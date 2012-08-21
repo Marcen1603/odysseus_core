@@ -68,16 +68,16 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		SADataTuple tuple = new SADataTuple(true);
 		// Security Punctuation Flag
 //		tuple.addAttribute("SecurityPunctuation");
-		// DDP - Stream (mehrere Werte mit Komma getrennt)
+		// DDP - Stream (mehrere Werte mit Komma getrennt) ("" --> keine Beschränkung)
 		tuple.addAttribute("Stream, Test");
 		// DDP - Starttupel (-1 bedeutet keine Beschränkung)
 		tuple.addAttribute(new Integer(counterTS.intValue()));
 		// DDP - Endtupel (-1 bedeutet keine Beschränkung)
 		tuple.addAttribute(new Integer((int) Math.round((Math.random() * 25) + counterTS)));
-		// DDP - Attribute (mehrere Werte mit Komma getrennt)
+		// DDP - Attribute (mehrere Werte mit Komma getrennt) ("" --> keine Beschränkung)
 		tuple.addAttribute("Attribut1, Attribut2");
-		// SRP - Rollen (mehrere Werte mit Komma getrennt)
-		tuple.addAttribute("sys_admin, PUBLIC");
+		// SRP - Rollen (mehrere Werte mit Komma getrennt) ("" --> keine Beschränkung)
+		tuple.addAttribute("sys_admin");
 		// Sign
 		tuple.addAttribute(new Integer(1));
 		// ts
