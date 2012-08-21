@@ -83,15 +83,12 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
-		println("#################################################################### NEW ELEMENT ####################################################################");
-		println("NEW ELEMENT: "+object.toString());
+		
 		if (counter % 100 == 0) {
 			long now = System.currentTimeMillis();
 			long needed = (now - lastTime);
 			long total = (now - startTime);
-			println("current: " + counter + " needed: " + needed + " ms and total " + total + " ms");
-			println("number of transactions: " + transactions.size());
-			println("number in sweeparea: " + this.sweepArea.size());
+			
 			lastTime = now;
 			Tuple<M> countTuple = new Tuple<M>(3, false);
 			countTuple.setAttribute(0, counter);
@@ -146,7 +143,6 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			end = PointInTime.min(end, currentTime);
 			transaction.setTimeInterval(start, end);
 
-			println("adding new transaction: " + transaction);
 			if (this.transactions.size() == this.maxTransactions) {
 				Transaction<M> removed = this.transactions.remove(0);
 				this.flist.remove(removed.getElements());
@@ -158,7 +154,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			// und endet mit der letzten transaction
 			PointInTime totalMax = end;
 
-			trace("unsorted f-List: " + this.flist);
+			
 			synchronized (this.flist) {
 				int internalminsupport = minsupport;
 				FPTree<M> thetree = new FPTree<M>();
@@ -167,38 +163,31 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 					internalminsupport = 1;
 				}
 				List<Pair<Tuple<M>, Integer>> currentfList = this.flist.getSortedList(internalminsupport);
-				println("sorted f-List: " + currentfList);
+			
 
 				if (!currentfList.isEmpty()) {
 
 					if (useGlobaleTree) {
-						println("actual transaction: " + transaction);
 						List<Tuple<M>> sortedList = transaction.getFBasedList(currentfList);
 						if (!sortedList.isEmpty()) {
-							println("insert ordered frequent items: " + sortedList);
 							thetree.insertTree(sortedList, thetree.getRoot());
 						}
 						totalMin = PointInTime.min(totalMin, transaction.getMetadata().getStart());
 						totalMax = PointInTime.max(totalMax, transaction.getMetadata().getEnd());
 					} else {
 						for (Transaction<M> trans : this.transactions) {
-							println("actual transaction: " + trans);
+							
 							List<Tuple<M>> sortedList = trans.getFBasedList(currentfList);
 							if (!sortedList.isEmpty()) {
-								println("insert ordered frequent items: " + sortedList);
 								thetree.insertTree(sortedList, thetree.getRoot());
 							}
 							totalMin = PointInTime.min(totalMin, trans.getMetadata().getStart());
 							totalMax = PointInTime.max(totalMax, trans.getMetadata().getEnd());
 						}
-					}
-					println("FP-TREE: ");
-					println(thetree.toString());
+					}					
 					ArrayList<Pattern<M>> results = fpgrowth(thetree);
 
-					println("-----------------------------------------------------------------");
-					println("-----------------------------------------------------------------");
-					println("ERGEBNIS:");
+					
 					int i = 0;
 					for (Pattern<M> p : results) {						
 						Tuple<M> newtuple = new Tuple<M>(2, false);
@@ -207,10 +196,10 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 						newtuple.setAttribute(0, i);
 						newtuple.setAttribute(1, p);
 						i++;
-						println("new Tuple: "+newtuple);
+						
 						transfer(newtuple);
 					}
-					println("-----------------------------------------------------------------");
+					
 
 				}
 			}
@@ -240,47 +229,29 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		// }
 		for (Tuple<M> tuple : tree.getDescendingHeaderList()) {
 			Pattern<M> newPattern = new Pattern<M>(pattern);
-			trace("-----------------------------------------------------------------");
-			trace("NEW CALL: Added " + tuple + " to pattern...");
 			newPattern.add(tuple, tree.getCount(tuple));
-			allPatterns.add(newPattern);
-			trace("INPUT TREE: ");
-			tree.printTree();
+			allPatterns.add(newPattern);			
+			//tree.printTree();
 			// get conditional prefix pathes
-			List<Pattern<M>> paths = tree.getPrefixPaths(tuple);
-			trace("BUILD NEW CONDITIONAL FP-TREE FOR " + newPattern);
+			List<Pattern<M>> paths = tree.getPrefixPaths(tuple);			
 			// build conditional fp tree
 			FPTree<M> condTree = new FPTree<M>();
-			for (Pattern<M> path : paths) {
-				trace("INSERT PATH: " + path);
+			for (Pattern<M> path : paths) {				
 				condTree.insertTree(path);
 			}
-			condTree.printTree();
+			//condTree.printTree();
 			// REMOVE INFREQUENT (bei e wäre es b)
 			condTree.removeWithoutMinSupport(minsupport);
-			condTree.printTree();
+			//condTree.printTree();
 			// if conditional tree is not empty, call recursively fpgrowth
 			if (!condTree.isEmpty()) {
 				Tuple<M> nextKey = condTree.getHeaderTable().lastKey();
 				if (!newPattern.contains(nextKey)) {
-
-					// newPattern.add(nextKey, condTree.getCount(nextKey));
-					trace("call recursively for " + newPattern + " with tree:");
-					condTree.printTree();
-					trace("...");
 					fpgrowth(condTree, newPattern, allPatterns);
 				}
 			}
 		}
-	}
-
-	private void println(String s) {
-		//System.out.println(s);
-	}
-
-	private void trace(String s) {
-		// System.out.println(s);
-	}
+	}	
 
 	@Override
 	public FrequentItemsetFPGrowthPO<M> clone() {

@@ -25,11 +25,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeStampOrderValidatorTIPO;
 import de.uniol.inf.is.odysseus.mining.frequentitem.AssociationRule;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.FPTree;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Pattern;
-import de.uniol.inf.is.odysseus.mining.logicaloperator.RuleGenerationAO;
 
 /**
  * @author Dennis Geesen
@@ -74,8 +72,8 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	 */
 	@Override
 	protected void process_next(Tuple<M> element, int port) {
-		System.out.println("--------------------------------------------------------------");
-		System.out.println("New element: " + element);
+//		System.out.println("--------------------------------------------------------------");
+//		System.out.println("New element: " + element);
 		// System.out.println("SA:");
 		// System.out.println(this.sweepArea.getSweepAreaAsString());
 		// System.out.println("--------------------------------------------------------------");
@@ -154,8 +152,7 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 					newtuple.setAttribute(0, counter);
 					AssociationRule<M> rule = new AssociationRule<M>(premise, consequence, conf);
 					newtuple.setAttribute(1, rule);
-					counter++;
-					System.out.println("new tuple" + newtuple);
+					counter++;					
 					transfer(newtuple);
 				} else {
 					iterHigherCons.remove();

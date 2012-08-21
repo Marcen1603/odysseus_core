@@ -251,12 +251,7 @@ public class FPTree<M extends IMetaAttribute> {
 	public void setHeaderTable(TreeMap<Tuple<M>, FPTreeNode<M>> headerTable) {
 		this.headerTable = headerTable;
 	}
-	/**
-	 * 
-	 */
-	public void printTree() {
-		println(toString());
-	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
