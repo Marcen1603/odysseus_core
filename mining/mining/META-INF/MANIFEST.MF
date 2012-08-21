@@ -21,3 +21,12 @@ Require-Bundle: de.uniol.inf.is.odysseus.logicaloperator.builder;bundle-version=
  org.apache.commons.math3;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.weka;bundle-version="1.0.0"
 Service-Component: OSGI-INF/RuleService.xml, OSGI-INF/OperatorBuilder.xml, OSGI-INF/DataDictionaryService.xml
+Export-Package: de.uniol.inf.is.odysseus.mining,
+ de.uniol.inf.is.odysseus.mining.clustering,
+ de.uniol.inf.is.odysseus.mining.distance,
+ de.uniol.inf.is.odysseus.mining.frequentitem,
+ de.uniol.inf.is.odysseus.mining.frequentitem.apriori,
+ de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth,
+ de.uniol.inf.is.odysseus.mining.logicaloperator,
+ de.uniol.inf.is.odysseus.mining.physicaloperator,
+ de.uniol.inf.is.odysseus.mining.transform
