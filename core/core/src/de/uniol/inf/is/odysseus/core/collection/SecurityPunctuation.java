@@ -1,164 +1,64 @@
 package de.uniol.inf.is.odysseus.core.collection;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-//public class SecurityPunctuation extends AbstractSecurityPunctuation {
-public class SecurityPunctuation implements Serializable {
+public class SecurityPunctuation extends AbstractSecurityPunctuation {
 
 	private static final long serialVersionUID = 8534064040716648960L;
 	
-	private String[] ddpStream;
-	private Integer ddpStarttuple;
-	private Integer ddpEndtuple;
-	private String[] ddpName;
-	private String[] srpRole;
-	private Integer sign;
-	private Long ts;
-	
 	private ArrayList<Integer> evaluateAttributesCache = new ArrayList<Integer>();
-	
-	
-	
-	
-//	public SecurityPunctuation(Object[] objects) {
-//		String[] ddpStream = ((String) objects[0]).split(",");
-//		for(int i = 0; i < ddpStream.length; i++) {
-//			ddpStream[i] = ddpStream[i].trim();
-//		}
-//		attributes.put("ddpStream", ddpStream);
-//		attributes.put("ddpStarttuple", (Integer) objects[1]);
-//		attributes.put("ddpEndtuple", (Integer) objects[2]);
-//		String[] ddpName = ((String) objects[3]).split(",");
-//		for(int i = 0; i < ddpName.length; i++) {
-//			ddpName[i] = ddpName[i].trim();
-//		}
-//		attributes.put("ddpName", ddpName);
-//		String[] srpRole = ((String) objects[4]).split(",");
-//		for(int i = 0; i < srpRole.length; i++) {
-//			srpRole[i] = srpRole[i].trim();
-//		}
-//		attributes.put("srpRole", srpRole);
-//		attributes.put("sign", (Integer) objects[5]);
-//		attributes.put("ts", (Integer) objects[6]);
-//	}
-//	
-//	public SecurityPunctuation(SecurityPunctuation sp) {
-//		attributes.put("ddpStream", sp.getAttribute("ddpStream"));
-//		attributes.put("ddpStarttuple", sp.getAttribute("ddpStarttuple"));
-//		attributes.put("ddpEndtuple", sp.getAttribute("ddpEndtuple"));
-//		attributes.put("ddpName", sp.getAttribute("ddpName"));
-//		attributes.put("srpRole", sp.getAttribute("srpRole"));
-//		attributes.put("sign", sp.getAttribute("sign"));
-//		attributes.put("ts", sp.getAttribute("ts"));
-//	}	
-	
-	
+	private SDFSchema schemaCache;
 	
 	public SecurityPunctuation(Object[] objects) {
-		//Strings mit möglicher Mehrfach-Angabe zerschneiden:
-		ddpStream = ((String) objects[0]).split(",");
+		String[] ddpStream = ((String) objects[0]).split(",");
 		for(int i = 0; i < ddpStream.length; i++) {
 			ddpStream[i] = ddpStream[i].trim();
 		}
-		ddpStarttuple = (Integer) objects[1];
-		ddpEndtuple = (Integer) objects[2];
-		ddpName = ((String) objects[3]).split(",");
+		attributes.put("ddpStream", ddpStream);
+		attributes.put("ddpStarttuple", (Long) objects[1]);
+		attributes.put("ddpEndtuple", (Long) objects[2]);
+		String[] ddpName = ((String) objects[3]).split(",");
 		for(int i = 0; i < ddpName.length; i++) {
 			ddpName[i] = ddpName[i].trim();
 		}
-		srpRole = ((String) objects[4]).split(",");
+		attributes.put("ddpName", ddpName);
+		String[] srpRole = ((String) objects[4]).split(",");
 		for(int i = 0; i < srpRole.length; i++) {
 			srpRole[i] = srpRole[i].trim();
 		}
-		sign = (Integer) objects[5];
-		ts = (Long) objects[6];
+		attributes.put("srpRole", srpRole);
+		attributes.put("sign", (Integer) objects[5]);
+		attributes.put("immutable", (Integer) objects[6]);
+		attributes.put("ts", (Long) objects[7]);
 	}
 	
 	public SecurityPunctuation(SecurityPunctuation sp) {
-		this.ddpStream = sp.ddpStream;
-		this.ddpStarttuple = sp.ddpStarttuple;
-		this.ddpEndtuple = sp.ddpEndtuple;
-		this.ddpName = sp.ddpName;
-		this.srpRole = sp.srpRole;
-		this.sign = sp.sign;
-		this.ts = sp.ts;
+		attributes.put("ddpStream", sp.getAttribute("ddpStream"));
+		attributes.put("ddpStarttuple", sp.getAttribute("ddpStarttuple"));
+		attributes.put("ddpEndtuple", sp.getAttribute("ddpEndtuple"));
+		attributes.put("ddpName", sp.getAttribute("ddpName"));
+		attributes.put("srpRole", sp.getAttribute("srpRole"));
+		attributes.put("sign", sp.getAttribute("sign"));
+		attributes.put("immutable", sp.getAttribute("immutable"));
+		attributes.put("ts", sp.getAttribute("ts"));
 	}	
-
-	public String[] getDDPdpStream() {
-		return this.ddpStream;
-	}
-	public void setDDPStream(String[] ddpStream) {
-		this.ddpStream = ddpStream;
-	}
-	public void setDDPStream(String ddpStream) {
-		this.ddpStream[0] = ddpStream;
-	}
-	
-	public Integer getDDPStarttuple() {
-		return this.ddpStarttuple;
-	}
-	public void setDDPStarttuple(Integer ddpStarttuple) {
-		this.ddpStarttuple = ddpStarttuple;
-	}
-	
-	public Integer getDDPEndtuple() {
-		return this.ddpEndtuple;
-	}
-	public void setDDPEndtuple(Integer ddpEndtuple) {
-		this.ddpEndtuple = ddpEndtuple;
-	}
-	
-	public String[] getDDPName() {
-		return this.ddpName;
-	}
-	public void setDDPName(String[] ddpName) {
-		this.ddpName = ddpName;
-	}
-	public void setDDPName(String ddpName) {
-		this.ddpName[0] = ddpName;
-	}
-	
-	public String[] getSRPRole() {
-		return this.srpRole;
-	}
-	public void setSRPRole(String[] srpRole) {
-		this.srpRole = srpRole;
-	}
-	public void setSRPRole(String srpRole) {
-		this.srpRole[0] = srpRole;
-	}
-	
-	public Integer getSign() {
-		return this.sign;
-	}
-	public void setSign(Integer sign) {
-		this.sign = sign;
-	}
-	
-	public Long getTS() {
-		return this.ts;
-	}
-	public void setTS(Long ts) {
-		this.ts = ts;
-	}
-	
 	
 	public Boolean evaluateTS(Long ts) {
-		if((this.getDDPStarttuple() == -1 && this.getDDPEndtuple() == -1) ||
-				(ts > this.getDDPStarttuple() && (ts <= this.getDDPEndtuple() || this.getDDPEndtuple() == -1))) {
+		if(((Long)this.getAttribute("ddpStarttuple") == -1 && ((Long)this.getAttribute("ddpEndtuple")) == -1) ||
+				(ts > ((Long)this.getAttribute("ddpStarttuple"))) && (ts <= (Long)this.getAttribute("ddpEndtuple")) || (Long)this.getAttribute("ddpEndtuple") == -1) {
 			return true;
 		}
 		return false;
 	}
 
 	public Boolean evaluateRoles(List<String> userRoles) {
-		if(this.getSRPRole().equals("")) {
+		if(this.getAttribute("srpRole").equals("")) {
 			return true;
 		}
-		for(String role:this.getSRPRole()) {
+		for(String role:((String[])this.getAttribute("srpRole"))) {
 			if(userRoles.contains(role)) {
 				return true;
 			}
@@ -175,18 +75,19 @@ public class SecurityPunctuation implements Serializable {
 	 * @return
 	 */
 	public Boolean evaluateAttributes(Tuple<?> tuple, SDFSchema schema) {
-		if(evaluateAttributesCache.isEmpty()) {
-			if(this.getDDPName() == null) {
+		if(!schema.equals(schemaCache) || evaluateAttributesCache.isEmpty()) {
+			evaluateAttributesCache.clear();
+			if(this.getAttribute("ddpName") == null) {
 				return false;
 			}
-			if(this.getDDPName().length <= 1 && this.getDDPName()[0].equals("")) {
+			if(((String[])this.getAttribute("ddpName")).length <= 1 && ((String[])this.getAttribute("ddpName"))[0].equals("")) {
 				return true;
 			}
 			
 			for(int i = 0; i < schema.size(); i++) {
 				Boolean setToNull = true;
 				String schemaAttribute = schema.getAttribute(i).getAttributeName();
-				for(String ddpName:getDDPName()) {
+				for(String ddpName:(String[])this.getAttribute("ddpName")) {
 					if(schemaAttribute.equals(ddpName)) {
 						setToNull = false;
 						break;
@@ -199,21 +100,21 @@ public class SecurityPunctuation implements Serializable {
 						evaluateAttributesCache.add(i);
 					}
 				}
-			}
-		} else {
-			for(Integer i:evaluateAttributesCache) {
-				tuple.setAttribute(i, (Object) null);
-			}
+			}	
+			return true;
+		}
+		for(Integer i:evaluateAttributesCache) {
+			tuple.setAttribute(i, (Object) null);
 		}
 		return true;
 	}	
 	
 	public Boolean evaluateStreamName(SDFSchema schema) {
 		//Was passiert hier bei Join???
-		if(ddpStream[0].equals("")) {
+		if(((String[])this.getAttribute("ddpStream"))[0].equals("")) {
 			return true;
 		}
-		for(String stream:ddpStream) {
+		for(String stream:(String[])this.getAttribute("ddpStream")) {
 			if(schema.getURI().equals(stream)) {
 				return true;
 			}
@@ -222,7 +123,7 @@ public class SecurityPunctuation implements Serializable {
 	}
 	
 	public Boolean evaluateAll(Long tupleTS, List<String> userRoles, Tuple<?> tuple, SDFSchema schema) {
-		if(	getSign() == 1 
+		if( (Integer)this.getAttribute("sign") == 1 
 			&& evaluateRoles(userRoles)
 			&& evaluateTS(tupleTS)
 			&& evaluateAttributes(tuple, schema)
@@ -231,5 +132,10 @@ public class SecurityPunctuation implements Serializable {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public ISecurityPunctuation union(ISecurityPunctuation sp2) {
+		return null;
 	}
 }

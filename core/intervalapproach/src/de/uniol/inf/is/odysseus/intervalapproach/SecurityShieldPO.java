@@ -27,7 +27,6 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 	
 	private SecurityPunctuationCache spCache = new SecurityPunctuationCache();
 	
-	private Boolean usersChanged = true;
 	private Boolean rolesChanged = true;
 	private List<String> userRoles = new ArrayList<String>();
 	
@@ -47,7 +46,7 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 			//Funktioniert das???
 			heartbeatGenerationStrategy.generateHeartbeat(object, this);
 		}
-		cleanCache(object);
+		spCache.cleanCache(object.getMetadata().getStart().getMainPoint());
 	}	
 
 	@Override
@@ -93,37 +92,13 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 		
 		return false;
 	}
-	
-	private void cleanCache(T object) {
-		//Reihenfolge in Cache beachten!!!!
-		while(!spCache.isEmpty() && spCache.get(0).getDDPEndtuple() < object.getMetadata().getStart().getMainPoint()) {
-//			System.out.println("spCache.get(0).getDDPEndtuple(): " + spCache.get(0).getDDPEndtuple());
-//			System.out.println("object.getMetadata().getStart().getMainPoint(): " + object.getMetadata().getStart().getMainPoint());
-			spCache.remove(0);
-		}
-//		System.out.println("aktuelle Size: " + spCache.size());
-	}
 
 	@Override
 	public void usersChangedEvent() {
-		usersChanged = true;
 	}
 
 	@Override
 	public void roleChangedEvent() {
 		rolesChanged = true;
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("MIEPMIEPMIEPMIEP");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
 	}
 }

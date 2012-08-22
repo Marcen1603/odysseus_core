@@ -71,14 +71,16 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		// DDP - Stream (mehrere Werte mit Komma getrennt) ("" --> keine Beschränkung)
 		tuple.addAttribute("Stream, Test");
 		// DDP - Starttupel (-1 bedeutet keine Beschränkung)
-		tuple.addAttribute(new Integer(counterTS.intValue()));
+		tuple.addAttribute(new Long(counterTS));
 		// DDP - Endtupel (-1 bedeutet keine Beschränkung)
-		tuple.addAttribute(new Integer((int) Math.round((Math.random() * 25) + counterTS)));
+		tuple.addAttribute(new Long(Math.round((Math.random() * 25) + counterTS)));
 		// DDP - Attribute (mehrere Werte mit Komma getrennt) ("" --> keine Beschränkung)
 		tuple.addAttribute("Attribut1, Attribut2");
 		// SRP - Rollen (mehrere Werte mit Komma getrennt) ("" --> keine Beschränkung)
 		tuple.addAttribute("sys_admin");
 		// Sign
+		tuple.addAttribute(new Integer(1));
+		// Immutable
 		tuple.addAttribute(new Integer(1));
 		// ts
 		tuple.addAttribute(new Long(counterTS++));
