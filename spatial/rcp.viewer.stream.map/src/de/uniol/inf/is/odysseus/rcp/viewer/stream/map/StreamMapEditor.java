@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -45,6 +47,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.ViewerStreamMapPlugIn;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.LayerPropertyDialog;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyDialog;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyTitleDialog;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
@@ -330,12 +336,21 @@ public class StreamMapEditor implements IStreamEditorType {
 		addLayer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DialogPropertyWindow window = new DialogPropertyWindow(PlatformUI.getWorkbench().getDisplay().getActiveShell());				
-				window.open();
+//				LayerPropertyDialog window = new LayerPropertyDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), layerOrder);
+//				window.create();
+//				window.open();
+//				window.getShell().setText("Add a new Layer");
 				
-				if( !window.close()) {
-					getParent().layout();
-				}
+//				if( !window.close()) {
+//					getParent().layout();
+//				}
+				
+				PropertyTitleDialog dialog = new PropertyTitleDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(),layerOrder);
+				dialog.create();
+				if (dialog.open() == Window.OK) {
+			
+					
+				} 
 			}
 		});
 		
