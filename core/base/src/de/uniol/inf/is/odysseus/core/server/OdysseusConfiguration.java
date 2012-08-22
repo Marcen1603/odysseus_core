@@ -208,6 +208,15 @@ public class OdysseusConfiguration {
 		}
 	}
 
+	public static boolean getBoolean(String key) {
+		String val = props.getProperty(key);
+		if (val != null){
+			return Boolean.parseBoolean(val);
+		}
+		return false;
+	}
+
+	
 	public static void set(String key, String value, boolean permanent,
 			ISession caller) {
 
@@ -260,4 +269,5 @@ public class OdysseusConfiguration {
 			return "";
 		}
 	}
+
 }
