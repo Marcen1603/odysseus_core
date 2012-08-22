@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -57,11 +58,13 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 	private List<SDFExpression> expressions = new ArrayList<SDFExpression>();
 	private SDFSchema _outputSchema = null;
-	List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+	private List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 
 	private SDFSchema _aliasSchema = null;
-	List<SDFAttribute> aliasAttributes = new ArrayList<SDFAttribute>();
+	private List<SDFAttribute> aliasAttributes = new ArrayList<SDFAttribute>();	
 
+	private boolean mathematicalExpressionNeeded = false;
+	
 	double[][] projectionMatrix = null;
 
 	double[] projectionVector = null;
@@ -91,7 +94,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		if (!_outputSchema.equals(inputSchema) || projectionMatrix != null) {
 			// if there are no mathematical expressions, a simple ProjectAO will
 			// do, otherwise a Map operator is needed
-			if (expressions.isEmpty()) {
+			if (!mathematicalExpressionNeeded) {
 				// createrestrictlist
 
 				if (projectionMatrix == null) {
@@ -114,25 +117,9 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			} else {
 				MapAO map = new MapAO();
 				map.subscribeTo(_top, inputSchema);
-
+				// all real expressions
 				List<SDFExpression> outputExpressions = new ArrayList<SDFExpression>(expressions);
 				map.setExpressions(outputExpressions);
-
-				//
-				// Iterator<SDFExpression> exprIt = this.expressions.iterator();
-				//
-				// for (SDFAttribute attr : outputSchema) {
-				// if (inputSchema.contains(attr)) {
-				// outputExpressions.add(new SDFExpression(attr));
-				// } else {
-				// // mathematical expressions were added in the order of
-				// // their occurence, so whenever an outputattribute is
-				// // not found in the inputschema we add the next
-				// // expression to the output
-				// outputExpressions.add(exprIt.next());
-				// }
-				// }
-				// map.setExpressions(outputExpressions);
 				_top = map;
 			}
 
@@ -147,18 +134,11 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTSelectAll node, Object data) throws QueryParseException {
-		outputAttributes.addAll(_top.getOutputSchema().getAttributes());
-		// aliasAttributes = new ArrayList<SDFAttribute>();
-		for (SDFAttribute attribute : outputAttributes) {
-			SDFAttribute attr = (SDFAttribute) attribute;
-			if (attr.getSourceName() != null) {
-				// Create new Attribute without sourcepart
-				SDFAttribute newAttribute = attr.clone(null, attr.getAttributeName());
-				aliasAttributes.add(newAttribute);
-			} else {
-				aliasAttributes.add(attr);
-			}
-			expressions.add(new SDFExpression(null, attr.getAttributeName(), this.attributeResolver, MEP.getInstance()));
+		// select all is simply a * and means all input
+		for (SDFAttribute attribute : _top.getOutputSchema().getAttributes()) {
+			aliasAttributes.add(attribute);
+			outputAttributes.add(attribute);
+			expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
 		}
 		return null;
 	}
@@ -169,90 +149,124 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		return child.jjtAccept(this, null);
 	}
 
-//	private void addSourceDotStar(String sourceName) {
-//		for (SDFAttribute attribute : _top.getOutputSchema().getAttributes()) {
-//			SDFAttribute attr = (SDFAttribute) attribute;
-//			if (attr.getSourceName().equals(sourceName)) {
-//				outputAttributes.add(attr);
-//				// Create new Attribute without sourcepart
-//				SDFAttribute newAttribute = attr.clone(null, attr.getAttributeName());
-//				aliasAttributes.add(newAttribute);
-//				expressions.add(new SDFExpression(null, attr.getAttributeName(), this.attributeResolver, MEP.getInstance()));
-//			}
-//		}
-//	}
-
 	@Override
-	public Object visit(ASTExpression expression, Object data) throws QueryParseException {
+	public Object visit(ASTNumber node, Object data) throws QueryParseException {
+		// ASTString should always be a constant number and must have an alias
+		// it is either a double (with dot) or a long
+		ASTExpression expression = (ASTExpression) data;
 		ASTRenamedExpression aliasExpression = (ASTRenamedExpression) expression.jjtGetParent();
-		Node node = getNode(expression);
-
-		// node is null, if the expression is something more complex
-		// than a simple Identifier or AggregateExpression.
-		// Identifier and AggregateExpressions can be used in a simple
-		// projection that just returns a subset of its inputs. Everything
-		// else needs to be calculated in a Map operator.
-		if (node == null || node instanceof ASTFunctionExpression || node instanceof ASTNumber || node instanceof ASTString) {
-			if (!aliasExpression.hasAlias()) {
-				throw new IllegalArgumentException("Missing alias identifier in SELECT-clause for expression " + expression.toString());
+		if (!aliasExpression.hasAlias()) {
+			throw new IllegalArgumentException("Missing alias identifier in SELECT-clause for expression " + node.toString());
+		} else {
+			mathematicalExpressionNeeded = true;			
+			SDFDatatype datatype = SDFDatatype.LONG;
+			if (node.getValue().contains(".")) {				
+				datatype = SDFDatatype.DOUBLE;				
 			}
-			expressions.add(new SDFExpression(null, expression.toString(), this.attributeResolver, MEP.getInstance()));
-			SDFAttribute attribute = null;
-			if (node instanceof ASTNumber) {
-				ASTNumber number = (ASTNumber) node;
-				if (number.getValue().contains(".")) {
-					attribute = new SDFAttribute(null, aliasExpression.getAlias(), SDFDatatype.DOUBLE);
-				} else {
-					attribute = new SDFAttribute(null, aliasExpression.getAlias(), SDFDatatype.LONG);
-				}
-			} else {
-				attribute = new SDFAttribute(null, aliasExpression.getAlias(), SDFDatatype.STRING);
-			}
+			SDFExpression exp = new SDFExpression(new Constant<String>(node.getValue(), datatype), this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());			
+			expressions.add(exp);
+			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), datatype);			
 			outputAttributes.add(attribute);
 			aliasAttributes.add(attribute);
+		}
+		return null;
+	}
+	
+	@Override
+	public Object visit(ASTExpression expression, Object data) throws QueryParseException {
+		expression.childrenAccept(this, expression);
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTFunctionExpression node, Object data) throws QueryParseException {
+		// ASTFunctionExpression is a math-function that could be completely
+		// passed to MEP
+		ASTExpression expression = (ASTExpression) data;
+		ASTRenamedExpression aliasExpression = (ASTRenamedExpression) expression.jjtGetParent();
+		if (!aliasExpression.hasAlias()) {
+			throw new IllegalArgumentException("Missing alias identifier in SELECT-clause for expression " + node.toString());
 		} else {
-			List<?> attributes = (List<?>) node.jjtAccept(this, null);
-			
-			for (Object o : attributes) {
-				SDFAttribute attribute = (SDFAttribute) o;
-				outputAttributes.add(attribute);
-				// Add Attribute in MEP Expression in the right order
-				expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
-				SDFAttribute aliasAttribute;
-				if (aliasExpression.hasAlias()) {
-					// copy other attributes like datatypes
-					aliasAttribute = attribute.clone(null, aliasExpression.getAlias());
-					// aliasAttribute.setSourceName("");
-					// aliasAttribute.setAttributeName(aliasExpression.getAlias());
-				} else {
-					aliasAttribute = attribute;
-				}
-				aliasAttributes.add(aliasAttribute);
-			}
+			mathematicalExpressionNeeded = true;
+			SDFExpression expr = new SDFExpression(null, expression.toString(), this.attributeResolver, MEP.getInstance());
+			expressions.add(expr);
+			SDFDatatype type = expr.getMEPExpression().getReturnType();
+			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), type);
+			outputAttributes.add(attribute);
+			aliasAttributes.add(attribute);
 		}
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTIdentifier node, Object data) throws QueryParseException {
+		// ASTIdentifier is either "sourcename.*" or just an attribute name
+		// (sometimes with alias)
+		ASTExpression expression = (ASTExpression) data;
 		String name = node.getName();
 		if (name.endsWith(".*")) {
 			String[] splits = name.split("\\.");
 			String sourceName = splits[0];
-			return this.attributeResolver.getSource(sourceName).getOutputSchema().getAttributes();
-			//addSourceDotStar(sourceName);			
+			List<SDFAttribute> liste = this.attributeResolver.getSource(sourceName).getOutputSchema().getAttributes();
+			for (SDFAttribute attribute : liste) {
+				outputAttributes.add(attribute);
+				aliasAttributes.add(attribute);
+				expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
+			}
 		} else {
-			List<SDFAttribute> list = new ArrayList<SDFAttribute>();
-			list.add(this.attributeResolver.getAttribute(node.getName()));
-			return list;
+			SDFAttribute attribute = this.attributeResolver.getAttribute(node.getName());
+			ASTRenamedExpression aliasExpression = (ASTRenamedExpression) expression.jjtGetParent();
+			outputAttributes.add(attribute);
+			// if it has an alias, we use a clone with new alias name
+			if (aliasExpression.hasAlias()) {
+				SDFAttribute aliasAttribute = attribute.clone(null, aliasExpression.getAlias());
+				aliasAttributes.add(aliasAttribute);
+			} else {
+				// otherwise we use the normal attribute
+				aliasAttributes.add(attribute);
+			}
+			expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
 		}
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTString node, Object data) throws QueryParseException {
+		// ASTString should always be a constant string and must have an alias
+		ASTExpression expression = (ASTExpression) data;
+		ASTRenamedExpression aliasExpression = (ASTRenamedExpression) expression.jjtGetParent();
+		if (!aliasExpression.hasAlias()) {
+			throw new IllegalArgumentException("Missing alias identifier in SELECT-clause for expression " + node.toString());
+		} else {
+			mathematicalExpressionNeeded = true;			
+			SDFDatatype datatype = SDFDatatype.STRING;			
+			SDFExpression exp = new SDFExpression(new Constant<String>(node.getValue(), datatype), this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());			
+			expressions.add(exp);
+			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), datatype);			
+			outputAttributes.add(attribute);
+			aliasAttributes.add(attribute);
+		}
+		return null;
 	}
 
 	@Override
 	public Object visit(ASTAggregateExpression node, Object data) throws QueryParseException {
+		ASTExpression expression = (ASTExpression) data;
+		ASTRenamedExpression aliasExpression = (ASTRenamedExpression) expression.jjtGetParent();
 		String name = node.jjtGetChild(1).toString();
 		String aggregateName = node.jjtGetChild(0).toString();
-		return this.attributeResolver.getAggregateAttribute(name, aggregateName);
+		SDFAttribute attribute = this.attributeResolver.getAggregateAttribute(name, aggregateName);
+		outputAttributes.add(attribute);
+		expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));		
+		// if it has an alias, we use a clone with new alias name
+		if (aliasExpression.hasAlias()) {
+			SDFAttribute aliasAttribute = attribute.clone(null, aliasExpression.getAlias());
+			aliasAttributes.add(aliasAttribute);
+		} else {
+			// otherwise we use the normal attribute
+			aliasAttributes.add(attribute);
+		}
+		return null;
 	}
 
 	@Override
@@ -285,7 +299,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	private static void checkAttributes(List<SDFAttribute> aliasSchema) {
 		for (SDFAttribute attribute : aliasSchema) {
 			if (Collections.frequency(aliasSchema, attribute) != 1) {
-				throw new IllegalArgumentException("ambigious attribute: " + attribute);
+				throw new IllegalArgumentException("ambiguous attribute: " + attribute);
 			}
 		}
 	}

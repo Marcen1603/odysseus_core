@@ -272,6 +272,14 @@ public class SDFAttribute extends SDFElement implements
 	public SDFAttribute clone(String newSourceName, String newAttributeName) {
 		return new SDFAttribute(newSourceName, newAttributeName, this);
 	}
+	
+	/** 
+	 * Creates a new SDFAttribute with a new datatype
+	 * from this attribute, keeping all other information
+	 */
+	public SDFAttribute clone(SDFDatatype dt) {
+		return new SDFAttribute(this.getSourceName(), this.getAttributeName(), dt);
+	}
 
 	@Override
 	public int compareTo(SDFAttribute o) {

@@ -57,7 +57,8 @@ public class MapAO extends UnaryLogicalOp {
 				SDFAttribute attr = null;
 
 				IExpression<?> mepExpression = expr.getMEPExpression();
-				String exprString = mepExpression.toString();
+				//String exprString = mepExpression.toString();
+				String exprString = expr.toString();
 				// Variable could be source.name oder name, we are looking for
 				// name!
 				String[] split = SDFElement.splitURI(exprString);

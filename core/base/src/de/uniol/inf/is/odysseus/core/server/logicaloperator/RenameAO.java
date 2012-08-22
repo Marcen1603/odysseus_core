@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ public class RenameAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 4218605858465342011L;
 	private List<String> aliases;
 	private String typeName;
+	private boolean calculated = false;
 
 	public RenameAO() {
 		super();
@@ -53,40 +54,51 @@ public class RenameAO extends UnaryLogicalOp {
 	public void setAliases(List<String> aliases) {
 		this.aliases = aliases;
 	}
-	
-	@Parameter(name="Type",type = StringParameter.class, optional = true)
+
+	@Parameter(name = "Type", type = StringParameter.class, optional = true)
 	public void setType(String typeName) {
 		this.typeName = typeName;
-	}	
-	
-	@GetParameter(name="setAliases")
-	public List<String> getAliases(){
+	}
+
+	@GetParameter(name = "setAliases")
+	public List<String> getAliases() {
 		return this.aliases;
 	}
-	
+
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		if (!calculated) {
+			SDFSchema output = super.getOutputSchema(pos);
+			SDFSchema input = super.getInputSchema();
+			List<SDFAttribute> newOutput = new ArrayList<SDFAttribute>();
+			// check, if types are equal
+			for (int i = 0; i < output.size(); i++) {
+				newOutput.add(output.get(i).clone(input.get(i).getDatatype()));
+			}
+		}
+		return super.getOutputSchemaIntern(pos);
+	}
+
 	@Override
 	public void initialize() {
 		SDFSchema inputSchema = getInputSchema();
 		if (inputSchema.size() != aliases.size()) {
-			throw new IllegalArgumentException(
-					"number of aliases does not match number of input attributes for rename");
+			throw new IllegalArgumentException("number of aliases does not match number of input attributes for rename");
 		}
 		Iterator<SDFAttribute> it = inputSchema.iterator();
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		for (String str : aliases) {
 			// use clone, so we have a datatype etc.
-			SDFAttribute attribute = it.next().clone(null,str);
+			SDFAttribute attribute = it.next().clone(null, str);
 			attrs.add(attribute);
 		}
-		String uri = typeName !=null ? typeName:inputSchema.getURI();
+		String uri = typeName != null ? typeName : inputSchema.getURI();
 		setOutputSchema(new SDFSchema(uri, attrs));
 	}
-
 
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new RenameAO(this);
 	}
-
 
 }
