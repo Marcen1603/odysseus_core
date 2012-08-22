@@ -162,6 +162,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		rasterLayer.setLayout(groupLayout);
 		rasterLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 		rasterLayer.setVisible(true);
+
 		
 		Label serverTypeLabel = new Label(rasterLayer, SWT.NONE);
 		serverTypeLabel.setText("Server Type:");
@@ -214,6 +215,21 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		serverTypeButtonUD.setText("User Defined");
 		serverTypeButtonUD.addListener(SWT.Selection, serverTypeListner);
 		
+		Label serverLabel = new Label(rasterLayer, SWT.FLAT);
+		serverLabel.setText("Adresse:");
+
+		CCombo server = new CCombo(rasterLayer, SWT.BORDER);
+		server.setLayoutData(gridData);
+
+		server.add("http://tah.openstreetmap.org/Tiles/tile/");
+		server.setText("http://tah.openstreetmap.org/Tiles/tile/");
+
+		server.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				//Check Adresse
+				isValidInput();
+			};
+		});
 		
 		Label protocolTypeLabel = new Label(rasterLayer, SWT.NONE);
 		protocolTypeLabel.setText("Protocol Type:");
@@ -230,21 +246,6 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		serverType.setText("RESTFUL Tile Server");
 
 		serverType.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				
-			};
-		});
-
-		Label serverLabel = new Label(rasterLayer, SWT.FLAT);
-		serverLabel.setText("Basic Adresse:");
-
-		CCombo server = new CCombo(rasterLayer, SWT.BORDER);
-		server.setLayoutData(gridData);
-
-		server.add("http://tah.openstreetmap.org/Tiles/tile/");
-		server.setText("http://tah.openstreetmap.org/Tiles/tile/");
-
-		server.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				
 			};
@@ -345,10 +346,10 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 	private boolean isValidInput() {
 		boolean valid = true;
-		// if (firstNameText.getText().length() == 0) {
-		// setErrorMessage("Please maintain the first name");
-		// valid = false;
-		// }
+		 if (true) {
+			setErrorMessage("Server is not active.");
+		    valid = false;
+		 }
 		// if (lastNameText.getText().length() == 0) {
 		// setErrorMessage("Please maintain the last name");
 		// valid = false;
