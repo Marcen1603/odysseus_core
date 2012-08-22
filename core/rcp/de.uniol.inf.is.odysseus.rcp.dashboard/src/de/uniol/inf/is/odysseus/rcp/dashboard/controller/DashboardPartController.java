@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
-import de.uniol.inf.is.odysseus.rcp.viewer.editors.DefaultStreamConnection;
+import de.uniol.inf.is.odysseus.rcp.stream.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
 public final class DashboardPartController {

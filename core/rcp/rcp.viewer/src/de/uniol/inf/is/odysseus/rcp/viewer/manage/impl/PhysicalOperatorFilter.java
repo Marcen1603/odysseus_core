@@ -20,7 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.rcp.viewer.editors.DefaultStreamConnection;
+import de.uniol.inf.is.odysseus.rcp.stream.DefaultStreamConnection;
 
 public class PhysicalOperatorFilter {
 

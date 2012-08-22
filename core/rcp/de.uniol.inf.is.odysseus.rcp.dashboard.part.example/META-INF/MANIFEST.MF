@@ -11,6 +11,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.rcp.dashboard,
 Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.physicaloperator,
- de.uniol.inf.is.odysseus.rcp.viewer.model.stream,
+ de.uniol.inf.is.odysseus.rcp.stream,
  org.eclipse.core.resources,
  org.slf4j

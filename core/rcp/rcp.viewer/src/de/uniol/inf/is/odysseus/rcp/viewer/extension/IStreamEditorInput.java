@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.extension;
 
 import org.eclipse.ui.IEditorInput;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamConnection;
+import de.uniol.inf.is.odysseus.rcp.stream.IStreamConnection;
 
 public interface IStreamEditorInput extends IEditorInput{
 

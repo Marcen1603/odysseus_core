@@ -7,7 +7,6 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.table.activator.Vie
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.rcp.viewer;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
@@ -17,6 +16,9 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
+ de.uniol.inf.is.odysseus.rcp.stream,
+ de.uniol.inf.is.odysseus.rcp.viewer.editors,
+ de.uniol.inf.is.odysseus.rcp.viewer.extension,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.relational.base,
  org.slf4j

@@ -27,9 +27,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.rcp.stream.DefaultStreamConnection;
+import de.uniol.inf.is.odysseus.rcp.stream.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamConnection;
 
 public class StreamEditorInput implements IStreamEditorInput {
 
