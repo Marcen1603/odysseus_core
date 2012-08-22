@@ -65,12 +65,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
-	// DashboardPart
-	// Query
-	// File / Text
-	// Setting
-	// Custom
-
 	public static final String DASHBOARD_PART_XML_ELEMENT = "DashboardPart";
 	public static final String SETTING_XML_ELEMENT = "Setting";
 	public static final String CUSTOM_SETTING_XML_ELEMENT = "Setting";
@@ -111,8 +105,9 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 	}
 
 	@Override
-	public IDashboardPart load(List<String> lines) throws DashboardHandlerException, FileNotFoundException {
-		Preconditions.checkNotNull(lines, "File to load from must not be null!");
+	public IDashboardPart load(List<String> lines) throws DashboardHandlerException {
+		Preconditions.checkNotNull(lines, "Array of lines from must not be null!");
+		Preconditions.checkArgument(!lines.isEmpty(), "Array of lines must not be empty!");
 
 		try {
 			Document doc = getDocument(lines);
