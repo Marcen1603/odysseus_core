@@ -355,21 +355,24 @@ public class StreamMapEditor implements IStreamEditorType {
 		});
 		
 		/* Dummy Buttom */
-//		ToolItem dummyButton2 = new ToolItem(toolbar, SWT.PUSH);
-//		dummyButton2.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("dummy_16") );
-//		dummyButton2.setToolTipText("Dummy Button");
-//		
-//		dummyButton2.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				PropertyWindow window = new PropertyWindow(PlatformUI.getWorkbench().getDisplay(), "Dummy_Two");				
-//				window.show();
-//				
-//				if( !window.isCanceled()) {
-//					getParent().layout();
-//				}
-//			}
-//		});
+		ToolItem dummyButton2 = new ToolItem(toolbar, SWT.PUSH);
+		dummyButton2.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("dummy_16") );
+		dummyButton2.setToolTipText("Dummy Button");
+		
+		dummyButton2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				LayerPropertyDialog window = new LayerPropertyDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), layerOrder);
+//				window.create();
+				window.open();
+
+				
+				if( !window.close()) {
+					getParent().layout();
+				}
+				
+			}
+		});
 		
 		
 		
