@@ -88,14 +88,32 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		radioTypeSelection.setLayoutData(new GridData(GridData.FILL,
 				GridData.BEGINNING, false, false));
 
+		GridData separatorgridData = new GridData();
+		separatorgridData.horizontalAlignment = GridData.FILL;
+		separatorgridData.verticalAlignment = GridData.FILL;
+		separatorgridData.grabExcessHorizontalSpace = true;
+		separatorgridData.grabExcessVerticalSpace = false;
+		separatorgridData.horizontalSpan = 2;
+
+		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+		separator.setLayoutData(separatorgridData);
+		
+		final Composite vectorLayer = new Composite(parent, SWT.NONE);
+		final Composite rasterLayer = new Composite(parent, SWT.NONE);
+		
 		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
 				Control[] children = radioTypeSelection.getChildren();
-
-				System.out.println(radioTypeSelection.getChildren().toString());
-
+				if(((Button) e.widget).getText().endsWith("Raster")){
+					vectorLayer.setVisible(false);
+					rasterLayer.setVisible(true);
+				}
+				if(((Button) e.widget).getText().endsWith("Vector")){
+					vectorLayer.setVisible(true);
+					rasterLayer.setVisible(false);
+				}
+				
 				for (Control child : children) {
-					System.out.println(e.widget.toString());
 					if (e.widget != child) {
 						((Button) child).setSelection(false);
 					}
@@ -144,15 +162,6 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		// lastNameText = new Text(parent, SWT.BORDER);
 		// lastNameText.setLayoutData(gridData);
 
-		GridData separatorgridData = new GridData();
-		separatorgridData.horizontalAlignment = GridData.FILL;
-		separatorgridData.verticalAlignment = GridData.FILL;
-		separatorgridData.grabExcessHorizontalSpace = true;
-		separatorgridData.grabExcessVerticalSpace = false;
-		separatorgridData.horizontalSpan = 2;
-
-		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-		separator.setLayoutData(separatorgridData);
 
 		
 		
@@ -165,10 +174,10 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		
 		
 		
-		final Composite rasterLayer = new Composite(parent, SWT.NONE);
 		rasterLayer.setLayout(groupLayout);
 		rasterLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
-
+		rasterLayer.setVisible(false);
+		
 		Label serverTypeLabel = new Label(rasterLayer, SWT.FLAT);
 		serverTypeLabel.setText("Sever Type:");
 		serverTypeLabel.setLayoutData(gridLabelLayout);
@@ -205,6 +214,16 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 			};
 		});
 
+		
+		GridLayout vectorLayout = new GridLayout();
+		vectorLayout.numColumns = 2;
+		vectorLayout.horizontalSpacing = GridData.FILL;
+		vectorLayout.verticalSpacing = GridData.FILL;
+		
+		vectorLayer.setLayout(groupLayout);
+		vectorLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+		vectorLayer.setVisible(false);
+		
 		Label separator2 = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator2.setLayoutData(separatorgridData);
 
@@ -275,7 +294,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 	@Override
 	protected boolean isResizable() {
-		return true;
+		return false;
 	}
 
 	// Coyy textFields because the UI gets disposed
