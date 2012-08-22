@@ -69,6 +69,19 @@
                tooltip="Sort">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.toolbar1">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.editor.text.pql.ShowPQLAccessStatementGenWindow"
+                  icon="icons/access.gif"
+                  label="Generate PQL-ACCESS-Statement"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -96,6 +109,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.pql.commands.ToggleSortPQLOperatorsCommand"
             id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.ToggleSortPQLOperators"
             name="Sort PQL Operators">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.pql.commands.ShowPQLAccessStatementWindowHandler"
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.ShowPQLAccessStatementGenWindow"
+            name="Show PQL Access-Statement Window">
       </command>
    </extension>
 
