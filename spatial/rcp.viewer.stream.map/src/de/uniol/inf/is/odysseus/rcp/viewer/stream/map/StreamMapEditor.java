@@ -336,20 +336,10 @@ public class StreamMapEditor implements IStreamEditorType {
 		addLayer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				LayerPropertyDialog window = new LayerPropertyDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), layerOrder);
-//				window.create();
-//				window.open();
-//				window.getShell().setText("Add a new Layer");
-				
-//				if( !window.close()) {
-//					getParent().layout();
-//				}
-				
 				PropertyTitleDialog dialog = new PropertyTitleDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(),layerOrder);
 				dialog.create();
 				if (dialog.open() == Window.OK) {
-			
-					
+					dialog.getMessage();
 				} 
 			}
 		});
