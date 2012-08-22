@@ -81,10 +81,17 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// Eventhandling
 	// ------------------------------------------------------------------
 
-	private EventHandler eventHandler = EventHandler.getInstance(this);
+	private EventHandler eventHandler = null;
+
+	private void initEventHandler() {
+		if (eventHandler == null) {
+			eventHandler = EventHandler.getInstance(this);
+		}
+	}
 
 	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
+		initEventHandler();
 		eventHandler.subscribe(this, listener, type);
 	}
 
@@ -95,6 +102,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void subscribeToAll(IEventListener listener) {
+		initEventHandler();
 		eventHandler.subscribeToAll(this, listener);
 	}
 
@@ -105,7 +113,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void fire(IEvent<?, ?> event) {
-		eventHandler.fire(this, event);
+		if (eventHandler != null) {
+			eventHandler.fire(this, event);
+		}
 	}
 
 	final private POEvent openInitEvent;
@@ -252,7 +262,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public abstract void processPunctuation(PointInTime timestamp, int port);
-	
+
 	@Override
 	public void processSecurityPunctuation(SecurityPunctuation sp, int port) {
 	}
@@ -345,7 +355,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	@Override
 	public SDFSchema getOutputSchema(int port) {
 		SDFSchema schema = outputSchema.get(port);
-		if (schema == null){
+		if (schema == null) {
 			schema = getSubscribedToSource(port).getSchema();
 		}
 		return schema;

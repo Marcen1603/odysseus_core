@@ -83,10 +83,17 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// Eventhandling
 	// ------------------------------------------------------------------
 
-	private EventHandler eventHandler = EventHandler.getInstance(this);
+	private EventHandler eventHandler = null;
+
+	private void initEventHandler() {
+		if (eventHandler == null) {
+			eventHandler = EventHandler.getInstance(this);
+		}
+	}
 
 	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
+		initEventHandler();
 		eventHandler.subscribe(this, listener, type);
 	}
 
@@ -97,6 +104,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void subscribeToAll(IEventListener listener) {
+		initEventHandler();
 		eventHandler.subscribeToAll(this, listener);
 	}
 
@@ -106,8 +114,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public synchronized void fire(IEvent<?, ?> event) {
-		eventHandler.fire(this, event);
+	public void fire(IEvent<?, ?> event) {
+		if (eventHandler != null) {
+			eventHandler.fire(this, event);
+		}
 	}
 
 	final private POEvent doneEvent = new POEvent(this, POEventType.Done);
