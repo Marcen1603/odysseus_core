@@ -9,7 +9,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -48,8 +50,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		// Main Area
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-		//layout.horizontalSpacing = GridData.HORIZONTAL_ALIGN_FILL;
-		//layout.verticalSpacing = GridData.VERTICAL_ALIGN_FILL;
+		layout.horizontalSpacing = GridData.BEGINNING;
+		layout.verticalSpacing = GridData.BEGINNING;
 		parent.setLayout(layout);
 
 		// Group Area
@@ -90,7 +92,6 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 		GridData separatorgridData = new GridData();
 		separatorgridData.horizontalAlignment = GridData.FILL;
-		separatorgridData.verticalAlignment = GridData.FILL;
 		separatorgridData.grabExcessHorizontalSpace = true;
 		separatorgridData.grabExcessVerticalSpace = false;
 		separatorgridData.horizontalSpan = 2;
@@ -154,18 +155,70 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		
 		GridLayout rasterLayout = new GridLayout();
 		rasterLayout.numColumns = 2;
-		rasterLayout.horizontalSpacing = GridData.FILL;
-		rasterLayout.verticalSpacing = GridData.FILL;
-	
+		//rasterLayout.horizontalSpacing = GridData.FILL;
+		rasterLayout.verticalSpacing = GridData.BEGINNING;
+		//rasterLayer.setBackground(new Color(parent.getDisplay(), new RGB(100, 0, 0)));
 		
 		rasterLayer.setLayout(groupLayout);
 		rasterLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 		rasterLayer.setVisible(true);
 		
-		Label serverTypeLabel = new Label(rasterLayer, SWT.FLAT);
-		serverTypeLabel.setText("Sever Type:");
+		Label serverTypeLabel = new Label(rasterLayer, SWT.NONE);
+		serverTypeLabel.setText("Server Type:");
 		serverTypeLabel.setLayoutData(gridLabelLayout);
 
+		GridLayout radioGroupLayout = new GridLayout();
+		radioGroupLayout.numColumns = 3;
+		radioGroupLayout.horizontalSpacing = GridData.FILL;
+		radioGroupLayout.verticalSpacing = GridData.FILL;
+		
+		final Composite serverTypeSelection = new Composite(rasterLayer,SWT.NONE);
+		serverTypeSelection.setLayout(radioGroupLayout);
+		serverTypeSelection.setLayoutData(new GridData(GridData.FILL,	GridData.BEGINNING, false, false));
+		
+		Listener serverTypeListner = new Listener() {
+			
+			public void handleEvent(Event e) {
+				Control[] children = serverTypeSelection.getChildren();
+				
+				if(((Button) e.widget).getText().endsWith("WMS")){
+				
+				}
+				if(((Button) e.widget).getText().endsWith("Tile")){
+					
+				}
+				if(((Button) e.widget).getText().endsWith("User Defined")){
+					
+				}
+				
+				for (Control child : children) {
+					if (e.widget != child) {
+						((Button) child).setSelection(false);
+					}
+				}
+				((Button) e.widget).setSelection(true);
+			}
+			
+		};
+
+		Button serverTypeButtonWMS = new Button(serverTypeSelection, SWT.RADIO);
+		serverTypeButtonWMS.setText("WMS");
+		serverTypeButtonWMS.addListener(SWT.Selection, serverTypeListner);
+
+		Button serverTypeButtonTile = new Button(serverTypeSelection, SWT.RADIO);
+		serverTypeButtonTile.setText("Tile");
+		serverTypeButtonTile.addListener(SWT.Selection, serverTypeListner);
+		serverTypeButtonTile.setSelection(true);
+		
+		Button serverTypeButtonUD = new Button(serverTypeSelection, SWT.RADIO);
+		serverTypeButtonUD.setText("User Defined");
+		serverTypeButtonUD.addListener(SWT.Selection, serverTypeListner);
+		
+		
+		Label protocolTypeLabel = new Label(rasterLayer, SWT.NONE);
+		protocolTypeLabel.setText("Protocol Type:");
+		protocolTypeLabel.setLayoutData(gridLabelLayout);
+		
 		CCombo serverType = new CCombo(rasterLayer, SWT.BORDER);
 		serverType.setLayoutData(gridData);
 
@@ -178,7 +231,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 		serverType.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println(e.data.toString());
+				
 			};
 		});
 
@@ -197,6 +250,12 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 			};
 		});
 
+//		Button radioTypeButton = new Button(rasterLayer, SWT.RADIO);
+//		radioTypeButton.setText("Worldmap");
+//		radioTypeButton.setSelection(true);
+//		radioTypeButton.addListener(SWT.Selection, listener);
+		
+		
 		
 		GridLayout vectorLayout = new GridLayout();
 		vectorLayout.numColumns = 2;
