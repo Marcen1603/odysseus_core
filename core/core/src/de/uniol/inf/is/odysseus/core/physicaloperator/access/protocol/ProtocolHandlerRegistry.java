@@ -21,6 +21,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -61,5 +63,9 @@ public class ProtocolHandlerRegistry {
 	static public IProtocolHandler<?> getInstance(String name, Map<String, String> options, 
 			ITransportHandler transportHandler, IDataHandler dataHandler){
 		return getInstance(name, options, transportHandler, dataHandler, null);
+	}
+	
+	public static ImmutableList<String> getHandlerNames() {
+		return ImmutableList.copyOf(handlers.keySet());
 	}
 }

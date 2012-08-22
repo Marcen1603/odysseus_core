@@ -34,4 +34,5 @@ Export-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.core.util
 Service-Component: OSGI-INF/*
+Require-Bundle: com.google.guava;bundle-version="12.0.0"
 

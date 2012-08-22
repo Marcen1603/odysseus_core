@@ -21,6 +21,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+
 public class TransportHandlerRegistry {
 
 	static Logger logger = LoggerFactory.getLogger(TransportHandlerRegistry.class);
@@ -51,4 +53,7 @@ public class TransportHandlerRegistry {
 		return null;
 	}
 	
+	public static ImmutableList<String> getHandlerNames() {
+		return ImmutableList.copyOf(handlers.keySet());
+	}
 }
