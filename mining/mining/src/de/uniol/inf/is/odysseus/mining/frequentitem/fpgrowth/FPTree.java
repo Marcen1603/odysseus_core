@@ -82,7 +82,7 @@ public class FPTree<M extends IMetaAttribute> {
 		
 	}
 	
-	private void removeNode(FPTreeNode<M> nodeToRemove){
+	private synchronized void removeNode(FPTreeNode<M> nodeToRemove){
 		if(nodeToRemove==null){
 			return;
 		}
@@ -94,7 +94,7 @@ public class FPTree<M extends IMetaAttribute> {
 	}
 	
 	
-	public int getSupport(Pattern<M> pattern){
+	public synchronized int getSupport(Pattern<M> pattern){
 		int support = Integer.MAX_VALUE;
 		FPTreeNode<M> current = getRoot();				
 		for(Tuple<M> t : pattern.getPattern()){
@@ -110,13 +110,14 @@ public class FPTree<M extends IMetaAttribute> {
 				}
 			}
 			if(!found){
-				System.err.println("Something went wrong during support calculation with fp tree!");
+				//throw new RuntimeException("looked for pattern: "+pattern+" in tree, but it was not found");
+				return 0;
 			}
 		}
 		return support;
 	}
 	
-	public List<FPTreeNode<M>> getSinglePrefixPath(){
+	public synchronized List<FPTreeNode<M>> getSinglePrefixPath(){
 		List<FPTreeNode<M>> spp = new ArrayList<FPTreeNode<M>>();
 		FPTreeNode<M> branchNode = root;
 		do{		
@@ -126,7 +127,7 @@ public class FPTree<M extends IMetaAttribute> {
 		return spp;
 	}
 	
-	public FPTree<M> getMultiPathTree(){
+	public synchronized FPTree<M> getMultiPathTree(){
 		FPTree<M> tree = new FPTree<M>();
 		for(FPTreeNode<M> child : this.getSinglePrefixBranchNode().getChilds()){
 			tree.getRoot().addChild(child);			
@@ -151,7 +152,7 @@ public class FPTree<M extends IMetaAttribute> {
 	}
 		
 		
-	private Pattern<M> getPatternBottomUp(FPTreeNode<M> node) {
+	private synchronized Pattern<M> getPatternBottomUp(FPTreeNode<M> node) {
 		int count = node.getCount();
 		Pattern<M> p = new Pattern<M>();
 		while(node != null && node.getItem()!=null){
@@ -165,7 +166,7 @@ public class FPTree<M extends IMetaAttribute> {
 		return p;
 	}
 
-	public FPTreeNode<M> getSinglePrefixBranchNode(){
+	public synchronized FPTreeNode<M> getSinglePrefixBranchNode(){
 		FPTreeNode<M> branchNode = root;
 		while(branchNode.getChilds().size()==1){
 			branchNode = branchNode.getChilds().get(0);
@@ -177,11 +178,11 @@ public class FPTree<M extends IMetaAttribute> {
 		return (!getSinglePrefixBranchNode().equals(root));
 	}
 	
-	public void insertTree(List<Tuple<M>> transactionFList) {
+	public synchronized void insertTree(List<Tuple<M>> transactionFList) {
 		insertIntoTree(transactionFList, this.root, 1);
 	}
 	
-	public void insertTree(Pattern<M> p){
+	public synchronized void insertTree(Pattern<M> p){
 		try{
 		insertIntoTree(p.getPattern(), this.root, p.getSupport());
 		}catch (Exception e) {
@@ -190,11 +191,11 @@ public class FPTree<M extends IMetaAttribute> {
 		}
 	}
 	
-	public void insertTree(List<Tuple<M>> transactionFList, FPTreeNode<M> root){		
+	public synchronized void insertTree(List<Tuple<M>> transactionFList, FPTreeNode<M> root){		
 		insertIntoTree(transactionFList, root, 1);
 	}
 	
-	private void insertIntoTree(List<Tuple<M>> transactionFList, FPTreeNode<M> root, int supportCount){
+	private synchronized void insertIntoTree(List<Tuple<M>> transactionFList, FPTreeNode<M> root, int supportCount){
 		Tuple<M> item = transactionFList.get(0);
 		FPTreeNode<M> thechild = null;
 		for (FPTreeNode<M> child : root.getChilds()) {
