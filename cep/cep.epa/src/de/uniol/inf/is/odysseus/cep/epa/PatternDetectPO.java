@@ -105,7 +105,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 	/**
 	 * EventAgent
 	 */
-	private CEPEventAgent agent = new CEPEventAgent();
+	private CEPEventAgent eventAgent = new CEPEventAgent();
 
 	/**
 	 * Erzeugt einen neuen EPA.
@@ -279,14 +279,14 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 
 	private void addInstance(StateMachine<R> sm,
 			StateMachineInstance<R> stateMachineInstance) {
-		this.agent.fireCEPEvent(CEPEvent.ADD_MASCHINE, stateMachineInstance);
+		this.eventAgent.fireCEPEvent(CEPEvent.ADD_MASCHINE, stateMachineInstance);
 		smInstances.get(sm).add(stateMachineInstance);
 	}
 
 	private void removeInstance(StateMachine<R> sm,
 			StateMachineInstance<R> stateMachineInstance) {
 		logger.trace(this+":Remove Instance " + stateMachineInstance);
-		this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, stateMachineInstance);
+		this.eventAgent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, stateMachineInstance);
 		smInstances.get(sm).remove(stateMachineInstance);
 	}
 
@@ -311,7 +311,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 							eventReader.get(port).getTime(event),
 							sm.getWindowSize())) {
 						// logger.debug(instance + " Out of Window ...");
-						this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED,
+						this.eventAgent.fireCEPEvent(CEPEvent.MACHINE_ABORTED,
 								instance);
 						outofWindowInstances.add(instance);
 						outOfTime = true;
@@ -363,7 +363,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 						// execute transition
 						instance.takeTransition(transitionsToTake.remove(0),
 								event, eventReader.get(port));
-						this.agent
+						this.eventAgent
 								.fireCEPEvent(CEPEvent.CHANGE_STATE, instance);
 					} else {
 						// execute possible further transitions on new instances
@@ -382,7 +382,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 						// Now its save to update current Transition
 						instance.takeTransition(transitionsToTake.remove(0),
 								event, eventReader.get(port));
-						this.agent
+						this.eventAgent
 								.fireCEPEvent(CEPEvent.CHANGE_STATE, instance);
 					}
 				}
@@ -649,7 +649,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 	 * @return the CEPEventAgent
 	 */
 	public CEPEventAgent getCEPEventAgent() {
-		return this.agent;
+		return this.eventAgent;
 	}
 
 	/**
