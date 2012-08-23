@@ -31,6 +31,11 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 	private List<String> userRoles = new ArrayList<String>();
 	
 	@Override
+	public void process_open() {
+		UserManagement.getUsermanagement().addUserManagementListener(this);
+	}
+	
+	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
@@ -66,9 +71,7 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 	}
 
 	private Boolean evaluate(T object) {
-		if(!spCache.isEmpty() && object instanceof Tuple<?>) {
-			UserManagement.getUsermanagement().addUserManagementListener(this);
-			
+		if(!spCache.isEmpty() && object instanceof Tuple<?>) {			
 			//schöner möglich???
 			Tuple<?> tuple = (Tuple<?>) object;
 			
@@ -82,7 +85,7 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 				}
 				rolesChanged = false;
 			}
-				
+			
 			Long startPoint = object.getMetadata().getStart().getMainPoint();			
 			SecurityPunctuation sp = spCache.getMatchingSP(startPoint);			
 			if(sp != null && sp.evaluateAll(startPoint, userRoles, tuple, this.getOutputSchema())) {
@@ -95,10 +98,10 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 
 	@Override
 	public void usersChangedEvent() {
+		rolesChanged = true;
 	}
 
 	@Override
 	public void roleChangedEvent() {
-		rolesChanged = true;
 	}
 }
