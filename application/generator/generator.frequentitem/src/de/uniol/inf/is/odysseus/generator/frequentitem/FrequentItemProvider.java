@@ -77,6 +77,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 			line = in.readLine();
 
 			if (line == null) {
+				System.out.println("end of file reached");
 				return null;
 			}
 
