@@ -73,7 +73,7 @@ public class MapAO extends UnaryLogicalOp {
 				List<SDFAttribute> inAttribs = expr.getAllAttributes();
 				for (SDFAttribute attribute : inAttribs) {
 					if (attribute.equalsCQL(elem)) {
-						attr = new SDFAttribute(null, exprString,
+						attr = new SDFAttribute(elem.getURIWithoutQualName(), elem.getQualName(),
 								attribute.getDatatype());
 					}
 				}
