@@ -34,6 +34,10 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
         if (tuple != null) {
             tuples.add(tuple);
         }
+        else {
+            this.close();
+            this.init();
+        }
         try {
             Thread.sleep(500);
         }
@@ -77,31 +81,69 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 
     private DataTuple generateDataTuple() throws IOException {
         final DataTuple tuple = new DataTuple();
-        final String line = this.reader.readLine();
+        String line = null;
+        while (line == null) {
+            line = this.reader.readLine();
+            if (line == null) {
+                break;
+            }
+            if (line.startsWith("#")) {
+                line = null;
+            }
+        }
         if (line != null) {
             tuple.addLong(System.currentTimeMillis());
             final String[] values = line.split(",");
             for (final String value : values) {
                 if (value.startsWith("(")) {
-                    final String[] discreteValues = value.substring(1, value.length() - 1).split(";");
-                    tuple.addInteger(discreteValues.length);
-                    for (final String discreteValue2 : discreteValues) {
-                        final String[] discreteValue = discreteValue2.split(":");
-                        tuple.addDouble(discreteValue[0]);
-                        tuple.addDouble(discreteValue[1]);
+                    final String[] probabilisticValues = value.substring(1, value.length() - 1).split(";");
+                    if (probabilisticValues.length > 0) {
+                        if (probabilisticValues[0].split(":").length == 2) {
+                            // Send discrete probabilistic value
+                            tuple.addInteger(probabilisticValues.length);
+                            for (final String probabilisticValue : probabilisticValues) {
+                                final String[] probabilisticParameter = probabilisticValue.split(":");
+                                // The value
+                                tuple.addDouble(probabilisticParameter[0]);
+                                // The probability
+                                tuple.addDouble(probabilisticParameter[1]);
+                            }
+                        }
+                        else {
+                            // Send continuous probabilistic value
+                            tuple.addInteger(probabilisticValues.length);
+                            for (final String probabilisticValue : probabilisticValues) {
+                                final String[] probabilisticParameter = probabilisticValue.split(":");
+                                // The Covariance ID
+                                tuple.addInteger(probabilisticParameter[0]);
+                                // The Covariance Index
+                                tuple.addInteger(probabilisticParameter[1]);
+                                // The mean
+                                tuple.addDouble(probabilisticParameter[2]);
+                                // The probability
+                                tuple.addDouble(probabilisticParameter[3]);
+                            }
+                        }
                     }
                 }
                 else {
-                    final String[] continuousValue = value.split(":");
-                    tuple.addDouble(continuousValue[0]);
-                    tuple.addDouble(continuousValue[1]);
+                    final String[] parameters = value.split(":");
+                    if (parameters.length > 1) {
+                        // The Covariance ID
+                        tuple.addInteger(parameters[0]);
+                        // Number of Covariance Matrix entries (Triangle)
+                        tuple.addInteger(parameters.length - 1);
+                        for (int i = 0; i < parameters.length - 1; i++) {
+                            // The Covariance Entry i
+                            tuple.addDouble(parameters[1 + i]);
+                        }
+                    }
+                    else {
+                        tuple.addDouble(value);
+                    }
                 }
             }
             return tuple;
-        }
-        else {
-            this.close();
-            this.init();
         }
         return null;
     }

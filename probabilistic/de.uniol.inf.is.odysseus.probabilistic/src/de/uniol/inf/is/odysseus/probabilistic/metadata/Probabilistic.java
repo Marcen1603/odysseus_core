@@ -32,6 +32,8 @@ public class Probabilistic implements IProbabilistic {
 	 */
     private static final long        serialVersionUID = -147594856639774242L;
     private double[]                 probabilities;
+    /** Tuple existence probability */
+    private double                   existence;
 
     public Probabilistic() {
         this.probabilities = new double[] {};
@@ -84,6 +86,21 @@ public class Probabilistic implements IProbabilistic {
     @Override
     public void setProbabilities(final double[] values) {
         this.probabilities = values;
+    }
+
+    @Override
+    public double getExistence() {
+        return this.existence;
+    }
+
+    @Override
+    public void setExistence(double existence) {
+        this.existence = existence;
+    }
+
+    @Override
+    public String toString() {
+        return "TEP: " + this.existence;
     }
 
 }

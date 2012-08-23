@@ -62,4 +62,14 @@ public class IntervalProbabilistic extends TimeInterval implements
 	public String getCSVHeader() {
 		return super.getCSVHeader() + ";" + this.probabilistic.getCSVHeader();
 	}
+
+    @Override
+    public double getExistence() {
+        return this.probabilistic.getExistence();
+    }
+
+    @Override
+    public void setExistence(double existence) {
+        this.probabilistic.setExistence(existence);
+    }
 }

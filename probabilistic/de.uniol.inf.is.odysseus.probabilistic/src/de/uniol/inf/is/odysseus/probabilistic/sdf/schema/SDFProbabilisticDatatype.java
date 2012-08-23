@@ -28,18 +28,24 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
         super(datatypeName, type, subType);
     }
 
-    public static final SDFDatatype PROBABILISTIC_DOUBLE            = new SDFProbabilisticDatatype(
-                                                                            "ProbabilisticDouble");
+    public static final SDFDatatype PROBABILISTIC_DOUBLE                         = new SDFProbabilisticDatatype(
+                                                                                         "ProbabilisticDouble");
 
-    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype(
-                                                                            "ProbabilisticContinuousDouble");
+    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_DOUBLE              = new SDFProbabilisticDatatype(
+                                                                                         "ProbabilisticContinuousDouble");
+
+    public static final SDFDatatype PROBABILISTIC_MULTIVARIANT_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype(
+                                                                                         "ProbabilisticMultivariantContinuousDouble",
+                                                                                         SDFDatatype.KindOfDatatype.MULTI_VALUE,
+                                                                                         SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
 
     public boolean isProbabilistic() {
         return this.getURI().equals(this.isContinuous() || this.isDiscrete());
     }
 
     public boolean isContinuous() {
-        return this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI());
+        return this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI())
+                || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_MULTIVARIANT_CONTINUOUS_DOUBLE.getURI());
     }
 
     public boolean isDiscrete() {

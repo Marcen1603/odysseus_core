@@ -31,6 +31,9 @@ public interface IProbabilistic extends IMetaAttribute, IClone {
 
     void setProbabilities(double[] values);
 
+    double getExistence();
+    void setExistence(double existence);
+    
     @Override
     public IProbabilistic clone();
 }

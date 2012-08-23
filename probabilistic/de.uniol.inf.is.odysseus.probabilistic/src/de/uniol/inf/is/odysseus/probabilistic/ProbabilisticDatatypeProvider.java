@@ -19,6 +19,9 @@ public class ProbabilisticDatatypeProvider {
             ProbabilisticDatatypeProvider.datadictionary.addDatatype(
                     SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI(),
                     SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+            ProbabilisticDatatypeProvider.datadictionary.addDatatype(
+                    SDFProbabilisticDatatype.PROBABILISTIC_MULTIVARIANT_CONTINUOUS_DOUBLE.getURI(),
+                    SDFProbabilisticDatatype.PROBABILISTIC_MULTIVARIANT_CONTINUOUS_DOUBLE);
         }
         catch (final DataDictionaryException e) {
             e.printStackTrace();

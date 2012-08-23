@@ -36,6 +36,7 @@ public class ProbabilisticFactory extends AbstractMetadataUpdater<IProbabilistic
     @Override
     public void updateMetadata(final Tuple<? extends IProbabilistic> inElem) {
         final IProbabilistic metadata = inElem.getMetadata();
+        metadata.setExistence(1.0);
         if (this.pos.length == 1) {
             for (int i = 0; i < inElem.size(); i++) {
                 if (i != this.pos[0]) {

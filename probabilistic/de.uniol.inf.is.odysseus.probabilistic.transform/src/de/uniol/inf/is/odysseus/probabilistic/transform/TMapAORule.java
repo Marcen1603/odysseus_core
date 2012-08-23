@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
-import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.ProbabilisticMapPO;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

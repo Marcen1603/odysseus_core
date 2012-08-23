@@ -33,9 +33,9 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
 
     @Override
     public ProbabilisticDouble readData(final ObjectInputStream inputStream) throws IOException {
-        final int size = inputStream.readInt();
-        final Pair<Double, Double>[] values = new Pair[size];
-        for (int i = 0; i < size; i++) {
+        final int length = inputStream.readInt();
+        final Pair<Double, Double>[] values = new Pair[length];
+        for (int i = 0; i < length; i++) {
             final Double value = inputStream.readDouble();
             final Double probability = inputStream.readDouble();
             values[i] = new Pair<Double, Double>(value, probability);
@@ -46,13 +46,13 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
     @Override
     public ProbabilisticDouble readData(final String string) {
         final String[] discreteValues = string.split(";");
-        final Pair<Double, Double>[] discreteProbabilisticValue = new Pair[discreteValues.length];
+        final Pair<Double, Double>[] values = new Pair[discreteValues.length];
         for (int i = 0; i < discreteValues.length; i++) {
             final String[] discreteValue = discreteValues[i].split(":");
-            discreteProbabilisticValue[i] = new Pair<Double, Double>(Double.parseDouble(discreteValue[0]),
+            values[i] = new Pair<Double, Double>(Double.parseDouble(discreteValue[0]),
                     Double.parseDouble(discreteValue[1]));
         }
-        return new ProbabilisticDouble(discreteProbabilisticValue);
+        return new ProbabilisticDouble(values);
     }
 
     @Override

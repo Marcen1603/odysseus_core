@@ -14,8 +14,12 @@ public class ProbabilisticDouble implements Serializable, Cloneable {
     private static final long            serialVersionUID = 1616011665709240661L;
     private final Pair<Double, Double>[] values;
 
+    public ProbabilisticDouble(final double value, double probability) {
+        this(new Pair<Double, Double>(value, probability));
+    }
+
     public ProbabilisticDouble(final Pair<Double, Double> value) {
-        this.values = new Pair[] { value };
+        this(new Pair[] { value });
     }
 
     public ProbabilisticDouble(final Pair<Double, Double>[] values) {
@@ -37,5 +41,19 @@ public class ProbabilisticDouble implements Serializable, Cloneable {
     @Override
     public ProbabilisticDouble clone() {
         return new ProbabilisticDouble(this.values.clone());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        for (Pair<Double, Double> value : values) {
+            if (sb.length() > 1) {
+                sb.append(";");
+            }
+            sb.append(value.getE1()).append(":").append(value.getE2());
+        }
+        sb.append(")");
+        return sb.toString();
     }
 }

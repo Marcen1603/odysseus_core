@@ -11,6 +11,23 @@ public class MultivariateGaussianDensityFunction implements MultivariateProbabil
     /** Covariance matrix of this distribution. */
     private final RealMatrix covarianceMatrix;
 
+    public MultivariateGaussianDensityFunction(final double[] mean, final double[] covarianceTriangleMatrix) {
+        int size = (int) (-0.5 + Math.sqrt(0.25 + covarianceTriangleMatrix.length * 2));
+        RealMatrix covarianceMatrix = MatrixUtils.createRealMatrix(size, size);
+        int left = 0;
+        int right = size;
+        for (int i = 0; i < size; i++) {
+            double[] row = covarianceMatrix.getRow(i);
+            System.arraycopy(covarianceTriangleMatrix, left, row, i, right);
+            row[i] /= 2;
+            covarianceMatrix.setRow(i, row);
+            left += right;
+            right--;
+        }
+        this.mean = MatrixUtils.createRealVector(mean);
+        this.covarianceMatrix = covarianceMatrix.add(covarianceMatrix.transpose());
+    }
+
     public MultivariateGaussianDensityFunction(final double[] mean, final double[][] covarianceMatrix) {
         this(MatrixUtils.createRealVector(mean), MatrixUtils.createRealMatrix(covarianceMatrix));
     }
@@ -40,13 +57,22 @@ public class MultivariateGaussianDensityFunction implements MultivariateProbabil
 
     @Override
     public double cumulativeProbability(final double[] x1, final double[] x2) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
     public MultivariateGaussianDensityFunction clone() {
-        return new MultivariateGaussianDensityFunction(this.mean, this.covarianceMatrix);
+        return new MultivariateGaussianDensityFunction(this.mean, this.covarianceMatrix.copy());
     }
 
+    @Override
+    public String toString() {
+        return this.mean.toString() + " " + this.covarianceMatrix.toString();
+    }
+
+    public static void main(String[] args) {
+        MultivariateGaussianDensityFunction test = new MultivariateGaussianDensityFunction(new double[] { 1.0, 2.0 },
+                new double[] { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 });
+        System.out.println(test);
+    }
 }
