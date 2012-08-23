@@ -19,10 +19,10 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ISubscribable;
-import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.IHasMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
 
 /**
  * Interface for data sources in a query graph.

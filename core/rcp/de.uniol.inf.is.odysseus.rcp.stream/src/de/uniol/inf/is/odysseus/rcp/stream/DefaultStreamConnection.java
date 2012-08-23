@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
 
 public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection<In> {
 

@@ -42,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sun.awt.util.IdentityArrayList;
-import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
@@ -56,6 +55,7 @@ import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
 
 /**
  * ReceiverPO without AbstractSource but with ISource

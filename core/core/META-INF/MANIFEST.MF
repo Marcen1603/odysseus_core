@@ -31,6 +31,7 @@ Export-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.sdf,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.core.sdf.unit,
+ de.uniol.inf.is.odysseus.core.securitypunctuation,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.core.util
 Service-Component: OSGI-INF/*

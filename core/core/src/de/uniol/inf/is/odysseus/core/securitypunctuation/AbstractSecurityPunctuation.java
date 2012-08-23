@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.collection;
+package de.uniol.inf.is.odysseus.core.securitypunctuation;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -11,5 +11,17 @@ public abstract class AbstractSecurityPunctuation implements Serializable, ISecu
 	
 	public Object getAttribute(String key) {
 		return attributes.get(key);
+	}
+	
+	public Long getLongAttribute(String key) {
+		return (Long) attributes.get(key);
+	}
+	
+	public Integer getIntegerAttribute(String key) {
+		return (Integer) attributes.get(key);
+	}
+	
+	public String getStringAttribute(String key) {
+		return (String) attributes.get(key);
 	}
 }

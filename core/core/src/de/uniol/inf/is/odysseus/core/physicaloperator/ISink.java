@@ -18,8 +18,8 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.ISubscriber;
-import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
 
 /**
  * Interface for data sinks in a query graph.

@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.core.server.securitypunctuation;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
 
 public class SecurityPunctuationCache extends ArrayList<SecurityPunctuation> {
 	

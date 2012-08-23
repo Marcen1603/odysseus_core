@@ -15,8 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
 
 public interface ITransferHandler<W> {
 

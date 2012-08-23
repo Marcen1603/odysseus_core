@@ -14,6 +14,7 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.planmanagement,
  de.uniol.inf.is.odysseus.core.sdf.schema,
+ de.uniol.inf.is.odysseus.core.securitypunctuation,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.rcp.stream

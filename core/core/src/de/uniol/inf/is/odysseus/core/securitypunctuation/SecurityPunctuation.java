@@ -1,8 +1,9 @@
-package de.uniol.inf.is.odysseus.core.collection;
+package de.uniol.inf.is.odysseus.core.securitypunctuation;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class SecurityPunctuation extends AbstractSecurityPunctuation {
@@ -47,8 +48,8 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	}	
 	
 	public Boolean evaluateTS(Long ts) {
-		if(((Long)this.getAttribute("ddpStarttuple") == -1 && ((Long)this.getAttribute("ddpEndtuple")) == -1) ||
-				(ts > ((Long)this.getAttribute("ddpStarttuple"))) && (ts <= (Long)this.getAttribute("ddpEndtuple")) || (Long)this.getAttribute("ddpEndtuple") == -1) {
+		if((this.getLongAttribute("ddpStarttuple") == -1 && (this.getLongAttribute("ddpEndtuple")) == -1) ||
+				(ts > (this.getLongAttribute("ddpStarttuple"))) && (ts <= this.getLongAttribute("ddpEndtuple")) || this.getLongAttribute("ddpEndtuple") == -1) {
 			return true;
 		}
 		return false;

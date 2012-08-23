@@ -1,6 +1,8 @@
-package de.uniol.inf.is.odysseus.core.collection;
+package de.uniol.inf.is.odysseus.core.securitypunctuation;
 
 import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface ISecurityPunctuation {

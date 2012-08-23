@@ -6,11 +6,11 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
 
 /**
  * @author Jan Sören Schwarz
