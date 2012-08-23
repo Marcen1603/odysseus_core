@@ -6,15 +6,26 @@ DROP CONTEXT STORE gridStore IF EXISTS
 CREATE CONTEXT STORE gridStore (grid Grid, gridTime TIMESTAMP) AS MULTI SIZE 1
 
 #PARSER PQL
-#TRANSCFG salsa
+#TRANSCFG Standard
 #QUERY
 ///Your first query here
 
 /// LaserScanner
 
-lms1 =  adapter({schema = ['dist1:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'x:-213.0', 'y:76.0', 'angle:-45.0'], adapter = 'Sick'})
-lms2 = adapter({schema = ['dist1:SpatialMultiPoint'], options = ['host:192.168.1.11', 'port:2111', 'x:-1274', 'y:91.0', 'angle:132.5'], adapter = 'Sick'})
-
+lms1 = ACCESS({source='lms1', wrapper='GenericPush',
+transport='TCPClient',protocol='SICK',
+  dataHandler='SICK',options=[['host','192.168.1.20'],['port','2111']],
+  schema=[['TIMESTAMP','StartTimeStamp'],
+    ['dist1','SpatialMultiPoint']  
+  ]
+})
+lms2 = ACCESS({source='lms2', wrapper='GenericPush',
+transport='TCPClient',protocol='SICK',
+  dataHandler='SICK',options=[['host','192.168.1.11'],['port','2111']],
+  schema=[['TIMESTAMP','StartTimeStamp'],
+    ['dist1','SpatialMultiPoint']  
+  ]
+})
 /// Punctuation for transmission/processing errors
 lms1Punctuation = punctuation({ratio = 5}, lms1, lms2)
 lms2Punctuation =  punctuation({ratio = 5}, lms2, lms1)
