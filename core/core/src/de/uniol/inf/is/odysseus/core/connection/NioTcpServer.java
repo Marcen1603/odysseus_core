@@ -111,6 +111,8 @@ public class NioTcpServer extends Thread implements IConnection {
 								NioTcpConnection connection = (NioTcpConnection) attachment;
 
 								if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+                                    if (((SocketChannel) selectionKey.channel())
+                                            .finishConnect()) {
 									ByteBuffer buffer = connection.read();
 									try {
 										connection.getListener()
@@ -118,6 +120,7 @@ public class NioTcpServer extends Thread implements IConnection {
 									} catch (ClassNotFoundException e) {
 										LOG.error(e.getMessage(), e);
 									}
+                                    }
 								}
 								if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) {
 									connection.write();
