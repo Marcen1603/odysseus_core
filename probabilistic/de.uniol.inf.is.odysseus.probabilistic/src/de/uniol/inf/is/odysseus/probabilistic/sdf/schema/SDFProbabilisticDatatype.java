@@ -45,7 +45,7 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
                                                                                          SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
 
     public boolean isProbabilistic() {
-        return this.getURI().equals(this.isContinuous() || this.isDiscrete());
+        return this.isContinuous() || this.isDiscrete();
     }
 
     public boolean isContinuous() {
@@ -57,12 +57,22 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
         return this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI());
     }
 
+    public boolean isCovarianceMatrix() {
+        return this.getURI().equals(SDFProbabilisticDatatype.COVARIANCE_MATRIX);
+    }
+
+    public boolean isMultivariateCovarianceMatrix() {
+        return this.getURI().equals(SDFProbabilisticDatatype.MULTIVARIATE_COVARIANCE_MATRIX);
+    }
+
     @Override
     public boolean compatibleTo(final SDFDatatype other) {
         if (other instanceof SDFProbabilisticDatatype) {
             final SDFProbabilisticDatatype otherProbabilistic = (SDFProbabilisticDatatype) other;
             if ((this.isDiscrete() && (otherProbabilistic.isDiscrete()))
-                    || (this.isContinuous() && (otherProbabilistic.isContinuous()))) {
+                    || (this.isContinuous() && (otherProbabilistic.isContinuous()))
+                    || (this.isCovarianceMatrix() && (otherProbabilistic.isCovarianceMatrix()))
+                    || (this.isMultivariateCovarianceMatrix() && (otherProbabilistic.isMultivariateCovarianceMatrix()))) {
                 return true;
             }
         }

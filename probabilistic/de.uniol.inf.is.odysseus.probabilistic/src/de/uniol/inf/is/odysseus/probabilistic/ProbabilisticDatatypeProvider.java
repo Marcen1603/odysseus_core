@@ -14,6 +14,12 @@ public class ProbabilisticDatatypeProvider {
         ProbabilisticDatatypeProvider.datadictionary = dd;
         try {
             ProbabilisticDatatypeProvider.datadictionary.addDatatype(
+                    SDFProbabilisticDatatype.MULTIVARIATE_COVARIANCE_MATRIX.getURI(),
+                    SDFProbabilisticDatatype.MULTIVARIATE_COVARIANCE_MATRIX);
+            ProbabilisticDatatypeProvider.datadictionary.addDatatype(
+                    SDFProbabilisticDatatype.COVARIANCE_MATRIX.getURI(),
+                    SDFProbabilisticDatatype.COVARIANCE_MATRIX);
+            ProbabilisticDatatypeProvider.datadictionary.addDatatype(
                     SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI(),
                     SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
             ProbabilisticDatatypeProvider.datadictionary.addDatatype(
@@ -30,8 +36,11 @@ public class ProbabilisticDatatypeProvider {
 
     protected void unbindDataDictionary(final IDataDictionary dd) {
         try {
+            dd.removeDatatype(SDFProbabilisticDatatype.MULTIVARIATE_COVARIANCE_MATRIX.getURI());
+            dd.removeDatatype(SDFProbabilisticDatatype.COVARIANCE_MATRIX.getURI());
             dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI());
             dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI());
+            dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_MULTIVARIATE_CONTINUOUS_DOUBLE.getURI());
         }
         catch (final DataDictionaryException e) {
             e.printStackTrace();
