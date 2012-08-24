@@ -23,6 +23,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 public class SumPartialAggregate<T> implements IPartialAggregate<T> {
     double sum = 0;
 
+    public SumPartialAggregate() {
+        this.sum = 0.0;
+    }
+    
     public SumPartialAggregate(final double value, final double probability) {
         this.sum = value * probability;
     }

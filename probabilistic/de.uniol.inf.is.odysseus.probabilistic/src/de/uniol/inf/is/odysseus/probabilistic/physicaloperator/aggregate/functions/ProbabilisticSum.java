@@ -18,10 +18,11 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functi
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -51,9 +52,11 @@ public class ProbabilisticSum extends AbstractAggregateFunction<Tuple<?>, Tuple<
 
     @Override
     public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-        final IPartialAggregate<Tuple<?>> pa = new SumPartialAggregate<Tuple<?>>(
-                ((Number) in.getAttribute(this.pos)).doubleValue(),
-                ((IProbabilistic) in.getMetadata()).getProbability(this.pos));
+        final SumPartialAggregate<Tuple<?>> pa = new SumPartialAggregate<Tuple<?>>();
+
+        for (Pair<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues()) {
+            pa.add(value.getE1(), value.getE2());
+        }
         return pa;
     }
 
@@ -68,8 +71,10 @@ public class ProbabilisticSum extends AbstractAggregateFunction<Tuple<?>, Tuple<
             pa = (SumPartialAggregate<Tuple<?>>) p;
         }
 
-        pa.add(((Number) toMerge.getAttribute(this.pos)).doubleValue(),
-                ((IProbabilistic) toMerge.getMetadata()).getProbability(this.pos));
+        for (Pair<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues()) {
+            pa.add(value.getE1(), value.getE2());
+        }
+
         return pa;
     }
 

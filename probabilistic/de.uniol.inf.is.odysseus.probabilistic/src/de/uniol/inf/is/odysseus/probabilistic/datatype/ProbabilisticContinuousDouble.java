@@ -11,54 +11,52 @@ public class ProbabilisticContinuousDouble implements Serializable, Cloneable {
     /**
 	 * 
 	 */
-    private static final long                          serialVersionUID = 5858308006884394418L;
-    private final Pair<Pair<Double, Double>, Double>[] values;
+    private static final long serialVersionUID = 5858308006884394418L;
+    private final byte        covarianceMatrixId;
+    private final int         covarianceMatrixIndex;
+    private final double      mean;
 
-    public ProbabilisticContinuousDouble(final double mean, double sigma, double probability) {
-        this(new Pair<Double, Double>(mean, sigma), probability);
+    public ProbabilisticContinuousDouble(final double mean, byte covarianceId, int covarianceIndex) {
+        this.mean = mean;
+        this.covarianceMatrixId = covarianceId;
+        this.covarianceMatrixIndex = covarianceIndex;
     }
 
-    public ProbabilisticContinuousDouble(final Pair<Double, Double> distribution, double probability) {
-        this(new Pair<Pair<Double, Double>, Double>(distribution, probability));
+    public ProbabilisticContinuousDouble(final double mean, Pair<Byte, Integer> covarianceMatrix) {
+        this.mean = mean;
+        this.covarianceMatrixId = covarianceMatrix.getE1();
+        this.covarianceMatrixIndex = covarianceMatrix.getE2();
     }
 
-    public ProbabilisticContinuousDouble(final Pair<Pair<Double, Double>, Double> value) {
-        this(new Pair[] { value });
+    public ProbabilisticContinuousDouble(ProbabilisticContinuousDouble probabilisticContinuousDouble) {
+        this.mean = probabilisticContinuousDouble.mean;
+        this.covarianceMatrixId = probabilisticContinuousDouble.covarianceMatrixId;
+        this.covarianceMatrixIndex = probabilisticContinuousDouble.covarianceMatrixIndex;
     }
 
-    public ProbabilisticContinuousDouble(final Pair<Pair<Double, Double>, Double>[] values) {
-        this.values = values;
+    public byte getCovarianceMatrixId() {
+        return covarianceMatrixId;
     }
 
-    public ProbabilisticContinuousDouble(final Pair<Double, Double>[] values, final Double[] probabilities) {
-        final int length = Math.min(values.length, probabilities.length);
-        this.values = new Pair[length];
-        for (int i = 0; i < length; i++) {
-            this.values[i] = new Pair<Pair<Double, Double>, Double>(values[i], probabilities[i]);
-        }
+    public int getCovarianceMatrixIndex() {
+        return covarianceMatrixIndex;
+    }
+
+    public double getMean() {
+        return mean;
     }
 
     @Override
     public ProbabilisticContinuousDouble clone() {
-        return new ProbabilisticContinuousDouble(this.values.clone());
+        return new ProbabilisticContinuousDouble(this);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("(");
-        for (Pair<Pair<Double, Double>, Double> value : values) {
-            if (sb.length() > 1) {
-                sb.append(";");
-            }
-            sb.append("𝒩(").append(value.getE1().getE1()).append(",").append(value.getE1().getE2()).append("):")
-                    .append(value.getE2());
-        }
-        sb.append(")");
+        sb.append("𝒩(").append(this.mean).append(",").append(this.covarianceMatrixId).append("(")
+                .append(this.covarianceMatrixIndex).append("))");
         return sb.toString();
     }
 
-    public Pair<Pair<Double, Double>, Double>[] values() {
-        return values;
-    }
 }

@@ -28,6 +28,11 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
         super(datatypeName, type, subType);
     }
 
+    public static final SDFDatatype COVARIANCE_MATRIX                            = new SDFProbabilisticDatatype(
+                                                                                         "CovarianceMatrix");
+    public static final SDFDatatype MULTIVARIANT_COVARIANCE_MATRIX               = new SDFProbabilisticDatatype(
+                                                                                         "MultivariantCovarianceMatrix");
+    
     public static final SDFDatatype PROBABILISTIC_DOUBLE                         = new SDFProbabilisticDatatype(
                                                                                          "ProbabilisticDouble");
 

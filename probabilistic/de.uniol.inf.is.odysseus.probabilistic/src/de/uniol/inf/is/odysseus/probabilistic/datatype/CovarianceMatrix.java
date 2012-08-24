@@ -1,16 +1,17 @@
 package de.uniol.inf.is.odysseus.probabilistic.datatype;
 
-import java.io.Serializable;
+public class CovarianceMatrix {
+    private final double[] entries;
 
-/**
- * @author Christian Kuka <christian.kuka@offis.de>
- */
-public class CovarianceMatrix implements Serializable, Cloneable {
-    private double[] values;
-    private int      id;
+    public CovarianceMatrix(double[] entries) {
+        this.entries = entries;
+    }
 
-    public CovarianceMatrix(int id, double[] values) {
-        this.id = id;
-        this.values = values;
+    public double[] getEntries() {
+        return entries;
+    }
+    
+    public int size() {
+        return (int) (-0.5 + Math.sqrt(0.25 + entries.length * 2));
     }
 }

@@ -18,10 +18,11 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functi
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -51,8 +52,10 @@ public class ProbabilisticCount extends AbstractAggregateFunction<Tuple<?>, Tupl
 
     @Override
     public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-        final IPartialAggregate<Tuple<?>> pa = new CountPartialAggregate<Tuple<?>>(
-                ((IProbabilistic) in.getMetadata()).getProbability(this.pos));
+        final CountPartialAggregate<Tuple<?>> pa = new CountPartialAggregate<Tuple<?>>();
+        for (Pair<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues()) {
+            pa.add(value.getE2());
+        }
         return pa;
     }
 
@@ -67,7 +70,10 @@ public class ProbabilisticCount extends AbstractAggregateFunction<Tuple<?>, Tupl
             pa = (CountPartialAggregate<Tuple<?>>) p;
         }
 
-        pa.add(((IProbabilistic) toMerge.getMetadata()).getProbability(this.pos));
+        for (Pair<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues()) {
+            pa.add(value.getE2());
+        }
+
         return pa;
     }
 

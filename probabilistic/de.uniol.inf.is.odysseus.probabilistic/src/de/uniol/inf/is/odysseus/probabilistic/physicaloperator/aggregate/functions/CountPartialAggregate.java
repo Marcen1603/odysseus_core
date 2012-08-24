@@ -23,6 +23,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 public class CountPartialAggregate<T> implements IPartialAggregate<T> {
     double count = 0;
 
+    public CountPartialAggregate() {
+        this.count = 0.0;
+    }
     public CountPartialAggregate(final double count) {
         this.count = count;
     }

@@ -17,48 +17,29 @@ package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariantCovarianceMatrix;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ProbabilisticFactory extends AbstractMetadataUpdater<IProbabilistic, Tuple<? extends IProbabilistic>> {
 
-    int[] pos;
+    int[] covarianceMatrixPositions;
 
     public ProbabilisticFactory(final int pos) {
-        this.pos = new int[] { pos };
-    }
-
-    public ProbabilisticFactory(final int[] pos) {
-        this.pos = pos;
+        this.covarianceMatrixPositions = new int[] { pos };
     }
 
     @Override
     public void updateMetadata(final Tuple<? extends IProbabilistic> inElem) {
         final IProbabilistic metadata = inElem.getMetadata();
         metadata.setExistence(1.0);
-        if (this.pos.length == 1) {
-            for (int i = 0; i < inElem.size(); i++) {
-                if (i != this.pos[0]) {
-                    metadata.setProbability(i, (Double) inElem.getAttribute(this.pos[0]));
-                }
-                else {
-                    metadata.setProbability(i, 1.0);
-                }
-            }
+        MultivariantCovarianceMatrix metadataCovarianceMatrices = new MultivariantCovarianceMatrix(0);
+        for (int pos : covarianceMatrixPositions) {
+            MultivariantCovarianceMatrix covarianceMatrices = (MultivariantCovarianceMatrix) inElem.getAttribute(pos);
+            metadataCovarianceMatrices.putAll(covarianceMatrices);
         }
-        else {
-            int index = 0;
-            for (int i = 0; i < inElem.size(); i++) {
-                if (i == this.pos[index]) {
-                    metadata.setProbability(i, 1.0);
-                    index++;
-                }
-                else {
-                    metadata.setProbability(i, (Double) inElem.getAttribute(this.pos[index]));
-                }
-            }
-        }
+        metadata.setCovarianceMatrices(metadataCovarianceMatrices);
     }
 
 }

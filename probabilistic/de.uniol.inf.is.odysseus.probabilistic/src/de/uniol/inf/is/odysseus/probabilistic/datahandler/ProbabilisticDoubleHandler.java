@@ -70,10 +70,10 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
     @Override
     public void writeData(final ByteBuffer buffer, final Object data) {
         final ProbabilisticDouble value = (ProbabilisticDouble) data;
-        buffer.putInt(value.values().length);
-        for (int i = 0; i < value.values().length; i++) {
-            buffer.putDouble(value.values()[i].getE1());
-            buffer.putDouble(value.values()[i].getE2());
+        buffer.putInt(value.getValues().length);
+        for (int i = 0; i < value.getValues().length; i++) {
+            buffer.putDouble(value.getValues()[i].getE1());
+            buffer.putDouble(value.getValues()[i].getE2());
         }
     }
 
@@ -84,6 +84,6 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
 
     @Override
     public int memSize(final Object attribute) {
-        return (((ProbabilisticDouble) attribute).values().length * Double.SIZE * 2) / 8;
+        return (((ProbabilisticDouble) attribute).getValues().length * Double.SIZE * 2) / 8;
     }
 }

@@ -34,7 +34,7 @@ public class ProbabilisticDouble implements Serializable, Cloneable {
         }
     }
 
-    public Pair<Double, Double>[] values() {
+    public Pair<Double, Double>[] getValues() {
         return this.values;
     }
 

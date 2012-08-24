@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -33,60 +32,35 @@ public class ProbabilisticContinuousDoubleHandler extends AbstractDataHandler<Pr
 
     @Override
     public ProbabilisticContinuousDouble readData(final ObjectInputStream inputStream) throws IOException {
-        final int length = inputStream.readInt();
-        final Pair<Pair<Double, Double>, Double>[] values = new Pair[length];
-        for (int i = 0; i < length; i++) {
-            final Integer matrixId = inputStream.readInt();
-            final Integer matrixIndex = inputStream.readInt();
-            final Double mean = inputStream.readDouble();
-            final Double sigma = inputStream.readDouble();
-            final Double probability = inputStream.readDouble();
-            final Pair<Double, Double> distribution = new Pair<Double, Double>(mean, sigma);
-            values[i] = new Pair<Pair<Double, Double>, Double>(distribution, probability);
-        }
-        return new ProbabilisticContinuousDouble(values);
+        final Byte covarianceMatrixId = inputStream.readByte();
+        final Integer covarianceMatrixIndex = inputStream.readInt();
+        final Double mean = inputStream.readDouble();
+        return new ProbabilisticContinuousDouble(mean, covarianceMatrixId, covarianceMatrixIndex);
     }
 
     @Override
     public ProbabilisticContinuousDouble readData(final String string) {
-        final String[] continuousValues = string.split(";");
-        final Pair<Pair<Double, Double>, Double>[] values = new Pair[continuousValues.length];
-        for (int i = 0; i < continuousValues.length; i++) {
-            //FIXME use matrix id and index
-            final String[] continuousValue = continuousValues[i].split(":");
-            values[i] = new Pair<Pair<Double, Double>, Double>(new Pair<Double, Double>(
-                    Double.parseDouble(continuousValue[0]), Double.parseDouble(continuousValue[1])),
-                    Double.parseDouble(continuousValue[2]));
-        }
-        return new ProbabilisticContinuousDouble(values);
+        final String[] continuousValue = string.split(":");
+        final Byte covarianceMatrixId = Byte.parseByte(continuousValue[0]);
+        final Integer covarianceMatrixIndex = Integer.parseInt(continuousValue[1]);
+        final Double mean = Double.parseDouble(continuousValue[2]);
+        return new ProbabilisticContinuousDouble(mean, covarianceMatrixId, covarianceMatrixIndex);
     }
 
     @Override
     public ProbabilisticContinuousDouble readData(final ByteBuffer buffer) {
-        final int length = buffer.getInt();
-        final Pair<Pair<Double, Double>, Double>[] values = new Pair[length];
-        for (int i = 0; i < length; i++) {
-            final Integer matrixId = buffer.getInt();
-            final Integer matrixIndex = buffer.getInt();
-            final Double mean = buffer.getDouble();
-            final Double sigma = buffer.getDouble();
-            final Double probability = buffer.getDouble();
-            final Pair<Double, Double> distribution = new Pair<Double, Double>(mean, sigma);
-            values[i] = new Pair<Pair<Double, Double>, Double>(distribution, probability);
-        }
-        return new ProbabilisticContinuousDouble(values);
+        final Byte covarianceMatrixId = buffer.get();
+        final Integer covarianceMatrixIndex = buffer.getInt();
+        final Double mean = buffer.getDouble();
+        return new ProbabilisticContinuousDouble(mean, covarianceMatrixId, covarianceMatrixIndex);
     }
 
     @Override
     public void writeData(final ByteBuffer buffer, final Object data) {
         final ProbabilisticContinuousDouble value = (ProbabilisticContinuousDouble) data;
-        buffer.putInt(value.values().length);
-        //FIXME use matrix id and index
-        for (int i = 0; i < value.values().length; i++) {
-            buffer.putDouble(value.values()[i].getE1().getE1());
-            buffer.putDouble(value.values()[i].getE1().getE2());
-            buffer.putDouble(value.values()[i].getE2());
-        }
+        buffer.put(value.getCovarianceMatrixId());
+        buffer.putInt(value.getCovarianceMatrixIndex());
+        buffer.putDouble(value.getMean());
     }
 
     @Override
@@ -96,7 +70,7 @@ public class ProbabilisticContinuousDoubleHandler extends AbstractDataHandler<Pr
 
     @Override
     public int memSize(final Object attribute) {
-        return (((ProbabilisticContinuousDouble) attribute).values().length * Double.SIZE * 3) / 8;
+        return (Byte.SIZE + Integer.SIZE + Double.SIZE) / 8;
     }
 
 }

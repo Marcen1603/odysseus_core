@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.probabilistic.metadata;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariantCovarianceMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.math.PBox;
 
 /**
@@ -25,42 +27,48 @@ import de.uniol.inf.is.odysseus.probabilistic.math.PBox;
  */
 public class Probabilistic implements IProbabilistic {
     @SuppressWarnings("unused")
-    private final Map<Integer, PBox> pBoxes           = new HashMap<Integer, PBox>();
+    private final Map<Integer, PBox>     pBoxes           = new HashMap<Integer, PBox>();
 
     /**
 	 * 
 	 */
-    private static final long        serialVersionUID = -147594856639774242L;
-    private double[]                 probabilities;
+    private static final long            serialVersionUID = -147594856639774242L;
+    private MultivariantCovarianceMatrix covarianceMatrices;
     /** Tuple existence probability */
-    private double                   existence;
+    private double                       existence;
 
     public Probabilistic() {
-        this.probabilities = new double[] {};
+        this.existence = 1.0;
+        this.covarianceMatrices = new MultivariantCovarianceMatrix(0);
     }
 
     public Probabilistic(final int size) {
-        this.probabilities = new double[size];
+        this.existence = 1.0;
+        this.covarianceMatrices = new MultivariantCovarianceMatrix(size);
     }
 
     public Probabilistic(final Probabilistic probability) {
-        this.probabilities = probability.probabilities.clone();
+        this.existence = probability.existence;
+        this.covarianceMatrices = probability.covarianceMatrices.clone();
 
     }
 
-    @Override
-    public double getProbability(final int pos) {
-        return this.probabilities[pos];
+    public MultivariantCovarianceMatrix getCovarianceMatrices() {
+        return covarianceMatrices;
     }
 
     @Override
-    public void setProbability(final int pos, final double value) {
-        this.probabilities[pos] = value;
+    public void setCovarianceMatrices(MultivariantCovarianceMatrix covarianceMatrices) {
+        this.covarianceMatrices = covarianceMatrices;
+    }
+
+    public CovarianceMatrix getCovarianceMatrix(byte id) {
+        return covarianceMatrices.get(id);
     }
 
     @Override
     public String csvToString() {
-        return "" + this.probabilities;
+        return "" + this.covarianceMatrices;
     }
 
     @Override
@@ -76,16 +84,6 @@ public class Probabilistic implements IProbabilistic {
     @Override
     public IProbabilistic clone() {
         return new Probabilistic(this);
-    }
-
-    @Override
-    public double[] getProbabilities() {
-        return this.probabilities;
-    }
-
-    @Override
-    public void setProbabilities(final double[] values) {
-        this.probabilities = values;
     }
 
     @Override
