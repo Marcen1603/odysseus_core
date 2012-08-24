@@ -73,6 +73,14 @@ public class DataTuple {
 		this.attributes.add(value);
 	}
 
+    public void addByte(Byte value) {
+        this.attributes.add(value);
+    }
+
+    public void addByte(String string) {
+        this.attributes.add(Byte.parseByte(string));
+    }
+	    
 	public void addInteger(Integer value) {
 		this.attributes.add(value);
 	}
@@ -157,7 +165,7 @@ public class DataTuple {
 			return Integer.SIZE / 8;
 		if (attObject instanceof String)
 			return ((String) attObject).length() * 2 // Unicode!
-					+ Integer.SIZE / 8; // Für die Längeninformation
+					+ Integer.SIZE / 8; // Fï¿½r die Lï¿½ngeninformation
 		if (attObject instanceof DataTuple)
 			return ((DataTuple) attObject).memSize(true);
 
