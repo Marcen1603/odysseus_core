@@ -60,12 +60,12 @@ public abstract class StreamClientHandler extends Thread {
 
 	public abstract void close();
 
-	public abstract List<DataTuple> next();
+	public abstract List<DataTuple> next() throws InterruptedException;
 
 	public void pause() {
 		synchronized (this) {
 			this.paused = true;
-		}		
+		}
 	}
 
 	public void stopClient() {
@@ -89,7 +89,13 @@ public abstract class StreamClientHandler extends Thread {
 	@Override
 	public void run() {
 		internalInit();
-		List<DataTuple> next = next();
+		List<DataTuple> next;
+		try {
+			next = next();
+		} catch (InterruptedException ie) {
+			System.out.println("Thread interrupted. Stopping Client");
+			next = null;
+		} 
 		while (next != null) {
 			try {
 				if (this.connection.isClosed()) {
@@ -101,10 +107,14 @@ public abstract class StreamClientHandler extends Thread {
 				}
 				next = next();
 
-			} catch (IOException e) {
+			}catch (InterruptedException ie) {
+				System.out.println("Thread interrupted. Stopping Client");
+				next = null;
+			}  			
+			catch (IOException e) {
 				System.out.println("Connection closed.");
 				break;
-			} 
+			}
 			synchronized (this) {
 				while (paused) {
 					try {
