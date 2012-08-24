@@ -30,6 +30,10 @@
   */
 package de.uniol.inf.is.odysseus.generator.frequentitem;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -38,6 +42,8 @@ import de.uniol.inf.is.odysseus.generator.StreamServer;
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
+	
+	private static List<StreamServer> server = new ArrayList<StreamServer>();
 
 	static BundleContext getContext() {
 		return context;
@@ -50,15 +56,22 @@ public class Activator implements BundleActivator {
 	@Override
     public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		
+		
+		bundleContext.registerService(CommandProvider.class.getName(), new ConsoleCommands(), null);
+		
 		StreamServer serverSimple = new StreamServer(54321, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_SIMPLE));
 		serverSimple.start();
+		server.add(serverSimple);
 		StreamServer serverT10I4D = new StreamServer(54322, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_T10I4D100K));
 		serverT10I4D.start();
+		server.add(serverT10I4D);
 		StreamServer serverFCMA= new StreamServer(54323, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_FCMA));
 		serverFCMA.start();
+		server.add(serverFCMA);
 		StreamServer serverABC = new StreamServer(54324, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_ABC));
 		serverABC.start();
-		
+		server.add(serverABC);		
 	}
 
 	/*
@@ -68,6 +81,33 @@ public class Activator implements BundleActivator {
 	@Override
     public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+	}
+
+	/**
+	 * 
+	 */
+	public static void pause() {
+		synchronized (server) {
+			for(StreamServer s : server){
+				s.pauseClients();
+			}
+		}		
+	}
+	
+	public static void proceed() {
+		synchronized (server) {
+			for(StreamServer s : server){
+				s.proceedClients();
+			}
+		}		
+	}
+	
+	public static void stop() {
+		synchronized (server) {
+			for(StreamServer s : server){
+				s.stopClients();
+			}
+		}		
 	}
 
 }

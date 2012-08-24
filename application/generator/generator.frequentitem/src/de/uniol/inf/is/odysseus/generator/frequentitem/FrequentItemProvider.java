@@ -68,7 +68,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 	}
 	
 	@Override
-	public List<DataTuple> next() {
+	public List<DataTuple> next() throws InterruptedException {
 		List<DataTuple> tuples = new ArrayList<DataTuple>();
 
 		// each line = same transaction
@@ -96,7 +96,9 @@ public class FrequentItemProvider extends StreamClientHandler {
 			time = time + 100;
 			transId++;
 
-			//Thread.sleep(1);
+			//Thread.sleep(500);
+//		} catch (InterruptedException ie){
+//			throw ie;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
