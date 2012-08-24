@@ -98,7 +98,8 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
                 if (value.startsWith("(")) {
                     final String[] probabilisticValues = value.substring(1, value.length() - 1).split(";");
                     if (probabilisticValues.length > 0) {
-                        if (probabilisticValues[0].split(":").length == 2) {
+                        if ((probabilisticValues[0].split(":").length == 2)
+                                && (probabilisticValues[0].split(":")[0].contains("."))) {
                             // Send discrete probabilistic value
                             tuple.addInteger(probabilisticValues.length);
                             for (final String probabilisticValue : probabilisticValues) {
@@ -110,37 +111,43 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
                             }
                         }
                         else {
-                            // Send continuous probabilistic value
+                            // Send continuous probabilistic value or covariance
+                            // matrix
                             tuple.addInteger(probabilisticValues.length);
-                            for (final String probabilisticValue : probabilisticValues) {
-                                final String[] probabilisticParameter = probabilisticValue.split(":");
-                                // The Covariance ID
-                                tuple.addInteger(probabilisticParameter[0]);
-                                // The Covariance Index
-                                tuple.addInteger(probabilisticParameter[1]);
-                                // The mean
-                                tuple.addDouble(probabilisticParameter[2]);
-                                // The probability
-                                tuple.addDouble(probabilisticParameter[3]);
+
+                            if (!probabilisticValues[0].split(":")[1].contains(".")) {
+                                // The string is a continuous probabilistic
+                                // value
+                                for (final String probabilisticValue : probabilisticValues) {
+                                    final String[] probabilisticParameter = probabilisticValue.split(":");
+                                    // The Covariance ID
+                                    tuple.addByte(probabilisticParameter[0]);
+                                    // The Covariance Index
+                                    tuple.addInteger(probabilisticParameter[1]);
+                                    // The mean
+                                    tuple.addDouble(probabilisticParameter[2]);
+                                    // The probability
+                                    tuple.addDouble(probabilisticParameter[3]);
+                                }
+                            }
+                            else {
+                                // The string is a covariance matrix
+                                for (final String probabilisticValue : probabilisticValues) {
+                                    final String[] covarianceParameter = probabilisticValue.split(":");
+                                    // The Covariance ID
+                                    tuple.addByte(covarianceParameter[0]);
+                                    tuple.addInteger(covarianceParameter.length - 1);
+                                    for (int i = 0; i < covarianceParameter.length - 1; i++) {
+                                        // The Covariance Entry i
+                                        tuple.addDouble(covarianceParameter[1 + i]);
+                                    }
+                                }
                             }
                         }
                     }
                 }
                 else {
-                    final String[] parameters = value.split(":");
-                    if (parameters.length > 1) {
-                        // The Covariance ID
-                        tuple.addInteger(parameters[0]);
-                        // Number of Covariance Matrix entries (Triangle)
-                        tuple.addInteger(parameters.length - 1);
-                        for (int i = 0; i < parameters.length - 1; i++) {
-                            // The Covariance Entry i
-                            tuple.addDouble(parameters[1 + i]);
-                        }
-                    }
-                    else {
-                        tuple.addDouble(value);
-                    }
+                    tuple.addDouble(value);
                 }
             }
             return tuple;
