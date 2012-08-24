@@ -17,8 +17,8 @@ public class ProbabilisticMultivariateContinuousDoubleHandler extends
         AbstractDataHandler<ProbabilisticMultivariateContinuousDouble> {
     static protected List<String> types = new ArrayList<String>();
     static {
-        ProbabilisticContinuousDoubleHandler.types.add("ProbabilisticMultivariateContinuousDouble");
-        ProbabilisticContinuousDoubleHandler.types.add("ProbabilisticMultivariateContinuousFloat");
+        ProbabilisticMultivariateContinuousDoubleHandler.types.add("ProbabilisticMultivariateContinuousDouble");
+        ProbabilisticMultivariateContinuousDoubleHandler.types.add("ProbabilisticMultivariateContinuousFloat");
     }
 
     @Override

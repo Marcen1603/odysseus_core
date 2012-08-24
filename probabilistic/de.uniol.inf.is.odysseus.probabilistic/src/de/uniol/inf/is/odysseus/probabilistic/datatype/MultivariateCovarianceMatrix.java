@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
@@ -88,6 +90,20 @@ public class MultivariateCovarianceMatrix implements Serializable, Cloneable, Ma
     @Override
     public MultivariateCovarianceMatrix clone() {
         return new MultivariateCovarianceMatrix(this);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        for (CovarianceMatrix covarianceMatrix : values()) {
+            if (sb.length() > 1) {
+                sb.append(";");
+            }
+            sb.append("{").append(covarianceMatrix.getEntries()).append("}");
+        }
+        sb.append(")");
+        return sb.toString();
     }
 
 }

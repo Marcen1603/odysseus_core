@@ -40,9 +40,7 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
                                                                                          "ProbabilisticContinuousDouble");
 
     public static final SDFDatatype PROBABILISTIC_MULTIVARIATE_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype(
-                                                                                         "ProbabilisticMultivariateContinuousDouble",
-                                                                                         SDFDatatype.KindOfDatatype.MULTI_VALUE,
-                                                                                         SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+                                                                                         "ProbabilisticMultivariateContinuousDouble");
 
     public boolean isProbabilistic() {
         return this.isContinuous() || this.isDiscrete();
