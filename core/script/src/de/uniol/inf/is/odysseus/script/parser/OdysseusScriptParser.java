@@ -358,7 +358,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	@Override
 	public Map<String, String> getReplacements(String[] text) throws OdysseusScriptException {
 		Map<String, String> repl = new HashMap<String, String>();
-		repl.put("NOW", System.currentTimeMillis()+"");
+		addDefaultReplacements(repl);
 		for (String line : text) {
 			String correctLine = removeComments(line).trim();
 			String replacedLine = useReplacements(correctLine, repl);
@@ -379,6 +379,10 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 			}
 		}
 		return repl;
+	}
+
+	private void addDefaultReplacements(Map<String, String> repl) {
+		repl.put("NOW", System.currentTimeMillis()+"");		
 	}
 
 	protected String useReplacements(String line, Map<String, String> replacements) throws OdysseusScriptException {
