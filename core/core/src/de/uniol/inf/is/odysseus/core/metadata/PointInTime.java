@@ -126,7 +126,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	}
 
 	public boolean afterOrEquals(PointInTime time) {
-		return beforeOrEquals(this, this);
+		return beforeOrEquals(time, this);
 	}
 
 	public static PointInTime currentPointInTime() {
