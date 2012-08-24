@@ -22,6 +22,7 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.core.util,
  de.uniol.inf.is.odysseus.rcp,
+ de.uniol.inf.is.odysseus.rcp.editor.text.completion,
  de.uniol.inf.is.odysseus.rcp.exception,
  de.uniol.inf.is.odysseus.script.parser,
  de.uniol.inf.is.odysseus.script.parser.keyword,
@@ -38,6 +39,7 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  org.eclipse.ui.texteditor,
  org.eclipse.ui.views.contentoutline,
  org.slf4j
-Export-Package: de.uniol.inf.is.odysseus.rcp.editor.text
+Export-Package: de.uniol.inf.is.odysseus.rcp.editor.text,
+ de.uniol.inf.is.odysseus.rcp.editor.text.completion
 Service-Component: OSGI-INF/Executor.xml
 

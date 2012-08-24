@@ -49,7 +49,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.KeywordRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
-
+import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorCompletionProvider;
 
 /**
  * 
@@ -64,46 +64,55 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		try {
-			if (OdysseusRCPEditorTextPlugIn.getExecutor() == null){
+			if (OdysseusRCPEditorTextPlugIn.getExecutor() == null) {
 				return null;
 			}
 			IDocument document = viewer.getDocument();
 			String prefix = lastWord(document, offset);
-			String tokenBefore = tokenBefore(document, offset);		
+			String tokenBefore = tokenBefore(document, offset);
 			int qlen = prefix.length();
 			List<String> words = new ArrayList<String>();
 			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
-			if(tokenBefore.trim().equalsIgnoreCase("FROM")){
-				Set<Entry<String, ILogicalOperator>> sources = OdysseusRCPEditorTextPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());				
-				for(Entry<String, ILogicalOperator> e : sources){
+			if (tokenBefore.trim().equalsIgnoreCase("FROM")) {
+				Set<Entry<String, ILogicalOperator>> sources = OdysseusRCPEditorTextPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());
+				for (Entry<String, ILogicalOperator> e : sources) {
 					words.add(e.getKey());
-				}				
-			}else if(tokenBefore.trim().equalsIgnoreCase("#TRANSCFG")){
+				}
+			} else if (tokenBefore.trim().equalsIgnoreCase("#TRANSCFG")) {
 				words.addAll(OdysseusRCPEditorTextPlugIn.getExecutor().getQueryBuildConfigurationNames());
-			}else if(tokenBefore.trim().equalsIgnoreCase("#PARSER")){
+			} else if (tokenBefore.trim().equalsIgnoreCase("#PARSER")) {
 				words.addAll(OdysseusRCPEditorTextPlugIn.getExecutor().getSupportedQueryParsers());
-			}else if(tokenBefore.trim().equalsIgnoreCase("=")){
-				words.addAll(getKeywordsFromRegistry());
-			}else{								
+
+			} else if (tokenBefore.trim().equalsIgnoreCase("#")) {
 				words.addAll(getScriptKeywords());
-				words.addAll(getKeywordsFromRegistry());
-			}
-			
-			for(String word : words){
-				if(word.toUpperCase().startsWith(prefix.toUpperCase())){
-					result.add(new CompletionProposal(word, offset-qlen, qlen, word.length()));
+			} else {
+				if (OdysseusRCPEditorTextPlugIn.getEditorCompletionProviders().size() > 0) {
+					// TODO: parser dependent
+					for (IEditorCompletionProvider ecp : OdysseusRCPEditorTextPlugIn.getEditorCompletionProviders()) {
+						String currentToken = lastWord(document, offset, ecp.getTokenSplitters(), ecp.ignoreWhitespaces());
+						String beforeCurrentToken = lastLastWord(document, offset, ecp.getTokenSplitters(), ecp.ignoreWhitespaces());
+						for(String s : ecp.getWords(currentToken, beforeCurrentToken, OdysseusRCPEditorTextPlugIn.getExecutor(), OdysseusRCPPlugIn.getActiveSession(), document, offset)){
+							result.add(new CompletionProposal(s, offset, 0, s.length()));
+						}
+					}
+				} else {
+					words.addAll(getScriptKeywords());
+					words.addAll(getKeywordsFromRegistry());
 				}
 			}
-						
+
+			for (String word : words) {
+				if (word.toUpperCase().startsWith(prefix.toUpperCase())) {
+					result.add(new CompletionProposal(word, offset - qlen, qlen, word.length()));
+				}
+			}
+
 			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception e) {
 			// ... log the exception ...
 			return NO_COMPLETIONS;
 		}
 	}
-	
-	
-	
 
 	private static String tokenBefore(IDocument doc, int offset) {
 		try {
@@ -111,35 +120,76 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			while (n >= 0 && Character.isSpaceChar(doc.getChar(n))) {
 				n--;
 			}
-			return lastWord(doc, n+1);
+			return lastWord(doc, n + 1);
 		} catch (BadLocationException e) {
 			return "";
 		}
 	}
 
+	
+
 	private static String lastWord(IDocument doc, int offset) {
 		try {
 			for (int n = offset - 1; n >= 0; n--) {
 				char c = doc.getChar(n);
-				if (!(Character.isJavaIdentifierPart(c) || c == '#' || c=='='))
+				if (!(Character.isJavaIdentifierPart(c) || c == '#' || c == '=' || c == ',' || c == '\'' || c == '{' || c == '}' || c == '[' || c == ']' || c == '(' || c == ')'))
 					return doc.get(n + 1, offset - n - 1);
 			}
 		} catch (BadLocationException e) {
 		}
 		return "";
 	}
-
 	
-	private static List<String> getScriptKeywords(){
+	private static String lastWord(IDocument doc, int offset, List<Character> stopChars, boolean ignoreWhitespaces) {
+		try {
+			for (int n = offset - 1; n >= 0; n--) {
+				char c = doc.getChar(n);
+				if(ignoreWhitespaces && Character.isWhitespace(c)){
+					continue;
+				}
+				if ((stopChars.contains(c))){
+					return doc.get(n , offset - n);
+				}								
+			}
+		} catch (BadLocationException e) {
+		}
+		return "";
+	}
+	
+	
+	private static String lastLastWord(IDocument doc, int offset, List<Character> stopChars, boolean ignoreWhitespaces) {
+		boolean foundFirst = false;
+		int foundAt = offset;
+		try {
+			for (int n = offset - 1; n >= 0; n--) {
+				char c = doc.getChar(n);
+				if(ignoreWhitespaces && Character.isWhitespace(c)){
+					continue;
+				}
+				if ((stopChars.contains(c))){
+					if(!foundFirst){
+						foundAt = n;
+						foundFirst = true;
+					}else{
+						return doc.get(n, foundAt - n );
+					}
+				}								
+			}
+		} catch (BadLocationException e) {
+		}
+		return "";
+	}
+
+	private static List<String> getScriptKeywords() {
 		List<String> words = new ArrayList<String>();
 		String scriptkeywords[] = OdysseusRCPEditorTextPlugIn.getScriptParser().getKeywordNames().toArray(new String[] {});
 		for (int i = 0; i < scriptkeywords.length; i++) {
 			words.add("#" + scriptkeywords[i]);
 		}
-		Collections.sort(words);		
+		Collections.sort(words);
 		return words;
 	}
-	
+
 	private static List<String> getKeywordsFromRegistry() {
 		List<String> words = new ArrayList<String>();
 		for (String grp : KeywordRegistry.getInstance().getKeywordGroups()) {
@@ -149,7 +199,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 				}
 			}
 		}
-		Collections.sort(words);		
+		Collections.sort(words);
 		return words;
 	}
 

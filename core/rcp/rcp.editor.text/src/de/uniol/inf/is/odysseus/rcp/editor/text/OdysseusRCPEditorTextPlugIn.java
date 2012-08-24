@@ -15,10 +15,14 @@
   */
 package de.uniol.inf.is.odysseus.rcp.editor.text;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorCompletionProvider;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
 
@@ -38,6 +42,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	private static OdysseusRCPEditorTextPlugIn plugin;
 	private static IExecutor executor;
 	private static IOdysseusScriptParser scriptParser;
+	private static List<IEditorCompletionProvider> completionproviders = new ArrayList<IEditorCompletionProvider>();
 		
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -125,5 +130,18 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 
 	public static IOdysseusScriptParser getScriptParser() {
 		return scriptParser;
+	}
+	
+	
+	public static void bindCompletionProvider(IEditorCompletionProvider ecp){
+		completionproviders.add(ecp);
+	}
+	
+	public static void unbindCompletionProvider(IEditorCompletionProvider ecp){
+		completionproviders.remove(ecp);
+	}
+	
+	public static List<IEditorCompletionProvider> getEditorCompletionProviders(){
+		return completionproviders ;
 	}
 }

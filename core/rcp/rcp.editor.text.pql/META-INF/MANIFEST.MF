@@ -5,15 +5,19 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.editor.text.pql;singleton:=tru
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator,
+Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
+ de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.parser.pql,
  de.uniol.inf.is.odysseus.rcp.editor.text,
+ de.uniol.inf.is.odysseus.rcp.editor.text.completion,
+ org.eclipse.jface.text,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime;bundle-version="3.7.0",
  com.google.guava;bundle-version="12.0.0"
-Service-Component: OSGI-INF/operatorBuilderFactory.xml
+Service-Component: OSGI-INF/operatorBuilderFactory.xml, OSGI-INF/EditorCompletionProvider.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLEditorTextPlugIn
