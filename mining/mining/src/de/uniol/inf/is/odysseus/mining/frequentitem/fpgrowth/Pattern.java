@@ -61,6 +61,17 @@ public class Pattern<M extends IMetaAttribute> implements IMetaAttributeContaine
 		this.add(t, support);
 	}
 
+	/**
+	 * @param tuples
+	 * @param support2
+	 */
+	public Pattern(List<Tuple<M>> tuples, int sup) {
+		for(Tuple<M> t : tuples){
+			this.add(t, sup);
+		}
+		this.support = sup;
+	}
+
 	public void add(Tuple<M> t, int supportCount) {
 		this.pattern.add(t);
 		this.supports.add(supportCount);

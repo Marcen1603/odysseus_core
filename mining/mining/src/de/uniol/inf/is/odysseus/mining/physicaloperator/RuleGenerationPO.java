@@ -36,13 +36,15 @@ import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Pattern;
 public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	private int itemposition = -1;
+	private int supportposition = -1;
 	private double minconfidence = 0.9d;
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	private int counter = 0;
 
-	public RuleGenerationPO(int itemposition, double confidence) {
+	public RuleGenerationPO(int itemposition, int supportposition, double confidence) {
 		this.itemposition = itemposition;
 		this.minconfidence = confidence;
+		this.supportposition = supportposition;
 	}
 
 	/**
@@ -51,6 +53,7 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	public RuleGenerationPO(RuleGenerationPO<M> ruleGenerationPO) {
 		this.itemposition = ruleGenerationPO.itemposition;
 		this.minconfidence = ruleGenerationPO.minconfidence;
+		this.supportposition = ruleGenerationPO.supportposition;
 	}
 
 	/*
@@ -84,8 +87,9 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		Iterator<Tuple<M>> qualified = this.sweepArea.queryOverlaps(element.getMetadata());
 		while (qualified.hasNext()) {
 			Tuple<M> nextOne = qualified.next();
-			Pattern<M> p = nextOne.getAttribute(itemposition);
-			if (p.equals(element.getAttribute(itemposition))) {
+			List<Tuple<M>> tuples = nextOne.getAttribute(itemposition);
+			List<Tuple<M>> newOneTuples = element.getAttribute(itemposition);
+			if (tuples.containsAll(newOneTuples)) {
 				this.sweepArea.remove(nextOne);
 			}
 		}
@@ -105,12 +109,18 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 			FPTree<M> tree = new FPTree<M>();
 			synchronized (sweepArea) {
 				while (qualified.hasNext()) {
-					Pattern<M> pattern = qualified.next().getAttribute(itemposition);
+					Tuple<M> next = qualified.next();
+					List<Tuple<M>> tuples = next.getAttribute(itemposition);
+					int support = next.getAttribute(supportposition);
+					Pattern<M> pattern = new Pattern<M>(tuples, support);
 					tree.insertTree(pattern.clone());
 				}
 				qualified = this.sweepArea.extractElementsStartingBefore(start);
 				while (qualified.hasNext()) {
-					Pattern<M> o = qualified.next().getAttribute(itemposition);
+					Tuple<M> next = qualified.next();
+					List<Tuple<M>> tuples = next.getAttribute(itemposition);
+					int support = next.getAttribute(supportposition);
+					Pattern<M> o = new Pattern<M>(tuples, support);
 					generateRuleForItemSet(o.clone(), tree, start);
 				}
 			}

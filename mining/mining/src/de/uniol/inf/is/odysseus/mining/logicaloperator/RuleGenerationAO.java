@@ -37,6 +37,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4443355945512399432L;
 	private int itemsetposition;
+	private int supportposition;
 	private double confidence;
 	
 	public RuleGenerationAO() {
@@ -46,6 +47,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 	public RuleGenerationAO(RuleGenerationAO old) {
 		this.itemsetposition = old.itemsetposition;
 		this.confidence = old.confidence;
+		this.supportposition = old.supportposition;
 	}
 
 	/* (non-Javadoc)
@@ -59,6 +61,11 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ITEMSET")
 	public void setItemsetAttribute(SDFAttribute itemset) {
 		this.itemsetposition = this.getInputSchema(0).indexOf(itemset);
+	}
+	
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "SUPPORT")
+	public void setSupprtAttribute(SDFAttribute support) {
+		this.supportposition = this.getInputSchema(0).indexOf(support);
 	}
 	
 	
@@ -91,6 +98,10 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 		return itemsetposition;
 	}
 
+	public int getSupportPosition(){
+		return supportposition;
+	}
+	
 	/**
 	 * @return the confidence
 	 */
