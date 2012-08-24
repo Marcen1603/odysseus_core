@@ -190,11 +190,12 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 					
 					int i = 0;
 					for (Pattern<M> p : results) {						
-						Tuple<M> newtuple = new Tuple<M>(2, false);
+						Tuple<M> newtuple = new Tuple<M>(3, false);
 						newtuple.setMetadata(p.getMetadata());
 						newtuple.getMetadata().setStartAndEnd(totalMin, totalMax);
-						newtuple.setAttribute(0, i);
-						newtuple.setAttribute(1, p);
+						newtuple.setAttribute(0, i);											
+						newtuple.setAttribute(1, p.getPattern());
+						newtuple.setAttribute(2, p.getSupport());
 						i++;
 						
 						transfer(newtuple);
