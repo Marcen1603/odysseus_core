@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariantCovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariateCovarianceMatrix;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -30,13 +30,18 @@ public class ProbabilisticFactory extends AbstractMetadataUpdater<IProbabilistic
         this.covarianceMatrixPositions = new int[] { pos };
     }
 
+    public ProbabilisticFactory(final int[] pos) {
+        this.covarianceMatrixPositions = pos;
+    }
+
     @Override
     public void updateMetadata(final Tuple<? extends IProbabilistic> inElem) {
         final IProbabilistic metadata = inElem.getMetadata();
         metadata.setExistence(1.0);
-        MultivariantCovarianceMatrix metadataCovarianceMatrices = new MultivariantCovarianceMatrix(0);
-        for (int pos : covarianceMatrixPositions) {
-            MultivariantCovarianceMatrix covarianceMatrices = (MultivariantCovarianceMatrix) inElem.getAttribute(pos);
+        final MultivariateCovarianceMatrix metadataCovarianceMatrices = new MultivariateCovarianceMatrix(0);
+        for (final int pos : this.covarianceMatrixPositions) {
+            final MultivariateCovarianceMatrix covarianceMatrices = (MultivariateCovarianceMatrix) inElem
+                    .getAttribute(pos);
             metadataCovarianceMatrices.putAll(covarianceMatrices);
         }
         metadata.setCovarianceMatrices(metadataCovarianceMatrices);

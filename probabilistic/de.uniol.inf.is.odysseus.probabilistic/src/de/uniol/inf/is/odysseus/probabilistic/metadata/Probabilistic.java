@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariantCovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariateCovarianceMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.math.PBox;
 
 /**
@@ -33,18 +33,18 @@ public class Probabilistic implements IProbabilistic {
 	 * 
 	 */
     private static final long            serialVersionUID = -147594856639774242L;
-    private MultivariantCovarianceMatrix covarianceMatrices;
+    private MultivariateCovarianceMatrix covarianceMatrices;
     /** Tuple existence probability */
     private double                       existence;
 
     public Probabilistic() {
         this.existence = 1.0;
-        this.covarianceMatrices = new MultivariantCovarianceMatrix(0);
+        this.covarianceMatrices = new MultivariateCovarianceMatrix(0);
     }
 
     public Probabilistic(final int size) {
         this.existence = 1.0;
-        this.covarianceMatrices = new MultivariantCovarianceMatrix(size);
+        this.covarianceMatrices = new MultivariateCovarianceMatrix(size);
     }
 
     public Probabilistic(final Probabilistic probability) {
@@ -53,17 +53,19 @@ public class Probabilistic implements IProbabilistic {
 
     }
 
-    public MultivariantCovarianceMatrix getCovarianceMatrices() {
-        return covarianceMatrices;
+    @Override
+    public MultivariateCovarianceMatrix getCovarianceMatrices() {
+        return this.covarianceMatrices;
     }
 
     @Override
-    public void setCovarianceMatrices(MultivariantCovarianceMatrix covarianceMatrices) {
+    public void setCovarianceMatrices(final MultivariateCovarianceMatrix covarianceMatrices) {
         this.covarianceMatrices = covarianceMatrices;
     }
 
-    public CovarianceMatrix getCovarianceMatrix(byte id) {
-        return covarianceMatrices.get(id);
+    @Override
+    public CovarianceMatrix getCovarianceMatrix(final byte id) {
+        return this.covarianceMatrices.get(id);
     }
 
     @Override
@@ -92,7 +94,7 @@ public class Probabilistic implements IProbabilistic {
     }
 
     @Override
-    public void setExistence(double existence) {
+    public void setExistence(final double existence) {
         this.existence = existence;
     }
 

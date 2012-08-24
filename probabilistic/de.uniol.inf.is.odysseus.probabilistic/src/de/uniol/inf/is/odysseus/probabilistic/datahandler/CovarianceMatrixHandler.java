@@ -22,9 +22,9 @@ public class CovarianceMatrixHandler extends AbstractDataHandler<CovarianceMatri
     }
 
     @Override
-    public CovarianceMatrix readData(ByteBuffer buffer) {
+    public CovarianceMatrix readData(final ByteBuffer buffer) {
         final int size = buffer.getInt();
-        double[] entries = new double[size];
+        final double[] entries = new double[size];
         for (int i = 0; i < entries.length; i++) {
             entries[i] = buffer.getDouble();
         }
@@ -32,9 +32,9 @@ public class CovarianceMatrixHandler extends AbstractDataHandler<CovarianceMatri
     }
 
     @Override
-    public CovarianceMatrix readData(ObjectInputStream inputStream) throws IOException {
+    public CovarianceMatrix readData(final ObjectInputStream inputStream) throws IOException {
         final int size = inputStream.readInt();
-        double[] entries = new double[size];
+        final double[] entries = new double[size];
         for (int i = 0; i < entries.length; i++) {
             entries[i] = inputStream.readDouble();
         }
@@ -42,9 +42,9 @@ public class CovarianceMatrixHandler extends AbstractDataHandler<CovarianceMatri
     }
 
     @Override
-    public CovarianceMatrix readData(String string) {
+    public CovarianceMatrix readData(final String string) {
         final String[] covarianceMatrix = string.split(":");
-        double[] entries = new double[covarianceMatrix.length];
+        final double[] entries = new double[covarianceMatrix.length];
         for (int i = 0; i < covarianceMatrix.length; i++) {
             entries[i] = Double.parseDouble(covarianceMatrix[i]);
         }
@@ -52,28 +52,28 @@ public class CovarianceMatrixHandler extends AbstractDataHandler<CovarianceMatri
     }
 
     @Override
-    public void writeData(ByteBuffer buffer, Object data) {
+    public void writeData(final ByteBuffer buffer, final Object data) {
         final CovarianceMatrix covarianceMatrix = (CovarianceMatrix) data;
         buffer.putInt(covarianceMatrix.size());
-        for (Double value : covarianceMatrix.getEntries()) {
+        for (final Double value : covarianceMatrix.getEntries()) {
             buffer.putDouble(value);
         }
     }
 
     @Override
-    public int memSize(Object attribute) {
+    public int memSize(final Object attribute) {
         final CovarianceMatrix covarianceMatrix = (CovarianceMatrix) attribute;
-        return (Integer.SIZE + covarianceMatrix.getEntries().length * Double.SIZE) / 8;
+        return (Integer.SIZE + (covarianceMatrix.getEntries().length * Double.SIZE)) / 8;
     }
 
     @Override
-    protected IDataHandler<CovarianceMatrix> getInstance(SDFSchema schema) {
+    protected IDataHandler<CovarianceMatrix> getInstance(final SDFSchema schema) {
         return new CovarianceMatrixHandler();
     }
 
     @Override
     public List<String> getSupportedDataTypes() {
-        return types;
+        return CovarianceMatrixHandler.types;
     }
 
 }

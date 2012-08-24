@@ -4,17 +4,17 @@ public class GenericDensityFunction implements ProbabilityDensityFunction {
     private CumulativeDistributionFunction cdf;
 
     @Override
-    public double density(double x) {
+    public double density(final double x) {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public double cumulativeProbability(double x1, double x2) {
+    public double cumulativeProbability(final double x1, final double x2) {
         return this.cdf.evaluate(x2) - this.cdf.evaluate(x1);
     }
 
-    public void setCumulativeDistributionFunction(CumulativeDistributionFunction cdf) {
+    public void setCumulativeDistributionFunction(final CumulativeDistributionFunction cdf) {
         this.cdf = cdf;
     }
 

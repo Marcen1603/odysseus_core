@@ -26,6 +26,7 @@ public class CountPartialAggregate<T> implements IPartialAggregate<T> {
     public CountPartialAggregate() {
         this.count = 0.0;
     }
+
     public CountPartialAggregate(final double count) {
         this.count = count;
     }

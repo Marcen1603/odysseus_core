@@ -54,7 +54,7 @@ public class ProbabilisticSum extends AbstractAggregateFunction<Tuple<?>, Tuple<
     public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
         final SumPartialAggregate<Tuple<?>> pa = new SumPartialAggregate<Tuple<?>>();
 
-        for (Pair<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues()) {
+        for (final Pair<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues()) {
             pa.add(value.getE1(), value.getE2());
         }
         return pa;
@@ -71,7 +71,7 @@ public class ProbabilisticSum extends AbstractAggregateFunction<Tuple<?>, Tuple<
             pa = (SumPartialAggregate<Tuple<?>>) p;
         }
 
-        for (Pair<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues()) {
+        for (final Pair<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues()) {
             pa.add(value.getE1(), value.getE2());
         }
 

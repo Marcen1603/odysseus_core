@@ -12,12 +12,12 @@ public class MultivariateGaussianDensityFunction implements MultivariateProbabil
     private final RealMatrix covarianceMatrix;
 
     public MultivariateGaussianDensityFunction(final double[] mean, final double[] covarianceTriangleMatrix) {
-        int size = (int) (-0.5 + Math.sqrt(0.25 + covarianceTriangleMatrix.length * 2));
-        RealMatrix covarianceMatrix = MatrixUtils.createRealMatrix(size, size);
+        final int size = (int) (-0.5 + Math.sqrt(0.25 + (covarianceTriangleMatrix.length * 2)));
+        final RealMatrix covarianceMatrix = MatrixUtils.createRealMatrix(size, size);
         int left = 0;
         int right = size;
         for (int i = 0; i < size; i++) {
-            double[] row = covarianceMatrix.getRow(i);
+            final double[] row = covarianceMatrix.getRow(i);
             System.arraycopy(covarianceTriangleMatrix, left, row, i, right);
             row[i] /= 2;
             covarianceMatrix.setRow(i, row);
@@ -70,9 +70,9 @@ public class MultivariateGaussianDensityFunction implements MultivariateProbabil
         return this.mean.toString() + " " + this.covarianceMatrix.toString();
     }
 
-    public static void main(String[] args) {
-        MultivariateGaussianDensityFunction test = new MultivariateGaussianDensityFunction(new double[] { 1.0, 2.0 },
-                new double[] { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 });
+    public static void main(final String[] args) {
+        final MultivariateGaussianDensityFunction test = new MultivariateGaussianDensityFunction(new double[] { 1.0,
+                2.0 }, new double[] { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 });
         System.out.println(test);
     }
 }

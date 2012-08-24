@@ -2,20 +2,20 @@ package de.uniol.inf.is.odysseus.probabilistic.datatype;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 
-public class ProbabilisticMultivariantContinuousDouble {
+public class ProbabilisticMultivariateContinuousDouble {
     private final Pair<ProbabilisticContinuousDouble, Double>[] mixtures;
 
-    public ProbabilisticMultivariantContinuousDouble(final double mean, byte covarianceId, int covarianceIndex,
-            double probability) {
+    public ProbabilisticMultivariateContinuousDouble(final double mean, final byte covarianceId,
+            final int covarianceIndex, final double probability) {
         this(new ProbabilisticContinuousDouble(mean, covarianceId, covarianceIndex), probability);
     }
 
-    public ProbabilisticMultivariantContinuousDouble(final ProbabilisticContinuousDouble continuousDouble,
-            double probability) {
+    public ProbabilisticMultivariateContinuousDouble(final ProbabilisticContinuousDouble continuousDouble,
+            final double probability) {
         this.mixtures = new Pair[] { new Pair<ProbabilisticContinuousDouble, Double>(continuousDouble, probability) };
     }
 
-    public ProbabilisticMultivariantContinuousDouble(final Double[] means,
+    public ProbabilisticMultivariateContinuousDouble(final Double[] means,
             final Pair<Byte, Integer>[] covarianceMatrices, final Double[] probabilities) {
         final int length = Math.min(covarianceMatrices.length, Math.min(means.length, probabilities.length));
         this.mixtures = new Pair[length];
@@ -25,24 +25,24 @@ public class ProbabilisticMultivariantContinuousDouble {
         }
     }
 
-    public ProbabilisticMultivariantContinuousDouble(Pair<ProbabilisticContinuousDouble, Double>[] mixtures) {
+    public ProbabilisticMultivariateContinuousDouble(final Pair<ProbabilisticContinuousDouble, Double>[] mixtures) {
         this.mixtures = mixtures;
     }
 
-    public ProbabilisticMultivariantContinuousDouble(
-            ProbabilisticMultivariantContinuousDouble probabilisticMultivariantContinuousDouble) {
+    public ProbabilisticMultivariateContinuousDouble(
+            final ProbabilisticMultivariateContinuousDouble probabilisticMultivariantContinuousDouble) {
         this.mixtures = probabilisticMultivariantContinuousDouble.mixtures.clone();
     }
 
     public Pair<ProbabilisticContinuousDouble, Double>[] getMixtures() {
-        return mixtures;
+        return this.mixtures;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("(");
-        for (Pair<ProbabilisticContinuousDouble, Double> mixture : getMixtures()) {
+        for (final Pair<ProbabilisticContinuousDouble, Double> mixture : this.getMixtures()) {
             if (sb.length() > 1) {
                 sb.append(";");
             }

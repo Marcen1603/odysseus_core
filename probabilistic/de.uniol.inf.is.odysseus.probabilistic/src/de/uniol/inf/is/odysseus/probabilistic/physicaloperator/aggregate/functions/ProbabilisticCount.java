@@ -53,7 +53,7 @@ public class ProbabilisticCount extends AbstractAggregateFunction<Tuple<?>, Tupl
     @Override
     public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
         final CountPartialAggregate<Tuple<?>> pa = new CountPartialAggregate<Tuple<?>>();
-        for (Pair<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues()) {
+        for (final Pair<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues()) {
             pa.add(value.getE2());
         }
         return pa;
@@ -70,7 +70,7 @@ public class ProbabilisticCount extends AbstractAggregateFunction<Tuple<?>, Tupl
             pa = (CountPartialAggregate<Tuple<?>>) p;
         }
 
-        for (Pair<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues()) {
+        for (final Pair<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues()) {
             pa.add(value.getE2());
         }
 

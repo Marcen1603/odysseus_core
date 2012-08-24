@@ -26,7 +26,7 @@ public class SumPartialAggregate<T> implements IPartialAggregate<T> {
     public SumPartialAggregate() {
         this.sum = 0.0;
     }
-    
+
     public SumPartialAggregate(final double value, final double probability) {
         this.sum = value * probability;
     }

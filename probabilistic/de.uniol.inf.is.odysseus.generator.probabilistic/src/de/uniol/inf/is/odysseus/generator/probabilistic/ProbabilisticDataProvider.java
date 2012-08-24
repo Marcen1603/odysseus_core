@@ -137,7 +137,7 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
                                     // The Covariance ID
                                     tuple.addByte(covarianceParameter[0]);
                                     tuple.addInteger(covarianceParameter.length - 1);
-                                    for (int i = 0; i < covarianceParameter.length - 1; i++) {
+                                    for (int i = 0; i < (covarianceParameter.length - 1); i++) {
                                         // The Covariance Entry i
                                         tuple.addDouble(covarianceParameter[1 + i]);
                                     }

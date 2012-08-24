@@ -11,18 +11,18 @@ import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticMultivariantContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticMultivariateContinuousDouble;
 
-public class ProbabilisticMultivariantContinuousDoubleHandler extends
-        AbstractDataHandler<ProbabilisticMultivariantContinuousDouble> {
+public class ProbabilisticMultivariateContinuousDoubleHandler extends
+        AbstractDataHandler<ProbabilisticMultivariateContinuousDouble> {
     static protected List<String> types = new ArrayList<String>();
     static {
-        ProbabilisticContinuousDoubleHandler.types.add("ProbabilisticMultivariantContinuousDouble");
-        ProbabilisticContinuousDoubleHandler.types.add("ProbabilisticMultivariantContinuousFloat");
+        ProbabilisticContinuousDoubleHandler.types.add("ProbabilisticMultivariateContinuousDouble");
+        ProbabilisticContinuousDoubleHandler.types.add("ProbabilisticMultivariateContinuousFloat");
     }
 
     @Override
-    public ProbabilisticMultivariantContinuousDouble readData(final ObjectInputStream inputStream) throws IOException {
+    public ProbabilisticMultivariateContinuousDouble readData(final ObjectInputStream inputStream) throws IOException {
         final int length = inputStream.readInt();
         final Pair<ProbabilisticContinuousDouble, Double>[] mixtures = new Pair[length];
         for (int i = 0; i < length; i++) {
@@ -34,11 +34,11 @@ public class ProbabilisticMultivariantContinuousDoubleHandler extends
                     covarianceMatrixId, covarianceMatrixIndex);
             mixtures[i] = new Pair<ProbabilisticContinuousDouble, Double>(distribution, probability);
         }
-        return new ProbabilisticMultivariantContinuousDouble(mixtures);
+        return new ProbabilisticMultivariateContinuousDouble(mixtures);
     }
 
     @Override
-    public ProbabilisticMultivariantContinuousDouble readData(final String string) {
+    public ProbabilisticMultivariateContinuousDouble readData(final String string) {
         final String[] continuousValues = string.split(";");
         final Pair<ProbabilisticContinuousDouble, Double>[] mixtures = new Pair[continuousValues.length];
         for (int i = 0; i < continuousValues.length; i++) {
@@ -50,11 +50,11 @@ public class ProbabilisticMultivariantContinuousDoubleHandler extends
             mixtures[i] = new Pair<ProbabilisticContinuousDouble, Double>(new ProbabilisticContinuousDouble(mean,
                     covarianceMatrixId, covarianceMatrixIndex), probability);
         }
-        return new ProbabilisticMultivariantContinuousDouble(mixtures);
+        return new ProbabilisticMultivariateContinuousDouble(mixtures);
     }
 
     @Override
-    public ProbabilisticMultivariantContinuousDouble readData(final ByteBuffer buffer) {
+    public ProbabilisticMultivariateContinuousDouble readData(final ByteBuffer buffer) {
         final int length = buffer.getInt();
         final Pair<ProbabilisticContinuousDouble, Double>[] mixtures = new Pair[length];
         for (int i = 0; i < length; i++) {
@@ -66,14 +66,14 @@ public class ProbabilisticMultivariantContinuousDoubleHandler extends
                     covarianceMatrixId, covarianceMatrixIndex);
             mixtures[i] = new Pair<ProbabilisticContinuousDouble, Double>(distribution, probability);
         }
-        return new ProbabilisticMultivariantContinuousDouble(mixtures);
+        return new ProbabilisticMultivariateContinuousDouble(mixtures);
     }
 
     @Override
     public void writeData(final ByteBuffer buffer, final Object data) {
-        final ProbabilisticMultivariantContinuousDouble value = (ProbabilisticMultivariantContinuousDouble) data;
+        final ProbabilisticMultivariateContinuousDouble value = (ProbabilisticMultivariateContinuousDouble) data;
         buffer.putInt(value.getMixtures().length);
-        for (Pair<ProbabilisticContinuousDouble, Double> mixture : value.getMixtures()) {
+        for (final Pair<ProbabilisticContinuousDouble, Double> mixture : value.getMixtures()) {
             buffer.put(mixture.getE1().getCovarianceMatrixId());
             buffer.putInt(mixture.getE1().getCovarianceMatrixIndex());
             buffer.putDouble(mixture.getE1().getMean());
@@ -82,19 +82,19 @@ public class ProbabilisticMultivariantContinuousDoubleHandler extends
     }
 
     @Override
-    public int memSize(Object attribute) {
-        final ProbabilisticMultivariantContinuousDouble value = (ProbabilisticMultivariantContinuousDouble) attribute;
+    public int memSize(final Object attribute) {
+        final ProbabilisticMultivariateContinuousDouble value = (ProbabilisticMultivariateContinuousDouble) attribute;
         return (Integer.SIZE * value.getMixtures().length * (Byte.SIZE + Integer.SIZE + Double.SIZE)) / 8;
     }
 
     @Override
-    protected IDataHandler<ProbabilisticMultivariantContinuousDouble> getInstance(SDFSchema schema) {
-        return new ProbabilisticMultivariantContinuousDoubleHandler();
+    protected IDataHandler<ProbabilisticMultivariateContinuousDouble> getInstance(final SDFSchema schema) {
+        return new ProbabilisticMultivariateContinuousDoubleHandler();
     }
 
     @Override
     public List<String> getSupportedDataTypes() {
-        return types;
+        return ProbabilisticMultivariateContinuousDoubleHandler.types;
     }
 
 }

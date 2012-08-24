@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariantCovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariateCovarianceMatrix;
 
 /**
  * Merge function for probabilistic data streams
@@ -28,7 +28,7 @@ public class ProbabilisticMergeFunction implements IInlineMetadataMergeFunction<
     @Override
     public void mergeInto(final IProbabilistic result, final IProbabilistic inLeft, final IProbabilistic inRight) {
         result.setExistence(inLeft.getExistence() * inRight.getExistence());
-        MultivariantCovarianceMatrix covarianceMatrices = new MultivariantCovarianceMatrix(0);
+        final MultivariateCovarianceMatrix covarianceMatrices = new MultivariateCovarianceMatrix(0);
         covarianceMatrices.putAll(inLeft.getCovarianceMatrices());
         covarianceMatrices.putAll(inRight.getCovarianceMatrices());
         result.setCovarianceMatrices(covarianceMatrices);

@@ -30,17 +30,17 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
 
     public static final SDFDatatype COVARIANCE_MATRIX                            = new SDFProbabilisticDatatype(
                                                                                          "CovarianceMatrix");
-    public static final SDFDatatype MULTIVARIANT_COVARIANCE_MATRIX               = new SDFProbabilisticDatatype(
-                                                                                         "MultivariantCovarianceMatrix");
-    
+    public static final SDFDatatype MULTIVARIATE_COVARIANCE_MATRIX               = new SDFProbabilisticDatatype(
+                                                                                         "MultivariateCovarianceMatrix");
+
     public static final SDFDatatype PROBABILISTIC_DOUBLE                         = new SDFProbabilisticDatatype(
                                                                                          "ProbabilisticDouble");
 
     public static final SDFDatatype PROBABILISTIC_CONTINUOUS_DOUBLE              = new SDFProbabilisticDatatype(
                                                                                          "ProbabilisticContinuousDouble");
 
-    public static final SDFDatatype PROBABILISTIC_MULTIVARIANT_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype(
-                                                                                         "ProbabilisticMultivariantContinuousDouble",
+    public static final SDFDatatype PROBABILISTIC_MULTIVARIATE_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype(
+                                                                                         "ProbabilisticMultivariateContinuousDouble",
                                                                                          SDFDatatype.KindOfDatatype.MULTI_VALUE,
                                                                                          SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
 
@@ -50,7 +50,7 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
 
     public boolean isContinuous() {
         return this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI())
-                || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_MULTIVARIANT_CONTINUOUS_DOUBLE.getURI());
+                || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_MULTIVARIATE_CONTINUOUS_DOUBLE.getURI());
     }
 
     public boolean isDiscrete() {

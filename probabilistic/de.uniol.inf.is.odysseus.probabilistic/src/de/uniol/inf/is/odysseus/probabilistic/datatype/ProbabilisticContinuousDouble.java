@@ -16,34 +16,34 @@ public class ProbabilisticContinuousDouble implements Serializable, Cloneable {
     private final int         covarianceMatrixIndex;
     private final double      mean;
 
-    public ProbabilisticContinuousDouble(final double mean, byte covarianceId, int covarianceIndex) {
+    public ProbabilisticContinuousDouble(final double mean, final byte covarianceId, final int covarianceIndex) {
         this.mean = mean;
         this.covarianceMatrixId = covarianceId;
         this.covarianceMatrixIndex = covarianceIndex;
     }
 
-    public ProbabilisticContinuousDouble(final double mean, Pair<Byte, Integer> covarianceMatrix) {
+    public ProbabilisticContinuousDouble(final double mean, final Pair<Byte, Integer> covarianceMatrix) {
         this.mean = mean;
         this.covarianceMatrixId = covarianceMatrix.getE1();
         this.covarianceMatrixIndex = covarianceMatrix.getE2();
     }
 
-    public ProbabilisticContinuousDouble(ProbabilisticContinuousDouble probabilisticContinuousDouble) {
+    public ProbabilisticContinuousDouble(final ProbabilisticContinuousDouble probabilisticContinuousDouble) {
         this.mean = probabilisticContinuousDouble.mean;
         this.covarianceMatrixId = probabilisticContinuousDouble.covarianceMatrixId;
         this.covarianceMatrixIndex = probabilisticContinuousDouble.covarianceMatrixIndex;
     }
 
     public byte getCovarianceMatrixId() {
-        return covarianceMatrixId;
+        return this.covarianceMatrixId;
     }
 
     public int getCovarianceMatrixIndex() {
-        return covarianceMatrixIndex;
+        return this.covarianceMatrixIndex;
     }
 
     public double getMean() {
-        return mean;
+        return this.mean;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ProbabilisticContinuousDouble implements Serializable, Cloneable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("𝒩(").append(this.mean).append(",").append(this.covarianceMatrixId).append("(")
                 .append(this.covarianceMatrixIndex).append("))");
         return sb.toString();

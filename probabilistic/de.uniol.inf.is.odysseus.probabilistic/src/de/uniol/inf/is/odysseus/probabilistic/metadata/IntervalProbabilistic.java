@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariantCovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariateCovarianceMatrix;
 
 public class IntervalProbabilistic extends TimeInterval implements IProbabilistic {
 
@@ -17,7 +17,7 @@ public class IntervalProbabilistic extends TimeInterval implements IProbabilisti
         this.probabilistic = new Probabilistic();
     }
 
-    public IntervalProbabilistic(IntervalProbabilistic intervalProbabilistic) {
+    public IntervalProbabilistic(final IntervalProbabilistic intervalProbabilistic) {
         super(intervalProbabilistic);
         this.probabilistic = intervalProbabilistic.probabilistic.clone();
     }
@@ -48,22 +48,22 @@ public class IntervalProbabilistic extends TimeInterval implements IProbabilisti
     }
 
     @Override
-    public void setExistence(double existence) {
+    public void setExistence(final double existence) {
         this.probabilistic.setExistence(existence);
     }
 
     @Override
-    public MultivariantCovarianceMatrix getCovarianceMatrices() {
+    public MultivariateCovarianceMatrix getCovarianceMatrices() {
         return this.probabilistic.getCovarianceMatrices();
     }
 
     @Override
-    public CovarianceMatrix getCovarianceMatrix(byte id) {
+    public CovarianceMatrix getCovarianceMatrix(final byte id) {
         return this.probabilistic.getCovarianceMatrix(id);
     }
 
     @Override
-    public void setCovarianceMatrices(MultivariantCovarianceMatrix covarianceMatrices) {
+    public void setCovarianceMatrices(final MultivariateCovarianceMatrix covarianceMatrices) {
         this.probabilistic.setCovarianceMatrices(covarianceMatrices);
     }
 }

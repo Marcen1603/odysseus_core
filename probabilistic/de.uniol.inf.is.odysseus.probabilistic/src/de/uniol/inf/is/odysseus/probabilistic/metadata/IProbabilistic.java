@@ -18,16 +18,16 @@ package de.uniol.inf.is.odysseus.probabilistic.metadata;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariantCovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.MultivariateCovarianceMatrix;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public interface IProbabilistic extends IMetaAttribute, IClone {
 
-    MultivariantCovarianceMatrix getCovarianceMatrices();
+    MultivariateCovarianceMatrix getCovarianceMatrices();
 
-    void setCovarianceMatrices(MultivariantCovarianceMatrix covarianceMatrices);
+    void setCovarianceMatrices(MultivariateCovarianceMatrix covarianceMatrices);
 
     CovarianceMatrix getCovarianceMatrix(byte id);
 
