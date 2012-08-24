@@ -36,6 +36,7 @@ package de.uniol.inf.is.odysseus.generator.valuegenerator;
  */
 public enum DataType {
 
+    BYTE,
 	LONG,
 	DOUBLE,
 	INTEGER,

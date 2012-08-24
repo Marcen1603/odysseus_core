@@ -160,7 +160,9 @@ public abstract class StreamClientHandler extends Thread {
 		}
 
 		for (Object data : tuple.getAttributes()) {
-			if (data instanceof Integer) {
+            if (data instanceof Byte) {
+                bytebuffer.put((Byte) data);
+            } else if (data instanceof Integer) {
 				bytebuffer.putInt((Integer) data);
 			} else if (data instanceof Boolean) {
 				boolean b = (Boolean) data;
@@ -202,6 +204,9 @@ public abstract class StreamClientHandler extends Thread {
 		for (IValueGenerator v : this.generators) {
 			DataType datatype = datatypes.get(v);
 			switch (datatype) {
+            case BYTE:
+                tuple.addByte(v.nextValue());
+                break;
 			case BOOLEAN:
 				tuple.addBoolean(v.nextValue());
 				break;

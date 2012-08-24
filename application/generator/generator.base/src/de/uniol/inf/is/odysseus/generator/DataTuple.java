@@ -105,6 +105,11 @@ public class DataTuple {
 		this.attributes.add(value);
 	}
 
+    public void addByte(double value) {
+        Byte val = new Byte((byte) value);
+        this.attributes.add(val);
+    }
+	   
 	public void addInteger(double value) {
 		Integer val = new Integer((int) value);
 		this.attributes.add(val);
@@ -155,6 +160,8 @@ public class DataTuple {
 	private static int calcBaseTypeSize(Object attObject) {
 		if (attObject == null)
 			return 0;
+	      if (attObject instanceof Byte)
+	            return Byte.SIZE / 8;
 		if (attObject instanceof Integer)
 			return Integer.SIZE / 8;
 		if (attObject instanceof Double)
