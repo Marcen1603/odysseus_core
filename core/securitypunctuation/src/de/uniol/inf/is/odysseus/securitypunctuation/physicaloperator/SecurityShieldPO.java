@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.intervalapproach;
+package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,16 +7,16 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.securitypunctuation.SecurityPunctuationCache;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
+import de.uniol.inf.is.odysseus.securitypunctuation.helper.SecurityPunctuationCache;
 
 /**
  * @author Jan Sören Schwarz
@@ -65,7 +65,7 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 	}
 
 	@Override
-	public void processSecurityPunctuation(SecurityPunctuation sp, int port) {
+	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		spCache.add(sp);
 		this.transferSecurityPunctuation(sp);
 	}
@@ -87,7 +87,7 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 			}
 			
 			Long startPoint = object.getMetadata().getStart().getMainPoint();			
-			SecurityPunctuation sp = spCache.getMatchingSP(startPoint);			
+			ISecurityPunctuation sp = spCache.getMatchingSP(startPoint);			
 			if(sp != null && sp.evaluateAll(startPoint, userRoles, tuple, this.getOutputSchema())) {
 				return true;
 			}

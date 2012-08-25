@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEvent;
@@ -264,7 +264,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	public abstract void processPunctuation(PointInTime timestamp, int port);
 
 	@Override
-	public void processSecurityPunctuation(SecurityPunctuation sp, int port) {
+	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 	}
 
 	// ------------------------------------------------------------------------

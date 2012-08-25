@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEvent;
@@ -317,12 +317,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 	
 	@Override
-	public void transferSecurityPunctuation(SecurityPunctuation sp) {
+	public void transferSecurityPunctuation(ISecurityPunctuation sp) {
 		transferSecurityPunctuation(sp, 0);
 	}
 
 	@Override
-	public void transferSecurityPunctuation(SecurityPunctuation sp, int sourceOutPort) {
+	public void transferSecurityPunctuation(ISecurityPunctuation sp, int sourceOutPort) {
 		fire(this.pushInitEvent);
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {

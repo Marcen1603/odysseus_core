@@ -1,7 +1,9 @@
-package de.uniol.inf.is.odysseus.core.securitypunctuation;
+package de.uniol.inf.is.odysseus.securitypunctuation;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public abstract class AbstractSecurityPunctuation implements Serializable, ISecurityPunctuation {
 	

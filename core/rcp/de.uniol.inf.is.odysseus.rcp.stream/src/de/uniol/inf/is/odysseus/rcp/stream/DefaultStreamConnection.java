@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection<In> {
 
@@ -186,7 +186,7 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 	}
 
 	@Override
-	public void processSecurityPunctuation(SecurityPunctuation sp, int port) {
+	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 	}
 
 	public void notifyListenersPunctuation(PointInTime point, int port) {

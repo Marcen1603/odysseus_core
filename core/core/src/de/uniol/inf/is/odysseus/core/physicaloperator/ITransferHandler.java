@@ -16,12 +16,12 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public interface ITransferHandler<W> {
 
 	void transfer(W toTransfer);
 	void sendPunctuation(PointInTime pointInTime);
-	void transferSecurityPunctuation(SecurityPunctuation createSecurityPunctuation);
+	void transferSecurityPunctuation(ISecurityPunctuation createSecurityPunctuation);
 
 }

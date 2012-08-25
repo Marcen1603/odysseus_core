@@ -10,4 +10,9 @@ public interface ISecurityPunctuation {
 	public Boolean evaluateAll(Long tupleTS, List<String> userRoles, Tuple<?> tuple, SDFSchema schema);
 	
 	public ISecurityPunctuation union(ISecurityPunctuation sp2);
+
+	public Object getAttribute(String key);	
+	public Long getLongAttribute(String key);
+	public Integer getIntegerAttribute(String key);
+	public String getStringAttribute(String key);
 }

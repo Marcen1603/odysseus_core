@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.datahandler;
+package de.uniol.inf.is.odysseus.securitypunctuation.handler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,17 +7,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
+import de.uniol.inf.is.odysseus.securitypunctuation.SecurityPunctuation;
 
 /**
  * @author Jan Sören Schwarz
  * @param <SecurityPunctuation>
  *
  */
-public class SecurityPunctuationHandler extends AbstractDataHandler<SecurityPunctuation> {
+public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPunctuation> {
 
 	protected IDataHandler<?>[] securityPunctuationHandlers = null;
 	static protected List<String> types = new ArrayList<String>();
@@ -46,23 +50,23 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<SecurityPunc
 	}
 	
 	
-	public SecurityPunctuation readData(ByteBuffer buffer) {
+	public ISecurityPunctuation readData(ByteBuffer buffer) {
 		Object[] objects = new Object[securityPunctuationHandlers.length];
 		for(int i=0; i < securityPunctuationHandlers.length; i++) {
 			objects[i] = securityPunctuationHandlers[i].readData(buffer);
 		}
 		
-		SecurityPunctuation sp = new SecurityPunctuation(objects);
+		ISecurityPunctuation sp = new SecurityPunctuation(objects);
 		return sp;
 	}
 
 	@Override
-	public SecurityPunctuation readData(ObjectInputStream inputStream) throws IOException {
+	public ISecurityPunctuation readData(ObjectInputStream inputStream) throws IOException {
 		return null;
 	}
 
 	@Override
-	public SecurityPunctuation readData(String string) {
+	public ISecurityPunctuation readData(String string) {
 		return null;
 	}
 
@@ -76,7 +80,7 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<SecurityPunc
 	}
 
 	@Override
-	protected IDataHandler<SecurityPunctuation> getInstance(SDFSchema schema) {
+	protected IDataHandler<ISecurityPunctuation> getInstance(SDFSchema schema) {
 		return new SecurityPunctuationHandler(schema);
 	}
 

@@ -20,15 +20,12 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.SecurityPunctuationHandler;
 
 public class ByteBufferHandler<T> implements
 		IObjectHandler<T> {
 
 	ByteBuffer byteBuffer = null;
 	private IDataHandler<?> dataHandler;
-	
-	private SecurityPunctuationHandler securityPunctuationHandler = new SecurityPunctuationHandler();
 	
 	public ByteBufferHandler() {
 	}
@@ -66,17 +63,6 @@ public class ByteBufferHandler<T> implements
 		synchronized(byteBuffer){		
 			byteBuffer.flip();
 			retval = (T)this.dataHandler.readData(byteBuffer);
-			byteBuffer.clear();
-		}
-		return retval;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public synchronized T createSecurityAware() throws IOException, ClassNotFoundException, BufferUnderflowException {
-		T retval = null;
-		synchronized(byteBuffer){
-			byteBuffer.flip();
-			retval = (T)this.securityPunctuationHandler.readData(byteBuffer);
 			byteBuffer.clear();
 		}
 		return retval;

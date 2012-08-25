@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.CSVProtoco
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.MarkerByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SASizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleCSVProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.TextProtocolHandler;
@@ -63,7 +62,6 @@ public class Activator implements BundleActivator {
 		ProtocolHandlerRegistry.register(new TextProtocolHandler());
 		ProtocolHandlerRegistry.register(new SizeByteBufferHandler());
 		ProtocolHandlerRegistry.register(new MarkerByteBufferHandler());
-		ProtocolHandlerRegistry.register(new SASizeByteBufferHandler());
 		
 		
 		TransportHandlerRegistry.register(new TcpSocketHandler());

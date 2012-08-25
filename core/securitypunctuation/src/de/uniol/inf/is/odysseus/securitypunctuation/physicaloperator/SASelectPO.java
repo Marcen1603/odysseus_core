@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.intervalapproach;
+package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,16 +7,16 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.securitypunctuation.SecurityPunctuationCache;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
+import de.uniol.inf.is.odysseus.securitypunctuation.helper.SecurityPunctuationCache;
 
 public class SASelectPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends SelectPO<T> implements IUserManagementListener {
 
@@ -56,7 +56,7 @@ public class SASelectPO<T extends IMetaAttributeContainer<? extends ITimeInterva
 
 	private Boolean evaluate(T object) {
 		Long startPoint = object.getMetadata().getStart().getMainPoint();	
-		SecurityPunctuation sp = null;
+		ISecurityPunctuation sp = null;
 		Boolean checkSendingSP = false;
 		
 		if(!preSPCache.isEmpty() && preSPCache.getMatchingSP(startPoint) != null) {
@@ -99,7 +99,7 @@ public class SASelectPO<T extends IMetaAttributeContainer<? extends ITimeInterva
 	}
 	
 	@Override
-	public void processSecurityPunctuation(SecurityPunctuation sp, int port) {
+	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		preSPCache.add(sp);
 	}
 

@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEventType;
 
 /**
@@ -57,7 +57,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		}
 
 		@Override
-		public void processSecurityPunctuation(SecurityPunctuation sp, int port) {
+		public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 			AbstractPipe.this.delegatedProcessSecurityPunctuation(sp, port);
 		}		
 
@@ -195,7 +195,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		processPunctuation(timestamp, port);
 	}
 
-	private void delegatedProcessSecurityPunctuation(SecurityPunctuation sp, int port) {
+	private void delegatedProcessSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		processSecurityPunctuation(sp, port);
 	}
 
@@ -210,7 +210,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	abstract public void processPunctuation(PointInTime timestamp, int port);
 
 	@Override
-	public void processSecurityPunctuation(SecurityPunctuation sp, int port) {
+	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		this.transferSecurityPunctuation(sp);
 	}
 	

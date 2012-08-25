@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
+package de.uniol.inf.is.odysseus.securitypunctuation.handler;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -7,10 +7,11 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 /**
  * @author Jan Sören Schwarz
@@ -22,7 +23,7 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
-	private ByteBufferHandler<T> objectHandler;
+	private SAByteBufferHandler<T> objectHandler;
 	/**
 	 * Gibt an, ob das gerade übertragene Tupel eine Security Punctuation ist
 	 */
@@ -132,7 +133,7 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 							getTransfer().transfer(objectHandler.create());
 						} else {
 //							System.out.println("SizeByteBuffer - isSP - Buffer: " + buffer);
-							getTransfer().transferSecurityPunctuation((SecurityPunctuation) objectHandler.createSecurityAware());
+							getTransfer().transferSecurityPunctuation((ISecurityPunctuation) objectHandler.createSecurityAware());
 						}
 						size = -1;
 						sizeBuffer.clear();
@@ -162,7 +163,7 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 		instance.setDataHandler(dataHandler);
 		instance.setTransportHandler(transportHandler);
 		instance.setTransfer(transfer);
-		instance.objectHandler = new ByteBufferHandler<T>(dataHandler);
+		instance.objectHandler = new SAByteBufferHandler<T>(dataHandler);
 		instance.setByteOrder(options.get("byteorder"));
 		transportHandler.addListener(instance);
 		return instance;

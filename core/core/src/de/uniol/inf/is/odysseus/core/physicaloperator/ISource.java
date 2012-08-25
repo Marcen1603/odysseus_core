@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.metadata.IHasMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 /**
  * Interface for data sources in a query graph.
@@ -73,9 +73,9 @@ public interface ISource<T> extends IPhysicalOperator,
 	 * @param object
 	 *            the parameter for processNext.
 	 */
-	public void transferSecurityPunctuation(SecurityPunctuation sp, int sourceOutPort);
+	public void transferSecurityPunctuation(ISecurityPunctuation sp, int sourceOutPort);
 
-	public void transferSecurityPunctuation(SecurityPunctuation sp);
+	public void transferSecurityPunctuation(ISecurityPunctuation sp);
 
 	/**
 	 * Close down the connection/do not read any more data

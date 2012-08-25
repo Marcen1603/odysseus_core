@@ -13,14 +13,14 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.interval.transform;
+package de.uniol.inf.is.odysseus.securitypunctuation.rules;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
-import de.uniol.inf.is.odysseus.intervalapproach.SASelectPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SASelectPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -30,7 +30,7 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	public int getPriority() {		
 		return 10;
 	}
-
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) {	

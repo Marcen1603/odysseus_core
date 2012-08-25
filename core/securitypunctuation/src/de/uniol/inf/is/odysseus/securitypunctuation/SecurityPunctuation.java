@@ -1,10 +1,11 @@
-package de.uniol.inf.is.odysseus.core.securitypunctuation;
+package de.uniol.inf.is.odysseus.securitypunctuation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public class SecurityPunctuation extends AbstractSecurityPunctuation {
 

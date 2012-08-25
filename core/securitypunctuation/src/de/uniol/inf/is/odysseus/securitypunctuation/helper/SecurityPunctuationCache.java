@@ -1,18 +1,18 @@
-package de.uniol.inf.is.odysseus.core.server.securitypunctuation;
+package de.uniol.inf.is.odysseus.securitypunctuation.helper;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.core.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
-public class SecurityPunctuationCache extends ArrayList<SecurityPunctuation> {
+public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 	
 	private static final long serialVersionUID = 4167234327602968536L;
 
-	public SecurityPunctuation getMatchingSP(Integer ts) {
+	public ISecurityPunctuation getMatchingSP(Integer ts) {
 		return getMatchingSP(Long.valueOf(ts));
 	}
 	
-	public SecurityPunctuation getMatchingSP(Long ts) {
+	public ISecurityPunctuation getMatchingSP(Long ts) {
 		//keine SP vorhanden die älter als das aktuelle Tupel ist... Exception???
 		if(!this.isEmpty()) {
 			if(((Long)this.get(0).getAttribute("ts")) > ts) {
