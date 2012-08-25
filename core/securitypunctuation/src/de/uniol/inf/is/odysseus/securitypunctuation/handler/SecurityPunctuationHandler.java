@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
-import de.uniol.inf.is.odysseus.securitypunctuation.SecurityPunctuation;
+import de.uniol.inf.is.odysseus.securitypunctuation.sp.SecurityPunctuation;
 
 /**
  * @author Jan Sören Schwarz

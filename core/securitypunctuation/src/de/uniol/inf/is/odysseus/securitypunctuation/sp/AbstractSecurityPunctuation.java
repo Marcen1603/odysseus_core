@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.securitypunctuation;
+package de.uniol.inf.is.odysseus.securitypunctuation.sp;
 
 import java.io.Serializable;
 import java.util.HashMap;

@@ -8,11 +8,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.securitypunctuation.helper.SecurityEvaluator;
+import de.uniol.inf.is.odysseus.securitypunctuation.helper.PreCacheSecurityEvaluator;
 
 public class SARelationalProjectPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
-	private SecurityEvaluator<T> securityEvaluator = new SecurityEvaluator<T>((AbstractPipe<T, T>) this, true);
+	private PreCacheSecurityEvaluator<T> securityEvaluator = new PreCacheSecurityEvaluator<T>((AbstractPipe<T, T>) this);
 	private int[] restrictList;
 
 	public SARelationalProjectPO(int[] restrictList) {
@@ -34,6 +34,7 @@ public class SARelationalProjectPO<T extends IMetaAttributeContainer<? extends I
 	@Override
 	protected void process_next(T object, int port) {
 		try {
+			@SuppressWarnings("unchecked")
 			T out = (T) ((Tuple<IMetaAttribute>) object).restrict(this.restrictList, false);
 //			logger.debug(this+" transferNext() "+object);			
 			transfer(out);
