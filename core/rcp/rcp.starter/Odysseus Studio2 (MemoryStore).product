@@ -80,6 +80,7 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.datadictionary.mem.feature"/>
       <feature id="de.uniol.inf.is.odysseus.usermanagement.mem.feature"/>
       <feature id="org.eclipse.gef" version="3.7.2.v20110927-2020-777D381B4Bz0755B465D34242"/>
+      <feature id="de.uniol.inf.is.odysseus.securitypunctuation.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
