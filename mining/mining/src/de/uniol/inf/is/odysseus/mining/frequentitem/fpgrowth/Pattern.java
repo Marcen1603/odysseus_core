@@ -20,14 +20,15 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 /**
  * @author Dennis Geesen
  * 
  */
-public class Pattern<M extends IMetaAttribute> implements IMetaAttributeContainer<M> {
+public class Pattern<M extends ITimeInterval> implements IMetaAttributeContainer<M> {
 
 	private static final long serialVersionUID = -2474068801651074450L;
 
@@ -243,6 +244,19 @@ public class Pattern<M extends IMetaAttribute> implements IMetaAttributeContaine
 		}else{
 			return false;
 		}		
+	}
+
+	/**
+	 * @return
+	 */
+	public PointInTime getMinTime() {
+		PointInTime min = PointInTime.getInfinityTime();
+		for(Tuple<M> t : this.pattern){
+			if(min.after(t.getMetadata().getStart())){
+				min = t.getMetadata().getStart();
+			}
+		}
+		return min;
 	}
 
 }

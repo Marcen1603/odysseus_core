@@ -22,13 +22,13 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 /**
  * @author Dennis Geesen
  *
  */
-public class FPTree<M extends IMetaAttribute> {
+public class FPTree<M extends ITimeInterval> {
 
 	private FPTreeNode<M> root = new FPTreeNode<M>(null);	
 	private TreeMap<Tuple<M>, FPTreeNode<M>> headerTable = new TreeMap<Tuple<M>, FPTreeNode<M>>();

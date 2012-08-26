@@ -34,6 +34,7 @@ public class RuleProvider implements ITransformRuleProvider{
 		rules.add(new TClusteringAORule());		
 		rules.add(new TFrequentItemsetAORule());
 		rules.add(new TRuleGenerationAORule());
+		rules.add(new TStatCounterAORule());
 		return rules;
 	}
 

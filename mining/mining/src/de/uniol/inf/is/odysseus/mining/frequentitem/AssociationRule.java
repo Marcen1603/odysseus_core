@@ -15,14 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.mining.frequentitem;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Pattern;
 
 /**
  * @author Dennis Geesen
  *
  */
-public class AssociationRule<M extends IMetaAttribute> {
+public class AssociationRule<M extends ITimeInterval> {
 
 	private Pattern<M> premise;
 	private Pattern<M> consequence;	

@@ -100,7 +100,7 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	/**
 	 * @param start
 	 */
-	private void processData(PointInTime start) {
+	private synchronized void processData(PointInTime start) {
 		counter = 0;
 		if (this.sweepArea.getMaxTs() != null && start.after(this.sweepArea.getMaxTs())) {
 
@@ -157,7 +157,8 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 					// System.out.println("OUT: \t" + premise + " => " +
 					// consequence + "(conf=" + conf + ")");
 					Tuple<M> newtuple = new Tuple<M>(2, false);
-					newtuple.setMetadata(frequentitemset.getMetadata());
+					newtuple.setMetadata((M) frequentitemset.getMetadata().clone());
+					newtuple.getMetadata().setStart(frequentitemset.getMinTime());
 					newtuple.getMetadata().setEnd(start);
 					newtuple.setAttribute(0, counter);
 					AssociationRule<M> rule = new AssociationRule<M>(premise, consequence, conf);

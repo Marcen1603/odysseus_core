@@ -39,6 +39,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 	private int itemsetposition;
 	private int supportposition;
 	private double confidence;
+
 	
 	public RuleGenerationAO() {
 		
@@ -49,6 +50,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 		this.confidence = old.confidence;
 		this.supportposition = old.supportposition;
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#clone()
