@@ -38,10 +38,8 @@ Unless required by applicable law or agreed to in writing, software
       <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
       <import plugin="de.uniol.inf.is.odysseus.transform"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="de.uniol.inf.is.odysseus.spatial" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views"/>
       <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
       <import feature="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
       <import plugin="de.uniol.inf.is.odysseus.database.spatial"/>
