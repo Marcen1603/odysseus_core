@@ -12,6 +12,11 @@ public abstract class AbstractLayer implements ILayer {
 		return name;
 	}
 
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	public String getSrid() {
 		return srid;
 	}

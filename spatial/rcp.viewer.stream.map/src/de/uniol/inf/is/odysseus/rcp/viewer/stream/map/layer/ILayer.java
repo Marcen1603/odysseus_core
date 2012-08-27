@@ -32,6 +32,7 @@ public interface ILayer {
 	public String getName();
 	public String getComplexName();
 	public String getQualifiedName();
+	void setName(String name);
 	
 //	public BoundingBox getBoundingBox();
 //	public void setBoundingBox(BoundingBox boundingBox);

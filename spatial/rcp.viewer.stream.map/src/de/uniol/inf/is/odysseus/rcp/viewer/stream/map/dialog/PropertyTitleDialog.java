@@ -135,20 +135,22 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 			public void handleEvent(Event e) {
 				Control[] children = radioTypeSelection.getChildren();
 				if (((Button) e.widget).getText().endsWith("Raster")) {
-					configContainer.getChildren()[0].dispose();
-//					configContainer.getChildren()[0].redraw();
-					getRasterConfiguration(configContainer).setVisible(true);
-					configContainer.redraw();
-					main.layout(true);
-					raster = true;
+					if(!raster){
+						configContainer.getChildren()[0].dispose();
+						getRasterConfiguration(configContainer).setVisible(true);
+						configContainer.redraw();
+						main.layout(true);
+						raster = true;	
+					}
 				}
 				if (((Button) e.widget).getText().endsWith("Vector")) {
-					configContainer.getChildren()[0].dispose();
-//					configContainer.getChildren()[0].redraw();
-					getVectorConfiguration(configContainer).setVisible(true);
-					configContainer.redraw();
-					main.layout(true);
-					raster = false;
+					if(raster){
+						configContainer.getChildren()[0].dispose();
+						getVectorConfiguration(configContainer).setVisible(true);
+						configContainer.redraw();
+						main.layout(true);
+						raster = false;
+					}
 				}
 
 				for (Control child : children) {

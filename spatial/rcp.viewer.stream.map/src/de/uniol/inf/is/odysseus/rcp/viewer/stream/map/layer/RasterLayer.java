@@ -51,7 +51,7 @@ public class RasterLayer extends AbstractLayer {
 		this.name = name;
 		
 		tileServer = new TileServer("http://tile.openstreetmap.org/", 18, 0, manager);
-		this.name = "Raster Layer( " + tileServer.getURL() + " )";
+		//this.name = "Raster Layer( " + tileServer.getURL() + " )";
 
 		LOG.info("Add new RasterLayer: " + getName());
 	}
