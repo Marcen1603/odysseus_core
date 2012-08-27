@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.spatial.feature"
-      label="Spatial Feature"
+      id="de.uniol.inf.is.odysseus.spatial.client.feature"
+      label="Spatial Client Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
@@ -30,45 +30,24 @@ Unless required by applicable law or agreed to in writing, software
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.spatial.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.spatial.feature"
+         version="0.0.0"/>
+
    <requires>
-      <import plugin="org.osgeo.proj4j" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="com.vividsolutions.jts" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
-      <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
-      <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
-      <import plugin="de.uniol.inf.is.odysseus.transform"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="de.uniol.inf.is.odysseus.spatial" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.rcp.viewer" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views"/>
-      <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
-      <import feature="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
-      <import plugin="de.uniol.inf.is.odysseus.database.spatial"/>
    </requires>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.spatial"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.spatial.grid"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.osgeo.proj4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="com.vividsolutions.jts"
+         id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map"
          download-size="0"
          install-size="0"
          version="0.0.0"
