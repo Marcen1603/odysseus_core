@@ -28,5 +28,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
 Export-Package: de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
-Service-Component: OSGI-INF/SAByteBufferHandler.xml, OSGI-INF/SARuleProvider.xml
+Service-Component: OSGI-INF/SAByteBufferHandler.xml, OSGI-INF/SARuleProvider.xml, OSGI-INF/TransformRuleService.xml
 
