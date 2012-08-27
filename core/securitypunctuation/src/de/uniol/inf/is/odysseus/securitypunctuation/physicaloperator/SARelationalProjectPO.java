@@ -5,14 +5,15 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.securitypunctuation.helper.PreCacheSecurityEvaluator;
 
 public class SARelationalProjectPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
-	private PreCacheSecurityEvaluator<T> securityEvaluator = new PreCacheSecurityEvaluator<T>((AbstractPipe<T, T>) this);
 	private int[] restrictList;
 
 	public SARelationalProjectPO(int[] restrictList) {
@@ -31,12 +32,11 @@ public class SARelationalProjectPO<T extends IMetaAttributeContainer<? extends I
 		return OutputMode.MODIFIED_INPUT;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
 		try {
-			@SuppressWarnings("unchecked")
 			T out = (T) ((Tuple<IMetaAttribute>) object).restrict(this.restrictList, false);
-//			logger.debug(this+" transferNext() "+object);			
 			transfer(out);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -76,15 +76,47 @@ public class SARelationalProjectPO<T extends IMetaAttributeContainer<? extends I
 	}
 	
 	@Override
-	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {		
-		securityEvaluator.addToCache(sp);
-		this.transferSecurityPunctuation(sp);
+	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
+		if(projectSPEvaluate(sp)) {
+			System.out.println("send SP");
+			this.transferSecurityPunctuation(sp);
+		} else {
+			System.out.println("send NO SP");
+		}
 	}
 	
-	public Boolean projectEvaluate(Tuple<IMetaAttribute> object) {
-//		ISecurityPunctuation sp = securityEvaluator.getFromCache(((IMetaAttributeContainer<? extends ITimeInterval>)object.getMetadata()).getMetadata().getStart().getMainPoint());
-//		String spAttributes = sp.getStringAttribute("ddpName");
-//		SDFSchema schema = this.getOutputSchema();
+	public Boolean projectSPEvaluate(ISecurityPunctuation sp) {
+		String[] spAttributes = sp.getStringArrayAttribute("ddpName");
+		SDFSchema tupleSchema = null;		
+		
+		//wirklich jedes mal notwendig??? --- 4 For-Schleifen :-/
+		
+		for(PhysicalSubscription<ISource<? extends T>> subscribedTo:this.getSubscribedToSource()) {
+			tupleSchema = subscribedTo.getSchema();
+
+			int[] negativeRestrictList = new int[tupleSchema.size() - this.restrictList.length];
+			int counter = 0;
+			for(int i = 0; i < tupleSchema.size(); i++) {
+				for(int index:restrictList) {
+					if(index != i) {
+						negativeRestrictList[counter++] = i;
+					}
+				} 
+			}
+			
+			for(String spAttribute:spAttributes) {
+				Boolean match = false;
+				for(int index:negativeRestrictList) {
+					if(tupleSchema.get(index).getAttributeName().equals(spAttribute)) {
+						match = true;
+					}
+				} 				
+				if(!match) {
+					// Bedeutet, dass SP nicht nur "restricted" Attribute beeinflusst und daher gesendet werden muss.
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 }

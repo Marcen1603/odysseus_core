@@ -29,6 +29,10 @@ public abstract class AbstractSecurityPunctuation implements Serializable, ISecu
 		return (String) attributes.get(key);
 	}
 	
+	public String[] getStringArrayAttribute(String key) {
+		return (String[]) attributes.get(key);
+	}
+	
 //	public RelationalPredicate getPredicateAttribute(String key) {
 //		return (RelationalPredicate) attributes.get(key);
 //	}

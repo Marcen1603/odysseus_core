@@ -59,10 +59,10 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 
 	public Boolean evaluateRoles(List<String> userRoles) {
-		if(this.getAttribute("srpRole").equals("")) {
+		if(this.getStringArrayAttribute("srpRole").equals("")) {
 			return true;
 		}
-		for(String role:((String[])this.getAttribute("srpRole"))) {
+		for(String role:(this.getStringArrayAttribute("srpRole"))) {
 			if(userRoles.contains(role)) {
 				return true;
 			}
@@ -81,17 +81,17 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	public Boolean evaluateAttributes(Tuple<?> tuple, SDFSchema schema) {
 		if(!schema.equals(this.schema) || evaluateAttributesCache.isEmpty()) {
 			evaluateAttributesCache.clear();
-			if(this.getAttribute("ddpName") == null) {
+			if(this.getStringArrayAttribute("ddpName") == null) {
 				return false;
 			}
-			if(((String[])this.getAttribute("ddpName")).length <= 1 && ((String[])this.getAttribute("ddpName"))[0].equals("")) {
+			if((this.getStringArrayAttribute("ddpName")).length <= 1 && (this.getStringArrayAttribute("ddpName"))[0].equals("")) {
 				return true;
 			}
 			
 			for(int i = 0; i < schema.size(); i++) {
 				Boolean setToNull = true;
 				String schemaAttribute = schema.getAttribute(i).getAttributeName();
-				for(String ddpName:(String[])this.getAttribute("ddpName")) {
+				for(String ddpName:this.getStringArrayAttribute("ddpName")) {
 					if(schemaAttribute.equals(ddpName)) {
 						setToNull = false;
 						break;
@@ -116,10 +116,10 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	
 	public Boolean evaluateStreamName(SDFSchema schema) {
 		//Was passiert hier bei Join???
-		if(((String[])this.getAttribute("ddpStream"))[0].equals("")) {
+		if((this.getStringArrayAttribute("ddpStream"))[0].equals("")) {
 			return true;
 		}
-		for(String stream:(String[])this.getAttribute("ddpStream")) {
+		for(String stream:this.getStringArrayAttribute("ddpStream")) {
 			if(schema.getURI().equals(stream)) {
 				return true;
 			}
