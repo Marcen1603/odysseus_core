@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SASelectPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -35,11 +34,6 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	@Override
 	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) {	
 		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
-		if(transformConfig.getOption("isSecurityAware") != null) {		
-			if(transformConfig.getOption("isSecurityAware")) {
-				selectPO = new SASelectPO(selectAO.getPredicate());
-			}
-		} 
 		if (selectAO.getHeartbeatRate() > 0){
 			selectPO.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(
 					selectAO.getHeartbeatRate()));
