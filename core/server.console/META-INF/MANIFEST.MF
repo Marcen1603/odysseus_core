@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Server Console
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.core.server.console
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.core.server.console.Activator
+Import-Package: de.uniol.inf.is.odysseus.script.parser,
+ org.eclipse.osgi.framework.console;version="1.1.0",
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.prefs;version="1.1.1",
+ org.slf4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
