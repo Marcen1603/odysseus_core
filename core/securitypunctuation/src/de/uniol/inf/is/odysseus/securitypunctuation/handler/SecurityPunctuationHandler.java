@@ -29,7 +29,7 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPun
 		types.add("SecurityPunctuation");
 	}
 
-//	private SDFSchema schema;
+	protected SDFSchema schema;
 
 	/**
 	 * Create a new Security Punctuation Data Handler
@@ -46,7 +46,7 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPun
 	 */
 	private SecurityPunctuationHandler(SDFSchema schema) {
 		createSecurityPunctuationHandlers();
-//		this.schema = schema;
+		this.schema = schema;
 	}
 	
 	
@@ -56,7 +56,7 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPun
 			objects[i] = securityPunctuationHandlers[i].readData(buffer);
 		}
 		
-		ISecurityPunctuation sp = new SecurityPunctuation(objects);
+		ISecurityPunctuation sp = new SecurityPunctuation(objects, schema);
 		return sp;
 	}
 
@@ -90,7 +90,7 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPun
 	}
 	
 	private void createSecurityPunctuationHandlers() {
-		SDFSchema securityPunctuationSchema = new SDFSchema("securityPunctuation", 
+		schema = new SDFSchema("securityPunctuation", 
 				new SDFAttribute("SP", "stream", new SDFDatatype("String")),
 				new SDFAttribute("SP", "starttuple", new SDFDatatype("Long")),
 				new SDFAttribute("SP", "endtuple", new SDFDatatype("Long")),
@@ -99,12 +99,11 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPun
 				new SDFAttribute("SP", "sign", new SDFDatatype("Integer")),
 				new SDFAttribute("SP", "immutable", new SDFDatatype("Integer")),
 				new SDFAttribute("SP", "ts", new SDFDatatype("Long")));
-		this.securityPunctuationHandlers = new IDataHandler<?>[securityPunctuationSchema.size()];
+		this.securityPunctuationHandlers = new IDataHandler<?>[schema.size()];
 		int i = 0;
-		for (SDFAttribute attribute : securityPunctuationSchema) {
+		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
 			securityPunctuationHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", attribute));
 		}
 	}
-
 }

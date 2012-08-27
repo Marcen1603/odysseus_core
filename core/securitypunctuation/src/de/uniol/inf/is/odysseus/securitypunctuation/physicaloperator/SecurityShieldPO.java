@@ -1,62 +1,35 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
-import de.uniol.inf.is.odysseus.securitypunctuation.helper.SecurityPunctuationCache;
+import de.uniol.inf.is.odysseus.securitypunctuation.helper.StandardSecurityEvaluator;
 
 /**
  * @author Jan Sören Schwarz
  */
-public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractPipe<T, T> implements IUserManagementListener {
+public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
+	private StandardSecurityEvaluator<T> evaluator = new StandardSecurityEvaluator<T>((AbstractPipe<T, T>) this);
+	
 	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<T>();
-	
-	private SecurityPunctuationCache spCache = new SecurityPunctuationCache();
-	
-	private Boolean rolesChanged = true;
-	private List<String> userRoles = new ArrayList<String>();
-	
-	@Override
-	public void process_open() {
-		UserManagement.getUsermanagement().addUserManagementListener(this);
-	}
-	
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.INPUT;
-	}
 
 	@Override
 	protected void process_next(T object, int port) {
-		//Funktioniert das?
-		if (evaluate(object)) {
+		if(evaluator.evaluate(object, this.getOwner(), this.getOutputSchema())) {
 			transfer(object);
 		} else {			
-//			 Send filtered data to output port 1
 			transfer(object,1);
-			//Funktioniert das???
 			heartbeatGenerationStrategy.generateHeartbeat(object, this);
 		}
-		spCache.cleanCache(object.getMetadata().getStart().getMainPoint());
 	}	
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		
+	public void processPunctuation(PointInTime timestamp, int port) {		
 	}
 
 	@Override
@@ -66,42 +39,13 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
-		spCache.add(sp);
+		evaluator.addToCache(sp);
+//		evaluator.createPredicates(sp, this.getOwner(), this.getOutputSchema());
 		this.transferSecurityPunctuation(sp);
 	}
-
-	private Boolean evaluate(T object) {
-		if(!spCache.isEmpty() && object instanceof Tuple<?>) {			
-			//schöner möglich???
-			Tuple<?> tuple = (Tuple<?>) object;
-			
-			if(rolesChanged) {
-				List<IOperatorOwner> ownerList = this.getOwner();
-				userRoles.clear();
-				for(IOperatorOwner owner:ownerList) {
-					for(IRole role:((IPhysicalQuery)owner).getSession().getUser().getRoles()) {
-						userRoles.add(role.getName());
-					}
-				}
-				rolesChanged = false;
-			}
-			
-			Long startPoint = object.getMetadata().getStart().getMainPoint();			
-			ISecurityPunctuation sp = spCache.getMatchingSP(startPoint);			
-			if(sp != null && sp.evaluateAll(startPoint, userRoles, tuple, this.getOutputSchema())) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
+	
 	@Override
-	public void usersChangedEvent() {
-		rolesChanged = true;
-	}
-
-	@Override
-	public void roleChangedEvent() {
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
 	}
 }

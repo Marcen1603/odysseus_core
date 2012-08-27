@@ -48,9 +48,10 @@ public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? exten
 	
 	public void initEvaluate(T object) {
 		startPoint = object.getMetadata().getStart().getMainPoint();	
-		sp = null;
 		if(!spCache.isEmpty()) {
 			sp = spCache.getMatchingSP(startPoint);	
+		} else {
+			sp = null;
 		}
 	}
 	
@@ -87,10 +88,12 @@ public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? exten
 	public void roleChangedEvent() {
 	}
 	
-//	public IPredicate<?> createPredicate(IAttributeResolver resolver,
-//			String predicate) {
-//		SDFExpression expression = new SDFExpression("", predicate, resolver, MEP.getInstance());
-//		RelationalPredicate pred = new RelationalPredicate(expression);
-//		return pred;
+//	public void createPredicates(String predicateName, ISecurityPunctuation sp, List<IOperatorOwner> ownerList, SDFSchema outputSchema) {
+//		DirectAttributeResolver resolver = new DirectAttributeResolver(outputSchema);
+//		resolver.addAttributes(outputSchema);
+//		resolver.addSource(outputSchema.getURI(), null);
+//		MEP parser = new MEP();
+//		SDFExpression expression = new SDFExpression(null, sp.getStringAttribute("ddpStream"), resolver, parser);
+//		predicates.put(predicateName, new RelationalPredicate(expression));
 //	}
 }

@@ -12,14 +12,15 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	private static final long serialVersionUID = 8534064040716648960L;
 	
 	private ArrayList<Integer> evaluateAttributesCache = new ArrayList<Integer>();
-	private SDFSchema schemaCache;
 	
-	public SecurityPunctuation(Object[] objects) {
+	public SecurityPunctuation(Object[] objects, SDFSchema schema) {
+		this.schema = schema;
 		String[] ddpStream = ((String) objects[0]).split(",");
 		for(int i = 0; i < ddpStream.length; i++) {
 			ddpStream[i] = ddpStream[i].trim();
 		}
 		attributes.put("ddpStream", ddpStream);
+//		attributes.put("ddpStream", createPredicate("ddpStream", (String) objects[0]));
 		attributes.put("ddpStarttuple", (Long) objects[1]);
 		attributes.put("ddpEndtuple", (Long) objects[2]);
 		String[] ddpName = ((String) objects[3]).split(",");
@@ -36,8 +37,9 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		attributes.put("immutable", (Integer) objects[6]);
 		attributes.put("ts", (Long) objects[7]);
 	}
-	
+
 	public SecurityPunctuation(SecurityPunctuation sp) {
+		schema = sp.getSchema();
 		attributes.put("ddpStream", sp.getAttribute("ddpStream"));
 		attributes.put("ddpStarttuple", sp.getAttribute("ddpStarttuple"));
 		attributes.put("ddpEndtuple", sp.getAttribute("ddpEndtuple"));
@@ -47,7 +49,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		attributes.put("immutable", sp.getAttribute("immutable"));
 		attributes.put("ts", sp.getAttribute("ts"));
 	}	
-	
+
 	public Boolean evaluateTS(Long ts) {
 		if((this.getLongAttribute("ddpStarttuple") == -1 && (this.getLongAttribute("ddpEndtuple")) == -1) ||
 				(ts > (this.getLongAttribute("ddpStarttuple"))) && (ts <= this.getLongAttribute("ddpEndtuple")) || this.getLongAttribute("ddpEndtuple") == -1) {
@@ -77,7 +79,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	 * @return
 	 */
 	public Boolean evaluateAttributes(Tuple<?> tuple, SDFSchema schema) {
-		if(!schema.equals(schemaCache) || evaluateAttributesCache.isEmpty()) {
+		if(!schema.equals(this.schema) || evaluateAttributesCache.isEmpty()) {
 			evaluateAttributesCache.clear();
 			if(this.getAttribute("ddpName") == null) {
 				return false;
@@ -103,6 +105,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 					}
 				}
 			}	
+			this.schema = schema;
 			return true;
 		}
 		for(Integer i:evaluateAttributesCache) {
@@ -139,5 +142,9 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	@Override
 	public ISecurityPunctuation union(ISecurityPunctuation sp2) {
 		return null;
+	}
+	
+	private SDFSchema getSchema() {
+		return this.schema;
 	}
 }

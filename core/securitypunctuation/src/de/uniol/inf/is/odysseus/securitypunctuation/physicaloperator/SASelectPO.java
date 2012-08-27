@@ -22,7 +22,7 @@ public class SASelectPO<T extends IMetaAttributeContainer<? extends ITimeInterva
 	@Override
 	protected void process_next(T object, int port) {
 		if (getPredicate().evaluate(object)) {
-			if(evaluator.evaluate(object, this.getOwner(), this.getOutputSchema())) {
+			if(evaluator.preCacheEvaluate(object, this.getOwner(), this.getOutputSchema())) {
 				transfer(object);
 			}
 		}else{
