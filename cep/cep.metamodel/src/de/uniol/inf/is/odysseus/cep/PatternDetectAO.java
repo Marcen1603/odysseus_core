@@ -148,6 +148,9 @@ public class PatternDetectAO<T> extends AbstractLogicalOperator{
 			if (name == null) {
 				SDFSchema schema = s.getSchema();
 				name = schema.getURI();
+				if (name == null){
+					throw new IllegalArgumentException("Input stream must have a type.");
+				}
 				if (!types.contains(name)) {
 					throw new IllegalArgumentException("Type " + name
 							+ " no input for Operator");

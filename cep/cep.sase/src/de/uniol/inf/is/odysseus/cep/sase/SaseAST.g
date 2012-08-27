@@ -365,13 +365,13 @@ whereStrat[StateMachine sm]
   ^(STRICT_CONTIGUITY paramlist)
   
    {
-    sm.setEventSelectionStrategy(EEventSelectionStrategy.PARTITION_CONTIGUITY);
+    sm.setEventSelectionStrategy(EEventSelectionStrategy.STRICT_CONTIGUITY);
    }
   |
   ^(PARTITION_CONTIGUITY paramlist)
   
    {
-    sm.setEventSelectionStrategy(EEventSelectionStrategy.STRICT_CONTIGUITY);
+    sm.setEventSelectionStrategy(EEventSelectionStrategy.PARTITION_CONTIGUITY);
    }
   ;
 

@@ -1,4 +1,4 @@
-// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-08-21 13:48:19
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-08-27 09:33:24
 
 /********************************************************************************** 
   * Copyright 2011 The Odysseus Team
@@ -931,7 +931,7 @@ public class SaseAST extends TreeParser {
 
 
 
-                        sm.setEventSelectionStrategy(EEventSelectionStrategy.PARTITION_CONTIGUITY);
+                        sm.setEventSelectionStrategy(EEventSelectionStrategy.STRICT_CONTIGUITY);
                        
 
                     }
@@ -952,7 +952,7 @@ public class SaseAST extends TreeParser {
 
 
 
-                        sm.setEventSelectionStrategy(EEventSelectionStrategy.STRICT_CONTIGUITY);
+                        sm.setEventSelectionStrategy(EEventSelectionStrategy.PARTITION_CONTIGUITY);
                        
 
                     }
