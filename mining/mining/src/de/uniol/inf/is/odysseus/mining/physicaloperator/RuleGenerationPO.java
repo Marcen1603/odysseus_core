@@ -157,7 +157,9 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 					// System.out.println("OUT: \t" + premise + " => " +
 					// consequence + "(conf=" + conf + ")");
 					Tuple<M> newtuple = new Tuple<M>(2, false);
-					newtuple.setMetadata((M) frequentitemset.getMetadata().clone());
+					@SuppressWarnings("unchecked")
+					M metadata = (M) frequentitemset.getMetadata().clone();
+					newtuple.setMetadata((M) metadata);
 					newtuple.getMetadata().setStart(frequentitemset.getMinTime());
 					newtuple.getMetadata().setEnd(start);
 					newtuple.setAttribute(0, counter);

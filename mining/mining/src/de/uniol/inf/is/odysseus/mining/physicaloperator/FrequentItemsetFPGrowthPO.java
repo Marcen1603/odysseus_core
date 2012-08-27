@@ -46,9 +46,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	private int maxTransactions = 25;
 	private int counter = 0;
 	private long lastTime = 0L;
-	private long startTime = 0L;
-	FPTree<M> globalfptree = new FPTree<M>();
-	private boolean useGlobaleTree = false;
+	private long startTime = 0L;	
 
 	private FList<M> flist = new FList<M>();
 
@@ -114,81 +112,62 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			// hole alle elemente, die definitiv bearbeitet werden können, weil
 			// sie echt vor der aktuellen zeit sind
 			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
-			// wir betrachten den zeitraum zwischen der letzten berechnung und
-			// der aktuellen zeit
-			PointInTime start = PointInTime.getZeroTime();
-			PointInTime end = PointInTime.getInfinityTime();
 
-			// die betrachtete zeit ist die maximale startzeit und die minimale
-			// endzeit
-			Transaction<M> transaction = new Transaction<M>();
-			while (qualifies.hasNext()) {
-				Tuple<M> next = qualifies.next();
-				// wir nehmen den maximalen startzeitstempel (alles davor wurde
-				// schon in der vorherigen iteration berechnet!)
-				if (start.before(next.getMetadata().getStart())) {
-					start = next.getMetadata().getStart();
-				}
-				// der endzeitstempel ist der kleinste endzeitstempel
-				if (end.after(next.getMetadata().getEnd())) {
-					end = next.getMetadata().getEnd();
-				}
+			// baue daraus eine transaktion und zähle die vorkommen für die
+			// flist
+			Transaction<M> transaction = new Transaction<M>();			
+			while (qualifies.hasNext()) {				
+				// wir holen eine kopie
+				Tuple<M> next = qualifies.next().clone();
+				// transaction sorgt dafür, dass alle elemente dieselben zeiten haben
 				transaction.addElement(next);
 				this.flist.insertTuple(next);
-
 			}
-			// korrigiere TI, wenn die aktuelle zeit innerhalb des TI ist
-			if(start.afterOrEquals(end)){
-				System.out.println("HILFE!");
-			}
-			end = PointInTime.min(end, currentTime);
-			transaction.setTimeInterval(start, end);
 
+			// wenn wir mehr transactions als benötigt angeschaut haben, dann
+			// entfernen wir zu alte wieder
 			if (this.transactions.size() == this.maxTransactions) {
 				Transaction<M> removed = this.transactions.remove(0);
 				this.flist.remove(removed.getElements());
 			}
 			this.transactions.add(transaction);
-			// unser gesamter zeitraum um das es hier geht,
-			// startet bei dem letzten cut (oder der transaktion)
-			PointInTime totalMin = start;
-			// und endet mit der letzten transaction
-			PointInTime totalMax = end;
 
+			PointInTime totalMin = lastCut;
+			PointInTime totalMax = currentTime;
+			
+			
 			synchronized (this.flist) {
-				int internalminsupport = minsupport;
+				// create a new fp-tree
 				FPTree<M> thetree = new FPTree<M>();
-				if (useGlobaleTree) {
-					thetree = globalfptree;
-					internalminsupport = 1;
-				}
-				List<Pair<Tuple<M>, Integer>> currentfList = this.flist.getSortedList(internalminsupport);
+				// and use the current f-list with minimum support
+				List<Pair<Tuple<M>, Integer>> currentfList = this.flist.getSortedList(minsupport);
 
+ 
+				// do we have at least one frequent item with min-support?
 				if (!currentfList.isEmpty()) {
 
-					if (useGlobaleTree) {
-						List<Tuple<M>> sortedList = transaction.getFBasedList(currentfList);
+					// the validity of the fptree
+					
+							
+					// then - insert all into the tree
+					for (Transaction<M> trans : this.transactions) {
+
+						List<Tuple<M>> sortedList = trans.getFBasedList(currentfList);
 						if (!sortedList.isEmpty()) {
+							// we strech the whole fptree-timeintervall to min and max of all transactions
+//							totalMin = PointInTime.min(totalMin, trans.getMinTime());
+//							totalMax = PointInTime.max(totalMax, trans.getMaxTime());
 							thetree.insertTree(sortedList, thetree.getRoot());
 						}
-						totalMin = PointInTime.min(totalMin, transaction.getMetadata().getStart());
-						totalMax = PointInTime.max(totalMax, transaction.getMetadata().getEnd());
-					} else {
-						for (Transaction<M> trans : this.transactions) {
-
-							List<Tuple<M>> sortedList = trans.getFBasedList(currentfList);
-							if (!sortedList.isEmpty()) {
-								thetree.insertTree(sortedList, thetree.getRoot());
-							}
-							totalMin = PointInTime.min(totalMin, trans.getMetadata().getStart());
-							totalMax = PointInTime.max(totalMax, trans.getMetadata().getEnd());
-						}
+						
 					}
+
 					ArrayList<Pattern<M>> results = fpgrowth(thetree);
 
 					int i = 0;
 					for (Pattern<M> p : results) {
 						Tuple<M> newtuple = new Tuple<M>(3, false);
+						// TODO: use metadatamerge-functions...
 						newtuple.setMetadata(p.getMetadata());
 						newtuple.getMetadata().setStartAndEnd(totalMin, totalMax);
 						newtuple.setAttribute(0, i);

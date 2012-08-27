@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,136 +26,131 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 /**
  * @author Dennis Geesen
- *
+ * 
  */
 public class FPTree<M extends ITimeInterval> {
 
-	private FPTreeNode<M> root = new FPTreeNode<M>(null);	
+	private FPTreeNode<M> root = new FPTreeNode<M>(null);
 	private TreeMap<Tuple<M>, FPTreeNode<M>> headerTable = new TreeMap<Tuple<M>, FPTreeNode<M>>();
 	private TreeMap<Tuple<M>, Integer> headerTableCount = new TreeMap<Tuple<M>, Integer>();
 	private TreeMap<Tuple<M>, FPTreeNode<M>> headerTableLastNode = new TreeMap<Tuple<M>, FPTreeNode<M>>();
-	
-	
-	public synchronized int getCount(Tuple<M> t){
+
+	public synchronized int getCount(Tuple<M> t) {
 		return this.headerTableCount.get(t);
 	}
-	
-	
-	public synchronized List<Tuple<M>> getDescendingHeaderList(){
-		return new ArrayList<Tuple<M>>(this.headerTable.descendingKeySet());		
+
+	public synchronized List<Tuple<M>> getDescendingHeaderList() {
+		return new ArrayList<Tuple<M>>(this.headerTable.descendingKeySet());
 	}
-	
-	public synchronized void addToHeaderTable(FPTreeNode<M> node){
-		if(this.headerTable.get(node.getItem())== null){
-			this.headerTable.put(node.getItem(), node);			
+
+	public synchronized void addToHeaderTable(FPTreeNode<M> node) {
+		if (this.headerTable.get(node.getItem()) == null) {
+			this.headerTable.put(node.getItem(), node);
 			this.headerTableLastNode.put(node.getItem(), node);
-		}else{
-			this.headerTableLastNode.get(node.getItem()).setLink(node);			
+		} else {
+			this.headerTableLastNode.get(node.getItem()).setLink(node);
 			this.headerTableLastNode.put(node.getItem(), node);
 		}
 	}
-	
-	public boolean isEmpty(){
-		if(this.root.getChilds().size()==0){
+
+	public boolean isEmpty() {
+		if (this.root.getChilds().size() == 0) {
 			return true;
 		}
 		return false;
 	}
-	
-	public synchronized void removeWithoutMinSupport(int minsupport){
+
+	public synchronized void removeWithoutMinSupport(int minsupport) {
 		Iterator<Entry<Tuple<M>, Integer>> iter = this.headerTableCount.entrySet().iterator();
-		while(iter.hasNext()){
+		while (iter.hasNext()) {
 			Entry<Tuple<M>, Integer> e = iter.next();
-			if(e.getValue()<minsupport){
-				println("REMOVE: "+e.getKey());
+			if (e.getValue() < minsupport) {				
 				FPTreeNode<M> n = this.headerTable.get(e.getKey());
-				while(n!=null){					
-					removeNode(n);					
-					n = n.getLink();						
-				}				
+				while (n != null) {
+					removeNode(n);
+					n = n.getLink();
+				}
 				this.headerTable.remove(e.getKey());
-				//this.headerTableCount.remove(e.getKey());
+				// this.headerTableCount.remove(e.getKey());
 				iter.remove();
-				this.headerTableLastNode.remove(e.getKey());			
+				this.headerTableLastNode.remove(e.getKey());
 			}
 		}
-		
+
 	}
-	
-	private synchronized void removeNode(FPTreeNode<M> nodeToRemove){
-		if(nodeToRemove==null){
+
+	private synchronized void removeNode(FPTreeNode<M> nodeToRemove) {
+		if (nodeToRemove == null) {
 			return;
 		}
 		nodeToRemove.getParent().getChilds().remove(nodeToRemove);
-		for(FPTreeNode<M> child : nodeToRemove.getChilds()){
+		for (FPTreeNode<M> child : nodeToRemove.getChilds()) {
 			nodeToRemove.getParent().addChild(child);
 			child.setParent(nodeToRemove.getParent());
 		}
 	}
-	
-	
-	public synchronized int getSupport(Pattern<M> pattern){
+
+	public synchronized int getSupport(Pattern<M> pattern) {
 		int support = Integer.MAX_VALUE;
-		FPTreeNode<M> current = getRoot();				
-		for(Tuple<M> t : pattern.getPattern()){
+		FPTreeNode<M> current = getRoot();
+		for (Tuple<M> t : pattern.getPattern()) {
 			boolean found = false;
-			for(FPTreeNode<M> child : current.getChilds()){
-				if(child.getItem().equals(t)){
+			for (FPTreeNode<M> child : current.getChilds()) {
+				if (child.getItem().equals(t)) {
 					current = child;
-					if(support>current.getCount()){
+					if (support > current.getCount()) {
 						support = current.getCount();
 					}
 					found = true;
 					break;
 				}
 			}
-			if(!found){
-				//throw new RuntimeException("looked for pattern: "+pattern+" in tree, but it was not found");
+			if (!found) {
+				// throw new
+				// RuntimeException("looked for pattern: "+pattern+" in tree, but it was not found");
 				return 0;
 			}
 		}
 		return support;
 	}
-	
-	public synchronized List<FPTreeNode<M>> getSinglePrefixPath(){
+
+	public synchronized List<FPTreeNode<M>> getSinglePrefixPath() {
 		List<FPTreeNode<M>> spp = new ArrayList<FPTreeNode<M>>();
 		FPTreeNode<M> branchNode = root;
-		do{		
+		do {
 			spp.add(branchNode);
 			branchNode = branchNode.getChilds().get(0);
-		}while(branchNode.getChilds().size()==1);
+		} while (branchNode.getChilds().size() == 1);
 		return spp;
 	}
-	
-	public synchronized FPTree<M> getMultiPathTree(){
+
+	public synchronized FPTree<M> getMultiPathTree() {
 		FPTree<M> tree = new FPTree<M>();
-		for(FPTreeNode<M> child : this.getSinglePrefixBranchNode().getChilds()){
-			tree.getRoot().addChild(child);			
+		for (FPTreeNode<M> child : this.getSinglePrefixBranchNode().getChilds()) {
+			tree.getRoot().addChild(child);
 			tree.addToHeaderTable(child);
 			tree.increaseHeaderCount(child.getItem(), 1);
 		}
 		return tree;
 	}
-	
-	
-	public synchronized List<Pattern<M>> getPrefixPaths(Tuple<M> tuple){
+
+	public synchronized List<Pattern<M>> getPrefixPaths(Tuple<M> tuple) {
 		List<Pattern<M>> paths = new ArrayList<Pattern<M>>();
 		FPTreeNode<M> node = this.headerTable.get(tuple);
-		while(node!=null){
+		while (node != null) {
 			Pattern<M> p = this.getPatternBottomUp(node);
-			if(!p.isEmpty()){
+			if (!p.isEmpty()) {
 				paths.add(p);
 			}
 			node = node.getLink();
 		}
-		return paths;		
+		return paths;
 	}
-		
-		
+
 	private synchronized Pattern<M> getPatternBottomUp(FPTreeNode<M> node) {
 		int count = node.getCount();
 		Pattern<M> p = new Pattern<M>();
-		while(node != null && node.getItem()!=null){
+		while (node != null && node.getItem() != null) {
 			p.add(node.getItem(), count);
 			node = node.getParent();
 		}
@@ -166,41 +161,43 @@ public class FPTree<M extends ITimeInterval> {
 		return p;
 	}
 
-	public synchronized FPTreeNode<M> getSinglePrefixBranchNode(){
+	public synchronized FPTreeNode<M> getSinglePrefixBranchNode() {
 		FPTreeNode<M> branchNode = root;
-		while(branchNode.getChilds().size()==1){
+		while (branchNode.getChilds().size() == 1) {
 			branchNode = branchNode.getChilds().get(0);
 		}
 		return branchNode;
 	}
-	
-	public boolean hasSingePrefixPath(){
+
+	public boolean hasSingePrefixPath() {
 		return (!getSinglePrefixBranchNode().equals(root));
 	}
-	
+
 	public synchronized void insertTree(List<Tuple<M>> transactionFList) {
 		insertIntoTree(transactionFList, this.root, 1);
 	}
-	
-	public synchronized void insertTree(Pattern<M> p){
-		try{
-		insertIntoTree(p.getPattern(), this.root, p.getSupport());
-		}catch (Exception e) {
+
+	public synchronized void insertTree(Pattern<M> p) {
+		try {
+			insertIntoTree(p.getPattern(), this.root, p.getSupport());
+		} catch (Exception e) {
 			e.printStackTrace();
-			System.err.println("Hallo: "+p);
 		}
 	}
-	
-	public synchronized void insertTree(List<Tuple<M>> transactionFList, FPTreeNode<M> root){		
+
+	public synchronized void insertTree(List<Tuple<M>> transactionFList, FPTreeNode<M> root) {
 		insertIntoTree(transactionFList, root, 1);
 	}
-	
-	private synchronized void insertIntoTree(List<Tuple<M>> transactionFList, FPTreeNode<M> root, int supportCount){
+
+	private synchronized void insertIntoTree(List<Tuple<M>> transactionFList, FPTreeNode<M> root, int supportCount) {
 		Tuple<M> item = transactionFList.get(0);
 		FPTreeNode<M> thechild = null;
 		for (FPTreeNode<M> child : root.getChilds()) {
 			if (child.getItem().equals(item)) {
-				child.addCount(supportCount);				
+				child.addCount(supportCount);
+				
+				// use last item
+				child.setItem(item);
 				thechild = child;
 				break;
 			}
@@ -218,67 +215,67 @@ public class FPTree<M extends ITimeInterval> {
 			insertIntoTree(transactionFList, thechild, supportCount);
 		}
 	}
-	
-	private synchronized void increaseHeaderCount(Tuple<M> item, int count){
-		if(this.headerTableCount.containsKey(item)){
-			int newcount = this.headerTableCount.get(item)+count;
+
+	private synchronized void increaseHeaderCount(Tuple<M> item, int count) {
+		if (this.headerTableCount.containsKey(item)) {
+			int newcount = this.headerTableCount.get(item) + count;
 			this.headerTableCount.put(item, newcount);
-		}else{
+		} else {
 			this.headerTableCount.put(item, count);
 		}
 	}
-	
+
 	/**
 	 * @return the root
 	 */
 	public FPTreeNode<M> getRoot() {
 		return root;
 	}
+
 	/**
-	 * @param root the root to set
+	 * @param root
+	 *            the root to set
 	 */
 	public void setRoot(FPTreeNode<M> root) {
 		this.root = root;
 	}
+
 	/**
 	 * @return the headerTable
 	 */
 	public TreeMap<Tuple<M>, FPTreeNode<M>> getHeaderTable() {
 		return headerTable;
 	}
+
 	/**
-	 * @param headerTable the headerTable to set
+	 * @param headerTable
+	 *            the headerTable to set
 	 */
 	public void setHeaderTable(TreeMap<Tuple<M>, FPTreeNode<M>> headerTable) {
 		this.headerTable = headerTable;
 	}
-	
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString() {	
-		String s = ""; 
+	public String toString() {
+		String s = "";
 		s = this.root.printTree("", s);
-		s = s+"Header Table: \n";
-		for(Entry<Tuple<M>, FPTreeNode<M>> e : this.headerTable.entrySet()){
-			FPTreeNode<M> node = e.getValue();				
-			s = s+e.getKey()+" ("+(this.headerTableCount.get(e.getKey()))+"): "+node;			
-			while(node.getLink()!=null){
-				s = s+" -> "+node.getLink();
+		s = s + "Header Table: \n";
+		for (Entry<Tuple<M>, FPTreeNode<M>> e : this.headerTable.entrySet()) {
+			FPTreeNode<M> node = e.getValue();
+			s = s + e.getKey() + " (" + (this.headerTableCount.get(e.getKey())) + "): " + node;
+			while (node.getLink() != null) {
+				s = s + " -> " + node.getLink();
 				node = node.getLink();
 			}
-			s = s+"\n";
+			s = s + "\n";
 		}
 		return s;
 	}
 	
-	
-	private void println(String s){
-		//System.out.println(s);
-	}
-	
-		
-	
+
 }

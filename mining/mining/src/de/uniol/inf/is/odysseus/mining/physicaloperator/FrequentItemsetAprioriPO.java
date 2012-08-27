@@ -105,7 +105,6 @@ public class FrequentItemsetAprioriPO<M extends ITimeInterval> extends AbstractP
 			}
 			// korrigiere TI, wenn die aktuelle zeit innerhalb des TI ist
 			end = PointInTime.min(end, currentTime);
-			transaction.setTimeInterval(start, end);
 			lastCut = currentTime;
 //			System.out.println("adding");
 //			System.out.println(transaction);
@@ -153,7 +152,8 @@ public class FrequentItemsetAprioriPO<M extends ITimeInterval> extends AbstractP
 				} else {
 					oneItemSet.increaseCount(fis);
 				}
-				fis.setMetadata(trans.getMetadata());				
+				// TODO: set metadata
+				//fis.setMetadata(trans.getMetadata());				
 			}
 		}
 		oneItemSet.purgeFrequentItemWithoutMinimumSupport(minsupport);		
