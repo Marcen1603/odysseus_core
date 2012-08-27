@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -48,6 +49,7 @@ public class ScreenManager {
 	
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private MapMouseListener mouseListener;
+	private TreeViewer treeViewer;
 	
 	public ScreenManager(ScreenTransformation transformation, StreamMapEditor editor) {
 		this.transformation = transformation;
@@ -363,6 +365,15 @@ public class ScreenManager {
 	public void removePropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(propertyName, listener);
+	}
+	
+	public void redraw() {
+		canvas.redraw();
+		treeViewer.refresh(true);
+	}
+	
+	public void setTreeViewer(TreeViewer treeViewer){
+		this.treeViewer = treeViewer;
 	}
 	
 }

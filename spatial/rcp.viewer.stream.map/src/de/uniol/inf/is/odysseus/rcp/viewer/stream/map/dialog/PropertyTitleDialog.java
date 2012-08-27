@@ -38,6 +38,14 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 	private LayerConfiguration layerConfiguration = new LayerConfiguration();
 
+	public LayerConfiguration getLayerConfiguration() {
+		return layerConfiguration;
+	}
+
+	public void setLayerConfiguration(LayerConfiguration layerConfiguration) {
+		this.layerConfiguration = layerConfiguration;
+	}
+
 	public PropertyTitleDialog(Shell parentShell,
 			LinkedList<ILayer> layerOrder, SDFSchema schema) {
 		super(parentShell);

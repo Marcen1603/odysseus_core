@@ -58,6 +58,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 	private StreamMapEditor editor;
 	private TreeViewer treeViewer;
 
+	
 	private static final Logger LOG = LoggerFactory.getLogger(StreamMapEditorOutlinePage.class);
 	
 	public StreamMapEditorOutlinePage(StreamMapEditor editor) {
@@ -77,6 +78,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		input[1] = editor.getLayerOrder();
 		treeViewer.setInput(input);
 		createContextMenu();
+		editor.getScreenManager().setTreeViewer(treeViewer);
 	}
 
 	public void setInput(StreamMapEditor editor) {
@@ -208,13 +210,13 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 			}
 		});
 		
-		mgr.add(new Action("Add Layer"){ 
-			public void run() {
-				editor.getLayerOrder().add(new RasterLayer(editor.getScreenManager(), 0));
-				getTreeViewer().refresh(true);
-				editor.getScreenManager().getCanvas().redraw();
-			}
-		});
+//		mgr.add(new Action("Add Layer"){ 
+//			public void run() {
+//				editor.getLayerOrder().add(new RasterLayer(editor.getScreenManager(), 0));
+//				getTreeViewer().refresh(true);
+//				editor.getScreenManager().getCanvas().redraw();
+//			}
+//		});
 		
 		
 		mgr.add(new Action("Change Server") {

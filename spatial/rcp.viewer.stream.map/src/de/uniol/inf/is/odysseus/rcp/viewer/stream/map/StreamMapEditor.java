@@ -54,6 +54,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyTitleDialog
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
@@ -95,7 +96,6 @@ public class StreamMapEditor implements IStreamEditorType  {
 		transformation = new ScreenTransformation();
 		screenManager = new ScreenManager(transformation, this);
 		setMaxTuplesCount(maxTuples);
-		
 	}
 
 	public StreamMapEditor() {
@@ -160,7 +160,7 @@ public class StreamMapEditor implements IStreamEditorType  {
 		
 		//Create Map Background
 
-		RasterLayer map = new RasterLayer(screenManager, 0);
+		RasterLayer map = new RasterLayer(screenManager, 0, "Raster Basic");
 		layerOrder.addFirst(map);
 		
 		BasicLayer basic = new BasicLayer(screenManager);
@@ -343,7 +343,14 @@ public class StreamMapEditor implements IStreamEditorType  {
 				PropertyTitleDialog dialog = new PropertyTitleDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(),layerOrder, schema	);
 				dialog.create();
 				if (dialog.open() == Window.OK) {
-					dialog.getMessage();
+					LayerConfiguration config = dialog.getLayerConfiguration();
+					if(config.isRaster()){
+						config.getName();
+						RasterLayer newLayer = new RasterLayer(screenManager, 0, config.getName());
+						layerOrder.addLast(newLayer);
+						screenManager.redraw();
+					}
+					
 				} 
 			}
 		});

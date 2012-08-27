@@ -43,11 +43,12 @@ public class RasterLayer extends AbstractLayer {
 	private Canvas canvas = null;
 	private Display display = null;
 
-	public RasterLayer(ScreenManager manager, int style) {
+	public RasterLayer(ScreenManager manager, int style, String name) {
 		this.manager = manager;
 		this.transformation = manager.getTransformation();
 		this.canvas = manager.getCanvas();
 		this.display = canvas.getDisplay();
+		this.name = name;
 		
 		tileServer = new TileServer("http://tile.openstreetmap.org/", 18, 0, manager);
 		this.name = "Raster Layer( " + tileServer.getURL() + " )";
