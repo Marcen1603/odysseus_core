@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator;
 
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -23,7 +24,8 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorAdapterFactory;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorAdapterFactory;
+
 
 /**
  *
@@ -39,7 +41,8 @@ public class ViewerStreamMapPlugIn extends AbstractUIPlugin {
 
 	// The shared instance
 	private static ViewerStreamMapPlugIn plugin;
-
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
@@ -75,6 +78,6 @@ public class ViewerStreamMapPlugIn extends AbstractUIPlugin {
 		IStatus status = new Status(IStatus.ERROR, PLUGIN_ID, -1, "Exception", e);
 		getLog().log(status);
 	}
-
+	
 	
 }

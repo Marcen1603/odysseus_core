@@ -33,8 +33,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
  * @author Kai Pancratz
  * 
  */
-public class StreamMapEditorOutlineTreeContentProvider implements
-		ITreeContentProvider {
+public class StreamMapEditorOutlineTreeContentProvider implements ITreeContentProvider {
 
 	Object[] input;
 

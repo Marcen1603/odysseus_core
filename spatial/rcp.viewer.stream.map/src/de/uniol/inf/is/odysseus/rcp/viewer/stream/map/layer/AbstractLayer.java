@@ -4,23 +4,12 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
 public abstract class AbstractLayer implements ILayer {
 
-	//protected BoundingBox boundingBox;
 	protected String name;
 	protected String srid;
 	
-//	@Override
-//	public BoundingBox getBoundingBox() {
-//		return boundingBox;
-//	}
-//
-//	@Override
-//	public void setBoundingBox(BoundingBox boundingBox) {
-//		this.boundingBox = boundingBox;;
-//	}
-	
 	@Override
 	public String getName() {
-	 return name;
+		return name;
 	}
 
 	public String getSrid() {
@@ -33,6 +22,16 @@ public abstract class AbstractLayer implements ILayer {
 	
 	public Style getStyle() {
 		return null;
+	}
+
+	@Override
+	public String getComplexName() {
+		return name;
+	}
+	
+	@Override
+	public String getQualifiedName() {
+		return name;
 	}
 	
 }

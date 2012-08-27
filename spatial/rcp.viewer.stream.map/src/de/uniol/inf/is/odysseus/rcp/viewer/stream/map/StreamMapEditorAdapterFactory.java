@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline;
+package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOutlinePage;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapLayerTreeContentProvider;
 
 /**
  * @author Stephan Jansen
@@ -32,18 +34,29 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
 public class StreamMapEditorAdapterFactory implements IAdapterFactory {
 
 	@Override
-	public Object getAdapter(Object adaptableObject,
-			@SuppressWarnings("rawtypes") Class adapterType) {
+	public Object getAdapter(Object adaptableObject, @SuppressWarnings("rawtypes") Class adapterType) {
+		
+		
+		if (adapterType.equals(ITreeContentProvider.class)) {
+			if (adaptableObject instanceof StreamEditor) {
+				IStreamEditorInput input = ((StreamEditor) adaptableObject)
+						.getInput();
+				if (input instanceof StreamEditorInput) {
+					IStreamEditorType type = ((StreamEditorInput) input).getEditorType();
+					if (type instanceof StreamMapEditor)
+						return new MapLayerTreeContentProvider( (StreamMapEditor) type);
+				}
+			}
+		}
+		
 		if (adapterType.equals(IContentOutlinePage.class)) {
 			if (adaptableObject instanceof StreamEditor) {
 				IStreamEditorInput input = ((StreamEditor) adaptableObject)
 						.getInput();
 				if (input instanceof StreamEditorInput) {
-					IStreamEditorType type = ((StreamEditorInput) input)
-							.getEditorType();
+					IStreamEditorType type = ((StreamEditorInput) input).getEditorType();
 					if (type instanceof StreamMapEditor)
-						return new StreamMapEditorOutlinePage(
-								(StreamMapEditor) type);
+						return new StreamMapEditorOutlinePage( (StreamMapEditor) type);
 				}
 			}
 		}
@@ -53,6 +66,10 @@ public class StreamMapEditorAdapterFactory implements IAdapterFactory {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Class[] getAdapterList() {
-		return new Class[] { IContentOutlinePage.class };
+
+		
+		
+		
+		return new Class[] { IContentOutlinePage.class, ITreeContentProvider.class };
 	}
 }

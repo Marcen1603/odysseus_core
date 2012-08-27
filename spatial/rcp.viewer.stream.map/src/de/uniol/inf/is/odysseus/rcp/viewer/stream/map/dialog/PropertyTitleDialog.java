@@ -9,10 +9,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -24,72 +20,79 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerConfiguration;
 
 public class PropertyTitleDialog extends TitleAreaDialog {
 
 	private LinkedList<ILayer> layerOrder;
+	private SDFSchema schema;
 
-	public PropertyTitleDialog(Shell parentShell, LinkedList<ILayer> layerOrder) {
+	private Composite configContainer; 
+	private Composite main; 
+	
+	private boolean raster = true; 
+	private Text layerName;
+
+	private LayerConfiguration layerConfiguration = new LayerConfiguration();
+
+	public PropertyTitleDialog(Shell parentShell,
+			LinkedList<ILayer> layerOrder, SDFSchema schema) {
 		super(parentShell);
 		this.layerOrder = layerOrder;
+		this.schema = schema;
 	}
 
 	@Override
 	public void create() {
 		super.create();
-		// Set the title
 		setTitle("Map Layer");
-		// Set the message
 		setMessage("Create or edit a Map Layer.", IMessageProvider.INFORMATION);
 	}
 
-	@Override
-	protected Control createDialogArea(Composite parent) {
-
-		// Main Area
+	private GridLayout getMainLayout() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		layout.horizontalSpacing = GridData.BEGINNING;
 		layout.verticalSpacing = GridData.BEGINNING;
-		parent.setLayout(layout);
+		return layout;
+	}
 
-		// Group Area
-		GridLayout groupLayout = new GridLayout();
-		groupLayout.numColumns = 2;
-		groupLayout.horizontalSpacing = GridData.FILL;
-		groupLayout.verticalSpacing = GridData.FILL;
+	private GridLayout getGroupLayout() {
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.horizontalSpacing = GridData.FILL;
+		layout.verticalSpacing = GridData.FILL;
+		return layout;
+	}
 
-		//GridData gridDataLayout = new GridData(GridData.FILL, GridData.BEGINNING, false, false);
-		//gridDataLayout.heightHint = 30;
-		
+	private GridData getLabelDataLayout() {
 		GridData gridLabelLayout = new GridData();
 		gridLabelLayout.widthHint = 150;
-		
-		final Composite layerConfiguration = new Composite(parent, SWT.NONE);
-		layerConfiguration.setLayout(groupLayout);
-		layerConfiguration.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+		gridLabelLayout.heightHint = 25;
+		return gridLabelLayout;
+	}
 
-		// The text fields will grow with the size of the dialog
+	private GridData getTextDataLayout() {
 		GridData gridData = new GridData();
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.heightHint = 20;
+		return gridData;
+	}
 
-		Label layerNameLabel = new Label(layerConfiguration, SWT.NONE);
-		layerNameLabel.setText("Name:");
-		layerNameLabel.setLayoutData(gridLabelLayout);
-		
-		Text layerName = new Text(layerConfiguration, SWT.BORDER);
-		layerName.setLayoutData(gridData);
+	private GridLayout getRadioSelectionLayout(int colums) {
+		GridLayout layout = new GridLayout();
+		layout.numColumns = colums;
+		layout.horizontalSpacing = GridData.FILL;
+		layout.verticalSpacing = GridData.BEGINNING;
+		// layout.setBackground(new Color(parent.getDisplay(), new RGB(100, 0, 0)));
+		return layout;
+	}
 
-		Label layerTypelabel = new Label(layerConfiguration, SWT.FLAT);
-		layerTypelabel.setText("Type:");
-
-		final Composite radioTypeSelection = new Composite(layerConfiguration,SWT.NONE);
-		radioTypeSelection.setLayout(groupLayout);
-		radioTypeSelection.setLayoutData(new GridData(GridData.FILL,	GridData.BEGINNING, false, false));
-
+	private void separator(Composite parent) {
 		GridData separatorgridData = new GridData();
 		separatorgridData.horizontalAlignment = GridData.FILL;
 		separatorgridData.grabExcessHorizontalSpace = true;
@@ -98,22 +101,48 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(separatorgridData);
-		
-		final Composite vectorLayer = new Composite(parent, SWT.NONE);
-		final Composite rasterLayer = new Composite(parent, SWT.NONE);
-		
+	}
+
+	private Composite getBasicConfiguration(final Composite parent) {
+		Composite layerConfiguration = new Composite(parent, SWT.NONE);
+		layerConfiguration.setLayout(getGroupLayout());
+		layerConfiguration.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+
+		Label layerNameLabel = new Label(layerConfiguration, SWT.NONE);
+		layerNameLabel.setText("Name:");
+		layerNameLabel.setLayoutData(getLabelDataLayout());
+
+		layerName = new Text(layerConfiguration, SWT.BORDER);
+		layerName.setLayoutData(getTextDataLayout());
+
+		Label layerTypelabel = new Label(layerConfiguration, SWT.FLAT);
+		layerTypelabel.setText("Type:");
+
+		final Composite radioTypeSelection = new Composite(layerConfiguration,
+				SWT.NONE);
+		radioTypeSelection.setLayout(getRadioSelectionLayout(2));
+		radioTypeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+
 		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
 				Control[] children = radioTypeSelection.getChildren();
-				if(((Button) e.widget).getText().endsWith("Raster")){
-					vectorLayer.setVisible(false);
-					rasterLayer.setVisible(true);
+				if (((Button) e.widget).getText().endsWith("Raster")) {
+					configContainer.getChildren()[0].dispose();
+//					configContainer.getChildren()[0].redraw();
+					getRasterConfiguration(configContainer).setVisible(true);
+					configContainer.redraw();
+					main.layout(true);
+					raster = true;
 				}
-				if(((Button) e.widget).getText().endsWith("Vector")){
-					vectorLayer.setVisible(true);
-					rasterLayer.setVisible(false);
+				if (((Button) e.widget).getText().endsWith("Vector")) {
+					configContainer.getChildren()[0].dispose();
+//					configContainer.getChildren()[0].redraw();
+					getVectorConfiguration(configContainer).setVisible(true);
+					configContainer.redraw();
+					main.layout(true);
+					raster = false;
 				}
-				
+
 				for (Control child : children) {
 					if (e.widget != child) {
 						((Button) child).setSelection(false);
@@ -136,7 +165,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		layerPlaceLabel.setText("Placement (after):");
 
 		CCombo layerPlace = new CCombo(layerConfiguration, SWT.BORDER);
-		layerPlace.setLayoutData(gridData);
+		layerPlace.setLayoutData(getTextDataLayout());
 
 		for (ILayer layer : layerOrder) {
 			layerPlace.add(layer.getName());
@@ -145,53 +174,42 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 		layerPlace.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				
+
 			};
 		});
 
-		
-		
-		// Inhalt Raster Layer
-		
-		GridLayout rasterLayout = new GridLayout();
-		rasterLayout.numColumns = 2;
-		//rasterLayout.horizontalSpacing = GridData.FILL;
-		rasterLayout.verticalSpacing = GridData.BEGINNING;
-		//rasterLayer.setBackground(new Color(parent.getDisplay(), new RGB(100, 0, 0)));
-		
-		rasterLayer.setLayout(groupLayout);
+		return layerConfiguration;
+	}
+
+	private Composite getRasterConfiguration(Composite parent) {
+		Composite rasterLayer = new Composite(parent, SWT.NONE);
+		rasterLayer.setLayout(getGroupLayout());
 		rasterLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 		rasterLayer.setVisible(true);
 
-		
 		Label serverTypeLabel = new Label(rasterLayer, SWT.NONE);
 		serverTypeLabel.setText("Server Type:");
-		serverTypeLabel.setLayoutData(gridLabelLayout);
+		serverTypeLabel.setLayoutData(getLabelDataLayout());
 
-		GridLayout radioGroupLayout = new GridLayout();
-		radioGroupLayout.numColumns = 3;
-		radioGroupLayout.horizontalSpacing = GridData.FILL;
-		radioGroupLayout.verticalSpacing = GridData.FILL;
-		
-		final Composite serverTypeSelection = new Composite(rasterLayer,SWT.NONE);
-		serverTypeSelection.setLayout(radioGroupLayout);
-		serverTypeSelection.setLayoutData(new GridData(GridData.FILL,	GridData.BEGINNING, false, false));
-		
+		final Composite serverTypeSelection = new Composite(rasterLayer,
+				SWT.NONE);
+		serverTypeSelection.setLayout(getRadioSelectionLayout(3));
+		serverTypeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+
 		Listener serverTypeListner = new Listener() {
-			
 			public void handleEvent(Event e) {
 				Control[] children = serverTypeSelection.getChildren();
-				
-				if(((Button) e.widget).getText().endsWith("WMS")){
-				
+
+				if (((Button) e.widget).getText().endsWith("WMS")) {
+
 				}
-				if(((Button) e.widget).getText().endsWith("Tile")){
-					
+				if (((Button) e.widget).getText().endsWith("Tile")) {
+
 				}
-				if(((Button) e.widget).getText().endsWith("User Defined")){
-					
+				if (((Button) e.widget).getText().endsWith("User Defined")) {
+
 				}
-				
+
 				for (Control child : children) {
 					if (e.widget != child) {
 						((Button) child).setSelection(false);
@@ -199,7 +217,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				}
 				((Button) e.widget).setSelection(true);
 			}
-			
+
 		};
 
 		Button serverTypeButtonWMS = new Button(serverTypeSelection, SWT.RADIO);
@@ -210,33 +228,33 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		serverTypeButtonTile.setText("Tile");
 		serverTypeButtonTile.addListener(SWT.Selection, serverTypeListner);
 		serverTypeButtonTile.setSelection(true);
-		
+
 		Button serverTypeButtonUD = new Button(serverTypeSelection, SWT.RADIO);
 		serverTypeButtonUD.setText("User Defined");
 		serverTypeButtonUD.addListener(SWT.Selection, serverTypeListner);
-		
+
 		Label serverLabel = new Label(rasterLayer, SWT.FLAT);
+		serverLabel.setLayoutData(getLabelDataLayout());
 		serverLabel.setText("Adresse:");
 
 		CCombo server = new CCombo(rasterLayer, SWT.BORDER);
-		server.setLayoutData(gridData);
+		server.setLayoutData(getTextDataLayout());
 
 		server.add("http://tah.openstreetmap.org/Tiles/tile/");
 		server.setText("http://tah.openstreetmap.org/Tiles/tile/");
 
 		server.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				//Check Adresse
 				isValidInput();
 			};
 		});
-		
+
 		Label protocolTypeLabel = new Label(rasterLayer, SWT.NONE);
 		protocolTypeLabel.setText("Protocol Type:");
-		protocolTypeLabel.setLayoutData(gridLabelLayout);
-		
+		protocolTypeLabel.setLayoutData(getLabelDataLayout());
+
 		CCombo serverType = new CCombo(rasterLayer, SWT.BORDER);
-		serverType.setLayoutData(gridData);
+		serverType.setLayoutData(getTextDataLayout());
 
 		serverType.add("RESTFUL Tile Server");
 		serverType.add("WMS 1.0");
@@ -247,113 +265,135 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 		serverType.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				
+
+			};
+		});
+		return rasterLayer;
+	}
+
+	private Composite getVectorConfiguration(Composite parent) {
+		Composite vectorLayer = new Composite(parent, SWT.NONE);
+
+		vectorLayer.setLayout(getGroupLayout());
+		vectorLayer.setLayoutData(new GridData(GridData.FILL,
+				GridData.BEGINNING, false, false));
+		vectorLayer.setVisible(false);
+
+		Label attributesLabel = new Label(vectorLayer, SWT.NONE);
+		attributesLabel.setText("Attribute:");
+		attributesLabel.setLayoutData(getLabelDataLayout());
+
+		CCombo attributeSelect = new CCombo(vectorLayer, SWT.BORDER);
+		attributeSelect.setLayoutData(getTextDataLayout());
+
+		for (SDFAttribute attribute : schema.getAttributes()) {
+			attributeSelect.add(attribute.getAttributeName());
+		}
+
+		attributeSelect.setText(schema.getAttribute(0).getAttributeName());
+
+		attributeSelect.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				isValidInput();
 			};
 		});
 
-//		Button radioTypeButton = new Button(rasterLayer, SWT.RADIO);
-//		radioTypeButton.setText("Worldmap");
-//		radioTypeButton.setSelection(true);
-//		radioTypeButton.addListener(SWT.Selection, listener);
-		
-		
-		
-		GridLayout vectorLayout = new GridLayout();
-		vectorLayout.numColumns = 2;
-		vectorLayout.horizontalSpacing = GridData.FILL;
-		vectorLayout.verticalSpacing = GridData.FILL;
-		
-		vectorLayer.setLayout(groupLayout);
-		vectorLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
-		vectorLayer.setVisible(false);
-		
-		
-		
-		
-		// Abschluss
-		
-		GridLayout freespaceLayout = new GridLayout();
+		return vectorLayer;
+	}
+
+	private Composite getFlexArea(Composite parent) {
+		GridLayout freespaceLayout = getGroupLayout();
 		freespaceLayout.numColumns = 2;
 		freespaceLayout.horizontalSpacing = GridData.FILL;
 		freespaceLayout.verticalSpacing = GridData.FILL;
-		
-		
-		final Composite freespace = new Composite(parent, SWT.NONE);
-		freespace.setLayout(freespaceLayout);
-		freespace.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-		freespace.setVisible(true);
-		
-		
-		Label separator2 = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-		separator2.setLayoutData(separatorgridData);
 
+		final Composite freeSpace = new Composite(parent, SWT.NONE);
+		freeSpace.setLayout(freespaceLayout);
+		freeSpace.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		
+		return freeSpace;
+	}
+
+	@Override
+	protected Control createDialogArea(Composite parent) {
+		parent.setLayout(getMainLayout());
+		main = parent;
+		
+		getBasicConfiguration(parent);
+		
+		separator(parent);
+		configContainer = new Composite(parent, SWT.NONE);
+		configContainer.setLayout(getGroupLayout());
+		configContainer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+		
+		getRasterConfiguration(configContainer);
+		
+		separator(parent);
+		getFlexArea(parent);
+		separator(parent);
+
 		return parent;
 	}
 
-	  @Override
-	  protected void createButtonsForButtonBar(Composite parent) {
-	    GridData gridData = new GridData();
-	    gridData.verticalAlignment = GridData.FILL;
-	    gridData.horizontalSpan = 3;
-	    gridData.grabExcessHorizontalSpace = true;
-	    gridData.grabExcessVerticalSpace = true;
-	    gridData.horizontalAlignment = SWT.RIGHT;
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		GridData gridData = new GridData();
+		gridData.verticalAlignment = GridData.FILL;
+		gridData.horizontalSpan = 3;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.grabExcessVerticalSpace = true;
+		gridData.horizontalAlignment = SWT.RIGHT;
 
-	    parent.setLayoutData(gridData);
-	    // Create Add button
-	    // Own method as we need to overview the SelectionAdapter
-	    createOkButton(parent, OK, "Add", true);
-	    // Add a SelectionListener
+		parent.setLayoutData(gridData);
+		// Create Add button
+		// Own method as we need to overview the SelectionAdapter
+		createOkButton(parent, OK, "Add", true);
+		// Add a SelectionListener
 
-	    // Create Cancel button
-	    Button cancelButton = 
-	        createButton(parent, CANCEL, "Cancel", false);
-	    // Add a SelectionListener
-	    cancelButton.addSelectionListener(new SelectionAdapter() {
-	      public void widgetSelected(SelectionEvent e) {
-	        setReturnCode(CANCEL);
-	        close();
-	      }
-	    });
-	  }
+		// Create Cancel button
+		Button cancelButton = createButton(parent, CANCEL, "Cancel", false);
+		// Add a SelectionListener
+		cancelButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setReturnCode(CANCEL);
+				close();
+			}
+		});
+	}
 
-	  protected Button createOkButton(Composite parent, int id, 
-	      String label,
-	      boolean defaultButton) {
-	    // increment the number of columns in the button bar
-	    ((GridLayout) parent.getLayout()).numColumns++;
-	    Button button = new Button(parent, SWT.PUSH);
-	    button.setText(label);
-	    button.setFont(JFaceResources.getDialogFont());
-	    button.setData(new Integer(id));
-	    button.addSelectionListener(new SelectionAdapter() {
-	      public void widgetSelected(SelectionEvent event) {
-	        if (isValidInput()) {
-	          okPressed();
-	        }
-	      }
-	    });
-	    if (defaultButton) {
-	      Shell shell = parent.getShell();
-	      if (shell != null) {
-	        shell.setDefaultButton(button);
-	      }
-	    }
-	    setButtonLayoutData(button);
-	    return button;
-	  }
+	protected Button createOkButton(Composite parent, int id, String label,
+			boolean defaultButton) {
+		// increment the number of columns in the button bar
+		((GridLayout) parent.getLayout()).numColumns++;
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText(label);
+		button.setFont(JFaceResources.getDialogFont());
+		button.setData(new Integer(id));
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				if (isValidInput()) {
+					okPressed();
+				}
+			}
+		});
+		if (defaultButton) {
+			Shell shell = parent.getShell();
+			if (shell != null) {
+				shell.setDefaultButton(button);
+			}
+		}
+		setButtonLayoutData(button);
+		return button;
+	}
 
 	private boolean isValidInput() {
 		boolean valid = true;
-		 if (true) {
-			setErrorMessage("Server is not active.");
-		    valid = false;
-		 }
-		// if (lastNameText.getText().length() == 0) {
-		// setErrorMessage("Please maintain the last name");
-		// valid = false;
-		// }
+
+		if (layerName.getText().length() == 0) {
+			setErrorMessage("Please maintain the layer name.");
+			valid = false;
+		}
+
 		return valid;
 	}
 
@@ -362,11 +402,15 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		return true;
 	}
 
-	// Coyy textFields because the UI gets disposed
-	// and the Text Fields are not accessible any more.
 	private void saveInput() {
-		// firstName = firstNameText.getText();
-		// lastName = lastNameText.getText();
+		layerConfiguration.setName(layerName.getText());
+		if(raster){
+			layerConfiguration.setRaster(true);
+			
+		}
+		else{
+			
+		}
 	}
 
 	@Override
@@ -376,8 +420,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 	}
 
 	@Override
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText("Layer Properties");
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		shell.setText("Layer Properties");
 	}
 }

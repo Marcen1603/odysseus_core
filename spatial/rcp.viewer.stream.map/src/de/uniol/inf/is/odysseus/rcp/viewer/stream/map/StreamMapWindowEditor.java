@@ -22,8 +22,13 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
-//import de.uniol.inf.is.odysseus.intervalapproach.*;
+import de.uniol.inf.is.odysseus.intervalapproach.*;
 
 /**
  * @author Stephan Jansen
@@ -34,29 +39,32 @@ public class StreamMapWindowEditor extends StreamMapEditor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StreamMapWindowEditor.class);
 	//private ITimeInterval metadata = null;
+	private ITimeIntervalSweepArea<Tuple<ITimeInterval>> sweepArea;
 	
 	//DefaultTISweepArea sweepArea;
 	
 	public StreamMapWindowEditor() {
-		super(100000);
-		
-		LOG.debug("Window Set to 100.000 Tuple.");
+		super();
+		sweepArea = new DefaultTISweepArea<Tuple<ITimeInterval>>();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void streamElementRecieved(Object element, int port) {
 		if (!(element instanceof Tuple<?>)) {
 			LOG.error("Warning: StreamMap is only for spatial relational tuple!");
 			return;
 		}
-		//LOG.info("Received Element: " + element.toString());
+		Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>)element;
+		sweepArea.insert(tuple);
 		
-		for (Integer key : spatialDataIndex.keySet()) {	
-			spatialDataIndex.get(key).addGeometry((Geometry)((Tuple<?>) element).getAttribute(key));	
-		}
+		
+		
+//		for (Integer key : spatialDataIndex.keySet()) {	
+//			spatialDataIndex.get(key).addGeometry((Geometry)((Tuple<?>) element).getAttribute(key));	
+//		}
 
-
-		tuples.addFirst((Tuple<?>) element);
+//		tuples.addFirst((Tuple<?>) element);
 
 		
 		

@@ -27,10 +27,23 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-      <Generic></Generic>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <Generic></Generic>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+               <view
+            allowMultiple="false"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapLayerView"
+            id="de.uniol.inf.is.odysseus.rcp.views.MapLayerView"
+            name="MapLayer View"
+            restorable="true">
+      </view>
+         
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
    </extension>
 </plugin>

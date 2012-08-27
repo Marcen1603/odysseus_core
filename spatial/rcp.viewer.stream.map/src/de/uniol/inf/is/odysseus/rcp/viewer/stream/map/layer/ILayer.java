@@ -28,7 +28,11 @@ public interface ILayer {
 
 	public Style getStyle();
 	public void draw(GC gc);	
+	
 	public String getName();
+	public String getComplexName();
+	public String getQualifiedName();
+	
 //	public BoundingBox getBoundingBox();
 //	public void setBoundingBox(BoundingBox boundingBox);
 	

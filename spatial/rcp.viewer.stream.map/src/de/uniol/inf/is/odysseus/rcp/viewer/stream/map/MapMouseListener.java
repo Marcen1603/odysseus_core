@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tile;
+package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -10,8 +10,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
 
 public class MapMouseListener implements MouseListener, MouseWheelListener,
 		MouseMoveListener, MouseTrackListener {
@@ -127,12 +125,12 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 	}
 
 	public void mouseScrolled(MouseEvent e) {
-		if (!editor.isRectangleZoom()) {
+//		if (!editor.isRectangleZoom()) {
 			if (e.count > 0)
 				screenManager.zoomIn(new Point(mouseCoords.x, mouseCoords.y));
 			else if (e.count < 0)
 				screenManager.zoomOut(new Point(mouseCoords.x, mouseCoords.y));
-		}
+//		}
 	}
 
 	private void handlePosition(MouseEvent e) {

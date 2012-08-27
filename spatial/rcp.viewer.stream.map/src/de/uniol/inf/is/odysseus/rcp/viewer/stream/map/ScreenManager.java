@@ -31,7 +31,6 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tile.MapMouseListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tile.PointD;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.ProjectionUtil;
 

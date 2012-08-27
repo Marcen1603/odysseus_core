@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
@@ -68,7 +69,7 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  * @author Kai Pancratz
  * 
  */
-public class StreamMapEditor implements IStreamEditorType {
+public class StreamMapEditor implements IStreamEditorType  {
 
 	protected static final Logger LOG = LoggerFactory.getLogger(StreamMapEditor.class);
 
@@ -93,9 +94,12 @@ public class StreamMapEditor implements IStreamEditorType {
 		LOG.debug("Create Stream Map Editor");
 		transformation = new ScreenTransformation();
 		screenManager = new ScreenManager(transformation, this);
-		
 		setMaxTuplesCount(maxTuples);
 		
+	}
+
+	public StreamMapEditor() {
+		this(10);
 	}
 
 	@Override
@@ -336,7 +340,7 @@ public class StreamMapEditor implements IStreamEditorType {
 		addLayer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PropertyTitleDialog dialog = new PropertyTitleDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(),layerOrder);
+				PropertyTitleDialog dialog = new PropertyTitleDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(),layerOrder, schema	);
 				dialog.create();
 				if (dialog.open() == Window.OK) {
 					dialog.getMessage();
