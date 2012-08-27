@@ -327,11 +327,11 @@ public class StreamMapEditor implements IStreamEditorType  {
 		});
 		
 		/* Edit Layer */	
-		ToolItem layerOrder = new ToolItem(toolbar, SWT.PUSH);
-		layerOrder.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("layers_16"));
-		layerOrder.setToolTipText("Add a new Layer.");
+		ToolItem layerOrderButton = new ToolItem(toolbar, SWT.PUSH);
+		layerOrderButton.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("layers_16"));
+		layerOrderButton.setToolTipText("Add a new Layer.");
 		
-		layerOrder.addSelectionListener(new SelectionAdapter() {
+		layerOrderButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 //				PropertyTitleDialog dialog = new PropertyTitleDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(),layerOrder, schema	);
