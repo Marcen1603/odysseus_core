@@ -16,15 +16,12 @@
 package de.uniol.inf.is.odysseus.relational.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SARelationalProjectPO;
 
 public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 
@@ -35,13 +32,6 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 
 	@Override
 	public void execute(ProjectAO projectAO, TransformationConfiguration transformConfig) {		
-		if(transformConfig.getOption("isSecurityAware") != null) {		
-			if(transformConfig.getOption("isSecurityAware")) {
-				SARelationalProjectPO<IMetaAttributeContainer<? extends ITimeInterval>> saProjectPO = new SARelationalProjectPO<IMetaAttributeContainer<? extends ITimeInterval>>(projectAO.determineRestrictList());
-				defaultExecute(projectAO, saProjectPO, transformConfig, true, true);
-				return;
-			} 
-		} 
 		RelationalProjectPO<?> projectPO = new RelationalProjectPO<IMetaAttribute>(projectAO.determineRestrictList());	
 		defaultExecute(projectAO, projectPO, transformConfig, true, true);
 	}
