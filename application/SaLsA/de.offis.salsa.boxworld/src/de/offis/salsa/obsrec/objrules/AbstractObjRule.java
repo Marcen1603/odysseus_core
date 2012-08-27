@@ -11,13 +11,17 @@ import de.offis.salsa.obsrec.TypeDetails;
 
 public abstract class AbstractObjRule implements IObjectRule {
 
-	private static HashMap<Type, AbstractObjRule> objRules = new HashMap<>();	
+	private static HashMap<Type, IObjectRule> objRules = new HashMap<>();	
 	
-	protected void registerObjRule(AbstractObjRule objRule){
+	public static void registerObjRule(IObjectRule objRule){
 		AbstractObjRule.objRules.put(objRule.getType(), objRule);
 	}
 	
-	public static Polygon getPredictedPolygon(List<Sample> segment, Type type){		
+	public static Polygon getPredictedPolygon(List<Sample> segment, Type type){	
+		if(objRules.get(type) == null){
+			return new Polygon();
+		}
+		
 		return objRules.get(type).getPredictedPolygon(segment);
 	}
 	
@@ -25,7 +29,7 @@ public abstract class AbstractObjRule implements IObjectRule {
 	public static TypeDetails getTypeDetails(List<Sample> samplesObject){
 		TypeDetails details = new TypeDetails();
 		
-		for(Entry<Type, AbstractObjRule> objRule : objRules.entrySet()){
+		for(Entry<Type, IObjectRule> objRule : objRules.entrySet()){
 			details.addTypeAffinity(objRule.getValue().getType(), objRule.getValue().getTypeAffinity(samplesObject));
 		}
 		

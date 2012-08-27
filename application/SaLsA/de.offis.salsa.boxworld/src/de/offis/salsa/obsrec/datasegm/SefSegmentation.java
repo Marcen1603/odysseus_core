@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.SensorMeasurement;
+import de.offis.salsa.obsrec.annotations.ScanSegmentation;
 /**
  * Successive Edge Following "SEF" method for segmentation of a laser scan. 
  * SEF works directly on the measured distances, no x/y-coordinates, of a scan. 
@@ -14,6 +15,7 @@ import de.offis.salsa.obsrec.SensorMeasurement;
  * @author Alex
  *
  */
+@ScanSegmentation(name = "SefSegmentation")
 public class SefSegmentation implements ILmsDataSegmenter {
 
 	private Sample last;

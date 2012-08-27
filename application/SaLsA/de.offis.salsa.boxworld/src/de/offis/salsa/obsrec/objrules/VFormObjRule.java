@@ -8,14 +8,13 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.TrackedObject.Type;
+import de.offis.salsa.obsrec.annotations.ObjectRule;
 
+@ObjectRule(objectType = Type.V_FORM, name = "StandardVForm")
 public class VFormObjRule extends AbstractObjRule {
 	
 //	private static final int TOLERANCE = 30;
 
-	public VFormObjRule() {
-		registerObjRule(this);
-	}
 	
 	@Override
 	public Type getType() {

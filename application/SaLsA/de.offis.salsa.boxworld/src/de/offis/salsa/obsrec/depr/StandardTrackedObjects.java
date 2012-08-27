@@ -6,7 +6,6 @@ import java.util.List;
 import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.SensorMeasurement;
 import de.offis.salsa.obsrec.TrackedObject;
-import de.offis.salsa.obsrec.bbox.TrackedObjectsProvider;
 @Deprecated
 public class StandardTrackedObjects implements TrackedObjectsProvider {
 

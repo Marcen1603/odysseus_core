@@ -3,20 +3,20 @@ package de.offis.salsa.obsrec;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.impetus.annovention.ClasspathDiscoverer;
+import com.impetus.annovention.Discoverer;
+import com.impetus.annovention.listener.ClassAnnotationDiscoveryListener;
+
 import de.offis.salsa.lms.model.Sample;
-import de.offis.salsa.obsrec.bbox.TrackedObjectsProvider;
+import de.offis.salsa.obsrec.annotations.ObjectRule;
 import de.offis.salsa.obsrec.datasegm.ILmsDataSegmenter;
 import de.offis.salsa.obsrec.datasegm.SefSegmentation;
-import de.offis.salsa.obsrec.depr.StandardTrackedObjects;
 import de.offis.salsa.obsrec.ls.DebugLaserScanner;
 import de.offis.salsa.obsrec.ls.ReadingLaserScanner;
 import de.offis.salsa.obsrec.ls.SavingLaserScanner;
 import de.offis.salsa.obsrec.ls.SickLaserScanner;
-import de.offis.salsa.obsrec.objrules.EckigObjRule;
-import de.offis.salsa.obsrec.objrules.GeradeObjRule;
-import de.offis.salsa.obsrec.objrules.KonkavObjRule;
-import de.offis.salsa.obsrec.objrules.RundObjRule;
-import de.offis.salsa.obsrec.objrules.VFormObjRule;
+import de.offis.salsa.obsrec.objrules.AbstractObjRule;
+import de.offis.salsa.obsrec.objrules.IObjectRule;
 
 public class Objektwelt {
 //	private List<SensorMeasurement> measurements;
@@ -34,12 +34,38 @@ public class Objektwelt {
 		registerObjRules();
 	}
 	
-	private void registerObjRules(){
-		new KonkavObjRule();
-		new VFormObjRule();
-		new RundObjRule();
-		new GeradeObjRule();
-		new EckigObjRule();
+	private void registerObjectRule(IObjectRule rule){
+		AbstractObjRule.registerObjRule(rule);
+	}
+	
+	private void registerObjRules(){		
+		Discoverer discoverer = new ClasspathDiscoverer();
+        
+        // Add class annotation listener (optional)
+        discoverer.addAnnotationListener(new ClassAnnotationDiscoveryListener() {
+			
+			@Override
+			public String[] supportedAnnotations() {
+				return new String[]{
+						ObjectRule.class.getName()
+						};
+			}
+			
+			@Override
+			public void discovered(String clazz, String annotation) {
+				try {
+					Object objRule = Class.forName(clazz).newInstance();
+					registerObjectRule((IObjectRule) objRule);
+					System.out.println(clazz);
+				} catch (InstantiationException | IllegalAccessException
+						| ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+        
+        // Fire it
+        discoverer.discover();
 	}
 
 	public SickLaserScanner addSickLaserScanner(String host, int port){
