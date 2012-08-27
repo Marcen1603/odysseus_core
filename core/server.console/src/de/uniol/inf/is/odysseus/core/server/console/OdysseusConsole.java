@@ -260,7 +260,6 @@ public class OdysseusConsole implements CommandProvider,
 
 	private String outputputFilename;
 
-
 	public void bindScriptParser(IOdysseusScriptParser parser) {
 		this.scriptParser = parser;
 	}
@@ -273,39 +272,6 @@ public class OdysseusConsole implements CommandProvider,
 		this.executor.addErrorEventListener(this);
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
-		// this.executor.addCompilerListener(this);
-		// try {
-		// System.out.println(executor.getCompiler());
-		// if (executor.getCompiler() != null) {
-		// System.out.println("Rewrite Bound : " +
-		// executor.getCompiler().isRewriteBound());
-		// System.out.println("Transformation Bound :" +
-		// executor.getCompiler().isTransformationBound());
-		// this.originalBuildConfig =
-		// executor.getQueryBuildConfiguration(defaultBuildConfiguration);
-		// }
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// Typically no compiler is loaded here, so the following
-		// code will always break
-
-		// try {
-		// // Default is CQL
-		// for (String p: this.executor.getSupportedQueryParser()){
-		// if ("CQL".equalsIgnoreCase(p)){
-		// parser = p;
-		// }
-		// }
-		// // Only if CQL-Parser isn't bound, set another Parser
-		// if (this.parser == null && executor.getSupportedQueryParser()!=null){
-		// this.parser = this.executor.getSupportedQueryParser().iterator()
-		// .next();
-		// }
-		// } catch (PlanManagementException e) {
-		// System.out.println("Error setting parser.");
-		// e.printStackTrace();
-		// }
 	}
 
 	public void unbindExecutor(IExecutor executor) {
@@ -895,6 +861,25 @@ public class OdysseusConsole implements CommandProvider,
 			resetBuildConfig();
 			this.executor.addQuery(q.toString(), parser(), currentUser,
 					defaultBuildConfiguration);
+		} catch (Exception e) {
+			ci.println(e.getMessage());
+		}
+	}
+
+	public void _login(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		try {
+			if (args.length == 2) {
+				currentUser = UserManagement.getSessionmanagement().login(
+						args[0], args[1].getBytes());
+				if (currentUser != null){
+				ci.println("User "+args[0]+" successfully logged in.");
+				}else{
+					ci.println("Error logging in user "+args[0]);					
+				}
+			} else {
+				ci.println("Must be username and password");
+			}
 		} catch (Exception e) {
 			ci.println(e.getMessage());
 		}

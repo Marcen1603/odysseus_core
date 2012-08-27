@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.console;
 
-import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -18,7 +17,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		bundleContext.registerService(CommandProvider.class.getName(), new OdysseusConsole(), null);
+	//	bundleContext.registerService(CommandProvider.class.getName(), new OdysseusConsole(), null);
 
 	}
 
