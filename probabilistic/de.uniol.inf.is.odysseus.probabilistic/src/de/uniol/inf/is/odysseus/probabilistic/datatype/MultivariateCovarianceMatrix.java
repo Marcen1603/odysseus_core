@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.collection.Pair;
-
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */

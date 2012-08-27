@@ -15,9 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferedFilterAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;

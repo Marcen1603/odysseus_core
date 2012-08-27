@@ -1,9 +1,5 @@
 package de.uniol.inf.is.odysseus.dbenrich.physicaloperator;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -11,17 +7,12 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
-import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ComplexParameterKey;
 import de.uniol.inf.is.odysseus.dbenrich.cache.DBRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ICache;
-import de.uniol.inf.is.odysseus.dbenrich.cache.IRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.SomeCache;
-import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 
 public class DBEnrichPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, Tuple<T>> {
 

@@ -2,9 +2,6 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views;
 
 import java.util.LinkedList;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;

@@ -35,8 +35,6 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGeneratorConfiguration;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 

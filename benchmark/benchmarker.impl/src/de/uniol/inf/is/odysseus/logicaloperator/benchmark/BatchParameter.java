@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.logicaloperator.benchmark;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.USAGE;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.benchmark.BatchParameter.BatchItem;
 

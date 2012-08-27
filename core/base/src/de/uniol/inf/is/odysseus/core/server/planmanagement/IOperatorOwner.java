@@ -20,6 +20,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement;
  * 
  * @author Wolf Bauer
  */
+@Deprecated
 public interface IOperatorOwner {
 	/**
 	 * ID which identifies an owner. This ID should be unique.

@@ -16,12 +16,10 @@
 package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.connection.NioConnectionHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;

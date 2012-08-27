@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.List;
 
-import javax.jws.soap.SOAPBinding.Use;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;

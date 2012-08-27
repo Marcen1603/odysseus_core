@@ -19,13 +19,8 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.intervalapproach.*;

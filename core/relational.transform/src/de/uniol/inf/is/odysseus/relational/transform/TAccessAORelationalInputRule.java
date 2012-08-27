@@ -16,11 +16,9 @@
 package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.io.ObjectInputStream;
-import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.ObjectDataHandler;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
