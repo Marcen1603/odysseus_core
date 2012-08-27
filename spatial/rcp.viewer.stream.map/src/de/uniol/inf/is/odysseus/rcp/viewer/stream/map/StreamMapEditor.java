@@ -326,6 +326,28 @@ public class StreamMapEditor implements IStreamEditorType  {
 			}
 		});
 		
+		/* Edit Layer */	
+		ToolItem layerOrder = new ToolItem(toolbar, SWT.PUSH);
+		layerOrder.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("layers_16"));
+		layerOrder.setToolTipText("Add a new Layer.");
+		
+		layerOrder.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+//				PropertyTitleDialog dialog = new PropertyTitleDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(),layerOrder, schema	);
+//				dialog.create();
+//				if (dialog.open() == Window.OK) {
+//					LayerConfiguration config = dialog.getLayerConfiguration();
+//					if(config.isRaster()){
+//						config.getName();
+//						RasterLayer newLayer = new RasterLayer(screenManager, 0, config.getName());
+//						layerOrder.addLast(newLayer);
+//						screenManager.redraw();
+//					}
+//					
+//				} 
+			}
+		});
 		
 		/* Add Layer */
 		ToolItem addLayer = new ToolItem(toolbar, SWT.PUSH);
@@ -349,6 +371,9 @@ public class StreamMapEditor implements IStreamEditorType  {
 				} 
 			}
 		});
+		
+
+		
 		
 		/* Dummy Buttom */
 //		ToolItem dummyButton2 = new ToolItem(toolbar, SWT.PUSH);
