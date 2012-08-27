@@ -35,11 +35,12 @@ public class SelectAO extends UnaryLogicalOp {
 	private int rate;
 
 	public SelectAO() {
-		super();
+		super();		
 	}
 
 	public SelectAO(SelectAO po) {
 		super(po);
+		this.rate = po.rate;
 	}
 
 	public SelectAO(IPredicate<?> predicate) {
