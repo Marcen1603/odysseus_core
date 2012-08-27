@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
-import de.uniol.inf.is.odysseus.intervalapproach.*;
 
 /**
  * @author Stephan Jansen

@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 
@@ -47,7 +46,7 @@ public class LayerPropertyDialog extends PropertyDialog {
 			Label layerNameLabel = new Label (layerConfiguration, SWT.FLAT);
 			layerNameLabel.setText("Name");	
 		
-			Text layerName = new Text(layerConfiguration, SWT.BORDER);
+			//Text layerName = new Text(layerConfiguration, SWT.BORDER);
 			
 			Label layerTypelabel = new Label (layerConfiguration, SWT.FLAT);
 			layerTypelabel.setText("Type");	

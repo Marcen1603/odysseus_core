@@ -46,9 +46,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.ViewerStreamMapPlugIn;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.LayerPropertyDialog;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyTitleDialog;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerConfiguration;
@@ -283,21 +281,21 @@ public class StreamMapEditor implements IStreamEditorType  {
 //		buttom_16.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("blank_16"));
 		
 		/* Filter button */
-		ToolItem filter = new ToolItem(toolbar, SWT.PUSH);
-		filter.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("filter_16"));
-		filter.setToolTipText("Filer");
-		
-		filter.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				PropertyWindow window = new PropertyWindow(PlatformUI.getWorkbench().getDisplay(), "Filter");				
-				window.show();
-				
-//				if( !window.isCanceled()) {
-//					getParent().layout();
-//				}
-			}
-		});
+//		ToolItem filter = new ToolItem(toolbar, SWT.PUSH);
+//		filter.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("filter_16"));
+//		filter.setToolTipText("Filer");
+//		
+//		filter.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				PropertyWindow window = new PropertyWindow(PlatformUI.getWorkbench().getDisplay(), "Filter");				
+//				window.show();
+//				
+////				if( !window.isCanceled()) {
+////					getParent().layout();
+////				}
+//			}
+//		});
 		
 		/* Change between rectangle and click zoom button */
 		final ToolItem magnifier_rectangle = new ToolItem(toolbar, SWT.PUSH);
@@ -353,24 +351,24 @@ public class StreamMapEditor implements IStreamEditorType  {
 		});
 		
 		/* Dummy Buttom */
-		ToolItem dummyButton2 = new ToolItem(toolbar, SWT.PUSH);
-		dummyButton2.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("dummy_16") );
-		dummyButton2.setToolTipText("Dummy Button");
-		
-		dummyButton2.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				LayerPropertyDialog window = new LayerPropertyDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), layerOrder);
-//				window.create();
-				window.open();
-
-				
-				if( !window.close()) {
-					getParent().layout();
-				}
-				
-			}
-		});
+//		ToolItem dummyButton2 = new ToolItem(toolbar, SWT.PUSH);
+//		dummyButton2.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("dummy_16") );
+//		dummyButton2.setToolTipText("Dummy Button");
+//		
+//		dummyButton2.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				LayerPropertyDialog window = new LayerPropertyDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), layerOrder);
+////				window.create();
+//				window.open();
+//
+//				
+//				if( !window.close()) {
+//					getParent().layout();
+//				}
+//				
+//			}
+//		});
 		
 		
 		
