@@ -33,6 +33,7 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
 import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
@@ -111,7 +112,7 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 		ArrayList<IRule> rules = new ArrayList<IRule>();
 
 		// Strings
-		rules.add(new SingleLineRule("'", "'", strings));
+		rules.add(new MultiLineRule("'", "'", strings));
 
 		// PreParserKeywords
 		WordRule wr = new WordRule(getWordDetector(), Token.UNDEFINED, false);
