@@ -39,16 +39,13 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
     public static final SDFDatatype PROBABILISTIC_CONTINUOUS_DOUBLE              = new SDFProbabilisticDatatype(
                                                                                          "ProbabilisticContinuousDouble");
 
-    public static final SDFDatatype PROBABILISTIC_MULTIVARIATE_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype(
-                                                                                         "ProbabilisticMultivariateContinuousDouble");
 
     public boolean isProbabilistic() {
         return this.isContinuous() || this.isDiscrete();
     }
 
     public boolean isContinuous() {
-        return this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI())
-                || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_MULTIVARIATE_CONTINUOUS_DOUBLE.getURI());
+        return this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI());
     }
 
     public boolean isDiscrete() {

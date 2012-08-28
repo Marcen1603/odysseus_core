@@ -25,9 +25,6 @@ public class ProbabilisticDatatypeProvider {
             ProbabilisticDatatypeProvider.datadictionary.addDatatype(
                     SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI(),
                     SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
-            ProbabilisticDatatypeProvider.datadictionary.addDatatype(
-                    SDFProbabilisticDatatype.PROBABILISTIC_MULTIVARIATE_CONTINUOUS_DOUBLE.getURI(),
-                    SDFProbabilisticDatatype.PROBABILISTIC_MULTIVARIATE_CONTINUOUS_DOUBLE);
         }
         catch (final DataDictionaryException e) {
             e.printStackTrace();
@@ -40,7 +37,6 @@ public class ProbabilisticDatatypeProvider {
             dd.removeDatatype(SDFProbabilisticDatatype.COVARIANCE_MATRIX.getURI());
             dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI());
             dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI());
-            dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_MULTIVARIATE_CONTINUOUS_DOUBLE.getURI());
         }
         catch (final DataDictionaryException e) {
             e.printStackTrace();

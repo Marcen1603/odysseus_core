@@ -1,62 +1,54 @@
 package de.uniol.inf.is.odysseus.probabilistic.datatype;
 
-import java.io.Serializable;
-
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 
-/**
- * @author Christian Kuka <christian.kuka@offis.de>
- */
-public class ProbabilisticContinuousDouble implements Serializable, Cloneable {
-    /**
-	 * 
-	 */
-    private static final long serialVersionUID = 5858308006884394418L;
-    private final byte        covarianceMatrixId;
-    private final int         covarianceMatrixIndex;
-    private final double      mean;
+public class ProbabilisticContinuousDouble {
+    private final Pair<NormalDistribution, Double>[] mixtures;
 
-    public ProbabilisticContinuousDouble(final double mean, final byte covarianceId, final int covarianceIndex) {
-        this.mean = mean;
-        this.covarianceMatrixId = covarianceId;
-        this.covarianceMatrixIndex = covarianceIndex;
+    public ProbabilisticContinuousDouble(final double mean, final byte covarianceId,
+            final int covarianceIndex, final double probability) {
+        this(new NormalDistribution(mean, covarianceId, covarianceIndex), probability);
     }
 
-    public ProbabilisticContinuousDouble(final double mean, final Pair<Byte, Integer> covarianceMatrix) {
-        this.mean = mean;
-        this.covarianceMatrixId = covarianceMatrix.getE1();
-        this.covarianceMatrixIndex = covarianceMatrix.getE2();
+    public ProbabilisticContinuousDouble(final NormalDistribution distribution,
+            final double probability) {
+        this.mixtures = new Pair[] { new Pair<NormalDistribution, Double>(distribution, probability) };
     }
 
-    public ProbabilisticContinuousDouble(final ProbabilisticContinuousDouble probabilisticContinuousDouble) {
-        this.mean = probabilisticContinuousDouble.mean;
-        this.covarianceMatrixId = probabilisticContinuousDouble.covarianceMatrixId;
-        this.covarianceMatrixIndex = probabilisticContinuousDouble.covarianceMatrixIndex;
+    public ProbabilisticContinuousDouble(final Double[] means,
+            final Pair<Byte, Integer>[] covarianceMatrices, final Double[] probabilities) {
+        final int length = Math.min(covarianceMatrices.length, Math.min(means.length, probabilities.length));
+        this.mixtures = new Pair[length];
+        for (int i = 0; i < length; i++) {
+            this.mixtures[i] = new Pair<NormalDistribution, Double>(new NormalDistribution(
+                    means[i], covarianceMatrices[i]), probabilities[i]);
+        }
     }
 
-    public byte getCovarianceMatrixId() {
-        return this.covarianceMatrixId;
+    public ProbabilisticContinuousDouble(final Pair<NormalDistribution, Double>[] mixtures) {
+        this.mixtures = mixtures;
     }
 
-    public int getCovarianceMatrixIndex() {
-        return this.covarianceMatrixIndex;
+    public ProbabilisticContinuousDouble(
+            final ProbabilisticContinuousDouble probabilisticContinuousDouble) {
+        this.mixtures = probabilisticContinuousDouble.mixtures.clone();
     }
 
-    public double getMean() {
-        return this.mean;
-    }
-
-    @Override
-    public ProbabilisticContinuousDouble clone() {
-        return new ProbabilisticContinuousDouble(this);
+    public Pair<NormalDistribution, Double>[] getMixtures() {
+        return this.mixtures;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("𝒩(").append(this.mean).append(",").append(this.covarianceMatrixId).append("(")
-                .append(this.covarianceMatrixIndex).append("))");
+        sb.append("(");
+        for (final Pair<NormalDistribution, Double> mixture : this.getMixtures()) {
+            if (sb.length() > 1) {
+                sb.append(";");
+            }
+            sb.append(mixture.getE1().toString()).append(":").append(mixture.getE2());
+        }
+        sb.append(")");
         return sb.toString();
     }
-
 }
