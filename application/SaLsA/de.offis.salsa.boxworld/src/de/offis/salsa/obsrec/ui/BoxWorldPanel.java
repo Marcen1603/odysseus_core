@@ -23,13 +23,11 @@ import de.offis.salsa.obsrec.ui.paint.TrackedObjectElement;
 @SuppressWarnings("serial")
 public class BoxWorldPanel extends JPanel implements ObjWorldListener {
 
-
 	private MouseDragZoomListener mouseListener = new MouseDragZoomListener(this);
 	private DrawingContext drawCtx = new DrawingContext();
 	
 	private Objectworld objWelt;	
-	private SensorMeasurement measure = null;
-	
+	private SensorMeasurement measure = null;	
 	
 	private List<CanvasElement> samplePoints = new ArrayList<CanvasElement>();
 	private List<CanvasElement> area = new ArrayList<CanvasElement>();

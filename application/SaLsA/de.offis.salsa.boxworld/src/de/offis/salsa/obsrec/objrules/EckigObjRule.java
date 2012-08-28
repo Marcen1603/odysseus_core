@@ -10,7 +10,7 @@ import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.TrackedObject.Type;
 import de.offis.salsa.obsrec.annotations.ObjectRule;
 
-@ObjectRule(objectType = Type.ECKIG, name = "StandardEckig")
+@ObjectRule(typeCategory = Type.ECKIG, name = "StandardEckig")
 public class EckigObjRule extends AbstractObjRule {
 	
 	private static final int TOLERANCE = 30;

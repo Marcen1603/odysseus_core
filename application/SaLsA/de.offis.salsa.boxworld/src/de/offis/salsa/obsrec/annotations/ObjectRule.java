@@ -10,6 +10,6 @@ import de.offis.salsa.obsrec.TrackedObject.Type;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ObjectRule {
-	Type objectType();
+	Type typeCategory();
 	String name();
 }

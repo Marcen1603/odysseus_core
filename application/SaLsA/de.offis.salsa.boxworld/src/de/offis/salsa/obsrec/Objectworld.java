@@ -3,9 +3,9 @@ package de.offis.salsa.obsrec;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
@@ -13,14 +13,12 @@ import com.impetus.annovention.ClasspathDiscoverer;
 import com.impetus.annovention.Discoverer;
 
 import de.offis.salsa.lms.model.Sample;
-import de.offis.salsa.obsrec.TrackedObject.Type;
-import de.offis.salsa.obsrec.datasegm.IScanSegmentation;
 import de.offis.salsa.obsrec.ls.DebugLaserScanner;
 import de.offis.salsa.obsrec.ls.ReadingLaserScanner;
 import de.offis.salsa.obsrec.ls.SavingLaserScanner;
 import de.offis.salsa.obsrec.ls.SickLaserScanner;
-import de.offis.salsa.obsrec.objrules.AbstractObjRule;
 import de.offis.salsa.obsrec.objrules.IObjectRule;
+import de.offis.salsa.obsrec.scansegm.IScanSegmentation;
 
 public class Objectworld {
 	private Logger log = Logger.getLogger("Objektwelt");
@@ -35,7 +33,7 @@ public class Objectworld {
 	private HashMap<String, IScanSegmentation> scanSegmenter = new HashMap<String, IScanSegmentation>();
 	
 //	private HashMap<Type, IObjectRule> objRulesActivated = new HashMap<Type, IObjectRule>();
-	private HashMap<Type, IObjectRule> objRules = new HashMap<Type, IObjectRule>();
+	private HashMap<String, IObjectRule> objRules = new HashMap<String, IObjectRule>();
 	
 	public Objectworld(){
 		log.info("Initiating Objektwelt ...");
@@ -60,13 +58,13 @@ public class Objectworld {
 	}
 	
 	
-	public void registerScanSegmentation(IScanSegmentation segmenter){
-		this.scanSegmenter.put(segmenter.getName(), segmenter);
-		log.info("Registered ScanSegmentation: " + segmenter.getName());
+	public void registerScanSegmentation(String name, IScanSegmentation segmenter){
+		this.scanSegmenter.put(name, segmenter);
+		log.info("Registered ScanSegmentation: " + name);
 	}
 	
-	public void registerObjectRule(IObjectRule rule){
-		this.objRules.put(rule.getType(), rule);
+	public void registerObjectRule(String name, IObjectRule rule){
+		this.objRules.put(name, rule);
 		log.info("Registered ObjectRule: " + rule.toString());
 	}
 	
@@ -140,23 +138,20 @@ public class Objectworld {
 		
 		Rectangle b = p.getBounds();
 		
-		// create typedetails 
-		TypeDetails details = AbstractObjRule.getTypeDetails(samplesObject);
-		for(Entry<Type, IObjectRule> objRule : objRules.entrySet()){
-			details.addTypeAffinity(objRule.getValue().getType(), objRule.getValue().getTypeAffinity(samplesObject));
+		
+		Map<String, Double> affs = new HashMap<String, Double>();
+		Map<String, Polygon> polygons = new HashMap<String, Polygon>();
+		for(Entry<String, IObjectRule> objRule : objRules.entrySet()){
+			// put affinity info
+			affs.put(objRule.getKey(), objRule.getValue().getTypeAffinity(samplesObject));
+
+			// put polygon			
+			Polygon poly = new Polygon();
+			poly = objRule.getValue().getPredictedPolygon(samplesObject);
+			polygons.put(objRule.getKey(), poly);				
 		}
 		
-		// create polygons
-		PolygonContainer polys = new PolygonContainer();
-		for(Type type : details){			
-			if(objRules.get(type) != null){
-				Polygon poly = new Polygon();
-				poly = objRules.get(type).getPredictedPolygon(samplesObject);
-				polys.addPolygon(type, poly);
-			}			
-		}
-		
-		return new TrackedObject(b.x, b.y, b.width, b.height, details, polys);
+		return new TrackedObject(b.x, b.y, b.width, b.height, affs, polygons);
 	}
 	
 	public List<TrackedObject> getTrackedObjects() {

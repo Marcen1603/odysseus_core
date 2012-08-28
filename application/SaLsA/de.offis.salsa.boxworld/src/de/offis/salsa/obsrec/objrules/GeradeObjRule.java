@@ -10,7 +10,7 @@ import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.TrackedObject.Type;
 import de.offis.salsa.obsrec.annotations.ObjectRule;
 
-@ObjectRule(objectType = Type.GERADE, name = "StandardGerade")
+@ObjectRule(typeCategory = Type.GERADE, name = "StandardGerade")
 public class GeradeObjRule extends AbstractObjRule {
 	
 	private static final int TOLERANCE = 25;

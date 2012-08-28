@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 import de.offis.salsa.obsrec.TrackedObject.Type;
 
-public class PolygonContainer implements Iterable<Polygon>{
+public class PolygonContainer implements Iterable<Polygon> {
 	private HashMap<Type, Polygon> polygons = new HashMap<TrackedObject.Type, Polygon>();
 	
 	public void addPolygon(Type type, Polygon poly){

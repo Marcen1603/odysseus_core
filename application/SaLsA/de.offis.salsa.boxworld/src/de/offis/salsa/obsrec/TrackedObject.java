@@ -1,5 +1,9 @@
 package de.offis.salsa.obsrec;
 
+import java.awt.Polygon;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class TrackedObject {
 	public enum Type {
@@ -11,17 +15,17 @@ public class TrackedObject {
 	private int width;
 	private int height;
 	
-	private TypeDetails typeDetails;
-	
-	private PolygonContainer polys;
-	
-	public TrackedObject(int x, int y, int width, int height, TypeDetails typeDetails, PolygonContainer polys) {
+	private Map<String, Double> affinitys = new HashMap<String, Double>();
+	private Map<String, Polygon> polygons = new HashMap<String, Polygon>();
+		
+	public TrackedObject(int x, int y, int width, int height, 
+			Map<String, Double> affinitys, Map<String, Polygon> polygons) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.typeDetails = typeDetails;
-		this.polys = polys;
+		this.affinitys = new HashMap<String, Double>(affinitys);
+		this.polygons = new HashMap<String, Polygon>(polygons);
 	}
 	
 	public int getX() {
@@ -40,11 +44,11 @@ public class TrackedObject {
 		return width;
 	}
 
-	public TypeDetails getTypeDetails() {
-		return typeDetails;
+	public Map<String, Double> getTypeAffinitys() {
+		return affinitys;
 	}
 	
-	public PolygonContainer getPolygonContainer() {
-		return polys;
+	public Map<String, Polygon> getPolygons() {
+		return polygons;
 	}
 }

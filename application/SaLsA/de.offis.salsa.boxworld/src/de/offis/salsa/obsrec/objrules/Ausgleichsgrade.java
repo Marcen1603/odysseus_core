@@ -1,4 +1,4 @@
-package de.offis.salsa.obsrec;
+package de.offis.salsa.obsrec.objrules;
 
 import java.util.List;
 

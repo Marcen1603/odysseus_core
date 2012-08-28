@@ -10,7 +10,7 @@ import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.TrackedObject.Type;
 import de.offis.salsa.obsrec.annotations.ObjectRule;
 
-@ObjectRule(objectType = Type.KONKAV, name = "StandardKonkav")
+@ObjectRule(typeCategory = Type.KONKAV, name = "StandardKonkav")
 public class KonkavObjRule extends AbstractObjRule {
 
 	

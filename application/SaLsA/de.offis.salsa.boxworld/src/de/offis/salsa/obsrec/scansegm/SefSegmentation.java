@@ -1,4 +1,4 @@
-package de.offis.salsa.obsrec.datasegm;
+package de.offis.salsa.obsrec.scansegm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,11 +86,4 @@ public class SefSegmentation implements IScanSegmentation {
 		
 		return false;		
 	}
-	
-
-	@Override
-	public String getName() {
-		return "SefSegmentation";
-	}
-
 }

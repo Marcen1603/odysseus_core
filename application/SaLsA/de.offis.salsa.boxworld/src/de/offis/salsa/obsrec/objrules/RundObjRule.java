@@ -10,7 +10,7 @@ import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.TrackedObject.Type;
 import de.offis.salsa.obsrec.annotations.ObjectRule;
 
-@ObjectRule(objectType = Type.RUND, name = "StandardRund")
+@ObjectRule(typeCategory = Type.RUND, name = "StandardRund")
 public class RundObjRule extends AbstractObjRule {
 	
 	private static final int TOLERANCE = 30;
