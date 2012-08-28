@@ -14,5 +14,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/annovention-0.1.jar"/>
 	<classpathentry kind="lib" path="libs/javassist.jar"/>
+	<classpathentry kind="lib" path="libs/timingframework-swing-5.1/lib/timingframework-swing-5.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

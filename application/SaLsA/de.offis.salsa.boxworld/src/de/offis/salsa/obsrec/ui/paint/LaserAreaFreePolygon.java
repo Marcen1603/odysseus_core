@@ -1,4 +1,4 @@
-package de.offis.salsa.obsrec.ui;
+package de.offis.salsa.obsrec.ui.paint;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -14,16 +14,16 @@ public class LaserAreaFreePolygon extends CanvasElement {
 	}
 	
 	@Override
-	public void paint(Graphics g) {
+	public void paint(Graphics g, DrawingContext ctx) {
 		Graphics2D g2d = (Graphics2D) g;		
 		
-		p.translate(offsetX, offsetY);
+		p.translate((int)ctx.dragOffsetX, (int)ctx.dragOffsetY);
 		
 		g2d.setColor(new Color(0, 255, 0, 80));		
 		
 		g2d.fill(p);
 		
-		p.translate(-offsetX, -offsetY);
+		p.translate((int)-ctx.dragOffsetX, (int)-ctx.dragOffsetY);
 	}
 
 	public void addPoint(int x, int y) {

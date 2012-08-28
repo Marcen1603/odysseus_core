@@ -1,4 +1,4 @@
-package de.offis.salsa.obsrec.ui;
+package de.offis.salsa.obsrec.ui.paint;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -6,67 +6,70 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import de.offis.salsa.obsrec.ui.BoxWorldPanel;
+
 public class MouseDragZoomListener implements MouseListener, MouseMotionListener, MouseWheelListener {
 
-	private ObjectworldWidget objectworldWidget;
+	private int startX;
+	private int startY;
 	
-	public MouseDragZoomListener(ObjectworldWidget objectworldWidget) {
+	private BoxWorldPanel objectworldWidget;
+	
+	public MouseDragZoomListener(BoxWorldPanel objectworldWidget) {
 		this.objectworldWidget = objectworldWidget;
 	}
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		startX = e.getXOnScreen();
+		startY = e.getYOnScreen();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		System.out.println("mmw");
 		if(e.getWheelRotation() < 0){
-			CanvasElement.zoom += 0.01;
+			objectworldWidget.zoomIn(e.getX(), e.getY());
 		} else if (e.getWheelRotation() > 0) {
-			CanvasElement.zoom -= 0.01;
+			objectworldWidget.zoomOut(e.getX(), e.getY());
 		}
 	}
 
-	int x = 0;
-	int y = 0;
-	
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		e.getX();
-		e.getY();
-		
+		int wegX = e.getXOnScreen() - startX;
+        int wegY = e.getYOnScreen() - startY;
+
+        startX = e.getXOnScreen();
+        startY = e.getYOnScreen();
+        
+        double newX = objectworldWidget.getOffset()[0] + wegX;
+        double newY = objectworldWidget.getOffset()[1] + wegY;
+        
+        objectworldWidget.setOffset(newX, newY);		
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 

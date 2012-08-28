@@ -6,12 +6,12 @@ import java.util.List;
 
 import de.offis.salsa.lms.model.Measurement;
 import de.offis.salsa.lms.model.Sample;
-import de.offis.salsa.obsrec.Objektwelt;
+import de.offis.salsa.obsrec.Objectworld;
 import de.offis.salsa.obsrec.SensorMeasurement;
 
 public class DebugLaserScanner extends SickLaserScanner {
 
-	public DebugLaserScanner(Objektwelt world) {
+	public DebugLaserScanner(Objectworld world) {
 		super(world);
 	}
 	
@@ -60,7 +60,7 @@ public class DebugLaserScanner extends SickLaserScanner {
 		while (true) {
 			onMeasurement(null);
 			try {
-				Thread.sleep((1/50)*1000);
+				Thread.sleep((1/25)*1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

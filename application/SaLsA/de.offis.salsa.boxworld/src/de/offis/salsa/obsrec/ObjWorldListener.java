@@ -1,5 +1,5 @@
 package de.offis.salsa.obsrec;
 
-public interface ObjektWeltListener {
+public interface ObjWorldListener {
 	void onChange();
 }

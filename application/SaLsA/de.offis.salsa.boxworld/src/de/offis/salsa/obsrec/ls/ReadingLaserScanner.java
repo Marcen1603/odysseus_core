@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import de.offis.salsa.lms.model.Measurement;
-import de.offis.salsa.obsrec.Objektwelt;
+import de.offis.salsa.obsrec.Objectworld;
 import de.offis.salsa.obsrec.SensorMeasurement;
 
 public class ReadingLaserScanner extends SickLaserScanner {
@@ -14,7 +14,7 @@ public class ReadingLaserScanner extends SickLaserScanner {
 	FileInputStream fis = null;
 	ObjectInputStream in = null;
 	
-	public ReadingLaserScanner(Objektwelt world, String filename) {
+	public ReadingLaserScanner(Objectworld world, String filename) {
 		super(world);
 		this.filename = filename;
 	}

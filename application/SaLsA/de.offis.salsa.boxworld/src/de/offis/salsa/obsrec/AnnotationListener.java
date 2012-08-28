@@ -13,9 +13,9 @@ class AnnotationListener implements ClassAnnotationDiscoveryListener {
 	private Logger log = Logger.getLogger("Objektwelt.AnnotationListener");
 	
 	
-	private Objektwelt objektwelt;
+	private Objectworld objektwelt;
 	
-	public AnnotationListener(Objektwelt objektwelt) {
+	public AnnotationListener(Objectworld objektwelt) {
 		this.objektwelt = objektwelt;
 	}
 

@@ -1,4 +1,4 @@
-package de.offis.salsa.obsrec.ui;
+package de.offis.salsa.obsrec.ui.paint;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -23,11 +23,11 @@ public class SampleIndicator extends PositionCanvasElement {
 	}
 
 	@Override
-	public void paint(Graphics g) {
+	public void paint(Graphics g, DrawingContext ctx) {
 		Graphics2D g2d = (Graphics2D) g;
 		
-		double x = getX();
-		double y = getY();
+		double x = getX()+ctx.dragOffsetX;
+		double y = getY()+ctx.dragOffsetY;
 		double width = getWidth();
 		double height = getHeight();
 				

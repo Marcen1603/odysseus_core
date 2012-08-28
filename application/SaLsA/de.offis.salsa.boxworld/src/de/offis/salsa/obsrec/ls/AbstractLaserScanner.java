@@ -1,12 +1,12 @@
 package de.offis.salsa.obsrec.ls;
 
 import de.offis.salsa.obsrec.LmsListener;
-import de.offis.salsa.obsrec.Objektwelt;
+import de.offis.salsa.obsrec.Objectworld;
 
 public abstract class AbstractLaserScanner implements LmsListener {
-	protected Objektwelt world = null;
+	protected Objectworld world = null;
 	
-	public AbstractLaserScanner(Objektwelt world) {
+	public AbstractLaserScanner(Objectworld world) {
 		this.world = world;
 	}
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 import de.offis.salsa.lms.model.Measurement;
 import de.offis.salsa.lms.model.Sample;
-import de.offis.salsa.obsrec.Objektwelt;
+import de.offis.salsa.obsrec.Objectworld;
 import de.offis.salsa.obsrec.SensorMeasurement;
 
 public class SavingLaserScanner extends SickLaserScanner {
@@ -18,7 +18,7 @@ public class SavingLaserScanner extends SickLaserScanner {
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
 		
-		public SavingLaserScanner(Objektwelt world, String host, int port, String filename) {
+		public SavingLaserScanner(Objectworld world, String host, int port, String filename) {
 			super(world, host, port);
 			this.filename = filename;
 		}

@@ -3,6 +3,7 @@ package de.offis.salsa.obsrec;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -14,7 +15,6 @@ import com.impetus.annovention.Discoverer;
 import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.TrackedObject.Type;
 import de.offis.salsa.obsrec.datasegm.IScanSegmentation;
-import de.offis.salsa.obsrec.datasegm.SefSegmentation;
 import de.offis.salsa.obsrec.ls.DebugLaserScanner;
 import de.offis.salsa.obsrec.ls.ReadingLaserScanner;
 import de.offis.salsa.obsrec.ls.SavingLaserScanner;
@@ -22,7 +22,7 @@ import de.offis.salsa.obsrec.ls.SickLaserScanner;
 import de.offis.salsa.obsrec.objrules.AbstractObjRule;
 import de.offis.salsa.obsrec.objrules.IObjectRule;
 
-public class Objektwelt {
+public class Objectworld {
 	private Logger log = Logger.getLogger("Objektwelt");
 	
 	private List<SickLaserScanner> scanner;
@@ -30,12 +30,14 @@ public class Objektwelt {
 	private SensorMeasurement measure;
 	private List<TrackedObject> boxes = new ArrayList<TrackedObject>();
 	
-	private IScanSegmentation segmenter = new SefSegmentation();
+//	private IScanSegmentation segmenter = new SefSegmentation();
+	private String activeSegmenter = "SefSegmentation";
 	private HashMap<String, IScanSegmentation> scanSegmenter = new HashMap<String, IScanSegmentation>();
 	
+//	private HashMap<Type, IObjectRule> objRulesActivated = new HashMap<Type, IObjectRule>();
 	private HashMap<Type, IObjectRule> objRules = new HashMap<Type, IObjectRule>();
 	
-	public Objektwelt(){
+	public Objectworld(){
 		log.info("Initiating Objektwelt ...");
 		
 		this.scanner = new ArrayList<SickLaserScanner>();
@@ -44,7 +46,7 @@ public class Objektwelt {
 	}
 	
 	private void doAnnotationProcessing(){
-		log.info("Starting Annotation Proccessing ...");
+		log.info("Starting Annotation Processing ...");
 		
 		// we will look in classpath for classes with annotation ...
 		Discoverer discoverer = new ClasspathDiscoverer();
@@ -54,7 +56,7 @@ public class Objektwelt {
         
         // Fire it
         discoverer.discover();
-        log.info("Finished Annotation Proccessing ...");
+        log.info("Finished Annotation Processing ...");
 	}
 	
 	
@@ -64,7 +66,6 @@ public class Objektwelt {
 	}
 	
 	public void registerObjectRule(IObjectRule rule){
-//		AbstractObjRule.registerObjRule(rule);
 		this.objRules.put(rule.getType(), rule);
 		log.info("Registered ObjectRule: " + rule.toString());
 	}
@@ -101,7 +102,7 @@ public class Objektwelt {
 		this.measure = new SensorMeasurement(measurement);
 
 		ArrayList<TrackedObject> tempObj = new ArrayList<TrackedObject>();
-		for(List<Sample> segmentSamples : this.segmenter.segmentScan(measurement)){
+		for(List<Sample> segmentSamples : getActiveSegmenter().segmentScan(measurement)){
 			tempObj.add(createTrackedObject(segmentSamples));
 		}
 		
@@ -110,7 +111,27 @@ public class Objektwelt {
 		fireOnChangeEvent();
 	}
 	
+	private IScanSegmentation getActiveSegmenter(){		
+		return scanSegmenter.get(activeSegmenter);		
+	}
+	
+	public void setActiveSegmenter(String segmenter){
+		if(scanSegmenter.containsKey(segmenter)){
+			this.activeSegmenter = segmenter;
+		} else {
+			throw new RuntimeException("ScanSegmenter not Found! " + segmenter);
+		}
+	}
+	
+	public String[] getRegisteredSegmenter(){
+		return scanSegmenter.keySet().toArray(new String[0]);
+	}
+	
 	private TrackedObject createTrackedObject(List<Sample> samplesObject){
+//		GeometryFactory fact = new GeometryFactory();
+//		LinearRing linear = new GeometryFactory().createLinearRing(coordinates);
+//		Polygon poly = new Polygon(linear, null, fact);
+		 
 		Polygon p = new Polygon();
 		
 		for(Sample s : samplesObject){
@@ -146,19 +167,19 @@ public class Objektwelt {
 		return new SensorMeasurement(measure);
 	}
 	
-	private List<ObjektWeltListener> listener = new ArrayList<ObjektWeltListener>();
-	
+	private List<ObjWorldListener> listener = new ArrayList<ObjWorldListener>();
+		
 	private void fireOnChangeEvent(){
-		for(ObjektWeltListener listener : this.listener){
+		for(ObjWorldListener listener : this.listener){
 			listener.onChange();
 		}
 	}
 	
-	public void registerListener(ObjektWeltListener listener){
+	public void addObjectWorldListener(ObjWorldListener listener){
 		this.listener.add(listener);
 	}
 	
-	public void removeListener(ObjektWeltListener listener){
+	public void removeListener(ObjWorldListener listener){
 		this.listener.remove(listener);
 	}
 }

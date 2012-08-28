@@ -1,4 +1,4 @@
-package de.offis.salsa.obsrec.ui;
+package de.offis.salsa.obsrec.ui.paint;
 
 
 public abstract class PositionCanvasElement extends CanvasElement {
@@ -16,19 +16,19 @@ public abstract class PositionCanvasElement extends CanvasElement {
 	}
 	
 	public double getHeight() {
-		return height * zoom;
+		return height;
 	}
 	
 	public double getWidth() {
-		return width * zoom;
+		return width;
 	}
 	
 	public double getX() {
-		return (x + offsetX) * zoom;
+		return x;
 	}
 	
 	public double getY() {
-		return (y + offsetY) * zoom;
+		return y;
 	}
 }
 

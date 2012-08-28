@@ -1,4 +1,4 @@
-package de.offis.salsa.obsrec.ui;
+package de.offis.salsa.obsrec.ui.paint;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -18,16 +18,19 @@ public class CoordMarker extends PositionCanvasElement {
 
 	
 	@Override
-	public void paint(Graphics g) {
+	public void paint(Graphics g, DrawingContext ctx) {
 		Graphics2D g2d = (Graphics2D) g;
 		
 		g2d.setColor(Color.BLACK);
 		
-		rect.setRect(getX(), getY()-9, getWidth(), getHeight());
+		double x = getX() + ctx.dragOffsetX;
+		double y = getY() + ctx.dragOffsetY;
+		
+		rect.setRect(x, y - 9, getWidth(), getHeight());
 		g2d.fill(rect);		
 		
-		rect.setRect(getX()-9, getY(), getHeight(), getWidth());
+		rect.setRect(x-9, y, getHeight(), getWidth());
 		g2d.fill(rect);
-		g.drawString(getX() + "," + getY(), (int)getX(), (int)getY());		
+		g.drawString(getX() + "," + getY(), (int)x, (int)y);		
 	}
 }
