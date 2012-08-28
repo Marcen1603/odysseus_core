@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,20 +29,22 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class RelationalUnNestPO<T extends IMetaAttribute> extends
-        AbstractPipe<Tuple<T>, Tuple<T>> {
-    private static Logger LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
+public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
+    private static Logger   LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
 
-    private int nestedAttribute;
+    private int             nestedAttribute;
     private final SDFSchema inputSchema;
+
+    private boolean         isMultiValue;
 
     /**
      * @param schema
      * @param attribute
      */
-    public RelationalUnNestPO(final SDFSchema inputSchema, final int nestedAttribute) {
+    public RelationalUnNestPO(final SDFSchema inputSchema, final int nestedAttribute, final boolean isMultiValue) {
         this.inputSchema = inputSchema;
         this.nestedAttribute = nestedAttribute;
+        this.isMultiValue = isMultiValue;
     }
 
     /**
@@ -51,11 +53,14 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
     public RelationalUnNestPO(final RelationalUnNestPO<T> po) {
         this.inputSchema = po.inputSchema;
         this.nestedAttribute = po.nestedAttribute;
+        this.isMultiValue = po.isMultiValue;
     }
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone()
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
+     * ()
      */
     @Override
     public RelationalUnNestPO<T> clone() {
@@ -64,7 +69,8 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#getOutputMode()
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+     * getOutputMode()
      */
     @Override
     public OutputMode getOutputMode() {
@@ -73,28 +79,32 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_next(java.lang.Object,
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+     * process_next(java.lang.Object,
      * int)
      */
     @SuppressWarnings("unchecked")
     @Override
     protected void process_next(final Tuple<T> tuple, final int port) {
-        int depth = ((List<Tuple<?>>) tuple.getAttribute(nestedAttribute)).size();
+        int depth = ((List<?>) tuple.getAttribute(nestedAttribute)).size();
         for (int d = 0; d < depth; d++) {
             try {
-                final Tuple<T> outputTuple = new Tuple<T>(this
-                        .getOutputSchema().size(), false);
+                final Tuple<T> outputTuple = new Tuple<T>(this.getOutputSchema().size(), false);
                 outputTuple.setMetadata((T) tuple.getMetadata().clone());
                 int pos = 0;
                 for (int i = 0; i < this.inputSchema.size(); i++) {
                     if (i == this.nestedAttribute) {
-                        final List<Tuple<?>> nestedTuple = (List<Tuple<?>>) tuple
-                                .getAttribute(i);
-                        for (int j = 0; j < nestedTuple.get(d).size(); j++) {
-                            outputTuple.setAttribute(pos, nestedTuple.get(d).getAttribute(j));
-                            pos++;
+                        if (isMultiValue) {
+                            final List<?> nestedTuple = (List<?>) tuple.getAttribute(i);
+                            outputTuple.setAttribute(pos, nestedTuple.get(d));
                         }
-
+                        else {
+                            final List<Tuple<?>> nestedTuple = (List<Tuple<?>>) tuple.getAttribute(i);
+                            for (int j = 0; j < nestedTuple.get(d).size(); j++) {
+                                outputTuple.setAttribute(pos, nestedTuple.get(d).getAttribute(j));
+                                pos++;
+                            }
+                        }
                     }
                     else {
                         outputTuple.setAttribute(pos, tuple.getAttribute(i));
@@ -112,7 +122,8 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
     /*
      * (non-Javadoc)
      * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.ISink#processPunctuation(de.uniol.inf.is.odysseus.core.server
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.ISink#
+     * processPunctuation(de.uniol.inf.is.odysseus.core.server
      * .metadata.PointInTime, int)
      */
     @Override

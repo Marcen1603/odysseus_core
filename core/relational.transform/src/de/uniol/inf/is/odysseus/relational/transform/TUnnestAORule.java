@@ -36,7 +36,7 @@ public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
     @Override
     public void execute(final UnNestAO operator, final TransformationConfiguration config) {
         final RelationalUnNestPO<?> po = new RelationalUnNestPO<IMetaAttribute>(
-                operator.getInputSchema(), operator.getAttributePosition());
+                operator.getInputSchema(), operator.getAttributePosition(), operator.isMultiValue());
         defaultExecute(operator, po, config, true, true);
     }
 
