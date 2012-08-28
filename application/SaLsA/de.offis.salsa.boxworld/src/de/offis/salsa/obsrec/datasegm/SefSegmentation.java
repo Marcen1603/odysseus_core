@@ -16,7 +16,7 @@ import de.offis.salsa.obsrec.annotations.ScanSegmentation;
  *
  */
 @ScanSegmentation(name = "SefSegmentation")
-public class SefSegmentation implements ILmsDataSegmenter {
+public class SefSegmentation implements IScanSegmentation {
 
 	private Sample last;
 	
@@ -53,7 +53,7 @@ public class SefSegmentation implements ILmsDataSegmenter {
 	}
 	
 	private void beginSegment(){
-		this.tempSegment = new ArrayList<>();
+		this.tempSegment = new ArrayList<Sample>();
 	}
 	
 	private void addSegmentSample(Sample s){
@@ -85,6 +85,12 @@ public class SefSegmentation implements ILmsDataSegmenter {
 		}
 		
 		return false;		
+	}
+	
+
+	@Override
+	public String getName() {
+		return "SefSegmentation";
 	}
 
 }

@@ -11,7 +11,7 @@ import de.offis.salsa.obsrec.TypeDetails;
 
 public abstract class AbstractObjRule implements IObjectRule {
 
-	private static HashMap<Type, IObjectRule> objRules = new HashMap<>();	
+	private static HashMap<Type, IObjectRule> objRules = new HashMap<Type, IObjectRule>();
 	
 	public static void registerObjRule(IObjectRule objRule){
 		AbstractObjRule.objRules.put(objRule.getType(), objRule);

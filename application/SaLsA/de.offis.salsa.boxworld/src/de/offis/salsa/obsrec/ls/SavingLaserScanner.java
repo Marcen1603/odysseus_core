@@ -28,7 +28,7 @@ public class SavingLaserScanner extends SickLaserScanner {
 			if(world != null){
 				Measurement m = new Measurement();
 				
-				List<Sample> ss = new ArrayList<>();
+				List<Sample> ss = new ArrayList<Sample>();
 				for(int i = 0 ; i <= 70; i+=5){
 					Sample s = new Sample();
 					s.setAngle(i);

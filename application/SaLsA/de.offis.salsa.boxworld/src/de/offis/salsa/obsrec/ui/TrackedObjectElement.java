@@ -3,7 +3,6 @@ package de.offis.salsa.obsrec.ui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.geom.Rectangle2D;
 
 import de.offis.salsa.obsrec.TrackedObject;
@@ -29,7 +28,7 @@ public class TrackedObjectElement extends PositionCanvasElement {
 		g2d.setColor(Color.RED);		
 		g2d.draw(bbox);
 		
-		PredictedNotFreePolygon p = new PredictedNotFreePolygon(box.getPoly());
+		PredictedNotFreePolygon p = new PredictedNotFreePolygon(box.getPolygonContainer().getPolygon(box.getTypeDetails().getMaxAffinityType()));
 		p.paint(g);
 		
 		g2d.setColor(Color.BLACK);

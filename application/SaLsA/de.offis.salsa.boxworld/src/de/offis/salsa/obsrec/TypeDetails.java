@@ -6,8 +6,8 @@ import java.util.Map.Entry;
 
 import de.offis.salsa.obsrec.TrackedObject.Type;
 
-public class TypeDetails implements Iterable<Type>{
-	private HashMap<Type, Double> types = new HashMap<>();
+public class TypeDetails implements Iterable<Type> {
+	private HashMap<Type, Double> types = new HashMap<Type, Double>();
 			
 	public TypeDetails(Type type, Double affinity) {
 		this.types.put(type, affinity);
