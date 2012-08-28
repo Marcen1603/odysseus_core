@@ -71,7 +71,7 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler
 	}
 
 	@Override
-	public ITransportHandler createInstance(Map<String, String> options) {
+	public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
 		return new NonBlockingUdpServerHandler(options);
 	}
 

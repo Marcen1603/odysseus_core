@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IToObjectInputStreamTransformer;
@@ -73,9 +74,15 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 
 			String protocolHandler = operator.getProtocolHandler();
 			Map<String, String> options = operator.getOptionsMap();
-			ITransportHandler transportHandler = TransportHandlerRegistry
-					.getInstance(operator.getTransportHandler(), options);
-
+			ITransportHandler transportHandler; 
+            if ("genericpull".equals(operator.getWrapper().toLowerCase())) {
+                transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(),
+                        ITransportPattern.PULL, options);
+            }
+            else {
+                transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(),
+                        ITransportPattern.PULL, options);
+            }
 			if (transportHandler == null) {
 				throw new TransformationException("No transport handler "
 						+ operator.getTransportHandler() + " found.");

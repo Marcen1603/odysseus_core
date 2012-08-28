@@ -36,6 +36,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportPattern;
 
 /**
  * 
@@ -65,7 +66,7 @@ public class JMSTransportHandler extends AbstractTransportHandler implements
 	}
 
 	@Override
-	public ITransportHandler createInstance(Map<String, String> options) {
+	public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
 		JMSTransportHandler handler = new JMSTransportHandler();
 		handler.url = options.get("url");
 		handler.subject = options.get("subject");

@@ -44,7 +44,7 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
 	}
 
 	@Override
-	public ITransportHandler createInstance(Map<String, String> options) {
+	public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
 		NonBlockingTcpHandler handler = new NonBlockingTcpHandler();
 		try {
 			NonBlockingTcpHandler.nioConnection = NioConnection.getInstance();

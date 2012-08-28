@@ -44,10 +44,10 @@ public class TransportHandlerRegistry {
 		handlers.remove(handler.getName().toLowerCase());
 	}
 	
-	static public ITransportHandler getInstance(String name, Map<String, String> options){
+	static public ITransportHandler getInstance(String name, ITransportPattern transportPattern, Map<String, String> options){
 		ITransportHandler ret = handlers.get(name.toLowerCase());
 		if (ret != null){
-			return ret.createInstance(options);
+			return ret.createInstance(transportPattern, options);
 		}
 		logger.error("No handler with name "+name+" found!");
 		return null;

@@ -30,7 +30,7 @@ public interface ITransportHandler  {
 	
 	public void send(byte[] message) throws IOException;
 	
-	public ITransportHandler createInstance(Map<String, String> options);
+	public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options);
 	
 	public InputStream getInputStream();
 		

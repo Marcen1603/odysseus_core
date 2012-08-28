@@ -22,6 +22,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportPattern;
 /**
  * 
  * Generic transport handler for Normalized Message Router (ESB)
@@ -38,7 +39,7 @@ public class NMRTransportHandler extends AbstractTransportHandler{
 	}
 
 	@Override
-	public ITransportHandler createInstance(Map<String, String> options) {
+	public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
 		// TODO Auto-generated method stub
 		return null;
 	}

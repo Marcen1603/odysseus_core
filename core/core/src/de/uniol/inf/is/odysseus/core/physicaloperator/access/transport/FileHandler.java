@@ -44,7 +44,7 @@ public class FileHandler extends AbstractTransportHandler {
 	}
 
 	@Override
-	public ITransportHandler createInstance(Map<String, String> options) {
+	public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
 		FileHandler fh = new FileHandler();
 		fh.filename = options.get("filename");
 		return fh;

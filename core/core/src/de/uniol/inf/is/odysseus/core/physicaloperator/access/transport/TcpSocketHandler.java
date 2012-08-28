@@ -51,7 +51,7 @@ public class TcpSocketHandler extends AbstractTransportHandler {
 	}
 
 	@Override
-	public ITransportHandler createInstance(Map<String, String> options) {
+	public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
 		TcpSocketHandler th = new TcpSocketHandler();
 		th.hostname = options.get("host");
 		th.port = Integer.parseInt(options.get("port"));

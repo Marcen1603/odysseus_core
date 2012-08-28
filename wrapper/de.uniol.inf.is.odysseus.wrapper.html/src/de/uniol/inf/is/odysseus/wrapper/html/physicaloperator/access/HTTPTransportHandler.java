@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportPattern;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -42,6 +43,7 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
     private PipedInputStream  pipeInput;
     private PipedOutputStream pipeOutput;
     private String            uri;
+    private ITransportPattern transportPattern;
 
     /**
  * 
@@ -53,8 +55,9 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
     /**
      * @param options
      */
-    public HTTPTransportHandler(Map<String, String> options) {
+    public HTTPTransportHandler(ITransportPattern transportPattern, Map<String, String> options) {
         this.uri = options.get("uri");
+        this.transportPattern = transportPattern;
         this.pipeInput = new PipedInputStream();
         try {
             this.pipeOutput = new PipedOutputStream(this.pipeInput);
@@ -91,8 +94,8 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
     }
 
     @Override
-    public ITransportHandler createInstance(Map<String, String> options) {
-        return new HTTPTransportHandler(options);
+    public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
+        return new HTTPTransportHandler(transportPattern, options);
     }
 
     @Override
