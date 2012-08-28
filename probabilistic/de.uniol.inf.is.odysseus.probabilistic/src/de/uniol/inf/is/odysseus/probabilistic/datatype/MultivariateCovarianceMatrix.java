@@ -98,7 +98,7 @@ public class MultivariateCovarianceMatrix implements Serializable, Cloneable, Ma
             if (sb.length() > 1) {
                 sb.append(";");
             }
-            sb.append("{").append(covarianceMatrix.getEntries()).append("}");
+            sb.append(covarianceMatrix.toString());
         }
         sb.append(")");
         return sb.toString();
