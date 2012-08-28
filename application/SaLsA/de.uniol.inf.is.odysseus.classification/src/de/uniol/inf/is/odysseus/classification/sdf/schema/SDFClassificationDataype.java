@@ -15,7 +15,7 @@ public class SDFClassificationDataype extends SDFDatatype {
      */
     private static final long       serialVersionUID     = -7124737402682903059L;
     public static final SDFDatatype CLASSIFICATION       = new SDFSpatialDatatype("Classification",
-                                                                 SDFDatatype.KindOfDatatype.BEAN, new SDFSchema("",
+                                                                 SDFDatatype.KindOfDatatype.TUPLE, new SDFSchema("",
                                                                          new SDFAttribute(null, "polygon",
                                                                                  SDFSpatialDatatype.SPATIAL_GEOMETRY),
                                                                          new SDFAttribute(null, "class",

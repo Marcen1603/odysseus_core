@@ -8,9 +8,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 
-import de.uniol.inf.is.odysseus.classification.datatype.Classification;
 import de.uniol.inf.is.odysseus.classification.sdf.schema.SDFClassificationDataype;
 import de.uniol.inf.is.odysseus.classification.segmentation.IEPFSegmentation;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  * @author Alexander Funk <alexander.funk@uni-oldenburg.de>
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ClassifyObject extends AbstractFunction<List<List<Classification>>> {
+public class ClassifyObject extends AbstractFunction<List<List<Tuple<?>>>> {
     /**
      * 
      */
@@ -50,20 +50,23 @@ public class ClassifyObject extends AbstractFunction<List<List<Classification>>>
     }
 
     @Override
-    public List<List<Classification>> getValue() {
+    public List<List<Tuple<?>>> getValue() {
         final MultiLineString segments = (MultiLineString) this.getInputValue(0);
-        final List<List<Classification>> classifyObjects = new ArrayList<List<Classification>>();
+        final List<List<Tuple<?>>> classifyObjects = new ArrayList<List<Tuple<?>>>();
         for (int i = 0; i < segments.getNumGeometries(); i++) {
             final LineString segment = (LineString) segments.getGeometryN(i);
             final TypeDetails typeDetails = ObjectRuleRegistry.getTypeDetails(segment);
-            final List<Classification> object = new ArrayList<Classification>();
+            final List<Tuple<?>> object = new ArrayList<Tuple<?>>();
             final Iterator<IObjectType> iter = typeDetails.iterator();
             while (iter.hasNext()) {
                 final IObjectType type = iter.next();
                 final Geometry polygon = ObjectRuleRegistry.getPredictedPolygon(segment, type);
-                final Classification classification = new Classification(polygon, type.toString(),
-                        typeDetails.getTypeAffinity(type));
-                object.add(classification);
+                @SuppressWarnings("rawtypes")
+                final Tuple<?> tuple = new Tuple(3, false);
+                tuple.setAttribute(0, polygon);
+                tuple.setAttribute(1, type.toString());
+                tuple.setAttribute(2, typeDetails.getTypeAffinity(type));
+                object.add(tuple);
             }
             classifyObjects.add(object);
         }
