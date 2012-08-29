@@ -60,6 +60,5 @@ final class GeometryPaintListener implements PaintListener {
 			e.gc.fillRectangle(this.streamMapEditor.getScreenManager().getMouseSelection());
 			e.gc.drawRectangle(this.streamMapEditor.getScreenManager().getMouseSelection());
 		}
-		//e.gc.drawText(this.streamMapEditor.getScreenManager().getMouseLabel().label, this.streamMapEditor.getScreenManager().getMouseLabel().x + 15 , this.streamMapEditor.getScreenManager().getMouseLabel().y,true); 
 	}
 }
