@@ -88,8 +88,9 @@ implements Serializable{
 	// static
 	// ----------------------------------
 	
-	public KeyValueObject<T> merge(KeyValueObject<T> left, KeyValueObject<T> right){
-		KeyValueObject<T> merged = new KeyValueObject<T>(left);
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static KeyValueObject<?> merge(KeyValueObject<?> left, KeyValueObject<?> right){
+		KeyValueObject<?> merged = new KeyValueObject(left);
 		merged.attributes.putAll(right.attributes);
 		return merged;
 	}
