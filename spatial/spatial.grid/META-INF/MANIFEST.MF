@@ -3,30 +3,20 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Spatial.Grid
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.spatial.grid
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus.context,
- de.uniol.inf.is.odysseus.context.store,
- de.uniol.inf.is.odysseus.context.store.types,
- de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core.server.logicaloperator,
+Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
  de.uniol.inf.is.odysseus.core.server.mep,
- de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
- de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull,
- de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push,
  de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate,
  de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions,
  de.uniol.inf.is.odysseus.core.server.planmanagement,
- de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.intervalapproach,
- de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.spatial.geom,
  de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
- org.osgi.framework;version="1.3.0",
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/GridDatatypeProvider.xml, OSGI-INF/GridFunctionProvider.xml, OSGI-INF/AggregationFunctionBuilder.xml, OSGI-INF/TransformationRuleService.xml
