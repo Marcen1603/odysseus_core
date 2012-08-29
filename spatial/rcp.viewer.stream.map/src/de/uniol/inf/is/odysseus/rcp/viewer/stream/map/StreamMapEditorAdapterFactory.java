@@ -36,19 +36,6 @@ public class StreamMapEditorAdapterFactory implements IAdapterFactory {
 	@Override
 	public Object getAdapter(Object adaptableObject, @SuppressWarnings("rawtypes") Class adapterType) {
 		
-		
-		if (adapterType.equals(ITreeContentProvider.class)) {
-			if (adaptableObject instanceof StreamEditor) {
-				IStreamEditorInput input = ((StreamEditor) adaptableObject)
-						.getInput();
-				if (input instanceof StreamEditorInput) {
-					IStreamEditorType type = ((StreamEditorInput) input).getEditorType();
-					if (type instanceof StreamMapEditor)
-						return new MapLayerTreeContentProvider( (StreamMapEditor) type);
-				}
-			}
-		}
-		
 		if (adapterType.equals(IContentOutlinePage.class)) {
 			if (adaptableObject instanceof StreamEditor) {
 				IStreamEditorInput input = ((StreamEditor) adaptableObject)
@@ -70,6 +57,6 @@ public class StreamMapEditorAdapterFactory implements IAdapterFactory {
 		
 		
 		
-		return new Class[] { IContentOutlinePage.class, ITreeContentProvider.class };
+		return new Class[] {IContentOutlinePage.class};
 	}
 }

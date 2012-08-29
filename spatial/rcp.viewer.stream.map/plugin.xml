@@ -27,6 +27,11 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.commands.AddLayerCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.commands.AddLayerCommand"
+            name="Add Map Layer">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -43,4 +48,24 @@
    <extension
          point="org.eclipse.ui.perspectives">
    </extension>
+   
+   <extension point="org.eclipse.ui.menus">
+ 			<menuContribution locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+	 			<menu
+	               label="Geo Information"
+	               id="org.eclipse.ui.examples.contributions.menus.globalMenu">
+	         		<command 
+	         			commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.commands.AddLayerCommand" 
+	         			label="Add Map Layer" 
+	         			style="push">
+	         		</command>
+	         		<separator
+	                  name="additions"
+	                  visible="true">
+	            	</separator>
+	         	</menu>
+      		</menuContribution>
+   </extension>
+   
+   
 </plugin>

@@ -344,9 +344,7 @@ public class StreamMapEditor implements IStreamEditorType {
 				orderDialog.create();
 
 				if (orderDialog.open() == Window.OK) {
-
 					screenManager.redraw();
-
 				}
 			}
 		});
