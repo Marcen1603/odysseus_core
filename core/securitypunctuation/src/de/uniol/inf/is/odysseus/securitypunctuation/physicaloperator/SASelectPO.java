@@ -6,11 +6,12 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.securitypunctuation.helper.PreCacheSecurityEvaluator;
+import de.uniol.inf.is.odysseus.securitypunctuation.helper.SecurityPunctuationCache;
 
 public class SASelectPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends SelectPO<T> {
 
 	private PreCacheSecurityEvaluator<T> evaluator = new PreCacheSecurityEvaluator<T>(this);
-			
+	private SecurityPunctuationCache spCache = new SecurityPunctuationCache();		
 	public SASelectPO(IPredicate<? super T> predicate) {
 		super(predicate);
 	}
@@ -34,6 +35,6 @@ public class SASelectPO<T extends IMetaAttributeContainer<? extends ITimeInterva
 	
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
-		evaluator.addToPreCache(sp);
+		spCache.add(sp);
 	}
 }

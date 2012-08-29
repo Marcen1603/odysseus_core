@@ -14,55 +14,61 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	private ArrayList<Integer> evaluateAttributesCache = new ArrayList<Integer>();
 	
 	public SecurityPunctuation(Object[] objects, SDFSchema schema) {
-		this.schema = schema;
-		String[] ddpStream = ((String) objects[0]).split(",");
-		for(int i = 0; i < ddpStream.length; i++) {
-			ddpStream[i] = ddpStream[i].trim();
+		setSchema(schema);
+		String[] streamname = ((String) objects[0]).split(",");
+		for(int i = 0; i < streamname.length; i++) {
+			streamname[i] = streamname[i].trim();
 		}
-		attributes.put("ddpStream", ddpStream);
-//		attributes.put("ddpStream", createPredicate("ddpStream", (String) objects[0]));
-		attributes.put("ddpStarttuple", (Long) objects[1]);
-		attributes.put("ddpEndtuple", (Long) objects[2]);
-		String[] ddpName = ((String) objects[3]).split(",");
-		for(int i = 0; i < ddpName.length; i++) {
-			ddpName[i] = ddpName[i].trim();
+		setAttribute("streamname", streamname);
+//		attributes.put("streamname", createPredicate("streamname", (String) objects[0]));
+		setAttribute("tupleStartTS", (Long) objects[1]);
+		setAttribute("tupleEndTS", (Long) objects[2]);
+		String[] attributeNames = ((String) objects[3]).split(",");
+		for(int i = 0; i < attributeNames.length; i++) {
+			attributeNames[i] = attributeNames[i].trim();
 		}
-		attributes.put("ddpName", ddpName);
-		String[] srpRole = ((String) objects[4]).split(",");
-		for(int i = 0; i < srpRole.length; i++) {
-			srpRole[i] = srpRole[i].trim();
+		setAttribute("attributeNames", attributeNames);
+		String[] role = ((String) objects[4]).split(",");
+		for(int i = 0; i < role.length; i++) {
+			role[i] = role[i].trim();
 		}
-		attributes.put("srpRole", srpRole);
-		attributes.put("sign", (Integer) objects[5]);
-		attributes.put("immutable", (Integer) objects[6]);
-		attributes.put("ts", (Long) objects[7]);
+		setAttribute("role", role);
+		setAttribute("sign", (Integer) objects[5]);
+		setAttribute("immutable", (Integer) objects[6]);
+		setAttribute("ts", (Long) objects[7]);
 	}
 
 	public SecurityPunctuation(SecurityPunctuation sp) {
-		schema = sp.getSchema();
-		attributes.put("ddpStream", sp.getAttribute("ddpStream"));
-		attributes.put("ddpStarttuple", sp.getAttribute("ddpStarttuple"));
-		attributes.put("ddpEndtuple", sp.getAttribute("ddpEndtuple"));
-		attributes.put("ddpName", sp.getAttribute("ddpName"));
-		attributes.put("srpRole", sp.getAttribute("srpRole"));
-		attributes.put("sign", sp.getAttribute("sign"));
-		attributes.put("immutable", sp.getAttribute("immutable"));
-		attributes.put("ts", sp.getAttribute("ts"));
+		setSchema(sp.getSchema());
+		setAttribute("streamname", sp.getAttribute("streamname"));
+		setAttribute("tupleStartTS", sp.getAttribute("tupleStartTS"));
+		setAttribute("tupleEndTS", sp.getAttribute("tupleEndTS"));
+		setAttribute("attributeNames", sp.getAttribute("attributeNames"));
+		setAttribute("role", sp.getAttribute("role"));
+		setAttribute("sign", sp.getAttribute("sign"));
+		setAttribute("immutable", sp.getAttribute("immutable"));
+		setAttribute("ts", sp.getAttribute("ts"));
 	}	
 
 	public Boolean evaluateTS(Long ts) {
-		if((this.getLongAttribute("ddpStarttuple") == -1 && (this.getLongAttribute("ddpEndtuple")) == -1) ||
-				(ts > (this.getLongAttribute("ddpStarttuple"))) && (ts <= this.getLongAttribute("ddpEndtuple")) || this.getLongAttribute("ddpEndtuple") == -1) {
-			return true;
+		if(this.getLongAttribute("tupleStartTS") != null) {
+			if((this.getLongAttribute("tupleStartTS") == -1 && (this.getLongAttribute("tupleEndTS")) == -1) ||
+					((ts > (this.getLongAttribute("tupleStartTS"))) && (ts <= this.getLongAttribute("tupleEndTS")) || this.getLongAttribute("tupleEndTS") == -1) ||
+					(this.getLongAttribute("tupleStartTS") <= this.getLongAttribute("tupleEndTS") && (ts <= this.getLongAttribute("tupleEndTS")) || this.getLongAttribute("tupleEndTS") == -1)) {
+				return true;
+			}
 		}
 		return false;
 	}
 
 	public Boolean evaluateRoles(List<String> userRoles) {
-		if(this.getStringArrayAttribute("srpRole").equals("")) {
+		if(this.getStringArrayAttribute("role") == null) {
+			return false;
+		}			
+		if(this.getStringArrayAttribute("role").equals("")) {
 			return true;
 		}
-		for(String role:(this.getStringArrayAttribute("srpRole"))) {
+		for(String role:(this.getStringArrayAttribute("role"))) {
 			if(userRoles.contains(role)) {
 				return true;
 			}
@@ -79,20 +85,20 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	 * @return
 	 */
 	public Boolean evaluateAttributes(Tuple<?> tuple, SDFSchema schema) {
-		if(!schema.equals(this.schema) || evaluateAttributesCache.isEmpty()) {
+		if(!schema.equals(getSchema()) || evaluateAttributesCache.isEmpty()) {
 			evaluateAttributesCache.clear();
-			if(this.getStringArrayAttribute("ddpName") == null) {
+			if(this.getStringArrayAttribute("attributeNames") == null) {
 				return false;
 			}
-			if((this.getStringArrayAttribute("ddpName")).length <= 1 && (this.getStringArrayAttribute("ddpName"))[0].equals("")) {
+			if((this.getStringArrayAttribute("attributeNames")).length <= 1 && (this.getStringArrayAttribute("attributeNames"))[0].equals("")) {
 				return true;
 			}
 			
 			for(int i = 0; i < schema.size(); i++) {
 				Boolean setToNull = true;
 				String schemaAttribute = schema.getAttribute(i).getAttributeName();
-				for(String ddpName:this.getStringArrayAttribute("ddpName")) {
-					if(schemaAttribute.equals(ddpName)) {
+				for(String attributeNames:this.getStringArrayAttribute("attributeNames")) {
+					if(schemaAttribute.equals(attributeNames)) {
 						setToNull = false;
 						break;
 					}
@@ -105,7 +111,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 					}
 				}
 			}	
-			this.schema = schema;
+			setSchema(schema);
 			return true;
 		}
 		for(Integer i:evaluateAttributesCache) {
@@ -116,10 +122,13 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	
 	public Boolean evaluateStreamName(SDFSchema schema) {
 		//Was passiert hier bei Join???
-		if((this.getStringArrayAttribute("ddpStream"))[0].equals("")) {
+		if(this.getStringArrayAttribute("streamname") == null) {
+			return false;
+		}
+		if((this.getStringArrayAttribute("streamname")).length <= 1 && (this.getStringArrayAttribute("streamname"))[0].equals("")) {
 			return true;
 		}
-		for(String stream:this.getStringArrayAttribute("ddpStream")) {
+		for(String stream:this.getStringArrayAttribute("streamname")) {
 			if(schema.getURI().equals(stream)) {
 				return true;
 			}
@@ -128,7 +137,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 	
 	public Boolean evaluateAll(Long tupleTS, List<String> userRoles, Tuple<?> tuple, SDFSchema schema) {
-		if( (Integer)this.getAttribute("sign") == 1 
+		if( (Integer)this.getIntegerAttribute("sign") == 1 
 			&& evaluateRoles(userRoles)
 			&& evaluateTS(tupleTS)
 			&& evaluateAttributes(tuple, schema)
@@ -142,9 +151,5 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	@Override
 	public ISecurityPunctuation union(ISecurityPunctuation sp2) {
 		return null;
-	}
-	
-	private SDFSchema getSchema() {
-		return this.schema;
 	}
 }

@@ -91,10 +91,10 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPun
 	
 	private void createSecurityPunctuationHandlers() {
 		schema = new SDFSchema("securityPunctuation", 
-				new SDFAttribute("SP", "stream", new SDFDatatype("String")),
-				new SDFAttribute("SP", "starttuple", new SDFDatatype("Long")),
-				new SDFAttribute("SP", "endtuple", new SDFDatatype("Long")),
-				new SDFAttribute("SP", "attribute", new SDFDatatype("String")),
+				new SDFAttribute("SP", "streamname", new SDFDatatype("String")),
+				new SDFAttribute("SP", "tupleStartTS", new SDFDatatype("Long")),
+				new SDFAttribute("SP", "tupleEndTS", new SDFDatatype("Long")),
+				new SDFAttribute("SP", "attributeNames", new SDFDatatype("String")),
 				new SDFAttribute("SP", "role", new SDFDatatype("String")),
 				new SDFAttribute("SP", "sign", new SDFDatatype("Integer")),
 				new SDFAttribute("SP", "immutable", new SDFDatatype("Integer")),

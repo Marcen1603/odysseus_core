@@ -86,7 +86,7 @@ public class SARelationalProjectPO<T extends IMetaAttributeContainer<? extends I
 	}
 	
 	public Boolean projectSPEvaluate(ISecurityPunctuation sp) {
-		String[] spAttributes = sp.getStringArrayAttribute("ddpName");
+		String[] spAttributes = sp.getStringArrayAttribute("attributeNames");
 		SDFSchema tupleSchema = null;		
 		
 		//wirklich jedes mal notwendig??? --- 4 For-Schleifen :-/

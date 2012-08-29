@@ -93,7 +93,7 @@ public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? exten
 //		resolver.addAttributes(outputSchema);
 //		resolver.addSource(outputSchema.getURI(), null);
 //		MEP parser = new MEP();
-//		SDFExpression expression = new SDFExpression(null, sp.getStringAttribute("ddpStream"), resolver, parser);
+//		SDFExpression expression = new SDFExpression(null, sp.getStringAttribute("streamname"), resolver, parser);
 //		predicates.put(predicateName, new RelationalPredicate(expression));
 //	}
 }

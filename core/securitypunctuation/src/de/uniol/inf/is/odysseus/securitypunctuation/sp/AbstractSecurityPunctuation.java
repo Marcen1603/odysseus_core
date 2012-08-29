@@ -8,8 +8,8 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public abstract class AbstractSecurityPunctuation implements Serializable, ISecurityPunctuation {
 	
-	protected HashMap<String, Object> attributes = new HashMap<String, Object>();
-	protected SDFSchema schema;
+	private HashMap<String, Object> attributes = new HashMap<String, Object>();
+	private SDFSchema schema;
 	
 	private static final long serialVersionUID = 1069899975287225287L;
 	
@@ -33,6 +33,16 @@ public abstract class AbstractSecurityPunctuation implements Serializable, ISecu
 		return (String[]) attributes.get(key);
 	}
 	
+	public void setAttribute(String key, Object value) {
+		this.attributes.put(key, value);
+	}
+	
+	public void setSchema(SDFSchema schema) {
+		this.schema = schema;
+	}
+	public SDFSchema getSchema() {
+		return this.schema;
+	}
 //	public RelationalPredicate getPredicateAttribute(String key) {
 //		return (RelationalPredicate) attributes.get(key);
 //	}
