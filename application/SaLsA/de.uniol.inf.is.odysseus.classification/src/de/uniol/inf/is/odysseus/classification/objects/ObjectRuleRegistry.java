@@ -5,6 +5,8 @@ import java.util.Map.Entry;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * @author Alexander Funk <alexander.funk@uni-oldenburg.de>
@@ -18,9 +20,10 @@ public class ObjectRuleRegistry {
         ObjectRuleRegistry.objRules.put(objRule.getType(), objRule);
     }
 
-    public static Geometry getPredictedPolygon(final Geometry segment, final IObjectType type) {
+    public static Polygon getPredictedPolygon(final Geometry segment, final IObjectType type) {
         if (ObjectRuleRegistry.objRules.get(type) == null) {
-            return segment.getFactory().createLineString(new Coordinate[0]);
+            LinearRing linearRing = segment.getFactory().createLinearRing(new Coordinate[0]);
+            return segment.getFactory().createPolygon(linearRing, null);
         }
 
         return ObjectRuleRegistry.objRules.get(type).getPredictedPolygon(segment);
@@ -33,7 +36,7 @@ public class ObjectRuleRegistry {
             details.addTypeAffinity(objRule.getValue().getType(), objRule.getValue().getTypeAffinity(segment));
         }
         details.normalize();
-        
+
         return details;
     }
 }

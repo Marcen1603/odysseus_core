@@ -7,6 +7,8 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
 
 import de.uniol.inf.is.odysseus.classification.objects.IObjectRule;
 import de.uniol.inf.is.odysseus.classification.objects.IObjectType;
@@ -65,7 +67,7 @@ public class StraightObjRule implements IObjectRule {
     }
 
     @Override
-    public Geometry getPredictedPolygon(final Geometry segment) {
+    public Polygon getPredictedPolygon(final Geometry segment) {
         // TODO ausgleichsgrade benutzen!
 
         final List<Coordinate> result = new ArrayList<Coordinate>();
@@ -100,6 +102,8 @@ public class StraightObjRule implements IObjectRule {
 
         result.add(new Coordinate(x2p, y2p));
         result.add(new Coordinate(x1p, y1p));
-        return segment.getFactory().createLineString(result.toArray(new Coordinate[result.size()]));
+        result.add(result.get(0));
+        LinearRing linearRing = segment.getFactory().createLinearRing(result.toArray(new Coordinate[result.size()]));
+        return segment.getFactory().createPolygon(linearRing, null);
     }
 }

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.Polygon;
 
 import de.uniol.inf.is.odysseus.classification.sdf.schema.SDFClassificationDataype;
 import de.uniol.inf.is.odysseus.classification.segmentation.IEPFSegmentation;
@@ -60,13 +60,15 @@ public class ClassifyObject extends AbstractFunction<List<List<Tuple<?>>>> {
             final Iterator<IObjectType> iter = typeDetails.iterator();
             while (iter.hasNext()) {
                 final IObjectType type = iter.next();
-                final Geometry polygon = ObjectRuleRegistry.getPredictedPolygon(segment, type);
-                @SuppressWarnings("rawtypes")
-                final Tuple<?> tuple = new Tuple(3, false);
-                tuple.setAttribute(0, polygon);
-                tuple.setAttribute(1, type.toString());
-                tuple.setAttribute(2, typeDetails.getTypeAffinity(type));
-                object.add(tuple);
+                if (typeDetails.getTypeAffinity(type) > 0.0) {
+                    final Polygon polygon = ObjectRuleRegistry.getPredictedPolygon(segment, type);
+                    @SuppressWarnings("rawtypes")
+                    final Tuple<?> tuple = new Tuple(3, false);
+                    tuple.setAttribute(0, polygon);
+                    tuple.setAttribute(1, type.toString());
+                    tuple.setAttribute(2, typeDetails.getTypeAffinity(type));
+                    object.add(tuple);
+                }
             }
             classifyObjects.add(object);
         }

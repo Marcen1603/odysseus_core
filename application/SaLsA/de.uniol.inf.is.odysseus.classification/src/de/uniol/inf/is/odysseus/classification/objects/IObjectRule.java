@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.classification.objects;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * @author Alexander Funk <alexander.funk@uni-oldenburg.de>
@@ -11,5 +12,5 @@ public interface IObjectRule {
 
     public double getTypeAffinity(Geometry segment);
 
-    public Geometry getPredictedPolygon(Geometry segment);
+    public Polygon getPredictedPolygon(Geometry segment);
 }
