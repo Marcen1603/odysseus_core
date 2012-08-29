@@ -3,7 +3,9 @@ package de.uniol.inf.is.odysseus.core.server.predicate;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -59,4 +61,14 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
 		return new KeyValueObjectPredicate(this);
 	}
 
+	public static void main(String[] args) {
+		String predicate = "a > b";
+		SDFExpression expression = new SDFExpression(null,predicate, MEP.getInstance());
+		KeyValueObjectPredicate pre = new KeyValueObjectPredicate(expression);
+		KeyValueObject<IMetaAttribute> input = new KeyValueObject<IMetaAttribute>();
+		input.setAttribute("a", 10);
+		input.setAttribute("b", 8);
+		System.out.println(pre.evaluate(input));
+	}
+	
 }

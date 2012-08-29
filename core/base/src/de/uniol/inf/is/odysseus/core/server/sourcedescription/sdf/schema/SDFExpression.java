@@ -74,6 +74,16 @@ public class SDFExpression implements Serializable, IClone {
 		init(null, value, attributeResolver, expressionParser);
 	}
 
+	/**
+	 * @param URI
+	 * @param value
+	 * @param attributeResolver
+	 * @throws ParseException
+	 */
+	public SDFExpression(String URI, String value, IExpressionParser expressionParser) throws SDFExpressionParseException {
+		init(null, value, null, expressionParser);
+	}
+
 	public SDFExpression(SDFExpression expression) throws SDFExpressionParseException {
 		init(expression.expression, expression.expressionString, expression.attributeResolver, expression.expressionParser);
 
@@ -105,7 +115,18 @@ public class SDFExpression implements Serializable, IClone {
 		this.varCounter = 0;
 		this.variableArrayList = new ArrayList<Variable>();
 		this.attributes = new ArrayList<SDFAttribute>();
-		this.attributeResolver = attributeResolver.clone();
+		if (attributeResolver != null){
+			this.attributeResolver = attributeResolver.clone();
+		}else{
+			// Try to determine own attribute resolver from expression
+			try {
+				IExpression<?> tmpExpression = expressionParser.parse(expressionString);
+				this.attributeResolver = new DirectAttributeResolver(tmpExpression.getVariables());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		Map<String, String> aliasToAggregationAttributeMapping = new HashMap<String, String>();
 

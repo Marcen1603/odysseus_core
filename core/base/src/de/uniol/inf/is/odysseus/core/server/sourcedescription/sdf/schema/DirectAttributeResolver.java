@@ -15,7 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -29,6 +34,15 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 
     public DirectAttributeResolver(SDFSchema schema) {
         this.schema = schema;
+    }
+    
+    public DirectAttributeResolver(Set<Variable> vars){
+		List<SDFAttribute> attribs = new ArrayList<SDFAttribute>();
+    	for (Variable var: vars){
+			SDFAttribute a = new SDFAttribute(null,var.getIdentifier(), var.getReturnType());
+			attribs.add(a);
+    	}
+		schema = new SDFSchema("", attribs);
     }
 
     public DirectAttributeResolver(
