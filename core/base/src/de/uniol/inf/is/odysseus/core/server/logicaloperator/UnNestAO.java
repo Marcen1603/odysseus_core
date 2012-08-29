@@ -41,7 +41,6 @@ public class UnNestAO extends UnaryLogicalOp {
     private static Logger     LOG              = LoggerFactory.getLogger(UnNestAO.class);
     private SDFAttribute      attribute;
     private boolean           recalculate      = true;
-    private boolean           isMultiValue     = false;                                   ;
 
     /**
      * 
@@ -85,7 +84,6 @@ public class UnNestAO extends UnaryLogicalOp {
                 if (attribute.getDatatype().isMultiValue()) {
                     attrs.add(new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName(), attribute
                             .getDatatype().getSubType()));
-                    this.isMultiValue=true;
                 }
                 else {
                     SDFSchema subschema = attribute.getDatatype().getSchema();
@@ -132,6 +130,6 @@ public class UnNestAO extends UnaryLogicalOp {
     }
 
     public boolean isMultiValue() {
-        return this.isMultiValue;
+        return this.attribute.getDatatype().isMultiValue();
     }
 }

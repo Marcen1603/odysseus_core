@@ -20,11 +20,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -32,18 +32,18 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
     private static Logger   LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
 
-    private int             nestedAttribute;
+    private final int       nestedAttributePos;
     private final SDFSchema inputSchema;
 
-    private boolean         isMultiValue;
+    private final boolean   isMultiValue;
 
     /**
      * @param schema
      * @param attribute
      */
-    public RelationalUnNestPO(final SDFSchema inputSchema, final int nestedAttribute, final boolean isMultiValue) {
+    public RelationalUnNestPO(final SDFSchema inputSchema, final int nestedAttributePos, final boolean isMultiValue) {
         this.inputSchema = inputSchema;
-        this.nestedAttribute = nestedAttribute;
+        this.nestedAttributePos = nestedAttributePos;
         this.isMultiValue = isMultiValue;
     }
 
@@ -52,7 +52,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
      */
     public RelationalUnNestPO(final RelationalUnNestPO<T> po) {
         this.inputSchema = po.inputSchema;
-        this.nestedAttribute = po.nestedAttribute;
+        this.nestedAttributePos = po.nestedAttributePos;
         this.isMultiValue = po.isMultiValue;
     }
 
@@ -86,36 +86,42 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
     @SuppressWarnings("unchecked")
     @Override
     protected void process_next(final Tuple<T> tuple, final int port) {
-        int depth = ((List<?>) tuple.getAttribute(nestedAttribute)).size();
-        for (int d = 0; d < depth; d++) {
-            try {
+        if (this.isMultiValue) {
+            final int depth = ((List<?>) tuple.getAttribute(this.nestedAttributePos)).size();
+            for (int d = 0; d < depth; d++) {
                 final Tuple<T> outputTuple = new Tuple<T>(this.getOutputSchema().size(), false);
                 outputTuple.setMetadata((T) tuple.getMetadata().clone());
-                int pos = 0;
                 for (int i = 0; i < this.inputSchema.size(); i++) {
-                    if (i == this.nestedAttribute) {
-                        if (isMultiValue) {
-                            final List<?> nestedTuple = (List<?>) tuple.getAttribute(i);
-                            outputTuple.setAttribute(pos, nestedTuple.get(d));
-                        }
-                        else {
-                            final List<Tuple<?>> nestedTuple = (List<Tuple<?>>) tuple.getAttribute(i);
-                            for (int j = 0; j < nestedTuple.get(d).size(); j++) {
-                                outputTuple.setAttribute(pos, nestedTuple.get(d).getAttribute(j));
-                                pos++;
-                            }
-                        }
+                    if (i == this.nestedAttributePos) {
+                        final List<?> nestedTuple = (List<?>) tuple.getAttribute(this.nestedAttributePos);
+                        outputTuple.setAttribute(i, nestedTuple.get(d));
                     }
                     else {
-                        outputTuple.setAttribute(pos, tuple.getAttribute(i));
+                        outputTuple.setAttribute(i, tuple.getAttribute(i));
+                    }
+                }
+                this.transfer(outputTuple);
+            }
+
+        }
+        else {
+            final Tuple<T> outputTuple = new Tuple<T>(this.getOutputSchema().size(), false);
+            outputTuple.setMetadata((T) tuple.getMetadata().clone());
+            int pos = 0;
+            for (int i = 0; i < this.inputSchema.size(); i++) {
+                if (i == this.nestedAttributePos) {
+                    final Tuple<?> nestedTuple = (Tuple<?>) tuple.getAttribute(i);
+                    for (int j = 0; j < nestedTuple.size(); j++) {
+                        outputTuple.setAttribute(pos, nestedTuple.getAttribute(j));
                         pos++;
                     }
                 }
-                transfer(outputTuple);
+                else {
+                    outputTuple.setAttribute(pos, tuple.getAttribute(i));
+                    pos++;
+                }
             }
-            catch (final Exception e) {
-                RelationalUnNestPO.LOG.error(e.getMessage(), e);
-            }
+            this.transfer(outputTuple);
         }
     }
 
