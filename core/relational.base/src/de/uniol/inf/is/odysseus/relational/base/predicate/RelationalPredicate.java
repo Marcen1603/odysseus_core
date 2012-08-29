@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.relational.base.predicate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,15 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.AndOperator;
@@ -43,7 +44,8 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements IRelationalPredicate {
+public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
+		IRelationalPredicate {
 
 	// Logger logger = LoggerFactory.getLogger(RelationalPredicate.class);
 
@@ -55,24 +57,32 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 	// variable bindings
 	protected int[] attributePositions;
 
+	final List<SDFAttribute> neededAttributes;
+
 	// fromRightChannel[i] stores if the getAttribute(attributePositions[i])
 	// should be called on the left or on the right input tuple
 	protected boolean[] fromRightChannel;
 
 	protected Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
 
-	 protected SDFSchema leftSchema;
-	 protected SDFSchema rightSchema;
+	protected SDFSchema leftSchema;
+	protected SDFSchema rightSchema;
 
 	public RelationalPredicate(SDFExpression expression) {
 		this.expression = expression;
+		this.neededAttributes = expression.getAllAttributes();
 	}
 
 	@Override
 	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
+		init(leftSchema, rightSchema, true);
+	}
+
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema,
+			boolean checkRightSchema) {
 		// logger.debug("Init ("+this+"): Left "+leftSchema+" Right "+rightSchema);
-		 this.leftSchema = leftSchema;
-		 this.rightSchema = rightSchema;
+		this.leftSchema = leftSchema;
+		this.rightSchema = rightSchema;
 
 		List<SDFAttribute> neededAttributes = expression.getAllAttributes();
 		this.attributePositions = new int[neededAttributes.size()];
@@ -83,16 +93,21 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 
 			int pos = indexOf(leftSchema, curAttribute);
 			if (pos == -1) {
-				if (rightSchema == null) {
-					throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + leftSchema + " and rightSchema is null!");
+				if (rightSchema == null && checkRightSchema) {
+					throw new IllegalArgumentException("Attribute "
+							+ curAttribute + " not in " + leftSchema
+							+ " and rightSchema is null!");
 				}
-				// if you get here, there is an attribute
-				// in the predicate that does not exist
-				// in the left schema, so there must also be
-				// a right schema
-				pos = indexOf(rightSchema, curAttribute);
-				if (pos == -1) {
-					throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + rightSchema);
+				if (checkRightSchema) {
+					// if you get here, there is an attribute
+					// in the predicate that does not exist
+					// in the left schema, so there must also be
+					// a right schema
+					pos = indexOf(rightSchema, curAttribute);
+					if (pos == -1) {
+						throw new IllegalArgumentException("Attribute "
+								+ curAttribute + " not in " + rightSchema);
+					}
 				}
 				this.fromRightChannel[i] = true;
 			}
@@ -122,10 +137,16 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 	}
 
 	public RelationalPredicate(RelationalPredicate predicate) {
-		this.attributePositions = predicate.attributePositions == null ? null : (int[]) predicate.attributePositions.clone();
-		this.fromRightChannel = predicate.fromRightChannel == null ? null : (boolean[]) predicate.fromRightChannel.clone();
-		this.expression = predicate.expression == null ? null : predicate.expression.clone();
-		this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(predicate.replacementMap);
+		this.attributePositions = predicate.attributePositions == null ? null
+				: (int[]) predicate.attributePositions.clone();
+		this.fromRightChannel = predicate.fromRightChannel == null ? null
+				: (boolean[]) predicate.fromRightChannel.clone();
+		this.expression = predicate.expression == null ? null
+				: predicate.expression.clone();
+		this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(
+				predicate.replacementMap);
+		this.neededAttributes = new ArrayList<SDFAttribute>(
+				predicate.neededAttributes);
 		// logger.debug("Cloned "+this+ " "+attributePositions);
 	}
 
@@ -146,6 +167,22 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 			Tuple<?> r = fromRightChannel[i] ? right : left;
 			values[i] = r.getAttribute(this.attributePositions[i]);
 		}
+		this.expression.bindVariables(values);
+		return (Boolean) this.expression.getValue();
+	}
+
+	public boolean evaluate(Tuple<?> input, KeyValueObject<?> additional) {
+		Object[] values = new Object[neededAttributes.size()];
+
+		for (int i = 0; i < neededAttributes.size(); ++i) {
+			if (!fromRightChannel[i]) {
+				values[i] = input.getAttribute(this.attributePositions[i]);
+			} else {
+				values[i] = additional.getAttribute(neededAttributes.get(i)
+						.getURI());
+			}
+		}
+
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
@@ -283,7 +320,8 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 			// Noch mal zu parsen scheint mir wenig sinnvoll zu sein ...
 			IExpression<?> ex1 = this.expression.getMEPExpression();// MEP.parse(this.expression.getExpression());
 			IExpression<?> ex2 = rp2.expression.getMEPExpression();// MEP.parse(rp2.getExpression().getExpression());
-			if (ex1.getReturnType().equals(ex2.getReturnType()) && ex1.isFunction()) {
+			if (ex1.getReturnType().equals(ex2.getReturnType())
+					&& ex1.isFunction()) {
 				IFunction<?> if1 = (IFunction<?>) ex1;
 				IFunction<?> if2 = (IFunction<?>) ex2;
 				if (if1.getArity() != 2) {
@@ -303,119 +341,183 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 
 					// gleiches Attribut auf der linken Seite, Konstante auf der
 					// rechten
-					if (firstArgument1.isVariable() && secondArgument1.isConstant() && firstArgument2.isVariable() && secondArgument2.isConstant()
-							&& firstArgument1.toVariable().equals(firstArgument2.toVariable())) {
-						Double c1 = Double.parseDouble(secondArgument1.toString());
-						Double c2 = Double.parseDouble(secondArgument2.toString());
+					if (firstArgument1.isVariable()
+							&& secondArgument1.isConstant()
+							&& firstArgument2.isVariable()
+							&& secondArgument2.isConstant()
+							&& firstArgument1.toVariable().equals(
+									firstArgument2.toVariable())) {
+						Double c1 = Double.parseDouble(secondArgument1
+								.toString());
+						Double c2 = Double.parseDouble(secondArgument2
+								.toString());
 
 						// Funktion kleiner-als
-						if (symbol1.equals("<") && (symbol2.equals("<") || symbol2.equals("<=")) && c1 <= c2) {
+						if (symbol1.equals("<")
+								&& (symbol2.equals("<") || symbol2.equals("<="))
+								&& c1 <= c2) {
 							return true;
 						}
 						// Funktion kleiner-gleich-als
-						if (symbol1.equals("<=") && ((symbol2.equals("<=") && c1 <= c2) || (symbol2.equals("<") && c1 < c2))) {
+						if (symbol1.equals("<=")
+								&& ((symbol2.equals("<=") && c1 <= c2) || (symbol2
+										.equals("<") && c1 < c2))) {
 							return true;
 						}
 						// Funktion ist-gleich oder ist-nicht-gleich
-						if (((symbol1.equals("==") && symbol2.equals("==")) || (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
+						if (((symbol1.equals("==") && symbol2.equals("==")) || (symbol1
+								.equals("!=") && symbol2.equals("!=")))
+								&& c1.compareTo(c2) == 0) {
 							return true;
 						}
 						// Funktion größer-als
-						if (symbol1.equals(">") && (symbol2.equals(">") || symbol2.equals(">=")) && c1 >= c2) {
+						if (symbol1.equals(">")
+								&& (symbol2.equals(">") || symbol2.equals(">="))
+								&& c1 >= c2) {
 							return true;
 						}
 						// Funktion größer-gleich-als
-						if (symbol1.equals(">=") && ((symbol2.equals(">=") && c1 >= c2) || (symbol2.equals(">") && c1 > c2))) {
+						if (symbol1.equals(">=")
+								&& ((symbol2.equals(">=") && c1 >= c2) || (symbol2
+										.equals(">") && c1 > c2))) {
 							return true;
 						}
 						// gleiches Attribut auf der rechten Seite, Konstante
 						// auf der linken Seite
-					} else if (secondArgument1.isVariable() && firstArgument1.isConstant() && secondArgument2.isVariable() && firstArgument2.isConstant()
-							&& secondArgument1.toVariable().equals(secondArgument2.toVariable())) {
+					} else if (secondArgument1.isVariable()
+							&& firstArgument1.isConstant()
+							&& secondArgument2.isVariable()
+							&& firstArgument2.isConstant()
+							&& secondArgument1.toVariable().equals(
+									secondArgument2.toVariable())) {
 
-						Double c1 = Double.parseDouble(firstArgument1.toString());
-						Double c2 = Double.parseDouble(firstArgument2.toString());
+						Double c1 = Double.parseDouble(firstArgument1
+								.toString());
+						Double c2 = Double.parseDouble(firstArgument2
+								.toString());
 
 						// Funktion kleiner-als
-						if (symbol1.equals("<") && (symbol2.equals("<") || symbol2.equals("<=")) && c1 >= c2) {
+						if (symbol1.equals("<")
+								&& (symbol2.equals("<") || symbol2.equals("<="))
+								&& c1 >= c2) {
 							return true;
 						}
 						// Funktion kleiner-gleich-als
-						if (symbol1.equals("<=") && ((symbol2.equals("<=") && c1 >= c2) || (symbol2.equals("<") && c1 > c2))) {
+						if (symbol1.equals("<=")
+								&& ((symbol2.equals("<=") && c1 >= c2) || (symbol2
+										.equals("<") && c1 > c2))) {
 							return true;
 						}
 						// Funktion ist-gleich oder ist-nicht-gleich
-						if (((symbol1.equals("==") && symbol2.equals("==")) || (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
+						if (((symbol1.equals("==") && symbol2.equals("==")) || (symbol1
+								.equals("!=") && symbol2.equals("!=")))
+								&& c1.compareTo(c2) == 0) {
 							return true;
 						}
 						// Funktion größer-als
-						if (symbol1.equals(">") && (symbol2.equals(">") || symbol2.equals(">=")) && c1 <= c2) {
+						if (symbol1.equals(">")
+								&& (symbol2.equals(">") || symbol2.equals(">="))
+								&& c1 <= c2) {
 							return true;
 						}
 						// Funktion größer-gleich-als
-						if (symbol1.equals(">=") && ((symbol2.equals(">=") && c1 <= c2) || (symbol2.equals(">") && c1 < c2))) {
+						if (symbol1.equals(">=")
+								&& ((symbol2.equals(">=") && c1 <= c2) || (symbol2
+										.equals(">") && c1 < c2))) {
 							return true;
 						}
 						// Attribut bei F1 links, bei F2 rechts
-					} else if (firstArgument1.isVariable() && secondArgument1.isConstant() && secondArgument2.isVariable() && firstArgument2.isConstant()
-							&& firstArgument1.toVariable().equals(secondArgument2.toVariable())) {
-						Double c1 = Double.parseDouble(secondArgument1.toString());
-						Double c2 = Double.parseDouble(firstArgument2.toString());
+					} else if (firstArgument1.isVariable()
+							&& secondArgument1.isConstant()
+							&& secondArgument2.isVariable()
+							&& firstArgument2.isConstant()
+							&& firstArgument1.toVariable().equals(
+									secondArgument2.toVariable())) {
+						Double c1 = Double.parseDouble(secondArgument1
+								.toString());
+						Double c2 = Double.parseDouble(firstArgument2
+								.toString());
 
 						// F1 kleiner-als, F2 größer-als oder größer-gleich-als
-						if (symbol1.equals("<") && (symbol2.equals(">") || symbol2.equals(">=")) && c1 <= c2) {
+						if (symbol1.equals("<")
+								&& (symbol2.equals(">") || symbol2.equals(">="))
+								&& c1 <= c2) {
 							return true;
 						}
 						// F1 kleiner-gleich-als, F2 größer-als oder
 						// größer-gleich-als
-						if (symbol1.equals("<=") && (symbol2.equals(">") && c1 < c2) || (symbol2.equals(">=")) && c1 <= c2) {
+						if (symbol1.equals("<=")
+								&& (symbol2.equals(">") && c1 < c2)
+								|| (symbol2.equals(">=")) && c1 <= c2) {
 							return true;
 						}
 						// Funktion ist-gleich oder ist-nicht-gleich
-						if (((symbol1.equals("==") && symbol2.equals("==")) || (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
+						if (((symbol1.equals("==") && symbol2.equals("==")) || (symbol1
+								.equals("!=") && symbol2.equals("!=")))
+								&& c1.compareTo(c2) == 0) {
 							return true;
 						}
 						// F1 größer-als, F2 kleiner-als oder kleiner-gleich-als
-						if (symbol1.equals(">") && (symbol2.equals("<") || symbol2.equals("<=")) && c1 >= c2) {
+						if (symbol1.equals(">")
+								&& (symbol2.equals("<") || symbol2.equals("<="))
+								&& c1 >= c2) {
 							return true;
 						}
 						// F1 größer-gleich-als, F2 kleiner-als oder
 						// kleiner-gleich-als
-						if (symbol1.equals(">=") && (symbol2.equals("<") && c1 > c2) || (symbol2.equals("<=")) && c1 >= c2) {
+						if (symbol1.equals(">=")
+								&& (symbol2.equals("<") && c1 > c2)
+								|| (symbol2.equals("<=")) && c1 >= c2) {
 							return true;
 						}
 
 						// Attribut bei F1 rechts, bei F2 links
-					} else if (secondArgument1.isVariable() && firstArgument1.isConstant() && firstArgument2.isVariable() && secondArgument2.isConstant()
-							&& secondArgument1.toVariable().equals(firstArgument2.toVariable())) {
+					} else if (secondArgument1.isVariable()
+							&& firstArgument1.isConstant()
+							&& firstArgument2.isVariable()
+							&& secondArgument2.isConstant()
+							&& secondArgument1.toVariable().equals(
+									firstArgument2.toVariable())) {
 
-						Double c1 = Double.parseDouble(firstArgument1.toString());
-						Double c2 = Double.parseDouble(secondArgument2.toString());
+						Double c1 = Double.parseDouble(firstArgument1
+								.toString());
+						Double c2 = Double.parseDouble(secondArgument2
+								.toString());
 
 						// F1 kleiner-als, F2 größer-als oder größer-gleich-als
-						if (symbol1.equals("<") && (symbol2.equals(">") || symbol2.equals(">=")) && c1 >= c2) {
+						if (symbol1.equals("<")
+								&& (symbol2.equals(">") || symbol2.equals(">="))
+								&& c1 >= c2) {
 							return true;
 						}
 
 						// F1 kleiner-gleich-als, F2 größer-als oder
 						// größer-gleich-als
-						if (symbol1.equals("<=") && (symbol2.equals(">") && c1 > c2) || (symbol2.equals(">=")) && c1 >= c2) {
+						if (symbol1.equals("<=")
+								&& (symbol2.equals(">") && c1 > c2)
+								|| (symbol2.equals(">=")) && c1 >= c2) {
 							return true;
 						}
 
 						// Funktion ist-gleich oder ist-nicht-gleich
-						if (((symbol1.equals("==") && symbol2.equals("==")) || (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
+						if (((symbol1.equals("==") && symbol2.equals("==")) || (symbol1
+								.equals("!=") && symbol2.equals("!=")))
+								&& c1.compareTo(c2) == 0) {
 							return true;
 						}
 
 						// F1 größer-als, F2 kleiner-als oder kleiner-gleich-als
-						if (symbol1.equals(">") && (symbol2.equals("<") || symbol2.equals("<=")) && c1 <= c2) {
+						if (symbol1.equals(">")
+								&& (symbol2.equals("<") || symbol2.equals("<="))
+								&& c1 <= c2) {
 							return true;
 						}
 
 						// F1 größer-gleich-als, F2 kleiner-als oder
 						// kleiner-gleich-als
-						if (symbol1.equals(">=") && (symbol2.equals("<") && c1 < c2) || (symbol2.equals("<=")) && c1 <= c2) {
+						if (symbol1.equals(">=")
+								&& (symbol2.equals("<") && c1 < c2)
+								|| (symbol2.equals("<=")) && c1 <= c2) {
 							return true;
 						}
 					}
@@ -428,16 +530,32 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 
 					// Attribute sind links und rechts gleich
 					if (v11.equals(v21) && v12.equals(v22)) {
-						if ((symbol1.equals("<") && symbol2.equals("<")) || (symbol1.equals("<=") && symbol2.equals("<=")) || (symbol1.equals("==") && symbol2.equals("=="))
-								|| (symbol1.equals("!=") && symbol2.equals("!=")) || (symbol1.equals(">=") && symbol2.equals(">=")) || (symbol1.equals(">") && symbol2.equals(">"))) {
+						if ((symbol1.equals("<") && symbol2.equals("<"))
+								|| (symbol1.equals("<=") && symbol2
+										.equals("<="))
+								|| (symbol1.equals("==") && symbol2
+										.equals("=="))
+								|| (symbol1.equals("!=") && symbol2
+										.equals("!="))
+								|| (symbol1.equals(">=") && symbol2
+										.equals(">="))
+								|| (symbol1.equals(">") && symbol2.equals(">"))) {
 							return true;
 						}
 					}
 					// linkes Attribut von F1 ist gleich rechtem Attribut von F2
 					// und umgekehrt
 					if (v11.equals(v22) && v12.equals(v21)) {
-						if ((symbol1.equals("<") && symbol2.equals(">")) || (symbol1.equals("<=") && symbol2.equals(">=")) || (symbol1.equals("==") && symbol2.equals("=="))
-								|| (symbol1.equals("!=") && symbol2.equals("!=")) || (symbol1.equals(">=") && symbol2.equals("<=")) || (symbol1.equals(">") && symbol2.equals("<"))) {
+						if ((symbol1.equals("<") && symbol2.equals(">"))
+								|| (symbol1.equals("<=") && symbol2
+										.equals(">="))
+								|| (symbol1.equals("==") && symbol2
+										.equals("=="))
+								|| (symbol1.equals("!=") && symbol2
+										.equals("!="))
+								|| (symbol1.equals(">=") && symbol2
+										.equals("<="))
+								|| (symbol1.equals(">") && symbol2.equals("<"))) {
 							return true;
 						}
 					}
@@ -457,15 +575,18 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 	}
 
 	static boolean isAndPredicate(IExpression<?> iExpression) {
-		return iExpression.isFunction() && iExpression.toFunction() instanceof AndOperator;
+		return iExpression.isFunction()
+				&& iExpression.toFunction() instanceof AndOperator;
 	}
 
 	public boolean isOrPredicate() {
-		return expression.getMEPExpression().isFunction() && expression.getMEPExpression().toFunction() instanceof OrOperator;
+		return expression.getMEPExpression().isFunction()
+				&& expression.getMEPExpression().toFunction() instanceof OrOperator;
 	}
 
 	public boolean isNotPredicate() {
-		return expression.getMEPExpression().isFunction() && expression.getMEPExpression().toFunction() instanceof NotOperator;
+		return expression.getMEPExpression().isFunction()
+				&& expression.getMEPExpression().toFunction() instanceof NotOperator;
 	}
 
 	/**
@@ -483,18 +604,36 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 			while (!expressionStack.isEmpty()) {
 				IExpression<?> curExpression = expressionStack.pop();
 				if (isAndPredicate(curExpression)) {
-					expressionStack.push(curExpression.toFunction().getArgument(0));
-					expressionStack.push(curExpression.toFunction().getArgument(1));
+					expressionStack.push(curExpression.toFunction()
+							.getArgument(0));
+					expressionStack.push(curExpression.toFunction()
+							.getArgument(1));
 				} else {
-					SDFExpression expr = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
+					SDFExpression expr = new SDFExpression(curExpression,
+							expression.getAttributeResolver(),
+							MEP.getInstance());
 					result.add(new RelationalPredicate(expr));
 				}
 			}
 			return result;
 
 		}
-		throw new RuntimeException("Split can only be called on conjunctive predicates");
+		throw new RuntimeException(
+				"Split can only be called on conjunctive predicates");
 
+	}
+
+	public static void main(String[] args) {
+		RelationalPredicate pred = new RelationalPredicate(new SDFExpression(
+				"", "a>b", MEP.getInstance()));
+		SDFAttribute a = new SDFAttribute("", "a", SDFDatatype.DOUBLE);
+		SDFSchema schema = new SDFSchema("", a);
+		pred.init(schema, null, false);
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
+		tuple.setAttribute(0, 8);
+		KeyValueObject<IMetaAttribute> additional = new KeyValueObject<IMetaAttribute>();
+		additional.setAttribute("b", 5);
+		System.out.println(pred.evaluate(tuple, additional));
 	}
 
 }
