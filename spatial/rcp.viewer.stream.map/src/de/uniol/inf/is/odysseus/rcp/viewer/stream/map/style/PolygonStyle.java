@@ -41,8 +41,10 @@ public class PolygonStyle extends Style{
 		this.setFillColor(fillColor);
 	}
 	
+	@Override
 	public void draw(GC gc, int[][] list) {
 		draw(gc, list, getLineColor(), getFillColor());
+		
 		super.draw(gc, list);
 	}	
 
@@ -59,7 +61,6 @@ public class PolygonStyle extends Style{
 		draw(gc, list, getLineColor(), getFillColor());
 	}
 	
-	//@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor) {
 		Color tmp = gc.getForeground();
 		gc.setForeground(fcolor);

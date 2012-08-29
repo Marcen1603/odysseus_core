@@ -53,6 +53,12 @@ public class VectorLayer extends AbstractLayer{
 		this.transformation = transformation;
 		this.sdfAttribute = sdfAttribute;
 		this.style = style;
+		this.name = sdfAttribute.getAttributeName();
+	}
+	
+	public VectorLayer(String name, ScreenTransformation transformation, SDFAttribute sdfAttribute, Style style) {
+		this(transformation, sdfAttribute, style);
+		this.name = name;
 	}
 
 	public void setStyle(Style style) {
@@ -128,23 +134,11 @@ public class VectorLayer extends AbstractLayer{
 			list[n + 1] = drawLinearRing(polygon.getInteriorRingN(n), gc);
 		}
 		this.style.setActiveStyle(polygon);
-		this.style.draw(gc, list);
-//		if(this.style instanceof PolygonStyle){
-//			((PolygonStyle) this.style).draw(gc, list);
-//		}
-//		/*
-//		 * @ToDo
-//		 * 
-//		 * 
-//		 * 
-//		 */
-//		if(this.style instanceof CollectionStyle){
-//			((CollectionStyle) this.style).draw(gc, list);
-//		}
+		this.style.draw(gc, list);	
+
 	}
 	
 	public void addGeometry(Geometry geometry) {
-		//LOG.debug("(ADD)Current Geometries:" + geometries.size());
 		synchronized (geometries) {
 			this.geometries.offer(geometry);
 		}
@@ -166,7 +160,7 @@ public class VectorLayer extends AbstractLayer{
 
 	@Override
 	public String getName() {
-		return this.sdfAttribute.getAttributeName();
+		return this.name;
 	}
 	
 	public SDFAttribute getNativeAttribute() {

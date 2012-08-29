@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.ViewerStreamMapPlugIn;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.LayerOrderTrayDialog;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyTitleDialog;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
@@ -60,12 +61,12 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
- *  
+ * 
  * @author Stephan Jansen
  * @author Kai Pancratz
  * 
  */
-public class StreamMapEditor implements IStreamEditorType  {
+public class StreamMapEditor implements IStreamEditorType {
 
 	protected static final Logger LOG = LoggerFactory.getLogger(StreamMapEditor.class);
 
@@ -83,9 +84,9 @@ public class StreamMapEditor implements IStreamEditorType  {
 	protected Runnable update;
 
 	protected Composite parent;
-	
+
 	protected boolean reactangleZoom = false;
-	
+
 	public StreamMapEditor(int maxTuples) {
 		LOG.debug("Create Stream Map Editor");
 		transformation = new ScreenTransformation();
@@ -103,15 +104,14 @@ public class StreamMapEditor implements IStreamEditorType  {
 			LOG.error("Warning: StreamMap is only for spatial relational tuple!");
 			return;
 		}
-		//LOG.info("Received Element: " + element.toString());
-		for (Integer key : spatialDataIndex.keySet()) {	
-			spatialDataIndex.get(key).addGeometry((Geometry)((Tuple<?>) element).getAttribute(key));	
+		// LOG.info("Received Element: " + element.toString());
+		for (Integer key : spatialDataIndex.keySet()) {
+			spatialDataIndex.get(key).addGeometry((Geometry) ((Tuple<?>) element).getAttribute(key));
 		}
 
-
 		tuples.addFirst((Tuple<?>) element);
-		//LOG.debug("Tuples: " + tuples.size());
-		
+		// LOG.debug("Tuples: " + tuples.size());
+
 		if (tuples.size() > getMaxTuplesCount()) {
 			tuples.removeLast();
 			for (VectorLayer layer : spatialDataIndex.values()) {
@@ -119,19 +119,17 @@ public class StreamMapEditor implements IStreamEditorType  {
 			}
 		}
 
-		if (update == null && screenManager.hasCanvasViewer()
-				&& !screenManager.getCanvas().isDisposed()) {
-			PlatformUI.getWorkbench().getDisplay()
-					.asyncExec(update = new Runnable() {
-						@Override
-						public void run() {
-							if (!screenManager.getCanvas().isDisposed())
-								screenManager.getCanvas().redraw();
-							update = null;
-						}
-					});
+		if (update == null && screenManager.hasCanvasViewer() && !screenManager.getCanvas().isDisposed()) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(update = new Runnable() {
+				@Override
+				public void run() {
+					if (!screenManager.getCanvas().isDisposed())
+						screenManager.getCanvas().redraw();
+					update = null;
+				}
+			});
 		}
-		
+
 	}
 
 	@Override
@@ -144,7 +142,7 @@ public class StreamMapEditor implements IStreamEditorType  {
 	@Override
 	public void createPartControl(Composite parent) {
 		setParent(parent);
-		
+
 		if (hasSchema() && getSchema().size() > 0) {
 			screenManager.setCanvasViewer(screenManager.createCanvas(parent));
 		} else {
@@ -152,21 +150,21 @@ public class StreamMapEditor implements IStreamEditorType  {
 			Label label = new Label(parent, SWT.NONE);
 			label.setText("Operator provides no schema");
 		}
-		
-		//Create Map Background
+
+		// Create Map Background
 
 		RasterLayer map = new RasterLayer(screenManager, 0, "Raster Basic");
 		layerOrder.addFirst(map);
-		
+
 		BasicLayer basic = new BasicLayer(screenManager);
 		layerOrder.addFirst(basic);
-		
+
 	}
 
 	@Override
 	public void setFocus() {
-//		if (screenManager.hasCanvasViewer())
-//			screenManager.getCanvas().setFocus();
+		// if (screenManager.hasCanvasViewer())
+		// screenManager.getCanvas().setFocus();
 	}
 
 	@Override
@@ -194,25 +192,24 @@ public class StreamMapEditor implements IStreamEditorType  {
 		return ArrayContentProvider.getInstance();
 	}
 
-
-
 	/**
 	 * 
 	 * The setSchema method
 	 * 
-	 * @param schema - the streaming schema
+	 * @param schema
+	 *            - the streaming schema
 	 */
 	private void setSchema(SDFSchema schema) {
 		this.schema = schema;
-		
+
 		for (int i = 0; i < schema.size(); i++) {
 			if (schema.getAttribute(i).getDatatype() instanceof SDFSpatialDatatype) {
 				SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) schema.getAttribute(i).getDatatype();
 
 				Style style = getStyle(spatialDatatype);
-				
+
 				if (style != null) {
-					addVectorLayer( schema.getAttribute(i),i,style);
+					addVectorLayer(schema.getAttribute(i), i, style);
 				} else {
 					throw new RuntimeException("Style for Spatialtype is not available or not implemented: " + spatialDatatype.getQualName().toString());
 				}
@@ -221,26 +218,31 @@ public class StreamMapEditor implements IStreamEditorType  {
 		}
 	}
 
-	public void addVectorLayer(SDFAttribute attribute, int position, Style style){
+	public void addVectorLayer(String name, SDFAttribute attribute, int position, Style style) {
+		VectorLayer layer = new VectorLayer(name, transformation, attribute, style);
+		spatialDataIndex.put(position, layer);
+		layerOrder.add(layer);
+	}
+
+	public void addVectorLayer(SDFAttribute attribute, int position, Style style) {
 		VectorLayer layer = new VectorLayer(transformation, attribute, style);
 		spatialDataIndex.put(position, layer);
 		layerOrder.add(layer);
 	}
-	
-	public void removeVectorLayer(int position){
+
+	public void removeVectorLayer(int position) {
 		spatialDataIndex.remove(position);
 	}
-	
-	public Style getStyle(SDFSpatialDatatype spatialDatatype){
+
+	public Style getStyle(SDFSpatialDatatype spatialDatatype) {
 		Style style = null;
-		
+
 		if (spatialDatatype.isPoint()) {
-			style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor());
+			style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor());
 		} else if (spatialDatatype.isLineString()) {
-			style = new LineStyle(1, ColorManager.getInstance()
-					.randomColor());
+			style = new LineStyle(1, ColorManager.getInstance().randomColor());
 		} else if (spatialDatatype.isPolygon()) {
-			style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), null);
+			style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor());
 		} else if (spatialDatatype.isMultiPoint()) {
 			style = new CollectionStyle();
 			style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
@@ -249,164 +251,173 @@ public class StreamMapEditor implements IStreamEditorType  {
 			style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
 		} else if (spatialDatatype.isMultiPolygon()) {
 			style = new CollectionStyle();
-			style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
+			style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
 		} else if (spatialDatatype.isSpatial()) {
 			style = new CollectionStyle();
 			style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
 			style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
-			style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
+			style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
 		}
-		
+
 		return style;
 	}
-	
-	
-	
+
 	private void setMaxTuplesCount(int maxTuples) {
 		if (maxTuples > 0)
 			this.maxTuplesCount = maxTuples;
 		else
 			this.maxTuplesCount = Integer.MAX_VALUE;
 	}
-	
+
 	@Override
 	public void initToolbar(final ToolBar toolbar) {
-		//final Label toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
-		
+		// final Label toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
+
 		/* break */
-		//ToolItem toolbarBreak = new ToolItem(toolbar, SWT.BREAK);
-		
-		/* blank button  16 */
-//		ToolItem buttom_16 = new ToolItem(toolbar, SWT.PUSH);	
-//		buttom_16.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("blank_16"));
-		
+		// ToolItem toolbarBreak = new ToolItem(toolbar, SWT.BREAK);
+
+		/* blank button 16 */
+		// ToolItem buttom_16 = new ToolItem(toolbar, SWT.PUSH);
+		// buttom_16.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("blank_16"));
+
 		/* Filter button */
-//		ToolItem filter = new ToolItem(toolbar, SWT.PUSH);
-//		filter.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("filter_16"));
-//		filter.setToolTipText("Filer");
-//		
-//		filter.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				PropertyWindow window = new PropertyWindow(PlatformUI.getWorkbench().getDisplay(), "Filter");				
-//				window.show();
-//				
-////				if( !window.isCanceled()) {
-////					getParent().layout();
-////				}
-//			}
-//		});
-		
+		// ToolItem filter = new ToolItem(toolbar, SWT.PUSH);
+		// filter.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("filter_16"));
+		// filter.setToolTipText("Filer");
+		//
+		// filter.addSelectionListener(new SelectionAdapter() {
+		// @Override
+		// public void widgetSelected(SelectionEvent e) {
+		// PropertyWindow window = new
+		// PropertyWindow(PlatformUI.getWorkbench().getDisplay(), "Filter");
+		// window.show();
+		//
+		// // if( !window.isCanceled()) {
+		// // getParent().layout();
+		// // }
+		// }
+		// });
+
 		/* Change between rectangle and click zoom button */
 		final ToolItem magnifier_rectangle = new ToolItem(toolbar, SWT.PUSH);
 		magnifier_rectangle.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("magnifier_rectangle_16"));
 		magnifier_rectangle.setDisabledImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("magnifier_rectangle_de_16"));
 		magnifier_rectangle.setToolTipText("Magnifier");
-		
+
 		final ToolItem magnifier_zoom = new ToolItem(toolbar, SWT.PUSH);
-		magnifier_zoom.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("magnifier_zoom_16"));
-		magnifier_zoom.setDisabledImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("magnifier_zoom_de_16"));
+		magnifier_zoom.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("magnifier_move_16"));
+		magnifier_zoom.setDisabledImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("magnifier_move_de_16"));
 		magnifier_zoom.setToolTipText("Magnifier");
-		
+
+		magnifier_rectangle.setEnabled(true);
+		reactangleZoom = false;
+		magnifier_zoom.setEnabled(false);
+
 		magnifier_rectangle.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {				
-					magnifier_rectangle.setEnabled(false);
-					reactangleZoom = true;
-					magnifier_zoom.setEnabled(true);
+			public void widgetSelected(SelectionEvent e) {
+				magnifier_rectangle.setEnabled(false);
+				reactangleZoom = true;
+				magnifier_zoom.setEnabled(true);
 			}
-		}); 
-		
+		});
+
 		magnifier_zoom.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-					magnifier_rectangle.setEnabled(true);
-					reactangleZoom = false;
-					magnifier_zoom.setEnabled(false);
+				magnifier_rectangle.setEnabled(true);
+				reactangleZoom = false;
+				magnifier_zoom.setEnabled(false);
 			}
 		});
-		
-		/* Edit Layer */	
+
+		/* Edit Layer */
 		ToolItem layerOrderButton = new ToolItem(toolbar, SWT.PUSH);
 		layerOrderButton.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("layers_16"));
 		layerOrderButton.setToolTipText("Add a new Layer.");
-		
+
 		layerOrderButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				PropertyTitleDialog dialog = new PropertyTitleDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(),layerOrder, schema	);
-//				dialog.create();
-//				if (dialog.open() == Window.OK) {
-//					LayerConfiguration config = dialog.getLayerConfiguration();
-//					if(config.isRaster()){
-//						config.getName();
-//						RasterLayer newLayer = new RasterLayer(screenManager, 0, config.getName());
-//						layerOrder.addLast(newLayer);
-//						screenManager.redraw();
-//					}
-//					
-//				} 
+
+				LayerOrderTrayDialog orderDialog = new LayerOrderTrayDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell());
+				orderDialog.create();
+
+				if (orderDialog.open() == Window.OK) {
+
+					screenManager.redraw();
+
+				}
 			}
 		});
-		
+
 		/* Add Layer */
 		ToolItem addLayer = new ToolItem(toolbar, SWT.PUSH);
 		addLayer.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("layers_plus_16"));
 		addLayer.setToolTipText("Add a new Layer.");
-		
+
 		addLayer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PropertyTitleDialog dialog = new PropertyTitleDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(),layerOrder, schema	);
+				PropertyTitleDialog dialog = new PropertyTitleDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), layerOrder, schema);
 				dialog.create();
 				if (dialog.open() == Window.OK) {
 					LayerConfiguration config = dialog.getLayerConfiguration();
-					if(config.isRaster()){
+					if (config.getLayerType() == 0) {
 						config.getName();
 						RasterLayer newLayer = new RasterLayer(screenManager, 0, config.getName());
 						layerOrder.addLast(newLayer);
-						screenManager.redraw();
+					} else if(config.getLayerType() == 1) {
+						if (schema.getAttribute(config.getAttributePosition()).getDatatype() instanceof SDFSpatialDatatype) {
+							SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) schema.getAttribute(config.getAttributePosition()).getDatatype();
+							Style style = getStyle(spatialDatatype);
+							if (style != null) {
+								addVectorLayer(config.getName(), schema.getAttribute(config.getAttributePosition()), config.getAttributePosition(), style);
+							} else {
+								throw new RuntimeException("Style for Spatialtype is not available or not implemented: " + spatialDatatype.getQualName().toString());
+							}
+
+						}
+					} else if(config.getLayerType() == 2){
+						
 					}
-					
-				} 
+					screenManager.redraw();
+				}
 			}
 		});
-		
 
-		
-		
 		/* Dummy Buttom */
-//		ToolItem dummyButton2 = new ToolItem(toolbar, SWT.PUSH);
-//		dummyButton2.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("dummy_16") );
-//		dummyButton2.setToolTipText("Dummy Button");
-//		
-//		dummyButton2.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				LayerPropertyDialog window = new LayerPropertyDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), layerOrder);
-////				window.create();
-//				window.open();
-//
-//				
-//				if( !window.close()) {
-//					getParent().layout();
-//				}
-//				
-//			}
-//		});
-		
-		
-		
+		// ToolItem dummyButton2 = new ToolItem(toolbar, SWT.PUSH);
+		// dummyButton2.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("dummy_16")
+		// );
+		// dummyButton2.setToolTipText("Dummy Button");
+		//
+		// dummyButton2.addSelectionListener(new SelectionAdapter() {
+		// @Override
+		// public void widgetSelected(SelectionEvent e) {
+		// LayerPropertyDialog window = new
+		// LayerPropertyDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
+		// layerOrder);
+		// // window.create();
+		// window.open();
+		//
+		//
+		// if( !window.close()) {
+		// getParent().layout();
+		// }
+		//
+		// }
+		// });
+
 	}
 
 	public final Composite getParent() {
 		return parent;
 	}
-	
+
 	private void setParent(Composite parent) {
 		this.parent = parent;
 	}
-
 
 	public LinkedList<ILayer> getLayerOrder() {
 		return layerOrder;
@@ -415,14 +426,14 @@ public class StreamMapEditor implements IStreamEditorType  {
 	public void setLayerOrder(LinkedList<ILayer> layerOrder) {
 		this.layerOrder = layerOrder;
 	}
-	
-	public ScreenManager getScreenManager(){
+
+	public ScreenManager getScreenManager() {
 		return screenManager;
-		
+
 	}
 
 	public boolean isRectangleZoom() {
 		return reactangleZoom;
 	}
-	
+
 }

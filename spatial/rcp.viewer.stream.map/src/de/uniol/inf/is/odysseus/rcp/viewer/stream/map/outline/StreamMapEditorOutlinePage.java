@@ -263,6 +263,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 					colorDialog.setRGB(color);
 					colorDialog.setText("ColorDialog");
 					RGB selectedColor = colorDialog.open();
+					
 					if (!selectedColor.equals(color))
 						element.setFillColor(ColorManager.getInstance().getColor(selectedColor));
 					getTreeViewer().refresh(element, true);

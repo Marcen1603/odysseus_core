@@ -21,6 +21,8 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Stephan Jansen
@@ -28,7 +30,9 @@ import org.osgi.framework.Bundle;
  * 
  */
 public class StreamMapEditorEarlyStartup implements IStartup {
-
+	
+	private static final Logger LOG = LoggerFactory.getLogger(StreamMapEditorEarlyStartup.class);
+	
 	@Override
 	public void earlyStartup() {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -42,6 +46,8 @@ public class StreamMapEditorEarlyStartup implements IStartup {
 					imageRegistry.put("layers_16", ImageDescriptor.createFromURL(bundle.getEntry("icons/layers_16.png")));
 					imageRegistry.put("layers_plus_16", ImageDescriptor.createFromURL(bundle.getEntry("icons/layers_plus_16.png")));
 					imageRegistry.put("magnifier_16", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier_16.png")));
+					imageRegistry.put("magnifier_move_16", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier_move_16.png")));
+					imageRegistry.put("magnifier_move_de_16", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier_move_de_16.png")));
 					imageRegistry.put("magnifier_zoom_16", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier_plus_minus_16.png")));
 					imageRegistry.put("magnifier_rectangle_16", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier_rectangle_16.png")));
 					imageRegistry.put("magnifier_zoom_de_16", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier_plus_minus_de_16.png")));
@@ -53,6 +59,8 @@ public class StreamMapEditorEarlyStartup implements IStartup {
 					imageRegistry.put("layers", ImageDescriptor.createFromURL(bundle.getEntry("icons/layers.png")));
 					imageRegistry.put("layers_plus", ImageDescriptor.createFromURL(bundle.getEntry("icons/layers_plus.png")));
 					imageRegistry.put("magnifier", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier.png")));
+					imageRegistry.put("magnifier_move", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier_move.png")));
+					imageRegistry.put("magnifier_move_de", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier_move_de.png")));
 					imageRegistry.put("magnifier_zoom", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier_plus_minus.png")));
 					imageRegistry.put("magnifier_rectangle", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier_rectangle.png")));
 					imageRegistry.put("magnifier_zoom_de", ImageDescriptor.createFromURL(bundle.getEntry("icons/magnifier_plus_minus_de.png")));
@@ -60,7 +68,7 @@ public class StreamMapEditorEarlyStartup implements IStartup {
 					imageRegistry.put("filter", ImageDescriptor.createFromURL(bundle.getEntry("icons/filter.png")));
 					imageRegistry.put("dummy", ImageDescriptor.createFromURL(bundle.getEntry("icons/dummy.png")));
 				} catch (SWTError e) {
-					// Ignore :-)
+					LOG.error(e.getMessage());
 				}
 			}
 
