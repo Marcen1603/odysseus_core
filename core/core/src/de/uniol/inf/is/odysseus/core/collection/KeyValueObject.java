@@ -20,12 +20,11 @@ import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
  */
 
 public class KeyValueObject <T extends IMetaAttribute> extends MetaAttributeContainer<T>
-implements Serializable, Comparable<Tuple<?>>{
+implements Serializable{
 	
 	private static final long serialVersionUID = -94667746890198612L;
 
 	final private Map<String, Object> attributes = new HashMap<String, Object>();
-	private boolean valueChanged = true;
 	
 	public KeyValueObject(){
 		
@@ -34,7 +33,6 @@ implements Serializable, Comparable<Tuple<?>>{
 	public KeyValueObject(KeyValueObject<T> other){
 		super(other);
 		this.attributes.putAll(other.attributes);	
-		this.valueChanged = other.valueChanged;
 	}
 	
 	//-----------------------------------------------
@@ -57,12 +55,10 @@ implements Serializable, Comparable<Tuple<?>>{
 			this.attributes.put(key, new ArrayList<Object>());
 		}
 		((Collection<Object>) this.attributes.get(key)).add(value);
-		this.valueChanged = true;
 	}
 
 	public final void setAttribute(String key, Object value) {
 		this.attributes.put(key, value);
-		this.valueChanged = true;
 	}
 	
 	public final void setAttributes(List<String> keys, List<Object> values){
@@ -86,6 +82,16 @@ implements Serializable, Comparable<Tuple<?>>{
 	
 	public final int size() {
 		return this.attributes.size();
+	}
+	
+	// ----------------------------------
+	// static
+	// ----------------------------------
+	
+	public KeyValueObject<T> merge(KeyValueObject<T> left, KeyValueObject<T> right){
+		KeyValueObject<T> merged = new KeyValueObject<T>(left);
+		merged.attributes.putAll(right.attributes);
+		return merged;
 	}
 	
 	// ---------------------------------
@@ -114,12 +120,6 @@ implements Serializable, Comparable<Tuple<?>>{
 	}
 
 	// ------------------------------------
-	
-	@Override
-	public int compareTo(Tuple<?> arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 	
 	@Override
 	public MetaAttributeContainer<T> clone() {
