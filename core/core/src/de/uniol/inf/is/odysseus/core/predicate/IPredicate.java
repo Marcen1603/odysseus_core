@@ -56,9 +56,6 @@ public interface IPredicate<T> extends IClone, Serializable {
 	 */
 	boolean isContainedIn(IPredicate<?> o);
 	
-	@Deprecated
-	boolean isContainedIn(Object o);
-	
 	/**
 	 * Get the list of all attributes in this predicate
 	 * @return

@@ -61,9 +61,4 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 		return false;
 	}
 	
-	@Override
-	@Deprecated
-	final public boolean isContainedIn(Object o) {
-		return isContainedIn((IPredicate<?>)o);
-	} 
 }

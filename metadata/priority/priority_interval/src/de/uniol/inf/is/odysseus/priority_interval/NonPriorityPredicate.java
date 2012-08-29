@@ -57,11 +57,6 @@ public class NonPriorityPredicate<T extends IMetaAttributeContainer<? extends IP
 	}
 	
 	@Override
-	public boolean isContainedIn(Object o) {
-		return false;
-	}
-	
-	@Override
 	public List<SDFAttribute> getAttributes() {
 		return null;
 	}
