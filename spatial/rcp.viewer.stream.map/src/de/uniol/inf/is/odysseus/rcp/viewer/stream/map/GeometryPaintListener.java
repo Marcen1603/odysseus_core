@@ -56,6 +56,8 @@ final class GeometryPaintListener implements PaintListener {
 		}
 		e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		if (this.streamMapEditor.getScreenManager().getMouseSelection() != null){
+			e.gc.setAlpha(90);
+			e.gc.fillRectangle(this.streamMapEditor.getScreenManager().getMouseSelection());
 			e.gc.drawRectangle(this.streamMapEditor.getScreenManager().getMouseSelection());
 		}
 		//e.gc.drawText(this.streamMapEditor.getScreenManager().getMouseLabel().label, this.streamMapEditor.getScreenManager().getMouseLabel().x + 15 , this.streamMapEditor.getScreenManager().getMouseLabel().y,true); 
