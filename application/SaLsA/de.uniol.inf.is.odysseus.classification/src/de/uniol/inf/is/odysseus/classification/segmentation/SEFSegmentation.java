@@ -54,7 +54,7 @@ public class SEFSegmentation extends AbstractFunction<Geometry> {
     @Override
     public MultiLineString getValue() {
         final PolarCoordinate[] points = (PolarCoordinate[]) this.getInputValue(0);
-        final double threshold = this.getNumericalInputValue(2).doubleValue();
+        final double threshold = this.getNumericalInputValue(1).doubleValue();
         final int minNumberOfPoints = this.getNumericalInputValue(2).intValue();
 
         final LineString[] segments = this.segmentScan(points, threshold, minNumberOfPoints);
