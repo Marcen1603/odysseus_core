@@ -40,7 +40,7 @@ public class SEFSegmentation extends AbstractFunction<Geometry> {
         }
         if (argPos > this.getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
-                    + " argument(s): A matrix,a threashold, and the min. number of points per segment.");
+                    + " argument(s): A point cloud, a threashold, and the min. number of points per segment.");
         }
 
         return SEFSegmentation.accTypes[argPos];
