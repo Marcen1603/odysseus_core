@@ -1,23 +1,27 @@
 package de.offis.salsa.obsrec.objrules;
 
-import java.awt.Polygon;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import de.offis.salsa.lms.model.Sample;
-import de.offis.salsa.obsrec.TrackedObject.Type;
-import de.offis.salsa.obsrec.annotations.ObjectRule;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Polygon;
 
-@ObjectRule(typeCategory = Type.ECKIG, name = "StandardEckig")
-public class EckigObjRule extends AbstractObjRule {
+import de.offis.salsa.lms.model.Sample;
+import de.offis.salsa.obsrec.annotations.ObjectRule;
+import de.offis.salsa.obsrec.models.ObjectType;
+import de.offis.salsa.obsrec.util.Util;
+
+@ObjectRule(typeCategory = ObjectType.RUND, name = "StandardRund")
+public class RoundObjRule implements IObjectRule {
 	
 	private static final int TOLERANCE = 30;
-	
+
 	@Override
-	public Type getType() {
-		return Type.ECKIG;
+	public ObjectType getType() {
+		return ObjectType.RUND;
 	}
 
 	@Override
@@ -46,12 +50,11 @@ public class EckigObjRule extends AbstractObjRule {
 			
 			stats.addValue(v);
 		}
-
 		
 		int upperBound = 90 + TOLERANCE;
 		int lowerBound = 90 - TOLERANCE;
-		double min = stats.getMin();
-		if( min < upperBound && min > lowerBound){
+		double mean = stats.getMean();
+		if( mean < upperBound && mean > lowerBound){
 			// TODO feingranulare wahrscheinlichkeiten
 			return 1.0;
 		} else {
@@ -62,7 +65,7 @@ public class EckigObjRule extends AbstractObjRule {
 	@Override
 	public Polygon getPredictedPolygon(List<Sample> segment) {
 		// TODO Auto-generated method stub
-		return new Polygon();
+		return Util.createPolygon(new ArrayList<Coordinate>());
 	}
 
 }

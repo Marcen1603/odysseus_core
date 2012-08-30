@@ -1,15 +1,12 @@
-package de.offis.salsa.obsrec;
+package de.offis.salsa.obsrec.models;
 
-import java.awt.Polygon;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.vividsolutions.jts.geom.Polygon;
+
 
 public class TrackedObject {
-	public enum Type {
-		GERADE, RUND, KONKAV, V_FORM, ECKIG;
-	}
-	
 	private int x;
 	private int y;
 	private int width;

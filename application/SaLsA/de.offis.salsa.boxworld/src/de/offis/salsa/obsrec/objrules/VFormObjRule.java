@@ -1,24 +1,28 @@
 package de.offis.salsa.obsrec.objrules;
 
-import java.awt.Polygon;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import de.offis.salsa.lms.model.Sample;
-import de.offis.salsa.obsrec.TrackedObject.Type;
-import de.offis.salsa.obsrec.annotations.ObjectRule;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Polygon;
 
-@ObjectRule(typeCategory = Type.V_FORM, name = "StandardVForm")
-public class VFormObjRule extends AbstractObjRule {
+import de.offis.salsa.lms.model.Sample;
+import de.offis.salsa.obsrec.annotations.ObjectRule;
+import de.offis.salsa.obsrec.models.ObjectType;
+import de.offis.salsa.obsrec.util.Util;
+
+@ObjectRule(typeCategory = ObjectType.V_FORM, name = "StandardVForm")
+public class VFormObjRule implements IObjectRule {
 	
 //	private static final int TOLERANCE = 30;
 
 	
 	@Override
-	public Type getType() {
-		return Type.V_FORM;
+	public ObjectType getType() {
+		return ObjectType.V_FORM;
 	}
 
 	@Override
@@ -59,7 +63,7 @@ public class VFormObjRule extends AbstractObjRule {
 	@Override
 	public Polygon getPredictedPolygon(List<Sample> segment) {
 		// TODO Auto-generated method stub
-		return new Polygon();
+		return Util.createPolygon(new ArrayList<Coordinate>());
 	}
 
 }

@@ -1,22 +1,23 @@
 package de.offis.salsa.obsrec;
 
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import com.impetus.annovention.ClasspathDiscoverer;
 import com.impetus.annovention.Discoverer;
+import com.vividsolutions.jts.geom.Polygon;
 
+import de.offis.salsa.lms.model.Measurement;
 import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.ls.DebugLaserScanner;
 import de.offis.salsa.obsrec.ls.ReadingLaserScanner;
 import de.offis.salsa.obsrec.ls.SavingLaserScanner;
 import de.offis.salsa.obsrec.ls.SickLaserScanner;
+import de.offis.salsa.obsrec.models.TrackedObject;
 import de.offis.salsa.obsrec.objrules.IObjectRule;
 import de.offis.salsa.obsrec.scansegm.IScanSegmentation;
 
@@ -25,15 +26,14 @@ public class Objectworld {
 	
 	private List<SickLaserScanner> scanner;
 	
-	private SensorMeasurement measure;
+	private Measurement measure;
 	private List<TrackedObject> boxes = new ArrayList<TrackedObject>();
 	
-//	private IScanSegmentation segmenter = new SefSegmentation();
 	private String activeSegmenter = "SefSegmentation";
-	private HashMap<String, IScanSegmentation> scanSegmenter = new HashMap<String, IScanSegmentation>();
+	private Map<String, IScanSegmentation> scanSegmenter = new HashMap<String, IScanSegmentation>();
 	
-//	private HashMap<Type, IObjectRule> objRulesActivated = new HashMap<Type, IObjectRule>();
-	private HashMap<String, IObjectRule> objRules = new HashMap<String, IObjectRule>();
+	private ArrayList<String> activeObjRules = new ArrayList<String>();
+	private Map<String, IObjectRule> objRules = new HashMap<String, IObjectRule>();
 	
 	public Objectworld(){
 		log.info("Initiating Objektwelt ...");
@@ -41,6 +41,18 @@ public class Objectworld {
 		this.scanner = new ArrayList<SickLaserScanner>();
 		
 		doAnnotationProcessing();
+	}
+	
+	public void setActiveObjectRules(ArrayList<String> arrayList){
+		activeObjRules.clear();
+		
+		for(String s : arrayList){
+			activeObjRules.add(s);
+		}
+	}
+	
+	public ArrayList<String> getRegisteredObjectRules(){
+		return new ArrayList<String>(objRules.keySet());
 	}
 	
 	private void doAnnotationProcessing(){
@@ -93,11 +105,11 @@ public class Objectworld {
 		return ls;
 	}
 	
-	public void receiveMeasure(SensorMeasurement measurement){
+	public void receiveMeasure(Measurement measurement){
 		// TODO insert into objektwelt
 		// bei mehreren scanners probleme mit der synchronisation! (vielleicht)
 		
-		this.measure = new SensorMeasurement(measurement);
+		this.measure = measurement;
 
 		ArrayList<TrackedObject> tempObj = new ArrayList<TrackedObject>();
 		for(List<Sample> segmentSamples : getActiveSegmenter().segmentScan(measurement)){
@@ -121,34 +133,34 @@ public class Objectworld {
 		}
 	}
 	
+	
+	
 	public String[] getRegisteredSegmenter(){
 		return scanSegmenter.keySet().toArray(new String[0]);
 	}
 	
-	private TrackedObject createTrackedObject(List<Sample> samplesObject){
-//		GeometryFactory fact = new GeometryFactory();
-//		LinearRing linear = new GeometryFactory().createLinearRing(coordinates);
-//		Polygon poly = new Polygon(linear, null, fact);
-		 
-		Polygon p = new Polygon();
-		
+	private TrackedObject createTrackedObject(List<Sample> samplesObject){		 
+		java.awt.Polygon p = new java.awt.Polygon();		
 		for(Sample s : samplesObject){
 			p.addPoint((int)s.getX(), (int)s.getY());
-		}
-		
+		}		
 		Rectangle b = p.getBounds();
 		
 		
 		Map<String, Double> affs = new HashMap<String, Double>();
 		Map<String, Polygon> polygons = new HashMap<String, Polygon>();
-		for(Entry<String, IObjectRule> objRule : objRules.entrySet()){
-			// put affinity info
-			affs.put(objRule.getKey(), objRule.getValue().getTypeAffinity(samplesObject));
+		for(String objRuleName : new ArrayList<String>(activeObjRules)){
+			IObjectRule objRule = objRules.get(objRuleName);			
+			
+			double affinity = objRule.getTypeAffinity(samplesObject);
+			
+			if(affinity > 0){
+				// put affinity info
+				affs.put(objRuleName, affinity);
 
-			// put polygon			
-			Polygon poly = new Polygon();
-			poly = objRule.getValue().getPredictedPolygon(samplesObject);
-			polygons.put(objRule.getKey(), poly);				
+				// put polygon
+				polygons.put(objRuleName, objRule.getPredictedPolygon(samplesObject));
+			}							
 		}
 		
 		return new TrackedObject(b.x, b.y, b.width, b.height, affs, polygons);
@@ -158,8 +170,8 @@ public class Objectworld {
 		return new ArrayList<TrackedObject>(boxes);
 	}
 	
-	public SensorMeasurement getMeasurement(){
-		return new SensorMeasurement(measure);
+	public Measurement getMeasurement(){
+		return measure;
 	}
 	
 	private List<ObjWorldListener> listener = new ArrayList<ObjWorldListener>();

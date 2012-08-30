@@ -3,7 +3,6 @@ package de.offis.salsa.obsrec.ls;
 import de.offis.salsa.lms.model.Measurement;
 import de.offis.salsa.obsrec.AntiJitter;
 import de.offis.salsa.obsrec.Objectworld;
-import de.offis.salsa.obsrec.SensorMeasurement;
 
 public class SickLaserScanner extends AbstractLaserScanner {
 	
@@ -29,7 +28,7 @@ public class SickLaserScanner extends AbstractLaserScanner {
 	@Override
 	public void onMeasurement(Measurement m) {
 		if(world != null){
-			world.receiveMeasure(new SensorMeasurement(jitter.deJitter(m)));
+			world.receiveMeasure(jitter.deJitter(m));
 		}
 	}
 }

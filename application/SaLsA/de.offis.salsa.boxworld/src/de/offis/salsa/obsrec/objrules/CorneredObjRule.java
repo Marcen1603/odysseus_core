@@ -1,22 +1,27 @@
 package de.offis.salsa.obsrec.objrules;
 
-import java.awt.Polygon;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Polygon;
+
 import de.offis.salsa.lms.model.Sample;
-import de.offis.salsa.obsrec.TrackedObject.Type;
 import de.offis.salsa.obsrec.annotations.ObjectRule;
+import de.offis.salsa.obsrec.models.ObjectType;
+import de.offis.salsa.obsrec.util.Util;
 
-@ObjectRule(typeCategory = Type.KONKAV, name = "StandardKonkav")
-public class KonkavObjRule extends AbstractObjRule {
-
+@ObjectRule(typeCategory = ObjectType.ECKIG, name = "StandardEckig")
+public class CorneredObjRule implements IObjectRule {
+	
+	private static final int TOLERANCE = 30;
 	
 	@Override
-	public Type getType() {
-		return Type.KONKAV;
+	public ObjectType getType() {
+		return ObjectType.ECKIG;
 	}
 
 	@Override
@@ -33,7 +38,7 @@ public class KonkavObjRule extends AbstractObjRule {
 		for(int i = 1 ; i < segment.size()-1 ; i += 2){
 			Sample current = segment.get(i);
 			double currentX = current.getX();
-			double currentY = current.getY();			
+			double currentY = current.getY();
 			
 			double b = Point2D.distance(firstX, firstY, currentX, currentY);
 			double c = Point2D.distance(currentX, currentY, lastX, lastY);
@@ -43,47 +48,31 @@ public class KonkavObjRule extends AbstractObjRule {
 			double acos = Math.acos(cos_v);
 			double v = Math.toDegrees(acos);
 			
-			if(firstY < currentY || lastY < currentY){
-				v = 360 - v;
-			}
-			
 			stats.addValue(v);
 		}
+
 		
-		if(stats.getMin() > 180){
+		int upperBound = 90 + TOLERANCE;
+		int lowerBound = 90 - TOLERANCE;
+		double min = stats.getMin();
+		if( min < upperBound && min > lowerBound){
 			// TODO feingranulare wahrscheinlichkeiten
-			
+//			NormalDistribution dist = new NormalDistribution();
+//			Gaussian g = new Gaussian(,90 ,);
 			return 1.0;
 		} else {
 			return 0.0;
 		}
 	}
+	
+//	private double getValue(double lowerBound, double upperBound, double value){
+//		
+//	}
 
-
-	public Polygon getPredictedPolygon(List<Sample> segment){
-		Polygon result = new Polygon();
-		
-		Integer maxX = null;
-		Integer maxY = null;
-		
-		for(Sample s : segment){
-			if(maxX == null)
-				maxX = (int) s.getX();
-			
-			if(maxY == null)
-				maxY = (int) s.getY();
-			
-			if(maxX < s.getX())
-				maxX = (int) s.getX();
-			
-			if(maxY < s.getY())
-				maxY = (int) s.getY();
-			
-			result.addPoint((int)s.getX(), (int)s.getY());
-		}
-		
-		result.addPoint(maxX, maxY);
-		
-		return result;
+	@Override
+	public Polygon getPredictedPolygon(List<Sample> segment) {
+		// TODO Auto-generated method stub
+		return Util.createPolygon(new ArrayList<Coordinate>());
 	}
+
 }

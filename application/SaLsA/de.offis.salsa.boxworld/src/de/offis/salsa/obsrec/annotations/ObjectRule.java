@@ -5,11 +5,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import de.offis.salsa.obsrec.TrackedObject.Type;
+import de.offis.salsa.obsrec.models.ObjectType;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ObjectRule {
-	Type typeCategory();
+	ObjectType typeCategory();
 	String name();
 }

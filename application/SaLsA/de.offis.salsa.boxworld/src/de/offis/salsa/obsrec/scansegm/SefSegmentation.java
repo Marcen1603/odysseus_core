@@ -3,8 +3,8 @@ package de.offis.salsa.obsrec.scansegm;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.offis.salsa.lms.model.Measurement;
 import de.offis.salsa.lms.model.Sample;
-import de.offis.salsa.obsrec.SensorMeasurement;
 import de.offis.salsa.obsrec.annotations.ScanSegmentation;
 /**
  * Successive Edge Following "SEF" method for segmentation of a laser scan. 
@@ -26,11 +26,11 @@ public class SefSegmentation implements IScanSegmentation {
 	private static final int TRESHOLD = 100;
 	
 	@Override
-	public List<List<Sample>> segmentScan(SensorMeasurement measurement) {
+	public List<List<Sample>> segmentScan(Measurement measurement) {
 		List<List<Sample>> segments = new ArrayList<List<Sample>>();
 				
 		beginSegment();
-		for(Sample s : measurement.getData()){
+		for(Sample s : measurement.getSamples()){
 			if(checkNewObjectConditions(s) && last != null){
 				List<Sample> segment = closeSegment();
 				if(segment != null){

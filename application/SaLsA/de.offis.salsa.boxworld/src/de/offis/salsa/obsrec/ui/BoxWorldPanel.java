@@ -6,11 +6,11 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import de.offis.salsa.lms.model.Measurement;
 import de.offis.salsa.lms.model.Sample;
-import de.offis.salsa.obsrec.TrackedObject;
 import de.offis.salsa.obsrec.ObjWorldListener;
 import de.offis.salsa.obsrec.Objectworld;
-import de.offis.salsa.obsrec.SensorMeasurement;
+import de.offis.salsa.obsrec.models.TrackedObject;
 import de.offis.salsa.obsrec.ui.paint.CanvasElement;
 import de.offis.salsa.obsrec.ui.paint.CoordMarker;
 import de.offis.salsa.obsrec.ui.paint.DrawingContext;
@@ -27,7 +27,7 @@ public class BoxWorldPanel extends JPanel implements ObjWorldListener {
 	private DrawingContext drawCtx = new DrawingContext();
 	
 	private Objectworld objWelt;	
-	private SensorMeasurement measure = null;	
+	private Measurement measure = null;	
 	
 	private List<CanvasElement> samplePoints = new ArrayList<CanvasElement>();
 	private List<CanvasElement> area = new ArrayList<CanvasElement>();
@@ -76,7 +76,7 @@ public class BoxWorldPanel extends JPanel implements ObjWorldListener {
 		}
 	}
 	
-	SensorMeasurement sensorMeasurementTemp;
+	Measurement sensorMeasurementTemp;
 	List<TrackedObject> boxesTemp;
 	
 
@@ -102,8 +102,8 @@ public class BoxWorldPanel extends JPanel implements ObjWorldListener {
 		}
 	}
 	
-	private void setNewMeasurement(SensorMeasurement sensorMeasurement){
-		this.measure = new SensorMeasurement(sensorMeasurement);
+	private void setNewMeasurement(Measurement measurement){
+		this.measure = measurement;
 		
 		this.samplePoints.clear();
 		this.area.clear();
@@ -111,7 +111,7 @@ public class BoxWorldPanel extends JPanel implements ObjWorldListener {
 		LaserAreaFreePolygon p = new LaserAreaFreePolygon();
 	
 		
-		for(Sample s : this.measure.getData()){
+		for(Sample s : this.measure.getSamples()){
 			this.samplePoints.add(createSampleIndicatorGfx(s));
 			p.addPoint((int)s.getX(), (int)s.getY());
 		}

@@ -9,7 +9,6 @@ public class Entrypoint {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-	
 		Objectworld objWelt = new Objectworld();
 //		SickLaserScanner s = objWelt.addSickLaserScanner("192.168.1.20", 2111);
 //		ReadingLaserScanner s = objWelt.addReadingLaserScanner("lms1.data");

@@ -1,23 +1,27 @@
 package de.offis.salsa.obsrec.objrules;
 
-import java.awt.Polygon;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import de.offis.salsa.lms.model.Sample;
-import de.offis.salsa.obsrec.TrackedObject.Type;
-import de.offis.salsa.obsrec.annotations.ObjectRule;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Polygon;
 
-@ObjectRule(typeCategory = Type.GERADE, name = "StandardGerade")
-public class GeradeObjRule extends AbstractObjRule {
+import de.offis.salsa.lms.model.Sample;
+import de.offis.salsa.obsrec.annotations.ObjectRule;
+import de.offis.salsa.obsrec.models.ObjectType;
+import de.offis.salsa.obsrec.util.Util;
+
+@ObjectRule(typeCategory = ObjectType.GERADE, name = "GeradePoint2Point")
+public class StraightP2PObjRule implements IObjectRule {
 	
 	private static final int TOLERANCE = 25;
 	
 	@Override
-	public Type getType() {
-		return Type.GERADE;
+	public ObjectType getType() {
+		return ObjectType.GERADE;
 	}
 
 	@Override
@@ -60,10 +64,7 @@ public class GeradeObjRule extends AbstractObjRule {
 
 	public Polygon getPredictedPolygon(List<Sample> segment){
 		// TODO ausgleichsgrade benutzen!
-		
-		
-		Polygon p = new Polygon();
-		
+				
 //		 var x1 = ..., x2 = ..., y1 = ..., y2 = ... // The original line
 //				    var L = Math.Sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))
 //
@@ -74,7 +75,7 @@ public class GeradeObjRule extends AbstractObjRule {
 //				    var x2p = x2 + offsetPixels * (y2-y1) / L
 //				    var y1p = y1 + offsetPixels * (x1-x2) / L
 //				    var y2p = y2 + offsetPixels * (x1-x2) / L
-		
+				
 		int x1 = (int)segment.get(0).getX();
 		int y1 = (int)segment.get(0).getY();
 		int x2 = (int)segment.get(segment.size()-1).getX();
@@ -88,13 +89,21 @@ public class GeradeObjRule extends AbstractObjRule {
 		int y1p = (int) (y1 + offsetPixels * (x1-x2) / L);
 		int y2p = (int) (y2 + offsetPixels * (x1-x2) / L);
 		
-		p.addPoint(x1, y1);
-		p.addPoint(x2, y2);
-//p.addPoint(0, 0);
-
-		p.addPoint(x2p, y2p);
-		p.addPoint(x1p, y1p);
+//		Polygon p = new Polygon();
+//		p.addPoint(x1, y1);
+//		p.addPoint(x2, y2);
+////p.addPoint(0, 0);
+//
+//		p.addPoint(x2p, y2p);
+//		p.addPoint(x1p, y1p);
+//		
+//		return p;
 		
-		return p;
+		List<Coordinate> coords = new ArrayList<Coordinate>();
+		coords.add(new Coordinate(x1, y1));
+		coords.add(new Coordinate(x2, y2));
+		coords.add(new Coordinate(x2p, y2p));
+		coords.add(new Coordinate(x1p, y1p));
+		return Util.createPolygon(coords);
 	}
 }

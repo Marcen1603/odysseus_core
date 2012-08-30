@@ -6,7 +6,6 @@ import java.io.ObjectInputStream;
 
 import de.offis.salsa.lms.model.Measurement;
 import de.offis.salsa.obsrec.Objectworld;
-import de.offis.salsa.obsrec.SensorMeasurement;
 
 public class ReadingLaserScanner extends SickLaserScanner {
 
@@ -49,7 +48,7 @@ public class ReadingLaserScanner extends SickLaserScanner {
 	@Override
 	public void onMeasurement(Measurement m) {
 		if(world != null){
-			world.receiveMeasure(new SensorMeasurement(m));
+			world.receiveMeasure(m);
 		}
 	}
 }

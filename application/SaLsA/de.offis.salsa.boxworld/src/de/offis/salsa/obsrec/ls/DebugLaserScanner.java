@@ -1,13 +1,11 @@
 package de.offis.salsa.obsrec.ls;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.offis.salsa.lms.model.Measurement;
 import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.Objectworld;
-import de.offis.salsa.obsrec.SensorMeasurement;
 
 public class DebugLaserScanner extends SickLaserScanner {
 
@@ -16,7 +14,7 @@ public class DebugLaserScanner extends SickLaserScanner {
 	}
 	
 	@Override
-	public void onMeasurement(Measurement mm) {
+	public void onMeasurement(Measurement measurement) {
 		// call this method everytime the real sensor wnats to send me data
 		if(world != null){
 			Measurement m = new Measurement();
@@ -55,8 +53,7 @@ public class DebugLaserScanner extends SickLaserScanner {
 			}
 			
 			m.setSamples(ss.toArray(new Sample[0]));
-			SensorMeasurement measurement = new SensorMeasurement(m);
-			world.receiveMeasure(measurement);
+			world.receiveMeasure(m);
 		}
 	}
 	
