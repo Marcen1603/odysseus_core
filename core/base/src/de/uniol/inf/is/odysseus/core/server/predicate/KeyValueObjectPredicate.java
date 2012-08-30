@@ -62,7 +62,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
 	}
 
 	public static void main(String[] args) {
-		String predicate = "a > b";
+		String predicate = "a*10-100 > b";
 		SDFExpression expression = new SDFExpression(null,predicate, MEP.getInstance());
 		KeyValueObjectPredicate pre = new KeyValueObjectPredicate(expression);
 		KeyValueObject<IMetaAttribute> input = new KeyValueObject<IMetaAttribute>();

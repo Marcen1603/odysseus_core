@@ -6,13 +6,23 @@ Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.metadata,
+ de.uniol.inf.is.odysseus.interval.transform.join,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.window,
+ de.uniol.inf.is.odysseus.logicaloperator.intervalapproach,
+ de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.relational.persistentqueries,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.transform.engine,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
+ org.osgi.framework;version="1.6.0",
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.relational_interval
 Bundle-ClassPath: .
 Require-Bundle: de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Service-Component: OSGI-INF/QueryBuildConfiguration.xml 
+Service-Component: OSGI-INF/*  
 

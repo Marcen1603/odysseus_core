@@ -35,21 +35,7 @@ Unless required by applicable law or agreed to in writing, software
    </requires>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.logicaloperator.relational"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.parser.pql.relational"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.physicaloperator.relational"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -63,28 +49,7 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.relational.rewrite"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.relational.transform"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.relational_interval"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.relational_interval.transform"
          download-size="0"
          install-size="0"
          version="0.0.0"

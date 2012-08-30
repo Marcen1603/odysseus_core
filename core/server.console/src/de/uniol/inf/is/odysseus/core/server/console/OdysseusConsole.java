@@ -866,6 +866,7 @@ public class OdysseusConsole implements CommandProvider,
 		}
 	}
 
+	@Help(parameter = "<login username password>", description = "Login user with name and password.")
 	public void _login(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		try {
@@ -884,6 +885,18 @@ public class OdysseusConsole implements CommandProvider,
 			ci.println(e.getMessage());
 		}
 	}
+	
+	@Help(parameter = "<logout>", description = "Logout current user.")
+	public void _logout(CommandInterpreter ci) {
+		try {
+				UserManagement.getSessionmanagement().logout(currentUser);
+				currentUser = null;				
+					ci.println("Current user logged out ");					
+		} catch (Exception e) {
+			ci.println(e.getMessage());
+		}
+	}
+	
 
 	@Help(parameter = "<query string without SELECT> [<S>|<F> filename|<E>]", description = "add query [with console-output-sink|File output|eclipse output]\n\tExample:SELECT (a * 2) as value FROM test WHERE a > 2 <S>")
 	public void _SELECT(CommandInterpreter ci) {

@@ -89,7 +89,6 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
     // ----------------------------------------------------------------------------------------
     // Logging
     // ----------------------------------------------------------------------------------------
-
     protected static Logger _logger = null;
 
     protected static Logger getLogger() {
