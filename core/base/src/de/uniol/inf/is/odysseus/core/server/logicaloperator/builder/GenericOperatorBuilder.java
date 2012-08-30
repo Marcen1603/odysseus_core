@@ -152,7 +152,7 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 	private void initOp(ILogicalOperator op) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		for (int i = 0; i < getInputOperatorCount(); ++i) {
 			ILogicalOperator inputOperator = getInputOperator(i);
-			op.subscribeToSource(inputOperator, i, getInputOperatorItem(i).outputPort, inputOperator.getOutputSchema());
+			op.subscribeToSource(inputOperator, i, getInputOperatorItem(i).outputPort, inputOperator.getOutputSchema(getInputOperatorItem(i).outputPort));
 		}
 		for (Map.Entry<Method, IParameter<?>> parameterEntry : parameterMap.entrySet()) {
 			IParameter<?> parameter = parameterEntry.getValue();

@@ -197,7 +197,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	// Default-Implementation: Get the input from the
 	// input operator on port 0
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		return getInputSchema(0);
+		return getInputSchema(pos);
 	}
 
 	@Override
