@@ -87,6 +87,11 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	 */
 	private List<SingleSourceExecutor> sourceThreads = new CopyOnWriteArrayList<SingleSourceExecutor>();
 
+	private List<IIterableSource<?>> sourcesToScheduleBackup;
+
+	private List<IPartialPlan> partialPlansBackup;
+
+
 	@Override
 	public synchronized void startScheduling() {
 		if (isRunning()) {
@@ -127,6 +132,9 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 			schedulingExecutor[i].interrupt();
 		}
 		super.stopScheduling();
+		// to allow restart of processing init threads again
+		setPartialPlans(partialPlansBackup);
+		setLeafSources(sourcesToScheduleBackup);
 	}
 
 	/*
@@ -139,8 +147,9 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	@Override
 	protected synchronized void process_setPartialPlans(
 			List<IPartialPlan> partialPlans) {
+		this.partialPlansBackup = partialPlans;
 		logger.debug("Setting new Plans to schedule :" + partialPlans);
-
+		
 		for (int i = 0; i < schedulingExecutor.length; i++) {
 			schedulingExecutor[i].pause();
 			this.planScheduling[i].clear();
@@ -181,6 +190,7 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	protected synchronized void process_setLeafSources(
 			List<IIterableSource<?>> sourcesToSchedule) {
 		if (sourcesToSchedule != null) {
+			this.sourcesToScheduleBackup = sourcesToSchedule;
 
 			for (SingleSourceExecutor source : sourceThreads) {
 				logger.debug("Interrupting running source thread " + source);
