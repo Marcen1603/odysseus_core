@@ -63,8 +63,7 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 		if (element instanceof ISubscription){
 			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("subscription");
 		}
-		
-		
+					
 		if (element instanceof IOdysseusNodeView) {
 			IOdysseusNodeView node = (IOdysseusNodeView)element;
 			IPhysicalOperator op = node.getModelNode().getContent();

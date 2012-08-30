@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -63,7 +64,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	private AtomicBoolean open = new AtomicBoolean(false);
 	private String name = null;
-	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
+	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 	protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 
 	// --------------------------------------------------------------------
@@ -208,6 +209,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	final public void setOutputSchema(SDFSchema outputSchema, int port) {
 		this.outputSchema.put(port, outputSchema);
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator#getOutputSchemas()
+	 */
+	@Override
+	final public Map<Integer, SDFSchema> getOutputSchemas() {
+		return Collections.unmodifiableMap(this.outputSchema);
 	}
 
 	// ------------------------------------------------------------------------

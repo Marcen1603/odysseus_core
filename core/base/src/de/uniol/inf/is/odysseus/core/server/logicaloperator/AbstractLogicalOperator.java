@@ -169,7 +169,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			if (ret == null) {
 				ILogicalOperator op = s.getTarget();
 				if (op != null) {
-					ret = op.getOutputSchema();
+					ret = op.getOutputSchema(s.getSourceOutPort());
 				}
 			}
 		}

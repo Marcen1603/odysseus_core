@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.editors.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -59,9 +60,11 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			
 			Collection<Object> children = new ArrayList<Object>();
 			
-			// Add Schemainformation
-			if (node.getModelNode().getContent().getOutputSchema() != null){
-				children.add( node.getModelNode().getContent().getOutputSchema());
+			// Add Schemainformation			
+			if (node.getModelNode().getContent().getOutputSchemas().size()>0){
+				for(Entry<Integer, SDFSchema> e : node.getModelNode().getContent().getOutputSchemas().entrySet()){
+					children.add(e.getValue());
+				}
 			}else{
 				LOG.error("No output Schema for {}!", node.getModelNode().getContent());
 			}

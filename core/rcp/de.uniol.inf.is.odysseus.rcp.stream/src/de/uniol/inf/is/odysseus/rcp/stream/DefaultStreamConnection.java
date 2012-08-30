@@ -17,7 +17,9 @@ package de.uniol.inf.is.odysseus.rcp.stream;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,6 +236,11 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 
 	@Override
 	public SDFSchema getOutputSchema(int port) {
+		return null;
+	}
+	
+	@Override
+	final public Map<Integer, SDFSchema> getOutputSchemas() {
 		return null;
 	}
 

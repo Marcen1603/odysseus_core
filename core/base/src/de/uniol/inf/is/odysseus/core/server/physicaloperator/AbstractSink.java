@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -59,7 +60,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	protected int noInputPorts = -1;
 
 	private String name;
-	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
+	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 
 	final transient protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 
@@ -371,6 +372,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		this.outputSchema.put(port, outputSchema);
 	}
 
+	@Override
+	final public Map<Integer, SDFSchema> getOutputSchemas() {
+		return Collections.unmodifiableMap(this.outputSchema);
+	}
+	
 	// ------------------------------------------------------------------------
 	// Owner Management
 	// ------------------------------------------------------------------------

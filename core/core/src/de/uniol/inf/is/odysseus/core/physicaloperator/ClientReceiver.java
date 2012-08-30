@@ -172,6 +172,11 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		this.outputSchema.put(port, outputSchema);
 	}
 
+	@Override
+	final public Map<Integer, SDFSchema> getOutputSchemas() {
+		return Collections.unmodifiableMap(this.outputSchema);
+	}
+	
 	// ------------------------------------------------------------------------
 	// Owner Management
 	// ------------------------------------------------------------------------
