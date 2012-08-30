@@ -1,19 +1,17 @@
 package de.offis.salsa.obsrec.scansegm;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiLineString;
 
 import de.offis.salsa.lms.model.Measurement;
-import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.annotations.ScanSegmentation;
 
 @ScanSegmentation(name = "LtSegmentation")
 public class LtSegmentation implements IScanSegmentation {
 
 	@Override
-	public List<List<Sample>> segmentScan(Measurement measurement) {
+	public MultiLineString segmentScan(Measurement measurement) {
 		// TODO Auto-generated method stub
-		List<List<Sample>> segments = new ArrayList<List<Sample>>();
-		return segments;
+		return new GeometryFactory().createMultiLineString(null);
 	}
 }

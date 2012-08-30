@@ -9,10 +9,12 @@ import java.util.logging.Logger;
 
 import com.impetus.annovention.ClasspathDiscoverer;
 import com.impetus.annovention.Discoverer;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
 
 import de.offis.salsa.lms.model.Measurement;
-import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.ls.DebugLaserScanner;
 import de.offis.salsa.obsrec.ls.ReadingLaserScanner;
 import de.offis.salsa.obsrec.ls.SavingLaserScanner;
@@ -112,8 +114,9 @@ public class Objectworld {
 		this.measure = measurement;
 
 		ArrayList<TrackedObject> tempObj = new ArrayList<TrackedObject>();
-		for(List<Sample> segmentSamples : getActiveSegmenter().segmentScan(measurement)){
-			tempObj.add(createTrackedObject(segmentSamples));
+		MultiLineString segments = getActiveSegmenter().segmentScan(measurement);
+		for(int i = 0 ; i < segments.getNumGeometries() ; i++){
+			tempObj.add(createTrackedObject((LineString) segments.getGeometryN(i)));
 		}
 		
 		this.boxes = tempObj;
@@ -139,10 +142,12 @@ public class Objectworld {
 		return scanSegmenter.keySet().toArray(new String[0]);
 	}
 	
-	private TrackedObject createTrackedObject(List<Sample> samplesObject){		 
+	private TrackedObject createTrackedObject(LineString samplesObject){
+		Coordinate[] coords = samplesObject.getCoordinates();
+		
 		java.awt.Polygon p = new java.awt.Polygon();		
-		for(Sample s : samplesObject){
-			p.addPoint((int)s.getX(), (int)s.getY());
+		for(Coordinate s : coords){
+			p.addPoint((int)s.x, (int)s.y);
 		}		
 		Rectangle b = p.getBounds();
 		

@@ -7,7 +7,6 @@ import java.awt.geom.Rectangle2D;
 
 import de.offis.salsa.lms.model.Sample;
 
-@SuppressWarnings("serial")
 public class SampleIndicator extends PositionCanvasElement {
 
 	private Rectangle2D rect = new Rectangle2D.Double();

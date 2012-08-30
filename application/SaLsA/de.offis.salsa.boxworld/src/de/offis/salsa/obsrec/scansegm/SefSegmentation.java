@@ -3,6 +3,11 @@ package de.offis.salsa.obsrec.scansegm;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+
 import de.offis.salsa.lms.model.Measurement;
 import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.annotations.ScanSegmentation;
@@ -20,51 +25,53 @@ public class SefSegmentation implements IScanSegmentation {
 
 	private Sample last;
 	
-	private List<Sample> tempSegment;
+	private List<Coordinate> tempSegment;
 	
 	private static final int MIN_OBJECTS_PER_SEGMENT = 5;
 	private static final int TRESHOLD = 100;
 	
 	@Override
-	public List<List<Sample>> segmentScan(Measurement measurement) {
-		List<List<Sample>> segments = new ArrayList<List<Sample>>();
+	public MultiLineString segmentScan(Measurement measurement) {
+		
+		
+		List<LineString> segments = new ArrayList<LineString>();
 				
 		beginSegment();
 		for(Sample s : measurement.getSamples()){
 			if(checkNewObjectConditions(s) && last != null){
-				List<Sample> segment = closeSegment();
+				LineString segment = closeSegment();
 				if(segment != null){
 					segments.add(segment);
 				}
 				beginSegment();		
 			}
 			
-			addSegmentSample(s);
+			addSegmentSample(new Coordinate(s.getX(), s.getY()));
 			
 			this.last = s;
 		}
 		
-		List<Sample> segment = closeSegment();
+		LineString segment = closeSegment();
 		if(segment != null){
 			segments.add(segment);
 		}
 				
-		return segments;
+		return new GeometryFactory().createMultiLineString(segments.toArray(new LineString[0]));
 	}
 	
 	private void beginSegment(){
-		this.tempSegment = new ArrayList<Sample>();
+		this.tempSegment = new ArrayList<Coordinate>();
 	}
 	
-	private void addSegmentSample(Sample s){
+	private void addSegmentSample(Coordinate s){
 		if(this.tempSegment != null){
 			this.tempSegment.add(s);
 		}
 	}
 	
-	private List<Sample> closeSegment(){
+	private LineString closeSegment(){
 		if(tempSegment.size() > MIN_OBJECTS_PER_SEGMENT){
-			return tempSegment;
+			return new GeometryFactory().createLineString(tempSegment.toArray(new Coordinate[0]));
 		} else {
 			return null;
 		}

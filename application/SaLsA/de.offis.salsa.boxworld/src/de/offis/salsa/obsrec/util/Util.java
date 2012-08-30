@@ -9,6 +9,7 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
 
+import de.offis.salsa.lms.model.Sample;
 import de.offis.salsa.obsrec.models.TrackedObject;
 
 public class Util {
@@ -53,5 +54,15 @@ public class Util {
 		}
 		
 		return p;
+	}
+	
+	public static Coordinate[] convert(Sample[] samples){
+		Coordinate[] coords = new Coordinate[samples.length];
+		
+		for(int i = 0 ; i < samples.length ; i++ ){
+			coords[i] = new Coordinate(samples[i].getX(), samples[i].getY());
+		}
+		
+		return coords;
 	}
 }
