@@ -37,7 +37,6 @@ Unless required by applicable law or agreed to in writing, software
       <import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.jobs"/>
-      <import plugin="de.uniol.inf.is.odysseus.relational.persistentqueries"/>
    </requires>
 
    <plugin
@@ -139,13 +138,6 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.interval.transform"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.core"
          download-size="0"
          install-size="0"
@@ -173,13 +165,6 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="com.vividsolutions.jts"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.relational.persistentqueries"
          download-size="0"
          install-size="0"
          version="0.0.0"

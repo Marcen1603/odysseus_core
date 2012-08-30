@@ -16,33 +16,31 @@
 package de.uniol.inf.is.odysseus.interval.transform.join;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
-import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTITransferArea;
-import de.uniol.inf.is.odysseus.relational.persistentqueries.PersistentTransferArea;
+import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 @SuppressWarnings({"unchecked","rawtypes"})
-public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
+public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 
 	@Override
 	public int getPriority() {	
-		// must be higher than TJoinAORule, since
-		// LeftJoinAO extends JoinAO
-		return 5; 
-	
+		return 0;
 	}
 
 	@Override
-	public void execute(LeftJoinAO joinAO, TransformationConfiguration transformConfig) {
-		LeftJoinTIPO joinPO = new LeftJoinTIPO(joinAO.getInputSchema(0), joinAO.getInputSchema(1), joinAO.getOutputSchema());
+	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) {
+		JoinTIPO joinPO = new JoinTIPO();
 		IPredicate pred = joinAO.getPredicate();
 		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred.clone());
 		
@@ -62,18 +60,19 @@ public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
 		}
 		// otherwise we use a LeftJoinTISweepArea
 		else{
-			joinPO.setTransferFunction(new LeftJoinTITransferArea());	
+			joinPO.setTransferFunction(new TITransferArea());
 		}
 		
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 		
 		defaultExecute(joinAO, joinPO, transformConfig, true, true);
+
 	}
 
 	@Override
-	public boolean isExecutable(LeftJoinAO operator, TransformationConfiguration transformConfig) {
-		if(operator.isAllPhysicalInputSet()){
+	public boolean isExecutable(JoinAO operator, TransformationConfiguration transformConfig) {
+		if(operator.isAllPhysicalInputSet() && !(operator instanceof LeftJoinAO)){
 			if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
 				return true;
 			}
@@ -92,8 +91,8 @@ public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
 	}
 	
 	@Override
-	public Class<? super LeftJoinAO> getConditionClass() {	
-		return LeftJoinAO.class;
+	public Class<? super JoinAO> getConditionClass() {	
+		return JoinAO.class;
 	}
 
 }

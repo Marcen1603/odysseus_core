@@ -13,6 +13,10 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.5.0",
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.latency,
@@ -21,4 +25,4 @@ Bundle-Activator: de.uniol.inf.is.odysseus.latency.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
-Service-Component: OSGI-INF/QueryBuildConfiguration.xml
+Service-Component: OSGI-INF/*
