@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Relational Base Plug-in
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.relational.base
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.relational.base;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.relational.base.Activator
 Import-Package: de.uniol.inf.is.odysseus.core,
