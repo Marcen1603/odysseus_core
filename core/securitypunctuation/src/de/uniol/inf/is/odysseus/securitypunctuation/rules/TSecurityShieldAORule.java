@@ -34,10 +34,12 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<TopAO> {
 				topAOCollection.add(topAO);
 				
 				for(IPhysicalOperator e:physInputPOs) {
-					oldFather = (ISource<?>) e;
-					IPipe securityShieldPO = new SecurityShieldPO();
-					securityShieldPO.setOutputSchema(oldFather.getOutputSchema()); 					
-					transformConfig.getTransformationHelper().insertNewFather(oldFather, topAOCollection, securityShieldPO);
+					if(e instanceof ISource) {
+						oldFather = (ISource<?>) e;
+						IPipe securityShieldPO = new SecurityShieldPO();
+						securityShieldPO.setOutputSchema(oldFather.getOutputSchema()); 					
+						transformConfig.getTransformationHelper().insertNewFather(oldFather, topAOCollection, securityShieldPO);
+					}
 				}
 						
 			}	
