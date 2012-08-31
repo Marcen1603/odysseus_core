@@ -15,41 +15,75 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.fusion.physicaloperator.association;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import com.vividsolutions.jts.geom.Point;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.fusion.metadata.IFusionProbability;
+import de.uniol.inf.is.odysseus.fusion.util.Mahalanobis;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+public class SpatialAssociationPO extends AbstractPipe<Tuple<? extends IFusionProbability>, Tuple<? extends IFusionProbability>> {
 
-public class SpatialAssociationPO  extends AbstractPipe<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
+	private static Tuple<? extends IFusionProbability> current = null;
+	private static Tuple<? extends IFusionProbability> min = null;
+	private static double minDist = Double.NaN;
 
-	
-	public SpatialAssociationPO(SDFSchema outputSchema) { 
+	public SpatialAssociationPO(SDFSchema outputSchema) {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public OutputMode getOutputMode() {
-		return OutputMode.INPUT;
+		return OutputMode.MODIFIED_INPUT;
 	}
 
 	@Override
-	protected void process_next(Tuple<? extends IMetaAttribute> tuple, int port) {
+	protected void process_next(Tuple<? extends IFusionProbability> tuple, int port) {
+		// hold the new measured tuple
+		if (port == 0) {
+			current = tuple;
+		}
+		if (port == 1) {
+			if (current != null) {
+				Point pointA = (Point) current.getAttribute(2);
+				Point pointB = (Point) tuple.getAttribute(2);
 
-		transfer(tuple);
+				double[] dA = { pointA.getX(), pointA.getY(), 0, 0 };
+				double[] dB = { pointB.getX(), pointB.getY(), 0, 0 };
+
+				//Only the predicted tuple has the variance
+				double dist = Mahalanobis.mahalanobis_simple(dA, dB, tuple.getMetadata().getTransition_matrix().getArray());
+				if (dist < minDist) {
+					minDist = dist;
+					min = tuple;
+					min.setAttributes(current.getAttributes());
+				}
+
+			}
+			
+			// Last tuple of the prediction is the new measurement(reference)
+			// Dirty, but works because the stream is sorted.
+			if (current.equals(tuple)) {
+				if (min != null){
+					transfer(min);
+				}
+				min = null;
+				current = null;
+			}
+		}
 		process_done();
-		throw new RuntimeException("Association is not Implemented.");
 	}
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public AbstractPipe<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> clone() {
+	public AbstractPipe<Tuple<? extends IFusionProbability>, Tuple<? extends IFusionProbability>> clone() {
 		return this.clone();
 	}
 

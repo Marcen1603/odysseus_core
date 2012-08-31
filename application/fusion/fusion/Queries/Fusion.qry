@@ -1,0 +1,32 @@
+Fusion_Input := 
+PROJECT({attributes=['scan']},
+	ACCESS({
+		source = 'L0Source', 
+		host = '10.53.1.2', 
+		port = 9999, 
+		type='RelationalByteBufferAccessPO', 
+		schema = [	['scan','SpatialPolygon'],
+					['meta_valid_start','STARTTIMESTAMP'],
+					['meta_valid_end','ENDTIMESTAMP']
+				 ]
+		   })
+)
+
+Fusion_Window = WINDOW({type = 'time', size = 40, advance = 1}, Fusion_Input)
+
+///Spatial Spatial Fusion
+Fusion_Spatial = AGGREGATE({aggregations = [['L1Fusion','scan','scan','SpatialMultiPolygon']]}, Fusion_Window)
+Unnest_Fusion_Spatial = RENAME({aliases = ['scan']},  UNNEST({attribute='scan'},Fusion_Spatial))
+
+Fusion_Classify = RENAME({aliases = ['scan','oclass']},  MAP({expressions = ['scan','getSurfaceClass(scan)']}, Unnest_Fusion_Spatial))
+
+Object_Centroid = RENAME({aliases = ['scan','oclass','centroid']},   MAP({expressions = ['scan','oclass','getCentroid(scan)']},Fusion_Classify))	  
+				  
+Object_Predict  = RENAME({aliases = ['scan','oclass','centroid']},  SPATIALPREDICT({prediction='Kalman'}, Object_Centroid))
+		   	      
+///Object_Association = join({Predicate = RelationalPredicate("SpatialIsWithinMahalanobisDistance(centroid, centroid,10.00)")},Object_Predict,Object_Centroid) 
+Object_Association = SPATIALASSOCIATION(Object_Centroid,Object_Predict)
+
+Object_Filter = SPATIALFILTER(Object_Association)	      
+		   	      
+Object_Store =	FUSIONCONTEXTSTORE(Object_Filter)  	   

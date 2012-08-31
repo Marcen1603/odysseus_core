@@ -15,26 +15,18 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.fusion.physicaloperator.filter;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import com.vividsolutions.jts.geom.Point;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.fusion.metadata.IFusionProbability;
 import de.uniol.inf.is.odysseus.fusion.util.matrix.Matrix;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
-public class SpatialFilterPO  extends AbstractPipe<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
-
-    /** measurement noise covariance matrix (R) */
-    Matrix measurement_noise_cov;
-	
-    /** measurement matrix (H) */    
-    Matrix measurement_matrix;
-
-    /** Kalman gain matrix (K(k)): K(k)=P'(k)*Ht*inv(H*P'(k)*Ht+R) */
-    Matrix gain;
+public class SpatialFilterPO  extends AbstractPipe<Tuple<? extends IFusionProbability>, Tuple<? extends IFusionProbability>> {
     
-    /** temporary matrices */
+    // temporary matrices
     Matrix temp1;
     Matrix temp2;
     Matrix temp3;
@@ -50,15 +42,15 @@ public class SpatialFilterPO  extends AbstractPipe<Tuple<? extends IMetaAttribut
 	}
 
 	@Override
-	protected void process_next(Tuple<? extends IMetaAttribute> tuple, int port) {
+	protected void process_next(Tuple<? extends IFusionProbability> tuple, int port) {
+		Point centroid = (Point)tuple.getAttribute(2);
 		
-		Matrix state = (Matrix)tuple.getAttribute(0);
-		Matrix measurment =  (Matrix)tuple.getAttribute(1);
-		Matrix error_cov_pre = ((IFusionProbability)tuple.getMetadata()).getError_cov_pre();
+		Matrix measure = new Matrix(2, 1); // measurement [x]
+		measure.set(0, 0, centroid.getX());
+		measure.set(1, 0, centroid.getY());
 		
-		correct(state, measurment, error_cov_pre);
-		((IFusionProbability)tuple.getMetadata()).setError_cov_post(updateCovariance(error_cov_pre));
-		
+		correct(tuple.getMetadata(),measure);
+		tuple.getMetadata().setError_cov_post(updateCovariance(tuple.getMetadata()));
 		transfer(tuple);
 		process_done();
 	}
@@ -70,42 +62,32 @@ public class SpatialFilterPO  extends AbstractPipe<Tuple<? extends IMetaAttribut
 	}
 
 	@Override
-	public AbstractPipe<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> clone() {
+	public AbstractPipe<Tuple<? extends IFusionProbability>, Tuple<? extends IFusionProbability>> clone() {
 		return this.clone();
 	}
 	
-    private Matrix correct(final Matrix state, final Matrix measurement, Matrix error_cov_pre) {
-    	Matrix state_post;
-    	
+    private Matrix correct(IFusionProbability metadata, Matrix measurment) {
         // (1) Compute the Kalman gain
         // temp1 = H*P'(k)
-        temp1 = measurement_matrix.times(error_cov_pre);        
-
+        temp1 =  metadata.getMeasurement_matrix().times(metadata.getError_cov_pre());     
         // temp2 = temp1*Ht + R 
-        temp2 = temp1.gemm(measurement_matrix.transpose(), measurement_noise_cov, 1, 1);
-
+        temp2 = temp1.gemm(metadata.getMeasurement_matrix().transpose(), metadata.getMeasurement_noise_cov(), 1, 1);
         // temp3 = inv(temp2)*temp1 = Kt(k) 
         temp3 = temp2.solve(temp1);
-
         // K(k) 
-        gain = temp3.transpose();
-        
+        metadata.setGain(temp3.transpose());
         // (2) Update estimate with measurement z(k)
         // temp4 = z(k) - H*x'(k) 
-        temp4 = measurement_matrix.gemm(state, measurement, -1, 1);
-
+        temp4 = metadata.getMeasurement_matrix().gemm(metadata.getState_pre(), measurment, -1, 1);
         // x(k) = x'(k) + K(k)*temp5 
-        state_post = gain.gemm(temp4, state, 1, 1);
-
-
-        return state_post;
+        metadata.setState_post(metadata.getGain().gemm(temp4, metadata.getState_pre(), 1, 1));
+        return metadata.getState_post();
     }
     
-    private Matrix updateCovariance(Matrix error_cov_pre){
-    	
+    private Matrix updateCovariance(IFusionProbability metatdata){
     	// (3) Update the error covariance.
         // P(k) = P'(k) - K(k)*temp2 
-        return gain.gemm(measurement_matrix.times(error_cov_pre), error_cov_pre, -1, 1);
+        return metatdata.getGain().gemm(metatdata.getMeasurement_matrix().times(metatdata.getError_cov_pre()), metatdata.getError_cov_pre(), -1, 1);
     }
 
 }

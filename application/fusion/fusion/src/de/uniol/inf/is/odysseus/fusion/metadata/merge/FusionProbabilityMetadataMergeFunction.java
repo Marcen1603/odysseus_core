@@ -9,7 +9,6 @@ public class FusionProbabilityMetadataMergeFunction implements IInlineMetadataMe
 	
 	public FusionProbabilityMetadataMergeFunction(
 			FusionProbabilityMetadataMergeFunction timeIntervalInlineMetadataMergeFunction) {
-
 	}
 	
 	public FusionProbabilityMetadataMergeFunction(){}

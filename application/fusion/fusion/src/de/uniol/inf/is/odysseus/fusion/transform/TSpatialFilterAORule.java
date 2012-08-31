@@ -23,9 +23,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.fusion.logicaloperator.filter.SpatialFilterAO;
-import de.uniol.inf.is.odysseus.fusion.physicaloperator.association.SpatialAssociationPO;
-
-
+import de.uniol.inf.is.odysseus.fusion.physicaloperator.filter.SpatialFilterPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -44,7 +42,7 @@ public class TSpatialFilterAORule extends AbstractTransformationRule<SpatialFilt
     @Override
     public void execute(final SpatialFilterAO operator, final TransformationConfiguration config) {
         try {
-            final SpatialAssociationPO po = new SpatialAssociationPO(operator.getOutputSchema());
+            final SpatialFilterPO po = new SpatialFilterPO(operator.getOutputSchema());
             po.setOutputSchema(operator.getOutputSchema());
             final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                     operator, po);

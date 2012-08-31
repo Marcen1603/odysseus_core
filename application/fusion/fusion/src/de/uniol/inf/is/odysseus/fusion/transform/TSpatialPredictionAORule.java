@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.fusion.logicaloperator.prediction.SpatialPredictionAO;
-import de.uniol.inf.is.odysseus.fusion.physicaloperator.prediction.SpatialPredictionPO;
+import de.uniol.inf.is.odysseus.fusion.physicaloperator.prediction.SpatialKalmanPredictionPO;
 
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -43,16 +43,23 @@ public class TSpatialPredictionAORule extends AbstractTransformationRule<Spatial
     @Override
     public void execute(final SpatialPredictionAO operator, final TransformationConfiguration config) {
         try {
-            final SpatialPredictionPO po = new SpatialPredictionPO(operator.getOutputSchema());
-            po.setOutputSchema(operator.getOutputSchema());
-            final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
-                    operator, po);
-            for (final ILogicalOperator o : toUpdate) {
-                this.update(o);
-            }
-            this.replace(operator, po, config);
-            this.retract(operator);
-
+        	//if(operator.getPredictionFunction().equalsIgnoreCase("Kalman")){
+        		LOG.info("SpatialPredictionAO -> SpatialPredictionAO");
+        		
+        		final SpatialKalmanPredictionPO po = new SpatialKalmanPredictionPO(operator.getOutputSchema());
+                po.setOutputSchema(operator.getOutputSchema());
+                
+                final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
+                        operator, po);
+                for (final ILogicalOperator o : toUpdate) {
+                    this.update(o);
+                }
+                this.replace(operator, po, config);
+                this.retract(operator);	
+//        	}
+//        	else{
+//        		LOG.error("Predictionefunction: " + operator.getPredictionFunction() + " is not implemented.");
+//        	}
         }
         catch (final Exception e) {
         	TSpatialPredictionAORule.LOG.error(e.getMessage(), e);

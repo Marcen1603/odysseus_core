@@ -50,17 +50,33 @@ static public double mahalanobis_2( double[] x, double[] y, double[][] covx, dou
     Matrix covMY = new Matrix(covy);
     
     double[][] cov = (covMY.plus(covMX)).getArray();
+
+	cacheCov( cov );
+	
+	// Matrix covMat = cachedCovMat;
+	 Matrix iCov   = cachedInverse;
+
+	 double retval = (((xMat.transpose()).times(iCov)).times(xMat)).get(0,0);
+
+	 return retval;	
     
-    cacheCov( cov );
-    
-
-   // Matrix covMat = cachedCovMat;
-    Matrix iCov   = cachedInverse;
-
-    double retval = (((xMat.transpose()).times(iCov)).times(xMat)).get(0,0);
-
-    return retval;
 }
+
+static public double mahalanobis_simple( double[] x, double[] y, double[][] cov){
+	 Matrix yMat = new Matrix(y, y.length);
+	 Matrix xMat = (new Matrix(x, x.length)).minus(yMat) ;
+	
+	cacheCov( cov );
+	
+	// Matrix covMat = cachedCovMat;
+	 Matrix iCov   = cachedInverse;
+
+	 double retval = (((xMat.transpose()).times(iCov)).times(xMat)).get(0,0);
+
+	 return retval;	
+}
+
+
 
 /** Mahalanobis distance **/
 static public double mahalanobis( double[] x, double[] y, double[][] covx, double[][] covy)

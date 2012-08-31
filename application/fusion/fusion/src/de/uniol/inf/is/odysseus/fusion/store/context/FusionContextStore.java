@@ -17,27 +17,43 @@ package de.uniol.inf.is.odysseus.fusion.store.context;
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.fusion.metadata.IFusionProbability;
 
 
 public class FusionContextStore<T> {
 	
-	private HashMap<Integer, Tuple<? extends IMetaAttribute>> contextStore;
-	private SDFSchema storeSchema;
+	private static HashMap<Integer, Tuple<? extends IFusionProbability>> contextStore = null;
+	private static SDFSchema storeSchema;
 	
-	public FusionContextStore(SDFSchema schema) {
+	public static void insertNew(int id,Tuple<? extends IFusionProbability> tuple){
+		System.out.println(id);
+		contextStore.put(id, tuple);
+	}
+	
+	public static void update(int id ,Tuple<? extends IFusionProbability> tuple){
+		System.out.println(id);
+		contextStore.put(id,  tuple);
+	}
+	
+	public static void setStoreSchema(final SDFSchema schema) {
 		storeSchema = schema;
-		contextStore = new HashMap<Integer, Tuple<? extends IMetaAttribute>>();
-	}
+    }
 	
-	public void insertValue(Tuple<? extends IMetaAttribute> tuple){
-		contextStore.put((Integer)tuple.getAttribute(0), tuple);
-	}
-	
-	public SDFSchema getStoreSchema(){
+	public static SDFSchema getStoreSchema(){
 		return storeSchema;
 	}
 
+	public static HashMap<Integer, Tuple<? extends IFusionProbability>> getStoreMap(){
+		if(contextStore == null){
+			contextStore = new HashMap<Integer, Tuple<? extends IFusionProbability>>();
+		}
+		return contextStore;
+	}
+	
+	public static int getNextStoreId() {
+	    return contextStore.size();
+    }
+	
 }

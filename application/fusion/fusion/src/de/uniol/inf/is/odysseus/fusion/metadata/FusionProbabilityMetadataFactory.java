@@ -20,8 +20,6 @@ public class FusionProbabilityMetadataFactory extends AbstractMetadataUpdater<IF
 	
 	@Override
 	public void updateMetadata(Tuple<IFusionProbability> inElem) {
-		
-		//Nicht gut!!!
 		inElem.setMetadata(new FusionProbability(inElem.getMetadata()));
 	}
 
