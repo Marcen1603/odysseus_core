@@ -9,6 +9,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -33,6 +35,11 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 	private Composite configContainer;
 	private Composite main;
 
+	
+	/*
+	 * @TODO make layertype enum
+	 * 
+	 */
 	private int layerType = 0;
 	private Text layerName;
 
@@ -153,7 +160,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 	private Composite getRasterConfiguration(Composite parent) {
 		Composite rasterLayer = new Composite(parent, SWT.NONE);
 		rasterLayer.setLayout(DialogUtils.getGroupLayout());
-		rasterLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+		rasterLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
 		rasterLayer.setVisible(true);
 
 		Label serverTypeLabel = new Label(rasterLayer, SWT.NONE);
@@ -243,7 +250,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		Composite vectorLayer = new Composite(parent, SWT.NONE);
 
 		vectorLayer.setLayout(DialogUtils.getGroupLayout());
-		vectorLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+		vectorLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 		vectorLayer.setVisible(true);
 
 		Label attributesLabel = new Label(vectorLayer, SWT.NONE);
@@ -287,12 +294,17 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 		DialogUtils.separator(parent);
 		configContainer = new Composite(parent, SWT.NONE);
+//		GridLayout configContainerLayout =	DialogUtils.getGroupLayout();
+//		configContainerLayout.numColumns = 1;
+//		configContainerLayout.horizontalSpacing = 1;
+//		configContainer.setBackground(new Color(parent.getDisplay(), new RGB(200, 200, 200)));
 		configContainer.setLayout(DialogUtils.getGroupLayout());
 		configContainer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
 		getRasterConfiguration(configContainer);
 
 		DialogUtils.separator(parent);
+	
 		DialogUtils.getFlexArea(parent);
 		DialogUtils.separator(parent);
 

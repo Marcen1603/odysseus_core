@@ -20,7 +20,7 @@ public class DialogUtils {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.horizontalSpacing = GridData.FILL;
-		layout.verticalSpacing = GridData.FILL;
+		layout.verticalSpacing = GridData.BEGINNING;
 		return layout;
 	}
 
