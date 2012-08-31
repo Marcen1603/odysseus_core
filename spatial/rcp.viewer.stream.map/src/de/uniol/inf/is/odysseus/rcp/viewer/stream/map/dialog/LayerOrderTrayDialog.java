@@ -91,7 +91,7 @@ public class LayerOrderTrayDialog extends TrayDialog {
 
 	@Override
 	protected boolean isResizable() {
-		return true;
+		return true	;
 	}
 
 	private void saveInput() {

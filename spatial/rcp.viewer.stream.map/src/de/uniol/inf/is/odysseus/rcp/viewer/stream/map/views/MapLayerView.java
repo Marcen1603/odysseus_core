@@ -1,14 +1,10 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views;
 
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOutlineLabelProvider;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOutlineTreeContentProvider;
 
 
 public class MapLayerView extends ViewPart{
