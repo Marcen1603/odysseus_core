@@ -92,6 +92,7 @@ import java.util.ResourceBundle;
  * @author JSON.org
  * @version 2012-07-02
  */
+@SuppressWarnings("all")
 public class JSONObject {
 
     /**
