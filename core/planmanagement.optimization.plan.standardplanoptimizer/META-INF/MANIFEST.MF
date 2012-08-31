@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Standard Plan Optimizer
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/StandardPlanOptimizer.xml

@@ -22,6 +22,6 @@ Export-Package: de.uniol.inf.is.odysseus.action.exception,
  de.uniol.inf.is.odysseus.action.output
 Bundle-Activator: de.uniol.inf.is.odysseus.action.Activator
 Service-Component: OSGI-INF/extractionBinding.xml
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"

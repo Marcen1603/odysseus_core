@@ -12,7 +12,7 @@ Import-Package:
  org.osgi.service.component,
  org.slf4j
 Service-Component: OSGI-INF/*
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.ac,

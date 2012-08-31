@@ -24,4 +24,4 @@ Export-Package: org.apache.commons.math,
  org.apache.commons.math.stat.regression,
  org.apache.commons.math.transform,
  org.apache.commons.math.util
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

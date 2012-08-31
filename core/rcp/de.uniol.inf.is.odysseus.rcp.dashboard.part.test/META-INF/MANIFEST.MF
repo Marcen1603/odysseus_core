@@ -5,4 +5,4 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.dashboard.part.test
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Fragment-Host: de.uniol.inf.is.odysseus.rcp.dashboard.part;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

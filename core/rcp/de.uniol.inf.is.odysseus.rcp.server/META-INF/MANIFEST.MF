@@ -8,7 +8,7 @@ Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.google.guava;bundle-version="12.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.core.event,
  de.uniol.inf.is.odysseus.core.logicaloperator,

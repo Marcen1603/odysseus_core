@@ -19,7 +19,7 @@ Import-Package: com.vividsolutions.jts,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.6.0",
  org.slf4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
 Service-Component: OSGI-INF/AggregateFunctionProvider.xml, OSGI-INF/TransformRuleProvider.xml, OSGI-INF/FunctionProvider.xml, OSGI-INF/QueryBuildConfiguration.xml
 Export-Package: 

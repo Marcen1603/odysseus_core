@@ -14,4 +14,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  org.osgi.service.component
 Service-Component: OSGI-INF/ChainIterFactory.xml, OSGI-INF/ChainNoIterFactory.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

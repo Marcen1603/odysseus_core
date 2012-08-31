@@ -40,4 +40,4 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  net.jxta.util,
  net.jxta.util.documentSerializable
 Service-Component: OSGI-INF/AbstractSplittingStrategy.xml
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

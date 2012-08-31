@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.offis.salsa.wrapper.car
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.salsa.wrapper.car.Activator
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.vividsolutions.jts.geom,
  de.uniol.inf.is.odysseus.spatial.grid.model,
  de.uniol.inf.is.odysseus.wrapper.base,

@@ -29,5 +29,5 @@ Import-Package:
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  Jxta.2.6;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/AdministrationPeer.xml

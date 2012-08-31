@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.broker.transform
 Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.broker.transform.Activator
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.broker,
  de.uniol.inf.is.odysseus.broker.logicaloperator,
  de.uniol.inf.is.odysseus.broker.metric,

@@ -7,7 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.queryview.physical.PhysicalQueryV
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui;bundle-version="3.7.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/physicalQueryViewDataProvider.xml, OSGI-INF/executor.xml
 Import-Package: de.uniol.inf.is.odysseus.core.planmanagement,

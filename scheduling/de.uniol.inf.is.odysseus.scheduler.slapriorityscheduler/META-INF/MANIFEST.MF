@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler.Activator
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.server.scheduler,
  de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
  de.uniol.inf.is.odysseus.scheduler.slascheduler,

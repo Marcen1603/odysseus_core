@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Standard Executor
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.server.ac,
  de.uniol.inf.is.odysseus.core.server.datadictionary,
  de.uniol.inf.is.odysseus.core.server.logicaloperator,

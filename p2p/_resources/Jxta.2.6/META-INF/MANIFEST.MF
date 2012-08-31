@@ -232,4 +232,4 @@ Export-Package: javax.servlet,
  org.mortbay.servlet,
  org.mortbay.util,
  org.mortbay.xml
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

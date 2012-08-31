@@ -4,6 +4,6 @@ Bundle-Name: Clientselection
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.ac.bidselection
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.p2p.queryhandling
 Export-Package: de.uniol.inf.is.odysseus.p2p.ac.bidselection

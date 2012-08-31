@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.ac.standard
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.ac.standard.StandardACPlugIn
 Bundle-Vendor: Timo Michelsen
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.osgi.framework;version="1.3.0",
  org.slf4j
 Service-Component: OSGI-INF/AdmissionControl.xml

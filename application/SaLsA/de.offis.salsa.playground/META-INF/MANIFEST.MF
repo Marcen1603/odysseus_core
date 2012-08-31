@@ -21,7 +21,7 @@ Import-Package: com.vividsolutions.jts,
  org.osgi.service.component,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.salsa.logicaloperator;uses:="de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,de.uniol.inf.is.odysseus.logicaloperator"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/TransformationRuleService.xml, OSGI-INF/AggregationFunctionBuilder.xml, OSGI-INF/SalsaQueryBuilderConfiguration.xml

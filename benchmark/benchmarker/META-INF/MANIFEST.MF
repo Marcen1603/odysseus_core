@@ -6,4 +6,4 @@ Bundle-Version: 1.0.0.qualifier
 Import-Package: org.simpleframework.xml,
  org.simpleframework.xml.core
 Export-Package: de.uniol.inf.is.odysseus.benchmarker
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

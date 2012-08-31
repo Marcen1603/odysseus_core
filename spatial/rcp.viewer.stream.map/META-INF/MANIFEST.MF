@@ -31,5 +31,5 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.map,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .

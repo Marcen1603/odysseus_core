@@ -11,4 +11,4 @@ Bundle-ClassPath: slf4j-api-1.6.4.jar,
  .
 Export-Package: de.uniol.inf.is.odysseus.slf4j,
  org.slf4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

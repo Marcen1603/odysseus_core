@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Java Topological Suite
 Bundle-SymbolicName: com.vividsolutions.jts
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: lib/jts-1.12.jar,
  lib/jtsio-1.12.jar
 Export-Package: com.vividsolutions.jts,

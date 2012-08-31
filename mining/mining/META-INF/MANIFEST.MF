@@ -4,7 +4,7 @@ Bundle-Name: Mining
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.mining.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.engine,

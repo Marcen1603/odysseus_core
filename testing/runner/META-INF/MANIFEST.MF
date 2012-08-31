@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Test Runner
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.test.runner;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.common.base,
  com.google.common.collect,
  org.osgi.framework;version="1.6.0",

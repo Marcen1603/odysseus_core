@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Tuple Compare Tests
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.test.tuple
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.common.base,
  com.google.common.collect,
  de.uniol.inf.is.odysseus.core,

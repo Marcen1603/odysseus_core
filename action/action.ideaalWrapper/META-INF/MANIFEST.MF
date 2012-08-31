@@ -14,4 +14,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

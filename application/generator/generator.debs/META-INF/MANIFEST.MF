@@ -4,7 +4,7 @@ Bundle-Name: Debs Generator
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.generator.debs
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.generator.debs.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.generator,
  de.uniol.inf.is.odysseus.generator.datatype,
  de.uniol.inf.is.odysseus.generator.error,

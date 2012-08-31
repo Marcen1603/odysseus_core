@@ -83,4 +83,4 @@ Export-Package: weka,
  weka.gui.treevisualizer,
  weka.gui.visualize,
  weka.gui.visualize.plugins
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

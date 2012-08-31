@@ -9,7 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.event,
  de.uniol.inf.is.odysseus.cep.metamodel,

@@ -343,4 +343,4 @@ Export-Package: com.bea.xml.stream,
  org.xith3d.utility.texturing,
  org.xith3d.utility.timing
 Require-Bundle: org.eclipse.swt
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -4,7 +4,7 @@ Bundle-Name: Webserviceexecutor
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.datadictionary,
  de.uniol.inf.is.odysseus.core.server.event.error,

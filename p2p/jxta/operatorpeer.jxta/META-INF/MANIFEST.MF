@@ -31,4 +31,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.event,
  net.jxta.platform,
  net.jxta.protocol,
  net.jxta.socket
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

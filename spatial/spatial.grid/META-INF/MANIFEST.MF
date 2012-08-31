@@ -18,7 +18,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
  org.slf4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/GridDatatypeProvider.xml, OSGI-INF/GridFunctionProvider.xml, OSGI-INF/AggregationFunctionBuilder.xml, OSGI-INF/TransformationRuleService.xml
 Export-Package: de.uniol.inf.is.odysseus.spatial.grid,
  de.uniol.inf.is.odysseus.spatial.grid.common,

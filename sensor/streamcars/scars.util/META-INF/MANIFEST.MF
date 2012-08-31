@@ -4,7 +4,7 @@ Bundle-Name: Util
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.util
 Bundle-Version: 1.0.0.0
 Bundle-Vendor: Timo Michelsen
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.sdf,

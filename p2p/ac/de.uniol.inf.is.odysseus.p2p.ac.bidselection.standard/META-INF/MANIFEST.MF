@@ -4,7 +4,7 @@ Bundle-Name: Standard Bid Selection
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.p2p.ac.bidselection,
  de.uniol.inf.is.odysseus.p2p.queryhandling
 Service-Component: OSGI-INF/StandardBidSelection.xml

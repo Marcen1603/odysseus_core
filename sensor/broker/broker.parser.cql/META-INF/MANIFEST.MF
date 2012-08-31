@@ -11,5 +11,5 @@ Import-Package: de.uniol.inf.is.odysseus.broker.dictionary,
  de.uniol.inf.is.odysseus.core.server.datadictionary,
  de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.objecttracking.sdf
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core

@@ -39,6 +39,6 @@ Export-Package: org.jboss.netty.bootstrap,
  org.jboss.netty.util,
  org.jboss.netty.util.internal,
  org.jboss.netty.util.internal.jzlib
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  com.google.protobuf;bundle-version="2.4.1"

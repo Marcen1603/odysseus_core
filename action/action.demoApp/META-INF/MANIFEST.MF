@@ -11,4 +11,4 @@ Import-Package: org.eclipse.equinox.app;version="1.0.0",
  org.eclipse.swt.widgets,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.action.demoapp
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

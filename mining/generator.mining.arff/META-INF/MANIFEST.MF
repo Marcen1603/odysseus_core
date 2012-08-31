@@ -4,6 +4,6 @@ Bundle-Name: Arff
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.generator.mining.arff
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.generator.mining.arff.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.osgi.framework;version="1.3.0"
 Require-Bundle: de.uniol.inf.is.odysseus.generator;bundle-version="1.0.0"

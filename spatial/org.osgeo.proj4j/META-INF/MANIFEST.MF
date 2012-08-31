@@ -12,4 +12,4 @@ Export-Package: org.osgeo.proj4j,
  org.osgeo.proj4j.proj,
  org.osgeo.proj4j.units,
  org.osgeo.proj4j.util
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

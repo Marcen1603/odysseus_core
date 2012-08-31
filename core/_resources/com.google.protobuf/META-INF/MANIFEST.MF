@@ -5,7 +5,7 @@ Bundle-SymbolicName: com.google.protobuf
 Bundle-Version: 2.4.1
 Bundle-ClassPath: protobuf-2.4.1.jar
 Export-Package: com.google.protobuf;version="2.4.1"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.osgi.framework;version="1.6.0",
  org.osgi.service.log;version="1.3.0",
  org.osgi.util.tracker;version="1.5.0"

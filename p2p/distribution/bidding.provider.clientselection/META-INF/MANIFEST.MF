@@ -27,5 +27,5 @@ Import-Package: de.uniol.inf.is.odysseus.p2p.ac.bidselection,
  net.jxta.protocol,
  org.osgi.framework;version="1.3.0"
 Service-Component: OSGI-INF/StandardBiddingClientSelectorFactory.xml, OSGI-INF/StandardBidSelection.xml
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.p2p

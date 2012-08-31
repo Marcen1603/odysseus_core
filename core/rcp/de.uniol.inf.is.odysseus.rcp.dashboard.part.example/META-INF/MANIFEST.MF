@@ -4,7 +4,7 @@ Bundle-Name: Dashboard Part AuctionStatus Example
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.dashboard.part.example;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.rcp.dashboard,
  org.eclipse.ui;bundle-version="3.7.0",
  com.google.guava;bundle-version="12.0.0"
