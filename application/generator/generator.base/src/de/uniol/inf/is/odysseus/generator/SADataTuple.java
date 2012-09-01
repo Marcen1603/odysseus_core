@@ -26,6 +26,7 @@ public class SADataTuple extends DataTuple {
 	 * Gibt an, ob es sich um ein normales Datentupel oder eine Security Punctuation handelt.
 	 */
 	protected Boolean isSP = false;
+	private String spType = "attribute";
 	protected Boolean isSA = true;	
 
 	public SADataTuple(Boolean isSP) {
@@ -44,5 +45,13 @@ public class SADataTuple extends DataTuple {
 	
 	public Boolean isSP() {
 		return isSP;
+	}
+
+	public String getSPType() {
+		return spType;
+	}
+
+	public void setSPType(String spType) {
+		this.spType = spType;
 	}
 }

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.securitypunctuation.sp;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
@@ -31,6 +32,10 @@ public abstract class AbstractSecurityPunctuation implements Serializable, ISecu
 	
 	public String[] getStringArrayAttribute(String key) {
 		return (String[]) attributes.get(key);
+	}
+
+	public IPredicate<?> getPredicateAttribute(String key) {
+		return (IPredicate<?>) attributes.get(key);
 	}
 	
 	public void setAttribute(String key, Object value) {

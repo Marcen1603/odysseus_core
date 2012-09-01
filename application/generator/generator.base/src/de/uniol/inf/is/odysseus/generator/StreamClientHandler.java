@@ -152,7 +152,11 @@ public abstract class StreamClientHandler extends Thread {
 		if (tuple instanceof SADataTuple) {
 			if (isSA) {
 				if (((SADataTuple) tuple).isSP()) {
-					bytebuffer.putInt(1);
+					if(((SADataTuple) tuple).getSPType().equals("predicate")) {
+						bytebuffer.putInt(2);
+					} else { 
+						bytebuffer.putInt(1);
+					}
 				} else {
 					bytebuffer.putInt(0);
 				}

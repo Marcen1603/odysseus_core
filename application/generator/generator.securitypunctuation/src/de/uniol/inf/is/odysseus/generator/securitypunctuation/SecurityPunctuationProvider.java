@@ -27,7 +27,8 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		if(Math.random() > 0.2) {
 			list.add(generateDataTuple());
 		} else {
-			list.add(generateSecurityPunctuation());
+//			list.add(generateAttributeSP());
+			list.add(generatePredicateSP());
 		}
 
 		i++;
@@ -64,7 +65,8 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		return tuple;
 	}
 
-	private SADataTuple generateSecurityPunctuation() {
+	@SuppressWarnings("unused")
+	private SADataTuple generateAttributeSP() {
 		SADataTuple tuple = new SADataTuple(true);
 		// Security Punctuation Flag
 //		tuple.addAttribute("SecurityPunctuation");
@@ -78,6 +80,21 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		tuple.addAttribute("Attribut1, Attribut2");
 		// SRP - Rollen (mehrere Werte mit Komma getrennt) ("" --> keine Beschränkung)
 		tuple.addAttribute("sys_admin");
+		// Sign
+		tuple.addAttribute(new Integer(1));
+		// Immutable
+		tuple.addAttribute(new Integer(1));
+		// ts
+		tuple.addAttribute(new Long(counterTS++));
+		return tuple;
+	}
+	
+	private SADataTuple generatePredicateSP() {
+		SADataTuple tuple = new SADataTuple(true);
+		tuple.setSPType("predicate");
+		//Prädikat
+//		tuple.addAttribute("(ts>1) && (has_sys_admin) && (streamname = Test)");
+		tuple.addAttribute("(ts>1) && (has_sys_admin)");
 		// Sign
 		tuple.addAttribute(new Integer(1));
 		// Immutable

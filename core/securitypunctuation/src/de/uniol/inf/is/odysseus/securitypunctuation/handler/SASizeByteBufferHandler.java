@@ -28,6 +28,7 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 	 * Gibt an, ob das gerade übertragene Tupel eine Security Punctuation ist
 	 */
 	private Boolean isSP = null;
+	private String spType = "attribute";
 	private ByteBuffer isSPBuffer = ByteBuffer.allocate(4);
 
 	@Override
@@ -97,11 +98,12 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 					}
 					// Wenn alles übertragen
 					if (isSPBuffer.position() == 4) {
-						isSPBuffer.flip();						
-						if(isSPBuffer.getInt() == 1) {
-							isSP = true;
-						} else {
-							isSP = false;
+						isSPBuffer.flip();
+						int getInt = isSPBuffer.getInt();
+						switch(getInt) {
+							case(0): isSP = false; break;
+							case(1): isSP = true; spType = "attribute"; break;
+							case(2): isSP = true; spType = "predicate"; break;
 						}
 						currentSize = currentSize + 4;
 					}
@@ -133,7 +135,7 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 							getTransfer().transfer(objectHandler.create());
 						} else {
 //							System.out.println("SizeByteBuffer - isSP - Buffer: " + buffer);
-							getTransfer().transferSecurityPunctuation((ISecurityPunctuation) objectHandler.createSecurityAware());
+							getTransfer().transferSecurityPunctuation((ISecurityPunctuation) objectHandler.createSecurityAware(spType));
 						}
 						size = -1;
 						sizeBuffer.clear();
