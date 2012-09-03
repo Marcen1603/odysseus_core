@@ -13,6 +13,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		List<IRule<?,?>> rules = new ArrayList<IRule<?,?>>();
 		rules.add(new TSecurityShieldAORule());
 		rules.add(new TSASelectAORule());
+		rules.add(new TSAJoinAORule());
 		rules.add(new TProjectAORule());
 		return rules;
 	}

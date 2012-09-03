@@ -16,4 +16,6 @@ public interface ISecurityPunctuation {
 	public Integer getIntegerAttribute(String key);
 	public String getStringAttribute(String key);
 	public String[] getStringArrayAttribute(String string);
+
+	public int getNumberofAttributes();
 }

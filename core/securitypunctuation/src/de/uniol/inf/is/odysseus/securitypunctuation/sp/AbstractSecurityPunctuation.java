@@ -48,6 +48,10 @@ public abstract class AbstractSecurityPunctuation implements Serializable, ISecu
 	public SDFSchema getSchema() {
 		return this.schema;
 	}
+	
+	public int getNumberofAttributes() {
+		return attributes.size();
+	}
 //	public RelationalPredicate getPredicateAttribute(String key) {
 //		return (RelationalPredicate) attributes.get(key);
 //	}

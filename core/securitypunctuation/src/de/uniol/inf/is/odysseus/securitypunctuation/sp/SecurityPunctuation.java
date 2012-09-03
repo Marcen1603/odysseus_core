@@ -150,6 +150,40 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 
 	@Override
 	public ISecurityPunctuation union(ISecurityPunctuation sp2) {
+		if(sp2 instanceof SecurityPunctuation) {
+			// Union gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen
+			if(getLongAttribute("ts") == sp2.getLongAttribute("ts") &&
+					getSchema().getURI().equals(((SecurityPunctuation) sp2).getSchema().getURI())) {
+				Object[] attribute = new Object[sp2.getNumberofAttributes()];
+				
+				ArrayList<String> temp = new ArrayList<String>();
+				for(String streamname:getStringArrayAttribute("streamname")) {
+					temp.add(streamname);
+				}
+				for(String streamname:sp2.getStringArrayAttribute("streamname")) {
+					if(!temp.contains(streamname)) {
+						temp.add(streamname);
+					}
+				}
+				String[] stringarray = new String[temp.size()];
+				for(int i = 0; i < temp.size(); i++){
+					stringarray[i] = temp.get(i);
+				}
+				attribute[0] = stringarray;
+				
+				setAttribute("streamname", sp2.getAttribute("streamname"));
+				setAttribute("tupleStartTS", sp2.getAttribute("tupleStartTS"));
+				setAttribute("tupleEndTS", sp2.getAttribute("tupleEndTS"));
+				setAttribute("attributeNames", sp2.getAttribute("attributeNames"));
+				setAttribute("role", sp2.getAttribute("role"));
+				setAttribute("sign", sp2.getAttribute("sign"));
+				setAttribute("immutable", sp2.getAttribute("immutable"));
+				setAttribute("ts", sp2.getAttribute("ts"));
+				
+				SecurityPunctuation newSP = new SecurityPunctuation(attribute, getSchema());
+				return newSP;
+			}
+		}
 		return null;
 	}
 }
