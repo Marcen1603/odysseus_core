@@ -29,7 +29,7 @@ public class VFormObjRule implements IObjectRule {
 		Coordinate first = segment.getCoordinateN(0);
 		double firstX = first.x;
 		double firstY = first.y;
-		Coordinate last = segment.getCoordinateN(segment.getNumGeometries() - 1);
+		Coordinate last = segment.getCoordinateN(segment.getNumPoints() - 1);
 		double lastX = last.x;
 		double lastY = last.y;
 
@@ -52,8 +52,10 @@ public class VFormObjRule implements IObjectRule {
 		}
 		
 		if(stats.getMin() < 90){
-			// TODO feingranulare wahrscheinlichkeiten
-			return 1.0;
+			double normVal = stats.getMin();						
+			
+			double result = (1.0/90.0) * normVal;
+			return result;	
 		} else {
 			return 0.0;
 		}

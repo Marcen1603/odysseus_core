@@ -47,7 +47,7 @@ public class TrackedObjectElement extends PositionCanvasElement {
 		int i = 1;
 		for(Entry<String, Double> t : d.entrySet()){
 			if (t.getValue() > 0) {
-				g2d.drawString(t.getKey() + "(" + t.getValue() + ")",
+				g2d.drawString(t.getKey() + "(" + Util.roundTwoDecimals(t.getValue()) + ")",
 						(int) x + trackedObject.getWidth() + 5, (int) y + 10 * i);
 				i++;
 			}

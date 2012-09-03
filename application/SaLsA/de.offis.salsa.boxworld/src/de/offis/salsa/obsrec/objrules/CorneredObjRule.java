@@ -28,7 +28,7 @@ public class CorneredObjRule implements IObjectRule {
 		Coordinate first = segment.getCoordinateN(0);
 		double firstX = first.x;
 		double firstY = first.y;
-		Coordinate last = segment.getCoordinateN(segment.getNumGeometries() - 1);
+		Coordinate last = segment.getCoordinateN(segment.getNumPoints() - 1);
 		double lastX = last.x;
 		double lastY = last.y;
 
@@ -55,10 +55,15 @@ public class CorneredObjRule implements IObjectRule {
 		int lowerBound = 90 - TOLERANCE;
 		double min = stats.getMin();
 		if( min < upperBound && min > lowerBound){
-			// TODO feingranulare wahrscheinlichkeiten
-//			NormalDistribution dist = new NormalDistribution();
-//			Gaussian g = new Gaussian(,90 ,);
-			return 1.0;
+			
+			double peak = (upperBound - lowerBound)/2.0;
+			double normVal = min - lowerBound;
+			
+			if(normVal <= peak){
+				return peak * normVal;
+			} else {
+				return -peak * normVal + 1.0;
+			}
 		} else {
 			return 0.0;
 		}

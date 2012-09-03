@@ -29,7 +29,7 @@ public class StraightExtendedObjRule implements IObjectRule {
 		Coordinate first = segment.getCoordinateN(0);
 		double firstX = first.x;
 		double firstY = first.y;
-		Coordinate last = segment.getCoordinateN(segment.getNumGeometries() - 1);
+		Coordinate last = segment.getCoordinateN(segment.getNumPoints() - 1);
 		double lastX = last.x;
 		double lastY = last.y;
 
@@ -55,8 +55,15 @@ public class StraightExtendedObjRule implements IObjectRule {
 		int lowerBound = 180 - TOLERANCE;
 		double mean = stats.getMean();
 		if( mean < upperBound && mean > lowerBound){
-			// TODO feingranulare wahrscheinlichkeiten
-			return 1.0;
+
+			double peak = (upperBound - lowerBound)/2.0;
+			double normVal = mean - lowerBound;
+			
+			if(normVal <= peak){
+				return peak * normVal;
+			} else {
+				return -peak * normVal + 1.0;
+			}
 		} else {
 			return 0.0;
 		}

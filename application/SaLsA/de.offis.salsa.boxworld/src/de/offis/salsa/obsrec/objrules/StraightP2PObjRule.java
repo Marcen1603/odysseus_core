@@ -29,7 +29,7 @@ public class StraightP2PObjRule implements IObjectRule {
 		Coordinate first = segment.getCoordinateN(0);
 		double firstX = first.x;
 		double firstY = first.y;
-		Coordinate last = segment.getCoordinateN(segment.getNumGeometries() - 1);
+		Coordinate last = segment.getCoordinateN(segment.getNumPoints() - 1);
 		double lastX = last.x;
 		double lastY = last.y;
 
@@ -51,20 +51,25 @@ public class StraightP2PObjRule implements IObjectRule {
 			stats.addValue(v);
 		}
 		
-		int upperBound = 180 + TOLERANCE;
-		int lowerBound = 180 - TOLERANCE;
+		double upperBound = 180 + TOLERANCE;
+		double lowerBound = 180 - TOLERANCE;
 		double mean = stats.getMean();
 		if( mean < upperBound && mean > lowerBound){
-			// TODO feingranulare wahrscheinlichkeiten
-			return 1.0;
+			
+			double peak = (upperBound - lowerBound)/2.0;
+			double normVal = mean - lowerBound;
+			
+			if(normVal <= peak){
+				return peak * normVal;
+			} else {
+				return -peak * normVal + 1.0;
+			}
 		} else {
 			return 0.0;
 		}
 	}
 
-	public Polygon getPredictedPolygon(LineString segment){
-		// TODO ausgleichsgrade benutzen!
-				
+	public Polygon getPredictedPolygon(LineString segment){				
 //		 var x1 = ..., x2 = ..., y1 = ..., y2 = ... // The original line
 //				    var L = Math.Sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))
 //

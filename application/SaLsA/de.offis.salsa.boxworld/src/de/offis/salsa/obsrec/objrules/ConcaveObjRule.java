@@ -27,7 +27,7 @@ public class ConcaveObjRule implements IObjectRule {
 		Coordinate first = segment.getCoordinateN(0);
 		double firstX = first.x;
 		double firstY = first.y;
-		Coordinate last = segment.getCoordinateN(segment.getNumGeometries() - 1);
+		Coordinate last = segment.getCoordinateN(segment.getNumPoints() - 1);
 		double lastX = last.x;
 		double lastY = last.y;
 
@@ -55,8 +55,10 @@ public class ConcaveObjRule implements IObjectRule {
 		}
 
 		if (stats.getMin() > 180) {
-			// TODO feingranulare wahrscheinlichkeiten
-			return 1.0;
+			double normVal = stats.getMin() - 180;						
+			
+			double result = -(1.0/180.0) * normVal + 1.0;
+			return result;			
 		} else {
 			return 0.0;
 		}

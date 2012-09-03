@@ -1,5 +1,6 @@
 package de.offis.salsa.obsrec.util;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -14,55 +15,67 @@ import de.offis.salsa.obsrec.models.TrackedObject;
 
 public class Util {
 	public static GeometryFactory geoFact = new GeometryFactory();
-	
-	public static String getMaxAffinityType(TrackedObject to){
+
+	public static String getMaxAffinityType(TrackedObject to) {
 		Double affnity = -1.0;
 		String type = null;
-		
+
 		for (Entry<String, Double> t : to.getTypeAffinitys().entrySet()) {
 			if (type == null || t.getValue() > affnity) {
 				type = t.getKey();
 				affnity = t.getValue();
 			}
 		}
-		
+
 		return type;
 	}
-	
-	public static com.vividsolutions.jts.geom.Polygon getMaxAffinityPolygon(TrackedObject to){
+
+	public static com.vividsolutions.jts.geom.Polygon getMaxAffinityPolygon(
+			TrackedObject to) {
 		return to.getPolygons().get(Util.getMaxAffinityType(to));
 	}
-	
-	public static com.vividsolutions.jts.geom.Polygon createPolygon(List<Coordinate> coords){
+
+	public static com.vividsolutions.jts.geom.Polygon createPolygon(
+			List<Coordinate> coords) {
 		// FIXME close path, find another solution
-		coords.add(new Coordinate(coords.get(0)));
-		
-		LinearRing r = geoFact.createLinearRing(coords.toArray(new Coordinate[0]));
+		if (coords.size() > 0) {
+			coords.add(new Coordinate(coords.get(0)));
+		}
+
+		LinearRing r = geoFact.createLinearRing(coords
+				.toArray(new Coordinate[0]));
 		return geoFact.createPolygon(r, null);
 	}
-	
-	public static MultiLineString createMultiLineString(){
-//		LineString ls = geoFact.createLineString(coordinates);
+
+	public static MultiLineString createMultiLineString() {
+		// LineString ls = geoFact.createLineString(coordinates);
 		return null;
 	}
-	
-	public static java.awt.Polygon convertPolygon(Polygon polygon){
+
+	public static java.awt.Polygon convertPolygon(Polygon polygon) {
 		java.awt.Polygon p = new java.awt.Polygon();
-		
-		for(Coordinate c : polygon.getCoordinates()){
-			p.addPoint((int)c.x, (int)c.y);
+
+		for (Coordinate c : polygon.getCoordinates()) {
+			p.addPoint((int) c.x, (int) c.y);
 		}
-		
+
 		return p;
 	}
-	
-	public static Coordinate[] convert(Sample[] samples){
+
+	public static Coordinate[] convert(Sample[] samples) {
 		Coordinate[] coords = new Coordinate[samples.length];
-		
-		for(int i = 0 ; i < samples.length ; i++ ){
+
+		for (int i = 0; i < samples.length; i++) {
 			coords[i] = new Coordinate(samples[i].getX(), samples[i].getY());
 		}
-		
+
 		return coords;
+	}
+
+	public static double roundTwoDecimals(double d) {
+		DecimalFormat twoDForm = new DecimalFormat("#.##");
+		String str = twoDForm.format(d);
+		str = str.replaceAll(",", ".");
+		return Double.valueOf(str);
 	}
 }
