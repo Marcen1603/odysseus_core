@@ -69,24 +69,32 @@ public class StraightExtendedObjRule implements IObjectRule {
 		}
 	}
 
-	public Polygon getPredictedPolygon(LineString segment){
-		// TODO ausgleichsgrade benutzen!
-				
-//		 var x1 = ..., x2 = ..., y1 = ..., y2 = ... // The original line
-//				    var L = Math.Sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))
-//
-//				    var offsetPixels = 10.0
-//
-//				    // This is the second line
-//				    var x1p = x1 + offsetPixels * (y2-y1) / L
-//				    var x2p = x2 + offsetPixels * (y2-y1) / L
-//				    var y1p = y1 + offsetPixels * (x1-x2) / L
-//				    var y2p = y2 + offsetPixels * (x1-x2) / L
-				
+	public Polygon getPredictedPolygon(LineString segment){	
+		
+		DescriptiveStatistics statsX = new DescriptiveStatistics();
+		DescriptiveStatistics statsY = new DescriptiveStatistics();
+		for(Coordinate c : segment.getCoordinates()){
+			statsX.addValue(c.x);
+			statsY.addValue(c.y);
+		}
+		
+		double meanX = statsX.getMean();
+		double meanY = statsY.getMean();
+		
+		double sum1 = 0;
+		double sum2 = 0;
+		for(Coordinate c : segment.getCoordinates()){
+			sum1 += (c.x - meanX)*(c.y - meanY);
+			sum2 += Math.pow(c.x - meanX, 2);
+		}
+		
+		double a1 = sum1/sum2;
+		double a0 = meanY - a1 * meanX;
+		
 		int x1 = (int)segment.getCoordinateN(0).x;
-		int y1 = (int)segment.getCoordinateN(0).y;
-		int x2 = (int)segment.getCoordinateN(segment.getNumGeometries()-1).x;
-		int y2 = (int)segment.getCoordinateN(segment.getNumGeometries()-1).y;
+		int y1 = (int)(a1 * x1 + a0);
+		int x2 = (int)segment.getCoordinateN(segment.getNumPoints()-1).x;
+		int y2 = (int)(a1 * x2 + a0);
 				
 		double L = Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
 		double offsetPixels = 10.0;
@@ -95,16 +103,6 @@ public class StraightExtendedObjRule implements IObjectRule {
 		int x2p = (int) (x2 + offsetPixels * (y2-y1) / L);
 		int y1p = (int) (y1 + offsetPixels * (x1-x2) / L);
 		int y2p = (int) (y2 + offsetPixels * (x1-x2) / L);
-		
-//		Polygon p = new Polygon();
-//		p.addPoint(x1, y1);
-//		p.addPoint(x2, y2);
-////p.addPoint(0, 0);
-//
-//		p.addPoint(x2p, y2p);
-//		p.addPoint(x1p, y1p);
-//		
-//		return p;
 		
 		List<Coordinate> coords = new ArrayList<Coordinate>();
 		coords.add(new Coordinate(x1, y1));

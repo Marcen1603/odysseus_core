@@ -157,6 +157,10 @@ public class Objectworld {
 		for(String objRuleName : new ArrayList<String>(activeObjRules)){
 			IObjectRule objRule = objRules.get(objRuleName);			
 			
+			if(objRule == null){
+				String s = "";
+			}
+			
 			double affinity = objRule.getTypeAffinity(samplesObject);
 			
 			if(affinity > 0){

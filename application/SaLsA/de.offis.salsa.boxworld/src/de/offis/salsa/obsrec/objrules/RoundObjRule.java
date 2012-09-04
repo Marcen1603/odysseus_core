@@ -2,7 +2,11 @@ package de.offis.salsa.obsrec.objrules;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Line;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -68,10 +72,83 @@ public class RoundObjRule implements IObjectRule {
 		}
 	}
 
-	@Override
-	public Polygon getPredictedPolygon(LineString segment) {
-		// TODO Auto-generated method stub
-		return Util.createPolygon(new ArrayList<Coordinate>());
-	}
+	public Polygon getPredictedPolygon(LineString segment) {		
+		Vector2D moveVector = getMoveVector(segment);
+		
+		List<Coordinate> coords = new ArrayList<Coordinate>();
+		List<Coordinate> projCoords = new ArrayList<Coordinate>();
+		
+		Integer maxX = null;
+		Integer maxY = null;
 
+		for (Coordinate s : segment.getCoordinates()) {
+			if (maxX == null)
+				maxX = (int) s.x;
+
+			if (maxY == null)
+				maxY = (int) s.y;
+
+			if (maxX < s.x)
+				maxX = (int) s.x;
+
+			if (maxY < s.y)
+				maxY = (int) s.y;
+
+			coords.add(new Coordinate((int) s.x, (int) s.y));
+			Vector2D temp = new Vector2D(s.x, s.y).add(moveVector).add(moveVector);
+			projCoords.add(new Coordinate(temp.getX(), temp.getY()));
+		}
+
+		// reverse projected coords so the polygon is correct
+		Collections.reverse(projCoords);
+		coords.addAll(projCoords);
+		
+		return Util.createPolygon(coords);
+	}
+	
+	private Vector2D getMoveVector(LineString segment) {
+		// erstelle gerade von start zu endpunkt ...
+		Coordinate startCoord = segment.getCoordinateN(0);
+		Coordinate endCoord = segment
+				.getCoordinateN(segment.getNumPoints() - 1);
+
+		Vector2D startVector = new Vector2D(startCoord.x, startCoord.y);
+		Vector2D endVector = new Vector2D(endCoord.x, endCoord.y);
+
+		Line startEndLine = new Line(startVector, endVector);
+
+		// get the point from this segment which has the highest distance to the
+		// line
+		double maxDistance = 0;
+		Coordinate maxCoord = null;
+		for (Coordinate c : segment.getCoordinates()) {
+			double distance = Math.abs(startEndLine.getOffset(new Vector2D(c.x,
+					c.y)));
+			if (maxDistance < distance) {
+				maxDistance = distance;
+				maxCoord = c;
+			}
+		}
+
+		// http://paulbourke.net/geometry/pointline/
+		Vector2D P1 = startVector;
+		Vector2D P3 = new Vector2D(maxCoord.x, maxCoord.y);
+		Vector2D P2 = endVector;
+
+		double u = (((P3.getX() - P1.getX()) * (P2.getX() - P1.getX())) + ((P3
+				.getY() - P1.getY()) * (P2.getY() - P1.getY())))
+				/ ((P2.subtract(P1).dotProduct(P2.subtract(P1))));
+
+		// schnittpunkt
+		// x = x1 + u (x2 - x1)
+		// y = y1 + u (y2 - y1)
+
+		double x = P1.getX() + u * (P2.getX() - P1.getX());
+		double y = P1.getY() + u * (P2.getY() - P1.getY());
+//		Debug.addDebugObject(new DebugMarker("NEW", x, y));
+
+		Vector2D maxVector = new Vector2D(maxCoord.x, maxCoord.y);
+		Vector2D newVector = new Vector2D(x, y);
+		return newVector.subtract(maxVector);
+	}
 }

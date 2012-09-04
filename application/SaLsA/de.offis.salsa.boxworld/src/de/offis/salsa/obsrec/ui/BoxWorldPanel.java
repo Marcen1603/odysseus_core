@@ -18,6 +18,7 @@ import de.offis.salsa.obsrec.ui.paint.LaserAreaFreePolygon;
 import de.offis.salsa.obsrec.ui.paint.MouseDragZoomListener;
 import de.offis.salsa.obsrec.ui.paint.SampleIndicator;
 import de.offis.salsa.obsrec.ui.paint.TrackedObjectElement;
+import de.offis.salsa.obsrec.util.Debug;
 
 
 @SuppressWarnings("serial")
@@ -33,6 +34,7 @@ public class BoxWorldPanel extends JPanel implements ObjWorldListener {
 	private List<CanvasElement> area = new ArrayList<CanvasElement>();
 	private List<CanvasElement> boxes = new ArrayList<CanvasElement>();
 	private List<CanvasElement> marker = new ArrayList<CanvasElement>();
+	private List<CanvasElement> debug = new ArrayList<CanvasElement>();
 	
 	public BoxWorldPanel(Objectworld objWelt) {
 		this.objWelt = objWelt;
@@ -45,6 +47,11 @@ public class BoxWorldPanel extends JPanel implements ObjWorldListener {
 		addMouseMotionListener(mouseListener);		
 		
 		marker.add(new CoordMarker(0, 0));
+		Debug.registerPaintPanel(this);
+	}
+	
+	public void addDebugPaint(CanvasElement elem){
+		this.debug.add(elem);
 	}
 	
 	@Override
@@ -67,6 +74,14 @@ public class BoxWorldPanel extends JPanel implements ObjWorldListener {
 			o.paint(g, drawCtx);
 		}
 		
+		for(CanvasElement o : new ArrayList<CanvasElement>(debug)){
+			// TODO fix weird error with o being null sometimes
+			if(o != null)
+				o.paint(g, drawCtx);
+		}		
+
+		debug.clear();
+		
 		if(sensorMeasurementTemp != null){
 			setNewMeasurement(sensorMeasurementTemp);
 		}
@@ -74,6 +89,7 @@ public class BoxWorldPanel extends JPanel implements ObjWorldListener {
 		if(boxesTemp != null){
 			setNewBoxes(boxesTemp);
 		}
+		
 	}
 	
 	Measurement sensorMeasurementTemp;

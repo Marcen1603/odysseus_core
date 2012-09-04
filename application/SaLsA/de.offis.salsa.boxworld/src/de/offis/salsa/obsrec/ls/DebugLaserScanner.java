@@ -20,10 +20,7 @@ public class DebugLaserScanner extends SickLaserScanner {
 			Measurement m = new Measurement();
 			
 			List<Sample> ss = new ArrayList<Sample>();
-			for(int i = 0 ; i <= 70; i+=5){
-				// geradegleichung in polarform 1/[(sin(t)-(1/2)cos(t)]
-				// .. oder auch nich
-				
+			for(int i = 0 ; i <= 70; i+=5){				
 				Sample s = new Sample();
 				
 				s.setAngle(i);				
