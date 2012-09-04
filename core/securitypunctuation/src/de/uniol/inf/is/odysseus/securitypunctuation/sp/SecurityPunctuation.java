@@ -154,36 +154,51 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 			// Union gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen
 			if(getLongAttribute("ts") == sp2.getLongAttribute("ts") &&
 					getSchema().getURI().equals(((SecurityPunctuation) sp2).getSchema().getURI())) {
+
 				Object[] attribute = new Object[sp2.getNumberofAttributes()];
 				
-				ArrayList<String> temp = new ArrayList<String>();
-				for(String streamname:getStringArrayAttribute("streamname")) {
-					temp.add(streamname);
+				attribute[0] = mergeStringArrays(this.getStringArrayAttribute("streamname"), sp2.getStringArrayAttribute("streamname"));
+				//kleineren wählen
+				if(this.getLongAttribute("tupleStartTS") >= sp2.getLongAttribute("tupleStartTS")) {
+					attribute[1] = sp2.getLongAttribute("tupleStartTS");
+				} else {
+					attribute[1] = this.getLongAttribute("tupleStartTS");
 				}
-				for(String streamname:sp2.getStringArrayAttribute("streamname")) {
-					if(!temp.contains(streamname)) {
-						temp.add(streamname);
-					}
+				//größeren Wählen
+				if(this.getLongAttribute("tupleEndTS") >= sp2.getLongAttribute("tupleEndTS")) {
+					attribute[2] = this.getLongAttribute("tupleStartTS");
+				} else {
+					attribute[2] = sp2.getLongAttribute("tupleStartTS");
 				}
-				String[] stringarray = new String[temp.size()];
-				for(int i = 0; i < temp.size(); i++){
-					stringarray[i] = temp.get(i);
-				}
-				attribute[0] = stringarray;
+				attribute[3] = mergeStringArrays(this.getStringArrayAttribute("attributeNames"), sp2.getStringArrayAttribute("attributeNames"));
+				attribute[4] = mergeStringArrays(this.getStringArrayAttribute("role"), sp2.getStringArrayAttribute("role"));
 				
-				setAttribute("streamname", sp2.getAttribute("streamname"));
-				setAttribute("tupleStartTS", sp2.getAttribute("tupleStartTS"));
-				setAttribute("tupleEndTS", sp2.getAttribute("tupleEndTS"));
-				setAttribute("attributeNames", sp2.getAttribute("attributeNames"));
-				setAttribute("role", sp2.getAttribute("role"));
-				setAttribute("sign", sp2.getAttribute("sign"));
-				setAttribute("immutable", sp2.getAttribute("immutable"));
-				setAttribute("ts", sp2.getAttribute("ts"));
+				//Was soll hier passieren?
+				attribute[5] = getIntegerAttribute("sign");
+				attribute[6] = getIntegerAttribute("immutable");
+				attribute[7] = getLongAttribute("ts");
 				
 				SecurityPunctuation newSP = new SecurityPunctuation(attribute, getSchema());
 				return newSP;
 			}
 		}
 		return null;
+	}
+	
+	private String[] mergeStringArrays(String[] array1, String[] array2) {
+		ArrayList<String> temp = new ArrayList<String>();
+		for(String streamname:array1) {
+			temp.add(streamname);
+		}
+		for(String streamname:array2) {
+			if(!temp.contains(streamname)) {
+				temp.add(streamname);
+			}
+		}
+		String[] stringarray = new String[temp.size()];
+		for(int i = 0; i < temp.size(); i++){
+			stringarray[i] = temp.get(i);
+		}
+		return stringarray;
 	}
 }
