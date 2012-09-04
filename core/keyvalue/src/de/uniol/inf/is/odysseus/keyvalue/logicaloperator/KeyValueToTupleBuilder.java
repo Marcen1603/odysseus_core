@@ -26,7 +26,7 @@ public class KeyValueToTupleBuilder extends AbstractOperatorBuilder {
 			"keepInput", REQUIREMENT.OPTIONAL);
 	
 	public KeyValueToTupleBuilder() {
-		super("KeyValueToTuple", 0, 0);
+		super("KeyValueToTuple", 1, 1);
 		addParameters(outputschema, type, keepInput);
 	}
 
