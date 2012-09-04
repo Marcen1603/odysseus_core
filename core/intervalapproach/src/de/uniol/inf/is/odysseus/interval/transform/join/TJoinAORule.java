@@ -35,7 +35,7 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 
 	@Override
 	public int getPriority() {	
-		return 1;
+		return 0;
 	}
 
 	@Override
