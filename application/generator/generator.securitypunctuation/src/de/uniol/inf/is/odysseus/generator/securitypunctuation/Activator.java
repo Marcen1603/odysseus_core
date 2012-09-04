@@ -21,7 +21,7 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 	    StreamServer server1 = new StreamServer(54321, new SecurityPunctuationProvider());
 	    StreamServer server2 = new StreamServer(54322, new SecurityPunctuationProvider());
-	    StreamServer server3 = new StreamServer(54323, new SecurityPunctuationProvider());
+	    StreamServer server3 = new StreamServer(54323, new CSVSPProvider());
 	    server1.start();
 	    server2.start();
 	    server3.start();

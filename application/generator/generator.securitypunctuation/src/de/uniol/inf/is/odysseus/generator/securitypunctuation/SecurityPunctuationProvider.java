@@ -27,8 +27,8 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		if(Math.random() > 0.2) {
 			list.add(generateDataTuple());
 		} else {
-//			list.add(generateAttributeSP());
-			list.add(generatePredicateSP());
+			list.add(generateAttributeSP());
+//			list.add(generatePredicateSP());
 		}
 
 		i++;
@@ -54,7 +54,7 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 	public StreamClientHandler clone() {
 		return new SecurityPunctuationProvider();
 	}
-
+	
 	private SADataTuple generateDataTuple() {
 		SADataTuple tuple = new SADataTuple(false);
 		//Hier schon TS einbauen!!!
@@ -65,27 +65,26 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		return tuple;
 	}
 
-	@SuppressWarnings("unused")
 	private SADataTuple generateAttributeSP() {
 		SADataTuple tuple = new SADataTuple(true);
 		// Security Punctuation Flag
 //		tuple.addAttribute("SecurityPunctuation");
-		// DDP - Stream (mehrere Werte mit Komma getrennt) ("" --> keine Beschränkung)
+		// DDP - Stream (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
 		tuple.addAttribute("Stream, Test");
 		// DDP - Starttupel (-1 bedeutet keine Beschränkung)
 		tuple.addAttribute(new Long(counterTS));
 		// DDP - Endtupel (-1 bedeutet keine Beschränkung)
 		tuple.addAttribute(new Long(Math.round((Math.random() * 25) + counterTS)));
-		// DDP - Attribute (mehrere Werte mit Komma getrennt) ("" --> keine Beschränkung)
+		// DDP - Attribute (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
 		tuple.addAttribute("Attribut1, Attribut2");
-		// SRP - Rollen (mehrere Werte mit Komma getrennt) ("" --> keine Beschränkung)
+		// SRP - Rollen (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
 		tuple.addAttribute("sys_admin");
 		// Sign
 		tuple.addAttribute(new Integer(1));
 		// Immutable
 		tuple.addAttribute(new Integer(1));
 		// ts
-		tuple.addAttribute(new Long(counterTS++));
+		tuple.addAttribute(new Long(counterTS));
 		return tuple;
 	}
 	
