@@ -155,7 +155,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		if (outputschema.hasValue()) {
 			SDFSchema schema = new SDFSchema(sourceName,
 					outputschema.getValue());
-			getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
+			getDataDictionary()
+					.addEntitySchema(sourceName, schema, getCaller());
 			ao.setOutputSchema(schema);
 		}
 
@@ -194,7 +195,10 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		}
 
 		String df = dateFormat.hasValue() ? dateFormat.getValue() : null;
-		ILogicalOperator op = addTimestampAO(ao, df);
+		ILogicalOperator op = ao;
+		if (ao.getOutputSchema() != null){
+			op = addTimestampAO(ao, df);
+		}
 		return op;
 	}
 
@@ -203,23 +207,22 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		TimestampAO timestampAO = new TimestampAO();
 		timestampAO.setDateFormat(dateFormat);
 
-		for (SDFAttribute attr : operator.getOutputSchema()) {
-			if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(
-					attr.getDatatype().getURI())
-					|| SDFDatatype.START_TIMESTAMP_STRING.toString()
-							.equalsIgnoreCase(attr.getDatatype().getURI())) {
-				timestampAO.setStartTimestamp(attr);
+			for (SDFAttribute attr : operator.getOutputSchema()) {
+				if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(
+						attr.getDatatype().getURI())
+						|| SDFDatatype.START_TIMESTAMP_STRING.toString()
+								.equalsIgnoreCase(attr.getDatatype().getURI())) {
+					timestampAO.setStartTimestamp(attr);
+				}
+
+				if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(
+						attr.getDatatype().getURI())
+						|| SDFDatatype.END_TIMESTAMP_STRING.toString()
+								.equalsIgnoreCase(attr.getDatatype().getURI())) {
+					timestampAO.setEndTimestamp(attr);
+				}
+
 			}
-
-			if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(
-					attr.getDatatype().getURI())
-					|| SDFDatatype.END_TIMESTAMP_STRING.toString()
-							.equalsIgnoreCase(attr.getDatatype().getURI())) {
-				timestampAO.setEndTimestamp(attr);
-			}
-
-		}
-
 		timestampAO.subscribeTo(operator, operator.getOutputSchema());
 		timestampAO.setName(timestampAO.getStandardName());
 		return timestampAO;
