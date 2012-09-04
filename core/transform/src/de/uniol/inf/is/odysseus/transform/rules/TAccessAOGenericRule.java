@@ -58,6 +58,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 	static Logger logger = LoggerFactory.getLogger(TAccessAOGenericRule.class);
+
 	@Override
 	public int getPriority() {
 		return 0;
@@ -74,31 +75,36 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 
 			String protocolHandler = operator.getProtocolHandler();
 			Map<String, String> options = operator.getOptionsMap();
-			ITransportHandler transportHandler; 
-            if ("genericpull".equals(operator.getWrapper().toLowerCase())) {
-                transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(),
-                        ITransportPattern.PULL, options);
-            }
-            else {
-                transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(),
-                        ITransportPattern.PULL, options);
-            }
+			ITransportHandler transportHandler;
+			if ("genericpull".equals(operator.getWrapper().toLowerCase())) {
+				transportHandler = TransportHandlerRegistry.getInstance(
+						operator.getTransportHandler(), ITransportPattern.PULL,
+						options);
+			} else {
+				transportHandler = TransportHandlerRegistry.getInstance(
+						operator.getTransportHandler(), ITransportPattern.PULL,
+						options);
+			}
 			if (transportHandler == null) {
 				throw new TransformationException("No transport handler "
 						+ operator.getTransportHandler() + " found.");
 			}
 
 			IDataHandler dataHandler = null;
-			if (operator.getInputSchema() != null){
-				dataHandler = DataHandlerRegistry.getDataHandler(
-						operator.getDataHandler(), operator.getInputSchema());
-			}else{
-				dataHandler =  DataHandlerRegistry.getDataHandler(
-						operator.getDataHandler(), operator.getOutputSchema());
-			}
-			if (dataHandler == null) {
-				throw new TransformationException("No data handler "
-						+ operator.getDataHandler() + " found.");
+			if (operator.getDataHandler() != null) {
+				if (operator.getInputSchema() != null) {
+					dataHandler = DataHandlerRegistry.getDataHandler(
+							operator.getDataHandler(),
+							operator.getInputSchema());
+				} else if (operator.getOutputSchema() != null) {
+					dataHandler = DataHandlerRegistry.getDataHandler(
+							operator.getDataHandler(),
+							operator.getOutputSchema());
+				}
+				if (dataHandler == null) {
+					throw new TransformationException("No data handler "
+							+ operator.getDataHandler() + " found.");
+				}
 			}
 
 			if ("genericpull".equals(operator.getWrapper().toLowerCase())) {
@@ -126,7 +132,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 			}
 
 		} else {
-            logger.warn("DEPRECATED: Use new generic AccessAO style");
+			logger.warn("DEPRECATED: Use new generic AccessAO style");
 			// older generic accessao style
 			if ("genericpull".equals(operator.getWrapper().toLowerCase())) {
 
@@ -140,15 +146,16 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 						.getInstance(operator.getOptionsMap());
 
 				IDataHandler dataHandler = null;
-				if (operator.getInputSchema() != null){
+				if (operator.getInputSchema() != null) {
 					dataHandler = DataHandlerRegistry.getDataHandler(
-							operator.getDataHandler(), operator.getInputSchema());
-				}else{
-					dataHandler =  DataHandlerRegistry.getDataHandler(
-							operator.getDataHandler(), operator.getOutputSchema());
+							operator.getDataHandler(),
+							operator.getInputSchema());
+				} else {
+					dataHandler = DataHandlerRegistry.getDataHandler(
+							operator.getDataHandler(),
+							operator.getOutputSchema());
 				}
-				
-				
+
 				if (dataHandler == null) {
 					throw new TransformationException("No data handler "
 							+ operator.getDataHandler() + " found.");
@@ -225,7 +232,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 		}
 
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
-		defaultExecute(operator, accessPO, config, true,true);
+		defaultExecute(operator, accessPO, config, true, true);
 	}
 
 	@Override
