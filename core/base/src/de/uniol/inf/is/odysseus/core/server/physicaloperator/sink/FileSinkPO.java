@@ -81,9 +81,9 @@ public class FileSinkPO extends AbstractSink<Object> {
 				String toWrite = null;
 				if (csvSink) {
 					toWrite = ((ICSVToString) object)
-							.csvToString(printMetadata);
+							.csvToString(printMetadata)+"\n";
 				} else {
-					toWrite = "" + object;
+					toWrite = "" + object+"\n";
 				}
 				if (writeAfterElements > 0) {
 					writeCache.append(toWrite).append("\n");
