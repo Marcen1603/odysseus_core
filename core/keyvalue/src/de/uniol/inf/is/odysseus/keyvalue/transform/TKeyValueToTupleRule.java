@@ -36,5 +36,12 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
+	
+	@Override
+	public Class<? super KeyValueToTupleAO> getConditionClass() {
+		return KeyValueToTupleAO.class;
+	}
+	
+	
 
 }
