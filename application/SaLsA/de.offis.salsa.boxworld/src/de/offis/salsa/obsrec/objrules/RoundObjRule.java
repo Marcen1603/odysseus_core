@@ -57,6 +57,7 @@ public class RoundObjRule implements IObjectRule {
 		int upperBound = 90 + TOLERANCE;
 		int lowerBound = 90 - TOLERANCE;
 		double mean = stats.getMean();
+//		return 1.0;
 		if( mean < upperBound && mean > lowerBound){
 			
 			double peak = (upperBound - lowerBound)/2.0;
@@ -78,21 +79,7 @@ public class RoundObjRule implements IObjectRule {
 		List<Coordinate> coords = new ArrayList<Coordinate>();
 		List<Coordinate> projCoords = new ArrayList<Coordinate>();
 		
-		Integer maxX = null;
-		Integer maxY = null;
-
 		for (Coordinate s : segment.getCoordinates()) {
-			if (maxX == null)
-				maxX = (int) s.x;
-
-			if (maxY == null)
-				maxY = (int) s.y;
-
-			if (maxX < s.x)
-				maxX = (int) s.x;
-
-			if (maxY < s.y)
-				maxY = (int) s.y;
 
 			coords.add(new Coordinate((int) s.x, (int) s.y));
 			Vector2D temp = new Vector2D(s.x, s.y).add(moveVector).add(moveVector);

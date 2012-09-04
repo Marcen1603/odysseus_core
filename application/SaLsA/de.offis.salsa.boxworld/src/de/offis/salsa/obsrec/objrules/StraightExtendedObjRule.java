@@ -12,6 +12,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import de.offis.salsa.obsrec.annotations.ObjectRule;
 import de.offis.salsa.obsrec.models.ObjectType;
+import de.offis.salsa.obsrec.util.LinearRegression2D;
 import de.offis.salsa.obsrec.util.Util;
 
 @ObjectRule(typeCategory = ObjectType.GERADE, name = "KleinsteQuadrateGerade")
@@ -54,6 +55,7 @@ public class StraightExtendedObjRule implements IObjectRule {
 		int upperBound = 180 + TOLERANCE;
 		int lowerBound = 180 - TOLERANCE;
 		double mean = stats.getMean();
+//		return 1.0;
 		if( mean < upperBound && mean > lowerBound){
 
 			double peak = (upperBound - lowerBound)/2.0;
@@ -69,40 +71,22 @@ public class StraightExtendedObjRule implements IObjectRule {
 		}
 	}
 
-	public Polygon getPredictedPolygon(LineString segment){	
+	public Polygon getPredictedPolygon(LineString segment){
 		
-		DescriptiveStatistics statsX = new DescriptiveStatistics();
-		DescriptiveStatistics statsY = new DescriptiveStatistics();
-		for(Coordinate c : segment.getCoordinates()){
-			statsX.addValue(c.x);
-			statsY.addValue(c.y);
-		}
+		LinearRegression2D linreg = new LinearRegression2D(segment.getCoordinates());
 		
-		double meanX = statsX.getMean();
-		double meanY = statsY.getMean();
-		
-		double sum1 = 0;
-		double sum2 = 0;
-		for(Coordinate c : segment.getCoordinates()){
-			sum1 += (c.x - meanX)*(c.y - meanY);
-			sum2 += Math.pow(c.x - meanX, 2);
-		}
-		
-		double a1 = sum1/sum2;
-		double a0 = meanY - a1 * meanX;
-		
-		int x1 = (int)segment.getCoordinateN(0).x;
-		int y1 = (int)(a1 * x1 + a0);
-		int x2 = (int)segment.getCoordinateN(segment.getNumPoints()-1).x;
-		int y2 = (int)(a1 * x2 + a0);
+		double x1 = segment.getCoordinateN(0).x;
+		double y1 = (linreg.getM() * x1 + linreg.getB());
+		double x2 = segment.getCoordinateN(segment.getNumPoints()-1).x;
+		double y2 = (linreg.getM() * x2 + linreg.getB());
 				
 		double L = Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
 		double offsetPixels = 10.0;
 				
-		int x1p = (int) (x1 + offsetPixels * (y2-y1) / L);
-		int x2p = (int) (x2 + offsetPixels * (y2-y1) / L);
-		int y1p = (int) (y1 + offsetPixels * (x1-x2) / L);
-		int y2p = (int) (y2 + offsetPixels * (x1-x2) / L);
+		double x1p = (x1 + offsetPixels * (y2-y1) / L);
+		double x2p = (x2 + offsetPixels * (y2-y1) / L);
+		double y1p = (y1 + offsetPixels * (x1-x2) / L);
+		double y2p = (y2 + offsetPixels * (x1-x2) / L);
 		
 		List<Coordinate> coords = new ArrayList<Coordinate>();
 		coords.add(new Coordinate(x1, y1));

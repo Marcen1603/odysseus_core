@@ -72,23 +72,8 @@ public class ConcaveObjRule implements IObjectRule {
 		
 		List<Coordinate> coords = new ArrayList<Coordinate>();
 		List<Coordinate> projCoords = new ArrayList<Coordinate>();
-		
-		Integer maxX = null;
-		Integer maxY = null;
 
 		for (Coordinate s : segment.getCoordinates()) {
-			if (maxX == null)
-				maxX = (int) s.x;
-
-			if (maxY == null)
-				maxY = (int) s.y;
-
-			if (maxX < s.x)
-				maxX = (int) s.x;
-
-			if (maxY < s.y)
-				maxY = (int) s.y;
-
 			coords.add(new Coordinate((int) s.x, (int) s.y));
 			Vector2D temp = new Vector2D(s.x, s.y).add(moveVector).add(moveVector);
 			projCoords.add(new Coordinate(temp.getX(), temp.getY()));

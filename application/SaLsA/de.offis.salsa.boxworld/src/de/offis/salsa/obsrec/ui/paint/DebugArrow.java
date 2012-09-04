@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Line;
+
 public class DebugArrow extends CanvasElement {
 
 	private int x1 = 0;
@@ -16,6 +18,10 @@ public class DebugArrow extends CanvasElement {
 		this.y1 = (int) y;
 		this.x2 = (int) x3;
 		this.y2 = (int) y3;
+	}
+	
+	public DebugArrow(Line line) {
+		
 	}
 
 	
