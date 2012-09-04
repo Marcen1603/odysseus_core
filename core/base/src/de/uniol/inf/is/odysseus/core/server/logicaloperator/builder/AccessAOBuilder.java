@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,6 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	private final StringParameter dateFormat = new StringParameter(
 			"dateFormat", REQUIREMENT.OPTIONAL);
 
-	
 	public AccessAOBuilder() {
 		super("ACCESS", 0, 0);
 		addParameters(sourceName, host, port, outputschema, type, options,
@@ -128,7 +127,6 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				.getValue();
 		wrapperName = wrapper.hasValue() ? wrapper.getValue() : wrapperName;
 
-		SDFSchema schema = new SDFSchema(sourceName, outputschema.getValue());
 		HashMap<String, String> optionsMap = new HashMap<String, String>();
 
 		if (options.hasValue()) {
@@ -151,11 +149,16 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		}
 
 		getDataDictionary().addSourceType(sourceName, "RelationalStreaming");
-		getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
 
 		AccessAO ao = new AccessAO(sourceName, wrapperName, optionsMap);
-		ao.setOutputSchema(schema);
-		
+
+		if (outputschema.hasValue()) {
+			SDFSchema schema = new SDFSchema(sourceName,
+					outputschema.getValue());
+			getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
+			ao.setOutputSchema(schema);
+		}
+
 		if (host.hasValue()) {
 			ao.setHost(host.getValue());
 		}
