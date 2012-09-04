@@ -146,19 +146,21 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 						.getInstance(operator.getOptionsMap());
 
 				IDataHandler dataHandler = null;
-				if (operator.getInputSchema() != null) {
-					dataHandler = DataHandlerRegistry.getDataHandler(
-							operator.getDataHandler(),
-							operator.getInputSchema());
-				} else {
-					dataHandler = DataHandlerRegistry.getDataHandler(
-							operator.getDataHandler(),
-							operator.getOutputSchema());
-				}
+				if (operator.getDataHandler() != null) {
+					if (operator.getInputSchema() != null) {
+						dataHandler = DataHandlerRegistry.getDataHandler(
+								operator.getDataHandler(),
+								operator.getInputSchema());
+					} else {
+						dataHandler = DataHandlerRegistry.getDataHandler(
+								operator.getDataHandler(),
+								operator.getOutputSchema());
+					}
 
-				if (dataHandler == null) {
-					throw new TransformationException("No data handler "
-							+ operator.getDataHandler() + " found.");
+					if (dataHandler == null) {
+						throw new TransformationException("No data handler "
+								+ operator.getDataHandler() + " found.");
+					}
 				}
 
 				ITransformer transformerPrototype = TransformerRegistry
