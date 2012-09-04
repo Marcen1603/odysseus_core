@@ -4,18 +4,13 @@ Bundle-Name: DBEnrich
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.dbenrich
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.dbenrich.Activator
-Import-Package: de.uniol.inf.is.odysseus.core.sdf,
- de.uniol.inf.is.odysseus.core.sdf.schema,
- de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core.server.logicaloperator,
+Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
  de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.planmanagement,
- de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
- de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.flow,
@@ -24,7 +19,6 @@ Import-Package: de.uniol.inf.is.odysseus.core.sdf,
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.database;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.dbenrich.cache;bundle-version="1.0.0"
 Service-Component: OSGI-INF/TransformRuleService.xml

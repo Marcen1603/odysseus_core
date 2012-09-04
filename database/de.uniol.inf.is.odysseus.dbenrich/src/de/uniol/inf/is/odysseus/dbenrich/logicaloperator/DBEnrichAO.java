@@ -13,7 +13,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
@@ -26,14 +28,14 @@ public class DBEnrichAO extends UnaryLogicalOp {
 	private String connectionName;
 	private String query;
 	private List<String> attributes; // for pstmt parameters
+	private boolean noCache = false;
 	private int cacheSize = 20;
-	private String replacementStrategy = "myStrategy";
+	private long expirationTime = 1000 * 60 * 5; // 5 Minuten
+	private String removalStrategy = "fifo";
 
 	///* Available after initialize() */
 	///* The ordered attributes, that are expected after an db fetch */
 	//private SDFSchema dbFetchSchema;
-
-	// TODO projekt-imports reduzieren
 
 	private static final long serialVersionUID = -3850263953852415445L;
 
@@ -46,8 +48,10 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		connectionName = dBEnrichAO.connectionName;
 		query = dBEnrichAO.query;
 		attributes = dBEnrichAO.attributes;
+		noCache = dBEnrichAO.noCache;
 		cacheSize = dBEnrichAO.cacheSize;
-		replacementStrategy = dBEnrichAO.replacementStrategy;
+		expirationTime = dBEnrichAO.expirationTime;
+		removalStrategy = dBEnrichAO.removalStrategy;
 	}
 
 	@Override
@@ -137,7 +141,7 @@ public class DBEnrichAO extends UnaryLogicalOp {
 			variablesStr += "'" + var + "' ";
 		}
 		variablesStr = variablesStr.trim() + "}";
-		return String.format("connectionName:%s, query:%s, variables:%s, cacheSize:%s, replacementStrategy:%s", connectionName, query, variablesStr, cacheSize, replacementStrategy);
+		return String.format("connectionName:%s, query:%s, variables:%s, noCache:%s, cacheSize:%s, expirationTime:%s, removalStrategy:%s", connectionName, query, variablesStr, noCache, cacheSize, expirationTime, removalStrategy);
 	}
 
 	// Getters / Setters below
@@ -177,16 +181,30 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		this.cacheSize = cacheSize;
 	}
 
-	public String getReplacementStrategy() {
-		return replacementStrategy;
+	public String getRemovalStrategy() {
+		return removalStrategy;
 	}
 
-	@Parameter(type = StringParameter.class, optional=true, name = "replacementStrategy")
-	public void setReplacementStrategy(String replacementStrategy) {
-		this.replacementStrategy = replacementStrategy;
+	@Parameter(type = StringParameter.class, optional=true, name = "removalStrategy")
+	public void setRemovalStrategy(String removalStrategy) {
+		this.removalStrategy = removalStrategy;
 	}
 
-	//	public SDFSchema getDbFetchSchema() {
-	//		return dbFetchSchema;
-	//	}
+	public boolean isNoCache() {
+		return noCache;
+	}
+
+	@Parameter(type = BooleanParameter.class, optional=true, name = "noCache")
+	public void setNoCache(boolean noCache) {
+		this.noCache = noCache;
+	}
+
+	public long getExpirationTime() {
+		return expirationTime;
+	}
+
+	@Parameter(type = LongParameter.class, optional=true, name = "expirationTime")
+	public void setExpirationTime(long expirationTime) {
+		this.expirationTime = expirationTime;
+	}
 }

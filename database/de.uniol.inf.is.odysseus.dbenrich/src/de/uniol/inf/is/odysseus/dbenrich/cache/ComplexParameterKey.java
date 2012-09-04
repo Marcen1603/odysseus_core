@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.dbenrich.cache;
 import java.util.Arrays;
 
 public class ComplexParameterKey {
-	
+
 	private Object[] queryParameters;
-	
+
 	private int hashCode;
 
 	public ComplexParameterKey(Object[] queryParameters) {
@@ -21,13 +21,13 @@ public class ComplexParameterKey {
 	public int hashCode() {
 		return hashCode;
 	}
-	
+
 	private void setHashCodeIntern() {
 		final int prime = 31;
-		
-		this.hashCode = prime + Arrays.hashCode(queryParameters);
+
+		hashCode = prime + Arrays.hashCode(queryParameters);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

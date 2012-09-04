@@ -15,14 +15,15 @@ import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 
 public class DBRetrievalStrategy implements IRetrievalStrategy<ComplexParameterKey, Tuple> {
-	
+
 	private String connectionName;
 	private String query;
 	private List<String> variables;
-	
+
 	/** @deprecated */
+	@Deprecated
 	private SDFSchema opOutputSchema;
-	
+
 	// Initialized in open()
 	private SDFSchema dbFetchSchema;
 	private PreparedStatement preparedStatement;
@@ -76,27 +77,22 @@ public class DBRetrievalStrategy implements IRetrievalStrategy<ComplexParameterK
 		System.out.println("close dbret");
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		// TODO vielleicht statt close (und open in konstruktor)
-		super.finalize();
-	}
-	
-	
-	
-	
-	
-	
-	private Tuple getTupleFromDB(ComplexParameterKey complexParameterKey) { // FIXME (Tuple<T> inputTuple) {
+//	@Override
+//	protected void finalize() throws Throwable {
+//		// vielleicht statt close (und open in konstruktor)
+//		super.finalize();
+//	}
+
+	private Tuple getTupleFromDB(ComplexParameterKey complexParameterKey) {
 
 		ResultSet rs = null;
-		Tuple dbTuple = new Tuple(dbFetchSchema.size(), false); // false ok?
+		Tuple dbTuple = null;
 
 		try {
 			// Insert parameters corr. to variables in prepared statement...
 			Object[] queryParameters = complexParameterKey.getQueryParameters();
 			for(int i=0; i<queryParameters.length; i++) {
-				preparedStatement.setObject(i+1, queryParameters[i]); // automapping, works better with postgre
+				preparedStatement.setObject(i+1, queryParameters[i]); // automapping
 			}
 			// ... and execute
 			System.out.println("PreparedStatement: " + preparedStatement.toString());
@@ -104,67 +100,22 @@ public class DBRetrievalStrategy implements IRetrievalStrategy<ComplexParameterK
 
 
 			if(rs.next()) {
+				dbTuple = new Tuple(dbFetchSchema.size(), false); // false ok?
 				for(int i=0; i<dbFetchSchema.size(); i++) {
 					Object newAttribute = getWithType(rs, dbFetchSchema.get(i), i+1);
 					dbTuple.setAttribute(i, newAttribute);
 				}
 			} else {
-				throw new RuntimeException("No results for query");
+				// do nothing, return dbTuple = null
+				// (old:) throw new RuntimeException("No results for query");
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Could not retrieve entry from Database", e);
 		}
 
-		return dbTuple;
+		return dbTuple; // null, if nothing was found
 	}
-	
-	
-//	private Tuple getTupleFromDB(Tuple inputTuple) { // FIXME (Tuple<T> inputTuple) {
-//
-//		ResultSet rs = null;
-//		Tuple dbTuple = new Tuple(dbFetchSchema.size(), false); // false ok?
-//
-//		try {
-//			// Insert parameters corr. to variables in prepared statement...
-//			for(int i=0; i<variables.size(); i++) {
-//				String variable  = variables.get(i);
-//
-//				// Get desired parameter from input tuple
-//				// TODO remember the positions
-//				SDFAttribute attribute = opOutputSchema.findAttribute(variable);
-//				if(attribute==null) {
-//					throw new RuntimeException("Could not find attribute '" + variable +"' in input tuple.");
-//				}
-//				int parameterPosition = opOutputSchema.indexOf(attribute);
-//				// String parameter = inputTuple.getAttribute(parameterPosition).toString();
-//				Object parameter = inputTuple.getAttribute(parameterPosition);
-//
-//				// System.out.printf("i:%s, Variable:%s, Position:%s, Parameter:%s\n", i, variable, parameterPosition, parameter);
-//
-//				// preparedStatement.setString(i+1, parameter);
-//				preparedStatement.setObject(i+1, parameter); // automapping, works better with postgre
-//			}
-//			// ... and execute
-//			System.out.println("PreparedStatement: " + preparedStatement.toString());
-//			rs = preparedStatement.executeQuery();
-//
-//
-//			if(rs.next()) {
-//				for(int i=0; i<dbFetchSchema.size(); i++) {
-//					Object newAttribute = getWithType(rs, dbFetchSchema.get(i), i+1);
-//					dbTuple.setAttribute(i, newAttribute);
-//				}
-//			} else {
-//				throw new RuntimeException("No results for query");
-//			}
-//		} catch(SQLException e) {
-//			e.printStackTrace();
-//			throw new RuntimeException("Could not retrieve entry from Database", e);
-//		}
-//
-//		return dbTuple;
-//	}
 
 	private Object getWithType(ResultSet rs, SDFAttribute sdfAttributeTarget, int position) throws SQLException {
 
