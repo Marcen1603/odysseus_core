@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -247,9 +247,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				throw new RuntimeException(e);
 			}
 			// Set Type of view to name of view
-			SDFSchema oldSchema = topOperator.getOutputSchema();
-			SDFSchema newSchema = new SDFSchema(viewname, oldSchema.getAttributes());
-			topOperator.setOutputSchema(newSchema);
+			if (topOperator.getOutputSchema() != null) {
+				SDFSchema oldSchema = topOperator.getOutputSchema();
+				SDFSchema newSchema = new SDFSchema(viewname,
+						oldSchema.getAttributes());
+				topOperator.setOutputSchema(newSchema);
+			}
 			fireAddEvent(viewname, topOperator);
 		} else {
 			throw new PermissionException("User " + caller.getUser().getName()
@@ -457,7 +460,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public void addDatatype(String name, SDFDatatype dt) {
-		getLogger().debug("Add new Datatype "+name+" "+dt);
+		getLogger().debug("Add new Datatype " + name + " " + dt);
 		if (!this.datatypes.containsKey(name.toLowerCase())) {
 			this.datatypes.put(name.toLowerCase(), dt);
 			fireDataDictionaryChangedEvent();
@@ -685,8 +688,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		}
 	}
 
-	private static boolean hasPermission(ISession caller, IPermission permission,
-			String objectURI) {
+	private static boolean hasPermission(ISession caller,
+			IPermission permission, String objectURI) {
 		return UserManagement.getUsermanagement().hasPermission(caller,
 				permission, objectURI);
 	}
