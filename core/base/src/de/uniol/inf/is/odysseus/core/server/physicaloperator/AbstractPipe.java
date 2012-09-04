@@ -384,8 +384,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 				if (((ISource<?>) s1.getTarget()) ==
 						((ISource<?>) s2.getTarget())
 						&& s1.getSinkInPort() == s2.getSinkInPort()
-						&& s1.getSourceOutPort() == s2.getSourceOutPort()
-						&& s1.getSchema().compareTo(s2.getSchema()) == 0) {
+						&& s1.getSourceOutPort() == s2.getSourceOutPort()						
+						&& ((s1.getSchema() == null && s2.getSchema()==null) || (s1.getSchema().compareTo(s2.getSchema())) == 0)) {
 					foundmatch = true;
 				}
 			}
