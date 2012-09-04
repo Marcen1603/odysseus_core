@@ -114,7 +114,7 @@ implements Serializable{
 			}
 			retBuff.append(entry.getKey()+"="+entry.getValue());
 		}
-		if (withMetadata || getMetadata() != null) {
+		if (withMetadata && getMetadata() != null) {
 			retBuff.append(";").append(getMetadata().csvToString());
 		}
 		return retBuff.toString();
