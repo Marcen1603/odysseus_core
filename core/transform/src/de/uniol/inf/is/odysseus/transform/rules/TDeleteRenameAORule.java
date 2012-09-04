@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -49,7 +50,9 @@ public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO> {
 	}
 
 	private boolean schemaEquals(RenameAO operator) {
-		if(operator.getInputSchema().equals(operator.getOutputSchema())){
+		SDFSchema input = operator.getInputSchema();
+		SDFSchema output = operator.getOutputSchema();
+		if(input.equals(output)){
 			return true;
 		}
 		return false;

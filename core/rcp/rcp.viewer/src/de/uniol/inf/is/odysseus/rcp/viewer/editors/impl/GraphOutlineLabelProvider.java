@@ -108,7 +108,11 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 		}
 		if (element instanceof ISubscription){
 			ISubscription<?> s = (ISubscription<?>) element;
-			return " In("+s.getSinkInPort()+") "+" out("+s.getSourceOutPort()+") "+s.getTarget();
+			if (s.getTarget() instanceof IPhysicalOperator){
+				return " In("+s.getSinkInPort()+") "+" out("+s.getSourceOutPort()+") "+((IPhysicalOperator)s.getTarget()).getName();
+			}else{
+				return " In("+s.getSinkInPort()+") "+" out("+s.getSourceOutPort()+") "+s.getTarget();
+			}
 		}
 		if (element instanceof SDFSchema){				
 			return "OutputSchema ("+((SDFSchema)element).getURI()+")";

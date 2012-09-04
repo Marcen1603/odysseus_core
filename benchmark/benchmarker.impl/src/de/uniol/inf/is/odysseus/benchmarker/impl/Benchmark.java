@@ -54,7 +54,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
+import de.uniol.inf.is.odysseus.latency.logicaloperator.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 

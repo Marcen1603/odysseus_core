@@ -298,7 +298,7 @@ public class SDFAttribute extends SDFElement implements
 		if (getSourceName() != null) {
 			return getSourceName() + "." + getAttributeName();
 		}
-        return getAttributeName();
+        return "."+getAttributeName();
 	}
 
 	/**

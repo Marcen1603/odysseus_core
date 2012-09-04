@@ -61,7 +61,7 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 
 	@Override
 	public String toString() {
-		return super.toString() + " " + type.getName();
+		return super.toString() + " " + type.getSimpleName();
 	}
 
 	public Class<M> getType() {
