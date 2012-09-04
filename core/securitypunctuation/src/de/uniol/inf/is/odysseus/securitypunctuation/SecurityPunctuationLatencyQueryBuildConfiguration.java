@@ -29,11 +29,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
-public class SecurityPunctuationQueryBuildConfiguration extends
+public class SecurityPunctuationLatencyQueryBuildConfiguration extends
 		AbstractQueryBuildConfiguration {
 
 	@SuppressWarnings("unchecked")
-	public SecurityPunctuationQueryBuildConfiguration() {
+	public SecurityPunctuationLatencyQueryBuildConfiguration() {
 		TransformationConfiguration transformationConfiguration = new TransformationConfiguration(
 				"relational", 
 				ITimeInterval.class);
@@ -46,18 +46,18 @@ public class SecurityPunctuationQueryBuildConfiguration extends
 		settings.add(ParameterShareSimilarOperators.FALSE);
 	}
 	
-	public SecurityPunctuationQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
+	public SecurityPunctuationLatencyQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
 		settings.addAll(settings);
 	}
 
 	@Override
 	public String getName() {
-		return "SecurityPunctuation";
+		return "SecurityPunctuationLatency";
 	}
 	
 	@Override
 	public IQueryBuildConfiguration clone() {		
-		return new SecurityPunctuationQueryBuildConfiguration(settings);
+		return new SecurityPunctuationLatencyQueryBuildConfiguration(settings);
 	}
 
 }
