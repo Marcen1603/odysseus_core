@@ -43,7 +43,7 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 	@Override
 	public void run() {
 		interrupt = false;
-		logger.debug("Adding Source. "+s+".Waiting for open ...");
+		logger.debug("Adding Source. " + s + ".Waiting for open ...");
 		s.subscribe(this, POEventType.OpenDone);
 		synchronized (this) {
 			while (!interrupt && !s.isOpen() && !isInterrupted()) {
@@ -57,10 +57,11 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 			logger.debug("Opened " + this.hashCode()
 					+ "... Start Processing of Source " + s);
 		}
-		while (!interrupt && !isInterrupted() && s.isOpen() && !s.isDone()
-				&& s.hasNext()) {
-			s.transferNext();
-			Thread.yield();
+		while (!interrupt && !isInterrupted() && s.isOpen() && !s.isDone()) {
+			if (s.hasNext()) {
+				s.transferNext();
+				Thread.yield();
+			}
 		}
 
 		logger.debug("Removing " + this.hashCode() + " Source " + s);
