@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractOperatorBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
@@ -21,9 +22,12 @@ public class KeyValueToTupleBuilder extends AbstractOperatorBuilder {
 	private final StringParameter type = new StringParameter(
 			"type", REQUIREMENT.MANDATORY);
 
+	private final BooleanParameter keepInput = new BooleanParameter(
+			"keepInput", REQUIREMENT.OPTIONAL);
+	
 	public KeyValueToTupleBuilder() {
 		super("KeyValueToTuple", 0, 0);
-		addParameters(outputschema, type);
+		addParameters(outputschema, type, keepInput);
 	}
 
 	@Override
@@ -31,6 +35,9 @@ public class KeyValueToTupleBuilder extends AbstractOperatorBuilder {
 		KeyValueToTupleAO ao = new KeyValueToTupleAO();
 		SDFSchema schema = new SDFSchema(this.type.getValue(), this.outputschema.getValue());
 		ao.setOutputSchema(schema);
+		if (keepInput.hasValue()){
+			ao.setKeepInputObject(keepInput.getValue());
+		}
 		return ao;
 	}
 	
