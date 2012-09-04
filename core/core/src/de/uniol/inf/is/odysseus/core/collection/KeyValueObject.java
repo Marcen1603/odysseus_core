@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
@@ -106,14 +105,7 @@ implements Serializable{
 	
 	public String toString(boolean withMetadata) {
 		StringBuffer retBuff = new StringBuffer();
-		boolean first= true;
-		for (Entry<String, Object> entry: this.attributes.entrySet()) {
-			if (!first){
-				retBuff.append(";");
-				first = false;
-			}
-			retBuff.append(entry.getKey()+"="+entry.getValue());
-		}
+		retBuff.append(attributes);
 		if (withMetadata && getMetadata() != null) {
 			retBuff.append(";").append(getMetadata().csvToString());
 		}
