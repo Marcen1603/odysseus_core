@@ -15,27 +15,33 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	
 	public SecurityPunctuation(Object[] objects, SDFSchema schema) {
 		setSchema(schema);
+		ArrayList<String> streamnameArrayList = new ArrayList<String>();
 		String[] streamname = ((String) objects[0]).split(",");
 		for(int i = 0; i < streamname.length; i++) {
-			streamname[i] = streamname[i].trim();
+			streamnameArrayList.add(streamname[i].trim());
 		}
-		setAttribute("streamname", streamname);
-//		attributes.put("streamname", createPredicate("streamname", (String) objects[0]));
+		setAttribute("streamname", streamnameArrayList);
+
 		setAttribute("tupleStartTS", (Long) objects[1]);
 		setAttribute("tupleEndTS", (Long) objects[2]);
+		
+		ArrayList<String> attributeNamesArrayList = new ArrayList<String>();
 		String[] attributeNames = ((String) objects[3]).split(",");
 		for(int i = 0; i < attributeNames.length; i++) {
-			attributeNames[i] = attributeNames[i].trim();
+			attributeNamesArrayList.add(attributeNames[i].trim());
 		}
-		setAttribute("attributeNames", attributeNames);
+		setAttribute("attributeNames", attributeNamesArrayList);
+
+		ArrayList<String> roleArrayList = new ArrayList<String>();
 		String[] role = ((String) objects[4]).split(",");
 		for(int i = 0; i < role.length; i++) {
-			role[i] = role[i].trim();
+			roleArrayList.add(role[i].trim());
 		}
-		setAttribute("role", role);
-		setAttribute("sign", (Integer) objects[5]);
-		setAttribute("immutable", (Integer) objects[6]);
-		setAttribute("ts", (Long) objects[7]);
+		setAttribute("role", roleArrayList);
+		
+		this.sign = (Integer) objects[5];
+		this.immutable = (Integer) objects[6];
+		this.ts = (Long) objects[7];
 	}
 
 	public SecurityPunctuation(SecurityPunctuation sp) {
@@ -45,10 +51,27 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		setAttribute("tupleEndTS", sp.getAttribute("tupleEndTS"));
 		setAttribute("attributeNames", sp.getAttribute("attributeNames"));
 		setAttribute("role", sp.getAttribute("role"));
-		setAttribute("sign", sp.getAttribute("sign"));
-		setAttribute("immutable", sp.getAttribute("immutable"));
-		setAttribute("ts", sp.getAttribute("ts"));
+		this.sign = sp.sign;
+		this.immutable = sp.immutable;
+		this.ts = sp.ts;
 	}	
+	
+	@Override
+	public SecurityPunctuation clone() {
+		return new SecurityPunctuation(this);
+	}
+	
+	public Boolean evaluate(Long tupleTS, List<String> userRoles, Tuple<?> tuple, SDFSchema schema) {
+		if( this.sign == 1 
+			&& evaluateRoles(userRoles)
+			&& evaluateTS(tupleTS)
+			&& evaluateAttributes(tuple, schema)
+			&& evaluateStreamName(schema)
+			) {
+			return true;
+		}
+		return false;
+	}
 
 	public Boolean evaluateTS(Long ts) {
 		if(this.getLongAttribute("tupleStartTS") != null) {
@@ -62,13 +85,13 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 
 	public Boolean evaluateRoles(List<String> userRoles) {
-		if(this.getStringArrayAttribute("role") == null) {
+		if(this.getStringArrayListAttribute("role") == null) {
 			return false;
 		}			
-		if(this.getStringArrayAttribute("role").equals("")) {
+		if(this.getStringArrayListAttribute("role").isEmpty()) {
 			return true;
 		}
-		for(String role:(this.getStringArrayAttribute("role"))) {
+		for(String role:(this.getStringArrayListAttribute("role"))) {
 			if(userRoles.contains(role)) {
 				return true;
 			}
@@ -87,17 +110,17 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	public Boolean evaluateAttributes(Tuple<?> tuple, SDFSchema schema) {
 		if(!schema.equals(getSchema()) || evaluateAttributesCache.isEmpty()) {
 			evaluateAttributesCache.clear();
-			if(this.getStringArrayAttribute("attributeNames") == null) {
+			if(this.getStringArrayListAttribute("attributeNames") == null) {
 				return false;
 			}
-			if((this.getStringArrayAttribute("attributeNames")).length <= 1 && (this.getStringArrayAttribute("attributeNames"))[0].equals("")) {
+			if((this.getStringArrayListAttribute("attributeNames")).isEmpty()) {
 				return true;
 			}
 			
 			for(int i = 0; i < schema.size(); i++) {
 				Boolean setToNull = true;
 				String schemaAttribute = schema.getAttribute(i).getAttributeName();
-				for(String attributeNames:this.getStringArrayAttribute("attributeNames")) {
+				for(String attributeNames:this.getStringArrayListAttribute("attributeNames")) {
 					if(schemaAttribute.equals(attributeNames)) {
 						setToNull = false;
 						break;
@@ -122,13 +145,13 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	
 	public Boolean evaluateStreamName(SDFSchema schema) {
 		//Was passiert hier bei Join???
-		if(this.getStringArrayAttribute("streamname") == null) {
+		if(this.getStringArrayListAttribute("streamname") == null) {
 			return false;
 		}
-		if((this.getStringArrayAttribute("streamname")).length <= 1 && (this.getStringArrayAttribute("streamname"))[0].equals("")) {
+		if((this.getStringArrayListAttribute("streamname")).isEmpty()) {
 			return true;
 		}
-		for(String stream:this.getStringArrayAttribute("streamname")) {
+		for(String stream:this.getStringArrayListAttribute("streamname")) {
 			if(schema.getURI().equals(stream)) {
 				return true;
 			}
@@ -136,103 +159,99 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		return false;
 	}
 	
-	public Boolean evaluate(Long tupleTS, List<String> userRoles, Tuple<?> tuple, SDFSchema schema) {
-		if( (Integer)this.getIntegerAttribute("sign") == 1 
-			&& evaluateRoles(userRoles)
-			&& evaluateTS(tupleTS)
-			&& evaluateAttributes(tuple, schema)
-			&& evaluateStreamName(schema)
-			) {
-			return true;
-		}
-		return false;
-	}
-
 	@Override
-	public void union(ISecurityPunctuation sp2) {
+	public boolean union(ISecurityPunctuation sp2) {
 		if(sp2 instanceof SecurityPunctuation) {
-			// Union gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen
-			if(getLongAttribute("ts") == sp2.getLongAttribute("ts") &&
-					getSchema().getURI().equals(((SecurityPunctuation) sp2).getSchema().getURI())) {
-
-
-				setAttribute("streamname", mergeStringArrays(this.getStringArrayAttribute("streamname"), sp2.getStringArrayAttribute("streamname")));
+			// Union gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen und immutable sind
+			if(this.getLongAttribute("ts") == sp2.getLongAttribute("ts") 
+					&& getSchema().getURI().equals(((SecurityPunctuation) sp2).getSchema().getURI())
+					&& this.immutable == 1
+					&& ((SecurityPunctuation)sp2).immutable == 1
+					) {
+				mergeStringArrayList(this.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
+				
 				// kleineren Wählen --> Bereich wird größer
 				if(this.getLongAttribute("tupleStartTS") > sp2.getLongAttribute("tupleStartTS")) {
 					setAttribute("tupleStartTS", sp2.getLongAttribute("tupleStartTS"));
 				} 
+				
 				// größeren Wählen --> Bereich wird größer
 				if(this.getLongAttribute("tupleEndTS") < sp2.getLongAttribute("tupleEndTS")) {
 					setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
 				} 
-				setAttribute("attributeNames", mergeStringArrays(this.getStringArrayAttribute("attributeNames"), sp2.getStringArrayAttribute("attributeNames")));
-				setAttribute("role", mergeStringArrays(this.getStringArrayAttribute("role"), sp2.getStringArrayAttribute("role")));
+				mergeStringArrayList(this.getStringArrayListAttribute("attributeNames"), sp2.getStringArrayListAttribute("attributeNames"));
+				mergeStringArrayList(this.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
 				//Was soll hier passieren?
 //				setAttribute("sign", ???);
 //				setAttribute("immutable", ???);
 //				setAttribute("ts", ???);
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	@Override 
-	public void intersect(ISecurityPunctuation sp2) {
+	public boolean intersect(ISecurityPunctuation sp2) {
 		if(sp2 instanceof SecurityPunctuation) {
-			// Union gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen
-			if(getLongAttribute("ts") == sp2.getLongAttribute("ts") &&
-					!getSchema().getURI().equals(((SecurityPunctuation) sp2).getSchema().getURI())) {
+			// Union gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen und immutable sind
+			if(this.ts == ((SecurityPunctuation)sp2).ts 
+					&& !this.getSchema().getURI().equals(((SecurityPunctuation) sp2).getSchema().getURI())
+					&& this.immutable == 1
+					&& ((SecurityPunctuation)sp2).immutable == 1
+					) {
 
 
-				setAttribute("streamname", intersectStringArrays(this.getStringArrayAttribute("streamname"), sp2.getStringArrayAttribute("streamname")));
+				intersectStringArrayList(this.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
+				
 				// größeren Wählen --> Bereich wird kleiner
 				if(this.getLongAttribute("tupleStartTS") < sp2.getLongAttribute("tupleStartTS")) {
 					setAttribute("tupleStartTS", sp2.getLongAttribute("tupleStartTS"));
 				} 
+				
 				// kleineren Wählen --> Bereich wird kleiner
 				if(this.getLongAttribute("tupleEndTS") > sp2.getLongAttribute("tupleEndTS")) {
 					setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
 				} 
-				setAttribute("attributeNames", intersectStringArrays(this.getStringArrayAttribute("attributeNames"), sp2.getStringArrayAttribute("attributeNames")));
-				setAttribute("role", intersectStringArrays(this.getStringArrayAttribute("role"), sp2.getStringArrayAttribute("role")));
+				intersectStringArrayList(this.getStringArrayListAttribute("attributeNames"), sp2.getStringArrayListAttribute("attributeNames"));
+				intersectStringArrayList(this.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
 				//Was soll hier passieren?
 //				setAttribute("sign", ???);
 //				setAttribute("immutable", ???);
 //				setAttribute("ts", ???);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void mergeStringArrayList(ArrayList<String> list, ArrayList<String> list2) {
+		if(list.size() == 1 && list.get(0).equals("*")) {
+			return;
+		}
+		if(list2.size() == 1 && list2.get(0).equals("*")) {
+			list = list2;
+			return;
+		}
+		for(String streamname:list2) {
+			if(!list.contains(streamname)) {
+				list.add(streamname);
 			}
 		}
 	}
 	
-	private String[] mergeStringArrays(String[] array1, String[] array2) {
-		ArrayList<String> temp = new ArrayList<String>();
-		for(String streamname:array1) {
-			temp.add(streamname);
+	private void intersectStringArrayList(ArrayList<String> list, ArrayList<String> list2) {
+		if(list.size() == 1 && list.get(0).equals("*")) {
+			list = list2;
+			return;
 		}
-		for(String streamname:array2) {
-			if(!temp.contains(streamname)) {
-				temp.add(streamname);
+		if(list2.size() == 1 && list2.get(0).equals("*")) {
+			return;
+		}
+		for(int i = list.size() - 1; i >= 0; i--) {
+			if(!list2.contains(list.get(i))) {
+				list.remove(i);
 			}
 		}
-		String[] stringarray = new String[temp.size()];
-		for(int i = 0; i < temp.size(); i++){
-			stringarray[i] = temp.get(i);
-		}
-		return stringarray;
-	}
-	
-	private String[] intersectStringArrays(String[] array1, String[] array2) {
-		ArrayList<String> temp = new ArrayList<String>();
-		for(String streamname:array1) {
-			temp.add(streamname);
-		}
-		for(String streamname:array2) {
-			if(!temp.contains(streamname)) {
-				temp.add(streamname);
-			}
-		}
-		String[] stringarray = new String[temp.size()];
-		for(int i = 0; i < temp.size(); i++){
-			stringarray[i] = temp.get(i);
-		}
-		return stringarray;
 	}
 }

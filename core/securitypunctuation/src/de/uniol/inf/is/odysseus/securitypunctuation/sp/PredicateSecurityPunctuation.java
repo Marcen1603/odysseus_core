@@ -21,9 +21,22 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	public PredicateSecurityPunctuation(Object[] objects, SDFSchema schema) {
 		setSchema(schema);
 		setAttribute("predicate", createPredicate((String) objects[0]));
-		setAttribute("sign", (Integer) objects[1]);
-		setAttribute("immutable", (Integer) objects[2]);
-		setAttribute("ts", (Long) objects[3]);
+		this.sign = (Integer) objects[1];
+		this.immutable = (Integer) objects[2];
+		this.ts = (Long) objects[3];
+	}
+	
+	public PredicateSecurityPunctuation(PredicateSecurityPunctuation sp) {
+		setSchema(sp.getSchema());
+		setAttribute("predicate", sp.getPredicateAttribute("predicate"));
+		this.sign = sp.sign;
+		this.immutable = sp.immutable;
+		this.ts = sp.ts;
+	}
+	
+	@Override
+	public ISecurityPunctuation clone() {
+		return new PredicateSecurityPunctuation(this);
 	}
 	
 	@Override
@@ -41,7 +54,6 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 		}
 
 		System.out.println("");
-//		System.out.println("pred.getExpression(): " + pred.getExpression());
 		System.out.println("pred.evaluate - newTuple: " + newTuple);
 		System.out.println("pred.evaluate - additional: " + additional.toString(false));
 		System.out.println("");
@@ -59,13 +71,11 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 
 	@Override
-	public void union(ISecurityPunctuation sp2) {
-		
+	public boolean union(ISecurityPunctuation sp2) {	
+		return false;		
 	}
-
 	@Override
-	public void intersect(ISecurityPunctuation sp2) {
-		
+	public boolean intersect(ISecurityPunctuation sp2) {	
+		return false;		
 	}
-	
 }

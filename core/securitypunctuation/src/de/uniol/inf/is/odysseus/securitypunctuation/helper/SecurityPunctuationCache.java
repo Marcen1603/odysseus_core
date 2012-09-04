@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.securitypunctuation.helper;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
+import de.uniol.inf.is.odysseus.securitypunctuation.sp.SecurityPunctuation;
 
 public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 	
@@ -15,12 +16,12 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 	public ISecurityPunctuation getMatchingSP(Long ts) {
 		//keine SP vorhanden die älter als das aktuelle Tupel ist... Exception???
 		if(!this.isEmpty()) {
-			if(((Long)this.get(0).getAttribute("ts")) > ts) {
+			if((((SecurityPunctuation)this.get(0)).getTS()) > ts) {
 				return null;
 			}
 			int i;
 			for(i = 0; i < this.size(); i++) {
-				if(((Long)this.get(i).getAttribute("ts")) > ts) {
+				if((((SecurityPunctuation)this.get(i)).getTS()) > ts) {
 					return this.get(i-1);
 				}
 			}
@@ -37,7 +38,7 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 			for(int i = this.size() - 1; i >= 0; i--) {
 				if(remove) {
 					this.remove(i);
-				} else if(((Long)this.get(i).getAttribute("ts")) < ts) {
+				} else if((((SecurityPunctuation)this.get(i)).getTS()) < ts) {
 					remove = true;
 				}
 			}
@@ -50,13 +51,7 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 	 */
 	@Override
 	public boolean add(ISecurityPunctuation sp) {
-		if(!this.isEmpty() && this.get(this.size() - 1).getLongAttribute("ts") == sp.getLongAttribute("ts")) {
-			ISecurityPunctuation oldSP = this.get(this.size() - 1);
-			if(oldSP.getSchema().getURI().equals(sp.getSchema().getURI())) {
-				oldSP.union(sp);
-			} else {
-				oldSP.intersect(sp);
-			}
+		if(!this.isEmpty() && this.get(this.size() - 1).processSP(sp)) {
 			return true;
 		}
 		return super.add(sp);

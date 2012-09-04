@@ -18,7 +18,7 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<TopAO> {
 
 	@Override
 	public int getPriority() {
-		return 10;
+		return 100;
 	}
 
 	@SuppressWarnings("rawtypes")

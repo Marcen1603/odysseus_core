@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.securitypunctuation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -8,9 +9,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public interface ISecurityPunctuation {
 	
 	public Boolean evaluate(Long tupleTS, List<String> userRoles, Tuple<?> tuple, SDFSchema schema);
-	
-	public void union(ISecurityPunctuation sp2);
-	public void intersect(ISecurityPunctuation sp2);
+
+	public boolean processSP(ISecurityPunctuation sp2);
+	public boolean union(ISecurityPunctuation sp2);
+	public boolean intersect(ISecurityPunctuation sp2);
 
 	public SDFSchema getSchema();
 	
@@ -19,6 +21,7 @@ public interface ISecurityPunctuation {
 	public Integer getIntegerAttribute(String key);
 	public String getStringAttribute(String key);
 	public String[] getStringArrayAttribute(String string);
+	public ArrayList<String> getStringArrayListAttribute(String string);
 
 	public int getNumberofAttributes();
 }
