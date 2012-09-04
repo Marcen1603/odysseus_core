@@ -35,8 +35,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	private String wrapper;
 	
 	private String input;
-	// Default handler is tuple
-	private String dataHandler = "Tuple";
+	private String dataHandler;
 	private String transformer;
 	
 	private String objectHandler;
