@@ -36,7 +36,7 @@ public class SecurityPunctuationLatencyQueryBuildConfiguration extends
 	public SecurityPunctuationLatencyQueryBuildConfiguration() {
 		TransformationConfiguration transformationConfiguration = new TransformationConfiguration(
 				"relational", 
-				ITimeInterval.class);
+				ITimeInterval.class, ILatency.class);
 		transformationConfiguration.setOption("isSecurityAware", true);
 		settings.add(new ParameterTransformationConfiguration(transformationConfiguration));
 		
