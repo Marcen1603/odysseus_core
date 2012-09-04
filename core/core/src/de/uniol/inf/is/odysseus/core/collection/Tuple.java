@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 	private static final long serialVersionUID = 7119095568322125441L;
 
 	protected Object[] attributes;
+	protected Serializable additionalContent;
 	protected int memSize = -1;
 
 	private boolean containsNull = false;
@@ -170,6 +171,7 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 			Tuple<T> newTuple = new Tuple<T>(newAttrs.length, false);
 			newTuple.setAttributes(newAttrs);
 			newTuple.setMetadata((T) this.getMetadata().clone());
+			newTuple.setAdditionalContent(additionalContent);
 			return newTuple;
 		}
 		this.attributes = newAttrs;
@@ -182,6 +184,7 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 			Tuple<T> newTuple = new Tuple<T>(newAttrs.length, false);
 			newTuple.setAttributes(newAttrs);
 			newTuple.setMetadata((T) this.getMetadata().clone());
+			newTuple.setAdditionalContent(additionalContent);
 			return newTuple;
 		}
 		this.attributes = newAttrs;
@@ -199,6 +202,18 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 	public void setAttributes(Object[] attributes) {
 		this.attributes = attributes;
 		this.valueChanged = true;
+	}
+
+	// -----------------------------------------------------------------
+	// additional content
+	// -----------------------------------------------------------------
+
+	public Serializable getAdditionalContent() {
+		return additionalContent;
+	}
+
+	public void setAdditionalContent(Serializable additionalContent) {
+		this.additionalContent = additionalContent;
 	}
 
 	// -----------------------------------------------------------------
@@ -228,10 +243,10 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Like normal equals-method but has a tolerance for double
-	 * and float comparisons.
+	 * Like normal equals-method but has a tolerance for double and float
+	 * comparisons.
 	 * 
 	 * @param o
 	 * @return
@@ -244,19 +259,19 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 		if (this.attributes.length != t.attributes.length) {
 			return false;
 		}
-		
+
 		for (int i = 0; i < attributes.length; i++) {
 			Object attr = this.attributes[i];
 			Object theirAttr = t.attributes[i];
 			// test if attributes are not null and equal
 			// or both null (order is imporantant!)
 			if (attr != null) {
-				if(attr instanceof Double && theirAttr instanceof Double ){
-					if(Math.abs((Double)attr - (Double)theirAttr) > tolerance){
+				if (attr instanceof Double && theirAttr instanceof Double) {
+					if (Math.abs((Double) attr - (Double) theirAttr) > tolerance) {
 						return false;
 					}
-				} else if (attr instanceof Float && theirAttr instanceof Float ) {
-					if(Math.abs((Float)attr - (Float)theirAttr) > tolerance){
+				} else if (attr instanceof Float && theirAttr instanceof Float) {
+					if (Math.abs((Float) attr - (Float) theirAttr) > tolerance) {
 						return false;
 					}
 				} else {
@@ -336,6 +351,9 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 		}
 		retBuff.append(" | sz=" + (memSize == -1 ? "(-)" : memSize));
 		retBuff.append(" | META | " + getMetadata());
+		if (additionalContent != null) {
+			retBuff.append("|ADD|" + additionalContent);
+		}
 		return retBuff.toString();
 	}
 
@@ -422,6 +440,7 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 				}
 			}
 		}
+		this.additionalContent = copy.additionalContent;
 	}
 
 	/**
@@ -466,11 +485,11 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 		}
 		return this.containsNull;
 	}
-	
+
 	public void setRequiresDeepClone(boolean requiresDeepClone) {
 		this.requiresDeepClone = requiresDeepClone;
 	}
-	
+
 	public boolean requiresDeepClone() {
 		return this.requiresDeepClone;
 	}
