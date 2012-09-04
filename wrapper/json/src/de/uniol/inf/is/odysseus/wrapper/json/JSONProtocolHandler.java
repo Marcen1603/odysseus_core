@@ -40,7 +40,7 @@ public class JSONProtocolHandler extends
 
 	@Override
 	public boolean hasNext() throws IOException {
-		return getTransportHandler().getInputStream().available() > 0;
+		return true;
 	}
 
 	@Override
