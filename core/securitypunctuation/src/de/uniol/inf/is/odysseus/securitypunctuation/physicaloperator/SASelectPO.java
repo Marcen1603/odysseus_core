@@ -36,5 +36,6 @@ public class SASelectPO<T extends IMetaAttributeContainer<? extends ITimeInterva
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		spCache.add(sp);
+		super.processSecurityPunctuation(sp, port);
 	}
 }

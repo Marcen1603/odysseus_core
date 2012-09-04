@@ -27,7 +27,7 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 	
 	@Override
-	public Boolean evaluateAll(Long tupleTS, List<String> userRoles,
+	public Boolean evaluate(Long tupleTS, List<String> userRoles,
 			Tuple<?> tuple, SDFSchema schema) {
 		Tuple<IMetaAttribute> newTuple = new Tuple<IMetaAttribute>(2, false);
 		newTuple.setAttribute(0, tupleTS);
@@ -48,11 +48,6 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 		
 		return ((RelationalPredicate)getPredicateAttribute("predicate")).evaluate(newTuple, additional);
 	}
-
-	@Override
-	public ISecurityPunctuation union(ISecurityPunctuation sp2) {
-		return null;
-	}
 	
 	public IPredicate<?> createPredicate(String exprString) {		
 		RelationalPredicate pred = new RelationalPredicate(new SDFExpression(
@@ -63,10 +58,14 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 		return pred;
 	}
 
-	public IPredicate<?> createForredicate(String exprString) {	
-//		SDFAttribute forPredicateAttribute = new SDFAttribute("", "dfdf", SDFDatatyp.String);
-//		ForPredicate forPredicate = new ForPredicate(Type.ANY, forPredicateAttribute, exprString);
+	@Override
+	public void union(ISecurityPunctuation sp2) {
 		
-		return null;
 	}
+
+	@Override
+	public void intersect(ISecurityPunctuation sp2) {
+		
+	}
+	
 }

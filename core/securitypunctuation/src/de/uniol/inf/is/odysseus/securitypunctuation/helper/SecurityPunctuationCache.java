@@ -43,5 +43,23 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 			}
 		}
 	}	
+	
+	/**
+	 * Fügt eine neue SP in den Cache hinzu.
+	 * Dabei wird überprüft, ob die SP den gleichen Zeitstempel und dementsprechend vererinigt oder geschnitten werden müssen.
+	 */
+	@Override
+	public boolean add(ISecurityPunctuation sp) {
+		if(!this.isEmpty() && this.get(this.size() - 1).getLongAttribute("ts") == sp.getLongAttribute("ts")) {
+			ISecurityPunctuation oldSP = this.get(this.size() - 1);
+			if(oldSP.getSchema().getURI().equals(sp.getSchema().getURI())) {
+				oldSP.union(sp);
+			} else {
+				oldSP.intersect(sp);
+			}
+			return true;
+		}
+		return super.add(sp);
+	}
 
 }

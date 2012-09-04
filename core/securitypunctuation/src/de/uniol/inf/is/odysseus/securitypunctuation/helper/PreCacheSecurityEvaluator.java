@@ -33,7 +33,7 @@ public class PreCacheSecurityEvaluator<T extends IMetaAttributeContainer<? exten
 		
 		if(sp != null) {	
 			getUserRoles(ownerList);							
-			if(sp != null && sp.evaluateAll(startPoint, userRoles, (Tuple<?>)object, outputSchema)) {
+			if(sp != null && sp.evaluate(startPoint, userRoles, (Tuple<?>)object, outputSchema)) {
 				if(checkSendingSP) {
 					System.out.println("SP wird gesendet: " + sp.getAttribute("ts"));
 					spCache.add(sp);

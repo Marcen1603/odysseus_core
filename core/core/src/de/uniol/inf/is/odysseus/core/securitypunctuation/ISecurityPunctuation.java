@@ -7,10 +7,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface ISecurityPunctuation {
 	
-	public Boolean evaluateAll(Long tupleTS, List<String> userRoles, Tuple<?> tuple, SDFSchema schema);
+	public Boolean evaluate(Long tupleTS, List<String> userRoles, Tuple<?> tuple, SDFSchema schema);
 	
-	public ISecurityPunctuation union(ISecurityPunctuation sp2);
+	public void union(ISecurityPunctuation sp2);
+	public void intersect(ISecurityPunctuation sp2);
 
+	public SDFSchema getSchema();
+	
 	public Object getAttribute(String key);	
 	public Long getLongAttribute(String key);
 	public Integer getIntegerAttribute(String key);

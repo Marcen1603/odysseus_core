@@ -39,7 +39,7 @@ public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? exten
 		initEvaluate(object);		
 		if(sp != null) {			
 			getUserRoles(ownerList);							
-			if(sp != null && sp.evaluateAll(startPoint, userRoles, (Tuple<?>)object, outputSchema)) {
+			if(sp != null && sp.evaluate(startPoint, userRoles, (Tuple<?>)object, outputSchema)) {
 				return true;
 			}
 		}
