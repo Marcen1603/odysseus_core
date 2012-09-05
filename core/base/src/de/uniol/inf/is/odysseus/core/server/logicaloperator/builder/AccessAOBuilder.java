@@ -196,9 +196,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		String df = dateFormat.hasValue() ? dateFormat.getValue() : null;
 		ILogicalOperator op = ao;
-		if (ao.getOutputSchema() != null){
-			op = addTimestampAO(ao, df);
-		}
+		op = addTimestampAO(ao, df);
 		return op;
 	}
 
@@ -206,6 +204,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			String dateFormat) {
 		TimestampAO timestampAO = new TimestampAO();
 		timestampAO.setDateFormat(dateFormat);
+		if (operator.getOutputSchema() != null){
 
 			for (SDFAttribute attr : operator.getOutputSchema()) {
 				if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(
@@ -223,6 +222,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				}
 
 			}
+		}
 		timestampAO.subscribeTo(operator, operator.getOutputSchema());
 		timestampAO.setName(timestampAO.getStandardName());
 		return timestampAO;
