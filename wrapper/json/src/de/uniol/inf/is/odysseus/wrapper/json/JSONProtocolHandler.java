@@ -7,6 +7,11 @@ import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -14,11 +19,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 public class JSONProtocolHandler extends
 		AbstractProtocolHandler<KeyValueObject<? extends IMetaAttribute>> {
@@ -47,10 +47,12 @@ public class JSONProtocolHandler extends
 	public KeyValueObject<? extends IMetaAttribute> getNext()
 			throws IOException {
 		// ReadInput
+		KeyValueObject<IMetaAttribute> out = null;
 		JSONObject object = null;
-		KeyValueObject<IMetaAttribute> out = new KeyValueObject<>();
+		String nextObject = readNextObject(reader);
+		out = new KeyValueObject<>();
 		try {
-			object = new JSONObject(new JSONTokener(reader));
+			object = new JSONObject(new JSONTokener(nextObject));
 		} catch (JSONException e) {
 			throw new IOException(e);
 		}
@@ -63,38 +65,67 @@ public class JSONProtocolHandler extends
 		return out;
 	}
 
+	static public String readNextObject(BufferedReader reader) {
+		StringBuffer object = new StringBuffer();
+		int openBrackets = 0;
+		boolean foundObject = false;
+		try {
+			String input = null;
+			while ((input = reader.readLine()) != null) {
+				char[] line = input.toCharArray();
+				object.append(line);
+				for (char c : line) {
+					if (c == '{') {
+						openBrackets++;
+						foundObject = true;
+					} else if (c == '}') {
+						openBrackets--;
+					}
+				}
+				if (openBrackets == 0 && foundObject) {
+					return object.toString();
+				}
+			}
+		} catch (IOException e) {
+
+		}
+		return null;
+	}
+
 	static public void convert(JSONObject object,
-			KeyValueObject<IMetaAttribute> out,
-			String path) throws IOException, JSONException {
+			KeyValueObject<IMetaAttribute> out, String path)
+			throws IOException, JSONException {
 		@SuppressWarnings("unchecked")
 		Iterator<String> names = object.keys();
 		while (names.hasNext()) {
 			String key = names.next();
 			Object value = null;
-				value = object.get(key);
+			value = object.get(key);
 			if (value instanceof JSONObject) {
 				StringBuffer newPath = new StringBuffer(path);
 				newPath.append(key).append(".");
 				convert((JSONObject) value, out, newPath.toString());
 			} else if (value instanceof JSONArray) {
-				JSONArray elements = (JSONArray)value;
+				JSONArray elements = (JSONArray) value;
 				convert(elements, out, key, path);
 			} else {
 				out.setAttribute(path + key, value);
 			}
 		}
 	}
-	
-	static public void convert(JSONArray elements, KeyValueObject<IMetaAttribute> out, String key, String path) throws IOException, JSONException{
-		for (int i=0;i<elements.length();i++){
+
+	static public void convert(JSONArray elements,
+			KeyValueObject<IMetaAttribute> out, String key, String path)
+			throws IOException, JSONException {
+		for (int i = 0; i < elements.length(); i++) {
 			Object arrayElement = elements.get(i);
 			StringBuffer newPath = new StringBuffer(path);
 			newPath.append(key).append("[").append(i).append("]").append(".");
-			if (arrayElement instanceof JSONObject){
-				convert((JSONObject) arrayElement,out,newPath.toString());
-			}else if (arrayElement instanceof JSONArray){
+			if (arrayElement instanceof JSONObject) {
+				convert((JSONObject) arrayElement, out, newPath.toString());
+			} else if (arrayElement instanceof JSONArray) {
 				convert((JSONArray) arrayElement, out, key, newPath.toString());
-			}else{
+			} else {
 				out.setAttribute(newPath.toString(), arrayElement);
 			}
 		}
@@ -139,7 +170,7 @@ public class JSONProtocolHandler extends
 		JSONObject object = new JSONObject(test);
 		System.out.println(object);
 		KeyValueObject<IMetaAttribute> out = new KeyValueObject<>();
-		convert(object, out,  "");
+		convert(object, out, "");
 		System.out.println(out);
 	}
 }

@@ -37,6 +37,7 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.util.Date;
 import java.util.Scanner;
 
 public class TxtDataProvider extends Thread {
@@ -67,7 +68,7 @@ public class TxtDataProvider extends Thread {
 			BufferedWriter out = null;
 			try {
 				socket = server.accept();
-				System.out.println("Client connected ... Sending data");
+				System.out.println("Client from "+socket.getRemoteSocketAddress()+" connected ... Sending data"+(new Date()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -77,6 +78,7 @@ public class TxtDataProvider extends Thread {
 				String elem;
 				while ((elem = next()) != null) {
 					out.write(elem);
+					out.flush();
 				}
 
 			} catch (IOException e) {
