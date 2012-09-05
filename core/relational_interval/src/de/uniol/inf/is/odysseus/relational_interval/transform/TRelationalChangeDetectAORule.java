@@ -48,7 +48,7 @@ public class TRelationalChangeDetectAORule extends
 	@Override
 	public boolean isExecutable(ChangeDetectAO operator,
 			TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet() && operator.hasAttributes();
+		return config.getDataType().equals("relational") && operator.isAllPhysicalInputSet() && operator.hasAttributes();
 	}
 
 	@Override

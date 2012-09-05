@@ -44,7 +44,7 @@ public class TRelationalSlidingElementWindowTIPORule extends
 	@Override
 	public boolean isExecutable(WindowAO operator,
 			TransformationConfiguration transformConfig) {
-		if (transformConfig.getMetaTypes().contains(
+		if (transformConfig.getDataType().equals("relational") && transformConfig.getMetaTypes().contains(
 				ITimeInterval.class.getCanonicalName())) {
 			if (operator.isAllPhysicalInputSet())
 				if (operator.getWindowType() == WindowType.TUPLE

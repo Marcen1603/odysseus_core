@@ -106,7 +106,8 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
 	@Override
 	public boolean isExecutable(JoinTIPO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
+		if(transformConfig.getDataType().equals("relational") && 
+				transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
 			if(operator.getAreas()==null){
 				return true;
 			}
