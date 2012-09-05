@@ -61,7 +61,7 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			Collection<Object> children = new ArrayList<Object>();
 			
 			// Add Schemainformation			
-			if (node.getModelNode().getContent().getOutputSchemas().size()>0){
+			if (node.getModelNode().getContent().getOutputSchemas() != null && node.getModelNode().getContent().getOutputSchemas().size()>0){
 				for(Entry<Integer, SDFSchema> e : node.getModelNode().getContent().getOutputSchemas().entrySet()){
 					children.add(e.getValue());
 				}
