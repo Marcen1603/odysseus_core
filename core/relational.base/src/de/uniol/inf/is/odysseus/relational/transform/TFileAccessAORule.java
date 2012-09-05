@@ -64,7 +64,7 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 	@Override
 	public boolean isExecutable(FileAccessAO fileAccessAO,
 			TransformationConfiguration trafo) {
-		if (getDataDictionary().getAccessPlan(fileAccessAO.getSourcename()) == null) {
+		if (trafo.getDataType().equals("relational") && getDataDictionary().getAccessPlan(fileAccessAO.getSourcename()) == null) {
 			return true;
 		}
 		return false;

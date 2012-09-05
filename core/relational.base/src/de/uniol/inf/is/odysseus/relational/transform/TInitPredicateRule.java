@@ -42,7 +42,7 @@ public class TInitPredicateRule extends AbstractTransformationRule<ILogicalOpera
 	@Override
 	public boolean isExecutable(ILogicalOperator operator,
 			TransformationConfiguration config) {
-		return (operator.providesPredicates());
+		return (config.getDataType().equals("relational") && operator.providesPredicates());
 	}
 
 	@Override

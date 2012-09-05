@@ -81,7 +81,7 @@ public class TRelationalSocketSinkAORule extends
 	@Override
 	public boolean isExecutable(SocketSinkAO operator,
 			TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet()
+		return config.getDataType().equals("relational") &&  operator.isAllPhysicalInputSet()
 				&& operator.getSinkType().equalsIgnoreCase("bytebuffer");
 	}
 
