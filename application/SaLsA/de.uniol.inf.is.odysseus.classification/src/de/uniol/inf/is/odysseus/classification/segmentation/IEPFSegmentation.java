@@ -26,7 +26,7 @@ public class IEPFSegmentation extends AbstractFunction<Geometry> {
     private static final long           serialVersionUID = 4973220087210280849L;
 
     public static final SDFDatatype[][] accTypes         = new SDFDatatype[][] {
-            { SDFSpatialDatatype.SPATIAL_MULTI_POINT }, { SDFDatatype.DOUBLE }, { SDFDatatype.DOUBLE } };
+            { SDFSpatialDatatype.SPATIAL_MULTI_POINT }, { SDFDatatype.DOUBLE }, { SDFDatatype.INTEGER } };
     private final GeometryFactory       geometryFactory  = new GeometryFactory();
 
     @Override
