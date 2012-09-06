@@ -38,72 +38,82 @@ import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class VisualGridSinkPO extends AbstractSink<Object> {
-	private CanvasFrame canvas;
-	private final SDFSchema schema;
-	private final AtomicBoolean pause = new AtomicBoolean(false);
+    private CanvasFrame         canvas;
+    private final SDFSchema     schema;
+    private final AtomicBoolean pause = new AtomicBoolean(false);
 
-	public VisualGridSinkPO(final SDFSchema schema) {
-		this.schema = schema;
-	}
+    public VisualGridSinkPO(final SDFSchema schema) {
+        this.schema = schema;
+    }
 
-	public VisualGridSinkPO(final VisualGridSinkPO po) {
-		this.schema = po.schema;
-	}
+    public VisualGridSinkPO(final VisualGridSinkPO po) {
+        this.schema = po.schema;
+    }
 
-	@Override
-	public void open() throws OpenFailedException {
-		super.open();
-		this.canvas = new CanvasFrame("Grid");
-		canvas.getCanvas().addKeyListener(new KeyListener() {
+    @Override
+    public void open() throws OpenFailedException {
+        super.open();
+        this.canvas = new CanvasFrame("Grid");
+        this.canvas.createBufferStrategy(2);
+        canvas.getCanvas().addKeyListener(new KeyListener() {
 
-			@Override
-			public void keyPressed(KeyEvent event) {
-				if (event.getKeyCode() == KeyEvent.VK_SPACE) {
-					pause.set(!pause.get());
-				}
-			}
+            @Override
+            public void keyPressed(KeyEvent event) {
+                if (event.getKeyCode() == KeyEvent.VK_SPACE) {
+                    pause.set(!pause.get());
+                }
+            }
 
-			@Override
-			public void keyReleased(KeyEvent event) {
+            @Override
+            public void keyReleased(KeyEvent event) {
 
-			}
+            }
 
-			@Override
-			public void keyTyped(KeyEvent event) {
+            @Override
+            public void keyTyped(KeyEvent event) {
 
-			}
+            }
 
-		});
-	}
+        });
+    }
 
-	@Override
-	public void close() {
-		super.close();
-		if (this.canvas != null) {
-			this.canvas.dispose();
-			this.canvas = null;
-		}
-	}
+    @Override
+    public void close() {
+        super.close();
+        if (this.canvas != null) {
+            this.canvas.dispose();
+            this.canvas = null;
+        }
+    }
 
-	@Override
-	public VisualGridSinkPO clone() {
-		return new VisualGridSinkPO(this);
-	}
+    @Override
+    public VisualGridSinkPO clone() {
+        return new VisualGridSinkPO(this);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected void process_next(final Object object, final int port) {
-		Grid grid = (Grid) ((Tuple<TimeInterval>) object).getAttribute(0);
-		if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
-			IplImage image = OpenCVUtil.gridToImage(grid);
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void process_next(final Object object, final int port) {
+        Grid grid = (Grid) ((Tuple<TimeInterval>) object).getAttribute(0);
+        if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
 
-			this.canvas.showImage(image);
-			image.release();
-		}
-	}
+            IplImage image = OpenCVUtil.gridToImage(grid);
+            try {
+                this.canvas.showImage(image);
+            }
+            catch (Exception e) {
+//                System.out.println(grid);
+//                System.out.println(image);
+                e.printStackTrace();
+            }
+            finally {
+                image.release();
+            }
+        }
+    }
 
-	@Override
-	public void processPunctuation(final PointInTime timestamp, final int port) {
+    @Override
+    public void processPunctuation(final PointInTime timestamp, final int port) {
 
-	}
+    }
 }
