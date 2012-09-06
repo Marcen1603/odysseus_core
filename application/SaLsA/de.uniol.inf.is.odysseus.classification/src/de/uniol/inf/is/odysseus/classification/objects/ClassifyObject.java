@@ -62,12 +62,14 @@ public class ClassifyObject extends AbstractFunction<List<List<Tuple<?>>>> {
                 final IObjectType type = iter.next();
                 if (typeDetails.getTypeAffinity(type) > 0.0) {
                     final Polygon polygon = ObjectRuleRegistry.getPredictedPolygon(segment, type);
-                    @SuppressWarnings("rawtypes")
-                    final Tuple<?> tuple = new Tuple(3, false);
-                    tuple.setAttribute(0, polygon);
-                    tuple.setAttribute(1, type.toString());
-                    tuple.setAttribute(2, typeDetails.getTypeAffinity(type));
-                    object.add(tuple);
+                    if (polygon.getCoordinates().length > 0) {
+                        @SuppressWarnings("rawtypes")
+                        final Tuple<?> tuple = new Tuple(3, false);
+                        tuple.setAttribute(0, polygon);
+                        tuple.setAttribute(1, type.toString());
+                        tuple.setAttribute(2, typeDetails.getTypeAffinity(type));
+                        object.add(tuple);
+                    }
                 }
             }
             classifyObjects.add(object);
