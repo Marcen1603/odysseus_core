@@ -21,6 +21,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -85,5 +87,9 @@ public class DataHandlerRegistry {
 			ret = ret.createInstance(schema);
 		}
 		return ret;
+	}
+	
+	public static ImmutableList<String> getHandlerNames() {
+		return ImmutableList.copyOf(dataHandlers.keySet());
 	}
 }
