@@ -196,11 +196,25 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
         if (message.startsWith(SICKConstants.SRA)) {
             if (SICKConstants.LCM_STATE.equalsIgnoreCase(data[1])) {
                 final int dirtyness = Integer.parseInt(data[2]);
-                LOG.warn(String.format("Dirtyness %s ", dirtyness));
+                LOG.warn("Dirtyness {} ", dirtyness);
             }
         }
         else if (message.startsWith(SICKConstants.SEA)) {
-            LOG.debug(String.format("Receive message %s (%s byte)", message, message.getBytes().length + 2));
+            LOG.debug("Receive message {} ({} byte)", message, message.getBytes().length);
+        }
+        else if (message.startsWith(SICKConstants.SAN)) {
+            if (SICKConstants.SET_ACCESS_MODE.equalsIgnoreCase(data[1])) {
+                LOG.debug("Login success {}", data[2]);
+            }
+            else if (SICKConstants.SET_DATETIME.equalsIgnoreCase(data[1])) {
+                LOG.debug("Set date time success {}", data[2]);
+            }
+            else {
+                LOG.debug("Receive message {} ({} byte)", message, message.getBytes().length);
+            }
+        }
+        else if (message.startsWith(SICKConstants.SFA)) {
+            LOG.error("Login failed");
         }
         else if (message.startsWith(SICKConstants.SSN)) {
             if (SICKConstants.LMD_SCANDATA.equalsIgnoreCase(data[1])) {
@@ -423,22 +437,34 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
                     event.put(SCANNING_FREQUENCY_ATTRIBUTE, measurement.getScanningFrequency());
                     event.put(MEASUREMENT_FREQUENCY_ATTRIBUTE, measurement.getMeasurementFrequency());
 
-                    final PolarCoordinate[] dist1Coordinates = new PolarCoordinate[measurement.getSamples().length];
-                    final Double[] remission1 = new Double[measurement.getSamples().length];
-                    final PolarCoordinate[] dist2Coordinates = new PolarCoordinate[measurement.getSamples().length];
-                    final Double[] remission2 = new Double[measurement.getSamples().length];
-                    for (int j = 0; j < measurement.getSamples().length; j++) {
-                        final Sample sample = measurement.getSamples()[j];
-                        dist1Coordinates[j] = new PolarCoordinate((double) sample.getDist1(), sample.getAngle());
-                        remission1[j] = (double) sample.getRssi1();
-                        dist2Coordinates[j] = new PolarCoordinate((double) sample.getDist2(), sample.getAngle());
-                        remission2[j] = (double) sample.getRssi2();
+                    final List<PolarCoordinate> dist1Coordinates = new ArrayList<PolarCoordinate>(
+                            measurement.getSamples().length);
+                    final List<Double> remission1 = new ArrayList<Double>(measurement.getSamples().length);
+                    final List<PolarCoordinate> dist2Coordinates = new ArrayList<PolarCoordinate>(
+                            measurement.getSamples().length);
+                    final List<Double> remission2 = new ArrayList<Double>(measurement.getSamples().length);
+
+                    for (Sample sample : measurement.getSamples()) {
+                        if ((dist1Coordinates.size() == 0)
+                                || (sample.getDist1() != 0.0)
+                                || ((sample.getDist1() == 0.0) && (dist1Coordinates.get(dist1Coordinates.size() - 1).r != 0.0))) {
+                            dist1Coordinates.add(new PolarCoordinate((double) sample.getDist1(), sample.getAngle()));
+                            remission1.add((double) sample.getRssi1());
+                        }
+                        if ((dist2Coordinates.size() == 0)
+                                || (sample.getDist2() != 0.0)
+                                || ((sample.getDist2() == 0.0) && (dist2Coordinates.get(dist2Coordinates.size() - 1).r != 0.0))) {
+                            dist2Coordinates.add(new PolarCoordinate((double) sample.getDist2(), sample.getAngle()));
+                            remission2.add((double) sample.getRssi2());
+                        }
                     }
 
-                    event.put(SICKConstants.DIST1, dist1Coordinates);
-                    event.put(SICKConstants.RSSI1, remission1);
-                    event.put(SICKConstants.DIST2, dist2Coordinates);
-                    event.put(SICKConstants.RSSI2, remission2);
+                    event.put(SICKConstants.DIST1,
+                            dist1Coordinates.toArray(new PolarCoordinate[dist1Coordinates.size()]));
+                    event.put(SICKConstants.RSSI1, remission1.toArray(new Double[dist1Coordinates.size()]));
+                    event.put(SICKConstants.DIST2,
+                            dist2Coordinates.toArray(new PolarCoordinate[dist2Coordinates.size()]));
+                    event.put(SICKConstants.RSSI2, remission2.toArray(new Double[dist2Coordinates.size()]));
 
                     Object[] retObj = new Object[schema.size()];
                     for (int i = 0; i < retObj.length; i++) {
@@ -449,7 +475,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
             }
         }
         else {
-            LOG.debug(String.format("Receive message %s (%s byte)", message, message.getBytes().length + 2));
+            LOG.error("Receive unknown message {} ({} byte)", message, message.getBytes().length);
         }
         return ret;
     }

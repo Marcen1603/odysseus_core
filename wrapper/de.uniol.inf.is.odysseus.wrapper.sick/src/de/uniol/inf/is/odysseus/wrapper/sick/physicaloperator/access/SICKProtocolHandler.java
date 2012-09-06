@@ -21,7 +21,9 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.util.Calendar;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +44,13 @@ import de.uniol.inf.is.odysseus.wrapper.sick.SICKConstants;
  */
 public class SICKProtocolHandler<T> extends AbstractByteBufferHandler<T> {
     private static final Logger    LOG     = LoggerFactory.getLogger(SICKProtocolHandler.class);
-    private final Charset          charset = Charset.forName("utf-8");
+    private final Charset          charset = Charset.forName("ASCII");
     protected ByteBufferHandler<T> objectHandler;
     private byte                   start;
     private byte                   end;
+    @SuppressWarnings("unused")
+    private String                 password;
+    private String                 username;
 
     @Override
     public String getName() {
@@ -65,8 +70,30 @@ public class SICKProtocolHandler<T> extends AbstractByteBufferHandler<T> {
         if (options.get("byteorder") != null) {
             instance.setByteOrder(options.get("byteorder"));
         }
+        if (options.get("username") != null) {
+            instance.setUsername(options.get("username"));
+        }
+        else {
+            instance.setUsername("client");
+        }
+        if (options.get("password") != null) {
+            instance.setPassword(options.get("password"));
+        }
+        else {
+            instance.setPassword("client");
+        }
         transportHandler.addListener(instance);
         return instance;
+    }
+
+    // FIXME Currently not used
+    private void setPassword(String password) {
+        this.password = password;
+
+    }
+
+    private void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -77,17 +104,46 @@ public class SICKProtocolHandler<T> extends AbstractByteBufferHandler<T> {
     @Override
     public void onConnect(ITransportHandler caller) {
         try {
-            this.write(SICKConstants.STOP_SCAN.getBytes(charset));
-            this.write(SICKConstants.START_SCAN.getBytes(charset));
+            LOG.debug("Connected");
+            if (this.username.equalsIgnoreCase("maintainer")) {
+                this.write(SICKConstants.SET_ACCESS_MODE_MAINTAINER_COMMAND.getBytes(charset));
+            }
+            else if (this.username.equalsIgnoreCase("client")) {
+                this.write(SICKConstants.SET_ACCESS_MODE_CLIENT_COMMAND.getBytes(charset));
+            }
+            else if (this.username.equalsIgnoreCase("service")) {
+                this.write(SICKConstants.SET_ACCESS_MODE_SERVICE_COMMAND.getBytes(charset));
+            }
+            Thread.sleep(1000);
+            Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+
+            StringBuilder timeString = new StringBuilder();
+            timeString.append(SICKConstants.SET_DATETIME_COMMAND).append(" ");
+            timeString.append("+").append(now.get(Calendar.YEAR)).append(" ");
+            timeString.append("+").append((now.get(Calendar.MONTH) + 1)).append(" ");
+            timeString.append("+").append( now.get(Calendar.DATE)).append(" ");
+            timeString.append("+").append(now.get(Calendar.HOUR_OF_DAY)).append(" ");
+            timeString.append("+").append(now.get(Calendar.MINUTE)).append(" ");
+            timeString.append("+").append( now.get(Calendar.SECOND)).append(" ");
+            timeString.append("+").append(now.get(Calendar.MILLISECOND));
+
+            this.write(timeString.toString().getBytes(charset));
+            Thread.sleep(1000);
+            this.write(SICKConstants.STOP_SCAN_COMMAND.getBytes(charset));
+            Thread.sleep(1000);
+            this.write(SICKConstants.START_SCAN_COMMAND.getBytes(charset));
         }
         catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        catch (InterruptedException e) {
             LOG.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void close() throws IOException {
-        this.write(SICKConstants.STOP_SCAN.getBytes(charset));
+        this.write(SICKConstants.STOP_SCAN_COMMAND.getBytes(charset));
         getTransportHandler().close();
     }
 
@@ -124,6 +180,9 @@ public class SICKProtocolHandler<T> extends AbstractByteBufferHandler<T> {
                 if (object != null) {
                     getTransfer().transfer(object);
                 }
+                else {
+                    LOG.error("Empty object");
+                }
             }
             if (value == start) {
                 objectHandler.clear();
@@ -144,8 +203,7 @@ public class SICKProtocolHandler<T> extends AbstractByteBufferHandler<T> {
 
     @Override
     public void onDisonnect(ITransportHandler caller) {
-        // TODO Auto-generated method stub
-
+        LOG.debug(" Disconnected");
     }
 
     @Override
@@ -158,7 +216,7 @@ public class SICKProtocolHandler<T> extends AbstractByteBufferHandler<T> {
             messageBuffer[messageBuffer.length - 1] = SICKConstants.END;
             getTransportHandler().send(messageBuffer);
 
-            LOG.debug(String.format("SICK: Send message %s", decoder.decode(ByteBuffer.wrap(message))));
+            LOG.debug("SICK: Send message {}", decoder.decode(ByteBuffer.wrap(message)));
         }
         catch (final IOException e) {
             LOG.error(e.getMessage(), e);
