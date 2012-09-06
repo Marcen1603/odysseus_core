@@ -69,6 +69,36 @@ public class CornerObjRule implements IObjectRule {
     @Override
     public Polygon getPredictedPolygon(final Geometry segment) {
         final List<Coordinate> result = new ArrayList<Coordinate>();
+        final Coordinate first = segment.getCoordinates()[0];
+        Coordinate last = segment.getCoordinates()[segment.getCoordinates().length - 1];
+        result.add(first);
+
+        Coordinate pcv = segment.getCoordinates()[0];
+        double max = 0;
+        for (int i = 1; i < (segment.getCoordinates().length - 1); i++) {
+            final Coordinate current = segment.getCoordinates()[i];
+            final double b = first.distance(current);
+            final double c = current.distance(last);
+            final double a = first.distance(last);
+
+            final double cos_v = (Math.pow(a, 2) - Math.pow(b, 2) - Math.pow(c, 2)) / (-2 * b * c);
+            final double acos = Math.acos(cos_v);
+            final double v = Math.toDegrees(acos);
+            if (v > max) {
+                pcv = current;
+                max = v;
+            }
+
+        }
+
+        if (max > 90.0) {
+            last = new Coordinate(first.x + pcv.x, first.y + pcv.y);
+        }
+        result.add(pcv);
+
+        result.add(last);
+        result.add(new Coordinate(pcv.y, pcv.x));
+        result.add(result.get(0));
         LinearRing linearRing = segment.getFactory().createLinearRing(result.toArray(new Coordinate[result.size()]));
         return segment.getFactory().createPolygon(linearRing, null);
     }

@@ -69,8 +69,44 @@ public class RoundObjRule implements IObjectRule {
     @Override
     public Polygon getPredictedPolygon(final Geometry segment) {
         final List<Coordinate> result = new ArrayList<Coordinate>();
+
+        final Coordinate first = segment.getCoordinates()[0];
+        final Coordinate last = segment.getCoordinates()[segment.getCoordinates().length - 1];
+
+        result.add(first);
+
+        Coordinate pcv = segment.getCoordinates()[0];
+        double max = 0.0;
+        for (int i = 1; i < (segment.getCoordinates().length - 1); i++) {
+            final Coordinate current = segment.getCoordinates()[i];
+
+            double distance = getDistanceToLine(current, first, last);
+            if (distance > max) {
+                pcv = current;
+                max = distance;
+            }
+
+        }
+
+        result.add(new Coordinate(pcv.x - first.x, pcv.y - first.y));
+        result.add(last);
+        result.add(new Coordinate(pcv.y, pcv.x));
+        result.add(result.get(0));
         LinearRing linearRing = segment.getFactory().createLinearRing(result.toArray(new Coordinate[result.size()]));
         return segment.getFactory().createPolygon(linearRing, null);
     }
 
+    private double getDistanceToLine(final Coordinate point, final Coordinate start, final Coordinate end) {
+        double x1 = start.x;
+        double y1 = start.y;
+
+        double x2 = end.x;
+        double y2 = end.y;
+
+        double x3 = point.x;
+        double y3 = point.y;
+
+        return Math.abs((x1 - x2) * (y1 - y3) - (x1 - x3) * (y1 - y2))
+                / Math.sqrt(Math.pow(x1 - x2, 2) - Math.pow(y1 - y2, 2));
+    }
 }
