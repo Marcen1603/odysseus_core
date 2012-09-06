@@ -40,8 +40,7 @@ public class SingleElementStore<T extends Tuple<? extends ITimeInterval>> extend
     @Override
     public List<T> getValues(ITimeInterval timeinterval) {
         List<T> list = new ArrayList<T>();
-        if ((timeinterval.getStart().beforeOrEquals(this.tuple.getMetadata().getStart()))
-                && (timeinterval.getEnd().after(this.tuple.getMetadata().getStart()))) {
+        if (this.tuple != null) {
             list.add(this.tuple);
         }
         return list;
@@ -50,14 +49,18 @@ public class SingleElementStore<T extends Tuple<? extends ITimeInterval>> extend
     @Override
     public List<T> getLastValues() {
         List<T> list = new ArrayList<T>();
-        list.add(this.tuple);
+        if (this.tuple == null) {
+            list.add(this.tuple);
+        }
         return list;
     }
 
     @Override
     public List<T> getAllValues() {
         List<T> list = new ArrayList<T>();
-        list.add(this.tuple);
+        if (this.tuple == null) {
+            list.add(this.tuple);
+        }
         return list;
     }
 
