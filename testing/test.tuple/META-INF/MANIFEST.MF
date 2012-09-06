@@ -39,6 +39,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.parser.pql;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.parser.cql;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.spatial;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.spatial.grid;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.wrapper.base;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.wrapper.csv;bundle-version="1.0.0"
