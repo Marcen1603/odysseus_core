@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.context.ContextManagementException;
 import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.context.store.types.MultiElementStore;
+import de.uniol.inf.is.odysseus.context.store.types.SingleElementStore;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
@@ -70,7 +71,13 @@ public class ContextVisitor implements IVisitor {
 		SDFSchema schema = new SDFSchema("ContextStore:" + name, csv.getAttributes());
 
 		int size = visit(typeNode, schema);
-		IContextStore<Tuple<? extends ITimeInterval>> store = new MultiElementStore<Tuple<? extends ITimeInterval>>(name, schema, size);
+        IContextStore<Tuple<? extends ITimeInterval>> store;
+        if (size == 1) {
+            store = new SingleElementStore<Tuple<? extends ITimeInterval>>(name, schema);
+        }
+        else {
+            store = new MultiElementStore<Tuple<? extends ITimeInterval>>(name, schema, size);
+        }
 
 		try {
 			ContextStoreManager.addStore(name, store);
