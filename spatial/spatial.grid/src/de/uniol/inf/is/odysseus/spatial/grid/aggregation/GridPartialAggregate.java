@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.spatial.grid.aggregation;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
-import com.googlecode.javacv.cpp.opencv_imgproc;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
@@ -30,30 +29,20 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
     private double         count;
     private final Grid     grid;
     private final IplImage image;
-    private final IplImage mask;
 
     public GridPartialAggregate(final Grid grid) {
         this.count = 1.0;
         this.grid = grid.clone();
         this.image = IplImage.create(opencv_core.cvSize(this.grid.width, this.grid.height), opencv_core.IPL_DEPTH_16U,
                 1);
-        this.mask = IplImage.create(opencv_core.cvSize(this.image.width(), this.image.height()),
-                opencv_core.IPL_DEPTH_8U, 1);
         IplImage tmp = IplImage.create(opencv_core.cvSize(this.image.width(), this.image.height()),
                 opencv_core.IPL_DEPTH_8U, 1);
 
         IplImage tmp64f = OpenCVUtil.gridToImage(this.grid);
         opencv_core.cvConvertScale(tmp64f, tmp, 255, 0);
-        opencv_imgproc.cvThreshold(tmp, tmp, 100, 0, opencv_imgproc.CV_THRESH_TOZERO_INV);
         opencv_core.cvConvertScale(tmp, this.image, 1, 0);
         tmp.release();
         tmp64f.release();
-
-        IplImage mask64f = OpenCVUtil.gridToImage(grid);
-        opencv_core.cvConvertScale(mask64f, mask, 255, 0);
-        opencv_imgproc.cvThreshold(this.mask, this.mask, 100, 255, opencv_imgproc.CV_THRESH_BINARY);
-
-        mask64f.release();
     }
 
     public GridPartialAggregate(final GridPartialAggregate<T> gridPartialAggregate) {
@@ -61,10 +50,7 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
         this.count = gridPartialAggregate.count;
         this.image = IplImage.create(opencv_core.cvSize(this.grid.width, this.grid.height), opencv_core.IPL_DEPTH_16U,
                 1);
-        this.mask = IplImage.create(opencv_core.cvSize(this.image.width(), this.image.height()),
-                opencv_core.IPL_DEPTH_8U, 1);
         opencv_core.cvCopy(gridPartialAggregate.image, this.image);
-        opencv_core.cvCopy(gridPartialAggregate.mask, this.mask);
     }
 
     @Override
@@ -77,14 +63,12 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
                 opencv_core.IPL_DEPTH_8U, 1);
         IplImage image64f = OpenCVUtil.gridToImage(grid);
         opencv_core.cvConvertScale(this.image, image, 1.0 / this.count, 0);
-        opencv_core.cvOr(image, this.mask, image, null);
         opencv_core.cvConvertScale(image, image64f, 1.0 / 255.0, 0);
         OpenCVUtil.imageToGrid(image64f, this.grid);
 
         image64f.release();
         image.release();
         this.image.release();
-        this.mask.release();
     }
 
     public Grid getGrid() {
@@ -93,11 +77,6 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
 
     public void merge(final Grid grid, long time) {
         this.count++;
-        IplImage mask = IplImage.create(opencv_core.cvSize(grid.width, grid.height), opencv_core.IPL_DEPTH_8U, 1);
-        IplImage mask64f = OpenCVUtil.gridToImage(grid);
-        opencv_core.cvConvertScale(mask64f, mask, 255, 0);
-        opencv_imgproc.cvThreshold(mask, mask, 100, 255, opencv_imgproc.CV_THRESH_BINARY);
-        opencv_core.cvAnd(this.mask, mask, this.mask, null);
 
         IplImage merge = IplImage.create(opencv_core.cvSize(this.image.width(), this.image.height()),
                 opencv_core.IPL_DEPTH_16U, 1);
@@ -107,18 +86,13 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
         IplImage tmp64f = OpenCVUtil.gridToImage(grid);
         opencv_core.cvConvertScale(tmp64f, tmp, 255, 0);
 
-        opencv_imgproc.cvThreshold(tmp, tmp, 100, 0, opencv_imgproc.CV_THRESH_TOZERO_INV);
-
         opencv_core.cvConvert(tmp, merge);
-        tmp.release();
-        tmp64f.release();
 
         opencv_core.cvAdd(this.image, merge, this.image, null);
 
         merge.release();
-        mask.release();
-        mask64f.release();
-
+        tmp.release();
+        tmp64f.release();
     }
 
     @Override
