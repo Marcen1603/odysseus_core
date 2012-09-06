@@ -10,9 +10,9 @@ public interface ISecurityPunctuation {
 	
 	public Boolean evaluate(Long tupleTS, List<String> userRoles, Tuple<?> tuple, SDFSchema schema);
 
-	public boolean processSP(ISecurityPunctuation sp2);
-	public boolean union(ISecurityPunctuation sp2);
-	public boolean intersect(ISecurityPunctuation sp2);
+	public ISecurityPunctuation processSP(ISecurityPunctuation sp2);
+	public ISecurityPunctuation union(ISecurityPunctuation sp2);
+	public ISecurityPunctuation intersect(ISecurityPunctuation sp2);
 
 	public SDFSchema getSchema();
 	

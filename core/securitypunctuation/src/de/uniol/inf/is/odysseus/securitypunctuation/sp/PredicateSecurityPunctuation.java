@@ -22,7 +22,7 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 		setSchema(schema);
 		setAttribute("predicate", createPredicate((String) objects[0]));
 		this.sign = (Integer) objects[1];
-		this.immutable = (Integer) objects[2];
+		this.mutable = (Integer) objects[2];
 		this.ts = (Long) objects[3];
 	}
 	
@@ -30,7 +30,7 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 		setSchema(sp.getSchema());
 		setAttribute("predicate", sp.getPredicateAttribute("predicate"));
 		this.sign = sp.sign;
-		this.immutable = sp.immutable;
+		this.mutable = sp.mutable;
 		this.ts = sp.ts;
 	}
 	
@@ -71,11 +71,11 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 
 	@Override
-	public boolean union(ISecurityPunctuation sp2) {	
-		return false;		
+	public ISecurityPunctuation union(ISecurityPunctuation sp2) {	
+		return null;		
 	}
 	@Override
-	public boolean intersect(ISecurityPunctuation sp2) {	
-		return false;		
+	public ISecurityPunctuation intersect(ISecurityPunctuation sp2) {	
+		return null;		
 	}
 }

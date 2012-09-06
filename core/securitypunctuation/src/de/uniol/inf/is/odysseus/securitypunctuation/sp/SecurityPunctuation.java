@@ -40,7 +40,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		setAttribute("role", roleArrayList);
 		
 		this.sign = (Integer) objects[5];
-		this.immutable = (Integer) objects[6];
+		this.mutable = (Integer) objects[6];
 		this.ts = (Long) objects[7];
 	}
 
@@ -52,7 +52,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		setAttribute("attributeNames", sp.getAttribute("attributeNames"));
 		setAttribute("role", sp.getAttribute("role"));
 		this.sign = sp.sign;
-		this.immutable = sp.immutable;
+		this.mutable = sp.mutable;
 		this.ts = sp.ts;
 	}	
 	
@@ -159,70 +159,77 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		return false;
 	}
 	
+	/**
+	 * Vereinigt zwei SP und gibt null zurück, falls die Bedingungen für eine Vereinigung nicht erfüllt sind
+	 */
 	@Override
-	public boolean union(ISecurityPunctuation sp2) {
+	public ISecurityPunctuation union(ISecurityPunctuation sp2) {
 		if(sp2 instanceof SecurityPunctuation) {
-			// Union gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen und immutable sind
+			// Union gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen und mutable sind
 			if(this.getLongAttribute("ts") == sp2.getLongAttribute("ts") 
 					&& getSchema().getURI().equals(((SecurityPunctuation) sp2).getSchema().getURI())
-					&& this.immutable == 1
-					&& ((SecurityPunctuation)sp2).immutable == 1
+					&& this.mutable == 1
+					&& ((SecurityPunctuation)sp2).mutable == 1
 					) {
-				mergeStringArrayList(this.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
+				
+				SecurityPunctuation newSP = new SecurityPunctuation(this);
+				
+				newSP.mergeStringArrayList(newSP.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
 				
 				// kleineren Wählen --> Bereich wird größer
-				if(this.getLongAttribute("tupleStartTS") > sp2.getLongAttribute("tupleStartTS")) {
-					setAttribute("tupleStartTS", sp2.getLongAttribute("tupleStartTS"));
+				if(newSP.getLongAttribute("tupleStartTS") > sp2.getLongAttribute("tupleStartTS")) {
+					newSP.setAttribute("tupleStartTS", sp2.getLongAttribute("tupleStartTS"));
 				} 
 				
 				// größeren Wählen --> Bereich wird größer
-				if(this.getLongAttribute("tupleEndTS") < sp2.getLongAttribute("tupleEndTS")) {
-					setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
+				if(newSP.getLongAttribute("tupleEndTS") < sp2.getLongAttribute("tupleEndTS")) {
+					newSP.setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
 				} 
-				mergeStringArrayList(this.getStringArrayListAttribute("attributeNames"), sp2.getStringArrayListAttribute("attributeNames"));
-				mergeStringArrayList(this.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
+				newSP.mergeStringArrayList(newSP.getStringArrayListAttribute("attributeNames"), sp2.getStringArrayListAttribute("attributeNames"));
+				newSP.mergeStringArrayList(newSP.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
 				//Was soll hier passieren?
 //				setAttribute("sign", ???);
-//				setAttribute("immutable", ???);
+//				setAttribute("mutable", ???);
 //				setAttribute("ts", ???);
-				return true;
+				return newSP;
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	@Override 
-	public boolean intersect(ISecurityPunctuation sp2) {
+	public ISecurityPunctuation intersect(ISecurityPunctuation sp2) {
 		if(sp2 instanceof SecurityPunctuation) {
-			// Union gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen und immutable sind
+			// Union gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen und mutable sind
 			if(this.ts == ((SecurityPunctuation)sp2).ts 
 					&& !this.getSchema().getURI().equals(((SecurityPunctuation) sp2).getSchema().getURI())
-					&& this.immutable == 1
-					&& ((SecurityPunctuation)sp2).immutable == 1
+					&& this.mutable == 1
+					&& ((SecurityPunctuation)sp2).mutable == 1
 					) {
 
+				SecurityPunctuation newSP = new SecurityPunctuation(this);
 
-				intersectStringArrayList(this.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
+				newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
 				
 				// größeren Wählen --> Bereich wird kleiner
-				if(this.getLongAttribute("tupleStartTS") < sp2.getLongAttribute("tupleStartTS")) {
-					setAttribute("tupleStartTS", sp2.getLongAttribute("tupleStartTS"));
+				if(newSP.getLongAttribute("tupleStartTS") < sp2.getLongAttribute("tupleStartTS")) {
+					newSP.setAttribute("tupleStartTS", sp2.getLongAttribute("tupleStartTS"));
 				} 
 				
 				// kleineren Wählen --> Bereich wird kleiner
-				if(this.getLongAttribute("tupleEndTS") > sp2.getLongAttribute("tupleEndTS")) {
-					setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
+				if(newSP.getLongAttribute("tupleEndTS") > sp2.getLongAttribute("tupleEndTS")) {
+					newSP.setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
 				} 
-				intersectStringArrayList(this.getStringArrayListAttribute("attributeNames"), sp2.getStringArrayListAttribute("attributeNames"));
-				intersectStringArrayList(this.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
+				newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("attributeNames"), sp2.getStringArrayListAttribute("attributeNames"));
+				newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
 				//Was soll hier passieren?
 //				setAttribute("sign", ???);
-//				setAttribute("immutable", ???);
+//				setAttribute("mutable", ???);
 //				setAttribute("ts", ???);
-				return true;
+				return newSP;
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	private void mergeStringArrayList(ArrayList<String> list, ArrayList<String> list2) {

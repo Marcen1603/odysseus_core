@@ -1,4 +1,4 @@
-flag;stream;starttupel;endtupel;attribute;rollen;sign;immutable;ts
+flag;stream;starttupel;endtupel;attribute;rollen;sign;mutable;ts
 SP;Test,SP,Stream;1;15;;sys_admin;1;1;0
 SP;Test,Streah,Stream;1;13;Attribut1,Attribut2,id;sys_admin, chef;1;1;0
 ;asdfc;33;1111;ferd;asd;1;1;1

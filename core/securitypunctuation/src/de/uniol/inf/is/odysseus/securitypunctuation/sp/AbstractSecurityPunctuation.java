@@ -14,7 +14,7 @@ public abstract class AbstractSecurityPunctuation implements Serializable, ISecu
 	private SDFSchema schema;
 	
 	protected Long ts;
-	protected Integer immutable;
+	protected Integer mutable;
 	protected Integer sign;
 	
 	private static final long serialVersionUID = 1069899975287225287L;
@@ -23,14 +23,15 @@ public abstract class AbstractSecurityPunctuation implements Serializable, ISecu
 	
 	/**
 	 * Logik zum entscheiden, ob auf Tupel union() oder intersect() angewendet werden soll.
+	 * Falls beides nicht zutrifft wird null zurückgegeben.
 	 */
 	@Override
-	public boolean processSP(ISecurityPunctuation sp2) {
+	public ISecurityPunctuation processSP(ISecurityPunctuation sp2) {
 		AbstractSecurityPunctuation sp = (AbstractSecurityPunctuation)sp2;
 		if(this.ts == sp.ts) {
 			if(this.getSchema().getURI().equals(sp.getSchema().getURI())) {
 				//Was passiert hier, wenn Immutable = 0???
-				if(this.immutable >= 1 && sp.immutable >= 1) {
+				if(this.mutable >= 1 && sp.mutable >= 1) {
 					if(sp.sign == 1) {
 						return this.union(sp);
 					} else {
@@ -42,14 +43,14 @@ public abstract class AbstractSecurityPunctuation implements Serializable, ISecu
 				return this.intersect(sp);
 			}
 		} 
-		if(sp.immutable == 2 && this.immutable >= 1) {
+		if(sp.mutable == 2 && this.mutable >= 1) {
 			if(sp.sign == 1) {
 				return this.union(sp);
 			} else {
 				return this.intersect(sp);
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	public Long getTS() {

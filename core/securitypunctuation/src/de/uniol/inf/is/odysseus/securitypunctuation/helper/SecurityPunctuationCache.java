@@ -51,8 +51,11 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 	 */
 	@Override
 	public boolean add(ISecurityPunctuation sp) {
-		if(!this.isEmpty() && this.get(this.size() - 1).processSP(sp)) {
-			return true;
+		if(!this.isEmpty()) {
+			ISecurityPunctuation newSP = this.get(this.size() - 1).processSP(sp);
+			if(newSP != null) {
+				return super.add(newSP);
+			}
 		}
 		return super.add(sp);
 	}

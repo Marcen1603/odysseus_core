@@ -97,7 +97,7 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPun
 				new SDFAttribute("SP", "attributeNames", new SDFDatatype("String")),
 				new SDFAttribute("SP", "role", new SDFDatatype("String")),
 				new SDFAttribute("SP", "sign", new SDFDatatype("Integer")),
-				new SDFAttribute("SP", "immutable", new SDFDatatype("Integer")),
+				new SDFAttribute("SP", "mutable", new SDFDatatype("Integer")),
 				new SDFAttribute("SP", "ts", new SDFDatatype("Long")));
 		this.securityPunctuationHandlers = new IDataHandler<?>[schema.size()];
 		int i = 0;
