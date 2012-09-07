@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.rcp.stream;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
