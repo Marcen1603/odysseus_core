@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Basic TestNG utilities
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.testng
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: de.uniol.inf.is.odysseus.testng
