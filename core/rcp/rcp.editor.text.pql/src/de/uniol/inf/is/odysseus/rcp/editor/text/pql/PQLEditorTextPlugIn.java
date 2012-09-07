@@ -7,6 +7,7 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 
@@ -21,6 +22,7 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 
 	private static PQLEditorTextPlugIn instance;
 	private static IOperatorBuilderFactory operatorBuilderFactory;
+	private static IDataDictionary dataDictionary;
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -49,6 +51,20 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 			LOG.debug("Unbound OperatorBuilderFactory {}.", builder);
 		}
 	}
+	
+	public void bindDataDictionary( IDataDictionary dd ) {
+		dataDictionary = dd;
+
+		LOG.debug("Bound DataDictionary {}.", dd);
+	}
+	
+	public void unbindDataDictionary( IDataDictionary dd ) {
+		if( dataDictionary == dd ) {
+			
+			dataDictionary = null;
+			LOG.debug("Unbound DataDictionary {}.", dd);
+		}
+	}
 
 	public static String[] getPQLKeywords() {
 		return operatorBuilderFactory != null ? determineNames(operatorBuilderFactory.getOperatorBuilder()) : new String[0];
@@ -56,6 +72,10 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 	
 	public static IOperatorBuilderFactory getOperatorBuilderFactory() {
 		return operatorBuilderFactory;
+	}
+	
+	public static IDataDictionary getDataDictionary() {
+		return dataDictionary;
 	}
 
 	public static PQLEditorTextPlugIn getDefault() {
