@@ -20,6 +20,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartExtensionPointResolver;
+import de.uniol.inf.is.odysseus.testng.TestUtil;
 
 public class DashboardPartExtensionPointResolverTest {
 	
