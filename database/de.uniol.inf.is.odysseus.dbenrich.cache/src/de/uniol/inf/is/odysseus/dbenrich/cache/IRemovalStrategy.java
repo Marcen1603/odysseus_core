@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.dbenrich.cache;
 
-public interface IRemovalStrategy<K, V> {
+public interface IRemovalStrategy<K, V extends CacheEntry<?>> {
 
 	/**
 	 * Notifies the removal strategy, that a new key-value-pair was
@@ -14,4 +14,6 @@ public interface IRemovalStrategy<K, V> {
 	 * removal strategy if present.
 	 */
 	void removeNext();
+	
+	//TODO createInstance(params)
 }

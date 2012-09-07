@@ -5,49 +5,57 @@ import java.util.Map;
 
 public class ReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 
-	private final Map<K,V> cacheStore;
+	private final Map<K, CacheEntry<V>> cacheStore;
 	private final int maxSize;
+	private final long expirationTime;
 
 	private final IRetrievalStrategy<K, V> retrievalStrategy;
-	private final IRemovalStrategy<K, V> removalStrategy;
+	private final IRemovalStrategy<K, CacheEntry<V>> removalStrategy;
 
-	public ReadOnlyCache(Map<K,V> cacheStore, IRetrievalStrategy<K, V> retrievalStrategy, IRemovalStrategy<K, V> removalStrategy, int maxSize) {
+	public ReadOnlyCache(Map<K, CacheEntry<V>> cacheStore,
+			IRetrievalStrategy<K, V> retrievalStrategy,
+			IRemovalStrategy<K, CacheEntry<V>> removalStrategy, int maxSize,
+			long expirationTime) {
 		this.cacheStore = cacheStore;
 		this.retrievalStrategy = retrievalStrategy;
 		this.removalStrategy = removalStrategy;
-		if(maxSize <= 0) throw new IllegalArgumentException(
-				maxSize+"(maxSize) <= 0");
+		if (maxSize <= 0)
+			throw new IllegalArgumentException(maxSize + "(maxSize) <= 0");
 		this.maxSize = maxSize;
+		this.expirationTime = expirationTime;
 	}
 
 	@Override
 	public V get(K key) {
-		// wie prefetching mit rein? ab und zu bei get, weil thread zu unpassend?
+		V data;
 
 		// Try to get the value from the cache store
-		V value = cacheStore.get(key);
+		CacheEntry<V> cacheEntry = cacheStore.get(key);
 
 		// If it's not found or invalid, get it from caching strategy
-		if(value==null) { // || isExpired(value)) { //FIXME
-			System.out.println("No value for key " + key.toString() + ", Hash: " + key.hashCode());
-			value = getInternal(key);
-			putInternal(key, value);
+		if (cacheEntry == null || cacheEntry.isExpired(expirationTime)) {
+			System.out.println("No (valid) cacheEntry for key "
+					+ key.toString() + ", Hash: " + key.hashCode());
+			data = getInternal(key);
+			putInternal(key, new CacheEntry<V>(data));
+		} else {
+			data = cacheEntry.accessData();
 		}
 
-		return value;
+		return data;
 	}
 
 	private V getInternal(K key) {
 		return retrievalStrategy.get(key);
 	}
 
-	private void putInternal(K key, V value) {
+	private void putInternal(K key, CacheEntry<V> cacheEntry) {
 		while(cacheStore.size() >= maxSize) {
 			System.out.println("Removed a cache entry");
 			removalStrategy.removeNext();
 		}
-		cacheStore.put(key, value);
-		removalStrategy.handleNewEntry(key, value);
+		cacheStore.put(key, cacheEntry);
+		removalStrategy.handleNewEntry(key, cacheEntry);
 	}
 
 	// TODO maybe purge, clear depending on further implementation

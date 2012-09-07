@@ -7,11 +7,13 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ComplexParameterKey;
 import de.uniol.inf.is.odysseus.dbenrich.cache.DBRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.DummyReadOnlyCache;
 import de.uniol.inf.is.odysseus.dbenrich.cache.IReadOnlyCache;
 import de.uniol.inf.is.odysseus.dbenrich.cache.IRemovalStrategy;
+import de.uniol.inf.is.odysseus.dbenrich.cache.IRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ReadOnlyCache;
 import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.FIFO;
 import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.Random;
@@ -64,30 +66,31 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 	private IReadOnlyCache<ComplexParameterKey, Tuple> createCache(
 			DBEnrichAO logical) {
 
-		DBRetrievalStrategy dbRetrievalStrategy = new DBRetrievalStrategy(
-				logical.getConnectionName(), logical.getQuery(),
-				logical.getAttributes(), logical.getOutputSchema());
+		IRetrievalStrategy<ComplexParameterKey, Tuple> retrievalStrategy = 
+				new DBRetrievalStrategy( logical.getConnectionName(), 
+						logical.getQuery());
 
 		if(logical.isNoCache()) {
 			return new DummyReadOnlyCache<ComplexParameterKey, Tuple>(
-					dbRetrievalStrategy);
+					retrievalStrategy);
 		} else {
 
 			/* It is ensured, that the store size will never exceed the
 			 * maximum size, therefore the loadCapacity may be set to 1
 			 * to prevent rehashing. */
-			Map<ComplexParameterKey, Tuple> cacheStore =
-					new HashMap<ComplexParameterKey, Tuple>(logical.getCacheSize()+1, 1.0f);
+			Map<ComplexParameterKey, CacheEntry<Tuple>> cacheStore =
+					new HashMap<ComplexParameterKey, CacheEntry<Tuple>>(logical.getCacheSize()+1, 1.0f);
 
+			// FIXME DEKLARATIVE SERVICE
 			/* Instantiate removal strategy. A Switch case (Java 7), or a
 			 * factory class could be used here if needed in the future. */
 			String removalStrategyLCStr = logical.getRemovalStrategy().toLowerCase();
-			IRemovalStrategy<ComplexParameterKey, Tuple> removalStrategy;
+			IRemovalStrategy<ComplexParameterKey, CacheEntry<Tuple>> removalStrategy;
 			System.out.println("RemovalStrategyLCStr: " + removalStrategyLCStr);
 			if (removalStrategyLCStr.equals(RANDOM)) {
-				removalStrategy = new Random<ComplexParameterKey, Tuple>(cacheStore);
+				removalStrategy = new Random<ComplexParameterKey, CacheEntry<Tuple>>(cacheStore);
 			} else if (removalStrategyLCStr.equals(FIFO)) {
-				removalStrategy = new FIFO<ComplexParameterKey, Tuple>(cacheStore);
+				removalStrategy = new FIFO<ComplexParameterKey, CacheEntry<Tuple>>(cacheStore);
 			} else if (removalStrategyLCStr.equals(LRU)) {
 				throw new RuntimeException("TBD"); //FIXME
 			} else if (removalStrategyLCStr.equals(LFU)) {
@@ -97,8 +100,9 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 						"'"+removalStrategyLCStr+"'");
 			}
 
-			return new ReadOnlyCache<ComplexParameterKey, Tuple>(
-					cacheStore, dbRetrievalStrategy, removalStrategy, logical.getCacheSize());
+			return new ReadOnlyCache<ComplexParameterKey, Tuple>(cacheStore,
+					retrievalStrategy, removalStrategy, logical.getCacheSize(),
+					logical.getExpirationTime());
 		}
 	}
 

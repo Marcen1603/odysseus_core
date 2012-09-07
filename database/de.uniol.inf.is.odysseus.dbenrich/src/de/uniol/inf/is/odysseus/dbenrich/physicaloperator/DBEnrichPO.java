@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.dbenrich.physicaloperator;
 
+import java.util.Arrays;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -23,7 +24,7 @@ public class DBEnrichPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, 
 	private final int cacheSize;
 	private final long expirationTime;
 	private final String removalStrategy;
-	// Fully initialized after process_open()
+	// Fully initialized after process_open(), TODO maybe transient, but how to reinitialize after serialization?
 	private final IDataMergeFunction<Tuple<T>> dataMergeFunction;
 	private final IReadOnlyCache<ComplexParameterKey, Tuple> cacheManager;
 	/** The positions of the db query parameters in the inputTuple attributes,
@@ -57,10 +58,11 @@ public class DBEnrichPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, 
 		this.cacheSize = dBEnrichPO.cacheSize;
 		this.expirationTime = dBEnrichPO.expirationTime;
 		this.removalStrategy = dBEnrichPO.removalStrategy;
-		this.dataMergeFunction = dBEnrichPO.dataMergeFunction;
-		this.cacheManager = dBEnrichPO.cacheManager;
-		this.parameterPositions = dBEnrichPO.parameterPositions;
-		//TODO ggf. deepCopies von arrays, cacheManager, mergeFunction
+		this.dataMergeFunction = dBEnrichPO.dataMergeFunction.clone();
+		this.cacheManager = dBEnrichPO.cacheManager; //FIXME copy/new needed
+		this.parameterPositions = Arrays.copyOf(
+				dBEnrichPO.parameterPositions,
+				dBEnrichPO.parameterPositions.length);
 	}
 
 	@Override
@@ -209,7 +211,41 @@ public class DBEnrichPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, 
 
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		// TODO Auto-generated method stub
-		return false;
+		// Compare all class attributes, that were already present in the AO.
+		if (this == ipo)
+			return true;
+		if (!super.equals(ipo))
+			return false;
+		if (getClass() != ipo.getClass())
+			return false;
+		@SuppressWarnings("rawtypes")
+		DBEnrichPO other = (DBEnrichPO) ipo;
+		if (cacheSize != other.cacheSize)
+			return false;
+		if (connectionName == null) {
+			if (other.connectionName != null)
+				return false;
+		} else if (!connectionName.equals(other.connectionName))
+			return false;
+		if (expirationTime != other.expirationTime)
+			return false;
+		if (noCache != other.noCache)
+			return false;
+		if (query == null) {
+			if (other.query != null)
+				return false;
+		} else if (!query.equals(other.query))
+			return false;
+		if (removalStrategy == null) {
+			if (other.removalStrategy != null)
+				return false;
+		} else if (!removalStrategy.equals(other.removalStrategy))
+			return false;
+		if (variables == null) {
+			if (other.variables != null)
+				return false;
+		} else if (!variables.equals(other.variables))
+			return false;
+		return true;
 	}
 }

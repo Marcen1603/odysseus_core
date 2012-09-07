@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -14,25 +13,19 @@ import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 
-public class DBRetrievalStrategy implements IRetrievalStrategy<ComplexParameterKey, Tuple> {
+public class DBRetrievalStrategy implements
+		IRetrievalStrategy<ComplexParameterKey, Tuple> {
 
 	private String connectionName;
 	private String query;
-	private List<String> variables;
-
-	/** @deprecated */
-	@Deprecated
-	private SDFSchema opOutputSchema;
 
 	// Initialized in open()
 	private SDFSchema dbFetchSchema;
 	private PreparedStatement preparedStatement;
 
-	public DBRetrievalStrategy(String connectionName, String query, List<String> variables, SDFSchema opOutputSchema) {
+	public DBRetrievalStrategy(String connectionName, String query) {
 		this.connectionName = connectionName;
 		this.query = query;
-		this.variables = variables;
-		this.opOutputSchema = opOutputSchema;
 	}
 
 	@Override
@@ -46,8 +39,9 @@ public class DBRetrievalStrategy implements IRetrievalStrategy<ComplexParameterK
 			// Get Connection
 			IDatabaseConnection iDatabaseConnection = DatabaseConnectionDictionary
 					.getInstance().getDatabaseConnection(connectionName);
-			if(iDatabaseConnection == null) {
-				throw new RuntimeException("Could not find the connection '"+connectionName+"'");
+			if (iDatabaseConnection == null) {
+				throw new RuntimeException("Could not find the connection '"
+						+ connectionName + "'");
 			}
 
 			Connection connection = iDatabaseConnection.getConnection();
@@ -56,12 +50,12 @@ public class DBRetrievalStrategy implements IRetrievalStrategy<ComplexParameterK
 			preparedStatement = connection.prepareStatement(query);
 
 			// Retrieve DB Schema
-			dbFetchSchema = Conversions.createSDFSchemaByResultSetMetaData(preparedStatement.getMetaData());
-		} catch(Exception e) {
+			dbFetchSchema = Conversions.createSDFSchemaByResultSetMetaData(
+					preparedStatement.getMetaData());
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new OpenFailedException(e);
 		}
-		System.out.println("open dbret");
 	}
 
 	@Override
@@ -74,14 +68,7 @@ public class DBRetrievalStrategy implements IRetrievalStrategy<ComplexParameterK
 			}
 			preparedStatement = null;
 		}
-		System.out.println("close dbret");
 	}
-
-//	@Override
-//	protected void finalize() throws Throwable {
-//		// vielleicht statt close (und open in konstruktor)
-//		super.finalize();
-//	}
 
 	private Tuple getTupleFromDB(ComplexParameterKey complexParameterKey) {
 
@@ -91,33 +78,36 @@ public class DBRetrievalStrategy implements IRetrievalStrategy<ComplexParameterK
 		try {
 			// Insert parameters corr. to variables in prepared statement...
 			Object[] queryParameters = complexParameterKey.getQueryParameters();
-			for(int i=0; i<queryParameters.length; i++) {
-				preparedStatement.setObject(i+1, queryParameters[i]); // automapping
+			for (int i = 0; i < queryParameters.length; i++) {
+				preparedStatement.setObject(i + 1, queryParameters[i]); // automapping
 			}
 			// ... and execute
-			System.out.println("PreparedStatement: " + preparedStatement.toString());
+			System.out.println("PreparedStatement: "
+					+ preparedStatement.toString());
 			rs = preparedStatement.executeQuery();
 
-
-			if(rs.next()) {
-				dbTuple = new Tuple(dbFetchSchema.size(), false); // false ok?
-				for(int i=0; i<dbFetchSchema.size(); i++) {
-					Object newAttribute = getWithType(rs, dbFetchSchema.get(i), i+1);
+			if (rs.next()) {
+				dbTuple = new Tuple(dbFetchSchema.size(), false);
+				for (int i = 0; i < dbFetchSchema.size(); i++) {
+					Object newAttribute = getWithType(rs, dbFetchSchema.get(i),
+							i + 1);
 					dbTuple.setAttribute(i, newAttribute);
 				}
 			} else {
 				// do nothing, return dbTuple = null
 				// (old:) throw new RuntimeException("No results for query");
 			}
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new RuntimeException("Could not retrieve entry from Database", e);
+			throw new RuntimeException(
+					"Could not retrieve entry from Database", e);
 		}
 
 		return dbTuple; // null, if nothing was found
 	}
 
-	private Object getWithType(ResultSet rs, SDFAttribute sdfAttributeTarget, int position) throws SQLException {
+	private Object getWithType(ResultSet rs, SDFAttribute sdfAttributeTarget,
+			int position) throws SQLException {
 
 		/*
 		 * getObject(pos) should be sufficient for all use cases, since JDBC

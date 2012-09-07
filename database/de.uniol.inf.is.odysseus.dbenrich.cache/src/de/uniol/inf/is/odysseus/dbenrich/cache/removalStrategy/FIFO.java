@@ -4,7 +4,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-public class FIFO<K, V> extends AbstractRemovalStrategy<K, V> {
+import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
+
+public class FIFO<K, V extends CacheEntry<?>> extends AbstractRemovalStrategy<K, V> {
 
 	private final Queue<K> queue;
 

@@ -3,7 +3,9 @@ package de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy;
 import java.util.Map;
 import java.util.Set;
 
-public class Random<K, V> extends AbstractRemovalStrategy<K, V> {
+import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
+
+public class Random<K, V extends CacheEntry<?>> extends AbstractRemovalStrategy<K, V> {
 
 	private final java.util.Random random;
 

@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -62,11 +63,21 @@ public class DBEnrichAO extends UnaryLogicalOp {
 	@Override
 	public boolean isValid() {
 		System.out.println("isValid() call; " + getDebugString());
-		// TODO Parameter überprüfen
-		// prüfen, ob variables in inputSchema
-		// Existenz von PrepStmt prüfen
+		boolean valid = true;
 
-		return true;
+		if (cacheSize < 1) {
+			addError(new IllegalParameterException(
+					"CacheSize must be at least 1."));
+			valid = false;
+		}
+
+		if (expirationTime < 0) {
+			addError(new IllegalParameterException(
+					"ExpirationTime may not be negative."));
+			valid = false;
+		}
+
+		return valid;
 	}
 
 	@Override
@@ -113,7 +124,7 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		return super.getOutputSchemaIntern(pos);
 	}
 
-	private static void printSchema(SDFSchema schema, String identifier) { // TODO DELETE
+	private static void printSchema(SDFSchema schema, String identifier) {
 		System.out.println(identifier + " {");
 		for(SDFAttribute attribute : schema) {
 			System.out.println("\t" + attribute.getURI() + ": " + attribute.getDatatype());
@@ -121,7 +132,7 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		System.out.println("}");
 	}
 
-	private static void printMetaData(ResultSetMetaData resultSetMetaData) { // TODO DELETE
+	private static void printMetaData(ResultSetMetaData resultSetMetaData) {
 		try {
 			System.out.print("SQL-ResultSetMetaData: ");
 			for (int i=1; i<=resultSetMetaData.getColumnCount(); i++) {
@@ -135,7 +146,7 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		}
 	}
 
-	public String getDebugString() { // TODO DELETE
+	private String getDebugString() {
 		String variablesStr = "{";
 		for(String var : attributes) {
 			variablesStr += "'" + var + "' ";
