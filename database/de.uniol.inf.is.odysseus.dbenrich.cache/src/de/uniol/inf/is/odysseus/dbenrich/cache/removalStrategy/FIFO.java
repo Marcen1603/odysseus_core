@@ -6,28 +6,44 @@ import java.util.Queue;
 
 import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
 
-public class FIFO<K, V extends CacheEntry<?>> extends AbstractRemovalStrategy<K, V> {
+public class FIFO extends AbstractRemovalStrategy {
 
-	private final Queue<K> queue;
+	private Queue queue;
 
-	public FIFO(Map<K, V> cacheStore) {
-		super(cacheStore);
+	public FIFO() {
+		// Needed for the activator
+	}
 
-		this.queue = new LinkedList<K>();
+	private FIFO(Map<?, CacheEntry<?>> cacheStore) {
+		super.cacheStore = cacheStore;
+		queue = new LinkedList();
 	}
 
 	@Override
-	public void handleNewEntry(K key, V value) {
+	public void notifyNew(Object key, CacheEntry<?> value) {
 		// Insert as last element in queue
 		queue.offer(key);
+	}
+	
+	@Override
+	public void notifyAccess(Object key, CacheEntry<?> value) {
+		// do nothing
 	}
 
 	@Override
 	public void removeNext() {
-		if(!queue.isEmpty()) {
-			// Remove element from the head of the queue and the cache.
-			K key = queue.remove();
-			cacheStore.remove(key);
-		}
+		// Remove element from the head of the queue and the cache.
+		Object key = queue.remove();
+		cacheStore.remove(key);
+	}
+
+	@Override
+	public String getName() {
+		return "FIFO";
+	}
+
+	@Override
+	public IRemovalStrategy createInstance(Map<?, CacheEntry<?>> cacheStore) {
+		return new FIFO(cacheStore);
 	}
 }

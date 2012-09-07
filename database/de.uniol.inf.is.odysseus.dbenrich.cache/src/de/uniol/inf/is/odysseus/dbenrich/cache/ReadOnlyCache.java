@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.dbenrich.cache;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.IRemovalStrategy;
+
 
 public class ReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 
@@ -10,11 +12,11 @@ public class ReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 	private final long expirationTime;
 
 	private final IRetrievalStrategy<K, V> retrievalStrategy;
-	private final IRemovalStrategy<K, CacheEntry<V>> removalStrategy;
+	private final IRemovalStrategy removalStrategy;
 
 	public ReadOnlyCache(Map<K, CacheEntry<V>> cacheStore,
 			IRetrievalStrategy<K, V> retrievalStrategy,
-			IRemovalStrategy<K, CacheEntry<V>> removalStrategy, int maxSize,
+			IRemovalStrategy removalStrategy, int maxSize,
 			long expirationTime) {
 		this.cacheStore = cacheStore;
 		this.retrievalStrategy = retrievalStrategy;
@@ -40,6 +42,7 @@ public class ReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 			putInternal(key, new CacheEntry<V>(data));
 		} else {
 			data = cacheEntry.accessData();
+			removalStrategy.notifyAccess(key, cacheEntry);
 		}
 
 		return data;
@@ -55,7 +58,7 @@ public class ReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 			removalStrategy.removeNext();
 		}
 		cacheStore.put(key, cacheEntry);
-		removalStrategy.handleNewEntry(key, cacheEntry);
+		removalStrategy.notifyNew(key, cacheEntry);
 	}
 
 	// TODO maybe purge, clear depending on further implementation

@@ -5,38 +5,46 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
 
-public class Random<K, V extends CacheEntry<?>> extends AbstractRemovalStrategy<K, V> {
+public class Random extends AbstractRemovalStrategy {
 
-	private final java.util.Random random;
+	private java.util.Random random;
 
-	public Random(Map<K, V> cacheStore) {
-		super(cacheStore);
+	public Random() {
+		// Needed for the activator
+	}
 
-		this.random = new java.util.Random();
+	private Random(Map<?, CacheEntry<?>> cacheStore) {
+		super.cacheStore = cacheStore;
+		random = new java.util.Random();
 	}
 
 	@Override
-	public void handleNewEntry(K key, V value) {
+	public void notifyNew(Object key, CacheEntry<?> value) {
+		// do nothing
+	}
+	
+	@Override
+	public void notifyAccess(Object key, CacheEntry<?> value) {
 		// do nothing
 	}
 
 	@Override
 	public void removeNext() {
-		Set<K> keySet = cacheStore.keySet();
+		Set<?> keySet = cacheStore.keySet();
 
-		if(!keySet.isEmpty()) {
-			/* Removing a random entry out of a set cannot be done
-			 * efficiently in Java, since only an iterator or an array
-			 * copy of the set can be used for that. So the performance is bad
-			 * when there are many entries.
-			 * Here the iterator version is used.
-			 * Alternatively the first entry of the keyset could be removed, but
-			 * that is not random in all implementations of a Map.
+		if (!keySet.isEmpty()) {
+			/*
+			 * Removing a random entry out of a set cannot be done efficiently
+			 * in Java, since only an iterator or an array copy of the set can
+			 * be used for that. So the performance is bad when there are many
+			 * entries. Here the iterator version is used. Alternatively the
+			 * first entry of the keyset could be removed, but that is not
+			 * random in all implementations of a Map.
 			 */
-			int number  = random.nextInt(keySet.size());
+			int number = random.nextInt(keySet.size());
 			int counter = 0;
-			for(K key : keySet) {
-				if(counter++ == number) {
+			for (Object key : keySet) {
+				if (counter++ == number) {
 					cacheStore.remove(key);
 					return;
 				}
@@ -44,4 +52,13 @@ public class Random<K, V extends CacheEntry<?>> extends AbstractRemovalStrategy<
 		}
 	}
 
+	@Override
+	public String getName() {
+		return "RANDOM";
+	}
+
+	@Override
+	public IRemovalStrategy createInstance(Map<?, CacheEntry<?>> cacheStore) {
+		return new Random(cacheStore);
+	}
 }

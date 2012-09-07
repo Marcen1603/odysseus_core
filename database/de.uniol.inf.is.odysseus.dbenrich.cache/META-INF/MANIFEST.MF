@@ -4,7 +4,10 @@ Bundle-Name: Cache
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.dbenrich.cache
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.dbenrich.cache.Activator
-Import-Package: org.osgi.framework;version="1.3.0"
+Import-Package: com.google.common.collect,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.dbenrich.cache,
  de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy
+Service-Component: OSGI-INF/RemovalStrategyRegistry.xml

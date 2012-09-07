@@ -3,13 +3,8 @@ package de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
-import de.uniol.inf.is.odysseus.dbenrich.cache.IRemovalStrategy;
 
-public abstract class AbstractRemovalStrategy<K, V extends CacheEntry<?>> implements IRemovalStrategy<K, V> {
+public abstract class AbstractRemovalStrategy implements IRemovalStrategy {
 
-	protected final Map<K, V> cacheStore;
-
-	public AbstractRemovalStrategy(Map<K, V> cacheStore) {
-		this.cacheStore = cacheStore;
-	}
+	protected Map<?, CacheEntry<?>> cacheStore;
 }

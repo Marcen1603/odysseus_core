@@ -4,19 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ComplexParameterKey;
 import de.uniol.inf.is.odysseus.dbenrich.cache.DBRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.DummyReadOnlyCache;
 import de.uniol.inf.is.odysseus.dbenrich.cache.IReadOnlyCache;
-import de.uniol.inf.is.odysseus.dbenrich.cache.IRemovalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.IRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ReadOnlyCache;
 import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.FIFO;
+import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.IRemovalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.Random;
+import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.RemovalStrategyRegistry;
 import de.uniol.inf.is.odysseus.dbenrich.logicaloperator.DBEnrichAO;
 import de.uniol.inf.is.odysseus.dbenrich.physicaloperator.DBEnrichPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
@@ -67,7 +71,7 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 			DBEnrichAO logical) {
 
 		IRetrievalStrategy<ComplexParameterKey, Tuple> retrievalStrategy = 
-				new DBRetrievalStrategy( logical.getConnectionName(), 
+				new DBRetrievalStrategy(logical.getConnectionName(), 
 						logical.getQuery());
 
 		if(logical.isNoCache()) {
@@ -81,23 +85,10 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 			Map<ComplexParameterKey, CacheEntry<Tuple>> cacheStore =
 					new HashMap<ComplexParameterKey, CacheEntry<Tuple>>(logical.getCacheSize()+1, 1.0f);
 
-			// FIXME DEKLARATIVE SERVICE
-			/* Instantiate removal strategy. A Switch case (Java 7), or a
-			 * factory class could be used here if needed in the future. */
-			String removalStrategyLCStr = logical.getRemovalStrategy().toLowerCase();
-			IRemovalStrategy<ComplexParameterKey, CacheEntry<Tuple>> removalStrategy;
-			System.out.println("RemovalStrategyLCStr: " + removalStrategyLCStr);
-			if (removalStrategyLCStr.equals(RANDOM)) {
-				removalStrategy = new Random<ComplexParameterKey, CacheEntry<Tuple>>(cacheStore);
-			} else if (removalStrategyLCStr.equals(FIFO)) {
-				removalStrategy = new FIFO<ComplexParameterKey, CacheEntry<Tuple>>(cacheStore);
-			} else if (removalStrategyLCStr.equals(LRU)) {
-				throw new RuntimeException("TBD"); //FIXME
-			} else if (removalStrategyLCStr.equals(LFU)) {
-				throw new RuntimeException("TBD"); //FIXME
-			} else {
-				throw new RuntimeException("Unknown Removal Strategy" +
-						"'"+removalStrategyLCStr+"'");
+			/* Instantiate removal strategy using the declarative service */
+			IRemovalStrategy removalStrategy = RemovalStrategyRegistry.getInstance(logical.getRemovalStrategy(), cacheStore);
+			if (removalStrategy == null) {
+				throw new TransformationException("No removal strategy '" + logical.getRemovalStrategy() + "' found.");
 			}
 
 			return new ReadOnlyCache<ComplexParameterKey, Tuple>(cacheStore,
