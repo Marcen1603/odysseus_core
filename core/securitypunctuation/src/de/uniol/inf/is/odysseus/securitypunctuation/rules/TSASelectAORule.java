@@ -44,7 +44,7 @@ public class TSASelectAORule extends AbstractTransformationRule<SelectAO> {
 
 	@Override
 	public boolean isExecutable(SelectAO operator, TransformationConfiguration transformConfig) {
-		return operator.isAllPhysicalInputSet() && (transformConfig.getOption("isSecurityAware") != null) && ((Boolean)transformConfig.getOption("isSecurityAware")) ;
+		return operator.isAllPhysicalInputSet() && (transformConfig.getOption("isSecurityAware") != null) && ((Boolean)transformConfig.getOption("isSecurityAware"));
 	}
 
 	@Override

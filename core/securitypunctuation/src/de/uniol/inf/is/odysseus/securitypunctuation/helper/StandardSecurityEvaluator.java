@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.securitypunctuation.helper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -20,6 +23,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
  */
 public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? extends ITimeInterval>> implements IUserManagementListener {
 	
+    private static Logger LOG = LoggerFactory.getLogger(SecurityPunctuationCache.class);
+	
 	protected Boolean rolesChanged = true;
 	protected List<String> userRoles = new ArrayList<String>();
 	protected SecurityPunctuationCache spCache = new SecurityPunctuationCache();
@@ -36,9 +41,16 @@ public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? exten
 	}
 	
 	public Boolean evaluate(T object, List<IOperatorOwner> ownerList, SDFSchema outputSchema) {
-		initEvaluate(object);		
-		if(sp != null) {			
-			getUserRoles(ownerList);							
+		startPoint = object.getMetadata().getStart().getMainPoint();	
+		if(!spCache.isEmpty()) {
+			sp = spCache.getMatchingSP(startPoint);	
+		} else {
+			sp = null;
+		}	
+		if(sp != null) {
+			if(rolesChanged) {
+				getUserRoles(ownerList);
+			}
 			if(sp != null && sp.evaluate(startPoint, userRoles, (Tuple<?>)object, outputSchema)) {
 				return true;
 			}
@@ -46,25 +58,14 @@ public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? exten
 		return false;
 	}
 	
-	public void initEvaluate(T object) {
-		startPoint = object.getMetadata().getStart().getMainPoint();	
-		if(!spCache.isEmpty()) {
-			sp = spCache.getMatchingSP(startPoint);	
-		} else {
-			sp = null;
-		}
-	}
-	
 	public void getUserRoles(List<IOperatorOwner> ownerList) {
-		if(rolesChanged) {
-			userRoles.clear();
-			for(IOperatorOwner owner:ownerList) {
-				for(IRole role:((IPhysicalQuery)owner).getSession().getUser().getRoles()) {
-					userRoles.add(role.getName());
-				}
+		userRoles.clear();
+		for(IOperatorOwner owner:ownerList) {
+			for(IRole role:((IPhysicalQuery)owner).getSession().getUser().getRoles()) {
+				userRoles.add(role.getName());
 			}
-			rolesChanged = false;
 		}
+		rolesChanged = false;
 	}
 		
 	public void cleanCache(Long ts) {
@@ -73,6 +74,8 @@ public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? exten
 	
 	public void addToCache(ISecurityPunctuation sp) {
 		spCache.add(sp);
+		LOG.debug("addToCache in StandardSecurityEvaluator:");
+		spCache.printCache();
 	}
 	
 	public ISecurityPunctuation getFromCache(Long ts) {
@@ -87,13 +90,4 @@ public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? exten
 	@Override
 	public void roleChangedEvent() {
 	}
-	
-//	public void createPredicates(String predicateName, ISecurityPunctuation sp, List<IOperatorOwner> ownerList, SDFSchema outputSchema) {
-//		DirectAttributeResolver resolver = new DirectAttributeResolver(outputSchema);
-//		resolver.addAttributes(outputSchema);
-//		resolver.addSource(outputSchema.getURI(), null);
-//		MEP parser = new MEP();
-//		SDFExpression expression = new SDFExpression(null, sp.getStringAttribute("streamname"), resolver, parser);
-//		predicates.put(predicateName, new RelationalPredicate(expression));
-//	}
 }

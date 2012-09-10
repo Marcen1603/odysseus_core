@@ -48,9 +48,10 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<TopAO> {
 
 	@Override
 	public boolean isExecutable(TopAO topAO,
-			TransformationConfiguration config) {		
-		return true;
-//		return topAO.isAllPhysicalInputSet();
+			TransformationConfiguration config) {	
+		return topAO.isAllPhysicalInputSet() 
+				&& (config.getOption("isSecurityAware") != null) 
+				&& ((Boolean)config.getOption("isSecurityAware")) ;	
 	}
 
 	@Override

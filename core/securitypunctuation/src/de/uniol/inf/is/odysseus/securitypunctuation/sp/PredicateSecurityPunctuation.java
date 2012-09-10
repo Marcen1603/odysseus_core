@@ -17,21 +17,25 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 
 	private static final long serialVersionUID = -6847322746263006915L;
+	/**
+	 * Gibt an, ob die Attribute der SP leer sind - die SP also keinerlei Zugriff gewährt.
+	 */
+	private Boolean isEmpty;
 	
 	public PredicateSecurityPunctuation(Object[] objects, SDFSchema schema) {
 		setSchema(schema);
 		setAttribute("predicate", createPredicate((String) objects[0]));
-		this.sign = (Integer) objects[1];
-		this.mutable = (Integer) objects[2];
-		this.ts = (Long) objects[3];
+		this.setAttribute("sign", (Integer) objects[1]);
+		this.setAttribute("mutable", (Integer) objects[2]);
+		this.setAttribute("ts", (Long) objects[3]);
 	}
 	
 	public PredicateSecurityPunctuation(PredicateSecurityPunctuation sp) {
 		setSchema(sp.getSchema());
 		setAttribute("predicate", sp.getPredicateAttribute("predicate"));
-		this.sign = sp.sign;
-		this.mutable = sp.mutable;
-		this.ts = sp.ts;
+		this.setAttribute("sign", sp.getIntegerAttribute("sign"));
+		this.setAttribute("mutable", sp.getIntegerAttribute("mutable"));
+		this.setAttribute("ts", sp.getIntegerAttribute("ts"));
 	}
 	
 	@Override
@@ -77,5 +81,18 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	@Override
 	public ISecurityPunctuation intersect(ISecurityPunctuation sp2) {	
 		return null;		
+	}
+
+	@Override
+	public ISecurityPunctuation processSP(ISecurityPunctuation sp2) {
+		return null;
+	}
+	
+	public Boolean isEmpty() {
+		if(isEmpty == null) {
+			// isEmpty überprüfen!!!
+		} 
+//		return isEmpty;
+		return false;
 	}
 }

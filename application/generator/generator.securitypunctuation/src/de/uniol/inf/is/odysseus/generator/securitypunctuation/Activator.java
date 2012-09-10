@@ -19,12 +19,19 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-	    StreamServer server1 = new StreamServer(54321, new SecurityPunctuationProvider());
-	    StreamServer server2 = new StreamServer(54322, new SecurityPunctuationProvider());
-	    StreamServer server3 = new StreamServer(54323, new CSVSPProvider());
+		
+		Integer delay = 50;
+		
+	    StreamServer server1 = new StreamServer(54321, new SecurityPunctuationProvider(true, "attribute", delay, "server1"));
+	    StreamServer server2 = new StreamServer(54322, new SecurityPunctuationProvider(true, "attribute", delay, "server2"));
+	    StreamServer server3 = new StreamServer(54323, new CSVSPProvider("input.csv"));
+	    StreamServer server4 = new StreamServer(54324, new SecurityPunctuationProvider(false, "attribute", delay, "server4"));
+	    StreamServer server5 = new StreamServer(54325, new CSVSPProvider("input2.csv"));
 	    server1.start();
 	    server2.start();
 	    server3.start();
+	    server4.start();
+	    server5.start();
 	}
 
 	/*

@@ -16,7 +16,12 @@ public class CSVSPProvider extends StreamClientHandler {
 		
 		Integer i = 0;
 		private BufferedReader in;
+		private String fileName;
 		
+		public CSVSPProvider(String fileName) {
+			super();
+			this.fileName = fileName;
+		}
 		@Override
 		public void init() {
 			initFileStream();
@@ -35,7 +40,7 @@ public class CSVSPProvider extends StreamClientHandler {
 				line = in.readLine();
 				if (line == null) {
 					System.out.println("restarting stream...");
-					//restart data
+//					restart data
 					in.close();
 					initFileStream();
 					line = in.readLine();
@@ -57,12 +62,9 @@ public class CSVSPProvider extends StreamClientHandler {
 					tuple = new SADataTuple(false);
 					
 					tuple.addAttribute(rawTuple[1]); // DDP - Stream
-					tuple.addAttribute(new Long(rawTuple[2])); // DDP - Starttupel
-					tuple.addAttribute(new Long(rawTuple[3])); // DDP - Endtupel
+					tuple.addAttribute(new Integer(rawTuple[2])); // Sign
+					tuple.addAttribute(new Integer(rawTuple[3])); // Immutable
 					tuple.addAttribute(rawTuple[4]); // DDP - Attribute
-					tuple.addAttribute(rawTuple[5]); // SRP - Rollen
-					tuple.addAttribute(new Integer(rawTuple[6])); // Sign
-					tuple.addAttribute(new Integer(rawTuple[7])); // Immutable
 					tuple.addAttribute(new Long(rawTuple[8])); // ts
 				}
 				try {
@@ -82,11 +84,11 @@ public class CSVSPProvider extends StreamClientHandler {
 
 		@Override
 		public StreamClientHandler clone() {
-			return new CSVSPProvider();
+			return new CSVSPProvider(fileName);
 		}
 
 		private void initFileStream(){
-			URL fileURL = Activator.getContext().getBundle().getEntry("/data/input.csv");
+			URL fileURL = Activator.getContext().getBundle().getEntry("/data/" + fileName);
 			try {
 				InputStream inputStream = fileURL.openConnection().getInputStream();
 				in = new BufferedReader(new InputStreamReader(inputStream));

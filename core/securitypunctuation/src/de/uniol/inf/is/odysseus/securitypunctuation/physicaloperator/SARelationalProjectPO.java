@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
@@ -78,45 +80,33 @@ public class SARelationalProjectPO<T extends IMetaAttributeContainer<? extends I
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		if(projectSPEvaluate(sp)) {
-			System.out.println("send SP");
+			System.out.println("send SP in ProjectPO");
 			this.transferSecurityPunctuation(sp);
 		} else {
-			System.out.println("send NO SP");
+			System.out.println("send NO SP in ProjectPO");
 		}
 	}
 	
 	public Boolean projectSPEvaluate(ISecurityPunctuation sp) {
-		String[] spAttributes = sp.getStringArrayAttribute("attributeNames");
+		ArrayList<String> spAttributes = sp.getStringArrayListAttribute("attributeNames");
 		SDFSchema tupleSchema = null;		
-		
-		//wirklich jedes mal notwendig??? --- 4 For-Schleifen :-/
 		
 		for(PhysicalSubscription<ISource<? extends T>> subscribedTo:this.getSubscribedToSource()) {
 			tupleSchema = subscribedTo.getSchema();
-
-			int[] negativeRestrictList = new int[tupleSchema.size() - this.restrictList.length];
-			int counter = 0;
-			for(int i = 0; i < tupleSchema.size(); i++) {
-				for(int index:restrictList) {
-					if(index != i) {
-						negativeRestrictList[counter++] = i;
-					}
-				} 
-			}
 			
 			for(String spAttribute:spAttributes) {
-				Boolean match = false;
-				for(int index:negativeRestrictList) {
+				for(int index:restrictList) {
 					if(tupleSchema.get(index).getAttributeName().equals(spAttribute)) {
-						match = true;
+						return true;
 					}
-				} 				
-				if(!match) {
-					// Bedeutet, dass SP nicht nur "restricted" Attribute beeinflusst und daher gesendet werden muss.
-					return true;
-				}
+				} 	
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public String getName() {
+		return "SAProject";
 	}
 }

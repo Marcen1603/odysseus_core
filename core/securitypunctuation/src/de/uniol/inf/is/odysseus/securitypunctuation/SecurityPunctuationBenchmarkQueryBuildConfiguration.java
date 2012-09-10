@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.securitypunctuation;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfiguration;
@@ -28,15 +29,15 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
-public class SecurityPunctuationQueryBuildConfiguration extends
+public class SecurityPunctuationBenchmarkQueryBuildConfiguration extends
 		AbstractQueryBuildConfiguration {
 
 	@SuppressWarnings("unchecked")
-	public SecurityPunctuationQueryBuildConfiguration() {
+	public SecurityPunctuationBenchmarkQueryBuildConfiguration() {
 		TransformationConfiguration transformationConfiguration = new TransformationConfiguration(
 				"relational", 
-				ITimeInterval.class);
-		transformationConfiguration.setOption("isSecurityAware", true);
+				ITimeInterval.class, ILatency.class);
+//		transformationConfiguration.setOption("isSecurityAware", true);
 		settings.add(new ParameterTransformationConfiguration(transformationConfiguration));
 		
 		settings.add(ParameterDoRewrite.TRUE);
@@ -45,18 +46,18 @@ public class SecurityPunctuationQueryBuildConfiguration extends
 		settings.add(ParameterShareSimilarOperators.FALSE);
 	}
 	
-	public SecurityPunctuationQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
+	public SecurityPunctuationBenchmarkQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
 		settings.addAll(settings);
 	}
 
 	@Override
 	public String getName() {
-		return "SecurityPunctuation";
+		return "SecurityPunctuationBenchmark";
 	}
 	
 	@Override
 	public IQueryBuildConfiguration clone() {		
-		return new SecurityPunctuationQueryBuildConfiguration(settings);
+		return new SecurityPunctuationLatencyQueryBuildConfiguration(settings);
 	}
 
 }

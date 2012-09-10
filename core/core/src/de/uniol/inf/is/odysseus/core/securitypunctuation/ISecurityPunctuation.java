@@ -24,4 +24,5 @@ public interface ISecurityPunctuation {
 	public ArrayList<String> getStringArrayListAttribute(String string);
 
 	public int getNumberofAttributes();
+	public Boolean isEmpty();
 }

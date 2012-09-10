@@ -9,8 +9,19 @@ import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
 public class SecurityPunctuationProvider extends StreamClientHandler {
 	
-	Integer i = 0;
-	Long counterTS = Long.valueOf(0);
+	private Long counterTS = Long.valueOf(0);
+	private boolean spActivated;
+	private String spType;
+	private Integer delay;
+	private String name;
+	
+	public SecurityPunctuationProvider(Boolean spActivated, String spType, Integer delay, String name) {
+		super();
+		this.spActivated = spActivated;
+		this.spType = spType;
+		this.delay = delay;
+		this.name = name;
+	}
 	
 	@Override
 	public void init() {
@@ -24,42 +35,40 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 	@Override
 	public List<DataTuple> next() {
 		List<DataTuple> list = new ArrayList<DataTuple>();
-		if(Math.random() > 0.2) {
+		if(spActivated) {
+			if(Math.random() > 0.2) {
+				list.add(generateDataTuple());
+			} else {
+				if(spType.equals("attribute")) {
+					list.add(generateAttributeSP());
+				} else {
+					list.add(generatePredicateSP());
+				}
+			}
+		} else {
 			list.add(generateDataTuple());
-		} else {
-			list.add(generateAttributeSP());
-//			list.add(generatePredicateSP());
 		}
-
-		i++;
 		
-		if(i > 1) {
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		} else {
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
-		System.out.println("next " + list.get(0).getAttributes());
+		System.out.println("next Tuple from " + name + ": " + list.get(0).getAttributes());
 		return list;
 	}
 
 	@Override
 	public StreamClientHandler clone() {
-		return new SecurityPunctuationProvider();
+		return new SecurityPunctuationProvider(spActivated, spType, delay, name);
 	}
 	
 	private SADataTuple generateDataTuple() {
 		SADataTuple tuple = new SADataTuple(false);
 		//Hier schon TS einbauen!!!
 		tuple.addAttribute(new Long(counterTS++));
-		tuple.addAttribute(new Integer(55));
+//		tuple.addAttribute(new Integer(55));
+		tuple.addAttribute(new Integer((int) Math.round((Math.random() * 100))));
 		tuple.addAttribute("beispiel text");
 		tuple.addAttribute(new Integer(76));
 		return tuple;
@@ -70,11 +79,13 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		// Security Punctuation Flag
 //		tuple.addAttribute("SecurityPunctuation");
 		// DDP - Stream (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
-		tuple.addAttribute("Stream, Test");
+		tuple.addAttribute("Stream, Test, Test2");
 		// DDP - Starttupel (-1 bedeutet keine Beschränkung)
-		tuple.addAttribute(new Long(counterTS));
+//		tuple.addAttribute(new Long(counterTS));
+		tuple.addAttribute(new Long(-1));
 		// DDP - Endtupel (-1 bedeutet keine Beschränkung)
-		tuple.addAttribute(new Long(Math.round((Math.random() * 25) + counterTS)));
+//		tuple.addAttribute(new Long(Math.round((Math.random() * 200) + counterTS)));
+		tuple.addAttribute(new Long(-1));
 		// DDP - Attribute (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
 		tuple.addAttribute("Attribut1, Attribut2");
 		// SRP - Rollen (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
@@ -101,6 +112,10 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		// ts
 		tuple.addAttribute(new Long(counterTS++));
 		return tuple;
+	}
+	
+	public void setSPActivated(boolean spActivated) {
+		this.spActivated = spActivated;
 	}
 	
 }
