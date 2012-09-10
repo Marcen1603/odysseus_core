@@ -25,10 +25,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorCompletionProvider;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
-
-/**
- * The activator class controls the plug-in life cycle
- */
 public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.editor.text";
@@ -38,12 +34,11 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	
 	public static final String ODYSSEUS_ANNOTATION_HIGHLIGHTING = "de.uniol.inf.is.odysseus.rcp.editor.highlightannotation";
 
-	// The shared instance
 	private static OdysseusRCPEditorTextPlugIn plugin;
 	private static IExecutor executor;
 	private static IOdysseusScriptParser scriptParser;
 	private static List<IEditorCompletionProvider> completionproviders = new ArrayList<IEditorCompletionProvider>();
-		
+	
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
