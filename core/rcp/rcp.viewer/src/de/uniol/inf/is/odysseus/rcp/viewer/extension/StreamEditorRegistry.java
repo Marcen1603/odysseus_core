@@ -19,9 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IRegistryEventListener;
 import org.eclipse.core.runtime.Platform;
 
-public class StreamEditorRegistry {
+public class StreamEditorRegistry implements IRegistryEventListener {
 
 	public static final String EXTENSION_ID = "de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor";
 	private static StreamEditorRegistry instance;
@@ -29,7 +32,12 @@ public class StreamEditorRegistry {
 	private List<StreamExtensionDefinition> definitions = new ArrayList<StreamExtensionDefinition>();
 
 	private StreamEditorRegistry() {
-		evaluateRegisteredExtensions();
+		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_ID);
+		for (IConfigurationElement e : config) {
+			registerStreamEditorDefinition(e);
+		}
+		
+		Platform.getExtensionRegistry().addListener(this, EXTENSION_ID);
 	}
 
 	public static StreamEditorRegistry getInstance() {
@@ -42,15 +50,54 @@ public class StreamEditorRegistry {
 		return definitions;
 	}
 
-	public void evaluateRegisteredExtensions() {
-		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_ID);
-		for (IConfigurationElement e : config) {
+	@Override
+	public void added(IExtension[] extensions) {
+		for( IExtension extension: extensions ) {
+			for(IConfigurationElement element : extension.getConfigurationElements()) {
+				registerStreamEditorDefinition(element);
+			}
+		}
+	}
 
-			StreamExtensionDefinition def = new StreamExtensionDefinition();
-			def.setID(e.getAttribute("id"));
-			def.setLabel(e.getAttribute("label"));
-			def.setConfigElement(e);
+	@Override
+	public void removed(IExtension[] extensions) {
+		for( IExtension extension: extensions ) {
+			for(IConfigurationElement element : extension.getConfigurationElements()) {
+				unregisterStreamEditorDefinition(element);
+			}
+		}
+	}
+	
+	@Override
+	public void added(IExtensionPoint[] extensionPoints) {
+	}
+
+	@Override
+	public void removed(IExtensionPoint[] extensionPoints) {
+	}
+
+	private void registerStreamEditorDefinition(IConfigurationElement e) {
+		StreamExtensionDefinition def = new StreamExtensionDefinition();
+		def.setID(e.getAttribute("id"));
+		def.setLabel(e.getAttribute("label"));
+		def.setConfigElement(e);
+		
+		synchronized(definitions) {
 			definitions.add(def);
 		}
 	}
+
+	private void unregisterStreamEditorDefinition(IConfigurationElement element) {
+		String defId = element.getAttribute("id");
+		
+		synchronized(definitions) {
+			for( StreamExtensionDefinition def : definitions.toArray(new StreamExtensionDefinition[0]) ) {
+				if(def.getID().equals(defId)) {
+					definitions.remove(def);
+					break;
+				}
+			}
+		}
+	}
+
 }
