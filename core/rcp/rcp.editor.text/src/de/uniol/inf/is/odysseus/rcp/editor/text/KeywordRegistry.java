@@ -47,7 +47,6 @@ public class KeywordRegistry implements IRegistryEventListener {
 	private Map<String, RGBColor> colors = new HashMap<String, RGBColor>();
 	
 	private KeywordRegistry() {
-		Platform.getExtensionRegistry().addListener(this, OdysseusRCPEditorTextPlugIn.KEYWORD_EXTENSION_ID);
 		for(IConfigurationElement element : Platform.getExtensionRegistry().getConfigurationElementsFor(OdysseusRCPEditorTextPlugIn.KEYWORD_EXTENSION_ID)) {
 			addExtension(element);
 		}		

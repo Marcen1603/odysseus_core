@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.text;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -43,12 +44,16 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		Platform.getExtensionRegistry().addListener(KeywordRegistry.getInstance());
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+		
+		Platform.getExtensionRegistry().removeListener(KeywordRegistry.getInstance());
 	}
 
 	/**
