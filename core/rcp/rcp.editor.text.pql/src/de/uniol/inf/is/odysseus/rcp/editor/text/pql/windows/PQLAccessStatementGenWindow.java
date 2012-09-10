@@ -44,12 +44,13 @@ public class PQLAccessStatementGenWindow {
 	private static final int WINDOW_WIDTH = 500;
 	private static final int WINDOW_HEIGHT = 500;
 	private static final String CLOSE_BUTTON_TEXT = "Close";
+	private static final String NONE_TEXT = "-- none --";
 
 	private final Shell parent;
 	private Shell window;
-	
+
 	private Text sourceText;
-	private Combo wrapperDropDown;
+	private Combo wrapperCombo;
 	private Text dateFormatText;
 	private Combo transportHandlerCombo;
 	private Combo protocolHandlerCombo;
@@ -136,10 +137,11 @@ public class PQLAccessStatementGenWindow {
 
 		createLabel(generalComposite, "Wrapper");
 
-		wrapperDropDown = new Combo(generalComposite, SWT.BORDER);
-		wrapperDropDown.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		wrapperDropDown.setItems(determineWrapperNameList());
-		wrapperDropDown.select(0);
+		wrapperCombo = new Combo(generalComposite, SWT.BORDER);
+		wrapperCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		wrapperCombo.setItems(determineWrapperNameList());
+		wrapperCombo.select(0);
+		
 
 		createLabel(generalComposite, "DateFormat");
 		dateFormatText = new Text(generalComposite, SWT.BORDER);
@@ -147,10 +149,10 @@ public class PQLAccessStatementGenWindow {
 
 		createLabel(generalComposite, "Transport Handler");
 		transportHandlerCombo = createCombo(generalComposite, TransportHandlerRegistry.getHandlerNames());
-		
+
 		createLabel(generalComposite, "Protocol Handler");
 		protocolHandlerCombo = createCombo(generalComposite, ProtocolHandlerRegistry.getHandlerNames());
-		
+
 		createLabel(generalComposite, "Data Handler");
 		dataHandlerCombo = createCombo(generalComposite, DataHandlerRegistry.getHandlerNames());
 	}
@@ -166,14 +168,14 @@ public class PQLAccessStatementGenWindow {
 	private void insertOptionsContent(Composite optionsTab) {
 		optionsTableViewer = new OptionsTableViewer(optionsTab);
 	}
-	
+
 	private void insertStatementContent(Composite composite) {
 		composite.setLayout(new GridLayout());
 
 		final Text statementText = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.WRAP);
 		statementText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		statementText.setEditable(false);
-		
+
 		Button generateButton = createButton(composite, "Generate");
 		generateButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -185,70 +187,90 @@ public class PQLAccessStatementGenWindow {
 
 	private String generateStatement() {
 		StringBuilder sb = new StringBuilder();
-		
-		sb.append(sourceText.getText().toLowerCase()).append(" = ");
-		sb.append("ACCESS({").append("\n");
-		sb.append("\tsource='").append(sourceText.getText()).append("',\n");
-		if( !dateFormatText.getText().isEmpty()) {
-			sb.append("\tdateformat='").append(dateFormatText.getText()).append("',\n");
+
+		if (hasTextText(sourceText)) {
+			sb.append(sourceText.getText().toLowerCase()).append(" = ");
 		}
-		sb.append("\twrapper='").append(wrapperDropDown.getItems()[wrapperDropDown.getSelectionIndex()]).append("',\n");
-		sb.append("\ttransport='").append(getComboSelection(transportHandlerCombo)).append("',\n");
-		sb.append("\tprotocol='").append(getComboSelection(protocolHandlerCombo)).append("',\n");
-		sb.append("\tdataHandler='").append(getComboSelection(dataHandlerCombo)).append("'");
+		sb.append("ACCESS({").append("\n");		
+		sb.append("\tsource='").append(sourceText.getText()).append("'");
 		
+		appendTextText(sb, dateFormatText, "dateformat");
+		
+		appendComboText(sb, wrapperCombo, "wrapper");
+		appendComboText(sb, transportHandlerCombo, "transport");
+		appendComboText(sb, protocolHandlerCombo, "protocol");
+		appendComboText(sb, dataHandlerCombo, "dataHandler");
+
 		List<AttributeTypePair> attributes = outputSchemaTableViewer.getData();
-		if( !attributes.isEmpty() ) {
+		if (!attributes.isEmpty()) {
 			sb.append(",\n\tschema=[\n");
-			
-			for( int i = 0; i < attributes.size(); i++ ) {
+
+			for (int i = 0; i < attributes.size(); i++) {
 				AttributeTypePair attribute = attributes.get(i);
 				sb.append("\t\t['").append(attribute.getAttributeName()).append("', '").append(outputSchemaTableViewer.getDataType(attribute.getTypeIndex())).append("']");
-				
-				if( i < attributes.size() - 1) {
+
+				if (i < attributes.size() - 1) {
 					sb.append(",\n");
 				} else {
 					sb.append("\n");
 				}
 			}
-			
+
 			sb.append("\t]");
 		}
-		
+
 		List<String> inputSchemaTypes = inputSchemaTableViewer.getData();
-		if( !inputSchemaTypes.isEmpty() ) {
+		if (!inputSchemaTypes.isEmpty()) {
 			sb.append(",\n\tinputschema=[");
-			for( int i = 0; i < inputSchemaTypes.size(); i++ ) {
+			for (int i = 0; i < inputSchemaTypes.size(); i++) {
 				String type = inputSchemaTypes.get(i);
 				sb.append("'").append(type).append("'");
-				if( i < inputSchemaTypes.size() - 1) {
+				if (i < inputSchemaTypes.size() - 1) {
 					sb.append(",");
 				}
 			}
 			sb.append("\t]");
 		}
-		
+
 		List<KeyValuePair> options = optionsTableViewer.getData();
-		if( !options.isEmpty() ) {
+		if (!options.isEmpty()) {
 			sb.append(",\n\toptions=[\n");
-			
-			for( int i = 0; i < options.size(); i++ ) {
+
+			for (int i = 0; i < options.size(); i++) {
 				KeyValuePair option = options.get(i);
 				sb.append("\t\t['").append(option.getKey()).append("', '").append(option.getValue()).append("']");
-				
-				if( i < options.size() - 1) {
+
+				if (i < options.size() - 1) {
 					sb.append(",\n");
-				}else {
+				} else {
 					sb.append("\n");
 				}
 			}
-			
+
 			sb.append("\t]");
 		}
 
 		sb.append("\n})");
-		
+
 		return sb.toString();
+	}
+
+	private static void appendTextText(StringBuilder sb, Text textControl, String string) {
+		if (hasTextText(textControl)) {
+			sb.append(",\n");
+			sb.append("\t").append(string).append("='");
+			sb.append(textControl.getText());
+			sb.append("'");
+		}
+	}
+
+	private static void appendComboText(StringBuilder sb, Combo combo, String string) {
+		if( hasComboText(combo)) {
+			sb.append(",\n");
+			sb.append("\t").append(string).append("='");
+			sb.append(getComboSelection(combo));
+			sb.append("'");
+		}
 	}
 
 	private static Label createLabel(Composite generalComposite, String string) {
@@ -260,6 +282,7 @@ public class PQLAccessStatementGenWindow {
 	private static Combo createCombo(Composite composite, List<String> items) {
 		Combo c = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
 		c.setItems(items.toArray(new String[items.size()]));
+		c.add(NONE_TEXT);
 		c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		c.select(0);
 		return c;
@@ -287,9 +310,16 @@ public class PQLAccessStatementGenWindow {
 	private static String[] determineWrapperNameList() {
 		return new String[] { "GenericPush", "GenericPull", "GoogleProtobuf", };
 	}
-	
+
 	private static String getComboSelection(Combo c) {
 		return c.getItems()[c.getSelectionIndex()];
 	}
 
+	private static boolean hasTextText(Text textControl) {
+		return textControl != null && textControl.getText() != null && !textControl.getText().trim().isEmpty();
+	}
+	
+	private static boolean hasComboText( Combo combo) {
+		return combo != null && !combo.getItems()[combo.getSelectionIndex()].equals(NONE_TEXT);
+	}
 }
