@@ -95,6 +95,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	public void setOperator(ILogicalOperator operator) {
 		this.operator = operator;
+		((AccessAO)operator).setDataHandler("Tuple");
 	}
 
 	@Override
@@ -316,6 +317,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		AccessAO source = new AccessAO(name,
 				"RelationalByteBufferAccessPO",null);
+		source.setDataHandler("Tuple");
 		source.setAutoReconnectEnabled(autoReconnect);
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);

@@ -177,6 +177,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		}
 		if (dataHandler.hasValue()) {
 			ao.setDataHandler(dataHandler.getValue());
+		}else{
+			ao.setDataHandler(null);
 		}
 		if (objectHandler.hasValue()) {
 			ao.setObjectHandler(objectHandler.getValue());
