@@ -47,6 +47,9 @@ public class KeywordRegistry implements IRegistryEventListener {
 	
 	private KeywordRegistry() {
 		Platform.getExtensionRegistry().addListener(this, OdysseusRCPEditorTextPlugIn.KEYWORD_EXTENSION_ID);
+		for(IConfigurationElement element : Platform.getExtensionRegistry().getConfigurationElementsFor(OdysseusRCPEditorTextPlugIn.KEYWORD_EXTENSION_ID)) {
+			loadExtension(element);
+		}		
 	}
 	
 	public static synchronized KeywordRegistry getInstance() {
