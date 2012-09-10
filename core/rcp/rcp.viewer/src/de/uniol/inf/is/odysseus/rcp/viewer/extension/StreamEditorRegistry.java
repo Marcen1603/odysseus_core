@@ -36,8 +36,6 @@ public class StreamEditorRegistry implements IRegistryEventListener {
 		for (IConfigurationElement e : config) {
 			registerStreamEditorDefinition(e);
 		}
-		
-		Platform.getExtensionRegistry().addListener(this, EXTENSION_ID);
 	}
 
 	public static StreamEditorRegistry getInstance() {

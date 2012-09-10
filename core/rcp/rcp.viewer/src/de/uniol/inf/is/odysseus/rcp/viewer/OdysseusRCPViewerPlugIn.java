@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -48,10 +49,9 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 	public void start(BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
 		
-		StreamEditorRegistry.getInstance();
+		Platform.getExtensionRegistry().addListener(StreamEditorRegistry.getInstance(), StreamEditorRegistry.EXTENSION_ID);
 		
 		context = this;
-		
 		SYMBOL_CONFIGURATION = new XMLSymbolConfiguration(
 				bundleContext.getBundle().getEntry("viewer_cfg/symbol.xml"), 
 				bundleContext.getBundle().getEntry("viewer_cfg/symbolSchema.xsd"));
@@ -60,6 +60,8 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);
+		
+		Platform.getExtensionRegistry().removeListener(StreamEditorRegistry.getInstance());
 		
 		context = null;
 	}
