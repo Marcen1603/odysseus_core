@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.dashboard.test;
+package de.uniol.inf.is.odysseus.rcp.dashboard.test.extension;
 
 import static org.testng.Assert.*;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartExtensionPointResolver;
+import de.uniol.inf.is.odysseus.rcp.dashboard.extension.DashboardPartExtensionPointResolver;
+import de.uniol.inf.is.odysseus.rcp.dashboard.test.TestDashboardPart;
 import de.uniol.inf.is.odysseus.testng.TestUtil;
 
 public class DashboardPartExtensionPointResolverTest {

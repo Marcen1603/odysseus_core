@@ -2,6 +2,8 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         id="Dashboard Part Defaults"
+         name="Dashboard Part Defaults"
          point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.dashboard.part.TableDashboardPart"

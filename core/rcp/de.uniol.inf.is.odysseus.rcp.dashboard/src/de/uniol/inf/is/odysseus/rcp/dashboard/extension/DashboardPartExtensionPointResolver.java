@@ -13,54 +13,86 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.dashboard;
+package de.uniol.inf.is.odysseus.rcp.dashboard.extension;
 
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IRegistryEventListener;
+import org.eclipse.core.runtime.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.DashboardPartDescriptor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.SettingDescriptor;
 
-public class DashboardPartExtensionPointResolver {
+public class DashboardPartExtensionPointResolver implements IRegistryEventListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartExtensionPointResolver.class);
 
-	public static void execute(IExtensionRegistry registry) {
-		Preconditions.checkNotNull(registry, "ExtensionRegistry must not be null!");
-
-		evaluateExtensions(registry);
+	public DashboardPartExtensionPointResolver() {
+		// Extensions, welche vor dem Listener bereits registriert wurden
+		for(IConfigurationElement element : Platform.getExtensionRegistry().getConfigurationElementsFor(DashboardPlugIn.EXTENSION_POINT_ID)) {
+			resolveConfigurationElement(element);
+		}
 	}
-
-	private static void evaluateExtensions(IExtensionRegistry registry) {
-		IConfigurationElement[] config = registry.getConfigurationElementsFor(DashboardPlugIn.EXTENSION_POINT_ID);
-		for (IConfigurationElement e : config) {
-			try {
-				evaluateDashboardPartExtension(e);
-			} catch (Throwable t) {
-				LOG.error("Could not resolve extension for dashboard part", t);
+	
+	@Override
+	public void added(IExtension[] extensions) {
+		for( IExtension extension : extensions ) {
+			for( IConfigurationElement element : extension.getConfigurationElements()) {
+				resolveConfigurationElement(element);
 			}
 		}
 	}
 
-	private static void evaluateDashboardPartExtension(IConfigurationElement e) throws Exception {
+	@Override
+	public void removed(IExtension[] extensions) {
+		for( IExtension extension : extensions ) {
+			for( IConfigurationElement element : extension.getConfigurationElements()) {
+				String name = element.getAttribute("name");
+				DashboardPartRegistry.unregister(name);
+			}
+		}
+	}
+
+	@Override
+	public void added(IExtensionPoint[] extensionPoints) {
+		// do nothing
+	}
+
+	@Override
+	public void removed(IExtensionPoint[] extensionPoints) {
+		// do nothing
+	}
+	
+	private static void resolveConfigurationElement(IConfigurationElement element) {
+		try {
+			Class<? extends IDashboardPart> clazz = checkAndGetDashboardPartClass(element.createExecutableExtension("class"));					
+			DashboardPartDescriptor desc = getDashboardPartDescriptorFromExtension(element);
+			DashboardPartRegistry.register(clazz, desc);
+		} catch( Throwable t ) {
+			LOG.error("Could not evaluate extension", t);
+		}
+	}
+	
+	private static DashboardPartDescriptor getDashboardPartDescriptorFromExtension(IConfigurationElement e) throws Exception {
 		String name = e.getAttribute("name");
 		String description = e.getAttribute("description");
-
-		Class<? extends IDashboardPart> clazz = checkAndGetDashboardPartClass(e.createExecutableExtension("class"));
 
 		List<SettingDescriptor<?>> settingDescriptors = Lists.newArrayList();
 		for (IConfigurationElement child : e.getChildren()) {
 			settingDescriptors.add(evaluateSetting(child));
 		}
 
-		DashboardPartRegistry.register(clazz, new DashboardPartDescriptor(name, description, settingDescriptors));
+		return new DashboardPartDescriptor(name, description, settingDescriptors);
 	}
 
 	private static SettingDescriptor<?> evaluateSetting(IConfigurationElement e) throws Exception {
