@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class KeywordRegistry implements IRegistryEventListener {
@@ -48,7 +49,7 @@ public class KeywordRegistry implements IRegistryEventListener {
 	private KeywordRegistry() {
 		Platform.getExtensionRegistry().addListener(this, OdysseusRCPEditorTextPlugIn.KEYWORD_EXTENSION_ID);
 		for(IConfigurationElement element : Platform.getExtensionRegistry().getConfigurationElementsFor(OdysseusRCPEditorTextPlugIn.KEYWORD_EXTENSION_ID)) {
-			loadExtension(element);
+			addExtension(element);
 		}		
 	}
 	
@@ -65,7 +66,7 @@ public class KeywordRegistry implements IRegistryEventListener {
 		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(OdysseusRCPEditorTextPlugIn.KEYWORD_EXTENSION_ID);
 		
 		for (IConfigurationElement e : config) {
-			loadExtension(e);
+			addExtension(e);
 		}
 	}
 
@@ -123,7 +124,7 @@ public class KeywordRegistry implements IRegistryEventListener {
 		for( IExtension extension : extensions ) {
 			for( IConfigurationElement conf : extension.getConfigurationElements()) {
 				try {
-					loadExtension(conf);
+					addExtension(conf);
 				} catch( Throwable t ) {
 					LOG.error("Could not load extension {}", conf, t);
 				}
@@ -133,6 +134,15 @@ public class KeywordRegistry implements IRegistryEventListener {
 
 	@Override
 	public void removed(IExtension[] extensions) {
+		for( IExtension extension : extensions ) {
+			for( IConfigurationElement conf : extension.getConfigurationElements()) {
+				try {
+					removeExtension(conf);
+				} catch( Throwable t ) {
+					LOG.error("Could not unload extension {}", conf, t);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -143,9 +153,44 @@ public class KeywordRegistry implements IRegistryEventListener {
 	public void removed(IExtensionPoint[] extensionPoints) {
 	}
 
-	private void loadExtension(IConfigurationElement e) {
+	private void addExtension(IConfigurationElement e) {
 		String groupName = e.getAttribute("name");
 		String className = e.getAttribute("class");
+		RGBColor color = getColor(e);
+		
+		if( Strings.isNullOrEmpty(className) ) {
+			 this.keywords.put(groupName, getKeywords(e));
+			 this.colors.put(groupName, color);
+		} else {
+			try {
+				IKeywordGroup grp = (IKeywordGroup)e.createExecutableExtension("class");
+				String[] keywords = grp.getKeywords();
+				if (keywords != null){
+					this.keywords.put(groupName, keywords);
+					this.colors.put(groupName, color);
+				}
+			} catch (CoreException e1) {
+				LOG.error("Could not get keywords", e1);
+			}
+		}
+	}
+
+	private void removeExtension(IConfigurationElement conf) {
+		String groupName = conf.getAttribute("name");
+		keywords.remove(groupName);
+		colors.remove(groupName);
+	}
+	
+	private static String[] getKeywords( IConfigurationElement conf ) {
+		 IConfigurationElement[] children = conf.getChildren();
+		 ArrayList<String> words = new ArrayList<String>();
+		 for( IConfigurationElement child : children ) {
+			 words.add(child.getAttribute("name"));
+		 }
+		 return words.toArray(new String[words.size()]);
+	}
+	
+	private static RGBColor getColor(IConfigurationElement e) {
 		String colorR = e.getAttribute("colorR");
 		String colorG = e.getAttribute("colorG");
 		String colorB = e.getAttribute("colorB");
@@ -170,25 +215,6 @@ public class KeywordRegistry implements IRegistryEventListener {
 		color.r = r;
 		color.g = g;
 		color.b = b;
-		if( className == null || className.length() == 0 ) {
-			 IConfigurationElement[] children = e.getChildren();
-			 ArrayList<String> words = new ArrayList<String>();
-			 for( IConfigurationElement child : children ) {
-				 words.add(child.getAttribute("name"));
-			 }
-			 this.keywords.put(groupName, words.toArray(new String[words.size()]));
-			 this.colors.put(groupName, color);
-		} else {
-			try {
-				IKeywordGroup grp = (IKeywordGroup)e.createExecutableExtension("class");
-				String[] keywords = grp.getKeywords();
-				if (keywords != null){
-					this.keywords.put(groupName, keywords);
-					this.colors.put(groupName, color);
-				}
-			} catch (CoreException e1) {
-				e1.printStackTrace();
-			}
-		}
+		return color;
 	}
 }
