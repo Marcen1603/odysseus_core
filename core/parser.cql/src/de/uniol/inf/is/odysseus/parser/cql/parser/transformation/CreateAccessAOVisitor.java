@@ -40,6 +40,8 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWindow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+
 public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private AttributeResolver attributeResolver;
@@ -95,6 +97,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		ILogicalOperator access;
 		try {
 			access = dd.getViewOrStream(sourceName, caller);
+			((AccessAO)access).setDataHandler("Tuple");
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());
 		}
