@@ -113,7 +113,7 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 				// Es kann auch direkt nach der size noch was im Puffer
 				// sein!
 				// Und Size kann gesetzt worden sein
-				if (size != -1) {
+				if (size != -1 && isSP != null) {
 					// Ist das was dazukommt kleiner als die finale Größe?
 										
 //					System.out.println("SizeByteBufferHandler - buffer.remaining: " + buffer.remaining());
@@ -140,14 +140,12 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 						size = -1;
 						sizeBuffer.clear();
 						currentSize = 0;
+						isSPBuffer.clear();
+						isSP = null;
 						// Dann in der While-Schleife weiterverarbeiten
 					}
 				}
-			}
-
-			isSPBuffer.clear();
-			isSP = null;
-			
+			}			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (BufferUnderflowException e) {

@@ -166,6 +166,9 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		String[] streamsInSchemaArray = null;
 		if(schema.getURI().contains(",")) {
 			streamsInSchemaArray = schema.getURI().split(",");
+		} else {
+			streamsInSchemaArray = new String[1];
+			streamsInSchemaArray[0] = schema.getURI();
 		}
 		
 		for(String stream:this.getStringArrayListAttribute("streamname")) {
@@ -196,8 +199,12 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 					return this.union(sp2);
 				} 
 			}
+			// gleiche Quelle, aber verschiedene Zeitstempel --> neue SP einfach hinzufügen
 		} else {
-			return this.intersect(sp2);
+			if(this.getIntegerAttribute("mutable") >= 1 && sp2.getIntegerAttribute("mutable") >= 1) {
+				return this.intersect(sp2);
+			}
+			// verschiedene Quellen und min. eine SP is immutable --> neue SP einfach hinzufügen
 		}
 		return null;
 	}
