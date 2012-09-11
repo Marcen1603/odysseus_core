@@ -55,6 +55,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	private static final int RESIZE_SELECTION_STEP_SIZE_PIXELS = 10;
 
 	private Composite dashboardComposite;
+	private ToolBar toolBar;
 
 	private List<DashboardPartPlacement> dashboardParts = Lists.newArrayList();
 	private DashboardPartPlacement selectedDashboardPart;
@@ -68,6 +69,11 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 		Preconditions.checkArgument(!dashboardParts.contains(partPlace), "Dashboard part placement %s already added!", partPlace);
 
 		dashboardParts.add(partPlace);
+		
+		if( dashboardComposite != null && toolBar != null ) {
+			insertDashboardPart(partPlace);
+			dashboardComposite.layout();
+		}
 	}
 
 	public void remove(DashboardPartPlacement partPlace) {
@@ -93,27 +99,20 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	}
 
 	public void createPartControl(Composite parent, ToolBar toolBar) {
+		this.toolBar = toolBar;
+		
 		dashboardComposite = new Composite(parent, SWT.BORDER);
 		dashboardComposite.setLayout(new FormLayout());
 		dashboardComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		dashboardComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		
+		dashboardComposite.addMouseListener(this);
+		dashboardComposite.addKeyListener(this);
+		dashboardComposite.addPaintListener(this);
 
 		for (DashboardPartPlacement dashboardPartPlace : dashboardParts) {
-			Composite outerContainer = createDashboardPartOuterContainer(dashboardComposite, dashboardPartPlace);
-			containers.put(dashboardPartPlace, outerContainer);
-
-			createContainerDecoration(outerContainer, dashboardPartPlace);
-			Composite innerContainer = getDashboardPartInnerContainer(outerContainer);
-
-			dashboardPartPlace.getDashboardPart().createPartControl(innerContainer, toolBar);
-			innerContainer.setToolTipText(dashboardPartPlace.getTitle());
-
-			addControlsToMap(outerContainer, dashboardPartPlace, controlsMap);
+			insertDashboardPart(dashboardPartPlace);
 		}
-
-		addListeners(dashboardComposite);
-
-		dashboardComposite.addPaintListener(this);
 	}
 
 	@Override
@@ -197,6 +196,21 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// do nothing
+	}
+
+	private void insertDashboardPart(DashboardPartPlacement dashboardPartPlace) {
+		Composite outerContainer = createDashboardPartOuterContainer(dashboardComposite, dashboardPartPlace);
+		containers.put(dashboardPartPlace, outerContainer);
+
+		createContainerDecoration(outerContainer, dashboardPartPlace);
+		Composite innerContainer = getDashboardPartInnerContainer(outerContainer);
+
+		dashboardPartPlace.getDashboardPart().createPartControl(innerContainer, toolBar);
+		innerContainer.setToolTipText(dashboardPartPlace.getTitle());
+
+		addControlsToMap(outerContainer, dashboardPartPlace, controlsMap);
+		
+		addListeners(outerContainer);
 	}
 	
 	private void fireChangedEvent() {

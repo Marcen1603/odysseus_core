@@ -24,6 +24,7 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.rcp.stream,
  de.uniol.inf.is.odysseus.rcp.viewer.editors,
  de.uniol.inf.is.odysseus.script.parser,
+ org.eclipse.core.expressions,
  org.eclipse.core.resources,
  org.eclipse.ui.dialogs,
  org.eclipse.ui.part

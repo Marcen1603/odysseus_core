@@ -33,6 +33,8 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 	public static final String EXTENSION_POINT_ID = "de.uniol.inf.is.odysseus.rcp.DashboardPart";
 	public static final String DASHBOARD_PART_EXTENSION = "prt";
 	
+	public static final String ADD_DASHBOARD_PART_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.AddDashboardPart";
+	
 	private static DashboardPartExtensionPointResolver extensionResolver;
 
 	private static DashboardPlugIn plugin;

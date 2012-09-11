@@ -32,5 +32,25 @@
             name="Odysseus Dashboard Editor">
       </editor>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.AddDashboardPart"
+               label="Add Dashboard Part(s)"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.AddDashboardPartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.AddDashboardPart"
+            name="Add Dashboard Part">
+      </command>
+   </extension>
 
 </plugin>

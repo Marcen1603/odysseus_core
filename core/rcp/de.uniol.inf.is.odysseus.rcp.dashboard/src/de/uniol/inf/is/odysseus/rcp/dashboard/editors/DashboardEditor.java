@@ -152,6 +152,14 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 			});
 		}
 	}
+	
+	public Dashboard getDashboard() {
+		return dashboard;
+	}
+	
+	public boolean hasDashboard() {
+		return dashboard != null;
+	}
 
 	private void startDashboard() throws Exception {
 		for (DashboardPartController controller : controllers.values()) {
