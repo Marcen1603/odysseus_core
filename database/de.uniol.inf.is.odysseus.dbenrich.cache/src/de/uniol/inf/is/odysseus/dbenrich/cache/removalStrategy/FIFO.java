@@ -11,7 +11,7 @@ public class FIFO extends AbstractRemovalStrategy {
 	private Queue queue;
 
 	public FIFO() {
-		// Needed for the activator
+		// Needed for the RemovalStrategyRegistry
 	}
 
 	private FIFO(Map<?, CacheEntry<?>> cacheStore) {

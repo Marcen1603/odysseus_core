@@ -11,7 +11,7 @@ public class LFU extends AbstractRemovalStrategy {
 	private PriorityQueue<ListEntry> priorityQueue;
 
 	public LFU() {
-		// Needed for the activator
+		// Needed for the RemovalStrategyRegistry
 	}
 
 	private LFU(Map<?, CacheEntry<?>> cacheStore) {

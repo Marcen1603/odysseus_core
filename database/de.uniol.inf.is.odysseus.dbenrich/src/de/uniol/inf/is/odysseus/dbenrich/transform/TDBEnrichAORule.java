@@ -1,11 +1,6 @@
 package de.uniol.inf.is.odysseus.dbenrich.transform;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportPattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -14,12 +9,12 @@ import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ComplexParameterKey;
 import de.uniol.inf.is.odysseus.dbenrich.cache.DBRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.DummyReadOnlyCache;
+import de.uniol.inf.is.odysseus.dbenrich.cache.ICacheStore;
 import de.uniol.inf.is.odysseus.dbenrich.cache.IReadOnlyCache;
 import de.uniol.inf.is.odysseus.dbenrich.cache.IRetrievalStrategy;
+import de.uniol.inf.is.odysseus.dbenrich.cache.WorkingMemoryCacheStore;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ReadOnlyCache;
-import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.FIFO;
 import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.IRemovalStrategy;
-import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.Random;
 import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.RemovalStrategyRegistry;
 import de.uniol.inf.is.odysseus.dbenrich.logicaloperator.DBEnrichAO;
 import de.uniol.inf.is.odysseus.dbenrich.physicaloperator.DBEnrichPO;
@@ -31,24 +26,20 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 //@SuppressWarnings({ "rawtypes" })
 public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 
-	private final static String RANDOM = "random";
-	private final static String FIFO   = "fifo";
-	private final static String LRU    = "lru";
-	private final static String LFU    = "lfu";
-
 	@Override
 	public int getPriority() {
 		return 0; // No prioritization
 	}
 
 	@Override
-	public void execute(DBEnrichAO logical, TransformationConfiguration transformConfig) {
+	public void execute(DBEnrichAO logical,
+			TransformationConfiguration transformConfig) {
 		// System.out.println("transform; " + logical.getDebugString());
 
-		IDataMergeFunction<Tuple<ITimeInterval>> dataMergeFunction =
-				new RelationalMergeFunction<ITimeInterval>(logical.getOutputSchema().size());
+		IDataMergeFunction<Tuple<ITimeInterval>> dataMergeFunction = new RelationalMergeFunction<ITimeInterval>(
+				logical.getOutputSchema().size());
 
-		IReadOnlyCache<ComplexParameterKey, Tuple> cacheManager = createCache(logical);
+		IReadOnlyCache<ComplexParameterKey, Tuple<?>> cacheManager = createCache(logical);
 
 		// Maybe check, if operator is already existent (when is it 100% equal?)
 		DBEnrichPO<ITimeInterval> physical = new DBEnrichPO<ITimeInterval>(
@@ -59,46 +50,48 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 				logical.getCacheSize(),
 				logical.getExpirationTime(),
 				logical.getRemovalStrategy(),
-				dataMergeFunction,
-				cacheManager);
+				dataMergeFunction, cacheManager);
 
 		physical.setOutputSchema(logical.getOutputSchema());
 		replace(logical, physical, transformConfig);
 		retract(logical);
 	}
 
-	private IReadOnlyCache<ComplexParameterKey, Tuple> createCache(
+	private IReadOnlyCache<ComplexParameterKey, Tuple<?>> createCache(
 			DBEnrichAO logical) {
 
-		IRetrievalStrategy<ComplexParameterKey, Tuple> retrievalStrategy = 
-				new DBRetrievalStrategy(logical.getConnectionName(), 
-						logical.getQuery());
+		IRetrievalStrategy<ComplexParameterKey, Tuple<?>> retrievalStrategy = new DBRetrievalStrategy(
+				logical.getConnectionName(), logical.getQuery());
 
-		if(logical.isNoCache()) {
-			return new DummyReadOnlyCache<ComplexParameterKey, Tuple>(
-					retrievalStrategy);
+		if (logical.isNoCache()) {
+			return new DummyReadOnlyCache<>(retrievalStrategy);
 		} else {
 
-			/* It is ensured, that the store size will never exceed the
-			 * maximum size, therefore the loadCapacity may be set to 1
-			 * to prevent rehashing. */
-			Map<ComplexParameterKey, CacheEntry<Tuple>> cacheStore =
-					new HashMap<ComplexParameterKey, CacheEntry<Tuple>>(logical.getCacheSize()+1, 1.0f);
+			/*
+			 * It is ensured, that the store size will never exceed the maximum
+			 * size, therefore the loadCapacity may be set to 1 to prevent
+			 * rehashing.
+			 */
+			ICacheStore<ComplexParameterKey, CacheEntry<Tuple<?>>> cacheStore = 
+					new WorkingMemoryCacheStore<>(logical.getCacheSize() + 1, 1.0f);
 
 			/* Instantiate removal strategy using the declarative service */
-			IRemovalStrategy removalStrategy = RemovalStrategyRegistry.getInstance(logical.getRemovalStrategy(), cacheStore);
+			IRemovalStrategy removalStrategy = RemovalStrategyRegistry
+					.getInstance(logical.getRemovalStrategy(), cacheStore);
 			if (removalStrategy == null) {
-				throw new TransformationException("No removal strategy '" + logical.getRemovalStrategy() + "' found.");
+				throw new TransformationException("No removal strategy '"
+						+ logical.getRemovalStrategy() + "' found.");
 			}
 
-			return new ReadOnlyCache<ComplexParameterKey, Tuple>(cacheStore,
-					retrievalStrategy, removalStrategy, logical.getCacheSize(),
+			return new ReadOnlyCache<>(cacheStore, retrievalStrategy,
+					removalStrategy, logical.getCacheSize(),
 					logical.getExpirationTime());
 		}
 	}
 
 	@Override
-	public boolean isExecutable(DBEnrichAO logical, TransformationConfiguration config) {
+	public boolean isExecutable(DBEnrichAO logical,
+			TransformationConfiguration config) {
 		return logical.isAllPhysicalInputSet();
 	}
 

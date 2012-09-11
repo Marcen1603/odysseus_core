@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 
 public class DBRetrievalStrategy implements
-		IRetrievalStrategy<ComplexParameterKey, Tuple> {
+		IRetrievalStrategy<ComplexParameterKey, Tuple<?>> {
 
 	private String connectionName;
 	private String query;
@@ -29,7 +29,7 @@ public class DBRetrievalStrategy implements
 	}
 
 	@Override
-	public Tuple get(ComplexParameterKey key) {
+	public Tuple<?> get(ComplexParameterKey key) {
 		return getTupleFromDB(key);
 	}
 
@@ -70,10 +70,10 @@ public class DBRetrievalStrategy implements
 		}
 	}
 
-	private Tuple getTupleFromDB(ComplexParameterKey complexParameterKey) {
+	private Tuple<?> getTupleFromDB(ComplexParameterKey complexParameterKey) {
 
 		ResultSet rs = null;
-		Tuple dbTuple = null;
+		Tuple<?> dbTuple = null;
 
 		try {
 			// Insert parameters corr. to variables in prepared statement...
@@ -87,7 +87,7 @@ public class DBRetrievalStrategy implements
 			rs = preparedStatement.executeQuery();
 
 			if (rs.next()) {
-				dbTuple = new Tuple(dbFetchSchema.size(), false);
+				dbTuple = new Tuple<>(dbFetchSchema.size(), false);
 				for (int i = 0; i < dbFetchSchema.size(); i++) {
 					Object newAttribute = getWithType(rs, dbFetchSchema.get(i),
 							i + 1);

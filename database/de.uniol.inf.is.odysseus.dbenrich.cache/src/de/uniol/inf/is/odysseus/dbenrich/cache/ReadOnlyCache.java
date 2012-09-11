@@ -1,20 +1,18 @@
 package de.uniol.inf.is.odysseus.dbenrich.cache;
 
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.IRemovalStrategy;
 
 
 public class ReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 
-	private final Map<K, CacheEntry<V>> cacheStore;
+	private final ICacheStore<K, CacheEntry<V>> cacheStore;
 	private final int maxSize;
 	private final long expirationTime;
 
 	private final IRetrievalStrategy<K, V> retrievalStrategy;
 	private final IRemovalStrategy removalStrategy;
 
-	public ReadOnlyCache(Map<K, CacheEntry<V>> cacheStore,
+	public ReadOnlyCache(ICacheStore<K, CacheEntry<V>> cacheStore,
 			IRetrievalStrategy<K, V> retrievalStrategy,
 			IRemovalStrategy removalStrategy, int maxSize,
 			long expirationTime) {

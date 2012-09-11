@@ -26,7 +26,7 @@ public class DBEnrichPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, 
 	private final String removalStrategy;
 	// Fully initialized after process_open(), TODO maybe transient, but how to reinitialize after serialization?
 	private final IDataMergeFunction<Tuple<T>> dataMergeFunction;
-	private final IReadOnlyCache<ComplexParameterKey, Tuple> cacheManager;
+	private final IReadOnlyCache<ComplexParameterKey, Tuple<?>> cacheManager;
 	/** The positions of the db query parameters in the inputTuple attributes,
 	 * ordered as in the db query */
 	private final int[] parameterPositions;
@@ -35,7 +35,7 @@ public class DBEnrichPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, 
 			List<String> variables, boolean noCache, int cacheSize,
 			long expirationTime, String removalStrategy,
 			IDataMergeFunction<Tuple<T>> dataMergeFunction,
-			IReadOnlyCache<ComplexParameterKey, Tuple> cacheManager) {
+			IReadOnlyCache<ComplexParameterKey, Tuple<?>> cacheManager) {
 		super();
 		this.connectionName = connectionName;
 		this.query = query;

@@ -10,7 +10,7 @@ public class Random extends AbstractRemovalStrategy {
 	private java.util.Random random;
 
 	public Random() {
-		// Needed for the activator
+		// Needed for the RemovalStrategyRegistry
 	}
 
 	private Random(Map<?, CacheEntry<?>> cacheStore) {

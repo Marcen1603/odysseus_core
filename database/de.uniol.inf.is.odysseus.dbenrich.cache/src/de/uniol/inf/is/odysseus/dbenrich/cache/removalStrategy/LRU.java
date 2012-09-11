@@ -11,7 +11,7 @@ public class LRU extends AbstractRemovalStrategy {
 	private PriorityQueue<ListEntry> priorityQueue;
 
 	public LRU() {
-		// Needed for the activator
+		// Needed for the RemovalStrategyRegistry
 	}
 
 	private LRU(Map<?, CacheEntry<?>> cacheStore) {
