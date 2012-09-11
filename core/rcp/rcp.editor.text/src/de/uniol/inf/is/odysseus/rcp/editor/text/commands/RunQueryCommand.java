@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.commands;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -41,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -54,89 +57,101 @@ import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 public class RunQueryCommand extends AbstractHandler implements IHandler {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RunQueryCommand.class);
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Optional<IFile> optFileToRun = getSelectedFile();
-		if( optFileToRun.isPresent() ) {
-			run(optFileToRun.get());
+		List<IFile> optFileToRun = getSelectedFiles();
+		if (!optFileToRun.isEmpty()) {
+			runFiles(optFileToRun);
+
 		} else {
-			
+
 			Optional<OdysseusScriptEditor> optEditor = getScriptEditor();
-			if( optEditor.isPresent() ) {
+			if (optEditor.isPresent()) {
 				OdysseusScriptEditor editor = optEditor.get();
-				String[] lines = readLines(editor);
+				String[] lines = readLinesFromEditor(editor);
 				execute(lines);
 				return null;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public boolean isEnabled() {
-		return getSelectedFile().isPresent() || getScriptEditor().isPresent();
+		return !getSelectedFiles().isEmpty() || getScriptEditor().isPresent();
 	}
 
-	private static Optional<IFile> getSelectedFile() {
+	@SuppressWarnings("unchecked")
+	private static List<IFile> getSelectedFiles() {
+		List<IFile> foundFiles = Lists.newArrayList();
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-			Object obj = structuredSelection.getFirstElement();
+			List<Object> selectedObjects = ((IStructuredSelection) selection).toList();
 
-			if( isQueryTextFile(obj)) {
-				return Optional.of((IFile) obj);
+			for (Object obj : selectedObjects) {
+				if (isQueryTextFile(obj)) {
+					foundFiles.add((IFile) obj);
+				}
 			}
 		}
-		
-		return Optional.absent();
+
+		return foundFiles;
 	}
-	
+
 	private static boolean isQueryTextFile(Object obj) {
-		return obj instanceof IFile && ((IFile)obj).getFileExtension().equals(OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION);
+		return obj instanceof IFile && ((IFile) obj).getFileExtension().equals(OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION);
 	}
-	
+
 	private static Optional<OdysseusScriptEditor> getScriptEditor() {
 		IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		if (part instanceof OdysseusScriptEditor) {
 			return Optional.of((OdysseusScriptEditor) part);
-		}		
+		}
 		return Optional.absent();
 	}
 
-	private static String[] readLines(OdysseusScriptEditor editor) {
+	private static String[] readLinesFromEditor(OdysseusScriptEditor editor) {
 		OdysseusScriptDocumentProvider docPro = (OdysseusScriptDocumentProvider) editor.getDocumentProvider();
 		Document doc = (Document) docPro.getDocument(editor.getEditorInput());
 		String text = doc.get();
 		String lines[] = text.split(doc.getDefaultLineDelimiter());
 		return lines;
 	}
-	
-	private static void run(IFile queryFile) {
+
+	private void runFiles(List<IFile> optFileToRun) {
 		try {
-			// Datei öffnen
-			if (!queryFile.isSynchronized(IResource.DEPTH_ZERO))
-				queryFile.refreshLocal(IResource.DEPTH_ZERO, null);
-
-			// Datei einlesen
-			ArrayList<String> lines = new ArrayList<String>();
-			BufferedReader br = new BufferedReader(new InputStreamReader(queryFile.getContents()));
-			String line = br.readLine();
-			while (line != null) {
-				lines.add(line);
-				line = br.readLine();
+			List<String> result = Lists.newArrayList();
+			for (IFile file : optFileToRun) {
+				result.addAll(readLinesFromFile(file));
 			}
-			br.close();
-
-			execute(lines.toArray(new String[lines.size()]));
-
-		} catch (Exception ex) {
-			LOG.error("Exception during running query file" , ex);
 			
+			execute(result.toArray(new String[result.size()]));
+		} catch (Exception ex) {
+			LOG.error("Exception during running query file", ex);
 			new ExceptionWindow(ex);
 		}
+
+	}
+
+	private static List<String> readLinesFromFile(IFile queryFile) throws CoreException, IOException {
+		// Datei öffnen
+		if (!queryFile.isSynchronized(IResource.DEPTH_ZERO)) {
+			queryFile.refreshLocal(IResource.DEPTH_ZERO, null);
+		}
+
+		// Datei einlesen
+		ArrayList<String> lines = new ArrayList<String>();
+		BufferedReader br = new BufferedReader(new InputStreamReader(queryFile.getContents()));
+		String line = br.readLine();
+		while (line != null) {
+			lines.add(line);
+			line = br.readLine();
+		}
+		br.close();
+		return lines;
 	}
 
 	private static void execute(final String[] text) {
@@ -174,7 +189,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					}
 				} catch (OdysseusScriptException ex) {
 					LOG.error("Exception during executing script", ex);
-					
+
 					status = new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error: " + ex.getRootMessage(), ex);
 				}
 				monitor.done();
@@ -182,8 +197,8 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 				return status;
 			}
 		};
-		job.setUser(true); 
-		job.schedule(); 
+		job.setUser(true);
+		job.schedule();
 	}
 
 }
