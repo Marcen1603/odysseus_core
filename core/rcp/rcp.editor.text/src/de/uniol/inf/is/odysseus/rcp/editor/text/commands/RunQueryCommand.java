@@ -36,9 +36,11 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -55,34 +57,64 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getSelectionService().getSelection();
+		Optional<IFile> optFileToRun = getSelectedFile();
+		if( optFileToRun.isPresent() ) {
+			run(optFileToRun.get());
+		} else {
+			
+			Optional<OdysseusScriptEditor> optEditor = getScriptEditor();
+			if( optEditor.isPresent() ) {
+				OdysseusScriptEditor editor = optEditor.get();
+				String[] lines = readLines(editor);
+				execute(lines);
+				return null;
+			}
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return getSelectedFile().isPresent() || getScriptEditor().isPresent();
+	}
+
+	private static Optional<IFile> getSelectedFile() {
+		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			Object obj = structuredSelection.getFirstElement();
 
-			if (obj instanceof IFile) {
-				run((IFile) obj);
-				return null;
+			if( isQueryTextFile(obj)) {
+				return Optional.of((IFile) obj);
 			}
 		}
-
-		// Check if we have an active Editor
-		IEditorPart part = HandlerUtil.getActiveEditor(event);
+		
+		return Optional.absent();
+	}
+	
+	private static boolean isQueryTextFile(Object obj) {
+		return obj instanceof IFile && ((IFile)obj).getFileExtension().equals(OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION);
+	}
+	
+	private static Optional<OdysseusScriptEditor> getScriptEditor() {
+		IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		if (part instanceof OdysseusScriptEditor) {
-			OdysseusScriptEditor editor = (OdysseusScriptEditor) part;
-			OdysseusScriptDocumentProvider docPro = (OdysseusScriptDocumentProvider) editor.getDocumentProvider();
-			Document doc = (Document) docPro.getDocument(editor.getEditorInput());
-			String text = doc.get();
-			String lines[] = text.split(doc.getDefaultLineDelimiter());
-			execute(lines);
-			return null;
-		}
-
-		return null;
+			return Optional.of((OdysseusScriptEditor) part);
+		}		
+		return Optional.absent();
 	}
 
-	private void run(IFile queryFile) {
+	private static String[] readLines(OdysseusScriptEditor editor) {
+		OdysseusScriptDocumentProvider docPro = (OdysseusScriptDocumentProvider) editor.getDocumentProvider();
+		Document doc = (Document) docPro.getDocument(editor.getEditorInput());
+		String text = doc.get();
+		String lines[] = text.split(doc.getDefaultLineDelimiter());
+		return lines;
+	}
+	
+	private static void run(IFile queryFile) {
 		try {
 			// Datei öffnen
 			if (!queryFile.isSynchronized(IResource.DEPTH_ZERO))
@@ -107,10 +139,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 		}
 	}
 
-	public void execute(final String[] text) {
-		// Dieser Teil geschieht asynchron zum UIThread und wird als Job
-		// ausgeführt
-		// Job-Mechanismus wird von RCP gestellt.
+	private static void execute(final String[] text) {
 		Job job = new Job("Parsing and Executing Query") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -153,8 +182,8 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 				return status;
 			}
 		};
-		job.setUser(true); // gibt an, dass der Nutzer dieses Job ausgelöst hat
-		job.schedule(); // dieser Job soll nun ausgeführt werden
+		job.setUser(true); 
+		job.schedule(); 
 	}
 
 }
