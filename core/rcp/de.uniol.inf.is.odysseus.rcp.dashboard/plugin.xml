@@ -12,6 +12,13 @@
             name="Dashboard Part"
             project="false">
       </wizard>
+      <wizard
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.wizards.NewDashboardWizard"
+            icon="icons/dashboard.jpg"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardWizard"
+            name="Dashboard">
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.editors">

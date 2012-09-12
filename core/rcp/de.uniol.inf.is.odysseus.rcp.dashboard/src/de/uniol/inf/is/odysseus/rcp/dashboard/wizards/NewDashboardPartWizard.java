@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
 	private static final Logger LOG = LoggerFactory.getLogger(NewDashboardPartWizard.class);
+	private static final String DEFAULT_DASHBOARD_FILENAME = "DashboardPart." + DashboardPlugIn.DASHBOARD_PART_EXTENSION;
 	
 	private ContainerSelectionPage containerPage;
 	private DashboardPartTypeSelectionPage partTypePage;
@@ -59,7 +60,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		containerPage = new ContainerSelectionPage("Select file name", selection);
+		containerPage = new ContainerSelectionPage("Select file name", selection, DEFAULT_DASHBOARD_FILENAME);
 		partTypePage = new DashboardPartTypeSelectionPage("Select type of Dashboard Part");
 		queryFilePage = new QueryFileSelectionPage("Select query", containerPage);
 	}
@@ -74,7 +75,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 		try {
-			String dashboardPartFileName = getDashboardPartFileName();
+			String dashboardPartFileName = getDashboardPartFileName(containerPage);
 
 			IPath path = containerPage.getContainerFullPath().append(dashboardPartFileName);
 			IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
@@ -101,7 +102,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 		}
 	}
 
-	private String getDashboardPartFileName() throws CancelException {
+	private static String getDashboardPartFileName(ContainerSelectionPage containerPage) throws CancelException {
 		String queryFileName = containerPage.getFileName();
 
 		Optional<String> optionalExtension = getFileExtension(queryFileName);
