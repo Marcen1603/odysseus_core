@@ -16,6 +16,7 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -40,8 +41,6 @@ public class AddDashboardPartCommand extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		System.out.println("Files to add: " + dashboardPartFiles);
-
 		Map<IFile, IDashboardPart> dashboardParts = loadDashboardParts(dashboardPartFiles);
 		if (dashboardParts.isEmpty()) {
 			return null;
@@ -62,11 +61,11 @@ public class AddDashboardPartCommand extends AbstractHandler {
 	@Override
 	public boolean isEnabled() {
 
-		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		if (isValidDashboardEditor(editor)) {
+		Optional<IEditorPart> editor = getActiveEditor();
+		if (!editor.isPresent() || !isValidDashboardEditor(editor.get())) {
 			return false;
 		} else {
-			dashboardEditor = (DashboardEditor) editor;
+			dashboardEditor = (DashboardEditor) editor.get();
 		}
 
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
@@ -76,8 +75,16 @@ public class AddDashboardPartCommand extends AbstractHandler {
 		return !dashboardPartFiles.isEmpty();
 	}
 
+	private static Optional<IEditorPart> getActiveEditor() {
+		try {
+			return Optional.of(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor());
+		} catch( Throwable t ) {
+			return Optional.absent();
+		}
+	}
+
 	private static boolean isValidDashboardEditor(IEditorPart editor) {
-		return !(editor instanceof DashboardEditor || !((DashboardEditor) editor).hasDashboard());
+		return editor instanceof DashboardEditor && ((DashboardEditor) editor).hasDashboard();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -95,12 +102,14 @@ public class AddDashboardPartCommand extends AbstractHandler {
 	}
 
 	private static List<IFile> getDashboardPartFiles(List<Object> selectedObjects) {
+		System.out.println(selectedObjects);
 		List<IFile> foundFiles = Lists.newArrayList();
 		for (Object obj : selectedObjects) {
 			if (isDashboardPartFile(obj)) {
 				foundFiles.add((IFile) obj);
 			}
 		}
+		System.out.println(foundFiles);
 		return foundFiles;
 	}
 	

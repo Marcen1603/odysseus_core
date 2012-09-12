@@ -126,7 +126,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
 		ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
-
+		
 		dashboard.createPartControl(parent, toolBar);
 
 		try {
