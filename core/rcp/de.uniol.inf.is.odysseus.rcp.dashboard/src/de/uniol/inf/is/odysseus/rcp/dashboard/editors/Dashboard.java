@@ -56,6 +56,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 	private Composite dashboardComposite;
 	private ToolBar toolBar;
+	private Composite parent;
 
 	private List<DashboardPartPlacement> dashboardParts = Lists.newArrayList();
 	private DashboardPartPlacement selectedDashboardPart;
@@ -64,6 +65,26 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	
 	private List<IDashboardListener> listeners = Lists.newArrayList();
 
+	public void createPartControl(Composite parent, ToolBar toolBar) {
+		this.toolBar = toolBar;
+		this.parent = parent;
+		
+		dashboardComposite = new Composite(parent, SWT.BORDER);
+		dashboardComposite.setLayout(new FormLayout());
+		dashboardComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		dashboardComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		
+		dashboardComposite.addMouseListener(this);
+		dashboardComposite.addKeyListener(this);
+		dashboardComposite.addPaintListener(this);
+
+		for (DashboardPartPlacement dashboardPartPlace : dashboardParts) {
+			insertDashboardPart(dashboardPartPlace);
+		}
+		
+		parent.layout();
+	}
+	
 	public void add(DashboardPartPlacement partPlace) {
 		Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
 		Preconditions.checkArgument(!dashboardParts.contains(partPlace), "Dashboard part placement %s already added!", partPlace);
@@ -77,8 +98,14 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	}
 
 	public void remove(DashboardPartPlacement partPlace) {
+		deletePartControl();		
 		dashboardParts.remove(partPlace);
+		
+		createPartControl(parent, toolBar);
+		
+		fireChangedEvent();
 	}
+
 	
 	public void addListener( IDashboardListener listener ) {
 		Preconditions.checkNotNull(listener, "Dashboardlistener to add must not be null!");
@@ -96,23 +123,6 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	
 	public ImmutableList<DashboardPartPlacement> getDashboardPartPlacements() {
 		return ImmutableList.copyOf(dashboardParts);
-	}
-
-	public void createPartControl(Composite parent, ToolBar toolBar) {
-		this.toolBar = toolBar;
-		
-		dashboardComposite = new Composite(parent, SWT.BORDER);
-		dashboardComposite.setLayout(new FormLayout());
-		dashboardComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		dashboardComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		
-		dashboardComposite.addMouseListener(this);
-		dashboardComposite.addKeyListener(this);
-		dashboardComposite.addPaintListener(this);
-
-		for (DashboardPartPlacement dashboardPartPlace : dashboardParts) {
-			insertDashboardPart(dashboardPartPlace);
-		}
 	}
 
 	@Override
@@ -142,7 +152,11 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	public void keyPressed(KeyEvent e) {
 		if (hasSelection() && (e.stateMask & SWT.CTRL) != 0) {
 
-			if( ( e.stateMask & SWT.SHIFT ) != 0 ) {
+			if( e.keyCode == SWT.DEL) {
+				remove(selectedDashboardPart);
+				selectedDashboardPart = null;
+
+			} else if( ( e.stateMask & SWT.SHIFT ) != 0 ) {
 				if (e.keyCode == SWT.ARROW_UP) {
 					selectedDashboardPart.setHeight(selectedDashboardPart.getHeight() - RESIZE_SELECTION_STEP_SIZE_PIXELS);
 					updateSelection();
@@ -198,6 +212,12 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 		// do nothing
 	}
 
+	private void deletePartControl() {
+		removeListeners(dashboardComposite);
+		dashboardComposite.dispose();
+		dashboardComposite = null;
+	}
+
 	private void insertDashboardPart(DashboardPartPlacement dashboardPartPlace) {
 		Composite outerContainer = createDashboardPartOuterContainer(dashboardComposite, dashboardPartPlace);
 		containers.put(dashboardPartPlace, outerContainer);
@@ -228,6 +248,16 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	private void addListeners(Control base) {
 		base.addMouseListener(this);
 		base.addKeyListener(this);
+		if (base instanceof Composite) {
+			for (Control ctrl : ((Composite) base).getChildren()) {
+				addListeners(ctrl);
+			}
+		}
+	}
+	
+	private void removeListeners(Control base) {
+		base.removeMouseListener(this);
+		base.removeKeyListener(this);
 		if (base instanceof Composite) {
 			for (Control ctrl : ((Composite) base).getChildren()) {
 				addListeners(ctrl);
