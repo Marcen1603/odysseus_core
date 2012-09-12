@@ -39,6 +39,9 @@ public class FileUtil {
 		while (lineScanner.hasNextLine()) {
 			lines.add(lineScanner.nextLine());
 		}
+		
+		lineScanner.close();
+		
 		return ImmutableList.copyOf(lines);		
 	}
 	
