@@ -54,9 +54,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	
 	public NewDashboardPartWizard() {
 		super();
-		setWindowTitle("New Odysseus Script");
-		
-		
+		setWindowTitle("New DashboardPart");
 	}
 
 	@Override
