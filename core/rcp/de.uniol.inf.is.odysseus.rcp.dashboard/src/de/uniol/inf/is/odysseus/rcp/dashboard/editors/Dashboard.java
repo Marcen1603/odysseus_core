@@ -124,6 +124,10 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	public ImmutableList<DashboardPartPlacement> getDashboardPartPlacements() {
 		return ImmutableList.copyOf(dashboardParts);
 	}
+	
+	public boolean setFocus() {
+		return dashboardComposite.setFocus();
+	}
 
 	@Override
 	public void paintControl(PaintEvent e) {

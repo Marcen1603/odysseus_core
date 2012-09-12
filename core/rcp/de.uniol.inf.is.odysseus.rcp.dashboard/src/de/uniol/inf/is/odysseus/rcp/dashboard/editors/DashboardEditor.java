@@ -138,7 +138,9 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 
 	@Override
 	public void setFocus() {
-
+		if( dashboard != null ) {
+			dashboard.setFocus();
+		}
 	}
 	
 	public void setDirty(boolean dirty) {
