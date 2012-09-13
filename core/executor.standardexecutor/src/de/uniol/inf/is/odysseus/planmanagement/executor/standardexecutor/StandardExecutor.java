@@ -553,7 +553,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
      * #startQuery (int)
      */
     @Override
-    public void startQuery(int queryID, ISession caller) {
+    public synchronized void startQuery(int queryID, ISession caller) {
         IPhysicalQuery queryToStart = this.executionPlan.getQuery(queryID);
         validateUserRight(queryToStart, caller, ExecutorPermission.START_QUERY);
         if (queryToStart.isOpened()) {
@@ -627,7 +627,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
      * #stopQuery (int)
      */
     @Override
-    public void stopQuery(int queryID, ISession caller) {
+    public synchronized void  stopQuery(int queryID, ISession caller) {
 
         getLogger().info("Stopping query (ID: " + queryID + ").");
 
