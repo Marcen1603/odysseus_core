@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
 
 public class FIFO extends AbstractRemovalStrategy {
 
-	private Queue queue;
+	private Queue<Object> queue;
 
 	public FIFO() {
 		// Needed for the RemovalStrategyRegistry
@@ -16,7 +16,7 @@ public class FIFO extends AbstractRemovalStrategy {
 
 	private FIFO(Map<?, CacheEntry<?>> cacheStore) {
 		super.cacheStore = cacheStore;
-		queue = new LinkedList();
+		queue = new LinkedList<>();
 	}
 
 	@Override
@@ -35,6 +35,12 @@ public class FIFO extends AbstractRemovalStrategy {
 		// Remove element from the head of the queue and the cache.
 		Object key = queue.remove();
 		cacheStore.remove(key);
+	}
+	
+	@Override
+	public void clear() {
+		queue.clear();
+		cacheStore.clear();
 	}
 
 	@Override

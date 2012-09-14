@@ -74,5 +74,7 @@ public class ReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 	@Override
 	public void close() {
 		retrievalStrategy.close();
+		// Clears the cache
+		removalStrategy.clear();
 	}
 }

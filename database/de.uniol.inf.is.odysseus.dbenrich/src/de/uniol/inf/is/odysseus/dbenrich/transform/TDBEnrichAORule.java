@@ -50,7 +50,8 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 				logical.getCacheSize(),
 				logical.getExpirationTime(),
 				logical.getRemovalStrategy(),
-				dataMergeFunction, cacheManager);
+				dataMergeFunction,
+				cacheManager);
 
 		physical.setOutputSchema(logical.getOutputSchema());
 		replace(logical, physical, transformConfig);

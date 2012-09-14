@@ -4,17 +4,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ComplexParameterKey;
 import de.uniol.inf.is.odysseus.dbenrich.cache.IReadOnlyCache;
 
-public class DBEnrichPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, Tuple<T>> {
+public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
 
 	// Initialized in the constructor
 	private final String connectionName;
@@ -112,60 +112,8 @@ public class DBEnrichPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, 
 		return queryParameters;
 	}
 
-	//	@Deprecated // the new version uses preset paramPositions, no search
-	//	private Object[] getQueryParameters(Tuple<T> inputTuple) {
-	//		Object[] queryParameters = new Object[variables.size()];
-	//
-	//		for(int i=0; i<queryParameters.length; i++) {
-	//			String variable  = variables.get(i);
-	//
-	//			// Get desired parameter from input tuple
-	//			// tbd remember the positions
-	//			SDFAttribute attribute = getOutputSchema().findAttribute(variable);
-	//			if(attribute==null) {
-	//				throw new RuntimeException("Could not find attribute '" + variable +"' in input tuple.");
-	//			}
-	//			int parameterPosition = getOutputSchema().indexOf(attribute);
-	//			// String parameter = inputTuple.getAttribute(parameterPosition).toString();
-	//			queryParameters[i] = inputTuple.getAttribute(parameterPosition);
-	//		}
-	//
-	//		return queryParameters;
-	//	}
-
 	@Override
 	protected void process_open() throws OpenFailedException {
-
-		//		/* It is ensured, that the store size will never exceed the
-		//		 * maximum size, therefore the loadCapacity may be set to 1
-		//		 * to prevent rehashing. */
-		//		Map<ComplexParameterKey, Tuple> cacheStore =
-		//				new HashMap<ComplexParameterKey, Tuple>(cacheSize+1, 1.0f);
-		//
-		//		DBRetrievalStrategy dbRetrievalStrategy =
-		//				new DBRetrievalStrategy(
-		//						connectionName, query, variables, getOutputSchema());
-		//
-		//		System.out.println("RemovalStrategy: " + removalStrategy);
-		//
-		//		/* Instantiate removal strategy. A Switch case (Java 7), or a
-		//		 * factory class could be used here if needed in the future. */
-		//		String removalStrategyLCStr = removalStrategy.toLowerCase();
-		//		IRemovalStrategy<ComplexParameterKey, Tuple> removalStrategy;
-		//		if (removalStrategyLCStr.equals("random")) {
-		//			removalStrategy = new Random<ComplexParameterKey, Tuple>(cacheStore);
-		//		} else if (removalStrategyLCStr.equals("fifo")) {
-		//			removalStrategy = new FIFO<ComplexParameterKey, Tuple>(cacheStore);
-		//		} else if (removalStrategyLCStr.equals("lru")) {
-		//			throw new RuntimeException("TBD");
-		//		} else if (removalStrategyLCStr.equals("lfu")) {
-		//			throw new RuntimeException("TBD");
-		//		} else { // default
-		//			removalStrategy = new FIFO<ComplexParameterKey, Tuple>(cacheStore);
-		//		}
-		//
-		//		cacheManager = new ReadOnlyCache<ComplexParameterKey, Tuple>(
-		//				cacheStore, dbRetrievalStrategy, removalStrategy, cacheSize);
 		initParameterPositions();
 
 		cacheManager.open();

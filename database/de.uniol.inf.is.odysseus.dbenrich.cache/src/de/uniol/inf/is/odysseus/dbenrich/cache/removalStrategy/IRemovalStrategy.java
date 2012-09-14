@@ -34,6 +34,12 @@ public interface IRemovalStrategy {
 	 * if present.
 	 */
 	void removeNext();
+	
+	/**
+	 * Removes all cache entries from the cache as well as the removal strategy
+	 * if present.
+	 */
+	void clear();
 
 	/**
 	 * Used instead of a public constructor.

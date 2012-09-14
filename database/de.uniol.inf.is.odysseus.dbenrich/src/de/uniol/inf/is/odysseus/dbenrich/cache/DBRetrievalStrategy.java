@@ -35,23 +35,28 @@ public class DBRetrievalStrategy implements
 
 	@Override
 	public void open() {
+
 		try {
-			// Get Connection
-			IDatabaseConnection iDatabaseConnection = DatabaseConnectionDictionary
-					.getInstance().getDatabaseConnection(connectionName);
-			if (iDatabaseConnection == null) {
-				throw new RuntimeException("Could not find the connection '"
-						+ connectionName + "'");
+			if (preparedStatement == null || preparedStatement.isClosed()
+					|| dbFetchSchema == null) {
+				// Get Connection
+				IDatabaseConnection iDatabaseConnection = DatabaseConnectionDictionary
+						.getInstance().getDatabaseConnection(connectionName);
+				if (iDatabaseConnection == null) {
+					throw new RuntimeException(
+							"Could not find the connection " +
+							"'" + connectionName + "'");
+				}
+
+				Connection connection = iDatabaseConnection.getConnection();
+
+				// Prepare Statement
+				preparedStatement = connection.prepareStatement(query);
+
+				// Retrieve DB Schema
+				dbFetchSchema = Conversions.createSDFSchemaByResultSetMetaData(
+						preparedStatement.getMetaData());
 			}
-
-			Connection connection = iDatabaseConnection.getConnection();
-
-			// Prepare Statement
-			preparedStatement = connection.prepareStatement(query);
-
-			// Retrieve DB Schema
-			dbFetchSchema = Conversions.createSDFSchemaByResultSetMetaData(
-					preparedStatement.getMetaData());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new OpenFailedException(e);
@@ -68,6 +73,7 @@ public class DBRetrievalStrategy implements
 			}
 			preparedStatement = null;
 		}
+		dbFetchSchema = null;
 	}
 
 	private Tuple<?> getTupleFromDB(ComplexParameterKey complexParameterKey) {

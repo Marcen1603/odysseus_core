@@ -42,6 +42,12 @@ public class LFU extends AbstractRemovalStrategy {
 		Object key = priorityQueue.remove().key;
 		cacheStore.remove(key);
 	}
+	
+	@Override
+	public void clear() {
+		priorityQueue.clear();
+		cacheStore.clear();
+	}
 
 	@Override
 	public IRemovalStrategy createInstance(Map<?, CacheEntry<?>> cacheStore) {

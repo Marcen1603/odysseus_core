@@ -51,6 +51,11 @@ public class Random extends AbstractRemovalStrategy {
 			}
 		}
 	}
+	
+	@Override
+	public void clear() {
+		cacheStore.clear();
+	}
 
 	@Override
 	public String getName() {
