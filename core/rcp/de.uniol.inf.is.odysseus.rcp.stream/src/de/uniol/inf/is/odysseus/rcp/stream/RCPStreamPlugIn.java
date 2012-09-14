@@ -11,18 +11,10 @@ public class RCPStreamPlugIn implements BundleActivator {
 		return context;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		RCPStreamPlugIn.context = bundleContext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
 	public void stop(BundleContext bundleContext) throws Exception {
 		RCPStreamPlugIn.context = null;
 	}
