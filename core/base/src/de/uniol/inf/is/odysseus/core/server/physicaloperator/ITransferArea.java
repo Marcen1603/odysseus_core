@@ -56,4 +56,6 @@ public interface ITransferArea<R extends IMetaAttributeContainer<?>, W extends I
 	
 	public void newHeartbeat(PointInTime heartbeat, int inPort);	
 	
+	public PointInTime getMinTs();
+	
 }

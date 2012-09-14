@@ -119,7 +119,7 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 		}
 	}
 
-	private PointInTime getMinTs() {
+	public PointInTime getMinTs() {
 		PointInTime minimum = minTs[0];
 		for (PointInTime p : minTs) {
 			// if one element has no value, no element

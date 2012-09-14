@@ -126,7 +126,7 @@ public class PersistentTransferArea<R extends IMetaAttributeContainer<? extends 
 		}
 	}
 
-	private PointInTime getMinTs() {
+	public PointInTime getMinTs() {
 		PointInTime minimum = minTs[0];
 		for (PointInTime p : minTs) {
 			// if one element has no value, no element
