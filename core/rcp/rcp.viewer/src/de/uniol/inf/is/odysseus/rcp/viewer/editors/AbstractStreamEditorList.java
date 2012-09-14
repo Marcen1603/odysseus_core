@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,17 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.editors;
 
-import org.eclipse.jface.viewers.TableViewer;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
+
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
@@ -27,22 +33,24 @@ import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 
 public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
-	private TableViewer tableViewer;
-	private IStreamEditorInput input;
-	private StreamEditorListContentProvider contentProvider;
-	private StreamEditorListLabelProvider labelProvider = new StreamEditorListLabelProvider();
+	private static final int REFRESH_INTERVAL_MILLIS = 1000;
+
+	private Text text;
+
+	private int receivedElements;
+	private final int maxElements;
 	
-	public AbstractStreamEditorList( int maxElements ) {
-		// max Elements can be negative to indicate infinite
-		contentProvider = new StreamEditorListContentProvider(maxElements);
+	private List<String> pendingElements = Lists.newLinkedList();
+
+	public AbstractStreamEditorList(int maxElements) {
+		this.maxElements = maxElements;
 	}
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
-		tableViewer = new TableViewer(parent, SWT.BORDER);
-		tableViewer.setContentProvider(contentProvider);
-		tableViewer.setLabelProvider(labelProvider);
-		tableViewer.setInput(input);
+		text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+		text.setEditable(false);
+		text.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
 		// Thread, womit die Liste jeder Sekunde
 		// automatisch aktualisiert wird.
@@ -51,29 +59,29 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 			@Override
 			public void run() {
 				while (true) {
-					if (PlatformUI.getWorkbench().getDisplay().isDisposed())
+					Display disp = PlatformUI.getWorkbench().getDisplay();
+					if (disp.isDisposed()) {
 						return;
+					}
 
-					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+					disp.asyncExec(new Runnable() {
 
 						@Override
 						public void run() {
-							if (!tableViewer.getTable().isDisposed())
-								tableViewer.refresh();
+							if (!text.isDisposed()) {
+								refreshText();
+							}
 						}
 
 					});
 
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					waiting();
 				}
 			}
 
 		});
 
+		t.setName("StreamList Updater");
 		t.start();
 	}
 
@@ -83,25 +91,76 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
 	@Override
 	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
-		this.input = editorInput;
 	}
 
 	@Override
 	public void setFocus() {
-		tableViewer.getControl().setFocus();
+		text.setFocus();
 	}
 
 	@Override
 	public void streamElementRecieved(Object element, int port) {
-		contentProvider.addElement(element.toString());
+		synchronized (pendingElements) {
+			pendingElements.add(element != null ? element.toString() : "null");
+			if (!isInfinite() && pendingElements.size() > maxElements) {
+				pendingElements.remove(0);
+			}
+		}
 	}
 
 	@Override
 	public void punctuationElementRecieved(PointInTime point, int port) {
-		contentProvider.addElement("PUNCTUATION: " + point);
+		synchronized (pendingElements) {
+			pendingElements.add("Punctuation: " + point);
+			if (!isInfinite() && pendingElements.size() > maxElements) {
+				pendingElements.remove(0);
+			}
+		}
 	}
 
 	@Override
 	public void initToolbar(ToolBar toolbar) {
+	}
+
+	private void refreshText() {
+		synchronized(pendingElements) {
+			if( pendingElements.isEmpty()) {
+				return;
+			}
+			
+			Point sel = text.getSelection();
+			for( String element : pendingElements ) {
+				text.append(element + "\n");
+				receivedElements++;
+
+				if( !isInfinite() && receivedElements > maxElements ) {
+					String txt = text.getText();
+					System.out.println(sel);
+					int pos = txt.indexOf("\n");
+					txt = txt.substring(pos+1);
+					text.setText(txt);
+
+					if( sel.x != sel.y ) {
+						sel.x = Math.max(sel.x - pos, 0);
+						sel.y = Math.max(sel.y - pos, 0);
+					}
+					
+					receivedElements--;
+				}
+			}
+			text.setSelection(sel);
+			pendingElements.clear();
+		}
+	}
+
+	private boolean isInfinite() {
+		return maxElements < 0;
+	}
+
+	private static void waiting() {
+		try {
+			Thread.sleep(REFRESH_INTERVAL_MILLIS);
+		} catch (InterruptedException e) {
+		}
 	}
 }
