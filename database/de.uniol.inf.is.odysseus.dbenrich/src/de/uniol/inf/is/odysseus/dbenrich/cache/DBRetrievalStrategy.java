@@ -35,10 +35,11 @@ public class DBRetrievalStrategy implements
 
 	@Override
 	public void open() {
-
 		try {
+			System.out.println("db open()1");
 			if (preparedStatement == null || preparedStatement.isClosed()
 					|| dbFetchSchema == null) {
+				System.out.println("db open()2");
 				// Get Connection
 				IDatabaseConnection iDatabaseConnection = DatabaseConnectionDictionary
 						.getInstance().getDatabaseConnection(connectionName);
@@ -65,6 +66,7 @@ public class DBRetrievalStrategy implements
 
 	@Override
 	public void close() {
+		System.out.println("db close()");
 		if (preparedStatement != null) {
 			try {
 				preparedStatement.close();

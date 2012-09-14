@@ -114,6 +114,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 
 	@Override
 	protected void process_open() throws OpenFailedException {
+		System.out.println("process_open()");
 		initParameterPositions();
 
 		cacheManager.open();
@@ -144,6 +145,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 
 	@Override
 	protected void process_close() {
+		System.out.println("process_close()");
 		cacheManager.close();
 	}
 
