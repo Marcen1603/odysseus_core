@@ -31,6 +31,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,8 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 	private Dashboard dashboard;
 	private FileEditorInput input;
 	private boolean dirty;
+	
+	private DashboardOutlineContentPage outlinePage;
 
 	private Map<IDashboardPart, DashboardPartController> controllers;
 
@@ -141,6 +144,17 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		if( dashboard != null ) {
 			dashboard.setFocus();
 		}
+	}
+	
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+		if (IContentOutlinePage.class.equals(adapter)) {
+			if (outlinePage == null) {
+				outlinePage = new DashboardOutlineContentPage(dashboard);
+			}
+			return outlinePage;
+		}
+		return super.getAdapter(adapter);
 	}
 	
 	public void setDirty(boolean dirty) {
