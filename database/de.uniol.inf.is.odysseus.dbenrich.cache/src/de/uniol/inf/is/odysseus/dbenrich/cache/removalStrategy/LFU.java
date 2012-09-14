@@ -6,7 +6,12 @@ import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
 
-public class LFU extends AbstractRemovalStrategy {
+/**
+ * This class implements a "least frequently used" caching strategy.
+ */
+public class LFU implements IRemovalStrategy {
+	
+	private Map<?, CacheEntry<?>> cacheStore;
 	
 	private PriorityQueue<ListEntry> priorityQueue;
 
@@ -15,7 +20,7 @@ public class LFU extends AbstractRemovalStrategy {
 	}
 
 	private LFU(Map<?, CacheEntry<?>> cacheStore) {
-		super.cacheStore = cacheStore;
+		this.cacheStore = cacheStore;
 		priorityQueue = new PriorityQueue<>(20, new ListEntryComparator());
 	}
 

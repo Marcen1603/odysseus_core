@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.dbenrich.cache;
 
+/**
+ * This interface describes, how read only retrievalStrategies can be accessed.
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ */
 public interface IRetrievalStrategy<K,V> {
 
 	/**
@@ -21,4 +26,6 @@ public interface IRetrievalStrategy<K,V> {
 	 * strategy.
 	 */
 	void close();
+
+	IRetrievalStrategy<K, V> clone();
 }

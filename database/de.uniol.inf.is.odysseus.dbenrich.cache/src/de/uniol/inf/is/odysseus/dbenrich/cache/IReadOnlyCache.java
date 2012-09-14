@@ -1,25 +1,32 @@
 package de.uniol.inf.is.odysseus.dbenrich.cache;
 
-public interface IReadOnlyCache<K,V> {
+/**
+ * This interface describes, how read only caches can be accessed.
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ */
+public interface IReadOnlyCache<K, V> {
 
 	/**
 	 * Returns the value, that is mapped to the given key in the cache.
-	 * @param  key the unique key
-	 * @return the value which belongs to the key, or {@code null}
-	 * if there is no value
+	 * 
+	 * @param key
+	 *            the unique key
+	 * @return the value which belongs to the key, or {@code null} if there is
+	 *         no value
 	 */
-	V get(K key);
-
-	void debug(); // TODO REMOVE
+	public V get(K key);
 
 	/**
-	 * Initializes all required resources. Call this method before using
-	 * the cache.
+	 * Initializes all required resources. Call this method before using the
+	 * cache.
 	 */
-	void open();
+	public void open();
 
 	/**
 	 * Closes all unneeded resources. Call this method before using the cache.
 	 */
-	void close();
+	public void close();
+
+	public IReadOnlyCache<K, V> clone() throws CloneNotSupportedException;
 }

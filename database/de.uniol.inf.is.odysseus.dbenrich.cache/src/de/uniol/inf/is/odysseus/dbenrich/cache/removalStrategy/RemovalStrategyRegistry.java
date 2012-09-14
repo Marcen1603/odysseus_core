@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
-/* Note: Copied and mofified from TransportHandlerRegistry */
+/* Note: Based on a copy of TransportHandlerRegistry */
 public class RemovalStrategyRegistry {
 
 	static Logger logger = LoggerFactory

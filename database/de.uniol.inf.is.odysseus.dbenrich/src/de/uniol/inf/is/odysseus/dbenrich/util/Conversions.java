@@ -39,7 +39,7 @@ public class Conversions {
 		 * Note: It's basically the same as in
 		 * de.uniol.inf.is.odysseus.database.Activator.start
 		 * but a full registry is not needed in this bundle, and by default
-		 * there is no registry/mapping already available anyway
+		 * there is no registry/mapping already available anyway.
 		 */
 		switch(sqlType) {
 			case Types.ARRAY: sdfDatatype = SDFDatatype.OBJECT; break;

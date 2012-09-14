@@ -5,7 +5,12 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
 
-public class Random extends AbstractRemovalStrategy {
+/**
+ * This class implements a "random" caching strategy.
+ */
+public class Random implements IRemovalStrategy {
+	
+	private Map<?, CacheEntry<?>> cacheStore;
 
 	private java.util.Random random;
 
@@ -14,7 +19,7 @@ public class Random extends AbstractRemovalStrategy {
 	}
 
 	private Random(Map<?, CacheEntry<?>> cacheStore) {
-		super.cacheStore = cacheStore;
+		this.cacheStore = cacheStore;
 		random = new java.util.Random();
 	}
 

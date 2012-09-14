@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-//@SuppressWarnings({ "rawtypes" })
 public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 
 	@Override
@@ -58,8 +57,12 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 		retract(logical);
 	}
 
-	private IReadOnlyCache<ComplexParameterKey, Tuple<?>> createCache(
-			DBEnrichAO logical) {
+	/**
+	 * Creates a cache by using the parameters from the logical operator.
+	 * @param logical the logical operator
+	 * @return the created cache
+	 */
+	private static IReadOnlyCache<ComplexParameterKey, Tuple<?>> createCache(DBEnrichAO logical) {
 
 		IRetrievalStrategy<ComplexParameterKey, Tuple<?>> retrievalStrategy = new DBRetrievalStrategy(
 				logical.getConnectionName(), logical.getQuery());

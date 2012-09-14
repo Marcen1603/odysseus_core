@@ -1,5 +1,13 @@
 package de.uniol.inf.is.odysseus.dbenrich.cache;
 
+/**
+ * This class represents a cache entry. It contains a data element as well as 
+ * metadata.
+ * 
+ * Note, that the metadata is initially set on creation and 
+ * only updated, if the data is accessed via a accessData() call.
+ * @param <V> The type of the data, that is cached
+ */
 public class CacheEntry<V> {
 
 	private V data;

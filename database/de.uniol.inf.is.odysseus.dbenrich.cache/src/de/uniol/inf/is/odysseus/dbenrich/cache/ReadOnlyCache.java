@@ -2,7 +2,12 @@ package de.uniol.inf.is.odysseus.dbenrich.cache;
 
 import de.uniol.inf.is.odysseus.dbenrich.cache.removalStrategy.IRemovalStrategy;
 
-
+/**
+ * The default read only cache implementation
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ */
 public class ReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 
 	private final ICacheStore<K, CacheEntry<V>> cacheStore;
@@ -34,8 +39,8 @@ public class ReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 
 		// If it's not found or invalid, get it from caching strategy
 		if (cacheEntry == null || cacheEntry.isExpired(expirationTime)) {
-			System.out.println("No (valid) cacheEntry for key "
-					+ key.toString() + ", Hash: " + key.hashCode());
+			// System.out.println("No (valid) cacheEntry for key "
+			//		+ key.toString() + ", Hash: " + key.hashCode());
 			data = getInternal(key);
 			putInternal(key, new CacheEntry<V>(data));
 		} else {
@@ -52,18 +57,11 @@ public class ReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 
 	private void putInternal(K key, CacheEntry<V> cacheEntry) {
 		while(cacheStore.size() >= maxSize) {
-			System.out.println("Removed a cache entry");
+			// System.out.println("Removed a cache entry");
 			removalStrategy.removeNext();
 		}
 		cacheStore.put(key, cacheEntry);
 		removalStrategy.notifyNew(key, cacheEntry);
-	}
-
-	// TODO maybe purge, clear depending on further implementation
-
-	@Override
-	public void debug() {
-		System.out.println("debugSomeCache");
 	}
 
 	@Override
@@ -76,5 +74,10 @@ public class ReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 		retrievalStrategy.close();
 		// Clears the cache
 		removalStrategy.clear();
+	}
+
+	@Override
+	public ReadOnlyCache<K, V> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
 	}
 }

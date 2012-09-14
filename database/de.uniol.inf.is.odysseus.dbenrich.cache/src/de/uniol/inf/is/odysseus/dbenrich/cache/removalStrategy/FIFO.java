@@ -6,7 +6,12 @@ import java.util.Queue;
 
 import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
 
-public class FIFO extends AbstractRemovalStrategy {
+/**
+ * This class implements a First-In-First-Out caching strategy.
+ */
+public class FIFO implements IRemovalStrategy {
+	
+	private Map<?, CacheEntry<?>> cacheStore;
 
 	private Queue<Object> queue;
 
@@ -15,7 +20,7 @@ public class FIFO extends AbstractRemovalStrategy {
 	}
 
 	private FIFO(Map<?, CacheEntry<?>> cacheStore) {
-		super.cacheStore = cacheStore;
+		this.cacheStore = cacheStore;
 		queue = new LinkedList<>();
 	}
 

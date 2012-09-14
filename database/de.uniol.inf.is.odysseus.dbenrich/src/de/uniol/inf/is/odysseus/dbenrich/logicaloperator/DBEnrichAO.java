@@ -7,7 +7,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -25,6 +24,8 @@ import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="DBENRICH")
 public class DBEnrichAO extends UnaryLogicalOp {
 
+	private static final long serialVersionUID = 7829900765149450355L;
+
 	/* Directly passed through attributes */
 	private String connectionName;
 	private String query;
@@ -33,12 +34,6 @@ public class DBEnrichAO extends UnaryLogicalOp {
 	private int cacheSize = 20;
 	private long expirationTime = 1000 * 60 * 5; // 5 Minuten
 	private String removalStrategy = "fifo";
-
-	///* Available after initialize() */
-	///* The ordered attributes, that are expected after an db fetch */
-	//private SDFSchema dbFetchSchema;
-
-	private static final long serialVersionUID = -3850263953852415445L;
 
 	public DBEnrichAO() {
 		super();
@@ -62,7 +57,7 @@ public class DBEnrichAO extends UnaryLogicalOp {
 
 	@Override
 	public boolean isValid() {
-		System.out.println("isValid() call; " + getDebugString());
+		// System.out.println("isValid() call; " + getDebugString());
 		boolean valid = true;
 
 		if (cacheSize < 1) {
@@ -103,9 +98,9 @@ public class DBEnrichAO extends UnaryLogicalOp {
 
 			setOutputSchema(outputSchema);
 
-			printMetaData(resultSetMetaData);
-			printSchema(getInputSchema(), "Input_"+getInputSchema().getURI());
-			printSchema(getOutputSchema(), "Output_"+getInputSchema().getURI());
+			// printMetaData(resultSetMetaData);
+			// printSchema(getInputSchema(), "Input_"+getInputSchema().getURI());
+			// printSchema(getOutputSchema(), "Output_"+getInputSchema().getURI());
 		} catch (SQLException e) {
 			throw new RuntimeException("Error while analysing SQL query", e);
 		} finally {
@@ -115,8 +110,6 @@ public class DBEnrichAO extends UnaryLogicalOp {
 				} catch (Exception e) { }
 			}
 		}
-
-		System.out.println("executed initialize()");
 	}
 
 	@Override
@@ -124,36 +117,36 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		return super.getOutputSchemaIntern(pos);
 	}
 
-	private static void printSchema(SDFSchema schema, String identifier) {
-		System.out.println(identifier + " {");
-		for(SDFAttribute attribute : schema) {
-			System.out.println("\t" + attribute.getURI() + ": " + attribute.getDatatype());
-		}
-		System.out.println("}");
-	}
+	//	private static void printSchema(SDFSchema schema, String identifier) {
+	//		System.out.println(identifier + " {");
+	//		for(SDFAttribute attribute : schema) {
+	//			System.out.println("\t" + attribute.getURI() + ": " + attribute.getDatatype());
+	//		}
+	//		System.out.println("}");
+	//	}
 
-	private static void printMetaData(ResultSetMetaData resultSetMetaData) {
-		try {
-			System.out.print("SQL-ResultSetMetaData: ");
-			for (int i=1; i<=resultSetMetaData.getColumnCount(); i++) {
-				System.out.printf("[%s,%s] ",
-						resultSetMetaData.getColumnLabel(i),
-						resultSetMetaData.getColumnType(i));
-			}
-			System.out.println();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
+	//	private static void printMetaData(ResultSetMetaData resultSetMetaData) {
+	//		try {
+	//			System.out.print("SQL-ResultSetMetaData: ");
+	//			for (int i=1; i<=resultSetMetaData.getColumnCount(); i++) {
+	//				System.out.printf("[%s,%s] ",
+	//						resultSetMetaData.getColumnLabel(i),
+	//						resultSetMetaData.getColumnType(i));
+	//			}
+	//			System.out.println();
+	//		} catch(Exception e) {
+	//			e.printStackTrace();
+	//		}
+	//	}
 
-	private String getDebugString() {
-		String variablesStr = "{";
-		for(String var : attributes) {
-			variablesStr += "'" + var + "' ";
-		}
-		variablesStr = variablesStr.trim() + "}";
-		return String.format("connectionName:%s, query:%s, variables:%s, noCache:%s, cacheSize:%s, expirationTime:%s, removalStrategy:%s", connectionName, query, variablesStr, noCache, cacheSize, expirationTime, removalStrategy);
-	}
+	//	private String getDebugString() {
+	//		String variablesStr = "{";
+	//		for(String var : attributes) {
+	//			variablesStr += "'" + var + "' ";
+	//		}
+	//		variablesStr = variablesStr.trim() + "}";
+	//		return String.format("connectionName:%s, query:%s, variables:%s, noCache:%s, cacheSize:%s, expirationTime:%s, removalStrategy:%s", connectionName, query, variablesStr, noCache, cacheSize, expirationTime, removalStrategy);
+	//	}
 
 	// Getters / Setters below
 	public String getConnectionName() {

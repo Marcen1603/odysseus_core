@@ -24,7 +24,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final int cacheSize;
 	private final long expirationTime;
 	private final String removalStrategy;
-	// Fully initialized after process_open(), TODO maybe transient, but how to reinitialize after serialization?
+	// Fully initialized after process_open()
 	private final IDataMergeFunction<Tuple<T>> dataMergeFunction;
 	private final IReadOnlyCache<ComplexParameterKey, Tuple<?>> cacheManager;
 	/** The positions of the db query parameters in the inputTuple attributes,
@@ -59,10 +59,12 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.expirationTime = dBEnrichPO.expirationTime;
 		this.removalStrategy = dBEnrichPO.removalStrategy;
 		this.dataMergeFunction = dBEnrichPO.dataMergeFunction.clone();
-		this.cacheManager = dBEnrichPO.cacheManager; //FIXME copy/new needed
+		this.cacheManager = dBEnrichPO.cacheManager; // FIXME .clone();
 		this.parameterPositions = Arrays.copyOf(
 				dBEnrichPO.parameterPositions,
 				dBEnrichPO.parameterPositions.length);
+		System.err.println("The use of a copy constructor is only parially " +
+				"supported in DBEnrichPO.");
 	}
 
 	@Override
@@ -71,11 +73,10 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	}
 
 	@Override
+	@SuppressWarnings("unchecked") // Suppress metadata-cast warnings
 	protected void process_next(Tuple<T> inputTuple, int port) {
-
-		System.out.println(String.format("(%28s-------", getName()).replace(' ', '-'));
-
-		System.out.println("Tuple(before):  "+inputTuple);
+		// System.out.println(String.format("(%28s-------", getName()).replace(' ', '-'));
+		// System.out.println("Tuple(before):  "+inputTuple);
 
 		// get the parameters used for the db query from the tuple attributes
 		Object[] queryParameters = getQueryParameters(inputTuple);
@@ -84,23 +85,30 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		Tuple<?> dbTupel = cacheManager.get(complexKey);
 
 		if(dbTupel != null) {
-			System.out.println("Tuple(dbcache): " + dbTupel);
+			// System.out.println("Tuple(dbcache): " + dbTupel);
 
-			@SuppressWarnings("unchecked") // The Metadata is irrelevant here
 			Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, (Tuple<T>)dbTupel);
-			outputTuple.setMetadata(inputTuple.getMetadata());
+			outputTuple.setMetadata((T)inputTuple.getMetadata().clone());
 
-			System.out.println("Tuple(after):   "+outputTuple);
+			// System.out.println("Tuple(after):   "+outputTuple);
 
 			transfer(outputTuple, port);
 
 		} else {
-			System.out.println("No enrichement data found.");
+			// System.out.println("No enrichement data found.");
 		}
 
-		System.out.println("-----------------------------------)");
+		// System.out.println("-----------------------------------)");
 	}
 
+	/**
+	 * Returns the attributes, that correspond to the positions defined in
+	 * parameterPositions. E.g. if the tuple contains the attributes
+	 * [SomeText|123|456.7] and the positions are [2|1|3|2], then the
+	 * result is [123|SomeText|456.7|123].
+	 * @param inputTuple the current tuple from the input stream
+	 * @return the corresponding parameters for a query
+	 */
 	private Object[] getQueryParameters(Tuple<T> inputTuple) {
 		Object[] queryParameters = new Object[parameterPositions.length];
 
@@ -114,7 +122,6 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		System.out.println("process_open()");
 		initParameterPositions();
 
 		cacheManager.open();
@@ -145,7 +152,6 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 
 	@Override
 	protected void process_close() {
-		System.out.println("process_close()");
 		cacheManager.close();
 	}
 

@@ -13,6 +13,10 @@ import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 
+/**
+ * A retrieval strategy, that uses a jdbc connection / sql database as its
+ * data source.
+ */
 public class DBRetrievalStrategy implements
 		IRetrievalStrategy<ComplexParameterKey, Tuple<?>> {
 
@@ -28,6 +32,11 @@ public class DBRetrievalStrategy implements
 		this.query = query;
 	}
 
+	public DBRetrievalStrategy(DBRetrievalStrategy dbRetrievalStrategy) {
+		this.connectionName = dbRetrievalStrategy.connectionName;
+		this.query = dbRetrievalStrategy.query;
+	}
+
 	@Override
 	public Tuple<?> get(ComplexParameterKey key) {
 		return getTupleFromDB(key);
@@ -36,10 +45,8 @@ public class DBRetrievalStrategy implements
 	@Override
 	public void open() {
 		try {
-			System.out.println("db open()1");
 			if (preparedStatement == null || preparedStatement.isClosed()
 					|| dbFetchSchema == null) {
-				System.out.println("db open()2");
 				// Get Connection
 				IDatabaseConnection iDatabaseConnection = DatabaseConnectionDictionary
 						.getInstance().getDatabaseConnection(connectionName);
@@ -66,7 +73,6 @@ public class DBRetrievalStrategy implements
 
 	@Override
 	public void close() {
-		System.out.println("db close()");
 		if (preparedStatement != null) {
 			try {
 				preparedStatement.close();
@@ -90,8 +96,7 @@ public class DBRetrievalStrategy implements
 				preparedStatement.setObject(i + 1, queryParameters[i]); // automapping
 			}
 			// ... and execute
-			System.out.println("PreparedStatement: "
-					+ preparedStatement.toString());
+			// System.out.println("PreparedStatement: " + preparedStatement.toString());
 			rs = preparedStatement.executeQuery();
 
 			if (rs.next()) {
@@ -124,5 +129,10 @@ public class DBRetrievalStrategy implements
 		 * tuples use an Object-Array anyway).
 		 */
 		return rs.getObject(position);
+	}
+	
+	@Override
+	public DBRetrievalStrategy clone() {
+		return new DBRetrievalStrategy(this);
 	}
 }

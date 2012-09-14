@@ -6,7 +6,12 @@ import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.dbenrich.cache.CacheEntry;
 
-public class LRU extends AbstractRemovalStrategy {
+/**
+ * This class implements a "least recently used" caching strategy.
+ */
+public class LRU implements IRemovalStrategy {
+	
+	private Map<?, CacheEntry<?>> cacheStore;
 	
 	private PriorityQueue<ListEntry> priorityQueue;
 
@@ -15,7 +20,7 @@ public class LRU extends AbstractRemovalStrategy {
 	}
 
 	private LRU(Map<?, CacheEntry<?>> cacheStore) {
-		super.cacheStore = cacheStore;
+		this.cacheStore = cacheStore;
 		priorityQueue = new PriorityQueue<>(20, new ListEntryComparator());
 	}
 

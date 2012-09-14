@@ -2,15 +2,20 @@ package de.uniol.inf.is.odysseus.dbenrich.cache;
 
 import java.util.Arrays;
 
+/**
+ * This class is used to encapsulate query parameters, so that they can be 
+ * used as a key in a cache. The array queryParameters itself would otherwise 
+ * be compared by reference.
+ */
 public class ComplexParameterKey {
 
-	private Object[] queryParameters;
+	private final Object[] queryParameters;
 
-	private int hashCode;
+	private final int hashCode;
 
 	public ComplexParameterKey(Object[] queryParameters) {
 		this.queryParameters = queryParameters;
-		setHashCodeIntern();
+		hashCode = genrateHashCode();
 	}
 
 	public Object[] getQueryParameters() {
@@ -22,10 +27,10 @@ public class ComplexParameterKey {
 		return hashCode;
 	}
 
-	private void setHashCodeIntern() {
+	private int genrateHashCode() {
 		final int prime = 31;
 
-		hashCode = prime + Arrays.hashCode(queryParameters);
+		return prime + Arrays.hashCode(queryParameters);
 	}
 
 	@Override
