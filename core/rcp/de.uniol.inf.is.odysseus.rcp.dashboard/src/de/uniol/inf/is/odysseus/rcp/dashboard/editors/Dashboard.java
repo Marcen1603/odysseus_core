@@ -90,6 +90,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 		Preconditions.checkArgument(!dashboardParts.contains(partPlace), "Dashboard part placement %s already added!", partPlace);
 
 		dashboardParts.add(partPlace);
+		fireChangedEvent();
 		
 		if( dashboardComposite != null && toolBar != null ) {
 			insertDashboardPart(partPlace);

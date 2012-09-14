@@ -49,7 +49,7 @@ public class AddDashboardPartCommand extends AbstractHandler {
 		Dashboard dashboard = dashboardEditor.getDashboard();
 
 		for (IFile dashboardPartFile : dashboardParts.keySet()) {
-			DashboardPartPlacement place = new DashboardPartPlacement(dashboardParts.get(dashboardPartFile), dashboardPartFile.getFullPath().toString(), "Title", 0, 0, 200, 200);
+			DashboardPartPlacement place = new DashboardPartPlacement(dashboardParts.get(dashboardPartFile), dashboardPartFile.getFullPath().toString(), "", 0, 0, 200, 200);
 			dashboard.add(place);
 		}
 		
