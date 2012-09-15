@@ -43,16 +43,14 @@ public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? exten
 	public Boolean evaluate(T object, List<IOperatorOwner> ownerList, SDFSchema outputSchema) {
 		startPoint = object.getMetadata().getStart().getMainPoint();	
 		if(!spCache.isEmpty()) {
-			sp = spCache.getMatchingSP(startPoint);	
-		} else {
-			sp = null;
-		}	
-		if(sp != null) {
-			if(rolesChanged) {
-				getUserRoles(ownerList);
-			}
-			if(sp != null && sp.evaluate(startPoint, userRoles, (Tuple<?>)object, outputSchema)) {
-				return true;
+			sp = spCache.getMatchingSP(startPoint);		
+			if(sp != null) {
+				if(rolesChanged) {
+					getUserRoles(ownerList);
+				}
+				if(sp != null && sp.evaluate(startPoint, userRoles, (Tuple<?>)object, outputSchema)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -74,8 +72,8 @@ public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? exten
 	
 	public void addToCache(ISecurityPunctuation sp) {
 		spCache.add(sp);
-		LOG.debug("addToCache in StandardSecurityEvaluator:");
-		spCache.printCache();
+//		LOG.debug("addToCache in StandardSecurityEvaluator:");
+//		spCache.printCache();
 	}
 	
 	public ISecurityPunctuation getFromCache(Long ts) {

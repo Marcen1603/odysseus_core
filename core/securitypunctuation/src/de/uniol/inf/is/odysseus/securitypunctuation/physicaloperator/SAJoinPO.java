@@ -14,42 +14,20 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.securitypunctuation.helper.BinarySecurityPunctuationCache;
 import de.uniol.inf.is.odysseus.securitypunctuation.helper.SecurityPunctuationCache;
 
 public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>> extends JoinTIPO<K, T> {
 	
     private static Logger LOG = LoggerFactory.getLogger(SAJoinPO.class);
 
-	private SecurityPunctuationCache[] spCaches = new SecurityPunctuationCache[2];
-
-//	private Integer counter = 0;
-	
-	public SAJoinPO(IDataMergeFunction<T> dataMerge,
-			IMetadataMergeFunction<K> metadataMerge,
-			ITransferArea<T, T> transferFunction,
-			ITimeIntervalSweepArea<T>[] areas) {
-		super(dataMerge, metadataMerge, transferFunction, areas);
-		spCaches[0] = new SecurityPunctuationCache();
-		spCaches[1] = new SecurityPunctuationCache();
-	}
-
-	public SAJoinPO() {
-		super();
-		spCaches[0] = new SecurityPunctuationCache();
-		spCaches[1] = new SecurityPunctuationCache();
-	}
-
-	public SAJoinPO(SAJoinPO<K, T> join) {
-		super(join);
-		spCaches[0] = new SecurityPunctuationCache();
-		spCaches[1] = new SecurityPunctuationCache();
-	}
+	private BinarySecurityPunctuationCache spCache = new BinarySecurityPunctuationCache();
 	
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 //		this.transferSecurityPunctuation(sp);
 		if(port >= 0 && port <= 1) {
-			spCaches[port].add(sp);
+			spCache.add(sp, port);
 		}
 		//nicht transferSecurityPunctuation()!!!
 	}
@@ -57,7 +35,7 @@ public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	@Override
 	protected void process_next(T object, int port) {
 		
-		LOG.debug("process_next: " + object + " - Port: " + port);
+		LOG.debug("process_next - Port: " + port + " - Objekt: " + object);
 		
 //		if(counter++ >= 20) {
 //			System.out.println("");
@@ -110,19 +88,32 @@ public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			T next = qualifies.next();
 			
 			//Beide SP mergen!
-			ISecurityPunctuation sp = spCaches[port].getMatchingSP(object.getMetadata().getStart().getMainPoint());
-			ISecurityPunctuation otherSP = spCaches[otherport].getMatchingSP(next.getMetadata().getStart().getMainPoint());
+			ISecurityPunctuation sp = spCache.getMatchingSP(object.getMetadata().getStart().getMainPoint(), port);
+			ISecurityPunctuation otherSP = spCache.getMatchingSP(next.getMetadata().getStart().getMainPoint(), otherport);
 			if(sp != null && otherSP != null) {
+				
+				LOG.debug("sp != null && otherSP != null");
+				
 				ISecurityPunctuation newSP = sp.intersect(otherSP);
 				if(newSP != null && !newSP.isEmpty()) {
 					T newElement = merge(object, next, order);			
 					transferFunction.transfer(newElement);
+					
+					LOG.debug("transferFunction.transfer(newElement): " + newElement);
+					
 					transferSecurityPunctuation(newSP);
-				}		
+				} else {
+					if(newSP.isEmpty()) {
+						LOG.debug("NewSP is empty!!!");
+					}
+				}
 			}	
 		}
+		
 		// Wann können SP gelöscht werden???
-//		spCaches[otherport].cleanCache(object.getMetadata().getStart().getMainPoint());
+		if(transferFunction.getMinTs() != null) {
+			spCache.cleanCache(transferFunction.getMinTs().getMainPoint(), port);
+		}
 	}
 	
 	@Override

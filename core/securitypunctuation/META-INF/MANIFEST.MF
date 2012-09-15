@@ -13,6 +13,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.physicaloperator.event,
  de.uniol.inf.is.odysseus.core.server.physicaloperator.sa,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator.sink,
  de.uniol.inf.is.odysseus.core.server.planmanagement,
  de.uniol.inf.is.odysseus.core.server.planmanagement.configuration,
  de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration,
@@ -24,6 +25,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.interval.transform.join,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.predicate,
+ de.uniol.inf.is.odysseus.latency.logicaloperator,
  de.uniol.inf.is.odysseus.parser.pql.relational,
  de.uniol.inf.is.odysseus.persistentqueries,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
@@ -38,5 +40,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
 Export-Package: de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
-Service-Component: OSGI-INF/*, OSGI-INF/SecurityPunctuationBenchmarQueryBuildConfiguration.xml
+Service-Component: OSGI-INF/*
 

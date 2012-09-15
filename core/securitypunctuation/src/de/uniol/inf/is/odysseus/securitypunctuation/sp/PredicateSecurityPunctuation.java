@@ -75,8 +75,8 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 
 	@Override
-	public ISecurityPunctuation union(ISecurityPunctuation sp2) {	
-		return null;		
+	public ISecurityPunctuation union(ISecurityPunctuation sp2) {
+		return null;
 	}
 	@Override
 	public ISecurityPunctuation intersect(ISecurityPunctuation sp2) {	

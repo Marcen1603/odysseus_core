@@ -14,13 +14,28 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 	private String spType;
 	private Integer delay;
 	private String name;
+	private Integer counter = 0;
+	private boolean benchmark;
+	private Float spProbability;
 	
-	public SecurityPunctuationProvider(Boolean spActivated, String spType, Integer delay, String name) {
+	/**
+	 * Neuer SecurityPunctuationProvider, der zufällige Datentupel und SP erzeugt.
+	 * 
+	 * @param spActivated 		true: Stream beinhaltet SP; false: Stream beinhaltet keine SP
+	 * @param spType			Type der SP, die erzeugt werden (z.B. attribute)
+	 * @param delay				Verzögerung zwischen dem Senden zweier Tupel
+	 * @param name				Name des Stream
+	 * @param benchmark			true: Senden wird nach bestimmter Anzahl von Tupel automatsch angehalten
+	 * @param spProbability		Wahrscheinlichkeit mit der ein SP statt eines Datentupel gesendet wird
+	 */
+	public SecurityPunctuationProvider(Boolean spActivated, String spType, Integer delay, String name, boolean benchmark, Float spProbability) {
 		super();
 		this.spActivated = spActivated;
 		this.spType = spType;
 		this.delay = delay;
 		this.name = name;
+		this.benchmark = benchmark;
+		this.spProbability = spProbability;
 	}
 	
 	@Override
@@ -34,33 +49,36 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 
 	@Override
 	public List<DataTuple> next() {
-		List<DataTuple> list = new ArrayList<DataTuple>();
-		if(spActivated) {
-			if(Math.random() > 0.2) {
-				list.add(generateDataTuple());
-			} else {
-				if(spType.equals("attribute")) {
-					list.add(generateAttributeSP());
+		if(!benchmark || counter++ < 50000) {
+			List<DataTuple> list = new ArrayList<DataTuple>();
+			if(spActivated) {
+				if(Math.random() > spProbability) {
+					list.add(generateDataTuple());
 				} else {
-					list.add(generatePredicateSP());
+					if(spType.equals("attribute")) {
+						list.add(generateAttributeSP());
+					} else {
+						list.add(generatePredicateSP());
+					}
 				}
+			} else {
+				list.add(generateDataTuple());
 			}
-		} else {
-			list.add(generateDataTuple());
+			
+			try {
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.out.println("next Tuple from " + name + ": " + list.get(0).getAttributes());
+			return list;
 		}
-		
-		try {
-			Thread.sleep(delay);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println("next Tuple from " + name + ": " + list.get(0).getAttributes());
-		return list;
+		return null;
 	}
 
 	@Override
 	public StreamClientHandler clone() {
-		return new SecurityPunctuationProvider(spActivated, spType, delay, name);
+		return new SecurityPunctuationProvider(spActivated, spType, delay, name, benchmark, spProbability);
 	}
 	
 	private SADataTuple generateDataTuple() {
@@ -79,7 +97,7 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		// Security Punctuation Flag
 //		tuple.addAttribute("SecurityPunctuation");
 		// DDP - Stream (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
-		tuple.addAttribute("Stream, Test, Test2");
+		tuple.addAttribute("stream1, stream2, stream3, stream4, stream5");
 		// DDP - Starttupel (-1 bedeutet keine Beschränkung)
 //		tuple.addAttribute(new Long(counterTS));
 		tuple.addAttribute(new Long(-1));

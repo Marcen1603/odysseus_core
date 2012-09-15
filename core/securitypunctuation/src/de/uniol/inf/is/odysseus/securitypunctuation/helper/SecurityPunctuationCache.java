@@ -1,11 +1,15 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.helper;
 
 import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 	
-//    private static Logger LOG = LoggerFactory.getLogger(SecurityPunctuationCache.class);
+    private static Logger LOG = LoggerFactory.getLogger(SecurityPunctuationCache.class);
 	
 	private static final long serialVersionUID = 4167234327602968536L;
 
@@ -39,8 +43,8 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 		// SP kann herausgeschmissen werden, wenn neuere SP angekommen ist und der ts des aktuellen Datentupels bereits für die neue SP gültig ist.
 		if(this.size() > 0) {
 			for(int i = this.size() - 1; i >= 0; i--) {
-				if((this.get(i).getLongAttribute("ts")) <= ts) {
-					this.removeRange(0, i+1);
+				if((this.get(i).getLongAttribute("ts")) < ts) {
+					this.removeRange(0, i);
 					return;
 				}
 			}
@@ -57,22 +61,21 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 		if(!this.isEmpty()) {
 			ISecurityPunctuation newSP = this.get(this.size() - 1).processSP(sp);
 			if(newSP != null) {
-				boolean temp = super.add(newSP);
-				if(temp) {
+				if(super.add(newSP)) {
 					this.remove(this.size()-2);
 				}
-				printCache();
-				return temp;
+//				printCache();
+				return false;
 			}
 		}
 		boolean temp = super.add(sp);
-		printCache();
+//		printCache();
 		return temp;
 	}
 
 	public void printCache() {
 //		for(ISecurityPunctuation sp:this) {
-//			LOG.debug("SP: " + sp.getLongAttribute("ts"));
+//			LOG.debug("SP: " + sp.getLongAttribute("ts") + sp.getIntegerAttribute("sign"));
 //		}
 	}
 }

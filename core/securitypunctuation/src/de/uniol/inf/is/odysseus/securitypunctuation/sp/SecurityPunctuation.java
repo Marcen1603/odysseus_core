@@ -100,6 +100,9 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 			return false;
 		}			
 		if(this.getStringArrayListAttribute("role").isEmpty()) {
+			return false;
+		}
+		if(this.getStringArrayListAttribute("role").size() == 1 && this.getStringArrayListAttribute("role").get(0).equals("*")) {
 			return true;
 		}
 		for(String role:(this.getStringArrayListAttribute("role"))) {
@@ -125,6 +128,9 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 				return false;
 			}
 			if((this.getStringArrayListAttribute("attributeNames")).isEmpty()) {
+				return false;
+			}
+			if((this.getStringArrayListAttribute("attributeNames")).size() == 1 && this.getStringArrayListAttribute("attributeNames").get(0).equals("*")) {
 				return true;
 			}
 			
@@ -160,24 +166,28 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 			return false;
 		}
 		if((this.getStringArrayListAttribute("streamname")).isEmpty()) {
+			return false;
+		}
+		if((this.getStringArrayListAttribute("streamname")).size() == 1 && this.getStringArrayListAttribute("streamname").get(0).equals("*")) {
 			return true;
-		}
-		//Checken, ob in schema mehrere Streamnamen "gemerged" sind (Diese sind dann mit Komma voneinander getrennt)
-		String[] streamsInSchemaArray = null;
-		if(schema.getURI().contains(",")) {
-			streamsInSchemaArray = schema.getURI().split(",");
-		} else {
-			streamsInSchemaArray = new String[1];
-			streamsInSchemaArray[0] = schema.getURI();
-		}
+		}		
 		
-		for(String stream:this.getStringArrayListAttribute("streamname")) {
-			for(String streamInSchema:streamsInSchemaArray) {
-				if(streamInSchema.equals(stream)) {
-					return true;
-				}
+		//es reicht nicht, wenn zugriff auf einen stream vorhanden war! auf beide!
+		for(String baseSourceName:schema.getBaseSourceNames()) {
+			if(this.getStringArrayListAttribute("streamname").contains(baseSourceName)) {
+				return true;
 			}
 		}
+//		for(String stream:this.getStringArrayListAttribute("streamname")) {
+//			if(schema.getBaseSourceNames().contains(stream)) { 
+//				return true;
+//			}
+//			for(String baseSourceName:schema.getBaseSourceNames()) {
+//				if(baseSourceName.equals(stream)) {
+//					return true;
+//				}
+//			}
+//		}
 		return false;
 	}
 
@@ -248,11 +258,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 				
 				newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
 				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung möglich sein.
-				if(this.getLongAttribute("ts") == sp2.getLongAttribute("ts")) {
-					newSP.setAttribute("ts", this.getLongAttribute("ts")); //Egal welcher genommen wird.
-				} else {
-					newSP.setAttribute("ts", sp2.getLongAttribute("ts")); //richtig so????
-				}
+				newSP.setAttribute("ts", sp2.getLongAttribute("ts")); 
 				return newSP;
 			} else if(sp2.getIntegerAttribute("sign") == 0){
 				newSP.minusStringArrayList(newSP.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
@@ -273,12 +279,9 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 				newSP.minusStringArrayList(newSP.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
 
 				newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
-				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung möglich sein.
-				if(this.getLongAttribute("ts") == sp2.getLongAttribute("ts")) {
-					newSP.setAttribute("ts", this.getLongAttribute("ts")); //Egal welcher genommen wird.
-				} else {
-					newSP.setAttribute("ts", sp2.getLongAttribute("ts")); //richtig so????
-				}
+				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung möglich sein
+				newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
+				return newSP;
 			}
 		}
 		return null;
@@ -320,11 +323,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 
 				newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
 				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung möglich sein.
-				if(this.getLongAttribute("ts") == sp2.getLongAttribute("ts")) {
-					newSP.setAttribute("ts", this.getLongAttribute("ts")); //Egal welcher genommen wird.
-				} else {
-					newSP.setAttribute("ts", sp2.getLongAttribute("ts")); //richtig so????
-				}
+				newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
 				return newSP;
 //			}
 		}
@@ -385,8 +384,12 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	public Boolean isEmpty() {
 		if(isEmpty == null) {
 			// isEmpty überprüfen!!!
+			isEmpty = this.getStringArrayListAttribute("attributeNames").isEmpty()
+						&& this.getStringArrayListAttribute("streamname").isEmpty()
+						&& this.getStringArrayListAttribute("role").isEmpty()
+						&& this.getLongAttribute("tupleStartTS") == -1
+						&& this.getLongAttribute("tupleEndTS") == -1;
 		} 
-//		return isEmpty;
-		return false;
+		return isEmpty;
 	}
 }

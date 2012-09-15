@@ -80,10 +80,10 @@ public class SARelationalProjectPO<T extends IMetaAttributeContainer<? extends I
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		if(projectSPEvaluate(sp)) {
-			System.out.println("send SP in ProjectPO");
+//			System.out.println("send SP in ProjectPO");
 			this.transferSecurityPunctuation(sp);
 		} else {
-			System.out.println("send NO SP in ProjectPO");
+//			System.out.println("send NO SP in ProjectPO");
 		}
 	}
 	

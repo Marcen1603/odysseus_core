@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -31,8 +32,14 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	private static final long serialVersionUID = 5218658682722448980L;
 
+	/**
+	 * contains the names of all real sources
+	 */
+	private List<String> baseSourceNames = new ArrayList<String>();
+	
 	protected SDFSchema(String URI) {
 		super(URI);
+		baseSourceNames.add(URI);
 	}
 
 	/**
@@ -40,6 +47,9 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	 */
 	public SDFSchema(String uri, SDFSchema attributes1) {
 		super(uri, attributes1);
+		if(attributes1.getBaseSourceNames() != null) {
+			baseSourceNames.addAll(attributes1.getBaseSourceNames());
+		}
 	}
 
 	public SDFSchema(String uri, SDFAttribute attribute,
@@ -49,10 +59,12 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		for (SDFAttribute a : attributes1) {
 			elements.add(a);
 		}
+		baseSourceNames.add(uri);
 	}
 
 	public SDFSchema(String uri, Collection<SDFAttribute> attributes1) {
 		super(uri, attributes1);
+		baseSourceNames.add(uri);
 	}
 
 	@Override
@@ -66,6 +78,16 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	public List<SDFAttribute> getAttributes() {
 		return Collections.unmodifiableList(elements);
+	}
+
+	private void addBaseSourceNames(Collection<String> baseSourceNames) {
+		if(baseSourceNames != null) {
+			this.baseSourceNames.addAll(baseSourceNames);
+		}
+	}
+
+	public List<String> getBaseSourceNames() {
+		return Collections.unmodifiableList(baseSourceNames);
 	}
 
 	public SDFAttribute findAttribute(String attributeName) {
@@ -161,6 +183,9 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		}
 		String name = getNewName(attributes1, attributes2);
 		SDFSchema newSet = new SDFSchema(name, attributes1);
+		
+		newSet.addBaseSourceNames(attributes2.getBaseSourceNames());
+		
 		for (int i = 0; i < attributes2.size(); i++) {
 			if (!newSet.contains(attributes2.getAttribute(i))) {
 				newSet.elements.add(attributes2.getAttribute(i));
