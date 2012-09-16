@@ -85,8 +85,9 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		SADataTuple tuple = new SADataTuple(false);
 		//Hier schon TS einbauen!!!
 		tuple.addAttribute(new Long(counterTS++));
-//		tuple.addAttribute(new Integer(55));
-		tuple.addAttribute(new Integer((int) Math.round((Math.random() * 100))));
+		tuple.addAttribute(new Long(counterTS + 9));
+//		tuple.addAttribute(new Long(counterTS * (Math.round(Math.random() + 1)) + 1));
+//		tuple.addAttribute(new Integer((int) Math.round((Math.random() * 100))));
 		tuple.addAttribute("beispiel text");
 		tuple.addAttribute(new Integer(76));
 		return tuple;

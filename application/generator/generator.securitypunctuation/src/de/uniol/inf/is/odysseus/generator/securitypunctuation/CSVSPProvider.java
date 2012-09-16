@@ -25,12 +25,14 @@ public class CSVSPProvider extends StreamClientHandler {
 		private boolean benchmark;
 		private Integer counter = 0;
 		private Integer delay;
+		private String name;
 		
-		public CSVSPProvider(String fileName, Integer delay, boolean benchmark) {
+		public CSVSPProvider(String fileName, Integer delay, String name, boolean benchmark) {
 			super();
 			this.fileName = fileName;
 			this.delay = delay;
 			this.benchmark = benchmark;
+			this.name = name;
 		}
 		@Override
 		public void init() {
@@ -49,40 +51,41 @@ public class CSVSPProvider extends StreamClientHandler {
 				String line;
 				try {
 					line = in.readLine();
-					if (line == null) {
-						System.out.println("restarting stream...");
+//					if (line == null) {
+//						System.out.println("restarting stream...");
 	//					restart data
-						in.close();
-						initFileStream();
-						line = in.readLine();
-					}
+//						in.close();
+//						initFileStream();
+//						line = in.readLine();
+//					}
 					String[] rawTuple = line.split(";");
 	
 					if(rawTuple[0].equals("SP")) {
 						tuple = new SADataTuple(true);
 						
-						tuple.addAttribute(rawTuple[1]); // DDP - Stream
-						tuple.addAttribute(new Long(rawTuple[2])); // DDP - Starttupel
-						tuple.addAttribute(new Long(rawTuple[3])); // DDP - Endtupel
-						tuple.addAttribute(rawTuple[4]); // DDP - Attribute
-						tuple.addAttribute(rawTuple[5]); // SRP - Rollen
-						tuple.addAttribute(new Integer(rawTuple[6])); // Sign
-						tuple.addAttribute(new Integer(rawTuple[7])); // Immutable
-						tuple.addAttribute(new Long(rawTuple[8])); // ts
+						tuple.addAttribute(rawTuple[2]); // DDP - Stream
+						tuple.addAttribute(new Long(rawTuple[3])); // DDP - Starttupel
+						tuple.addAttribute(new Long(rawTuple[4])); // DDP - Endtupel
+						tuple.addAttribute(rawTuple[5]); // DDP - Attribute
+						tuple.addAttribute(rawTuple[6]); // SRP - Rollen
+						tuple.addAttribute(new Integer(rawTuple[7])); // Sign
+						tuple.addAttribute(new Integer(rawTuple[8])); // Immutable
+						tuple.addAttribute(new Long(rawTuple[1])); // ts
 					} else {
 						tuple = new SADataTuple(false);
 
-						tuple.addAttribute(new Long(rawTuple[8])); // ts
-						tuple.addAttribute(new Integer(rawTuple[1])); // Sign
-						tuple.addAttribute(rawTuple[2]); // DDP - Attribute
-						tuple.addAttribute(new Integer(rawTuple[3])); // Immutable
+						tuple.addAttribute(new Long(rawTuple[1])); // startTS
+						tuple.addAttribute(new Long(rawTuple[2])); // endTS
+						tuple.addAttribute(rawTuple[3]); // DDP - Attribute
+						tuple.addAttribute(new Integer(rawTuple[4])); // Immutable
 					}
 					try {
 						Thread.sleep(delay);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					System.out.println(line);
+//					System.out.println(line);
+					System.out.println("next Tuple from " + name + ": " + line);
 					List<DataTuple> list = new ArrayList<DataTuple>();
 					list.add(tuple);
 					return list;
@@ -96,7 +99,7 @@ public class CSVSPProvider extends StreamClientHandler {
 
 		@Override
 		public StreamClientHandler clone() {
-			return new CSVSPProvider(fileName, delay, benchmark);
+			return new CSVSPProvider(fileName, delay, name, benchmark);
 		}
 
 		private void initFileStream(){

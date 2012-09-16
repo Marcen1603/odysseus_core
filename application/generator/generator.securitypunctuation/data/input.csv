@@ -1,12 +1,11 @@
 flag;stream;starttupel;endtupel;attribute;rollen;sign;mutable;ts
-SP;Test,SP,Stream;1;15;;sys_admin;1;1;0
-SP;Test,Streah,Stream;1;13;Attribut1,Attribut2,id;sys_admin, chef;1;1;0
-Data;asdfc;33;1111;ferd;;;;1
-Data;hnfrb;33;1111;ferd;;;;2
-SP;Test,SP,Stream;3;15;Attribut1,Attribut2,id;sys_admin;1;1;3
-SP;Test,Streah;6;13;id;sys_admin, chef;0;2;4
-Data;abcd;12;11;ferd;;;;5
-Data;efgh;55;23;ferd;;;;6
-Data;abcd;83;21;ferd;;;;7
-Data;efgh;22;33;df;;;;8
-Data;abcd;1;86;sdfsdf;;;;9
+SP;0;autoverkehr,fahrradverkehr;-1;-1;*;*;1;1
+Data;1;6;Oldenburg;34;;;;
+Data;2;7;Oldenburg;1111;;;;
+Data;3;8;Oldenburg;222;;;;
+Data;4;9;Oldenburg;123;;;;
+Data;5;10;Oldenburg;55;;;;
+Data;15;25;Oldenburg;1;;;;
+Data;16;26;Oldenburg;0;;;;
+Data;18;28;Oldenburg;45;;;;
+Data;22;32;Oldenburg;22;;;;

@@ -225,7 +225,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	@Override
 	public ISecurityPunctuation union(ISecurityPunctuation sp2) {
 		
-		LOG.debug("union in SP - TS: " + this.getLongAttribute("ts"));
+//		LOG.debug("union in SP - TS: " + this.getLongAttribute("ts"));
 		
 		if(sp2 instanceof SecurityPunctuation) {
 			
@@ -258,7 +258,9 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 				
 				newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
 				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung möglich sein.
-				newSP.setAttribute("ts", sp2.getLongAttribute("ts")); 
+				if(sp2.getLongAttribute("ts") > newSP.getLongAttribute("ts")) {
+					newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
+				} 
 				return newSP;
 			} else if(sp2.getIntegerAttribute("sign") == 0){
 				newSP.minusStringArrayList(newSP.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
@@ -280,7 +282,9 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 
 				newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
 				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung möglich sein
-				newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
+				if(sp2.getLongAttribute("ts") > newSP.getLongAttribute("ts")) {
+					newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
+				} 
 				return newSP;
 			}
 		}
@@ -293,7 +297,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	@Override 
 	public ISecurityPunctuation intersect(ISecurityPunctuation sp2) {
 		
-		LOG.debug("intersect in SP - TS: " + this.getLongAttribute("ts"));
+//		LOG.debug("intersect in SP - TS: " + this.getLongAttribute("ts"));
 		
 		if(sp2 instanceof SecurityPunctuation) {
 			// intersect gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen und mutable sind
@@ -323,7 +327,9 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 
 				newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
 				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung möglich sein.
-				newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
+				if(sp2.getLongAttribute("ts") > newSP.getLongAttribute("ts")) {
+					newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
+				} 
 				return newSP;
 //			}
 		}

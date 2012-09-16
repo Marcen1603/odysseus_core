@@ -74,8 +74,8 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 	}
 
 	public void printCache() {
-//		for(ISecurityPunctuation sp:this) {
-//			LOG.debug("SP: " + sp.getLongAttribute("ts") + sp.getIntegerAttribute("sign"));
-//		}
+		for(ISecurityPunctuation sp:this) {
+			LOG.debug("SP: " + sp.getLongAttribute("ts") + sp.getIntegerAttribute("sign"));
+		}
 	}
 }

@@ -29,4 +29,13 @@ public class BinarySecurityPunctuationCache {
 //		LOG.debug("cleanCache - size: " + spCache[port].size());
 		spCache[port].cleanCache(ts);
 	}
+	
+	public Integer size(int port) {
+		return spCache[port].size();
+	}
+	
+	public void printCache() {
+		spCache[0].printCache();
+		spCache[1].printCache();
+	}
 }

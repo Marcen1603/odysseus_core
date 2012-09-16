@@ -46,7 +46,7 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		
-		LOG.debug("SecurityShieldPO: " + sp);
+//		LOG.debug("SecurityShieldPO: " + sp);
 		
 		evaluator.addToCache(sp);
 //		evaluator.createPredicates(sp, this.getOwner(), this.getOutputSchema());
