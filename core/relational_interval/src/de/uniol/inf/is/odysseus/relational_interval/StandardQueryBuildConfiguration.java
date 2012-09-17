@@ -65,7 +65,7 @@ public class StandardQueryBuildConfiguration extends
 
 	@Override
 	public String getName() {
-		return "KeyValue";
+		return "Standard";
 	}
 	
 	@Override
