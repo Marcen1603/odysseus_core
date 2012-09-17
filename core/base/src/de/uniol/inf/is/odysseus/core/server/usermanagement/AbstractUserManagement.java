@@ -40,7 +40,7 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 		implements IUserManagement {
 
 	Logger logger = LoggerFactory.getLogger(AbstractUserManagement.class);
-	
+
 	private final List<IUserManagementListener> listener = new CopyOnWriteArrayList<IUserManagementListener>();
 
 	private final SessionStore sessionStore = SessionStore.getInstance();
@@ -48,10 +48,11 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #changePassword(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User,
-	 * byte[], de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #changePassword(de.uniol.inf.is.odysseus.core.server
+	 * .usermanagement.domain.User, byte[],
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
 	public void changePassword(final IUser user, final byte[] password,
@@ -68,15 +69,16 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	}
 
 	protected abstract IGenericDAO<USER, String> getUserDAO();
-    protected abstract IGenericDAO<ROLE, String> getRoleDAO();
-    protected abstract IGenericDAO<PRIVILEGE, String> getPrivilegeDAO();
 
-        /*
+	protected abstract IGenericDAO<ROLE, String> getRoleDAO();
+
+	protected abstract IGenericDAO<PRIVILEGE, String> getPrivilegeDAO();
+
+	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #createRole(java.lang.String,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService #createRole(java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -96,9 +98,8 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #createUser(java.lang.String,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService #createUser(java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -113,10 +114,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				this.getUserDAO().create(user);
 				fireUserChangedEvent();
 				return user;
-			} 
+			}
 			throw new UsernameAlreadyUsedException("name");
-		} 
-		
+		}
+
 		throw new PermissionException("Not right to create user");
 	}
 
@@ -125,9 +126,8 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #findRole(java.lang.String,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService #findRole(java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -136,12 +136,18 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 		return role;
 	}
 
+	@Override
+	public boolean hasRole(String name, String rolename) {
+		final USER user = this.getUserDAO().findByName(name);
+		final ROLE role = this.getRoleDAO().findByName(rolename);
+		return user.hasRole(role);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #getRole(java.lang.String,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService #getRole(java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -153,9 +159,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #getRoles(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #getRoles(de.uniol.inf.is.odysseus.core.server.usermanagement
+	 * .domain.Session)
 	 */
 	@Override
 	public List<? extends IRole> getRoles(final ISession caller) {
@@ -172,9 +179,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #activateUser(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #activateUser(de.uniol.inf.is.odysseus.core.server.usermanagement
+	 * .domain.User,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -191,9 +199,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #deactivateUser(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #deactivateUser(de.uniol.inf.is.odysseus.core.server
+	 * .usermanagement.domain.User,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -212,9 +221,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #deleteUser(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #deleteUser(de.uniol.inf.is.odysseus.core.server.usermanagement
+	 * .domain.User,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -230,9 +240,8 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #findUser(java.lang.String,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService #findUser(java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -244,9 +253,8 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #getUser(java.lang.String,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService #getUser(java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -258,9 +266,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #getUsers(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #getUsers(de.uniol.inf.is.odysseus.core.server.usermanagement
+	 * .domain.Session)
 	 */
 	@Override
 	public List<? extends IUser> getUsers(final ISession caller) {
@@ -277,9 +286,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #grantRole(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #grantRole(de.uniol.inf.is.odysseus.core.server.usermanagement
+	 * .domain.User,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Role,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
@@ -299,9 +309,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #revokeRole(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #revokeRole(de.uniol.inf.is.odysseus.core.server.usermanagement
+	 * .domain.User,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Role,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
@@ -321,11 +332,13 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #grantPermission(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #grantPermission(de.uniol.inf.is.odysseus.core.server
+	 * .usermanagement.domain.User,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Permission,
-	 * java.lang.String, de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
+	 * java.lang.String,
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
 	public void grantPermission(final IUser user, final IPermission permission,
@@ -338,10 +351,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #grantPermissions(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User,
-	 * java.util.Set, java.lang.String,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #grantPermissions(de.uniol.inf.is.odysseus.core.server
+	 * .usermanagement.domain.User, java.util.Set, java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -353,8 +366,8 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 			boolean create = true;
 			for (final IPrivilege privilege : user.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
-					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO()
-							.find(privilege.getId());
+					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO().find(
+							privilege.getId());
 					if (tmpPrivilege != null) {
 						create = false;
 						for (final IPermission permission : permissions) {
@@ -384,11 +397,13 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #grantPermission(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Role,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #grantPermission(de.uniol.inf.is.odysseus.core.server
+	 * .usermanagement.domain.Role,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Permission,
-	 * java.lang.String, de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
+	 * java.lang.String,
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
 	public void grantPermission(final IRole role, final IPermission permission,
@@ -401,10 +416,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #grantPermissions(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Role,
-	 * java.util.Set, java.lang.String,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #grantPermissions(de.uniol.inf.is.odysseus.core.server
+	 * .usermanagement.domain.Role, java.util.Set, java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -416,8 +431,8 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 			boolean create = true;
 			for (final IPrivilege privilege : role.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
-					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO()
-							.find(privilege.getId());
+					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO().find(
+							privilege.getId());
 					if (tmpPrivilege != null) {
 						create = false;
 						for (final IPermission permission : permissions) {
@@ -445,11 +460,13 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #revokePermission(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #revokePermission(de.uniol.inf.is.odysseus.core.server
+	 * .usermanagement.domain.User,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Permission,
-	 * java.lang.String, de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
+	 * java.lang.String,
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
 	public void revokePermission(final IUser user,
@@ -463,10 +480,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #revokePermissions(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User,
-	 * java.util.Set, java.lang.String,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #revokePermissions(de.uniol.inf.is.odysseus.core.server
+	 * .usermanagement.domain.User, java.util.Set, java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -477,8 +494,8 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				UserManagementPermission.objectUri)) {
 			for (final IPrivilege privilege : user.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
-					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO()
-							.find(privilege.getId());
+					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO().find(
+							privilege.getId());
 					if (tmpPrivilege != null) {
 						for (final IPermission permission : permissions) {
 							tmpPrivilege.removePermission(permission);
@@ -494,11 +511,13 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #revokePermission(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Role,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #revokePermission(de.uniol.inf.is.odysseus.core.server
+	 * .usermanagement.domain.Role,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Permission,
-	 * java.lang.String, de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
+	 * java.lang.String,
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
 	public void revokePermission(final IRole role,
@@ -512,10 +531,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #revokePermissions(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Role,
-	 * java.util.Set, java.lang.String,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #revokePermissions(de.uniol.inf.is.odysseus.core.server
+	 * .usermanagement.domain.Role, java.util.Set, java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override
@@ -526,8 +545,8 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				UserManagementPermission.objectUri)) {
 			for (final IPrivilege privilege : role.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
-					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO()
-							.find(privilege.getId());
+					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO().find(
+							privilege.getId());
 					if (tmpPrivilege != null) {
 						for (final IPermission permission : permissions) {
 							tmpPrivilege.removePermission(permission);
@@ -578,9 +597,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.UsermanagementService
-	 * #deleteRole(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Role,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * UsermanagementService
+	 * #deleteRole(de.uniol.inf.is.odysseus.core.server.usermanagement
+	 * .domain.Role,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override

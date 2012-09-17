@@ -47,6 +47,7 @@ public interface IUser extends IAbstractEntity, Principal, Comparable<IUser>, Se
 	
 	public void addRole(IRole role);
 	public void removeRole(IRole role);
+	public boolean hasRole(IRole role);
 
 	/**
 	 * @return The privileges of the user

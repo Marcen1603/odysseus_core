@@ -47,6 +47,14 @@ public interface IUserManagement {
      * @return
      */
     IRole findRole(String name, ISession caller);
+    
+    /**
+     * Test if a user has a role
+     * @param name
+     * @param role
+     * @return
+     */
+    boolean hasRole(String name, String role);
 
     /**
      * @param roleId

@@ -101,6 +101,12 @@ public class WsClientUser implements IUser {
 	}
 
 	@Override
+	public boolean hasRole(IRole role) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
 	public void addRole(IRole role) {
 		// TODO Auto-generated method stub
 

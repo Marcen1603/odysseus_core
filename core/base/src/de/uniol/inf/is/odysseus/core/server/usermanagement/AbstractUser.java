@@ -125,6 +125,14 @@ public abstract class AbstractUser implements IUser, Serializable {
 		return this.roles;
 	}
 
+	@Override
+	public boolean hasRole(IRole role) {
+		if (role !=null){
+			return roles.contains(role);
+		}
+		return false;
+	}
+	
 	/**
 	 * @param roles
 	 *            The roles to set.
@@ -133,7 +141,7 @@ public abstract class AbstractUser implements IUser, Serializable {
 		this.roles.clear();
 		this.roles.addAll(roles);
 	}
-
+	
 	/**
 	 * @param role
 	 */
