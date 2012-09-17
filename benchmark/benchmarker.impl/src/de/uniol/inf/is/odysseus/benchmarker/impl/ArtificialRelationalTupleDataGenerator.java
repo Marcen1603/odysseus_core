@@ -19,7 +19,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.Random;
 
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**

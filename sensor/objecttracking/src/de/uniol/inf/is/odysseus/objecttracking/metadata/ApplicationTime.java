@@ -18,9 +18,9 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
 public class ApplicationTime implements IApplicationTime{
 

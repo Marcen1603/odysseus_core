@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 /**
  * @author Jonas Jacobi

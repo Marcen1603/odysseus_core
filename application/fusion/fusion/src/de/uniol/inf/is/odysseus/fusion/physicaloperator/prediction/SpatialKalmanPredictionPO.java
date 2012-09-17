@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.fusion.metadata.IFusionProbability;
 import de.uniol.inf.is.odysseus.fusion.store.context.FusionContextStore;

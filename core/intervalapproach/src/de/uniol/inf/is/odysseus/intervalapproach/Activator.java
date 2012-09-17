@@ -18,7 +18,8 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 
 public class Activator implements BundleActivator {

@@ -41,7 +41,7 @@ import java.util.Random;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.mining.distance.EuclidianDistance;
 import de.uniol.inf.is.odysseus.mining.distance.IDistance;
 

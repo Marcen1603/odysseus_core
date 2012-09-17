@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 public class RelationalCreator<R extends IMetaAttributeContainer<?>> extends AbstractComplexEventFactory<R,Tuple<? extends ITimeInterval>> {
 

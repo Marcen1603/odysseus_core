@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.securitypunctuation.helper.SecurityPunctuationCache;
 

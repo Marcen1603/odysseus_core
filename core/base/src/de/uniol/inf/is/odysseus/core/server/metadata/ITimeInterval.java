@@ -15,19 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-
-
-
 /**
- * @author Jonas Jacobi
+ * 
+ * @deprecated de.uniol.inf.is.odysseus.core.metadata.TimeInterval
+ * 
  */
-public interface ITimeInterval extends IMetaAttribute, Comparable<ITimeInterval>{
-	public PointInTime getStart();
-	public PointInTime getEnd();
-	public void setStart(PointInTime point);
-	public void setEnd(PointInTime point);
-	public void setStartAndEnd(PointInTime start, PointInTime end);
-	public String toString(PointInTime baseTime);
+@Deprecated
+public interface ITimeInterval extends de.uniol.inf.is.odysseus.core.metadata.ITimeInterval{
+	
 }

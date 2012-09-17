@@ -15,8 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.interval_latency;
 
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
 /**

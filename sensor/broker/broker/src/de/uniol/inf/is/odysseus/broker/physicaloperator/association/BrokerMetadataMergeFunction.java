@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.broker.physicaloperator.association;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 /**
  * The BrokerMetadataMergeFunction merges two {@link ITimeInterval}. 

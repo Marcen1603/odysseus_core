@@ -20,12 +20,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;

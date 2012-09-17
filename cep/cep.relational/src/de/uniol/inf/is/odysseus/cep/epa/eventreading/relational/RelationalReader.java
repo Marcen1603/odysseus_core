@@ -20,7 +20,7 @@ import java.util.HashMap;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class RelationalReader extends AbstractEventReader<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> {

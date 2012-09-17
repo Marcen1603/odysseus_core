@@ -37,7 +37,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
 import de.uniol.inf.is.odysseus.context.IContextManagementListener;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**

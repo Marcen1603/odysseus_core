@@ -21,7 +21,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 public class SlidingElementWindowTIPO<T extends IMetaAttributeContainer<ITimeInterval>>
 		extends AbstractWindowTIPO<T> {

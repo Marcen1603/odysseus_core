@@ -13,28 +13,21 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.broker.metadata;
+package de.uniol.inf.is.odysseus.core.metadata;
 
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+
+
 
 /**
- * The BrokerMetadata implements a default {@link IBrokerInterval}.
- * 
- * @author Dennis Geesen
+ * @author Jonas Jacobi
  */
-public class BrokerMetadata extends TimeInterval implements IBrokerInterval {
-
-	
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 9106037522259783069L;
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.intervalapproach.TimeInterval#clone()
-	 */
-	@Override
-	public BrokerMetadata clone(){
-		BrokerMetadata clone = new BrokerMetadata();		
-		return clone;
-	}
-	
+public interface ITimeInterval extends IMetaAttribute, Comparable<ITimeInterval>{
+	public PointInTime getStart();
+	public PointInTime getEnd();
+	public void setStart(PointInTime point);
+	public void setEnd(PointInTime point);
+	public void setStartAndEnd(PointInTime start, PointInTime end);
+	public String toString(PointInTime baseTime);
 }

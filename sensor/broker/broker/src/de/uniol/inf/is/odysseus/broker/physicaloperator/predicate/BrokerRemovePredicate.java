@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.broker.physicaloperator.predicate;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 
 /**

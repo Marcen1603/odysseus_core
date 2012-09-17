@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator.predicate;
 import java.util.Comparator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class AttributeTimeIntervalComparator<T extends IClone> implements Comparator<Tuple<ITimeInterval>>{

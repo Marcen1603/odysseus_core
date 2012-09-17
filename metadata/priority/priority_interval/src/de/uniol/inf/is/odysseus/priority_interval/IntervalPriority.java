@@ -15,7 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.priority_interval;
 
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class IntervalPriority extends TimeInterval implements IPriority {

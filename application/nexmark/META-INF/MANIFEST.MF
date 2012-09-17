@@ -7,7 +7,6 @@ Bundle-Activator: de.uniol.inf.is.odysseus.nexmark.Activator
 Import-Package: 
  de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.core.server.physicaloperator.sink,
- de.uniol.inf.is.odysseus.intervalapproach,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Bundle-ClassPath: xalan.jar,.

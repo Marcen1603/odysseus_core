@@ -21,8 +21,8 @@ import java.util.PriorityQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
 public class HashCodePrioritizationArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		implements IPostPrioritizationArea<T> {

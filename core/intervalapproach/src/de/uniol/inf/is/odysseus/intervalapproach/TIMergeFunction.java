@@ -15,8 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 /**
  * 

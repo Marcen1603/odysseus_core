@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.wrapper.base.SinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SinkConfiguration;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SinkSpec;

@@ -32,7 +32,7 @@ package de.uniol.inf.is.odysseus.mining.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
 public class MiningMetadata extends TimeInterval implements IMiningMetadata {
 	

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Transaction;
 
 /**
