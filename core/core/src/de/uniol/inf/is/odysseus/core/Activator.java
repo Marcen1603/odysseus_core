@@ -67,12 +67,7 @@ public class Activator implements BundleActivator {
 		TransportHandlerRegistry.register(new TcpSocketHandler());
 		TransportHandlerRegistry.register(new FileHandler());
 		TransportHandlerRegistry.register(new NonBlockingTcpHandler());
-		
-		TransportHandlerRegistry.register(new NonBlockingTcpServerHandler());
-		TransportHandlerRegistry.register(new NonBlockingTcpClientHandler());
-		TransportHandlerRegistry.register(new NonBlockingUdpServerHandler());
-		TransportHandlerRegistry.register(new NonBlockingUdpClientHandler());
-		
+
 		DataHandlerRegistry.registerDataHandler(new ListDataHandler());
 	}
 
