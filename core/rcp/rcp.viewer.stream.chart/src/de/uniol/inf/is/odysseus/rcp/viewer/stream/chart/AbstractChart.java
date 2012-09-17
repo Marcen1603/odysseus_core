@@ -15,13 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.swt.SWTException;
 import org.eclipse.ui.part.ViewPart;
@@ -29,18 +27,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.rcp.stream.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.stream.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.stream.IStreamElementListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPart implements IAttributesChangeable<T>, IStreamElementListener<Object>{
 
@@ -66,27 +62,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 		if (operator instanceof DefaultStreamConnection<?>) {
 			return (IStreamConnection<Object>) operator;
 		}
-		final List<ISubscription<ISource<?>>> subs = new LinkedList<ISubscription<ISource<?>>>();
-
-		if (operator instanceof ISource<?>) {
-			subs.add(new PhysicalSubscription<ISource<?>>(
-					(ISource<?>) operator, 0, 0, operator.getOutputSchema()));
-		} else if (operator instanceof ISink<?>) {
-			Collection<?> list = ((ISink<?>) operator).getSubscribedToSource();
-
-			for (Object obj : list) {
-				PhysicalSubscription<ISource<?>> sub = (PhysicalSubscription<ISource<?>>) obj;
-				subs.add(new PhysicalSubscription<ISource<?>>(sub.getTarget(),
-						sub.getSinkInPort(), sub.getSourceOutPort(), sub
-								.getSchema()));
-			}
-		} else {
-			throw new IllegalArgumentException(
-					"could not identify type of content of node " + operator);
-		}
-
-		IStreamConnection connection = new DefaultStreamConnection(subs);
-		return connection;
+		return new DefaultStreamConnection(operator);
 	}
 	
 	protected void initConnection(IStreamConnection<Object> streamConnection) {
