@@ -74,7 +74,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 
 	@Override
 	@SuppressWarnings("unchecked") // Suppress metadata-cast warnings
-	protected void process_next(Tuple<T> inputTuple, int port) {
+	protected synchronized void process_next(Tuple<T> inputTuple, int port) {
 		// System.out.println(String.format("(%28s-------", getName()).replace(' ', '-'));
 		// System.out.println("Tuple(before):  "+inputTuple);
 
@@ -121,7 +121,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected synchronized void process_open() throws OpenFailedException {
 		initParameterPositions();
 
 		cacheManager.open();
@@ -151,7 +151,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	}
 
 	@Override
-	protected void process_close() {
+	protected synchronized void process_close() {
 		cacheManager.close();
 	}
 
