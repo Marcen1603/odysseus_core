@@ -149,6 +149,14 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 		return this.roles;
 	}
 
+	@Override
+	public boolean hasRole(IRole role) {
+		if (role !=null){
+			return roles.contains(role);
+		}
+		return false;
+	}
+	
 	/**
 	 * @param roles
 	 *            The roles to set.
@@ -157,6 +165,8 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 		this.roles = roles;
 	}
 
+	
+	
 	/**
 	 * @param role
 	 */
