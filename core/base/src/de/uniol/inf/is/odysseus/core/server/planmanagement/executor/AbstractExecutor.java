@@ -79,14 +79,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public abstract class AbstractExecutor implements IServerExecutor, ISettingChangeListener, IQueryReoptimizeListener,
 		IPlanReoptimizeListener {
 
-	protected static Logger _logger = null;
-
-	protected synchronized static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(AbstractExecutor.class);
-		}
-		return _logger;
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractExecutor.class);
 
 	/**
 	 * Der aktuell ausgefuehrte physische Plan
@@ -177,11 +170,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * Standard-Construktor. Initialisiert die Ausf�hrungsumgebung.
 	 */
 	public AbstractExecutor() {
-		getLogger().trace("Create Executor.");
+		LOG.trace("Create Executor.");
 		try {
 			initialize();
 		} catch (ExecutorInitializeException e) {
-			getLogger().error(
+			LOG.error(
 					"Error activate executor. Error: " + e.getMessage());
 		}
 	}
@@ -211,7 +204,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	private void initialize() throws ExecutorInitializeException {
-		getLogger().debug("Initializing Executor.");
+		LOG.debug("Initializing Executor.");
 
 		initializeIntern(configuration);
 
@@ -222,7 +215,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 		this.configuration.addValueChangeListener(this);
 
-		getLogger().debug("Initializing Executor done.");
+		LOG.debug("Initializing Executor done.");
 	}
 
 	// ----------------------------------------------------------------------------------------
@@ -238,7 +231,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public void bindOptimizer(IOptimizer optimizer) {
 		this.optimizer = optimizer;
 		this.optimizer.addErrorEventListener(this);
-		getLogger().debug("Optimizer bound " + optimizer);
+		LOG.debug("Optimizer bound " + optimizer);
 	}
 
 	/**
@@ -250,7 +243,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public void unbindOptimizer(IOptimizer optimizer) {
 		if (this.optimizer == optimizer) {
 			this.optimizer = null;
-			getLogger().debug("Optimizer unbound " + optimizer);
+			LOG.debug("Optimizer unbound " + optimizer);
 		}
 
 	}
@@ -268,7 +261,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			this.addPlanModificationListener((IPlanModificationListener) this.schedulerManager);
 		}
 
-		getLogger().debug("Schedulermanager bound " + schedulerManager);
+		LOG.debug("Schedulermanager bound " + schedulerManager);
 	}
 
 	/**
@@ -280,7 +273,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public void unbindSchedulerManager(ISchedulerManager schedulerManager) {
 		if (this.schedulerManager == schedulerManager) {
 			this.schedulerManager = null;
-			getLogger().debug("Schedulermanager unbound " + schedulerManager);
+			LOG.debug("Schedulermanager unbound " + schedulerManager);
 		}
 	}
 
@@ -295,7 +288,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		for (ICompilerListener l : compilerListener) {
 			compiler.addCompilerListener(l);
 		}
-		getLogger().debug("Compiler bound " + compiler);
+		LOG.debug("Compiler bound " + compiler);
 	}
 
 	/**
@@ -310,7 +303,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 		if (this.compiler == compiler) {
 			this.compiler = null;
-			getLogger().debug("Compiler unbound " + compiler);
+			LOG.debug("Compiler unbound " + compiler);
 		}
 	}
 
@@ -321,7 +314,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 */
 	public void bindQueryBuildConfiguration(IQueryBuildConfiguration config) {
 		queryBuildConfigs.put(config.getName(), config);
-		getLogger().debug("Query Build Configuration " + config + " bound");
+		LOG.debug("Query Build Configuration " + config + " bound");
 	}
 
 	/**
@@ -425,7 +418,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 */
 	@Override
 	public void executionPlanChanged() throws SchedulerException, NoSchedulerLoadedException {
-		getLogger().info("Refresh Scheduling");
+		LOG.info("Refresh Scheduling");
 		getSchedulerManager().refreshScheduling(this.getExecutionPlan());
 	}
 
@@ -483,16 +476,16 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public void startExecution() throws SchedulerException {
 		if (isRunning()) {
-			getLogger().debug("Scheduler already running.");
+			LOG.debug("Scheduler already running.");
 			return;
 		}
-		getLogger().info("Start Scheduler.");
+		LOG.info("Start Scheduler.");
 		try {
 			getSchedulerManager().startScheduling();
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}
-		getLogger().info("Scheduler started.");
+		LOG.info("Scheduler started.");
 
 		firePlanExecutionEvent(new PlanExecutionEvent(this,
 				PlanExecutionEventType.EXECUTION_STARTED));
@@ -507,10 +500,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public void stopExecution() throws SchedulerException {
 		if (!isRunning()) {
-			getLogger().debug("Scheduler not running.");
+			LOG.debug("Scheduler not running.");
 			return;
 		}
-		getLogger().info("Stop Scheduler.");
+		LOG.info("Stop Scheduler.");
 		try {
 			getSchedulerManager().stopScheduling();
 			// Stopp only if it has an instance
@@ -520,7 +513,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}
-		getLogger().info("Scheduler stopped.");
+		LOG.info("Scheduler stopped.");
 
 		firePlanExecutionEvent(new PlanExecutionEvent(this,
 				PlanExecutionEventType.EXECUTION_STOPPED));
@@ -745,10 +738,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
     					addQuery(query.getLogicalPlan(), caller,
     							dataDictionary.getQueryBuildConfigName(query.getID()));
     				} else {
-    					getLogger().warn("Query " + query + " cannot be loaded");
+    					LOG.warn("Query " + query + " cannot be loaded");
     				}
 			    } catch( Throwable t ) {
-			        getLogger().error("Could not execute stored query", t);
+			        LOG.error("Could not execute stored query", t);
 			    }
 			}
 		}

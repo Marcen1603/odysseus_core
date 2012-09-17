@@ -86,17 +86,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadl
  */
 public class StandardExecutor extends AbstractExecutor implements IAdmissionListener {
 
-    // ----------------------------------------------------------------------------------------
-    // Logging
-    // ----------------------------------------------------------------------------------------
-    protected static Logger _logger = null;
-
-    protected static Logger getLogger() {
-        if (_logger == null) {
-            _logger = LoggerFactory.getLogger(StandardExecutor.class);
-        }
-        return _logger;
-    }
+	private static final Logger LOG = LoggerFactory.getLogger(StandardExecutor.class);
 
     private ReloadLog reloadLog;
 
@@ -236,10 +226,10 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
      *             Opening an sink or source failed.
      */
     private List<ILogicalQuery> createQueries(String queryStr, ISession user, QueryBuildConfiguration parameters) throws NoCompilerLoadedException, QueryParseException, OpenFailedException {
-        getLogger().debug("Translate Queries.");
+        LOG.debug("Translate Queries.");
         // translate query and build logical plans
         List<ILogicalQuery> queries = getCompiler().translateQuery(queryStr, parameters.getParserID(), user, getDataDictionary());
-        getLogger().trace("Number of queries: " + queries.size());
+        LOG.trace("Number of queries: " + queries.size());
         String slaName = SLADictionary.getInstance().getCurrentSLA(user);
         SLA sla = SLADictionary.getInstance().getSLA(slaName);
         // create for each logical plan an intern query
@@ -275,7 +265,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
      *             An exception during optimization occurred.
      */
     private Collection<IPhysicalQuery> addQueries(List<ILogicalQuery> newQueries, OptimizationConfiguration conf) throws NoOptimizerLoadedException, QueryOptimizationException {
-        getLogger().debug("Optimize Queries. Count:" + newQueries.size());
+        LOG.debug("Optimize Queries. Count:" + newQueries.size());
         Collection<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
         if (newQueries.isEmpty()) {
             return optimizedQueries;
@@ -308,7 +298,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             this.executionPlanLock.unlock();
         }
 
-        getLogger().info("Queries added (Count: " + newQueries.size() + ").");
+        LOG.info("Queries added (Count: " + newQueries.size() + ").");
         return optimizedQueries;
     }
 
@@ -345,7 +335,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             this.executionPlanLock.lock();
             return getOptimizer().getBufferPlacementStrategy(strategy);
         } catch (NoOptimizerLoadedException e) {
-            getLogger().error("Error while using optimizer. Getting BufferplacementStrategy. " + e.getMessage());
+            LOG.error("Error while using optimizer. Getting BufferplacementStrategy. " + e.getMessage());
         } finally {
             this.executionPlanLock.unlock();
         }
@@ -368,7 +358,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
     @Override
     public synchronized Collection<Integer> addQuery(String query, String parserID, ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting)
             throws PlanManagementException {
-        getLogger().info("Start adding Queries. " + query + " for user " + user.getUser().getName());
+        LOG.info("Start adding Queries. " + query + " for user " + user.getUser().getName());
         validateUserRight(user, ExecutorPermission.ADD_QUERY);
         QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
         params.set(new ParameterParserID(parserID));
@@ -380,22 +370,16 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             List<ILogicalQuery> newQueries = createQueries(query, user, buildConfiguration);
             Collection<IPhysicalQuery> addedQueries = addQueries(newQueries, new OptimizationConfiguration(buildConfiguration));
             reloadLog.queryAdded(query, buildConfiguration.getName(), parserID, user);
-            getLogger().info("Adding Queries. " + query + " for user " + user.getUser().getName() + " done.");
+            LOG.info("Adding Queries. " + query + " for user " + user.getUser().getName() + " done.");
             Collection<Integer> createdQueries = new ArrayList<Integer>();
             for (IPhysicalQuery p : addedQueries) {
                 createdQueries.add(p.getID());
             }
             return createdQueries;
-        } catch (QueryParseException e) {
-            getLogger().error("QueryAddError " + e.getMessage());
+        } catch (QueryParseException | QueryOptimizationException | OpenFailedException e) {
+            LOG.error("Could not add query '" + query + "'", e);
             throw e;
-        } catch (QueryOptimizationException e) {
-            getLogger().error("QueryOptimizationError " + e.getMessage());
-            throw e;
-        } catch (OpenFailedException e) {
-            getLogger().error("Query Init: Open Failed Exception " + e.getMessage());
-            throw e;
-        }
+        } 
     }
 
     // -----------
@@ -409,7 +393,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
     @Override
     public Integer addQuery(ILogicalOperator logicalPlan, ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting) throws PlanManagementException {
-        getLogger().info("Start adding Queries.");
+        LOG.info("Start adding Queries.");
         validateUserRight(user, ExecutorPermission.ADD_QUERY);
         QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
         return addQuery(logicalPlan, user, params);
@@ -430,7 +414,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             Collection<IPhysicalQuery> addedQueries = addQueries(newQueries, new OptimizationConfiguration(params));
             return addedQueries.iterator().next().getID();
         } catch (Exception e) {
-            getLogger().error("Error adding Queries. Details: " + e.getMessage());
+            LOG.error("Error adding Queries. Details: " + e.getMessage());
             throw new QueryAddException(e);
         }
     }
@@ -446,7 +430,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
     @Override
     public Integer addQuery(List<IPhysicalOperator> physicalPlan, ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting) throws PlanManagementException {
-        getLogger().info("Start adding Queries.");
+        LOG.info("Start adding Queries.");
         validateUserRight(user, ExecutorPermission.ADD_QUERY);
         try {
             QueryBuildConfiguration queryBuildConfiguration = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
@@ -459,7 +443,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             List<IPhysicalQuery> added = addQueries(newQueries, new OptimizationConfiguration(queryBuildConfiguration));
             return added.get(0).getID();
         } catch (Exception e) {
-            getLogger().error("Error adding Queries. Details: " + e.getMessage());
+            LOG.error("Error adding Queries. Details: " + e.getMessage());
             throw new QueryAddException(e);
         }
     }
@@ -497,7 +481,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
     @Override
     public void removeQuery(int queryID, ISession caller) throws PlanManagementException {
-        getLogger().info("Start remove a query (ID: " + queryID + ").");
+        LOG.info("Start remove a query (ID: " + queryID + ").");
 
         IPhysicalQuery queryToRemove = this.executionPlan.getQuery(queryID);
         validateUserRight(queryToRemove, caller, ExecutorPermission.REMOVE_QUERY);
@@ -507,23 +491,23 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
                 getOptimizer().beforeQueryRemove(queryToRemove, this.executionPlan, null, getDataDictionary());
                 executionPlanChanged();
                 stopQuery(queryToRemove.getID(), caller);
-                getLogger().info("Removing Query " + queryToRemove.getID());
+                LOG.info("Removing Query " + queryToRemove.getID());
                 this.executionPlan.removeQuery(queryToRemove.getID());
-                getLogger().info("Removing Ownership " + queryToRemove.getID());
+                LOG.info("Removing Ownership " + queryToRemove.getID());
                 queryToRemove.removeOwnerschip();
                 if (queryToRemove.getLogicalQuery() != null) {
                     queryBuildParameter.remove(queryToRemove.getLogicalQuery());
                 }
                 dataDictionary.removeClosedSources();
                 dataDictionary.removeClosedSinks();
-                getLogger().debug("Query " + queryToRemove.getID() + " removed.");
+                LOG.debug("Query " + queryToRemove.getID() + " removed.");
                 firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REMOVE, queryToRemove));
                 if (queryToRemove.getLogicalQuery() != null) {
                     dataDictionary.removeQuery(queryToRemove.getLogicalQuery(), caller);
                     this.reloadLog.removeQuery(queryToRemove.getLogicalQuery().getQueryText());
                 }
             } catch (Exception e) {
-                getLogger().warn("Query not removed. An Error while optimizing occurd (ID: " + queryID + ").");
+                LOG.warn("Query not removed. An Error while optimizing occurd (ID: " + queryID + ").");
                 throw new PlanManagementException(e);
             } finally {
                 executionPlanLock.unlock();
@@ -538,7 +522,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             try {
                 removeQuery(q.getID(), caller);
             } catch (Throwable throwable) {
-                getLogger().error("Exception during stopping query " + q.getID() + " caller " + caller.getId(), throwable);
+                LOG.error("Exception during stopping query " + q.getID() + " caller " + caller.getId(), throwable);
                 success = false;
             }
         }
@@ -557,10 +541,10 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         IPhysicalQuery queryToStart = this.executionPlan.getQuery(queryID);
         validateUserRight(queryToStart, caller, ExecutorPermission.START_QUERY);
         if (queryToStart.isOpened()) {
-            getLogger().info("Query (ID: " + queryID + ") is already started.");
+            LOG.info("Query (ID: " + queryID + ") is already started.");
             return;
         }
-        getLogger().info("Starting query (ID: " + queryID + ").");
+        LOG.info("Starting query (ID: " + queryID + ").");
 
         try {
             this.executionPlanLock.lock();
@@ -568,13 +552,13 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             executionPlanChanged();
             if (isRunning()) {
                 queryToStart.open();
-                getLogger().debug("Query " + queryID + " started.");
+                LOG.debug("Query " + queryID + " started.");
                 firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_START, queryToStart));
             } else {
                 throw new RuntimeException("Scheduler not running. Query cannot be started");
             }
         } catch (Exception e) {
-            getLogger().warn("Query not started. An Error during optimizing occurd (ID: " + queryID + ").");
+            LOG.warn("Query not started. An Error during optimizing occurd (ID: " + queryID + ").");
             throw new RuntimeException("Query not started. An Error during optimizing occurd (ID: " + queryID + ").", e);
         } finally {
             this.executionPlanLock.unlock();
@@ -629,7 +613,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
     @Override
     public synchronized void  stopQuery(int queryID, ISession caller) {
 
-        getLogger().info("Stopping query (ID: " + queryID + ").");
+        LOG.info("Stopping query (ID: " + queryID + ").");
 
         IPhysicalQuery queryToStop = this.executionPlan.getQuery(queryID);
         validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
@@ -639,13 +623,13 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             executionPlanChanged();
             if (isRunning()) {
                 queryToStop.close();
-                getLogger().debug("Query " + queryID + " stopped.");
+                LOG.debug("Query " + queryID + " stopped.");
                 firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_STOP, queryToStop));
             } else {
                 throw new RuntimeException("Scheduler not running. Query cannot be stopped");
             }
         } catch (Exception e) {
-            getLogger().warn("Query not stopped. An Error while optimizing occurd (ID: " + queryID + ")." + e.getMessage());
+            LOG.warn("Query not stopped. An Error while optimizing occurd (ID: " + queryID + ")." + e.getMessage());
             throw new RuntimeException(e);
             // return;
         } finally {
@@ -663,17 +647,17 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
      */
     @Override
     public void reoptimize(IPhysicalQuery sender) {
-        getLogger().info("Reoptimize request by query (ID: " + sender.getID() + ").");
+        LOG.info("Reoptimize request by query (ID: " + sender.getID() + ").");
 
         try {
             this.executionPlanLock.lock();
             getOptimizer().reoptimize(sender, this.executionPlan);
             executionPlanChanged();
 
-            getLogger().debug("Query " + sender.getID() + " reoptimized.");
+            LOG.debug("Query " + sender.getID() + " reoptimized.");
             firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REOPTIMIZE, sender));
         } catch (Exception e) {
-            getLogger().warn("Query not reoptimized. An Error while optimizing occurd (ID: " + sender.getID() + ").");
+            LOG.warn("Query not reoptimized. An Error while optimizing occurd (ID: " + sender.getID() + ").");
             return;
         } finally {
             this.executionPlanLock.unlock();
@@ -690,23 +674,23 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
      */
     @Override
     public void reoptimizeRequest(IExecutionPlan sender) {
-        getLogger().info("Reoptimize request by plan.");
+        LOG.info("Reoptimize request by plan.");
 
         if (sender instanceof ExecutionPlan) {
             try {
                 this.executionPlanLock.lock();
                 getOptimizer().reoptimize(this.executionPlan);
                 executionPlanChanged();
-                getLogger().debug("Plan reoptimized.");
+                LOG.debug("Plan reoptimized.");
                 firePlanModificationEvent(new PlanModificationEvent(this, PlanModificationEventType.PLAN_REOPTIMIZE, this.executionPlan));
             } catch (Exception e) {
-                getLogger().warn("Plan not reoptimized. An Error while optimizing occurd.");
+                LOG.warn("Plan not reoptimized. An Error while optimizing occurd.");
                 return;
             } finally {
                 this.executionPlanLock.unlock();
             }
         } else {
-            getLogger().warn("Plan not reoptimized. Plan type is not supported.");
+            LOG.warn("Plan not reoptimized. Plan type is not supported.");
             return;
         }
 
@@ -723,7 +707,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         try {
             return getOptimizer().getRegisteredBufferPlacementStrategies();
         } catch (NoOptimizerLoadedException e) {
-            getLogger().error("Error while using optimizer. Getting BufferplacementStrategies. " + e.getMessage());
+            LOG.error("Error while using optimizer. Getting BufferplacementStrategies. " + e.getMessage());
         }
         return null;
     }
@@ -740,7 +724,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         try {
             return getSchedulerManager().getSchedulingStrategy();
         } catch (SchedulerException e) {
-            getLogger().error("Error while using schedulerManager. Getting SchedulingStrategyFactories. " + e.getMessage());
+            LOG.error("Error while using schedulerManager. Getting SchedulingStrategyFactories. " + e.getMessage());
         }
         return null;
     }
@@ -757,7 +741,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         try {
             return getSchedulerManager().getScheduler();
         } catch (SchedulerException e) {
-            getLogger().error("Error while using schedulerManager. Getting SchedulingFactories. " + e.getMessage());
+            LOG.error("Error while using schedulerManager. Getting SchedulingFactories. " + e.getMessage());
         }
         return null;
     }
@@ -773,7 +757,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         try {
             getSchedulerManager().setActiveScheduler(scheduler, schedulerStrategy, this.getExecutionPlan());
         } catch (SchedulerException e) {
-            getLogger().error("Error while using schedulerManager. Setting Scheduler. " + e.getMessage());
+            LOG.error("Error while using schedulerManager. Setting Scheduler. " + e.getMessage());
         }
     }
 
@@ -788,7 +772,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         try {
             return getSchedulerManager().getActiveSchedulingStrategyID();
         } catch (SchedulerException e) {
-            getLogger().error("Error while using schedulerManager. Getting Active Scheduling Strategy. " + e.getMessage());
+            LOG.error("Error while using schedulerManager. Getting Active Scheduling Strategy. " + e.getMessage());
         }
         return null;
     }
@@ -804,7 +788,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         try {
             return getSchedulerManager().getActiveSchedulerID();
         } catch (SchedulerException e) {
-            getLogger().error("Error while using schedulerManager. Getting Active Scheduler. " + e.getMessage());
+            LOG.error("Error while using schedulerManager. Getting Active Scheduler. " + e.getMessage());
         }
         return null;
     }
@@ -814,7 +798,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         try {
             return getSchedulerManager().getActiveScheduler();
         } catch (SchedulerException e) {
-            getLogger().error("Error while using schedulerManager. Getting Active Scheduler. " + e.getMessage());
+            LOG.error("Error while using schedulerManager. Getting Active Scheduler. " + e.getMessage());
         }
         return null;
     }
