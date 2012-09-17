@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 		@Override
 		protected void process_next(R object, int port) {
-			if (isOpen()){
+			if (isOpen()) {
 				AbstractPipe.this.delegatedProcess(object, port);
 			}
 		}
@@ -59,7 +59,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		@Override
 		public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 			AbstractPipe.this.delegatedProcessSecurityPunctuation(sp, port);
-		}		
+		}
 
 		@Override
 		protected void process_open() throws OpenFailedException {
@@ -98,7 +98,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	public enum OutputMode {
 		NEW_ELEMENT, MODIFIED_INPUT, INPUT
 	}
-	
+
 	final protected DelegateSink delegateSink = new DelegateSink();
 	private SDFMetaAttributeList metadataAttributeSchema = new SDFMetaAttributeList();
 	private boolean metadataCalculated = false;
@@ -121,33 +121,34 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	protected int getInputPortCount() {
 		return this.delegateSink.noInputPorts;
 	}
-	
+
 	abstract public OutputMode getOutputMode();
-	
-//	@Override
-//	public boolean isTransferExclusive() {
-//		// Zun�chst Testen ob das Datum an mehrere Empf�nger
-//		// versendet wird --> dann niemals exclusiv
-//		boolean ret = super.isTransferExclusive();
-//		OutputMode out = getOutputMode();
-//		switch (out) {
-//		case NEW_ELEMENT:
-//			return ret;
-//		default: // MODIFIED_INPUT und INPUT
-//			// Wenn einer der Eing�nge nicht exclusive ist
-//			// das Ergebnis auch nicht exclusive
-//			// for (int i = 0; i < inputExclusive.length && ret; i++) {
-//			// ret = ret && inputExclusive[i];
-//			// }
-//			return false;
-//		}
-//	}
+
+	// @Override
+	// public boolean isTransferExclusive() {
+	// // Zun�chst Testen ob das Datum an mehrere Empf�nger
+	// // versendet wird --> dann niemals exclusiv
+	// boolean ret = super.isTransferExclusive();
+	// OutputMode out = getOutputMode();
+	// switch (out) {
+	// case NEW_ELEMENT:
+	// return ret;
+	// default: // MODIFIED_INPUT und INPUT
+	// // Wenn einer der Eing�nge nicht exclusive ist
+	// // das Ergebnis auch nicht exclusive
+	// // for (int i = 0; i < inputExclusive.length && ret; i++) {
+	// // ret = ret && inputExclusive[i];
+	// // }
+	// return false;
+	// }
+	// }
 
 	@Override
 	protected boolean needsClone() {
 		return getOutputMode() == OutputMode.MODIFIED_INPUT
 				|| super.needsClone();
 	}
+
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
@@ -162,7 +163,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath)
 			throws OpenFailedException {
 		super.open(caller, sourcePort, sinkPort, callPath);
-		this.delegateSink.open(callPath);
+		// TODO: Why do we have this second call to open?
+		if (!isOpen()) {
+			this.delegateSink.open(callPath);
+		}
 	}
 
 	public void delegatedProcessOpen() throws OpenFailedException {
@@ -177,7 +181,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// ------------------------------------------------------------------------
 	// PROCESS
 	// ------------------------------------------------------------------------
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 	}
@@ -195,7 +199,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		processPunctuation(timestamp, port);
 	}
 
-	private void delegatedProcessSecurityPunctuation(ISecurityPunctuation sp, int port) {
+	private void delegatedProcessSecurityPunctuation(ISecurityPunctuation sp,
+			int port) {
 		processSecurityPunctuation(sp, port);
 	}
 
@@ -213,21 +218,21 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		this.transferSecurityPunctuation(sp);
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE
 	// ------------------------------------------------------------------------
 
 	@Override
-	final public void close(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath) {
+	final public void close(ISink<? super W> caller, int sourcePort,
+			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath) {
 		super.close(caller, sourcePort, sinkPort, callPath);
 		this.delegateSink.close(callPath);
 	}
 
 	@Override
 	final public void close() {
-		this.delegateSink.close();		
+		this.delegateSink.close();
 	}
 
 	@Override
@@ -381,11 +386,12 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			boolean foundmatch = false;
 			for (PhysicalSubscription<?> s2 : otherSubs) {
 				// Subscription enth�lt gleiche Quelle und gleiche Ports
-				if (((ISource<?>) s1.getTarget()) ==
-						((ISource<?>) s2.getTarget())
+				if (((ISource<?>) s1.getTarget()) == ((ISource<?>) s2
+						.getTarget())
 						&& s1.getSinkInPort() == s2.getSinkInPort()
-						&& s1.getSourceOutPort() == s2.getSourceOutPort()						
-						&& ((s1.getSchema() == null && s2.getSchema()==null) || (s1.getSchema().compareTo(s2.getSchema())) == 0)) {
+						&& s1.getSourceOutPort() == s2.getSourceOutPort()
+						&& ((s1.getSchema() == null && s2.getSchema() == null) || (s1
+								.getSchema().compareTo(s2.getSchema())) == 0)) {
 					foundmatch = true;
 				}
 			}
@@ -414,12 +420,12 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		}
 		return this.metadataAttributeSchema;
 	}
-	
+
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof IPipe))
 			return false;
-		if (!this.hasSameSources(ipo)){
+		if (!this.hasSameSources(ipo)) {
 			return false;
 		}
 		return process_isSemanticallyEqual(ipo);
