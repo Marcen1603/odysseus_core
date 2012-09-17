@@ -68,6 +68,17 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 
 		this.subscriptions = determineSubscriptions(operator); 
 	}
+	
+	@SuppressWarnings("unchecked")
+	public DefaultStreamConnection(Collection<IPhysicalOperator> operators ) {
+		Preconditions.checkNotNull(operators, "List of operators must not be null!");
+		Preconditions.checkArgument(operators.isEmpty(), "List of operators must not be empty!");
+		
+		subscriptions = Lists.newLinkedList();
+		for( IPhysicalOperator operator : operators ) {
+			subscriptions.addAll((Collection<? extends ISubscription<? extends ISource<In>>>) determineSubscriptions(operator));
+		}
+	}
 
 	@Override
 	public List<ISubscription<? extends ISource<In>>> getSubscriptions() {
