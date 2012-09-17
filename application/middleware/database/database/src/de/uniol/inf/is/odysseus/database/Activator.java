@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.DatatypeRegistry;
 import de.uniol.inf.is.odysseus.database.drivers.MySQLConnectionFactory;
+import de.uniol.inf.is.odysseus.database.drivers.OracleConnectionFactory;
 import de.uniol.inf.is.odysseus.database.drivers.PostgresConnectionFactory;
 
 public class Activator implements BundleActivator {
@@ -43,6 +44,7 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		DatabaseConnectionDictionary.getInstance().addFactory("mysql", new MySQLConnectionFactory());
 		DatabaseConnectionDictionary.getInstance().addFactory("postgresql", new PostgresConnectionFactory());
+		DatabaseConnectionDictionary.getInstance().addFactory("oracle", new OracleConnectionFactory());
 		
 		//Mappings Database -> Odysseus
 		DatatypeRegistry.getInstance().registerDatabaseToStream(Types.ARRAY, SDFDatatype.OBJECT);
