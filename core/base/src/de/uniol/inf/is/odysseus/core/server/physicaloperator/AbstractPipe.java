@@ -114,7 +114,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public boolean isSink() {
+	final public boolean isSink() {
 		return true;
 	}
 

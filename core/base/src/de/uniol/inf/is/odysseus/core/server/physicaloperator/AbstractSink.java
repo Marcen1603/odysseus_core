@@ -154,17 +154,17 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public boolean isSink() {
+	final public boolean isSink() {
 		return true;
 	}
 
 	@Override
-	public boolean isSource() {
+	final public boolean isSource() {
 		return false;
 	}
 
 	@Override
-	public boolean isPipe() {
+	final public boolean isPipe() {
 		return isSink() && isSource();
 	}
 

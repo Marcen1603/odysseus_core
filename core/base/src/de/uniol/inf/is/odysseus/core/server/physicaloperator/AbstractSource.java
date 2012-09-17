@@ -163,12 +163,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public boolean isSource() {
+	final public boolean isSource() {
 		return true;
 	}
 
 	@Override
-	public boolean isPipe() {
+	final public boolean isPipe() {
 		return isSink() && isSource();
 	}
 
