@@ -40,7 +40,6 @@ Unless required by applicable law or agreed to in writing, software
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="de.uniol.inf.is.odysseus.rcp.viewer" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views"/>
-      <import plugin="de.uniol.inf.is.odysseus.rcp.stream"/>
    </requires>
 
    <plugin
