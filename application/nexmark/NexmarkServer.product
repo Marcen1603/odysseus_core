@@ -84,9 +84,7 @@ This Software contains parts of the nexmark generator
       <plugin id="com.google.guava"/>
       <plugin id="de.uniol.inf.is.odysseus.core"/>
       <plugin id="de.uniol.inf.is.odysseus.core.server"/>
-      <plugin id="de.uniol.inf.is.odysseus.intervalapproach"/>
       <plugin id="de.uniol.inf.is.odysseus.nexmark"/>
-      <plugin id="de.uniol.inf.is.odysseus.relational.base"/>
       <plugin id="de.uniol.inf.is.odysseus.slf4j"/>
       <plugin id="javax.activation"/>
       <plugin id="javax.mail"/>
