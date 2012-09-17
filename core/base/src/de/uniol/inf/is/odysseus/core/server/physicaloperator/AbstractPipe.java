@@ -153,12 +153,12 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void open() throws OpenFailedException {
+	final public void open() throws OpenFailedException {
 		this.delegateSink.open();
 	}
 
 	@Override
-	public void open(ISink<? super W> caller, int sourcePort,
+	final public void open(ISink<? super W> caller, int sourcePort,
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath)
 			throws OpenFailedException {
 		super.open(caller, sourcePort, sinkPort, callPath);
@@ -219,14 +219,14 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void close(ISink<? super W> caller, int sourcePort, int sinkPort,
+	final public void close(ISink<? super W> caller, int sourcePort, int sinkPort,
 			List<PhysicalSubscription<ISink<?>>> callPath) {
 		super.close(caller, sourcePort, sinkPort, callPath);
 		this.delegateSink.close(callPath);
 	}
 
 	@Override
-	public void close() {
+	final public void close() {
 		this.delegateSink.close();		
 	}
 
