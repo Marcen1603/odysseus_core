@@ -32,9 +32,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.rcp.stream.DefaultStreamConnection;
-import de.uniol.inf.is.odysseus.rcp.stream.IStreamConnection;
-import de.uniol.inf.is.odysseus.rcp.stream.IStreamElementListener;
+import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
+import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
+import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
 
