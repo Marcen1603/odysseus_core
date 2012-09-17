@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
@@ -54,12 +55,18 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 
 	private final Collection<IStreamElementListener<In>> listeners = new ArrayList<IStreamElementListener<In>>();
 	private boolean hasExceptions = false;
-	
+
 	public DefaultStreamConnection(List<ISubscription<? extends ISource<In>>> subscriptions) {
-		if (subscriptions == null || subscriptions.isEmpty())
-			throw new IllegalArgumentException("subscriptions is null or empty!");
+		Preconditions.checkNotNull(subscriptions, "List of subscriptions must not be null!");
+		Preconditions.checkArgument(!subscriptions.isEmpty(), "List of subscriptions must not be empty!");
 
 		this.subscriptions = subscriptions;
+	}
+
+	public DefaultStreamConnection(IPhysicalOperator operator) {
+		Preconditions.checkNotNull(operator, "Operator for DefaultStreamConnection must not be null!");
+
+		this.subscriptions = determineSubscriptions(operator); 
 	}
 
 	@Override
@@ -93,7 +100,6 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 		return connected;
 	}
 
-		
 	@Override
 	public void process(In element, int port) {
 		logger.debug("Objekt:" + element.toString());
@@ -111,7 +117,7 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 			try {
 				notifyListeners(element, port);
 			} catch (Exception ex) {
-				logger.error( "Bei der Verarbeitung des Datenelements " + element.toString() + " trat eine Exception auf!", ex);
+				logger.error("Bei der Verarbeitung des Datenelements " + element.toString() + " trat eine Exception auf!", ex);
 				hasExceptions = true;
 			}
 		}
@@ -129,8 +135,7 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 			synchronized (collectedObjects) {
 				// gesammelte Daten nachträglich verarbeiten lassen
 				for (int i = 0; i < collectedObjects.size(); i++) {
-					process(collectedObjects.get(i),
-							collectedPorts.get(i));
+					process(collectedObjects.get(i), collectedPorts.get(i));
 				}
 				collectedObjects.clear();
 				collectedPorts.clear();
@@ -237,7 +242,7 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 	public SDFSchema getOutputSchema(int port) {
 		return null;
 	}
-	
+
 	@Override
 	final public Map<Integer, SDFSchema> getOutputSchemas() {
 		return null;
@@ -257,7 +262,7 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 	}
 
 	@Override
-	public void addOwner(IOperatorOwner owner) {		
+	public void addOwner(IOperatorOwner owner) {
 	}
 
 	@Override
@@ -363,7 +368,7 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 
 	@Override
 	public void process(Collection<? extends In> object, int port) {
-		for( In obj : object ) {
+		for (In obj : object) {
 			process(obj, port);
 		}
 	}
@@ -378,5 +383,25 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 
 	@Override
 	public void close() {
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <In> List<ISubscription<? extends ISource<In>>> determineSubscriptions(IPhysicalOperator operator) {
+		Preconditions.checkArgument(operator.isSink() || operator.isSource(), "Operator must be sink and/or source!");
+
+		List<ISubscription<? extends ISource<In>>> subs = Lists.newLinkedList();
+
+		if (operator.isSource()) {
+			subs.add((ISubscription<? extends ISource<In>>) new PhysicalSubscription<ISource<?>>((ISource<?>) operator, 0, 0, operator.getOutputSchema()));
+		} else  {
+			Collection<?> subscriptions = ((ISink<?>) operator).getSubscribedToSource();
+
+			for (Object subscription : subscriptions) {
+				PhysicalSubscription<ISource<?>> sub = (PhysicalSubscription<ISource<?>>) subscription;
+				subs.add((ISubscription<? extends ISource<In>>) new PhysicalSubscription<ISource<?>>(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema()));
+			}
+		}
+		
+		return subs;
 	}
 }
