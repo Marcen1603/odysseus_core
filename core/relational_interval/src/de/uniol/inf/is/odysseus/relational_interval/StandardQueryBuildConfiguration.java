@@ -51,7 +51,7 @@ public class StandardQueryBuildConfiguration extends
 	public StandardQueryBuildConfiguration() {
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(
-						"keyvalue", 
+						"relational", 
 						ITimeInterval.class)));
 		settings.add(ParameterDoRewrite.TRUE);
 		settings.add(ParameterPerformQuerySharing.TRUE);
