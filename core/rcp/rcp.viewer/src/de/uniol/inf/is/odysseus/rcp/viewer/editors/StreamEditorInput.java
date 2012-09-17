@@ -15,18 +15,10 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.editors;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPersistableElement;
 
-import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.rcp.stream.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.stream.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
@@ -46,27 +38,8 @@ public class StreamEditorInput implements IStreamEditorInput {
 		this.editorTypeID = editorTypeID;
 		this.editorLabel = editorLabel;
 		this.operator = operator;
-		
-		final List<ISubscription<ISource<?>>> subs = new LinkedList<ISubscription<ISource<?>>>();
 
-		if (operator instanceof ISource<?>) {
-			subs.add(new PhysicalSubscription<ISource<?>>(
-					(ISource<?>) operator, 0, 0, operator.getOutputSchema()));
-		} else if (operator instanceof ISink<?>) {
-			Collection<?> list = ((ISink<?>) operator).getSubscribedToSource();
-
-			for (Object obj : list) {
-				PhysicalSubscription<ISource<?>> sub = (PhysicalSubscription<ISource<?>>) obj;
-				subs.add(new PhysicalSubscription<ISource<?>>(sub.getTarget(),
-						sub.getSinkInPort(), sub.getSourceOutPort(), sub
-								.getSchema()));
-			}
-		} else {
-			throw new IllegalArgumentException(
-					"could not identify type of content of node " + operator);
-		}
-
-		connection = new DefaultStreamConnection(subs);
+		connection = new DefaultStreamConnection(operator);
 	}
 	
 	public String getEditorTypeID() {
