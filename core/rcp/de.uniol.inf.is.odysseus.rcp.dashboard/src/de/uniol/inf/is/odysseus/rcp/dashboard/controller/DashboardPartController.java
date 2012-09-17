@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.controller;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -25,11 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
@@ -73,15 +67,14 @@ public final class DashboardPartController {
 
 		List<IPhysicalOperator> roots = Lists.newArrayList();
 		for (Integer id : queryIDs) {
-			List<IPhysicalOperator> rootsOfQuery = DashboardPlugIn.getExecutor().getPhysicalRoots(id);
-			for( IPhysicalOperator rootOfQuery : rootsOfQuery ) {
+			for( IPhysicalOperator rootOfQuery :  DashboardPlugIn.getExecutor().getPhysicalRoots(id) ) {
 				if( !(rootOfQuery instanceof DefaultStreamConnection)) {
 					roots.add(rootOfQuery);
 				}
 			}
 		}
 
-		streamConnection = new DefaultStreamConnection<Object>(getSubscriptions(roots));
+		streamConnection = new DefaultStreamConnection<Object>(roots);
 		
 		dashboardPart.onStart(roots);
 		streamConnection.addStreamElementListener(dashboardPart);
@@ -129,28 +122,6 @@ public final class DashboardPartController {
 		queryIDs = null;
 
 		status = Status.STOPPED;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static List<ISubscription<? extends ISource<Object>>> getSubscriptions(List<IPhysicalOperator> roots) {
-		final List<ISubscription<? extends ISource<Object>>> subs = new LinkedList<ISubscription<? extends ISource<Object>>>();
-
-		for (IPhysicalOperator operator : roots) {
-			if (operator instanceof ISource<?>) {
-				subs.add(new PhysicalSubscription<ISource<Object>>((ISource<Object>) operator, 0, 0, operator.getOutputSchema()));
-			} else if (operator instanceof ISink<?>) {
-				Collection<?> list = ((ISink<?>) operator).getSubscribedToSource();
-
-				for (Object obj : list) {
-					PhysicalSubscription<ISource<Object>> sub = (PhysicalSubscription<ISource<Object>>) obj;
-					subs.add(new PhysicalSubscription<ISource<Object>>(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema()));
-				}
-			} else {
-				throw new IllegalArgumentException("could not identify type of content of node " + operator);
-			}
-		}
-
-		return subs;
 	}
 
 	private static List<Integer> getExecutedQueryIDs(List<?> results) {
