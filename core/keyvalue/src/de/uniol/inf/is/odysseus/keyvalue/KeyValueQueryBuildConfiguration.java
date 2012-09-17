@@ -51,7 +51,7 @@ public class KeyValueQueryBuildConfiguration extends
 	public KeyValueQueryBuildConfiguration() {
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(
-						"relational", 
+						"keyvalue", 
 						ITimeInterval.class)));
 		settings.add(ParameterDoRewrite.TRUE);
 		settings.add(ParameterPerformQuerySharing.TRUE);
