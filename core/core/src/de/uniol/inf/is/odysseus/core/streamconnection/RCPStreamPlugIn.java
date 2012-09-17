@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.stream;
+package de.uniol.inf.is.odysseus.core.streamconnection;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

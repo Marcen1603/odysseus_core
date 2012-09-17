@@ -13,14 +13,28 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.stream;
+package de.uniol.inf.is.odysseus.core.streamconnection;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 
 
-public interface IStreamElementListener<In> {
+public interface IStreamConnection<In> {
 
-	public void streamElementRecieved( In element, int port );
-	public void punctuationElementRecieved(PointInTime point, int port);
+	public void connect();
+	public void disconnect();
+	public boolean isConnected();
+	
+	public void disable();
+	public void enable();
+	public boolean isEnabled();
+	
+	public void addStreamElementListener( IStreamElementListener<In> listener );
+	public void removeStreamElementListener( IStreamElementListener<In> listener );
+	public void notifyListeners( In element, int port );
+	
+	public List<ISubscription<? extends ISource<In>>> getSubscriptions();
 	
 }

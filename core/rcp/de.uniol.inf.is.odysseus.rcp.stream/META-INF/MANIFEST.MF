@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Stream
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.stream
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.rcp.stream.RCPStreamPlugIn
+Bundle-Activator: de.uniol.inf.is.odysseus.core.streamconnection.RCPStreamPlugIn
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core,
@@ -17,5 +17,4 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.securitypunctuation,
  org.osgi.framework;version="1.3.0",
  org.slf4j
-Export-Package: de.uniol.inf.is.odysseus.rcp.stream
 Require-Bundle: com.google.guava;bundle-version="12.0.0"

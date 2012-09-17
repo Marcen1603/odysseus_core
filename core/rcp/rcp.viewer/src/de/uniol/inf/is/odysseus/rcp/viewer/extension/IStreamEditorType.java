@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.extension;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 
-import de.uniol.inf.is.odysseus.rcp.stream.IStreamElementListener;
+import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 
 public interface IStreamEditorType extends IStreamElementListener<Object> {
