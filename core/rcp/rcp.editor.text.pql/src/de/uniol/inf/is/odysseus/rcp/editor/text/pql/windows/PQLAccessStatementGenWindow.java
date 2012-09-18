@@ -37,6 +37,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 
 public class PQLAccessStatementGenWindow {
 
@@ -308,7 +309,8 @@ public class PQLAccessStatementGenWindow {
 	}
 
 	private static String[] determineWrapperNameList() {
-		return new String[] { "GenericPush", "GenericPull", "GoogleProtobuf", };
+		return WrapperRegistry.getWrapperNames().toArray(new String[0]);
+//		return new String[] { "GenericPush", "GenericPull", "GoogleProtobuf", };
 	}
 
 	private static String getComboSelection(Combo c) {
