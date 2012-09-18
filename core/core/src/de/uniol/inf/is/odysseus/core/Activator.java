@@ -28,7 +28,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleCSVP
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.TextProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpClientHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpServerHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingUdpClientHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingUdpServerHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TcpSocketHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 
@@ -63,6 +67,11 @@ public class Activator implements BundleActivator {
 		TransportHandlerRegistry.register(new TcpSocketHandler());
 		TransportHandlerRegistry.register(new FileHandler());
 		TransportHandlerRegistry.register(new NonBlockingTcpHandler());
+		
+		TransportHandlerRegistry.register(new NonBlockingTcpServerHandler());
+		TransportHandlerRegistry.register(new NonBlockingTcpClientHandler());
+		TransportHandlerRegistry.register(new NonBlockingUdpServerHandler());
+		TransportHandlerRegistry.register(new NonBlockingUdpClientHandler());
 
 		DataHandlerRegistry.registerDataHandler(new ListDataHandler());
 	}
