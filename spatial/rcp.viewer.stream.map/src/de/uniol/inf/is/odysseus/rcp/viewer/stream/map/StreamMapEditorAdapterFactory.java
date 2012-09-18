@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
@@ -24,7 +23,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOutlinePage;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapLayerTreeContentProvider;
 
 /**
  * @author Stephan Jansen
