@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.extension.DashboardPartExtensionPointResolver;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
@@ -41,6 +42,7 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 	private static DashboardPlugIn plugin;
 	private static IOdysseusScriptParser scriptParser;
 	private static IExecutor executor;
+	private static ImageManager imageManager;
 	
 	public DashboardPlugIn() {
 	}
@@ -51,6 +53,9 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		
 		extensionResolver = new DashboardPartExtensionPointResolver();
 		Platform.getExtensionRegistry().addListener(extensionResolver, DashboardPlugIn.EXTENSION_POINT_ID);
+		
+		imageManager = new ImageManager(context.getBundle());
+		imageManager.register("dashboardPart", "icons/dashboardPart.jpg");
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -58,12 +63,9 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		super.stop(context);
 		
 		Platform.getExtensionRegistry().removeListener(extensionResolver);
+		
+		imageManager.disposeAll();
 	}
-
-	public static DashboardPlugIn getDefault() {
-		return plugin;
-	}
-	
 	public void bindScriptParser( IOdysseusScriptParser parser ) {
 		LOG.debug("ScriptParser {} bound." , parser);
 		
@@ -76,10 +78,6 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 			
 			scriptParser = null;
 		}
-	}
-	
-	public static IOdysseusScriptParser getScriptParser() {
-		return scriptParser;
 	}
 	
 	public void bindExecutor( IExecutor exec ) {
@@ -96,8 +94,20 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		}
 	}
 	
+	public static DashboardPlugIn getDefault() {
+		return plugin;
+	}
+	
+	public static IOdysseusScriptParser getScriptParser() {
+		return scriptParser;
+	}
+
 	public static IExecutor getExecutor() {
 		return executor;
+	}
+	
+	public static ImageManager getImageManager() {
+		return imageManager;
 	}
 	
 }
