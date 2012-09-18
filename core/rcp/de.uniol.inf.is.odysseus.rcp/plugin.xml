@@ -3,11 +3,6 @@
 <plugin>
    <extension-point id="de.uniol.inf.is.odysseus.rcp.buildConfiguration" name="Query Build Configuration" schema="schema/de.uniol.inf.is.odysseus.rcp.buildConfiguration.exsd"/>
    <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="de.uniol.inf.is.odysseus.rcp.StartUp"></startup>
-   </extension>
-   <extension
          point="org.eclipse.ui.views">
       <category
             id="Odysseus"
