@@ -73,7 +73,7 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 	@SuppressWarnings("unchecked")
 	public DefaultStreamConnection(Collection<IPhysicalOperator> operators ) {
 		Preconditions.checkNotNull(operators, "List of operators must not be null!");
-		Preconditions.checkArgument(operators.isEmpty(), "List of operators must not be empty!");
+		Preconditions.checkArgument(!operators.isEmpty(), "List of operators must not be empty!");
 		
 		subscriptions = Lists.newLinkedList();
 		for( IPhysicalOperator operator : operators ) {
