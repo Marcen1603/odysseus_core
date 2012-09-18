@@ -66,6 +66,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			AbstractPipe.this.delegatedProcessOpen();
 		}
 
+		
 		@Override
 		protected void setInputPortCount(int ports) {
 			super.setInputPortCount(ports);
@@ -91,6 +92,16 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		@Override
 		public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 			return AbstractPipe.this.delegatedIsSemanticallyEqual(ipo);
+		}
+		
+		// Needed because isOpen needs to be called from AbstractPipe
+		@Override
+		public boolean isOpen() {
+			return AbstractPipe.this.isOpen();
+		}
+		
+		public boolean sinkIsOpen(){
+			return super.isOpen();
 		}
 
 	}
@@ -162,12 +173,11 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	final public void open(ISink<? super W> caller, int sourcePort,
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath)
 			throws OpenFailedException {
+		// First: Call open for the source part. Activate subscribers and call process_open
 		super.open(caller, sourcePort, sinkPort, callPath);
-		// TODO: Why do we have this second call to open?
-		// DGe: if this is not done, open is not called on the next subscription target
-	//	if (!isOpen()) {
-			this.delegateSink.open(callPath);
-		//}
+		// Second: Call open for the sink part. Call open on connected sources and do not call process_open
+		this.delegateSink.open(callPath);
+		
 	}
 
 	public void delegatedProcessOpen() throws OpenFailedException {
@@ -176,7 +186,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	public boolean isOpen() {
-		return super.isOpen() || this.delegateSink.isOpen();
+		return super.isOpen() || this.delegateSink.sinkIsOpen();
 	}
 
 	// ------------------------------------------------------------------------

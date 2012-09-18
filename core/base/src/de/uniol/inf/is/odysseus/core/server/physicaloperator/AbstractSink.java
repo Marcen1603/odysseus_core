@@ -237,7 +237,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	final public boolean isOpen() {
+	public boolean isOpen() {
 		return this.isSinkOpen.get();
 	}
 
