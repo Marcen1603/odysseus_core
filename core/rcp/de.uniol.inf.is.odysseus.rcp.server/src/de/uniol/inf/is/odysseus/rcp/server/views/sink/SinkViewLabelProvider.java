@@ -38,7 +38,7 @@ import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.rcp.ImageManager;
+import de.uniol.inf.is.odysseus.rcp.server.OdysseusRCPServerPlugIn;
 
 /**
  * 
@@ -66,10 +66,10 @@ public class SinkViewLabelProvider implements ILabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof Entry) {
-			return ImageManager.getInstance().get("source");
+			return OdysseusRCPServerPlugIn.getImageManager().get("source");
 		}
 		if (element instanceof SDFAttribute) {
-			return ImageManager.getInstance().get("attribute");
+			return OdysseusRCPServerPlugIn.getImageManager().get("attribute");
 		}
 		return null;
 	}

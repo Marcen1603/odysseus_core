@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.SchedulingEventType;
+import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 
 /**
@@ -46,15 +47,30 @@ public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventL
 	public static final String MEP_FUNCTIONS_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.MEPFunctionsView";
 	
 	private static IServerExecutor serverExecutor;
+	
+	private static ImageManager imageManager;
 
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		
+		imageManager = new ImageManager(context.getBundle());
+		imageManager.register("source", "icons/application-import.png");
+		imageManager.register("attribute", "icons/status.png");
+		imageManager.register("loggedinuser", "icons/user--plus.png");
+		imageManager.register("users", "icons/users.png");
+		imageManager.register("role", "icons/tick-small-circle.png");
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
+		
+		imageManager.disposeAll();
+	}
+	
+	public static ImageManager getImageManager() {
+		return imageManager;
 	}
 	
 	public void bindExecutor(IExecutor executor) {
@@ -69,16 +85,6 @@ public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventL
 		}
 	}
 
-	private void prepareServerExecutor() {
-		StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, determineStatusManagerExecutorInfo());
-
-		if (serverExecutor.getSchedulerManager() != null) {
-			serverExecutor.getSchedulerManager().subscribeToAll(this);
-			serverExecutor.getSchedulerManager().getActiveScheduler().subscribeToAll(this);
-		}
-		
-		serverExecutor.startExecution();
-	}
 
 	public void unbindExecutor(IExecutor executor) {
 		if( executor == serverExecutor ) {
@@ -102,6 +108,17 @@ public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventL
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private void prepareServerExecutor() {
+		StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, determineStatusManagerExecutorInfo());
+
+		if (serverExecutor.getSchedulerManager() != null) {
+			serverExecutor.getSchedulerManager().subscribeToAll(this);
+			serverExecutor.getSchedulerManager().getActiveScheduler().subscribeToAll(this);
+		}
+		
+		serverExecutor.startExecution();
 	}
 
 	private String determineStatusManagerExecutorInfo() {

@@ -25,8 +25,8 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.server.OdysseusRCPServerPlugIn;
 
 public class SourcesViewLabelProvider implements ILabelProvider {
 
@@ -50,10 +50,10 @@ public class SourcesViewLabelProvider implements ILabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof Entry) {
-			return ImageManager.getInstance().get("source");
+			return OdysseusRCPServerPlugIn.getImageManager().get("source");
 		}
 		if (element instanceof SDFAttribute) {
-			return ImageManager.getInstance().get("attribute");
+			return OdysseusRCPServerPlugIn.getImageManager().get("attribute");
 		}
 		return null;
 	}

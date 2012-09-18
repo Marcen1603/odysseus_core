@@ -61,6 +61,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 	private static OdysseusRCPPlugIn instance;
 	private static IExecutor executor = null;
 	private static ISession activeSession;
+	private static ImageManager imageManager;
 
 	public static OdysseusRCPPlugIn getDefault() {
 		return instance;
@@ -79,16 +80,13 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 		super.start(bundleContext);
 
 		// Bilder registrieren
-		ImageManager.getInstance().register("repository", "icons/repository_rep.gif");
-		ImageManager.getInstance().register("user", "icons/user.png");
-		ImageManager.getInstance().register("loggedinuser", "icons/user--plus.png");
-		ImageManager.getInstance().register("users", "icons/users.png");
-		ImageManager.getInstance().register("sla", "icons/document-block.png");
-		ImageManager.getInstance().register("percentile", "icons/document-tag.png");
-		ImageManager.getInstance().register("role", "icons/tick-small-circle.png");
-		ImageManager.getInstance().register("source", "icons/application-import.png");
-		ImageManager.getInstance().register("view", "icons/table.png");
-		ImageManager.getInstance().register("attribute", "icons/status.png");
+		imageManager = new ImageManager(bundleContext.getBundle());
+		
+		imageManager.register("repository", "icons/repository_rep.gif");
+		imageManager.register("user", "icons/user.png");
+		imageManager.register("sla", "icons/document-block.png");
+		imageManager.register("percentile", "icons/document-tag.png");
+		imageManager.register("view", "icons/table.png");
 
 		instance = this;
 	}
@@ -98,6 +96,12 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 		super.stop(bundleContext);
 
 		instance = null;
+		
+		imageManager.disposeAll();
+	}
+	
+	public static ImageManager getImageManager() {
+		return imageManager;
 	}
 
 	public static IExecutor getExecutor() {

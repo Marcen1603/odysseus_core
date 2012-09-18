@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.context.rcp;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.rcp.ImageManager;
+
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -28,6 +30,8 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
+	
+	private static ImageManager imageManager;
 	
 	/**
 	 * The constructor
@@ -42,6 +46,10 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		imageManager = new ImageManager(context.getBundle());
+		imageManager.register("source", "icons/application-import.png");
+		imageManager.register("attribute", "icons/status.png");
 	}
 
 	/*
@@ -51,6 +59,8 @@ public class Activator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+		
+		imageManager.disposeAll();
 	}
 
 	/**
@@ -62,4 +72,7 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
+	public static ImageManager getImageManager() {
+		return imageManager;
+	}
 }

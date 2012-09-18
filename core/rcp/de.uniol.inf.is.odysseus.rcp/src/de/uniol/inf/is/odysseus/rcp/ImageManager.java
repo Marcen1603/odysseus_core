@@ -15,67 +15,108 @@
   */
 package de.uniol.inf.is.odysseus.rcp;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 
 public class ImageManager {
 
-	private static ImageManager instance = null;
+	private static final Logger LOG = LoggerFactory.getLogger(ImageManager.class);
 	
-	private Map<String, String> imageIDs;
-	private Map<String, Image> loadedImages;
+	private final Bundle bundle;
 	
-	private ImageManager() {
-		
-	}
+	private Map<String, String> imageIDs = Maps.newHashMap();
+	private Map<String, Image> loadedImages = Maps.newHashMap();
 	
-	public static ImageManager getInstance() {
-		if( instance == null ) 
-			instance = new ImageManager();
-		return instance;
+	public ImageManager( Bundle bundle ) {
+		this.bundle = Preconditions.checkNotNull(bundle, "Bundle for ImageRegistry must not be null!");
 	}
 	
 	public void register( String imageID, String fileName ) {
-		Assert.isNotNull(imageID, "imageID");
-		Assert.isNotNull(fileName, "fileName");
-		Assert.isLegal(!getImageIDs().containsKey(imageID), "imageID "+ imageID + " already registered");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(fileName), "Filename to register must not be null or empty!");
+
+		if( imageIDs.containsKey(imageID)) {
+			LOG.warn("Registering already registered imageID {}.", imageID);
+		}
 		
-		getImageIDs().put(imageID, fileName);
+		imageIDs.put(imageID, fileName);
+	}
+	
+	public void unregister( String imageID ) {
+		if( imageIDs.containsKey(imageID)) {
+			imageIDs.remove(imageID);
+			if(isLoaded(imageID)) {
+				dispose(imageID);
+			}
+		} else {
+			LOG.warn("Unregister an imageID {} which was not registered before.", imageID);
+		}
+	}
+	
+	public ImmutableList<String> getRegisteredImageIDs() {
+		return ImmutableList.copyOf(imageIDs.keySet());
+	}
+	
+	public ImmutableList<String> getLoadedImageIDs() {
+		return ImmutableList.copyOf(loadedImages.keySet());
 	}
 	
 	public Image get( String imageID ) {
-		Assert.isNotNull(imageID, "imageID");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
 		
-		if( !getLoadedImages().containsKey(imageID)) {
+		if( !loadedImages.containsKey(imageID)) {
 			// Load image
-			String filename = getImageIDs().get(imageID);
+			String filename = imageIDs.get(imageID);
 			if( filename == null )
-				throw new IllegalArgumentException("imageID " + imageID + " not registered ");
+				throw new IllegalArgumentException("ImageID " + imageID + " not registered ");
 			
-			ImageDescriptor img = ImageDescriptor.createFromURL(OdysseusRCPPlugIn.getDefault().getBundle().getEntry(filename));
+			ImageDescriptor img = ImageDescriptor.createFromURL(bundle.getEntry(filename));
 			Image image = img.createImage();
 			if( image == null ) 
-				throw new IllegalArgumentException("image is null (imageID=" + imageID + ")");
+				throw new IllegalArgumentException("Returned image with imageID=" + imageID + " is null!");
 			
-			getLoadedImages().put(imageID, image);
+			loadedImages.put(imageID, image);
 		}
 		
-		return getLoadedImages().get(imageID);
+		return loadedImages.get(imageID);
 	}
 	
-	private Map<String, String> getImageIDs() {
-		if( imageIDs == null )
-			imageIDs = new HashMap<String, String>();
-		return imageIDs;
+	public boolean isLoaded( String imageID ) {
+		return loadedImages.containsKey(imageID);
 	}
 	
-	private Map<String, Image> getLoadedImages() {
-		if( loadedImages == null ) 
-			loadedImages = new HashMap<String, Image>();
-		return loadedImages;
+	public void disposeAll() {
+		debugNotLoadedImages();
+		
+		for( Image image : loadedImages.values()) {
+			image.dispose();
+		}
+		loadedImages.clear();
+	}
+
+	public void dispose( String imageID ) {
+		Image img = loadedImages.get(imageID);
+		if( img != null ) {
+			img.dispose();
+			loadedImages.remove(imageID);
+		}
+	}
+	
+	private void debugNotLoadedImages() {
+		for( String imageID : imageIDs.keySet() ) {
+			if( loadedImages.containsKey(imageID)) {
+				LOG.debug("ImageID {} was never loaded.", imageID);
+			}
+		}
 	}
 }

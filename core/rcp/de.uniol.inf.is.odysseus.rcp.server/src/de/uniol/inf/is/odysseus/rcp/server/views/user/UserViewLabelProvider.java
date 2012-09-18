@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IPrivilege;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.rcp.ImageManager;
+import de.uniol.inf.is.odysseus.rcp.server.OdysseusRCPServerPlugIn;
 
 public class UserViewLabelProvider extends LabelProvider {
 
@@ -55,13 +55,13 @@ public class UserViewLabelProvider extends LabelProvider {
 	@Override
 	public Image getImage(Object obj) {
 		if (obj instanceof ISession) {
-			return ImageManager.getInstance().get("loggedinuser");
+			return OdysseusRCPServerPlugIn.getImageManager().get("loggedinuser");
 		}
 		if (obj instanceof IUser) {
-			return ImageManager.getInstance().get("user");
+			return OdysseusRCPServerPlugIn.getImageManager().get("user");
 		}
 		if (obj instanceof IRole) {
-			return ImageManager.getInstance().get("role");
+			return OdysseusRCPServerPlugIn.getImageManager().get("role");
 		}
 		String imageKey = ISharedImages.IMG_OBJ_FILE;
 		return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);

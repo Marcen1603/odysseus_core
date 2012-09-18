@@ -34,10 +34,10 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
+import de.uniol.inf.is.odysseus.context.rcp.Activator;
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.ImageManager;
 
 /**
  * 
@@ -65,10 +65,10 @@ public class ContextViewTreeLabelProvider implements ILabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IContextStore) {
-			return ImageManager.getInstance().get("source");
+			return Activator.getImageManager().get("source");
 		}
 		if (element instanceof SDFAttribute) {
-			return ImageManager.getInstance().get("attribute");
+			return Activator.getImageManager().get("attribute");
 		}
 		return null;
 	}
