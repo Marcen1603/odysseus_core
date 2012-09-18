@@ -62,6 +62,7 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		Platform.getExtensionRegistry().removeListener(extensionResolver);
 		
 		imageManager.disposeAll();
+		imageManager = null;
 	}
 	public void bindScriptParser( IOdysseusScriptParser parser ) {
 		LOG.debug("ScriptParser {} bound." , parser);
