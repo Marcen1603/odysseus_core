@@ -18,8 +18,11 @@ package de.uniol.inf.is.odysseus.wrapper.protobuf;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
+
 public class Activator implements BundleActivator {
 
+	public static final String GOOGLE_PROTOBUF = "GoogleProtoBuf";
 	private static BundleContext context;
 
 	static BundleContext getContext() {
@@ -32,6 +35,8 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		
+		WrapperRegistry.registerWrapper(GOOGLE_PROTOBUF);
 	}
 
 	/*

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.transform;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rules.RuleProvider;
@@ -25,7 +26,11 @@ import de.uniol.inf.is.odysseus.transform.rules.RuleProvider;
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
+	
+	final public static String GENERIC_PUSH = "GenericPush"; 
+	final public static String GENERIC_PULL = "GenericPull"; 
 
+	
 	static BundleContext getContext() {
 		return context;
 	}
@@ -50,6 +55,9 @@ public class Activator implements BundleActivator {
 		//loading my own rules because self-binding-services don't work
 		TransformationInventory.getInstance().bindRuleProvider(new RuleProvider());
 		
+		// TAccessAOGenericRule handles GenericPush and GenericPull-Wrapper
+		WrapperRegistry.registerWrapper(GENERIC_PUSH);
+		WrapperRegistry.registerWrapper(GENERIC_PULL);
 	}
 
 	/*

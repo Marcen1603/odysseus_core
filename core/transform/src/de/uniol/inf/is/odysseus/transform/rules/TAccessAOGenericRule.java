@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.Receive
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.Activator;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -76,7 +77,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 			String protocolHandler = operator.getProtocolHandler();
 			Map<String, String> options = operator.getOptionsMap();
 			ITransportHandler transportHandler;
-			if ("genericpull".equals(operator.getWrapper().toLowerCase())) {
+			if (Activator.GENERIC_PULL.equals(operator.getWrapper().toLowerCase())) {
 				transportHandler = TransportHandlerRegistry.getInstance(
 						operator.getTransportHandler(), ITransportPattern.PULL,
 						options);
@@ -107,7 +108,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 				}
 			}
 
-			if ("genericpull".equals(operator.getWrapper().toLowerCase())) {
+			if (Activator.GENERIC_PULL.equals(operator.getWrapper().toLowerCase())) {
 
 				IProtocolHandler ph = ProtocolHandlerRegistry
 						.getInstance(protocolHandler, options,
@@ -134,7 +135,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 		} else {
 			logger.warn("DEPRECATED: Use new generic AccessAO style");
 			// older generic accessao style
-			if ("genericpull".equals(operator.getWrapper().toLowerCase())) {
+			if (Activator.GENERIC_PULL.equals(operator.getWrapper().toLowerCase())) {
 
 				IInputHandler inputHandlerPrototype = InputHandlerRegistry
 						.getInputHandler(operator.getInput());
@@ -241,8 +242,8 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 	public boolean isExecutable(AccessAO operator,
 			TransformationConfiguration config) {
 		return (getDataDictionary().getAccessPlan(operator.getSourcename()) == null
-				&& operator.getWrapper() != null && ("genericpull"
-				.equals(operator.getWrapper().toLowerCase()) || "genericpush"
+				&& operator.getWrapper() != null && (Activator.GENERIC_PULL
+				.equals(operator.getWrapper().toLowerCase()) || Activator.GENERIC_PUSH
 				.equals(operator.getWrapper().toLowerCase())));
 	}
 
