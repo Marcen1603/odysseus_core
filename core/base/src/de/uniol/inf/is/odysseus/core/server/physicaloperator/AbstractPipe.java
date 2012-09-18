@@ -164,9 +164,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			throws OpenFailedException {
 		super.open(caller, sourcePort, sinkPort, callPath);
 		// TODO: Why do we have this second call to open?
-		if (!isOpen()) {
+		// DGe: if this is not done, open is not called on the next subscription target
+	//	if (!isOpen()) {
 			this.delegateSink.open(callPath);
-		}
+		//}
 	}
 
 	public void delegatedProcessOpen() throws OpenFailedException {
