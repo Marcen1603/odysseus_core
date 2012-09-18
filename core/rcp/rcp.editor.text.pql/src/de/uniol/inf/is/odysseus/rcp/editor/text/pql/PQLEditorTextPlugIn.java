@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.rcp.ImageManager;
 
 public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 
@@ -23,12 +24,18 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 	private static PQLEditorTextPlugIn instance;
 	private static IOperatorBuilderFactory operatorBuilderFactory;
 	private static IDataDictionary dataDictionary;
+	private static ImageManager imageManager;
 
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
 		instance = this;
+		imageManager = new ImageManager(context.getBundle());
+
+		imageManager.register("pqlOperator", "icons/operator.png");
+		imageManager.register("pqlAttribute", "icons/manParameter.png");
+		imageManager.register("pqlOptionalAttribute", "icons/optParameter.png");
 	}
 
 	@Override
@@ -36,6 +43,9 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 		super.stop(context);
 
 		instance = null;
+	
+		imageManager.disposeAll();
+		imageManager = null;
 	}
 
 	public void bindOperatorBuilderFactory(IOperatorBuilderFactory builder) {
@@ -80,6 +90,10 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 
 	public static PQLEditorTextPlugIn getDefault() {
 		return instance;
+	}
+	
+	public static ImageManager getImageManager() {
+		return imageManager;
 	}
 
 	private static String[] determineNames(List<IOperatorBuilder> builders) {

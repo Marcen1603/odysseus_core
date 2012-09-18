@@ -23,12 +23,6 @@
       </view>
    </extension>
    <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.pql.StartUp">
-      </startup>
-   </extension>
-   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
