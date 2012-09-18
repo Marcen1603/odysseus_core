@@ -121,7 +121,10 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 	@Override
 	public void dispose() {
 		stopDashboard();
-
+		
+		dashboard.dispose();
+		getSite().setSelectionProvider(null);
+		
 		super.dispose();
 	}
 
@@ -131,7 +134,8 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
 		
 		dashboard.createPartControl(parent, toolBar);
-
+		getSite().setSelectionProvider(dashboard);
+		
 		try {
 			startDashboard();
 		} catch (Exception ex) {

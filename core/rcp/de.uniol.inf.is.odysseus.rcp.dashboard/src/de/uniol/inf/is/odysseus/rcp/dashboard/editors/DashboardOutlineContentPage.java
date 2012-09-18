@@ -16,13 +16,17 @@
 
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import com.google.common.base.Preconditions;
 
-public class DashboardOutlineContentPage extends ContentOutlinePage implements IDashboardListener {
+public class DashboardOutlineContentPage extends ContentOutlinePage implements IDashboardListener, ISelectionListener {
 
 	private final Dashboard dashboard;
 	
@@ -39,6 +43,8 @@ public class DashboardOutlineContentPage extends ContentOutlinePage implements I
 		viewer.setContentProvider(new DashboardOutlineContentProvider());
 		viewer.setLabelProvider(new DashboardOutlineLabelProvider());
 		viewer.setInput(dashboard);
+		
+		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 	}
 	
 	public void refresh() {
@@ -54,5 +60,12 @@ public class DashboardOutlineContentPage extends ContentOutlinePage implements I
 	@Override
 	public void dashboardChanged(Dashboard sender) {
 		refresh();
+	}
+
+	@Override
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {	
+		if (part instanceof DashboardEditor && selection instanceof IStructuredSelection && !selection.isEmpty()) {
+			setSelection(selection);
+		}
 	}
 }
