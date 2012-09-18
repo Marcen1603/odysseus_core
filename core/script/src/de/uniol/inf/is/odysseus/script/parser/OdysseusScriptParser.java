@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.script.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,9 +33,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class OdysseusScriptParser implements IOdysseusScriptParser {
+public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser {
 
 	private static final PreParserKeywordRegistry KEYWORD_REGISTRY = new PreParserKeywordRegistry();
 
@@ -458,6 +463,35 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		for (Entry<String, Class<? extends IPreParserKeyword>> entry : keywords.entrySet()) {
 			KEYWORD_REGISTRY.removeKeyword(entry.getKey());
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#getLanguage()
+	 */
+	@Override
+	public String getLanguage() {
+		return "OdysseusScript";
+	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse(java.lang.String, de.uniol.inf.is.odysseus.core.usermanagement.ISession, de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
+	 */
+	@Override
+	public List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
+		try {
+			this.parseAndExecute(query, user, null);
+		} catch (OdysseusScriptException e) {
+			throw new QueryParseException(e);			
+		}
+		return new ArrayList<>();
+	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse(java.io.Reader, de.uniol.inf.is.odysseus.core.usermanagement.ISession, de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
+	 */
+	@Override
+	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {		
+		return new ArrayList<>();
 	}
 
 }

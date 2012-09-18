@@ -19,5 +19,6 @@
    <reference bind="addKeywordProvider" cardinality="1..n" interface="de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider" name="IPreParserKeywordProvider" policy="dynamic" unbind="removeKeywordProvider"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser"/>
    </service>
 </scr:component>
