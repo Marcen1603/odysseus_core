@@ -56,14 +56,6 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 	private final Collection<IStreamElementListener<In>> listeners = new ArrayList<IStreamElementListener<In>>();
 	private boolean hasExceptions = false;
 
-	@Deprecated
-	public DefaultStreamConnection(List<ISubscription<? extends ISource<In>>> subscriptions) {
-		Preconditions.checkNotNull(subscriptions, "List of subscriptions must not be null!");
-		Preconditions.checkArgument(!subscriptions.isEmpty(), "List of subscriptions must not be empty!");
-
-		this.subscriptions = subscriptions;
-	}
-
 	public DefaultStreamConnection(IPhysicalOperator operator) {
 		Preconditions.checkNotNull(operator, "Operator for DefaultStreamConnection must not be null!");
 
