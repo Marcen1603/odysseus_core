@@ -387,14 +387,15 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		sub.decOpenCalls();
 		if (sub.getOpenCalls() == 0) {
 			this.activeSinkSubscriptions.remove(sub);
-			if (activeSinkSubscriptions.size() == 0) {
+			// defaultstreamconnections could be connected and opencalls represents only real subscriptions
+//			if (activeSinkSubscriptions.size() == 0) {
 				getLogger().debug("Closing " + toString());
 				fire(this.closeInitEvent);
 				this.process_close();
 				open.set(false);
 				stopMonitoring();
 				fire(this.closeDoneEvent);
-			}
+//			}
 		}
 
 	}
