@@ -69,12 +69,12 @@ public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		int otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
 		synchronized (this.areas[otherport]) {
-//			areas[otherport].purgeElements(object, order);
+			areas[otherport].purgeElements(object, order);
 			
 			//behelfsmäßiges Sliding-Window...
 //			Long point = object.getMetadata().getStart().getMainPoint();
 //			areas[otherport].purgeElementsBefore(new PointInTime(point - 20));
-			areas[otherport].purgeElementsBefore(object.getMetadata().getStart());
+//			areas[otherport].purgeElementsBefore(object.getMetadata().getStart());
 		}
 
 		synchronized (this) {
@@ -128,16 +128,16 @@ public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 //		printAreas();
 		
 		// Wann können SP gelöscht werden???
-		if(areas[otherport].getMinTs() != null) {
+		if(transferFunction.getMinTs() != null) {
 //			LOG.debug("areas[otherport].getMinTs(): " + areas[otherport].getMinTs().getMainPoint());
 //			LOG.debug("transferFunction.getMinTs().getMainPoint(): " + transferFunction.getMinTs().getMainPoint());
-			spCache.cleanCache(areas[otherport].getMinTs().getMainPoint(), port);
-			LOG.debug("spCache.size(otherport) after clean(): " + spCache.size(otherport));
-			LOG.debug("spCache.size(port) after clean(): " + spCache.size(port));
-			LOG.debug("areas[otherport].getMinTs(): " + areas[otherport].getMinTs());
-			LOG.debug("areas[otherport].getMaxTs(): " + areas[otherport].getMaxTs());
-			LOG.debug("areas[port].getMinTs(): " + areas[port].getMinTs());
-			LOG.debug("areas[port].getMaxTs(): " + areas[port].getMaxTs());
+			spCache.cleanCache(transferFunction.getMinTs().getMainPoint(), port);
+//			LOG.debug("spCache.size(otherport) after clean(): " + spCache.size(otherport));
+//			LOG.debug("spCache.size(port) after clean(): " + spCache.size(port));
+//			LOG.debug("areas[otherport].getMinTs(): " + areas[otherport].getMinTs());
+//			LOG.debug("areas[otherport].getMaxTs(): " + areas[otherport].getMaxTs());
+//			LOG.debug("areas[port].getMinTs(): " + areas[port].getMinTs());
+//			LOG.debug("areas[port].getMaxTs(): " + areas[port].getMaxTs());
 //			spCache.printCache();
 		}
 	}
