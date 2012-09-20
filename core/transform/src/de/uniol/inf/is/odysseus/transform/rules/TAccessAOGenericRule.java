@@ -77,7 +77,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 			String protocolHandler = operator.getProtocolHandler();
 			Map<String, String> options = operator.getOptionsMap();
 			ITransportHandler transportHandler;
-			if (Activator.GENERIC_PULL.equals(operator.getWrapper().toLowerCase())) {
+			if (Activator.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 				transportHandler = TransportHandlerRegistry.getInstance(
 						operator.getTransportHandler(), ITransportPattern.PULL,
 						options);
@@ -108,7 +108,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 				}
 			}
 
-			if (Activator.GENERIC_PULL.equals(operator.getWrapper().toLowerCase())) {
+			if (Activator.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 
 				IProtocolHandler ph = ProtocolHandlerRegistry
 						.getInstance(protocolHandler, options,
@@ -135,7 +135,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 		} else {
 			logger.warn("DEPRECATED: Use new generic AccessAO style");
 			// older generic accessao style
-			if (Activator.GENERIC_PULL.equals(operator.getWrapper().toLowerCase())) {
+			if (Activator.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 
 				IInputHandler inputHandlerPrototype = InputHandlerRegistry
 						.getInputHandler(operator.getInput());
@@ -243,8 +243,8 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 			TransformationConfiguration config) {
 		return (getDataDictionary().getAccessPlan(operator.getSourcename()) == null
 				&& operator.getWrapper() != null && (Activator.GENERIC_PULL
-				.equals(operator.getWrapper().toLowerCase()) || Activator.GENERIC_PUSH
-				.equals(operator.getWrapper().toLowerCase())));
+				.equalsIgnoreCase(operator.getWrapper()) || Activator.GENERIC_PUSH
+				.equalsIgnoreCase(operator.getWrapper())));
 	}
 
 	@Override

@@ -27,8 +27,8 @@ public class Activator implements BundleActivator {
 
 	private static BundleContext context;
 	
-	final public static String GENERIC_PUSH = "genericpush"; 
-	final public static String GENERIC_PULL = "genericpull"; 
+	final public static String GENERIC_PUSH = "GenericPush"; 
+	final public static String GENERIC_PULL = "GenericPull"; 
 
 	
 	static BundleContext getContext() {
