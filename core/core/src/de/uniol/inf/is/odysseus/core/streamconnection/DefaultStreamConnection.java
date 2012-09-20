@@ -46,7 +46,8 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 
 	Logger logger = LoggerFactory.getLogger(DefaultStreamConnection.class);
 
-	private List<ISubscription<? extends ISource<In>>> subscriptions;
+	private final List<ISubscription<? extends ISource<In>>> subscriptions;
+	
 	private boolean connected = false;
 	private boolean enabled = false;
 
@@ -57,20 +58,15 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 	private boolean hasExceptions = false;
 
 	public DefaultStreamConnection(IPhysicalOperator operator) {
-		Preconditions.checkNotNull(operator, "Operator for DefaultStreamConnection must not be null!");
-
-		this.subscriptions = determineSubscriptions(operator); 
+		this(Lists.newArrayList(operator));
 	}
 	
-	@SuppressWarnings("unchecked")
 	public DefaultStreamConnection(Collection<IPhysicalOperator> operators ) {
 		Preconditions.checkNotNull(operators, "List of operators must not be null!");
 		Preconditions.checkArgument(!operators.isEmpty(), "List of operators must not be empty!");
 		
-		subscriptions = Lists.newLinkedList();
-		for( IPhysicalOperator operator : operators ) {
-			subscriptions.addAll((Collection<? extends ISubscription<? extends ISource<In>>>) determineSubscriptions(operator));
-		}
+		this.subscriptions = determineSubscriptions(operators);
+		listenToTargets(this.subscriptions);
 	}
 
 	@Override
@@ -389,6 +385,16 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 	public void close() {
 	}
 	
+
+	@SuppressWarnings("unchecked")
+	private static <In> List<ISubscription<? extends ISource<In>>> determineSubscriptions(Collection<IPhysicalOperator> operators) {
+		List<ISubscription<? extends ISource<In>>> subscriptions = Lists.newLinkedList();
+		for( IPhysicalOperator operator : operators ) {
+			subscriptions.addAll((Collection<? extends ISubscription<? extends ISource<In>>>) determineSubscriptions(operator));
+		}
+		return subscriptions;
+	}
+	
 	@SuppressWarnings("unchecked")
 	private static <In> List<ISubscription<? extends ISource<In>>> determineSubscriptions(IPhysicalOperator operator) {
 		Preconditions.checkArgument(operator.isSink() || operator.isSource(), "Operator must be sink and/or source!");
@@ -407,5 +413,11 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 		}
 		
 		return subs;
+	}
+	
+	private static <In> void listenToTargets(List<ISubscription<? extends ISource<In>>> subscriptions) {
+		Preconditions.checkNotNull(subscriptions, "Subscriptions to listen to targets must not be null!");
+		
+		
 	}
 }
