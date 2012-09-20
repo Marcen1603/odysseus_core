@@ -6,17 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.securitypunctuation.helper.BinarySecurityPunctuationCache;
-import de.uniol.inf.is.odysseus.securitypunctuation.helper.SecurityPunctuationCache;
 
 public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>> extends JoinTIPO<K, T> {
 	
@@ -37,17 +31,8 @@ public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	protected void process_next(T object, int port) {
 		
 		LOG.debug("process_next - Port: " + port + " - Objekt: " + object);
-		LOG.debug("areas[port].size(): " + areas[port].size());
-		LOG.debug("areas[otherport].size(): " + areas[port^1].size());
-		
-		if(object.getMetadata().getStart().getMainPoint() > 55) {
-			System.out.println("");
-		}
-		
-//		if(counter++ >= 20) {
-//			System.out.println("");
-//		}
-
+//		LOG.debug("areas[port].size(): " + areas[port].size());
+//		LOG.debug("areas[otherport].size(): " + areas[port^1].size());
 
 		if (isDone()) {
 			// TODO bei den sources abmelden ?? MG: Warum??
@@ -70,11 +55,6 @@ public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		Order order = Order.fromOrdinal(port);
 		synchronized (this.areas[otherport]) {
 			areas[otherport].purgeElements(object, order);
-			
-			//behelfsmäßiges Sliding-Window...
-//			Long point = object.getMetadata().getStart().getMainPoint();
-//			areas[otherport].purgeElementsBefore(new PointInTime(point - 20));
-//			areas[otherport].purgeElementsBefore(object.getMetadata().getStart());
 		}
 
 		synchronized (this) {
@@ -125,38 +105,14 @@ public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			}	
 		}
 		
-//		printAreas();
-		
 		// Wann können SP gelöscht werden???
 		if(transferFunction.getMinTs() != null) {
-//			LOG.debug("areas[otherport].getMinTs(): " + areas[otherport].getMinTs().getMainPoint());
-//			LOG.debug("transferFunction.getMinTs().getMainPoint(): " + transferFunction.getMinTs().getMainPoint());
 			spCache.cleanCache(transferFunction.getMinTs().getMainPoint(), port);
-//			LOG.debug("spCache.size(otherport) after clean(): " + spCache.size(otherport));
-//			LOG.debug("spCache.size(port) after clean(): " + spCache.size(port));
-//			LOG.debug("areas[otherport].getMinTs(): " + areas[otherport].getMinTs());
-//			LOG.debug("areas[otherport].getMaxTs(): " + areas[otherport].getMaxTs());
-//			LOG.debug("areas[port].getMinTs(): " + areas[port].getMinTs());
-//			LOG.debug("areas[port].getMaxTs(): " + areas[port].getMaxTs());
-//			spCache.printCache();
 		}
 	}
 	
 	@Override
 	public String getName() {
 		return "SAJoin";
-	}
-	
-	private void printAreas() {
-//		LOG.debug("");
-//		LOG.debug("areas[0]:");
-//		for(T lala:areas[0]) {
-//			LOG.debug(lala.toString());
-//		}
-//		LOG.debug("areas[1]:");
-//		for(T lala:areas[1]) {
-//			LOG.debug(lala.toString());
-//		}
-//		LOG.debug("");
 	}
 }

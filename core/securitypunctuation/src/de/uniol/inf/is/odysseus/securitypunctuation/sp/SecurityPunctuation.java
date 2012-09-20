@@ -3,20 +3,15 @@ package de.uniol.inf.is.odysseus.securitypunctuation.sp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public class SecurityPunctuation extends AbstractSecurityPunctuation {
-	
-    private static Logger LOG = LoggerFactory.getLogger(SecurityPunctuation.class);
-
 	private static final long serialVersionUID = 8534064040716648960L;
 	
 	private ArrayList<Integer> evaluateAttributesCache = new ArrayList<Integer>();
+	
 	/**
 	 * Gibt an, ob die Attribute der SP leer sind - die SP also keinerlei Zugriff gewährt.
 	 */
@@ -65,15 +60,20 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		this.setAttribute("ts", sp.getLongAttribute("ts"));
 	}	
 	
-	//TODO Kann wieder raus...
-	@Override
-	public SecurityPunctuation clone() {
-		return new SecurityPunctuation(this);
+	/**
+	 * Creates an empty security punctuation that allows no access to the stream
+	 */
+	public SecurityPunctuation(SDFSchema schema, Long ts) {
+		setSchema(schema);
+		isEmpty = true;
+		this.setAttribute("sign", 1);
+		this.setAttribute("mutable", 1);
+		this.setAttribute("ts", ts);
 	}
 	
-	//TODO tupleTS ist doppelt...
 	public Boolean evaluate(Long tupleTS, List<String> userRoles, Tuple<?> tuple, SDFSchema schema) {
-		if( this.getIntegerAttribute("sign") == 1 
+		if( !this.isEmpty()
+			&& this.getIntegerAttribute("sign") == 1 
 			&& evaluateRoles(userRoles)
 			&& evaluateTS(tupleTS)
 			&& evaluateAttributes(tuple, schema)
@@ -161,7 +161,6 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	}	
 	
 	public Boolean evaluateStreamName(SDFSchema schema) {
-		//Was passiert hier bei Join???
 		if(this.getStringArrayListAttribute("streamname") == null) {
 			return false;
 		}
@@ -172,22 +171,11 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 			return true;
 		}		
 		
-		//es reicht nicht, wenn zugriff auf einen stream vorhanden war! auf beide!
 		for(String baseSourceName:schema.getBaseSourceNames()) {
 			if(this.getStringArrayListAttribute("streamname").contains(baseSourceName)) {
 				return true;
 			}
 		}
-//		for(String stream:this.getStringArrayListAttribute("streamname")) {
-//			if(schema.getBaseSourceNames().contains(stream)) { 
-//				return true;
-//			}
-//			for(String baseSourceName:schema.getBaseSourceNames()) {
-//				if(baseSourceName.equals(stream)) {
-//					return true;
-//				}
-//			}
-//		}
 		return false;
 	}
 
@@ -197,7 +185,10 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	 */
 	@Override
 	public ISecurityPunctuation processSP(ISecurityPunctuation isp) {
-		AbstractSecurityPunctuation sp2 = (AbstractSecurityPunctuation)isp;
+		SecurityPunctuation sp2 = (SecurityPunctuation)isp;
+		if(sp2.isEmpty()) {
+			return null;
+		}
 		
 		if(this.getSchema().getURI().equals(sp2.getSchema().getURI())) {
 			if(this.getLongAttribute("ts") == sp2.getLongAttribute("ts")) {
@@ -224,20 +215,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	 */
 	@Override
 	public ISecurityPunctuation union(ISecurityPunctuation sp2) {
-		
-//		LOG.debug("union in SP - TS: " + this.getLongAttribute("ts"));
-		
-		if(sp2 instanceof SecurityPunctuation) {
-			
-			// Union gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen und mutable sind
-			// Logik, wann es ausgeführt werden soll/kann liegt eher in processSP()!!!!!
-			
-//			if(this.getLongAttribute("ts") == sp2.getLongAttribute("ts") 
-//					&& getSchema().getURI().equals(((SecurityPunctuation) sp2).getSchema().getURI())
-//					&& this.getIntegerAttribute("mutable") == 1
-//					&& sp2.getIntegerAttribute("mutable") == 1
-//					) {
-			
+		if(sp2 instanceof SecurityPunctuation) {			
 			SecurityPunctuation newSP = new SecurityPunctuation(this);
 			
 			if(sp2.getIntegerAttribute("sign") == 1) {				
@@ -295,19 +273,8 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	 *
 	 */
 	@Override 
-	public ISecurityPunctuation intersect(ISecurityPunctuation sp2) {
-		
-//		LOG.debug("intersect in SP - TS: " + this.getLongAttribute("ts"));
-		
+	public ISecurityPunctuation intersect(ISecurityPunctuation sp2) {		
 		if(sp2 instanceof SecurityPunctuation) {
-			// intersect gibt es nur, wenn SP mit gleichem Zeitstempel aus der gleichen Quelle kommen und mutable sind
-			// Logik, wann es ausgeführt werden soll/kann liegt eher in processSP()!!!!!
-			
-//			if(this.getLongAttribute("ts") == sp2.getLongAttribute("ts")
-//					&& !this.getSchema().getURI().equals(((SecurityPunctuation) sp2).getSchema().getURI())
-//					&& this.getIntegerAttribute("mutable") == 1
-//					&& sp2.getIntegerAttribute("mutable") == 1
-//					) {
 
 				SecurityPunctuation newSP = new SecurityPunctuation(this);
 
@@ -331,7 +298,6 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 					newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
 				} 
 				return newSP;
-//			}
 		}
 		return null;
 	}
@@ -389,7 +355,6 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	
 	public Boolean isEmpty() {
 		if(isEmpty == null) {
-			// isEmpty überprüfen!!!
 			isEmpty = this.getStringArrayListAttribute("attributeNames").isEmpty()
 						&& this.getStringArrayListAttribute("streamname").isEmpty()
 						&& this.getStringArrayListAttribute("role").isEmpty()

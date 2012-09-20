@@ -48,6 +48,9 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	public SDFSchema(String uri, SDFSchema attributes1) {
 		super(uri, attributes1);
 		if(attributes1.getBaseSourceNames() != null) {
+			if(attributes1.getBaseSourceNames().size() == 1 && attributes1.getBaseSourceNames().get(0).equals("")) {
+				baseSourceNames.add(uri);
+			}
 			baseSourceNames.addAll(attributes1.getBaseSourceNames());
 		}
 	}

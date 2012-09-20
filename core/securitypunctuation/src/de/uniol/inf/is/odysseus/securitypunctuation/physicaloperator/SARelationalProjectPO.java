@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
@@ -13,8 +16,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.securitypunctuation.sp.SecurityPunctuation;
 
 public class SARelationalProjectPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractPipe<T, T> {
+	
+    private static Logger LOG = LoggerFactory.getLogger(SARelationalProjectPO.class);
 
 	private int[] restrictList;
 
@@ -80,16 +86,24 @@ public class SARelationalProjectPO<T extends IMetaAttributeContainer<? extends I
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		if(projectSPEvaluate(sp)) {
-//			System.out.println("send SP in ProjectPO");
 			this.transferSecurityPunctuation(sp);
+			LOG.debug("sent SP in ProjectPO");
 		} else {
-//			System.out.println("send NO SP in ProjectPO");
+			this.transferSecurityPunctuation(new SecurityPunctuation(sp.getSchema(), sp.getLongAttribute("ts")));
+			LOG.debug("sent Empty SP in ProjectPO");
 		}
 	}
 	
 	public Boolean projectSPEvaluate(ISecurityPunctuation sp) {
 		ArrayList<String> spAttributes = sp.getStringArrayListAttribute("attributeNames");
 		SDFSchema tupleSchema = null;		
+		
+		if(spAttributes == null) {
+			return false;
+		}
+		if(spAttributes.size() == 1 && spAttributes.get(0).equals("*")) {
+			return true;
+		}
 		
 		for(PhysicalSubscription<ISource<? extends T>> subscribedTo:this.getSubscribedToSource()) {
 			tupleSchema = subscribedTo.getSchema();

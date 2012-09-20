@@ -87,34 +87,44 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		tuple.addAttribute(new Long(counterTS++));
 		tuple.addAttribute(new Long(counterTS + 9));
 //		tuple.addAttribute(new Long(counterTS * (Math.round(Math.random() + 1)) + 1));
-//		tuple.addAttribute(new Integer((int) Math.round((Math.random() * 100))));
 		tuple.addAttribute("beispiel text");
-		tuple.addAttribute(new Integer(76));
+//		tuple.addAttribute(new Integer(76));
+		tuple.addAttribute(new Integer((int) Math.round((Math.random() * 100))));
 		return tuple;
 	}
 
 	private SADataTuple generateAttributeSP() {
 		SADataTuple tuple = new SADataTuple(true);
-		// Security Punctuation Flag
-//		tuple.addAttribute("SecurityPunctuation");
-		// DDP - Stream (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
-		tuple.addAttribute("stream1, stream2, stream3, stream4, stream5");
-		// DDP - Starttupel (-1 bedeutet keine Beschränkung)
-//		tuple.addAttribute(new Long(counterTS));
-		tuple.addAttribute(new Long(-1));
-		// DDP - Endtupel (-1 bedeutet keine Beschränkung)
-//		tuple.addAttribute(new Long(Math.round((Math.random() * 200) + counterTS)));
-		tuple.addAttribute(new Long(-1));
-		// DDP - Attribute (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
-		tuple.addAttribute("Attribut1, Attribut2");
-		// SRP - Rollen (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
-		tuple.addAttribute("sys_admin");
-		// Sign
-		tuple.addAttribute(new Integer(1));
-		// Immutable
-		tuple.addAttribute(new Integer(1));
-		// ts
-		tuple.addAttribute(new Long(counterTS));
+		if(Math.random() > 0.1) {
+			// DDP - Stream (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
+			tuple.addAttribute("stream1, stream2, stream3, stream4, stream5");
+			// DDP - Starttupel (-1 bedeutet keine Beschränkung)
+	//		tuple.addAttribute(new Long(counterTS));
+			tuple.addAttribute(new Long(-1));
+			// DDP - Endtupel (-1 bedeutet keine Beschränkung)
+	//		tuple.addAttribute(new Long(Math.round((Math.random() * 200) + counterTS)));
+			tuple.addAttribute(new Long(-1));
+			// DDP - Attribute (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
+			tuple.addAttribute("*");
+			// SRP - Rollen (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
+			tuple.addAttribute("sys_admin");
+			// Sign
+			tuple.addAttribute(new Integer(1));
+			// Immutable
+			tuple.addAttribute(new Integer(1));
+			// ts
+			tuple.addAttribute(new Long(counterTS));
+		} else {
+			// DDP - Stream (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
+			tuple.addAttribute("stream1, stream2, stream3, stream4, stream5");
+			tuple.addAttribute(new Long(counterTS));
+			tuple.addAttribute(new Long(Math.round((Math.random() * 200) + counterTS)));
+			tuple.addAttribute("Attribut1,Attribut2,Attribut12,Attribut22,ts,endts2");
+			tuple.addAttribute("sys_admin");
+			tuple.addAttribute(new Integer(1));
+			tuple.addAttribute(new Integer(1));
+			tuple.addAttribute(new Long(counterTS));
+		}
 		return tuple;
 	}
 	

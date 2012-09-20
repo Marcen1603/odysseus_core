@@ -8,14 +8,12 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
-public abstract class AbstractSecurityPunctuation implements Serializable, ISecurityPunctuation, Cloneable {
+public abstract class AbstractSecurityPunctuation implements Serializable, ISecurityPunctuation {
 	
 	private HashMap<String, Object> attributes = new HashMap<String, Object>();
 	private SDFSchema schema;
 		
 	private static final long serialVersionUID = 1069899975287225287L;
-	
-	public abstract ISecurityPunctuation clone();
 		
 	public Object getAttribute(String key) {
 		return attributes.get(key);

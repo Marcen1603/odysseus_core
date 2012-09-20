@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
@@ -16,8 +13,6 @@ import de.uniol.inf.is.odysseus.securitypunctuation.helper.StandardSecurityEvalu
  * @author Jan Sören Schwarz
  */
 public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractPipe<T, T> {
-	
-    private static Logger LOG = LoggerFactory.getLogger(SecurityShieldPO.class);
 
 	private StandardSecurityEvaluator<T> evaluator = new StandardSecurityEvaluator<T>((AbstractPipe<T, T>) this);
 	
@@ -45,11 +40,7 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
-		
-//		LOG.debug("SecurityShieldPO: " + sp);
-		
 		evaluator.addToCache(sp);
-//		evaluator.createPredicates(sp, this.getOwner(), this.getOutputSchema());
 		this.transferSecurityPunctuation(sp);
 	}
 	
