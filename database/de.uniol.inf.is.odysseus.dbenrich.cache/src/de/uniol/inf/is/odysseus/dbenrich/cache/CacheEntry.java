@@ -33,13 +33,13 @@ public class CacheEntry<V> {
 
 	/**
 	 * Checks, if the cache entry is expired. An entry is expired, if it has 
-	 * been longer in the cache than the given maximum period of time.
+	 * been in the cache for the given maximum period of time or longer.
 	 * @param maxPeriod the maximum period of time for an entry to be valid 
 	 * in the cache in Milliseconds
 	 * @return true if expired, false if still valid
 	 */
 	public boolean isExpired(long maxPeriod) {
-		return System.currentTimeMillis() - insertationTime > maxPeriod;
+		return System.currentTimeMillis() - insertationTime >= maxPeriod;
 	}
 	
 	public long getAccessCount() {
