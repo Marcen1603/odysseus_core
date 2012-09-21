@@ -49,5 +49,10 @@ public class RandomFunction extends AbstractFunction<Double> {
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		throw new IllegalArgumentException("rnd has no arguments");
 	}
+	
+	@Override
+	public boolean optimizeConstantParameter() {
+		return false;
+	}
 
 }
