@@ -15,40 +15,40 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.relational_interval;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ChangeDetectPO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
-public class RelationalChangeDetectPO extends ChangeDetectPO<Tuple<?>> {
+public class RelationalRelativeNumericChangeDetectPO extends
+		AbstractRelationalNumericChangeDetectPO {
 
-	final protected int[] comparePositions;
-
-	public RelationalChangeDetectPO(int[] comparePositions) {
-		super();
-		this.comparePositions = comparePositions;
-		StringBuffer tmp = new StringBuffer(" ");
-		for (int i:comparePositions){
-			tmp.append(i).append(",");
-		}
-		setName(getName()+tmp);
+	public RelationalRelativeNumericChangeDetectPO(int[] comparePositions,
+			double tolerance) {
+		super(comparePositions, tolerance);
 	}
 
-	public RelationalChangeDetectPO(RelationalChangeDetectPO pipe) {
+	public RelationalRelativeNumericChangeDetectPO(
+			RelationalRelativeNumericChangeDetectPO pipe) {
 		super(pipe);
-		this.comparePositions = pipe.comparePositions;
 	}
 
 	@Override
 	protected boolean areDifferent(Tuple<?> object, Tuple<?> lastElement) {
-		for (int i:comparePositions){
-			Object a = object.getAttribute(i);
-			Object b = lastElement.getAttribute(i);
-			if (!a.equals(b)){
-				return true;
+		for (int i : comparePositions) {
+			Number a = object.getAttribute(i);
+			Number b = lastElement.getAttribute(i);
+			if (a.doubleValue() != 0) {
+				if (Math.abs(1 - b.doubleValue() / a.doubleValue()) > tolerance) {
+					return true;
+				}
+			}else{
+				// Need special handling if last value is 0 (0.1 * 0 is 0)
+				if (b.doubleValue() != 0){
+					return true;
+				}
 			}
+			return false;
 		}
-		
+
 		return false;
 	}
-	
-	
+
 }

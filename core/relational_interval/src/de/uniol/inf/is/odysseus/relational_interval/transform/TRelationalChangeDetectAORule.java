@@ -18,7 +18,9 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
+import de.uniol.inf.is.odysseus.relational_interval.RelationalAbsoluteNumericChangeDetectPO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalChangeDetectPO;
+import de.uniol.inf.is.odysseus.relational_interval.RelationalRelativeNumericChangeDetectPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -35,8 +37,16 @@ public class TRelationalChangeDetectAORule extends
 	@Override
 	public void execute(ChangeDetectAO operator,
 			TransformationConfiguration config) {
-		RelationalChangeDetectPO po = new RelationalChangeDetectPO(
-				operator.getComparePositions());
+		RelationalChangeDetectPO po = null;
+		if (operator.getTolerance() == 0) {
+			po = new RelationalChangeDetectPO(operator.getComparePositions());
+		} else {
+			if (operator.isRelativeTolerance()){
+				po = new RelationalRelativeNumericChangeDetectPO(operator.getComparePositions(),operator.getTolerance());
+			}else{
+				po = new RelationalAbsoluteNumericChangeDetectPO(operator.getComparePositions(),operator.getTolerance());
+			}
+		}
 		if (operator.getHeartbeatRate() > 0) {
 			po.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(
 					operator.getHeartbeatRate()));
@@ -48,7 +58,8 @@ public class TRelationalChangeDetectAORule extends
 	@Override
 	public boolean isExecutable(ChangeDetectAO operator,
 			TransformationConfiguration config) {
-		return config.getDataType().equals("relational") && operator.isAllPhysicalInputSet() && operator.hasAttributes();
+		return config.getDataType().equals("relational")
+				&& operator.isAllPhysicalInputSet() && operator.hasAttributes();
 	}
 
 	@Override

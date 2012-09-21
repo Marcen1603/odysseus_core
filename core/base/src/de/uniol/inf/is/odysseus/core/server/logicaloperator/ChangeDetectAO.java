@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
@@ -38,6 +39,8 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9042464546094886480L;
 	private SDFSchema attributes;
+	private double tolerance = 0;
+	private boolean isRelativeTolerance = false;
 	private int rate;
 	private boolean deliverFirstElement = false;
 
@@ -77,6 +80,24 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	@Parameter(type = BooleanParameter.class, name = "deliverFirstElement", optional = true)
 	public void setDeliverFirstElement(boolean deliverFirstElement) {
 		this.deliverFirstElement = deliverFirstElement;
+	}
+	
+	@Parameter(type = DoubleParameter.class, name = "tolerance")
+	public void setTolerance(double tolerance) {
+		this.tolerance = tolerance;
+	}
+	
+	public double getTolerance() {
+		return tolerance;
+	}
+	
+	@Parameter(type = BooleanParameter.class, name = "relativeTolerance", optional = true)
+	public void setRelativeTolerance(boolean isRelativeTolerance) {
+		this.isRelativeTolerance = isRelativeTolerance;
+	}
+	
+	public boolean isRelativeTolerance() {
+		return isRelativeTolerance;
 	}
 
 	@Override
