@@ -69,6 +69,25 @@ public class QueryTableViewer extends TableViewer {
 		};
 		sorter.setSorter(sorter, ColumnViewerSorter.NONE);
 
+		/************* QueryName ****************/
+		TableViewerColumn queryNameColumn = new TableViewerColumn(this, SWT.NONE);
+		queryNameColumn.getColumn().setText("Name");
+		queryNameColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setText(String.valueOf(((IQueryViewData) cell.getElement()).getName()));
+			}
+		});
+		tableColumnLayout.setColumnData(queryNameColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		new ColumnViewerSorter(this, queryNameColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				IQueryViewData id1 = (IQueryViewData) e1;
+				IQueryViewData id2 = (IQueryViewData) e2;
+				return id1.getName().compareTo(id2.getName());
+			}
+		};
+
 		/************* Status ****************/
 		TableViewerColumn statusColumn = new TableViewerColumn(this, SWT.NONE);
 		statusColumn.getColumn().setText(OdysseusNLS.Status);

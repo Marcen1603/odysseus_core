@@ -15,6 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.queryview.physical;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 
 public class PhysicalQueryViewData implements IQueryViewData {
@@ -25,15 +28,23 @@ public class PhysicalQueryViewData implements IQueryViewData {
     private final String parserId;
     private final String userName;
     private final String queryText;
+    private final String queryName;
 
-    public PhysicalQueryViewData(int id, String status, int priority, String parserId, String userName, String queryText) {
-        super();
+    public PhysicalQueryViewData(int id, String status, int priority, String parserId, String userName, String queryText, String queryName) {
+    	Preconditions.checkArgument(id >= 0, "Id must be zero or positive!");
+    	Preconditions.checkArgument(!Strings.isNullOrEmpty(status), "Status of query must not be null or empty!");
+    	Preconditions.checkArgument(!Strings.isNullOrEmpty(parserId), "ID of parser of query must not be null or empty!");
+    	Preconditions.checkArgument(!Strings.isNullOrEmpty(userName), "Username of query must not be null or empty!");
+    	Preconditions.checkArgument(!Strings.isNullOrEmpty(queryText), "Text of query must not be null or empty!");
+    	Preconditions.checkArgument(!Strings.isNullOrEmpty(queryName), "Name of query must not be null or empty!");
+    	
         this.id = id;
         this.status = status;
         this.priority = priority;
         this.parserId = parserId;
         this.userName = userName;
         this.queryText = queryText;
+        this.queryName = queryName;
     }
 
     @Override
@@ -65,5 +76,10 @@ public class PhysicalQueryViewData implements IQueryViewData {
     public String getQueryText() {
         return queryText;
     }
+
+	@Override
+	public String getName() {
+		return queryName;
+	}
 
 }

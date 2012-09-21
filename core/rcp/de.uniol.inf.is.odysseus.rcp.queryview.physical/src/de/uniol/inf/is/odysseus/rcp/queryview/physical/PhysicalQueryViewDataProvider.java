@@ -27,6 +27,9 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -37,6 +40,7 @@ import de.uniol.inf.is.odysseus.rcp.views.query.QueryView;
 
 public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IPlanModificationListener, IDoubleClickListener, KeyListener {
 
+	private static final String QUERY_NAME_SEPARATOR = ", ";
 	private static final Logger LOG = LoggerFactory.getLogger(PhysicalQueryViewDataProvider.class);
 	private QueryView view;
 
@@ -75,23 +79,17 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 
 		List<IQueryViewData> result = new ArrayList<IQueryViewData>();
 		for (IPhysicalQuery query : queries) {
-			result.add(new PhysicalQueryViewData(query.getID(), getQueryStatus(query), query.getPriority(), query.getLogicalQuery().getParserId(), getQueryUser(query), query.getLogicalQuery()
-					.getQueryText()));
+			result.add(new PhysicalQueryViewData(
+						query.getID(), 
+						getQueryStatus(query), 
+						query.getPriority(), 
+						query.getLogicalQuery().getParserId(), 
+						getQueryUser(query), 
+						query.getLogicalQuery().getQueryText(),
+						getQueryName(query)));
 		}
 
 		return result;
-	}
-
-	private static String getQueryStatus(IPhysicalQuery q) {
-		return q.isOpened() ? "Running" : "Inactive";
-	}
-
-	private static String getQueryUser(IPhysicalQuery query) {
-		// if( query.getUser() != null && query.getUser().getUser() != null &&
-		// query.getUser().getUser().getName() != null ) {
-		// return query.getUser().getUser().getName();
-		// }
-		return "[No user]";
 	}
 
 	@Override
@@ -122,5 +120,29 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 		} catch (Exception ex) {
 			LOG.error("Exception during executing command {}.", cmdID, ex);
 		}		
+	}
+
+	private static String getQueryName(IPhysicalQuery query) {
+		List<IPhysicalOperator> roots = query.getRoots();
+		StringBuilder sb = new StringBuilder();
+		
+		for( int i = 0; i < roots.size(); i++ ) {
+			String name = roots.get(i).getName();
+			if( !Strings.isNullOrEmpty(name)) {
+				sb.append(name);
+				if( i < roots.size() - 1) {
+					sb.append(QUERY_NAME_SEPARATOR);
+				}
+			}
+		}
+		return sb.toString();
+	}
+
+	private static String getQueryStatus(IPhysicalQuery q) {
+		return q.isOpened() ? "Running" : "Inactive";
+	}
+
+	private static String getQueryUser(IPhysicalQuery query) {
+		return "[No user]";
 	}
 }

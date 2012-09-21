@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 public class LogicalQueryViewData implements IQueryViewData {
 
 	private static final String LOGICAL_QUERY_STATUS = "<unknown>";
+	private static final String LOGICAL_QUERY_NAME = "<unknown>";
 	
 	private final int id;
 	private final String status;
@@ -30,6 +31,7 @@ public class LogicalQueryViewData implements IQueryViewData {
 	private final String parser;
 	private final String username;
 	private final String queryText;
+	private final String queryName;
 	
 	public LogicalQueryViewData( ILogicalQuery logicalQuery ) {
 		Preconditions.checkNotNull(logicalQuery, "LogicalQuery must not be null");
@@ -40,6 +42,7 @@ public class LogicalQueryViewData implements IQueryViewData {
 		parser = logicalQuery.getParserId();
 		username = logicalQuery.getUser().getUser().getName();
 		queryText = logicalQuery.getQueryText();
+		queryName = LOGICAL_QUERY_NAME;
 	}
 	
 	@Override
@@ -70,6 +73,11 @@ public class LogicalQueryViewData implements IQueryViewData {
 	@Override
 	public String getQueryText() {
 		return queryText;
+	}
+
+	@Override
+	public String getName() {
+		return queryName;
 	}
 
 }
