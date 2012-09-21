@@ -50,9 +50,9 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 					throw new TransformationException("No Handler for sink type "+operator.getSinkType()+" found.");
 				}
 				
-				socketSinkPO = new SocketSinkPO(operator.getSinkPort(),
+				socketSinkPO = new SocketSinkPO(operator.getSinkPort(), operator.getHost(),
 						streamHandler, false,
-						operator.isLoginNeeded(), null);
+						operator.isLoginNeeded(), null, operator.getPush());
 
 				socketSinkPO.setOutputSchema(operator.getOutputSchema());
 				getDataDictionary().putSink(operator.getName(), socketSinkPO);

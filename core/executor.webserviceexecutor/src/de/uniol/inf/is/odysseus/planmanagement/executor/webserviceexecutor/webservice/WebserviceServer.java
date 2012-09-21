@@ -467,7 +467,7 @@ public class WebserviceServer {
 			// copied from TRelationSocketSinkAORule
 			IDataHandler<?> handler = new TupleDataHandler().getInstance(roots.get(0).getOutputSchema());
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(handler);
-			ISink sink = new SocketSinkPO(port, sinkStreamHandlerBuilder, useNio, loginNeeded, objectHandler);
+			ISink sink = new SocketSinkPO(port, "", sinkStreamHandlerBuilder, useNio, loginNeeded, objectHandler, false);
 			sink.subscribeToSource(roots.get(0), sourceInPort, sourceOutPort, roots.get(0).getOutputSchema());
 			sink.open();
 		} else {

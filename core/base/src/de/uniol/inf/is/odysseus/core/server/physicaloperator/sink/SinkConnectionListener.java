@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 @SuppressWarnings("rawtypes")
-class SinkConnectionListener extends Thread {
+class SinkConnectionListener extends Thread implements ISinkConnection {
 
 	static private Logger logger = LoggerFactory.getLogger(SocketSinkPO.class);
 
