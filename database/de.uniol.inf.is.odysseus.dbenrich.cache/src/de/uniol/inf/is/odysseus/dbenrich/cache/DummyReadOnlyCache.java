@@ -23,10 +23,12 @@ public class DummyReadOnlyCache<K, V> implements IReadOnlyCache<K, V> {
 
 	@Override
 	public void open() {
+		retrievalStrategy.open();
 	}
 
 	@Override
 	public void close() {
+		retrievalStrategy.close();
 	}
 
 	@Override
