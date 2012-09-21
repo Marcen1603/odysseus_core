@@ -29,7 +29,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 
 /**
  * This operator can reduce traffic. It lets an event pass if its different than
- * the last event
+ * the last event, if specified, numeric values can have a tolerance band (relative or absolute defined), 
+ * e.i. only if the new values lies outside this band, it is send (aka known as deadband or histerese band)
  * 
  * @author Marco Grawunder
  * 
@@ -139,4 +140,10 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		return attributes != null && attributes.size() > 0;
 	}
 
+	@Override
+	public String getDoc() {
+		return "This operator can reduce traffic. It lets an event pass if its different than "+
+				"the last event, if specified, numeric values can have a tolerance band (relative or absolute defined) "+
+				"e.i. only if the new values lies outside this band, it is send (aka known as deadband or histerese band)";
+	}
 }
