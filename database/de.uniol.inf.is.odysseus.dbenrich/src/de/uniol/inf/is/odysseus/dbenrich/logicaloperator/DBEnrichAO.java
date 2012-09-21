@@ -62,7 +62,8 @@ public class DBEnrichAO extends UnaryLogicalOp {
 
 		if (cacheSize < 1) {
 			addError(new IllegalParameterException(
-					"CacheSize must be at least 1."));
+					"CacheSize must be at least 1. You may " +
+					"use the parameter \"nocache='True'\" instead."));
 			valid = false;
 		}
 
