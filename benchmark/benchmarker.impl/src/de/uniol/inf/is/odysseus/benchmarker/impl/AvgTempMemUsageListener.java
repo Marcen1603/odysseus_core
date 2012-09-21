@@ -18,9 +18,9 @@ package de.uniol.inf.is.odysseus.benchmarker.impl;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.IPOEventListener;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 

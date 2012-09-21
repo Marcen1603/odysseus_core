@@ -40,6 +40,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
+import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
@@ -47,8 +49,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEvent;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEventType;
 
 /**
  * @author Jonas Jacobi, Tobias Witt, Marco Grawunder

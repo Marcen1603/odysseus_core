@@ -19,10 +19,10 @@ import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.monitoring.ISubscriber;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.server.monitoring.MonitoringDataScheduler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.IPOEventListener;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEventType;
 
 public class Datarate extends AbstractPeriodicalMonitoringData<Double>
 		implements IPOEventListener {

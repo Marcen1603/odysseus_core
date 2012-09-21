@@ -96,12 +96,15 @@ public class NioConnectionHandler implements IAccessConnectionHandler<ByteBuffer
 	public void notify(IConnection nioConnection, ConnectionMessageReason reason) {
 		switch (reason) {
 		case ConnectionAbort:
-			reconnect();
+		case ConnectionRefused:
+			if (autoReconnect){
+				reconnect();
+			}else{
+				// TODO: Deliver Error Event to caller!
+				throw new RuntimeException("Connection to "+host+" on port "+port+" aborted/refused!");
+			}
 			break;
 		case ConnectionClosed:
-			break;
-		case ConnectionRefused:
-			reconnect();
 			break;
 		case ConnectionOpened:
 			break;

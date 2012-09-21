@@ -13,11 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.event;
+package de.uniol.inf.is.odysseus.core.physicaloperator.event;
 
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.event.AbstractEvent;
+import de.uniol.inf.is.odysseus.core.event.AbstractEvent;
+import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 
 /**
  * @author Marco Grawunder, Jonas Jacobi
