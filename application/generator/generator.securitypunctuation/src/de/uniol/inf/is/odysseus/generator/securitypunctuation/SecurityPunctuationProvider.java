@@ -95,7 +95,8 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 
 	private SADataTuple generateAttributeSP() {
 		SADataTuple tuple = new SADataTuple(true);
-		if(Math.random() > 0.1) {
+		double random = Math.random();
+		if(random > 0.3) {
 			// DDP - Stream (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
 			tuple.addAttribute("stream1, stream2, stream3, stream4, stream5");
 			// DDP - Starttupel (-1 bedeutet keine Beschränkung)
@@ -114,13 +115,21 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 			tuple.addAttribute(new Integer(1));
 			// ts
 			tuple.addAttribute(new Long(counterTS));
-		} else {
-			// DDP - Stream (mehrere Werte mit Komma getrennt) ("" --> Beschränkung / * --> keine Beschränkung)
+		} else if(random < 0.2) {
 			tuple.addAttribute("stream1, stream2, stream3, stream4, stream5");
 			tuple.addAttribute(new Long(counterTS));
 			tuple.addAttribute(new Long(Math.round((Math.random() * 200) + counterTS)));
 			tuple.addAttribute("Attribut1,Attribut2,Attribut12,Attribut22,ts,endts2");
 			tuple.addAttribute("sys_admin");
+			tuple.addAttribute(new Integer(1));
+			tuple.addAttribute(new Integer(1));
+			tuple.addAttribute(new Long(counterTS));
+		} else {
+			tuple.addAttribute("");
+			tuple.addAttribute(new Long(counterTS));
+			tuple.addAttribute(new Long(Math.round((Math.random() * 200) + counterTS)));
+			tuple.addAttribute("");
+			tuple.addAttribute("");
 			tuple.addAttribute(new Integer(1));
 			tuple.addAttribute(new Integer(1));
 			tuple.addAttribute(new Long(counterTS));

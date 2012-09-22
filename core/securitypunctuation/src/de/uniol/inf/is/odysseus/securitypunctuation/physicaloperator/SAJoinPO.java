@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.securitypunctuation.helper.BinarySecurityPunctuationCache;
+import de.uniol.inf.is.odysseus.securitypunctuation.sp.SecurityPunctuation;
 
 public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>> extends JoinTIPO<K, T> {
 	
@@ -20,11 +21,9 @@ public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
-//		this.transferSecurityPunctuation(sp);
 		if(port >= 0 && port <= 1) {
 			spCache.add(sp, port);
 		}
-		//nicht transferSecurityPunctuation()!!!
 	}
 
 	@Override
@@ -76,38 +75,65 @@ public class SAJoinPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			}
 		}
 
+		//here begin the changes for the SAJoin
 		while (qualifies.hasNext()) {
 			T next = qualifies.next();
 			
-			//Beide SP mergen!
+			LOG.debug("qualifies: " + next);
+			
 			ISecurityPunctuation sp = spCache.getMatchingSP(object.getMetadata().getStart().getMainPoint(), port);
 			ISecurityPunctuation otherSP = spCache.getMatchingSP(next.getMetadata().getStart().getMainPoint(), otherport);
+			
 			if(sp != null && otherSP != null) {
-				
-//				LOG.debug("sp != null && otherSP != null");
-				
-				ISecurityPunctuation newSP = sp.intersect(otherSP);
+				Long newTS = next.getMetadata().getStart().getMainPoint();
+				if(newTS.compareTo(object.getMetadata().getStart().getMainPoint()) < 0) {
+					newTS = object.getMetadata().getStart().getMainPoint();
+				} 				
+				ISecurityPunctuation newSP = sp.intersect(otherSP, newTS);
 				if(newSP != null && !newSP.isEmpty()) {
 					T newElement = merge(object, next, order);	
 					//Tupel mit komplett auseinander liegenden Intervallen können nicht gemerged werden!!!
 					//Dann wäre getStart() == null...
-					if(newElement.getMetadata() != null) { 
-//						if(newElement.getMetadata().getStart() != null) { 
-						transferFunction.transfer(newElement);						
-	//					LOG.debug("transferFunction.transfer(newElement): " + newElement);						
+					if(newElement.getMetadata() != null) { 				
 						transferSecurityPunctuation(newSP);
+						transferFunction.transfer(newElement);						
+						
+						LOG.debug("transfered Datatuple: " + newElement);
+						LOG.debug("transfered SP: ");
+						((SecurityPunctuation)newSP).printSP();	
+					} else {						
+						LOG.debug("newElement.getMetadata() == null: " + newElement);
 					}
 				} else {
 					if(newSP.isEmpty()) {
 						LOG.debug("NewSP is empty!!!");
 					}
 				}
-			}	
+			} else {
+				LOG.debug("sp == null || otherSP == null");
+				LOG.debug("sp: " + sp);
+				LOG.debug("otherSP: " + otherSP);
+			}
 		}
 		
-		// Wann können SP gelöscht werden???
-		if(transferFunction.getMinTs() != null) {
-			spCache.cleanCache(transferFunction.getMinTs().getMainPoint(), port);
+		Long minTS = null;
+		if(!areas[port].isEmpty()) {
+			if(!areas[otherport].isEmpty()) {
+				if(areas[port].getMinTs().compareTo(areas[otherport].getMinTs()) <= 0) {
+					minTS = areas[port].getMinTs().getMainPoint();
+				} else {
+					minTS = areas[otherport].getMinTs().getMainPoint();
+				}	
+			} else {
+				minTS = areas[port].getMinTs().getMainPoint();
+			}
+		} else {
+			if(!areas[otherport].isEmpty()) {
+				minTS = areas[otherport].getMinTs().getMainPoint();
+			}
+		}
+		if(minTS != null) {
+			spCache.cleanCache(minTS, port);
 		}
 	}
 	

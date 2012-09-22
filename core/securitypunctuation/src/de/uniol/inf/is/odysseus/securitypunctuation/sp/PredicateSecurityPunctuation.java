@@ -55,13 +55,7 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 		// Alle Rollen als Attribut hinzufügen. Wenn Benutzer sie besitzt dann Wert true, sonst false...???
 		for(String userRole:userRoles) {
 			additional.setAttribute("has_" + userRole, true);
-		}
-
-		System.out.println("");
-		System.out.println("pred.evaluate - newTuple: " + newTuple);
-		System.out.println("pred.evaluate - additional: " + additional.toString(false));
-		System.out.println("");
-		
+		}		
 		return ((RelationalPredicate)getPredicateAttribute("predicate")).evaluate(newTuple, additional);
 	}
 	
@@ -92,7 +86,11 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 		if(isEmpty == null) {
 			// isEmpty überprüfen!!!
 		} 
-//		return isEmpty;
 		return false;
+	}
+
+	@Override
+	public ISecurityPunctuation intersect(ISecurityPunctuation sp2, Long newTS) {
+		return null;
 	}
 }

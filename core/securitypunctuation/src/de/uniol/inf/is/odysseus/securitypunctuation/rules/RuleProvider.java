@@ -22,6 +22,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TSAJoinPOInsertDataMergeRule());
 		rules.add(new TSAJoinPOAddMetadataMergeRule());
 		rules.add(new TProjectAORule());
+		rules.add(new TSAStreamGroupingWithAggregationTIPORule());
 		return rules;
 	}
 }

@@ -26,7 +26,7 @@ public class BinarySecurityPunctuationCache {
 	}
 	
 	public void cleanCache(Long ts, int port) {
-//		LOG.debug("cleanCache - size: " + spCache[port].size());
+		LOG.debug("cleanCache - size: " + spCache[port].size() + " - ts: " + ts);
 		spCache[port].cleanCache(ts);
 	}
 	

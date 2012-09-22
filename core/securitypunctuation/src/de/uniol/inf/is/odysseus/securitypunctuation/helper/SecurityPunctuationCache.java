@@ -45,6 +45,7 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 			for(int i = this.size() - 1; i >= 0; i--) {
 				if((this.get(i).getLongAttribute("ts")) < ts) {
 					this.removeRange(0, i);
+//					printCache();
 					return;
 				}
 			}
@@ -52,6 +53,8 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 	}	
 	
 	/**
+	 * Adds sp to the cache
+	 * before adding it checks if the sp had to be intersected oder unioned with the previous sp.
 	 * Fügt eine neue SP in den Cache hinzu.
 	 * Dabei wird überprüft, ob die SP den gleichen Zeitstempel und dementsprechend vererinigt oder geschnitten werden müssen.
 	 * 
@@ -64,18 +67,26 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 				if(super.add(newSP)) {
 					this.remove(this.size()-2);
 				}
+				LOG.debug("added sp: " + sp.getLongAttribute("ts"));
 //				printCache();
 				return false;
 			}
 		}
 		boolean temp = super.add(sp);
+		LOG.debug("added sp: " + sp.getLongAttribute("ts"));
 //		printCache();
 		return temp;
 	}
 
+	/**
+	 * for debugging
+	 */
 	public void printCache() {
 		for(ISecurityPunctuation sp:this) {
-			LOG.debug("SP: " + sp.getLongAttribute("ts") + sp.getIntegerAttribute("sign"));
+			LOG.debug("SP: ts: " + sp.getLongAttribute("ts") + " - sign: " + sp.getIntegerAttribute("sign"));
+			for(String string:sp.getStringArrayListAttribute("attributeNames")) {
+				LOG.debug("SP: attribute: " + string);
+			}
 		}
 	}
 }

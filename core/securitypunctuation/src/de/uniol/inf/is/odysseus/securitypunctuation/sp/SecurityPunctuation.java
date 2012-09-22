@@ -3,11 +3,17 @@ package de.uniol.inf.is.odysseus.securitypunctuation.sp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public class SecurityPunctuation extends AbstractSecurityPunctuation {
+	
+    private static Logger LOG = LoggerFactory.getLogger(SecurityPunctuation.class);
+	
 	private static final long serialVersionUID = 8534064040716648960L;
 	
 	private ArrayList<Integer> evaluateAttributesCache = new ArrayList<Integer>();
@@ -134,6 +140,8 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 				return true;
 			}
 			
+//			printSP();
+			
 			for(int i = 0; i < schema.size(); i++) {
 				Boolean setToNull = true;
 				String schemaAttribute = schema.getAttribute(i).getAttributeName();
@@ -153,7 +161,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 			}	
 			setSchema(schema);
 			return true;
-		}
+		}		
 		for(Integer i:evaluateAttributesCache) {
 			tuple.setAttribute(i, (Object) null);
 		}
@@ -171,10 +179,14 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 			return true;
 		}		
 		
+		Boolean returnValue = true;
 		for(String baseSourceName:schema.getBaseSourceNames()) {
-			if(this.getStringArrayListAttribute("streamname").contains(baseSourceName)) {
-				return true;
+			if(!this.getStringArrayListAttribute("streamname").contains(baseSourceName)) {
+				returnValue = false;
 			}
+		}
+		if(returnValue) {
+			return true;
 		}
 		return false;
 	}
@@ -202,7 +214,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 			}
 			// gleiche Quelle, aber verschiedene Zeitstempel --> neue SP einfach hinzufügen
 		} else {
-			if(this.getIntegerAttribute("mutable") >= 1 && sp2.getIntegerAttribute("mutable") >= 1) {
+			if(this.getIntegerAttribute("mutable") >= 1 && sp2.getIntegerAttribute("mutable") >= 2) {
 				return this.intersect(sp2);
 			}
 			// verschiedene Quellen und min. eine SP is immutable --> neue SP einfach hinzufügen
@@ -276,30 +288,42 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	public ISecurityPunctuation intersect(ISecurityPunctuation sp2) {		
 		if(sp2 instanceof SecurityPunctuation) {
 
-				SecurityPunctuation newSP = new SecurityPunctuation(this);
+			SecurityPunctuation newSP = new SecurityPunctuation(this);
 
-				newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
+			newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
 				
-				// größeren Wählen --> Bereich wird kleiner
-				if(newSP.getLongAttribute("tupleStartTS") < sp2.getLongAttribute("tupleStartTS")) {
-					newSP.setAttribute("tupleStartTS", sp2.getLongAttribute("tupleStartTS"));
-				} 
+			// größeren Wählen --> Bereich wird kleiner
+			if(newSP.getLongAttribute("tupleStartTS") < sp2.getLongAttribute("tupleStartTS")) {
+				newSP.setAttribute("tupleStartTS", sp2.getLongAttribute("tupleStartTS"));
+			} 
 				
-				// kleineren Wählen --> Bereich wird kleiner
-				if(newSP.getLongAttribute("tupleEndTS") > sp2.getLongAttribute("tupleEndTS")) {
-					newSP.setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
-				} 
-				newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("attributeNames"), sp2.getStringArrayListAttribute("attributeNames"));
-				newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
+			// kleineren Wählen --> Bereich wird kleiner
+			if(newSP.getLongAttribute("tupleEndTS") > sp2.getLongAttribute("tupleEndTS")) {
+				newSP.setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
+			} 
+			newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("attributeNames"), sp2.getStringArrayListAttribute("attributeNames"));
+			newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
 
-				newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
-				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung möglich sein.
-				if(sp2.getLongAttribute("ts") > newSP.getLongAttribute("ts")) {
-					newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
-				} 
-				return newSP;
+			newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
+			newSP.setAttribute("mutable", 0); //Da intersect z.B. beim Join ausgeführt wird und die SP danach nicht mehr geändert werden können sollen.
+			if(sp2.getLongAttribute("ts") > newSP.getLongAttribute("ts")) {
+				newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
+			} 
+			return newSP;
 		}
 		return null;
+	}	
+
+	/**
+	 * @param sp2
+	 * @param newTS the timestamp for the new sp
+	 * @return
+	 */
+	@Override 
+	public ISecurityPunctuation intersect(ISecurityPunctuation sp2, Long newTS) {	
+		SecurityPunctuation newSP = (SecurityPunctuation)intersect(sp2);
+		newSP.setAttribute("ts", newTS);
+		return newSP;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -362,5 +386,21 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 						&& this.getLongAttribute("tupleEndTS") == -1;
 		} 
 		return isEmpty;
+	}
+	
+	/**
+	 * for debugging
+	 */
+	public void printSP() {
+		LOG.debug("" + this);
+		LOG.debug("" + this.getSchema());
+		LOG.debug("" + this.getAttribute("streamname"));
+		LOG.debug("" + this.getAttribute("tupleStartTS"));
+		LOG.debug("" + this.getAttribute("tupleEndTS"));
+		LOG.debug("" + this.getAttribute("attributeNames"));
+		LOG.debug("" + this.getAttribute("role"));
+		LOG.debug("" + this.getIntegerAttribute("sign"));
+		LOG.debug("" + this.getIntegerAttribute("mutable"));
+		LOG.debug("" + this.getLongAttribute("ts"));
 	}
 }

@@ -13,6 +13,7 @@ public interface ISecurityPunctuation {
 	public ISecurityPunctuation processSP(ISecurityPunctuation sp2);
 	public ISecurityPunctuation union(ISecurityPunctuation sp2);
 	public ISecurityPunctuation intersect(ISecurityPunctuation sp2);
+	public ISecurityPunctuation intersect(ISecurityPunctuation sp2, Long newTS);
 
 	public SDFSchema getSchema();
 	

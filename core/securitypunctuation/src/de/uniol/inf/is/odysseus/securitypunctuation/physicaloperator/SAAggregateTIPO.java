@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -18,6 +21,8 @@ import de.uniol.inf.is.odysseus.securitypunctuation.helper.StandardSecurityEvalu
 
 public class SAAggregateTIPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>, W extends IMetaAttributeContainer<Q>> 
 extends StreamGroupingWithAggregationPO<Q, R, W> {
+	
+    private static Logger LOG = LoggerFactory.getLogger(SAAggregateTIPO.class);
 
 	@SuppressWarnings("unchecked")
 	private StandardSecurityEvaluator<R> evaluator = new StandardSecurityEvaluator<R>((AbstractPipe<R, R>) this);
@@ -34,12 +39,11 @@ extends StreamGroupingWithAggregationPO<Q, R, W> {
 
 	@Override
 	protected synchronized void updateSA(DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,	R elemToAdd) {
-		System.out.println("test");
 		if(evaluator.evaluate(elemToAdd, this.getOwner(), this.getOutputSchema())) {
 			super.updateSA(sa, elemToAdd);
-			System.out.println("evaluated");
+			LOG.debug("evaluated");
 		} else {
-			System.out.println("nicht evaluated");
+			LOG.debug("nicht evaluated");
 		}
 	}
 	
