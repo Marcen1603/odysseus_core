@@ -59,12 +59,12 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.expirationTime = dBEnrichPO.expirationTime;
 		this.removalStrategy = dBEnrichPO.removalStrategy;
 		this.dataMergeFunction = dBEnrichPO.dataMergeFunction.clone();
-		this.cacheManager = dBEnrichPO.cacheManager; // FIXME .clone();
+		this.cacheManager = dBEnrichPO.cacheManager; // better provide clone();
 		this.parameterPositions = Arrays.copyOf(
 				dBEnrichPO.parameterPositions,
 				dBEnrichPO.parameterPositions.length);
 		System.err.println("The use of a copy constructor is only parially " +
-				"supported in DBEnrichPO.");
+				"supported in DBEnrichPO. The cacheManager will not be copied.");
 	}
 
 	@Override
