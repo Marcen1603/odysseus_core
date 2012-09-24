@@ -483,7 +483,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
     public void removeQuery(int queryID, ISession caller) throws PlanManagementException {
         LOG.info("Start remove a query (ID: " + queryID + ").");
 
-        IPhysicalQuery queryToRemove = this.executionPlan.getQuery(queryID);
+        IPhysicalQuery queryToRemove = this.executionPlan.getQueryById(queryID);
         validateUserRight(queryToRemove, caller, ExecutorPermission.REMOVE_QUERY);
         if (queryToRemove != null && getOptimizer() != null) {
             try {
@@ -538,7 +538,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
      */
     @Override
     public synchronized void startQuery(int queryID, ISession caller) {
-        IPhysicalQuery queryToStart = this.executionPlan.getQuery(queryID);
+        IPhysicalQuery queryToStart = this.executionPlan.getQueryById(queryID);
         validateUserRight(queryToStart, caller, ExecutorPermission.START_QUERY);
         if (queryToStart.isOpened()) {
             LOG.info("Query (ID: " + queryID + ") is already started.");
@@ -615,7 +615,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
         LOG.info("Stopping query (ID: " + queryID + ").");
 
-        IPhysicalQuery queryToStop = this.executionPlan.getQuery(queryID);
+        IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID);
         validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
         try {
             this.executionPlanLock.lock();
@@ -876,7 +876,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 	@Override
 	public SDFSchema getOutputSchema(int queryId) {
-		return getLogicalQuery(queryId).getLogicalPlan().getOutputSchema();
+		return getLogicalQueryById(queryId).getLogicalPlan().getOutputSchema();
 	}
 
 }

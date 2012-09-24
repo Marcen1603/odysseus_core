@@ -154,7 +154,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     @Override
 	public de.uniol.inf.is.odysseus.webservice.SchemaArray getSchema(java.lang.String queryID) throws QueryIDFault    { 
         try {
-        	IPhysicalQuery query = executor.getExecutionPlan().getQuery(Integer.valueOf(queryID));
+        	IPhysicalQuery query = executor.getExecutionPlan().getQueryById(Integer.valueOf(queryID));
         	// TODO: getSchema if more than one root
         	SDFSchema outputSchema = query.getRoots().get(0).getOutputSchema();
         	ObjectFactory factory = new ObjectFactory();

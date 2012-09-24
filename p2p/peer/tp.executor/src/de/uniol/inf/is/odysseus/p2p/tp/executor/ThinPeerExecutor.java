@@ -254,4 +254,15 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 		return null;
 	}
 
+	@Override
+	public ILogicalQuery getLogicalQueryByName(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public ILogicalQuery getLogicalQueryById(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

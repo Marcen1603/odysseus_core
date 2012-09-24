@@ -72,14 +72,37 @@ IReoptimizeHandler<IPlanReoptimizeListener> {
 	 */
 	void addQueries(List<IPhysicalQuery> allQueries);
 
+	
 	/**
 	 * Returns a modifiable query with the defined ID.
 	 * 
 	 * @param queryID
 	 *            ID of the searched modifiable query
 	 * @return The query with the defined ID or null if no query is found.
+	 *
+	 * @deprecated use getQueryById
 	 */
+	@Deprecated
 	public IPhysicalQuery getQuery(int queryID);
+	
+	
+	/**
+	 * Returns a modifiable query with the defined ID.
+	 * 
+	 * @param queryID  ID of the searched modifiable query
+	 * @return The query with the defined ID or null if no query is found.
+	 */
+	public IPhysicalQuery getQueryById(int queryID);
+	
+
+	/**
+	 * Returns a query with the defined name.
+	 * 
+	 * @param name name of the searched query
+	 *            
+	 * @return The query with the name or null if no query is found.
+	 */
+	public IPhysicalQuery getQueryByName(String name);
 
 	/**
 	 * Returns a query with the defined ID.

@@ -112,7 +112,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 		List<IPhysicalOperator> roots = Lists.<IPhysicalOperator>newArrayList(defaultSink);
 			
 		for (Integer queryId : queriesToStart) {
-			IPhysicalQuery physicalQuery = planManager.getExecutionPlan().getQuery(queryId);
+			IPhysicalQuery physicalQuery = planManager.getExecutionPlan().getQueryById(queryId);
 			for (IPhysicalOperator operator : physicalQuery.getRoots()) {
 				((ISource) operator).subscribeSink(defaultSink, 0, 0, operator.getOutputSchema());
 			}

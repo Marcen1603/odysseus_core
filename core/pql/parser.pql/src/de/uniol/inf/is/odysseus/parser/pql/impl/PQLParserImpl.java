@@ -47,10 +47,10 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       throw new ValidationException(identifier, builder.getErrors());
     }
-    for (Exception e: builder.getWarnings())
+    for (Exception e : builder.getWarnings())
     {
-                // TODO: How to transport this to the gui?
-                System.err.println("WARNING "+e.getMessage());
+      // TODO: How to transport this to the gui?
+      System.err.println("WARNING " + e.getMessage());
     }
     ILogicalOperator operator = builder.createOperator();
     return operator;
@@ -139,13 +139,14 @@ public class PQLParserImpl implements PQLParserImplConstants {
       }
     }
     PropertyDescriptor [ ] properties = beanInfo.getPropertyDescriptors();
+    ILogicalQuery query = null;
     for (Map.Entry < String, ILogicalOperator > opEntry : namedOps.entrySet())
     {
       String queryName = opEntry.getKey();
       ILogicalOperator topOperator = opEntry.getValue();
       if (roots.contains(topOperator))
       {
-        ILogicalQuery query = new LogicalQuery();
+        query = new LogicalQuery();
         PQLParser.initQueryParameters(namedOpParameters.get(queryName));
         for (String parameterName : namedOpParameters.get(queryName).keySet())
         {
@@ -190,10 +191,14 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       ILogicalOperator topOperator = new TopAO();
       int inputPort = 0;
-      for (ILogicalOperator root : roots){
-                        root.subscribeSink(topOperator, inputPort++, 0, root.getOutputSchema());
+      for (ILogicalOperator root : roots)
+      {
+        root.subscribeSink(topOperator, inputPort++, 0, root.getOutputSchema());
       }
-      ILogicalQuery query = new LogicalQuery();
+      if (query == null)
+      {
+        query = new LogicalQuery();
+      }
       // Set Owners for query 
       //AbstractTreeWalker walker = new AbstractTreeWalker();
       AbstractGraphWalker walker = new AbstractGraphWalker();
@@ -204,6 +209,12 @@ public class PQLParserImpl implements PQLParserImplConstants {
       //		AbstractTreeWalker walker2 = new AbstractTreeWalker();
       //		System.err.println(walker2.prefixWalk(topOperator, new AlgebraPlanToStringVisitor()));
       query.setLogicalPlan(topOperator, false);
+      ILogicalOperator namingOp = topOperator;
+      if (topOperator instanceof TopAO)
+      {
+        namingOp = topOperator.getSubscribedToSource(0).getTarget();
+      }
+      query.setName(namingOp.getName());
       queries.add(query);
     }
     {if (true) return queries;}
@@ -460,7 +471,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       key = parameterValue();
       jj_consume_token(18);
       value = parameterValue();
-                  map.put(key, value);
+      map.put(key, value);
       label_4:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -475,7 +486,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
         key = parameterValue();
         jj_consume_token(18);
         value = parameterValue();
-                  map.put(key, value);
+        map.put(key, value);
       }
       break;
     default:
@@ -565,14 +576,75 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_10() {
-    if (jj_scan_token(FLOAT)) return true;
+  static private boolean jj_3R_13() {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_9() {
+    if (jj_scan_token(22)) return true;
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_15() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(21)) return true;
+    if (jj_scan_token(CHAR_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
     return false;
   }
 
   static private boolean jj_3R_17() {
     if (jj_3R_8()) return true;
     if (jj_scan_token(18)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_12() {
+    if (jj_scan_token(CHAR_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_7() {
+    if (jj_3R_8()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_9()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_16() {
+    if (jj_scan_token(24)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_17()) jj_scanpos = xsp;
+    if (jj_scan_token(25)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11() {
+    if (jj_scan_token(INTEGER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_6() {
+    if (jj_scan_token(24)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_7()) jj_scanpos = xsp;
+    if (jj_scan_token(25)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_10() {
+    if (jj_scan_token(FLOAT)) return true;
     return false;
   }
 
@@ -598,13 +670,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
     return false;
   }
 
-  static private boolean jj_3R_15() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(21)) return true;
-    if (jj_scan_token(CHAR_LITERAL)) return true;
-    return false;
-  }
-
   static private boolean jj_3_1() {
     if (jj_scan_token(IDENTIFIER)) return true;
     if (jj_scan_token(21)) return true;
@@ -613,60 +678,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
 
   static private boolean jj_3R_14() {
     if (jj_3R_16()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_13() {
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_9() {
-    if (jj_scan_token(22)) return true;
-    if (jj_3R_8()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_16() {
-    if (jj_scan_token(24)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_17()) jj_scanpos = xsp;
-    if (jj_scan_token(25)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_12() {
-    if (jj_scan_token(CHAR_LITERAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_7() {
-    if (jj_3R_8()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_9()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_11() {
-    if (jj_scan_token(INTEGER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_6() {
-    if (jj_scan_token(24)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_7()) jj_scanpos = xsp;
-    if (jj_scan_token(25)) return true;
     return false;
   }
 

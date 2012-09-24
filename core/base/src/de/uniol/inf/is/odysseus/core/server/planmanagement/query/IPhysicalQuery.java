@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public interface IPhysicalQuery extends IMonitoringDataProvider, IReoptimizeHandler<IQueryReoptimizeListener>,
 IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 
+	String getName();
+	
 	/**
 	 * The method must be called for each of the physical roots of a query.
 	 * Usually there is only one, but sometimes like in object tracking, there

@@ -85,7 +85,7 @@ public abstract class AbstractCommand extends AbstractHandler {
                 IExecutor executor = Activator.getExecutor();
                 if( executor instanceof IServerExecutor ) {
                     IServerExecutor serverExecutor = (IServerExecutor)executor;
-                    opForStream = serverExecutor.getExecutionPlan().getQuery(queryID).getPhysicalChilds().get(0);
+                    opForStream = serverExecutor.getExecutionPlan().getQueryById(queryID).getPhysicalChilds().get(0);
                 } else {
                     LOG.error("Could not show charts outside server.");
                 }

@@ -120,7 +120,10 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public PhysicalQuery(List<IPhysicalOperator> physicalPlan,
 			IPhysicalOperator defaultRoot,
 			IDefaultRootStrategy defaultRootStrategy) {
-		id = idCounter++;
+		// Query created directly from physical plans get a negative query id to
+		// distinct from query created from logical queries (and garantee that
+		// logical and corresponding physical queries have the same id)
+		id = (-1)*idCounter++;
 		this.defaultRoot = defaultRoot;
 		this.defaultRootStrategy = defaultRootStrategy;
 		initializePhysicalRoots(physicalPlan);
@@ -130,7 +133,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 			ArrayList<IPhysicalOperator> physicalPlan,
 			IPhysicalOperator defaultRoot,
 			IDefaultRootStrategy defaultRootStrategy) {
-		id = idCounter++;
+		//id = idCounter++;
+		// logical and physical query must have the same id!
+		id = query.getID();
 		this.query = query;
 		this.defaultRoot = defaultRoot;
 		this.defaultRootStrategy = defaultRootStrategy;
@@ -138,6 +143,14 @@ public class PhysicalQuery implements IPhysicalQuery {
 		this.priority = query.getPriority();
 		this.containsCycles = query.containsCycles();
 		initializePhysicalRoots(physicalPlan);
+	}
+	
+	@Override
+	public String getName() {
+		if (query != null){
+			return query.getName();
+		}
+		return "";
 	}
 
 	/*

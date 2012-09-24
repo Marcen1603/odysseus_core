@@ -104,8 +104,24 @@ public interface IExecutor extends IClientPlanManager{
 	 * Return the logical query with the id
 	 * @param id
 	 * @return
+	 * @deprecated use getLogicalQueryById(int id) instead
 	 */
+	@Deprecated
 	public ILogicalQuery getLogicalQuery(int id);
+	
+	/**
+	 * Return the logical query with the id
+	 * @param id
+	 * @return
+	 */
+	public ILogicalQuery getLogicalQueryById(int id);
+	
+	/**
+	 * Return the named logical query 
+	 * @param name
+	 * @return
+	 */
+	public ILogicalQuery getLogicalQueryByName(String name);
 	
 	/**
 	 * getLogicalQueryIds gibt die Query-IDs aller Anfragen zurück

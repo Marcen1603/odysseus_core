@@ -642,7 +642,7 @@ public class OdysseusConsole implements CommandProvider,
 
 			try {
 				IPhysicalQuery query = this.executor.getExecutionPlan()
-						.getQuery(qnum);
+						.getQueryById(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -675,7 +675,7 @@ public class OdysseusConsole implements CommandProvider,
 			int qnum = Integer.valueOf(args[0]);
 			try {
 				IPhysicalQuery query = this.executor.getExecutionPlan()
-						.getQuery(qnum);
+						.getQueryById(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);

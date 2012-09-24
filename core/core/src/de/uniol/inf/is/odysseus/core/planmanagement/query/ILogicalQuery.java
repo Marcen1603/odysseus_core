@@ -42,6 +42,18 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializab
 	public int getID();
 
 	/**
+	 * A query can be named, retrieve the value
+	 * @return
+	 */
+	public String getName();
+	
+	/**
+	 * A query can be named, set the value
+	 * @return
+	 */	
+	void setName(String name);
+	
+	/**
 	 * Returns the priority with which this query should be scheduled.
 	 * 
 	 * @return The priority with which this query should be scheduled.
@@ -107,6 +119,7 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializab
 	 * @param key
 	 * @return
 	 */
-	public Object getParameter(String key);	
+	public Object getParameter(String key);
+
 }
 

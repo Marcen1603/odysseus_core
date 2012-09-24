@@ -79,6 +79,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 * Map of all registered queries.
 	 */
 	private Map<Integer, IPhysicalQuery> queries;
+	private Map<String, IPhysicalQuery> namedQueries;
 
 	/**
 	 * List of objects which respond to reoptimize requests.
@@ -98,6 +99,8 @@ public class ExecutionPlan implements IExecutionPlan {
 		leafSources = new ArrayList<IIterableSource<?>>();
 		queries = Collections
 				.synchronizedMap(new HashMap<Integer, IPhysicalQuery>());
+		namedQueries = Collections
+				.synchronizedMap(new HashMap<String, IPhysicalQuery>());
 	}
 
 	private ExecutionPlan(ExecutionPlan otherPlan) {
@@ -113,6 +116,9 @@ public class ExecutionPlan implements IExecutionPlan {
 		this.queries = Collections
 				.synchronizedMap(new HashMap<Integer, IPhysicalQuery>(
 						otherPlan.queries));
+		this.namedQueries = Collections
+				.synchronizedMap(new HashMap<String, IPhysicalQuery>(
+						otherPlan.namedQueries));
 		this.reoptimizeListener.addAll(otherPlan.reoptimizeListener);
 		this.reoptimizeRule.addAll(otherPlan.reoptimizeRule);
 	}
@@ -202,7 +208,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public synchronized boolean addQuery(IPhysicalQuery query) {
 		this.queries.put(query.getID(), query);
-
+		this.namedQueries.put(query.getName(), query);
 		return true;
 	}
 	
@@ -224,14 +230,26 @@ public class ExecutionPlan implements IExecutionPlan {
 		return this.queries.remove(queryID);
 	}
 
+	
+	@Override
+	@Deprecated
+	public IPhysicalQuery getQuery(int queryID) {
+		return getQueryById(queryID);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlan#getQuery(int)
 	 */
 	@Override
-	public synchronized IPhysicalQuery getQuery(int queryID) {
+	public synchronized IPhysicalQuery getQueryById(int queryID) {
 		return this.queries.get(queryID);
+	}
+	
+	@Override
+	public IPhysicalQuery getQueryByName(String name) {
+		return this.namedQueries.get(name);
 	}
 
 	/*

@@ -78,7 +78,7 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 		
 		List<ILogicalQuery> logicalQueries = Lists.newArrayListWithCapacity(logicalQueryIds.size());
 		for( Integer id : logicalQueryIds ) {
-			logicalQueries.add( executor.getLogicalQuery(id));
+			logicalQueries.add( executor.getLogicalQueryById(id));
 		}
 		
 		return logicalQueries;

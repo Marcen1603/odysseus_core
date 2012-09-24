@@ -86,7 +86,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 						query.getLogicalQuery().getParserId(), 
 						getQueryUser(query), 
 						query.getLogicalQuery().getQueryText(),
-						getQueryName(query)));
+						query.getName()));
 		}
 
 		return result;
@@ -122,6 +122,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 		}		
 	}
 
+	@SuppressWarnings("unused")
 	private static String getQueryName(IPhysicalQuery query) {
 		List<IPhysicalOperator> roots = query.getRoots();
 		StringBuilder sb = new StringBuilder();

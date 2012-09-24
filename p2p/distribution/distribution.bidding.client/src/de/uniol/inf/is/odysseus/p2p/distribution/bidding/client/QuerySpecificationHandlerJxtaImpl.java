@@ -191,7 +191,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 				}
 			} else {
 				int queryID = executor.addQuery(subplan.getAo(), user, "Standard");
-				query = executor.getExecutionPlan().getQuery(queryID);
+				query = executor.getExecutionPlan().getQueryById(queryID);
 				subplan.setQuery(query);
 
 				result = admissionControl.canStartQuery(query);

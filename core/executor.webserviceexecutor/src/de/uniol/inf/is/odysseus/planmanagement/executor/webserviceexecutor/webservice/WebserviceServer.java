@@ -414,7 +414,7 @@ public class WebserviceServer {
 	public QueryResponse getLogicalQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "id") String id) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new QueryResponse((LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQuery(Integer.valueOf(id)), true);
+			return new QueryResponse((LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryById(Integer.valueOf(id)), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new QueryResponse(null, false);
@@ -456,7 +456,7 @@ public class WebserviceServer {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addSocketSink(int queryId, int port) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
-		IPhysicalQuery query = plan.getQuery(queryId);
+		IPhysicalQuery query = plan.getQueryById(queryId);
 		List<IPhysicalOperator> roots = query.getRoots();
 		if (roots.size() == 1) {
 			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder = new ByteBufferSinkStreamHandlerBuilder();

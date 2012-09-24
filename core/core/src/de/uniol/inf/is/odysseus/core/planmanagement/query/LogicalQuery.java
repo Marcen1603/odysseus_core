@@ -34,13 +34,8 @@ import de.uniol.inf.is.odysseus.core.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "logicalQueryInfo", propOrder = {
-    "id",
-    "queryText",
-    "parserID",
-    "containsCycles",
-    "priority"
-})
+@XmlType(name = "logicalQueryInfo", propOrder = { "id", "queryText",
+		"parserID", "containsCycles", "priority" })
 public class LogicalQuery implements ILogicalQuery {
 
 	private static final long serialVersionUID = -7357156628145329724L;
@@ -54,6 +49,11 @@ public class LogicalQuery implements ILogicalQuery {
 	 * Unique id of an ID. Used for identification of an query.
 	 */
 	private final int id;
+
+	/**
+	 * Name of the query.
+	 */
+	private String name;
 
 	/**
 	 * If available the text of the entered query
@@ -85,7 +85,7 @@ public class LogicalQuery implements ILogicalQuery {
 	private int priority = 0;
 
 	transient final private Map<String, Object> parameters = new HashMap<String, Object>();
-	
+
 	/**
 	 * 
 	 * @param parserID
@@ -116,7 +116,7 @@ public class LogicalQuery implements ILogicalQuery {
 		this.logicalPlan = logicalPlan;
 		this.priority = priority;
 	}
-	
+
 	public LogicalQuery(ILogicalOperator logicalPlan, int priority) {
 		this("", logicalPlan, priority);
 	}
@@ -125,6 +125,16 @@ public class LogicalQuery implements ILogicalQuery {
 		this("", null, 0);
 	}
 
+	@Override
+	public String getName() {
+		return name;
+	}
+	
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	/**
 	 * Provides an info string which describes the query.
 	 * 
