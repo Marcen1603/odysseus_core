@@ -412,6 +412,10 @@ public class WebserviceServer {
 	}
 
 	public QueryResponse getLogicalQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "id") String id) {
+		return getLogicalQueryById(securityToken, id);
+	}
+
+	public QueryResponse getLogicalQueryById(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "id") String id) {
 		try {
 			loginWithSecurityToken(securityToken);
 			return new QueryResponse((LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryById(Integer.valueOf(id)), true);
@@ -420,7 +424,15 @@ public class WebserviceServer {
 			return new QueryResponse(null, false);
 		}
 	}
-
+	public QueryResponse getLogicalQueryByName(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "name") String name) {
+		try {
+			loginWithSecurityToken(securityToken);
+			return new QueryResponse((LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryByName(name), true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new QueryResponse(null, false);
+		}
+	}
 	public IntegerCollectionResponse getLogicalQueryIds(@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
