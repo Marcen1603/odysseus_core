@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -210,9 +211,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final public void setOutputSchema(SDFSchema outputSchema, int port) {
 		this.outputSchema.put(port, outputSchema);
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator#getOutputSchemas()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator#
+	 * getOutputSchemas()
 	 */
 	@Override
 	final public Map<Integer, SDFSchema> getOutputSchemas() {
@@ -293,7 +297,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
 				try {
-					sink.getTarget().process(cloneIfNessessary(object,isTransferExclusive()), sink.getSinkInPort());
+					sink.getTarget().process(
+							cloneIfNessessary(object, isTransferExclusive()),
+							sink.getSinkInPort());
 				} catch (Exception e) {
 					// Send object that could not be processed to the error port
 					e.printStackTrace();
@@ -324,19 +330,21 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void transfer(Collection<T> object) {
 		transfer(object, 0);
 	}
-	
+
 	@Override
 	public void transferSecurityPunctuation(ISecurityPunctuation sp) {
 		transferSecurityPunctuation(sp, 0);
 	}
 
 	@Override
-	public void transferSecurityPunctuation(ISecurityPunctuation sp, int sourceOutPort) {
+	public void transferSecurityPunctuation(ISecurityPunctuation sp,
+			int sourceOutPort) {
 		fire(this.pushInitEvent);
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
 				try {
-					sink.getTarget().processSecurityPunctuation(sp, sink.getSinkInPort());
+					sink.getTarget().processSecurityPunctuation(sp,
+							sink.getSinkInPort());
 				} catch (Exception e) {
 					// Send object that could not be processed to the error port
 					e.printStackTrace();
@@ -346,7 +354,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 		fire(this.pushDoneEvent);
 	}
-	
+
 	/**
 	 * states if the next Operator can change the transfer object oder has to
 	 * make a copy
@@ -356,10 +364,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final protected boolean isTransferExclusive() {
 		return hasSingleConsumer();
 	}
-	
+
 	protected boolean needsClone() {
 		return !isTransferExclusive();
 	}
+
 	// Classes for Objects not implementing IClone (e.g. ByteBuffer, String,
 	// etc.)
 	// MUST override this method (else there will be a ClassCastException)
@@ -370,7 +379,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 		return object;
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// CLOSE
 	// ------------------------------------------------------------------------
@@ -387,15 +396,21 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		sub.decOpenCalls();
 		if (sub.getOpenCalls() == 0) {
 			this.activeSinkSubscriptions.remove(sub);
-			// defaultstreamconnections could be connected and opencalls represents only real subscriptions
-//			if (activeSinkSubscriptions.size() == 0) {
-				getLogger().debug("Closing " + toString());
-				fire(this.closeInitEvent);
-				this.process_close();
-				open.set(false);
-				stopMonitoring();
-				fire(this.closeDoneEvent);
-//			}
+			// defaultstreamconnections could be connected and opencalls
+			// represents only real subscriptions
+			Iterator<PhysicalSubscription<ISink<? super T>>> iter = activeSinkSubscriptions
+					.iterator();
+			while (iter.hasNext()) {
+				PhysicalSubscription<ISink<? super T>> sup = iter.next();
+				sup.getTarget().close();
+				iter.remove();
+			}
+			getLogger().debug("Closing " + toString());
+			fire(this.closeInitEvent);
+			this.process_close();
+			open.set(false);
+			stopMonitoring();
+			fire(this.closeDoneEvent);
 		}
 
 	}
@@ -645,7 +660,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof ISource || ipo instanceof IPipe))
-			return false;		
+			return false;
 		return process_isSemanticallyEqual(ipo);
 	}
 
