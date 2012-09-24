@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2012 The Odysseus Team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.uniol.inf.is.odysseus.securitypunctuation.sp;
 
 import java.util.ArrayList;
@@ -140,8 +155,6 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 				return true;
 			}
 			
-//			printSP();
-			
 			for(int i = 0; i < schema.size(); i++) {
 				Boolean setToNull = true;
 				String schemaAttribute = schema.getAttribute(i).getAttributeName();
@@ -212,12 +225,10 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 					return this.union(sp2);
 				} 
 			}
-			// gleiche Quelle, aber verschiedene Zeitstempel --> neue SP einfach hinzufügen
 		} else {
 			if(this.getIntegerAttribute("mutable") >= 1 && sp2.getIntegerAttribute("mutable") >= 2) {
 				return this.intersect(sp2);
 			}
-			// verschiedene Quellen und min. eine SP is immutable --> neue SP einfach hinzufügen
 		}
 		return null;
 	}

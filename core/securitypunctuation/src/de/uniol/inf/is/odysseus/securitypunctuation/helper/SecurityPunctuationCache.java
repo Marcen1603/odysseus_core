@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2012 The Odysseus Team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.uniol.inf.is.odysseus.securitypunctuation.helper;
 
 import java.util.ArrayList;
@@ -18,7 +33,6 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 	}
 	
 	public ISecurityPunctuation getMatchingSP(Long ts) {
-		//keine SP vorhanden die älter als das aktuelle Tupel ist... Exception???
 		if(!this.isEmpty()) {
 			if((this.get(0).getLongAttribute("ts")) > ts) {
 				return null;
@@ -40,12 +54,10 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 	 * @param ts Zeitstempel
 	 */
 	public void cleanCache(Long ts) {
-		// SP kann herausgeschmissen werden, wenn neuere SP angekommen ist und der ts des aktuellen Datentupels bereits für die neue SP gültig ist.
 		if(this.size() > 0) {
 			for(int i = this.size() - 1; i >= 0; i--) {
 				if((this.get(i).getLongAttribute("ts")) < ts) {
 					this.removeRange(0, i);
-//					printCache();
 					return;
 				}
 			}
@@ -68,25 +80,11 @@ public class SecurityPunctuationCache extends ArrayList<ISecurityPunctuation> {
 					this.remove(this.size()-2);
 				}
 				LOG.debug("added sp: " + sp.getLongAttribute("ts"));
-//				printCache();
 				return false;
 			}
 		}
 		boolean temp = super.add(sp);
 		LOG.debug("added sp: " + sp.getLongAttribute("ts"));
-//		printCache();
 		return temp;
-	}
-
-	/**
-	 * for debugging
-	 */
-	public void printCache() {
-		for(ISecurityPunctuation sp:this) {
-			LOG.debug("SP: ts: " + sp.getLongAttribute("ts") + " - sign: " + sp.getIntegerAttribute("sign"));
-			for(String string:sp.getStringArrayListAttribute("attributeNames")) {
-				LOG.debug("SP: attribute: " + string);
-			}
-		}
 	}
 }
