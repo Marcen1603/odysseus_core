@@ -374,10 +374,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 			this.activeSinkSubscriptions.remove(sub);
 			// defaultstreamconnections could be connected and opencalls
 			// represents only real subscriptions
-			for( PhysicalSubscription<ISink<? super T>> sup : activeSinkSubscriptions) {
-				sup.getTarget().close();
-			}
-			activeSinkSubscriptions.clear();
+			closeAllSinkSubscriptions();
 			getLogger().debug("Closing " + toString());
 			fire(this.closeInitEvent);
 			this.process_close();
@@ -386,6 +383,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 			fire(this.closeDoneEvent);
 		}
 
+	}
+
+	protected void closeAllSinkSubscriptions() {
+		for( PhysicalSubscription<ISink<? super T>> sup : activeSinkSubscriptions) {
+			sup.getTarget().close();
+		}
+		activeSinkSubscriptions.clear();
 	}
 
 	protected void process_close() {

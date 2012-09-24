@@ -244,6 +244,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	@Override
 	final public void close() {
 		this.delegateSink.close();
+		// The are cases where elements are connected that 
+		// are no roots of this query 
+		// here we need to call close by hand
+		closeAllSinkSubscriptions();
 	}
 
 	@Override
