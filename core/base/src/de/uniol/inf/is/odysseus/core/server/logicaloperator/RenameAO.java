@@ -18,12 +18,17 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
@@ -34,6 +39,7 @@ public class RenameAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 4218605858465342011L;
 	private List<String> aliases;
+	private boolean aliasesAsPairs = false;
 	private String typeName;
 	private boolean calculated = false;
 
@@ -48,6 +54,7 @@ public class RenameAO extends UnaryLogicalOp {
 	public RenameAO(RenameAO ao) {
 		super(ao);
 		aliases = ao.aliases;
+		aliasesAsPairs = ao.aliasesAsPairs;
 	}
 
 	@Parameter(type = StringParameter.class, isList = true)
@@ -58,6 +65,11 @@ public class RenameAO extends UnaryLogicalOp {
 	@Parameter(name = "Type", type = StringParameter.class, optional = true)
 	public void setType(String typeName) {
 		this.typeName = typeName;
+	}
+	
+	@Parameter(name = "Pairs", type = BooleanParameter.class, optional = true)
+	public void setPairs( boolean aliasesAsPairs ) {
+		this.aliasesAsPairs = aliasesAsPairs;
 	}
 
 	@GetParameter(name = "setAliases")
@@ -81,19 +93,45 @@ public class RenameAO extends UnaryLogicalOp {
 
 	@Override
 	public void initialize() {
-		SDFSchema inputSchema = getInputSchema();
-		if (inputSchema.size() != aliases.size()) {
-			throw new IllegalArgumentException("number of aliases does not match number of input attributes for rename");
+		if( !aliasesAsPairs ) {
+			SDFSchema inputSchema = getInputSchema();
+			if (inputSchema.size() != aliases.size()) {
+				throw new IllegalArgumentException("number of aliases does not match number of input attributes for rename");
+			}
+			Iterator<SDFAttribute> it = inputSchema.iterator();
+			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+			for (String str : aliases) {
+				// use clone, so we have a datatype etc.
+				SDFAttribute attribute = it.next().clone(null, str);
+				attrs.add(attribute);
+			}
+			String uri = typeName != null ? typeName : inputSchema.getURI();
+			setOutputSchema(new SDFSchema(uri, attrs));
+		} else {
+			SDFSchema inputSchema = getInputSchema();
+			if( aliases.isEmpty() ) {
+				throw new IllegalArgumentException("number of aliases interpreted as pairs must be at least two");
+			}
+			if (aliases.size() % 2 != 0) {
+				throw new IllegalArgumentException("number of aliases interpreted as pairs must be even");
+			}
+			
+			Map<String, String> aliasesMap = toMap(aliases);
+			
+			List<SDFAttribute> attrs = Lists.newArrayList();
+			for( SDFAttribute oldAttr : inputSchema ) {
+				String alias = aliasesMap.get(oldAttr.getAttributeName());
+				if( alias != null ) {
+					// alias found!
+					SDFAttribute newAttr = oldAttr.clone(null, alias);
+					attrs.add(newAttr);
+				} else {
+					attrs.add(oldAttr.clone());
+				}
+				String uri = typeName != null ? typeName : inputSchema.getURI();
+				setOutputSchema(new SDFSchema(uri, attrs));
+			}
 		}
-		Iterator<SDFAttribute> it = inputSchema.iterator();
-		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-		for (String str : aliases) {
-			// use clone, so we have a datatype etc.
-			SDFAttribute attribute = it.next().clone(null, str);
-			attrs.add(attribute);
-		}
-		String uri = typeName != null ? typeName : inputSchema.getURI();
-		setOutputSchema(new SDFSchema(uri, attrs));
 	}
 
 	@Override
@@ -101,4 +139,11 @@ public class RenameAO extends UnaryLogicalOp {
 		return new RenameAO(this);
 	}
 
+	private static Map<String, String> toMap( List<String> aliases ) {
+		Map<String, String> map = Maps.newHashMap();
+		for( int i = 0; i < aliases.size(); i+=2) {
+			map.put(aliases.get(i), aliases.get(i+1));
+		}
+		return map;
+	}
 }
