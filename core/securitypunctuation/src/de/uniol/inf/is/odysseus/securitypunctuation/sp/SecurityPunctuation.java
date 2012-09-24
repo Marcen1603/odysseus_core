@@ -290,7 +290,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 
 			SecurityPunctuation newSP = new SecurityPunctuation(this);
 
-			newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
+			newSP.intersectStringArrayList("streamname", sp2.getStringArrayListAttribute("streamname"));
 				
 			// größeren Wählen --> Bereich wird kleiner
 			if(newSP.getLongAttribute("tupleStartTS") < sp2.getLongAttribute("tupleStartTS")) {
@@ -301,8 +301,8 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 			if(newSP.getLongAttribute("tupleEndTS") > sp2.getLongAttribute("tupleEndTS")) {
 				newSP.setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
 			} 
-			newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("attributeNames"), sp2.getStringArrayListAttribute("attributeNames"));
-			newSP.intersectStringArrayList(newSP.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
+			newSP.intersectStringArrayList("attributeNames", sp2.getStringArrayListAttribute("attributeNames"));
+			newSP.intersectStringArrayList("role", sp2.getStringArrayListAttribute("role"));
 
 			newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
 			newSP.setAttribute("mutable", 0); //Da intersect z.B. beim Join ausgeführt wird und die SP danach nicht mehr geändert werden können sollen.
@@ -331,13 +331,15 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		if(list == null && list2 == null) {
 			return;
 		}
-		if(list2 == null
-				|| list.size() == 1 && list.get(0).equals("*")) {
+		if(list2 == null) {
 			return;
 		}
 		if(list == null
 				|| list2.size() == 1 && list2.get(0).equals("*")) {
 			list = (ArrayList<String>) list2.clone();
+			return;
+		}
+		if(list.size() == 1 && list.get(0).equals("*")) {
 			return;
 		}
 		for(String streamname:list2) {
@@ -362,19 +364,21 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		}
 	}
 	
-	private void intersectStringArrayList(ArrayList<String> list, ArrayList<String> list2) {
+	@SuppressWarnings("unchecked")
+	private void intersectStringArrayList(String attribute, ArrayList<String> list2) {
+		ArrayList<String> list = this.getStringArrayListAttribute(attribute);
 		if(list.size() == 1 && list.get(0).equals("*")) {
-			list = list2;
+			list = (ArrayList<String>) list2.clone();
+		} else if(list2.size() == 1 && list2.get(0).equals("*")) {
 			return;
-		}
-		if(list2.size() == 1 && list2.get(0).equals("*")) {
-			return;
-		}
-		for(int i = list.size() - 1; i >= 0; i--) {
-			if(!list2.contains(list.get(i))) {
-				list.remove(i);
+		} else {
+			for(int i = list.size() - 1; i >= 0; i--) {
+				if(!list2.contains(list.get(i))) {
+					list.remove(i);
+				}
 			}
 		}
+		this.setAttribute(attribute, list);
 	}
 	
 	public Boolean isEmpty() {

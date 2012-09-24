@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.FileSinkPO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.latency.logicaloperator.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SecurityShieldPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -49,23 +48,23 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<TopAO> {
 							securityShieldPO.setOutputSchema(oldFather.getOutputSchema()); 					
 							transformConfig.getTransformationHelper().insertNewFather(oldFather, topAOCollection, securityShieldPO);
 						}
-					} else if(e instanceof FileSinkPO && counter++ < 1) { // für Benchmarks...
+					} else if(e instanceof FileSinkPO && counter++ < 1) {
 						List<PhysicalSubscription<ISource<? extends Object>>> fileSink = ((FileSinkPO) e).getSubscribedToSource();
 						for(PhysicalSubscription<ISource<? extends Object>> source:fileSink) {
-							// Wenn auch CalcLatency direkt vor FileSInk, dann SecShield auch davor noch setzen...
-							if(source.getTarget() instanceof LatencyCalculationPipe) {
-								LatencyCalculationPipe pipe = (LatencyCalculationPipe) source.getTarget();
-								List<PhysicalSubscription<ISource<? extends Object>>> subscribedTo = pipe.getSubscribedToSource();
-								for(PhysicalSubscription<ISource<? extends Object>> source2:subscribedTo) {
-									oldFather = (ISource<?>) source2.getTarget();
-									IPipe securityShieldPO = new SecurityShieldPO();
-									securityShieldPO.setOutputSchema(oldFather.getOutputSchema()); // ???
-									Collection<ISubscription<ISink>> testds = new ArrayList<ISubscription<ISink>>();
-									PhysicalSubscription phsy = new PhysicalSubscription(source.getTarget(), 0, 0, oldFather.getOutputSchema());
-									testds.add(phsy);
-									transformConfig.getTransformationHelper().insertNewFatherPhysical(oldFather, testds, securityShieldPO);
-								}
-							} else {
+							// Wenn auch CalcLatency direkt vor FileSInk, dann SecShield auch davor noch setzen... - für Benchmarks
+//							if(source.getTarget() instanceof LatencyCalculationPipe) {
+//								LatencyCalculationPipe pipe = (LatencyCalculationPipe) source.getTarget();
+//								List<PhysicalSubscription<ISource<? extends Object>>> subscribedTo = pipe.getSubscribedToSource();
+//								for(PhysicalSubscription<ISource<? extends Object>> source2:subscribedTo) {
+//									oldFather = (ISource<?>) source2.getTarget();
+//									IPipe securityShieldPO = new SecurityShieldPO();
+//									securityShieldPO.setOutputSchema(oldFather.getOutputSchema()); // ???
+//									Collection<ISubscription<ISink>> testds = new ArrayList<ISubscription<ISink>>();
+//									PhysicalSubscription phsy = new PhysicalSubscription(source.getTarget(), 0, 0, oldFather.getOutputSchema());
+//									testds.add(phsy);
+//									transformConfig.getTransformationHelper().insertNewFatherPhysical(oldFather, testds, securityShieldPO);
+//								}
+//							} else {
 								oldFather = (ISource<?>) source.getTarget();
 								IPipe securityShieldPO = new SecurityShieldPO();
 								securityShieldPO.setOutputSchema(e.getOutputSchema());
@@ -73,7 +72,7 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<TopAO> {
 								PhysicalSubscription phsy = new PhysicalSubscription((FileSinkPO) e, 0, 0, e.getOutputSchema());
 								testds.add(phsy);
 								transformConfig.getTransformationHelper().insertNewFatherPhysical(oldFather, testds, securityShieldPO);
-							}
+//							}
 						}
 					}
 				}						

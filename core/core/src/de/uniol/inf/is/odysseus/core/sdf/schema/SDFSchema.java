@@ -39,7 +39,9 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	
 	protected SDFSchema(String URI) {
 		super(URI);
-		baseSourceNames.add(URI);
+		if(!URI.equals("")) {
+			baseSourceNames.add(URI);
+		}
 	}
 
 	/**
@@ -62,12 +64,16 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		for (SDFAttribute a : attributes1) {
 			elements.add(a);
 		}
-		baseSourceNames.add(uri);
+		if(!uri.equals("")) {
+			baseSourceNames.add(uri);
+		}
 	}
 
 	public SDFSchema(String uri, Collection<SDFAttribute> attributes1) {
 		super(uri, attributes1);
-		baseSourceNames.add(uri);
+		if(!uri.equals("")) {
+			baseSourceNames.add(uri);
+		}
 	}
 
 	@Override
