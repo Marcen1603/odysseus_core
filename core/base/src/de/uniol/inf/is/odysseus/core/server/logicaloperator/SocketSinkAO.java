@@ -110,12 +110,12 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 	}
 	
 	
-	@Parameter(name="HOST", type = StringParameter.class)
+	@Parameter(name="HOST", type = StringParameter.class, optional = true)
 	public void setHost(String host) {
 		this.host = host;
 	}
 	
-	@Parameter(name="PUSH", type = BooleanParameter.class)
+	@Parameter(name="PUSH", type = BooleanParameter.class, optional = true)
 	public void setPush(boolean push) {
 		this.push= push;
 	}
