@@ -38,13 +38,14 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 		IDataMergeFunction<Tuple<ITimeInterval>> dataMergeFunction = new RelationalMergeFunction<ITimeInterval>(
 				logical.getOutputSchema().size());
 
-		IReadOnlyCache<ComplexParameterKey, Tuple<?>> cacheManager = createCache(logical);
+		IReadOnlyCache<ComplexParameterKey, Tuple<?>[]> cacheManager = createCache(logical);
 
 		// Maybe check, if operator is already existent (when is it 100% equal?)
 		DBEnrichPO<ITimeInterval> physical = new DBEnrichPO<ITimeInterval>(
 				logical.getConnectionName(),
 				logical.getQuery(),
 				logical.getAttributes(),
+				logical.isMultiTupleOutput(),
 				logical.isNoCache(),
 				logical.getCacheSize(),
 				logical.getExpirationTime(),
@@ -62,10 +63,10 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 	 * @param logical the logical operator
 	 * @return the created cache
 	 */
-	private static IReadOnlyCache<ComplexParameterKey, Tuple<?>> createCache(DBEnrichAO logical) {
+	private static IReadOnlyCache<ComplexParameterKey, Tuple<?>[]> createCache(DBEnrichAO logical) {
 
-		IRetrievalStrategy<ComplexParameterKey, Tuple<?>> retrievalStrategy = new DBRetrievalStrategy(
-				logical.getConnectionName(), logical.getQuery());
+		IRetrievalStrategy<ComplexParameterKey, Tuple<?>[]> retrievalStrategy = new DBRetrievalStrategy(
+				logical.getConnectionName(), logical.getQuery(), logical.isMultiTupleOutput());
 
 		if (logical.isNoCache()) {
 			return new DummyReadOnlyCache<>(retrievalStrategy);
@@ -76,7 +77,7 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 			 * size, therefore the loadCapacity may be set to 1 to prevent
 			 * rehashing.
 			 */
-			ICacheStore<ComplexParameterKey, CacheEntry<Tuple<?>>> cacheStore = 
+			ICacheStore<ComplexParameterKey, CacheEntry<Tuple<?>[]>> cacheStore = 
 					new WorkingMemoryCacheStore<>(logical.getCacheSize() + 1, 1.0f);
 
 			/* Instantiate removal strategy using the declarative service */

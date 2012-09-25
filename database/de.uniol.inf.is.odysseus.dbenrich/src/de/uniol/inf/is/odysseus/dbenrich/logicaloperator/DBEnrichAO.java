@@ -7,6 +7,10 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -25,11 +29,14 @@ import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 public class DBEnrichAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 7829900765149450355L;
+	
+	static Logger logger = LoggerFactory.getLogger(DBEnrichAO.class);
 
 	/* Directly passed through attributes */
 	private String connectionName;
 	private String query;
 	private List<String> attributes; // for pstmt parameters
+	private boolean multiTupleOutput = false; // n output tuples for n db results
 	private boolean noCache = false;
 	private int cacheSize = 20;
 	private long expirationTime = 1000 * 60 * 5; // 5 Minuten
@@ -44,6 +51,7 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		connectionName = dBEnrichAO.connectionName;
 		query = dBEnrichAO.query;
 		attributes = dBEnrichAO.attributes;
+		multiTupleOutput = dBEnrichAO.multiTupleOutput;
 		noCache = dBEnrichAO.noCache;
 		cacheSize = dBEnrichAO.cacheSize;
 		expirationTime = dBEnrichAO.expirationTime;
@@ -99,9 +107,11 @@ public class DBEnrichAO extends UnaryLogicalOp {
 
 			setOutputSchema(outputSchema);
 
-			// printMetaData(resultSetMetaData);
-			// printSchema(getInputSchema(), "Input_"+getInputSchema().getURI());
-			// printSchema(getOutputSchema(), "Output_"+getInputSchema().getURI());
+			logger.debug(resultSetMetaDataToString(resultSetMetaData));
+			logger.debug(sdfSchemaToString(getInputSchema(), 
+					"Input stream: "+getInputSchema().getURI()));
+			logger.debug(sdfSchemaToString(getOutputSchema(), 
+					"Output stream: "+getInputSchema().getURI()));
 		} catch (SQLException e) {
 			throw new RuntimeException("Error while analysing SQL query", e);
 		} finally {
@@ -118,36 +128,43 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		return super.getOutputSchemaIntern(pos);
 	}
 
-	//	private static void printSchema(SDFSchema schema, String identifier) {
-	//		System.out.println(identifier + " {");
-	//		for(SDFAttribute attribute : schema) {
-	//			System.out.println("\t" + attribute.getURI() + ": " + attribute.getDatatype());
-	//		}
-	//		System.out.println("}");
-	//	}
+	private static String sdfSchemaToString(SDFSchema schema, String identifier) {
+		StringBuilder sb = new StringBuilder(140);
+		sb.append(identifier + ", Schema=[");
+		boolean addComma = false;
+		for (SDFAttribute attribute : schema) {
+			if(addComma) sb.append(",");
+			sb.append("['" + attribute.getURI() + "','" + attribute.getDatatype() + "']");
+			addComma = true;
+		}
+		sb.append("]");
+		return sb.toString();
+	}
 
-	//	private static void printMetaData(ResultSetMetaData resultSetMetaData) {
-	//		try {
-	//			System.out.print("SQL-ResultSetMetaData: ");
-	//			for (int i=1; i<=resultSetMetaData.getColumnCount(); i++) {
-	//				System.out.printf("[%s,%s] ",
-	//						resultSetMetaData.getColumnLabel(i),
-	//						resultSetMetaData.getColumnType(i));
-	//			}
-	//			System.out.println();
-	//		} catch(Exception e) {
-	//			e.printStackTrace();
-	//		}
-	//	}
+	private static String resultSetMetaDataToString(ResultSetMetaData resultSetMetaData) {
+		StringBuilder sb = new StringBuilder(80);
+		try {
+			sb.append("SQL-ResultSetMetaData: [");
+			for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
+				if(i>1) sb.append(",");
+				sb.append("[" + resultSetMetaData.getColumnLabel(i) + ","
+						+ resultSetMetaData.getColumnType(i) + "]");
+			}
+			sb.append("]");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sb.toString();
+	}
 
-	//	private String getDebugString() {
-	//		String variablesStr = "{";
-	//		for(String var : attributes) {
-	//			variablesStr += "'" + var + "' ";
-	//		}
-	//		variablesStr = variablesStr.trim() + "}";
-	//		return String.format("connectionName:%s, query:%s, variables:%s, noCache:%s, cacheSize:%s, expirationTime:%s, removalStrategy:%s", connectionName, query, variablesStr, noCache, cacheSize, expirationTime, removalStrategy);
-	//	}
+	// private String getDebugString() {
+	// 	String variablesStr = "{";
+	// 	for (String var : attributes) {
+	// 		variablesStr += "'" + var + "' ";
+	// 	}
+	// 	variablesStr = variablesStr.trim() + "}";
+	// 	return String.format("connectionName:%s, query:%s, variables:%s, multiTupleOutput:%s, noCache:%s, cacheSize:%s, expirationTime:%s, removalStrategy:%s", connectionName, query, variablesStr, multiTupleOutput, noCache, cacheSize, expirationTime, removalStrategy);
+	// }
 
 	// Getters / Setters below
 	public String getConnectionName() {
@@ -175,6 +192,15 @@ public class DBEnrichAO extends UnaryLogicalOp {
 	@Parameter(type = StringParameter.class, name = "attributes", isList = true)
 	public void setAttributes(List<String> attributes) {
 		this.attributes = attributes;
+	}
+	
+	public boolean isMultiTupleOutput() {
+		return multiTupleOutput;
+	}
+
+	@Parameter(type = BooleanParameter.class, optional=true, name = "multiTupleOutput")
+	public void setMultiTupleOutput(boolean multiTupleOutput) {
+		this.multiTupleOutput = multiTupleOutput;
 	}
 
 	public int getCacheSize() {

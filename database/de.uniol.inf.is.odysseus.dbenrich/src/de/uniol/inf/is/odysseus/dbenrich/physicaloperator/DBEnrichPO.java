@@ -20,26 +20,28 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final String connectionName;
 	private final String query;
 	private final List<String> variables;
+	private final boolean multiTupleOutput;
 	private final boolean noCache;
 	private final int cacheSize;
 	private final long expirationTime;
 	private final String removalStrategy;
 	// Fully initialized after process_open()
 	private final IDataMergeFunction<Tuple<T>> dataMergeFunction;
-	private final IReadOnlyCache<ComplexParameterKey, Tuple<?>> cacheManager;
+	private final IReadOnlyCache<ComplexParameterKey, Tuple<?>[]> cacheManager;
 	/** The positions of the db query parameters in the inputTuple attributes,
 	 * ordered as in the db query */
 	private final int[] parameterPositions;
 
 	public DBEnrichPO(String connectionName, String query,
-			List<String> variables, boolean noCache, int cacheSize,
-			long expirationTime, String removalStrategy,
+			List<String> variables, boolean noCache, boolean multiTupleOutput, 
+			int cacheSize, long expirationTime, String removalStrategy,
 			IDataMergeFunction<Tuple<T>> dataMergeFunction,
-			IReadOnlyCache<ComplexParameterKey, Tuple<?>> cacheManager) {
+			IReadOnlyCache<ComplexParameterKey, Tuple<?>[]> cacheManager) {
 		super();
 		this.connectionName = connectionName;
 		this.query = query;
 		this.variables = variables;
+		this.multiTupleOutput = multiTupleOutput;
 		this.noCache = noCache;
 		this.cacheSize = cacheSize;
 		this.expirationTime = expirationTime;
@@ -54,6 +56,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.connectionName = dBEnrichPO.connectionName;
 		this.query = dBEnrichPO.query;
 		this.variables = dBEnrichPO.variables;
+		this.multiTupleOutput = dBEnrichPO.multiTupleOutput;
 		this.noCache = dBEnrichPO.noCache;
 		this.cacheSize = dBEnrichPO.cacheSize;
 		this.expirationTime = dBEnrichPO.expirationTime;
@@ -82,22 +85,28 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		Object[] queryParameters = getQueryParameters(inputTuple);
 		ComplexParameterKey complexKey = new ComplexParameterKey(queryParameters);
 
-		Tuple<?> dbTupel = cacheManager.get(complexKey);
+		Tuple<?>[] dbTupels = cacheManager.get(complexKey);
+		
+		/*
+		 * If multiTupleOutput is set, there will be as many output-tuples 
+		 * generated as there are tuples in the db resultset.
+		 * Otherwise the array dbTupels has the length '1' and only the first 
+		 * result tuple from the db will used for the single output tuple.
+		 * If the db resultset was empty, no tuple will be transfered.
+		 */
+		for(int i=0; i<dbTupels.length; i++) {
+			// System.out.println("Tuple(dbcache): " + dbTupels[i]);
 
-		if(dbTupel != null) {
-			// System.out.println("Tuple(dbcache): " + dbTupel);
-
-			Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, (Tuple<T>)dbTupel);
+			Tuple<T> outputTuple = dataMergeFunction.merge(
+					inputTuple, (Tuple<T>)dbTupels[i]);
+			// The the metadata of the inputtuple
 			outputTuple.setMetadata((T)inputTuple.getMetadata().clone());
 
-			// System.out.println("Tuple(after):   "+outputTuple);
+			// System.out.println("Tuple(after,"+i+1+"): "+outputTuple);
 
 			transfer(outputTuple, port);
-
-		} else {
-			// System.out.println("No enrichement data found.");
 		}
-
+		
 		// System.out.println("-----------------------------------)");
 	}
 
@@ -184,6 +193,8 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		} else if (!connectionName.equals(other.connectionName))
 			return false;
 		if (expirationTime != other.expirationTime)
+			return false;
+		if (multiTupleOutput != other.multiTupleOutput)
 			return false;
 		if (noCache != other.noCache)
 			return false;

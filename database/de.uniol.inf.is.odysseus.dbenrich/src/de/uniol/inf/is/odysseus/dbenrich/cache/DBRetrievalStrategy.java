@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -18,28 +19,31 @@ import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
  * data source.
  */
 public class DBRetrievalStrategy implements
-		IRetrievalStrategy<ComplexParameterKey, Tuple<?>> {
+		IRetrievalStrategy<ComplexParameterKey, Tuple<?>[]> {
 
 	private String connectionName;
 	private String query;
+	private boolean multiTupleOutput;
 
 	// Initialized in open()
 	private SDFSchema dbFetchSchema;
 	private PreparedStatement preparedStatement;
 
-	public DBRetrievalStrategy(String connectionName, String query) {
+	public DBRetrievalStrategy(String connectionName, String query, boolean multiTupleOutput) {
 		this.connectionName = connectionName;
 		this.query = query;
+		this.multiTupleOutput = multiTupleOutput;
 	}
 
 	public DBRetrievalStrategy(DBRetrievalStrategy dbRetrievalStrategy) {
 		this.connectionName = dbRetrievalStrategy.connectionName;
 		this.query = dbRetrievalStrategy.query;
+		this.multiTupleOutput = dbRetrievalStrategy.multiTupleOutput;
 	}
 
 	@Override
-	public Tuple<?> get(ComplexParameterKey key) {
-		return getTupleFromDB(key);
+	public Tuple<?>[] get(ComplexParameterKey key) {
+		return getTuplesFromDB(key);
 	}
 
 	@Override
@@ -84,13 +88,16 @@ public class DBRetrievalStrategy implements
 		dbFetchSchema = null;
 	}
 
-	private Tuple<?> getTupleFromDB(ComplexParameterKey complexParameterKey) {
+	private Tuple<?>[] getTuplesFromDB(ComplexParameterKey complexParameterKey) {
 
 		ResultSet rs = null;
-		Tuple<?> dbTuple = null;
+		/* Will be converted to an array at the end; replace it with a 
+		 * more efficient data structure, if you find one for this use */
+		ArrayList<Tuple<?>> dbTuples = 
+				(multiTupleOutput?new ArrayList<Tuple<?>>():null);
 
 		try {
-			// Insert parameters corr. to variables in prepared statement...
+			// Insert parameters corresponding to variables in prepared statement...
 			Object[] queryParameters = complexParameterKey.getQueryParameters();
 			for (int i = 0; i < queryParameters.length; i++) {
 				preparedStatement.setObject(i + 1, queryParameters[i]); // automapping
@@ -98,17 +105,22 @@ public class DBRetrievalStrategy implements
 			// ... and execute
 			// System.out.println("PreparedStatement: " + preparedStatement.toString());
 			rs = preparedStatement.executeQuery();
-
-			if (rs.next()) {
-				dbTuple = new Tuple<>(dbFetchSchema.size(), false);
+			
+			while (rs.next()) {
+				Tuple<?> dbTuple = new Tuple<>(dbFetchSchema.size(), false);
 				for (int i = 0; i < dbFetchSchema.size(); i++) {
 					Object newAttribute = getWithType(rs, dbFetchSchema.get(i),
 							i + 1);
 					dbTuple.setAttribute(i, newAttribute);
 				}
-			} else {
-				// do nothing, return dbTuple = null
-				// (old:) throw new RuntimeException("No results for query");
+				
+				// Return only the first, if multiTupleOutput is not set
+				if(!multiTupleOutput) {
+					// direct return without using the list to speed the process up
+					return new Tuple[] {dbTuple};
+				} else {
+					dbTuples.add(dbTuple);
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -116,7 +128,9 @@ public class DBRetrievalStrategy implements
 					"Could not retrieve entry from Database", e);
 		}
 
-		return dbTuple; // null, if nothing was found
+		return (dbTuples!=null)?
+				dbTuples.toArray(new Tuple[dbTuples.size()]):
+				new Tuple[0];
 	}
 
 	private Object getWithType(ResultSet rs, SDFAttribute sdfAttributeTarget,
