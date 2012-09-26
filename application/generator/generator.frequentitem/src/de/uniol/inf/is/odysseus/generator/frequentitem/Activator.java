@@ -60,10 +60,10 @@ public class Activator implements BundleActivator {
 		
 		bundleContext.registerService(CommandProvider.class.getName(), new ConsoleCommands(), null);
 		
-		StreamServer serverSimple = new StreamServer(54321, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_SIMPLE));
+		StreamServer serverSimple = new StreamServer(54321, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_SIMPLE), "SimpleData");
 		serverSimple.start();
 		server.add(serverSimple);
-		StreamServer serverT10I4D = new StreamServer(54322, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_T10I4D100K));
+		StreamServer serverT10I4D = new StreamServer(54322, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_T10I4D100K),10000000, "T10I4D100K");
 		serverT10I4D.start();
 		server.add(serverT10I4D);
 		StreamServer serverFCMA= new StreamServer(54323, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_FCMA));
@@ -72,6 +72,7 @@ public class Activator implements BundleActivator {
 		StreamServer serverABC = new StreamServer(54324, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_ABC));
 		serverABC.start();
 		server.add(serverABC);		
+	//	BenchmarkController.getInstance().start();
 	}
 
 	/*

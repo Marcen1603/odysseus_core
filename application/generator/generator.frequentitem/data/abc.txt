@@ -1,11 +1,17 @@
-a b
-b c d
-a c d e
-a d e
-a b c
-a b c d
+a
 a
 a b c
-a b d
-b c e
+a b c d
+b c d
+b c d
+d
+d
+e
+e
+b
+b
+a b
+a
+d
+d
 Dummy

@@ -56,6 +56,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 	private long time = 0;
 	private int transId = 1;
 	private BufferedReader in;
+	private int counter = 1;
 
 	private String file;
 
@@ -77,7 +78,10 @@ public class FrequentItemProvider extends StreamClientHandler {
 			line = in.readLine();
 
 			if (line == null) {
+				//System.out.println("number of items: "+counter);
 				System.out.println("end of file reached");
+				super.printStats();
+				BenchmarkController.getInstance().instanceFinished();
 				return null;
 			}
 
@@ -88,17 +92,18 @@ public class FrequentItemProvider extends StreamClientHandler {
 				String itemId = part.trim();
 				DataTuple tuple = new DataTuple();
 				tuple.addAttribute(new Long(time));
-				tuple.addAttribute(new Integer(transId));
+				tuple.addAttribute(new Integer(transId));				
 				tuple.addAttribute(new String(itemId));							
 				tuples.add(tuple);
+				counter++;
 			}
 
 			time = time + 100;
 			transId++;
-
-			//Thread.sleep(500);
-//		} catch (InterruptedException ie){
-//			throw ie;
+			
+			Thread.sleep(4000);
+		} catch (InterruptedException ie){
+			throw ie;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
