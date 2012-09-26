@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Executor Wsclient
+Bundle-Name: Executor over Webservice
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.executor.wsclient
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -10,4 +10,6 @@ Service-Component: OSGI-INF/wsclient.xml
 Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.usermanagement,
+ de.uniol.inf.is.odysseus.webservice.client,
  org.slf4j
+Bundle-Vendor: University of Oldenburg
