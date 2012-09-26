@@ -943,9 +943,17 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			List<String> roles = (List<String>) node.jjtGetChild(0).jjtAccept(this, data);
 			String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 			IUser user = UserManagement.getUsermanagement().findUser(userName, caller);
+			if (user != null){
 			for (String rolename : roles) {
 				IRole role = UserManagement.getUsermanagement().getRole(rolename, caller);
+				if (role != null){
 				UserManagement.getUsermanagement().grantRole(user, role, caller);
+				}else{
+					throw new QueryParseException("Role "+rolename+" not defined!");
+				}
+			}
+			}else{
+				throw new QueryParseException("User "+userName+" not found");
 			}
 		}
 		return null;
