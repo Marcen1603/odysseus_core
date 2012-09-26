@@ -8,12 +8,11 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.latency.logicaloperator,
  de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
- org.junit,
- org.osgi.service.component,
- org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
-Service-Component: OSGI-INF/SLAScheduler.xml
+ org.osgi.service.component
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.scheduler.slascheduler,
  de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance,
- de.uniol.inf.is.odysseus.scheduler.slascheduler.placement,
- de.uniol.inf.is.odysseus.scheduler.slascheduler.test
+ de.uniol.inf.is.odysseus.scheduler.slascheduler.placement
