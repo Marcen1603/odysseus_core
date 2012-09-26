@@ -34,9 +34,11 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.generator.valuegenerator.DataType;
@@ -50,11 +52,22 @@ public abstract class StreamClientHandler extends Thread {
 	private List<IValueGenerator> generators = new ArrayList<IValueGenerator>();
 	private Map<IValueGenerator, DataType> datatypes = new HashMap<IValueGenerator, DataType>();
 	private boolean paused = false;
+	private NumberFormat nf = NumberFormat.getIntegerInstance(Locale.GERMAN);
+	private int instanceNumber = 0;
+	private String streamName = "";
 	/**
 	 * Gibt an, ob der StreamClientHandler Security Aware ist, also Security
 	 * Punctuation verarbeitet.
 	 */
 	private Boolean isSA = false;
+
+	private boolean printthroughput = false;
+	private int throughputEach;
+	private int counter = 0;
+	private long lastTime = 0;
+	private long startTime = 0;
+	private int lastSize = 0;
+	private int totalSize = 0;
 
 	public abstract void init();
 
@@ -83,6 +96,9 @@ public abstract class StreamClientHandler extends Thread {
 		for (IValueGenerator gen : this.generators) {
 			gen.init();
 		}
+		this.startTime = System.currentTimeMillis();
+		this.lastTime = startTime;
+		this.counter = 0;
 		init();
 	}
 
@@ -93,26 +109,44 @@ public abstract class StreamClientHandler extends Thread {
 		try {
 			next = next();
 		} catch (InterruptedException ie) {
-			System.out.println("Thread interrupted. Stopping Client");
+			System.out.println("Thread interrupted. Stopping client for"+getInternalName());
 			next = null;
-		} 
+		}
 		while (next != null) {
 			try {
 				if (this.connection.isClosed()) {
-					System.out.println("Connection closed.");
+					System.out.println("Connection closed for "+getInternalName());
 					break;
 				}
-				for (DataTuple nextTuple : next) {
+				for (DataTuple nextTuple : next) {							
 					transferTuple(nextTuple);
+					if (printthroughput) {
+						counter++;						
+						int size = nextTuple.memSize;
+						this.totalSize += size;
+						this.lastSize += size;
+						if ((counter % throughputEach) == 0) {							
+							printStats();
+							lastTime = System.currentTimeMillis();
+							lastSize = 0;
+						}
+					}
 				}
 				next = next();
 
-			}catch (InterruptedException ie) {
-				System.out.println("Thread interrupted. Stopping Client");
+			} catch (InterruptedException ie) {
+				System.out.println("Thread interrupted. Stopping client for "+getInternalName());
+				if (printthroughput) {
+					System.out.println("Total stats:");
+					printStats();
+				}
 				next = null;
-			}  			
-			catch (IOException e) {
-				System.out.println("Connection closed.");
+			} catch (IOException e) {
+				System.out.println("Connection closed for "+getInternalName());
+				if (printthroughput) {
+					System.out.println("Total stats for :");
+					printStats();
+				}
 				break;
 			}
 			synchronized (this) {
@@ -127,6 +161,22 @@ public abstract class StreamClientHandler extends Thread {
 		}
 		close();
 	}
+
+	private String getInternalName(){
+		return this.streamName+" #"+this.instanceNumber;
+	}
+	
+	/**
+	 * @param nextTuple
+	 */
+	protected void printStats() {
+		System.out.println("--- "+getInternalName()+"---");
+		double needed = System.currentTimeMillis()-lastTime;		
+		double total = System.currentTimeMillis() - startTime;
+		System.out.println("Duration for last " + nf.format(throughputEach) + " elements: \t" + nf.format(needed) + "\t ms for " + nf.format(lastSize) + "\t bytes. Throughput: \t"+Math.round((lastSize/needed)*100.)/100.+" bytes/ms");
+		System.out.println("Total for "+nf.format(counter)+" elements: \t\t" + nf.format(total) + "\t ms for " + nf.format(totalSize) + "\t bytes. Throughput: \t"+Math.round((totalSize/total)*100.)/100.+" \tbytes/ms");
+	}
+		
 
 	public void transferTuple(DataTuple tuple) throws IOException {
 		if (tuple != null) {
@@ -164,9 +214,9 @@ public abstract class StreamClientHandler extends Thread {
 		}
 
 		for (Object data : tuple.getAttributes()) {
-            if (data instanceof Byte) {
-                bytebuffer.put((Byte) data);
-            } else if (data instanceof Integer) {
+			if (data instanceof Byte) {
+				bytebuffer.put((Byte) data);
+			} else if (data instanceof Integer) {
 				bytebuffer.putInt((Integer) data);
 			} else if (data instanceof Boolean) {
 				boolean b = (Boolean) data;
@@ -208,9 +258,9 @@ public abstract class StreamClientHandler extends Thread {
 		for (IValueGenerator v : this.generators) {
 			DataType datatype = datatypes.get(v);
 			switch (datatype) {
-            case BYTE:
-                tuple.addByte(v.nextValue());
-                break;
+			case BYTE:
+				tuple.addByte(v.nextValue());
+				break;
 			case BOOLEAN:
 				tuple.addBoolean(v.nextValue());
 				break;
@@ -262,5 +312,32 @@ public abstract class StreamClientHandler extends Thread {
 
 	public Boolean isSA() {
 		return this.isSA;
+	}
+
+	/**
+	 * @param throughputEach
+	 */
+	public void setThroughputEach(int throughputEach) {
+		if (throughputEach > 0) {
+			this.printthroughput = true;
+			this.throughputEach = throughputEach;
+		}
+
+	}
+
+	public int getInstanceNumber() {
+		return instanceNumber;
+	}
+
+	public void setInstanceNumber(int instanceNumber) {
+		this.instanceNumber = instanceNumber;
+	}
+
+	public String getStreamName() {
+		return streamName;
+	}
+
+	public void setStreamName(String streamName) {
+		this.streamName = streamName;
 	}
 }

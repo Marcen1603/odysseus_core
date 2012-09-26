@@ -42,28 +42,54 @@ public class StreamServer extends Thread {
 	private ServerSocket socket;
 	private StreamClientHandler streamClientHandler;	
 	private List<StreamClientHandler> clients = new ArrayList<StreamClientHandler>();
+	private int throughputEach = 0;
+	private int instanceCounter = 1;
+	private String name = "";
 
 	public StreamServer(int port, StreamClientHandler streamClientHandler) throws Exception {
+		this(port, streamClientHandler, streamClientHandler.getClass().getSimpleName());
+	}
+	
+	public StreamServer(int port, StreamClientHandler streamClientHandler, String name) throws Exception {
 		this.streamClientHandler = streamClientHandler;
 		ServerSocketChannel serverChannel = ServerSocketChannel.open();
 		socket = serverChannel.socket();
 		socket.bind(new InetSocketAddress(port));
 		serverChannel.configureBlocking(true);
+		this.name = name;
+	}
+	
+	public StreamServer(int port, StreamClientHandler streamClientHandler, int printThroughputEach) throws Exception {
+		this(port, streamClientHandler, printThroughputEach, streamClientHandler.getClass().getSimpleName());
+	}
+	
+	public StreamServer(int port, StreamClientHandler streamClientHandler, int printThroughputEach, String name) throws Exception {
+		this.streamClientHandler = streamClientHandler;
+		ServerSocketChannel serverChannel = ServerSocketChannel.open();
+		socket = serverChannel.socket();
+		socket.bind(new InetSocketAddress(port));
+		serverChannel.configureBlocking(true);
+		this.throughputEach  = printThroughputEach;
+		this.name = name;
 	}
 
 	@Override
 	public void run() {
-		System.out.println("Starting new server on port " + this.socket.getLocalPort());
+		System.out.println("Starting new server on port " + this.socket.getLocalPort()+" for "+this.name);
 		while (true) {
 			Socket connection = null;
 			try {
 				System.out.println("Waiting for connection...");
 				connection = socket.accept();
-				System.out.println("New connection from " + connection.getInetAddress());
+				System.out.println("New connection from " + connection.getInetAddress()+" on port on port " + this.socket.getLocalPort()+" for "+this.name);				
 				StreamClientHandler streamClient = this.streamClientHandler.clone();
 				streamClient.setConnection(connection);
+				streamClient.setThroughputEach(this.throughputEach);
 				streamClient.start();
+				streamClient.setInstanceNumber(instanceCounter);
+				streamClient.setStreamName(name);
 				this.clients.add(streamClient);
+				instanceCounter++;
 			} catch (Exception ex) {
 				System.err.println("Error: " + ex.getStackTrace());
 				continue;
