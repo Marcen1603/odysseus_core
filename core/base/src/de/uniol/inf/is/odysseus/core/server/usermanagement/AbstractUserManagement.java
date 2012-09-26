@@ -629,88 +629,128 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 		if (getUserDAO().findByName("System") == null) {
 			try {
 				logger.debug("Creating new user database");
-				USER user = createEmptyUser();
-				user.setName("System");
-				user.setPassword("manager".getBytes());
-				user = getUserDAO().create(user);
-
-				// --- ADMIN ROLE ----
-				ROLE adminRole = createEmptyRole();
-				adminRole.setName("sys_admin");
-				adminRole = getRoleDAO().create(adminRole);
-
-				PRIVILEGE adminPrivilege = createEmptyPrivilege();
-				adminPrivilege.setObjectURI(UserManagementPermission.objectUri);
-				for (IPermission permission : UserManagementPermission.class
-						.getEnumConstants()) {
-					adminPrivilege.addPermission(permission);
-				}
-				adminPrivilege = getPrivilegeDAO().create(adminPrivilege);
-				adminRole.addPrivilege(adminPrivilege);
-				getRoleDAO().update(adminRole);
-
-				// --- Data dictionary Role ----
-				ROLE dictionaryRole = createEmptyRole();
-				dictionaryRole.setName("datadictionary");
-				dictionaryRole = getRoleDAO().create(dictionaryRole);
-
-				PRIVILEGE dictPrivilege = createEmptyPrivilege();
-				dictPrivilege.setObjectURI(DataDictionaryPermission.objectURI);
-				for (IPermission permission : DataDictionaryPermission.class
-						.getEnumConstants()) {
-					dictPrivilege.addPermission(permission);
-				}
-				dictPrivilege = getPrivilegeDAO().create(dictPrivilege);
-				dictionaryRole.addPrivilege(dictPrivilege);
-				getRoleDAO().update(dictionaryRole);
-
-				// --- Configuration Role ----
-				ROLE configurationRole = createEmptyRole();
-				configurationRole.setName("configuration");
-				configurationRole = getRoleDAO().create(configurationRole);
-
-				PRIVILEGE confPrivilege = createEmptyPrivilege();
-				confPrivilege.setObjectURI(ConfigurationPermission.objectURI);
-				for (IPermission permission : ConfigurationPermission.class
-						.getEnumConstants()) {
-					confPrivilege.addPermission(permission);
-				}
-				confPrivilege = getPrivilegeDAO().create(confPrivilege);
-				configurationRole.addPrivilege(confPrivilege);
-				getRoleDAO().update(configurationRole);
-
-				// --- Query Execution Role ----
-				ROLE queryexecutor = createEmptyRole();
-				queryexecutor.setName("queryexecutor");
-				queryexecutor = getRoleDAO().create(queryexecutor);
-
-				PRIVILEGE execPrivilege = createEmptyPrivilege();
-				execPrivilege.setObjectURI(ExecutorPermission.objectURI);
-				for (IPermission permission : ExecutorPermission.class
-						.getEnumConstants()) {
-					execPrivilege.addPermission(permission);
-				}
-				execPrivilege = getPrivilegeDAO().create(execPrivilege);
-				queryexecutor.addPrivilege(execPrivilege);
-				getRoleDAO().update(queryexecutor);
-
-				user.addRole(adminRole);
-				user.addRole(dictionaryRole);
-				user.addRole(configurationRole);
-				user.addRole(queryexecutor);
-				user.setActive(true);
-
-				ROLE pub = createEmptyRole();
-				pub.setName("Public");
-				getRoleDAO().create(pub);
-				user.addRole(pub);
-
-				getUserDAO().update(user);
+				createSuperUser();
+				createDSUserRole();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		fireUserChangedEvent();
+	}
+
+	protected void createDSUserRole() {
+		ROLE dsUserRole = createEmptyRole();
+		dsUserRole.setName("DSUser");
+		dsUserRole = getRoleDAO().create(dsUserRole);
+		
+		PRIVILEGE userMgmtPrivilege = createEmptyPrivilege();
+		userMgmtPrivilege.setObjectURI(UserManagementPermission.objectUri);
+		userMgmtPrivilege.addPermission(UserManagementPermission.LOGOUT);
+		userMgmtPrivilege = getPrivilegeDAO().create(userMgmtPrivilege);
+		dsUserRole.addPrivilege(userMgmtPrivilege);
+		getRoleDAO().update(dsUserRole);
+		
+		PRIVILEGE dictPrivilege = createEmptyPrivilege();
+		dictPrivilege.setObjectURI(DataDictionaryPermission.objectURI);
+		dictPrivilege.addPermission(DataDictionaryPermission.ADD_DATATYPE);
+		dictPrivilege.addPermission(DataDictionaryPermission.ADD_ENTITY);
+		dictPrivilege.addPermission(DataDictionaryPermission.ADD_SOURCETYPE);
+		dictPrivilege.addPermission(DataDictionaryPermission.ADD_STREAM);
+		dictPrivilege.addPermission(DataDictionaryPermission.ADD_VIEW);
+		dictPrivilege = getPrivilegeDAO().create(dictPrivilege);
+		dsUserRole.addPrivilege(dictPrivilege);
+		getRoleDAO().update(dsUserRole);
+		
+		PRIVILEGE execPrivilege = createEmptyPrivilege();
+		execPrivilege.setObjectURI(ExecutorPermission.objectURI);
+		execPrivilege.addPermission(ExecutorPermission.ADD_QUERY);
+		execPrivilege.addPermission(ExecutorPermission.START_QUERY);
+		execPrivilege.addPermission(ExecutorPermission.STOP_QUERY);
+		execPrivilege.addPermission(ExecutorPermission.REMOVE_QUERY);
+		
+		execPrivilege = getPrivilegeDAO().create(execPrivilege);
+		dsUserRole.addPrivilege(execPrivilege);
+		getRoleDAO().update(dsUserRole);
+	}
+
+	protected void createSuperUser() {
+		USER user = createEmptyUser();
+		user.setName("System");
+		user.setPassword("manager".getBytes());
+		user = getUserDAO().create(user);
+
+		// --- ADMIN ROLE ----
+		ROLE adminRole = createEmptyRole();
+		adminRole.setName("sys_admin");
+		adminRole = getRoleDAO().create(adminRole);
+
+		PRIVILEGE adminPrivilege = createEmptyPrivilege();
+		adminPrivilege.setObjectURI(UserManagementPermission.objectUri);
+		for (IPermission permission : UserManagementPermission.class
+				.getEnumConstants()) {
+			adminPrivilege.addPermission(permission);
+		}
+		adminPrivilege = getPrivilegeDAO().create(adminPrivilege);
+		adminRole.addPrivilege(adminPrivilege);
+		getRoleDAO().update(adminRole);
+
+		// --- Data dictionary Role ----
+		ROLE dictionaryRole = createEmptyRole();
+		dictionaryRole.setName("datadictionary");
+		dictionaryRole = getRoleDAO().create(dictionaryRole);
+
+		PRIVILEGE dictPrivilege = createEmptyPrivilege();
+		dictPrivilege.setObjectURI(DataDictionaryPermission.objectURI);
+		for (IPermission permission : DataDictionaryPermission.class
+				.getEnumConstants()) {
+			dictPrivilege.addPermission(permission);
+		}
+		dictPrivilege = getPrivilegeDAO().create(dictPrivilege);
+		dictionaryRole.addPrivilege(dictPrivilege);
+		getRoleDAO().update(dictionaryRole);
+
+		// --- Configuration Role ----
+		ROLE configurationRole = createEmptyRole();
+		configurationRole.setName("configuration");
+		configurationRole = getRoleDAO().create(configurationRole);
+
+		PRIVILEGE confPrivilege = createEmptyPrivilege();
+		confPrivilege.setObjectURI(ConfigurationPermission.objectURI);
+		for (IPermission permission : ConfigurationPermission.class
+				.getEnumConstants()) {
+			confPrivilege.addPermission(permission);
+		}
+		confPrivilege = getPrivilegeDAO().create(confPrivilege);
+		configurationRole.addPrivilege(confPrivilege);
+		getRoleDAO().update(configurationRole);
+
+		// --- Query Execution Role ----
+		ROLE queryexecutor = createEmptyRole();
+		queryexecutor.setName("queryexecutor");
+		queryexecutor = getRoleDAO().create(queryexecutor);
+
+		PRIVILEGE execPrivilege = createEmptyPrivilege();
+		execPrivilege.setObjectURI(ExecutorPermission.objectURI);
+		for (IPermission permission : ExecutorPermission.class
+				.getEnumConstants()) {
+			execPrivilege.addPermission(permission);
+		}
+		execPrivilege = getPrivilegeDAO().create(execPrivilege);
+		queryexecutor.addPrivilege(execPrivilege);
+		getRoleDAO().update(queryexecutor);
+
+		user.addRole(adminRole);
+		user.addRole(dictionaryRole);
+		user.addRole(configurationRole);
+		user.addRole(queryexecutor);
+		user.setActive(true);
+
+		ROLE pub = createEmptyRole();
+		pub.setName("Public");
+		getRoleDAO().create(pub);
+		user.addRole(pub);
+
+		getUserDAO().update(user);
 	}
 
 }
