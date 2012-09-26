@@ -35,7 +35,7 @@ public class TransCfgPreParserKeyword extends AbstractPreParserKeyword {
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		if (parameter.length() == 0)
-			throw new OdysseusScriptException("Parameter needed for #TRANCFG");
+			throw new OdysseusScriptException("Parameter needed for #"+TRANSCFG);
 
 		variables.put(TRANSCFG, parameter);
 	}
