@@ -144,6 +144,11 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 	}
 
 	private static String getQueryUser(IPhysicalQuery query) {
+		if (query.getLogicalQuery()!= null){
+			if (query.getLogicalQuery().getUser() != null){
+				return query.getLogicalQuery().getUser().getUser().getName();
+			}
+		}
 		return "[No user]";
 	}
 }
