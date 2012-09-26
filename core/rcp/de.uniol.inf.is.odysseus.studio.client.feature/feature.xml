@@ -35,10 +35,6 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.executor.wsclient.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.platform"
          version="0.0.0"/>
 
@@ -48,6 +44,10 @@ Unless required by applicable law or agreed to in writing, software
 
    <includes
          id="de.uniol.inf.is.odysseus.relational.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature"
          version="0.0.0"/>
 
    <plugin
