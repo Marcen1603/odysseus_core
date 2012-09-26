@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 
 public class PhysicalQueryViewData implements IQueryViewData {
 
+	private static final String UNKNOWN_QUERY_NAME_TEXT = "<unknown>";
     private final int id;
     private final String status;
     private final int priority;
@@ -36,7 +37,6 @@ public class PhysicalQueryViewData implements IQueryViewData {
     	Preconditions.checkArgument(!Strings.isNullOrEmpty(parserId), "ID of parser of query must not be null or empty!");
     	Preconditions.checkArgument(!Strings.isNullOrEmpty(userName), "Username of query must not be null or empty!");
     	Preconditions.checkArgument(!Strings.isNullOrEmpty(queryText), "Text of query must not be null or empty!");
-    	Preconditions.checkArgument(!Strings.isNullOrEmpty(queryName), "Name of query must not be null or empty!");
     	
         this.id = id;
         this.status = status;
@@ -44,7 +44,7 @@ public class PhysicalQueryViewData implements IQueryViewData {
         this.parserId = parserId;
         this.userName = userName;
         this.queryText = queryText;
-        this.queryName = queryName;
+        this.queryName = Strings.isNullOrEmpty(queryName) ? UNKNOWN_QUERY_NAME_TEXT : queryName;
     }
 
     @Override
