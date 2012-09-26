@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Webserviceexecutor
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor
+Bundle-Name: Executor over Webservice - Server
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -37,3 +37,4 @@ Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecu
  de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice,
  de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.exception,
  de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response
+Bundle-Vendor: University of Oldenburg
