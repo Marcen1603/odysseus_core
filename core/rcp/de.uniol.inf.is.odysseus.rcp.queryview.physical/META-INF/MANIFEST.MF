@@ -7,15 +7,12 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.queryview.physical.PhysicalQueryV
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui;bundle-version="3.7.0",
- com.google.guava;bundle-version="12.0.0"
+ com.google.guava;bundle-version="12.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/physicalQueryViewDataProvider.xml, OSGI-INF/executor.xml
-Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator,
- de.uniol.inf.is.odysseus.core.planmanagement,
- de.uniol.inf.is.odysseus.core.planmanagement.executor,
- de.uniol.inf.is.odysseus.core.planmanagement.query,
- de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
+Import-Package: de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification,
