@@ -72,10 +72,6 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.executor.wsclient.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.latency.feature"
          version="0.0.0"/>
 
@@ -137,6 +133,10 @@ Unless required by applicable law or agreed to in writing, software
 
    <includes
          id="de.uniol.inf.is.odysseus.securitypunctuation.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature"
          version="0.0.0"/>
 
 </feature>
