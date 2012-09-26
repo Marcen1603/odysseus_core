@@ -28,32 +28,33 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response;
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 
 /**
- * @author Merlin Wasmann
- *
+ * 
+ * @author Dennis Geesen Created at: 09.08.2011
  */
-public class QueryResponse extends Response {
-	
-	private LogicalQuery query;
-	
-	public QueryResponse() {
-		super();
+public class ExecutorServiceBinding {
+
+	private static IServerExecutor executor = null;
+
+	public static IServerExecutor getExecutor() {
+		return executor;
 	}
-	
-	public QueryResponse(LogicalQuery value, boolean success) {
-		super(success);
-		this.query = value;
+
+	public void bindExecutor(IExecutor ex) {
+		if (ex instanceof IServerExecutor) {
+			executor = (IServerExecutor) ex;
+		} else {
+			throw new IllegalArgumentException("Only serverbased Executor can be bound!");
+		}
+
 	}
-	
-	public LogicalQuery getResponseValue() {
-		return this.query;
-	}
-	
-	public void setResponseValue(LogicalQuery value) {
-		this.query = value;
+
+	public void unbindExecutor(IExecutor ex) {
+		executor = null;
 	}
 }

@@ -27,29 +27,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response;
+
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
 /**
- * @author Merlin Wasmann
- *
+ * 
+ * @author Dennis Geesen Created at: 15.08.2011
  */
-public class ConnectionInformationResponse extends Response {
-	private ConnectionInformation responseValue;
+public class StringResponse extends Response {
 
-	public ConnectionInformationResponse() {
+	private String responseValue;
+
+	public StringResponse() {
 		super();
 	}
-	
-	public ConnectionInformationResponse(ConnectionInformation responseValue, boolean success) {
+
+	public StringResponse(String responseValue, boolean success) {
 		super(success);
 		this.responseValue = responseValue;
 	}
-	
-	public ConnectionInformation getResponseValue() {
-		return this.responseValue;
+
+	public String getResponseValue() {
+		return responseValue;
 	}
-	
-	public void setResponseValue(ConnectionInformation value) {
-		this.responseValue = value;
+
+	public void setResponseValue(String responseValue) {
+		this.responseValue = responseValue;
 	}
 }

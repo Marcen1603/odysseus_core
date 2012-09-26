@@ -28,7 +28,7 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response;
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
 import java.util.ArrayList;
 

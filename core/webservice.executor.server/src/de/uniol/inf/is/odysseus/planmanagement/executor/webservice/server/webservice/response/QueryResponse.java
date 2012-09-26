@@ -27,32 +27,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
+
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 
 /**
  * @author Merlin Wasmann
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "connectionInformation", propOrder = {
-    "port",
-    "address"
-})
-public class ConnectionInformation {
-
-	public ConnectionInformation() {
-		
+public class QueryResponse extends Response {
+	
+	private LogicalQuery query;
+	
+	public QueryResponse() {
+		super();
 	}
 	
-	public int port;
-	public String address;
+	public QueryResponse(LogicalQuery value, boolean success) {
+		super(success);
+		this.query = value;
+	}
 	
-	public ConnectionInformation(int port, String address) {
-		this.port = port;
-		this.address = address;
+	public LogicalQuery getResponseValue() {
+		return this.query;
+	}
+	
+	public void setResponseValue(LogicalQuery value) {
+		this.query = value;
 	}
 }

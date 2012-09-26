@@ -28,7 +28,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice;
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -72,22 +72,22 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.ExecutorServiceBinding;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.exception.WebserviceException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.BooleanResponse;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.ConnectionInformation;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.ConnectionInformationResponse;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.GraphNode;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.IntegerCollectionResponse;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.QueryResponse;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.Response;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SDFAttributeInformation;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SDFDatatypeInformation;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SDFSchemaInformation;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SDFSchemaResponse;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception.WebserviceException;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.BooleanResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ConnectionInformation;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ConnectionInformationResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.GraphNode;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.IntegerCollectionResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.QueryResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.Response;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFAttributeInformation;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFDatatypeInformation;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFSchemaInformation;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFSchemaResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SimpleGraph;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringListResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringResponse;
 
 /**
  * 

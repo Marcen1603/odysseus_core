@@ -28,7 +28,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.planmanagement.executor.wsclient;
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -72,8 +72,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.planmanagement.executor.wsclient.util.WsClientSession;
-import de.uniol.inf.is.odysseus.planmanagement.executor.wsclient.util.WsClientUser;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.WsClientSession;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.WsClientUser;
 import de.uniol.inf.is.odysseus.webservice.client.ConnectionInformation;
 import de.uniol.inf.is.odysseus.webservice.client.LogicalQueryInfo;
 import de.uniol.inf.is.odysseus.webservice.client.SdfAttributeInformation;

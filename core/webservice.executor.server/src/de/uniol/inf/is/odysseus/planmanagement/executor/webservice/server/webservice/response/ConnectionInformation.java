@@ -27,34 +27,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response;
-
-import java.util.Collection;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
  * @author Merlin Wasmann
  *
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "connectionInformation", propOrder = {
+    "port",
+    "address"
+})
+public class ConnectionInformation {
 
-public class IntegerCollectionResponse extends Response {
-	private Collection<Integer> responseValue;
-	
-	public IntegerCollectionResponse() {
-		super();
+	public ConnectionInformation() {
+		
 	}
 	
-	public IntegerCollectionResponse(Collection<Integer> responseValue, boolean success) {
-		super(success);
-		this.responseValue = responseValue;
-	}
+	public int port;
+	public String address;
 	
-	public Collection<Integer> getResponseValue() {
-		return this.responseValue;
-	}
-	
-	public void setResponseValue(Collection<Integer> value) {
-		this.responseValue = value;
+	public ConnectionInformation(int port, String address) {
+		this.port = port;
+		this.address = address;
 	}
 }

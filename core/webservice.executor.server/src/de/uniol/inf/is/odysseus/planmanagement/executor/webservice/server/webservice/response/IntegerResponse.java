@@ -28,30 +28,33 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response;
+
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
 /**
  * 
- * @author Dennis Geesen Created at: 15.08.2011
+ * @author Merlin Wasmann
+ *
  */
-public class StringResponse extends Response {
 
-	private String responseValue;
+public class IntegerResponse extends Response {
 
-	public StringResponse() {
+	private Integer responseValue;
+	
+	public IntegerResponse() {
 		super();
 	}
-
-	public StringResponse(String responseValue, boolean success) {
+	
+	public IntegerResponse(Integer value, boolean success) {
 		super(success);
-		this.responseValue = responseValue;
+		this.responseValue = value;
 	}
-
-	public String getResponseValue() {
+	
+	public Integer getResponseValue() {
 		return responseValue;
 	}
-
-	public void setResponseValue(String responseValue) {
-		this.responseValue = responseValue;
+	
+	public void setResponseValue(Integer value) {
+		this.responseValue = value;
 	}
 }

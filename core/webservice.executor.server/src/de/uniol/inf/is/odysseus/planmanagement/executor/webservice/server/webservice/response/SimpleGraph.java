@@ -28,33 +28,37 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor;
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import java.util.ArrayList;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * 
- * @author Dennis Geesen Created at: 09.08.2011
+ * @author Dennis Geesen Created at: 12.08.2011
  */
-public class ExecutorServiceBinding {
+@XmlRootElement
+public class SimpleGraph {
 
-	private static IServerExecutor executor = null;
+	private ArrayList<GraphNode> rootNodes = new ArrayList<GraphNode>();
 
-	public static IServerExecutor getExecutor() {
-		return executor;
+	public GraphNode[] getRootNodes() {
+		return rootNodes.toArray(new GraphNode[0]);
 	}
 
-	public void bindExecutor(IExecutor ex) {
-		if (ex instanceof IServerExecutor) {
-			executor = (IServerExecutor) ex;
-		} else {
-			throw new IllegalArgumentException("Only serverbased Executor can be bound!");
+	public void addRootNode(GraphNode rootNode) {
+		this.rootNodes.add(rootNode);
+	}
+
+	public void removeRootNode(GraphNode rootNode) {
+		this.rootNodes.remove(rootNode);
+	}
+
+	public void setRootNodes(GraphNode[] newRootNodes) {
+		for (GraphNode n : newRootNodes) {
+			this.rootNodes.add(n);
 		}
-
 	}
 
-	public void unbindExecutor(IExecutor ex) {
-		executor = null;
-	}
 }

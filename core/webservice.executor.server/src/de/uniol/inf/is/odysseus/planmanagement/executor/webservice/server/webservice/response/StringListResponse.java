@@ -28,17 +28,55 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.exception;
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * 
  * @author Dennis Geesen
- * Created at: 09.08.2011
+ * Created at: 15.08.2011
  */
-public class WebserviceException extends Exception{
+public class StringListResponse extends Response {
 
-	private static final long serialVersionUID = -1206683010331503964L;
+	private List<String> responseValue = new ArrayList<String>();
+
+	public StringListResponse() {
+		super();
+	}
+
+	public StringListResponse(boolean success) {
+		super(success);		
+	}
 	
-	public WebserviceException(String message){
-		super(message);
+	public StringListResponse(List<String> response, boolean success){
+		super(success);
+		this.responseValue = response;
+	}
+	
+	public StringListResponse(Collection<String> response, boolean success){
+		super(success);
+		this.setResponseValue(response.toArray(new String[0]));
+	}
+
+	public String[] getResponseValue() {
+		return responseValue.toArray(new String[0]);
+	}
+
+	public void setResponseValue(String[] responseValue) {
+		this.responseValue.clear();
+		for(String s : responseValue){
+			this.responseValue.add(s);
+		}
+	}
+	
+	public void addResponseValue(String s){
+		this.responseValue.add(s);
+	}
+	
+	public void removeResponseValue(String s){
+		this.responseValue.remove(s);
 	}
 }

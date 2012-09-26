@@ -27,38 +27,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response;
-
-import java.util.ArrayList;
-
-import javax.xml.bind.annotation.XmlRootElement;
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
 /**
- * 
- * @author Dennis Geesen Created at: 12.08.2011
+ * @author Merlin Wasmann
+ *
  */
-@XmlRootElement
-public class SimpleGraph {
+public class ConnectionInformationResponse extends Response {
+	private ConnectionInformation responseValue;
 
-	private ArrayList<GraphNode> rootNodes = new ArrayList<GraphNode>();
-
-	public GraphNode[] getRootNodes() {
-		return rootNodes.toArray(new GraphNode[0]);
+	public ConnectionInformationResponse() {
+		super();
 	}
-
-	public void addRootNode(GraphNode rootNode) {
-		this.rootNodes.add(rootNode);
+	
+	public ConnectionInformationResponse(ConnectionInformation responseValue, boolean success) {
+		super(success);
+		this.responseValue = responseValue;
 	}
-
-	public void removeRootNode(GraphNode rootNode) {
-		this.rootNodes.remove(rootNode);
+	
+	public ConnectionInformation getResponseValue() {
+		return this.responseValue;
 	}
-
-	public void setRootNodes(GraphNode[] newRootNodes) {
-		for (GraphNode n : newRootNodes) {
-			this.rootNodes.add(n);
-		}
+	
+	public void setResponseValue(ConnectionInformation value) {
+		this.responseValue = value;
 	}
-
 }

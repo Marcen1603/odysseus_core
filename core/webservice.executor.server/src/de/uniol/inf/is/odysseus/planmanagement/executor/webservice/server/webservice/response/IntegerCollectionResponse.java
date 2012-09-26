@@ -28,8 +28,9 @@
  * limitations under the License.
  */
 
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response;
+import java.util.Collection;
 
 /**
  * 
@@ -37,24 +38,23 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webs
  *
  */
 
-public class IntegerResponse extends Response {
-
-	private Integer responseValue;
+public class IntegerCollectionResponse extends Response {
+	private Collection<Integer> responseValue;
 	
-	public IntegerResponse() {
+	public IntegerCollectionResponse() {
 		super();
 	}
 	
-	public IntegerResponse(Integer value, boolean success) {
+	public IntegerCollectionResponse(Collection<Integer> responseValue, boolean success) {
 		super(success);
-		this.responseValue = value;
+		this.responseValue = responseValue;
 	}
 	
-	public Integer getResponseValue() {
-		return responseValue;
+	public Collection<Integer> getResponseValue() {
+		return this.responseValue;
 	}
 	
-	public void setResponseValue(Integer value) {
+	public void setResponseValue(Collection<Integer> value) {
 		this.responseValue = value;
 	}
 }

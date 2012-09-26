@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.planmanagement.executor.wsclient.util;
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;

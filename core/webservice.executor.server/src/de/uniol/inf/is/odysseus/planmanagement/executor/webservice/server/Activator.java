@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor;
+package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.WebserviceServer;
 import de.uniol.inf.is.odysseus.slf4j.LoggingConfiguration;
 
 public class Activator implements BundleActivator {

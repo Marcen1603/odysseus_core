@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.executor.wsclient.feature"
-      label="Executor WsClient Feature"
+      id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature"
+      label="Executor over Webservice - Client Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
@@ -36,7 +36,14 @@ Unless required by applicable law or agreed to in writing, software
    </requires>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.planmanagement.executor.wsclient"
+         id="de.uniol.inf.is.odysseus.webservice.client"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client"
          download-size="0"
          install-size="0"
          version="0.0.0"
