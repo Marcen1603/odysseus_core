@@ -229,7 +229,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			}
 		}
 	}
-
+//
 	@Override
 	public FrequentItemsetFPGrowthPO<M> clone() {
 		return new FrequentItemsetFPGrowthPO<M>(this);
