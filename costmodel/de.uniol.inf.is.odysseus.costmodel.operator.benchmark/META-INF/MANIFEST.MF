@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Benchmark
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel.operator.benchmark
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Service-Component: OSGI-INF/benchmarkEstimator.xml
+Import-Package: de.uniol.inf.is.odysseus.benchmarker.impl,
+ de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.sdf.schema,
+ de.uniol.inf.is.odysseus.costmodel.operator,
+ de.uniol.inf.is.odysseus.costmodel.operator.datasrc,
+ de.uniol.inf.is.odysseus.costmodel.operator.util
+Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
