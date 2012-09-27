@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-ClassPath: slf4j-api-1.6.4.jar,
  slf4j-log4j12-1.6.4.jar,
  log4j-1.2.16.jar,
- properties/,
  src/,
  .
 Export-Package: de.uniol.inf.is.odysseus.slf4j,
