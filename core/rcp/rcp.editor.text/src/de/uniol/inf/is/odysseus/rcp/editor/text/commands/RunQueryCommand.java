@@ -19,9 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -45,14 +43,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptDocumentProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
 public class RunQueryCommand extends AbstractHandler implements IHandler {
 
@@ -158,47 +154,27 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 		Job job = new Job("Parsing and Executing Query") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				IStatus status = Status.OK_STATUS;
+				IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
 				try {
-					ISession user = OdysseusRCPPlugIn.getActiveSession();
-					// Befehle holen
-					final List<PreParserStatement> statements = OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user);
-
-					// Erst Text testen
-					monitor.beginTask("Executing Commands", statements.size() * 2);
-					monitor.subTask("Validating");
-
-					Map<String, Object> variables = new HashMap<String, Object>();
-					for (PreParserStatement stmt : statements) {
-						stmt.validate(variables, user);
-						monitor.worked(1);
-
-						// Wollte der Nutzer abbrechen?
-						if (monitor.isCanceled())
-							return Status.CANCEL_STATUS;
-					}
-
-					// Dann ausführen
-					variables = new HashMap<String, Object>();
-					int counter = 1;
-					for (PreParserStatement stmt : statements) {
-						monitor.subTask("Executing (" + counter + " / " + statements.size() + ")");
-						stmt.execute(variables, user, OdysseusRCPEditorTextPlugIn.getScriptParser());
-						monitor.worked(1);
-						counter++;
-					}
-				} catch (OdysseusScriptException ex) {
-					LOG.error("Exception during executing script", ex);
-
-					status = new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error: " + ex.getRootMessage(), ex);
+					executor.addQuery(concatLines(text), "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), "Standard");
+				} catch( Throwable ex ) {
+					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", ex);
 				}
-				monitor.done();
-
-				return status;
+				return Status.OK_STATUS;
 			}
+
 		};
 		job.setUser(true);
 		job.schedule();
+	}
+	
+
+	private static String concatLines(String[] text) {
+		StringBuilder sb = new StringBuilder();
+		for( String t : text ) {
+			sb.append(t).append("\n");
+		}
+		return sb.toString();
 	}
 
 }
