@@ -81,7 +81,7 @@ public class OdysseusScriptWizard extends Wizard implements INewWizard {
 	protected InputStream getQueryTemplate() {
 		String template = 
 				"///OdysseusScript\n" +
-				"#PARSER CQL\n" +
+				"#PARSER PQL\n" +
 				"#TRANSCFG Standard\n" +
 				"#RUNQUERY\n" +
 				"///Your first query here";		
