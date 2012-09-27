@@ -52,7 +52,7 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends
 	@Override
 	@SuppressWarnings("unchecked")
 	protected final void process_next(R object, int port) {
-		long end = System.currentTimeMillis() + this.processingTime;
+		long end = System.nanoTime() + this.processingTime;
 
 		if (selectivity == 1) {
 			waitProcessingTime(end);
@@ -76,12 +76,7 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends
 	}
 	
 	private static void waitProcessingTime(long end) {
-	    long current = System.currentTimeMillis();
-		try {
-			long waittime = end - current;
-            Thread.sleep(waittime);
-            
-        } catch (InterruptedException ignored) {}
+		while( System.nanoTime() < end );
 	}
 
 	protected void setOldVal(R object, double d) {
@@ -120,5 +115,8 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends
 	public void processPunctuation(PointInTime timestamp, int port) {
 		sendPunctuation(timestamp);
 	}
-
+	
+	public double getSelectivity() {
+		return selectivity;
+	}
 }
