@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.benchmark.BatchParameter.BatchItem;
 
 
@@ -34,6 +35,7 @@ public class TestProducerAO extends AbstractLogicalOperator {
 	private ArrayList<Integer> elementCounts = new ArrayList<Integer>();
 	private ArrayList<Long> frequencies = new ArrayList<Long>();
 	private int invertedPriorityRatio = 0;
+	private long delayMillis = 0;
 	
 	final private SDFSchema outputSchema;
 
@@ -54,6 +56,7 @@ public class TestProducerAO extends AbstractLogicalOperator {
 				.clone();
 		this.frequencies = (ArrayList<Long>) testProducerAO.frequencies.clone();
 		this.outputSchema = testProducerAO.outputSchema;
+		this.delayMillis = testProducerAO.delayMillis;
 	}
 	
 	public void addTestPart(int size, long wait) {
@@ -86,9 +89,18 @@ public class TestProducerAO extends AbstractLogicalOperator {
 	public int getInvertedPriorityRatio() {
 		return invertedPriorityRatio;
 	}
+	
+	public long getDelayMillis() {
+		return delayMillis;
+	}
 
 	@Parameter(type=IntegerParameter.class)
 	public void setInvertedPriorityRatio(int invertedPriorityRatio) {
 		this.invertedPriorityRatio = invertedPriorityRatio;
+	}
+	
+	@Parameter(type=LongParameter.class, optional=true)
+	public void setDelay( long delay ) {
+		this.delayMillis = delay;
 	}
 }

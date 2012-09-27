@@ -31,10 +31,11 @@ public class TestproducerPO extends
 	private ArrayList<Integer> elementCounts = new ArrayList<Integer>();
 	private ArrayList<Long> frequencies = new ArrayList<Long>();
 	private int jedeswievielteelementprio;
+	private long delay;
 	
-	public TestproducerPO(int percentagePrios) {
+	public TestproducerPO(int percentagePrios, long delay) {
 		this.jedeswievielteelementprio = percentagePrios;
-
+		this.delay = delay;
 	}
 
 	public void addTestPart(int elementCount, long elementsPerSecond) {
@@ -47,6 +48,7 @@ public class TestproducerPO extends
 		Thread t = new Thread() {
 			@Override
 			public void run() {
+				delayStart(delay);
 				long lastTime = System.nanoTime();
 				for (int j = 0; j < elementCounts.size(); ++j) {
 					Integer count = elementCounts.get(j);
@@ -71,6 +73,7 @@ public class TestproducerPO extends
 				}
 				propagateDone();
 			}
+
 		};
 		t.setPriority(7);
 		t.setDaemon(true);
@@ -92,5 +95,11 @@ public class TestproducerPO extends
 		return new SDFMetaAttributeList(super.getMetaAttributeSchema().getURI(), metalist);
 	}
 
-	
+	private static void delayStart(long delay) {
+		if( delay > 0 ) {
+			try {
+				Thread.sleep(delay);
+			} catch (InterruptedException ex) {}
+		}
+	}	
 }
