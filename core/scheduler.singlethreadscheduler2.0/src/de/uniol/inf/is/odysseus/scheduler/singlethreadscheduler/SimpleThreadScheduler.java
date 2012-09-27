@@ -57,27 +57,6 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	final IPartialPlanScheduling[] planScheduling;
 
 	/**
-	 * Creates a new SingleThreadScheduler.
-	 * 
-	 * @param schedulingStrategieFactory
-	 *            Factory for creating new scheduling strategies for each
-	 *            partial plan which should be scheduled.
-	 * @throws IOException
-	 */
-	public SimpleThreadScheduler(ISchedulingFactory schedulingStrategieFactory,
-			IPartialPlanScheduling[] planScheduling) {
-		super(schedulingStrategieFactory);
-		this.planScheduling = planScheduling;
-		schedulingExecutor = new SchedulingExecutor[planScheduling.length];
-		for (int i = 0; i < planScheduling.length; i++) {
-			schedulingExecutor[i] = new SchedulingExecutor(planScheduling[i],
-					timeSlicePerStrategy, this, trainSize);
-			schedulingExecutor[i].setUncaughtExceptionHandler(this);
-			schedulingExecutor[i].setPriority(Thread.NORM_PRIORITY);
-		}
-	}
-
-	/**
 	 * Thread for execution the registered partial plans.
 	 */
 	protected SchedulingExecutor[] schedulingExecutor;
@@ -90,14 +69,44 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	private List<IIterableSource<?>> sourcesToScheduleBackup;
 
 	private List<IPartialPlan> partialPlansBackup;
+	
+	/**
+	 * Creates a new SingleThreadScheduler.
+	 * 
+	 * @param schedulingStrategieFactory
+	 *            Factory for creating new scheduling strategies for each
+	 *            partial plan which should be scheduled.
+	 * @throws IOException
+	 */
+	public SimpleThreadScheduler(ISchedulingFactory schedulingStrategieFactory,
+			IPartialPlanScheduling[] planScheduling) {
+		super(schedulingStrategieFactory);
+		this.planScheduling = planScheduling;
+	}
 
+	private void initPlanScheduling() {
+		if( schedulingExecutor != null ) {
+			for( SchedulingExecutor exec : schedulingExecutor ) {
+				exec.setUncaughtExceptionHandler(null);
+			}
+		}
+		
+		schedulingExecutor = new SchedulingExecutor[planScheduling.length];
+		for (int i = 0; i < planScheduling.length; i++) {
+			schedulingExecutor[i] = new SchedulingExecutor(planScheduling[i],
+					timeSlicePerStrategy, this, trainSize);
+			schedulingExecutor[i].setUncaughtExceptionHandler(this);
+			schedulingExecutor[i].setPriority(Thread.NORM_PRIORITY);
+		}
+	}
 
 	@Override
 	public synchronized void startScheduling() {
 		if (isRunning()) {
 			throw new SchedulingException("scheduler is already running");
 		}
-
+		initPlanScheduling();
+		
 		super.startScheduling();
 		// Start Source Threads
 		// TODO: Wenn die Threads vorher beendet wurden, kann man die nicht
