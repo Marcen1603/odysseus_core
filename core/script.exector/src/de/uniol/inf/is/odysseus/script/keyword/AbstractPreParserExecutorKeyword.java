@@ -15,17 +15,17 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.script.keyword;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public abstract class AbstractPreParserExecutorKeyword extends AbstractPreParserKeyword {
 
-	IExecutor getExecutor() throws OdysseusScriptException{
-		IExecutor executor = ExecutorHandler.getExecutor();
+	IServerExecutor getServerExecutor() throws OdysseusScriptException{
+		IServerExecutor executor = ExecutorHandler.getServerExecutor();
 		if (executor == null)
-			throw new OdysseusScriptException("No executor found");
+			throw new OdysseusScriptException("No server-executor found");
 		return executor;
 	}
 	

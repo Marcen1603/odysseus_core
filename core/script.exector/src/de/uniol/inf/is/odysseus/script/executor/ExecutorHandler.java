@@ -82,7 +82,7 @@ public class ExecutorHandler {
 	 * @return Aktuelle <code>IExecutor</code>-Instanz oder
 	 *         <code>null</code>.
 	 */
-	public static IServerExecutor getExecutor() {
+	public static IServerExecutor getServerExecutor() {
 		return executor;
 	}
 	

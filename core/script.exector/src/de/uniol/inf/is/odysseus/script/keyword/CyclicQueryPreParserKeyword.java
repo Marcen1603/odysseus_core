@@ -31,7 +31,7 @@ public class CyclicQueryPreParserKeyword extends
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller) throws OdysseusScriptException {
 		try {
-			IExecutor executor = getExecutor();
+			IExecutor executor = getServerExecutor();
 			if (executor == null)
 				throw new OdysseusScriptException("No executor found");
 

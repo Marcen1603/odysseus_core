@@ -41,7 +41,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		try {
-			IExecutor executor = ExecutorHandler.getExecutor();
+			IExecutor executor = ExecutorHandler.getServerExecutor();
 			if (executor == null) {
 				throw new OdysseusScriptException("No executor found");
 			}
@@ -77,7 +77,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 			transCfgName = transCfgName.trim();
 			String queryText = parameter.trim();
 
-			IExecutor executor = getExecutor();
+			IExecutor executor = getServerExecutor();
 
 			Collection<Integer> queriesToStart = null;
 			if (addSettings != null) {

@@ -29,7 +29,7 @@ AbstractPreParserExecutorKeyword {
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
-		IExecutor executor = getExecutor();
+		IExecutor executor = getServerExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");
 	}
@@ -37,7 +37,7 @@ AbstractPreParserExecutorKeyword {
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
-		IExecutor executor = getExecutor();
+		IExecutor executor = getServerExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");
 		executor.startAllClosedQueries(caller);

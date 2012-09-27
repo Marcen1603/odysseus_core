@@ -46,14 +46,14 @@ public class DropAllQueriesPreParserKeyword extends AbstractPreParserExecutorKey
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
-		IExecutor executor = getExecutor();
+		IExecutor executor = getServerExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");
 	}
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
-		IExecutor executor = getExecutor();
+		IExecutor executor = getServerExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");
 		for (int id : executor.getLogicalQueryIds()) {
