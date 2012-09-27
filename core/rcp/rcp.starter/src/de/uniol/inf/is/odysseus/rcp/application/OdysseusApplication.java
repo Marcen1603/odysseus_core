@@ -111,7 +111,7 @@ public class OdysseusApplication implements IApplication {
 	private static void setClientConnection(Display display) {
 		String wsdlLocation = "http://localhost:9669/odysseus?wsdl";
 		String service = "WebserviceServerService";
-		String serviceNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/";
+		String serviceNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/";
 
 		ConnectPreferencesManager.getInstance().setWdslLocation(wsdlLocation);
 		ConnectPreferencesManager.getInstance().setService(service);

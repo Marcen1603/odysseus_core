@@ -752,26 +752,26 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.webserviceexecutor" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor"/>
-<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor">
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.webservice\.server" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core/executor.webserviceexecutor/">
+    <rm:uri format="file:///{0}/core/executor.webservice.server/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.wsclient" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.wsclient"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.webservice\.client" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.wsclient"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.executor.wsclient">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core/executor.wsclient/">
+    <rm:uri format="file:///{0}/core/executor.webservice.client/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.executor\.wsclient\.feature" searchPathRef="de.uniol.inf.is.odysseus.executor.wsclient.feature"/>
-<rm:searchPath name="de.uniol.inf.is.odysseus.executor.wsclient.feature">
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.executor\.webservice\.client\.feature" searchPathRef="de.uniol.inf.is.odysseus.executor.wsclient.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.executor.webservice.client.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core/executor.wsclient.feature/">
+    <rm:uri format="file:///{0}/core/executor.webservice.client.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
