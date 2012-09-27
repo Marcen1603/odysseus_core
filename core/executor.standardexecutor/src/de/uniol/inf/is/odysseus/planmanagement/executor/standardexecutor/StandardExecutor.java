@@ -351,12 +351,12 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
     // -----------
 
     @Override
-    public synchronized Collection<Integer> addQuery(String query, String parserID, ISession user, String buildConfigurationName) throws PlanManagementException {
+    public Collection<Integer> addQuery(String query, String parserID, ISession user, String buildConfigurationName) throws PlanManagementException {
         return addQuery(query, parserID, user, buildConfigurationName, null);
     }
 
     @Override
-    public synchronized Collection<Integer> addQuery(String query, String parserID, ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting)
+    public Collection<Integer> addQuery(String query, String parserID, ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting)
             throws PlanManagementException {
         LOG.info("Start adding Queries. " + query + " for user " + user.getUser().getName());
         validateUserRight(user, ExecutorPermission.ADD_QUERY);
@@ -365,7 +365,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         return addQuery(query, parserID, user, params);
     }
 
-    private synchronized Collection<Integer> addQuery(String query, String parserID, ISession user, QueryBuildConfiguration buildConfiguration) throws PlanManagementException {
+    private Collection<Integer> addQuery(String query, String parserID, ISession user, QueryBuildConfiguration buildConfiguration) throws PlanManagementException {
         try {
             List<ILogicalQuery> newQueries = createQueries(query, user, buildConfiguration);
             Collection<IPhysicalQuery> addedQueries = addQueries(newQueries, new OptimizationConfiguration(buildConfiguration));
@@ -480,7 +480,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
     // -------------------------------------------------------------------------------------------------
 
     @Override
-    public void removeQuery(int queryID, ISession caller) throws PlanManagementException {
+    public  void removeQuery(int queryID, ISession caller) throws PlanManagementException {
         LOG.info("Start remove a query (ID: " + queryID + ").");
 
         IPhysicalQuery queryToRemove = this.executionPlan.getQueryById(queryID);
@@ -537,7 +537,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
      * #startQuery (int)
      */
     @Override
-    public synchronized void startQuery(int queryID, ISession caller) {
+    public void startQuery(int queryID, ISession caller) {
         IPhysicalQuery queryToStart = this.executionPlan.getQueryById(queryID);
         validateUserRight(queryToStart, caller, ExecutorPermission.START_QUERY);
         if (queryToStart.isOpened()) {
@@ -611,7 +611,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
      * #stopQuery (int)
      */
     @Override
-    public synchronized void  stopQuery(int queryID, ISession caller) {
+    public void  stopQuery(int queryID, ISession caller) {
 
         LOG.info("Stopping query (ID: " + queryID + ").");
 

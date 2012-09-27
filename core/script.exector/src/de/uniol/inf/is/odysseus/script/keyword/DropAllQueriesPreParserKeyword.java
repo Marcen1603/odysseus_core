@@ -58,8 +58,7 @@ public class DropAllQueriesPreParserKeyword extends AbstractPreParserExecutorKey
 			throw new OdysseusScriptException("No executor found");
 		for (int id : executor.getLogicalQueryIds()) {
 			executor.removeQuery(id, caller);
-		}
-		executor.startAllClosedQueries(caller);
+		}	
 		return null;
 	}
 
