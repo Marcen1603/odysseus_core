@@ -15,7 +15,11 @@
   */
 package de.uniol.inf.is.odysseus.script.executor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 
 /**
  * Diese Hilfsklasse verwaltet die vom Declarative Service zur Verf�gung
@@ -31,7 +35,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
  */
 public class ExecutorHandler {
 
-	private static IExecutor executor;
+	private static final Logger LOG = LoggerFactory.getLogger(ExecutorHandler.class);
+	private static IServerExecutor executor;
 
 	/**
 	 * Wird vom Declarative Service aufgerufen. Damit wird der aktuelle
@@ -46,7 +51,11 @@ public class ExecutorHandler {
 	 *            <code>null</code> sein.
 	 */
 	public void bindExecutor(IExecutor e) {
-		executor =  e;
+		if( e instanceof IServerExecutor ) {
+			executor =  (IServerExecutor)e;
+		} else {
+			LOG.error("Bound executor {} is not a ServerExecutor!", e);
+		}
 	}
 
 	/**
@@ -73,7 +82,7 @@ public class ExecutorHandler {
 	 * @return Aktuelle <code>IExecutor</code>-Instanz oder
 	 *         <code>null</code>.
 	 */
-	public static IExecutor getExecutor() {
+	public static IServerExecutor getExecutor() {
 		return executor;
 	}
 	
