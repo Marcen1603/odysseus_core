@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="stringResponse">
  *   &lt;complexContent>
- *     &lt;extension base="{http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/}response">
+ *     &lt;extension base="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}response">
  *       &lt;sequence>
  *         &lt;element name="responseValue" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>

@@ -17,14 +17,14 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "WebserviceServerService", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", wsdlLocation = "http://localhost:9669/odysseus?wsdl")
+@WebServiceClient(name = "WebserviceServerService", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", wsdlLocation = "http://localhost:9669/odysseus?wsdl")
 public class WebserviceServerService
     extends Service
 {
 
     private final static URL WEBSERVICESERVERSERVICE_WSDL_LOCATION;
     private final static WebServiceException WEBSERVICESERVERSERVICE_EXCEPTION;
-    private final static QName WEBSERVICESERVERSERVICE_QNAME = new QName("http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", "WebserviceServerService");
+    private final static QName WEBSERVICESERVERSERVICE_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "WebserviceServerService");
 
     static {
         URL url = null;
@@ -69,7 +69,7 @@ public class WebserviceServerService
      */
     @WebEndpoint(name = "WebserviceServerPort")
     public WebserviceServer getWebserviceServerPort() {
-        return super.getPort(new QName("http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", "WebserviceServerPort"), WebserviceServer.class);
+        return super.getPort(new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "WebserviceServerPort"), WebserviceServer.class);
     }
 
     /**
@@ -81,7 +81,7 @@ public class WebserviceServerService
      */
     @WebEndpoint(name = "WebserviceServerPort")
     public WebserviceServer getWebserviceServerPort(WebServiceFeature... features) {
-        return super.getPort(new QName("http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", "WebserviceServerPort"), WebserviceServer.class, features);
+        return super.getPort(new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "WebserviceServerPort"), WebserviceServer.class, features);
     }
 
     private static URL __getWsdlLocation() {
