@@ -54,8 +54,7 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 			getSystemColor(SWT.COLOR_RED),
 			getSystemColor(SWT.COLOR_YELLOW), 
 			getSystemColor(SWT.COLOR_GRAY), 
-			getSystemColor(SWT.COLOR_MAGENTA), 
-			getSystemColor(SWT.COLOR_WHITE), 
+			getSystemColor(SWT.COLOR_MAGENTA),  
 			getSystemColor(SWT.COLOR_CYAN),  };
 
 	@Override
