@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -24,32 +25,63 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
 public class QueryViewCopyCommand extends AbstractHandler implements IHandler {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryViewCopyCommand.class);
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<Object> selections = SelectionProvider.getSelection(event);
-		String text = "";
+		List<String> texts = new ArrayList<>();				
 		for (Object selection : selections) {
-			LOG.debug("Selection for QueryViewCopy: " + selection);
-			
-			StatusBarManager.getInstance().setMessage("Copying querytexts not supported yet");
+			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
+			if (executor != null) {
+				int id = (Integer)selection;
+				ILogicalQuery query = executor.getLogicalQueryById(id);
+				String queryText = query.getQueryText();
+				texts.add(queryText);				
+			} else {
+				LOG.error("Executor is not set");
+			}						
 		}
-		if (!text.isEmpty()) {
-			Clipboard cb = new Clipboard(HandlerUtil.getActiveWorkbenchWindow(event).getShell().getDisplay());
-			TextTransfer textTransfer = TextTransfer.getInstance();
-			cb.setContents(new Object[] { text}, new Transfer[] { textTransfer });
-			StatusBarManager.getInstance().setMessage("Copy successful");
+		
+		if(texts.size()==1){
+			transferToClipboard(texts.get(0), event);
+		}else{
+			if(texts.size()>1){
+				String all = "";
+				String sep = "";
+				for(String text : texts){
+					all = all + sep + text;
+					sep = "\n\n///next query\n\n";							
+				}
+				transferToClipboard(all, event);
+			}
 		}
+		
+		
+
+		
 		return null;
+	}
+	
+	private void transferToClipboard(String text, ExecutionEvent event){
+		Display display = HandlerUtil.getActiveWorkbenchWindow(event).getShell().getDisplay();
+		Clipboard clipboard = new Clipboard(display);
+		TextTransfer textTransfer = TextTransfer.getInstance();
+		Transfer[] transfers = new Transfer[]{textTransfer};
+		Object[] data = new Object[]{text};
+		clipboard.setContents(data, transfers);
+		clipboard.dispose();
 	}
 }
