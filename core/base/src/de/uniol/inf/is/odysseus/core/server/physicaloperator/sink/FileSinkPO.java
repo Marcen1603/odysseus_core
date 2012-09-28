@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,11 +38,10 @@ public class FileSinkPO extends AbstractSink<Object> {
 	private boolean printMetadata;
 	transient private StringBuffer writeCache;
 	transient BufferedWriter out;
-	
+
 	static Logger LOG = LoggerFactory.getLogger(FileSinkPO.class);
 
-	public FileSinkPO(String filename, String sinkType,
-			long writeAfterElements, boolean printMetadata) {
+	public FileSinkPO(String filename, String sinkType, long writeAfterElements, boolean printMetadata) {
 		this.filename = filename;
 		if ("CSV".equalsIgnoreCase(sinkType)) {
 			csvSink = true;
@@ -67,10 +66,11 @@ public class FileSinkPO extends AbstractSink<Object> {
 	@Override
 	protected void process_open() throws OpenFailedException {
 		try {
-			writeCache = new StringBuffer();
-			elementsWritten = 0;
-			out = new BufferedWriter(new FileWriter(
-					FileUtils.openOrCreateFile(filename)));
+			synchronized (this) {
+				writeCache = new StringBuffer();
+				elementsWritten = 0;
+				out = new BufferedWriter(new FileWriter(FileUtils.openOrCreateFile(filename)));
+			}
 		} catch (IOException e) {
 			OpenFailedException ex = new OpenFailedException(e);
 			ex.fillInStackTrace();
@@ -85,10 +85,9 @@ public class FileSinkPO extends AbstractSink<Object> {
 			try {
 				String toWrite = null;
 				if (csvSink) {
-					toWrite = ((ICSVToString) object)
-							.csvToString(printMetadata)+"\n";
+					toWrite = ((ICSVToString) object).csvToString(printMetadata) + "\n";
 				} else {
-					toWrite = "" + object+"\n";
+					toWrite = "" + object + "\n";
 				}
 				if (writeAfterElements > 0) {
 					writeCache.append(toWrite).append("\n");
@@ -109,19 +108,20 @@ public class FileSinkPO extends AbstractSink<Object> {
 	}
 
 	void writeToFile(String elem) throws IOException {
-		if (out != null) {
-			synchronized (out) {
+		synchronized (this) {
+			if (out != null) {
 				out.write(elem);
 				out.flush();
 			}
 		}
+
 	}
 
 	@Override
 	protected void process_close() {
 		if (isOpen()) {
 			try {
-				synchronized (out) {
+				synchronized (this) {
 					process_done(0);
 					out.close();
 					out = null;
@@ -147,10 +147,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 			return false;
 		}
 		FileSinkPO fs = (FileSinkPO) ipo;
-		if (this.getSubscribedToSource().get(0)
-				.equals(fs.getSubscribedToSource().get(0))
-				&& this.filename.equals(fs.getFilename())
-				&& this.csvSink == fs.csvSink) {
+		if (this.getSubscribedToSource().get(0).equals(fs.getSubscribedToSource().get(0)) && this.filename.equals(fs.getFilename()) && this.csvSink == fs.csvSink) {
 			return true;
 		}
 		return false;
@@ -161,7 +158,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 		LOG.debug("FileSinkPO finishing...");
 		try {
 			writeToFile(writeCache.toString());
-			synchronized (out) {
+			synchronized (this) {
 				out.close();
 			}
 		} catch (IOException e) {
