@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,11 +67,11 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 
 	public ReceiverPO() {
 	}
-	
+
 	public void setProtocolHandler(IProtocolHandler<W> ph) {
 		this.protocolHandler = ph;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public ReceiverPO(ReceiverPO<R, W> other) {
 		super();
@@ -140,7 +140,10 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 
 	@Override
 	public void process(R object) throws ClassNotFoundException {
-		inputDataHandler.process(object, objectHandler, accessHandler, this);
+		if (isOpen()) {
+			inputDataHandler
+					.process(object, objectHandler, accessHandler, this);
+		}
 	}
 
 	@Override
@@ -161,6 +164,5 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 	public AbstractSource<W> clone() {
 		return new ReceiverPO<R, W>(this);
 	}
-
 
 }
