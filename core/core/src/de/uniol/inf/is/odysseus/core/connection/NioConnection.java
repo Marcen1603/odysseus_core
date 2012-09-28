@@ -252,11 +252,11 @@ public class NioConnection extends Thread implements IConnection {
 		// System.out.println("Read From Socket " + socketChannel.toString() +
 		// " "
 		// + os + " " + socketChannel.isConnected());
-		int count;
+		int count = -1;
 		try {
 			synchronized (buffer) {
-				buffer.clear();
-				while ((count = socketChannel.read(buffer)) > 0) {
+				buffer.clear();				
+				while (socketChannel.isConnected() && (count = socketChannel.read(buffer)) > 0) {
 					buffer.flip();
 					os.process(buffer);
 					buffer.clear();
