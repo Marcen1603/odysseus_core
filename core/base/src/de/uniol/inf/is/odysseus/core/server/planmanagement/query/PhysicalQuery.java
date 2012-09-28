@@ -625,7 +625,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	@Override
 	public Object getParameter(String key) {
-		return parameters.get(key);
+		Object param = parameters.get(key);
+		if (param == null) {
+			param = query.getParameter(key);
+		}
+		return param;
 	}
 
 }
