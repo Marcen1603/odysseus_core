@@ -107,6 +107,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.DropAllSources"
             name="Drop All Sources">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.ShowQueryTextCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ShowQueryTextCommand"
+            name="Show Query Text">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -189,8 +194,14 @@
          </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.QueryViewCopyCommand"
-               icon="icons/page_white_text.png"
+               icon="icons/page_white_copy.png"
                label="Copy Querytext"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ShowQueryTextCommand"
+               icon="icons/page_white_text.png"
+               label="Show Querytext"
                style="push">
          </command>
          <command
