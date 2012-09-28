@@ -19,6 +19,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -35,6 +38,8 @@ public class FileSinkPO extends AbstractSink<Object> {
 	private boolean printMetadata;
 	transient private StringBuffer writeCache;
 	transient BufferedWriter out;
+	
+	static Logger LOG = LoggerFactory.getLogger(FileSinkPO.class);
 
 	public FileSinkPO(String filename, String sinkType,
 			long writeAfterElements, boolean printMetadata) {
@@ -104,7 +109,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 	}
 
 	void writeToFile(String elem) throws IOException {
-		if (!isDone() && isOpen()) {
+		if (out != null) {
 			synchronized (out) {
 				out.write(elem);
 				out.flush();
@@ -119,6 +124,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 				synchronized (out) {
 					process_done(0);
 					out.close();
+					out = null;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -152,7 +158,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 
 	@Override
 	public void process_done(int port) {
-		System.out.println("FileSinkPO finishing...");
+		LOG.debug("FileSinkPO finishing...");
 		try {
 			writeToFile(writeCache.toString());
 			synchronized (out) {
@@ -161,7 +167,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("FileSinkPO.done");
+		LOG.debug("FileSinkPO.done");
 	}
 
 }
