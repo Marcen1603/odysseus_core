@@ -18,15 +18,15 @@ package de.uniol.inf.is.odysseus.benchmarker.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.interval_latency.IntervalLatency;
 
 public class TestproducerPO extends
-		AbstractSource<Tuple<IntervalLatencyPriority>>{
+		AbstractSource<Tuple<IntervalLatency>>{
 
 	private ArrayList<Integer> elementCounts = new ArrayList<Integer>();
 	private ArrayList<Long> frequencies = new ArrayList<Long>();
@@ -55,16 +55,13 @@ public class TestproducerPO extends
 					Long frequency = frequencies.get(j);
 					long offset = 1000000000 / frequency;
 					for (int i = 0; i < count; ++i) {
-						Tuple<IntervalLatencyPriority> r = new Tuple<IntervalLatencyPriority>(
+						Tuple<IntervalLatency> r = new Tuple<IntervalLatency>(
 								1, false);
 						r.setAttribute(0, i);
+						IntervalLatency meta = new IntervalLatency();
 						long expectedTime = lastTime + offset;
-						r
-								.setMetadata(new IntervalLatencyPriority(
-										expectedTime));
-						if (jedeswievielteelementprio > 0 && i%(jedeswievielteelementprio) == 0) {
-							r.getMetadata().setPriority((byte) 1);
-						}
+						meta.setLatencyStart(expectedTime);
+						r.setMetadata(meta);
 						while (expectedTime > System.nanoTime()) {
 						}
 						lastTime = expectedTime;
@@ -88,7 +85,7 @@ public class TestproducerPO extends
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {
 		List<SDFMetaAttribute> metalist = new ArrayList<SDFMetaAttribute>(super.getMetaAttributeSchema().getAttributes());
-		SDFMetaAttribute mataAttribute = new SDFMetaAttribute(IntervalLatencyPriority.class);
+		SDFMetaAttribute mataAttribute = new SDFMetaAttribute(IntervalLatency.class);
 		if(!metalist.contains(mataAttribute)){
 			metalist.add(mataAttribute);
 		}

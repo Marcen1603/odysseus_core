@@ -18,11 +18,9 @@ package de.uniol.inf.is.odysseus.benchmarker.transform;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkPO;
-import de.uniol.inf.is.odysseus.benchmarker.impl.PriorityBenchmarkPO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -67,9 +65,6 @@ public class TAlgebra2BenchmarkAORule extends AbstractTransformationRule<ILogica
 	
 	
 	public BenchmarkPO createBenchmarkPO(int processingTime, double selectivity, TransformationConfiguration trafo) {
-		if (trafo.getMetaTypes().contains(IPriority.class.getName())) {
-			return new PriorityBenchmarkPO(processingTime, selectivity);
-		}
         return new BenchmarkPO(processingTime, selectivity);
 	}
 

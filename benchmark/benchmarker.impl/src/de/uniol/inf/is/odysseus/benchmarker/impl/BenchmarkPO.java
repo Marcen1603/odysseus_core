@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends
 		AbstractPipe<R, R> {
 
-	final double selectivity;
+	protected final double selectivity;
 	double oldVal = 0;
 	int processingTime = 300;
 

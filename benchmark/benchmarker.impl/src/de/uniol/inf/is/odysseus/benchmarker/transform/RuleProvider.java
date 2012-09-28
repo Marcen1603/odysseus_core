@@ -27,13 +27,8 @@ public class RuleProvider implements ITransformRuleProvider {
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?,?>> rules = new ArrayList<IRule<?,?>>();
 		rules.add(new TAlgebra2BenchmarkAORule());
-		rules.add(new TBatchProducerAORule());
 		rules.add(new TBenchmarkAORule());
-		rules.add(new TBenchmarkDirectInterlinkBufferRule());
-		rules.add(new TBenchmarkOutofOrderBufferRule());
-		rules.add(new TBenchmarkStrongOrderBufferRule());
 		rules.add(new TTestProducerAORule());
-		rules.add(new TBenchmarkPrioIdJoinAORule());
 		rules.add(new TBenchmarkAOExtRule());
 		rules.add(new TBenchmarkBufferAOToPuncPipeRule());
 		rules.add(new TBenchmarkBufferAOToPuncPipe2Rule());
