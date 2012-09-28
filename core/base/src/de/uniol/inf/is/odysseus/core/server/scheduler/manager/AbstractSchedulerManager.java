@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.server.scheduler.manager;
 
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent;
@@ -76,9 +77,9 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 */
 	private List<IErrorEventListener> errorEventListener = Collections
 			.synchronizedList(new ArrayList<IErrorEventListener>());
-	
+
 	final EventHandler eventHandler;
-	
+
 	/**
 	 * Creates a new manager and initializes the logger. Used by OSGi (no
 	 * parameter allowed).
@@ -87,9 +88,8 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 		this.eventHandler = EventHandler.getInstance(this);
 		this.logger = LoggerFactory.getLogger(AbstractSchedulerManager.class);
 		this.logger.trace("Scheduler manager activated.");
-		
-	}
 
+	}
 
 	/**
 	 * OSGi-Method: Is called when this object will be deactivted by OSGi.
@@ -97,7 +97,7 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	protected void deactivate() {
 		synchronized (this.schedulerFactoryMap) {
 			schedulerFactoryMap.clear();
-			//schedulerFactoryMap = null;
+			// schedulerFactoryMap = null;
 		}
 	}
 
@@ -172,10 +172,10 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 *            {@link ISchedulerFactory} service to unbind
 	 */
 	public void unbindSchedulerFactory(ISchedulerFactory schedulerFactory) {
-		if (schedulerFactory!= null && schedulerFactory.getName()!=null){
+		if (schedulerFactory != null && schedulerFactory.getName() != null) {
 			this.schedulerFactoryMap.remove(schedulerFactory.getName());
-		}else{
-			logger.error("Trying to unbound Scheduler "+schedulerFactory);
+		} else {
+			logger.error("Trying to unbound Scheduler " + schedulerFactory);
 		}
 	}
 
@@ -192,8 +192,9 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 		if (this.schedulingStrategyFactoryMap.get(stratName) == null) {
 			this.schedulingStrategyFactoryMap.put(stratName,
 					schedulingStrategyFactory);
-			
-			fire(new SchedulerManagerEvent(this, SchedulerManagerEventType.SCHEDULING_STRATEGY_ADDED, null));
+
+			fire(new SchedulerManagerEvent(this,
+					SchedulerManagerEventType.SCHEDULING_STRATEGY_ADDED, null));
 			// For internal processing
 			schedulingsChanged();
 		} else {
@@ -212,7 +213,8 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 			ISchedulingFactory schedulingStrategyFactory) {
 		this.schedulingStrategyFactoryMap.remove(schedulingStrategyFactory
 				.getName());
-		fire(new SchedulerManagerEvent(this, SchedulerManagerEventType.SCHEDULING_STRATEGY_REMOVED, null));
+		fire(new SchedulerManagerEvent(this,
+				SchedulerManagerEventType.SCHEDULING_STRATEGY_REMOVED, null));
 		// For internal processing
 		schedulingsChanged();
 	}
@@ -220,11 +222,10 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler
+	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler
 	 * #
-	 * addErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement.event.
-	 * error.IErrorEventListener)
+	 * addErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement
+	 * .event. error.IErrorEventListener)
 	 */
 	@Override
 	public void addErrorEventListener(IErrorEventListener errorEventListener) {
@@ -236,11 +237,10 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler
+	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler
 	 * #
-	 * removeErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement.event
-	 * .error.IErrorEventListener)
+	 * removeErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement
+	 * .event .error.IErrorEventListener)
 	 */
 	@Override
 	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
@@ -250,18 +250,17 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener
+	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener
 	 * #sendErrorEvent(de.uniol.inf.is.odysseus.core.server.event.error.
 	 * ErrorEvent)
 	 */
 	@Override
 	public synchronized void errorEventOccured(ErrorEvent eventArgs) {
-		this.logger.error("Error while scheduling. "+eventArgs);
-		
+		this.logger.error("Error while scheduling. " + eventArgs);
+
 		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
 				"Schedulermanager exception (with inner error). ",
-						eventArgs.getValue()));
+				eventArgs.getValue()));
 	}
 
 	/*
@@ -279,8 +278,8 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager#getScheduler
-	 * ()
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager
+	 * #getScheduler ()
 	 */
 	@Override
 	public Set<String> getScheduler() {
@@ -325,30 +324,28 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	}
 
 	@Override
-    public void subscribe(IEventListener listener, IEventType type) {
-		eventHandler.subscribe(this,listener, type);
+	public void subscribe(IEventListener listener, IEventType type) {
+		eventHandler.subscribe(this, listener, type);
 	}
 
 	@Override
-    public void unsubscribe(IEventListener listener, IEventType type) {
-		eventHandler.unsubscribe(this,listener, type);
+	public void unsubscribe(IEventListener listener, IEventType type) {
+		eventHandler.unsubscribe(this, listener, type);
 	}
 
 	@Override
-    public void subscribeToAll(IEventListener listener) {
-		eventHandler.subscribeToAll(this,listener);
+	public void subscribeToAll(IEventListener listener) {
+		eventHandler.subscribeToAll(this, listener);
 	}
 
 	@Override
-    public void unSubscribeFromAll(IEventListener listener) {
-		eventHandler.unSubscribeFromAll(this,listener);
+	public void unSubscribeFromAll(IEventListener listener) {
+		eventHandler.unSubscribeFromAll(this, listener);
 	}
 
 	@Override
-    public final void fire(IEvent<?, ?> event) {
-		eventHandler.fire(this,event);
+	public final void fire(IEvent<?, ?> event) {
+		eventHandler.fire(this, event);
 	}
-	
-	
 
 }

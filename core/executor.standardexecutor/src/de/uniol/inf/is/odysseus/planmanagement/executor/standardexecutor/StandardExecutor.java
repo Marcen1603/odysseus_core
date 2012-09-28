@@ -550,13 +550,9 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             this.executionPlanLock.lock();
             getOptimizer().beforeQueryStart(queryToStart, this.executionPlan);
             executionPlanChanged();
-            if (isRunning()) {
-                queryToStart.open();
-                LOG.debug("Query " + queryID + " started.");
-                firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_START, queryToStart));
-            } else {
-                throw new RuntimeException("Scheduler not running. Query cannot be started");
-            }
+            queryToStart.open();
+            LOG.debug("Query " + queryID + " started.");
+            firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_START, queryToStart));
         } catch (Exception e) {
             LOG.warn("Query not started. An Error during optimizing occurd (ID: " + queryID + ").");
             throw new RuntimeException("Query not started. An Error during optimizing occurd (ID: " + queryID + ").", e);

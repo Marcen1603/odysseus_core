@@ -39,7 +39,6 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAConformanceFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAConformancePlacementFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationLogger;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.OverheadMeasurement;
 
 abstract public class AbstractDynamicPriorityPlanScheduling implements
 		IPartialPlanScheduling, ISLAViolationEventDistributor {
@@ -55,8 +54,6 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 	private List<ISLAViolationEventListener> listeners;
 	private Set<IPhysicalQuery> extendedQueries = new HashSet<IPhysicalQuery>();
 	private List<ISLAConformance> conformances = new ArrayList<ISLAConformance>();
-
-	private final OverheadMeasurement OVERHEAD = new OverheadMeasurement();
 
 	public AbstractDynamicPriorityPlanScheduling() {
 		queue = new LinkedList<IScheduling>();
@@ -111,7 +108,6 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 
 	@Override
 	public IScheduling nextPlan() {
-		OVERHEAD.start();
 		synchronized (conformances) {
 			for (ISLAConformance conformance : this.conformances) {
 				conformance.checkViolation();
@@ -125,7 +121,6 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 
 		synchronized (lastRun) {
 			if (lastRun.size() > 0) {
-				OVERHEAD.stop();
 				return updateMetaAndReturnPlan(lastRun.remove(0));
 			}
 		}
@@ -149,7 +144,6 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 						break;
 					}
 				}
-				OVERHEAD.stop();
 				return updateMetaAndReturnPlan(lastRun.remove(0));
 			}
 		}

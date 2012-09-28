@@ -47,21 +47,22 @@ public class GenQueries {
 	private static final String QUERY_SHARING_COST_MODEL = "none";
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final double OP_SELECTIVITY = 1.0;
-	public static final int OP_PROCESSING_TIME = 1500; // realistic 1500
-	private static final int NUMBER_OF_USERS = 50;
-	private static final int NUMBER_OF_QUERIES_PER_USER = 4;
-	private static final int NUMBER_OF_SLAS = 5;
+	public static final int OP_PROCESSING_TIME = 150000000; // realistic 1500
+	private static final int NUMBER_OF_USERS = 15;
+	private static final int NUMBER_OF_QUERIES_PER_USER = 5;
+	private static final int NUMBER_OF_SLAS = 3;
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
 	private static final int NUMBER_OF_SERVICE_LEVELS = 3;
 	private static final String SLA_SCOPE = ScopeFactory.SCOPE_AVERAGE;
 	private static final boolean COMPLEX_QUERIES_ENABLED = false;
+	private static final int INPUT_DELAY_MILLIS = 60000;
 
 	private static final int ALTERNATIVE_SLA_RATIO = 10;
 	private static int ALTERNATIVE_SLA_COUNTER = 0;
-	private static final boolean ALTERNATIVE_SLA_ENABLED = true;
+	private static final boolean ALTERNATIVE_SLA_ENABLED = false;
 	private static final int ALTERNATIVE_BEST_SLA_PRIO = 10;
 
-	private static final int NUMBER_OF_SIMULATIONS = 10;
+	private static final int NUMBER_OF_SIMULATIONS = 1;
 	private static int currentNumberOfSimulation = 0;
 
 	private static final int DATA_RATE_BURST = 10000;
@@ -164,7 +165,7 @@ public class GenQueries {
 	static int[][][] DATA_RATES = { dataRates0, dataRates1, dataRates2,
 			dataRates3, dataRates4, dataRates5, dataRates6, dataRates7 };
 
-	static int[] DATA_RATE_INDICES = { 6, 7 };
+	static int[] DATA_RATE_INDICES = { 6,7 };
 	static int dataRatePos = 0;
 
 	public static void main(String[] args) {
@@ -177,7 +178,7 @@ public class GenQueries {
 			currentNumberOfSimulation++;
 		}
 		String scriptRun = "///OdysseusScript" + NEWLINE + "#PARSER CQL"
-				+ NEWLINE + "#TRANSCFG Standard" + NEWLINE + "#STARTQUERIES";
+				+ NEWLINE + "#TRANSCFG Standard" + NEWLINE + "#STOPSCHEDULER" + NEWLINE + "#STARTQUERIES" + NEWLINE + "#STARTSCHEDULER";
 		writeScriptFile("run.qry", scriptRun);
 		System.out.println(scriptSLA);
 		System.out.println(createScriptOps());
@@ -439,7 +440,7 @@ public class GenQueries {
 
 	private static String createGlobalSettings() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("#TRANSCFG Standard Latency").append(NEWLINE);
+		sb.append("#TRANSCFG StandardLatency").append(NEWLINE);
 		sb.append("#BUFFERPLACEMENT None").append(NEWLINE);
 		sb.append("#ODYSSEUS_PARAM sla_starvationFreedomDecay ")
 				.append(SF_DECAY).append(NEWLINE);
@@ -473,7 +474,7 @@ public class GenQueries {
 		sb.append("testinput")
 				.append(number)
 				.append(formatSubnumber(subNumber))
-				.append(" := testproducer({invertedpriorityratio = 10, parts = [")
+				.append(" := testproducer({delay = ").append(INPUT_DELAY_MILLIS).append(", invertedpriorityratio = 10, parts = [")
 				.append(createTestInputParam()).append("]})").append(NEWLINE);
 		sb.append("#PARSER CQL").append(NEWLINE);
 		sb.append("#QUERY").append(NEWLINE);

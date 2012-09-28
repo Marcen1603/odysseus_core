@@ -259,10 +259,12 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		// if (this.planScheduling instanceof IPlanModificationListener) {
-		// ((IPlanModificationListener) this.planScheduling)
-		// .planModificationEvent(eventArgs);
-		// }
+		for (IPartialPlanScheduling sched : this.planScheduling) {
+			if (sched instanceof IPlanModificationListener) {
+				((IPlanModificationListener) sched)
+				.planModificationEvent(eventArgs);
+			}
+		}
 	}
 
 }

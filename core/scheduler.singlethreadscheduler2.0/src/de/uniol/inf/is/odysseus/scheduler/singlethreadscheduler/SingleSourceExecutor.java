@@ -46,7 +46,7 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 		logger.debug("Adding Source. " + s + ".Waiting for open ...");
 		s.subscribe(this, POEventType.OpenDone);
 		synchronized (this) {
-			while (!interrupt && !s.isOpen() && !isInterrupted()) {
+			while (!interrupt && !s.isOpen() && !isInterrupted() && caller.isRunning()) {
 				try {
 					this.wait(1000);
 				} catch (InterruptedException ignored) {
