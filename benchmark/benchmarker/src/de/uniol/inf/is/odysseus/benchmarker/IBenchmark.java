@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.benchmarker;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.benchmark.BenchmarkException;
-import de.uniol.inf.is.odysseus.benchmark.IBenchmarkResult;
+import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
 
 

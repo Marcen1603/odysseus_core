@@ -14,6 +14,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.args,
  de.uniol.inf.is.odysseus.benchmark,
+ de.uniol.inf.is.odysseus.benchmark.result,
  de.uniol.inf.is.odysseus.benchmarker,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.collection,

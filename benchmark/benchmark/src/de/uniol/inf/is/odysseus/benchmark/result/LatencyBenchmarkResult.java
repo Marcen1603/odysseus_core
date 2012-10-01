@@ -13,12 +13,15 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.benchmark;
+package de.uniol.inf.is.odysseus.benchmark.result;
 
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
-/**
- * @author Jonas Jacobi
- */
-public interface IBenchmarkResultFactory<T> {
-	public IBenchmarkResult<T> createBenchmarkResult();
+public class LatencyBenchmarkResult extends AbstractBenchmarkResult<ILatency> {
+
+	@Override
+	public void add(ILatency object) {
+		super.add(object);
+		getStatistics().addValue(object.getLatency());
+	}
 }

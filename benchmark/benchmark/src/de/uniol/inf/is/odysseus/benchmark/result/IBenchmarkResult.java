@@ -13,18 +13,22 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.benchmark;
+package de.uniol.inf.is.odysseus.benchmark.result;
 
-import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
+import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
 
-/**
- * @author Jonas Jacobi
- */
-public class LatencyBenchmarkResultFactory implements IBenchmarkResultFactory<ILatency> {
+public interface IBenchmarkResult<T> {
+	public void add(T object);
 
-	@Override
-	public IBenchmarkResult<ILatency> createBenchmarkResult() {
-		return new LatencyBenchmarkResult();
-	}
+	public void setStartTime(long start);
 
+	public void setEndTime(long start);
+
+	public long getDuration();
+
+	public long size();
+
+	public DescriptiveStatistics getStatistics();
+
+	public void setQueryId(int queryId);
 }

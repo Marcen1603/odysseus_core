@@ -16,14 +16,14 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.benchmark.physical;
+package de.uniol.inf.is.odysseus.benchmarker;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import de.uniol.inf.is.odysseus.benchmark.IBenchmarkResult;
+import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;

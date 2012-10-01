@@ -21,7 +21,7 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.core.Persister;
 
-import de.uniol.inf.is.odysseus.benchmark.AbstractBenchmarkResult;
+import de.uniol.inf.is.odysseus.benchmark.result.AbstractBenchmarkResult;
 import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.interval_latency_priority.ILatencyPriority;
 

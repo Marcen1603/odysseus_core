@@ -26,11 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.benchmark.BenchmarkException;
-import de.uniol.inf.is.odysseus.benchmark.IBenchmarkResult;
-import de.uniol.inf.is.odysseus.benchmark.IBenchmarkResultFactory;
-import de.uniol.inf.is.odysseus.benchmark.LatencyBenchmarkResultFactory;
-import de.uniol.inf.is.odysseus.benchmark.physical.BenchmarkSink;
 import de.uniol.inf.is.odysseus.benchmark.physical.IntegrationPipe;
+import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResult;
+import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResultFactory;
+import de.uniol.inf.is.odysseus.benchmark.result.LatencyBenchmarkResultFactory;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.event.IEvent;

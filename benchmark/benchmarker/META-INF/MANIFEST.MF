@@ -5,6 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.benchmarker
 Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus.benchmark,
  de.uniol.inf.is.odysseus.benchmark.physical,
+ de.uniol.inf.is.odysseus.benchmark.result,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.latency.logicaloperator,
  org.osgi.service.component;version="1.1.0",

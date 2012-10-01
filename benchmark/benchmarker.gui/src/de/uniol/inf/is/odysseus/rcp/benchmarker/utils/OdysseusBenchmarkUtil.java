@@ -33,7 +33,7 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 import de.uniol.inf.is.odysseus.benchmark.BenchmarkException;
-import de.uniol.inf.is.odysseus.benchmark.IBenchmarkResult;
+import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.Activator;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;

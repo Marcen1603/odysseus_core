@@ -8,6 +8,7 @@ Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Import-Package: de.uniol.inf.is.odysseus.args,
  de.uniol.inf.is.odysseus.benchmark,
+ de.uniol.inf.is.odysseus.benchmark.result,
  de.uniol.inf.is.odysseus.benchmarker,
  org.simpleframework.xml,
  org.simpleframework.xml.core

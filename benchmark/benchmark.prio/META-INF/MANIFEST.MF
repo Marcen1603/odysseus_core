@@ -7,6 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.benchmark.prio.Activator
 Import-Package: de.uniol.inf.is.odysseus.benchmark,
  de.uniol.inf.is.odysseus.benchmark.logicaloperator,
  de.uniol.inf.is.odysseus.benchmark.physical,
+ de.uniol.inf.is.odysseus.benchmark.result,
  de.uniol.inf.is.odysseus.interval_latency_priority,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.priority,
@@ -24,4 +25,3 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
 Service-Component: OSGI-INF/*
- 
