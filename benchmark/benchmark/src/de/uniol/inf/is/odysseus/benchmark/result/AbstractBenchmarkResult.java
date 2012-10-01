@@ -81,5 +81,20 @@ public abstract class AbstractBenchmarkResult<T> implements IBenchmarkResult<T> 
 	public DescriptiveStatistics getStatistics() {
 		return this.desc;
 	}
+	
+	@Override
+	public String csvToString() {
+		return queryId+";"+startTime+";"+endTime+";"+size+";"+desc.csvToString();
+	}
+	
+	@Override
+	public String csvToString(boolean withMetada) {
+		return csvToString();
+	}
+	
+	@Override
+	public String getCSVHeader() {
+		return "queryId;startTime;endTime;size;"+desc.getCSVHeader();
+	}
 
 }
