@@ -42,20 +42,6 @@ Unless required by applicable law or agreed to in writing, software
    </requires>
 
    <plugin
-         id="de.offis.salsa.wrapper.car"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.wrapper.sick"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.wrapper.base"
          download-size="0"
          install-size="0"
@@ -70,13 +56,6 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.offis.salsa.wrapper.scooter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.spatial"
          download-size="0"
          install-size="0"
@@ -85,12 +64,6 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="org.osgeo.proj4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.spatial.grid"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
