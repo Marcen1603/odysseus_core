@@ -51,7 +51,7 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.action.benchmark"
+         id="de.uniol.inf.is.odysseus.benchmark"
          download-size="0"
          install-size="0"
          version="0.0.0"
