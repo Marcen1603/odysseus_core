@@ -94,7 +94,7 @@ public class BenchmarkResultPO<M extends ILatency> extends
 	@Override
 	protected void process_open() throws OpenFailedException {
 		result.clear();
-		for (PhysicalSubscription<?> s: getSubscriptions()){
+		for (PhysicalSubscription<?> s: getSubscribedToSource()){
 			result.put(s.getSinkInPort(), resultFactory.createBenchmarkResult());
 		}
 	}
