@@ -88,6 +88,7 @@ http://odysseus.offis.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.dbenrich.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.benchmark.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

@@ -1,5 +1,4 @@
-/********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+/** Copyright [2011] [The Odysseus Team]
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -22,25 +21,34 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementMap;
+import org.simpleframework.xml.core.Persist;
 
 /**
  * @author Jonas Jacobi
  */
 public class DescriptiveStatistics {
 	private long[] values = new long[10000];
+	@Element(name = "N")
 	private int count = 0;
 	boolean isEvaluated = false;
+	@Element
 	private double standardDeviation;
+	@Element
 	private double variance;
 	private double sum = 0;
 	private int offset;
 	final private double[] percentiles = new double[100];
 	// percentileMap is a little hack to only have selected values occur in xml
 	// serialization
+	@ElementMap(attribute = true, entry = "percentile", key = "percent", value = "value")
 	private Map<Integer, Double> percentileMap = new TreeMap<Integer, Double>();
+	@Element
 	private double mean;
+	@Element
 	private long min;
-
+	@Element
 	private long max;
 
 	public int getN() {
@@ -71,6 +79,7 @@ public class DescriptiveStatistics {
 		return this.standardDeviation;
 	}
 
+	@Persist
 	private void prepareStats() {
 		if (isEvaluated) {
 			return;

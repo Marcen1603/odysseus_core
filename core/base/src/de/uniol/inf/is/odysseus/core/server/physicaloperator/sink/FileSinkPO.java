@@ -20,6 +20,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,11 +36,13 @@ public class FileSinkPO extends AbstractSink<Object> {
 
 	final private String filename;
 	final private boolean csvSink;
+	final private boolean xmlSink;
 	final private long writeAfterElements;
 	private long elementsWritten;
 	private boolean printMetadata;
 	transient private StringBuffer writeCache;
 	transient BufferedWriter out;
+	Serializer serializer;
 
 	private final ReentrantLock lock = new ReentrantLock();
 
@@ -49,7 +53,12 @@ public class FileSinkPO extends AbstractSink<Object> {
 		this.filename = filename;
 		if ("CSV".equalsIgnoreCase(sinkType)) {
 			csvSink = true;
+			xmlSink = false;
+		} else if ("XML".equalsIgnoreCase(sinkType)) {
+			xmlSink = true;
+			csvSink = false;
 		} else {
+			xmlSink = false;
 			csvSink = false;
 		}
 		this.writeAfterElements = writeAfterElements;
@@ -59,6 +68,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 	public FileSinkPO(FileSinkPO fileSink) {
 		this.filename = fileSink.filename;
 		this.csvSink = fileSink.csvSink;
+		this.xmlSink = fileSink.xmlSink;
 		this.printMetadata = fileSink.printMetadata;
 		this.writeAfterElements = fileSink.writeAfterElements;
 	}
@@ -73,6 +83,9 @@ public class FileSinkPO extends AbstractSink<Object> {
 			lock.lock();
 			writeCache = new StringBuffer();
 			elementsWritten = 0;
+			if (xmlSink) {
+				serializer = new Persister();
+			}
 			out = new BufferedWriter(new FileWriter(
 					FileUtils.openOrCreateFile(filename)));
 			lock.unlock();
@@ -88,26 +101,34 @@ public class FileSinkPO extends AbstractSink<Object> {
 	protected void process_next(Object object, int port) {
 		if (isOpen()) {
 			try {
-				String toWrite = null;
-				if (csvSink) {
-					toWrite = ((ICSVToString) object)
-							.csvToString(printMetadata) + "\n";
-				} else {
-					toWrite = "" + object + "\n";
-				}
-				if (writeAfterElements > 0) {
-					writeCache.append(toWrite).append("\n");
-					elementsWritten++;
-					if (writeAfterElements >= elementsWritten) {
-						writeToFile(writeCache.toString());
-						writeCache = new StringBuffer();
-						elementsWritten = 0;
-					}
-				} else {
-					writeToFile(toWrite);
-				}
 
-			} catch (IOException e) {
+				if (xmlSink) {
+					serializer.write(object, out);
+					out.flush();
+				} else {
+
+					String toWrite = null;
+					if (csvSink) {
+						toWrite = ((ICSVToString) object)
+								.csvToString(printMetadata) + "\n";
+					} else {
+						toWrite = "" + object + "\n";
+					}
+
+					if (writeAfterElements > 0) {
+						writeCache.append(toWrite).append("\n");
+						elementsWritten++;
+						if (writeAfterElements >= elementsWritten) {
+							writeToFile(writeCache.toString());
+							writeCache = new StringBuffer();
+							elementsWritten = 0;
+						}
+					} else {
+						writeToFile(toWrite);
+					}
+
+				}
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -164,16 +185,18 @@ public class FileSinkPO extends AbstractSink<Object> {
 
 	@Override
 	public void process_done(int port) {
-		LOG.debug("FileSinkPO finishing...");
-		try {
-			writeToFile(writeCache.toString());
-			lock.lock();
-			out.close();
-			lock.unlock();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (out != null) {
+			LOG.debug("FileSinkPO finishing...");
+			try {
+				writeToFile(writeCache.toString());
+				lock.lock();
+				out.close();
+				lock.unlock();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			LOG.debug("FileSinkPO.done");
 		}
-		LOG.debug("FileSinkPO.done");
 	}
 
 }

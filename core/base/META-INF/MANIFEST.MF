@@ -10,6 +10,8 @@ Import-Package:
  de.uniol.inf.is.odysseus.core.server.datadictionary,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.component,
+ org.simpleframework.xml,
+ org.simpleframework.xml.core,
  org.slf4j
 Service-Component: OSGI-INF/*
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
