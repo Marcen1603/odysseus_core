@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.args.Args;
 import de.uniol.inf.is.odysseus.args.Args.REQUIREMENT;
 import de.uniol.inf.is.odysseus.args.ArgsException;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
-import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
+import de.uniol.inf.is.odysseus.benchmark.IBenchmarkResult;
 
 /**
  * This class controls all aspects of the application's execution

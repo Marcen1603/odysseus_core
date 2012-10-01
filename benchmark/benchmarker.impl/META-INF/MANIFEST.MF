@@ -4,7 +4,9 @@ Bundle-Name: Benchmarker Plug-in
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.benchmarker.impl
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.benchmarker.impl.Activator
-Import-Package: de.uniol.inf.is.odysseus.benchmarker,
+Import-Package: de.uniol.inf.is.odysseus.benchmark,
+ de.uniol.inf.is.odysseus.benchmark.physical,
+ de.uniol.inf.is.odysseus.benchmarker,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.physicaloperator,
@@ -21,7 +23,6 @@ Import-Package: de.uniol.inf.is.odysseus.benchmarker,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.latency.logicaloperator,
- de.uniol.inf.is.odysseus.logicaloperator.benchmark,
  de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.ruleengine.rule,
@@ -38,8 +39,7 @@ Service-Component: OSGI-INF/component.xml, OSGI-INF/TransformRuleService.xml, OS
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
-Export-Package: de.uniol.inf.is.odysseus.benchmarker.impl,
- de.uniol.inf.is.odysseus.logicaloperator.benchmark
+Export-Package: 
 Bundle-ClassPath: ostermillerutils_1_07_00.jar,
  .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

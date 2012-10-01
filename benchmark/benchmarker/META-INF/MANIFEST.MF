@@ -3,7 +3,15 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Benchmarker
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.benchmarker
 Bundle-Version: 1.0.0.qualifier
-Import-Package: org.simpleframework.xml,
+Import-Package: de.uniol.inf.is.odysseus.benchmark,
+ de.uniol.inf.is.odysseus.benchmark.physical,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.latency.logicaloperator,
+ org.osgi.service.component;version="1.1.0",
+ org.simpleframework.xml,
  org.simpleframework.xml.core
 Export-Package: de.uniol.inf.is.odysseus.benchmarker
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
