@@ -46,9 +46,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 		@Override
 		protected void process_next(R object, int port) {
-			if (isOpen()) {
-				AbstractPipe.this.delegatedProcess(object, port);
-			}
+			AbstractPipe.this.delegatedProcess(object, port);
 		}
 
 		@Override
