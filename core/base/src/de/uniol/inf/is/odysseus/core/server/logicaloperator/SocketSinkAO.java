@@ -33,8 +33,9 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 	private Boolean loginNeeded = false;
 	private String sinkName;
 	
-	private String host = "localhost";
-	private boolean push = false;
+	private String host = "localhost";	
+
+	private boolean connectToServer = false;
 	
 	public SocketSinkAO(int sinkPort, String sinkType, boolean loginNeeded, String name){
 		this.sinkPort = sinkPort;
@@ -53,7 +54,7 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 		this.loginNeeded = socketSinkAO.loginNeeded;
 		this.sinkName = socketSinkAO.sinkName;
 		this.host = socketSinkAO.host;
-		this.push = socketSinkAO.push;
+		this.connectToServer = socketSinkAO.connectToServer;
 	}
 
 	@Parameter(name="SINKPORT",type = IntegerParameter.class, optional = false)
@@ -105,8 +106,8 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 		return this.host;
 	}
 	
-	public boolean getPush(){
-		return this.push;
+	public boolean getConnectToServer(){
+		return this.connectToServer;
 	}
 	
 	
@@ -115,10 +116,11 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 		this.host = host;
 	}
 	
-	@Parameter(name="PUSH", type = BooleanParameter.class, optional = true)
-	public void setPush(boolean push) {
-		this.push= push;
+	@Parameter(name="CONNECTTOSERVER", type = BooleanParameter.class, optional = true)
+	public void setConnectToServer(boolean connectToServer){
+		this.connectToServer = connectToServer;
 	}
+		
 	
 	@Parameter(type = StringParameter.class, optional=true)
 	public void setDataHandler(String dataHandler) {
