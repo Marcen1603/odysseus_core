@@ -19,7 +19,7 @@ public class BenchmarkResultFactoryRegistry {
 			logger.error("BenchmarkResultFactory " + name
 					+ " already registered! Ignoring new entry");
 		}else{
-			entries.put(name, entry);
+			entries.put(name.toLowerCase(), entry);
 			logger.debug("adding new BenchmarkResultFactory "+name);
 		}
 	}
