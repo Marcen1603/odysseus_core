@@ -25,10 +25,12 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.core.Persist;
 
+import de.uniol.inf.is.odysseus.core.ICSVToString;
+
 /**
  * @author Jonas Jacobi
  */
-public class DescriptiveStatistics {
+public class DescriptiveStatistics implements ICSVToString{
 	private long[] values = new long[10000];
 	@Element(name = "N")
 	private int count = 0;
@@ -182,5 +184,30 @@ public class DescriptiveStatistics {
 		str += "75 percentile: " + this.getPercentile(75) + "\n";
 		str += "50 percentile: " + this.getPercentile(50);
 		return str;
+	}
+	
+	@Override
+	public String csvToString() {
+		prepareStats();
+		return getMin()+";"+getMax()+";"+getMean()+";"+getN()+";"+
+				getStandardDeviation()+";"+getVariance()+";"
+				+getPercentile(5)+";"+
+				+getPercentile(10)+";"+
+				+getPercentile(25)+";"+
+				+getPercentile(50)+";"+
+				+getPercentile(75)+";"+
+				+getPercentile(90)+";"+
+				+getPercentile(95);
+	}
+	
+	@Override
+	public String getCSVHeader() {
+		return "Min;Max;Mean;Count;StandardDeviation;variance;percentile5;percentile10;percentile25;" +
+				"percentile50;percentile75;percentile90;percentile95";
+	}
+	
+	@Override
+	public String csvToString(boolean withMetada) {
+		return csvToString();
 	}
 }
