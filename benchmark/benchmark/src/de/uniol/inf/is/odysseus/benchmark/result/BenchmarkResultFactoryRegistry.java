@@ -13,18 +13,29 @@ public class BenchmarkResultFactoryRegistry {
 
 	private static Map<String, IBenchmarkResultFactory<?>> entries = new HashMap<String, IBenchmarkResultFactory<?>>();
 
-	static void addEntry(IBenchmarkResultFactory<?> entry) {
+	static public void addEntry(IBenchmarkResultFactory<?> entry) {
 		String name = entry.getName();
-		if (entries.containsKey(name)) {
+		if (entries.containsKey(name.toLowerCase())) {
 			logger.error("BenchmarkResultFactory " + name
 					+ " already registered! Ignoring new entry");
 		}else{
 			entries.put(name, entry);
+			logger.debug("adding new BenchmarkResultFactory "+name);
 		}
 	}
 	
-	static IBenchmarkResultFactory<?> getEntry(String name){
-		return entries.get(name);
+	static public IBenchmarkResultFactory<?> getEntry(String name){
+		return entries.get(name.toLowerCase());
+	}
+	
+	static public void removeEntry(IBenchmarkResultFactory<?> entry){
+		String name = entry.getName();
+		if (!entries.containsKey(name.toLowerCase())) {
+			logger.error("BenchmarkResultFactory " + name
+					+ " not registered! Ignoring removal call.");
+		}else{
+			entries.remove(name.toLowerCase());
+		}
 	}
 
 }
