@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkPO;
+import de.uniol.inf.is.odysseus.benchmark.physical.BenchmarkPO;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.operator.DataStream;
 import de.uniol.inf.is.odysseus.costmodel.operator.IDataStream;
