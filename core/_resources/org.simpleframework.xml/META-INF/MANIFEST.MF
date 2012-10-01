@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Simple XML
+Bundle-SymbolicName: org.simpleframework.xml
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: simple-xml-2.1.4.jar
+Export-Package: org.simpleframework.xml,
+ org.simpleframework.xml.core,
+ org.simpleframework.xml.filter,
+ org.simpleframework.xml.strategy,
+ org.simpleframework.xml.stream,
+ org.simpleframework.xml.transform,
+ org.simpleframework.xml.util
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
