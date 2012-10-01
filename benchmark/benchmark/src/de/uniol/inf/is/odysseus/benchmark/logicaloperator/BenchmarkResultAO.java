@@ -19,7 +19,9 @@ public class BenchmarkResultAO extends AbstractLogicalOperator {
 	}
 
 	public BenchmarkResultAO(BenchmarkResultAO other) {
-		
+		super(other);
+		maxResults = other.maxResults;
+		resultType = other.resultType;
 	}
 	
 	@Parameter(type = IntegerParameter.class, name = "maxResults", optional=true)
