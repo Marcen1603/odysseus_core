@@ -56,7 +56,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 	private long time = 0;
 	private int transId = 1;
 	private BufferedReader in;
-	private int counter = 1;
+//	private int counter = 1;
 
 	private String file;
 
@@ -95,15 +95,15 @@ public class FrequentItemProvider extends StreamClientHandler {
 				tuple.addAttribute(new Integer(transId));				
 				tuple.addAttribute(new String(itemId));							
 				tuples.add(tuple);
-				counter++;
+//				counter++;
 			}
 
 			time = time + 100;
 			transId++;
 			
-			Thread.sleep(4000);
-		} catch (InterruptedException ie){
-			throw ie;
+//			Thread.sleep(4000);
+//		} catch (InterruptedException ie){
+//			throw ie;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

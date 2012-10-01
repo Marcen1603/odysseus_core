@@ -72,7 +72,7 @@ public class Activator implements BundleActivator {
 		StreamServer serverABC = new StreamServer(54324, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_ABC));
 		serverABC.start();
 		server.add(serverABC);		
-	//	BenchmarkController.getInstance().start();
+		BenchmarkController.getInstance().start();
 	}
 
 	/*
