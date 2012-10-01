@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.sink;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +40,12 @@ public class FileSinkPO extends AbstractSink<Object> {
 	transient private StringBuffer writeCache;
 	transient BufferedWriter out;
 
+	private final ReentrantLock lock = new ReentrantLock();
+
 	static Logger LOG = LoggerFactory.getLogger(FileSinkPO.class);
 
-	public FileSinkPO(String filename, String sinkType, long writeAfterElements, boolean printMetadata) {
+	public FileSinkPO(String filename, String sinkType,
+			long writeAfterElements, boolean printMetadata) {
 		this.filename = filename;
 		if ("CSV".equalsIgnoreCase(sinkType)) {
 			csvSink = true;
@@ -66,11 +70,12 @@ public class FileSinkPO extends AbstractSink<Object> {
 	@Override
 	protected void process_open() throws OpenFailedException {
 		try {
-			synchronized (this) {
-				writeCache = new StringBuffer();
-				elementsWritten = 0;
-				out = new BufferedWriter(new FileWriter(FileUtils.openOrCreateFile(filename)));
-			}
+			lock.lock();
+			writeCache = new StringBuffer();
+			elementsWritten = 0;
+			out = new BufferedWriter(new FileWriter(
+					FileUtils.openOrCreateFile(filename)));
+			lock.unlock();
 		} catch (IOException e) {
 			OpenFailedException ex = new OpenFailedException(e);
 			ex.fillInStackTrace();
@@ -85,7 +90,8 @@ public class FileSinkPO extends AbstractSink<Object> {
 			try {
 				String toWrite = null;
 				if (csvSink) {
-					toWrite = ((ICSVToString) object).csvToString(printMetadata) + "\n";
+					toWrite = ((ICSVToString) object)
+							.csvToString(printMetadata) + "\n";
 				} else {
 					toWrite = "" + object + "\n";
 				}
@@ -108,24 +114,24 @@ public class FileSinkPO extends AbstractSink<Object> {
 	}
 
 	void writeToFile(String elem) throws IOException {
-		synchronized (this) {
-			if (out != null) {
-				out.write(elem);
-				out.flush();
-			}
-		}
+		lock.lock();
+		if (out != null) {
+			out.write(elem);
+			out.flush();
 
+		}
+		lock.unlock();
 	}
 
 	@Override
 	protected void process_close() {
 		if (isOpen()) {
 			try {
-				synchronized (this) {
-					process_done(0);
-					out.close();
-					out = null;
-				}
+				lock.lock();
+				process_done(0);
+				out.close();
+				out = null;
+				lock.unlock();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -147,7 +153,10 @@ public class FileSinkPO extends AbstractSink<Object> {
 			return false;
 		}
 		FileSinkPO fs = (FileSinkPO) ipo;
-		if (this.getSubscribedToSource().get(0).equals(fs.getSubscribedToSource().get(0)) && this.filename.equals(fs.getFilename()) && this.csvSink == fs.csvSink) {
+		if (this.getSubscribedToSource().get(0)
+				.equals(fs.getSubscribedToSource().get(0))
+				&& this.filename.equals(fs.getFilename())
+				&& this.csvSink == fs.csvSink) {
 			return true;
 		}
 		return false;
@@ -158,9 +167,9 @@ public class FileSinkPO extends AbstractSink<Object> {
 		LOG.debug("FileSinkPO finishing...");
 		try {
 			writeToFile(writeCache.toString());
-			synchronized (this) {
-				out.close();
-			}
+			lock.lock();
+			out.close();
+			lock.unlock();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
