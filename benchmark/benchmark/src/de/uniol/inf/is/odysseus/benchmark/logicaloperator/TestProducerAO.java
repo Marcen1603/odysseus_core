@@ -94,7 +94,7 @@ public class TestProducerAO extends AbstractLogicalOperator {
 		return delayMillis;
 	}
 
-	@Parameter(type=IntegerParameter.class)
+	@Parameter(type=IntegerParameter.class, optional = true)
 	public void setInvertedPriorityRatio(int invertedPriorityRatio) {
 		this.invertedPriorityRatio = invertedPriorityRatio;
 	}
