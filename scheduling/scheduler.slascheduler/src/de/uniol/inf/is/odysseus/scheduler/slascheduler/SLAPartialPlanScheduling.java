@@ -152,15 +152,15 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		}
 		this.addSLAViolationEventListener(new SLAViolationLogger());
 		this.queue = new LinkedList<Pair<IScheduling, Double>>();
-		// init csv logger
-		SLATestLogger.initCSVLogger("scheduler0", 1000000, 0, "Query", "oc",
-				"mg", "sf", "prio", "conformance", "service level");
-		SLATestLogger.initCSVLogger("scheduler1", 1000000, 0, "Query", "oc",
-				"mg", "sf", "prio", "conformance", "service level");
-		SLATestLogger.initCSVLogger("scheduler2", 1000000, 0, "Query", "oc",
-				"mg", "sf", "prio", "conformance", "service level");
+//		// init csv logger
+//		SLATestLogger.initCSVLogger("scheduler0", 1000000, 0, "Query", "oc",
+//				"mg", "sf", "prio", "conformance", "service level");
+//		SLATestLogger.initCSVLogger("scheduler1", 1000000, 0, "Query", "oc",
+//				"mg", "sf", "prio", "conformance", "service level");
+//		SLATestLogger.initCSVLogger("scheduler2", 1000000, 0, "Query", "oc",
+//				"mg", "sf", "prio", "conformance", "service level");
 
-		SLATestLogger.init();
+//		SLATestLogger.init();
 		getLogger().debug("Creating SLA PartialPlanScheduling .Done");
 	}
 
@@ -258,11 +258,11 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 						double prio = this.prioFunction
 								.calcPriority(oc, mg, sf);
 
-						SLATestLogger.logCSV("scheduler" + query.getID(), query
-								.getID(), oc, mg, sf, prio, conformance,
-								((QuadraticCFLatency) costFunc)
-										.getCurrentServiceLevelIndex(
-												conformance, sla));
+//						SLATestLogger.logCSV("scheduler" + query.getID(), query
+//								.getID(), oc, mg, sf, prio, conformance,
+//								((QuadraticCFLatency) costFunc)
+//										.getCurrentServiceLevelIndex(
+//												conformance, sla));
 
 						// select plan with highest priority
 						if (prio > nextPrio) {
@@ -290,10 +290,10 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		}
 
 		if (next != null){
-			getLogger().debug(
-					"[" + SLATestLogger.formatNanoTime(System.nanoTime())
-							+ "] Scheduling query "
-							+ next.getPlan().getQueries().get(0).getID());
+//			getLogger().debug(
+//					"[" + SLATestLogger.formatNanoTime(System.nanoTime())
+//							+ "] Scheduling query "
+//							+ next.getPlan().getQueries().get(0).getID());
 		}
 		// set tmestamp of last execution
 		if (next != null) {
