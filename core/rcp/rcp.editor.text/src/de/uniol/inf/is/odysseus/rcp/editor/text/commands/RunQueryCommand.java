@@ -49,6 +49,8 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptDocumentProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 public class RunQueryCommand extends AbstractHandler implements IHandler {
 
@@ -158,7 +160,13 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 				try {
 					executor.addQuery(concatLines(text), "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), "Standard");
 				} catch( Throwable ex ) {
-					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", ex);
+					Throwable cause = ex;
+					// Exceptions are wrapped ... try to find the real cause :-)
+					while ((cause instanceof OdysseusScriptException || cause instanceof QueryParseException) && cause.getCause() != null){
+						cause = cause.getCause();
+					}
+					
+					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", cause);
 				}
 				return Status.OK_STATUS;
 			}
