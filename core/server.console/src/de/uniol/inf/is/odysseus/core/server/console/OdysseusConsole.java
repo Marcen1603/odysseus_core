@@ -815,7 +815,7 @@ public class OdysseusConsole implements CommandProvider,
 						.getQueryBuildConfiguration(defaultBuildConfiguration)
 						.getConfiguration()
 						.add(new ParameterDefaultRoot(new FileSinkPO(
-								outputputFilename, "", -1, true)));
+								outputputFilename, "", -1, true, false)));
 				this.executor.addQuery(q, parser(), currentUser,
 						defaultBuildConfiguration);
 			}
@@ -920,7 +920,7 @@ public class OdysseusConsole implements CommandProvider,
 						.getQueryBuildConfiguration(defaultBuildConfiguration)
 						.getConfiguration()
 						.add(new ParameterDefaultRoot(new FileSinkPO(
-								args[args.length - 1], "", -1, true)));
+								args[args.length - 1], "", -1, true, false)));
 				this.executor.addQuery(q.toString(), parser(), currentUser,
 						defaultBuildConfiguration);
 

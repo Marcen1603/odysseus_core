@@ -38,6 +38,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 	final private boolean csvSink;
 	final private boolean xmlSink;
 	final private long writeAfterElements;
+	final private boolean append;
 	private long elementsWritten;
 	private boolean printMetadata;
 	transient private StringBuffer writeCache;
@@ -49,7 +50,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 	static Logger LOG = LoggerFactory.getLogger(FileSinkPO.class);
 
 	public FileSinkPO(String filename, String sinkType,
-			long writeAfterElements, boolean printMetadata) {
+			long writeAfterElements, boolean printMetadata, boolean append) {
 		this.filename = filename;
 		if ("CSV".equalsIgnoreCase(sinkType)) {
 			csvSink = true;
@@ -63,6 +64,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 		}
 		this.writeAfterElements = writeAfterElements;
 		this.printMetadata = printMetadata;
+		this.append = append;
 	}
 
 	public FileSinkPO(FileSinkPO fileSink) {
@@ -71,6 +73,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 		this.xmlSink = fileSink.xmlSink;
 		this.printMetadata = fileSink.printMetadata;
 		this.writeAfterElements = fileSink.writeAfterElements;
+		this.append = fileSink.append;
 	}
 
 	public String getFilename() {
@@ -87,7 +90,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 				serializer = new Persister();
 			}
 			out = new BufferedWriter(new FileWriter(
-					FileUtils.openOrCreateFile(filename)));
+					FileUtils.openOrCreateFile(filename), this.append));
 			lock.unlock();
 		} catch (IOException e) {
 			OpenFailedException ex = new OpenFailedException(e);

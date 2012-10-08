@@ -43,6 +43,7 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	 */
 	long writeAfterElements = -1;
 	
+	private boolean append = false;
 	private boolean printMetadata;
 
 	public FileSinkAO() {
@@ -52,7 +53,7 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		this.filename = filename;
 		this.sinkType = sinkType;
 		this.printMetadata = printMetadata;
-		this.writeAfterElements = writeAfterElements;
+		this.writeAfterElements = writeAfterElements;		
 	}
 
 	public FileSinkAO(FileSinkAO fileSinkAO) {
@@ -61,6 +62,7 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		this.sinkType = fileSinkAO.sinkType;
 		this.printMetadata = fileSinkAO.printMetadata;
 		this.writeAfterElements = fileSinkAO.writeAfterElements;
+		this.append = fileSinkAO.append;
 	}
 
 	@Parameter(name = "FILE", type = StringParameter.class)
@@ -71,6 +73,11 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	@Parameter(name = "FILETYPE", type = StringParameter.class, optional = true)
 	public void setSinkType(String sinkType) {
 		this.sinkType = sinkType;
+	}
+	
+	@Parameter(name = "APPEND", type = BooleanParameter.class, optional = true)
+	public void setAppend(boolean append) {
+		this.append = append;
 	}
 
 	@Parameter(type = LongParameter.class, optional = true)
@@ -91,6 +98,10 @@ public class FileSinkAO extends AbstractLogicalOperator {
 
 	public String getFilename() {
 		return filename;
+	}
+	
+	public boolean getAppend(){
+		return this.append;
 	}
 
 	public String getSinkType() {
