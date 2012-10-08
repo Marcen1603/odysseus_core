@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.lang.reflect.Method;
@@ -46,7 +46,6 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private AttributeResolver attributeResolver;
 
-
 	private ISession caller;
 	private IDataDictionary dd;
 
@@ -66,49 +65,51 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTSimpleSource node, Object data) throws QueryParseException {
+	public Object visit(ASTSimpleSource node, Object data)
+			throws QueryParseException {
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
-		if (dd.containsViewOrStream(sourceString, caller) ){
-		
-		String sourceType = dd.getSourceType(sourceString);
+		if (dd.containsViewOrStream(sourceString, caller)) {
 
-		if ("RelationalStreaming".equalsIgnoreCase(sourceType)) {
-			relationalStreamingSource(node, sourceString);
-			return null;
-		} else if ("brokerStreaming".equalsIgnoreCase(sourceType)) {
-			brokerStreamingSource(node, data);
-			return null;
-		} else if ("ObjectRelationalStreaming".equalsIgnoreCase(sourceType)) {
-			relationalStreamingSource(node, sourceString);
-			return null;
+			String sourceType = dd.getSourceType(sourceString);
+
+			if ("RelationalStreaming".equalsIgnoreCase(sourceType)) {
+				relationalStreamingSource(node, sourceString);
+				return null;
+			} else if ("brokerStreaming".equalsIgnoreCase(sourceType)) {
+				brokerStreamingSource(node, data);
+				return null;
+			} else if ("ObjectRelationalStreaming".equalsIgnoreCase(sourceType)) {
+				relationalStreamingSource(node, sourceString);
+				return null;
+			} else {
+				throw new QueryParseException("unknown type of source '"
+						+ sourceType + "' for source: " + sourceString);
+			}
 		} else {
-			throw new QueryParseException("unknown type of source '"
-					+ sourceType + "' for source: " + sourceString);
-		}
-		}else{
-			throw new QueryParseException("Unkown Source "+sourceString);
+			throw new QueryParseException("Unkown Source " + sourceString);
 		}
 
 	}
 
-
-	private void relationalStreamingSource(ASTSimpleSource node, String sourceName) {
+	private void relationalStreamingSource(ASTSimpleSource node,
+			String sourceName) {
 		ILogicalOperator access;
 		try {
 			access = dd.getViewOrStream(sourceName, caller);
-			((AccessAO)access).setDataHandler("Tuple");
+			if (access instanceof AccessAO) {
+				((AccessAO) access).setDataHandler("Tuple");
+			}
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());
 		}
-		
 
 		ILogicalOperator inputOp = access;
 		if (node.hasAlias()) {
 			inputOp = new RenameAO();
 			inputOp.subscribeToSource(access, 0, 0, access.getOutputSchema());
-			((RenameAO) inputOp).setOutputSchema(createAliasSchema(node
-					.getAlias(), access));
+			((RenameAO) inputOp).setOutputSchema(createAliasSchema(
+					node.getAlias(), access));
 			sourceName = node.getAlias();
 		}
 
@@ -119,7 +120,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		this.attributeResolver.addSource(sourceName, inputOp);
 	}
 
-	private static WindowAO createWindow(ASTWindow windowNode, ILogicalOperator inputOp) {
+	private static WindowAO createWindow(ASTWindow windowNode,
+			ILogicalOperator inputOp) {
 		WindowAO window = new WindowAO();
 		window.subscribeToSource(inputOp, 0, 0, inputOp.getOutputSchema());
 
@@ -149,7 +151,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 
 		window.setWindowType(windowNode.getType());
-		
+
 		if (!windowNode.isUnbounded()) {
 			window.setWindowSize(windowNode.getSize());
 			Long advance = windowNode.getAdvance();
@@ -178,7 +180,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	// }
 
 	@Override
-	public Object visit(ASTSubselect node, Object data) throws QueryParseException {
+	public Object visit(ASTSubselect node, Object data)
+			throws QueryParseException {
 		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node
 				.jjtGetChild(0);
 		CQLParser v = new CQLParser();
@@ -196,9 +199,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		ASTIdentifier asIdentifier = (ASTIdentifier) asNode.jjtGetChild(0);
 		RenameAO rename = new RenameAO();
 		rename.subscribeToSource(result, 0, 0, result.getOutputSchema());
-		rename
-				.setOutputSchema(createAliasSchema(asIdentifier.getName(),
-						result));
+		rename.setOutputSchema(createAliasSchema(asIdentifier.getName(), result));
 		this.attributeResolver.addSource(asIdentifier.getName(), rename);
 		return null;
 	}
@@ -208,23 +209,28 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		// Keep the original Type not the alias
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute attribute : access.getOutputSchema()) {
-			SDFAttribute newAttribute = (SDFAttribute) attribute.clone(alias,attribute.getAttributeName());
-			//newAttribute.setSourceName(alias);
+			SDFAttribute newAttribute = (SDFAttribute) attribute.clone(alias,
+					attribute.getAttributeName());
+			// newAttribute.setSourceName(alias);
 			attributes.add(newAttribute);
 		}
-		SDFSchema schema = new SDFSchema(access.getOutputSchema().getURI(), attributes);
+		SDFSchema schema = new SDFSchema(access.getOutputSchema().getURI(),
+				attributes);
 		return schema;
-	}	
+	}
 
 	@Override
-	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
+	public Object visit(ASTBrokerSource node, Object data)
+			throws QueryParseException {
 		try {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
+					ISession.class);
 			m.invoke(bsv, caller);
-			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary",
+					IDataDictionary.class);
 			m.invoke(bsv, dd);
 
 			m = brokerSourceVisitor.getDeclaredMethod("visit",
@@ -248,16 +254,19 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		return null;
 	}
 
-	private Object brokerStreamingSource(ASTSimpleSource node, Object data) throws QueryParseException {
+	private Object brokerStreamingSource(ASTSimpleSource node, Object data)
+			throws QueryParseException {
 		try {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
+					ISession.class);
 			m.invoke(bsv, caller);
-			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary",
+					IDataDictionary.class);
 			m.invoke(bsv, dd);
-			
+
 			m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTSimpleSource.class, Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
