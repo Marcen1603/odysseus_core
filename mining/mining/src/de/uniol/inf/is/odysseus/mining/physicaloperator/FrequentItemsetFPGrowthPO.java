@@ -21,10 +21,11 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Transaction;
@@ -49,6 +50,9 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	private long startTime = 0L;	
 
 	private FList<M> flist = new FList<M>();
+	
+	private IMetadataMergeFunction<M> metadatamergefunction;
+	private M lastMetadata;
 
 	public FrequentItemsetFPGrowthPO() {
 
@@ -57,6 +61,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	public FrequentItemsetFPGrowthPO(FrequentItemsetFPGrowthPO<M> old) {
 		this.minsupport = old.minsupport;
 		this.maxTransactions = old.maxTransactions;
+		this.metadatamergefunction = old.metadatamergefunction.clone();
 	}
 
 	public FrequentItemsetFPGrowthPO(int minSupport, int maxTransactions) {
@@ -79,9 +84,11 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		lastTime = startTime;
 	}
 
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
-
+		lastMetadata = (M) object.getMetadata().clone();
 		if (counter % 100 == 0) {
 			long now = System.currentTimeMillis();
 			long needed = (now - lastTime);
@@ -91,10 +98,8 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			Tuple<M> countTuple = new Tuple<M>(3, false);
 			countTuple.setAttribute(0, counter);
 			countTuple.setAttribute(1, needed);
-			countTuple.setAttribute(2, total);
-			@SuppressWarnings("unchecked")
-			M clonedMD = (M) object.getMetadata().clone();
-			countTuple.setMetadata(clonedMD);
+			countTuple.setAttribute(2, total);						
+			countTuple.setMetadata(lastMetadata);
 			transfer(countTuple, 1);
 		}
 		// daten werden verarbeitet, weil wir einen zeitfortschritt haben
@@ -167,9 +172,14 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 					int i = 0;
 					for (Pattern<M> p : results) {
 						Tuple<M> newtuple = new Tuple<M>(3, false);
-						// TODO: use metadatamerge-functions...
-						newtuple.setMetadata(p.getMetadata());
-						newtuple.getMetadata().setStartAndEnd(totalMin, totalMax);
+						@SuppressWarnings("unchecked")
+						M left = (M) p.getMetadata().clone();
+						left.setStartAndEnd(totalMin, totalMax);
+						@SuppressWarnings("unchecked")
+						M right = (M) lastMetadata.clone();		
+						right.setStartAndEnd(totalMin, totalMax);
+						M meta = this.metadatamergefunction.mergeMetadata(left, right);
+						newtuple.setMetadata(meta);						
 						newtuple.setAttribute(0, i);
 						newtuple.setAttribute(1, p.getPattern());
 						newtuple.setAttribute(2, p.getSupport());
@@ -254,6 +264,21 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @param combinedMergeFunction
+	 */
+	public void setMetadataMerge(IMetadataMergeFunction<M> combinedMergeFunction) {
+		this.metadatamergefunction = combinedMergeFunction;
+		
+	}
+
+	/**
+	 * @return
+	 */
+	public IMetadataMergeFunction<M> getMetadataMerge() {
+		return this.metadatamergefunction;
 	}
 
 }

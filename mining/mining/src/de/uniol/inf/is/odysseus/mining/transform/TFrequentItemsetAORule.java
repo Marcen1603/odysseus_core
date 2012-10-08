@@ -32,8 +32,10 @@ package de.uniol.inf.is.odysseus.mining.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.FrequentItemsetAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetAprioriPO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetFPGrowthPO;
@@ -55,10 +57,15 @@ public class TFrequentItemsetAORule extends AbstractTransformationRule<FrequentI
 
 	@Override
 	public void execute(FrequentItemsetAO operator, TransformationConfiguration config) {
-		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = new FrequentItemsetFPGrowthPO<ITimeInterval>(operator.getMinSupport(), operator.getMaxTransactions());
+		FrequentItemsetFPGrowthPO<ITimeInterval> fpg = new FrequentItemsetFPGrowthPO<ITimeInterval>(operator.getMinSupport(), operator.getMaxTransactions());
+		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = fpg; 
+		CombinedMergeFunction<ITimeInterval> metaDataMerge = new CombinedMergeFunction<ITimeInterval>();
+		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
+		fpg.setMetadataMerge(metaDataMerge);		
 		if(operator.getAlgorithm().equalsIgnoreCase("APRIORI")){
-			po = new FrequentItemsetAprioriPO<ITimeInterval>(operator.getMinSupport());
+			po = new FrequentItemsetAprioriPO<ITimeInterval>(operator.getMinSupport());			
 		}		
+		
 		po.setOutputSchema(operator.getOutputSchema(0), 0);
 		po.setOutputSchema(operator.getOutputSchema(1), 1);
 		replace(operator, po, config);
