@@ -183,6 +183,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 		return false;
 	}
 
+	
 	@Override
 	public void process_done(int port) {
 		if (out != null) {

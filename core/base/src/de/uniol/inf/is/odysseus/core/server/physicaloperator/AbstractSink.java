@@ -280,9 +280,10 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
 		if (this.isSinkOpen.get()) {
 			try {
-				process_close();
-				stopMonitoring();
+				prepare_close();
 				callCloseOnChildren(callPath);
+				process_close();
+				stopMonitoring();				
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			} finally {
@@ -304,6 +305,10 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
+	protected void prepare_close(){
+		// Empty Default Implementation		
+	}
+	
 	protected void process_close() {
 		// Empty Default Implementation
 	}
