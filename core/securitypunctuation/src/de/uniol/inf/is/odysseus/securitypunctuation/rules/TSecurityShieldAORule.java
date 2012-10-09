@@ -56,7 +56,7 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<TopAO> {
 				topAOCollection.add(topAO);
 				
 				for(IPhysicalOperator e:physInputPOs) {
-					if(e instanceof ISource) {
+					if(e.isSource()) {
 						oldFather = (ISource<?>) e;
 						if(!(oldFather instanceof SecurityShieldPO)) {
 							IPipe securityShieldPO = new SecurityShieldPO();

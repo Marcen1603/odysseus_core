@@ -68,7 +68,7 @@ public class BreakOperatorCommand extends AbstractHandler implements IHandler {
 
 				if (ob == null) {
 					// Es können nur hinter Quellen Breaks gesetzt werden
-					if (operator instanceof ISource) {
+					if (operator.isSource()) {
 						final ISource<?> src = (ISource<?>) operator;
 						ob = new OperatorBreak(src);
 						OperatorBreakManager.getInstance().add(ob);

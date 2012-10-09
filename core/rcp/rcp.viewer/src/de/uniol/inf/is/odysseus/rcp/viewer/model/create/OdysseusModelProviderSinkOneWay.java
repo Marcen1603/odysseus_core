@@ -131,7 +131,7 @@ public final class OdysseusModelProviderSinkOneWay implements IModelProvider<IPh
 			ISink<T> sink = (ISink<T>)operator;
 			Collection<PhysicalSubscription<ISource<? extends T>>> sources = sink.getSubscribedToSource();
 			for (PhysicalSubscription<ISource<? extends T>> sub : sources) {
-				if (sub.getTarget() instanceof ISink<?>) {
+				if (sub.getTarget().isSink()) {
 					parse((ISink<?>) sub.getTarget(), graphModel, node);
 				} else {
 					parse(sub.getTarget(), graphModel, node);

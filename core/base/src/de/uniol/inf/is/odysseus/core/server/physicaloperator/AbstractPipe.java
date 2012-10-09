@@ -82,6 +82,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 		@Override
 		public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
+			// Do not (!) call close on AbstractSink! It would immediately
+			// call process_close (this should only be done by the
+			// source-Part of AbstractPipe)
 			if (isOpen()) {
 				callCloseOnChildren(callPath);
 			}
@@ -153,9 +156,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// }
 
 	@Override
-	protected boolean needsClone() {
+	protected boolean needsClone(int port) {
 		return getOutputMode() == OutputMode.MODIFIED_INPUT
-				|| super.needsClone();
+				|| super.needsClone(port);
 	}
 
 	// ------------------------------------------------------------------------

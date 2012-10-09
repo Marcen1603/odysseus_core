@@ -47,7 +47,7 @@ public enum MonitoringDataTypes {
 	
 	static public IMonitoringData< ? > createMetadata( String type, IPhysicalOperator source ){
 		int in = 0;
-		if (source instanceof ISink<?>){
+		if (source.isSink()){
 			in = ((ISink<?>)source).getSubscribedToSource().size();
 		}
 		

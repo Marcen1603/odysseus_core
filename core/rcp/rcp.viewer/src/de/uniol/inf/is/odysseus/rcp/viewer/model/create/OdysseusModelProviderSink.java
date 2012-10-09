@@ -138,7 +138,7 @@ public final class OdysseusModelProviderSink implements IModelProvider<IPhysical
 			ISink<T> sink = (ISink<T>)operator;
 			Collection<PhysicalSubscription<ISource<? extends T>>> sources = sink.getSubscribedToSource();
 			for (PhysicalSubscription<ISource<? extends T>> sub : sources) {
-				if (sub.getTarget() instanceof ISink<?>) {
+				if (sub.getTarget().isSink()) {
 					parse((ISink<?>) sub.getTarget(), graphModel, node, false);
 				} else {
 					parse(sub.getTarget(), graphModel, node, false);
@@ -146,7 +146,7 @@ public final class OdysseusModelProviderSink implements IModelProvider<IPhysical
 			}
 		}
 
-		if (operator instanceof ISource<?>) {
+		if (operator.isSource()) {
 			for (PhysicalSubscription<? extends ISink<?>> sub : ((ISource<?>) operator).getSubscriptions()) {
 				parse((ISink<?>) sub.getTarget(), graphModel, node, true);
 			}

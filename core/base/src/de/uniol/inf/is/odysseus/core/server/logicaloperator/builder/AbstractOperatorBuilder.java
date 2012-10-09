@@ -239,7 +239,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 			int outputPort) {
 		if (this.maxPortCount <= inputPort) {
 			throw new IllegalArgumentException("illegal input port: "
-					+ inputPort+" for operator "+operator);
+					+ inputPort+" for operator "+name+". Tried to connect operator "+operator.getName());
 		}
 		if (operator != null) {
 			this.inputOperators.put(inputPort, new InputOperatorItem(operator,

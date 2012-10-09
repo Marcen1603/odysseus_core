@@ -31,6 +31,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TBenchmarkBufferAOToPuncPipeRule());
 		rules.add(new TBenchmarkBufferAOToPuncPipe2Rule());
 		rules.add(new TBenchmarkResultAORule());
+		rules.add(new TDatarateCalcAORule());
 		return rules;
 	}
 

@@ -154,7 +154,7 @@ abstract public class AbstractExecListScheduling extends
 			}
 		}
 		for (PhysicalSubscription<? extends ISink<?>> sub: s.getSubscriptions() ){
-			if (sub.getTarget() instanceof ISource<?>){
+			if (sub.getTarget().isSource()){
 				getPathToRoot((ISource<?>)sub.getTarget(), schedulableOps, allOps, virtualOps);
 			}
 		}
@@ -186,7 +186,7 @@ abstract public class AbstractExecListScheduling extends
 			leafs.add((ISource<?>) sink);
 		} else {
 			for (PhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedToSource()) {
-				if (sub.getTarget() instanceof ISink<?>) {
+				if (sub.getTarget().isSink()) {
 					findLeafs((ISink<?>) sub.getTarget(), leafs);
 				} else {
 					// Only ISource

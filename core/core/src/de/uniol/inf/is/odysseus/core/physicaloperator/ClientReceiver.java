@@ -660,7 +660,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof ISource)) {
+		if (!(ipo.isSource())) {
 			return false;
 		}
 		return process_isSemanticallyEqual(ipo);

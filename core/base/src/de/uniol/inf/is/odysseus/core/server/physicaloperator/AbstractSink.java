@@ -197,14 +197,20 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	protected void open(List<PhysicalSubscription<ISink<?>>> callPath)
 			throws OpenFailedException {
 		// getLogger().debug("open() " + this);
+		// The operator can already be initialized from former calls
 		if (!isOpen()) {
 			fire(openInitEvent);
 			process_open();
 			fire(openDoneEvent);
 		}
+		// In every case, the sink is now open (no need to check, its cheaper to
+		// always set this value to true
+		// Hint: The operator can be opened by another method (c.f. AbstractPipe)
 		this.isSinkOpen.set(true);
+		
+		// Call open on all registered sources0
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
-			// Check if callPath contains this call to avoid cycles
+			// Check if callPath contains this call already to avoid cycles
 			if (!containsSubscription(callPath, getInstance(),
 					sub.getSourceOutPort(), sub.getSinkInPort())) {
 				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(),
@@ -570,7 +576,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof ISink || ipo instanceof IPipe))
+		if (!(ipo.isSink() || ipo.isPipe()))
 			return false;
 		return process_isSemanticallyEqual(ipo);
 	}

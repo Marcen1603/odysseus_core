@@ -57,7 +57,7 @@ public class GraphWalker {
 		// find sources
 		List<ISource<?>> sources = new ArrayList<ISource<?>>();
 		for( IPhysicalOperator op : operators ) {
-			if( op instanceof ISource && !(op instanceof ISink))
+			if( op.isSource() && !(op.isSink()))
 				sources.add((ISource<?>)op);
 		}
 		
@@ -73,7 +73,7 @@ public class GraphWalker {
 			
 			operatorsVisited.add(operator);
 			
-			if( operator instanceof ISource<?>) {
+			if( operator.isSource()) {
 				ISource<?> operatorAsSource = (ISource<?>)operator;
 				Collection<?> subscriptions = operatorAsSource.getSubscriptions();
 				

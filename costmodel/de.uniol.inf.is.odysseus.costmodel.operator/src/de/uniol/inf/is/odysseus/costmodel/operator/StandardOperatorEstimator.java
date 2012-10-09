@@ -21,7 +21,6 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
@@ -51,7 +50,7 @@ public class StandardOperatorEstimator<T extends IPhysicalOperator> implements I
 		OperatorEstimation estimation = new OperatorEstimation(instance);
 		
 		// sink?
-		if( instance instanceof ISink) {
+		if( instance.isSink()) {
 			// assume, that we have only one input-operator
 			OperatorEstimation prevOperatorEstimation = prevOperators.get(0);
 	

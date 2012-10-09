@@ -66,7 +66,7 @@ public class ConsoleFunctions {
 		if(source == null) {
 			return;
 		}
-		if (source instanceof ISink) {
+		if (source.isSink()) {
 			dumpPlan((ISink<?>) source, depth, b);
 		} else {
 			for (int i = 0; i < depth; ++i) {

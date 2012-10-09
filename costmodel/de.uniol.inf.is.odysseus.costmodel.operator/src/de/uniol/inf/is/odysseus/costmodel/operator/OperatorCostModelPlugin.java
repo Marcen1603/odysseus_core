@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MedianProcessingTime;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.PlanMonitor;
@@ -87,7 +86,7 @@ public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizati
 
 		// own metadata
 		for (IPhysicalOperator operator : query.getPhysicalChilds()) {
-			if (operator instanceof ISink) {
+			if (operator.isSink()) {
 				if (operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name) == null)
 					operator.addMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name, new MedianProcessingTime(operator));
 			}

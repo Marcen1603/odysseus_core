@@ -42,7 +42,7 @@ public class LatencySLAConformancePlacement implements ISLAConformancePlacement 
 			ISLAConformance conformance) {
 		// it is expected that there is only one query per partial plan!
 		IPhysicalOperator root = query.getRoots().get(0);
-		if (root instanceof ISource) {
+		if (root.isSource()) {
 			LatencyCalculationPipe<?> latencyCalc = new LatencyCalculationPipe();
 			ISubscribable subscribable = latencyCalc;
 			subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());

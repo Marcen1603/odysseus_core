@@ -89,7 +89,7 @@ public class ExecutorHelper implements IPlanModificationListener {
 		List<ISource<?>> sources = new ArrayList<ISource<?>>();
 
 		for (IPhysicalOperator op : physicalOperators)
-			if (op instanceof ISource && !(op instanceof ISink))
+			if (op.isSource() && !(op.isSink()))
 				sources.add((ISource<?>) op);
 		return sources;
 	}

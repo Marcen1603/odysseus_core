@@ -136,7 +136,7 @@ public class LoadManager {
 			leafs.add((ISource<?>) sink);
 		} else {
 			for (PhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedToSource()) {
-				if (sub.getTarget() instanceof ISink<?>) {
+				if (sub.getTarget().isSink()) {
 					findLeafs((ISink<?>) sub.getTarget(), leafs);
 				} else {
 					leafs.add(sub.getTarget());
