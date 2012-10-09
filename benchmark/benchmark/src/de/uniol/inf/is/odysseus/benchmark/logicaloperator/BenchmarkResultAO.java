@@ -13,6 +13,8 @@ public class BenchmarkResultAO extends AbstractLogicalOperator {
 
 	private long maxResults = -1;
 	private String resultType = "Latency";
+
+	private String statisticsType = "ALL";
 	
 	public BenchmarkResultAO() {
 
@@ -22,6 +24,7 @@ public class BenchmarkResultAO extends AbstractLogicalOperator {
 		super(other);
 		maxResults = other.maxResults;
 		resultType = other.resultType;
+		statisticsType = other.statisticsType;
 	}
 	
 	@Parameter(type = IntegerParameter.class, name = "maxResults", optional=true)
@@ -41,11 +44,19 @@ public class BenchmarkResultAO extends AbstractLogicalOperator {
 	@Parameter(type = StringParameter.class, name = "resultType", optional=true)
 	public void setResultType(String resultType) {
 		this.resultType = resultType;
-	}
+	}	
 
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new BenchmarkResultAO(this);
+	}
+
+	public String getStatisticsType() {
+		return statisticsType;
+	}
+	@Parameter(type = StringParameter.class, name = "statistics", optional=true)
+	public void setStatisticsType(String statisticsType) {
+		this.statisticsType = statisticsType;
 	}
 
 }

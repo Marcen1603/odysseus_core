@@ -20,6 +20,7 @@ import org.simpleframework.xml.Root;
 import org.simpleframework.xml.core.Persist;
 
 import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
+import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 
 /**
  * @author Jonas Jacobi
@@ -35,8 +36,9 @@ public abstract class AbstractBenchmarkResult<T> implements IBenchmarkResult<T> 
 	@Element
 	private long duration;
 	@Element(name = "statistics")
-	private DescriptiveStatistics desc = new DescriptiveStatistics();
+	private IDescriptiveStatistics desc = new DescriptiveStatistics();
 
+		
 	@Override
 	public void setStartTime(long start) {
 		this.startTime = start;
@@ -78,7 +80,7 @@ public abstract class AbstractBenchmarkResult<T> implements IBenchmarkResult<T> 
 	}
 	
 	@Override
-	public DescriptiveStatistics getStatistics() {
+	public IDescriptiveStatistics getStatistics() {
 		return this.desc;
 	}
 	
@@ -95,6 +97,22 @@ public abstract class AbstractBenchmarkResult<T> implements IBenchmarkResult<T> 
 	@Override
 	public String getCSVHeader() {
 		return "queryId;startTime;endTime;size;"+desc.getCSVHeader();
+	}
+
+	/**
+	 * @param statistics
+	 */
+	public void setStatistics(IDescriptiveStatistics statistics) {
+		this.desc = statistics;
+		
+	}
+	
+	@Override
+	abstract public AbstractBenchmarkResult<T> clone();
+	
+	@Override
+	public String toString() {	
+		return csvToString();
 	}
 
 }

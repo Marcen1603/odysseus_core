@@ -23,6 +23,7 @@ import org.simpleframework.xml.core.Persister;
 
 import de.uniol.inf.is.odysseus.benchmark.result.AbstractBenchmarkResult;
 import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
+import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 import de.uniol.inf.is.odysseus.interval_latency_priority.ILatencyPriority;
 
 @Root(name = "priorityresult")
@@ -30,6 +31,13 @@ public class PriorityBenchmarkResult<T extends ILatencyPriority> extends
 		AbstractBenchmarkResult<T> {
 	@Element(name="prioritizedStatistics")
 	private DescriptiveStatistics prioritizedStats = new DescriptiveStatistics();
+
+	/**
+	 * @param descStats
+	 */
+	public PriorityBenchmarkResult(IDescriptiveStatistics descStats) {
+		super.setStatistics(descStats);
+	}
 
 	@Override
 	public void add(T object) {
@@ -53,6 +61,11 @@ public class PriorityBenchmarkResult<T extends ILatencyPriority> extends
 		}
 		
 		return writer.toString();
+	}
+	
+	@Override
+	public PriorityBenchmarkResult<T> clone() {
+		return new PriorityBenchmarkResult<T>(getStatistics());
 	}
 	
 }

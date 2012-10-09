@@ -16,20 +16,22 @@
 package de.uniol.inf.is.odysseus.benchmark.prio.physical;
 
 import de.uniol.inf.is.odysseus.benchmark.result.AbstractBenchmarkResult;
-import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResultFactory;
+import de.uniol.inf.is.odysseus.benchmark.result.AbstractBenchmarkResultFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class PriorityBenchmarkResultFactory implements IBenchmarkResultFactory {
-
+public class PriorityBenchmarkResultFactory extends AbstractBenchmarkResultFactory {
+	
 	@Override
 	public AbstractBenchmarkResult<? extends ILatency> createBenchmarkResult() {
-		return new PriorityBenchmarkResult();
+		return new PriorityBenchmarkResult(getStatistics().createInstance());
 	}
 
 	@Override
 	public String getName() {
 		return "Priority";
 	}
+
+	
 
 }

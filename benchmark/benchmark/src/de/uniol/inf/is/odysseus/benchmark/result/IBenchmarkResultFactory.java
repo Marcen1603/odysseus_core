@@ -15,11 +15,14 @@
   */
 package de.uniol.inf.is.odysseus.benchmark.result;
 
+import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
+
 
 /**
  * @author Jonas Jacobi
  */
 public interface IBenchmarkResultFactory<T> {
-	public IBenchmarkResult<T> createBenchmarkResult();
+	public void setStatistics(IDescriptiveStatistics statistics);
+	public IBenchmarkResult<T> createBenchmarkResult();	
 	public String getName();
 }

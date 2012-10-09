@@ -16,9 +16,10 @@
 package de.uniol.inf.is.odysseus.benchmark.result;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
-import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
+import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 
-public interface IBenchmarkResult<T> extends ICSVToString{
+public interface IBenchmarkResult<T> extends ICSVToString, IClone{
 	public void add(T object);
 
 	public void setStartTime(long start);
@@ -29,7 +30,7 @@ public interface IBenchmarkResult<T> extends ICSVToString{
 
 	public long size();
 
-	public DescriptiveStatistics getStatistics();
+	public IDescriptiveStatistics getStatistics();
 
 	public void setQueryId(int queryId);
 }

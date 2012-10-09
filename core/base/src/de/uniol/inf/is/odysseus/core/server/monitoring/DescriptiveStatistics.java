@@ -25,12 +25,10 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.core.Persist;
 
-import de.uniol.inf.is.odysseus.core.ICSVToString;
-
 /**
  * @author Jonas Jacobi
  */
-public class DescriptiveStatistics implements ICSVToString{
+public class DescriptiveStatistics implements IDescriptiveStatistics{
 	private long[] values = new long[10000];
 	@Element(name = "N")
 	private int count = 0;
@@ -209,5 +207,10 @@ public class DescriptiveStatistics implements ICSVToString{
 	@Override
 	public String csvToString(boolean withMetada) {
 		return csvToString();
+	}
+
+	@Override
+	public IDescriptiveStatistics createInstance() {
+		return new DescriptiveStatistics();
 	}
 }

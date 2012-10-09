@@ -4,14 +4,14 @@ import de.uniol.inf.is.odysseus.benchmark.logicaloperator.BenchmarkResultAO;
 import de.uniol.inf.is.odysseus.benchmark.physical.BenchmarkResultPO;
 import de.uniol.inf.is.odysseus.benchmark.result.BenchmarkResultFactoryRegistry;
 import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResultFactory;
+import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TBenchmarkResultAORule extends
-		AbstractTransformationRule<BenchmarkResultAO> {
+public class TBenchmarkResultAORule extends AbstractTransformationRule<BenchmarkResultAO> {
 
 	@Override
 	public int getPriority() {
@@ -19,12 +19,16 @@ public class TBenchmarkResultAORule extends
 	}
 
 	@Override
-	public void execute(BenchmarkResultAO operator,
-			TransformationConfiguration config) {
+	public void execute(BenchmarkResultAO operator, TransformationConfiguration config) {
 		IBenchmarkResultFactory<?> resultFactory = BenchmarkResultFactoryRegistry.getEntry(operator.getResultType());
-		if (resultFactory == null){
-			throw new TransformationException("ResultFactory "+operator.getResultType()+" not registered!");
+		if (resultFactory == null) {
+			throw new TransformationException("ResultFactory " + operator.getResultType() + " not registered!");
 		}
+		IDescriptiveStatistics stats = BenchmarkResultFactoryRegistry.getStatistic(operator.getStatisticsType());
+		if (stats == null) {
+			throw new TransformationException("Statistic type " + operator.getStatisticsType() + " not registered!");
+		}
+		resultFactory.setStatistics(stats);
 		long resultsToRead = operator.getMaxResults();
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		BenchmarkResultPO po = new BenchmarkResultPO(resultFactory, resultsToRead);
@@ -32,8 +36,7 @@ public class TBenchmarkResultAORule extends
 	}
 
 	@Override
-	public boolean isExecutable(BenchmarkResultAO operator,
-			TransformationConfiguration config) {
+	public boolean isExecutable(BenchmarkResultAO operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 
@@ -46,7 +49,7 @@ public class TBenchmarkResultAORule extends
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
 	public Class<? super BenchmarkResultAO> getConditionClass() {
 		return BenchmarkResultAO.class;

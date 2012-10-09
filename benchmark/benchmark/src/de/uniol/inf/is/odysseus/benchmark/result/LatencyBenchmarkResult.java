@@ -16,12 +16,26 @@
 package de.uniol.inf.is.odysseus.benchmark.result;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
+import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 
 public class LatencyBenchmarkResult extends AbstractBenchmarkResult<ILatency> {
+
+	/**
+	 * @param statistiscs
+	 */
+	public LatencyBenchmarkResult(IDescriptiveStatistics statistics) {
+		super.setStatistics(statistics);
+	}
 
 	@Override
 	public void add(ILatency object) {
 		super.add(object);
 		getStatistics().addValue(object.getLatency());
 	}
+
+	@Override
+	public LatencyBenchmarkResult clone() {
+		return new LatencyBenchmarkResult(getStatistics());
+	}
+		
 }

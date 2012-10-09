@@ -58,8 +58,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.latency.logicaloperator.LatencyCalculationPipe;
 
-public class Benchmark implements IErrorEventListener, IBenchmark,
-		IEventListener {
+public class Benchmark implements IErrorEventListener, IBenchmark, IEventListener {
 	private long maxResults;
 	private String scheduler;
 	private String schedulingStrategy;
@@ -95,9 +94,9 @@ public class Benchmark implements IErrorEventListener, IBenchmark,
 		this.buildParameters = null;
 		this.queries = new ArrayList<IPair<String, String>>();
 		this.buildParameters = new ArrayList<IQueryBuildSetting<?>>();
-		this.metadataTypes = new String[] { ITimeInterval.class.getName(),
-				ILatency.class.getName() };
+		this.metadataTypes = new String[] { ITimeInterval.class.getName(), ILatency.class.getName() };
 		this.resultFactory = new LatencyBenchmarkResultFactory();
+		this.resultFactory.setStatistics(new DescriptiveStatistics());
 		this.usePunctuations = false;
 		this.useLoadShedding = false;
 	}
@@ -140,16 +139,14 @@ public class Benchmark implements IErrorEventListener, IBenchmark,
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Collection<IBenchmarkResult<ILatency>> runBenchmark()
-			throws BenchmarkException {
+	public Collection<IBenchmarkResult<ILatency>> runBenchmark() throws BenchmarkException {
 
 		clearExecutor();
 		createNexmarkSources();
-
-		IBenchmarkResult<ILatency> result = resultFactory
-				.createBenchmarkResult();
-		BenchmarkSink<ILatency> sink = new BenchmarkSink<ILatency>(result,
-				maxResults);
+		
+		IBenchmarkResult<ILatency> result = resultFactory.createBenchmarkResult();
+		
+		BenchmarkSink<ILatency> sink = new BenchmarkSink<ILatency>(result, maxResults);
 		LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
 		latency.subscribeSink(sink, 0, 0, latency.getOutputSchema());
 
@@ -161,12 +158,10 @@ public class Benchmark implements IErrorEventListener, IBenchmark,
 			this.sinks.add(sink);
 		}
 
-		TransformationConfiguration trafoConfig = new TransformationConfiguration(
-				dataType, getMetadataTypes());
+		TransformationConfiguration trafoConfig = new TransformationConfiguration(dataType, getMetadataTypes());
 		trafoConfig.setOption("usePunctuations", this.usePunctuations);
 		trafoConfig.setOption("useLoadShedding", this.useLoadShedding);
-		trafoConfig.setOption("useExtendedPostPriorisation",
-				this.extendedPostPriorisation);
+		trafoConfig.setOption("useExtendedPostPriorisation", this.extendedPostPriorisation);
 		if (noMetadataCreation) {
 			trafoConfig.setOption("NO_METADATA", true);
 		}
@@ -188,8 +183,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark,
 			bp.add(new ParameterTransformationConfiguration(trafoConfig));
 			bp.add(new ParameterBufferPlacementStrategy(bufferPlacement));
 
-			BenchmarkQueryBuildConfiguration qbc = new BenchmarkQueryBuildConfiguration(
-					bp);
+			BenchmarkQueryBuildConfiguration qbc = new BenchmarkQueryBuildConfiguration(bp);
 
 			executor.getQueryBuildConfigurations().put(qbc.getName(), qbc);
 
@@ -199,16 +193,14 @@ public class Benchmark implements IErrorEventListener, IBenchmark,
 				executor.addQuery(queryString, parserId, user, qbc.getName());
 			}
 			int i = 0;
-			for (IPhysicalOperator curRoot : executor.getExecutionPlan()
-					.getRoots()) {
+			for (IPhysicalOperator curRoot : executor.getExecutionPlan().getRoots()) {
 				ISource<?> source = (ISource<?>) curRoot;
 				if (this.resultPerQuery) {
 					result = resultFactory.createBenchmarkResult();
 					result.setQueryId(getQueryId(curRoot));
 					sink = new BenchmarkSink<ILatency>(result, maxResults);
 					sinkPO = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
-					((ISource) sinkPO).subscribeSink(sink, 0, 0,
-							sinkPO.getOutputSchema());
+					((ISource) sinkPO).subscribeSink(sink, 0, 0, sinkPO.getOutputSchema());
 					this.sinks.add(sink);
 				}
 
@@ -226,8 +218,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark,
 
 			ISchedulerManager schedulermanager = executor.getSchedulerManager();
 			IScheduler curScheduler = schedulermanager.getActiveScheduler();
-			curScheduler
-					.subscribe(this, SchedulingEventType.SCHEDULING_STOPPED);
+			curScheduler.subscribe(this, SchedulingEventType.SCHEDULING_STOPPED);
 
 			long startTime = System.nanoTime();
 			// result.setStartTime(System.nanoTime());
@@ -307,8 +298,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark,
 	@Override
 	public void setResultFactory(String className) {
 		try {
-			this.resultFactory = (IBenchmarkResultFactory<ILatency>) Class
-					.forName(className).newInstance();
+			this.resultFactory = (IBenchmarkResultFactory<ILatency>) Class.forName(className).newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
