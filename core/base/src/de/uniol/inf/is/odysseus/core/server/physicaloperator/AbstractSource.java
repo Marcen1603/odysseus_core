@@ -64,7 +64,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final private List<PhysicalSubscription<ISink<? super T>>>  connectedSinks = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 	final private Map<Integer, Integer> consumerCount = new HashMap<>();
 
-	private AtomicBoolean open = new AtomicBoolean(false);
+	protected AtomicBoolean open = new AtomicBoolean(false);
 	private String name = null;
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 	protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();

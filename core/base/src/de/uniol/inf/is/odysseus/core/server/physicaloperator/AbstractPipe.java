@@ -88,6 +88,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			if (isOpen()) {
 				callCloseOnChildren(callPath);
 			}
+			sinkOpen.set(false);
+			
 		}
 
 		@Override
@@ -251,6 +253,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		// are no roots of this query 
 		// here we need to call close by hand
 		closeAllSinkSubscriptions();
+		open.set(false);
 	}
 
 	@Override

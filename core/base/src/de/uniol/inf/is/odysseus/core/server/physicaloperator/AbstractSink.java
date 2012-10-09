@@ -122,7 +122,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	final private POEvent openInitEvent;
 	final private POEvent openDoneEvent;
 
-	final private AtomicBoolean isSinkOpen = new AtomicBoolean(false);
+	final protected AtomicBoolean sinkOpen = new AtomicBoolean(false);
 
 	protected POEvent[] processInitEvent = null;
 	protected POEvent[] processDoneEvent = null;
@@ -206,7 +206,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		// In every case, the sink is now open (no need to check, its cheaper to
 		// always set this value to true
 		// Hint: The operator can be opened by another method (c.f. AbstractPipe)
-		this.isSinkOpen.set(true);
+		this.sinkOpen.set(true);
 		
 		// Call open on all registered sources0
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
@@ -244,7 +244,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public boolean isOpen() {
-		return this.isSinkOpen.get();
+		return this.sinkOpen.get();
 	}
 
 	// ------------------------------------------------------------------------
@@ -284,7 +284,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
-		if (this.isSinkOpen.get()) {
+		if (this.sinkOpen.get()) {
 			try {
 				prepare_close();
 				callCloseOnChildren(callPath);
@@ -293,7 +293,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			} finally {
-				this.isSinkOpen.set(false);
+				this.sinkOpen.set(false);
 			}
 		}
 	}
