@@ -67,21 +67,11 @@ public class BenchmarkResultPO<M extends ILatency> extends
 		lock.unlock();
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_close()
-	 */
-	@Override
-	protected void process_close() {	
-		
-	}
 
 	int i = 0;
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#prepare_close()
-	 */
+		
 	@Override
-	protected void prepare_close() {
+	protected synchronized void process_close() {
 		for(Integer port : result.keySet()){
 			result.get(port).setEndTime(System.nanoTime());
 			transfer(result.get(port), port);
