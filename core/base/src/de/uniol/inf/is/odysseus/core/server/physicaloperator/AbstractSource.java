@@ -292,7 +292,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	private void removeActiveSubscription(
 			PhysicalSubscription<ISink<? super T>> sub) {
-		if (!activeSinkSubscriptions.contains(sub)) {
+		if (activeSinkSubscriptions.contains(sub)) {
 			consumerCount.put(sub.getSourceOutPort(),
 					consumerCount.get(sub.getSourceOutPort()) - 1);
 			this.activeSinkSubscriptions.remove(sub);
@@ -430,7 +430,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			removeActiveSubscription(sub);
 			// The are some sink, that are not connected by open (because they will never
 			// call close) kept in list connectedSinks
-			// If all by open connected subscriptions are removed, close operator
+			// If all by open connected subscriptions are removed, close operator			
 			if (activeSinkSubscriptions.size() == connectedSinks.size()) {
 				// prepare closing (e.g. clear caches or write files)
 				this.prepare_close();

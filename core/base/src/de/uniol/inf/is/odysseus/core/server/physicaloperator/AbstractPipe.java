@@ -244,7 +244,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	final public void close() {
+		prepare_close();
 		this.delegateSink.close();
+		process_close();
 		// The are cases where elements are connected that 
 		// are no roots of this query 
 		// here we need to call close by hand
@@ -253,6 +255,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	protected void process_close() {
+		System.out.println("CLOSE ON "+this);
 	}
 
 	@Override
