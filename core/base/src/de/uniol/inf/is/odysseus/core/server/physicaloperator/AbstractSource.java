@@ -138,7 +138,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	POEvent blockedEvent = new POEvent(this, POEventType.Blocked);
 	POEvent unblockedEvent = new POEvent(this, POEventType.Unblocked);
 
-
 	// ------------------------------------------------------------------
 
 	public AbstractSource() {
@@ -418,15 +417,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 		// if this subscription has no more callers, remove it from
 		// the set of activeSubscriptions
 		if (sub.getOpenCalls() == 0) {
-			removeActiveSubscription(sub);
+
 			// The are some sink, that are not connected by open (because they
 			// will never
 			// call close) kept in list connectedSinks
 			// If all by open connected subscriptions are removed, close
 			// operator
-			if (activeSinkSubscriptions.size() == connectedSinks.size()) {				
-				// Close all sinks that are not connected by open
-				closeAllSinkSubscriptions();
+			if ((activeSinkSubscriptions.size() - 1) == connectedSinks.size()) {
 				getLogger().debug("Closing " + toString());
 				fire(this.closeInitEvent);
 				this.process_close();
@@ -434,12 +431,17 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 				stopMonitoring();
 				fire(this.closeDoneEvent);
 			}
+			removeActiveSubscription(sub);
+			// Close all sinks that are not connected by open
+			if (activeSinkSubscriptions.size() == connectedSinks.size()) {
+				closeAllSinkSubscriptions();
+			}
 		}
 	}
 
 	protected void process_close() {
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// DONE
 	// ------------------------------------------------------------------------
