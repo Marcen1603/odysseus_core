@@ -61,7 +61,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 	// Only active subscription are served on transfer
 	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
-	final private List<PhysicalSubscription<ISink<? super T>>>  connectedSinks = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
+	final private List<PhysicalSubscription<ISink<? super T>>> connectedSinks = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 	final private Map<Integer, Integer> consumerCount = new HashMap<>();
 
 	protected AtomicBoolean open = new AtomicBoolean(false);
@@ -256,21 +256,24 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 			// increase numer of open calls for this subscription
 			// Hint: Because of query sharing, there can be more than one
-			// way, an open call occurs 
+			// way, an open call occurs
 			// op1 --> op2 --> op3
 			// op4 --> op2
 			// We need to remember how many times open was called, and decrement
-			// by close calls 
-			// Remove subscription if no one is interested anymore (i.e. the number
+			// by close calls
+			// Remove subscription if no one is interested anymore (i.e. the
+			// number
 			// of open calls == 0) --> Remove from activeSubscriptions
 			// Operator can be closed if all active Subscriptions are removed
 			sub.incOpenCalls();
 		}
 		// Because of multiple calls from different source, the operator may
-		// already have been initialized (isOpen()) 
+		// already have been initialized (isOpen())
 		// in other cases open the operator
 		if (!isOpen()) {
 			fire(openInitEvent);
+			// re-add all connected sinks
+			activeSinkSubscriptions.addAll(connectedSinks);
 			process_open();
 			fire(openDoneEvent);
 			open.set(true);
@@ -278,7 +281,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	private void addActiveSubscription(
-			PhysicalSubscription<ISink<? super T>> sub){
+			PhysicalSubscription<ISink<? super T>> sub) {
 		// Handle multiple open calls{
 		if (!activeSinkSubscriptions.contains(sub)) {
 			this.activeSinkSubscriptions.add(sub);
@@ -419,18 +422,21 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			throw new RuntimeException(
 					"Close called from an unsubscribed sink ");
 		}
-		// Hint: Multiple Open calls can occur per subscription because of query sharing
+		// Hint: Multiple Open calls can occur per subscription because of query
+		// sharing
 		// Op1 --> Op2 --> Op3
 		// Op4 --> Op2
-		// Op3 must not be closed before Op1 and Op4 have called close (via Op2) 
+		// Op3 must not be closed before Op1 and Op4 have called close (via Op2)
 		sub.decOpenCalls();
-		// if this subscription has no more callers, remove it from 
+		// if this subscription has no more callers, remove it from
 		// the set of activeSubscriptions
 		if (sub.getOpenCalls() == 0) {
 			removeActiveSubscription(sub);
-			// The are some sink, that are not connected by open (because they will never
+			// The are some sink, that are not connected by open (because they
+			// will never
 			// call close) kept in list connectedSinks
-			// If all by open connected subscriptions are removed, close operator			
+			// If all by open connected subscriptions are removed, close
+			// operator
 			if (activeSinkSubscriptions.size() == connectedSinks.size()) {
 				// prepare closing (e.g. clear caches or write files)
 				this.prepare_close();
@@ -562,13 +568,15 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	final protected void closeAllSinkSubscriptions() {
-		for (PhysicalSubscription<ISink<? super T>> sup : connectedSinks) {
-			sup.getTarget().close();
-		}
-		connectedSinks.clear();
+		// Do not close these connections to allow them to reconnect at open
+		// time
+		// for (PhysicalSubscription<ISink<? super T>> sup : connectedSinks) {
+		// sup.getTarget().close();
+		// }
+		// connectedSinks.clear();
 		activeSinkSubscriptions.clear();
 	}
-	
+
 	@Override
 	public void unsubscribeSink(
 			PhysicalSubscription<ISink<? super T>> subscription) {
