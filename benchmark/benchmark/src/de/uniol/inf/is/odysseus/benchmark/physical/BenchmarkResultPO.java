@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  */
 public class BenchmarkResultPO<M extends ILatency> extends
 		AbstractPipe<Tuple<M>, IBenchmarkResult<M>> {
-
+	
 	private Lock lock = new ReentrantLock();
 	private IBenchmarkResultFactory<M> resultFactory;
 	private Map<Integer, IBenchmarkResult<M>> result = new HashMap<>();
@@ -49,7 +49,7 @@ public class BenchmarkResultPO<M extends ILatency> extends
 		this.resultsToRead = resultsToRead;
 	}
 
-	public BenchmarkResultPO(BenchmarkResultPO<M> old) {
+	public BenchmarkResultPO(BenchmarkResultPO<M> old) {		
 		this.lock = old.lock;
 		this.resultFactory = old.resultFactory;
 		this.resultsToRead = old.resultsToRead;
@@ -61,7 +61,7 @@ public class BenchmarkResultPO<M extends ILatency> extends
 	}
 
 	@Override
-	public synchronized void process_done(int port) {
+	public void process_done(int port) {
 		lock.lock();
 		inputDone(port);
 		lock.unlock();
@@ -71,22 +71,24 @@ public class BenchmarkResultPO<M extends ILatency> extends
 	int i = 0;
 		
 	@Override
-	protected synchronized void process_close() {
+	protected void process_close() {
+		lock.lock();
 		for(Integer port : result.keySet()){
 			result.get(port).setEndTime(System.nanoTime());
 			transfer(result.get(port), port);
 		}
+		lock.unlock();
 	}
 
 	@Override
-	protected synchronized void process_next(Tuple<M> object, int port) {
+	protected void process_next(Tuple<M> object, int port) {
 		if (isOpen()) {
 			if (resultsToRead == -1 || result.get(port).size() < resultsToRead) {
 				result.get(port).add(object.getMetadata());
-			} else {
+			} else {		
 				lock.lock();
 				inputDone(port);
-				done(port);
+				done(port);	
 				lock.unlock();
 			}
 		}
