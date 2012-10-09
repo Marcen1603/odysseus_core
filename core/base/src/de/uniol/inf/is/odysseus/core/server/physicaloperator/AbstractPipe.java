@@ -254,8 +254,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	protected void process_close() {
-		System.out.println("CLOSE ON "+this);
+	protected void process_close() {		
 	}
 
 	@Override

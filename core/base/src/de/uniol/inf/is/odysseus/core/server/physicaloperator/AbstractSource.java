@@ -175,7 +175,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	final protected boolean hasSingleConsumer(int port) {
-		return consumerCount.get(port) > 1;
+		return consumerCount.get(port) <= 1;
 	}
 
 	@Override
