@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.core.server.monitoring;
 
+import java.text.NumberFormat;
+
 
 /**
  * @author Dennis Geesen
@@ -26,18 +28,19 @@ public class IncrementalDescriptiveStatistics implements IDescriptiveStatistics 
 	private long sum = 0;
 	private long min = Long.MAX_VALUE;
 	private long max = Long.MIN_VALUE;
+	private NumberFormat nf = NumberFormat.getNumberInstance();
 	
 	
 	@Override
 	public String csvToString() {
-		return min+";"+max+";"+getMean()+";"+count+";"+sum;				
+		return min+";"+max+";"+nf.format(getMean())+";"+count+";"+sum;				
 	}
 	
 	/**
 	 * @return
 	 */
 	private double getMean() {
-		return sum / count;
+		return sum / (double)count;
 	}
 
 	@Override
