@@ -34,14 +34,17 @@ public class BenchmarkController {
 		return instance;
 	}
 
-	private int counter = 0;
-	
+	private int counter = -2;
+
 	private int startSupport = 2;
-	private int startTransactions = 25;
-	private int startSelectivity = 0;
-	private int maxSupport = 15;
-	private int maxTransactions = 150;
+	private int startTransactions = 100;
+	private int startSelectivity = 10;
+	// private int maxSupport = 5;
+	// private int maxTransactions = 100;
 	private int maxSelectivity = 100;
+
+	private int times = 5;
+	private int timesCounter = 0;
 
 	private int currentSupport;
 	private int currentTransaction;
@@ -50,11 +53,14 @@ public class BenchmarkController {
 	private WebserviceServer server;
 	private boolean started = false;
 
+	private String prefix = "";
+
 	public void start() {
 		this.started = true;
 		this.currentSupport = this.startSupport;
 		this.currentTransaction = this.startTransactions;
 		this.currentSelectivity = this.startSelectivity;
+		this.prefix = "pre-";
 
 		System.out.println("Connecting to Odysseus...");
 		WebserviceServerService wss = new WebserviceServerService();
@@ -70,66 +76,93 @@ public class BenchmarkController {
 	}
 
 	private void next() {
-		currentSupport = currentSupport + 1;
-		if (currentSupport > maxSupport) {
-			currentTransaction = currentTransaction + 25;
-			if (currentTransaction > maxTransactions) {
-				currentSelectivity = currentSelectivity + 25;
-				if (currentSelectivity > maxSelectivity) {
-					System.out.println("finished - all done!");
+		// the first two runs are not recognized so that we increase after the
+		// second run (counter is 0)...
+		if (counter > 0) {
+
+			currentSelectivity = currentSelectivity + 10;
+			if (currentSelectivity > maxSelectivity) {
+				timesCounter++;
+				if (timesCounter > times) {
+					System.out.println("finished - all " + counter + " runs done!");
 					return;
 				}
-				this.currentTransaction = this.startTransactions;
+				this.currentSelectivity = startSelectivity;
 			}
-			this.currentSupport = startSupport;
-
 		}
 		runquery();
 	}
+
+	// private void next() {
+	// if (counter > 0) {
+	//
+	// currentSelectivity = currentSelectivity + 10;
+	// if (currentSelectivity > maxSelectivity) {
+	// currentTransaction = currentTransaction + 25;
+	// if (currentTransaction > maxTransactions) {
+	// currentSupport = currentSupport + 1;
+	// if (currentSupport > maxSupport) {
+	// System.out.println("finished - all " + counter + " runs done!");
+	// return;
+	// }
+	// this.currentTransaction = this.startTransactions;
+	// }
+	// this.currentSelectivity = startSelectivity;
+	// }
+	// }
+	// runquery();
+	// }
 
 	private void runquery() {
 		if (!this.started) {
 			return;
 		}
-//		try {
-//			Thread.sleep(500);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-		System.out.println("********************************Query "+counter+" *************************************************");
-		counter++;				
-		System.out.println("Start new with: Support s=" + currentSupport + " \t Transactions w=" + currentTransaction+ " \t Selectivity g=" + currentSelectivity);
-		String query = "#PARSER CQL \n" + "#TRANSCFG StandardLatency \n" + "#DEFINE support "
-				+ currentSupport
-				+ " \n"
-				+ "#DEFINE transactions "
-				+ currentTransaction
-				+ " \n"
-				+ "#DEFINE selectivity "
-				+ currentSelectivity
-				+ " \n"
-				+ "#DROPALLQUERIES \n"
-				+ "#QUERY \n"
-				+ "DROP STREAM frequent IF EXISTS  \n"
-				+ "#QUERY \n"
-				+ "CREATE STREAM frequent (timestamp STARTTIMESTAMP, transaction INTEGER, item STRING) CHANNEL localhost : 54322; \n"
-				+ "#PARSER PQL \n"
-				+ "#RUNQUERY \n"
+		// try {
+		// Thread.sleep(500);
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		counter++;
+		if (counter > 0) {
+			prefix = "";
+		}
+
+		System.out.println("******************************** Query " + counter + " *************************************************");
+		System.out.println("Start new with: Support s=" + currentSupport + " \t Transactions w=" + currentTransaction + " \t Selectivity g=" + currentSelectivity);
+		String queryOptimized = "#PARSER CQL \n" + "#TRANSCFG StandardLatency \n" + "#DEFINE support " + currentSupport + " \n" + "#DEFINE transactions " + currentTransaction
+				+ " \n" + "#DEFINE selectivity " + currentSelectivity + " \n" + "#DROPALLQUERIES \n" + "#QUERY \n" + "DROP STREAM frequent IF EXISTS  \n" + "#QUERY \n"
+				+ "CREATE STREAM frequent (timestamp STARTTIMESTAMP, transaction INTEGER, item STRING) CHANNEL localhost : 54322; \n" + "#PARSER PQL \n" + "#RUNQUERY \n"
 				+ "fis = FREQUENTITEMSET({algorithm='fpgrowth', support=${support}, transactions=${transactions}}, \n"
-				+ " RENAME({ALIASES=['item']}, \n"
-				+ " MAP({EXPRESSIONS=['toLong(item)']}, \n"
-				+ "PROJECT({ATTRIBUTES=['item']}, \n"
-				+ "WINDOW({size = 50, advance = 1, type = 'time'}, \n"
-				+ "ACCESS({source = 'frequent'}) \n"
-				+ ") \n"
-				+ ") \n"
-				+ ") \n"
-				+ ") \n"
-				+ ") \n"
-				+ "selected = SELECT({PREDICATE=ForAllPredicate('set, item <= (${selectivity}*10)')},fis) \n"
-				+ "stats = CALCLATENCY(COUNTSTATS({outputeach=100}, selected)) \n"
-				+ "fs3 = FILESINK({file='E:/Results/unoptimized-"+counter+"- w${transactions} - sel ${selectivity}/dump-unoptimized-S${support}-W${transactions}-SEL${selectivity}.csv', filetype='csv', dumpMetaData='true', cachesize=100}, stats)";
-		server.addQuery(token, "OdysseusScript", query, "StandardLatency");
+				+ " SELECT({PREDICATE=RelationalPredicate('item < (${selectivity}*10)')}, \n" + " RENAME({ALIASES=['item']}, \n" + " MAP({EXPRESSIONS=['toLong(item)']}, \n"
+				+ "PROJECT({ATTRIBUTES=['item']}, \n" + "WINDOW({size = 50, advance = 1, type = 'time'}, \n" + "ACCESS({source = 'frequent'}) \n" + ") \n" + ") \n" + ") \n"
+				+ ") \n" + ") \n" + ") \n" + "stats = BENCHMARKRESULT({resultType='Latency', statistics='INCREMENTAL'}, CALCLATENCY(fis)) \n"
+				+ "fs3 = FILESINK({file='E:/Results/optimized - w${transactions} - s${support}/" + prefix
+				+ "optimized-S${support}-W${transactions}-SEL${selectivity}.csv', filetype='csv', append='true'}, stats)";
+
+		String queryUnoptimized = "#PARSER CQL \n" + "#TRANSCFG StandardLatency \n" + "#DEFINE support " + currentSupport + " \n" + "#DEFINE transactions " + currentTransaction
+				+ " \n" + "#DEFINE selectivity " + currentSelectivity + " \n" + "#DROPALLQUERIES \n" + "#QUERY \n" + "DROP STREAM frequent IF EXISTS  \n" + "#QUERY \n"
+				+ "CREATE STREAM frequent (timestamp STARTTIMESTAMP, transaction INTEGER, item STRING) CHANNEL localhost : 54322; \n" + "#PARSER PQL \n" + "#RUNQUERY \n"
+				+ "fis = FREQUENTITEMSET({algorithm='fpgrowth', support=${support}, transactions=${transactions}}, \n" + " RENAME({ALIASES=['item']}, \n"
+				+ " MAP({EXPRESSIONS=['toLong(item)']}, \n" + "PROJECT({ATTRIBUTES=['item']}, \n" + "WINDOW({size = 50, advance = 1, type = 'time'}, \n"
+				+ "ACCESS({source = 'frequent'}) \n" + ") \n" + ") \n" + ") \n" + ") \n" + ") \n"
+				+ "selected = SELECT({PREDICATE=ForAllPredicate('set, item < (${selectivity}*10)')},fis) \n"
+				+ "stats = BENCHMARKRESULT({resultType='Latency', statistics='INCREMENTAL'}, CALCLATENCY(selected)) \n"
+				+ "fs3 = FILESINK({file='E:/Results/unoptimized - w${transactions} - s${support}/" + prefix
+				+ "unoptimized-S${support}-W${transactions}-SEL${selectivity}.csv', filetype='csv', append='true'}, stats)";
+		// + "stats = CALCLATENCY(COUNTSTATS({outputeach=100}, selected)) \n"
+		String queryWithout = "#PARSER CQL \n" + "#TRANSCFG StandardLatency \n" + "#DEFINE support " + currentSupport + " \n" + "#DEFINE transactions " + currentTransaction
+				+ " \n" + "#DEFINE selectivity " + currentSelectivity + " \n" + "#DROPALLQUERIES \n" + "#QUERY \n" + "DROP STREAM frequent IF EXISTS  \n" + "#QUERY \n"
+				+ "CREATE STREAM frequent (timestamp STARTTIMESTAMP, transaction INTEGER, item STRING) CHANNEL localhost : 54322; \n" + "#PARSER PQL \n" + "#RUNQUERY \n"
+				+ "fis = FREQUENTITEMSET({algorithm='fpgrowth', support=${support}, transactions=${transactions}}, \n" + " RENAME({ALIASES=['item']}, \n"
+				+ " MAP({EXPRESSIONS=['toLong(item)']}, \n" + "PROJECT({ATTRIBUTES=['item']}, \n" + "WINDOW({size = 50, advance = 1, type = 'time'}, \n"
+				+ "ACCESS({source = 'frequent'}) \n" + ") \n" + ") \n" + ") \n" + ") \n" + ") \n"
+				+ "stats = BENCHMARKRESULT({resultType='Latency', statistics='INCREMENTAL'}, CALCLATENCY(fis)) \n"
+				+ "fs3 = FILESINK({file='E:/Results/normal - w${transactions} - s${support}/" + prefix
+				+ "normal-S${support}-W${transactions}.csv', filetype='csv', append='true'}, stats)";
+		server.addQuery(token, "OdysseusScript", queryUnoptimized, "StandardLatency");
+		// server.addQuery(token, "OdysseusScript", queryOptimized,
+		// "StandardLatency");
+//		server.addQuery(token, "OdysseusScript", queryWithout, "StandardLatency");
 		System.out.println("****************************************************************************************");
 
 	}
