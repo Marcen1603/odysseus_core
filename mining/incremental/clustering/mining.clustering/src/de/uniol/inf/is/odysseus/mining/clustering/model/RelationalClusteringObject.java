@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.mining.clustering.model;
 
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
@@ -24,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
  * @author Kolja Blohm
  * 
  */
-public class RelationalClusteringObject<T extends IMetaAttribute> implements IClusteringObject<T, Object> {
+public class RelationalClusteringObject<T extends IMetaAttribute> extends AbstractMetaAttributeContainer<T> implements IClusteringObject<T, Object> {
 
 	/**
 	 * 

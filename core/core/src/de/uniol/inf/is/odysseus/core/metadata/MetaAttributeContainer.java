@@ -15,13 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.core.metadata;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 
 /**
  * @author Jonas Jacobi
  */
-public class MetaAttributeContainer<T extends IMetaAttribute> implements IMetaAttributeContainer<T> {
+public class MetaAttributeContainer<T extends IMetaAttribute> extends AbstractMetaAttributeContainer<T> implements IMetaAttributeContainer<T> {
 	private static final long serialVersionUID = -4027708515386331790L;
 	
 	private T metadata;

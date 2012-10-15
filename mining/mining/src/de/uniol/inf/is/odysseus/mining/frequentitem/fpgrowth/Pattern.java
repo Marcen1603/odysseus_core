@@ -20,15 +20,15 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 /**
  * @author Dennis Geesen
  * 
  */
-public class Pattern<M extends ITimeInterval> implements IMetaAttributeContainer<M> {
+public class Pattern<M extends ITimeInterval> extends AbstractMetaAttributeContainer<M> {
 
 	private static final long serialVersionUID = -2474068801651074450L;
 
