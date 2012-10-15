@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 
 public class Activator implements BundleActivator {
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void start(BundleContext context) throws Exception {
 		MetadataRegistry.addMetadataType(Latency.class, ILatency.class);

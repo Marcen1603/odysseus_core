@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 public class SecurityPunctuationQueryBuildConfiguration extends
 		AbstractQueryBuildConfiguration {
 
-	@SuppressWarnings("unchecked")
 	public SecurityPunctuationQueryBuildConfiguration() {
 		TransformationConfiguration transformationConfiguration = new TransformationConfiguration(
 				"relational", 

@@ -47,7 +47,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 public class StandardQueryBuildConfiguration extends
 		AbstractQueryBuildConfiguration {
 
-	@SuppressWarnings("unchecked")
 	public StandardQueryBuildConfiguration() {
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(

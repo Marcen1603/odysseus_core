@@ -48,7 +48,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 public class StandardLatencyQueryBuildConfiguration extends
 		AbstractQueryBuildConfiguration {
 
-	@SuppressWarnings("unchecked")
 	public StandardLatencyQueryBuildConfiguration() {
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(

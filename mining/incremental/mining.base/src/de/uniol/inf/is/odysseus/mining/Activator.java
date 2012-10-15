@@ -40,7 +40,6 @@ public class Activator implements BundleActivator {
 	 * )
 	 */
 	@Override
-    @SuppressWarnings("unchecked")
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		MetadataRegistry.addMetadataType(IntervalLatencyMining.class, ITimeInterval.class, ILatency.class, IMiningMetadata.class);
@@ -53,7 +52,6 @@ public class Activator implements BundleActivator {
 	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    @SuppressWarnings("unchecked")
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 		MetadataRegistry.removeCombinedMetadataType(ITimeInterval.class,

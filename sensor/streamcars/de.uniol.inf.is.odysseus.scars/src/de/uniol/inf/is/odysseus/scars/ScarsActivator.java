@@ -41,7 +41,6 @@ public class ScarsActivator implements BundleActivator {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		ScarsActivator.context = bundleContext;

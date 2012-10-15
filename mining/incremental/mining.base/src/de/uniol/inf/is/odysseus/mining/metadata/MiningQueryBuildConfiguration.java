@@ -43,7 +43,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 
 public class MiningQueryBuildConfiguration extends AbstractQueryBuildConfiguration {
 
-	@SuppressWarnings("unchecked")
 	public MiningQueryBuildConfiguration() {
 		settings.add(new ParameterTransformationConfiguration(new TransformationConfiguration("relational", ITimeInterval.class, IMiningMetadata.class, ILatency.class)));
 		settings.add(ParameterDoRewrite.TRUE);

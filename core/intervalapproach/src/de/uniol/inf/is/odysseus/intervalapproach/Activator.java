@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 public class Activator implements BundleActivator {
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void start(BundleContext context) throws Exception {
 		MetadataRegistry.addMetadataType(TimeInterval.class,
 				ITimeInterval.class);

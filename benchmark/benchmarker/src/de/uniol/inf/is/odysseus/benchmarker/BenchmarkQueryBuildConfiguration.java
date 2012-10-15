@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 public class BenchmarkQueryBuildConfiguration extends
 		AbstractQueryBuildConfiguration {
 	
-	@SuppressWarnings("unchecked")
 	public BenchmarkQueryBuildConfiguration() {
 		TransformationConfiguration trafoconfig = new TransformationConfiguration(
 				"relational", 

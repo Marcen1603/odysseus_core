@@ -24,13 +24,11 @@ import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 
 public class Activator implements BundleActivator {
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void start(BundleContext context) throws Exception {
 		MetadataRegistry.addMetadataType(IntervalLatency.class, ITimeInterval.class, ILatency.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		MetadataRegistry.removeCombinedMetadataType(ITimeInterval.class, ILatency.class);
