@@ -32,10 +32,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatency;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.IQuerySharing;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.QuerySharing;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.SLATestLogger;
 
 /**
  * sla-based partial plan scheduler. it chooses the next partial plan to

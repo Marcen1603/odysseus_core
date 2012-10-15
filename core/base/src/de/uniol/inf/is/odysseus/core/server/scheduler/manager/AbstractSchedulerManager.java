@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent;

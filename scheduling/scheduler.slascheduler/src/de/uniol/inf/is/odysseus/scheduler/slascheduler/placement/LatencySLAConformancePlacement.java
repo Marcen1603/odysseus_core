@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.latency.logicaloperator.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
