@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: SALSA Starter
-Bundle-SymbolicName: de.offis.salsa.starter
-Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.offis.salsa.starter.Activator
-Require-Bundle: org.eclipse.core.runtime
-Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7

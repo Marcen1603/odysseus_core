@@ -1,7 +1,0 @@
-///OdysseusScript
-#PARSER CQL
-#TRANSCFG Standard
-#QUERY
-
-CREATE STREAM person2 (timestamp STARTTIMESTAMP, id INTEGER, name STRING, email STRING, creditcard STRING, city STRING, state STRING) CHANNEL localhost : 65440
-
