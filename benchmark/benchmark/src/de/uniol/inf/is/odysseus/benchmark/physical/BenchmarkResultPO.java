@@ -35,20 +35,21 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class BenchmarkResultPO<M extends ILatency> extends AbstractPipe<Tuple<M>, IBenchmarkResult<M>> {
-
+public class BenchmarkResultPO<M extends ILatency> extends
+		AbstractPipe<Tuple<M>, IBenchmarkResult<M>> {
+	
 	private Lock lock = new ReentrantLock();
 	private IBenchmarkResultFactory<M> resultFactory;
 	private Map<Integer, IBenchmarkResult<M>> result = new HashMap<>();
 	private long resultsToRead = -1;
-	private int counter = 0;
 
-	public BenchmarkResultPO(IBenchmarkResultFactory<M> resultFactory, long resultsToRead) {
+	public BenchmarkResultPO(IBenchmarkResultFactory<M> resultFactory,
+			long resultsToRead) {
 		this.resultFactory = resultFactory;
 		this.resultsToRead = resultsToRead;
 	}
 
-	public BenchmarkResultPO(BenchmarkResultPO<M> old) {
+	public BenchmarkResultPO(BenchmarkResultPO<M> old) {		
 		this.lock = old.lock;
 		this.resultFactory = old.resultFactory;
 		this.resultsToRead = old.resultsToRead;
@@ -65,13 +66,14 @@ public class BenchmarkResultPO<M extends ILatency> extends AbstractPipe<Tuple<M>
 		inputDone(port);
 		lock.unlock();
 	}
+	
 
 	int i = 0;
-
+		
 	@Override
 	protected void process_close() {
 		lock.lock();
-		for (Integer port : result.keySet()) {
+		for(Integer port : result.keySet()){
 			result.get(port).setEndTime(System.nanoTime());
 			transfer(result.get(port), port);
 		}
@@ -81,38 +83,17 @@ public class BenchmarkResultPO<M extends ILatency> extends AbstractPipe<Tuple<M>
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
 		if (isOpen()) {
-			lock.lock();
-			counter++;
-			result.get(port).add(object.getMetadata());
-			if ((counter % 1000) == 0) {
-				result.get(port).setEndTime(System.nanoTime());
-				transfer(result.get(port), port);
-				counter = 0;
-				clear();
+			if (resultsToRead == -1 || result.get(port).size() < resultsToRead) {
+				result.get(port).add(object.getMetadata());
+			} else {		
+				lock.lock();
+				inputDone(port);
+				done(port);	
+				lock.unlock();
 			}
-			lock.unlock();
-		}
-
-		// if (isOpen()) {
-		// if (resultsToRead == -1 || result.get(port).size() < resultsToRead) {
-		// result.get(port).add(object.getMetadata());
-		// } else {
-		// lock.lock();
-		// inputDone(port);
-		// done(port);
-		// lock.unlock();
-		// }
-		// }
-	}
-
-	
-	private void clear(){
-		result.clear();
-		for (PhysicalSubscription<?> s : getSubscribedToSource()) {
-			result.put(s.getSinkInPort(), resultFactory.createBenchmarkResult());
 		}
 	}
-	
+
 	private void inputDone(int port) {
 		result.get(port).setEndTime(System.nanoTime());
 		transfer(result.get(port), port);
@@ -121,7 +102,10 @@ public class BenchmarkResultPO<M extends ILatency> extends AbstractPipe<Tuple<M>
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		clear();
+		result.clear();
+		for (PhysicalSubscription<?> s : getSubscribedToSource()) {
+			result.put(s.getSinkInPort(), resultFactory.createBenchmarkResult());
+		}
 	}
 
 	@Override
