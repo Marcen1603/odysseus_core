@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.benchmark.prio.physical;
 
 import de.uniol.inf.is.odysseus.benchmark.physical.BenchmarkPO;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 /**
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.priority.IPriority;
  * 
  * @param <T>
  */
-public class PriorityBenchmarkPO<T extends IMetaAttributeContainer<? extends IPriority>>
+public class PriorityBenchmarkPO<T extends IStreamObject<? extends IPriority>>
 		extends BenchmarkPO<T> {
 
 	double[] oldVals = new double[128];

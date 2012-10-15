@@ -19,12 +19,12 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IWindow;
 
-public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>>
+public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITimeInterval>>
 		extends AbstractPipe<T, T> implements IWindow {
 	protected final long windowSize;
 	protected final long windowAdvance;

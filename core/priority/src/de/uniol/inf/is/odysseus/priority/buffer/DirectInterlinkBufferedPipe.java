@@ -18,11 +18,11 @@ package de.uniol.inf.is.odysseus.priority.buffer;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferedPipe;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
-public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? extends IPriority>>
+public class DirectInterlinkBufferedPipe<T extends IStreamObject<? extends IPriority>>
 		extends BufferedPipe<T> {
 	Lock directLinkLock = new ReentrantLock();
 

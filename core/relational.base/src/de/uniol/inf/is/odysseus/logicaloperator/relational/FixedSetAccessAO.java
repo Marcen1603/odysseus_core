@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.logicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-public class FixedSetAccessAO<T extends IMetaAttributeContainer<? extends IClone>> extends AccessAO {
+public class FixedSetAccessAO<T extends IStreamObject<? extends IClone>> extends AccessAO {
 
 	private static final long serialVersionUID = -4026927772571867684L;
 	private final T[] tuples;

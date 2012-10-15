@@ -34,7 +34,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.ICorrection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
  * 
  * @author Dennis Geesen Created at: 11.07.2011
  */
-public abstract class AbstractCorrectionPO<T extends IMetaAttributeContainer<? extends IMiningMetadata>, C extends ICorrection<T>> extends AbstractPipe<T, T> {
+public abstract class AbstractCorrectionPO<T extends IStreamObject<? extends IMiningMetadata>, C extends ICorrection<T>> extends AbstractPipe<T, T> {
 
 	protected List<C> corrections;
 

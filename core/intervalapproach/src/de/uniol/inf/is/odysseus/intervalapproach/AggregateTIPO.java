@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>, W extends IClone>
+public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IClone>
 		extends AggregatePO<Q, R, W> {
 
 	protected IMetadataMergeFunction<Q> metadataMerge;

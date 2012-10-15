@@ -18,13 +18,13 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 
 /**
  * @author Jonas Jacobi
  */
-public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContainer<? extends M>> extends AbstractPipe<T, T>{
+public class MetadataUpdatePO<M extends IClone, T extends IStreamObject<? extends M>> extends AbstractPipe<T, T>{
 
 	private IMetadataUpdater<M, T> metadataFactory;
 

@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 /**
  * @author Jan Sören Schwarz
  */
-public class StandardSecurityEvaluator<T extends IMetaAttributeContainer<? extends ITimeInterval>> implements IUserManagementListener {
+public class StandardSecurityEvaluator<T extends IStreamObject<? extends ITimeInterval>> implements IUserManagementListener {
 	
     private static Logger LOG = LoggerFactory.getLogger(StandardSecurityEvaluator.class);
 	

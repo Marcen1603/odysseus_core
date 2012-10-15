@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.broker.physicaloperator.association;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
  * @param <W>
  *            the type of the tuple
  */
-public class LeftAfterRightTITransferArea<R extends IMetaAttributeContainer<? extends ITimeInterval>,W extends IMetaAttributeContainer<? extends ITimeInterval>>
+public class LeftAfterRightTITransferArea<R extends IStreamObject<? extends ITimeInterval>,W extends IStreamObject<? extends ITimeInterval>>
 		extends TITransferArea<R,W> {
 
 	/**

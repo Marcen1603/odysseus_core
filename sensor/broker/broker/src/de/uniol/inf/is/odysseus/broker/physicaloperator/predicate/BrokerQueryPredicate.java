@@ -15,7 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.broker.physicaloperator.predicate;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 
@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
  *
  * @param <T> the generic type
  */
-public class BrokerQueryPredicate<T extends IMetaAttributeContainer<ITimeInterval>> extends AbstractPredicate<T> {
+public class BrokerQueryPredicate<T extends IStreamObject<ITimeInterval>> extends AbstractPredicate<T> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 759591029481942568L;

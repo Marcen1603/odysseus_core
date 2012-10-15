@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.action.services.dataExtraction.IDataExtractor;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
@@ -116,7 +116,7 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 						((Number)(dataExtractor.extractAttribute(object, "timestamp", type, this.schema))).longValue());
 
 				//dataextraction until metadata was created
-				ITimeInterval metaData = (ITimeInterval)((IMetaAttributeContainer)object).getMetadata();
+				ITimeInterval metaData = (ITimeInterval)((IStreamObject)object).getMetadata();
 				bmData.addOutputTime(IActuatorBenchmark.Operation.DATAEXTRACTION.name(), 
 					metaData.getStart().getMainPoint());
 				

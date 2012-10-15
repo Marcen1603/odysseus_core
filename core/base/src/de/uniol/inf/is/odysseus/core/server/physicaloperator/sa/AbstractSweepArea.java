@@ -24,12 +24,12 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  * @author Jonas Jacobi
  */
-public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> implements ITemporalSweepArea<T> {
+public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements ITemporalSweepArea<T> {
 	// elements get stored in a linked list instead of a priority queue
 	// because we need ordered traversal via iterator
 	// while insertion is in O(N), it is not that bad in reality, because

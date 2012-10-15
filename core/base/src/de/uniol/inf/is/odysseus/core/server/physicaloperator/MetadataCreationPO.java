@@ -24,12 +24,12 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  * @author Jonas Jacobi
  */
-public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttributeContainer<M>> extends
+public class MetadataCreationPO<M extends IMetaAttribute, In extends IStreamObject<M>> extends
 		AbstractPipe<In, In> implements Serializable{
 
 	private static final long serialVersionUID = 3783851208646530940L;

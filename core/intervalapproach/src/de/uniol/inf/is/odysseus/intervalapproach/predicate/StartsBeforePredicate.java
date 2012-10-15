@@ -16,11 +16,11 @@
 package de.uniol.inf.is.odysseus.intervalapproach.predicate;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 
-public class StartsBeforePredicate extends AbstractPredicate<IMetaAttributeContainer<? extends ITimeInterval>>{
+public class StartsBeforePredicate extends AbstractPredicate<IStreamObject<? extends ITimeInterval>>{
 
 	/**
 	 * 
@@ -34,12 +34,12 @@ public class StartsBeforePredicate extends AbstractPredicate<IMetaAttributeConta
 	}
 	
 	@Override
-	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> elem){
+	public boolean evaluate(IStreamObject<? extends ITimeInterval> elem){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> left, IMetaAttributeContainer<? extends ITimeInterval> right){
+	public boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right){
 		return left.getMetadata().getStart().beforeOrEquals(right.getMetadata().getStart());
 	}
 	

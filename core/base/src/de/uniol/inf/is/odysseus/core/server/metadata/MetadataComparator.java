@@ -19,18 +19,18 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  * @author Jonas Jacobi
  */
-public class MetadataComparator<T extends IClone> implements Comparator<IMetaAttributeContainer<? extends T>>, Serializable {
+public class MetadataComparator<T extends IClone> implements Comparator<IStreamObject<? extends T>>, Serializable {
 
 	private static final long serialVersionUID = -1674438499933717924L;
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public int compare(IMetaAttributeContainer<? extends T> o1, IMetaAttributeContainer<? extends T> o2) {
+	public int compare(IStreamObject<? extends T> o1, IStreamObject<? extends T> o2) {
 		return ((Comparable<T>)o1.getMetadata()).compareTo(o2.getMetadata());
 	}
       

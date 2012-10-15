@@ -15,7 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.intervalapproach.predicate;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
  * 
  * @author Andre Bolles
  */
-public class TotallyAfterPredicate extends AbstractPredicate<IMetaAttributeContainer<? extends ITimeInterval>> {
+public class TotallyAfterPredicate extends AbstractPredicate<IStreamObject<? extends ITimeInterval>> {
 
 	/**
 	 * 
@@ -39,13 +39,13 @@ public class TotallyAfterPredicate extends AbstractPredicate<IMetaAttributeConta
 	private static final TotallyAfterPredicate predicate = new TotallyAfterPredicate();
 
 	@Override
-	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> input) {
+	public boolean evaluate(IStreamObject<? extends ITimeInterval> input) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> left,
-			IMetaAttributeContainer<? extends ITimeInterval> right) {
+	public boolean evaluate(IStreamObject<? extends ITimeInterval> left,
+			IStreamObject<? extends ITimeInterval> right) {
 		return TimeInterval.totallyAfter(left.getMetadata(), right
 				.getMetadata());
 	}

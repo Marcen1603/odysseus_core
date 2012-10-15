@@ -15,10 +15,10 @@
   */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
-public class DefaultTIDummyDataCreation implements IDummyDataCreationFunction<ITimeInterval, IMetaAttributeContainer<ITimeInterval>>{
+public class DefaultTIDummyDataCreation implements IDummyDataCreationFunction<ITimeInterval, IStreamObject<ITimeInterval>>{
 
 	public DefaultTIDummyDataCreation(
 			DefaultTIDummyDataCreation defaultTIDummyDataCreation) {
@@ -29,13 +29,13 @@ public class DefaultTIDummyDataCreation implements IDummyDataCreationFunction<IT
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public IMetaAttributeContainer<ITimeInterval> createMetadata(
-			IMetaAttributeContainer<ITimeInterval> source) {
-		return (IMetaAttributeContainer<ITimeInterval>) source.clone();
+	public IStreamObject<ITimeInterval> createMetadata(
+			IStreamObject<ITimeInterval> source) {
+		return (IStreamObject<ITimeInterval>) source.clone();
 	}
 
 	@Override
-	public boolean hasMetadata(IMetaAttributeContainer<ITimeInterval> source) {
+	public boolean hasMetadata(IStreamObject<ITimeInterval> source) {
 		return true;
 	}
 

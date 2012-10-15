@@ -20,7 +20,7 @@ import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order
  * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>
  *
  */
-public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractPipe<T,T>{
+public class DuplicateEliminationTIPO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<T,T>{
 
 	/**
 	 * the list of next elems to return

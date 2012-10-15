@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 
 /**
@@ -32,5 +32,5 @@ public interface IPunctuationPipe<W,R> extends IPipe<W,R>{
 	 * @param punctuation the punctuation getting out of date
 	 * @param current the current processed data stream element
 	 */
-	public boolean cleanInternalStates(PointInTime punctuation, IMetaAttributeContainer<?> current);
+	public boolean cleanInternalStates(PointInTime punctuation, IStreamObject<?> current);
 }

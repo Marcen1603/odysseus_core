@@ -36,7 +36,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateful.IBinaryCorrection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
  * 
  * @author Dennis Geesen Created at: 11.07.2011
  */
-public class StatefulCorrectionPO<Meta extends IMiningMetadata, Data extends IMetaAttributeContainer<Meta>> extends
+public class StatefulCorrectionPO<Meta extends IMiningMetadata, Data extends IStreamObject<Meta>> extends
 		AbstractCorrectionPO<Data, IBinaryCorrection<Data>> {
 
 	private static final int LEFT = 0;

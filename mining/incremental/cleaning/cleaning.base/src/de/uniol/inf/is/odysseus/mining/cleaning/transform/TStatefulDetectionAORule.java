@@ -30,7 +30,7 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatefulDetectionAO;
 import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.StatefulDetectionPO;
@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Dennis Geesen
  * Created at: 07.07.2011
  */
-public class TStatefulDetectionAORule extends AbstractTransformationRule<StatefulDetectionAO<IMetaAttributeContainer<IMiningTimeIntervall>>> {
+public class TStatefulDetectionAORule extends AbstractTransformationRule<StatefulDetectionAO<IStreamObject<IMiningTimeIntervall>>> {
 
 	@Override
 	public int getPriority() {	
@@ -52,8 +52,8 @@ public class TStatefulDetectionAORule extends AbstractTransformationRule<Statefu
 	}
 
 	@Override
-	public void execute(StatefulDetectionAO<IMetaAttributeContainer<IMiningTimeIntervall>> detectAO, TransformationConfiguration config) {
-		StatefulDetectionPO<IMiningTimeIntervall, IMetaAttributeContainer<IMiningTimeIntervall>> detectPO = new StatefulDetectionPO<IMiningTimeIntervall,IMetaAttributeContainer<IMiningTimeIntervall>>(detectAO.getDetections());
+	public void execute(StatefulDetectionAO<IStreamObject<IMiningTimeIntervall>> detectAO, TransformationConfiguration config) {
+		StatefulDetectionPO<IMiningTimeIntervall, IStreamObject<IMiningTimeIntervall>> detectPO = new StatefulDetectionPO<IMiningTimeIntervall,IStreamObject<IMiningTimeIntervall>>(detectAO.getDetections());
 		detectPO.setOutputSchema(detectAO.getOutputSchema());
 		detectPO.setInputSchemas(detectAO.getInputSchema(0), detectAO.getInputSchema(1));
 		replace(detectAO, detectPO, config);		
@@ -61,7 +61,7 @@ public class TStatefulDetectionAORule extends AbstractTransformationRule<Statefu
 	}
 
 	@Override
-	public boolean isExecutable(StatefulDetectionAO<IMetaAttributeContainer<IMiningTimeIntervall>> operator, TransformationConfiguration config) {
+	public boolean isExecutable(StatefulDetectionAO<IStreamObject<IMiningTimeIntervall>> operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 

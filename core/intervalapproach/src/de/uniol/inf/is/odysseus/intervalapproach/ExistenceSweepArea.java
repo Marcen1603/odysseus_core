@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Collections;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 
-public class ExistenceSweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends JoinTISweepArea<T>{
+public class ExistenceSweepArea<T extends IStreamObject<? extends ITimeInterval>> extends JoinTISweepArea<T>{
 
 	@Override
 	public void insert(T object){

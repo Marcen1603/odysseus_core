@@ -33,11 +33,11 @@ package de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.IUnaryDetection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
 
-public class StatelessDetectionPO<T extends IMetaAttributeContainer<? extends IMiningMetadata>> extends AbstractDetectionPO<T, IUnaryDetection<T>> {	
+public class StatelessDetectionPO<T extends IStreamObject<? extends IMiningMetadata>> extends AbstractDetectionPO<T, IUnaryDetection<T>> {	
 
 	public StatelessDetectionPO(List<IUnaryDetection<T>> detections) {
 		super(detections);

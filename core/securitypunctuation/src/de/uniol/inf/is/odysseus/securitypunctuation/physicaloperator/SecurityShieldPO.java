@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.securitypunctuation.helper.StandardSecurityEvalu
 /**
  * @author Jan Sören Schwarz
  */
-public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractPipe<T, T> {
+public class SecurityShieldPO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private StandardSecurityEvaluator<T> evaluator = new StandardSecurityEvaluator<T>((AbstractPipe<T, T>) this);
 	

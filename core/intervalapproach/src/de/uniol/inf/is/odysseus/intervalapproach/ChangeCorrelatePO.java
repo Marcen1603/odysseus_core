@@ -31,7 +31,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order
  * 
  * @author Dennis Geesen Created at: 29.05.2012
  */
-public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IMetaAttributeContainer<K>> extends AbstractPipe<R, R> implements IProcessInternal<R> {
+public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject<K>> extends AbstractPipe<R, R> implements IProcessInternal<R> {
 
 	private R lasthigh;
 	private R lastlow;

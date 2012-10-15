@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  * IDummyDataCreationFunction is used to create data with special properties (e.g. set a priority
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
  * @param <K>
  * @param <T>
  */
-public interface IDummyDataCreationFunction<K extends IMetaAttribute,T extends IMetaAttributeContainer<K>> {
+public interface IDummyDataCreationFunction<K extends IMetaAttribute,T extends IStreamObject<K>> {
 		public T createMetadata(T source);
 		public boolean hasMetadata(T source);
 		public IDummyDataCreationFunction<K, T> clone() ;

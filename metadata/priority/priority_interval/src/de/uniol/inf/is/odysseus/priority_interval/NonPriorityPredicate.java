@@ -19,10 +19,10 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
-public class NonPriorityPredicate<T extends IMetaAttributeContainer<? extends IPriority>> implements IPredicate<T> {
+public class NonPriorityPredicate<T extends IStreamObject<? extends IPriority>> implements IPredicate<T> {
 
 	private static final long serialVersionUID = 3293073689856493084L;
 

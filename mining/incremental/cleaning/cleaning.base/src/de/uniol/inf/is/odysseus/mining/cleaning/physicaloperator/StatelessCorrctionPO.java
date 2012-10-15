@@ -33,7 +33,7 @@ package de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless.IUnaryCorrection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
 
@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
  * @author Dennis Geesen
  * Created at: 11.07.2011
  */
-public class StatelessCorrctionPO<T extends IMetaAttributeContainer<? extends IMiningMetadata>> extends AbstractCorrectionPO<T, IUnaryCorrection<T>>{
+public class StatelessCorrctionPO<T extends IStreamObject<? extends IMiningMetadata>> extends AbstractCorrectionPO<T, IUnaryCorrection<T>>{
 
 	public StatelessCorrctionPO(List<IUnaryCorrection<T>> corrections) {
 		super(corrections);

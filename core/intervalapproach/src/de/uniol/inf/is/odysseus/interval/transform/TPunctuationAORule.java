@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.interval.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.PunctuationAO;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -33,7 +33,7 @@ public class TPunctuationAORule extends AbstractTransformationRule<PunctuationAO
 
     @Override
     public void execute(PunctuationAO punctuationAO, TransformationConfiguration config) {
-        PunctuationPO<IMetaAttributeContainer<ITimeInterval>> punctuationPO = new PunctuationPO<IMetaAttributeContainer<ITimeInterval>>(punctuationAO.getRatio());
+        PunctuationPO<IStreamObject<ITimeInterval>> punctuationPO = new PunctuationPO<IStreamObject<ITimeInterval>>(punctuationAO.getRatio());
         defaultExecute(punctuationAO, punctuationPO, config, true, true);
     }
 

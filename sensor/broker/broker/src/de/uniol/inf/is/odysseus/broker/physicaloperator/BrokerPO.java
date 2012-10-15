@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
@@ -46,7 +46,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalComparator;
  * @param <T> the reading and writing type of a tuple
  * @author Dennis Geesen
  */
-public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends AbstractPipe<T, T> {
+public class BrokerPO<T extends IStreamObject<ITimeInterval>> extends AbstractPipe<T, T> {
 
 	/** The logger. */
 	private Logger logger = LoggerFactory.getLogger("BrokerPO");
@@ -67,7 +67,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * The waiting buffer caches all elements before it is their chronological
 	 * turn.
 	 */
-	private PriorityQueue<T> waitingBuffer = new PriorityQueue<T>(1, new TimeIntervalComparator<IMetaAttributeContainer<ITimeInterval>>());
+	private PriorityQueue<T> waitingBuffer = new PriorityQueue<T>(1, new TimeIntervalComparator<IStreamObject<ITimeInterval>>());
 
 	/** Assigns each writing stream a tsmin to save the minimum timestamp. */
 	private PointInTime tsmin[] = new PointInTime[0];

@@ -20,7 +20,7 @@ package de.uniol.inf.is.odysseus.core.metadata;
 /**
  * @author Jonas Jacobi
  */
-public class MetaAttributeContainer<T extends IMetaAttribute> extends AbstractMetaAttributeContainer<T> implements IMetaAttributeContainer<T> {
+public class MetaAttributeContainer<T extends IMetaAttribute> extends AbstractMetaAttributeContainer<T> implements IStreamObject<T> {
 	private static final long serialVersionUID = -4027708515386331790L;
 	
 	private T metadata;

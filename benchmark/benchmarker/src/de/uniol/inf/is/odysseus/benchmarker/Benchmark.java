@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -147,7 +147,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 		IBenchmarkResult<ILatency> result = resultFactory.createBenchmarkResult();
 		
 		BenchmarkSink<ILatency> sink = new BenchmarkSink<ILatency>(result, maxResults);
-		LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
+		LatencyCalculationPipe latency = new LatencyCalculationPipe<IStreamObject<? extends ILatency>>();
 		latency.subscribeSink(sink, 0, 0, latency.getOutputSchema());
 
 		ISink sinkPO = latency;
@@ -199,7 +199,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 					result = resultFactory.createBenchmarkResult();
 					result.setQueryId(getQueryId(curRoot));
 					sink = new BenchmarkSink<ILatency>(result, maxResults);
-					sinkPO = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
+					sinkPO = new LatencyCalculationPipe<IStreamObject<? extends ILatency>>();
 					((ISource) sinkPO).subscribeSink(sink, 0, 0, sinkPO.getOutputSchema());
 					this.sinks.add(sink);
 				}

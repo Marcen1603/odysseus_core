@@ -21,7 +21,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO;
 import de.uniol.inf.is.odysseus.securitypunctuation.helper.StandardSecurityEvaluator;
 
-public class SAAggregateTIPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>, W extends IMetaAttributeContainer<Q>> 
+public class SAAggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>> 
 extends StreamGroupingWithAggregationPO<Q, R, W> {
 	
     private static Logger LOG = LoggerFactory.getLogger(SAAggregateTIPO.class);

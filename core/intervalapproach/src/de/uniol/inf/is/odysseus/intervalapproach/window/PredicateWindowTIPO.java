@@ -19,7 +19,7 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * @param <T>
  */
 
-public class PredicateWindowTIPO<T extends IMetaAttributeContainer<ITimeInterval>>
+public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		extends AbstractPipe<T, T> {
 
 	private final List<T> queue = new LinkedList<T>();

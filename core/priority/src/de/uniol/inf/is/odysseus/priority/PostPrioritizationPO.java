@@ -17,10 +17,10 @@ package de.uniol.inf.is.odysseus.priority;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class PostPrioritizationPO<K extends IPriority, T extends IMetaAttributeContainer<? extends K>>
+public class PostPrioritizationPO<K extends IPriority, T extends IStreamObject<? extends K>>
 		extends AbstractPipe<T, T> {
 
 	private IPostPrioritizationArea<T> prioritizedElements;

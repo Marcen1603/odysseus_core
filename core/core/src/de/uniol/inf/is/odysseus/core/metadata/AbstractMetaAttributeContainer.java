@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 abstract public class AbstractMetaAttributeContainer<T extends IMetaAttribute> implements
-		IMetaAttributeContainer<T> {
+		IStreamObject<T> {
 	
-	private boolean inOrder;
+	private boolean inOrder = true;
 	private Map<String, Object> additionalContent = new HashMap<String, Object>();
 	
 	private static final long serialVersionUID = 1480009485404803793L;

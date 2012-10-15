@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  *	This class can be used to generate time order over different input streams. 
@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
  *
  * @param <T> Elements that will be processed
  */
-public interface IInputStreamSyncArea<T extends IMetaAttributeContainer<?>> extends IClone {
+public interface IInputStreamSyncArea<T extends IStreamObject<?>> extends IClone {
 	
 	/**
 	 * Adds a new element to the input area and determines if new elements can be generated

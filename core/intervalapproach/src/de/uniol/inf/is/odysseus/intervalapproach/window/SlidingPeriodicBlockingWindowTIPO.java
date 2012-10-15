@@ -29,7 +29,7 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 /**
@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>, Marco
  *         Grawunder
  */
-public class SlidingPeriodicBlockingWindowTIPO<R extends IMetaAttributeContainer<? extends ITimeInterval>>
+public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends ITimeInterval>>
 		extends AbstractWindowTIPO<R> {
 
 	/**

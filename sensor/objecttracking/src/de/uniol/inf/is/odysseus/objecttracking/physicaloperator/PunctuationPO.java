@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.objecttracking.ILatencyProbabilityTimeInterval;
 
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.objecttracking.ILatencyProbabilityTimeInterval;
  * @param <M>
  */
 @SuppressWarnings({"rawtypes","unchecked"})
-public class PunctuationPO<T extends IMetaAttributeContainer<M>, M extends ILatencyProbabilityTimeInterval> extends AbstractPipe<T, T>{
+public class PunctuationPO<T extends IStreamObject<M>, M extends ILatencyProbabilityTimeInterval> extends AbstractPipe<T, T>{
 
 	private int punctuationElemCount;
 	

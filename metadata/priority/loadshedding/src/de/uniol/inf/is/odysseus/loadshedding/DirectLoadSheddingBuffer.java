@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.loadshedding;
 
 import java.util.Random;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
 
-public class DirectLoadSheddingBuffer<T extends IMetaAttributeContainer<? extends IPriority>>
+public class DirectLoadSheddingBuffer<T extends IStreamObject<? extends IPriority>>
 extends DirectInterlinkBufferedPipe<T> {
 
 	public static final int NO_LOAD_SHEDDING = -1;

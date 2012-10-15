@@ -28,11 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
-public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
+public class P2PInputStreamAccessPO<In, Out extends IStreamObject<?>>
 		extends AbstractInputStreamAccessPO<In, Out> {
 
 	static Logger logger = LoggerFactory.getLogger(P2PInputStreamAccessPO.class);

@@ -21,10 +21,10 @@ import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
-public class RelationalCreator<R extends IMetaAttributeContainer<?>> extends AbstractComplexEventFactory<R,Tuple<? extends ITimeInterval>> {
+public class RelationalCreator<R extends IStreamObject<?>> extends AbstractComplexEventFactory<R,Tuple<? extends ITimeInterval>> {
 
 	/**
 	 * Erzeugt einen neuen Creator für relationale Tupel vom Typ

@@ -20,7 +20,7 @@ import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.broker.physicaloperator.predicate.AttributeTimeIntervalComparator;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea;
 
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepAre
  *
  * @param <T> the type of a tuple
  */
-public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractSweepArea<T>{
+public class BrokerSweepArea <T extends IStreamObject<? extends ITimeInterval>> extends AbstractSweepArea<T>{
 	
 	/**
 	 * Instantiates a new SweepArea.

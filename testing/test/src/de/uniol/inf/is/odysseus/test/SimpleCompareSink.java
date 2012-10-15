@@ -25,6 +25,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
@@ -37,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
  * @author Timo Michelsen
  *
  */
-public class SimpleCompareSink extends AbstractSink<Object> implements
+public class SimpleCompareSink extends AbstractSink<IStreamObject<?>> implements
 		ICompareSink {
 
 	Logger logger = LoggerFactory.getLogger(SimpleCompareSink.class);
@@ -76,7 +77,7 @@ public class SimpleCompareSink extends AbstractSink<Object> implements
 	}
 
 	@Override
-	protected void process_next(Object object, int port) {
+	protected void process_next(IStreamObject<?> object, int port) {
 		if (!isDone()) {
 			synchronized (compareInput) {
 				String line = compareInput.remove(0);

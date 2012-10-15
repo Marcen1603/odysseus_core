@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
-public class HashCodePrioritizationArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
+public class HashCodePrioritizationArea<T extends IStreamObject<? extends ITimeInterval>>
 		implements IPostPrioritizationArea<T> {
 
 	private IHashFunction<T> hashFunction;

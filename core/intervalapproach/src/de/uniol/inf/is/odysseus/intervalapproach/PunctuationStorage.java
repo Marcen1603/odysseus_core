@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 /**
@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  * @param <W>
  * @param <R>
  */
-public class PunctuationStorage<W extends IMetaAttributeContainer<?>, R> {
+public class PunctuationStorage<W extends IStreamObject<?>, R> {
 
 	private List<List<PointInTime>> storage = new ArrayList<List<PointInTime>>();
 

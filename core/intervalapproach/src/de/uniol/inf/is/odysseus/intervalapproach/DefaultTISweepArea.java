@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicat
  * elements, until the remove predicate first returns false. The remove
  * predicate is fixed to the TotallyBeforePredicate
  */
-public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractSweepArea<T> implements Comparable<DefaultTISweepArea<T>>,
+public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>> extends AbstractSweepArea<T> implements Comparable<DefaultTISweepArea<T>>,
 		ITimeIntervalSweepArea<T> {
 	// private static final Logger logger =
 	// LoggerFactory.getLogger(ITemporalSweepArea.class);

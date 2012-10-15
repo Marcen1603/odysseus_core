@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInterval>, W extends IMetaAttributeContainer<? extends ITimeInterval>>
+public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
 		implements ITransferArea<R, W> {
 
 	final protected PointInTime[] minTs;
@@ -68,13 +68,19 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 
 	@Override
 	public void newElement(R object, int inPort) {
-		newHeartbeat(object.getMetadata().getStart(), inPort);
+		if (object.isInOrder()) {
+			newHeartbeat(object.getMetadata().getStart(), inPort);
+		}
 	}
 
 	@Override
 	public void transfer(W object) {
-		synchronized (this.outputQueue) {
-			outputQueue.add(object);
+		if (object.isInOrder()) {
+			synchronized (this.outputQueue) {
+				outputQueue.add(object);
+			}
+		} else {
+			po.transfer(object);
 		}
 	}
 

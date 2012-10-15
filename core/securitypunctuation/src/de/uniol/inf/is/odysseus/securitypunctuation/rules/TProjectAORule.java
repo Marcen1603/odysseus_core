@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.securitypunctuation.rules;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -34,7 +34,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	@Override
 	public void execute(ProjectAO projectAO,
 			TransformationConfiguration transformConfig) {
-		SARelationalProjectPO<IMetaAttributeContainer<? extends ITimeInterval>> saProjectPO = new SARelationalProjectPO<IMetaAttributeContainer<? extends ITimeInterval>>(
+		SARelationalProjectPO<IStreamObject<? extends ITimeInterval>> saProjectPO = new SARelationalProjectPO<IStreamObject<? extends ITimeInterval>>(
 				projectAO.determineRestrictList());
 		defaultExecute(projectAO, saProjectPO, transformConfig, true, true);
 	}

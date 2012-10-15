@@ -15,7 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.priority.buffer;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy.StandardBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.priority.IPriority;
@@ -29,7 +29,7 @@ public class WeakOrderBufferPlacementStrategey extends
 		
 	@Override
 	protected IBuffer<?> createNewBuffer() {
-		return new OutOfOrderBufferedPipe<IMetaAttributeContainer<IPriority>>();
+		return new OutOfOrderBufferedPipe<IStreamObject<IPriority>>();
 	}
 
 }

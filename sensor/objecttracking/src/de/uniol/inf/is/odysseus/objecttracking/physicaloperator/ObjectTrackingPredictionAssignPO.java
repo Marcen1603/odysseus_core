@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingPredictionAssignAO;
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
  * @author Andre Bolles
  */
 @SuppressWarnings({"rawtypes","unchecked"})
-public class ObjectTrackingPredictionAssignPO<T extends IMetaAttributeContainer<M>, M extends IPredictionFunctionKey<IPredicate>> extends AbstractPipe<T, T>{
+public class ObjectTrackingPredictionAssignPO<T extends IStreamObject<M>, M extends IPredictionFunctionKey<IPredicate>> extends AbstractPipe<T, T>{
 
 	private final Map<IPredicate<? super T>, IPredictionFunction> predictionFunctions;
 	

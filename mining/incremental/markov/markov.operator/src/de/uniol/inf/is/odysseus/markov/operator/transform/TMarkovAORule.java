@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
@@ -49,7 +49,7 @@ public class TMarkovAORule extends AbstractTransformationRule<MarkovAO> {
 
 	@Override
 	public void execute(MarkovAO operator, TransformationConfiguration config) {
-		StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>,IMetaAttributeContainer<ITimeInterval>> aggregatePO = new StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>,IMetaAttributeContainer<ITimeInterval>>(operator.getInputSchema(), operator.getOutputSchemaIntern(0), operator.getGroupingAttributes(),
+		StreamGroupingWithAggregationPO<ITimeInterval,IStreamObject<ITimeInterval>,IStreamObject<ITimeInterval>> aggregatePO = new StreamGroupingWithAggregationPO<ITimeInterval,IStreamObject<ITimeInterval>,IStreamObject<ITimeInterval>>(operator.getInputSchema(), operator.getOutputSchemaIntern(0), operator.getGroupingAttributes(),
 				operator.getAggregations());
 		aggregatePO.setOutputSchema(operator.getOutputSchema());
 		aggregatePO.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());

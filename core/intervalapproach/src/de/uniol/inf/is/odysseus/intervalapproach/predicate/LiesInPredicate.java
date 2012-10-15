@@ -16,11 +16,11 @@
 package de.uniol.inf.is.odysseus.intervalapproach.predicate;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 
-public class LiesInPredicate extends AbstractPredicate<IMetaAttributeContainer<? extends ITimeInterval>>{
+public class LiesInPredicate extends AbstractPredicate<IStreamObject<? extends ITimeInterval>>{
 
 	/**
 	 * 
@@ -29,7 +29,7 @@ public class LiesInPredicate extends AbstractPredicate<IMetaAttributeContainer<?
 	private static final LiesInPredicate instance = new LiesInPredicate();
 	
 	@Override
-	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> left, IMetaAttributeContainer<? extends ITimeInterval> right){
+	public boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right){
 		if(left.getMetadata().getStart().beforeOrEquals(right.getMetadata().getStart()) &&
 				left.getMetadata().getEnd().afterOrEquals(right.getMetadata().getEnd())){
 			return true;
@@ -41,7 +41,7 @@ public class LiesInPredicate extends AbstractPredicate<IMetaAttributeContainer<?
 	 * @deprecated This method is not supported by this predicate.
 	 */
 	@Override
-	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> input) {
+	public boolean evaluate(IStreamObject<? extends ITimeInterval> input) {
 		throw new UnsupportedOperationException();
 	}
 	

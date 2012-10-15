@@ -16,12 +16,12 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 
-public abstract class TimestampToPayloadPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>> extends AbstractPipe<T, T> {
+public abstract class TimestampToPayloadPO<K extends ITimeInterval, T extends IStreamObject<K>> extends AbstractPipe<T, T> {
 
 	public TimestampToPayloadPO(){}
 	

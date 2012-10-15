@@ -19,11 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 
-public class NElementHeartbeatGeneration <K extends ITimeInterval, T extends IMetaAttributeContainer<K>> implements IHeartbeatGenerationStrategy<T>{
+public class NElementHeartbeatGeneration <K extends ITimeInterval, T extends IStreamObject<K>> implements IHeartbeatGenerationStrategy<T>{
 
 	static private final Logger logger = LoggerFactory.getLogger(NElementHeartbeatGeneration.class);
 	

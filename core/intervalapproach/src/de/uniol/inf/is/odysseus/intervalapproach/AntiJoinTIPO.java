@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 ///**
 // * @author Jonas Jacobi
 // */
-public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
+public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends AbstractPipe<T, T> {
 	//
 	private static final int LEFT = 0;

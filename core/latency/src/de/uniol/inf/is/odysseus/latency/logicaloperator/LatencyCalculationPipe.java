@@ -18,11 +18,11 @@ package de.uniol.inf.is.odysseus.latency.logicaloperator;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="CALCLATENCY")
-public class LatencyCalculationPipe<T extends IMetaAttributeContainer<? extends ILatency>> extends AbstractPipe<T, T>{
+public class LatencyCalculationPipe<T extends IStreamObject<? extends ILatency>> extends AbstractPipe<T, T>{
 
 	public LatencyCalculationPipe(){}
 	

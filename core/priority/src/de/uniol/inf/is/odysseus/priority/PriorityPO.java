@@ -20,14 +20,14 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
  * @author Jonas Jacobi, Jan Steinke
  */
-public class PriorityPO<K extends IPriority, T extends IMetaAttributeContainer<K>>
+public class PriorityPO<K extends IPriority, T extends IStreamObject<K>>
 		extends AbstractPipe<T, T> {
 
 	private final Map<Byte, IPredicate<? super T>> priorites;

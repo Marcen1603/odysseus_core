@@ -18,9 +18,9 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<R, R> {
+public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 
 	protected ITransferArea<R,R> transferFunction;
 	

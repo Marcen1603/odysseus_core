@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.persistentqueries;
 import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
  * persistent data temporal order is not important.
  * @author Andre Bolles
  */
-public class PersistentTransferArea<R extends IMetaAttributeContainer<? extends ITimeInterval>, W extends IMetaAttributeContainer<? extends ITimeInterval>>
+public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
 		implements ITransferArea<R,W> {
 
 	final protected PointInTime[] minTs;

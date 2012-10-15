@@ -36,7 +36,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.IBinaryDetection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
  * 
  * @author Dennis Geesen Created at: 07.07.2011
  */
-public class StatefulDetectionPO<Meta extends IMiningMetadata, Data  extends IMetaAttributeContainer<Meta>> extends AbstractDetectionPO<Data, IBinaryDetection<Data>> {
+public class StatefulDetectionPO<Meta extends IMiningMetadata, Data  extends IStreamObject<Meta>> extends AbstractDetectionPO<Data, IBinaryDetection<Data>> {
 	
 	//LEFT is data-port and RIGHT is aggregate-port
 	private static final int LEFT = 0;

@@ -15,10 +15,10 @@
   */
 package de.uniol.inf.is.odysseus.priority.buffer;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
-public class OutOfOrderBufferedPipe<T extends IMetaAttributeContainer<? extends IPriority>>
+public class OutOfOrderBufferedPipe<T extends IStreamObject<? extends IPriority>>
 		extends AbstractPrioBuffer<T> {
 
 	public OutOfOrderBufferedPipe() {

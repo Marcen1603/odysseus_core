@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyAfterPredicate
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 //should be K extends IPriority & ITimeInterval, but suns compiler (1.6) is buggy and doens't accept it:(
-public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
+public class PriorityTISweepArea<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends DefaultTISweepArea<T> {
 	public PriorityTISweepArea() {
 		super();

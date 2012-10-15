@@ -30,7 +30,7 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatefulCorrectionAO;
 import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.StatefulCorrectionPO;
@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Dennis Geesen
  * Created at: 11.07.2011
  */
-public class TStatefulCorrectionAORule extends AbstractTransformationRule<StatefulCorrectionAO<IMetaAttributeContainer<IMiningTimeIntervall>>> {
+public class TStatefulCorrectionAORule extends AbstractTransformationRule<StatefulCorrectionAO<IStreamObject<IMiningTimeIntervall>>> {
 
 	@Override
 	public int getPriority() {	
@@ -52,8 +52,8 @@ public class TStatefulCorrectionAORule extends AbstractTransformationRule<Statef
 	}
 
 	@Override
-	public void execute(StatefulCorrectionAO<IMetaAttributeContainer<IMiningTimeIntervall>> correctAO, TransformationConfiguration config) {
-		StatefulCorrectionPO<IMiningTimeIntervall, IMetaAttributeContainer<IMiningTimeIntervall>> correctPO = new StatefulCorrectionPO<IMiningTimeIntervall,IMetaAttributeContainer<IMiningTimeIntervall>>(correctAO.getCorrections());
+	public void execute(StatefulCorrectionAO<IStreamObject<IMiningTimeIntervall>> correctAO, TransformationConfiguration config) {
+		StatefulCorrectionPO<IMiningTimeIntervall, IStreamObject<IMiningTimeIntervall>> correctPO = new StatefulCorrectionPO<IMiningTimeIntervall,IStreamObject<IMiningTimeIntervall>>(correctAO.getCorrections());
 		correctPO.setOutputSchema(correctAO.getOutputSchema());
 		correctPO.setInputSchemas(correctAO.getInputSchema(0), correctAO.getInputSchema(1));
 		replace(correctAO, correctPO, config);		
@@ -61,7 +61,7 @@ public class TStatefulCorrectionAORule extends AbstractTransformationRule<Statef
 	}
 
 	@Override
-	public boolean isExecutable(StatefulCorrectionAO<IMetaAttributeContainer<IMiningTimeIntervall>> operator, TransformationConfiguration config) {
+	public boolean isExecutable(StatefulCorrectionAO<IStreamObject<IMiningTimeIntervall>> operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 

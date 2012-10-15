@@ -15,7 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.interval.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.UnionPO;
@@ -34,7 +34,7 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 
 	@Override
 	public void execute(UnionAO unionAO, TransformationConfiguration transformConfig) {
-		UnionPO<IMetaAttributeContainer<ITimeInterval>> unionPO = new UnionPO<IMetaAttributeContainer<ITimeInterval>>(new TITransferArea<IMetaAttributeContainer<ITimeInterval>,IMetaAttributeContainer<ITimeInterval>>(unionAO.getNumberOfInputs()));
+		UnionPO<IStreamObject<ITimeInterval>> unionPO = new UnionPO<IStreamObject<ITimeInterval>>(new TITransferArea<IStreamObject<ITimeInterval>,IStreamObject<ITimeInterval>>(unionAO.getNumberOfInputs()));
 		defaultExecute(unionAO, unionPO, transformConfig, true, true);
 	}
 

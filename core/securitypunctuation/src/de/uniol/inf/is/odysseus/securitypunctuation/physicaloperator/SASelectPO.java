@@ -15,14 +15,14 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.securitypunctuation.helper.SecurityPunctuationCache;
 
-public class SASelectPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends SelectPO<T> {
+public class SASelectPO<T extends IStreamObject<? extends ITimeInterval>> extends SelectPO<T> {
 
 	private SecurityPunctuationCache spCache = new SecurityPunctuationCache();	
 	

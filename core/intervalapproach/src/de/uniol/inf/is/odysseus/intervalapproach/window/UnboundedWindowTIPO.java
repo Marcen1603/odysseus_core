@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class UnboundedWindowTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractNonBlockingWindowTIPO<T> {
+public class UnboundedWindowTIPO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractNonBlockingWindowTIPO<T> {
 
 	public UnboundedWindowTIPO(WindowAO algebraOp) {
 		super(algebraOp);

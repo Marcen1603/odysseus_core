@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
+public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterval>>
 		implements IInputStreamSyncArea<T> {
 
 	static Logger _logger;
@@ -193,8 +193,8 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		final TIInputStreamSyncArea<IMetaAttributeContainer<? extends ITimeInterval>> area = new TIInputStreamSyncArea<IMetaAttributeContainer<? extends ITimeInterval>>();
-		TestClass<IMetaAttributeContainer<? extends ITimeInterval>> sink = new TestClass<IMetaAttributeContainer<? extends ITimeInterval>>();
+		final TIInputStreamSyncArea<IStreamObject<? extends ITimeInterval>> area = new TIInputStreamSyncArea<IStreamObject<? extends ITimeInterval>>();
+		TestClass<IStreamObject<? extends ITimeInterval>> sink = new TestClass<IStreamObject<? extends ITimeInterval>>();
 		area.init(sink);
 
 		int maxSleep = 10;
@@ -226,7 +226,7 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 	}
 
 	private static void startSource(
-			final TIInputStreamSyncArea<IMetaAttributeContainer<? extends ITimeInterval>> area,
+			final TIInputStreamSyncArea<IStreamObject<? extends ITimeInterval>> area,
 			final long start, final int port, final int elemCount,
 			final int maxSleep) {
 		new Thread() {
@@ -251,7 +251,7 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 
 }
 
-class TestClass<R extends IMetaAttributeContainer<? extends ITimeInterval>>
+class TestClass<R extends IStreamObject<? extends ITimeInterval>>
 		implements IProcessInternal<R> {
 
 	PointInTime lastElement = null;

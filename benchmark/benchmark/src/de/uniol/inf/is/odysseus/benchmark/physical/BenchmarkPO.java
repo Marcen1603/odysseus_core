@@ -16,13 +16,13 @@
 package de.uniol.inf.is.odysseus.benchmark.physical;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
  * @author Marco Grawunder, Jonas Jacobi
  */
-public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends
+public class BenchmarkPO<R extends IStreamObject<?>> extends
 		AbstractPipe<R, R> {
 
 	protected final double selectivity;

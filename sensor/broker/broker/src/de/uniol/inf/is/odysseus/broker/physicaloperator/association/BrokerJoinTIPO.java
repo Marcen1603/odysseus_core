@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator.association;
 
 import java.util.Iterator;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
  * @param <K> the type of the metadata (based on a time interval)
  * @param <T> the type of the tuple
  */
-public class BrokerJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>> extends JoinTIPO<K,T> {
+public class BrokerJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> extends JoinTIPO<K,T> {
 
 	/** The otherport. */
 	private int otherport = 0;

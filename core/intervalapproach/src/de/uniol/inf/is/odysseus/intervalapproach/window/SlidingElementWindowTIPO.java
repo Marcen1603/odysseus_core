@@ -20,10 +20,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
-public class SlidingElementWindowTIPO<T extends IMetaAttributeContainer<ITimeInterval>>
+public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		extends AbstractWindowTIPO<T> {
 
 	List<T> _buffer = null;

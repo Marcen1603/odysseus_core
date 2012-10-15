@@ -18,14 +18,14 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
+public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends AbstractPipe<T, T> {
 
 	Logger logger = LoggerFactory.getLogger(TimeStampOrderValidatorTIPO.class);

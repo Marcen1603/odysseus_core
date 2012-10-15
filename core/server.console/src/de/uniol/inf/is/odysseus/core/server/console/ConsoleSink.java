@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.console;
  
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 
 
-public class ConsoleSink extends AbstractSink<Object> {
+public class ConsoleSink extends AbstractSink<IStreamObject<?>> {
 
 	public ConsoleSink(){
 	}
@@ -35,7 +36,7 @@ public class ConsoleSink extends AbstractSink<Object> {
 	}
 	
 	@Override
-	protected void process_next(Object object, int port) {
+	protected void process_next(IStreamObject<?> object, int port) {
 		System.out.println("Port:" + port + ", Object:" + object.toString());
 	}
 

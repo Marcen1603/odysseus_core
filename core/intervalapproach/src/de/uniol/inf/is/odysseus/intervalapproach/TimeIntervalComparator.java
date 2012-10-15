@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Comparator;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
  *
  * @param <T> the generic type
  */
-public class TimeIntervalComparator<T extends IMetaAttributeContainer<? extends ITimeInterval>> implements Comparator<T> {
+public class TimeIntervalComparator<T extends IStreamObject<? extends ITimeInterval>> implements Comparator<T> {
 
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)

@@ -22,14 +22,14 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.objecttracking.IPredictionFunctionKeyApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 
 @SuppressWarnings({"unchecked","rawtypes"})
-public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M extends IPredictionFunctionKeyApplicationTime> extends AbstractPipe<T, T> {
+public class ObjectTrackingSelectPO<T extends IStreamObject<M>, M extends IPredictionFunctionKeyApplicationTime> extends AbstractPipe<T, T> {
 
 	private Map<IPredicate<? super T>, IRangePredicate> rangePredicates;
 

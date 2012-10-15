@@ -20,7 +20,7 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -49,7 +49,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepAr
  * @param <T>
  *            Datentyp
  */
-public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
+public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends AbstractPipe<T, T> {
 	private static Logger _logger =  null;
 	

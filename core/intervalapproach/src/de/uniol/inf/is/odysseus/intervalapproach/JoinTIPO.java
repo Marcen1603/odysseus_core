@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -50,7 +50,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSwe
  * @param <T>
  *            Datentyp
  */
-public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
+public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends AbstractPipe<T, T> implements IHasPredicate {
 	private final POEvent processPunctuationDoneEvent;
 	private static Logger _logger = null;
@@ -184,8 +184,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		}
 		int otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
-		synchronized (this.areas[otherport]) {
-			areas[otherport].purgeElements(object, order);
+		if (object.isInOrder()) {
+			synchronized (this.areas[otherport]) {
+				areas[otherport].purgeElements(object, order);
+			}
 		}
 
 		synchronized (this) {
@@ -231,6 +233,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 					left.getMetadata());
 		}
 		mergedData.setMetadata(mergedMetadata);
+		mergedData.setInOrder(left.isInOrder() && right.isInOrder());
 		return mergedData;
 	}
 
@@ -311,7 +314,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		if (!(ipo instanceof JoinTIPO)) {
 			return false;
 		}
-		JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>>) ipo;
+		JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>>) ipo;
 
 		// Falls die Operatoren verschiedene Quellen haben, wird false zur�ck
 		// gegeben
@@ -339,7 +342,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		if (!(ip instanceof JoinTIPO)) {
 			return false;
 		}
-		JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>>) ip;
+		JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>>) ip;
 
 		// Falls die Operatoren verschiedene Quellen haben, wird false zur�ck
 		// gegeben

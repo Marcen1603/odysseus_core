@@ -19,10 +19,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.NoSuchElementException;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 
-abstract public class AbstractInputStreamAccessPO <In, Out extends IMetaAttributeContainer<?>> extends
+abstract public class AbstractInputStreamAccessPO <In, Out extends IStreamObject<?>> extends
 AbstractIterableSource<Out>{
 	
 	protected ObjectInputStream iStream;

@@ -21,7 +21,7 @@ import java.util.Iterator;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order
  * @param <M> Metadatentyp
  * @param <T> Datentyp
  */
-public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeContainer<M>> extends
+public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>> extends
 		JoinTIPO<M, T> {
 //	private static final Logger logger = LoggerFactory.getLogger(LeftJoinTIPO.class);
 	

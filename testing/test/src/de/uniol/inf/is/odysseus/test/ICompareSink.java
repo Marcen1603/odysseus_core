@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.test;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 
 /**
@@ -23,6 +24,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
  * @author Timo Michelsen
  *
  */
-public interface ICompareSink extends ISink<Object>{
+public interface ICompareSink extends ISink<IStreamObject<?>>{
 
 }

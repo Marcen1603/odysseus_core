@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class TimeSplitTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>>
+public class TimeSplitTIPO<T extends IStreamObject<? extends ITimeInterval>>
 		extends AbstractPipe<T, T> {
 
 	private long size;

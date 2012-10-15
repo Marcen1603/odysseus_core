@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
@@ -56,7 +56,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerati
  * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
-public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeInterval>, W extends IMetaAttributeContainer<?>>
+public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<?>>
 		extends AbstractPipe<R, W> implements IProcessInternal<R> {
 
 	Logger logger = LoggerFactory.getLogger(PatternDetectPO.class);

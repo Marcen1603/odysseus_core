@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SAJoinPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TSAJoinAOSetSARule<K extends ITimeInterval, T extends IMetaAttributeContainer<K>> extends AbstractTransformationRule<SAJoinPO<K,T>>  {
+public class TSAJoinAOSetSARule<K extends ITimeInterval, T extends IStreamObject<K>> extends AbstractTransformationRule<SAJoinPO<K,T>>  {
 
 	@Override
 	public int getPriority() {		

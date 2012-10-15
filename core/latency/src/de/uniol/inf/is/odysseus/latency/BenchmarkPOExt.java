@@ -19,10 +19,10 @@ import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class BenchmarkPOExt<R extends IMetaAttributeContainer<? extends ILatency>> extends
+public class BenchmarkPOExt<R extends IStreamObject<? extends ILatency>> extends
 		AbstractPipe<R, R> {
 
 	final double selectivity;

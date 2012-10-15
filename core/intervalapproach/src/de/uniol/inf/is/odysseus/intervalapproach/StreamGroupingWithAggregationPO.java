@@ -29,14 +29,14 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>, W extends IMetaAttributeContainer<Q>>
+public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
 		extends AggregateTIPO<Q, R, W> {
 
 	static final Logger logger = LoggerFactory
@@ -111,7 +111,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	@Override
 	protected synchronized void process_next(R object, int port) {
-
+		
 		// Determine if there is any data from previous runs to write
 		createOutput(object.getMetadata().getStart());
 

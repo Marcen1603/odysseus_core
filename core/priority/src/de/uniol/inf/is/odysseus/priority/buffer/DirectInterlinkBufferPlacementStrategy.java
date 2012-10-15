@@ -15,7 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.priority.buffer;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy.StandardBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.priority.IPriority;
@@ -25,12 +25,12 @@ public class DirectInterlinkBufferPlacementStrategy extends
 
 	@Override
 	protected IBuffer<?> createNewBuffer() {
-		return new DirectInterlinkBufferedPipe<IMetaAttributeContainer<IPriority>>();
+		return new DirectInterlinkBufferedPipe<IStreamObject<IPriority>>();
 	}
 	
 	@Override	
 	protected IBuffer<?> createNewSourceBuffer() {
-		return new DirectInterlinkBufferedPipe<IMetaAttributeContainer<IPriority>>();
+		return new DirectInterlinkBufferedPipe<IStreamObject<IPriority>>();
 	}
 	
 	@Override

@@ -16,12 +16,12 @@
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  * @author Jonas Jacobi
  */
-public interface IMetadataUpdater<M extends IClone, T extends IMetaAttributeContainer<? extends M>> {
+public interface IMetadataUpdater<M extends IClone, T extends IStreamObject<? extends M>> {
 	
 	public void updateMetadata(T inElem);
 	public String getName();

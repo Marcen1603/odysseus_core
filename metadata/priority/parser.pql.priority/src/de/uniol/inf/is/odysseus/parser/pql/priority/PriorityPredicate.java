@@ -15,12 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.parser.pql.priority;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class PriorityPredicate extends
-		AbstractPredicate<IMetaAttributeContainer<? extends IPriority>> {
+		AbstractPredicate<IStreamObject<? extends IPriority>> {
 
 	private static final long serialVersionUID = -8530604545098107300L;
 
@@ -30,14 +30,14 @@ public class PriorityPredicate extends
 	}
 
 	@Override
-	public boolean evaluate(IMetaAttributeContainer<? extends IPriority> input) {
+	public boolean evaluate(IStreamObject<? extends IPriority> input) {
 		return input.getMetadata().getPriority() > 0;
 	}
 	
 
 	@Override
-	public boolean evaluate(IMetaAttributeContainer<? extends IPriority> left,
-			IMetaAttributeContainer<? extends IPriority> right) {
+	public boolean evaluate(IStreamObject<? extends IPriority> left,
+			IStreamObject<? extends IPriority> right) {
 		throw new UnsupportedOperationException();
 	}
 

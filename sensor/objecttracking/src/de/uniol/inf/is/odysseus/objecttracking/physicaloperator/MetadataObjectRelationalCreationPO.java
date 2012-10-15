@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -47,8 +47,8 @@ public class MetadataObjectRelationalCreationPO<M extends IProbability> extends 
 	@SuppressWarnings("unchecked")
 	private void assignMetadata(Object tuple ){
 		try {
-			if( tuple instanceof IMetaAttributeContainer ) {
-				((IMetaAttributeContainer<M>)tuple).setMetadata(getType().newInstance());
+			if( tuple instanceof IStreamObject ) {
+				((IStreamObject<M>)tuple).setMetadata(getType().newInstance());
 			}
 			if( tuple instanceof MVTuple<?>) {
 				MVTuple<M> t = (MVTuple<M>) tuple;

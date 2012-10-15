@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.priority.buffer;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferedPipe;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
-public abstract class AbstractPrioBuffer<T extends IMetaAttributeContainer<? extends IPriority>>
+public abstract class AbstractPrioBuffer<T extends IStreamObject<? extends IPriority>>
 		extends BufferedPipe<T> implements IPrioBuffer<T> {
 	final protected AtomicInteger prioCount = new AtomicInteger(0);
 

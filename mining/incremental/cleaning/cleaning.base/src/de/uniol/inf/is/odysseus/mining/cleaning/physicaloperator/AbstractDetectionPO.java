@@ -34,7 +34,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.IDetection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
  * @author Dennis Geesen
  * Created at: 07.07.2011
  */
-public abstract class AbstractDetectionPO<T extends IMetaAttributeContainer<? extends IMiningMetadata>, D extends IDetection<T>> extends AbstractPipe<T, T> {
+public abstract class AbstractDetectionPO<T extends IStreamObject<? extends IMiningMetadata>, D extends IDetection<T>> extends AbstractPipe<T, T> {
 
 	protected List<D> detections;
 

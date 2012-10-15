@@ -16,9 +16,9 @@
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-abstract public class AbstractMetadataUpdater<M extends IClone, T extends IMetaAttributeContainer<? extends M>> implements IMetadataUpdater<M, T> {
+abstract public class AbstractMetadataUpdater<M extends IClone, T extends IStreamObject<? extends M>> implements IMetadataUpdater<M, T> {
 
 	@Override
 	public String getName() {

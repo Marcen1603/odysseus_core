@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.mining.clustering.model;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.mining.distance.IMetricFunctionValues;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
  * @author kolja
  * 
  */
-public interface IClusteringObject<U extends IMetaAttribute,O> extends IMetaAttributeContainer<U>, IMetricFunctionValues<O> {
+public interface IClusteringObject<U extends IMetaAttribute,O> extends IStreamObject<U>, IMetricFunctionValues<O> {
 
 	/**
 	 * Sets the id of the cluster this object belongs to.

@@ -17,13 +17,13 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 /**
  * @author Jonas Jacobi
  */
-public class SystemTimeIntervalFactory <M extends ITimeInterval, T extends IMetaAttributeContainer<M>> extends AbstractMetadataUpdater<M, T>{
+public class SystemTimeIntervalFactory <M extends ITimeInterval, T extends IStreamObject<M>> extends AbstractMetadataUpdater<M, T>{
 
 	@Override
 	public void updateMetadata(T inElem) {
