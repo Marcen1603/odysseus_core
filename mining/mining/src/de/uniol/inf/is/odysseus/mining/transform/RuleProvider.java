@@ -33,6 +33,7 @@ public class RuleProvider implements ITransformRuleProvider{
 		ArrayList<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new TClusteringAORule());		
 		rules.add(new TFrequentItemsetAORule());
+		rules.add(new TFrequentItemsetLatencyRule());
 		rules.add(new TRuleGenerationAORule());
 		rules.add(new TStatCounterAORule());
 		return rules;

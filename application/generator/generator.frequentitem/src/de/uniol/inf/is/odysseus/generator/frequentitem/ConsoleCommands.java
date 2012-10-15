@@ -36,12 +36,17 @@ public class ConsoleCommands implements CommandProvider {
 	 public void _proceedClients(CommandInterpreter ci) {
 		 Activator.proceed();
 	 }
+	 
+	 public void _stats(CommandInterpreter ci){
+		 Activator.printStatus();
+	 }
 
 	 @Override
 	 public String getHelp() {
 	  String s = "\tstopClients - stops all clients of for all servers\n";
 	  s = s+"\tpauseClients - pauses all clients of for all servers\n";
 	  s = s+"\tproceedClients - proceeds all clients of for all servers\n";
+	  s = s+"\tstats - prints current status for all servers\n";
 	  return s;
 	 }
 

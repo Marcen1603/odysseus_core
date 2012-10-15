@@ -70,6 +70,7 @@ public class TFrequentItemsetAORule extends AbstractTransformationRule<FrequentI
 		po.setOutputSchema(operator.getOutputSchema(1), 1);
 		replace(operator, po, config);
 		retract(operator);
+		insert(po);
 	}
 
 	@Override

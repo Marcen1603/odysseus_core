@@ -111,4 +111,16 @@ public class Activator implements BundleActivator {
 		}		
 	}
 
+	/**
+	 * 
+	 */
+	public static void printStatus() {
+		synchronized (server) {
+			for(StreamServer s : server){
+				s.printStats();
+			}
+		}	
+		
+	}
+
 }

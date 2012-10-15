@@ -120,4 +120,13 @@ public class StreamServer extends Thread {
 			}
 		}
 	}
+	
+	public void printStats() {
+		synchronized (this) {
+			for (StreamClientHandler sch : this.clients) {
+				sch.printStatus();
+			}
+		}
+		
+	}
 }

@@ -177,6 +177,11 @@ public abstract class StreamClientHandler extends Thread {
 		System.out.println("Total for "+nf.format(counter)+" elements: \t\t" + nf.format(total) + "\t ms for " + nf.format(totalSize) + "\t bytes. Throughput: \t"+Math.round((totalSize/total)*100.)/100.+" \tbytes/ms");
 	}
 		
+	
+	public double getLastThroughput(){
+		double total = System.currentTimeMillis() - startTime;
+		return Math.round((totalSize/total)*100.)/100.;
+	}
 
 	public void transferTuple(DataTuple tuple) throws IOException {
 		if (tuple != null) {
@@ -339,5 +344,11 @@ public abstract class StreamClientHandler extends Thread {
 
 	public void setStreamName(String streamName) {
 		this.streamName = streamName;
+	}
+	
+	public void printStatus() {
+		System.out.println("------ Current Status ------");
+		printStats();
+		System.out.println("----------------------------");
 	}
 }
