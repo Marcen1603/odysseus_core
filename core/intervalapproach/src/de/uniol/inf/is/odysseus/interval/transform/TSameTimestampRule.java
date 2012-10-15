@@ -15,9 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.interval.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SameTimeFactory;
@@ -36,8 +36,8 @@ public class TSameTimestampRule extends AbstractTransformationRule<TimestampAO> 
 
 	@Override
 	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) {
-		SameTimeFactory<ITimeInterval, AbstractStreamObject<ITimeInterval>> mUpdater = new SameTimeFactory<ITimeInterval, AbstractStreamObject<ITimeInterval>>();		
-		MetadataUpdatePO<ITimeInterval, AbstractStreamObject<ITimeInterval>> po = new MetadataUpdatePO<ITimeInterval, AbstractStreamObject<ITimeInterval>>(mUpdater);
+		SameTimeFactory<ITimeInterval, IStreamObject<ITimeInterval>> mUpdater = new SameTimeFactory<ITimeInterval, IStreamObject<ITimeInterval>>();		
+		MetadataUpdatePO<ITimeInterval, IStreamObject<ITimeInterval>> po = new MetadataUpdatePO<ITimeInterval, IStreamObject<ITimeInterval>>(mUpdater);
 		defaultExecute(timestampAO, po, transformConfig, true, true);
 	}
 

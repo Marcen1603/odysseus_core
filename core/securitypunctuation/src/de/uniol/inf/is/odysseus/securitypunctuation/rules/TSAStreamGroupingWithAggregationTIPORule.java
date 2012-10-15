@@ -15,10 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.securitypunctuation.rules;
 
-import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SAAggregateTIPO;
@@ -34,7 +34,7 @@ public class TSAStreamGroupingWithAggregationTIPORule extends AbstractTransforma
 	
 	@Override
 	public void execute(AggregateAO aggregateAO, TransformationConfiguration transformConfig) {
-		SAAggregateTIPO<ITimeInterval, AbstractStreamObject<ITimeInterval>, AbstractStreamObject<ITimeInterval>> po = new SAAggregateTIPO<ITimeInterval, AbstractStreamObject<ITimeInterval>, AbstractStreamObject<ITimeInterval>>(aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0) , aggregateAO.getGroupingAttributes(),
+		SAAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>> po = new SAAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0) , aggregateAO.getGroupingAttributes(),
 				aggregateAO.getAggregations());
 		po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());
 		po.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());

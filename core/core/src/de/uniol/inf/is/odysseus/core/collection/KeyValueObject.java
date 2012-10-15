@@ -115,7 +115,7 @@ implements Serializable{
 	// ------------------------------------
 	
 	@Override
-	public AbstractStreamObject<T> clone() {
+	public KeyValueObject<T> clone() {
 		return new KeyValueObject<T>(this);
 	}
 

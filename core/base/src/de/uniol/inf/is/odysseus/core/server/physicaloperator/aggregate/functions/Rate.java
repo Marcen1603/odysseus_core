@@ -15,12 +15,12 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
-import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-abstract public class Rate<R extends AbstractStreamObject<?>, W extends AbstractStreamObject<?>>
+abstract public class Rate<R extends IStreamObject<?>, W extends IStreamObject<?>>
 		extends AbstractAggregateFunction<R, W> {
 
 	/**
