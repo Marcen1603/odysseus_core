@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
-public class DataSourceObserverSink<In extends IStreamObject<?>> extends AbstractSink<In> {
+public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 	
 	private static Logger _logger = null;
 
@@ -38,10 +38,10 @@ public class DataSourceObserverSink<In extends IStreamObject<?>> extends Abstrac
 		return _logger;
 	}
 
-	private final ISource<In> source;
-	private final List<IDataSourceObserverListener<In>> listeners = new ArrayList<IDataSourceObserverListener<In>>();
+	private final ISource<? extends IStreamObject<?>> source;
+	private final List<IDataSourceObserverListener> listeners = new ArrayList<IDataSourceObserverListener>();
 
-	public DataSourceObserverSink( ISource<In> source ) {
+	public DataSourceObserverSink( ISource<? extends IStreamObject<?>> source ) {
 		this.source = source;
 		connect();
 	}
@@ -52,12 +52,12 @@ public class DataSourceObserverSink<In extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	protected void process_next(In object, int port) {
+	protected void process_next(IStreamObject<?> object, int port) {
 		fireStreamElementRecieveEvent(object, port);
 	}
 
 	@Override
-	public AbstractSink<In> clone() {
+	public AbstractSink<IStreamObject<?>> clone() {
 		return null;
 	}
 	
@@ -71,7 +71,7 @@ public class DataSourceObserverSink<In extends IStreamObject<?>> extends Abstrac
 		getLogger().debug("Source " + source + " disconnected");
 	}
 
-	public void addListener( IDataSourceObserverListener<In> listener ) {
+	public void addListener( IDataSourceObserverListener listener ) {
 		if( listener == null )
 			throw new IllegalArgumentException("listener is null");
 		
@@ -86,15 +86,15 @@ public class DataSourceObserverSink<In extends IStreamObject<?>> extends Abstrac
 		return source.getOutputSchema();
 	}
 	
-	public void removeListener( IDataSourceObserverListener<In> listener ) {
+	public void removeListener( IDataSourceObserverListener listener ) {
 		synchronized( listeners ) {
 			listeners.remove(listener);
 		}
 	}
 	
-	protected final void fireStreamElementRecieveEvent( In element, int port ) {
+	protected final void fireStreamElementRecieveEvent( IStreamObject<?> element, int port ) {
 		synchronized( listeners ) {
-			for( IDataSourceObserverListener<In> listener : listeners ) {
+			for( IDataSourceObserverListener listener : listeners ) {
 				listener.streamElementRecieved(this, element, port);
 			}
 		}
@@ -102,7 +102,7 @@ public class DataSourceObserverSink<In extends IStreamObject<?>> extends Abstrac
 	
 	protected final void firePuntuationElementRecieveEvent( PointInTime element, int port ) {
 		synchronized( listeners ) {
-			for( IDataSourceObserverListener<In> listener : listeners ) {
+			for( IDataSourceObserverListener listener : listeners ) {
 				listener.punctuationElementRecieved(this, element, port);
 			}
 		}

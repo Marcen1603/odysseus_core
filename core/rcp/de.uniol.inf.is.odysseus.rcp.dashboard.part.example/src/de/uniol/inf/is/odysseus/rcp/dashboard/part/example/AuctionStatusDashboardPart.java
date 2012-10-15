@@ -36,6 +36,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
@@ -71,7 +72,7 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 	}
 
 	@Override
-	public void streamElementRecieved(Object element, int port) {
+	public void streamElementRecieved(IStreamObject<?> element, int port) {
 		if (!(element instanceof Tuple)) {
 			LOG.error("Could not use stream-objects of class {}. Only {} supported.", element.getClass(), Tuple.class);
 			return;

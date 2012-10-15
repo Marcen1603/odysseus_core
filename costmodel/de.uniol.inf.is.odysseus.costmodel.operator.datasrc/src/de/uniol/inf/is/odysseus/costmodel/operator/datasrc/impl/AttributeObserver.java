@@ -30,8 +30,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.EqualW
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.FreedmanDiaconisRule;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.IHistogramFactory;
 
-@SuppressWarnings("rawtypes")
-public class AttributeObserver<T extends IStreamObject<?>> implements IDataSourceObserverListener<T> {
+public class AttributeObserver implements IDataSourceObserverListener {
 
 	private static Logger _logger = null;
 	protected static Logger getLogger() {
@@ -42,7 +41,7 @@ public class AttributeObserver<T extends IStreamObject<?>> implements IDataSourc
 	}
 
 	private SDFAttribute attribute;
-	private DataSourceObserverSink<T> source;
+	private DataSourceObserverSink source;
 	private int schemaPosition;
 	
 	private IHistogramFactory factory;
@@ -60,7 +59,7 @@ public class AttributeObserver<T extends IStreamObject<?>> implements IDataSourc
 		return this.source != null;
 	}
 	
-	public void setSink( DataSourceObserverSink<T> sink ) {
+	public void setSink( DataSourceObserverSink sink ) {
 		if( this.source != null ) {
 			this.source.removeListener(this);
 		}
@@ -79,15 +78,7 @@ public class AttributeObserver<T extends IStreamObject<?>> implements IDataSourc
 	}
 	
 	@Override
-	public void streamElementRecieved(DataSourceObserverSink sender, T element, int port) {
-		
-//		// direct input... e.g. cached values
-//		if( element instanceof Double ) {
-//			factory.addValue((Double)element);
-//			getLogger().debug("Direct value for " + attribute + ": " + element );
-//			return;
-//		}
-		
+	public void streamElementRecieved(DataSourceObserverSink sender, IStreamObject<?> element, int port) {		
 		Tuple<?> tuple = (Tuple<?>)element;
 		
 		Object value = tuple.getAttribute(schemaPosition);
@@ -99,6 +90,10 @@ public class AttributeObserver<T extends IStreamObject<?>> implements IDataSourc
 			factory.addValue( ((Integer)value).doubleValue() );
 		else if (value instanceof Long ) 
 			factory.addValue( ((Long)value).doubleValue() );
+	}
+	
+	public void cachedElementRecieved(Double cachedElement ) {
+		factory.addValue(cachedElement);
 	}
 
 	@Override

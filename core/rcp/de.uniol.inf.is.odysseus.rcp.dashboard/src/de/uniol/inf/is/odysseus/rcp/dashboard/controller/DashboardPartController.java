@@ -78,8 +78,8 @@ public final class DashboardPartController {
 		streamConnection = new DefaultStreamConnection<IStreamObject<?>>(roots);
 		
 		dashboardPart.onStart(roots);
-		// FIXME: TIMO
-		//streamConnection.addStreamElementListener(dashboardPart);
+		
+		streamConnection.addStreamElementListener(dashboardPart);
 		streamConnection.connect();
 
 		status = Status.RUNNING;

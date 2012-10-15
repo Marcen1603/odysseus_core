@@ -21,6 +21,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -70,7 +71,7 @@ public class ExecutorHelper implements IPlanModificationListener {
 				.getEventType())) {
 			getLogger().debug("New query added.");
 
-			for (ISource<?> src : getSources(query))
+			for (ISource<? extends IStreamObject<?>> src : getSources(query))
 				DataSourceManager.getInstance().addSource(src);
 
 		} else if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
@@ -83,13 +84,14 @@ public class ExecutorHelper implements IPlanModificationListener {
 		}
 	}
 
-	private static List<ISource<?>> getSources(IPhysicalQuery query) {
+	@SuppressWarnings("unchecked")
+	private static List<ISource<? extends IStreamObject<?>>> getSources(IPhysicalQuery query) {
 		List<IPhysicalOperator> physicalOperators = query.getPhysicalChilds();
-		List<ISource<?>> sources = new ArrayList<ISource<?>>();
+		List<ISource<? extends IStreamObject<?>>> sources = new ArrayList<ISource<? extends IStreamObject<?>>>();
 
 		for (IPhysicalOperator op : physicalOperators)
 			if (op.isSource() && !(op.isSink()))
-				sources.add((ISource<?>) op);
+				sources.add((ISource<? extends IStreamObject<?>>) op);
 		return sources;
 	}
 }

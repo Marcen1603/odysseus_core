@@ -18,8 +18,8 @@ package de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
-public interface IDataSourceObserverListener<T  extends IStreamObject<?>> {
+public interface IDataSourceObserverListener {
 
-	public void streamElementRecieved( DataSourceObserverSink<T> sender, T element, int port );
-	public void punctuationElementRecieved( DataSourceObserverSink<T> sender, PointInTime punctuation, int port );
+	public void streamElementRecieved( DataSourceObserverSink sender, IStreamObject<?> element, int port );
+	public void punctuationElementRecieved( DataSourceObserverSink sender, PointInTime punctuation, int port );
 }

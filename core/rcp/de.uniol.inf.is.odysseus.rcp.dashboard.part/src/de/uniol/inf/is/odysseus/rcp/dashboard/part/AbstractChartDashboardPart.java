@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
@@ -54,7 +55,7 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void streamElementRecieved(final Object element, final int port) {
+	public void streamElementRecieved(final IStreamObject<?> element, final int port) {
 		if (!(element instanceof Tuple)) {
 			LOG.error("Lines DashboardPart only applyable for Tuples!");
 			return;

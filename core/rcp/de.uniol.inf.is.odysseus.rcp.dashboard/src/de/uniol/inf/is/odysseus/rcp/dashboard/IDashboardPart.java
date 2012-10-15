@@ -21,10 +21,11 @@ import java.util.Map;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 
-public interface IDashboardPart extends IStreamElementListener<Object>, IConfigurationListener {
+public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>, IConfigurationListener {
 	
 	public boolean init( Configuration configuration );
 	public Configuration getConfiguration();

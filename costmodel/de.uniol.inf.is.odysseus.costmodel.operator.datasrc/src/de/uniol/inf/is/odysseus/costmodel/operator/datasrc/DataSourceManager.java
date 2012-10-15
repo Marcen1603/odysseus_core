@@ -32,6 +32,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -62,10 +63,9 @@ public class DataSourceManager {
 	// (internal use only!)
 	private class SourceInfo {
 		public int queriesUsed = 1;
-		public DataSourceObserverSink<?> observer;
+		public DataSourceObserverSink observer;
 
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		public SourceInfo(ISource<?> source) {
+		public SourceInfo(ISource<? extends IStreamObject<?>> source) {
 			this.observer = new DataSourceObserverSink(source);
 		}
 	}
@@ -99,7 +99,7 @@ public class DataSourceManager {
 	 * @param src
 	 *            Neue zu beobachtende Datenquelle
 	 */
-	public void addSource(ISource<?> src) {
+	public void addSource(ISource<? extends IStreamObject<?>> src) {
 		if (!sources.containsKey(src)) {
 			SourceInfo info = new SourceInfo(src);
 			sources.put(src, info);
@@ -128,7 +128,7 @@ public class DataSourceManager {
 			// to connect to this new source?
 			for (SDFAttribute attribute : src.getOutputSchema()) {
 				if (attributes.containsKey(attribute)) {
-					AttributeObserver observer = attributes.get(attribute);
+					AttributeObserver observer = (AttributeObserver) attributes.get(attribute);
 					if (!observer.hasSink())
 						observer.setSink(info.observer);
 				}
@@ -194,9 +194,9 @@ public class DataSourceManager {
 			attributes.put(attribute, observer);
 			getLogger().debug("Created temporary attributeObserver for " + attribute);
 
-			// FIXME: TIMO
-			//			for (Double d : values)
-//				observer.streamElementRecieved(null, d, 0);
+			for (Double d : values) {
+				observer.cachedElementRecieved(d);
+			}
 
 			return observer.getHistogram();
 
@@ -223,7 +223,7 @@ public class DataSourceManager {
 		// only numerical attributes!
 		if (attribute.getDatatype().isNumeric()) {
 
-			DataSourceObserverSink<?> sink = findSink(attribute);
+			DataSourceObserverSink sink = findSink(attribute);
 			if (sink != null) {
 				AttributeObserver observer = attributes.get(attribute);
 				if (observer == null) {
@@ -247,7 +247,7 @@ public class DataSourceManager {
 		}
 	}
 
-	private DataSourceObserverSink<?> findSink(SDFAttribute attribute) {
+	private DataSourceObserverSink findSink(SDFAttribute attribute) {
 		for (SourceInfo sourceInfo : sources.values()) {
 			SDFSchema attributeList = sourceInfo.observer.getOutputSchema();
 			if (attributeList.contains(attribute))
