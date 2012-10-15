@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.RenamePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -32,7 +32,7 @@ public class TRenameAORule extends AbstractTransformationRule<RenameAO> {
 
 	@Override
 	public void execute(RenameAO operator, TransformationConfiguration config) {
-		defaultExecute(operator, new RenamePO<IMetaAttribute>(), config ,true, true);
+		defaultExecute(operator, new RenamePO<IStreamObject<?>>(), config ,true, true);
 	}
 
 	@Override

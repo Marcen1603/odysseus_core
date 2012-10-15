@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.util;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -49,19 +50,16 @@ public class CopyPhysicalGraphVisitor<T extends IPhysicalOperator> implements IG
 
 	@Override
 	public void afterFromSourceToSinkAction(T source, T sink) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void beforeFromSinkToSourceAction(T sink, T source) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void beforeFromSourceToSinkAction(T source, T sink) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -79,11 +77,11 @@ public class CopyPhysicalGraphVisitor<T extends IPhysicalOperator> implements IG
 			// also exists an outgoing in the preceding
 			// operator.
 			if(original.isSink()){
-				for(PhysicalSubscription sub: ((ISink<IPhysicalOperator>)original).getSubscribedToSource()){
+				for(PhysicalSubscription sub: ((ISink<IStreamObject<?>>)original).getSubscribedToSource()){
 					// get the copy of each target
-					ISource<IPhysicalOperator> targetCopy = (ISource<IPhysicalOperator>)this.nodeCopies.get(sub.getTarget());
+					ISource<IStreamObject<?>> targetCopy = (ISource<IStreamObject<?>>)this.nodeCopies.get(sub.getTarget());
 					// subscribe the target copy to the node copy
-					((ISink<IPhysicalOperator>)copy).subscribeToSource(targetCopy, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+					((ISink<IStreamObject<?>>)copy).subscribeToSource(targetCopy, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 				}
 			}
 		}
@@ -104,7 +102,7 @@ public class CopyPhysicalGraphVisitor<T extends IPhysicalOperator> implements IG
 		if(!this.nodeCopies.containsKey(op)){
 			T opCopy = (T)op.clone();
 			if(op.isSink()){
-				((ISink<IPhysicalOperator>)opCopy).unsubscribeFromAllSources();
+				((ISink<IStreamObject<?>>)opCopy).unsubscribeFromAllSources();
 			}
 
 			// if it is also a source,

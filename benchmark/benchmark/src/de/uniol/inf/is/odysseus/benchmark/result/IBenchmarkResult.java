@@ -17,11 +17,14 @@ package de.uniol.inf.is.odysseus.benchmark.result;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 
-public interface IBenchmarkResult<T> extends ICSVToString, IClone{
+public interface IBenchmarkResult<T> extends ICSVToString, IClone, IStreamObject<ITimeInterval>{
 	public void add(T object);
 
+	// TODO: Replace with Metadata
 	public void setStartTime(long start);
 
 	public void setEndTime(long start);

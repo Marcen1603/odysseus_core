@@ -16,9 +16,9 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
-import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistrib
  * 
  * @param <T>
  */
-public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
+public class LatencyAverageConformance<T extends IStreamObject<?>> extends AbstractSLaConformance<T> {
 	/**
 	 * partial aggregate for calculating teh average
 	 */
@@ -109,8 +109,7 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 	@Override
 	protected void process_next(T object, int port) {
 		super.process_next(object, port);
-		MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) object;
-		IMetaAttribute metadata = metaAttributeContainer.getMetadata();
+		IMetaAttribute metadata = object.getMetadata();
 		if (metadata instanceof ILatency) {
 			ILatency latency = (ILatency) metadata;
 			this.aggregate.addAggValue(this.nanoToMilli(latency

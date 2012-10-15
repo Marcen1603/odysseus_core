@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
@@ -28,29 +28,24 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
  * @author Dennis Geesen
  * 
  */
-public class Pattern<M extends ITimeInterval> extends AbstractMetaAttributeContainer<M> {
+public class Pattern<M extends ITimeInterval> extends AbstractStreamObject<M> {
 
 	private static final long serialVersionUID = -2474068801651074450L;
 
 	private ArrayList<Tuple<M>> pattern = new ArrayList<Tuple<M>>();
 	private ArrayList<Integer> supports = new ArrayList<Integer>();
 	private int support = Integer.MAX_VALUE;
-	private M metadata;
 
 	public Pattern() {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public Pattern(Pattern<M> old) {
 		for(int i=0;i<old.pattern.size();i++){
 			this.pattern.add(old.pattern.get(i));
 			this.supports.add(old.supports.get(i));
 		}
 		this.support = old.support;
-		if(old.metadata!=null){
-			this.metadata = (M) old.metadata.clone();
-		}
 	}
 	
 
@@ -78,7 +73,7 @@ public class Pattern<M extends ITimeInterval> extends AbstractMetaAttributeConta
 		this.supports.add(supportCount);
 		@SuppressWarnings("unchecked")
 		M clonedMD = (M) t.getMetadata().clone();
-		this.metadata = clonedMD;
+		setMetadata(clonedMD);
 		if (supportCount <= this.support) {
 			this.support = supportCount;
 		}
@@ -194,26 +189,6 @@ public class Pattern<M extends ITimeInterval> extends AbstractMetaAttributeConta
 	 */
 	public boolean isEmpty() {
 		return this.pattern.isEmpty();
-	}
-
-	/**
-	 * @return
-	 */
-	public M getMetadata() {
-		return this.metadata;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer#setMetadata
-	 * (de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute)
-	 */
-	@Override
-	public void setMetadata(M metadata) {
-		this.metadata = metadata;
-
 	}
 	
 	public void setSupport(int sup) {

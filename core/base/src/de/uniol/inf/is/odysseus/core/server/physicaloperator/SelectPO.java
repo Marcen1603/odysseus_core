@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -24,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
+public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements IHasPredicate{
 
 	private IPredicate<? super T> predicate;
 	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<T>();

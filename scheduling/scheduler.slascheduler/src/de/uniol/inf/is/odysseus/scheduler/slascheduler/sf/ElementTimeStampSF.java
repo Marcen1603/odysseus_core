@@ -18,10 +18,10 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.sf;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
-import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.IStarvationFreedom;
@@ -79,8 +79,8 @@ public class ElementTimeStampSF implements IStarvationFreedom {
 		// find element with oldest ts
 		for (IBuffer<?> buffer : this.buffers) {
 			Object head = buffer.peek();
-			if (head instanceof MetaAttributeContainer<?>) {
-				MetaAttributeContainer<?> metaContainer = (MetaAttributeContainer<?>) head;
+			if (head instanceof AbstractStreamObject<?>) {
+				AbstractStreamObject<?> metaContainer = (AbstractStreamObject<?>) head;
 				IMetaAttribute metaData = metaContainer.getMetadata();
 				if (metaData instanceof ILatency) {
 					ILatency latency = (ILatency) metaData;

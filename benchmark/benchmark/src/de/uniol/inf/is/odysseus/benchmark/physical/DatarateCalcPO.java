@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.benchmark.physical;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.StreamString;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class DatarateCalcPO<R> extends AbstractPipe<R, String> {
+public class DatarateCalcPO<R extends IStreamObject<?>> extends AbstractPipe<R, StreamString<?>> {
 
 	long updateRate = 1;
 	long elementsRead = 0;
@@ -39,6 +41,7 @@ public class DatarateCalcPO<R> extends AbstractPipe<R, String> {
 		lastTimestamp = firstTimestamp;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected void process_next(R object, int port) {
 		elementsRead++;		
@@ -48,7 +51,8 @@ public class DatarateCalcPO<R> extends AbstractPipe<R, String> {
 			long fullPeriod = now - firstTimestamp;
 			double elementsLastPeriod = Math.round(updateRate / lastPeriod * 100.0)/100.0; 
 			double elementsAll = Math.round(elementsRead / fullPeriod * 100.0)/100.0; 
-			transfer(new String(elementsLastPeriod+";"+elementsAll));
+			
+			transfer(new StreamString(elementsLastPeriod+";"+elementsAll));
 		}
 	}
 
@@ -58,7 +62,7 @@ public class DatarateCalcPO<R> extends AbstractPipe<R, String> {
 	}
 
 	@Override
-	public AbstractPipe<R, String> clone() {
+	public AbstractPipe<R, StreamString<?>> clone() {
 		return new DatarateCalcPO<R>(this);
 	}
 

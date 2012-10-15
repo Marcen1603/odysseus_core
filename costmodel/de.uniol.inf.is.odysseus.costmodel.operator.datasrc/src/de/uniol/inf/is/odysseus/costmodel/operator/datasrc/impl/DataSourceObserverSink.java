@@ -21,12 +21,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
-public class DataSourceObserverSink<In> extends AbstractSink<In> {
+public class DataSourceObserverSink<In extends IStreamObject<?>> extends AbstractSink<In> {
 	
 	private static Logger _logger = null;
 

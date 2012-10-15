@@ -18,9 +18,10 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import java.util.List;
 import java.util.Vector;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 
-public abstract class AbstractIterablePipe<R, W> extends AbstractPipe<R, W>
+public abstract class AbstractIterablePipe<R extends IStreamObject<?>, W extends IStreamObject<?>> extends AbstractPipe<R, W>
 		implements IIterableSource<W> {
 	protected List<IOperatorOwner> deactivateRequestControls = new Vector<IOperatorOwner>();
 	

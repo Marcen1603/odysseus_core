@@ -15,7 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.interval.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -33,7 +33,7 @@ public class TDifferenceAORule extends AbstractTransformationRule<DifferenceAO> 
 
 	@Override
 	public void execute(DifferenceAO differenceAO, TransformationConfiguration transformConfig) {
-		AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>>(differenceAO);
+		AntiJoinTIPO<ITimeInterval, AbstractStreamObject<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, AbstractStreamObject<ITimeInterval>>(differenceAO);
 		defaultExecute(differenceAO, po, transformConfig, true, true);		
 	}
 

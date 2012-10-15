@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  * @param <W>
  * @param <R>
  */
-public class PunctuationStorage<W extends IStreamObject<?>, R> {
+public class PunctuationStorage<W extends IStreamObject<?>, R  extends IStreamObject<?>> {
 
 	private List<List<PointInTime>> storage = new ArrayList<List<PointInTime>>();
 

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
  * @param <R>
  *            The type of the objects to filter
  */
-public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
+public class ChangeDetectPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 
 	R lastElement;
 	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();

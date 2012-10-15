@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
@@ -42,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
-public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection<In> {
+public class DefaultStreamConnection<In extends IStreamObject<?>> implements ISink<In>, IStreamConnection<In> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamConnection.class);
 

@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
  *
  * @param <T>
  */
-public class EventTriggerPO<T> extends AbstractSink<T>{
+public class EventTriggerPO<T extends IStreamObject<?>> extends AbstractSink<T>{
 	private Map<Action, List<IActionParameter>> actions;
 	private String type;
 	private Logger logger;

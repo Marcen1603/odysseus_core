@@ -22,10 +22,10 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
 
-public class PairMap<K1 extends IClone,K2 extends IClone,V extends IClone,M extends IMetaAttribute> extends MetaAttributeContainer<M>{
+public class PairMap<K1 extends IClone,K2 extends IClone,V extends IClone,M extends IMetaAttribute> extends AbstractStreamObject<M>{
 	/**
 	 * 
 	 */

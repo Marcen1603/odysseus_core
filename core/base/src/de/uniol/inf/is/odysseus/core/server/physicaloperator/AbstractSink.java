@@ -33,6 +33,7 @@ import sun.awt.util.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -52,7 +53,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataPro
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
+public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractMonitoringDataProvider
 		implements ISink<T> {
 
 	final private List<PhysicalSubscription<ISource<? extends T>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends T>>>();

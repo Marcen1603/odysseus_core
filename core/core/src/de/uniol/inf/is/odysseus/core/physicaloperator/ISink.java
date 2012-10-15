@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.ISubscriber;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
@@ -33,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
  * 
  * @author Jonas Jacobi
  */
-public interface ISink<T> extends IPhysicalOperator, ISubscriber<ISource<? extends T>, PhysicalSubscription<ISource<? extends T>>> {
+public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, ISubscriber<ISource<? extends T>, PhysicalSubscription<ISource<? extends T>>> {
 	
 	/**
 	 * Process an element.

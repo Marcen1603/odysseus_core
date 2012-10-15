@@ -26,13 +26,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 
-public class FileSinkPO extends AbstractSink<Object> {
+public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 
 	final private String filename;
 	final private boolean csvSink;
@@ -101,7 +102,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 	}
 
 	@Override
-	protected void process_next(Object object, int port) {
+	protected void process_next(IStreamObject<?> object, int port) {
 		if (isOpen()) {
 			try {
 

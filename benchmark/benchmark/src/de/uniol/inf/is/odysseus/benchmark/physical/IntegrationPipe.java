@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.benchmark.physical;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
@@ -22,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class IntegrationPipe extends AbstractPipe {
+public class IntegrationPipe extends AbstractPipe<IStreamObject<?>,IStreamObject<?>> {
 
 	private int curPort = 0;
 
@@ -37,7 +38,7 @@ public class IntegrationPipe extends AbstractPipe {
 	}
 
 	@Override
-	protected void process_next(Object object, int port) {
+	protected void process_next(IStreamObject<?> object, int port) {
 		transfer(object);
 	}
 

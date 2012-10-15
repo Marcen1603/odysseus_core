@@ -21,6 +21,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -35,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
+public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStreamObject<?>> extends AbstractSource<W> implements
 		IPipe<R, W> {
 
 	// ------------------------------------------------------------------------

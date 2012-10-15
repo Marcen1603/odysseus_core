@@ -194,8 +194,9 @@ public class DataSourceManager {
 			attributes.put(attribute, observer);
 			getLogger().debug("Created temporary attributeObserver for " + attribute);
 
-			for (Double d : values)
-				observer.streamElementRecieved(null, d, 0);
+			// FIXME: TIMO
+			//			for (Double d : values)
+//				observer.streamElementRecieved(null, d, 0);
 
 			return observer.getHistogram();
 

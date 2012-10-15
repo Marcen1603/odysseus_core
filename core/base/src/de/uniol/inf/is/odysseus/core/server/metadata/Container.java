@@ -15,12 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
+import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
 
 
 
-public class Container<Type, MetaType extends IMetaAttribute> extends MetaAttributeContainer<MetaType> {
+public class Container<Type, MetaType extends IMetaAttribute> extends AbstractStreamObject<MetaType> {
 	
 	private static final long serialVersionUID = -581770058118444611L;
 	public Type cargo;

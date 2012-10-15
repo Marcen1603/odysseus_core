@@ -20,13 +20,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class SocketSinkPO extends AbstractSink<Object> {
+public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 
 	// static private Logger logger =
 	// LoggerFactory.getLogger(SocketSinkPO.class);
@@ -62,7 +63,7 @@ public class SocketSinkPO extends AbstractSink<Object> {
 	}
 
 	@Override
-	protected void process_next(Object object, int port) {
+	protected void process_next(IStreamObject<?> object, int port) {
 		synchronized (subscribe) {
 			Iterator<ISinkStreamHandler> iter = subscribe.iterator();
 			Object toTransfer = object;

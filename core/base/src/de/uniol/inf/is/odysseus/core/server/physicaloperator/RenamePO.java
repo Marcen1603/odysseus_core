@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 /**
@@ -28,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
  * @param <R>
  */
 
-public class RenamePO<R> extends AbstractPipe<R, R> {
+public class RenamePO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 
 	public RenamePO() {
 	}

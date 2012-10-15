@@ -20,6 +20,8 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
@@ -27,10 +29,9 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.Combin
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.EqualWidthHistogramFactory;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.FreedmanDiaconisRule;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.IHistogramFactory;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 @SuppressWarnings("rawtypes")
-public class AttributeObserver implements IDataSourceObserverListener {
+public class AttributeObserver<T extends IStreamObject<?>> implements IDataSourceObserverListener<T> {
 
 	private static Logger _logger = null;
 	protected static Logger getLogger() {
@@ -41,7 +42,7 @@ public class AttributeObserver implements IDataSourceObserverListener {
 	}
 
 	private SDFAttribute attribute;
-	private DataSourceObserverSink<?> source;
+	private DataSourceObserverSink<T> source;
 	private int schemaPosition;
 	
 	private IHistogramFactory factory;
@@ -59,8 +60,7 @@ public class AttributeObserver implements IDataSourceObserverListener {
 		return this.source != null;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void setSink( DataSourceObserverSink<?> sink ) {
+	public void setSink( DataSourceObserverSink<T> sink ) {
 		if( this.source != null ) {
 			this.source.removeListener(this);
 		}
@@ -79,14 +79,14 @@ public class AttributeObserver implements IDataSourceObserverListener {
 	}
 	
 	@Override
-	public void streamElementRecieved(DataSourceObserverSink sender, Object element, int port) {
+	public void streamElementRecieved(DataSourceObserverSink sender, T element, int port) {
 		
-		// direct input... e.g. cached values
-		if( element instanceof Double ) {
-			factory.addValue((Double)element);
-			getLogger().debug("Direct value for " + attribute + ": " + element );
-			return;
-		}
+//		// direct input... e.g. cached values
+//		if( element instanceof Double ) {
+//			factory.addValue((Double)element);
+//			getLogger().debug("Direct value for " + attribute + ": " + element );
+//			return;
+//		}
 		
 		Tuple<?> tuple = (Tuple<?>)element;
 		

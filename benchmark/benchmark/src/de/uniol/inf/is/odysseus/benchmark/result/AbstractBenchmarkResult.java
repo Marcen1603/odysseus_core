@@ -19,6 +19,8 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.core.Persist;
 
+import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 
@@ -26,7 +28,8 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
  * @author Jonas Jacobi
  */
 @Root(name = "result")
-public abstract class AbstractBenchmarkResult<T> implements IBenchmarkResult<T> {
+public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<ITimeInterval> implements IBenchmarkResult<T> {
+	private static final long serialVersionUID = -3620110146842722398L;
 	private long startTime;
 	private long endTime;
 	protected int size = 0;

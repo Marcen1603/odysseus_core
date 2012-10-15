@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -41,7 +42,7 @@ public final class DashboardPartController {
 	
 	private final IDashboardPart dashboardPart;
 	private List<Integer> queryIDs;
-	private DefaultStreamConnection<Object> streamConnection;
+	private DefaultStreamConnection<IStreamObject<?>> streamConnection;
 
 	private Status status = Status.STOPPED;
 
@@ -74,10 +75,11 @@ public final class DashboardPartController {
 			}
 		}
 
-		streamConnection = new DefaultStreamConnection<Object>(roots);
+		streamConnection = new DefaultStreamConnection<IStreamObject<?>>(roots);
 		
 		dashboardPart.onStart(roots);
-		streamConnection.addStreamElementListener(dashboardPart);
+		// FIXME: TIMO
+		//streamConnection.addStreamElementListener(dashboardPart);
 		streamConnection.connect();
 
 		status = Status.RUNNING;

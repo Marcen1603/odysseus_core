@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
-import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.GenQueries;
  * 
  * @param <T>
  */
-public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
+public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends AbstractSink<T>
 		implements ISLAConformance {
 	/**
 	 * factor between nanoseconds and milliseconds
@@ -230,10 +230,9 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		for (IPhysicalOperator po : query.getAllOperators()) {
 			if (po instanceof IBuffer<?>) {
 				IBuffer<?> buffer = (IBuffer<?>) po;
-				Object element = buffer.peek();
+				IStreamObject<?> element = buffer.peek();
 				if (element != null) {
-					MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) element;
-					IMetaAttribute metadata = metaAttributeContainer.getMetadata();
+					IMetaAttribute metadata = element.getMetadata();
 					if (metadata instanceof ILatency) {
 						ILatency latency = (ILatency) metadata;
 						long ts = latency.getLatencyStart();
@@ -274,9 +273,8 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		for (IBuffer<?> buffer : this.buffers) {
 			synchronized (buffer) {
 				if (buffer.size() > 0) {
-					Object object = buffer.peek();
-					MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) object;
-					IMetaAttribute metadata = metaAttributeContainer.getMetadata();
+					IStreamObject<?> object = buffer.peek();
+					IMetaAttribute metadata = object.getMetadata();
 					if (metadata instanceof ILatency) {
 						ILatency latency = (ILatency) metadata;
 						long waitingTime = timestamp - latency.getLatencyStart();
@@ -304,9 +302,8 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		long timestamp = System.nanoTime();
 		for (IBuffer<?> buffer : this.buffers) {
 			if (buffer.size() > 0) {
-				Object object = buffer.peek();
-				MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) object;
-				IMetaAttribute metadata = metaAttributeContainer.getMetadata();
+				IStreamObject<?> object = buffer.peek();
+				IMetaAttribute metadata = object.getMetadata();
 				if (metadata instanceof ILatency) {
 					ILatency latency = (ILatency) metadata;
 					long waitingTime = timestamp - latency.getLatencyStart();
@@ -348,9 +345,8 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		long timestamp = System.nanoTime();
 		for (IBuffer<?> buffer : this.buffers) {
 			if (buffer.size() > 0) {
-				Object object = buffer.peek();
-				MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) object;
-				IMetaAttribute metadata = metaAttributeContainer.getMetadata();
+				IStreamObject<?>  object = buffer.peek();
+				IMetaAttribute metadata = object.getMetadata();
 				if (metadata instanceof ILatency) {
 					ILatency latency = (ILatency) metadata;
 					long waitingTime = timestamp - latency.getLatencyStart();

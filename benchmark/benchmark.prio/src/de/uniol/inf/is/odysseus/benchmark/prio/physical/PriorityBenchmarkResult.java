@@ -29,6 +29,8 @@ import de.uniol.inf.is.odysseus.interval_latency_priority.ILatencyPriority;
 @Root(name = "priorityresult")
 public class PriorityBenchmarkResult<T extends ILatencyPriority> extends
 		AbstractBenchmarkResult<T> {
+	
+	private static final long serialVersionUID = -6833977068355934158L;
 	@Element(name="prioritizedStatistics")
 	private DescriptiveStatistics prioritizedStats = new DescriptiveStatistics();
 

@@ -24,7 +24,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.util.Primes;
 
 /**
@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.util.Primes;
  * 
  * @author Marco Grawunder, Jonas Jacobi
  */
-public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
+public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		implements Serializable, Comparable<Tuple<?>>, ICSVToString {
 
 	private static final long serialVersionUID = 7119095568322125441L;

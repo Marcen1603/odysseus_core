@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ChangeDetectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -36,7 +36,7 @@ public class TChangeDetectAORule extends
 	@Override
 	public void execute(ChangeDetectAO operator,
 			TransformationConfiguration config) {
-		ChangeDetectPO<?> po = new ChangeDetectPO<IMetaAttribute>();
+		ChangeDetectPO<?> po = new ChangeDetectPO<IStreamObject<?>>();
 		defaultExecute(operator, po, config, true, true);
 	}
 

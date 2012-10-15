@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
 
 /**
  * This class is used to represent objects as simple key value pairs
@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
  * @param <T>
  */
 
-public class KeyValueObject <T extends IMetaAttribute> extends MetaAttributeContainer<T>
+public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObject<T>
 implements Serializable{
 	
 	private static final long serialVersionUID = -94667746890198612L;
@@ -115,7 +115,7 @@ implements Serializable{
 	// ------------------------------------
 	
 	@Override
-	public MetaAttributeContainer<T> clone() {
+	public AbstractStreamObject<T> clone() {
 		return new KeyValueObject<T>(this);
 	}
 

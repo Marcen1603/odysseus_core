@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 
 public class LatencyBenchmarkResult extends AbstractBenchmarkResult<ILatency> {
 
+	private static final long serialVersionUID = 8124398625553454326L;
+
 	/**
 	 * @param statistiscs
 	 */

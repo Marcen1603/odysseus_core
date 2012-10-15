@@ -18,10 +18,10 @@ package de.uniol.inf.is.odysseus.rcp.viewer.server.opbreak;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferedPipe;
 
-public class BufferedPipeWithListener<T extends IClone> extends BufferedPipe<T> {
+public class BufferedPipeWithListener<T extends IStreamObject<?>> extends BufferedPipe<T> {
 
 	private final List<IBufferedPipeListener> listeners = new ArrayList<IBufferedPipeListener>();
 	

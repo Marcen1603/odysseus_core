@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 
@@ -22,5 +23,5 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
  * An operator, which acts both a {@link ISource} and as a {@link ISink}.
  * @author Jonas Jacobi
  */
-public interface IPipe<Read,Write> extends ISource<Write>, ISink<Read>{
+public interface IPipe<Read  extends IStreamObject<?>,Write extends IStreamObject<?>> extends ISource<Write>, ISink<Read>{
 }

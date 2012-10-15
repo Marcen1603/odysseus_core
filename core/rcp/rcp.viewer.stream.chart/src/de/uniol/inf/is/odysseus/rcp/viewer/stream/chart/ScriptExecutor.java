@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
@@ -54,7 +55,7 @@ public class ScriptExecutor {
 	public static List<ISource<?>> loadAndExecuteQueryScript(String queryFile) {
 		try {
 			ISession caller = OdysseusRCPPlugIn.getActiveSession();
-			DummySink<?> dummy = new DummySink<Object>();
+			DummySink<IStreamObject<?>> dummy = new DummySink<IStreamObject<?>>();
 			String text = "";
 			Scanner scanner = new Scanner(new File(queryFile));
 			while (scanner.hasNextLine()) {

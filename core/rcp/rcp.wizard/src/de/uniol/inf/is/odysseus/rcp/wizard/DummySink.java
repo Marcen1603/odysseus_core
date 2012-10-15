@@ -30,6 +30,7 @@
 
 package de.uniol.inf.is.odysseus.rcp.wizard;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
@@ -38,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
  * @author Dennis Geesen
  * Created at: 01.12.2011
  */
-public class DummySink<T> extends AbstractSink<T>{
+public class DummySink<T extends IStreamObject<?>> extends AbstractSink<T>{
 
 	@Override
 	protected void process_next(T object, int port) {

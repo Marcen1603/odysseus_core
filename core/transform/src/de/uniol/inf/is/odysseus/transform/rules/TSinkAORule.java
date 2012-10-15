@@ -15,10 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SinkAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SinkPO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -33,7 +33,7 @@ public class TSinkAORule extends AbstractTransformationRule<SinkAO> {
 	@Override
 	public void execute(SinkAO operator,
 			TransformationConfiguration config) {
-		SinkPO<?> sinkPO = new SinkPO<IMetaAttribute>();
+		SinkPO<?> sinkPO = new SinkPO<IStreamObject<?>>();
 		defaultExecute(operator, sinkPO, config, true, true);
 	}
 

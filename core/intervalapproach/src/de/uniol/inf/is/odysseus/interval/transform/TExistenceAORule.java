@@ -15,10 +15,10 @@
   */
 package de.uniol.inf.is.odysseus.interval.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
@@ -39,15 +39,15 @@ public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
 
 	@Override
 	public void execute(ExistenceAO existenceAO, TransformationConfiguration transformConfig) {
-		ISweepArea<MetaAttributeContainer<ITimeInterval>> leftSA = new DefaultTISweepArea<MetaAttributeContainer<ITimeInterval>>();
-		ISweepArea<MetaAttributeContainer<ITimeInterval>> rightSA = new DefaultTISweepArea<MetaAttributeContainer<ITimeInterval>>();
+		ISweepArea<IStreamObject<ITimeInterval>> leftSA = new DefaultTISweepArea<IStreamObject<ITimeInterval>>();
+		ISweepArea<IStreamObject<ITimeInterval>> rightSA = new DefaultTISweepArea<IStreamObject<ITimeInterval>>();
 		IPredicate<?> predicate = existenceAO.getPredicate();
 		if (existenceAO.getType() == ExistenceAO.Type.NOT_EXISTS) {
 			predicate = ComplexPredicateHelper.createNotPredicate(predicate);
 		}
 		leftSA.setQueryPredicate(ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(), predicate));
 		rightSA.setQueryPredicate(ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(), predicate));
-		AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>>(existenceAO, leftSA, rightSA);
+		AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>>(existenceAO, leftSA, rightSA);
 		defaultExecute(existenceAO, po, transformConfig, true, true);
 	}
 

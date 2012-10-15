@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
  * @author Marco Grawunder
  */
 @SuppressWarnings({"rawtypes"})
-public class RoutePO<T> extends AbstractPipe<T, T> {
+public class RoutePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
 	private List<IPredicate<? super T>> predicates;
 

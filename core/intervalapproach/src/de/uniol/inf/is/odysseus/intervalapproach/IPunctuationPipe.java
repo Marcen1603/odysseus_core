@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
  * @author jan
  *
  */
-public interface IPunctuationPipe<W,R> extends IPipe<W,R>{
+public interface IPunctuationPipe<W  extends IStreamObject<?>,R  extends IStreamObject<?>> extends IPipe<W,R>{
 	/**
 	 * This function should be called if a punctuation is out of date and some internal
 	 * cleaning up is required.

@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePip
 /**
  * @author Jonas Jacobi
  */
-public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
+public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePipe<T, T>
 		implements IBuffer<T> {
 
 	volatile protected static Logger _logger = null;

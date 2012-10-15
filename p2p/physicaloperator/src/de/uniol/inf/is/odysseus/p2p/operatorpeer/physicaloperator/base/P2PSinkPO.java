@@ -30,11 +30,12 @@ import net.jxta.socket.JxtaServerSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 
-public class P2PSinkPO<T> extends AbstractSink<T> {
+public class P2PSinkPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 
     static private Logger logger = LoggerFactory.getLogger(P2PSinkPO.class);
 

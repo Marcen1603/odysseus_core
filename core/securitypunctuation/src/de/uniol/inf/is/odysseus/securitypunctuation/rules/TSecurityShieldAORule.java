@@ -21,6 +21,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -64,8 +65,8 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<TopAO> {
 							transformConfig.getTransformationHelper().insertNewFather(oldFather, topAOCollection, securityShieldPO);
 						}
 					} else if(e instanceof FileSinkPO && counter++ < 1) {
-						List<PhysicalSubscription<ISource<? extends Object>>> fileSink = ((FileSinkPO) e).getSubscribedToSource();
-						for(PhysicalSubscription<ISource<? extends Object>> source:fileSink) {
+						List<PhysicalSubscription<ISource<? extends IStreamObject<?>>>> fileSink = ((FileSinkPO) e).getSubscribedToSource();
+						for(PhysicalSubscription<ISource<? extends IStreamObject<?>>> source:fileSink) {
 							// Wenn auch CalcLatency direkt vor FileSInk, dann SecShield auch davor noch setzen... - für Benchmarks
 //							if(source.getTarget() instanceof LatencyCalculationPipe) {
 //								LatencyCalculationPipe pipe = (LatencyCalculationPipe) source.getTarget();

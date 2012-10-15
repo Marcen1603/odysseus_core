@@ -15,10 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
-public class SinkPO<R> extends AbstractSink<R> {
+public class SinkPO<R extends IStreamObject<?>> extends AbstractSink<R> {
 
 	@Override
 	protected void process_next(R object, int port) {		
