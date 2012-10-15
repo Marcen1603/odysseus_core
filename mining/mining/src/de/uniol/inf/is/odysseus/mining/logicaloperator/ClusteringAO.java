@@ -27,9 +27,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
-import de.uniol.inf.is.odysseus.mining.clustering.KMeans;
 
 /**
  * 
@@ -40,8 +37,6 @@ public class ClusteringAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -4053248940214364499L;
 
-	private IClusterer<ITimeInterval> clusterer;
-
 	private Map<String, List<String>> options;
 
 	private String clustererName;
@@ -51,8 +46,7 @@ public class ClusteringAO extends AbstractLogicalOperator {
 	public ClusteringAO() {
 	}
 
-	public ClusteringAO(ClusteringAO clusteringAO) {
-		this.clusterer = clusteringAO.clusterer;
+	public ClusteringAO(ClusteringAO clusteringAO) {		
 		this.options = clusteringAO.options;
 		this.clustererName = clusteringAO.clustererName;
 		this.attributes = clusteringAO.attributes;
@@ -67,29 +61,12 @@ public class ClusteringAO extends AbstractLogicalOperator {
 	public void setAlgorithmus(String clusterer) {
 		this.clustererName = clusterer;
 	}
-
-	@Override
-	public void initialize() {
-		super.initialize();
-		try {
-			// TODO: Clusterer dynamisch
-			KMeans<ITimeInterval> algo = new KMeans<ITimeInterval>();
-			algo.setOptions(this.options);
-			this.clusterer = algo;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException(e);
-		}
-	}
+	
 
 	@Parameter(name = "options", type = StringParameter.class, isList = true, optional = true, isMap = true)
 	public void setOptions(Map<String, List<String>> options) {
 		this.options = options;
-	}
-
-	public IClusterer<ITimeInterval> getClusterer() {
-		return this.clusterer;
-	}
+	}	
 
 	public Map<String, List<String>> getOptions() {
 		return this.options;
@@ -104,9 +81,7 @@ public class ClusteringAO extends AbstractLogicalOperator {
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>(getInputSchema(0).getAttributes());
 		SDFAttribute attributeId = new SDFAttribute(null, "clusterid", SDFDatatype.INTEGER);
-		attributes.add(attributeId);
-		SDFAttribute attributeRun = new SDFAttribute(null, "run", SDFDatatype.INTEGER);
-		attributes.add(attributeRun);
+		attributes.add(attributeId);		
 		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
 		return outSchema;
 	}
@@ -134,4 +109,14 @@ public class ClusteringAO extends AbstractLogicalOperator {
 		return ret;
 	}
 
+	public String getClustererName() {
+		return clustererName;
+	}
+
+	public void setClustererName(String clustererName) {
+		this.clustererName = clustererName;
+	}
+
+	
+	
 }

@@ -31,6 +31,7 @@
 package de.uniol.inf.is.odysseus.mining.distance;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -39,5 +40,5 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
  */
 public interface IDistance {
 
-	public double getDistance(Tuple<?> first, Tuple<?> second);
+	public double getDistance(Tuple<?> first, Tuple<?> second, SDFSchema schema);
 }
