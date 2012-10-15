@@ -30,6 +30,7 @@ public class MetadataRegistry {
 
 	private static Map<Set<String>, Class<? extends IMetaAttribute>> combinedMetadataTypes = new HashMap<Set<String>, Class<? extends IMetaAttribute>>();
 
+	@SafeVarargs
 	public static void addMetadataType(
 			Class<? extends IMetaAttribute> implementationType,
 			Class<? extends IMetaAttribute>... combinationOfInterfaces) {
@@ -90,6 +91,7 @@ public class MetadataRegistry {
 		}
 	}
 
+	@SafeVarargs
 	public static void removeCombinedMetadataType(
 			Class<? extends IMetaAttribute>... combinationOf) {
 		HashSet<String> typeSet = toStringSet(combinationOf);
@@ -99,6 +101,7 @@ public class MetadataRegistry {
 		}
 	}
 
+	@SafeVarargs
 	private static HashSet<String> toStringSet(
 			Class<? extends IMetaAttribute>... combinationOf) {
 		HashSet<String> typeSet = new HashSet<String>();

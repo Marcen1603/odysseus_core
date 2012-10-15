@@ -49,6 +49,7 @@ public class Configuration<T extends ISetting<?>> extends
 	 * @param entries
 	 *            Entries which should be stored.
 	 */
+	@SafeVarargs
 	public Configuration(T... entries) {
 		
 		if (entries != null) {

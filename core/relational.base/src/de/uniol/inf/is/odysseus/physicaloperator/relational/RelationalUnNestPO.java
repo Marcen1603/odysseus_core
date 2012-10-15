@@ -30,7 +30,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
-    private static Logger   LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
+    @SuppressWarnings("unused")
+	private static Logger   LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
 
     private final int       nestedAttributePos;
     private final SDFSchema inputSchema;

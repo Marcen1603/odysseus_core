@@ -24,6 +24,7 @@ public class FixedSetAccessAO<T extends IMetaAttributeContainer<? extends IClone
 	private static final long serialVersionUID = -4026927772571867684L;
 	private final T[] tuples;
 	
+	@SafeVarargs
 	public FixedSetAccessAO(String name, String type, T... tuples) {
 		super(name, type, null);
 		this.tuples = tuples;

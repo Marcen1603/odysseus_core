@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
 
 public class FragmentTestsComponent implements ITestComponent, BundleListener {
 
+	@SuppressWarnings("unused")
 	private static Logger LOG = LoggerFactory.getLogger(FragmentTestsComponent.class);
 
 	// OSGI injections

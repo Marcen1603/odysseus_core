@@ -43,7 +43,8 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
     private PipedInputStream  pipeInput;
     private PipedOutputStream pipeOutput;
     private String            uri;
-    private ITransportPattern transportPattern;
+    @SuppressWarnings("unused")
+	private ITransportPattern transportPattern;
 
     /**
  * 

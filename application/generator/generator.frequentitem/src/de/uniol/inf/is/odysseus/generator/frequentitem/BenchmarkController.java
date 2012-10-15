@@ -113,6 +113,7 @@ public class BenchmarkController {
 	// runquery();
 	// }
 
+	@SuppressWarnings("unused")
 	private void runquery() {
 		if (!this.started) {
 			return;

@@ -37,6 +37,7 @@ public class TransformationConfiguration {
 		this.transformHelper = transformHelper;
 	}
 
+	@SafeVarargs
 	public TransformationConfiguration(ITransformationHelper transformHelper, final String dataType,
 			Class<? extends IMetaAttribute>... metaTypes) {
 		this.dataType = dataType;
@@ -56,6 +57,7 @@ public class TransformationConfiguration {
 		this.transformHelper = new StandardTransformationHelper();
 	}
 
+	@SafeVarargs
 	public TransformationConfiguration(final String dataType,
 			Class<? extends IMetaAttribute>... metaTypes) {
 		this.dataType = dataType;

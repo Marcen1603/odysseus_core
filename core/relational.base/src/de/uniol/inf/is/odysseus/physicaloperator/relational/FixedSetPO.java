@@ -31,6 +31,7 @@ public final class FixedSetPO<T extends IMetaAttributeContainer<? extends IClone
 	private int index;
 	private AtomicBoolean isDone;
 
+	@SafeVarargs
 	public FixedSetPO(T... tuples) {
 		this.tuples = tuples;
 		this.isDone = new AtomicBoolean(false);
