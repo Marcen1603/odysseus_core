@@ -37,11 +37,5 @@ Unless required by applicable law or agreed to in writing, software
       <import feature="de.uniol.inf.is.odysseus.relational.feature" version="1.0.0.qualifier"/>
    </requires>
 
-   <plugin
-         id="de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
 </feature>

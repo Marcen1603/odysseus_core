@@ -57,11 +57,13 @@ public class ArffReader extends StreamClientHandler {
 
 	public ArffReader(ArffReader arffReader) {
 		this.file = arffReader.file;
+		@SuppressWarnings("unused")
 		int number = 0;
 	}
 
 	public ArffReader(String file) {
 		this.file = file;
+		@SuppressWarnings("unused")
 		int number = 0;
 	}
 
@@ -83,6 +85,7 @@ public class ArffReader extends StreamClientHandler {
 	private void readHeader() throws IOException {
 		System.out.println("Reading header...");
 		String line = in.readLine();
+		@SuppressWarnings("unused")
 		List<String> attributes = new ArrayList<String>();
 		while (line != null) {
 			line = in.readLine();

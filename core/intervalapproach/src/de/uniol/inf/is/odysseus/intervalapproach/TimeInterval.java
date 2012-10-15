@@ -20,6 +20,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
  * @deprecated de.uniol.inf.is.odysseus.core.metadata.TimeInterval
  * 
  */
+@SuppressWarnings("serial")
 @Deprecated
 public class TimeInterval extends de.uniol.inf.is.odysseus.core.metadata.TimeInterval {
 
