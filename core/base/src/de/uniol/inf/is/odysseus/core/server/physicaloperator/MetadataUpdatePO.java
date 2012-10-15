@@ -33,6 +33,11 @@ public class MetadataUpdatePO<M extends IClone, T extends IStreamObject<? extend
 		return OutputMode.MODIFIED_INPUT;
 	}
 	
+	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+	
 	public MetadataUpdatePO(IMetadataUpdater<M, T> mFac) {
 		super();
 		this.metadataFactory = mFac;

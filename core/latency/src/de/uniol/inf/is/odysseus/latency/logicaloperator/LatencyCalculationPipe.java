@@ -37,6 +37,11 @@ public class LatencyCalculationPipe<T extends IStreamObject<? extends ILatency>>
 	}
 	
 	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+	
+	@Override
 	protected void process_next(T object, int port) {
 		object.getMetadata().setLatencyEnd(System.nanoTime());
 		transfer(object);

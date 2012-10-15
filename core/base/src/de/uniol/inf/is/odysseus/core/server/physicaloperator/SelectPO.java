@@ -50,6 +50,11 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 	}
 	
 	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+	
+	@Override
 	protected void process_next(T object, int port) {
 		if (predicate.evaluate(object)) {
 			transfer(object);

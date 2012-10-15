@@ -50,6 +50,11 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IStreamObje
 	}
 
 	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+	
+	@Override
 	public void process_next(In object, int port) {
 		try {
 			object.setMetadata(type.newInstance());

@@ -44,7 +44,12 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITi
 		return new PointInTime((time.getStart().getMainPoint() / windowAdvance)
 				* windowAdvance + windowSize);
 	}
-	
+
+	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+
 	@Override
 	public SlidingAdvanceTimeWindowTIPO<T> clone() {
 		return new SlidingAdvanceTimeWindowTIPO<T>(this);

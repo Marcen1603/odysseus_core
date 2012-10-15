@@ -171,13 +171,17 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
-		// TODO Auto-generated method stub
 		return de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode.NEW_ELEMENT;
 	}
 
 	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+
+	
+	@Override
 	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-		// TODO Auto-generated method stub
 		return new TriplePatternMatchingPO(this);
 	}
 	

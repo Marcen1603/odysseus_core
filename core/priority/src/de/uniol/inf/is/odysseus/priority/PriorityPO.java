@@ -53,6 +53,12 @@ public class PriorityPO<K extends IPriority, T extends IStreamObject<K>>
 	}
 
 	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+
+	
+	@Override
 	protected void process_next(T next, int port) {
 		for (Map.Entry<Byte, IPredicate<? super T>> curPriority : this.priorites
 				.entrySet()) {

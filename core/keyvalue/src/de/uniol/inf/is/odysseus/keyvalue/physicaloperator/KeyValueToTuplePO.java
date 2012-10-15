@@ -35,6 +35,11 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+
 	public void setKeepInputObject(boolean keepInputObject) {
 		this.keepInputObject = keepInputObject;
 	}

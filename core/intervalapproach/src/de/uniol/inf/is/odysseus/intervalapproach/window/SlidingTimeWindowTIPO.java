@@ -41,6 +41,11 @@ public class SlidingTimeWindowTIPO<T extends IStreamObject<ITimeInterval>> exten
 	}
 
 	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+	
+	@Override
 	public SlidingTimeWindowTIPO<T> clone() {
 		return new SlidingTimeWindowTIPO<T>(this);
 	}

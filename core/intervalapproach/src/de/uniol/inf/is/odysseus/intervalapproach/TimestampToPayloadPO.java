@@ -38,5 +38,11 @@ public abstract class TimestampToPayloadPO<K extends ITimeInterval, T extends IS
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}
+	
+	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+
 
 }

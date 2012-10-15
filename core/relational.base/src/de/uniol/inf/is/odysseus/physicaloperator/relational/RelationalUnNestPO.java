@@ -78,6 +78,11 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
         return OutputMode.NEW_ELEMENT;
     }
 
+	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+    
     /*
      * (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#

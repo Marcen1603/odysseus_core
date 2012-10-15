@@ -68,6 +68,11 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 	
+	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	final protected void process_next(Tuple<T> object, int port) {

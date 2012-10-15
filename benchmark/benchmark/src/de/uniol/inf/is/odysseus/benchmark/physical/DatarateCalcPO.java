@@ -26,6 +26,11 @@ public class DatarateCalcPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 		return OutputMode.INPUT;
 	}
 	
+	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+	
 	public long getUpdateRate() {
 		return updateRate;
 	}

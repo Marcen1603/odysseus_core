@@ -37,6 +37,11 @@ public class UnboundedWindowTIPO<T extends IStreamObject<? extends ITimeInterval
 	}
 
 	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+	
+	@Override
 	public AbstractPipe<T, T> clone() {
 		return new UnboundedWindowTIPO<T>(this);
 	}

@@ -44,6 +44,12 @@ public class RenamePO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 	}
 
 	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+
+	
+	@Override
 	protected void process_next(R object, int port) {
 		transfer(object);
 	}

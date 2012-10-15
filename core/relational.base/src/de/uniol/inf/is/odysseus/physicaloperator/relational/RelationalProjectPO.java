@@ -52,6 +52,11 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 	}
 	
 	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
+	
+	@Override
 	final protected void process_next(Tuple<T> object, int port) {
 		try {
 			Tuple<T> out = object.restrict(this.restrictList, false);

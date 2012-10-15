@@ -254,9 +254,21 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 
 	@Override
 	final public void process(T object, int port) {
+		if (!object.isInOrder() && ! canHandleOutOfOrder()){
+			done(port);
+			throw new RuntimeException("The operator "+name+" is not designed to process out of order elements!");
+		}
 		fire(processInitEvent[port]);
 		process_next(object, port);
 		fire(processDoneEvent[port]);
+	}
+	
+	/**
+	 * If an operator is capable of handling out of order data, return true
+	 * @return
+	 */
+	protected boolean canHandleOutOfOrder() {
+		return false;
 	}
 
 	@Override

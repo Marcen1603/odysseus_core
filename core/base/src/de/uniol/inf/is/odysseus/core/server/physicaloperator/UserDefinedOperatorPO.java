@@ -37,6 +37,11 @@ public class UserDefinedOperatorPO<R  extends IStreamObject<?>,W  extends IStrea
 	public OutputMode getOutputMode() {
 		return udf.getOutputMode();
 	}
+	
+	@Override
+	protected boolean canHandleOutOfOrder() {
+		return true;
+	}
 
 	public void setInitString(String initString) {
 		this.initString = initString;
