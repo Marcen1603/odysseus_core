@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
@@ -35,7 +36,7 @@ public class TestDashboardPart implements IDashboardPart {
 	}
 
 	@Override
-	public void streamElementRecieved(Object element, int port) {
+	public void streamElementRecieved(IStreamObject<?> element, int port) {
 	}
 
 	@Override

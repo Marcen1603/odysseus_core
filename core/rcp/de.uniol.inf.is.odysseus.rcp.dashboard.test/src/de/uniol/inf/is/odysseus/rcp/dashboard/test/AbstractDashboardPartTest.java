@@ -31,6 +31,7 @@ import com.beust.jcommander.internal.Lists;
 import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
@@ -46,7 +47,7 @@ public class AbstractDashboardPartTest {
 		}
 
 		@Override
-		public void streamElementRecieved(Object element, int port) {
+		public void streamElementRecieved(IStreamObject<?> element, int port) {
 		}
 
 		@Override
