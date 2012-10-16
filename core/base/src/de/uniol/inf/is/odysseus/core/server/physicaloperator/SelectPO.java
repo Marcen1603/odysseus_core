@@ -60,6 +60,7 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 			transfer(object);
 		}else{
 			// Send filtered data to output port 1
+			//Removed sending negated elements to port 1 --> use Route instead (Selectivity measurement will always be one in this case)
 			//transfer(object,1);
 			heartbeatGenerationStrategy.generateHeartbeat(object, this);
 		}
