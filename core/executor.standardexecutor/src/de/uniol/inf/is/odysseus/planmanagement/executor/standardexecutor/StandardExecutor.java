@@ -544,6 +544,13 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             LOG.info("Query (ID: " + queryID + ") is already started.");
             return;
         }
+        
+        if( admissionControl != null ) {
+        	if( !admissionControl.canStartQuery(queryToStart) ) {
+        		LOG.error("Could not start query since it will potencially overload the system");
+        		throw new RuntimeException("Query due of admission control not started");
+        	}
+        }
         LOG.info("Starting query (ID: " + queryID + ").");
 
         try {
