@@ -49,14 +49,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.DataSourceObserv
  */
 public class DataSourceManager {
 
-	private static Logger _logger = null;
-
-	protected static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(DataSourceManager.class);
-		}
-		return _logger;
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(DataSourceManager.class);
 
 	// contains additional info
 	// of the used sources in odysseus
@@ -104,7 +97,7 @@ public class DataSourceManager {
 			SourceInfo info = new SourceInfo(src);
 			sources.put(src, info);
 
-			getLogger().debug("New source added: " + src);
+			LOG.debug("New source added: " + src);
 
 			if (!waitingAttributes.isEmpty()) {
 				SDFSchema attributes = src.getOutputSchema();
@@ -138,7 +131,7 @@ public class DataSourceManager {
 			SourceInfo info = sources.get(src);
 			info.queriesUsed++;
 
-			getLogger().debug("Source " + src + " already added. Uses: " + info.queriesUsed);
+			LOG.debug("Source " + src + " already added. Uses: " + info.queriesUsed);
 		}
 	}
 
@@ -160,14 +153,14 @@ public class DataSourceManager {
 
 				// source no longer used
 				sources.remove(src);
-				getLogger().debug("Source " + src + " removed");
+				LOG.debug("Source " + src + " removed");
 			}
 
-			getLogger().debug("Source " + src + " uses : " + srcInfo.queriesUsed);
+			LOG.debug("Source " + src + " uses : " + srcInfo.queriesUsed);
 
 		} else {
 			// sollte nicht vorkommen
-			getLogger().warn("Query with source " + src + "(which was not known here) removed");
+			LOG.warn("Query with source " + src + "(which was not known here) removed");
 		}
 	}
 
@@ -186,13 +179,13 @@ public class DataSourceManager {
 			return observer.getHistogram();
 		} else if (cachedAttributes.containsKey(attribute.toString())) {
 
-			getLogger().debug("Cached values of " + attribute + " found");
+			LOG.debug("Cached values of " + attribute + " found");
 
 			Collection<Double> values = cachedAttributes.get(attribute.toString());
 
 			AttributeObserver observer = new AttributeObserver(attribute);
 			attributes.put(attribute, observer);
-			getLogger().debug("Created temporary attributeObserver for " + attribute);
+			LOG.debug("Created temporary attributeObserver for " + attribute);
 
 			for (Double d : values) {
 				observer.cachedElementRecieved(d);
@@ -201,7 +194,7 @@ public class DataSourceManager {
 			return observer.getHistogram();
 
 		} else {
-			getLogger().debug("No histogram for attribute " + attribute + " exists");
+			LOG.debug("No histogram for attribute " + attribute + " exists");
 
 			createAttributeObserver(attribute);
 		}
@@ -232,18 +225,18 @@ public class DataSourceManager {
 					observer.setSink(sink);
 
 					attributes.put(attribute, observer);
-					getLogger().debug("Added AttributeObserver for attribute " + attribute);
+					LOG.debug("Added AttributeObserver for attribute " + attribute);
 				} else {
 					observer.setSink(sink);
-					getLogger().debug("Activated temporary AttributeObserver for attribute " + attribute);
+					LOG.debug("Activated temporary AttributeObserver for attribute " + attribute);
 				}
 
 			} else {
-				getLogger().warn("Source for attribute " + attribute + " not found. Cannot create observer now.");
+				LOG.warn("Source for attribute " + attribute + " not found. Cannot create observer now.");
 				waitingAttributes.add(attribute);
 			}
 		} else {
-			getLogger().warn("Attribute " + attribute + " is not numerical");
+			LOG.warn("Attribute " + attribute + " is not numerical");
 		}
 	}
 
@@ -263,18 +256,18 @@ public class DataSourceManager {
 	 */
 	public void save() {
 		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
-		System.out.println("Writing file " + filename);
+		LOG.debug("Writing file " + filename);
 		BufferedWriter bw = null;
 		try {
 			bw = new BufferedWriter(new FileWriter(filename));
 
 			for (SDFAttribute attribute : attributes.keySet()) {
-				System.out.print("Writing values of " + attribute);
+				LOG.debug("Writing values of " + attribute);
 
 				AttributeObserver observer = attributes.get(attribute);
 				Collection<Double> values = observer.getValues();
 
-				System.out.println(" Count: " + values.size());
+				LOG.debug(" Count: " + values.size());
 
 				bw.write(attribute.toString() + "\n");
 				bw.write(String.valueOf(values.size()) + "\n");
@@ -297,11 +290,11 @@ public class DataSourceManager {
 				if (found)
 					continue;
 
-				System.out.print("Writing cached values of " + attrName);
+				LOG.debug("Writing cached values of " + attrName);
 
 				Collection<Double> values = cachedAttributes.get(attrName);
 
-				System.out.println(" Count: " + values.size());
+				LOG.debug(" Count: " + values.size());
 
 				bw.write(attrName + "\n");
 				bw.write(String.valueOf(values.size()) + "\n");
@@ -311,15 +304,14 @@ public class DataSourceManager {
 				bw.flush();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.error("Could not save in {}", filename, e);
 		} finally {
 			if (bw != null)
 				try {
 					bw.flush();
 					bw.close();
-					System.out.println("Finished");
+					LOG.debug("Finished");
 				} catch (IOException e) {
-					e.printStackTrace();
 				}
 		}
 	}
@@ -329,7 +321,7 @@ public class DataSourceManager {
 	 */
 	public void load() {
 		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
-		System.out.println("Reading file " + filename);
+		LOG.debug("Reading file " + filename);
 
 		BufferedReader bw = null;
 		try {
@@ -337,14 +329,16 @@ public class DataSourceManager {
 
 			while (true) {
 				String attribute = bw.readLine();
-				if (attribute == null)
+				if (attribute == null) {
 					return;
-				System.out.print("Reading values of " + attribute);
+				}
+				LOG.debug("Reading values of " + attribute);
 
 				String count = bw.readLine();
-				System.out.println(" Count: " + count);
-				if (count == null)
+				LOG.debug(" Count: " + count);
+				if (count == null) {
 					return;
+				}
 				int size = Integer.valueOf(count);
 
 				List<Double> values = new ArrayList<Double>(size);
@@ -366,19 +360,17 @@ public class DataSourceManager {
 			try {
 				f.createNewFile();
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOG.error("Could not create new file {}", filename, e);
 			}
-			System.out.println("File " + filename + " created");
+			LOG.debug("File " + filename + " created");
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.error("Could not load file {}", filename, e);
 		} finally {
 			if (bw != null)
 				try {
 					bw.close();
-					System.out.println("Finished");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+					LOG.debug("Finished");
+				} catch (IOException e) {}
 		}
 
 	}
