@@ -31,7 +31,7 @@ public class ACUpdater extends Thread {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ACUpdater.class);
 
-	private static final long UPDATE_INTERVAL = 5000;
+	private static final long UPDATE_INTERVAL = 10000;
 
 	private IAdmissionControl ac;
 	private boolean isRunning = true;

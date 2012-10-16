@@ -40,7 +40,7 @@ public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizati
 		return _logger;
 	}
 
-	public static final int MONITORING_PERIOD_SECONDS = 20;
+	public static final int MONITORING_PERIOD_SECONDS = 10;
 	public static final int MONITORING_PERIOD_MILLIS = MONITORING_PERIOD_SECONDS * 1000;
 	public static final String DATARATE_TYPE = "datarate";
 
