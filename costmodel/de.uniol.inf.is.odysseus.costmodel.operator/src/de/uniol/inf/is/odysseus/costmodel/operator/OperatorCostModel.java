@@ -50,15 +50,8 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
  */
 public class OperatorCostModel implements ICostModel {
 
-	private static Logger _logger = null;
-
-	protected static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(OperatorCostModel.class);
-		}
-		return _logger;
-	}
-
+	private static final Logger LOG = LoggerFactory.getLogger(OperatorCostModel.class);
+	
 	private IOperatorDetailCostAggregator operatorAggregator = new OperatorDetailCostAggregator();
 
 	private final int processorCount;
@@ -71,10 +64,10 @@ public class OperatorCostModel implements ICostModel {
 		Runtime runtime = Runtime.getRuntime();
 		processorCount = runtime.availableProcessors();
 
-		getLogger().debug("Number of Processors available: " + processorCount);
+		LOG.debug("Number of Processors available: {} ", processorCount);
 
 		memory = runtime.totalMemory();
-		getLogger().debug("Memory in bytes: " + memory);
+		LOG.debug("Memory in bytes: {}", memory);
 	}
 
 	@Override
@@ -113,23 +106,23 @@ public class OperatorCostModel implements ICostModel {
 
 				// check estimation
 				if (!estimation.check()) {
-					getLogger().error("Estimation of " + operator + " with estimator " + estimator.getClass() + " not correct");
+					LOG.error("Estimation of {} with estimator {} not correct", operator, estimator.getClass());
 					StandardOperatorEstimator<IPhysicalOperator> stdEstimator = (StandardOperatorEstimator<IPhysicalOperator>) OperatorEstimatorFactory.getInstance().get(null);
 					OperatorEstimation stdEstimation = stdEstimator.estimateOperator(operator, prevOperators, baseHistograms);
 					if (estimation.getHistograms() == null) {
-						getLogger().error("No histograms in Estimation!");
+						LOG.error("No histograms in Estimation!");
 						estimation.setHistograms(stdEstimation.getHistograms());
 					}
 					if (estimation.getSelectivity() == null) {
-						getLogger().error("No selectivity in estimation!");
+						LOG.error("No selectivity in estimation!");
 						estimation.setSelectivity(stdEstimation.getSelectivity());
 					}
 					if (estimation.getDataStream() == null) {
-						getLogger().error("No datastream in estimation!");
+						LOG.error("No datastream in estimation!");
 						estimation.setDataStream(stdEstimation.getDataStream());
 					}
 					if (estimation.getDetailCost() == null) {
-						getLogger().error("No detailcost in estimation!");
+						LOG.error("No detailcost in estimation!");
 						estimation.setDetailCost(stdEstimation.getDetailCost());
 					}
 				}
@@ -201,11 +194,11 @@ public class OperatorCostModel implements ICostModel {
 		}
 
 		if (relevantOperators.isEmpty()) {
-			getLogger().debug("No relevant operators for selectivity-estimation found. ");
+			LOG.info("No relevant operators for selectivity-estimation found. ");
 			return histograms;
 		}
 
-		getLogger().debug("Relevant operators are " + relevantOperators);
+		LOG.debug("Relevant operators are {}", relevantOperators);
 
 		// find relevant attributes
 		// relevant attributes are attributes which are used
@@ -238,10 +231,10 @@ public class OperatorCostModel implements ICostModel {
 			}
 		}
 		if (relevantAttributes.isEmpty()) {
-			getLogger().debug("No relevant attributes found. Selectivity-estimation finished");
+			LOG.info("No relevant attributes found. Selectivity-estimation finished");
 			return histograms;
 		}
-		getLogger().debug("Relevant attributes are " + relevantAttributes);
+		LOG.debug("Relevant attributes are {}", relevantAttributes);
 
 		// getting histograms
 		for (SDFAttribute attribute : relevantAttributes) {
@@ -249,9 +242,9 @@ public class OperatorCostModel implements ICostModel {
 			IHistogram hist = DataSourceManager.getInstance().getHistogram(attribute);
 			if (hist != null) {
 				histograms.put(attribute, hist);
-				getLogger().debug("Got histogram for attribute " + attribute);
+				LOG.debug("Got histogram for attribute {} ", attribute);
 			} else {
-				getLogger().warn("No histogram for attribute " + attribute);
+				LOG.warn("No histogram for attribute {}", attribute);
 			}
 		}
 
@@ -273,7 +266,7 @@ public class OperatorCostModel implements ICostModel {
 			fillWithAttributes(comp.getLeft(), attributes);
 			fillWithAttributes(comp.getRight(), attributes);
 		} else {
-			getLogger().warn("Unknown type of predicate : " + predicate.getClass());
+			LOG.warn("Unknown type of predicate : {}", predicate.getClass());
 		}
 	}
 
