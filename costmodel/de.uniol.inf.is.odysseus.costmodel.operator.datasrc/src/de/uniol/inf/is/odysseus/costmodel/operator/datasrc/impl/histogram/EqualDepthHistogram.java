@@ -203,7 +203,7 @@ public class EqualDepthHistogram implements IHistogram {
 		}
 		
 		getLogger().warn("LowerBorderIndex invalid:" + value);
-		return borders.length - 1;
+		return borders.length - 2;
 	}
 
 	@Override
