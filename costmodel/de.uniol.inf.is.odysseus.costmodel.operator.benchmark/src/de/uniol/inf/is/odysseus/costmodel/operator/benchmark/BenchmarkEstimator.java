@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.costmodel.operator.OperatorDetailCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
-import de.uniol.inf.is.odysseus.costmodel.operator.util.MemoryUsageSaver;
 
 @SuppressWarnings("rawtypes")
 public class BenchmarkEstimator implements IOperatorEstimator<BenchmarkPO> {
@@ -59,14 +58,14 @@ public class BenchmarkEstimator implements IOperatorEstimator<BenchmarkPO> {
 		}
 		estimation.setDataStream(new DataStream(instance, datarate, prevStream.getIntervalLength()));	
 		
-		double cpu = instance.getProcessingTime() / 1000.0f;
+		double cpu = instance.getProcessingTime() / 1000000000.0f;
 		double cpuCost = 0.0;
 		if( cpu < 0.0 )
 			cpuCost = OperatorCostModelCfg.getInstance().getStandardCpuCost() * datarate;
 		else
 			cpuCost = cpu * datarate;
 		
-		estimation.setDetailCost(new OperatorDetailCost(instance, MemoryUsageSaver.get(instance), cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost(instance, instance.getMemoryUsage(), cpuCost));
 
 		return estimation;
 	}
