@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringData;
 
 public class MedianProcessingTime extends AbstractMonitoringData<Double> implements IPOEventListener {
 
-	private static final int MAX_DATA = 500;
+	private static final int MAX_DATA = 80;
 	private long startTimestampNano = -1;
 	private long endTimestampNano = -1;
 	private int counterCheck = 0;
