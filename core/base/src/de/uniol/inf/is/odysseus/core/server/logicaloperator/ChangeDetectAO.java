@@ -83,7 +83,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		this.deliverFirstElement = deliverFirstElement;
 	}
 	
-	@Parameter(type = DoubleParameter.class, name = "tolerance")
+	@Parameter(type = DoubleParameter.class, name = "tolerance", optional = true)
 	public void setTolerance(double tolerance) {
 		this.tolerance = tolerance;
 	}
