@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import de.uniol.inf.is.odysseus.core.event.IEvent;
+import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
@@ -27,113 +27,111 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringData;
 
 public class MedianProcessingTime extends AbstractMonitoringData<Double> implements IPOEventListener {
 
-	private static double granularity;
-	private static final int MAX_DATA = 50;
-	private long start1 = 0;
-	private long end1 = 0;
+	private static final int MAX_DATA = 500;
+	private long startTimestampNano = -1;
+	private long endTimestampNano = -1;
+	private int counterCheck = 0;
 	
 	private long runSum = 0;
-	private long runCount = 0;
-	
-	static {
-		long first = System.nanoTime();
-		while( true ) {
-			double second = System.nanoTime();
-			if( second > first ) {
-				granularity = second - first;
-				break;
-			}
-		}
-	}
 	
 	private List<Long> runTimes = new LinkedList<Long>();
-	private List<Long> sorted = new LinkedList<Long>();
+	private long initValue;
+	private IPhysicalOperator subscribedTarget;
+
+	public MedianProcessingTime(IPhysicalOperator target, long initValue) {
+		super(target, MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);
+		subscribeToTarget(target);
+		initValues(initValue);
+	}
 
 	public MedianProcessingTime(IPhysicalOperator target) {
-		super(target, MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);
-		setTarget(target);
+		this(target, 5000000);
 	}
-
+	
 	public MedianProcessingTime(MedianProcessingTime avgProcessingTime) {
 		super(avgProcessingTime);
-		this.start1 = avgProcessingTime.start1;
-		this.end1 = avgProcessingTime.end1;
+		subscribeToTarget((IPhysicalOperator)avgProcessingTime.getTarget());
+		this.startTimestampNano = avgProcessingTime.startTimestampNano;
+		this.endTimestampNano = avgProcessingTime.endTimestampNano;
 		this.runSum = avgProcessingTime.runSum;
-		this.runTimes = avgProcessingTime.runTimes;
-		this.runCount = avgProcessingTime.runCount;
+		this.runTimes = new LinkedList<Long>(avgProcessingTime.runTimes);
+		this.initValue = avgProcessingTime.initValue;
+		this.counterCheck = avgProcessingTime.counterCheck;
 	}
 
-	public void setTarget(IPhysicalOperator target) {
-		super.setTarget(target);
-		target.subscribe(this, POEventType.ProcessInit);
-		target.subscribe(this, POEventType.PushInit);
+	public void subscribeToTarget(IPhysicalOperator target) {
+		if(subscribedTarget != null ) {
+			subscribedTarget.unsubscribe(this, POEventType.ProcessInit);
+			subscribedTarget.unsubscribe(this, POEventType.PushInit);
+			subscribedTarget.unsubscribe(this, POEventType.ProcessDone);
+		}
+		subscribedTarget = target;
+		subscribedTarget.subscribe(this, POEventType.ProcessInit);
+		subscribedTarget.subscribe(this, POEventType.PushInit);
+		subscribedTarget.subscribe(this, POEventType.ProcessDone);
 	}
 
 	@Override
 	public void eventOccured(IEvent<?, ?> poEvent, long eventNanoTime) {
-		if (poEvent.getEventType().equals(POEventType.ProcessInit)) {
-			start1 = eventNanoTime;
-		} else if (poEvent.getEventType().equals(POEventType.PushInit)) {
-			end1 = eventNanoTime;
-			
-			Long lastRun = new Long( end1 - start1 );
-			if( lastRun < granularity )
-				lastRun = (long) granularity;
-			
-			runTimes.add(lastRun);
-			runSum += lastRun;
-			runCount++;
-
-			// add new value in sorted list
-			if (!sorted.isEmpty()) {
-				ListIterator<Long> iterator = sorted.listIterator();
-				boolean added = false;
-				while (iterator.hasNext()) {
-					Long v = iterator.next();
-					if (v >= lastRun) {
-						iterator.previous();
-						iterator.add(lastRun);
-						iterator.next();
-						added = true;
-						break;
-					}
+		synchronized(runTimes) {
+			IEventType type = poEvent.getEventType();
+			if (type.equals(POEventType.ProcessInit)) {
+				if( counterCheck > 0) {
+					throw new RuntimeException("ProcessInit without PushInit/ProcessDone before in Operator " + subscribedTarget);
 				}
-				// end of list?
-				if (!added && !iterator.hasNext())
-					sorted.add(lastRun);
-
-			} else {
-				// list is empty
-				sorted.add(lastRun);
-			}
-
-			
-			if( runTimes.size() > MAX_DATA ) {
+				startTimestampNano = eventNanoTime;
+				counterCheck++;
+			} else if (type.equals(POEventType.PushInit) || type.equals(POEventType.ProcessDone) ) {
+				if( startTimestampNano == -1 ) {
+					return;
+				}
+				endTimestampNano = eventNanoTime;
+				counterCheck--;
+				if( counterCheck > 0 ) {
+					throw new RuntimeException(type.toString() + " without ProcessInit in Operator " + subscribedTarget);
+				}
+				
+				Long lastRun = new Long( endTimestampNano - startTimestampNano );
+				endTimestampNano = -1;
+				startTimestampNano = -1;
+				
+				runTimes.add(lastRun);
+				runSum += lastRun;
+				
 				Long v = runTimes.remove(0);
 				runSum -= v;
-				sorted.remove(v);
 			}
 		}
 	}
 
 	@Override
 	public Double getValue() {
-		if ( !sorted.isEmpty() && runTimes.size() > MAX_DATA / 2 )
-			return new Double(sorted.get(sorted.size() / 2));
-		return null;
+		synchronized(runTimes) {
+			return (double)runSum / MAX_DATA;
+		}
 	}
 
 	@Override
 	public void reset() {
-		start1 = 0;
-		end1 = 0;
-		runCount = 0;
-		runTimes = new LinkedList<Long>();
+		startTimestampNano = -1;
+		endTimestampNano = -1;
+		counterCheck = 0;
+		initValues(this.initValue);
 	}
 
 	@Override
 	public MedianProcessingTime clone() {
 		return new MedianProcessingTime(this);
+	}
+
+	private void initValues(long initValue) {
+		runTimes.clear();
+		for( int i = 0; i < MAX_DATA; i++ ) {
+			runTimes.add(initValue);
+		}
+		runSum = MAX_DATA * initValue;
+		
+		this.initValue = initValue;		
 	}
 
 }
