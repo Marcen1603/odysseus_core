@@ -100,9 +100,13 @@ public class Cluster<M extends ITimeInterval> {
 	}
 	
 	public void recalcMean(){
+		if(this.isEmpty()){
+			return;
+		}
 		Tuple<M> mean = this.tuples.get(0).clone();
-		for (Tuple<M> tuple : this.tuples) {
-			for (int i = 1; i < tuple.size(); i++) {
+		for (int k =1 ; k< this.tuples.size(); k++) {
+			Tuple<M> tuple  = this.tuples.get(k);
+			for (int i = 0; i < tuple.size(); i++) {
 				mean.setAttribute(i, add(tuple.getAttribute(i), mean.getAttribute(i)));
 			}
 		}
@@ -115,6 +119,11 @@ public class Cluster<M extends ITimeInterval> {
 	
 	public int getNumber() {
 		return id;
+	}
+	
+	@Override
+	public String toString() {	
+		return "Cluster "+getNumber()+" size: "+this.size();
 	}
 
 }

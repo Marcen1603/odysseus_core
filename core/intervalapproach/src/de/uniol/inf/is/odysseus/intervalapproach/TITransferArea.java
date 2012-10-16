@@ -35,12 +35,19 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
 			new MetadataComparator<ITimeInterval>());
 
+	private int outputPort = 0;
+	
 	public TITransferArea() {
 		minTs = new PointInTime[2];
 	}
 
 	public TITransferArea(int inputPortCount) {
 		minTs = new PointInTime[inputPortCount];
+	}
+	
+	public TITransferArea(int inputPortCount, int outputPort) {
+		minTs = new PointInTime[inputPortCount];
+		this.outputPort = outputPort;
 	}
 
 	public TITransferArea(TITransferArea<R, W> tiTransferFunction) {
@@ -80,14 +87,15 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				outputQueue.add(object);
 			}
 		} else {
-			po.transfer(object);
+			po.transfer(object, outputPort);
 		}
 	}
+	
 
 	@Override
 	public void done() {
 		while (!this.outputQueue.isEmpty()) {
-			po.transfer(this.outputQueue.poll());
+			po.transfer(this.outputQueue.poll(), outputPort);
 		}
 	}
 
@@ -117,10 +125,10 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 						&& elem.getMetadata().getStart()
 								.beforeOrEquals(minimum)) {
 					this.outputQueue.poll();
-					po.transfer(elem);
+					po.transfer(elem, outputPort);
 					elem = this.outputQueue.peek();
 				}
-				po.sendPunctuation(minimum);
+				po.sendPunctuation(minimum, outputPort);
 			}
 		}
 	}
@@ -138,5 +146,15 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		}
 		return minimum;
 	}
+
+	public int getOutputPort() {
+		return outputPort;
+	}
+
+	public void setOutputPort(int outputPort) {
+		this.outputPort = outputPort;
+	}
+
+	
 
 }

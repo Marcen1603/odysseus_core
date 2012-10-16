@@ -113,6 +113,7 @@ public class SyntheticClusterProvider extends StreamClientHandler {
 			e.printStackTrace();
 		}
 		List<DataTuple> list = new ArrayList<DataTuple>();
+		System.out.println(tuple);
 		list.add(tuple);
 		return list;
 	}
