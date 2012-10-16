@@ -37,6 +37,8 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
  */
 public class StandardOperatorEstimator<T extends IPhysicalOperator> implements IOperatorEstimator<T> {
 
+	private static final long DEFAULT_MEMORY_USAGE_BYTES = 4;
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Class<T> getOperatorClass() {
@@ -74,7 +76,7 @@ public class StandardOperatorEstimator<T extends IPhysicalOperator> implements I
 			double cpu = getAvgCPUTimeMetadata(instance) * prevOperatorEstimation.getDataStream().getDataRate();
 			if (cpu < 0.0)
 				cpu = OperatorCostModelCfg.getInstance().getStandardCpuCost() * prevOperatorEstimation.getDataStream().getDataRate();
-			double mem = OperatorCostModelCfg.getInstance().getStandardMemCost();
+			double mem = DEFAULT_MEMORY_USAGE_BYTES;
 	
 			estimation.setDetailCost(new OperatorDetailCost(instance, mem, cpu));
 		} else {
@@ -108,7 +110,7 @@ public class StandardOperatorEstimator<T extends IPhysicalOperator> implements I
 				cpuCost = cpu * datarate;
 			}
 			
-			estimation.setDetailCost(new OperatorDetailCost(instance, OperatorCostModelCfg.getInstance().getStandardMemCost(), cpuCost));		
+			estimation.setDetailCost(new OperatorDetailCost(instance, DEFAULT_MEMORY_USAGE_BYTES, cpuCost));		
 		}
 		
 		return estimation;

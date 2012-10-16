@@ -78,6 +78,8 @@ public class CPURateSaver {
 
 				line = br.readLine();
 			}
+			
+			br.close();
 		} catch (FileNotFoundException ex) {
 			File file = new File(filename);
 			try {

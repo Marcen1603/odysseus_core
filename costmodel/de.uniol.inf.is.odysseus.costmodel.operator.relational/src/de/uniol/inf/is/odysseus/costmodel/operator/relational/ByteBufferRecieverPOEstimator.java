@@ -23,13 +23,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.costmodel.operator.DataStream;
 import de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModelCfg;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorDetailCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.DataStreamRateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
+import de.uniol.inf.is.odysseus.costmodel.operator.util.MemoryUsageSaver;
 
 @SuppressWarnings("rawtypes")
 public class ByteBufferRecieverPOEstimator implements IOperatorEstimator<ReceiverPO> {
@@ -81,7 +81,7 @@ public class ByteBufferRecieverPOEstimator implements IOperatorEstimator<Receive
 			CPURateSaver.getInstance().set(instance.getClass().getSimpleName(), cpu);
 		}
 		
-		estimation.setDetailCost(new OperatorDetailCost(instance, OperatorCostModelCfg.getInstance().getStandardMemCost(), cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost(instance, MemoryUsageSaver.get(instance), cpuCost));
 		
 		return estimation;
 	}

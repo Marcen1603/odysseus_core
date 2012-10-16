@@ -22,13 +22,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.costmodel.operator.IDataStream;
 import de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModelCfg;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorDetailCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.StandardOperatorEstimator;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
+import de.uniol.inf.is.odysseus.costmodel.operator.util.MemoryUsageSaver;
 
 @SuppressWarnings("rawtypes")
 public class MetadataUpdateEstimator implements IOperatorEstimator<MetadataUpdatePO> {
@@ -55,7 +55,7 @@ public class MetadataUpdateEstimator implements IOperatorEstimator<MetadataUpdat
 			cpuCost = cpu * c.getDataRate();
 			CPURateSaver.getInstance().set(instance.getClass().getSimpleName(), cpu);
 		}
-		estimation.setDetailCost(new OperatorDetailCost(instance, OperatorCostModelCfg.getInstance().getStandardMemCost(), cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost(instance, MemoryUsageSaver.get(instance), cpuCost));
 		
 		return estimation;
 	}

@@ -51,12 +51,10 @@ public class OperatorCostModelCfg {
 		return instance;
 	}
 
-	private static final double STD_MEM_COST = 4;
 	private static final double STD_CPU_COST = 0.00005;
 	private static final double MEM_HEADROOM = 0.4;
 	private static final double CPU_HEADROOM = 0.4;
 	
-	private double stdMemCost;
 	private double stdCpuCost;
 	private double memHeadroom;
 	private double cpuHeadroom;
@@ -65,38 +63,23 @@ public class OperatorCostModelCfg {
 	// Ermittelt alle Einstellungen. Falls nicht vorhanden,
 	// werden Standardwerte gesetzt.
 	private OperatorCostModelCfg() {
-		stdMemCost = toDouble( OdysseusConfiguration.get("ac_standardMemCost"), STD_MEM_COST);
 		stdCpuCost = toDouble( OdysseusConfiguration.get("ac_standardCpuCost"), STD_CPU_COST);
 		memHeadroom = toDouble( OdysseusConfiguration.get("ac_memHeadroom"), MEM_HEADROOM);
 		cpuHeadroom = toDouble( OdysseusConfiguration.get("ac_cpuHeadroom"), CPU_HEADROOM);
 		
 		// check cfg
-		if( stdMemCost <= 0.0 ) {
-			getLogger().error("Standard Memory Cost is invalid: " + stdMemCost + ", it must be positive. Setting to default of " + STD_MEM_COST);
-			stdMemCost = STD_MEM_COST;
-		}
-		// check cfg
 		if( stdCpuCost <= 0.0 ) {
 			getLogger().error("Standard Processor Cost is invalid: " + stdCpuCost + ", it must be positive. Setting to default of " + STD_CPU_COST);
-			stdMemCost = STD_CPU_COST;
+			stdCpuCost = STD_CPU_COST;
 		}
 		if( memHeadroom <= 0.0 || memHeadroom > 1.0 ) {
 			getLogger().error("Headroom of Memory Cost is invalid: " + memHeadroom + ", it must be between 0 and 1. Setting to default of " + MEM_HEADROOM);
-			stdMemCost = MEM_HEADROOM;
+			memHeadroom = MEM_HEADROOM;
 		}
 		if( cpuHeadroom <= 0.0 || cpuHeadroom > 1.0 ) {
 			getLogger().error("Headroom of Processor Cost is invalid: " + cpuHeadroom + ", it must be between 0 and 1. Setting to default of " + CPU_HEADROOM);
-			stdMemCost = CPU_HEADROOM;
+			cpuHeadroom = CPU_HEADROOM;
 		}		
-	}
-	
-	/**
-	 * Liefert den Standardwert für Speicherkosten
-	 * 
-	 * @return Standardwert für Speicherkosten
-	 */
-	public double getStandardMemCost() {
-		return stdMemCost;
 	}
 	
 	/**

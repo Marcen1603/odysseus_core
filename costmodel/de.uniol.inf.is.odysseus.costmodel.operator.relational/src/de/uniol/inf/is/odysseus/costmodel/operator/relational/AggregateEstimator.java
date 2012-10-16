@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.OperatorDetailCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
+import de.uniol.inf.is.odysseus.costmodel.operator.util.MemoryUsageSaver;
 import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO;
 
 @SuppressWarnings("rawtypes")
@@ -73,7 +74,7 @@ public class AggregateEstimator implements IOperatorEstimator<StreamGroupingWith
 			cpuCost = OperatorCostModelCfg.getInstance().getStandardCpuCost() * datarate;
 		else
 			cpuCost = cpu * datarate;
-		estimation.setDetailCost(new OperatorDetailCost(instance, OperatorCostModelCfg.getInstance().getStandardMemCost(), cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost(instance, MemoryUsageSaver.get(instance), cpuCost));
 		
 		return estimation;	
 	}
