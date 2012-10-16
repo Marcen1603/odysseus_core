@@ -4,19 +4,6 @@ Bundle-Name: Priority_interval
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.priority_interval
 Bundle-Version: 1.0.0.qualifier
 Import-Package: com.google.common.collect,
- de.uniol.inf.is.odysseus.core.collection,
- de.uniol.inf.is.odysseus.core.logicaloperator,
- de.uniol.inf.is.odysseus.core.metadata,
- de.uniol.inf.is.odysseus.core.predicate,
- de.uniol.inf.is.odysseus.core.sdf.schema,
- de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core.server.logicaloperator,
- de.uniol.inf.is.odysseus.core.server.metadata,
- de.uniol.inf.is.odysseus.core.server.physicaloperator,
- de.uniol.inf.is.odysseus.core.server.physicaloperator.sa,
- de.uniol.inf.is.odysseus.core.server.predicate,
- de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
- de.uniol.inf.is.odysseus.core.server.util,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.predicate,
  de.uniol.inf.is.odysseus.priority,
@@ -26,3 +13,5 @@ Import-Package: com.google.common.collect,
 Export-Package: de.uniol.inf.is.odysseus.priority_interval
 Bundle-Activator: de.uniol.inf.is.odysseus.priority_interval.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
