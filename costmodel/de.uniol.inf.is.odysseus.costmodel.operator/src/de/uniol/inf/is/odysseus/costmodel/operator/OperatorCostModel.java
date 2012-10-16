@@ -46,12 +46,12 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
  * Repräsentiert das Kostenmodell nach Operatoreigenschaften.
  * 
  * @author Timo Michelsen
- *
+ * 
  */
 public class OperatorCostModel implements ICostModel {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OperatorCostModel.class);
-	
+
 	private IOperatorDetailCostAggregator operatorAggregator = new OperatorDetailCostAggregator();
 
 	private final int processorCount;
@@ -77,7 +77,7 @@ public class OperatorCostModel implements ICostModel {
 	}
 
 	@Override
-	public ICost estimateCost(List<IPhysicalOperator> operators, final boolean onUpdate ) {
+	public ICost estimateCost(List<IPhysicalOperator> operators, final boolean onUpdate) {
 
 		final Map<SDFAttribute, IHistogram> baseHistograms = getBaseHistograms(operators);
 		final Map<IPhysicalOperator, OperatorEstimation> estimatedOperators = new HashMap<IPhysicalOperator, OperatorEstimation>();
@@ -126,16 +126,16 @@ public class OperatorCostModel implements ICostModel {
 						estimation.setDetailCost(stdEstimation.getDetailCost());
 					}
 				}
-				
+
 				boolean isRunning = false;
-				for( IOperatorOwner owner : operator.getOwner()) {
-					IPhysicalQuery query = (IPhysicalQuery)owner;
-					if( query.isOpened() ) { 
+				for (IOperatorOwner owner : operator.getOwner()) {
+					IPhysicalQuery query = (IPhysicalQuery) owner;
+					if (query.isOpened()) {
 						isRunning = true;
 						break;
 					}
 				}
-				
+
 				if (!onUpdate) {
 					// don't count already running operators
 					if (isRunning)
@@ -156,22 +156,20 @@ public class OperatorCostModel implements ICostModel {
 		// aggregate costs
 		AggregatedCost aggCost = operatorAggregator.aggregate(estimatedOperators);
 
-//		if( !onUpdate ) {
-//			System.out.println();
-//			for (IPhysicalOperator op : operators) {
-//	
-//				OperatorEstimation estimation = estimatedOperators.get(op);
-//				double s = estimation.getSelectivity();
-//				double r = estimation.getDataStream().getDataRate();
-//				double g = estimation.getDataStream().getIntervalLength();
-//				double cpu = estimation.getDetailCost().getProcessorCost();
-//				double mem = estimation.getDetailCost().getMemoryCost();
-//	
-//				System.out.println(String.format("%-20s : s = %-8.6f, r = %-10.6f, g = %-10.6f, cpu = %-10.6f, mem = %-10.6f ", op.getClass().getSimpleName(), s, r, g, cpu, mem));
-//			}
-//			
-//			System.out.println("Aggregated: " + aggCost);
-//		}
+		System.out.println();
+		for (IPhysicalOperator op : operators) {
+
+			OperatorEstimation estimation = estimatedOperators.get(op);
+			double s = estimation.getSelectivity();
+			double r = estimation.getDataStream().getDataRate();
+			double g = estimation.getDataStream().getIntervalLength();
+			double cpu = estimation.getDetailCost().getProcessorCost();
+			double mem = estimation.getDetailCost().getMemoryCost();
+
+			System.out.println(String.format("%-20s : s = %-8.6f, r = %-10.6f, g = %-10.6f, cpu = %-10.6f, mem = %-10.6f ", op.getClass().getSimpleName(), s, r, g, cpu, mem));
+		}
+
+		System.out.println("Aggregated: " + aggCost);
 
 		return new OperatorCost(estimatedOperators, aggCost.getMemCost(), aggCost.getCpuCost());
 	}
@@ -181,7 +179,8 @@ public class OperatorCostModel implements ICostModel {
 		return new OperatorCost(0, 0);
 	}
 
-	// holt eine Liste der Histogramme der Attribute, die in der Anfrage verarbeitet werden
+	// holt eine Liste der Histogramme der Attribute, die in der Anfrage
+	// verarbeitet werden
 	private Map<SDFAttribute, IHistogram> getBaseHistograms(List<IPhysicalOperator> physicalOperators) {
 		Map<SDFAttribute, IHistogram> histograms = new HashMap<SDFAttribute, IHistogram>();
 
@@ -250,7 +249,7 @@ public class OperatorCostModel implements ICostModel {
 
 		return histograms;
 	}
-	
+
 	// sucht aus einem prädikat alle Attribute raus
 	private void fillWithAttributes(IPredicate<?> predicate, List<SDFAttribute> attributes) {
 		if (predicate instanceof IRelationalPredicate) {

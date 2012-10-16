@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.PlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPostOptimizationAction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 
 public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizationAction {
 
@@ -87,8 +88,10 @@ public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizati
 		// own metadata
 		for (IPhysicalOperator operator : query.getPhysicalChilds()) {
 			if (operator.isSink()) {
-				if (operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name) == null)
-					operator.addMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name, new MedianProcessingTime(operator));
+				if (operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name) == null) {
+					long rate = (long)(1000000000 * CPURateSaver.getInstance().get(operator.getClass().getSimpleName()));
+					operator.addMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name, new MedianProcessingTime(operator, rate));
+				}
 			}
 		}
 

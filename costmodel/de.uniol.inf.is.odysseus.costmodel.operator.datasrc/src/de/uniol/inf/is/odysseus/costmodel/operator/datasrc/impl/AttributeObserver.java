@@ -82,7 +82,6 @@ public class AttributeObserver implements IDataSourceObserverListener {
 		Tuple<?> tuple = (Tuple<?>)element;
 		
 		Object value = tuple.getAttribute(schemaPosition);
-		getLogger().debug("Recieved value for " + attribute + ": " + value);
 		
 		if( value instanceof Double )
 			factory.addValue((Double)value);
