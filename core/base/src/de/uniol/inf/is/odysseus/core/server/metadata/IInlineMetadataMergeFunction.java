@@ -15,8 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+
 public interface IInlineMetadataMergeFunction<T> {
 	public void mergeInto(T result, T inLeft, T inRight);
 
 	public IInlineMetadataMergeFunction<? super T> clone() ;
+	
+	public Class<? extends IMetaAttribute> getMetadataType();
 }

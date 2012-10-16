@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.priority_interval;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -38,6 +39,11 @@ public class PriorityIntervalMergeFunction implements
 	@Override
 	public PriorityIntervalMergeFunction clone()  {
 		return new PriorityIntervalMergeFunction();
+	}
+
+	@Override
+	public Class<? extends IMetaAttribute> getMetadataType() {
+		return IPriority.class;
 	}
 	
 }

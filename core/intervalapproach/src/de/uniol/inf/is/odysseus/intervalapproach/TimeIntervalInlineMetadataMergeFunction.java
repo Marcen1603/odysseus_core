@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -42,4 +43,8 @@ public class TimeIntervalInlineMetadataMergeFunction implements
 		return new TimeIntervalInlineMetadataMergeFunction(this);
 	}
 	
+	@Override
+	public Class<? extends IMetaAttribute> getMetadataType() {
+		return ITimeInterval.class;
+	}
 }

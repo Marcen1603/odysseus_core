@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class CombinedMergeFunction<T extends IClone> implements
 		IMetadataMergeFunction<T>, IClone {
@@ -62,6 +63,16 @@ public class CombinedMergeFunction<T extends IClone> implements
 		return false;
 	}
 
+	public boolean providesMergeFunctionFor(Class<? extends IMetaAttribute> type){
+		for(IInlineMetadataMergeFunction<? super T> curFunc : mergeFunctions){
+			Class<? extends IMetaAttribute> funType = curFunc.getMetadataType();
+			if(funType == type){
+				return true;
+			}
+		}
+		return false;		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public T mergeMetadata(T left, T right) {
