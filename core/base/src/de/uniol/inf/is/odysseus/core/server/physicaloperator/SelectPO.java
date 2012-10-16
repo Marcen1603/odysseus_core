@@ -60,7 +60,7 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 			transfer(object);
 		}else{
 			// Send filtered data to output port 1
-			transfer(object,1);
+			//transfer(object,1);
 			heartbeatGenerationStrategy.generateHeartbeat(object, this);
 		}
 	}
