@@ -44,13 +44,9 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		
 		// init rule flow (order is important)
-		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.INIT);
-		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.ACCESS);
-		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.CREATE_METADATA);
-		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.SECURITY);
-		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.METAOBJECTS);
-		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.CLEANUP);		
+		for (TransformRuleFlowGroup e: TransformRuleFlowGroup.values()){
+			TransformationInventory.getInstance().addRuleFlowGroup(e);	
+		}
 		
 		//loading my own rules because self-binding-services don't work
 		TransformationInventory.getInstance().bindRuleProvider(new RuleProvider());

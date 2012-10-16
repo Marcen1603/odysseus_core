@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.transform.flow;
 
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
+//(order is important)!!
 public enum TransformRuleFlowGroup implements IRuleFlowGroup{
 	INIT,
 	ACCESS,
@@ -24,5 +25,6 @@ public enum TransformRuleFlowGroup implements IRuleFlowGroup{
 	TRANSFORMATION,
 	SECURITY,
 	METAOBJECTS,
+	VALIDATE,
 	CLEANUP
 }
