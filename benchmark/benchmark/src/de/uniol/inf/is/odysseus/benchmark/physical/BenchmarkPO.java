@@ -28,6 +28,8 @@ public class BenchmarkPO<R extends IStreamObject<?>> extends
 	protected final double selectivity;
 	double oldVal = 0;
 	int processingTime = 300;
+	private long memUsage;
+	private byte[] usedMem;
 
 	/**
 	 * 
@@ -37,16 +39,25 @@ public class BenchmarkPO<R extends IStreamObject<?>> extends
 	 *            wird in jedem Durchlauf maximal ein Element geschrieben,
 	 *            ansonsten koennen auch mal mehrere geschrieben werden
 	 */
-	public BenchmarkPO(int processingTime, double selectivity) {
+	public BenchmarkPO(int processingTime, double selectivity, long memUsage) {
 		super();
 		this.processingTime = processingTime;
 		this.selectivity = selectivity;
+		this.memUsage = memUsage;
+		
+		usedMem = new byte[(int)memUsage];
+		for( int i = 0; i < memUsage; i++ ) {
+			usedMem[i] = 0;
+		}
 	}
 
 	public BenchmarkPO(BenchmarkPO<R> benchmarkPO) {
 		super(benchmarkPO);
 		this.processingTime = benchmarkPO.processingTime;
 		this.selectivity = benchmarkPO.selectivity;
+		this.memUsage = benchmarkPO.memUsage;
+		this.usedMem = new byte[(int)memUsage];
+		System.arraycopy(benchmarkPO.usedMem, 0, usedMem, 0, benchmarkPO.usedMem.length);
 	}
 
 	@Override
@@ -93,6 +104,10 @@ public class BenchmarkPO<R extends IStreamObject<?>> extends
 
 	public void setProcessingTime(int processingTime) {
 		this.processingTime = processingTime;
+	}
+	
+	public long getMemoryUsage() {
+		return memUsage;
 	}
 
 	@Override

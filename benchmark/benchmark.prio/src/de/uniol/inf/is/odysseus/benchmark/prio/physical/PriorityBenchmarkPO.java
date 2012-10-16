@@ -33,7 +33,7 @@ public class PriorityBenchmarkPO<T extends IStreamObject<? extends IPriority>>
 
 	public PriorityBenchmarkPO(int processingTime,
 			double selectivity) {
-		super(processingTime, selectivity);
+		super(processingTime, selectivity, 4);
 		for (int i = 0; i < 128; ++i) {
 			oldVals[i] = this.selectivity;
 		}

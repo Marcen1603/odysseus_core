@@ -62,7 +62,7 @@ public class TBenchmarkAORule extends AbstractTransformationRule<BenchmarkAO> {
 		if (trafo.getMetaTypes().contains(IPriority.class.getName())) {
 			return new PriorityBenchmarkPO(processingTime, selectivity);
 		}
-        return new BenchmarkPO(processingTime, selectivity);
+        return new BenchmarkPO(processingTime, selectivity, 4);
 	}
 	
 	@Override

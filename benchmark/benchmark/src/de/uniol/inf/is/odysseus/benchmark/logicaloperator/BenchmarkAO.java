@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 
 /**
  * @author Jonas Jacobi
@@ -31,21 +32,23 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 9094076133083176377L;
 	private int processingTimeInns;
 	private double selectivity;
+	private long memoryUsageBytes;
 
 	public BenchmarkAO(BenchmarkAO benchmarkAO) {
 		super(benchmarkAO);
 		this.processingTimeInns = benchmarkAO.processingTimeInns;
 		this.selectivity = benchmarkAO.selectivity;
+		this.memoryUsageBytes = benchmarkAO.memoryUsageBytes;
 	}
 
 	public BenchmarkAO() {
-		this.processingTimeInns = -1;
-		this.selectivity = -1;
+		this(-1, -1);
 	}
 
 	public BenchmarkAO(int processingTimeInns, double selectivity) {
 		this.processingTimeInns = processingTimeInns;
 		this.selectivity = selectivity;
+		this.memoryUsageBytes = 4;
 	}
 
 	public int getProcessingTimeInns() {
@@ -57,6 +60,15 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 		this.processingTimeInns = processingTimeInns;
 	}
 
+	public long getMemoryUsage() {
+		return memoryUsageBytes;
+	}
+	
+	@Parameter(type = LongParameter.class, name = "MEMORY")
+	public void setMemoryUsage(long memoryUsage ) {
+		this.memoryUsageBytes = memoryUsage;
+	}
+	
 	public double getSelectivity() {
 		return selectivity;
 	}
@@ -91,6 +103,10 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 		if (processingTimeInns < 0) {
 			addError(new IllegalParameterException(
 					"time has to be greater than 0"));
+			isValid = false;
+		}
+		if( memoryUsageBytes < 0 ) {
+			addError(new IllegalParameterException("memoryUsage has to be greater than zero"));
 			isValid = false;
 		}
 		return isValid;
