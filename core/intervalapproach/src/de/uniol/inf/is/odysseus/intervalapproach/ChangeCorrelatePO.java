@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
@@ -47,7 +48,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order
  * 
  * @author Dennis Geesen Created at: 29.05.2012
  */
-public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject<K>> extends AbstractPipe<R, R> implements IProcessInternal<R> {
+public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject<K>> extends AbstractPipe<R, R> implements IProcessInternal<R>, IHasMetadataMergeFunction<K> {
 
 	private R lasthigh;
 	private R lastlow;

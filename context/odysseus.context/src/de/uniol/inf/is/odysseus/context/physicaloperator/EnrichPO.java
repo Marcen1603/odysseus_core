@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 
@@ -52,7 +53,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectA
  * 
  * @author Dennis Geesen Created at: 27.04.2012
  */
-public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
+public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> implements IHasMetadataMergeFunction<M> {
 
 	private IContextStore<Tuple<M>> store;
 	protected IDataMergeFunction<Tuple<M>> dataMerge;
@@ -165,6 +166,11 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
+	}
+	
+	@Override
+	public IMetadataMergeFunction<M> getMetadataMerge() {
+		return metadataMerge;
 	}
 
 }
