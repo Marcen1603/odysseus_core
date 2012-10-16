@@ -20,16 +20,16 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 
 public class PhysicalOperatorFilter {
 
-	private static final ImmutableList<Class<? extends IPhysicalOperator>> FILTERED_OPERATORS = ImmutableList.<Class<? extends IPhysicalOperator>> builder()
-			.add(DefaultStreamConnection.class)
+	private static final ImmutableList<String> FILTERED_OPERATORS = ImmutableList.<String> builder()
+			.add("DefaultStreamConnection")
+			.add("DataSourceObserverSink")
 			.build();
 
 	public static boolean isFiltered(IPhysicalOperator operator) {
 		Preconditions.checkNotNull(operator, "Operator must not be null!");
-		return FILTERED_OPERATORS.contains(operator.getClass());
+		return FILTERED_OPERATORS.contains(operator.getClass().getSimpleName());
 	}
 }
