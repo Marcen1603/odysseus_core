@@ -133,14 +133,14 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 
 	@ChartSetting(name = "Value for X-Axis", type = Type.GET)
 	public String getXValue() {
-		return getViewableAttributes(this.choosenXValuePort).get(this.choosenXValue).getName();
+		return getChoosenAttributes(this.choosenXValuePort).get(this.choosenXValue).getName();
 	}
 
 	@ChartSetting(name = "Value for X-Axis", type = Type.SET)
 	public void setXValue(String value) {
 		for (Integer port : getPorts()) {
-			for (int i = 0; i < getViewableAttributes(port).size(); i++) {
-				if (getViewableAttributes(port).get(i).getName().equals(value)) {
+			for (int i = 0; i < getChoosenAttributes(port).size(); i++) {
+				if (getChoosenAttributes(port).get(i).getName().equals(value)) {
 					this.choosenXValue = i;
 					this.choosenXValuePort = port;
 					return;
@@ -156,14 +156,14 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 
 	@ChartSetting(name = "Value for Y-Axis", type = Type.GET)
 	public String getYValue() {
-		return getViewableAttributes(choosenYValuePort).get(this.choosenYValue).getName();
+		return getChoosenAttributes(choosenYValuePort).get(this.choosenYValue).getName();
 	}
 
 	@ChartSetting(name = "Value for Y-Axis", type = Type.SET)
 	public void setYValue(String value) {
 		for (Integer port : getPorts()) {
-			for (int i = 0; i < getViewableAttributes(port).size(); i++) {
-				if (getViewableAttributes(port).get(i).getName().equals(value)) {
+			for (int i = 0; i < getChoosenAttributes(port).size(); i++) {
+				if (getChoosenAttributes(port).get(i).getName().equals(value)) {
 					this.choosenYValue = i;
 					this.choosenYValuePort = port;
 					return;
@@ -182,7 +182,7 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 	@ChartSetting(name = "Value for Series", type = Type.GET)
 	public String getSeriesValue() {
 		if (this.choosenSerie > -1) {
-			return getViewableAttributes(choosenSeriePort).get(this.choosenSerie).getName();
+			return getChoosenAttributes(choosenSeriePort).get(this.choosenSerie).getName();
 		}
 
 		return "";
@@ -194,8 +194,8 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 			this.choosenSerie = -1;
 		} else {
 			for (Integer port : getPorts()) {
-				for (int i = 0; i < getViewableAttributes(port).size(); i++) {
-					if (getViewableAttributes(port).get(i).getName().equals(value)) {
+				for (int i = 0; i < getChoosenAttributes(port).size(); i++) {
+					if (getChoosenAttributes(port).get(i).getName().equals(value)) {
 						this.choosenSerie = i;
 						this.choosenSeriePort = port;
 						return;
