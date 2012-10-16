@@ -119,6 +119,8 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	@Override
 	public synchronized void updateEstimations() {
 
+		long startTimestamp = System.currentTimeMillis();
+		
 		// check execution plan as one query
 		// collect them
 		List<IPhysicalOperator> operators = getAllOperators();
@@ -167,6 +169,11 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			LOGGER.debug("MaxCost = " + maxCost);
 
 			fireOverloadEvent();
+		}
+		
+		if (LOGGER.isDebugEnabled() ) {
+			long elapsedTime = System.currentTimeMillis() - startTimestamp;
+			LOGGER.debug("Updatetime: {} ms", elapsedTime);
 		}
 	}
 
@@ -232,19 +239,20 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	public synchronized void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 
 		IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
+		int queryID = query.getID();
 		List<IPhysicalOperator> operators = getAllOperators(query);
 
 		LOGGER.debug("EVENT : " + eventArgs.getEventType());
 		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
 			// query removed!
-			LOGGER.debug("Query " + query + " removed");
+			LOGGER.debug("Query " + queryID + " removed");
 
 			queryCosts.remove(query);
 			timestamps.remove(query);
 
 		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
 			// query added!
-			LOGGER.debug("Query " + query + " added");
+			LOGGER.debug("Query " + queryID + " added");
 
 			// do cost-estimation now
 			ICost queryCost = estimateCost(operators, false);
@@ -253,7 +261,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			timestamps.put(query, System.currentTimeMillis());
 
 		} else if (PlanModificationEventType.QUERY_START.equals(eventArgs.getEventType())) {
-			LOGGER.debug("Query " + query + " started");
+			LOGGER.debug("Query " + queryID + " started");
 
 			ICost queryCost = queryCosts.get(query);
 
@@ -262,7 +270,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			}
 
 		} else if (PlanModificationEventType.QUERY_STOP.equals(eventArgs.getEventType())) {
-			LOGGER.debug("Query " + query + " stopped");
+			LOGGER.debug("Query " + queryID + " stopped");
 
 			if (runningQueryCosts.containsKey(query)) {
 				runningQueryCosts.remove(query);
@@ -275,8 +283,16 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			throw new IllegalStateException("No CostModel selected.");
 		}
 
+		long startTimestamp = System.currentTimeMillis();
+
 		ICostModel costModel = getCostModels().get(getSelectedCostModel());
 		ICost queryCost = costModel.estimateCost(operators, onUpdate);
+		
+		if( LOGGER.isDebugEnabled() ) {
+			long elapsedTime = System.currentTimeMillis() - startTimestamp;
+			LOGGER.debug("Estimationtime : {} ms", elapsedTime);
+		}
+		
 		return queryCost;
 	}
 
