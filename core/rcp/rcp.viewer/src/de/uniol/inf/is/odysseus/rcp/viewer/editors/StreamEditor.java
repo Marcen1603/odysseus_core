@@ -126,16 +126,16 @@ public class StreamEditor extends EditorPart {
 	}
 	
 	protected void fillToolBar( ToolBar bar ) {
-		final ToolItem button = createToolBarButton(OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("stopStream"));
+		final ToolItem button = createToolBarButton(OdysseusRCPViewerPlugIn.getImageManager().get("stopStream"));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if( input.getStreamConnection().isConnected()) {
 					input.getStreamConnection().disconnect();
-					button.setImage(OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("startStream"));
+					button.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("startStream"));
 				} else {
 					input.getStreamConnection().connect();
-					button.setImage(OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("stopStream"));
+					button.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("stopStream"));
 				}
 			}
 		});

@@ -58,7 +58,7 @@ public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 	private void loadImage() {
 		if( image == null || image.isDisposed() ) {
 			// Bild neu holen
-			image = OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get(imageName);
+			image = OdysseusRCPViewerPlugIn.getImageManager().get(imageName);
 			if( image != null ) {
 				imageWidth = image.getBounds().width;
 				imageHeight = image.getBounds().height;

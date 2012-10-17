@@ -41,27 +41,27 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IMonitoringData<?>) {
-			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("metadata");
+			return OdysseusRCPViewerPlugIn.getImageManager().get("metadata");
 		}
 
 		if (element instanceof SDFSchema) {
-			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("schema");
+			return OdysseusRCPViewerPlugIn.getImageManager().get("schema");
 		}
 		
 		if (element instanceof IPredicate){
-			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("predicate");
+			return OdysseusRCPViewerPlugIn.getImageManager().get("predicate");
 		}
 		
 		if (element instanceof SDFAttribute){
-			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("attribute");
+			return OdysseusRCPViewerPlugIn.getImageManager().get("attribute");
 		}
 		
 		if (element instanceof OwnerWrapper){
-			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("partof_icon");
+			return OdysseusRCPViewerPlugIn.getImageManager().get("partof_icon");
 		}
 
 		if (element instanceof ISubscription){
-			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("subscription");
+			return OdysseusRCPViewerPlugIn.getImageManager().get("subscription");
 		}
 					
 		if (element instanceof IOdysseusNodeView) {
@@ -83,16 +83,16 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 //			images.put(node.getModelNode().getName(), image);		
 //			return image;
 			if (op.isSink() && ! op.isSource()){
-				return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("sink_icon");
+				return OdysseusRCPViewerPlugIn.getImageManager().get("sink_icon");
 			}
 			if (!op.isSink() &&  op.isSource()){
-				return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("source_icon");
+				return OdysseusRCPViewerPlugIn.getImageManager().get("source_icon");
 			}
-			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("pipe_icon");
+			return OdysseusRCPViewerPlugIn.getImageManager().get("pipe_icon");
 		}
 		
 		if (element instanceof String || element instanceof StringNode ) {
-			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("string");
+			return OdysseusRCPViewerPlugIn.getImageManager().get("string");
 		}
 
 

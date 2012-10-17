@@ -3,12 +3,6 @@
 <plugin>
    <extension-point id="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor" name="Stream Editor" schema="schema/de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor.exsd"/>
    <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="de.uniol.inf.is.odysseus.rcp.viewer.StartUp">
-      </startup>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <command
             id="de.uniol.inf.is.odysseus.rcp.commands.ShowStreamCommand"
