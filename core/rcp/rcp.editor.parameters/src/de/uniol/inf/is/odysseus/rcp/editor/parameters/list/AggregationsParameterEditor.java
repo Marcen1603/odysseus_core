@@ -98,7 +98,7 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 		buttonContainer.setLayout(gridLayout);
 		
 		Button addButton = new Button( buttonContainer, SWT.PUSH);
-		addButton.setImage( Activator.getDefault().getImageRegistry().get("addIcon"));
+		addButton.setImage( Activator.getImageManager().get("addIcon"));
 		addButton.setToolTipText("Add aggregation");
 		addButton.addSelectionListener( new SelectionAdapter() {
 			@Override
@@ -112,7 +112,7 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 		});
 		
 		Button removeButton = new Button( buttonContainer, SWT.PUSH );
-		removeButton.setImage( Activator.getDefault().getImageRegistry().get("removeIcon"));
+		removeButton.setImage( Activator.getImageManager().get("removeIcon"));
 		removeButton.setToolTipText("Remove aggregation");
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override

@@ -15,33 +15,38 @@
   */
 package de.uniol.inf.is.odysseus.rcp.editor.parameters.activator;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.rcp.editor.parameters.IParametersConstants;
+import de.uniol.inf.is.odysseus.rcp.ImageManager;
 
 public class Activator extends AbstractUIPlugin {
 
-	private static Activator instance;
+	private static ImageManager imageManager;
 	
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		instance = this;
+		
+		imageManager = new ImageManager(context.getBundle());
+		imageManager.register("addIcon", "icons/add.gif");
+		imageManager.register("removeIcon", "icons/remove.gif");
+		imageManager.register("upIcon", "icons/arrow-up.jpg");
+		imageManager.register("downIcon", "icons/arrow-down.jpg");
 	}
 	
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
-		instance = null;
+		
+		imageManager.disposeAll();
 	}
 	
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(IParametersConstants.PLUGIN_ID, path);
-	}
+//	public static ImageDescriptor getImageDescriptor(String path) {
+//		return imageDescriptorFromPlugin(IParametersConstants.PLUGIN_ID, path);
+//	}
 	
-	public static Activator getDefault() {
-		return instance;
+	public static ImageManager getImageManager() {
+		return imageManager;
 	}
 }

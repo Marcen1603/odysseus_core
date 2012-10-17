@@ -87,7 +87,7 @@ public abstract class AbstractTableButtonListParameterEditor<T, U, V> extends Ab
 	protected Button createAddButton(Composite parent) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setToolTipText("Add");
-		button.setImage(Activator.getDefault().getImageRegistry().get("addIcon"));
+		button.setImage(Activator.getImageManager().get("addIcon"));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -102,7 +102,7 @@ public abstract class AbstractTableButtonListParameterEditor<T, U, V> extends Ab
 	protected Button createRemoveButton(Composite parent) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setToolTipText("Remove");
-		button.setImage(Activator.getDefault().getImageRegistry().get("removeIcon"));
+		button.setImage(Activator.getImageManager().get("removeIcon"));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -120,7 +120,7 @@ public abstract class AbstractTableButtonListParameterEditor<T, U, V> extends Ab
 	protected Button createShiftUpButton(Composite parent) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setToolTipText("Shift Up");
-		button.setImage(Activator.getDefault().getImageRegistry().get("upIcon"));
+		button.setImage(Activator.getImageManager().get("upIcon"));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -144,7 +144,7 @@ public abstract class AbstractTableButtonListParameterEditor<T, U, V> extends Ab
 	protected Button createShiftDownButton(Composite parent) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setToolTipText("Shift Down");
-		button.setImage(Activator.getDefault().getImageRegistry().get("downIcon"));
+		button.setImage(Activator.getImageManager().get("downIcon"));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
