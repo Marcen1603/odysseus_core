@@ -25,11 +25,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 
 public class OdysseusRCPEditorPlugIn extends AbstractUIPlugin {
 
-	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.editor"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.editor"; 
 	
 	public static final String LOGICAL_PLAN_EDITOR_ID = "de.uniol.inf.is.odysseus.rcp.LogicalPlanEditor";
 	public static final String NEW_LOGICAL_PLAN_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.editor.NewLogicalPlanCommand";
@@ -43,30 +44,36 @@ public class OdysseusRCPEditorPlugIn extends AbstractUIPlugin {
 	
 	public static final String LOGICAL_PLAN_FILE_EXTENSION = "pln";
 	
-	private static OdysseusRCPEditorPlugIn plugin;
-	private final Logger logger = LoggerFactory.getLogger(OdysseusRCPEditorPlugIn.class);
-	private static IExecutor executor = null;
+	private static final Logger LOG = LoggerFactory.getLogger(OdysseusRCPEditorPlugIn.class);
+	
+	private static IExecutor executor;
+	private static ImageManager imageManager;
 	
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		plugin = this;
+		
+		imageManager = new ImageManager(context.getBundle());
+		imageManager.register("operatorIcon", "icons/operatorIcon.png");
+		imageManager.register("operatorGroupIcon", "icons/operatorGroupIcon.png");
+		imageManager.register("connectionIcon", "icons/connection.gif");
 		
 		resolveExtensions();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		plugin = null;
 		super.stop(context);
-	}
-
-	public static OdysseusRCPEditorPlugIn getDefault() {
-		return plugin;
+		
+		imageManager.disposeAll();
 	}
 
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+	
+	public static ImageManager getImageManager() {
+		return imageManager;
 	}
 	
 	public void bindExecutor( IExecutor ex ) {
@@ -101,7 +108,7 @@ public class OdysseusRCPEditorPlugIn extends AbstractUIPlugin {
 					ParameterEditorRegistry.getInstance().register(finalName, editor.getClass());
 				}
 			} catch( CoreException ex ) {
-				logger.error(ex.getMessage(), ex);
+				LOG.error(ex.getMessage(), ex);
 			}
 		}
 		
