@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.views.query;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -29,9 +30,18 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class QueryTableViewer extends TableViewer {
+
+	private static final Map<String, Integer> STATUS_MAP = ImmutableMap.<String, Integer>builder()
+			.put(OdysseusNLS.Opened.toLowerCase(), 3)
+			.put(OdysseusNLS.Active.toLowerCase(), 2)
+			.put(OdysseusNLS.Inactive.toLowerCase(), 1)
+			.build();
 
 	public QueryTableViewer(Composite parent, int style) {
 		super(parent, style);
@@ -108,16 +118,7 @@ public class QueryTableViewer extends TableViewer {
 				String s1 = id1.getStatus();
 				String s2 = id2.getStatus();
 
-				if (s1.equals(s2))
-					return 0;
-				else if (s1.equals(OdysseusNLS.Opened))
-					return 1;
-				else if (s1.equals(OdysseusNLS.Active)) {
-					if (s2.equals(OdysseusNLS.Inactive))
-						return 1;
-					return -1;
-				} else
-					return -1;
+				return compareStatus(s1, s2);
 			}
 		};
 
@@ -231,5 +232,11 @@ public class QueryTableViewer extends TableViewer {
 		}
 
 		return queryIds;
+	}
+	
+	private static int compareStatus(String s1, String s2) {
+		Integer s1Value = Optional.fromNullable(STATUS_MAP.get(s1)).or(0);
+		Integer s2Value = Optional.fromNullable(STATUS_MAP.get(s2)).or(0);
+		return s1Value.compareTo(s2Value);
 	}
 }
