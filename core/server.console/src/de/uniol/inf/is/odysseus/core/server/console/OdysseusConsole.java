@@ -263,6 +263,12 @@ public class OdysseusConsole implements CommandProvider,
 	public void bindScriptParser(IOdysseusScriptParser parser) {
 		this.scriptParser = parser;
 	}
+	
+	public void unbindScriptParser(IOdysseusScriptParser parser) {
+		if( this.scriptParser == parser ) {
+			this.scriptParser = null;
+		}
+	}
 
 	public void bindExecutor(IExecutor executor) {
 		logger.debug("executor gebunden");
