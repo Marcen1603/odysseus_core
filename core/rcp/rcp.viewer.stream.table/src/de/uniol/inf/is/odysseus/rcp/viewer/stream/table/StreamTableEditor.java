@@ -131,7 +131,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	@Override
 	public void initToolbar(ToolBar toolbar) {
 		ToolItem filterButton = new ToolItem(toolbar, SWT.PUSH);
-		filterButton.setImage(ViewerStreamTablePlugIn.getDefault().getImageRegistry().get("filter"));
+		filterButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("filter"));
 		filterButton.setToolTipText("Filter columns");
 		filterButton.addSelectionListener(new SelectionAdapter() {
 			@Override

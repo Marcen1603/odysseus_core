@@ -24,11 +24,5 @@
             label="Table">
       </editor>
    </extension>
-   <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.activator.StartUp">
-      </startup>
-   </extension>
 
 </plugin>

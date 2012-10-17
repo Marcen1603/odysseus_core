@@ -18,50 +18,33 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.table.activator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.rcp.ImageManager;
+
 /**
  * The activator class controls the plug-in life cycle
  */
 public class ViewerStreamTablePlugIn extends AbstractUIPlugin {
 
-	// The plug-in ID
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.stream.table"; //$NON-NLS-1$
 
-	// The shared instance
-	private static ViewerStreamTablePlugIn plugin;
+	private static ImageManager imageManager;
 	
-	/**
-	 * The constructor
-	 */
-	public ViewerStreamTablePlugIn() {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		plugin = this;
+		
+		imageManager = new ImageManager(context.getBundle());
+		imageManager.register("filter", "icons/filter.png");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		plugin = null;
 		super.stop(context);
+		
+		imageManager.disposeAll();
 	}
-
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static ViewerStreamTablePlugIn getDefault() {
-		return plugin;
+	
+	public static ImageManager getImageManager() {
+		return imageManager;
 	}
-
 }
