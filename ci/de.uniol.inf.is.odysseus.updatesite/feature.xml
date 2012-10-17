@@ -32,10 +32,6 @@ Unless required by applicable law or agreed to in writing, software
    </url>
 
    <includes
-         id="de.uniol.inf.is.odysseus.admissioncontrol.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.cep.feature"
          version="0.0.0"/>
 
@@ -137,6 +133,10 @@ Unless required by applicable law or agreed to in writing, software
 
    <includes
          id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.ac.feature"
          version="0.0.0"/>
 
 </feature>
