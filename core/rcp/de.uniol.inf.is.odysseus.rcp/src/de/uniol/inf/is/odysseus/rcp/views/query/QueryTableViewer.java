@@ -235,8 +235,8 @@ public class QueryTableViewer extends TableViewer {
 	}
 	
 	private static int compareStatus(String s1, String s2) {
-		Integer s1Value = Optional.fromNullable(STATUS_MAP.get(s1)).or(0);
-		Integer s2Value = Optional.fromNullable(STATUS_MAP.get(s2)).or(0);
+		Integer s1Value = Optional.fromNullable(STATUS_MAP.get(s1.toLowerCase())).or(0);
+		Integer s2Value = Optional.fromNullable(STATUS_MAP.get(s2.toLowerCase())).or(0);
 		return s1Value.compareTo(s2Value);
 	}
 }
