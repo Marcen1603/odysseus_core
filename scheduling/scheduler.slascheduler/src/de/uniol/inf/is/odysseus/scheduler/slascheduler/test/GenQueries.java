@@ -47,15 +47,15 @@ public class GenQueries {
 	private static final String QUERY_SHARING_COST_MODEL = "none";
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final double OP_SELECTIVITY = 1.0;
-	public static final int OP_PROCESSING_TIME = 150000000; // realistic 1500
-	private static final int NUMBER_OF_USERS = 15;
-	private static final int NUMBER_OF_QUERIES_PER_USER = 5;
+	public static final int OP_PROCESSING_TIME = 35 * 100000; // realistic 1500
+	private static final int NUMBER_OF_USERS = 30;
+	private static final int NUMBER_OF_QUERIES_PER_USER = 3;
 	private static final int NUMBER_OF_SLAS = 3;
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
 	private static final int NUMBER_OF_SERVICE_LEVELS = 3;
 	private static final String SLA_SCOPE = ScopeFactory.SCOPE_AVERAGE;
 	private static final boolean COMPLEX_QUERIES_ENABLED = false;
-	private static final int INPUT_DELAY_MILLIS = 60000;
+	private static final int INPUT_DELAY_MILLIS = 30 * 1000;
 
 	private static final int ALTERNATIVE_SLA_RATIO = 10;
 	private static int ALTERNATIVE_SLA_COUNTER = 0;
@@ -65,10 +65,10 @@ public class GenQueries {
 	private static final int NUMBER_OF_SIMULATIONS = 1;
 	private static int currentNumberOfSimulation = 0;
 
-	private static final int DATA_RATE_BURST = 10000;
-	private static final int DATA_RATE_HIGH = 100;
-	private static final int DATA_RATE_MID = 100;
-	private static final int DATA_RATE_LOW = 10;
+	private static final int DATA_RATE_BURST = 10;
+	private static final int DATA_RATE_HIGH = 5;
+	private static final int DATA_RATE_MID = 2;
+	private static final int DATA_RATE_LOW = 1;
 	private static final int DATA_RATE_VERY_LOW = 1;
 
 	private static String odysseusDefaultHome = String.format("%s/%sodysseus/", System.getProperty("user.home"),getDot(System.getProperty("os.name")));
