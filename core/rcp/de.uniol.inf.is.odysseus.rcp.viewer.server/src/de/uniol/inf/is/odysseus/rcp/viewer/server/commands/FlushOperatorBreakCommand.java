@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.server.opbreak.OperatorBreak;
@@ -31,6 +33,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public class FlushOperatorBreakCommand extends AbstractHandler implements IHandler {
 
+	static Logger LOG = LoggerFactory.getLogger(FlushOperatorBreakCommand.class);
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
@@ -67,7 +71,7 @@ public class FlushOperatorBreakCommand extends AbstractHandler implements IHandl
 				ob.flush();
 			}
 			else
-				System.out.println("No OperatorBreak found!");
+				LOG.warn("No OperatorBreak found!");
 			
 		}
 		

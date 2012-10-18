@@ -27,6 +27,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -37,6 +39,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public class BreakOperatorCommand extends AbstractHandler implements IHandler {
 
+	static Logger LOG = LoggerFactory.getLogger(BreakOperatorCommand.class);
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
@@ -95,13 +99,13 @@ public class BreakOperatorCommand extends AbstractHandler implements IHandler {
 				if (!ob.isBreaked()) {
 					if (ob.startBreak())
 						return true;
-                    System.out.println("Could not start breaking");
+					LOG.warn("Could not start breaking");
                     OperatorBreakManager.getInstance().remove(ob);
 				} else
-					System.out.println("Already breaking");
+					LOG.warn("Already breaking");
 
 			} else
-				System.out.println("No OperatorBreak found");
+				LOG.warn("No OperatorBreak found");
 
 		}
 

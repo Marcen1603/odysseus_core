@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.server.opbreak.OperatorBreak;
@@ -31,6 +33,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public class StepOperatorCommand extends AbstractHandler implements IHandler {
 
+	static Logger LOG = LoggerFactory.getLogger(StepOperatorCommand.class);
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
@@ -66,7 +70,7 @@ public class StepOperatorCommand extends AbstractHandler implements IHandler {
 			if( ob != null )
 				ob.step();
 			else
-				System.out.println("No OperatorBreak found!");
+				LOG.warn("No OperatorBreak found!");
 			
 		}
 		
