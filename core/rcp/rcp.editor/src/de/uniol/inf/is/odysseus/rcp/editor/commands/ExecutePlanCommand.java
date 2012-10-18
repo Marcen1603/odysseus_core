@@ -24,6 +24,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -39,11 +41,13 @@ import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
 public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 
+	Logger LOG = LoggerFactory.getLogger(ExecutePlanCommand.class);
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		if (OdysseusRCPEditorPlugIn.getExecutor() == null) {
-			System.out.println("AdvancedExecutor is null");
+			LOG.error("AdvancedExecutor is null");
 			return null;
 		}
 
@@ -56,9 +60,9 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 
 				// Plan validieren
 				if (!validatePlan(part.getOperatorPlan())) {
-					System.out.println("Folgende Fehler sind im OperatorPlan:");
+					LOG.error("Folgende Fehler sind im OperatorPlan:");
 					for (String txt : errorTexts)
-						System.out.println(txt);
+						LOG.error(txt);
 
 					return null;
 				}
