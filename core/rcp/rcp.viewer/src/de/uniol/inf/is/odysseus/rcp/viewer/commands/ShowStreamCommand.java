@@ -118,7 +118,7 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 										page.openEditor(input, OdysseusRCPViewerPlugIn.STREAM_EDITOR_ID);
 										continue nextSelection;
 									} catch (PartInitException ex) {
-										System.out.println(ex.getStackTrace());
+										ex.printStackTrace();
 									}
 								}
 							} catch (CoreException ex) {
