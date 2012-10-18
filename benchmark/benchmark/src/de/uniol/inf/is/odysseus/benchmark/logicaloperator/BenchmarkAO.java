@@ -32,7 +32,7 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 9094076133083176377L;
 	private int processingTimeInns;
 	private double selectivity;
-	private long memoryUsageBytes;
+	private long memoryUsageBytes = 4;
 
 	public BenchmarkAO(BenchmarkAO benchmarkAO) {
 		super(benchmarkAO);
@@ -64,7 +64,7 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 		return memoryUsageBytes;
 	}
 	
-	@Parameter(type = LongParameter.class, name = "MEMORY")
+	@Parameter(type = LongParameter.class, name = "MEMORY", optional=true)
 	public void setMemoryUsage(long memoryUsage ) {
 		this.memoryUsageBytes = memoryUsage;
 	}
