@@ -56,7 +56,7 @@ public class MatrixInvert extends AbstractFunction<Object> {
 			i = new RealMatrixImpl((double[][]) getInputValue(0)).inverse()
 					.getData();
 		} catch (Exception ex) {
-			System.out.println(getInputValue(0));
+			//System.out.println(getInputValue(0));
 			i = getInputValue(0);
 		}
 		return i;

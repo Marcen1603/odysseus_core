@@ -54,7 +54,8 @@ public class MatrixSub extends AbstractFunction<Object> {
 		double[][] input0 = (double[][]) getInputValue(0);
 		Object input1 = getInputValue(1);
 		if( !(input1 instanceof double[][]) ){
-			System.out.println("Blaaaa");
+			// TODO: Was soll das??
+			//System.out.println("Blaaaa");
 		}
 		double[][] d = new RealMatrixImpl(input0)
 				.subtract(new RealMatrixImpl((double[][])input1)).getData();
