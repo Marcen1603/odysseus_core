@@ -102,14 +102,14 @@ public class AddDashboardPartCommand extends AbstractHandler {
 	}
 
 	private static List<IFile> getDashboardPartFiles(List<Object> selectedObjects) {
-		System.out.println(selectedObjects);
+		LOG.debug(""+selectedObjects);
 		List<IFile> foundFiles = Lists.newArrayList();
 		for (Object obj : selectedObjects) {
 			if (isDashboardPartFile(obj)) {
 				foundFiles.add((IFile) obj);
 			}
 		}
-		System.out.println(foundFiles);
+		LOG.debug(""+foundFiles);
 		return foundFiles;
 	}
 	
