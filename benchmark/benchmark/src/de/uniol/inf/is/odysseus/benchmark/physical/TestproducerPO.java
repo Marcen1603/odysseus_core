@@ -60,7 +60,10 @@ public class TestproducerPO extends
 						long expectedTime = lastTime + offset;
 						meta.setLatencyStart(expectedTime);
 						r.setMetadata(meta);
-						while (expectedTime > System.nanoTime()) {
+						if( offset < 1000000) {
+							while (expectedTime > System.nanoTime()) {}
+						} else {
+							waitSomeTime(offset);
 						}
 						lastTime = expectedTime;
 						transfer(r);
@@ -69,12 +72,19 @@ public class TestproducerPO extends
 				propagateDone();
 			}
 
+
 		};
-		t.setPriority(7);
+		t.setPriority(7); // 7 is over normal
 		t.setDaemon(true);
 		t.start();
 	}
 	
+	private static void waitSomeTime(long offset) {
+		try {
+			Thread.sleep(offset / 1000000);
+		} catch (InterruptedException ex) {}
+	}
+
 	@Override
 	public TestproducerPO clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
