@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -33,6 +35,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 
 public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
+	static Logger LOG = LoggerFactory.getLogger(AbstractStreamEditorList.class);
+	
 	private static final int REFRESH_INTERVAL_MILLIS = 1000;
 
 	private Text text;
@@ -135,7 +139,6 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
 				if( !isInfinite() && receivedElements > maxElements ) {
 					String txt = text.getText();
-					System.out.println(sel);
 					int pos = txt.indexOf("\n");
 					txt = txt.substring(pos+1);
 					text.setText(txt);
