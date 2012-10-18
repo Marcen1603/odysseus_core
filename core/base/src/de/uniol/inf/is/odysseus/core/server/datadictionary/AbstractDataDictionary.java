@@ -465,7 +465,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			this.datatypes.put(name.toLowerCase(), dt);
 			fireDataDictionaryChangedEvent();
 		} else {
-			System.out.println(this.datatypes);
 			throw new DataDictionaryException("Type '" + name
 					+ "' already exists.");
 		}
