@@ -1,25 +1,26 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.strategy;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,46 +34,47 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 		ISchedulingEventListener, IClone {
 
 	Logger logger = LoggerFactory.getLogger(RoundRobinPlanScheduling.class);
+	private ReentrantLock lock = new ReentrantLock();
 
 	final private List<IScheduling> planList;
 	final private Set<IScheduling> pausedPlans;
 	private Iterator<IScheduling> planIterator = null;
 
-	private IScheduling currentPlan;
-	
 	public RoundRobinPlanScheduling() {
-		planList = new ArrayList<IScheduling>();
+		planList = new CopyOnWriteArrayList<IScheduling>();
 		pausedPlans = new HashSet<IScheduling>();
 	}
 
 	public RoundRobinPlanScheduling(RoundRobinPlanScheduling other) {
-		this.planList = new ArrayList<IScheduling>(other.planList);
+		this.planList = new CopyOnWriteArrayList<IScheduling>(other.planList);
 		this.pausedPlans = new HashSet<IScheduling>(other.pausedPlans);
 	}
 
 	@Override
 	public void addPlan(IScheduling plan) {
+		lock.lock();
 		planList.add(plan);
 		plan.addSchedulingEventListener(this);
 		planIterator = null;
+		lock.unlock();
 	}
 
 	@Override
 	public void clear() {
+		lock.lock();
 		planIterator = null;
-		for (IScheduling plan: planList){
+		for (IScheduling plan : planList) {
 			plan.removeSchedulingEventListener(this);
 		}
 		pausedPlans.clear();
 		planList.clear();
+		lock.unlock();
 	}
 
 	@Override
 	public void removePlan(IScheduling plan) {
-		if (planIterator != null && plan == currentPlan) {
-			planIterator.remove();
-			currentPlan.removeSchedulingEventListener(this);
-		}
+		planList.remove(plan);
+		plan.removeSchedulingEventListener(this);
 	}
 
 	@Override
@@ -82,28 +84,16 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 
 	@Override
 	public IScheduling nextPlan() {
+		IScheduling returnValue = null;
+		lock.lock();
 		if (planIterator == null || !planIterator.hasNext()) {
 			planIterator = planList.iterator();
 		}
 		if (planIterator.hasNext()) {
-//			synchronized (pausedPlans) {
-//				while (planCount() == pausedPlans.size()) {
-//					try {
-//						logger.debug(this + " paused");
-//						pausedPlans.wait(10);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//				}
-//			}
-			while (planIterator.hasNext()) {
-				currentPlan = planIterator.next();
-//				if (currentPlan.isSchedulable()) {
-					return currentPlan;
-//				}
-			}
+			returnValue = planIterator.next();
 		}
-		return null;
+		lock.unlock();
+		return returnValue;
 	}
 
 	@Override
