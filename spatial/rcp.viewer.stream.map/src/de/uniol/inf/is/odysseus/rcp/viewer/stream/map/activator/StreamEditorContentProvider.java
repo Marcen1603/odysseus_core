@@ -2,9 +2,13 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StreamEditorContentProvider implements IStructuredContentProvider {
 
+	static Logger LOG = LoggerFactory.getLogger(StreamEditorContentProvider.class);
+	
 	private Object input = null;
 
 	public StreamEditorContentProvider() {
@@ -21,7 +25,7 @@ public class StreamEditorContentProvider implements IStructuredContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInObject,
 			Object newInObject) {
 		input = newInObject;
-		System.out.println(input.toString());
+		LOG.debug(input.toString());
 	}
 
 	@Override
@@ -29,7 +33,7 @@ public class StreamEditorContentProvider implements IStructuredContentProvider {
 		if (input == null)
 			return null;
 
-		System.out.println(inputElement.toString());
+		LOG.debug(inputElement.toString());
 		
 		return null;
 	}

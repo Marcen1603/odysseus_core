@@ -63,11 +63,6 @@ public class MetadataUpdatePO<M extends IClone, T extends IStreamObject<? extend
 	public String toString(){
 		return super.toString() + " updateFac: " + this.metadataFactory.getClass();
 	}
-	
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {	
-		sendPunctuation(timestamp);
-	}
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {

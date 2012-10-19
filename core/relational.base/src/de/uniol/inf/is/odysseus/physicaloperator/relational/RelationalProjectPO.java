@@ -71,11 +71,7 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 	public RelationalProjectPO<T> clone() {
 		return new RelationalProjectPO<T>(this);
 	}
-	
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}	
+
 	
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {

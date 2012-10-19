@@ -125,10 +125,6 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 		// }
 	}
 
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
 
 	@Override
 	public RegressionPO<M, R> clone() {

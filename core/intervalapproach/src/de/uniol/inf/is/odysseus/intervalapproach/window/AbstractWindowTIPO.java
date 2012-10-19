@@ -62,11 +62,6 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 		return this.windowType;
 	}
 
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {

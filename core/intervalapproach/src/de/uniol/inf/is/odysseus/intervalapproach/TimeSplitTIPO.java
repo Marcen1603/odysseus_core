@@ -62,11 +62,6 @@ public class TimeSplitTIPO<T extends IStreamObject<? extends ITimeInterval>>
 		return new TimeSplitTIPO<T>(size);
 	}
 
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {

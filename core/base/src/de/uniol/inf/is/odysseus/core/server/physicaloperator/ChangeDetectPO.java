@@ -74,11 +74,6 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
-
-	@Override
 	public AbstractPipe<R, R> clone() {
 		return new ChangeDetectPO<R>(this);
 	}

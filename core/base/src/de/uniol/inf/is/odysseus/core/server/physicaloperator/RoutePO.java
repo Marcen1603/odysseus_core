@@ -85,11 +85,6 @@ public class RoutePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	public RoutePO<T> clone() {
 		return new RoutePO<T>(this);
 	}
-
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
 	
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {

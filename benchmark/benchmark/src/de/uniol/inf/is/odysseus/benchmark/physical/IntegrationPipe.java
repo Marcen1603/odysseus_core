@@ -43,11 +43,6 @@ public class IntegrationPipe extends AbstractPipe<IStreamObject<?>,IStreamObject
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
-
-	@Override
 	public void subscribeToSource(ISource source, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
 		PhysicalSubscription<ISource> sub = new PhysicalSubscription<ISource>(

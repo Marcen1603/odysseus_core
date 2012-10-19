@@ -71,10 +71,7 @@ public class SARelationalProjectPO<T extends IStreamObject<? extends ITimeInterv
 		return new SARelationalProjectPO<T>(this);
 	}
 	
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}	
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof SARelationalProjectPO)) {

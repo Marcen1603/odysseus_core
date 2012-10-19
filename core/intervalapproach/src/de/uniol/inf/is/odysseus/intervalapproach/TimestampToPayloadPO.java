@@ -30,11 +30,6 @@ public abstract class TimestampToPayloadPO<K extends ITimeInterval, T extends IS
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
-
-	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}

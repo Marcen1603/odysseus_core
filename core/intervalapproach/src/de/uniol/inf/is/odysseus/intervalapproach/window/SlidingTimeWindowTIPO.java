@@ -50,8 +50,4 @@ public class SlidingTimeWindowTIPO<T extends IStreamObject<ITimeInterval>> exten
 		return new SlidingTimeWindowTIPO<T>(this);
 	}
 	
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
 }

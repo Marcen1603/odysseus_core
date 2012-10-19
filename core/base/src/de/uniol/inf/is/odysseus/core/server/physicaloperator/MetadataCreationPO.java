@@ -79,11 +79,6 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IStreamObje
 	}
 	
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {	
-		sendPunctuation(timestamp);
-	}
-	
-	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof MetadataCreationPO)) {
 			return false;

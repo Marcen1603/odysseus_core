@@ -63,10 +63,6 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		transfer(output);
 	}
 
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
 
 	@Override
 	public AbstractPipe<KeyValueObject<M>, Tuple<M>> clone() {

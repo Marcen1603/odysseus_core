@@ -71,11 +71,6 @@ public class PunctuationPO<T extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		this.sendPunctuation(timestamp);
-	}
-
-	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (this != ipo) {
 			return false;

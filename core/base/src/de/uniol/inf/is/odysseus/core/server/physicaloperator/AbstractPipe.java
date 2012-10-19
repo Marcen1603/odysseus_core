@@ -236,7 +236,9 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	abstract protected void process_next(R object, int port);
 
 	@Override
-	abstract public void processPunctuation(PointInTime timestamp, int port);
+	public void processPunctuation(PointInTime timestamp, int port){
+		sendPunctuation(timestamp);
+	}
 
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {

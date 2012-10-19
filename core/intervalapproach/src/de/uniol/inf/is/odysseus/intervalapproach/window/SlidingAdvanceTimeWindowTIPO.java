@@ -55,9 +55,5 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITi
 		return new SlidingAdvanceTimeWindowTIPO<T>(this);
 	}
 	
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
 
 }

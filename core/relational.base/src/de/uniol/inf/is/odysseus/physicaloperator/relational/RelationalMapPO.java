@@ -101,11 +101,6 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	}
 	
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {	
-		sendPunctuation(timestamp);
-	}
-	
-	@Override
 	@SuppressWarnings({"rawtypes"})
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof RelationalMapPO)) {

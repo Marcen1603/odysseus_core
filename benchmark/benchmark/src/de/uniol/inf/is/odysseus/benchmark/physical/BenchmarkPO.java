@@ -125,11 +125,6 @@ public class BenchmarkPO<R extends IStreamObject<?>> extends
 	public BenchmarkPO<R> clone() {
 		return new BenchmarkPO<R>(this);
 	}
-
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
 	
 	public double getSelectivity() {
 		return selectivity;

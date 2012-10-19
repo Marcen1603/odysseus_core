@@ -69,12 +69,6 @@ public class UserDefinedOperatorPO<R  extends IStreamObject<?>,W  extends IStrea
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		// TODO: Was macht man mit Punctuations bei UDFs?
-		sendPunctuation(timestamp);
-	}
-
-	@Override
 	public AbstractPipe<R, W> clone() {
 		return new UserDefinedOperatorPO<R, W>(this);
 	}

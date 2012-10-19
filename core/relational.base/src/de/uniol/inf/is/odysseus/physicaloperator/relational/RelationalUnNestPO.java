@@ -131,15 +131,4 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.ISink#
-     * processPunctuation(de.uniol.inf.is.odysseus.core.server
-     * .metadata.PointInTime, int)
-     */
-    @Override
-    public void processPunctuation(final PointInTime timestamp, final int port) {
-        this.sendPunctuation(timestamp);
-    }
 }

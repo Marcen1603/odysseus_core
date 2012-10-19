@@ -113,10 +113,6 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 		return super.toString() + " predicate: " + this.getPredicate().toString(); 
 	}
 	
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {	
-		sendPunctuation(timestamp);
-	}
 
 	public IHeartbeatGenerationStrategy<T> getHeartbeatGenerationStrategy() {
 		return heartbeatGenerationStrategy;

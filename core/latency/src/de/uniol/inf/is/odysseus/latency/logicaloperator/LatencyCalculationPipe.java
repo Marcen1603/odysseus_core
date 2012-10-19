@@ -52,10 +52,6 @@ public class LatencyCalculationPipe<T extends IStreamObject<? extends ILatency>>
 		return new LatencyCalculationPipe<T>(this);
 	}
 
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
 
 
 }

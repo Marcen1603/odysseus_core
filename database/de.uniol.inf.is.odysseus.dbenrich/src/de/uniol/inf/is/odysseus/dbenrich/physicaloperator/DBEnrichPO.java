@@ -165,11 +165,6 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
-
-	@Override
 	public AbstractPipe<Tuple<T>, Tuple<T>> clone() {
 		return new DBEnrichPO<T>(this);
 	}

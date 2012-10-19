@@ -165,11 +165,6 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
-
-	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode.NEW_ELEMENT;
 	}

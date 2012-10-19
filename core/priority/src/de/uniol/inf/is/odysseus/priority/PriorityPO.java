@@ -90,11 +90,6 @@ public class PriorityPO<K extends IPriority, T extends IStreamObject<K>>
 		}
 	}
 
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
-
 	public boolean isPunctuationActive() {
 		return isPunctuationActive;
 	}
