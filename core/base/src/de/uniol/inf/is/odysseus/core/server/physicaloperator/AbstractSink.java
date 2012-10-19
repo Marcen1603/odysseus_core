@@ -341,6 +341,7 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 			}
 			if (!sub.isDone()) {
 				this.allInputsDone = false;
+				break;
 			}
 		}
 	}
