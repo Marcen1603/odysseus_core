@@ -35,7 +35,7 @@ public class LeastLossReaction implements IAdmissionReaction {
 
 	@Override
 	public IPossibleExecution react(List<IPossibleExecution> possibilities) {
-		
+		 
 		IPossibleExecution least = null;
 		ICost leastCost = null;
 		

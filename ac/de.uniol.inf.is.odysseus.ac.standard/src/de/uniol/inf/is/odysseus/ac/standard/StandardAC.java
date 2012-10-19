@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecution;
+import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecutionGenerator;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -411,6 +412,18 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 					ex.printStackTrace();
 				}
 			}
+		}
+	}
+	
+	public void bindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
+		LOGGER.debug("Bound PossibleExecutionGenerator " + generator);
+		this.generator = generator;
+	}
+	
+	public void unbindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
+		if( this.generator == generator ) {
+			this.generator = new PossibleExecutionGenerator();
+			LOGGER.debug("Unbound PossibleExecutionGenerator {}. Using default now.", generator);
 		}
 	}
 

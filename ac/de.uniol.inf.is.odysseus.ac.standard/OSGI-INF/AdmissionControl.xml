@@ -21,4 +21,5 @@
       <provide interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl"/>
    </service>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
+   <reference bind="bindPossibleExecutionGenerator" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecutionGenerator" name="IPossibleExecutionGenerator" policy="static" unbind="unbindPossibleExecutionGenerator"/>
 </scr:component>

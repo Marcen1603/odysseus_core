@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.ac.standard;
+package de.uniol.inf.is.odysseus.core.server.ac;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecution;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
