@@ -25,16 +25,6 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 	}
 
 	@Override
-	public boolean isInOrder() {
-		return inOrder;
-	}
-
-	@Override
-	public void setInOrder(boolean inOrder) {
-		this.inOrder = inOrder;
-	}
-
-	@Override
 	public Object getMetadata(String name) {
 		return metadataMap.get(name);
 	}

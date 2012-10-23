@@ -60,7 +60,7 @@ public class TChangeCorrelateAORule extends AbstractTransformationRule<ChangeCor
 	@Override
 	public void execute(ChangeCorrelateAO ccAO, TransformationConfiguration transformConfig) {
 		TIInputStreamSyncArea inputStreamSyncArea = new TIInputStreamSyncArea(ccAO.getSubscribedToSource().size());
-		TITransferArea outputTransferArea = new TITransferArea(ccAO.getSubscribedToSource().size());
+		TITransferArea outputTransferArea = new TITransferArea();
 		
 		ChangeCorrelatePO ccPO = new ChangeCorrelatePO(ccAO.getLeftHighPredicate(), ccAO.getLeftLowPredicate(), ccAO.getRightHighPredicate(), ccAO.getRightLowPredicate(), inputStreamSyncArea, outputTransferArea);
 		

@@ -17,11 +17,10 @@ package de.uniol.inf.is.odysseus.priority;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
@@ -51,12 +50,6 @@ public class PriorityPO<K extends IPriority, T extends IStreamObject<K>>
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}
-
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
-	}
-
 	
 	@Override
 	protected void process_next(T next, int port) {

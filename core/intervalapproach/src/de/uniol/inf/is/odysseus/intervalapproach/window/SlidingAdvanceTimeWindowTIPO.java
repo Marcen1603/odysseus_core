@@ -46,11 +46,6 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITi
 	}
 
 	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
-	}
-
-	@Override
 	public SlidingAdvanceTimeWindowTIPO<T> clone() {
 		return new SlidingAdvanceTimeWindowTIPO<T>(this);
 	}

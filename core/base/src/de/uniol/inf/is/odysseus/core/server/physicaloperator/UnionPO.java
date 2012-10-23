@@ -17,7 +17,9 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
@@ -31,7 +33,6 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 
 	public UnionPO(UnionPO<R> unionPO){
 		this.transferFunction = unionPO.transferFunction.clone();
-		transferFunction.setSourcePo(this);
 	}
 
 	@Override
@@ -45,8 +46,9 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 	}
 	
 	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
+	protected void newSourceSubscribed(
+			PhysicalSubscription<ISource<? extends R>> sub) {
+		transferFunction.addNewInput(sub);
 	}
 	
 	@Override

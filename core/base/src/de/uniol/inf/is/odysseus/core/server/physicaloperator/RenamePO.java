@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 /**
  * This operator is only needed as the top operator, if the output of
@@ -41,11 +40,6 @@ public class RenamePO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
-	}
-
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
 	}
 
 	

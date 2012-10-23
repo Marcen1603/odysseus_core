@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -55,12 +54,6 @@ public class RoutePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-	
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
-	}
-
 
 	@Override
 	public void process_open() throws OpenFailedException{

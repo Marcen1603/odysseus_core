@@ -225,14 +225,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		delegateSink.process(object, port);
 	}
 
-	/**
-	 * If an operator is capable of handling out of order data, return true
-	 * @return
-	 */
-	protected boolean canHandleOutOfOrder() {
-		return delegateSink.canHandleOutOfOrder();
-	}
-	
 	abstract protected void process_next(R object, int port);
 
 	@Override
@@ -310,6 +302,10 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 				schema);
 	}
 
+	protected void newSourceSubscribed(PhysicalSubscription<ISource<? extends R>> sub){
+		this.delegateSink.newSourceSubscribed(sub);
+	}
+	
 	@Override
 	public void unsubscribeFromSource(
 			PhysicalSubscription<ISource<? extends R>> subscription) {

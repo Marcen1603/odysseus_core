@@ -16,10 +16,13 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.PriorityQueue;
+import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
@@ -30,27 +33,18 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
 		implements ITransferArea<R, W> {
 
-	final protected PointInTime[] minTs;
+	private ReentrantLock lock = new ReentrantLock();
+	protected PointInTime[] minTs;
 	protected AbstractSource<W> po;
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
 			new MetadataComparator<ITimeInterval>());
 
 	private int outputPort = 0;
-	
+
 	public TITransferArea() {
-		minTs = new PointInTime[2];
 	}
 
-	public TITransferArea(int inputPortCount) {
-		minTs = new PointInTime[inputPortCount];
-	}
-	
-	public TITransferArea(int inputPortCount, int outputPort) {
-		minTs = new PointInTime[inputPortCount];
-		this.outputPort = outputPort;
-	}
-
-	public TITransferArea(TITransferArea<R, W> tiTransferFunction) {
+	private TITransferArea(TITransferArea<R, W> tiTransferFunction) {
 		minTs = new PointInTime[tiTransferFunction.minTs.length];
 		for (int i = 0; i < minTs.length; i++) {
 			minTs[i] = tiTransferFunction.minTs[i] != null ? tiTransferFunction.minTs[i]
@@ -60,37 +54,37 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	}
 
 	@Override
-	public void setSourcePo(AbstractSource<W> po) {
-		this.po = po;
-	}
-
-	@Override
 	public void init(AbstractSource<W> po) {
+		lock.lock();
 		this.po = po;
+		this.minTs = new PointInTime[po.getSubscriptions().size()];
 		for (int i = 0; i < minTs.length; i++) {
 			this.minTs[i] = null;
 		}
 		this.outputQueue.clear();
+		lock.unlock();
+	}
+
+	@Override
+	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub) {
+		lock.lock();
+
+		lock.unlock();
+		throw new IllegalArgumentException(
+				"Adding of inputs currently not implemented");
 	}
 
 	@Override
 	public void newElement(R object, int inPort) {
-		if (object.isInOrder()) {
-			newHeartbeat(object.getMetadata().getStart(), inPort);
-		}
+		newHeartbeat(object.getMetadata().getStart(), inPort);
 	}
 
 	@Override
 	public void transfer(W object) {
-		if (object.isInOrder()) {
-			synchronized (this.outputQueue) {
-				outputQueue.add(object);
-			}
-		} else {
-			po.transfer(object, outputPort);
+		synchronized (this.outputQueue) {
+			outputQueue.add(object);
 		}
 	}
-	
 
 	@Override
 	public void done() {
@@ -154,7 +148,5 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public void setOutputPort(int outputPort) {
 		this.outputPort = outputPort;
 	}
-
-	
 
 }

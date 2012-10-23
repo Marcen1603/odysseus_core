@@ -20,11 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  * @author Jonas Jacobi
@@ -49,11 +48,6 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IStreamObje
 		return OutputMode.MODIFIED_INPUT;
 	}
 
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
-	}
-	
 	@Override
 	public void process_next(In object, int port) {
 		try {

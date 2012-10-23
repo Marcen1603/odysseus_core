@@ -52,7 +52,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSwe
  *            Datentyp
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
-		extends AbstractPipe<T, T> implements IHasPredicate, IHasMetadataMergeFunction<K> {
+		extends AbstractPipe<T, T> implements IHasPredicate,
+		IHasMetadataMergeFunction<K> {
 	private final POEvent processPunctuationDoneEvent;
 	private static Logger _logger = null;
 
@@ -165,11 +166,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
-	}
-	
-	@Override
 	protected void process_next(T object, int port) {
 
 		if (isDone()) {
@@ -191,10 +187,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		int otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
-		if (object.isInOrder()) {
-			synchronized (this.areas[otherport]) {
-				areas[otherport].purgeElements(object, order);
-			}
+		synchronized (this.areas[otherport]) {
+			areas[otherport].purgeElements(object, order);
 		}
 
 		synchronized (this) {
@@ -240,7 +234,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 					left.getMetadata());
 		}
 		mergedData.setMetadata(mergedMetadata);
-		mergedData.setInOrder(left.isInOrder() && right.isInOrder());
 		return mergedData;
 	}
 

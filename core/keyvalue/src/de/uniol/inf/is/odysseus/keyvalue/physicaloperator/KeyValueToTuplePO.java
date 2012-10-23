@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.keyvalue.physicaloperator;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -33,11 +32,6 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
-	}
-
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
 	}
 
 	public void setKeepInputObject(boolean keepInputObject) {

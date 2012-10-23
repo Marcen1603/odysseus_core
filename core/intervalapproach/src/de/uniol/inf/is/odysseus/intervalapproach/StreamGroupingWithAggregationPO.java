@@ -53,16 +53,14 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			IGroupProcessor<R, W> grProcessor) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 		setGroupProcessor(grProcessor);
-		transferArea = new TITransferArea<W, W>(1);
-		transferArea.setSourcePo(this);
+		transferArea = new TITransferArea<W, W>();
 	}
 
 	public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
 			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
-		transferArea = new TITransferArea<W, W>(1);
-		transferArea.setSourcePo(this);
+		transferArea = new TITransferArea<W, W>();
 	}
 
 	public StreamGroupingWithAggregationPO(
@@ -89,6 +87,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
 		getGroupProcessor().init();
+		transferArea.init(this);
 	}
 
 	@Override
@@ -109,6 +108,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		return super.isDone() && transferArea.size() == 0;
 	}
 
+		
 	@Override
 	protected synchronized void process_next(R object, int port) {
 		

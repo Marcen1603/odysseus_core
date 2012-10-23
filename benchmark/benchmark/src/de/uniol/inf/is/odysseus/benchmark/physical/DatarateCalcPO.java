@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.benchmark.physical;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.StreamString;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -24,11 +23,6 @@ public class DatarateCalcPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.INPUT;
-	}
-	
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
 	}
 	
 	public long getUpdateRate() {

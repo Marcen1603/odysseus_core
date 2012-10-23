@@ -18,11 +18,10 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * @author Jonas Jacobi
@@ -49,11 +48,6 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
-	}
-	
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
 	}
 	
 	@Override

@@ -16,9 +16,8 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 
 /**
@@ -31,11 +30,6 @@ public class MetadataUpdatePO<M extends IClone, T extends IStreamObject<? extend
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
-	}
-	
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
 	}
 	
 	public MetadataUpdatePO(IMetadataUpdater<M, T> mFac) {

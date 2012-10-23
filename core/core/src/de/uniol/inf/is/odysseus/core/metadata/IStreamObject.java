@@ -39,20 +39,6 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 	 */
 	public void setMetadata(M metadata);
 
-	/**
-	 * Returns true if the element is in order
-	 * 
-	 * @return
-	 */
-	boolean isInOrder();
-
-	/**
-	 * Set to true to state the element as in order, else out of order
-	 * 
-	 * @param inOrder
-	 */
-	void setInOrder(boolean inOrder);
-
 	/** 
 	 * Allow any object to be attached, do not use this method for
 	 * often accessed meta data, (e.g. timestamps)

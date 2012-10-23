@@ -25,6 +25,7 @@ import java.util.Random;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
@@ -44,8 +45,8 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 	private int k = 2;
 	private IDistance distanceFunction = new EuclidianDistance();
 	private SDFSchema schema;
-	private TITransferArea<Tuple<M>, Tuple<M>> transferFunctionTuples = new TITransferArea<Tuple<M>, Tuple<M>>(1, 0);
-	private TITransferArea<Tuple<M>, Tuple<M>> transferFunctionMeans = new TITransferArea<Tuple<M>, Tuple<M>>(1, 1);
+	private TITransferArea<Tuple<M>, Tuple<M>> transferFunctionTuples = new TITransferArea<Tuple<M>, Tuple<M>>();
+	private TITransferArea<Tuple<M>, Tuple<M>> transferFunctionMeans = new TITransferArea<Tuple<M>, Tuple<M>>();
 
 	public ClusteringKMeansPO(int k, SDFSchema schema, int[] attributePositions) {
 		this.k = k;
@@ -62,8 +63,8 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 	}
 
 	private void init() {
-		transferFunctionTuples.setSourcePo(this);
-		transferFunctionMeans.setSourcePo(this);
+		transferFunctionTuples.setOutputPort(0);
+		transferFunctionMeans.setOutputPort(1);
 	}
 
 	@Override
@@ -71,6 +72,12 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@Override
+	protected void process_open() throws OpenFailedException {
+		transferFunctionTuples.init(this);
+		transferFunctionMeans.init(this);
+	}
+	
 	@Override
 	protected synchronized void process_next(Tuple<M> object, int port) {
 		System.out.println(object);

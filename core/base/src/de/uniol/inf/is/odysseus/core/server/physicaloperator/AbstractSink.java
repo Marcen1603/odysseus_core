@@ -53,10 +53,10 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataPro
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractMonitoringDataProvider
-		implements ISink<T> {
+public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractMonitoringDataProvider
+		implements ISink<R> {
 
-	final private List<PhysicalSubscription<ISource<? extends T>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends T>>>();
+	final private List<PhysicalSubscription<ISource<? extends R>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends R>>>();
 
 	protected int noInputPorts = -1;
 
@@ -135,13 +135,13 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 		openDoneEvent = new POEvent(getInstance(), POEventType.OpenDone);
 	}
 
-	public AbstractSink(AbstractSink<T> other) {
+	public AbstractSink(AbstractSink<R> other) {
 		openInitEvent = new POEvent(getInstance(), POEventType.OpenInit);
 		openDoneEvent = new POEvent(getInstance(), POEventType.OpenDone);
 		init(other);
 	}
 
-	protected void init(AbstractSink<T> other) {
+	protected void init(AbstractSink<R> other) {
 		noInputPorts = other.noInputPorts;
 		name = other.name;
 		this.outputSchema = createCleanClone(other.outputSchema);
@@ -150,7 +150,7 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 	}
 
 	// "delegatable this", used for the delegate sink
-	protected ISink<T> getInstance() {
+	protected ISink<R> getInstance() {
 		return this;
 	}
 
@@ -210,7 +210,7 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 		this.sinkOpen.set(true);
 		
 		// Call open on all registered sources0
-		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
+		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			// Check if callPath contains this call already to avoid cycles
 			if (!containsSubscription(callPath, getInstance(),
 					sub.getSourceOutPort(), sub.getSinkInPort())) {
@@ -225,7 +225,7 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 	@SuppressWarnings("static-method")
 	private boolean containsSubscription(
 			List<PhysicalSubscription<ISink<?>>> callPath,
-			ISink<? super T> sink, int sourcePort, int sinkPort) {
+			ISink<? super R> sink, int sourcePort, int sinkPort) {
 		for (PhysicalSubscription<ISink<?>> sub : callPath) {
 			if (sub.getTarget() == sink && sub.getSinkInPort() == sinkPort
 					&& sub.getSourceOutPort() == sourcePort) {
@@ -253,32 +253,21 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 	// ------------------------------------------------------------------------
 
 	@Override
-	final public void process(T object, int port) {
-		if (!object.isInOrder() && ! canHandleOutOfOrder()){
-			done(port);
-			throw new RuntimeException("The operator "+name+" is not designed to process out of order elements!");
-		}
+	final public void process(R object, int port) {
 		fire(processInitEvent[port]);
 		process_next(object, port);
 		fire(processDoneEvent[port]);
 	}
 	
-	/**
-	 * If an operator is capable of handling out of order data, return true
-	 * @return
-	 */
-	protected boolean canHandleOutOfOrder() {
-		return false;
-	}
 
 	@Override
-	public void process(Collection<? extends T> object, int port) {
-		for (T cur : object) {
+	public void process(Collection<? extends R> object, int port) {
+		for (R cur : object) {
 			process(cur, port);
 		}
 	}
 
-	protected abstract void process_next(T object, int port);
+	protected abstract void process_next(R object, int port);
 
 	@Override
 	public abstract void processPunctuation(PointInTime timestamp, int port);
@@ -312,7 +301,7 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 
 	protected void callCloseOnChildren(
 			List<PhysicalSubscription<ISink<?>>> callPath) {
-		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
+		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (!containsSubscription(callPath, getInstance(),
 					sub.getSourceOutPort(), sub.getSinkInPort())) {
 				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(),
@@ -335,7 +324,7 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 	final public void done(int port) {
 		process_done(port);
 		this.allInputsDone = true;
-		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
+		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (sub.getSinkInPort() == port) {
 				sub.setDone(true);
 			}
@@ -462,7 +451,7 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void subscribeToSource(ISource<? extends T> source, int sinkInPort,
+	public void subscribeToSource(ISource<? extends R> source, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
 
 		if (sinkInPort == -1) {
@@ -473,7 +462,7 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 			setInputPortCount(sinkInPort + 1);
 		}
 
-		PhysicalSubscription<ISource<? extends T>> sub = new PhysicalSubscription<ISource<? extends T>>(
+		PhysicalSubscription<ISource<? extends R>> sub = new PhysicalSubscription<ISource<? extends R>>(
 				source, sinkInPort, sourceOutPort, schema);
 		if (!this.subscribedToSource.contains(sub)) {
 			if (!sinkInPortFree(sinkInPort)) {
@@ -486,12 +475,18 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 			this.subscribedToSource.add(sub);
 			source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
 					schema);
+			newSourceSubscribed(sub);
 		}
+		
+	}
+	
+	protected void newSourceSubscribed(PhysicalSubscription<ISource<? extends R>> sub){
+		// Implement this method if need to react to new source subscription
 	}
 
 	private int getNextFreeSinkInPort() {
 		int sinkInPort = -1;
-		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
+		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (sub.getSinkInPort() > sinkInPort) {
 				sinkInPort = sub.getSinkInPort();
 			}
@@ -502,7 +497,7 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 	}
 
 	private boolean sinkInPortFree(int sinkInPort) {
-		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
+		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (sub.getSinkInPort() == sinkInPort) {
 				getLogger()
 						.error("SinkInPort " + sinkInPort
@@ -514,13 +509,13 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 	}
 
 	@Override
-	final public List<PhysicalSubscription<ISource<? extends T>>> getSubscribedToSource() {
+	final public List<PhysicalSubscription<ISource<? extends R>>> getSubscribedToSource() {
 		return Collections.unmodifiableList(this.subscribedToSource);
 	}
 
 	@Override
 	public void unsubscribeFromSource(
-			PhysicalSubscription<ISource<? extends T>> subscription) {
+			PhysicalSubscription<ISource<? extends R>> subscription) {
 		getLogger()
 				.debug("Unsubscribe from Source " + subscription.getTarget());
 		if (this.subscribedToSource.remove(subscription)) {
@@ -531,16 +526,16 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 	}
 
 	@Override
-	public void unsubscribeFromSource(ISource<? extends T> source,
+	public void unsubscribeFromSource(ISource<? extends R> source,
 			int sinkInPort, int sourceOutPort, SDFSchema schema) {
-		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends T>>(
+		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends R>>(
 				source, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
 	public void unsubscribeFromAllSources() {
 		while (!subscribedToSource.isEmpty()) {
-			PhysicalSubscription<ISource<? extends T>> subscription = subscribedToSource
+			PhysicalSubscription<ISource<? extends R>> subscription = subscribedToSource
 					.remove(0);
 			getLogger().debug(
 					"Unsubscribe from Source " + subscription.getTarget());
@@ -555,7 +550,7 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 	}
 
 	@Override
-	final public PhysicalSubscription<ISource<? extends T>> getSubscribedToSource(
+	final public PhysicalSubscription<ISource<? extends R>> getSubscribedToSource(
 			int port) {
 		return this.subscribedToSource.get(port);
 	}
@@ -581,7 +576,7 @@ public abstract class AbstractSink<T extends IStreamObject<?>> extends AbstractM
 	}
 
 	@Override
-	abstract public AbstractSink<T> clone();
+	abstract public AbstractSink<R> clone();
 
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {

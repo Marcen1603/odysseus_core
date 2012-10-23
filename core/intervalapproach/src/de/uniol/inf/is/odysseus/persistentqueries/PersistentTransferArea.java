@@ -20,6 +20,8 @@ import java.util.PriorityQueue;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
@@ -32,17 +34,12 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
 		implements ITransferArea<R,W> {
 
-	final protected PointInTime[] minTs;
+	protected PointInTime[] minTs;
 	protected AbstractSource<W> po;
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
 			new MetadataComparator<ITimeInterval>());
 
 	public PersistentTransferArea() {
-		minTs = new PointInTime[2];
-	}
-
-	public PersistentTransferArea(int inputPortCount) {
-		minTs = new PointInTime[inputPortCount];
 	}
 
 	public PersistentTransferArea(PersistentTransferArea<R,W> tiTransferFunction) {
@@ -55,13 +52,15 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	}
 
 	@Override
-	public void setSourcePo(AbstractSource<W> po) {
-		this.po = po;
+	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub) {
+		// TODO Auto-generated method stub
+		throw new IllegalArgumentException("Adding of inputs currently not implemented");
 	}
-
+	
 	@Override
 	public void init(AbstractSource<W> po) {
 		this.po = po;
+		minTs = new PointInTime[po.getSubscriptions().size()];
 		for (int i = 0; i < minTs.length; i++) {
 			this.minTs[i] = null;
 		}

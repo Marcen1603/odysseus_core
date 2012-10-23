@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -47,11 +46,6 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
-	}
-	
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
 	}
 	
 	@Override

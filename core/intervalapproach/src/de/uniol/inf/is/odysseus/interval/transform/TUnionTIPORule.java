@@ -34,7 +34,7 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 
 	@Override
 	public void execute(UnionAO unionAO, TransformationConfiguration transformConfig) {
-		UnionPO<IStreamObject<ITimeInterval>> unionPO = new UnionPO<IStreamObject<ITimeInterval>>(new TITransferArea<IStreamObject<ITimeInterval>,IStreamObject<ITimeInterval>>(unionAO.getNumberOfInputs()));
+		UnionPO<IStreamObject<ITimeInterval>> unionPO = new UnionPO<IStreamObject<ITimeInterval>>(new TITransferArea<IStreamObject<ITimeInterval>,IStreamObject<ITimeInterval>>());
 		defaultExecute(unionAO, unionPO, transformConfig, true, true);
 	}
 

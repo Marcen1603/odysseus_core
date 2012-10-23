@@ -15,11 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.sparql.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
@@ -168,12 +167,6 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode.NEW_ELEMENT;
 	}
-
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
-	}
-
 	
 	@Override
 	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {

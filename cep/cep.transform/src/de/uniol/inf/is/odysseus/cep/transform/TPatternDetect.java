@@ -59,7 +59,7 @@ public class TPatternDetect extends AbstractTransformationRule<PatternDetectAO> 
 			cepPO = new PatternDetectPO(m, cepAO.getSecondStateMachine(), rMap,
 					complexEventFactory, false, new TIInputStreamSyncArea(cepAO
 							.getSubscribedToSource().size()),
-					new TITransferArea(cepAO.getSubscribedToSource().size()),
+					new TITransferArea(),
 					onlyOneMatchPerInstance);
 		} catch (Exception e) {
 			e.printStackTrace();

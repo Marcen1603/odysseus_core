@@ -34,11 +34,6 @@ public class TimeSplitTIPO<T extends IStreamObject<? extends ITimeInterval>>
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
-	
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override

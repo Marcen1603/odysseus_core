@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
@@ -77,11 +76,6 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
     public OutputMode getOutputMode() {
         return OutputMode.NEW_ELEMENT;
     }
-
-	@Override
-	protected boolean canHandleOutOfOrder() {
-		return true;
-	}
     
     /*
      * (non-Javadoc)

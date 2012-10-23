@@ -26,25 +26,14 @@ import de.uniol.inf.is.odysseus.priority.IPriority;
  */
 public class PriorityTITransferArea<K extends ITimeInterval, R extends IStreamObject<K>, W extends IStreamObject<K>>
 		extends TITransferArea<R, W> {
-
-	private void updateOrder(IStreamObject<K> object){
-		// If prio > 0 allow out of order processing
-		// do not change state if no prio!
-		// cast is necessary because of a compiler bug, see above
-		if (((IPriority) object.getMetadata()).getPriority() != 0) {
-			object.setInOrder(false);
-		}
-	}
 	
 	@Override
 	public void newElement(R object, int port) {
-		updateOrder(object);
 		super.newElement(object, port);
 	}
 
 	@Override
 	public void transfer(W object) {
-		updateOrder(object);
 		if (((IPriority) object.getMetadata()).getPriority() > 0) {
 			po.transfer(object);
 		} else {
