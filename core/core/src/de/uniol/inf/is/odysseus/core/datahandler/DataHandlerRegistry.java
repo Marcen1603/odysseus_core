@@ -92,4 +92,20 @@ public class DataHandlerRegistry {
 	public static ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(dataHandlers.keySet());
 	}
+	
+	/**
+	 * This method should only be used, if the data handler are used in a non OSGi enviroment!
+	 * In other cases there should be declarative services that register new data handler!!
+	 */
+	public static void initDefaultHandler(){
+		registerDataHandler(new BooleanHandler());
+		registerDataHandler(new DateHandler());
+		registerDataHandler(new DoubleHandler());
+		registerDataHandler(new IntegerHandler());
+		registerDataHandler(new ListDataHandler());
+		registerDataHandler(new LongHandler());
+		registerDataHandler(new ObjectDataHandler<>());
+		registerDataHandler(new StringHandler());
+		registerDataHandler(new TupleDataHandler());
+	}
 }
