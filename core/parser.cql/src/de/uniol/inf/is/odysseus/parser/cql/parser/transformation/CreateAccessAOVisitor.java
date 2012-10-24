@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -98,7 +99,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		try {
 			access = dd.getViewOrStream(sourceName, caller);
 			if (access instanceof AccessAO) {
-				((AccessAO) access).setDataHandler("Tuple");
+				((AccessAO) access).setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));;
 			}
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());

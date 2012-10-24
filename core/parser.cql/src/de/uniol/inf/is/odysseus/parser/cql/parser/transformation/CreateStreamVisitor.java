@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -95,7 +96,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	public void setOperator(ILogicalOperator operator) {
 		this.operator = operator;
-		((AccessAO)operator).setDataHandler("Tuple");
+		((AccessAO)operator).setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 	}
 
 	@Override
@@ -282,6 +283,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 							RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
 		}
 		initSource(source, host, port);
+		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		ILogicalOperator op = addTimestampAO(source);
 		try {
 			dd.setStream(name, op, caller);
@@ -317,7 +319,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		AccessAO source = new AccessAO(name,
 				"RelationalByteBufferAccessPO",null);
-		source.setDataHandler("Tuple");
+		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		source.setAutoReconnectEnabled(autoReconnect);
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);
@@ -337,21 +339,17 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		if (node.jjtGetNumChildren() > 0) {
 			type = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		}
-
-		String adapter="GenericPull";
-		String input="LineFile";
-		String transformer = "LineToString";
-		if ("csv".equalsIgnoreCase(type)){
-			transformer = "CSV2String";
-		}
-		String dataHandler = "Tuple";
+		String wrapperName="GenericPull";
 		Map<String, String> options = new HashMap<String, String>();
 		options.put("filename", filename);
 		
 		// TODO: read delimiter
 		options.put("delimiter",";");
-		
-		AccessAO source = new AccessAO(name,adapter,input,transformer,dataHandler,options);
+
+		AccessAO source = new AccessAO(name, wrapperName, options);
+		source.setTransportHandler("File");
+		source.setProtocolHandler(type);
+		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));		
 		
 		source.setOutputSchema(new SDFSchema(name, this.attributes));
 		ILogicalOperator op = addTimestampAO(source);
