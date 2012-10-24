@@ -52,7 +52,7 @@ public class SLA {
 	/**
 	 * maximum admission costs allowed for a user owning this sla
 	 */
-	private double maxAdmissionCost;
+	private double maxAdmissionCostFactor;
 	/**
 	 * a penalty to fine if the query was killed by the system/provider
 	 */
@@ -190,12 +190,12 @@ public class SLA {
 	}
 	
 
-	public double getMaxAdmissionCost() {
-		return maxAdmissionCost;
+	public double getMaxAdmissionCostFactor() {
+		return maxAdmissionCostFactor;
 	}
 
-	public void setMaxAdmissionCost(double maxAdmissionCost) {
-		this.maxAdmissionCost = maxAdmissionCost;
+	public void setMaxAdmissionCostFactor(double maxAdmissionCost) {
+		this.maxAdmissionCostFactor = maxAdmissionCost;
 	}
 
 	@Override
