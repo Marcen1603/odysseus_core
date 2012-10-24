@@ -28,5 +28,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server.ac,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor
 Service-Component: OSGI-INF/StandardExecutor.xml
-Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ com.google.guava;bundle-version="12.0.0"
 

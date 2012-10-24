@@ -140,4 +140,12 @@ public interface IAdmissionControl {
 	 *         gestoppt werden sollten, um eine √úberlastung aufzul√∂sen.
 	 */
 	public List<IPossibleExecution> getPossibleExecutions();
+	
+	/**
+	 * Liefert <code>true</code>, wenn die letzte Kostensch‰tzung eine ‹berlastung
+	 * festgestellt hat, <code>false</code> sonst.
+	 * 
+	 * @return <code>true</code> bei ‹berlastungssituation, sonts <code>false</code>.
+	 */
+	public boolean isOverloaded();
 }

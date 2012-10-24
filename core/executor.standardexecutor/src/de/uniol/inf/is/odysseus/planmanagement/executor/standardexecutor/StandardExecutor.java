@@ -27,6 +27,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -111,6 +113,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
     }
 
     private IAdmissionReaction admissionReaction = null;
+    private final List<IPhysicalQuery> stoppedQueriesByAC = Lists.newArrayList();
 
     private Map<ILogicalQuery, QueryBuildConfiguration> queryBuildParameter = new HashMap<ILogicalQuery, QueryBuildConfiguration>();
 
@@ -855,12 +858,32 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             List<IPossibleExecution> possibilities = sender.getPossibleExecutions();
             IPossibleExecution execution = admissionReaction.react(possibilities);
 
-            // Anfragen stoppen
             for (IPhysicalQuery query : execution.getStoppingQueries()) {
-                // System.err.println("Stopping query : " + query);
-                stopQuery(query.getID(), query.getSession());
+            	try{
+            		stopQuery(query.getID(), query.getSession());
+            		stoppedQueriesByAC.add(query);
+            	} catch( Throwable t ) {
+            		LOG.error("Could not stop query {] by admission control", query.getID(), t);
+            	}
             }
         }
+    }
+    
+    @Override
+    public void underloadOccured(IAdmissionControl sender) {
+    	if( !stoppedQueriesByAC.isEmpty() ) {
+    		for(IPhysicalQuery stoppedQuery : stoppedQueriesByAC.toArray(new IPhysicalQuery[0])) {
+    			try {
+	    			if( !stoppedQuery.isOpened() ) {
+	    				startQuery(stoppedQuery.getID(), stoppedQuery.getSession());
+	    			}
+	    			
+	    			stoppedQueriesByAC.remove(stoppedQuery);
+    			} catch( Throwable t ) {
+    				LOG.error("Could not start query {} which was stopped by admission control", stoppedQuery.getID(), t);
+    			}
+    		}
+    	}
     }
 
     @Override

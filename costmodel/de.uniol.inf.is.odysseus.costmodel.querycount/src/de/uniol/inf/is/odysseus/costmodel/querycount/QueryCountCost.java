@@ -97,4 +97,9 @@ public class QueryCountCost implements ICost {
 		return new QueryCountCost(value / operators.size());
 	}
 
+	@Override
+	public ICost fraction(double factor) {
+		return new QueryCountCost(value * factor);
+	}
+
 }

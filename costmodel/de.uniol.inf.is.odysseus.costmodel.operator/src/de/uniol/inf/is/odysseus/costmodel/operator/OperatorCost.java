@@ -147,4 +147,9 @@ public class OperatorCost implements ICost {
 	public double getCpuCost() {
 		return cpuCost;
 	}
+
+	@Override
+	public ICost fraction(double factor) {
+		return new OperatorCost(memCost * factor, cpuCost * factor);
+	}
 }

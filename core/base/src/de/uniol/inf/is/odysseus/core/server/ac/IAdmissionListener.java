@@ -16,8 +16,8 @@
 package de.uniol.inf.is.odysseus.core.server.ac;
 
 /**
- * Schnittstelle, welche von Klassen implementiert werden muss, damit sie Ã¼ber
- * Ãœberlastungen in der {@link IAdmissionControl} informiert werden. Sie mÃ¼ssen
+ * Schnittstelle, welche von Klassen implementiert werden muss, damit sie über
+ * Überlastungen in der {@link IAdmissionControl} informiert werden. Sie müssen
  * sind mittels der Methode <code>registerListener</code> der Klasse
  * {@link IAdmissionControl} registrieren.
  * 
@@ -27,14 +27,26 @@ package de.uniol.inf.is.odysseus.core.server.ac;
 public interface IAdmissionListener {
 
 	/**
-	 * Wird aufgerufen, wenn eine Ãœberlastung erkannt wurde. Eine Ãœberlastung
-	 * tritt auf, wenn die Gesamtkosten des AusfÃ¼hrungsplans die Maximalkosten
-	 * Ã¼bersteigen. Diese Methode wird nur dann aufgerufen, wenn die
-	 * AdmissionControl KostenschÃ¤tzungen vornimmt.
+	 * Wird aufgerufen, wenn eine Überlastung erkannt wurde. Eine Überlastung
+	 * tritt auf, wenn die Gesamtkosten des Ausführungsplans die Maximalkosten
+	 * übersteigen. Diese Methode wird nur dann aufgerufen, wenn die
+	 * AdmissionControl Kostenschätzungen vornimmt.
 	 * 
 	 * @param sender
-	 *            Instanz von {@link IAdmissionControl}, welcher die Ãœberlastung
+	 *            Instanz von {@link IAdmissionControl}, welcher die Überlastung
 	 *            entdeckt hat.
 	 */
 	public void overloadOccured(IAdmissionControl sender);
+	
+	/**
+	 * Wird aufgerufen, wenn eine Unterlastung erkannt wurde. Eine Unterlastung tritt auf, wenn 
+	 * mindestens einmal eine Überlastung festgestellt wurde und anschließend die Last sinkt.
+	 * Diese Methode wird nur dann aufgerufen, wenn die
+	 * AdmissionControl Kostenschätzungen vornimmt.
+	 * 
+	 * @param sender
+	 *            Instanz von {@link IAdmissionControl}, welcher die Unterlastung
+	 *            entdeckt hat.
+	 */
+	public void underloadOccured(IAdmissionControl sender);
 }

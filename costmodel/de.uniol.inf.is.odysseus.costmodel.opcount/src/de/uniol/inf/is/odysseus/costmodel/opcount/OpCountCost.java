@@ -106,4 +106,9 @@ public class OpCountCost implements ICost {
 		return new OpCountCost(1.0 / opCount);
 	}
 
+	@Override
+	public ICost fraction(double factor) {
+		return new OpCountCost(opCount * factor);
+	}
+
 }

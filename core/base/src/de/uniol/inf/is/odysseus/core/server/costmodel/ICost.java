@@ -63,4 +63,13 @@ public interface ICost extends Comparable<ICost>{
 	 * @return Subtraierte Kosten
 	 */
 	public ICost substract( ICost otherCost );
+	
+	/**
+	 * Gibt einen Bruchteil der Kosten als neue Instanz zurück
+	 * 
+	 * @param factor Faktor, womit die Kosten "multipliziert" werden sollen.
+	 * 
+	 * @return Bruchteil der Kosten als neue Instanz.
+	 */
+	public ICost fraction( double factor );
 }

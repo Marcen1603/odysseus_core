@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
@@ -55,6 +56,7 @@ public class OperatorCostModel implements ICostModel {
 	private IOperatorDetailCostAggregator operatorAggregator = new OperatorDetailCostAggregator();
 
 	private final int processorCount;
+	private final int schedulerThreadCount;
 	private final long memory;
 
 	/**
@@ -63,8 +65,10 @@ public class OperatorCostModel implements ICostModel {
 	public OperatorCostModel() {
 		Runtime runtime = Runtime.getRuntime();
 		processorCount = runtime.availableProcessors();
+		schedulerThreadCount = OdysseusConfiguration.getInt("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
 
 		LOG.debug("Number of Processors available: {} ", processorCount);
+		LOG.debug("Number of Scheduler Threads: {}", schedulerThreadCount);
 
 		memory = runtime.totalMemory();
 		LOG.debug("Memory in bytes: {}", memory);
@@ -73,7 +77,7 @@ public class OperatorCostModel implements ICostModel {
 	@Override
 	public ICost getMaximumCost() {
 		// return new OperatorCost(memory, processorCount);
-		return new OperatorCost(memory * OperatorCostModelCfg.getInstance().getMemHeadroom(), processorCount * OperatorCostModelCfg.getInstance().getCpuHeadroom());
+		return new OperatorCost(memory * OperatorCostModelCfg.getInstance().getMemHeadroom(), Math.min(processorCount, schedulerThreadCount) * OperatorCostModelCfg.getInstance().getCpuHeadroom());
 	}
 
 	@Override
