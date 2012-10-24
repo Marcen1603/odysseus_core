@@ -49,6 +49,14 @@ public class SLA {
 	 * the list of service levels defined by the sla.
 	 */
 	private List<ServiceLevel> serviceLevel;
+	/**
+	 * maximum admission costs allowed for a user owning this sla
+	 */
+	private double maxAdmissionCost;
+	/**
+	 * a penalty to fine if the query was killed by the system/provider
+	 */
+	private Penalty queryKillPenalty;
 
 	/**
 	 * creates a new sla.
@@ -179,6 +187,15 @@ public class SLA {
 	public double getMaxPenalty() {
 		return this.serviceLevel.get(this.serviceLevel.size() - 1).getPenalty()
 				.getCost();
+	}
+	
+
+	public double getMaxAdmissionCost() {
+		return maxAdmissionCost;
+	}
+
+	public void setMaxAdmissionCost(double maxAdmissionCost) {
+		this.maxAdmissionCost = maxAdmissionCost;
 	}
 
 	@Override
