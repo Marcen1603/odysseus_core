@@ -44,8 +44,9 @@ public class SLAPreParserKeyword extends AbstractPreParserKeyword {
 			throws OdysseusScriptException {
 		/*
 		 * buffer sla name for the usage for following queries of the user
+		 * TODO: second parameter to map sla to user
 		 */
-		SLADictionary.getInstance().setCurrentSLA(caller,
+		SLADictionary.getInstance().setUserSLA(caller.getUser(),
 				parameter);
 
 		return null;

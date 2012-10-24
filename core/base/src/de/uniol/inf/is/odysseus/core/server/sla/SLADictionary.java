@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
  * Singleton class for saving all created service level agreements and looking
@@ -31,16 +32,20 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * 
  */
 public class SLADictionary {
-
-	private static SLADictionary instance;
-
-	private Map<String, SLA> sla;
 	
-	private Map<ISession, String> currentSLA;
+	private static SLADictionary instance;
+	/**
+	 * Map of all slas registered in the system
+	 */
+	private Map<String, SLA> registeredSLA;
+	/**
+	 * Mapping users to their sla
+	 */
+	private Map<IUser, String> userSLA;
 	
 	private SLADictionary() {
-		this.sla = new HashMap<String, SLA>();
-		this.currentSLA = new HashMap<ISession, String>();
+		this.registeredSLA = new HashMap<String, SLA>();
+		this.userSLA = new HashMap<IUser, String>();
 	}
 
 	/**
@@ -62,18 +67,18 @@ public class SLADictionary {
 	 *            the sla to save
 	 */
 	public void addSLA(String slaName, SLA sla) {
-		this.sla.put(slaName, sla);
+		this.registeredSLA.put(slaName, sla);
 	}
 
 	/**
 	 * removes a sla from dictionary
 	 * 
-	 * @param sla
+	 * @param registeredSLA
 	 *            the name of the sla that should be removed
 	 * @return the removed sla
 	 */
 	public SLA removeSLA(String slaName) {
-		return this.sla.remove(slaName);
+		return this.registeredSLA.remove(slaName);
 	}
 
 	/**
@@ -85,36 +90,36 @@ public class SLADictionary {
 	 *         false otherwise
 	 */
 	public boolean exists(String slaName) {
-		if (this.sla.get(slaName) != null) {
+		if (this.registeredSLA.get(slaName) != null) {
 			return true;
 		}
         return false;
 	}
 	
 	
-	public void setCurrentSLA(ISession user, String slaName) {
-		this.currentSLA.put(user, slaName);
+	public void setUserSLA(IUser user, String slaName) {
+		this.userSLA.put(user, slaName);
 	}
 
-	public String getCurrentSLA(ISession user) {
-		return this.currentSLA.get(user);
+	public String getUserSLA(ISession user) {
+		return this.userSLA.get(user);
 	}
 	
 	public SLA getSLA(String slaName) {
-		return this.sla.get(slaName);
+		return this.registeredSLA.get(slaName);
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Registered SLAs:\n");
-		for (String s : this.sla.keySet()) {
+		for (String s : this.registeredSLA.keySet()) {
 			sb.append("\t").append(s).append("\n");
 		}
 		sb.append("Currently set SLAs for users:\n");
-		for (ISession user : this.currentSLA.keySet()) {
-			sb.append("\t").append(user.getUser().getName()).append(": ").append(
-					this.currentSLA.get(user)).append("\n");
+		for (IUser user : this.userSLA.keySet()) {
+			sb.append("\t").append(user.getName()).append(": ").append(
+					this.userSLA.get(user)).append("\n");
 		}
 		return sb.toString();
 	}

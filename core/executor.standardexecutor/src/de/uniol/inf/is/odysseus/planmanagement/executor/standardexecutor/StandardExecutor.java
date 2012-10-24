@@ -233,7 +233,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         // translate query and build logical plans
         List<ILogicalQuery> queries = getCompiler().translateQuery(queryStr, parameters.getParserID(), user, getDataDictionary());
         LOG.trace("Number of queries: " + queries.size());
-        String slaName = SLADictionary.getInstance().getCurrentSLA(user);
+        String slaName = SLADictionary.getInstance().getUserSLA(user);
         SLA sla = SLADictionary.getInstance().getSLA(slaName);
         // create for each logical plan an intern query
         for (ILogicalQuery query : queries) {
