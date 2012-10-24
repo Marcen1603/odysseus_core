@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.core.server.sla;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
@@ -101,7 +100,7 @@ public class SLADictionary {
 		this.userSLA.put(user, slaName);
 	}
 
-	public String getUserSLA(ISession user) {
+	public String getUserSLA(IUser user) {
 		return this.userSLA.get(user);
 	}
 	

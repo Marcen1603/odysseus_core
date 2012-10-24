@@ -18,8 +18,10 @@ package de.uniol.inf.is.odysseus.core.server.ac;
 import java.util.List;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
  * Zentrale Schnittstelle der Admission Control in Odysseus. Die aktuelle
@@ -136,10 +138,12 @@ public interface IAdmissionControl {
 	 * vorhanden, so wird nur ein Vorschlag - alle Anfragen auszuf√ºhren -
 	 * zur√ºckgegeben.
 	 * 
+	 * @param user User, welcher angibt, welche Anfragen genau betrachtet werden m¸ssen.
+	 * 
 	 * @return Liste an Vorschl√§gen, welche Anfragen laufen und welche Anfragen
 	 *         gestoppt werden sollten, um eine √úberlastung aufzul√∂sen.
 	 */
-	public List<IPossibleExecution> getPossibleExecutions();
+	public List<IPossibleExecution> getPossibleExecutions(IUser user);
 	
 	/**
 	 * Liefert <code>true</code>, wenn die letzte Kostensch‰tzung eine ‹berlastung

@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.ac.standard;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,9 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -38,6 +42,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.sla.SLA;
+import de.uniol.inf.is.odysseus.core.server.sla.SLADictionary;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
  * Standardimplementierung der Admission Control auf Basis von
@@ -49,9 +56,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  */
 public class StandardAC implements IAdmissionControl, IPlanModificationListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StandardAC.class);
+	private static final Logger LOG = LoggerFactory.getLogger(StandardAC.class);
 	private static final long ESTIMATION_TOO_OLD_MILLIS = 3000;
 	private static final double UNDERLOAD_FACTOR = 0.9;
+	private static final double UNDERLOAD_USER_FACTOR = 0.9;
 
 	private Map<String, ICostModel> costModels;
 	private ICostModel selectedCostModel;
@@ -62,9 +70,12 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	private ICost actCost;
 	private boolean wasOverloaded;
 
-	private Map<IPhysicalQuery, ICost> queryCosts = new HashMap<IPhysicalQuery, ICost>();
-	private Map<IPhysicalQuery, ICost> runningQueryCosts = new HashMap<IPhysicalQuery, ICost>();
-	private Map<IPhysicalQuery, Long> timestamps = new HashMap<IPhysicalQuery, Long>();
+	private Map<IPhysicalQuery, ICost> queryCosts = Maps.newHashMap();
+	private Map<IPhysicalQuery, ICost> runningQueryCosts = Maps.newHashMap();
+	private Map<IPhysicalQuery, Long> timestamps = Maps.newHashMap();
+
+	private Map<IUser, ICost> userCosts = Maps.newHashMap();
+	private Map<IUser, Boolean> userWasOverloaded = Maps.newHashMap();
 
 	private IPossibleExecutionGenerator generator = new PossibleExecutionGenerator();
 
@@ -77,134 +88,128 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 	@Override
 	public synchronized boolean canStartQuery(IPhysicalQuery query) {
-
 		if (runningQueryCosts.containsKey(query))
 			return true;
 
-		ICost queryCost = null;
-		if (queryCosts.containsKey(query)) {
-			Long lastTime = timestamps.get(query);
+		ICost queryCost = determineCost(query);
 
-			// last estimation too long before?
-			if (System.currentTimeMillis() - lastTime > ESTIMATION_TOO_OLD_MILLIS) {
-				queryCost = estimateCost(getAllOperators(query), false);
-				timestamps.put(query, System.currentTimeMillis());
-			} else {
-				queryCost = queryCosts.get(query);
+		// OVERALL COST
+		ICost totalCost = mergeCosts(actCost, queryCost);
+		LOG.debug("Total cost if executed: {}", totalCost);
+
+		if (isGreater(totalCost, maxCost)) {
+			LOG.debug("Executing queries would exceed maximum total cost");
+			LOG.debug("Maximum total cost: {}", maxCost);
+			return false;
+		}
+
+		// USER COST
+		Optional<Double> optFactor = determineMaximumCostFactor(query);
+		if (optFactor.isPresent()) {
+			double sla = optFactor.get();
+			ICost maxUserCost = maxCost.fraction(sla);
+			ICost userTotalCost = determineUserCost(query.getSession().getUser(), queryCost);
+			if (isGreater(userTotalCost, maxUserCost)) {
+				LOG.debug("Executing queries would exceed maximum cost of user {}", query.getSession().getUser().getName());
+				LOG.debug("Maxmimum cost for user: {}", maxUserCost);
+				return false;
 			}
-
-		} else {
-			queryCost = estimateCost(getAllOperators(query), false);
-			queryCosts.put(query, queryCost);
-			timestamps.put(query, System.currentTimeMillis());
 		}
 
-		// add costs of new query with actual system load
-		ICost totalCost = null;
-		if (actCost != null)
-			totalCost = actCost.merge(queryCost);
-		else
-			totalCost = queryCost;
-		LOG.debug("Total cost if executed: " + totalCost);
-
-		// check, if total is lower than maximum allowed
-		int cmp = totalCost.compareTo(maxCost);
-		if (cmp == -1 || cmp == 0) {
-			// low enough
-			LOG.debug("Total cost would be lower than maximum cost");
-		} else {
-		    LOG.debug("Executing queries would exceed maximum cost");
-		    LOG.debug("Maximum Cost: " + maxCost);
-		}
-		return cmp == -1 || cmp == 0;
+		return true;
 	}
 
 	@Override
 	public synchronized void updateEstimations() {
 
 		long startTimestamp = System.currentTimeMillis();
-		
+
 		// check execution plan as one query
-		// collect them
-		List<IPhysicalOperator> operators = getAllOperators();
+		List<IPhysicalOperator> operators = getAllOperators(executor);
 		actCost = estimateCost(operators, true);
 
 		// update query estimations
-		Map<IPhysicalQuery, ICost> map = new HashMap<IPhysicalQuery, ICost>();
+		userCosts = Maps.newHashMap();
+		Map<IPhysicalQuery, ICost> map = Maps.newHashMap();
+		Map<IUser, Double> userMaximumCostFactors = Maps.newHashMap();
 		for (IPhysicalOperator op : operators) {
-			List<IOperatorOwner> owners = op.getOwner();
+			Optional<IPhysicalQuery> optQuery = getFirstActiveOwner(op.getOwner());
 
-			// find first active owner
-			IPhysicalQuery query = null;
-			for (IOperatorOwner owner : owners) {
-				IPhysicalQuery q = (IPhysicalQuery) owner;
-				if (q.isOpened()) {
-					query = q;
-					break;
+			if (optQuery.isPresent()) {
+				IPhysicalQuery query = optQuery.get();
+				ICost opCost = actCost.getCostOfOperator(op);
+				IUser user = query.getSession().getUser();
+
+				map.put(query, mergeCosts(map.get(query), opCost));
+				userCosts.put(user, mergeCosts(userCosts.get(user), opCost));
+
+				Optional<Double> optSLA = determineMaximumCostFactor(query);
+				if (optSLA.isPresent()) {
+					userMaximumCostFactors.put(user, optSLA.get());
 				}
-			}
-
-			// operator not started?
-			if (query == null)
-				continue;
-
-			if (map.containsKey(query)) {
-				ICost cost = map.get(query);
-				ICost newCost = cost.merge(actCost.getCostOfOperator(op));
-				map.put(query, newCost);
-			} else {
-				map.put(query, actCost.getCostOfOperator(op));
 			}
 		}
 		runningQueryCosts.putAll(map);
 		queryCosts.putAll(map);
 
-		for (IPhysicalQuery query : runningQueryCosts.keySet())
-			timestamps.put(query, System.currentTimeMillis());
+		refreshTimestamps(timestamps, runningQueryCosts.keySet());
 
-		// check, if system-load is too heavy
-		LOG.debug("Cost of execution plan : " + actCost);
-		int cmp = actCost.compareTo(maxCost);
-		if (cmp > 0) {
-			// too high load now!
-			wasOverloaded = true;
-			
-			LOG.debug("Cost is too high");
-			LOG.debug("MaxCost = " + maxCost);
-
-			fireOverloadEvent();
-		} else {
-			if( wasOverloaded && actCost.compareTo(underloadCost) <= 0) {
-				wasOverloaded = false;
-				fireUnderloadEvent();
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Cost of execution plan : " + actCost);
+			for (IUser user : userCosts.keySet()) {
+				LOG.debug("Cost for {} : {}", user.getName(), userCosts.get(user));
 			}
 		}
-		
-		if (LOG.isDebugEnabled() ) {
+
+		// check, if user-load is too heavy
+		for (IUser user : userCosts.keySet()) {
+			if (!userMaximumCostFactors.containsKey(user)) {
+				continue;
+			}
+
+			ICost userCost = userCosts.get(user);
+			double factor = userMaximumCostFactors.get(user);
+			ICost maxUserCost = maxCost.fraction(factor);
+			if (isGreater(userCost, maxUserCost)) {
+				LOG.debug("Costs for user {} are too high: {}", user.getName(), userCost);
+				LOG.debug("Maximum allowed for user: {}", maxUserCost);
+
+				userWasOverloaded.put(user, true);
+				fireOverloadUserEvent(user);
+
+			} else {
+				Boolean b = userWasOverloaded.containsKey(user) ? userWasOverloaded.get(user) : false;
+				if (b) {
+					ICost userUnderloadCost = maxUserCost.fraction(UNDERLOAD_USER_FACTOR);
+					if (isGreater(userUnderloadCost, userCost)) {
+						LOG.debug("Cost for user {} is below underload-level: {}", user.getName(), underloadCost);
+
+						fireUnderloadUserEvent(user);
+						userWasOverloaded.put(user, false);
+					}
+				}
+			}
+		}
+
+		// check, if system-load is too heavy
+		if (isGreater(actCost, maxCost)) {
+			// too high load now!
+			wasOverloaded = true;
+
+			LOG.debug("Cost is too high");
+			LOG.debug("MaxCost = {}", maxCost);
+
+			fireOverloadEvent();
+		} else if (wasOverloaded && isGreater(underloadCost, actCost)) {
+			LOG.debug("Cost is below underload-level: {}", underloadCost);
+			wasOverloaded = false;
+			fireUnderloadEvent();
+		}
+
+		if (LOG.isDebugEnabled()) {
 			long elapsedTime = System.currentTimeMillis() - startTimestamp;
 			LOG.debug("Updatetime: {} ms", elapsedTime);
 		}
-	}
-
-	private List<IPhysicalOperator> getAllOperators() {
-		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
-
-		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries())
-			for (IPhysicalOperator op : query.getPhysicalChilds())
-				if (!operators.contains(op) && !op.getClass().getSimpleName().contains("DataSourceObserverSink") && op.getOwner().contains(query))
-					operators.add(op);
-
-		return operators;
-	}
-
-	private static List<IPhysicalOperator> getAllOperators(IPhysicalQuery query) {
-		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
-		// filter
-		for (IPhysicalOperator operator : query.getPhysicalChilds()) {
-			if (!operators.contains(operator) && !operator.getClass().getSimpleName().contains("DataSourceObserverSink") && operator.getOwner().contains(query))
-				operators.add(operator);
-		}
-		return operators;
 	}
 
 	@Override
@@ -251,60 +256,33 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 		IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
 		int queryID = query.getID();
-		List<IPhysicalOperator> operators = getAllOperators(query);
 
-		LOG.debug("EVENT : " + eventArgs.getEventType());
+		LOG.debug("EVENT for Query {}: {}", queryID, eventArgs.getEventType());
 		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
-			// query removed!
-			LOG.debug("Query " + queryID + " removed");
-
 			queryCosts.remove(query);
 			timestamps.remove(query);
 
 		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
-			// query added!
-			LOG.debug("Query " + queryID + " added");
-
 			// do cost-estimation now
-			ICost queryCost = estimateCost(operators, false);
+			ICost queryCost = estimateCost(getAllOperators(query), false);
 
 			queryCosts.put(query, queryCost);
 			timestamps.put(query, System.currentTimeMillis());
 
 		} else if (PlanModificationEventType.QUERY_START.equals(eventArgs.getEventType())) {
-			LOG.debug("Query " + queryID + " started");
-
 			ICost queryCost = queryCosts.get(query);
 
 			if (!runningQueryCosts.containsKey(query)) {
 				runningQueryCosts.put(query, queryCost);
+				IUser user = query.getSession().getUser();
+				userCosts.put(user, mergeCosts(userCosts.get(user), queryCost));
 			}
 
 		} else if (PlanModificationEventType.QUERY_STOP.equals(eventArgs.getEventType())) {
-			LOG.debug("Query " + queryID + " stopped");
-
-			if (runningQueryCosts.containsKey(query)) {
-				runningQueryCosts.remove(query);
-			}
+			ICost queryCost = runningQueryCosts.remove(query);
+			IUser user = query.getSession().getUser();
+			userCosts.put(user, substractCosts(userCosts.get(user), queryCost));
 		}
-	}
-
-	private ICost estimateCost(List<IPhysicalOperator> operators, boolean onUpdate) {
-		if (getSelectedCostModel() == null) {
-			throw new IllegalStateException("No CostModel selected.");
-		}
-
-		long startTimestamp = System.currentTimeMillis();
-
-		ICostModel costModel = getCostModels().get(getSelectedCostModel());
-		ICost queryCost = costModel.estimateCost(operators, onUpdate);
-		
-		if( LOG.isDebugEnabled() ) {
-			long elapsedTime = System.currentTimeMillis() - startTimestamp;
-			LOG.debug("Estimationtime : {} ms", elapsedTime);
-		}
-		
-		return queryCost;
 	}
 
 	/**
@@ -335,12 +313,6 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		getCostModels().remove(costModel.getClass().getSimpleName());
 
 		LOG.debug("Costmodel unbound: " + costModel.getClass().getSimpleName());
-	}
-
-	private Map<String, ICostModel> getCostModels() {
-		if (costModels == null)
-			costModels = new HashMap<String, ICostModel>();
-		return costModels;
 	}
 
 	/**
@@ -409,6 +381,63 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 	}
 
+	public void bindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
+		LOG.debug("Bound PossibleExecutionGenerator {}", generator);
+		this.generator = generator;
+	}
+
+	public void unbindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
+		if (this.generator == generator) {
+			this.generator = new PossibleExecutionGenerator();
+			LOG.debug("Unbound PossibleExecutionGenerator {}. Using default now.", generator);
+		}
+	}
+
+	@Override
+	public List<IPossibleExecution> getPossibleExecutions(IUser user) {
+		if (user == null) {
+			return generator.getPossibleExecutions(this, runningQueryCosts, maxCost);
+		} else {
+			Map<IPhysicalQuery, ICost> userQueries = Maps.newHashMap();
+			Optional<Double> optFactor = determineMaximumCostFactor(user);
+			for (IPhysicalQuery query : runningQueryCosts.keySet()) {
+				if (query.getSession().getUser().equals(user)) {
+					userQueries.put(query, runningQueryCosts.get(query));
+				}
+			}
+			return generator.getPossibleExecutions(this, userQueries, maxCost.fraction(optFactor.isPresent() ? optFactor.get() : 1.0));
+		}
+	}
+
+	@Override
+	public boolean isOverloaded() {
+		return isGreater(getActualCost(), getMaximumCost());
+	}
+
+	private Map<String, ICostModel> getCostModels() {
+		if (costModels == null)
+			costModels = new HashMap<String, ICostModel>();
+		return costModels;
+	}
+	
+	private ICost estimateCost(List<IPhysicalOperator> operators, boolean onUpdate) {
+		if (getSelectedCostModel() == null) {
+			throw new IllegalStateException("No CostModel selected.");
+		}
+
+		long startTimestamp = System.currentTimeMillis();
+
+		ICostModel costModel = getCostModels().get(getSelectedCostModel());
+		ICost queryCost = costModel.estimateCost(operators, onUpdate);
+
+		if (LOG.isDebugEnabled()) {
+			long elapsedTime = System.currentTimeMillis() - startTimestamp;
+			LOG.debug("Estimationtime : {} ms", elapsedTime);
+		}
+
+		return queryCost;
+	}
+
 	private void fireOverloadEvent() {
 		synchronized (listeners) {
 			for (IAdmissionListener listener : listeners) {
@@ -422,7 +451,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			}
 		}
 	}
-	
+
 	private void fireUnderloadEvent() {
 		synchronized (listeners) {
 			for (IAdmissionListener listener : listeners) {
@@ -436,28 +465,144 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			}
 		}
 	}
-	
-	public void bindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
-		LOG.debug("Bound PossibleExecutionGenerator {}", generator);
-		this.generator = generator;
-	}
-	
-	public void unbindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
-		if( this.generator == generator ) {
-			this.generator = new PossibleExecutionGenerator();
-			LOG.debug("Unbound PossibleExecutionGenerator {}. Using default now.", generator);
+
+	private void fireOverloadUserEvent(IUser user) {
+		synchronized (listeners) {
+			for (IAdmissionListener listener : listeners) {
+				try {
+					if (listener != null) {
+						listener.overloadUserOccured(this, user);
+					}
+				} catch (Throwable ex) {
+					LOG.error("Exception during firing overload-user-event", ex);
+				}
+			}
 		}
 	}
 
-	@Override
-	public List<IPossibleExecution> getPossibleExecutions() {
-		List<IPossibleExecution> executions = generator.getPossibleExecutions(this, runningQueryCosts, maxCost);
-		return executions;
+	private void fireUnderloadUserEvent(IUser user) {
+		synchronized (listeners) {
+			for (IAdmissionListener listener : listeners) {
+				try {
+					if (listener != null) {
+						listener.underloadUserOccured(this, user);
+					}
+				} catch (Throwable ex) {
+					LOG.error("Exception during firing underload-user-event", ex);
+				}
+			}
+		}
 	}
 
-	@Override
-	public boolean isOverloaded() {
-		return getActualCost().compareTo(getMaximumCost()) == 1;
+	private ICost determineCost(IPhysicalQuery query) {
+		if (queryCosts.containsKey(query)) {
+			Long lastTime = timestamps.get(query);
+
+			if (System.currentTimeMillis() - lastTime > ESTIMATION_TOO_OLD_MILLIS) {
+				ICost queryCost = estimateCost(getAllOperators(query), false);
+				timestamps.put(query, System.currentTimeMillis());
+				return queryCost;
+			} else {
+				return queryCosts.get(query);
+			}
+
+		} else {
+			ICost queryCost = estimateCost(getAllOperators(query), false);
+			queryCosts.put(query, queryCost);
+			timestamps.put(query, System.currentTimeMillis());
+			return queryCost;
+		}
 	}
 
+	private ICost determineUserCost(IUser user, ICost queryCost) {
+		ICost userCost = userCosts.get(user);
+		if (userCost == null) {
+			return queryCost;
+		} else {
+			return queryCost.merge(userCost);
+		}
+	}
+
+	private static Optional<Double> determineMaximumCostFactor(IPhysicalQuery query) {
+		return determineMaximumCostFactor(query.getSession().getUser());
+	}
+
+	private static Optional<Double> determineMaximumCostFactor(IUser user) {
+		String slaName = SLADictionary.getInstance().getUserSLA(user);
+		if (slaName == null) {
+			return Optional.absent();
+		}
+		SLA sla = SLADictionary.getInstance().getSLA(slaName);
+		Double factor = sla.getMaxAdmissionCostFactor();
+		if( factor < 0.0000001) {
+			factor = 1.0;
+		}
+		return sla != null ? Optional.of(factor) : Optional.<Double> absent();
+	}
+
+	private static boolean isGreater(ICost first, ICost last) {
+		return first.compareTo(last) > 0;
+	}
+
+	private static ICost mergeCosts(ICost a, ICost b) {
+		if (a == null && b != null) {
+			return b;
+		} else if (a != null && b == null) {
+			return a;
+		} else if (a == null && b == null) {
+			return null;
+		} else {
+			return a.merge(b);
+		}
+	}
+
+	private static ICost substractCosts(ICost a, ICost b) {
+		if (a == null && b != null) {
+			return b;
+		} else if (a != null && b == null) {
+			return a;
+		} else if (a == null && b == null) {
+			return null;
+		} else {
+			return a.substract(b);
+		}
+	}
+
+	private static List<IPhysicalOperator> getAllOperators(IServerExecutor executor) {
+		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
+
+		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries())
+			for (IPhysicalOperator op : query.getPhysicalChilds())
+				if (!operators.contains(op) && !op.getClass().getSimpleName().contains("DataSourceObserverSink") && op.getOwner().contains(query))
+					operators.add(op);
+
+		return operators;
+	}
+
+	private static List<IPhysicalOperator> getAllOperators(IPhysicalQuery query) {
+		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
+		// filter
+		for (IPhysicalOperator operator : query.getPhysicalChilds()) {
+			if (!operators.contains(operator) && !operator.getClass().getSimpleName().contains("DataSourceObserverSink") && operator.getOwner().contains(query))
+				operators.add(operator);
+		}
+		return operators;
+	}
+
+	private static Optional<IPhysicalQuery> getFirstActiveOwner(List<IOperatorOwner> owners) {
+		for (IOperatorOwner owner : owners) {
+			IPhysicalQuery q = (IPhysicalQuery) owner;
+			if (q.isOpened()) {
+				return Optional.of(q);
+			}
+		}
+		return Optional.absent();
+	}
+
+	private static void refreshTimestamps(Map<IPhysicalQuery, Long> timestamps, Collection<IPhysicalQuery> queriesToUpdate) {
+		long timestamp = System.currentTimeMillis();
+		for (IPhysicalQuery query : queriesToUpdate) {
+			timestamps.put(query, timestamp);
+		}
+	}
 }
