@@ -32,9 +32,11 @@ public class StrongOrderTransferArea<K extends ITimeIntervalPriority, R extends 
 		ArrayList<W> output = new ArrayList<W>();
 		PointInTime minimum = null;
 		synchronized (minTs) {
-			minTs[port] = heartbeat;
-			if (minTs[0] != null && minTs[1] != null) {
-				minimum = PointInTime.min(minTs[0], minTs[1]);
+			minTs.set(port,heartbeat);
+			PointInTime minTs0 = minTs.get(0);
+			PointInTime minTs1 = minTs.get(1);
+			if (minTs0 != null && minTs1 != null) {
+				minimum = PointInTime.min(minTs0, minTs1);
 			}
 		}
 		if (minimum != null) {
