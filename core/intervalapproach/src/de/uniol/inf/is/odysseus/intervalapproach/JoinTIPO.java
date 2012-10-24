@@ -157,7 +157,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	public void setTransferFunction(ITransferArea<T, T> transferFunction) {
 		this.transferFunction = transferFunction;
-		transferFunction.init(this);
 	}
 
 	@Override

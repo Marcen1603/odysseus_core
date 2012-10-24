@@ -15,15 +15,17 @@
  */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
-import java.util.concurrent.locks.ReentrantLock;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 
@@ -33,56 +35,72 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
 		implements ITransferArea<R, W> {
 
-	private ReentrantLock lock = new ReentrantLock();
-	protected PointInTime[] minTs;
+	// remember the last time stamp for each input port
+	// can contain null, if no element is seen
+	final protected List<PointInTime> minTs;
+	// states the time stamp of the last send object
+	private PointInTime watermark = null;
+	// the operator that uses this sink
 	protected AbstractSource<W> po;
+	// Store to reorder elements
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
 			new MetadataComparator<ITimeInterval>());
-
+	// to which port the data should be send
 	private int outputPort = 0;
 
 	public TITransferArea() {
+		minTs = new LinkedList<>();
 	}
 
 	private TITransferArea(TITransferArea<R, W> tiTransferFunction) {
-		minTs = new PointInTime[tiTransferFunction.minTs.length];
-		for (int i = 0; i < minTs.length; i++) {
-			minTs[i] = tiTransferFunction.minTs[i] != null ? tiTransferFunction.minTs[i]
-					.clone() : null;
-		}
+		minTs = new LinkedList<>(tiTransferFunction.minTs);
 		outputQueue.addAll(tiTransferFunction.outputQueue);
 	}
 
+	public void setOutputPort(int outputPort) {
+		this.outputPort = outputPort;
+	}
+
 	@Override
-	public void init(AbstractSource<W> po) {
-		lock.lock();
-		this.po = po;
-		this.minTs = new PointInTime[po.getSubscriptions().size()];
-		for (int i = 0; i < minTs.length; i++) {
-			this.minTs[i] = null;
+	public void init(AbstractPipe<R, W> po) {
+		synchronized (outputQueue) {
+			this.po = po;
+			int size = po.getSubscribedToSource().size();
+			for (int i = 0; i < size; i++) {
+				this.minTs.add(null);
+			}
+			this.outputQueue.clear();
 		}
-		this.outputQueue.clear();
-		lock.unlock();
 	}
 
 	@Override
 	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub) {
-		lock.lock();
-
-		lock.unlock();
-		throw new IllegalArgumentException(
-				"Adding of inputs currently not implemented");
+		minTs.add(null);
 	}
 
 	@Override
 	public void newElement(R object, int inPort) {
-		newHeartbeat(object.getMetadata().getStart(), inPort);
+		PointInTime start = object.getMetadata().getStart();
+		// watermark is needed if new sources are connected at runtime
+		// if watermark == null no object has ever been transferred --> init
+		// phase
+		// else treat only objects that are at least from time watermark
+		if (watermark == null || start.afterOrEquals(watermark)) {
+			newHeartbeat(start, inPort);
+		}
 	}
 
 	@Override
 	public void transfer(W object) {
 		synchronized (this.outputQueue) {
-			outputQueue.add(object);
+			// watermark is needed if new sources are connected at runtime
+			// if watermark == null no object has ever been transferred --> init
+			// phase
+			// else treat only objects that are at least from time watermark
+			if (watermark == null
+					|| object.getMetadata().getStart().afterOrEquals(watermark)) {
+				outputQueue.add(object);
+			}
 		}
 	}
 
@@ -107,9 +125,13 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public void newHeartbeat(PointInTime heartbeat, int inPort) {
 		PointInTime minimum = null;
 		synchronized (minTs) {
-			minTs[inPort] = heartbeat;
-			minimum = getMinTs();
+			minTs.set(inPort,heartbeat);
+			minimum = getMinTs();			
 		}
+		sendData(minimum);
+	}
+
+	protected void sendData(PointInTime minimum) {
 		if (minimum != null) {
 			synchronized (this.outputQueue) {
 				// don't use an iterator, it does NOT guarantee ordered
@@ -123,30 +145,26 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 					elem = this.outputQueue.peek();
 				}
 				po.sendPunctuation(minimum, outputPort);
+				// Set marker to time stamp of the last send object
+				watermark = minimum;
 			}
 		}
 	}
 
-	public PointInTime getMinTs() {
-		PointInTime minimum = minTs[0];
-		for (PointInTime p : minTs) {
-			// if one element has no value, no element
-			// has been read from this input port
-			// --> no data can be send
-			if (p == null) {
-				return null;
+	private PointInTime getMinTs() {
+		synchronized (minTs) {
+			PointInTime minimum = minTs.get(0);
+			for (PointInTime p : minTs) {
+				// if one element has no value, no element
+				// has been read from this input port
+				// --> no data can be send
+				if (p == null) {
+					return null;
+				}
+				minimum = PointInTime.min(minimum, p);
 			}
-			minimum = PointInTime.min(minimum, p);
+			return minimum;			
 		}
-		return minimum;
-	}
-
-	public int getOutputPort() {
-		return outputPort;
-	}
-
-	public void setOutputPort(int outputPort) {
-		this.outputPort = outputPort;
 	}
 
 }

@@ -17,12 +17,13 @@ package de.uniol.inf.is.odysseus.persistentqueries;
 
 import java.util.PriorityQueue;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 
@@ -58,9 +59,9 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	}
 	
 	@Override
-	public void init(AbstractSource<W> po) {
+	public void init(AbstractPipe<R,W> po) {
 		this.po = po;
-		minTs = new PointInTime[po.getSubscriptions().size()];
+		minTs = new PointInTime[po.getSubscribedToSource().size()];
 		for (int i = 0; i < minTs.length; i++) {
 			this.minTs[i] = null;
 		}

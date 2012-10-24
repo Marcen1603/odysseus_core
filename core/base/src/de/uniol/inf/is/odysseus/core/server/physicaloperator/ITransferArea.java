@@ -16,8 +16,8 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 
@@ -48,7 +48,7 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 
 	public void done();
 
-	public void init(AbstractSource<W> source);
+	public void init(AbstractPipe<R,W> source);
 	
 	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub);
 
@@ -58,7 +58,5 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	public ITransferArea<R,W> clone();
 	
 	public void newHeartbeat(PointInTime heartbeat, int inPort);	
-	
-	public PointInTime getMinTs();
-	
+		
 }
