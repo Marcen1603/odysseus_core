@@ -211,5 +211,13 @@ public class SLA {
 		sb.append(")");
 		return sb.toString();
 	}
+
+	public Penalty getQueryKillPenalty() {
+		return queryKillPenalty;
+	}
+
+	public void setQueryKillPenalty(Penalty queryKillPenalty) {
+		this.queryKillPenalty = queryKillPenalty;
+	}
 	
 }
