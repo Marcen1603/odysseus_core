@@ -16,6 +16,9 @@
 package de.uniol.inf.is.odysseus.core.server.ac;
 
 import java.util.Collection;
+import java.util.Map;
+
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -47,7 +50,7 @@ public class StandardPossibleExecution implements IPossibleExecution {
 		this.stoppingQueries = stoppingQueries;
 		this.costEstimation = costEstimation;
 	}
-
+	
 	@Override
 	public Collection<IPhysicalQuery> getRunningQueries() {
 		return runningQueries;
@@ -63,4 +66,22 @@ public class StandardPossibleExecution implements IPossibleExecution {
 		return costEstimation;
 	}
 
+	public static StandardPossibleExecution stopOneQuery( Map<IPhysicalQuery, ICost> queryCostMap, IPhysicalQuery queryToStop) {
+		Collection<IPhysicalQuery> runningQueries = Lists.newArrayList(queryCostMap.keySet());
+		runningQueries.remove(queryToStop);
+		
+		Collection<IPhysicalQuery> stoppedQueries = Lists.newArrayList(queryToStop);
+		
+		ICost costs = null;
+		for( ICost c : queryCostMap.values() ) {
+			if( costs == null ) {
+				costs = c;
+			} else {
+				costs = costs.merge(c);
+			}
+		}
+		costs = costs.substract(queryCostMap.get(stoppedQueries));
+		
+		return new StandardPossibleExecution(runningQueries, stoppedQueries, costs);
+	}
 }
