@@ -22,6 +22,12 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
+/**
+ * Deprecated! Use ASSIGN SLA statement instead
+ * @author Thomas Vogelgesang
+ *
+ */
+@Deprecated
 public class SLAPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String SLA = "SLA";
@@ -44,7 +50,6 @@ public class SLAPreParserKeyword extends AbstractPreParserKeyword {
 			throws OdysseusScriptException {
 		/*
 		 * buffer sla name for the usage for following queries of the user
-		 * TODO: second parameter to map sla to user
 		 */
 		SLADictionary.getInstance().setUserSLA(caller.getUser(),
 				parameter);
