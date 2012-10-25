@@ -1039,14 +1039,24 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		Window window = (Window) node.jjtGetChild(3).jjtAccept(this, null);
 		sla.setWindow(window);
 
-		// get service level(s)
+		// get remainder of sla (optional/unknown length) 
 		List<ServiceLevel> serviceLevels = new ArrayList<ServiceLevel>();
 		for (int i = 4; i < node.jjtGetNumChildren(); i++) {
-			ServiceLevel sl = (ServiceLevel) node.jjtGetChild(i).jjtAccept(this, null);
-			sl.setSla(sla);
-			serviceLevels.add(sl);
+			Node child = node.jjtGetChild(i);
+			if (child instanceof ASTSlaServiceLevelDef) {
+				ServiceLevel sl = (ServiceLevel) child.jjtAccept(this, null);
+				sl.setSla(sla);
+				serviceLevels.add(sl);
+			} else if (child instanceof ASTSlaMaxAdmissionCostFactor) {
+				double maxAdmissionCostFactor =  ((Double) child.jjtAccept(this, null)).doubleValue();
+				sla.setMaxAdmissionCostFactor(maxAdmissionCostFactor);
+			} else if (child instanceof ASTSlaKillPenalty) {
+				Penalty killPenalty = (Penalty) child.jjtAccept(this, null);
+				sla.setQueryKillPenalty(killPenalty);
+			}
 		}
 		sla.setServiceLevel(serviceLevels);
+		
 
 		// save sla
 		if (!SLADictionary.getInstance().exists(slaName)) {
@@ -1097,7 +1107,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		double threshold = Double.parseDouble(((ASTNumber) node.jjtGetChild(0)).getValue());
 
 		Penalty penalty = (Penalty) node.jjtGetChild(1).jjtAccept(this, null);
-		// TODO set service level in penalty
 
 		ServiceLevel sl = new ServiceLevel();
 		sl.setThreshold(threshold);
@@ -1113,6 +1122,19 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 		PenaltyFactory factory = new PenaltyFactory();
 		return factory.buildPenalty(penaltyID, value);
+	}
+	
+	@Override
+	public Object visit(ASTSlaMaxAdmissionCostFactor node, Object data) throws QueryParseException {
+		double value = Double.parseDouble(((ASTNumber) node.jjtGetChild(0)).getValue());
+		
+		return value;
+	}
+
+	@Override
+	public Object visit(ASTSlaKillPenalty node, Object data) throws QueryParseException {
+		Penalty penalty = (Penalty) node.jjtGetChild(0).jjtAccept(this, null);
+		return penalty;
 	}
 
 	@Override

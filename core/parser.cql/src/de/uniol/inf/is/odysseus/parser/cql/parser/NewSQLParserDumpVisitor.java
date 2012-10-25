@@ -686,5 +686,15 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTIfNotExists node, Object data) throws QueryParseException {
 		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTSlaMaxAdmissionCostFactor node, Object data) throws QueryParseException {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTSlaKillPenalty node, Object data) throws QueryParseException {
+		return pvisit(node);
 	}	
 }

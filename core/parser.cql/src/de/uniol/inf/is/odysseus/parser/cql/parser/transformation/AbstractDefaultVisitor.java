@@ -717,4 +717,14 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTIfNotExists node, Object data) throws QueryParseException {
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTSlaMaxAdmissionCostFactor node, Object data) throws QueryParseException {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTSlaKillPenalty node, Object data) throws QueryParseException {
+		return null;
+	}
 }
