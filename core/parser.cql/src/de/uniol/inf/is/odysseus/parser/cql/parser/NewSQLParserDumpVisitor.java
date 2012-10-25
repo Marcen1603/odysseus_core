@@ -696,5 +696,10 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTSlaKillPenalty node, Object data) throws QueryParseException {
 		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTAssignSLAStatement node, Object data) throws QueryParseException {
+		return null;
 	}	
 }

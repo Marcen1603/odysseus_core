@@ -57,6 +57,7 @@ import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UsernameNotExistException;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -1000,6 +1001,24 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTCreateType node, Object data) throws QueryParseException {
 		CreateTypeVisitor v = new CreateTypeVisitor(this.caller, this.dataDictionary);
 		return v.visit(node, data);
+	}
+	
+	@Override
+	public Object visit(ASTAssignSLAStatement node, Object data) throws QueryParseException {
+		String slaName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+		
+		if (!SLADictionary.getInstance().exists(slaName)) {
+			throw new QueryParseException("unknown sla: " + slaName);
+		}
+		
+		IUser user = UserManagement.getUsermanagement().findUser(userName, this.caller);
+		if (user == null) {
+			throw new QueryParseException(new UsernameNotExistException("Unknown user: " + userName));
+		}
+		SLADictionary.getInstance().setUserSLA(user, slaName);
+
+		return null;
 	}
 
 	@Override

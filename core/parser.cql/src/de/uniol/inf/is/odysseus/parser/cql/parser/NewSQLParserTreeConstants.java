@@ -115,17 +115,18 @@ public interface NewSQLParserTreeConstants
   public int JJTSLAPENALTYDEF = 109;
   public int JJTSLAMAXADMISSIONCOSTFACTOR = 110;
   public int JJTSLAKILLPENALTY = 111;
-  public int JJTDROPSTREAMSTATEMENT = 112;
-  public int JJTDROPVIEWSTATEMENT = 113;
-  public int JJTCREATEROLESTATEMENT = 114;
-  public int JJTIFEXISTS = 115;
-  public int JJTIFNOTEXISTS = 116;
-  public int JJTDROPROLESTATEMENT = 117;
-  public int JJTGRANTROLESTATEMENT = 118;
-  public int JJTREVOKEROLESTATEMENT = 119;
-  public int JJTGRANTSTATEMENT = 120;
-  public int JJTIDENTIFIERLIST = 121;
-  public int JJTREVOKESTATEMENT = 122;
+  public int JJTASSIGNSLASTATEMENT = 112;
+  public int JJTDROPSTREAMSTATEMENT = 113;
+  public int JJTDROPVIEWSTATEMENT = 114;
+  public int JJTCREATEROLESTATEMENT = 115;
+  public int JJTIFEXISTS = 116;
+  public int JJTIFNOTEXISTS = 117;
+  public int JJTDROPROLESTATEMENT = 118;
+  public int JJTGRANTROLESTATEMENT = 119;
+  public int JJTREVOKEROLESTATEMENT = 120;
+  public int JJTGRANTSTATEMENT = 121;
+  public int JJTIDENTIFIERLIST = 122;
+  public int JJTREVOKESTATEMENT = 123;
 
 
   public String[] jjtNodeName = {
@@ -241,6 +242,7 @@ public interface NewSQLParserTreeConstants
     "SlaPenaltyDef",
     "SlaMaxAdmissionCostFactor",
     "SlaKillPenalty",
+    "AssignSLAStatement",
     "DropStreamStatement",
     "DropViewStatement",
     "CreateRoleStatement",
@@ -254,4 +256,4 @@ public interface NewSQLParserTreeConstants
     "RevokeStatement",
   };
 }
-/* JavaCC - OriginalChecksum=25d72cc586430ecb9be31478f83f744e (do not edit this line) */
+/* JavaCC - OriginalChecksum=2518599dee03b58077adc312894f2c8d (do not edit this line) */
