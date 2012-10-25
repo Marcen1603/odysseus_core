@@ -344,6 +344,15 @@
          </keyword>
          <keyword
                name="BOOLEAN">
+         </keyword>
+         <keyword
+               name="ASSIGN">
+         </keyword>
+         <keyword
+               name="MAX_ADMISSION_COST_FACTOR">
+         </keyword>
+         <keyword
+               name="KILL">
          </keyword>         
       </group>
    </extension>
