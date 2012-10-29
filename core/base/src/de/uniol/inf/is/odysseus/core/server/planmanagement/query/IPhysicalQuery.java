@@ -122,6 +122,8 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 
 	ISession getSession();
 	void setSession(ISession user);
+	
+	boolean isOwner(ISession session);
 
 	//public QueryBuildConfiguration getBuildParameter();
 

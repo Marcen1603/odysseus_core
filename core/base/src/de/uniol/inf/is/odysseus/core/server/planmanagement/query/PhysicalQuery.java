@@ -597,6 +597,14 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public ISession getSession() {
 		return user;
 	}
+	
+	@Override
+	public boolean isOwner(ISession session) {
+		if (session == null || user == null){
+			return false;
+		}
+		return user.getUser().getName().equals(session.getUser().getName());
+	}
 
 	// @Override
 	// public QueryBuildConfiguration getBuildParameter() {
