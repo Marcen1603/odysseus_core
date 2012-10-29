@@ -71,7 +71,12 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 		String parserID = (String) variables.get(ParserPreParserKeyword.PARSER);
 		String transCfgName = (String) variables.get(TransCfgPreParserKeyword.TRANSCFG);
 		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables.get(TransCfgPreParserKeyword.ADD_TRANS_PARAMS);
-
+		
+		ISession queryCaller = (ISession) variables.get("USER");
+		if (queryCaller == null){
+			queryCaller = caller;
+		}
+		
 		try {
 			parserID = parserID.trim();
 			transCfgName = transCfgName.trim();
@@ -84,10 +89,10 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 				if (!(executor instanceof IServerExecutor)) {
 					throw new QueryParseException("Additional transformation parameter currently not supported on clients");
 				}
-				queriesToStart = ((IServerExecutor)executor).addQuery(queryText, parserID, caller, transCfgName, addSettings);
+				queriesToStart = ((IServerExecutor)executor).addQuery(queryText, parserID, queryCaller, transCfgName, addSettings);
 
 			} else {
-				queriesToStart = executor.addQuery(queryText, parserID, caller, transCfgName);
+				queriesToStart = executor.addQuery(queryText, parserID, queryCaller, transCfgName);
 			}
 
 			ISink defaultSink = variables.containsKey("_defaultSink") ? (ISink) variables.get("_defaultSink") : null;
@@ -97,7 +102,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 
 			if (startQuery()) {
 				for (Integer q : queriesToStart) {
-					executor.startQuery(q, caller);
+					executor.startQuery(q, queryCaller);
 				}
 			}
 
