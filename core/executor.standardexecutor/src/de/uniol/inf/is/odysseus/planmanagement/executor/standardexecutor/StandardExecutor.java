@@ -674,7 +674,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		// User has higher right
 		usrMgmt.hasPermission(caller,
 				ExecutorPermission.hasSuperAction(executorAction),
-				String.valueOf(query.getID())))) {
+				ExecutorPermission.objectURI))) {
 			throw new PermissionException("No Right to execute "
 					+ executorAction + " on Query " + query.getID() + " for "
 					+ caller.getUser().getName());
