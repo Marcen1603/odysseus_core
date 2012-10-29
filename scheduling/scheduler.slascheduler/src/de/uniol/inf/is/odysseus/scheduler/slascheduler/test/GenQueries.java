@@ -241,13 +241,13 @@ public class GenQueries {
 			for (int k = 0; k < NUMBER_OF_QUERIES_PER_USER; k++) {
 				if (COMPLEX_QUERIES_ENABLED) {
 					if (k == 0) {
-						sb.append(createSimpleQuery(i, i % NUMBER_OF_SLAS));
+						sb.append(createSimpleQuery(i, i % NUMBER_OF_SLAS, i));
 					} else {
 						sb.append(createComplexQuery(i, i % NUMBER_OF_SLAS,
-								k + 1));
+								k + 1, i));
 					}
 				} else {
-					sb.append(createSimpleQuery(i, i % NUMBER_OF_SLAS));
+					sb.append(createSimpleQuery(i, i % NUMBER_OF_SLAS, i));
 				}
 			}
 		}
@@ -264,9 +264,9 @@ public class GenQueries {
 		return sb.toString();
 	}
 
-	private static String createSimpleQuery(int number, int slaNumber) {
+	private static String createSimpleQuery(int number, int slaNumber, int userNumber) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(createQueryParams(slaNumber));
+		sb.append(createQueryParams(slaNumber, userNumber));
 		sb.append(createBuffer(number, 0));
 		sb.append(createBenchmark(number, 0, slaNumber, true));
 		// sb.append("#STARTQUERIES").append(NEWLINE);
@@ -337,9 +337,9 @@ public class GenQueries {
 	}
 
 	private static String createComplexQuery(int number, int slaNumber,
-			int numOfSources) {
+			int numOfSources, int userNumber) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(createQueryParams(slaNumber));
+		sb.append(createQueryParams(slaNumber, userNumber));
 		for (int i = 0; i < numOfSources; i++) {
 			sb.append(createBuffer(number, i));
 		}
@@ -356,14 +356,13 @@ public class GenQueries {
 		return "" + ((char) ('A' + currentNumberOfSimulation)) + number;
 	}
 
-	private static String createQueryParams(int slaNumber) {
+	private static String createQueryParams(int slaNumber, int userNumber) {
 		StringBuilder sb = new StringBuilder();
 		if (ALTERNATIVE_SLA_ENABLED) {
 			ALTERNATIVE_SLA_COUNTER++;
-			sb.append("#SLA sla").append(getALternativeSLANumber())
-					.append(NEWLINE);
+			sb.append("ASSIGN SLA sla").append(getALternativeSLANumber()).append(" TO USER test").append(userNumber).append(NEWLINE);
 		} else {
-			sb.append("#SLA sla").append(slaNumber).append(NEWLINE);
+			sb.append("ASSIGN SLA sla").append(slaNumber).append(" TO USER test").append(userNumber).append(NEWLINE);
 		}
 		sb.append("#ADDQUERY").append(NEWLINE);
 		return sb.toString();
@@ -478,7 +477,8 @@ public class GenQueries {
 				.append(createTestInputParam()).append("]})").append(NEWLINE);
 		sb.append("#PARSER CQL").append(NEWLINE);
 		sb.append("#QUERY").append(NEWLINE);
-		sb.append("GRANT READ ON testinput TO Public;").append(NEWLINE);
+		sb.append("GRANT READ ON ").append("testinput").append(number)
+			.append(formatSubnumber(subNumber)).append(" TO Public;").append(NEWLINE);
 		statsNumSources++;
 		return sb.toString();
 	}
