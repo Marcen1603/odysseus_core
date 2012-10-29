@@ -115,7 +115,7 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				fireUserChangedEvent();
 				return user;
 			}
-			throw new UsernameAlreadyUsedException("name");
+			throw new UsernameAlreadyUsedException(name);
 		}
 
 		throw new PermissionException("Not right to create user");
