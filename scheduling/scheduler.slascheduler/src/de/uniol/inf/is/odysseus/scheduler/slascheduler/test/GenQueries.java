@@ -48,8 +48,8 @@ public class GenQueries {
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final double OP_SELECTIVITY = 1.0;
 	public static final int OP_PROCESSING_TIME = 35 * 100000; // realistic 1500
-	private static final int NUMBER_OF_USERS = 30;
-	private static final int NUMBER_OF_QUERIES_PER_USER = 3;
+	private static final int NUMBER_OF_USERS = 4;
+	private static final int NUMBER_OF_QUERIES_PER_USER = 1;
 	private static final int NUMBER_OF_SLAS = 3;
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
 	private static final int NUMBER_OF_SERVICE_LEVELS = 3;
@@ -177,7 +177,7 @@ public class GenQueries {
 					scriptOps);
 			currentNumberOfSimulation++;
 		}
-		String scriptRun = "///OdysseusScript" + NEWLINE + "#PARSER CQL"
+		String scriptRun = "///OdysseusScript" + NEWLINE + "#LOGIN System manager" + NEWLINE + "#PARSER CQL"
 				+ NEWLINE + "#TRANSCFG Standard" + NEWLINE + "#STOPSCHEDULER" + NEWLINE + "#STARTQUERIES" + NEWLINE + "#STARTSCHEDULER";
 		writeScriptFile("run.qry", scriptRun);
 		System.out.println(scriptSLA);
@@ -235,7 +235,7 @@ public class GenQueries {
 				sb.append(createTestInput(i, k));
 			}
 		}
-		sb.append("#PARSER PQL").append(NEWLINE);
+		
 		for (int i = 0; i < NUMBER_OF_USERS; i++) {
 			sb.append(createLogin(i));
 			for (int k = 0; k < NUMBER_OF_QUERIES_PER_USER; k++) {
@@ -358,12 +358,15 @@ public class GenQueries {
 
 	private static String createQueryParams(int slaNumber, int userNumber) {
 		StringBuilder sb = new StringBuilder();
+		sb.append("#PARSER CQL").append(NEWLINE);
+		sb.append("#QUERY").append(NEWLINE);
 		if (ALTERNATIVE_SLA_ENABLED) {
 			ALTERNATIVE_SLA_COUNTER++;
 			sb.append("ASSIGN SLA sla").append(getALternativeSLANumber()).append(" TO USER test").append(userNumber).append(NEWLINE);
 		} else {
 			sb.append("ASSIGN SLA sla").append(slaNumber).append(" TO USER test").append(userNumber).append(NEWLINE);
 		}
+		sb.append("#PARSER PQL").append(NEWLINE);
 		sb.append("#ADDQUERY").append(NEWLINE);
 		return sb.toString();
 	}

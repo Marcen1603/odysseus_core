@@ -16,11 +16,16 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -127,28 +132,10 @@ public class SLARegistry implements IPlanModificationListener {
 		switch (eventType) {
 		case QUERY_ADDED: {
 			IPhysicalQuery query = ((QueryPlanModificationEvent)eventArgs).getValue();
-			
-			SLARegistryInfo data = new SLARegistryInfo();
-			ISLAConformance conformance = new SLAConformanceFactory().
-					createSLAConformance((SLA) query.getParameter(SLA.class.getName()), this.scheduler, query);
-			data.setConformance(conformance);
-			
-			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), (SLA) query.getParameter(SLA.class.getName()));
-			data.setCostFunction(costFunction);
-			
-			IStarvationFreedom starvationFreedom = new StarvationFreedomFactory().
-					buildStarvationFreedom(this.scheduler.getStarvationFreedom(),
-							data, query);
-			data.setStarvationFreedom(starvationFreedom);
-			
-			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement((SLA) query.getParameter(SLA.class.getName()));
-			data.setConnectionPoint(placement.placeSLAConformance(query, conformance));
-			
-			List<IBuffer<?>> buffers = findBuffers(query);
-			data.setBuffers(buffers);
-			conformance.setBuffers(buffers);
-			
+			SLARegistryInfo data = this.initRegistryInfo(query);
 			this.addSchedData(query, data);
+			
+			this.initSLAConformacePrediction(data.getBuffers(), data.getConformance());
 			
 			break;
 		}
@@ -166,6 +153,30 @@ public class SLARegistry implements IPlanModificationListener {
             break;
 		}
 	}
+	
+	private SLARegistryInfo initRegistryInfo(IPhysicalQuery query) {
+		SLARegistryInfo data = new SLARegistryInfo();
+		ISLAConformance conformance = new SLAConformanceFactory().
+				createSLAConformance((SLA) query.getParameter(SLA.class.getName()), this.scheduler, query);
+		data.setConformance(conformance);
+		
+		ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), (SLA) query.getParameter(SLA.class.getName()));
+		data.setCostFunction(costFunction);
+		
+		IStarvationFreedom starvationFreedom = new StarvationFreedomFactory().
+				buildStarvationFreedom(this.scheduler.getStarvationFreedom(),
+						data, query);
+		data.setStarvationFreedom(starvationFreedom);
+		
+		ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement((SLA) query.getParameter(SLA.class.getName()));
+		data.setConnectionPoint(placement.placeSLAConformance(query, conformance));
+		
+		List<IBuffer<?>> buffers = findBuffers(query);
+		data.setBuffers(buffers);
+		conformance.setBuffers(buffers);
+		
+		return data;
+	}
 
 	/**
 	 * Returns a list of all buffers owned by the given query
@@ -182,6 +193,70 @@ public class SLARegistry implements IPlanModificationListener {
 			}
 		}
 		return buffers;
+	}
+	
+	/**
+	 * initializes the SLAConformance prediction. Has side-effects on the parameter conformance: sets the map containing all paths for buffers
+	 * @param list
+	 * @param conformance
+	 */
+	private void initSLAConformacePrediction(List<IBuffer<?>> list, ISLAConformance conformance) {
+		Map<IBuffer<?>, List<List<IPhysicalOperator>>> pathMap = new HashMap<>();
+		
+		for (IBuffer<?> buffer : list) {
+			List<List<IPhysicalOperator>> paths = findPaths(buffer);
+			pathMap.put(buffer, paths);
+		}
+		
+		conformance.setPathMap(pathMap);
+	}
+	
+	private static List<List<IPhysicalOperator>> findPaths(IBuffer<?> buffer) {
+		List<IPhysicalOperator> path = new ArrayList<>();
+		
+		return findPathsRecursive(path, buffer);
+	}
+	
+	private static List<List<IPhysicalOperator>> findPathsRecursive(List<IPhysicalOperator> walkedPath, IPhysicalOperator currentOp) {
+		List<List<IPhysicalOperator>> paths = null;
+		
+		if (currentOp.isSource()) {
+			// follow outgoing paths 
+			ISource<?> source = (ISource<?>) currentOp;
+			Collection<?> subscriptions = source.getSubscriptions();
+			
+			walkedPath.add(currentOp);
+			
+			for (Object obj : subscriptions) {
+				@SuppressWarnings("unchecked")
+				PhysicalSubscription<ISink<?>> subscription = (PhysicalSubscription<ISink<?>>) obj;
+				ISink<?> target = subscription.getTarget();
+				
+				List<IPhysicalOperator> newPath = null; 
+				if (subscriptions.size() > 1) {
+					// new lists in case of path split
+					newPath = new ArrayList<>(walkedPath);
+				} else {
+					newPath = walkedPath;
+				}
+				
+				List<List<IPhysicalOperator>> foundPaths = findPathsRecursive(newPath, target);
+				
+				if (paths == null) {
+					paths = foundPaths;
+				} else {
+					paths.addAll(foundPaths);
+				}
+				
+			}
+		} else {
+			// current op is leaf
+			paths = new ArrayList<>();
+			walkedPath.add(currentOp);
+			paths.add(walkedPath);
+		}
+		
+		return paths;
 	}
 	
 }

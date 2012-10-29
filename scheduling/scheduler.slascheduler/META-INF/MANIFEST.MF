@@ -12,7 +12,7 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
-Service-Component: OSGI-INF/*
+Service-Component: OSGI-INF/*, OSGI-INF/slapostoptimizationaction.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.slascheduler,
  de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance,
  de.uniol.inf.is.odysseus.scheduler.slascheduler.placement

@@ -16,7 +16,9 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import java.util.List;
+import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 
 /**
@@ -52,5 +54,7 @@ public interface ISLAConformance {
 	public int getNumberOfPredictedLatency();
 	
 	public int getNumberOfViolationsPredictedLatency();
+	
+	public void setPathMap(Map<IBuffer<?>, List<List<IPhysicalOperator>>> pathMap);
 	
 }

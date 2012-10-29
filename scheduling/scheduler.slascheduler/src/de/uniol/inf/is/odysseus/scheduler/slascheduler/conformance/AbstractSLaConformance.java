@@ -16,12 +16,16 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
+import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -77,6 +81,19 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	private List<IBuffer<?>> buffers;
 	
 	private int numberOfPredictedElements;
+	/**
+	 * map containing all operator paths starting from a buffer
+	 */
+	private Map<IBuffer<?>, List<List<IPhysicalOperator>>> pathMap;
+	/**
+	 * mapping buffers to the maximum operating time for outgoing operator paths
+	 */
+	private Map<IBuffer<?>, Double> maxPathTimeMap;
+	/**
+	 * update interval for path time map in millis
+	 */
+	private int pathTimeUpdateInterval;
+	private int lastUpdate; 
 
 	/**
 	 * default constructor
@@ -99,6 +116,8 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 		this.hasRunInWindow = false;
 		this.maxLatency = sla.getMetric().getValue();
 		this.buffers = new ArrayList<IBuffer<?>>();
+		this.maxPathTimeMap = new HashMap<IBuffer<?>, Double>();
+		this.pathMap = new HashMap<>();
 	}
 
 	/**
@@ -278,7 +297,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 					if (metadata instanceof ILatency) {
 						ILatency latency = (ILatency) metadata;
 						long waitingTime = timestamp - latency.getLatencyStart();
-						double predictedLatency = calcLatency(waitingTime);
+						double predictedLatency = calcLatency(waitingTime, buffer);
 						if (predictedLatency > max) {
 							max = predictedLatency;
 						}
@@ -307,7 +326,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 				if (metadata instanceof ILatency) {
 					ILatency latency = (ILatency) metadata;
 					long waitingTime = timestamp - latency.getLatencyStart();
-					sum += calcLatency(waitingTime) * buffer.size();
+					sum += calcLatency(waitingTime, buffer) * buffer.size();
 					this.numberOfPredictedElements += buffer.size();
 				} else {
 					throw new RuntimeException("Latency missing");
@@ -324,13 +343,56 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 		return GenQueries.OP_PROCESSING_TIME;
 	}
 	
+	protected double getMaxPathTime(IBuffer<?> buffer) {
+		Double cachedTime = this.maxPathTimeMap.get(buffer);
+		if (cachedTime != null && (System.currentTimeMillis() < lastUpdate + pathTimeUpdateInterval)) {
+			return cachedTime.doubleValue();
+		} else {
+			double maxPathTime = calcMaxPathTime(buffer);
+			this.maxPathTimeMap.put(buffer, maxPathTime);
+			return maxPathTime;
+		}
+	}
+	
+	protected double calcMaxPathTime(IBuffer<?> buffer) {
+		/*
+		 * so umbauen dass pathTime gecacht wird
+		 * aktualisierungsrate f�r cache festlegen und cache ggf erneuern
+		 */
+		double maxPathTime = 0.0;
+		
+		List<List<IPhysicalOperator>> paths = this.pathMap.get(buffer);
+		if (paths != null) {
+			for (List<IPhysicalOperator> path : paths) {
+				double pathTime = this.getPathTime(path);
+				if (pathTime > maxPathTime) {
+					maxPathTime = pathTime;
+				}
+			}
+		} else {
+			throw new RuntimeException("buffer " + buffer + " not in buffer map");
+		}
+		
+		return maxPathTime;
+	}
+	
+	private double getPathTime(List<IPhysicalOperator> path) {
+		double time = 0.0;
+		
+		for (IPhysicalOperator op : path) {
+			time += getMeanCPUTimeMetadata(op);
+		}
+		
+		return time;
+	}
+	
 	/**
 	 * nanos
 	 * @param waitingTime
 	 * @return
 	 */
-	protected double calcLatency(double waitingTime) {
-		return waitingTime + getOpTime();
+	protected double calcLatency(double waitingTime, IBuffer<?> buffer) {
+		return waitingTime + getMaxPathTime(buffer);
 	}
 	
 	@Override
@@ -350,7 +412,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 				if (metadata instanceof ILatency) {
 					ILatency latency = (ILatency) metadata;
 					long waitingTime = timestamp - latency.getLatencyStart();
-					double predictedLatency = calcLatency(waitingTime);
+					double predictedLatency = calcLatency(waitingTime, buffer);
 					if (predictedLatency > this.maxLatency) {
 						numViolations += buffer.size();
 					}
@@ -361,6 +423,45 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 			}
 		}
 		return numViolations;
+	}
+
+	@Override
+	public void setPathMap(Map<IBuffer<?>, List<List<IPhysicalOperator>>> pathMap) {
+		this.pathMap = pathMap;
+	}
+	
+
+	/**
+	 * Liefert das Metadatum "median_processing_time" zum gegebenen physischen
+	 * Operator zurück (in Sekunden). Falls das Metadatum nichr vorhanden ist,
+	 * oder dessen Rückgabewert NaN oder <code>null</code> ist, wird -1
+	 * zurückgegeben.
+	 * 
+	 * @param operator
+	 *            Physischer Operator, dessen Prozessorzeit zurückgegeben werden
+	 *            soll.
+	 * @return Median der Prozessorzeiten des physischen Operators, oder -1,
+	 *         falls das Metadatum nicht existiert oder (noch) ungültig ist
+	 */
+
+	public static double getMeanCPUTimeMetadata(IPhysicalOperator operator) {
+		double time = -1.0;
+		try {
+			if (operator.isOpen()) {
+
+				// measure directly
+				IMonitoringData<Double> cpuTime = operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);
+				if (cpuTime != null && cpuTime.getValue() != null && !Double.isNaN(cpuTime.getValue())) {
+					time = cpuTime.getValue() / 1000000000.0;
+				} else {
+					System.out.println("no cpuTime found");
+				} 
+
+			}
+		} catch (NullPointerException ex) {
+		}
+
+		return time;
 	}
 
 }
