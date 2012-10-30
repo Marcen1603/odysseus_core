@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class LoggerSystem {
 
 	private static Logger defaultlogger = LoggerFactory.getLogger("ruleengine");
-	private static Accuracy defaultAccuracy = Accuracy.DEBUG;
+	private static Accuracy defaultAccuracy = Accuracy.TRACE;
 	private static Accuracy minAccuracy = Accuracy.TRACE;
 	private static boolean showAllAsDebug = false;
 
