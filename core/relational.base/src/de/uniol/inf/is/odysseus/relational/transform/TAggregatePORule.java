@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregat
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
+import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -86,7 +87,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 	@Override
 	public boolean isExecutable(AggregatePO operator,
 			TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataType().equals("relational")) {
+		if (transformConfig.getDataType().equals(Relational.RELATIONAL)) {
 			if (operator.getGroupProcessor() == null) {
 				return true;
 			}

@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -100,8 +101,9 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		boolean queryShouldBeRewritten = copiedPlan != null && restruct != null
 				&& restruct == ParameterDoRewrite.TRUE;
 		if (queryShouldBeRewritten) {
-			ILogicalOperator newPlan = compiler.rewritePlan(copiedPlan,
-					parameters.getRewriteConfiguration());
+			RewriteConfiguration rewriteConfig = parameters.getRewriteConfiguration();
+			rewriteConfig.setQueryBuildConfiguration(cb);
+			ILogicalOperator newPlan = compiler.rewritePlan(copiedPlan,rewriteConfig);
 			// set new logical plan.
 			query.setLogicalPlan(newPlan, false);
 		}

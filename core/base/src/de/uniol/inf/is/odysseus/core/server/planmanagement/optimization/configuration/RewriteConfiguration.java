@@ -18,9 +18,12 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configu
 import java.util.HashSet;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+
 public class RewriteConfiguration implements IOptimizationSetting<Set<String>>{
 
 	private Set<String> rulesToApply = new HashSet<String>();
+	private QueryBuildConfiguration cb;
 
 	public RewriteConfiguration(){
 		
@@ -37,5 +40,13 @@ public class RewriteConfiguration implements IOptimizationSetting<Set<String>>{
 	@Override
 	public Set<String> getValue() {		
 		return getRulesToApply();
+	}
+
+	public void setQueryBuildConfiguration(QueryBuildConfiguration cb) {
+		this.cb = cb;
+	}
+	
+	public QueryBuildConfiguration getQueryBuildConfiguration() {
+		return cb;
 	}
 }

@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -52,6 +53,9 @@ public class RSwitchSelectionProjectionRule extends AbstractRewriteRule<ProjectA
 
 	@Override
 	public boolean isExecutable(ProjectAO proj, RewriteConfiguration config) {
+		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataType().equals(Relational.RELATIONAL)){
+			return false;
+		}
 		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
 			if (isValidSelect(sel, proj)) {
 				return true;

@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessP
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInputStream2ObjectInputStreamTransformer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectStreamInputHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
@@ -51,7 +52,7 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration trafo) {
-		if(trafo.getDataType().equals("relational") && getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null){
+		if(trafo.getDataType().equals(Relational.RELATIONAL) && getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null){
 			if(accessAO.getWrapper().equals("RelationalInputStreamAccessPO")){
 				return true;
 			}

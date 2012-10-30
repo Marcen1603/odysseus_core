@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -64,6 +65,9 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 
 	@Override
 	public boolean isExecutable(SelectAO operator, RewriteConfiguration config) {
+		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataType().equals(Relational.RELATIONAL)){
+			return false;
+		}
 		IPredicate pred = operator.getPredicate();
 		if (pred != null) {
 			if (ComplexPredicateHelper.isAndPredicate(pred)

@@ -19,10 +19,11 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.relational.base.Relational;
 
 public class RelationalAggregateFunctionBuilder implements
 		IAggregateFunctionBuilder {
@@ -82,7 +83,7 @@ public class RelationalAggregateFunctionBuilder implements
 
 	@Override
 	public String getDatamodel() {
-		return "relational";
+		return Relational.RELATIONAL;
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.LineTransfor
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.LineFileInputHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -64,7 +65,7 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 	@Override
 	public boolean isExecutable(FileAccessAO fileAccessAO,
 			TransformationConfiguration trafo) {
-		if (trafo.getDataType().equals("relational") && getDataDictionary().getAccessPlan(fileAccessAO.getSourcename()) == null) {
+		if (trafo.getDataType().equals(Relational.RELATIONAL) && getDataDictionary().getAccessPlan(fileAccessAO.getSourcename()) == null) {
 			return true;
 		}
 		return false;

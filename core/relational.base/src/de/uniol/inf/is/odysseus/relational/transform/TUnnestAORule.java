@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnNestAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalUnNestPO;
+import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -74,7 +75,7 @@ public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
      */
     @Override
     public boolean isExecutable(final UnNestAO operator, final TransformationConfiguration config) {
-        return config.getDataType().equals("relational") && operator.isAllPhysicalInputSet();
+        return config.getDataType().equals(Relational.RELATIONAL) && operator.isAllPhysicalInputSet();
     }
 
     @Override

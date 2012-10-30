@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.objecthandler.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -62,7 +63,7 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {
-		if(transformConfig.getDataType().equals("relational") && getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null){
+		if(transformConfig.getDataType().equals(Relational.RELATIONAL) && getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null){
 			if(accessAO.getWrapper().equals("RelationalByteBufferAccessPO")){
 				return true;
 			}

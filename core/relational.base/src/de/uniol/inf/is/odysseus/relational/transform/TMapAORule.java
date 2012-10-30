@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
+import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -39,7 +40,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public boolean isExecutable(MapAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getDataType().equals("relational")){
+		if(transformConfig.getDataType().equals(Relational.RELATIONAL)){
 			if(operator.getPhysSubscriptionTo()!=null){
 				return true;
 			}

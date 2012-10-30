@@ -20,6 +20,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -45,7 +46,8 @@ public class RDeleteProjectionWithoutFunctionRule extends AbstractRewriteRule<Pr
 
 	@Override
 	public boolean isExecutable(ProjectAO proj, RewriteConfiguration transformConfig) {
-		return proj.getInputSchema().equals(proj.getOutputSchema());
+		return transformConfig.getQueryBuildConfiguration().getTransformationConfiguration().getDataType().equals(Relational.RELATIONAL) 
+				&& proj.getInputSchema().equals(proj.getOutputSchema());
 	}
 
 	@Override

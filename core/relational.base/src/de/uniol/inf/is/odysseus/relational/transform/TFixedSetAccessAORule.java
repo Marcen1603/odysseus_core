@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.FixedSetPO;
+import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -41,7 +42,7 @@ public class TFixedSetAccessAORule extends AbstractTransformationRule<FixedSetAc
 
 	@Override
 	public boolean isExecutable(FixedSetAccessAO<?> accessAO, TransformationConfiguration transformConfig) {
-		return (transformConfig.getDataType().equals("relational") && getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null);
+		return (transformConfig.getDataType().equals(Relational.RELATIONAL) && getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null);
 	}
 
 	@Override
