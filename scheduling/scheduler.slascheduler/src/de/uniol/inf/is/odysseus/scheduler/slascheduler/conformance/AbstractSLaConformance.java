@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
@@ -31,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.ServiceLevel;
+import de.uniol.inf.is.odysseus.latency.logicaloperator.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
@@ -93,7 +95,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	 * update interval for path time map in millis
 	 */
 	private int pathTimeUpdateInterval;
-	private int lastUpdate; 
+	private long lastUpdate; 
 
 	/**
 	 * default constructor
@@ -118,6 +120,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 		this.buffers = new ArrayList<IBuffer<?>>();
 		this.maxPathTimeMap = new HashMap<IBuffer<?>, Double>();
 		this.pathMap = new HashMap<>();
+		this.pathTimeUpdateInterval = Integer.parseInt(OdysseusConfiguration.get("sla_pathTimeUpdateInterval"));
 	}
 
 	/**
@@ -339,6 +342,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	/**
 	 * nanos
 	 */
+	@Deprecated
 	protected double getOpTime() {
 		return GenQueries.OP_PROCESSING_TIME;
 	}
@@ -350,15 +354,12 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 		} else {
 			double maxPathTime = calcMaxPathTime(buffer);
 			this.maxPathTimeMap.put(buffer, maxPathTime);
+			this.lastUpdate = System.currentTimeMillis();
 			return maxPathTime;
 		}
 	}
 	
 	protected double calcMaxPathTime(IBuffer<?> buffer) {
-		/*
-		 * so umbauen dass pathTime gecacht wird
-		 * aktualisierungsrate für cache festlegen und cache ggf erneuern
-		 */
 		double maxPathTime = 0.0;
 		
 		List<List<IPhysicalOperator>> paths = this.pathMap.get(buffer);
@@ -380,7 +381,9 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 		double time = 0.0;
 		
 		for (IPhysicalOperator op : path) {
-			time += getMeanCPUTimeMetadata(op);
+			if (!(op instanceof ISLAConformance || op instanceof LatencyCalculationPipe<?>)) {
+				time += getMeanCPUTimeMetadataMilli(op);
+			}
 		}
 		
 		return time;
@@ -444,24 +447,29 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	 *         falls das Metadatum nicht existiert oder (noch) ungÃ¼ltig ist
 	 */
 
-	public static double getMeanCPUTimeMetadata(IPhysicalOperator operator) {
+	public static double getMeanCPUTimeMetadataSeconds(IPhysicalOperator operator) {
+		return getMeanCPUTimeMetadataNano(operator) / 1000000000.0;
+	}
+	
+	public static double getMeanCPUTimeMetadataNano(IPhysicalOperator operator) {
 		double time = -1.0;
 		try {
-			if (operator.isOpen()) {
-
 				// measure directly
 				IMonitoringData<Double> cpuTime = operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);
 				if (cpuTime != null && cpuTime.getValue() != null && !Double.isNaN(cpuTime.getValue())) {
-					time = cpuTime.getValue() / 1000000000.0;
+					time = cpuTime.getValue();
 				} else {
 					System.out.println("no cpuTime found");
 				} 
 
-			}
 		} catch (NullPointerException ex) {
+			ex.printStackTrace();
 		}
 
 		return time;
 	}
-
+	
+	public static double getMeanCPUTimeMetadataMilli(IPhysicalOperator operator) {
+		return getMeanCPUTimeMetadataNano(operator) / 1000000.0;
+	}
 }

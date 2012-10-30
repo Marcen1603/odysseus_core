@@ -157,6 +157,7 @@ public class OdysseusConfiguration {
 		props.setProperty("sla_querySharingCostModel", "none");
 		props.setProperty("sla_querySharing", Boolean.FALSE.toString());
 		props.setProperty("sla_costFunctionName", "quadratic");
+		props.setProperty("sla_pathTimeUpdateInterval", 10000 + ""); // Milliseconds
 
 		// Odysseus Storing
 		props.setProperty("storing_database", odysseusHome + "database.conf");
