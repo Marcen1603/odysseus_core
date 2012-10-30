@@ -6,10 +6,10 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.application.Activator
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ com.google.guava;bundle-version="12.0.0"
 Bundle-ActivationPolicy: lazy
-Import-Package: com.google.common.base,
- de.uniol.inf.is.odysseus.core.planmanagement.executor,
+Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.rcp.status,
  de.uniol.inf.is.odysseus.rcp.util,
