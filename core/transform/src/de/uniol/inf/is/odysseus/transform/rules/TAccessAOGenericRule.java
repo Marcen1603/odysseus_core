@@ -101,7 +101,10 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 					dataHandler = DataHandlerRegistry.getDataHandler(
 							operator.getDataHandler(),
 							operator.getOutputSchema());
+				}else{
+					throw new TransformationException("Operator "+operator+" has no output schema!");
 				}
+				
 				if (dataHandler == null) {
 					throw new TransformationException("No data handler "
 							+ operator.getDataHandler() + " found.");

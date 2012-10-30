@@ -48,11 +48,11 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 		ITransformation transformation = new TransformationExecutor();
 		
 		ArrayList<IPhysicalOperator> roots = null;
-		try {
+//		try {
 			roots = transformation.transform(cPlan, transformConfig, getCaller(), getDataDictionary());
-		} catch (TransformationException e) {		
-			e.printStackTrace();
-		}
+//		} catch (TransformationException e) {		
+//			e.printStackTrace();
+//		}
 		
 		
 		// get the first root, since this is the physical operator for the passed plan
