@@ -52,6 +52,8 @@ public class ACUpdater extends Thread {
 	@Override
 	public void run() {
 		try {
+			LOGGER.debug("Interval is set to {} ms.", UPDATE_INTERVAL);
+			
 			while (isRunning) {
 
 				ac.updateEstimations();

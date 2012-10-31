@@ -69,6 +69,9 @@ public class OperatorCostModel implements ICostModel {
 
 		LOG.debug("Number of Processors available: {} ", processorCount);
 		LOG.debug("Number of Scheduler Threads: {}", schedulerThreadCount);
+		if( processorCount > schedulerThreadCount ) {
+			LOG.warn("Number of processors exceeds the number of threads used by simpleThreadScheduler. This can result in performance loss.");
+		}
 
 		memory = runtime.totalMemory();
 		LOG.debug("Memory in bytes: {}", memory);

@@ -171,8 +171,8 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			double factor = userMaximumCostFactors.get(user);
 			ICost maxUserCost = maxCost.fraction(factor);
 			if (isGreater(userCost, maxUserCost)) {
-				LOG.debug("Costs for user {} are too high: {}", user.getName(), userCost);
-				LOG.debug("Maximum allowed for user: {}", maxUserCost);
+				LOG.warn("Costs for user {} are too high: {}", user.getName(), userCost);
+				LOG.warn("Maximum allowed for user: {}", maxUserCost);
 
 				userWasOverloaded.put(user, true);
 				fireOverloadUserEvent(user);
@@ -196,8 +196,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			// too high load now!
 			wasOverloaded = true;
 
-			LOG.debug("Cost is too high");
-			LOG.debug("MaxCost = {}", maxCost);
+			LOG.warn("Cost is too high. MaxCost = {}", maxCost);
 
 			fireOverloadEvent();
 		} else if (wasOverloaded && isGreater(underloadCost, actCost)) {
