@@ -53,6 +53,9 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
 		}
 		NonBlockingTcpHandler.nioConnection.addConnectionListener(handler);
 		handler.host = options.get("host");
+		if (options.get("port") == null){
+			throw new IllegalArgumentException("Port must be set");
+		}
 		handler.port = Integer.parseInt(options.get("port"));
 		handler.autoconnect = Boolean.parseBoolean(options.get("autoconnect"));
 		handler.user = options.get("user");
