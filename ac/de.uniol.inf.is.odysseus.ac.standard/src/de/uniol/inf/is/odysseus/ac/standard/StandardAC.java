@@ -160,6 +160,8 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 				LOG.debug("Cost for {} : {}", user.getName(), userCosts.get(user));
 			}
 		}
+		
+		System.out.println(queryCosts.size() + "; " + runningQueryCosts.size() + "; " + actCost );
 
 		// check, if user-load is too heavy
 		for (IUser user : userCosts.keySet()) {
@@ -570,10 +572,13 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	private static List<IPhysicalOperator> getAllOperators(IServerExecutor executor) {
 		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
 
-		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries())
-			for (IPhysicalOperator op : query.getPhysicalChilds())
-				if (!operators.contains(op) && !op.getClass().getSimpleName().contains("DataSourceObserverSink") && op.getOwner().contains(query))
+		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
+			for (IPhysicalOperator op : query.getPhysicalChilds()) {
+				if (!operators.contains(op) && !op.getClass().getSimpleName().contains("DataSourceObserverSink") && op.getOwner().contains(query)) {
 					operators.add(op);
+				}
+			}
+		}
 
 		return operators;
 	}
