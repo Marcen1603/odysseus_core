@@ -317,11 +317,18 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 				port = Integer.parseInt(parts[1]);
 			}
 		}
+		String wrapperName="GenericPush";
+		Map<String, String> options = new HashMap<String, String>();
 		AccessAO source = new AccessAO(name,
-				"RelationalByteBufferAccessPO",null);
+				wrapperName,options);
+		
 		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
-		source.setAutoReconnectEnabled(autoReconnect);
-		initSource(source, host, port);
+		source.setTransportHandler("NonBlockingTcp");
+		options.put("host",host);
+		options.put("port",port+"");
+		options.put("autoconnect",autoReconnect+"");
+		source.setProtocolHandler("SizeByteBuffer");
+		source.setOutputSchema(new SDFSchema(name, this.attributes));
 		ILogicalOperator op = addTimestampAO(source);
 		try {
 			dd.setStream(name, op, caller);
