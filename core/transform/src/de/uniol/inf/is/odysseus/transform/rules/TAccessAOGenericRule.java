@@ -46,8 +46,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.IInputH
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.Activator;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -77,7 +77,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 			String protocolHandler = operator.getProtocolHandler();
 			Map<String, String> options = operator.getOptionsMap();
 			ITransportHandler transportHandler;
-			if (Activator.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 				transportHandler = TransportHandlerRegistry.getInstance(
 						operator.getTransportHandler(), ITransportPattern.PULL,
 						options);
@@ -111,7 +111,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 				}
 			}
 
-			if (Activator.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 
 				IProtocolHandler ph = ProtocolHandlerRegistry
 						.getInstance(protocolHandler, options,
@@ -138,7 +138,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 		} else {
 			logger.warn("DEPRECATED: Use new generic AccessAO style");
 			// older generic accessao style
-			if (Activator.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 
 				IInputHandler inputHandlerPrototype = InputHandlerRegistry
 						.getInputHandler(operator.getInput());
@@ -245,8 +245,8 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 	public boolean isExecutable(AccessAO operator,
 			TransformationConfiguration config) {
 		return (getDataDictionary().getAccessPlan(operator.getSourcename()) == null
-				&& operator.getWrapper() != null && (Activator.GENERIC_PULL
-				.equalsIgnoreCase(operator.getWrapper()) || Activator.GENERIC_PUSH
+				&& operator.getWrapper() != null && (Constants.GENERIC_PULL
+				.equalsIgnoreCase(operator.getWrapper()) || Constants.GENERIC_PUSH
 				.equalsIgnoreCase(operator.getWrapper())));
 	}
 
