@@ -213,23 +213,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 	
 	public void addConnection(IPhysicalQuery query) {
 		List<IPhysicalOperator>ops = query.getRoots();
-		final List<ISubscription<ISource<?>>> subs = new LinkedList<ISubscription<ISource<?>>>();
-		for (IPhysicalOperator operator : ops) {
-
-			if (operator instanceof ISource<?>) {
-				subs.add(new PhysicalSubscription<ISource<?>>((ISource<?>) operator, 0, 0, operator.getOutputSchema()));
-			} else if (operator instanceof ISink<?>) {
-				Collection<?> list = ((ISink<?>) operator).getSubscribedToSource();
-
-				for (Object obj : list) {
-					PhysicalSubscription<ISource<?>> sub = (PhysicalSubscription<ISource<?>>) obj;
-					subs.add(new PhysicalSubscription<ISource<?>>(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema()));
-				}
-			} else {
-				throw new IllegalArgumentException("could not identify type of content of node " + operator);
-			}
-		}
-		mapModel.addConnection(new DefaultStreamConnection(subs), query, this);
+		mapModel.addConnection(new DefaultStreamConnection(ops), query, this);
 		
 		dirt = true;
 		firePropertyChange(PROP_DIRTY);
