@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.thematicalmap.MapWizardEarlyStartup">
+      </startup>
+   </extension>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.thematicalmap.MapWizardEditor"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.thematicalmap.MapWizardEditor"
+            label="ThematicalMap">
+      </editor>
+   </extension>
+
+</plugin>
