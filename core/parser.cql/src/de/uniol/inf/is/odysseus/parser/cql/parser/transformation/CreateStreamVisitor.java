@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
@@ -317,7 +318,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 				port = Integer.parseInt(parts[1]);
 			}
 		}
-		String wrapperName="GenericPush";
+		String wrapperName = Constants.GENERIC_PUSH;
 		Map<String, String> options = new HashMap<String, String>();
 		AccessAO source = new AccessAO(name,
 				wrapperName,options);
@@ -346,7 +347,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		if (node.jjtGetNumChildren() > 0) {
 			type = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		}
-		String wrapperName="GenericPull";
+		String wrapperName= Constants.GENERIC_PULL;
 		Map<String, String> options = new HashMap<String, String>();
 		options.put("filename", filename);
 		
