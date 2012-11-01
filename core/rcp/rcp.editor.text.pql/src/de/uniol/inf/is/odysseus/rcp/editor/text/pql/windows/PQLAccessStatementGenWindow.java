@@ -310,7 +310,6 @@ public class PQLAccessStatementGenWindow {
 
 	private static String[] determineWrapperNameList() {
 		return WrapperRegistry.getWrapperNames().toArray(new String[0]);
-//		return new String[] { "GenericPush", "GenericPull", "GoogleProtobuf", };
 	}
 
 	private static String getComboSelection(Combo c) {
