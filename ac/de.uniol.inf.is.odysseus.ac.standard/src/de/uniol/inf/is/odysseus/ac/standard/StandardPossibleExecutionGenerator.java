@@ -38,9 +38,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  * @author Timo Michelsen
  *
  */
-public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
+public class StandardPossibleExecutionGenerator implements IPossibleExecutionGenerator {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(PossibleExecutionGenerator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(StandardPossibleExecutionGenerator.class);
 
 	@Override
 	public List<IPossibleExecution> getPossibleExecutions(IAdmissionControl ac, Map<IPhysicalQuery, ICost> queryCosts, ICost maxCost) {

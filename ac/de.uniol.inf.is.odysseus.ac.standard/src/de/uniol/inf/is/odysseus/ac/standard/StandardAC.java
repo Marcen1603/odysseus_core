@@ -77,7 +77,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	private Map<IUser, ICost> userCosts = Maps.newHashMap();
 	private Map<IUser, Boolean> userWasOverloaded = Maps.newHashMap();
 
-	private IPossibleExecutionGenerator generator = new PossibleExecutionGenerator();
+	private IPossibleExecutionGenerator generator = new StandardPossibleExecutionGenerator();
 
 	private final List<IAdmissionListener> listeners = new ArrayList<IAdmissionListener>();
 
@@ -244,7 +244,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	/**
 	 * Paket-bekannte Methode, um das ausgewählte Kostenmodell als
 	 * {@link ICostModel}-Instanz zurückzugeben. Wird aktuell nur von
-	 * {@link PossibleExecutionGenerator} verwendet.
+	 * {@link StandardPossibleExecutionGenerator} verwendet.
 	 * 
 	 * @return Aktuell verwendetes Kostenmodell
 	 */
@@ -389,7 +389,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 	public void unbindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
 		if (this.generator == generator) {
-			this.generator = new PossibleExecutionGenerator();
+			this.generator = new StandardPossibleExecutionGenerator();
 			LOG.debug("Unbound PossibleExecutionGenerator {}. Using default now.", generator);
 		}
 	}
