@@ -239,9 +239,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				@SuppressWarnings("rawtypes")
 				AbstractGraphWalker walker = new AbstractGraphWalker();
 				walker.prefixWalk(topOperator, visitor);
-
-				this.viewDefinitions.put(viewname, topOperator);
-				viewOrStreamFromUser.put(viewname, caller.getUser());
+				synchronized (viewDefinitions) {
+					this.viewDefinitions.put(viewname, topOperator);
+					viewOrStreamFromUser.put(viewname, caller.getUser());
+				}
 				fireDataDictionaryChangedEvent();
 			} catch (StoreException e) {
 				throw new RuntimeException(e);
@@ -280,9 +281,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	private ILogicalOperator removeView(String viewname, ISession caller) {
 		ILogicalOperator op;
 		try {
-			op = viewDefinitions.remove(viewname);
-			if (op != null) {
-				viewOrStreamFromUser.remove(viewname);
+			synchronized (viewDefinitions) {
+				op = viewDefinitions.remove(viewname);
+				if (op != null) {
+					viewOrStreamFromUser.remove(viewname);
+				}
 			}
 		} catch (StoreException e) {
 			throw new RuntimeException(e);
@@ -321,11 +324,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				throw new DataDictionaryException("Stream " + streamname
 						+ " already exists. Remove First");
 			}
-			try {
-				streamDefinitions.put(streamname, plan);
-				viewOrStreamFromUser.put(streamname, caller.getUser());
-			} catch (StoreException e) {
-				throw new RuntimeException(e);
+			synchronized (streamDefinitions) {
+				try {
+					streamDefinitions.put(streamname, plan);
+					viewOrStreamFromUser.put(streamname, caller.getUser());
+				} catch (StoreException e) {
+					throw new RuntimeException(e);
+				}
 			}
 			fireAddEvent(streamname, plan);
 			fireDataDictionaryChangedEvent();
@@ -383,10 +388,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	private Set<Entry<String, ILogicalOperator>> getDefinitions(
 			ISession caller, IStore<String, ILogicalOperator> definitions) {
 		Set<Entry<String, ILogicalOperator>> sources = new HashSet<Entry<String, ILogicalOperator>>();
-		for (Entry<String, ILogicalOperator> viewEntry : definitions.entrySet()) {
-			if (hasAccessRights(viewEntry.getKey(), caller,
-					DataDictionaryPermission.READ)) {
-				sources.add(viewEntry);
+		synchronized (definitions) {
+			for (Entry<String, ILogicalOperator> viewEntry : definitions
+					.entrySet()) {
+				if (hasAccessRights(viewEntry.getKey(), caller,
+						DataDictionaryPermission.READ)) {
+					sources.add(viewEntry);
+				}
 			}
 		}
 		return sources;
@@ -409,18 +417,20 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 					DataDictionaryPermission.REMOVE_VIEW);
 			return removeView(viewname, caller);
 		}
-		if (this.streamDefinitions.containsKey(viewname)) {
-			ILogicalOperator op;
-			checkAccessRights(viewname, caller,
-					DataDictionaryPermission.REMOVE_STREAM);
-			op = streamDefinitions.remove(viewname);
-			if (op != null) {
-				viewOrStreamFromUser.remove(viewname);
+		synchronized (streamDefinitions) {
+			if (this.streamDefinitions.containsKey(viewname)) {
+				ILogicalOperator op;
+				checkAccessRights(viewname, caller,
+						DataDictionaryPermission.REMOVE_STREAM);
+				op = streamDefinitions.remove(viewname);
+				if (op != null) {
+					viewOrStreamFromUser.remove(viewname);
+				}
+				if (op != null) {
+					fireRemoveEvent(viewname, op);
+				}
+				return op;
 			}
-			if (op != null) {
-				fireRemoveEvent(viewname, op);
-			}
-			return op;
 		}
 		return null;
 
