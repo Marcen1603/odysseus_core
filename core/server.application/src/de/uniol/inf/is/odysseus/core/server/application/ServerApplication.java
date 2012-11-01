@@ -1,28 +1,24 @@
-package de.uniol.inf.is.odysseus.core.server.console;
+package de.uniol.inf.is.odysseus.core.server.application;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
+public class ServerApplication implements IApplication {
 
-public class OdysseusServerApplication implements IApplication{
-
-	boolean run = true;
-	
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
+		System.out.println("Odysseus started");
 		synchronized(this){
-			while (run){
-				this.wait(10000);
-			}
+			this.wait();
 		}
+		System.out.println("Odysseus terminated");
 		return null;
 	}
 
 	@Override
 	public void stop() {
-		synchronized(this){
-			run = false;
-			this.notifyAll();
+		synchronized (this) {
+			notifyAll();
 		}
 	}
 

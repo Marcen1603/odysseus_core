@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Odysseus Server" uid="de.uniol.inf.is.odysseus.server" id="de.uniol.inf.is.odysseus.core.server.console.OdysseusServer" application="de.uniol.inf.is.odysseus.core.server.console.OdysseusServer" version="1.0.0" useFeatures="true" includeLaunchers="false">
+<product name="Odysseus Server" uid="de.uniol.inf.is.odysseus.server.application" id="de.uniol.inf.is.odysseus.core.server.console.product" application="de.uniol.inf.is.odysseus.core.server.application.odysseus" version="1.0.0" useFeatures="true" includeLaunchers="false">
 
 
    <configIni use="default">
@@ -64,7 +64,7 @@
       <feature id="de.uniol.inf.is.odysseus.mining.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.dwd.feature" version="1.0.0.qualifier"/>
-      <feature id="org.eclipse.rcp" version="3.7.2.v20120120-1424-9DB5FmnFq5JCf1UA38R-kz0S0272"/>
+      <feature id="de.uniol.inf.is.odysseus.core.server.headless.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
