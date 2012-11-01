@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline;
+package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
  * @author Kai Pancratz
  * 
  */
-public class StreamMapEditorOutlineTreeContentProvider implements ITreeContentProvider {
+public class ConnectionTreeContentProvider implements ITreeContentProvider {
 
 	Object[] input;
 

@@ -40,7 +40,7 @@ public class ScreenManager {
 	private static final Logger LOG = LoggerFactory.getLogger(ScreenManager.class);
 	private static final Color WHITE = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
 
-	private StreamMapEditor editor;
+	private StreamMapEditorPart editor;
 	private ScreenTransformation transformation;
 	private Canvas canvas;
 	private Point mapSize = new Point(0, 0);
@@ -49,9 +49,8 @@ public class ScreenManager {
 	
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private MapMouseListener mouseListener;
-	private TreeViewer treeViewer;
 	
-	public ScreenManager(ScreenTransformation transformation, StreamMapEditor editor) {
+	public ScreenManager(ScreenTransformation transformation, StreamMapEditorPart editor) {
 		this.transformation = transformation;
 		this.transformation.setScreenManager(this);
 		
@@ -67,98 +66,6 @@ public class ScreenManager {
 		canvas.setBackground(WHITE);
 		canvas.addPaintListener(new GeometryPaintListener(editor));
 		
-		
-//		canvasViewer.addControlListener(new ControlListener() {
-//
-//			@Override
-//			public void controlResized(ControlEvent e) {
-//				//transformation.updateOrigin(viewer.getClientArea());
-//				LOG.debug("Resize: " + " min=" + viewer.getClientArea().x + ","
-//						+ viewer.getClientArea().y + " max="
-//						+ viewer.getClientArea().width + ","
-//						+ viewer.getClientArea().height);
-//			}
-//
-//			@Override
-//			public void controlMoved(ControlEvent e) {
-//			}
-//		});
-//
-//		canvasViewer.addMouseListener(new MouseListener() {
-//
-//			@Override
-//			public void mouseUp(MouseEvent e) {
-//				// transformation.update(getRect());
-//
-//				mouseSelection.width = e.x;
-//				mouseSelection.height = e.y;
-//				// transformation.updateCurrent(mouseSelection);
-// 
-//				// setRect(null);
-//				mouseSelection = null;
-// 
-//				//LOG.debug("OnMouseUp: " + e.x + "," + e.y);
-//				// LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" +
-//				// transformation.getLon(e.y)) ;
-//
-//				if (hasCanvasViewer() && !getCanvas().isDisposed()) {
-//					PlatformUI.getWorkbench().getDisplay()
-//							.asyncExec(new Runnable() {
-//								@Override
-//								public void run() {
-//									if (!getCanvas().isDisposed())
-//										getCanvas().redraw();
-//								}
-//							});
-//				}
-//			}
-//
-//			@Override
-//			public void mouseDown(MouseEvent e) {
-//
-//				mouseSelection = new Rectangle(e.x, e.y, 0, 0);
-//				//LOG.debug("OnMouseDown: " + e.x + "," + e.y);
-//				// LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" +
-//				// transformation.getLon(e.y)) ;
-//			}
-//
-//			@Override
-//			public void mouseDoubleClick(MouseEvent e) {
-//				//LOG.error("Mouse Double Click is not implemented");
-//			}
-//		});
-//
-//		canvasViewer.addMouseMoveListener(new MouseMoveListener() {
-//
-//			@Override
-//			public void mouseMove(MouseEvent e) {
-//				infoText = "";
-//				infoText += "Screen Coordinate: " + e.x + "," + e.y + "\n";
-//			    infoText += "Zoom: " + transformation.getZoom() + "\n";	
-//			    infoText += "Size: " + viewer.getSize() + "\n";
-//			    infoText += "Position: " + transformation.getMapPosition() + "\n";	
-//			    infoText += "Center: " + transformation.getBasicLayer().getCenterPosition() + "\n";	
-//			    
-//			    infoText += "Courser: " + transformation.getBasicLayer().getCursorPosition() + "\n";	
-//			    
-//			    infoText += "Lat: " + ProjectionUtil.position2lat(transformation.getBasicLayer().getCursorPosition().y, transformation.getZoom()) + "\n";	
-//			    infoText += "Lon: " + ProjectionUtil.position2lon(transformation.getBasicLayer().getCursorPosition().x, transformation.getZoom()) + "\n";	
-//
-//
-////				if (hasCanvasViewer() && !getCanvas().isDisposed()) {
-////					PlatformUI.getWorkbench().getDisplay()
-////							.asyncExec(new Runnable() {
-////								@Override
-////								public void run() {
-////									if (!getCanvas().isDisposed())
-////										getCanvas().redraw();
-////								}
-////							});
-////				}
-//
-//			}
-//		});
-//
 		canvas.addKeyListener(new KeyListener() {
 
 			@Override
@@ -358,22 +265,16 @@ public class ScreenManager {
 	}
 
 	public void addPropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
+		PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(propertyName, listener);
 	}
 
 	public void removePropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
+		PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(propertyName, listener);
 	}
 	
 	public void redraw() {
 		canvas.redraw();
-		treeViewer.refresh(true);
 	}
-	
-	public void setTreeViewer(TreeViewer treeViewer){
-		this.treeViewer = treeViewer;
-	}
-	
 }

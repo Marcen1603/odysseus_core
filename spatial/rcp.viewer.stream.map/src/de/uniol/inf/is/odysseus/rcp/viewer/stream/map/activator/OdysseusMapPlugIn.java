@@ -17,14 +17,14 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator;
 
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorAdapterFactory;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerTypeRegistry;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 
 
 /**
@@ -34,33 +34,26 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorAdapterFact
  * 
  * 
  */
-public class ViewerStreamMapPlugIn extends AbstractUIPlugin {
+public class OdysseusMapPlugIn extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.stream.map"; //$NON-NLS-1$
+	public static final String ODYSSEUS_MAP_PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.stream.map.MapEditor";
+	public static final String ODYSSEYS_MAP_EXTENSION = "map";
 
-	// The shared instance
-	private static ViewerStreamMapPlugIn plugin;
+	private static OdysseusMapPlugIn plugin;
 	
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		Platform.getAdapterManager().registerAdapters(new StreamMapEditorAdapterFactory(), StreamEditor.class);
 		plugin = this;
+
+		LayerTypeRegistry.register(new VectorLayer(new LayerConfiguration(null)));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		
 		ColorManager.getInstance().dispose();
 		super.stop(context);
 	}
@@ -70,12 +63,12 @@ public class ViewerStreamMapPlugIn extends AbstractUIPlugin {
 	 *
 	 * @return shared instance
 	 */
-	public static ViewerStreamMapPlugIn getDefault() {
+	public static OdysseusMapPlugIn getDefault() {
 		return plugin;
 	}
 
 	public void log(Throwable e) {
-		IStatus status = new Status(IStatus.ERROR, PLUGIN_ID, -1, "Exception", e);
+		IStatus status = new Status(IStatus.ERROR, ODYSSEUS_MAP_PLUGIN_ID, -1, "Exception", e);
 		getLog().log(status);
 	}
 	

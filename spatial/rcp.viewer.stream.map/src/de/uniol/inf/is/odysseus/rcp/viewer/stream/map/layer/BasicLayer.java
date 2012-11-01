@@ -9,38 +9,29 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.ProjectionUtil;
 
 public class BasicLayer extends AbstractLayer{
 
+    private static final long serialVersionUID = -5707296757822008243L;
 	private ScreenManager screenmanager;
 	private ScreenTransformation transformation;
 	private Display display;
 	private Canvas canvas;
 	
 	private Color waitBackground, waitForeground;
-		
-	public BasicLayer(ScreenManager screenmanager) {
-		this.screenmanager = screenmanager;
-		this.transformation = screenmanager.getTransformation();
-		
-		this.display = screenmanager.getDisplay();
-		this.canvas = screenmanager.getCanvas();
-		
-		waitBackground = new Color(display, 160, 160, 160);
-		waitForeground = new Color(display, 200, 200, 200);	
-		
-		canvas.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				BasicLayer.this.widgetDisposed(e);
-			}
-		});
-		
-		this.name = "Basic Layer";
-	}
-	
+
+
+	public BasicLayer(LayerConfiguration configuration) {
+		super(configuration);
+		this.configuration.setType(-1);
+		this.active = false;
+    }
 	
 	@Override
 	public void draw(GC gc) {
@@ -97,5 +88,54 @@ public class BasicLayer extends AbstractLayer{
 		waitBackground.dispose();
 		waitForeground.dispose();
 	}
-	
+
+
+	@Override
+    public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
+		this.screenmanager = screenManager;
+		this.transformation = screenManager.getTransformation();
+		
+		this.display = screenManager.getDisplay();
+		this.canvas = screenManager.getCanvas();
+		
+		waitBackground = new Color(display, 160, 160, 160);
+		waitForeground = new Color(display, 200, 200, 200);	
+		
+		canvas.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				BasicLayer.this.widgetDisposed(e);
+			}
+		});
+		this.active = true;
+    }
+
+
+	@Override
+    public String[] getSupprtedDatatypes() {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
+
+
+	@Override
+    public void addTuple(Tuple<?> tuple) {
+	    // TODO Auto-generated method stub
+	    
+    }
+
+
+	@Override
+    public void removeLast() {
+	    // TODO Auto-generated method stub
+	    
+    }
+
+
+	@Override
+    public int getTupleCount() {
+	    // TODO Auto-generated method stub
+	    return 0;
+    }
+
+
 }

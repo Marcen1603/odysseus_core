@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline;
+package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views;
 
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -34,11 +35,11 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
  * @author Kai Pancratz
  * 
  */
-public class StreamMapEditorOutlineLabelProvider implements ILabelProvider {
+public class ConnectionLabelProvider implements ILabelProvider {
 
 	Map<SDFAttribute, Image> images = null;
 
-	public StreamMapEditorOutlineLabelProvider() {
+	public ConnectionLabelProvider() {
 		images = new TreeMap<SDFAttribute, Image>();
 	}
 
@@ -74,7 +75,7 @@ public class StreamMapEditorOutlineLabelProvider implements ILabelProvider {
 			}
 		}
 		if (element instanceof Style) {
-				return ((Style) element).getImage();
+			return ((Style) element).getImage();
 		}
 		return null;
 	}
@@ -82,19 +83,13 @@ public class StreamMapEditorOutlineLabelProvider implements ILabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof LayerUpdater) {
-			return ((LayerUpdater) element).getConnection().getSubscriptions().get(0).getSchema().toString();
-		} else if (element instanceof SDFSchema) {
-			return ((SDFSchema) element).toString();
+			return ((LayerUpdater) element).getQuery().getLogicalQuery().getQueryText();
 		} else if (element instanceof SDFAttribute) {
 			return ((SDFAttribute) element).getAttributeName();
-		} else if (element instanceof ILayer) {
-			return ((ILayer) element).getName();
-		} else if (element instanceof Style) {
-			return element.getClass().getSimpleName();
- 		} else if (element instanceof LayerUpdater[]) {
-			return "Sources";	
+		} else if (element instanceof IFile) {
+			return ((IFile) element).getName();
 		} else {
-			return "Layers";	
+			return "Unknown Type";
 		}
 	}
 }

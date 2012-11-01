@@ -33,8 +33,7 @@ public class PointStyle extends Style {
 	private SHAPE shape;
 	int size = 1;
 
-	public PointStyle(SHAPE shape, int size, int lineWidth, Color lineColor,
-			Color fillColor) {
+	public PointStyle(SHAPE shape, int size, int lineWidth, Color lineColor, Color fillColor) {
 		super();
 		this.shape = shape;
 		this.size = size;

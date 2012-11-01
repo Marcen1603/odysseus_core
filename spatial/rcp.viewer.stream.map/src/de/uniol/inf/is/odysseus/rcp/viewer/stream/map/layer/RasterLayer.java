@@ -22,6 +22,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tile.AsyncImage;
@@ -30,6 +33,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tile.TileServer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.ProjectionUtil;
 
 public class RasterLayer extends AbstractLayer {
+	
+	private static final long serialVersionUID = 7482299307627103992L;
 
 	private static final Logger LOG = Logger
 			.getLogger(RasterLayer.class.getName());
@@ -43,18 +48,20 @@ public class RasterLayer extends AbstractLayer {
 	private Canvas canvas = null;
 	private Display display = null;
 
-	public RasterLayer(ScreenManager manager, int style, String name) {
-		this.manager = manager;
+    public RasterLayer(LayerConfiguration configuration) {
+	    super(configuration);
+    }
+
+	@Override
+    public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
+		this.manager = screenManager;
 		this.transformation = manager.getTransformation();
 		this.canvas = manager.getCanvas();
 		this.display = canvas.getDisplay();
-		this.name = name;
-		
-		tileServer = new TileServer("http://tile.openstreetmap.org/", 18, 0, manager);
-		//this.name = "Raster Layer( " + tileServer.getURL() + " )";
-
-		LOG.info("Add new RasterLayer: " + getName());
-	}
+		this.name = configuration.getName();
+		tileServer = new TileServer(configuration.getUrl(), 18, 0, manager);
+		this.active = true;
+    }
 
 	@Override
 	public void draw(GC gc) {
@@ -131,6 +138,28 @@ public class RasterLayer extends AbstractLayer {
 	}
 
 
+	@Override
+    public String[] getSupprtedDatatypes() {
+	    return null;
+    }
+
+	@Override
+    public void addTuple(Tuple<?> tuple) {	    
+    }
+
+	@Override
+    public void removeLast() {	    
+    }
+
+	@Override
+    public int getTupleCount() {
+	    return 0;
+    }
+
+	@Override
+    public LayerConfiguration getConfiguration() {
+		return configuration;
+    }
 
 }
 

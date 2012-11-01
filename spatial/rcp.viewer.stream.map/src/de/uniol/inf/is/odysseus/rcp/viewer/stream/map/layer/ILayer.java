@@ -15,8 +15,16 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
+import java.io.Serializable;
+
 import org.eclipse.swt.graphics.GC;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
 /**
@@ -24,17 +32,30 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
  * @author Kai Pancratz
  * 
  */
-public interface ILayer {
+public interface ILayer extends Serializable {
 
-	public Style getStyle();
-	public void draw(GC gc);	
+	public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute);
 	
 	public String getName();
 	public String getComplexName();
 	public String getQualifiedName();
-	void setName(String name);
+	public String getSRID();
 	
-//	public BoundingBox getBoundingBox();
-//	public void setBoundingBox(BoundingBox boundingBox);
+	public String[] getSupprtedDatatypes();
+	
+	public void addTuple(Tuple<?> tuple);
+	
+	public Style getStyle();
+	
+	public void draw(GC gc);	
+	
+	public void removeLast();
+	
+	public int getTupleCount();
+	
+	public LayerConfiguration getConfiguration();
+	public void setConfiguration(LayerConfiguration configuration);
+
+	public boolean isActive();
 	
 }

@@ -40,8 +40,9 @@ public class StreamMapEditorEarlyStartup implements IStartup {
 			@Override
 			public void run() {
 				try {
-					Bundle bundle = ViewerStreamMapPlugIn.getDefault().getBundle();
-					ImageRegistry imageRegistry = ViewerStreamMapPlugIn.getDefault().getImageRegistry();
+					Bundle bundle = OdysseusMapPlugIn.getDefault().getBundle();
+					ImageRegistry imageRegistry = OdysseusMapPlugIn.getDefault().getImageRegistry();
+					
 					imageRegistry.put("blank_16", ImageDescriptor.createFromURL(bundle.getEntry("icons/blank_16.png")));
 					imageRegistry.put("layers_16", ImageDescriptor.createFromURL(bundle.getEntry("icons/layers_16.png")));
 					imageRegistry.put("layers_plus_16", ImageDescriptor.createFromURL(bundle.getEntry("icons/layers_plus_16.png")));

@@ -18,11 +18,11 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 	private Point downCoords;
 	private Point downPosition;
 	private ScreenManager screenManager;
-	StreamMapEditor editor;
+	private StreamMapEditorPart editor;
 
 	private Rectangle mouseSelection = null;
 
-	public MapMouseListener(ScreenManager screenManager, StreamMapEditor editor) {
+	public MapMouseListener(ScreenManager screenManager, StreamMapEditorPart editor) {
 		this.screenManager = screenManager;
 		this.editor = editor;
 	}

@@ -2,61 +2,153 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.wizard.OdysseusMapFileWizard"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
+            hasPages="true"
+            icon="Icons/layers.png"
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptWizard"
+            name="Odysseus Map"
+            project="false">
+      </wizard>
+   </extension>
+   <extension
          point="org.eclipse.ui.startup">
       <startup
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.StreamMapEditorEarlyStartup">
       </startup>
    </extension>
-   <extension
-         point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
-      <editor
-            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMap10Editor"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMap10Editor"
-            label="Map 10">
-      </editor>
-      <editor
-            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMap10000Editor"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMap10000Editor"
-            label="Map 10000">
-      </editor>
-      <editor
-            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapWindowEditor"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapWindowEditor"
-            label="Map Window">
-      </editor>
-   </extension>
+<!--
    <extension
          point="org.eclipse.ui.commands">
       <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.commands.AddSourceCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.commands.AddSourceCommand"
+            name="Connect Stream">
+      </command>
+      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.commands.AddLayerCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.commands.AddLayerCommand"
-            name="Add Map Layer">
+            name="Add Layer">
       </command>
+      
    </extension>
+-->
    <extension
          point="org.eclipse.ui.views">
                <view
             allowMultiple="false"
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapLayerView"
-            id="de.uniol.inf.is.odysseus.rcp.views.MapLayerView"
-            name="MapLayer View"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapLayerView"
+            name="Map Layers"
             restorable="true">
       </view>
+               <view
+                     allowMultiple="false"
+                     category="Odysseus"
+                     class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapConnectionView"
+                     id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapConnectionView"
+                     name="Map Connections"
+                     restorable="true">
+               </view>
+                <view
+                     allowMultiple="false"
+                     category="Odysseus"
+                     class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapQueryFilesView"
+                     id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapQueryFilesView"
+                     name="Preload Query Files"
+                     restorable="true">
+               </view>
          
    </extension>
    <extension
-         point="org.eclipse.ui.perspectives">
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart"
+            default="true"
+            filenames="*.map"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.MapEditor"
+            name="StreamMap">
+      </editor>
    </extension>
-   
+   <extension point="org.eclipse.ui.perspectives">
+  		<perspective 
+            id="de.uniol.inf.is.odysseus.ui.perspective.spatial" 
+            name="Spatial Queries" 
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.perspective.SpatialPerspective" 
+            icon="icons/MyIcon.gif"> 
+        </perspective> 
+   </extension>
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+         
+          <perspectiveExtension
+            targetID="de.uniol.inf.is.odysseus.ui.perspective.spatial">    
+         
+          <view
+               id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapQueryFilesView"
+               minimized="false"
+               ratio="0.5f"
+               relationship="bottom"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
+          </view>
+          <view
+               id="de.uniol.inf.is.odysseus.rcp.views.SinkView"
+               minimized="false"
+               ratio="0.5f"
+               relationship="bottom"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
+         </view>
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.views.SourcesView"
+               minimized="false"
+               ratio="0.5f"
+               relationship="bottom"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
+         </view>
+         
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.views.UserView"
+               minimized="false"
+               ratio="0.5f"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ContentOutline">
+         </view>
+         
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapLayerView"
+               minimized="false"
+               ratio="0.5f"
+               relationship="bottom"
+               relative="org.eclipse.ui.views.ContentOutline">
+         </view>
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.MapConnectionView"
+               minimized="false"
+               ratio="0.5f"
+               relationship="bottom"
+               relative="org.eclipse.ui.views.ContentOutline">
+         </view>
+      </perspectiveExtension>
+       
+   </extension>
+   <!--
    <extension point="org.eclipse.ui.menus">
  			<menuContribution locationURI="menu:org.eclipse.ui.main.menu?after=additions">
 	 			<menu
-	               label="Geo Information"
+	               label="Spatial"
 	               id="org.eclipse.ui.examples.contributions.menus.globalMenu">
+        <command
+              commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.commands.AddSourceCommand"
+              label="Connect Stream"
+              style="push">
+        </command>
 	         		<command 
 	         			commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.commands.AddLayerCommand" 
-	         			label="Add Map Layer" 
+	         			label="New Layer" 
 	         			style="push">
 	         		</command>
 	         		<separator
@@ -66,6 +158,6 @@
 	         	</menu>
       		</menuContribution>
    </extension>
-   
-   
+   -->
+
 </plugin>

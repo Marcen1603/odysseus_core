@@ -1,10 +1,22 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
-public class LayerConfiguration {
+import java.io.Serializable;
 
-	private int layerType = 0;
+public class LayerConfiguration implements Serializable{
+
+    private static final long serialVersionUID = -3897708132891607334L;
+    
+	private int type = 0;
 	private String name = null;
-	private int attributePosition = 0;
+	private String query = null;
+	private String attribute = null;
+	private String url = null;
+	
+	private PersestentStyle style = null;
+	
+	public LayerConfiguration(String layerName) {
+		this.name = layerName;
+    }
 	
 	public String getName() {
 		return name;
@@ -14,20 +26,45 @@ public class LayerConfiguration {
 		this.name = name;
 	}
 
-	public int getAttributePosition() {
-		return attributePosition;
-	}
-
-	public void setAttributePosition(int attributePosition) {
-		this.attributePosition = attributePosition;
-	}
-
-	public int getLayerType() {
-	    return layerType;
+	public int getType() {
+	    return type;
     }
 
-	public void setLayerType(int layerType) {
-	    this.layerType = layerType;
+	public void setType(int type) {
+	    this.type = type;
     }
 
+	public String getUrl() {
+	    return url;
+    }
+
+	public void setUrl(String url) {
+	    this.url = url;
+    }
+
+	public String getQuery() {
+	    return query;
+    }
+
+	public void setQuery(String query) {
+	    this.query = query;
+    }
+
+	public String getAttribute() {
+	    return attribute;
+    }
+
+	public void setAttribute(String attribute) {
+	    this.attribute = attribute;
+    }
+
+	public PersestentStyle getStyle() {
+	    return style;
+    }
+
+	public void setStyle(PersestentStyle style) {
+	    this.style = style;
+    }
+
+	
 }

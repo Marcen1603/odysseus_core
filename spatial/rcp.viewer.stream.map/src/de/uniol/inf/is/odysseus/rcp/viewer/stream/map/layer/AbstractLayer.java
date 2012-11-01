@@ -4,22 +4,25 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
 public abstract class AbstractLayer implements ILayer {
 
+    private static final long serialVersionUID = -8420177483408915474L;
 	protected String name;
 	protected String srid;
+	protected LayerConfiguration configuration;
+	protected boolean active = false;
+	
+	public AbstractLayer(LayerConfiguration configuration){
+		this.configuration = configuration;
+		this.name = configuration.getName();
+	}
 	
 	@Override
 	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
+		return name; 
 	}
 	
-	public String getSrid() {
-		return srid;
-	}
+    public String getSRID() {
+	    return srid;
+    }
 
 	public void setSrid(String srid) {
 		this.srid = srid;
@@ -37,6 +40,21 @@ public abstract class AbstractLayer implements ILayer {
 	@Override
 	public String getQualifiedName() {
 		return name;
+	}
+	
+	@Override
+	public LayerConfiguration getConfiguration(){
+		return configuration;
+	}
+	
+	@Override
+	public void setConfiguration(LayerConfiguration configuration){
+		this.configuration = configuration;
+	}
+	
+	@Override
+	public boolean isActive(){
+		return active;
 	}
 	
 }

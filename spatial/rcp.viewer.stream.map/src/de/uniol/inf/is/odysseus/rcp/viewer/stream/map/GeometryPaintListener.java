@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 
-/**
+/** 
  * @author Stephan Jansen
  * @author Kai Pancratz
  * 
@@ -37,22 +37,22 @@ final class GeometryPaintListener implements PaintListener {
 	/**
 	 * 
 	 */
-	private final StreamMapEditor streamMapEditor;
+	private final StreamMapEditorPart streamMapEditor;
 
-	public GeometryPaintListener(StreamMapEditor streamMapEditor) {
+	public GeometryPaintListener(StreamMapEditorPart streamMapEditor) {
 		this.streamMapEditor = streamMapEditor;
-	}
+	} 
 
 	public void paintControl(PaintEvent e) {
 		e.gc.setAntialias(SWT.ON);
-		for (ILayer layer : this.streamMapEditor.getLayerOrder()) {
-			if(layer != null){
+		for (ILayer layer : this.streamMapEditor.getMapEditorModel().getLayers()) {
+			if(layer != null && layer.isActive()){
 				layer.draw(e.gc);
 			}
-			else{
-				LOG.error("Layer in Orderlist is Null");
-				throw new RuntimeException("Layer Nullpointer");
-			}
+//			else{
+//				LOG.error("Layer in Orderlist is Null");
+//				throw new RuntimeException("Layer Nullpointer");
+//			}
 		}
 		e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		if (this.streamMapEditor.getScreenManager().getMouseSelection() != null){

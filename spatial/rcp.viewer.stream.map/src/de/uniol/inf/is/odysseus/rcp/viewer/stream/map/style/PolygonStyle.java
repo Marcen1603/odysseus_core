@@ -47,7 +47,7 @@ public class PolygonStyle extends Style{
 		
 		super.draw(gc, list);
 	}	
-
+	
 	protected void draw(GC gc, int[][] list, Color fcolor, Color bcolor) {
 		fill(gc, list, bcolor);
 		gc.setLineWidth(this.getLineWidth());

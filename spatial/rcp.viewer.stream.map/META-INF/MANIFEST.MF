@@ -4,20 +4,31 @@ Bundle-Name: Map
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.stream.map;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Stephan Jansen
-Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.ViewerStreamMapPlugIn
-Import-Package: de.uniol.inf.is.odysseus.core,
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.OdysseusMapPlugIn
+Import-Package: com.google.common.base,
+ de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.core.server.metadata,
- de.uniol.inf.is.odysseus.core.streamconnection,
+ de.uniol.inf.is.odysseus.rcp,
+ de.uniol.inf.is.odysseus.rcp.editor,
+ de.uniol.inf.is.odysseus.rcp.editor.text,
+ de.uniol.inf.is.odysseus.rcp.exception,
  de.uniol.inf.is.odysseus.rcp.viewer.editors,
  de.uniol.inf.is.odysseus.rcp.viewer.extension,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator,
+ de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.table,
+ org.eclipse.core.resources,
+ org.eclipse.ui.console,
+ org.eclipse.ui.dialogs,
+ org.eclipse.ui.navigator.resources,
+ org.eclipse.ui.part,
  org.eclipse.ui.views.contentoutline,
- org.osgeo.proj4j,
+ org.eclipse.ui.views.properties,
+ org.eclipse.ui.wizards.newresource,
  org.slf4j
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.ui,
@@ -26,10 +37,16 @@ Require-Bundle: org.eclipse.ui,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  com.vividsolutions.jts;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.rcp.editor.text;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.rcp.editor.text.cql;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.rcp.editor.text.pql;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.rcp.editor;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.map,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: .,
+ lib/gson-2.2.2.jar

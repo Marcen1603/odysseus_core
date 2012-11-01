@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
  * 
  */
 public abstract class Style{
-	
+
 	private boolean changed = true;
 	private int lineWidth = 1;
 	private Color lineColor = null;
@@ -104,6 +104,8 @@ public abstract class Style{
 			style.draw(gc, list);
 		}
 	}
+	
+	//Double Method: hasSubStyles and hasSubStyle  
 	
 	public boolean hasSubStyle() {
 		if(substyle != null){
@@ -176,4 +178,6 @@ public abstract class Style{
 			return null;
 		return this.substyle.toArray(new Style[this.substyle.size()]);
 	}    
+	
+	
 }
