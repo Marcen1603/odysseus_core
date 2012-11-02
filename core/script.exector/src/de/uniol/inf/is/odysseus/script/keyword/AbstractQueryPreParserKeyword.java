@@ -19,6 +19,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -38,6 +41,8 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.TransCfgPreParserKeyword;
 
 public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractQueryPreParserKeyword.class);
+	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		try {
@@ -102,7 +107,11 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 
 			if (startQuery()) {
 				for (Integer q : queriesToStart) {
-					executor.startQuery(q, queryCaller);
+					try {
+						executor.startQuery(q, queryCaller);
+					} catch( Throwable t ) {
+						LOG.error("Could not start query in script", t);
+					}
 				}
 			}
 
