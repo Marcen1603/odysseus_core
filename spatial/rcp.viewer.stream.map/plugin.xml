@@ -9,7 +9,7 @@
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.wizard.OdysseusMapFileWizard"
             finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             hasPages="true"
-            icon="Icons/layers.png"
+            icon="icons/layers.png"
             id="de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptWizard"
             name="Odysseus Map"
             project="false">
