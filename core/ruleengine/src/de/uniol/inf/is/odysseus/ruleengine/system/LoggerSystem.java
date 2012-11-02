@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,33 +54,28 @@ public class LoggerSystem {
 		printlog(defaultAccuracy, message, thelogger);
 	}
 
-	private static void printlog(Accuracy accuracy, String message,
-			Logger currentlogger) {
-		if (accuracy.ordinal() < minAccuracy.ordinal()) {
-			if (showAllAsDebug) {
-				currentlogger.debug("[" + accuracy + "] " + message);
-			} else {
-				switch (accuracy) {
-				case TRACE:
-					currentlogger.trace(message);
-					break;
-				case DEBUG:
-					currentlogger.debug(message);
-					break;
-				case INFO:
-					currentlogger.info(message);
-					break;
-				case WARN:
-					currentlogger.warn(message);
-					break;
-				case ERROR:
-					currentlogger.error(message);
-					break;
+	private static void printlog(Accuracy accuracy, String message, Logger currentlogger) {
 
-				default:
-					break;
-				}
-			}
+		switch (accuracy) {
+		case TRACE:
+			currentlogger.trace(message);
+			break;
+		case DEBUG:
+			currentlogger.debug(message);
+			break;
+		case INFO:
+			currentlogger.info(message);
+			break;
+		case WARN:
+			currentlogger.warn(message);
+			break;
+		case ERROR:
+			currentlogger.error(message);
+			break;
+
+		default:
+			break;
 		}
 	}
+
 }
