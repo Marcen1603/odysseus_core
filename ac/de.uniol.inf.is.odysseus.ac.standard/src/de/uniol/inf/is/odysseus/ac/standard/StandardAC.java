@@ -572,7 +572,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	private static List<IPhysicalOperator> getAllOperators(IServerExecutor executor) {
 		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
 
-		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
+		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries().toArray(new IPhysicalQuery[0])) {
 			for (IPhysicalOperator op : query.getPhysicalChilds()) {
 				if (!operators.contains(op) && !op.getClass().getSimpleName().contains("DataSourceObserverSink") && op.getOwner().contains(query)) {
 					operators.add(op);
