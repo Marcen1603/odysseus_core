@@ -71,6 +71,13 @@ public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePi
 	public void setBufferName(String buffername) {
 		this.buffername = buffername;
 	}
+	
+	@Override
+	protected void process_close() {
+		synchronized (buffer) {
+			buffer.clear();
+		}
+	}
 
 	@Override
 	final protected void process_open() throws OpenFailedException {
