@@ -18,6 +18,9 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.test;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import de.uniol.inf.is.odysseus.core.server.sla.factories.PenaltyFactory;
 import de.uniol.inf.is.odysseus.core.server.sla.factories.ScopeFactory;
@@ -48,9 +51,11 @@ public class GenQueries {
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final double OP_SELECTIVITY = 1.0;
 	public static final int OP_PROCESSING_TIME = 35 * 100000; // realistic 1500
-	private static final int NUMBER_OF_USERS = 4;
+	private static final int NUMBER_OF_USERS = 100;
 	private static final int NUMBER_OF_QUERIES_PER_USER = 1;
 	private static final int NUMBER_OF_SLAS = 3;
+	private static final double[] SLA_VARIANCE = { 0.1, 0.3, 0.6 };
+	private static final int[] PRIO_FOR_SLA_NO = {6,3,1};
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
 	private static final int NUMBER_OF_SERVICE_LEVELS = 3;
 	private static final String SLA_SCOPE = ScopeFactory.SCOPE_AVERAGE;
@@ -71,32 +76,34 @@ public class GenQueries {
 	private static final int DATA_RATE_LOW = 1;
 	private static final int DATA_RATE_VERY_LOW = 1;
 
-	private static String odysseusDefaultHome = String.format("%s/%sodysseus/", System.getProperty("user.home"),getDot(System.getProperty("os.name")));
+	private static String odysseusDefaultHome = String.format("%s/%sodysseus/",
+			System.getProperty("user.home"),
+			getDot(System.getProperty("os.name")));
 	private static String homeDir;
-	static{
+	static {
 		homeDir = System.getenv("ODYSSEUS_HOME");
-		if (homeDir == null || homeDir.length() == 0){
+		if (homeDir == null || homeDir.length() == 0) {
 			homeDir = odysseusDefaultHome;
 		}
 	}
-	
+
 	/**
 	 * Returns a dot on specific operating systems: unix,linux, and mac.
 	 * 
 	 */
-	private static String getDot(String os){
+	private static String getDot(String os) {
 		os = os.toLowerCase();
-		if((os.indexOf( "win" ) >= 0)){
-			//Windows
+		if ((os.indexOf("win") >= 0)) {
+			// Windows
 			return "";
-		}else if((os.indexOf( "mac" ) >= 0)){
-			//Macintosh 
+		} else if ((os.indexOf("mac") >= 0)) {
+			// Macintosh
 			return ".";
-		}else if((os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0)){
-			//Unix
+		} else if ((os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0)) {
+			// Unix
 			return ".";
-		}else{
-			//All other
+		} else {
+			// All other
 			return "";
 		}
 	}
@@ -165,7 +172,7 @@ public class GenQueries {
 	static int[][][] DATA_RATES = { dataRates0, dataRates1, dataRates2,
 			dataRates3, dataRates4, dataRates5, dataRates6, dataRates7 };
 
-	static int[] DATA_RATE_INDICES = { 6,7 };
+	static int[] DATA_RATE_INDICES = { 6, 7 };
 	static int dataRatePos = 0;
 
 	public static void main(String[] args) {
@@ -177,8 +184,10 @@ public class GenQueries {
 					scriptOps);
 			currentNumberOfSimulation++;
 		}
-		String scriptRun = "///OdysseusScript" + NEWLINE + "#LOGIN System manager" + NEWLINE + "#PARSER CQL"
-				+ NEWLINE + "#TRANSCFG Standard" + NEWLINE + "#STOPSCHEDULER" + NEWLINE + "#STARTQUERIES" + NEWLINE + "#STARTSCHEDULER";
+		String scriptRun = "///OdysseusScript" + NEWLINE
+				+ "#LOGIN System manager" + NEWLINE + "#PARSER CQL" + NEWLINE
+				+ "#TRANSCFG Standard" + NEWLINE + "#STOPSCHEDULER" + NEWLINE
+				+ "#STARTQUERIES" + NEWLINE + "#STARTSCHEDULER";
 		writeScriptFile("run.qry", scriptRun);
 		System.out.println(scriptSLA);
 		System.out.println(createScriptOps());
@@ -235,19 +244,32 @@ public class GenQueries {
 				sb.append(createTestInput(i, k));
 			}
 		}
-		
+
+		List<Integer> slas = new ArrayList<>();
+		for (int v = 0; v < SLA_VARIANCE.length; v++) {
+			for (int i = 0; i < NUMBER_OF_USERS * SLA_VARIANCE[v]; i++) {
+				slas.add(v);
+			}
+		}
+		while (slas.size() < NUMBER_OF_USERS) {
+			slas.add(SLA_VARIANCE.length);
+		}
+
+		Random rnd = new Random();
 		for (int i = 0; i < NUMBER_OF_USERS; i++) {
+			int pos = rnd.nextInt(slas.size());
+			int slaToUse = slas.remove(pos);
 			sb.append(createLogin(i));
 			for (int k = 0; k < NUMBER_OF_QUERIES_PER_USER; k++) {
 				if (COMPLEX_QUERIES_ENABLED) {
 					if (k == 0) {
-						sb.append(createSimpleQuery(i, i % NUMBER_OF_SLAS, i));
+						sb.append(createSimpleQuery(i, slaToUse, i));
 					} else {
-						sb.append(createComplexQuery(i, i % NUMBER_OF_SLAS,
+						sb.append(createComplexQuery(i, slaToUse,
 								k + 1, i));
 					}
 				} else {
-					sb.append(createSimpleQuery(i, i % NUMBER_OF_SLAS, i));
+					sb.append(createSimpleQuery(i, slaToUse, i));
 				}
 			}
 		}
@@ -264,7 +286,8 @@ public class GenQueries {
 		return sb.toString();
 	}
 
-	private static String createSimpleQuery(int number, int slaNumber, int userNumber) {
+	private static String createSimpleQuery(int number, int slaNumber,
+			int userNumber) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(createQueryParams(slaNumber, userNumber));
 		sb.append(createBuffer(number, 0));
@@ -284,7 +307,7 @@ public class GenQueries {
 				sb.append("{priority=").append(getALternativeSLANumber())
 						.append("}");
 			} else {
-				sb.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
+				sb.append("{priority=").append(PRIO_FOR_SLA_NO[slaNumber])
 						.append("}");
 			}
 
@@ -362,9 +385,11 @@ public class GenQueries {
 		sb.append("#QUERY").append(NEWLINE);
 		if (ALTERNATIVE_SLA_ENABLED) {
 			ALTERNATIVE_SLA_COUNTER++;
-			sb.append("ASSIGN SLA sla").append(getALternativeSLANumber()).append(" TO USER test").append(userNumber).append(NEWLINE);
+			sb.append("ASSIGN SLA sla").append(getALternativeSLANumber())
+					.append(" TO USER test").append(userNumber).append(NEWLINE);
 		} else {
-			sb.append("ASSIGN SLA sla").append(slaNumber).append(" TO USER test").append(userNumber).append(NEWLINE);
+			sb.append("ASSIGN SLA sla").append(slaNumber)
+					.append(" TO USER test").append(userNumber).append(NEWLINE);
 		}
 		sb.append("#PARSER PQL").append(NEWLINE);
 		sb.append("#ADDQUERY").append(NEWLINE);
@@ -376,7 +401,7 @@ public class GenQueries {
 		if (isHighPrio) {
 			return ALTERNATIVE_BEST_SLA_PRIO;
 		}
-        return 1;
+		return 1;
 	}
 
 	private static String createSLA(int number, double metricValue,
@@ -473,15 +498,17 @@ public class GenQueries {
 		StringBuilder sb = new StringBuilder();
 		sb.append("#PARSER PQL").append(NEWLINE);
 		sb.append("#QUERY").append(NEWLINE);
-		sb.append("testinput")
-				.append(number)
+		sb.append("testinput").append(number)
 				.append(formatSubnumber(subNumber))
-				.append(" := testproducer({delay = ").append(INPUT_DELAY_MILLIS).append(", invertedpriorityratio = 10, parts = [")
+				.append(" := testproducer({delay = ")
+				.append(INPUT_DELAY_MILLIS)
+				.append(", invertedpriorityratio = 10, parts = [")
 				.append(createTestInputParam()).append("]})").append(NEWLINE);
 		sb.append("#PARSER CQL").append(NEWLINE);
 		sb.append("#QUERY").append(NEWLINE);
 		sb.append("GRANT READ ON ").append("testinput").append(number)
-			.append(formatSubnumber(subNumber)).append(" TO Public;").append(NEWLINE);
+				.append(formatSubnumber(subNumber)).append(" TO Public;")
+				.append(NEWLINE);
 		statsNumSources++;
 		return sb.toString();
 	}
