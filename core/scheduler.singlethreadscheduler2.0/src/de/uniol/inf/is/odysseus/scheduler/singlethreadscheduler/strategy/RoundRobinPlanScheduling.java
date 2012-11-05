@@ -15,8 +15,10 @@
  */
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.strategy;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -24,42 +26,47 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.AbstractPartialPlanScheduling;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 
-public class RoundRobinPlanScheduling extends AbstractPartialPlanScheduling implements
-		IClone {
+public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
+		ISchedulingEventListener, IClone {
 
 	Logger logger = LoggerFactory.getLogger(RoundRobinPlanScheduling.class);
 	private ReentrantLock lock = new ReentrantLock();
 
 	final private List<IScheduling> planList;
+	final private Set<IScheduling> pausedPlans;
 	private Iterator<IScheduling> planIterator = null;
 
 	public RoundRobinPlanScheduling() {
 		planList = new CopyOnWriteArrayList<IScheduling>();
+		pausedPlans = new HashSet<IScheduling>();
 	}
 
 	public RoundRobinPlanScheduling(RoundRobinPlanScheduling other) {
 		this.planList = new CopyOnWriteArrayList<IScheduling>(other.planList);
+		this.pausedPlans = new HashSet<IScheduling>(other.pausedPlans);
 	}
 
 	@Override
 	public void addPlan(IScheduling plan) {
 		lock.lock();
 		planList.add(plan);
+		plan.addSchedulingEventListener(this);
 		planIterator = null;
 		lock.unlock();
 	}
 
 	@Override
 	public void clear() {
-		super.clear();
 		lock.lock();
 		planIterator = null;
 		for (IScheduling plan : planList) {
 			plan.removeSchedulingEventListener(this);
 		}
+		pausedPlans.clear();
 		planList.clear();
 		lock.unlock();
 	}
@@ -77,10 +84,16 @@ public class RoundRobinPlanScheduling extends AbstractPartialPlanScheduling impl
 
 	@Override
 	public IScheduling nextPlan() {
-		checkPausedPlans();
-
 		IScheduling returnValue = null;
-
+		synchronized (pausedPlans) {
+			while (pausedPlans.size() == planList.size()) {
+				try {
+					pausedPlans.wait(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		lock.lock();
 		if (planIterator == null || !planIterator.hasNext()) {
 			planIterator = planList.iterator();
@@ -92,6 +105,18 @@ public class RoundRobinPlanScheduling extends AbstractPartialPlanScheduling impl
 		return returnValue;
 	}
 
+	@Override
+	public void nothingToSchedule(IScheduling sched) {
+		pausedPlans.add(sched);
+	}
+
+	@Override
+	public void scheddulingPossible(IScheduling sched) {
+		synchronized (pausedPlans) {
+			pausedPlans.remove(sched);
+			pausedPlans.notifyAll();
+		}
+	}
 
 	@Override
 	public RoundRobinPlanScheduling clone() {
