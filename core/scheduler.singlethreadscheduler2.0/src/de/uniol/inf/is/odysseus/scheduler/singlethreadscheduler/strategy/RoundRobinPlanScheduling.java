@@ -74,6 +74,7 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 	@Override
 	public void removePlan(IScheduling plan) {
 		planList.remove(plan);
+		pausedPlans.remove(plan);
 		plan.removeSchedulingEventListener(this);
 	}
 
