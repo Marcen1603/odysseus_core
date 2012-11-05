@@ -35,13 +35,7 @@ abstract public class AbstractPartialPlanScheduling implements IPartialPlanSched
 			}
 		}		
 	}
-	
-	@Override
-	public void addPlan(IScheduling scheduling) {
-		synchronized (pausedPlans) {
-			pausedPlans.notifyAll();
-		}
-	}
+
 	
 	@Override
 	public void nothingToSchedule(IScheduling sched) {
