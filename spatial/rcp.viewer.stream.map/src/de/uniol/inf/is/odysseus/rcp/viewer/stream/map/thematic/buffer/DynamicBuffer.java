@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.buffer;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -30,8 +29,8 @@ public class DynamicBuffer {
 	
 	private TimeSliderControl timeSliderControl;
 	
-	private ArrayList<PointInTime> timeList;
-	
+	PointInTime startPointInTime;
+	PointInTime endPointInTime;
 	
 	public DynamicBuffer(StreamMapEditorPart streamMapEditor, MapEditorModel mapEditorModel, ScreenManager screenManager) {
 		super();
@@ -40,29 +39,22 @@ public class DynamicBuffer {
 		this.timeSliderControl = new TimeSliderControl(this, screenManager.getTimeSliderComposite());
 		puffer = new HashMap<>();
 		connections = new HashMap<>();
-
-		
-		timeList = new ArrayList<>();
-		timeList.add(new PointInTime(0));
 	}
 
 	public void addTuple(LayerUpdater layerUpdater, IStreamObject<? extends ITimeInterval> element) {
 		PointInTime start = element.getMetadata().getStart();
 		PointInTime end = element.getMetadata().getEnd();
 		
-		if(!timeList.contains(start)){
-			timeList.add(start);
+		if(startPointInTime==null || start.before(startPointInTime)){
+			startPointInTime=start;
 		}
-		if(end.isInfinite()==false){
-			if(!timeList.contains(end)){
-				timeList.add(end);
-			}
+		if(endPointInTime==null || start.after(endPointInTime)){
+			endPointInTime = start;
 		}
-		Collections.sort(timeList);
 		
-		screenManager.getDisplay().asyncExec(new Runnable() {
+		screenManager.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				timeSliderControl.setMaxValue(timeList.size()-1);
+				timeSliderControl.updateSliderRange(startPointInTime, endPointInTime);
 			}
 		});
 		
@@ -85,38 +77,6 @@ public class DynamicBuffer {
 			}
 		});
 		
-		
-		
-//		DefaultTISweepArea<IStreamObject<? extends ITimeInterval>> sweepArea = puffer.get(layerUpdater);
-//		sweepArea.insert(element);
-//		
-//		
-//		
-//		for (IStreamObject<? extends ITimeInterval> iStreamObject : sweepArea) {
-//			System.out.println(iStreamObject.toString());
-//		}
-		
-		
-		
-		
-		
-//		for (ILayer layer : layerUpdater) {
-//			if(layer instanceof ChoroplethLayer){
-//				((ChoroplethLayer)layer).addElement(element);
-//			}else{
-//				layer.addTuple((Tuple<?>) element);
-//				if (layer.getTupleCount() > streamMapEditor.getMaxTuplesCount()) {
-//					layer.removeLast();
-//				}
-//			}
-//		}
-//
-//		
-//		streamMapEditor.getScreenManager().getDisplay().asyncExec(new Runnable() {	
-//			public void run() {
-//				streamMapEditor.getScreenManager().getCanvas().redraw();
-//			}
-//		});
 	}
 	public void addConnection(String valueOf, LayerUpdater updater) {
 		connections.put(valueOf, updater);
@@ -125,50 +85,53 @@ public class DynamicBuffer {
 	public void removeConnection(String key) {
 		puffer.remove(connections.get(key));
 		connections.remove(key);
-		reorganiseTimeList();
+//		reorganiseTimeList();
 	}
 	
-	private void reorganiseTimeList() {
-		timeList = new ArrayList<>();
-		timeList.add(new PointInTime(0));
-		for (LayerUpdater element : puffer.keySet()) {
-			DefaultTISweepArea<IStreamObject<? extends ITimeInterval>> sweep = puffer.get(element);
-			PointInTime last = sweep.getMaxTs();
-			last.plus(1);
-			Iterator<IStreamObject<? extends ITimeInterval>> iter = sweep.queryElementsStartingBefore(last);
-			
-			while(iter.hasNext()){
-				IStreamObject<? extends ITimeInterval> nextObject = iter.next();
-				PointInTime start = nextObject.getMetadata().getStart();
-				PointInTime end = nextObject.getMetadata().getEnd();
-				if(!timeList.contains(start)){
-					timeList.add(start);
-				}
-				if(end.isInfinite()==false){
-					if(!timeList.contains(end)){
-						timeList.add(end);
-					}
-				}
-			}
-		}
-		Collections.sort(timeList);
-		screenManager.getDisplay().asyncExec(new Runnable() {
+//	private void reorganiseTimeList() {
+//		timeList = new ArrayList<>();
+//		timeList.add(new PointInTime(0));
+//		for (LayerUpdater element : puffer.keySet()) {
+//			DefaultTISweepArea<IStreamObject<? extends ITimeInterval>> sweep = puffer.get(element);
+//			PointInTime last = sweep.getMaxTs();
+//			last.plus(1);
+//			Iterator<IStreamObject<? extends ITimeInterval>> iter = sweep.queryElementsStartingBefore(last);
+//			
+//			while(iter.hasNext()){
+//				IStreamObject<? extends ITimeInterval> nextObject = iter.next();
+//				PointInTime start = nextObject.getMetadata().getStart();
+//				PointInTime end = nextObject.getMetadata().getEnd();
+//				if(!timeList.contains(start)){
+//					timeList.add(start);
+//				}
+//				if(end.isInfinite()==false){
+//					if(!timeList.contains(end)){
+//						timeList.add(end);
+//					}
+//				}
+//			}
+//		}
+//		Collections.sort(timeList);
+//		screenManager.getDisplay().asyncExec(new Runnable() {
+//			public void run() {
+//				timeSliderControl.setMaxValue(timeList.size()-1);
+//			}
+//		});
+//	}
+
+	public void draw(long start, long end){
+		PointInTime startPoint = new PointInTime(start);
+		PointInTime endPoint = new PointInTime(end);
+		
+		fillLayersWithTuples(startPoint, endPoint);
+		
+		
+		streamMapEditor.getScreenManager().getDisplay().asyncExec(new Runnable() {	
 			public void run() {
-				timeSliderControl.setMaxValue(timeList.size()-1);
+				streamMapEditor.getScreenManager().getCanvas().redraw();
 			}
 		});
-	}
 
-	public void draw(int start, int end){
-		if(timeList.size()>1 && timeList.get(start)!=null && timeList.get(end)!=null){
-			fillLayersWithTuples(timeList.get(start), timeList.get(end));
-			
-			streamMapEditor.getScreenManager().getDisplay().asyncExec(new Runnable() {	
-				public void run() {
-					streamMapEditor.getScreenManager().getCanvas().redraw();
-				}
-			});
-		}
 	}
 	
 	public void fillLayersWithTuples(PointInTime start, PointInTime end){
@@ -195,9 +158,5 @@ public class DynamicBuffer {
 				}				
 			}
 		}
-	}
-
-	public ArrayList<PointInTime> getTimeList() {
-		return timeList;
 	}
 }

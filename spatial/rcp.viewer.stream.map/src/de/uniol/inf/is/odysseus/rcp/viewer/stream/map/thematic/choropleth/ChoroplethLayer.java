@@ -198,7 +198,7 @@ public class ChoroplethLayer extends AbstractLayer{
 		return path;
 	}
 	public void clean() {
-		LOG.debug("(CLEAN)Current Choroplethes:" + choroplethList.size());
+//		LOG.debug("(CLEAN)Current Choroplethes:" + choroplethList.size());
 		synchronized (choroplethList) {
 			this.choroplethList.clear();
 		}

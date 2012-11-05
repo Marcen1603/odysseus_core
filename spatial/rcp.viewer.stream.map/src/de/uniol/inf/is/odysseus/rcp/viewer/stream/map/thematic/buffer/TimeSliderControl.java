@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.buffer;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+
 
 
 public class TimeSliderControl {
@@ -10,27 +12,16 @@ public class TimeSliderControl {
 		this.timeSliderComposite.setTimeSliderControl(this);
 		this.buffer = buffer;
 	}
-	public void setMaxValue(int size) {
-		if(size<1){
-			timeSliderComposite.setMaxValue(1);
-		}else{
-			timeSliderComposite.setMaxValue(size); 
-		}
-	}
-	public int getIntervalMin(){
+	public Long getIntervalMin(){
 		return timeSliderComposite.getIntervalMin();
 	}
-	public int getIntervalMax(){
+	public Long getIntervalMax(){
 		return timeSliderComposite.getIntervalMax();
 	}
 	public void updateCanvas() {
 		buffer.draw(getIntervalMin(), getIntervalMax());
 	}
-	public Long getTimestampToString(int value){
-		if(buffer.getTimeList().size()>=(value-1) && buffer.getTimeList().get(value)!=null){
-			return buffer.getTimeList().get(value).getMainPoint();
-		}else{
-			return null;
-		}
+	public void updateSliderRange(PointInTime startPointInTime, PointInTime endPointInTime) {
+		timeSliderComposite.updateSliderInterval(startPointInTime.getMainPoint(), endPointInTime.getMainPoint()+1);
 	}
 }

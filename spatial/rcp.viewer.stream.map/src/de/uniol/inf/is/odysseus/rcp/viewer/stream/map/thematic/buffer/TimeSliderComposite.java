@@ -11,7 +11,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Scale;
+import org.eclipse.swt.widgets.Slider;
 
 public class TimeSliderComposite extends Composite {
 	private TimeSliderControl timeSliderControl;
@@ -21,26 +21,26 @@ public class TimeSliderComposite extends Composite {
 	private Label timestampLabel;
 	private Label timeLabel;
 	private Label beginLabel;
-	private Scale beginScale;
+	private Slider beginSlider;
 	private Button equalButton;
 	private Label beginValue;
 	private Label beginTimestamp;
 	private Label beginTime;
 	private Label endLabel;
-	private Scale endScale;
+	private Slider endSlider;
 	private Label endValue;
 	private Label endTimestamp;
 	private Label endTime;
 	
-	Boolean isEqual;
-	Composite thisComposite;
-	Composite parent;
+	private Boolean isEqual;
+	private Composite thisComposite;
+	
+	private Long startValueDifference;
 	public TimeSliderComposite(Composite parent, int style) {
 		super(parent, style);
 		this.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		this.setLayout(new GridLayout(6, false));
 		thisComposite = this;
-		this.parent = parent;
 		
 		intervallLabel = new Label(this, SWT.NONE);
 		intervallLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 3, 1));
@@ -62,18 +62,16 @@ public class TimeSliderComposite extends Composite {
 		beginLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		beginLabel.setText("Begin:");
 		
-		beginScale = new Scale(this, SWT.NONE);
-		beginScale.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		beginScale.setMinimum(0);
-		beginScale.setMaximum(1);
-		beginScale.setSelection(0);
-		beginScale.addSelectionListener(new SelectionAdapter() {
+		beginSlider = new Slider(this, SWT.NONE);
+		beginSlider.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		beginSlider.setValues(0, 0, 1, 1, 1, 1);
+		beginSlider.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
                 if(isEqual==true){
-                	endScale.setSelection(beginScale.getSelection());
+                	endSlider.setSelection(beginSlider.getSelection());
                 }else{
-                	if(beginScale.getSelection()>endScale.getSelection()){
-                		beginScale.setSelection(endScale.getSelection());
+                	if(beginSlider.getSelection()>endSlider.getSelection()){
+                		beginSlider.setSelection(endSlider.getSelection());
                 	}
                 }
                 updateView();
@@ -88,7 +86,7 @@ public class TimeSliderComposite extends Composite {
 			public void widgetSelected(SelectionEvent e) {
                 if(equalButton.getSelection()==true){
                 	isEqual=true;
-                	beginScale.setSelection(endScale.getSelection());
+                	beginSlider.setSelection(endSlider.getSelection());
                 }else{
                 	isEqual=false;
                 }
@@ -99,7 +97,7 @@ public class TimeSliderComposite extends Composite {
 		
 		beginValue = new Label(this, SWT.BORDER);
 		beginValue.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		beginValue.setText(Integer.toString(beginScale.getSelection()));
+		beginValue.setText(Integer.toString(beginSlider.getSelection()));
 		
 		beginTimestamp = new Label(this, SWT.BORDER);
 		beginTimestamp.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
@@ -113,18 +111,16 @@ public class TimeSliderComposite extends Composite {
 		endLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		endLabel.setText("End:");
 		
-		endScale = new Scale(this, SWT.NONE);
-		endScale.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		endScale.setMinimum(0);
-		endScale.setMaximum(1);
-		endScale.setSelection(1);
-		endScale.addSelectionListener(new SelectionAdapter() {
+		endSlider = new Slider(this, SWT.NONE);
+		endSlider.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		endSlider.setValues(0, 0, 1, 1, 1, 1);
+		endSlider.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
                 if(isEqual==true){
-                	beginScale.setSelection(endScale.getSelection());
+                	beginSlider.setSelection(endSlider.getSelection());
                 }else{
-                	if(endScale.getSelection()<beginScale.getSelection()){
-                		endScale.setSelection(beginScale.getSelection());
+                	if(endSlider.getSelection()<beginSlider.getSelection()){
+                		endSlider.setSelection(beginSlider.getSelection());
                 	}
                 }
                 updateView();
@@ -134,7 +130,7 @@ public class TimeSliderComposite extends Composite {
 		
 		endValue = new Label(this, SWT.BORDER);
 		endValue.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		endValue.setText(Integer.toString(endScale.getSelection()));
+		endValue.setText(Integer.toString(endSlider.getSelection()));
 		
 		endTimestamp = new Label(this, SWT.BORDER);
 		endTimestamp.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
@@ -145,56 +141,36 @@ public class TimeSliderComposite extends Composite {
 		endTime.setText("");
 		
 		isEqual = false;
-	}
-	public void setMaxValue(int size) {
-		if(endScale.getSelection()==endScale.getMaximum()){
-			beginScale.setMaximum(size);
-			endScale.setMaximum(size);
-			endScale.setSelection(size);
-		}else{
-			beginScale.setMaximum(size);
-			endScale.setMaximum(size);
-		}
-		if(isEqual){
-			beginScale.setSelection(endScale.getSelection());
-		}
-		updateView();
+		startValueDifference = 0L;
 	}
 	private void updateView(){
-		int beginSelection = beginScale.getSelection();
-		int endSelection = endScale.getSelection();
+		int beginSelection = beginSlider.getSelection();
+		int endSelection = endSlider.getSelection();
 		beginValue.setText(Integer.toString(beginSelection));
 		endValue.setText(Integer.toString(endSelection));
 
-		if(timeSliderControl.getTimestampToString(beginSelection)!=null){
-			long ts = timeSliderControl.getTimestampToString(beginSelection);
-			beginTimestamp.setText(Long.toString(ts));
-			beginTime.setText(new SimpleDateFormat("dd/MM/yyyy-H:m:s.S").format(new Timestamp(ts)));
-		}else{
-			beginTimestamp.setText("");
-			beginTime.setText("");
-		}
-		if(timeSliderControl.getTimestampToString(endSelection)!=null){
-			long ts = timeSliderControl.getTimestampToString(endSelection);
-			endTimestamp.setText(Long.toString(ts));
-			endTime.setText(new SimpleDateFormat("dd/MM/yyyy-H:m:s.S").format(new Timestamp(ts)));
-		}else{
-			endTimestamp.setText("");
-			endTime.setText("");
-		}
+		long ts = beginSelection+startValueDifference;
+		beginTimestamp.setText(Long.toString(ts));
+		beginTime.setText(new SimpleDateFormat("dd/MM/yyyy-HH:mm:ss.SSS").format(new Timestamp(ts)));
 		
-		
+		ts = endSelection+startValueDifference;
+		endTimestamp.setText(Long.toString(ts));
+		endTime.setText(new SimpleDateFormat("dd/MM/yyyy-HH:mm:ss.SSS").format(new Timestamp(ts)));
 		
 		beginValue.pack();
         endValue.pack();
+        beginTimestamp.pack();
+        endTimestamp.pack();
+        beginTime.pack();
+        endTime.pack();
         thisComposite.layout();
 	}
 	
-	public int getIntervalMin(){
-		return beginScale.getSelection();
+	public Long getIntervalMin(){
+		return beginSlider.getSelection()+startValueDifference;
 	}
-	public int getIntervalMax(){
-		return endScale.getSelection();
+	public Long getIntervalMax(){
+		return endSlider.getSelection()+startValueDifference;
 	}
 	public void setTimeSliderControl(TimeSliderControl timeSliderControl) {
 		this.timeSliderControl = timeSliderControl;
@@ -202,5 +178,28 @@ public class TimeSliderComposite extends Composite {
 	public void updateCanvas(){
 		timeSliderControl.updateCanvas();
 	}
-	
+	public Long getStartValueDifference() {
+		return startValueDifference;
+	}
+	public void setStartValueDifference(Long startValueDifference) {
+		this.startValueDifference = startValueDifference;
+	}
+	public void updateSliderInterval(long startPoint, long endPoint) {
+		if(startValueDifference==0 || startPoint<startValueDifference){
+			startValueDifference = startPoint;
+		}
+		
+		if(endSlider.getSelection()==(endSlider.getMaximum()-1)){
+			beginSlider.setMaximum((int)(endPoint-startValueDifference));
+			endSlider.setMaximum((int)(endPoint-startValueDifference));
+			endSlider.setSelection((int)(endPoint-startValueDifference));
+		}else{
+			beginSlider.setMaximum((int)(endPoint-startValueDifference));
+			endSlider.setMaximum((int)(endPoint-startValueDifference));
+		}
+		if(isEqual){
+			beginSlider.setSelection(endSlider.getSelection());
+		}
+		updateView();
+	}
 }
