@@ -24,9 +24,9 @@ abstract public class AbstractPartialPlanScheduling implements IPartialPlanSched
 		pausedPlans.clear();
 	}
 	
-	protected void checkPausedPlans(int count) {
+	protected void checkPausedPlans() {
 		synchronized (pausedPlans) {
-			while (pausedPlans.size() == count) {
+			while (pausedPlans.size() == planCount()) {
 				try {
 					pausedPlans.wait(1000);
 				} catch (InterruptedException e) {

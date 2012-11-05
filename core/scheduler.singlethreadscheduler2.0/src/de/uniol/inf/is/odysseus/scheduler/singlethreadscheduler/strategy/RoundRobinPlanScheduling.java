@@ -78,8 +78,7 @@ public class RoundRobinPlanScheduling extends AbstractPartialPlanScheduling impl
 
 	@Override
 	public IScheduling nextPlan() {
-		int count = planList.size();
-		checkPausedPlans(count);
+		checkPausedPlans();
 
 		IScheduling returnValue = null;
 
