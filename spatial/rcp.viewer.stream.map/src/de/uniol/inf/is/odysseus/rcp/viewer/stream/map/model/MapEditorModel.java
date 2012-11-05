@@ -50,6 +50,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerTypeRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.buffer.DynamicBuffer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.choropleth.ChoroplethLayer;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
@@ -62,6 +64,7 @@ public class MapEditorModel extends ModelObject {
 	private LinkedList<ILayer> layers = new LinkedList<ILayer>();
 	private TreeMap<String, LayerUpdater> connections = new TreeMap<String, LayerUpdater>();
 	private LinkedList<IFile> qryFileList = new LinkedList<IFile>();
+	private DynamicBuffer dynamicBuffer;
 	
 	private IProject project = null;
 	
@@ -75,6 +78,7 @@ public class MapEditorModel extends ModelObject {
 			if (layer != null)
 				layer.init(screenManager, null, null);
 		}
+		dynamicBuffer = new DynamicBuffer(editor, this, screenManager);
 		// editor.updateViews();
 		screenManager.getCanvas().redraw();
 	}
@@ -286,7 +290,7 @@ public class MapEditorModel extends ModelObject {
 					// attribute =
 					// resolver.getAttribute(layerConfiguration.getAttribute());
 					for (SDFAttribute tmpAttribute : schema) {
-						if (tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute())) {
+						if (tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute().get(0))) {
 							attribute = tmpAttribute;
 							// LOG.debug("Stream: " + schema.getURI());
 							// LOG.debug("Stream: " + attribute.toString());
@@ -298,6 +302,51 @@ public class MapEditorModel extends ModelObject {
 
 							connection.add(layer);
 						}
+					}
+				}
+			}
+		}
+		
+		if (layerConfiguration.getType() == 2) {
+			for (LayerUpdater connection : connections.values()) {
+				 LOG.debug(connection.getQuery().getLogicalQuery().getQueryText());
+				 LOG.debug(layerConfiguration.getQuery());
+				if (connection.getQuery().getLogicalQuery().getQueryText().equals(layerConfiguration.getQuery())) {
+
+					// Connect the Stream to the iStreamListner
+					schema = connection.getConnection().getSubscriptions().get(0).getSchema();
+					// AttributeResolver resolver = new AttributeResolver();
+					// resolver.addSource(connection.getConnection().getSubscriptions().get(0).getSchema().getURI(),
+					// (ILogicalOperator)
+					// connection.getQuery().getLogicalQuery().getLogicalPlan().getSubscriptions().toArray()[0]);
+					// resolver.addAttributes(schema);
+					// attribute =
+					// resolver.getAttribute(layerConfiguration.getAttribute());
+					
+					
+					//0. Element in layerConfiguration.getAttribute()
+					SDFAttribute geometrieAttribute = null;
+					//1. Element in layerConfiguration.getAttribute()
+					SDFAttribute visualizationAttribute = null;
+					
+					for (SDFAttribute tmpAttribute : schema) {
+						if (tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute().get(0))) {
+							
+							geometrieAttribute = tmpAttribute;
+//							layer = LayerTypeRegistry.getLayer(attribute.getDatatype());
+//							layer.setConfiguration(layerConfiguration);
+//
+//							layer.init(null, schema, attribute);
+//
+//							connection.add(layer);
+						}else if(tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute().get(1))){
+							visualizationAttribute = tmpAttribute;
+						}
+					}
+					if(screenManager!=null && geometrieAttribute!=null && visualizationAttribute!=null){
+						layer = new ChoroplethLayer(layerConfiguration);
+						((ChoroplethLayer)layer).init(screenManager, schema, geometrieAttribute, visualizationAttribute);
+						connection.add(layer);
 					}
 				}
 			}
@@ -317,11 +366,15 @@ public class MapEditorModel extends ModelObject {
 
 		if (!connections.containsKey(String.valueOf(query.hashCode()))) {
 
-			LayerUpdater updater = new LayerUpdater(editor, query, connection);
+			LayerUpdater updater = new LayerUpdater(editor, query, connection, dynamicBuffer);
 			connections.put(String.valueOf(query.hashCode()), updater);
 
 			LOG.debug("Bind Query: " + query.getID());
 			LOG.debug("Bind Query: " + query.getLogicalQuery().getQueryText());
+			
+			
+//			update DynamicPuffer
+			dynamicBuffer.addConnection(String.valueOf(query.hashCode()), updater);
 		}
 		firePropertyChange(MAP, null, this);
 	}
@@ -336,7 +389,7 @@ public class MapEditorModel extends ModelObject {
 
 	private static void run(final IFile queryFile) {
 		try {
-			// Datei öffnen
+			// Datei ï¿½ffnen
 			if (!queryFile.isSynchronized(IResource.DEPTH_ZERO))
 				queryFile.refreshLocal(IResource.DEPTH_ZERO, null);
 
@@ -361,7 +414,7 @@ public class MapEditorModel extends ModelObject {
 
 	public static void execute(final String[] text) {
 		// Dieser Teil geschieht asynchron zum UIThread und wird als Job
-		// ausgeführt
+		// ausgefï¿½hrt
 		// Job-Mechanismus wird von RCP gestellt.
 		// Job job = new Job("Parsing and Executing Query") {
 		// @Override
@@ -386,7 +439,7 @@ public class MapEditorModel extends ModelObject {
 				// return Status.CANCEL_STATUS;
 			}
 
-			// Dann ausführen
+			// Dann ausfï¿½hren
 			variables = new HashMap<String, Object>();
 			int counter = 1;
 			for (PreParserStatement stmt : statements) {
@@ -417,9 +470,9 @@ public class MapEditorModel extends ModelObject {
 		// return status;
 		// }
 		// };
-		// job.setUser(true); // gibt an, dass der Nutzer dieses Job ausgelöst
+		// job.setUser(true); // gibt an, dass der Nutzer dieses Job ausgelï¿½st
 		// hat
-		// job.schedule(); // dieser Job soll nun ausgeführt werden
+		// job.schedule(); // dieser Job soll nun ausgefï¿½hrt werden
 	}
 
 	public void removeLayer(ILayer layer) {
@@ -433,6 +486,7 @@ public class MapEditorModel extends ModelObject {
 			removeLayer(layer);
 		}
 		connections.remove(key);
+		dynamicBuffer.removeConnection(key);
 		firePropertyChange(MAP, null, this);
 	}
 

@@ -18,13 +18,13 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -32,6 +32,7 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.buffer.TimeSliderComposite;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tile.PointD;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.ProjectionUtil;
 
@@ -43,6 +44,7 @@ public class ScreenManager {
 	private StreamMapEditorPart editor;
 	private ScreenTransformation transformation;
 	private Canvas canvas;
+	private TimeSliderComposite timeSliderComposite;
 	private Point mapSize = new Point(0, 0);
 	
 	private String infoText;
@@ -63,6 +65,7 @@ public class ScreenManager {
 
 	protected Canvas createCanvas(Composite parent) {
 		Canvas canvas = new Canvas(parent, SWT.DOUBLE_BUFFERED);
+		canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		canvas.setBackground(WHITE);
 		canvas.addPaintListener(new GeometryPaintListener(editor));
 		
@@ -121,6 +124,10 @@ public class ScreenManager {
 		
 		return canvas;
 	}
+	public TimeSliderComposite createTimeSliderComposite(Composite parent) {
+		timeSliderComposite = new TimeSliderComposite(parent, SWT.BORDER);
+		return timeSliderComposite;
+	}
 
 	public Point getCursorPosition() {
 		return new Point(transformation.getMapPosition().x +  mouseListener.mouseCoords.x,
@@ -129,6 +136,9 @@ public class ScreenManager {
 	
 	public final Canvas getCanvas() {
 		return canvas;
+	}
+	public final TimeSliderComposite getTimeSliderComposite() {
+		return timeSliderComposite;
 	}
 
 	public final boolean hasCanvasViewer() {
@@ -140,6 +150,14 @@ public class ScreenManager {
 			this.canvas = viewer;
 		} else {
 			LOG.error("Canvas Viewer is null.");
+		}
+	}
+	
+	public void setTimeSlider(TimeSliderComposite timeSlider) {
+		if(timeSlider!=null){
+			this.timeSliderComposite = timeSlider;
+		}else{
+			LOG.error("TimeSlider is null.");
 		}
 	}
 

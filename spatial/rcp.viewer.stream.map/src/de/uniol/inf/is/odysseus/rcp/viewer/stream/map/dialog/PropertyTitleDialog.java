@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -87,7 +88,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		layerTypelabel.setText("Type:");
 
 		final Composite radioTypeSelection = new Composite(layerConfiguration, SWT.NONE);
-		radioTypeSelection.setLayout(DialogUtils.getRadioSelectionLayout(2));
+		radioTypeSelection.setLayout(DialogUtils.getRadioSelectionLayout(3));
 		radioTypeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
 		Listener listener = new Listener() {
@@ -111,6 +112,15 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 						layerType = 1;
 					}
 				}
+				if (((Button) e.widget).getText().endsWith("Choropleth")) {
+					if (!(layerType == 2)) {
+						configContainer.getChildren()[0].dispose();
+						getChoroplethConfiguration(configContainer);
+						configContainer.redraw();
+						main.layout(true);
+						layerType = 2;
+					}
+				}
 				for (Control child : children) {
 					if (e.widget != child) {
 						((Button) child).setSelection(false);
@@ -128,6 +138,10 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		Button radioTypeButtonVector = new Button(radioTypeSelection, SWT.RADIO);
 		radioTypeButtonVector.setText("Vector");
 		radioTypeButtonVector.addListener(SWT.Selection, listener);
+		
+		Button radioTypeButtonChoropleth = new Button(radioTypeSelection, SWT.RADIO);
+		radioTypeButtonChoropleth.setText("Choropleth");
+		radioTypeButtonChoropleth.addListener(SWT.Selection, listener);
 
 
 		Label layerPlaceLabel = new Label(layerConfiguration, SWT.FLAT);
@@ -310,12 +324,18 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				resolver.addAttributes(schema);
 
 				attributeSelect.setText(schema.getAttribute(0).getAttributeName());
-				layerConfiguration.setAttribute(attributeSelect.getText());
+				ArrayList<String> attributes = new ArrayList<>();
+				attributes.add(attributeSelect.getText());
+				layerConfiguration.setAttribute(attributes);
 				
 				attributeSelect.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						layerConfiguration.setAttribute(attributeSelect.getText());
-						LOG.debug("Set Attribute: " + layerConfiguration.getAttribute());
+						ArrayList<String> attributes = new ArrayList<>();
+						attributes.add(attributeSelect.getText());
+						layerConfiguration.setAttribute(attributes);
+						for(int i=0;i<layerConfiguration.getAttribute().size();i++){
+							LOG.debug("Set Attribute "+(i+1)+"/"+layerConfiguration.getAttribute().size()+": " + layerConfiguration.getAttribute().get(i));
+						}
 					};
 				});
 
@@ -323,6 +343,103 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		});
 
 		return vectorLayer;
+	}
+	
+	private Composite getChoroplethConfiguration(Composite parent) {
+		final Composite chropletheLayer = new Composite(parent, SWT.NONE);
+		chropletheLayer.setLayout(DialogUtils.getGroupLayout());
+		chropletheLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
+		chropletheLayer.setVisible(true);
+
+		if (connections.isEmpty()) {
+			Label streamLabel = new Label(chropletheLayer, SWT.NONE);
+			streamLabel.setText("No Streams Available.");
+			streamLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+			setErrorMessage("Please connect a stream to the Map.");
+			return chropletheLayer;
+		}
+
+		Label streamLabel = new Label(chropletheLayer, SWT.NONE);
+		streamLabel.setText("Stream:");
+		streamLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo streamSelect = new CCombo(chropletheLayer, SWT.BORDER);
+		streamSelect.setLayoutData(DialogUtils.getTextDataLayout());
+
+		for (int i = 0; i < connections.toArray().length; i++) {
+			streamSelect.add(((LayerUpdater) connections.toArray()[i]).getQuery().getLogicalQuery().getQueryText(), i);
+		}
+
+		Label geometrieLabel = new Label(chropletheLayer, SWT.NONE);
+		geometrieLabel.setText("GeometryAttribute:");
+		geometrieLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo geometrieSelect = new CCombo(chropletheLayer, SWT.BORDER);
+		geometrieSelect.setLayoutData(DialogUtils.getTextDataLayout());
+		
+		Label visualizationLabel = new Label(chropletheLayer, SWT.NONE);
+		visualizationLabel.setText("VisualizationAttribute:");
+		visualizationLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo visualizationSelect = new CCombo(chropletheLayer, SWT.BORDER);
+		visualizationSelect.setLayoutData(DialogUtils.getTextDataLayout());
+
+		streamSelect.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				geometrieSelect.removeAll();
+				layerConfiguration.setQuery(streamSelect.getText());
+				LOG.debug("Set Query: " + layerConfiguration.getQuery());
+				SDFSchema schema = ((LayerUpdater) connections.toArray()[streamSelect.getSelectionIndex()]).getConnection().getSubscriptions().get(0).getSchema();
+
+				for (int i = 0; i < schema.size(); i++) {
+					geometrieSelect.add(schema.getAttribute(i).getAttributeName(), i);
+				}
+				
+				visualizationSelect.removeAll();
+				for (int i = 0; i < schema.size(); i++) {
+					visualizationSelect.add(schema.getAttribute(i).getAttributeName(), i);
+				}
+
+				AttributeResolver resolver = new AttributeResolver();
+				resolver.addAttributes(schema);
+
+				geometrieSelect.setText(schema.getAttribute(0).getAttributeName());
+				visualizationSelect.setText(schema.getAttribute(1).getAttributeName());
+				
+				
+				ArrayList<String> attributes = new ArrayList<>();
+				attributes.add(geometrieSelect.getText());
+				attributes.add(visualizationSelect.getText());
+				layerConfiguration.setAttribute(attributes);
+				
+				geometrieSelect.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						ArrayList<String> attributes = new ArrayList<>();
+						attributes.add(geometrieSelect.getText());
+						attributes.add(visualizationSelect.getText());
+						layerConfiguration.setAttribute(attributes);
+						for(int i=0;i<layerConfiguration.getAttribute().size();i++){
+							LOG.debug("Set Attribute "+(i+1)+"/"+layerConfiguration.getAttribute().size()+": " + layerConfiguration.getAttribute().get(i));
+						}
+					};
+				});
+				
+				visualizationSelect.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						ArrayList<String> attributes = new ArrayList<>();
+						attributes.add(geometrieSelect.getText());
+						attributes.add(visualizationSelect.getText());
+						layerConfiguration.setAttribute(attributes);
+						for(int i=0;i<layerConfiguration.getAttribute().size();i++){
+							LOG.debug("Set Attribute "+(i+1)+"/"+layerConfiguration.getAttribute().size()+": " + layerConfiguration.getAttribute().get(i));
+						}
+					};
+				});
+
+			};
+		});
+
+		return chropletheLayer;
 	}
 
 
@@ -426,7 +543,6 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		if(layerConfiguration.getType() == 0){
 			layerConfiguration.setUrl(server.getText());	
 		}
-		
 	}
 
 	@Override

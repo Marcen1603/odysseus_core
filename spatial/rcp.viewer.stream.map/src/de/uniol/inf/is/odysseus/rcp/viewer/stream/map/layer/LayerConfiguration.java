@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class LayerConfiguration implements Serializable{
 
@@ -9,7 +10,7 @@ public class LayerConfiguration implements Serializable{
 	private int type = 0;
 	private String name = null;
 	private String query = null;
-	private String attribute = null;
+	private ArrayList<String> attribute = null;
 	private String url = null;
 	
 	private PersestentStyle style = null;
@@ -50,13 +51,13 @@ public class LayerConfiguration implements Serializable{
 	    this.query = query;
     }
 
-	public String getAttribute() {
-	    return attribute;
-    }
+	public ArrayList<String> getAttribute() {
+		return attribute;
+	}
 
-	public void setAttribute(String attribute) {
-	    this.attribute = attribute;
-    }
+	public void setAttribute(ArrayList<String> attribute) {
+		this.attribute = attribute;
+	}
 
 	public PersestentStyle getStyle() {
 	    return style;

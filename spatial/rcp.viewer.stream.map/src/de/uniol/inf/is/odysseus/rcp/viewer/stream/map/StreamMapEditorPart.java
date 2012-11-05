@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -10,6 +8,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -21,11 +20,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
@@ -89,7 +84,10 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 
 	@Override
 	public void createPartControl(Composite parent) {
+		parent.setLayout(new GridLayout(1, false));
+		
 		screenManager.setCanvasViewer(screenManager.createCanvas(parent));
+		screenManager.setTimeSlider(screenManager.createTimeSliderComposite(parent));
 		
 //		//Always add a Basic Layer. 
 //		if(mapModel.getLayers().isEmpty()){

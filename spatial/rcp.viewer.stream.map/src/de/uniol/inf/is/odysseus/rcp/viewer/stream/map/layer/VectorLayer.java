@@ -19,7 +19,6 @@ import java.util.LinkedList;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +96,7 @@ public class VectorLayer extends AbstractLayer{
 		}
 		if(this.screenManager != null && this.sdfAttribute != null){
 			this.style = initStyle();
-			this.name =  this.sdfAttribute.getAttributeName();
+			this.name =  this.configuration.getName()+" [Vector("+this.sdfAttribute.getAttributeName()+")]";
 			this.active = true;
 		}
     }
@@ -108,8 +107,7 @@ public class VectorLayer extends AbstractLayer{
 			if (spatialDatatype.isPoint()) {
 				style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor());
 			} else if (spatialDatatype.isLineString()) {
-				style = new LineStyle(1, ColorManager.getInstance()
-						.randomColor());
+				style = new LineStyle(1, ColorManager.getInstance().randomColor());
 			} else if (spatialDatatype.isPolygon()) {
 				style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), null);
 			} else if (spatialDatatype.isMultiPoint()) {

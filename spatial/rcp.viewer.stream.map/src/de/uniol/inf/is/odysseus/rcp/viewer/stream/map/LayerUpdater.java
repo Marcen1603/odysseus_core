@@ -7,11 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.buffer.DynamicBuffer;
 
 public class LayerUpdater extends ArrayList<ILayer> implements IStreamElementListener<Object>, Serializable {
 
@@ -22,12 +25,14 @@ public class LayerUpdater extends ArrayList<ILayer> implements IStreamElementLis
 	private final IStreamMapEditor streamMapEditor;
 	private final IStreamConnection<Object> connection;
 	private final IPhysicalQuery query;
+	private final DynamicBuffer dynamicBuffer;
 	
-	public LayerUpdater(IStreamMapEditor streamMapEditor,IPhysicalQuery query, IStreamConnection<Object> connection) {
+	public LayerUpdater(IStreamMapEditor streamMapEditor,IPhysicalQuery query, IStreamConnection<Object> connection, DynamicBuffer dynamicBuffer) {
 		super();
 		this.streamMapEditor = streamMapEditor;
 		this.connection = connection;
 		this.query = query;
+		this.dynamicBuffer = dynamicBuffer;
 		connection.addStreamElementListener(this);
 		if(!connection.isConnected()){
 			connection.connect();
@@ -51,22 +56,33 @@ public class LayerUpdater extends ArrayList<ILayer> implements IStreamElementLis
 		}
 		
 		// SweepArea definiert Element Fenster bzw. die zu visualisierenden Elemente. 
+//		System.out.println(element.toString());
 		
 		
-		for (ILayer layer : this) {
-			layer.addTuple((Tuple<?>) element);
-			if (layer.getTupleCount() > this.streamMapEditor.getMaxTuplesCount()) {
-				layer.removeLast();
-			}
-		}
+		dynamicBuffer.addTuple(this, (IStreamObject<? extends ITimeInterval>) element);
 		
-		streamMapEditor.getScreenManager().getDisplay().asyncExec(new Runnable() {	
-			@Override
-			public void run() {
-				streamMapEditor.getScreenManager().getCanvas().redraw();
-				
-			}
-		});
+		
+		
+		
+		
+//		for (ILayer layer : this) {
+//			if(layer instanceof ChoroplethLayer){
+//				((ChoroplethLayer)layer).addElement(element);
+//			}else{
+//				layer.addTuple((Tuple<?>) element);
+//				if (layer.getTupleCount() > this.streamMapEditor.getMaxTuplesCount()) {
+//					layer.removeLast();
+//				}
+//			}
+//		}
+//		
+//		streamMapEditor.getScreenManager().getDisplay().asyncExec(new Runnable() {	
+//			@Override
+//			public void run() {
+//				streamMapEditor.getScreenManager().getCanvas().redraw();
+//				
+//			}
+//		});
 		
 	}
 

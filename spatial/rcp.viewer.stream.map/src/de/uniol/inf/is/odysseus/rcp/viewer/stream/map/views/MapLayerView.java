@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOut
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOutlineTreeContentProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.choropleth.ChoroplethLayer;
 
 public class MapLayerView extends AbstractStreamMapEditorViewPart {
 
@@ -221,43 +222,51 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 
 //		mgr.add(new Separator());
 		
-		mgr.add(new Action("Linecolor") {
-			public void run() {
-				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
-				if (i.getFirstElement() instanceof CollectionStyle)
-					return;
-				if (i.getFirstElement() instanceof Style) {
-					Style element = (Style) i.getFirstElement();
-					ColorDialog colorDialog = new ColorDialog(Display.getCurrent().getActiveShell());
-					RGB color = element.getLineColor().getRGB();
-					colorDialog.setRGB(color);
-					colorDialog.setText("ColorDialog");
-					RGB selectedColor = colorDialog.open();
-					if (!selectedColor.equals(color))
-						element.setLineColor(ColorManager.getInstance().getColor(selectedColor));
-					treeViewer.refresh(element, true);
+		if(i.getFirstElement() instanceof ChoroplethLayer){
+			mgr.add(new Action("Edit Settings") {
+				
+			});
+		}else{
+			mgr.add(new Action("Linecolor") {
+				public void run() {
+					ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
+					if (i.getFirstElement() instanceof CollectionStyle)
+						return;
+					if (i.getFirstElement() instanceof Style) {
+						Style element = (Style) i.getFirstElement();
+						ColorDialog colorDialog = new ColorDialog(Display.getCurrent().getActiveShell());
+						RGB color = element.getLineColor().getRGB();
+						colorDialog.setRGB(color);
+						colorDialog.setText("ColorDialog");
+						RGB selectedColor = colorDialog.open();
+						if (!selectedColor.equals(color))
+							element.setLineColor(ColorManager.getInstance().getColor(selectedColor));
+						treeViewer.refresh(element, true);
+					}
+
 				}
+			});
 
-			}
-		});
+			mgr.add(new Action("Fillcolor") {
+				public void run() {
+					ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
+					if (i.getFirstElement() instanceof Style) {
+						Style element = (Style) i.getFirstElement();
+						ColorDialog colorDialog = new ColorDialog(Display.getCurrent().getActiveShell());
+						RGB color = element.getFillColor().getRGB();
+						colorDialog.setRGB(color);
+						colorDialog.setText("ColorDialog");
+						RGB selectedColor = colorDialog.open();
+						if (!selectedColor.equals(color))
+							element.setFillColor(ColorManager.getInstance().getColor(selectedColor));
+						treeViewer.refresh(element, true);
+					}
 
-		mgr.add(new Action("Fillcolor") {
-			public void run() {
-				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
-				if (i.getFirstElement() instanceof Style) {
-					Style element = (Style) i.getFirstElement();
-					ColorDialog colorDialog = new ColorDialog(Display.getCurrent().getActiveShell());
-					RGB color = element.getFillColor().getRGB();
-					colorDialog.setRGB(color);
-					colorDialog.setText("ColorDialog");
-					RGB selectedColor = colorDialog.open();
-					if (!selectedColor.equals(color))
-						element.setFillColor(ColorManager.getInstance().getColor(selectedColor));
-					treeViewer.refresh(element, true);
 				}
-
-			}
-		});
+			});
+		}
+		
+		
 	}
 	
 }
