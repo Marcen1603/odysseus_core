@@ -230,7 +230,7 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 		IIterableSource<?> s = (IIterableSource<?>) poEvent.getSender();
 		int index = plan.getSourceId(s);
 		if (poEvent.getEventType() == POEventType.CloseDone) {
-			sourceDone(s);
+			//sourceDone(s);
 
 		} else {
 			synchronized (notBlocked) {
