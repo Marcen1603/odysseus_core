@@ -30,36 +30,34 @@ public class ChoroplethLegend{
 		
 		
 		Predicate pred = new Predicate("geometry", Operator.SMALLERTHAN, 10);
-		ChoroplethStyle style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 237, 248, 251), 50);
+		ChoroplethStyle style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 237, 248, 251), 255);
 		ChoroplethLegendEntry entry = new ChoroplethLegendEntry(pred,style);
 		legendList.add(entry);
 		
 		pred = new Predicate("geometry", Operator.SMALLERTHAN, 20);
-		style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 204, 236, 230), 50);
+		style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 204, 236, 230), 255);
 		entry = new ChoroplethLegendEntry(pred,style);
 		legendList.add(entry);
 		
 		pred = new Predicate("geometry", Operator.SMALLERTHAN, 30);
-		style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 153, 216, 201), 50);
+		style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 153, 216, 201), 255);
 		entry = new ChoroplethLegendEntry(pred,style);
 		legendList.add(entry);
 		
 		pred = new Predicate("geometry", Operator.SMALLERTHAN, 40);
-		style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 102, 194, 164), 50);
+		style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 102, 194, 164), 255);
 		entry = new ChoroplethLegendEntry(pred,style);
 		legendList.add(entry);
 		
 		pred = new Predicate("geometry",Operator.SMALLERTHAN, 50);
-		style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 44, 162, 95), 50);
+		style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 44, 162, 95), 255);
 		entry = new ChoroplethLegendEntry(pred,style);
 		legendList.add(entry);
 		
 		pred = new Predicate(null,Operator.ELSE, null);
-		style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 0, 109, 44), 50);
+		style = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 0, 109, 44), 255);
 		entry = new ChoroplethLegendEntry(pred,style);
 		legendList.add(entry);
-		
-		
 	}
 	public int getSize(){
 		return legendList.size();

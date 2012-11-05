@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOut
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.choropleth.ChoroplethLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.choropleth.EditChoroplethStyleDialog;
 
 public class MapLayerView extends AbstractStreamMapEditorViewPart {
 
@@ -203,7 +204,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 	new String("http://oatile2.mqcdn.com/tiles/1.0.0/sat/"), new String("http://otile2.mqcdn.com/tiles/1.0.0/osm/"), new String("http://tile.opencyclemap.org/cycle/"), new String("http://tile2.opencyclemap.org/transport/"), new String("http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/1/256/"), new String("http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/2/256/"), new String("http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/3/256/"), new String("http://otile1.mqcdn.com/tiles/1.0.0/osm/"), new String("http://oatile1.mqcdn.com/naip/"), new String("http://oatile1.mqcdn.com/naip/"), new String("http://tile.openstreetmap.org/") };
 
 	private void fillContextMenu(final IMenuManager mgr) {
-		ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
+		final ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
 
 //		mgr.add(new Action("Change Server") {
 //			public void run() {
@@ -224,7 +225,11 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		
 		if(i.getFirstElement() instanceof ChoroplethLayer){
 			mgr.add(new Action("Edit Settings") {
-				
+				public void run(){
+					ChoroplethLayer layer = (ChoroplethLayer)i.getFirstElement();
+					EditChoroplethStyleDialog dialog = new EditChoroplethStyleDialog(Display.getCurrent().getActiveShell(), layer);
+					dialog.open();
+				}
 			});
 		}else{
 			mgr.add(new Action("Linecolor") {
@@ -261,7 +266,6 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 							element.setFillColor(ColorManager.getInstance().getColor(selectedColor));
 						treeViewer.refresh(element, true);
 					}
-
 				}
 			});
 		}

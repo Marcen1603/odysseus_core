@@ -38,8 +38,8 @@ public class ChoroplethLayer extends AbstractLayer{
 	private int visualizationAttributeIndex = 0;
 	private Style style = null;
 	
-	LinkedList<Choropleth> choroplethList = new LinkedList<Choropleth>();
-	ChoroplethLegend legend;
+	private LinkedList<Choropleth> choroplethList = new LinkedList<Choropleth>();
+	private ChoroplethLegend legend;
 	
 	
 	static protected String[] types;
@@ -203,5 +203,19 @@ public class ChoroplethLayer extends AbstractLayer{
 			this.choroplethList.clear();
 		}
 	}
+
+	public ChoroplethLegend getLegend() {
+		return legend;
+	}
+
+	public void updateLegend(ChoroplethLegend legend) {
+		this.legend = legend;
+		screenManager.getDisplay().asyncExec(new Runnable() {	
+			public void run() {
+				screenManager.getCanvas().redraw();
+			}
+		});
+	}
+	
 
 }
