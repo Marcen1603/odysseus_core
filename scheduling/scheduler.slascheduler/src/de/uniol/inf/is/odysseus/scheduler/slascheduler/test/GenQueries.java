@@ -52,10 +52,10 @@ public class GenQueries {
 	private static final double OP_SELECTIVITY = 1.0;
 	public static final int OP_PROCESSING_TIME = 35 * 100000; // realistic 1500
 	private static final int NUMBER_OF_USERS = 100;
-	private static final int NUMBER_OF_QUERIES_PER_USER = 1;
+	private static final int NUMBER_OF_QUERIES_PER_USER = 10;
 	private static final int NUMBER_OF_SLAS = 3;
 	private static final double[] SLA_VARIANCE = { 0.1, 0.3, 0.6 };
-	private static final int[] PRIO_FOR_SLA_NO = {6,3,1};
+	private static final int[] PRIO_FOR_SLA_NO = { 6, 3, 1 };
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
 	private static final int NUMBER_OF_SERVICE_LEVELS = 3;
 	private static final String SLA_SCOPE = ScopeFactory.SCOPE_AVERAGE;
@@ -75,6 +75,9 @@ public class GenQueries {
 	private static final int DATA_RATE_MID = 2;
 	private static final int DATA_RATE_LOW = 1;
 	private static final int DATA_RATE_VERY_LOW = 1;
+
+	private static final boolean INCREMENTAL_QUERY_ADD_MODE = true;
+	private static final int INCREMENTAL_QUERY_ADD_MODE_SLEEPTIME = 5000;
 
 	private static String odysseusDefaultHome = String.format("%s/%sodysseus/",
 			System.getProperty("user.home"),
@@ -265,8 +268,7 @@ public class GenQueries {
 					if (k == 0) {
 						sb.append(createSimpleQuery(i, slaToUse, i));
 					} else {
-						sb.append(createComplexQuery(i, slaToUse,
-								k + 1, i));
+						sb.append(createComplexQuery(i, slaToUse, k + 1, i));
 					}
 				} else {
 					sb.append(createSimpleQuery(i, slaToUse, i));
@@ -392,7 +394,12 @@ public class GenQueries {
 					.append(" TO USER test").append(userNumber).append(NEWLINE);
 		}
 		sb.append("#PARSER PQL").append(NEWLINE);
-		sb.append("#ADDQUERY").append(NEWLINE);
+		if (INCREMENTAL_QUERY_ADD_MODE) {
+			sb.append("#SLEEP "+INCREMENTAL_QUERY_ADD_MODE_SLEEPTIME).append(NEWLINE);
+			sb.append("#RUNQUERY").append(NEWLINE);
+		} else {
+			sb.append("#ADDQUERY").append(NEWLINE);
+		}
 		return sb.toString();
 	}
 
