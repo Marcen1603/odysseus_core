@@ -26,12 +26,13 @@ public interface IPartialPlanScheduling extends IClone{
 
 	int planCount();
 
-	@Override
-    IPartialPlanScheduling clone();
 
 	IScheduling nextPlan();
 
 	//TODO wieder auf removeCurrent umbauen, atm unpassende bennenung fuer RR
 	void removePlan(IScheduling plan);
+
+	@Override
+    IPartialPlanScheduling clone();
 
 }
