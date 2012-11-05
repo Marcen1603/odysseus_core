@@ -16,11 +16,15 @@
 package de.uniol.inf.is.odysseus.core.server.scheduler.strategy;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.event.IEvent;
+import de.uniol.inf.is.odysseus.core.event.IEventListener;
+import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
@@ -33,37 +37,34 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
  * 
  * @author Jonas Jacobi, Marco Grawunder
  */
-public abstract class AbstractScheduling implements IScheduling,ITrainScheduling {
+public abstract class AbstractScheduling implements IScheduling,ITrainScheduling, IEventListener {
 
-	@SuppressWarnings("unused")
 	static private Logger logger = LoggerFactory
 			.getLogger(AbstractScheduling.class);
 
 	private List<ISchedulingEventListener> schedulingEventListener = new ArrayList<ISchedulingEventListener>();
 	private IPartialPlan plan = null;
 	protected boolean isPlanChanged = true;
-//	/**
-//	 * BitVector for every source, is set to false, if no data is available
-//	 * Changed on ProcessDone
-//	 */
-//	BitSet schedulable = new BitSet();
-//	/**
-//	 * if scheduling currently paused because nothing to schedule, need to send
-//	 * event if scheduling can be continued
-//	 */
-//	boolean schedulingPaused = false;
-//	/**
-//	 * BitVector for every source, is set to false, if source in manually
-//	 * blocked Changed by Blocked and Unblocked Events
-//	 */
-//	BitSet notBlocked = new BitSet();
-//	/**
-//	 * if all schedulable operators are blocked, is set to true, need to send
-//	 * event that scheduling is possible again
-//	 */
-//	boolean blocked = false;
-
-	// private SLATestCalculator slaTestCalculator = null;
+	/**
+	 * BitVector for every source, is set to false, if no data is available
+	 * Changed on ProcessDone
+	 */
+	BitSet schedulable = new BitSet();
+	/**
+	 * if scheduling currently paused because nothing to schedule, need to send
+	 * event if scheduling can be continued
+	 */
+	boolean schedulingPaused = false;
+	/**
+	 * BitVector for every source, is set to false, if source in manually
+	 * blocked Changed by Blocked and Unblocked Events
+	 */
+	BitSet notBlocked = new BitSet();
+	/**
+	 * if all schedulable operators are blocked, is set to true, need to send
+	 * event that scheduling is possible again
+	 */
+	boolean blocked = false;
 
 	public AbstractScheduling(IPartialPlan plan) {
 		this.plan = plan;
@@ -79,22 +80,22 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 	}
 
 	protected void prepareSources() {
-//		//logger.debug("Prepare Sources " + plan.getIterableSources());
-//
-//		for (int bitIndex = 0; bitIndex < plan.getIterableSources().size(); bitIndex++) {
-//			plan.getIterableSource(bitIndex).subscribe(this,
-//					POEventType.ProcessDone);
-//			plan.getIterableSource(bitIndex).subscribe(this,
-//					POEventType.Unblocked);
-//			plan.getIterableSource(bitIndex).subscribe(this,
-//					POEventType.Blocked);
-//			plan.getIterableSource(bitIndex).subscribe(this,
-//					POEventType.CloseDone);
-//			schedulable.set(bitIndex, true);
-//			notBlocked.set(bitIndex, true);
-//		}
-//		blocked = false;
-//		schedulingPaused = false;
+		logger.debug("Prepare Sources " + plan.getIterableSources());
+
+		for (int bitIndex = 0; bitIndex < plan.getIterableSources().size(); bitIndex++) {
+			plan.getIterableSource(bitIndex).subscribe(this,
+					POEventType.ProcessDone);
+			plan.getIterableSource(bitIndex).subscribe(this,
+					POEventType.Unblocked);
+			plan.getIterableSource(bitIndex).subscribe(this,
+					POEventType.Blocked);
+			plan.getIterableSource(bitIndex).subscribe(this,
+					POEventType.CloseDone);
+			schedulable.set(bitIndex, true);
+			notBlocked.set(bitIndex, true);
+		}
+		blocked = false;
+		schedulingPaused = false;
 	}
 
 	@Override
@@ -115,15 +116,15 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 			// System.out.println("Process ISource "+nextSource+" b="+nextSource.isBlocked()+" n="+nextSource.hasNext());
 			if (nextSource.isDone()) {
 				sourceDone(nextSource);
-//			} else if (nextSource.isBlocked()) {
-//				logger.debug(nextSource + " blocked");
-//				updateBlocked(plan.getSourceId(nextSource));
+			} else if (nextSource.isBlocked()) {
+				logger.debug(nextSource + " blocked");
+				updateBlocked(plan.getSourceId(nextSource));
 			}else if (nextSource.isOpen() && nextSource.hasNext()) {
 				// logger.debug(nextSource + " process");
 				nextSource.transferNext();
-//			} else {
-//				// logger.debug(nextSource + " nothing to process");
-//				updateSchedulable(nextSource);
+			} else {
+				// logger.debug(nextSource + " nothing to process");
+				updateSchedulable(nextSource);
 			}
 			nextSource = nextSource();
 		}
@@ -145,8 +146,8 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 				&& System.currentTimeMillis() < endTime) {
 			if (nextSource.isDone()) {
 				sourceDone(nextSource);
-//			} else if (nextSource.isBlocked()) {
-//				updateBlocked(plan.getSourceId(nextSource));
+			} else if (nextSource.isBlocked()) {
+				updateBlocked(plan.getSourceId(nextSource));
 			} else if (nextSource.isOpen() && nextSource.hasNext()) {
 				// batch processing of tuple train
 				int numScheds = 0;
@@ -154,48 +155,48 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 					numScheds++;
 					nextSource.transferNext();
 				} while (nextSource.hasNext() && numScheds < trainSize);
-//			} else {
-//				updateSchedulable(nextSource);
+			} else {
+				updateSchedulable(nextSource);
 			}
 			nextSource = nextSource();
 		}
 		return isDone();
 	}
 
-//	protected void updateSchedulable(IIterableSource<?> nextSource) {
-//		int id = plan.getSourceId(nextSource);
-//		if (id >= 0) {
-//			schedulable.set(id, false);
-//		}else{
-//			logger.warn(nextSource+" not Part of plan "+plan.getIterableSources());
-//		}
-//		if (schedulable.cardinality() == 0) {
-//			if (schedulingPaused == false) {
-//				schedulingPaused = true;
-//				// logger.debug("Scheduling paused, nothing to schedule");
-//				synchronized (schedulingEventListener) {
-//					for (ISchedulingEventListener l : schedulingEventListener) {
-//						l.nothingToSchedule(this);
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//	protected void updateBlocked(int index) {
-//		notBlocked.set(index, false);
-//		if (notBlocked.cardinality() == 0) {
-//			if (blocked == false) {
-//				blocked = true;
-//				logger.debug("Processing blocked because all operators are blocked");
-//				synchronized (schedulingEventListener) {
-//					for (ISchedulingEventListener l : schedulingEventListener) {
-//						l.nothingToSchedule(this);
-//					}
-//				}
-//			}
-//		}
-//	}
+	protected void updateSchedulable(IIterableSource<?> nextSource) {
+		int id = plan.getSourceId(nextSource);
+		if (id >= 0) {
+			schedulable.set(id, false);
+		}else{
+			logger.warn(nextSource+" not Part of plan "+plan.getIterableSources());
+		}
+		if (schedulable.cardinality() == 0) {
+			if (schedulingPaused == false) {
+				schedulingPaused = true;
+				logger.debug("Scheduling paused, nothing to schedule");
+				synchronized (schedulingEventListener) {
+					for (ISchedulingEventListener l : schedulingEventListener) {
+						l.nothingToSchedule(this);
+					}
+				}
+			}
+		}
+	}
+
+	protected void updateBlocked(int index) {
+		notBlocked.set(index, false);
+		if (notBlocked.cardinality() == 0) {
+			if (blocked == false) {
+				blocked = true;
+				logger.debug("Processing blocked because all operators are blocked");
+				synchronized (schedulingEventListener) {
+					for (ISchedulingEventListener l : schedulingEventListener) {
+						l.nothingToSchedule(this);
+					}
+				}
+			}
+		}
+	}
 
 	public abstract IIterableSource<?> nextSource();
 
@@ -224,58 +225,58 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 		}
 	}
 
-//	@Override
-//	public void eventOccured(IEvent<?, ?> poEvent) {
-//		IIterableSource<?> s = (IIterableSource<?>) poEvent.getSender();
-//		int index = plan.getSourceId(s);
-//		if (poEvent.getEventType() == POEventType.CloseDone) {
-//			sourceDone(s);
-//
-//		} else {
-//			synchronized (notBlocked) {
-//				if (poEvent.getEventType() == POEventType.Blocked) {
-//					// System.out.println(poEvent);
-//					updateBlocked(index);
-//					return;
-//				} else if (poEvent.getEventType() == POEventType.Unblocked) {
-//					// System.out.println(poEvent);
-//					notBlocked.set(index, true);
-//					if (blocked) {
-//						for (ISchedulingEventListener l : schedulingEventListener) {
-//							l.scheddulingPossible(this);
-//						}
-//					}
-//				}
-//			}
-//			// Ignore ProcessDone Events if Source is blocked
-//			if (notBlocked.get(index)) {
-//				// System.out.println(poEvent);
-//				if (poEvent.getEventType() == POEventType.ProcessDone) {
-//					synchronized (schedulingEventListener) {
-//						schedulable.set(index, true);
-//						if (schedulingPaused && !s.isBlocked()) {
-//							schedulingPaused = false;
-//							// logger.debug("Scheduling reactivated");
-//							for (ISchedulingEventListener l : schedulingEventListener) {
-//								l.scheddulingPossible(this);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//	@Override
-//	public boolean isSchedulingBlocked() {
-//		return blocked;
-//	}
-//
-//	@Override
-//	public boolean isSchedulingPaused() {
-//		return schedulingPaused;
-//	}
-//
+	@Override
+	public void eventOccured(IEvent<?, ?> poEvent, long nanoTimestamp) {
+		IIterableSource<?> s = (IIterableSource<?>) poEvent.getSender();
+		int index = plan.getSourceId(s);
+		if (poEvent.getEventType() == POEventType.CloseDone) {
+			sourceDone(s);
+
+		} else {
+			synchronized (notBlocked) {
+				if (poEvent.getEventType() == POEventType.Blocked) {
+					// System.out.println(poEvent);
+					updateBlocked(index);
+					return;
+				} else if (poEvent.getEventType() == POEventType.Unblocked) {
+					// System.out.println(poEvent);
+					notBlocked.set(index, true);
+					if (blocked) {
+						for (ISchedulingEventListener l : schedulingEventListener) {
+							l.scheddulingPossible(this);
+						}
+					}
+				}
+			}
+			// Ignore ProcessDone Events if Source is blocked
+			if (notBlocked.get(index)) {
+				// System.out.println(poEvent);
+				if (poEvent.getEventType() == POEventType.ProcessDone) {
+					synchronized (schedulingEventListener) {
+						schedulable.set(index, true);
+						if (schedulingPaused && !s.isBlocked()) {
+							schedulingPaused = false;
+							//logger.debug("Scheduling reactivated");
+							for (ISchedulingEventListener l : schedulingEventListener) {
+								l.scheddulingPossible(this);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean isSchedulingBlocked() {
+		return blocked;
+	}
+
+	@Override
+	public boolean isSchedulingPaused() {
+		return schedulingPaused;
+	}
+
 	@Override
 	public boolean isSchedulable() {
 		// TODO: 

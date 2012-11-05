@@ -22,8 +22,8 @@ public interface IScheduling {
 	public boolean schedule(long maxTime);
 	public boolean schedule(long maxTime, int trainSize);
 	public IPartialPlan getPlan();
-//	boolean isSchedulingPaused();
-//	boolean isSchedulingBlocked();
+	boolean isSchedulingPaused();
+	boolean isSchedulingBlocked();
 	public void addSchedulingEventListener(ISchedulingEventListener eventListener);
 	public void removeSchedulingEventListener(ISchedulingEventListener eventListener);
 	public boolean isSchedulable();

@@ -85,6 +85,15 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 	@Override
 	public IScheduling nextPlan() {
 		IScheduling returnValue = null;
+		synchronized (pausedPlans) {
+			while (pausedPlans.size() == planList.size()) {
+				try {
+					pausedPlans.wait(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		lock.lock();
 		if (planIterator == null || !planIterator.hasNext()) {
 			planIterator = planList.iterator();
@@ -103,8 +112,8 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 
 	@Override
 	public void scheddulingPossible(IScheduling sched) {
-		pausedPlans.remove(sched);
 		synchronized (pausedPlans) {
+			pausedPlans.remove(sched);
 			pausedPlans.notifyAll();
 		}
 	}
