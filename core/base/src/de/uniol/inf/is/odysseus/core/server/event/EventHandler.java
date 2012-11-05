@@ -176,7 +176,10 @@ public class EventHandler {
 	 */
 	final public void fire(Object caller, IEvent<?, ?> event) {
 		long curTime = System.nanoTime();
-		dispatcherMap.get(caller).addEvent(caller, event, curTime);
+		EventDispatcher eventDispatcher = dispatcherMap.get(caller);
+		if( eventDispatcher != null ) {
+			eventDispatcher.addEvent(caller, event, curTime);
+		}
 	}
 
 }
