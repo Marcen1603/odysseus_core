@@ -46,7 +46,6 @@ public class RoundRobinPlanScheduling extends AbstractPartialPlanScheduling impl
 
 	@Override
 	public void addPlan(IScheduling plan) {
-		super.addPlan(plan);
 		lock.lock();
 		planList.add(plan);
 		planIterator = null;
