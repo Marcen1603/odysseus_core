@@ -47,8 +47,8 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.message.GGAMessage;
 import de.uniol.inf.is.odysseus.wrapper.nmea.message.GSVMessage;
 import de.uniol.inf.is.odysseus.wrapper.nmea.message.RMCMessage;
 
-public class NMEADatHandler extends AbstractDataHandler<Tuple<?>> {
-	private static final Logger LOG = LoggerFactory.getLogger(NMEADatHandler.class);
+public class NMEADataHandler extends AbstractDataHandler<Tuple<?>> {
+	private static final Logger LOG = LoggerFactory.getLogger(NMEADataHandler.class);
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add("NMEA");
@@ -66,17 +66,17 @@ public class NMEADatHandler extends AbstractDataHandler<Tuple<?>> {
 	private Date date;
 	private SDFSchema schema;
 
-	public NMEADatHandler() {
+	public NMEADataHandler() {
 
 	}
 
-	public NMEADatHandler(SDFSchema schema) {
+	public NMEADataHandler(SDFSchema schema) {
 		this.schema = schema;
 	}
 
 	@Override
 	public IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
-		return new NMEADatHandler(schema);
+		return new NMEADataHandler(schema);
 	}
 
 	/*
