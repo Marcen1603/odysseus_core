@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
 
 /**
- * Testkomponente für Query-Tests mit Nexmark
+ * Testkomponente fï¿½r Query-Tests mit Nexmark
  * 
  * @author Timo Michelsen
  *
@@ -110,18 +110,19 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 				test(queryKey, queryFile, results.get(queryKey), parser, session);
 				waitProcessing();
 				
-				executor.removeAllQueries(session);
 				
 				checkForErrors(errorText);
 				LOG.debug("Query {} successfull", queryKey);
-
 			} catch (OdysseusScriptException e) {
 				LOG.error("Query {} failed! ", queryKey, e);
-				tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage());
+				tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage() + NEWLINE);
 			} catch( IOException e ) {
                 LOG.error("Query {} failed! ", queryKey, e);
-                tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage());
+                tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage() + NEWLINE);
+			}finally {
+	             executor.removeAllQueries(session);
 			}
+			tryFlush(out);
 		}
 		
 		tryClose(out);
@@ -165,13 +166,15 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		}
     }
 
-	private void waitProcessing() {
+	private void waitProcessing() throws OdysseusScriptException {
 		synchronized (this) {
 			while (!processingDone) {
-				try {
-                    this.wait(PROCESSING_WAIT_TIME);
-                }
-                catch (InterruptedException ignored) {}
+                    try {
+                        this.wait(PROCESSING_WAIT_TIME);
+                    }
+                    catch (InterruptedException e) {
+                        throw new OdysseusScriptException(e);
+                    }
 			}
 		}
 	}
@@ -218,12 +221,24 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		}
 	}
 
+    private static void tryFlush(BufferedWriter out) {
+        try {
+            out.flush();
+
+        }
+        catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+            e.printStackTrace();
+        }
+    }
+	   
 	private static void tryClose(BufferedWriter out) {
 		try {
 			out.flush();
 			out.close();
 
 		} catch (IOException e) {
+		    LOG.error(e.getMessage(),e);
 			e.printStackTrace();
 		}
 	}
@@ -232,6 +247,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		try {
 			out.write(text);
 		} catch( IOException ignored ) {
+		    LOG.error(ignored.getMessage(),ignored);
 		}
 	}
 
@@ -240,7 +256,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		
 		String text = "Testing Query " + key + " from file " + query + " with results from file " + result;
 		LOG.debug(text);
-		tryWrite(out, text);
+        tryWrite(out, text + NEWLINE);
 		
 		startTime = System.nanoTime();
 		parser.parseAndExecute(getQueryString(query), user, new SimpleCompareSink(result, this));
@@ -253,6 +269,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		while ((line = reader.readLine()) != null) {
 			queryString.append(line).append(NEWLINE);
 		}
+		reader.close();
 		return queryString.toString();
 	}
 
