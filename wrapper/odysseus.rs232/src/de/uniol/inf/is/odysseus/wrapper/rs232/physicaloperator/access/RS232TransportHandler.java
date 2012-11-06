@@ -28,8 +28,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -72,10 +70,6 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
     private int                databits;
     /** The input stream */
     private BufferedReader     input;
-    /** Pipe in and output for data transfer */
-    private PipedInputStream   pipeInput;
-    private PipedOutputStream  pipeOutput;
-    private boolean            usePipe        = false;
     private ITransportPattern  transportPattern;
 
     public RS232TransportHandler() {
@@ -90,15 +84,6 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
                 : SerialPort.DATABITS_8;
         this.stopbits = options.containsKey("stopbits") ? Integer.parseInt(options.get("stopbits"))
                 : SerialPort.STOPBITS_1;
-        if (this.transportPattern == ITransportPattern.PULL) {
-            this.pipeInput = new PipedInputStream();
-            try {
-                this.pipeOutput = new PipedOutputStream(this.pipeInput);
-            }
-            catch (IOException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
         // Bugfix for Linux/Unix access to /dev/ttyACM*
         String os = System.getProperty("os.name").toLowerCase();
         if ((os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0)) {
@@ -113,7 +98,6 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
             }
             System.setProperty("gnu.io.rxtx.SerialPorts", serialPorts.toString());
         }
-
     }
 
     public RS232TransportHandler(RS232TransportHandler rs232TransportHandler) {
@@ -123,16 +107,6 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
         this.parity = rs232TransportHandler.parity;
         this.databits = rs232TransportHandler.databits;
         this.stopbits = rs232TransportHandler.stopbits;
-        this.usePipe = rs232TransportHandler.usePipe;
-        if (this.transportPattern == ITransportPattern.PULL) {
-            this.pipeInput = new PipedInputStream();
-            try {
-                this.pipeOutput = new PipedOutputStream(this.pipeInput);
-            }
-            catch (IOException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
     }
 
     @Override
@@ -150,8 +124,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
 
     @Override
     public InputStream getInputStream() {
-        this.usePipe = true;
-        return this.pipeInput;
+        return null;
     }
 
     @Override
@@ -173,11 +146,13 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
         }
         catch (NoSuchPortException e) {
             LOG.error("No such port {}", this.portName);
+            LOG.error(e.getMessage(), e);
         }
         catch (UnsupportedCommOperationException e) {
             LOG.error(e.getMessage(), e);
         }
         catch (PortInUseException e) {
+            LOG.error("Port {} in use", this.portName);
             LOG.error(e.getMessage(), e);
         }
         catch (TooManyListenersException e) {
@@ -219,20 +194,10 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
             String message = "";
             try {
                 message = this.input.readLine();
+                super.fireProcess(ByteBuffer.wrap(message.getBytes()));
             }
             catch (IOException e) {
                 LOG.error(e.getMessage(), e);
-            }
-            if (this.transportPattern == ITransportPattern.PULL) {
-                try {
-                    this.pipeOutput.write(message.getBytes());
-                }
-                catch (IOException e) {
-                    LOG.error(e.getMessage(), e);
-                }
-            }
-            else {
-                super.fireProcess(ByteBuffer.wrap(message.getBytes()));
             }
         }
 
