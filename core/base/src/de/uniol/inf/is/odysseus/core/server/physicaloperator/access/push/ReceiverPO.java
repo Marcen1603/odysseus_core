@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
 public class ReceiverPO<R, W> extends AbstractSource<W> implements
-		IAccessConnectionListener<R>, ITransferHandler<W> {
+		 ITransferHandler<W> {
 
 	volatile protected static Logger _logger = null;
 
@@ -84,10 +84,10 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 		throw new IllegalArgumentException("CLONE CURRENTLY NOT SUPPORTED.");
 	}
 
-	@Override
-	public boolean isOpened() {
-		return super.isOpen();
-	}
+//	@Override
+//	public boolean isOpened() {
+//		return super.isOpen();
+//	}
 
 	@Override
 	public synchronized void process_open() throws OpenFailedException {
@@ -96,11 +96,11 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 			try {
 				if (protocolHandler != null) {
 					protocolHandler.open();
-				} else {
-					objectHandler.clear();
-					inputDataHandler.init();
-					accessHandler.open(this);
-				}
+				} //else {
+//					objectHandler.clear();
+//					inputDataHandler.init();
+//					accessHandler.open(this);
+//				}
 				opened = true;
 			} catch (Exception e) {
 				throw new OpenFailedException(e);
@@ -117,34 +117,35 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 
 				if (protocolHandler != null) {
 					protocolHandler.close();
-				} else {
-					accessHandler.close(this);
-					inputDataHandler.done();
-					objectHandler.clear();
 				}
+//				else {
+//					accessHandler.close(this);
+//					inputDataHandler.done();
+//					objectHandler.clear();
+//				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	@Override
-	public void done() {
-		propagateDone();
-	}
+//	@Override
+//	public void done() {
+//		propagateDone();
+//	}
 
 	@Override
 	public synchronized void transfer(W toTransfer) {
 		super.transfer(toTransfer);
 	}
 
-	@Override
-	public void process(R object) throws ClassNotFoundException {
-		if (isOpen()) {
-			inputDataHandler
-					.process(object, objectHandler, accessHandler, this);
-		}
-	}
+//	@Override
+//	public void process(R object) throws ClassNotFoundException {
+//		if (isOpen()) {
+//			inputDataHandler
+//					.process(object, objectHandler, accessHandler, this);
+//		}
+//	}
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
