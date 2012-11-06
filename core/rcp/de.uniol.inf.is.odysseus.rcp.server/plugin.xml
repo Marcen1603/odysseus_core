@@ -13,13 +13,6 @@
       </view>
       <view
             category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.server.views.partialplan.PartialPlanView"
-            id="de.uniol.inf.is.odysseus.rcp.views.PartialPlanView"
-            name="Partial Plan"
-            restorable="true">
-      </view>
-      <view
-            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.server.views.sink.SinkView"
             icon="icons/network-hub.png"
             id="de.uniol.inf.is.odysseus.rcp.views.SinkView"
