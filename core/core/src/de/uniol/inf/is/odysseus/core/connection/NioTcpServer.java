@@ -110,7 +110,7 @@ public class NioTcpServer extends Thread implements IConnection {
                         Object attachment = selectionKey.attachment();
                         if (attachment != null) {
                             NioTcpConnection connection = (NioTcpConnection) attachment;
-                            if ((selectionKey.isConnectable())
+                            if ((selectionKey.isValid()) && (selectionKey.isConnectable())
                                     && (((SocketChannel) selectionKey.channel()).finishConnect())) {
                                 if (((SocketChannel) selectionKey.channel()).isConnected()) {
                                     selectionKey.interestOps(SelectionKey.OP_READ);
@@ -118,7 +118,7 @@ public class NioTcpServer extends Thread implements IConnection {
                                             ConnectionMessageReason.ConnectionOpened);
                                 }
                             }
-                            else if (selectionKey.isReadable()) {
+                            else if ((selectionKey.isValid()) && (selectionKey.isReadable())) {
                                 if (!((SocketChannel) selectionKey.channel()).isConnected()) {
                                     selectionKey.interestOps(SelectionKey.OP_CONNECT);
                                 }
@@ -132,11 +132,11 @@ public class NioTcpServer extends Thread implements IConnection {
                                     }
                                 }
                             }
-                            else if (selectionKey.isWritable()) {
+                            else if ((selectionKey.isValid()) && (selectionKey.isWritable())) {
                                 connection.write();
                             }
                         }
-                        if (selectionKey.isAcceptable()) {
+                        if ((selectionKey.isValid()) && (selectionKey.isAcceptable())) {
                             ServerSocketChannel channel = (ServerSocketChannel) selectionKey.channel();
                             NioTcpConnection connection = new NioTcpConnection(selector, channel.accept(),
                                     this.readBufferSize, this.writeBufferSize, serverMap.get(channel));
