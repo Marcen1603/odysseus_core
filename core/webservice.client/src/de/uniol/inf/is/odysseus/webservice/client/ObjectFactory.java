@@ -26,6 +26,7 @@ public class ObjectFactory {
 
     private final static QName _GetCurrentSchedulerID_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getCurrentSchedulerID");
     private final static QName _GraphNode_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "graphNode");
+    private final static QName _GetSourcesResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getSourcesResponse");
     private final static QName _GetCurrentSchedulerIDResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getCurrentSchedulerIDResponse");
     private final static QName _IsRunningResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "isRunningResponse");
     private final static QName _LoginResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "loginResponse");
@@ -38,12 +39,15 @@ public class ObjectFactory {
     private final static QName _GetRegisteredSchedulersResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getRegisteredSchedulersResponse");
     private final static QName _GetLogicalQueryByName_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getLogicalQueryByName");
     private final static QName _GetLogicalQueryIdsResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getLogicalQueryIdsResponse");
-    private final static QName _Logout_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "logout");
     private final static QName _AddQuery_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "addQuery");
+    private final static QName _Logout_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "logout");
     private final static QName _GetRegisteredBufferPlacementStrategiesIDs_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getRegisteredBufferPlacementStrategiesIDs");
+    private final static QName _GetOutputSchemaBySource_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOutputSchemaBySource");
+    private final static QName _GetOutputSchemaByQueryIdResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOutputSchemaByQueryIdResponse");
     private final static QName _GetSupportedQueryParsers_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getSupportedQueryParsers");
     private final static QName _GetQueryBuildConfigurationNamesResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getQueryBuildConfigurationNamesResponse");
     private final static QName _GetName_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getName");
+    private final static QName _GetOperatorBuilderList_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOperatorBuilderList");
     private final static QName _GetRegisteredSchedulers_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getRegisteredSchedulers");
     private final static QName _GetSupportedQueryParsersResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getSupportedQueryParsersResponse");
     private final static QName _RemoveQueryResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "removeQueryResponse");
@@ -57,19 +61,22 @@ public class ObjectFactory {
     private final static QName _AddQueryResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "addQueryResponse");
     private final static QName _GetLogicalQuery_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getLogicalQuery");
     private final static QName _StartAllClosedQueriesResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "startAllClosedQueriesResponse");
+    private final static QName _GetSources_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getSources");
+    private final static QName _GetOutputSchemaByQueryId_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOutputSchemaByQueryId");
     private final static QName _IsRunning_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "isRunning");
     private final static QName _GetLogicalQueryResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getLogicalQueryResponse");
     private final static QName _GetInfos_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getInfos");
     private final static QName _GetCurrentSchedulingStrategyID_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getCurrentSchedulingStrategyID");
     private final static QName _StartQuery_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "startQuery");
     private final static QName _StopExecution_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "stopExecution");
-    private final static QName _GetOutputSchemaResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOutputSchemaResponse");
     private final static QName _GetInstalledSources_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getInstalledSources");
+    private final static QName _GetOutputSchemaResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOutputSchemaResponse");
     private final static QName _GetPlanResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getPlanResponse");
     private final static QName _StartQueryResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "startQueryResponse");
     private final static QName _StartExecutionResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "startExecutionResponse");
     private final static QName _SimpleGraph_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "simpleGraph");
     private final static QName _StopExecutionResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "stopExecutionResponse");
+    private final static QName _GetOperatorBuilderListResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOperatorBuilderListResponse");
     private final static QName _SetSchedulerResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "setSchedulerResponse");
     private final static QName _GetInfosResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getInfosResponse");
     private final static QName _GetLogicalQueryById_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getLogicalQueryById");
@@ -83,6 +90,7 @@ public class ObjectFactory {
     private final static QName _GetNameResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getNameResponse");
     private final static QName _StartAllClosedQueries_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "startAllClosedQueries");
     private final static QName _Login_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "login");
+    private final static QName _GetOutputSchemaBySourceResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOutputSchemaBySourceResponse");
     private final static QName _LogoutResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "logoutResponse");
 
     /**
@@ -93,43 +101,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SimpleGraph }
+     * Create an instance of {@link GraphNode }
      * 
      */
-    public SimpleGraph createSimpleGraph() {
-        return new SimpleGraph();
-    }
-
-    /**
-     * Create an instance of {@link StopExecutionResponse }
-     * 
-     */
-    public StopExecutionResponse createStopExecutionResponse() {
-        return new StopExecutionResponse();
-    }
-
-    /**
-     * Create an instance of {@link SetSchedulerResponse }
-     * 
-     */
-    public SetSchedulerResponse createSetSchedulerResponse() {
-        return new SetSchedulerResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetInfosResponse }
-     * 
-     */
-    public GetInfosResponse createGetInfosResponse() {
-        return new GetInfosResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetRegisteredSchedulingStrategiesResponse }
-     * 
-     */
-    public GetRegisteredSchedulingStrategiesResponse createGetRegisteredSchedulingStrategiesResponse() {
-        return new GetRegisteredSchedulingStrategiesResponse();
+    public GraphNode createGraphNode() {
+        return new GraphNode();
     }
 
     /**
@@ -141,99 +117,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetConnectionInformationResponse }
+     * Create an instance of {@link RemoveQueryResponse }
      * 
      */
-    public GetConnectionInformationResponse createGetConnectionInformationResponse() {
-        return new GetConnectionInformationResponse();
+    public RemoveQueryResponse createRemoveQueryResponse() {
+        return new RemoveQueryResponse();
     }
 
     /**
-     * Create an instance of {@link GetRegisteredSchedulingStrategies }
+     * Create an instance of {@link RemoveQuery }
      * 
      */
-    public GetRegisteredSchedulingStrategies createGetRegisteredSchedulingStrategies() {
-        return new GetRegisteredSchedulingStrategies();
-    }
-
-    /**
-     * Create an instance of {@link GetInstalledSourcesResponse }
-     * 
-     */
-    public GetInstalledSourcesResponse createGetInstalledSourcesResponse() {
-        return new GetInstalledSourcesResponse();
-    }
-
-    /**
-     * Create an instance of {@link StartExecution }
-     * 
-     */
-    public StartExecution createStartExecution() {
-        return new StartExecution();
-    }
-
-    /**
-     * Create an instance of {@link StopQuery }
-     * 
-     */
-    public StopQuery createStopQuery() {
-        return new StopQuery();
-    }
-
-    /**
-     * Create an instance of {@link GetOutputSchema }
-     * 
-     */
-    public GetOutputSchema createGetOutputSchema() {
-        return new GetOutputSchema();
-    }
-
-    /**
-     * Create an instance of {@link StartAllClosedQueries }
-     * 
-     */
-    public StartAllClosedQueries createStartAllClosedQueries() {
-        return new StartAllClosedQueries();
-    }
-
-    /**
-     * Create an instance of {@link GetNameResponse }
-     * 
-     */
-    public GetNameResponse createGetNameResponse() {
-        return new GetNameResponse();
-    }
-
-    /**
-     * Create an instance of {@link Login }
-     * 
-     */
-    public Login createLogin() {
-        return new Login();
-    }
-
-    /**
-     * Create an instance of {@link LogoutResponse }
-     * 
-     */
-    public LogoutResponse createLogoutResponse() {
-        return new LogoutResponse();
-    }
-
-    /**
-     * Create an instance of {@link IsRunning }
-     * 
-     */
-    public IsRunning createIsRunning() {
-        return new IsRunning();
-    }
-
-    /**
-     * Create an instance of {@link GetLogicalQueryResponse }
-     * 
-     */
-    public GetLogicalQueryResponse createGetLogicalQueryResponse() {
-        return new GetLogicalQueryResponse();
+    public RemoveQuery createRemoveQuery() {
+        return new RemoveQuery();
     }
 
     /**
@@ -245,27 +141,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetInfos }
+     * Create an instance of {@link GetOutputSchema }
      * 
      */
-    public GetInfos createGetInfos() {
-        return new GetInfos();
-    }
-
-    /**
-     * Create an instance of {@link StartQuery }
-     * 
-     */
-    public StartQuery createStartQuery() {
-        return new StartQuery();
-    }
-
-    /**
-     * Create an instance of {@link StopExecution }
-     * 
-     */
-    public StopExecution createStopExecution() {
-        return new StopExecution();
+    public GetOutputSchema createGetOutputSchema() {
+        return new GetOutputSchema();
     }
 
     /**
@@ -277,35 +157,155 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetOutputSchemaResponse }
+     * Create an instance of {@link GetRegisteredSchedulersResponse }
      * 
      */
-    public GetOutputSchemaResponse createGetOutputSchemaResponse() {
-        return new GetOutputSchemaResponse();
+    public GetRegisteredSchedulersResponse createGetRegisteredSchedulersResponse() {
+        return new GetRegisteredSchedulersResponse();
     }
 
     /**
-     * Create an instance of {@link GetPlanResponse }
+     * Create an instance of {@link SimpleGraph }
      * 
      */
-    public GetPlanResponse createGetPlanResponse() {
-        return new GetPlanResponse();
+    public SimpleGraph createSimpleGraph() {
+        return new SimpleGraph();
     }
 
     /**
-     * Create an instance of {@link StartQueryResponse }
+     * Create an instance of {@link ConnectionInformationResponse }
      * 
      */
-    public StartQueryResponse createStartQueryResponse() {
-        return new StartQueryResponse();
+    public ConnectionInformationResponse createConnectionInformationResponse() {
+        return new ConnectionInformationResponse();
     }
 
     /**
-     * Create an instance of {@link StartExecutionResponse }
+     * Create an instance of {@link GetInstalledQueriesResponse }
      * 
      */
-    public StartExecutionResponse createStartExecutionResponse() {
-        return new StartExecutionResponse();
+    public GetInstalledQueriesResponse createGetInstalledQueriesResponse() {
+        return new GetInstalledQueriesResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetName }
+     * 
+     */
+    public GetName createGetName() {
+        return new GetName();
+    }
+
+    /**
+     * Create an instance of {@link AddQueryResponse }
+     * 
+     */
+    public AddQueryResponse createAddQueryResponse() {
+        return new AddQueryResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetQueryBuildConfigurationNamesResponse }
+     * 
+     */
+    public GetQueryBuildConfigurationNamesResponse createGetQueryBuildConfigurationNamesResponse() {
+        return new GetQueryBuildConfigurationNamesResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetConnectionInformationResponse }
+     * 
+     */
+    public GetConnectionInformationResponse createGetConnectionInformationResponse() {
+        return new GetConnectionInformationResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetConnectionInformation }
+     * 
+     */
+    public GetConnectionInformation createGetConnectionInformation() {
+        return new GetConnectionInformation();
+    }
+
+    /**
+     * Create an instance of {@link GetOperatorBuilderList }
+     * 
+     */
+    public GetOperatorBuilderList createGetOperatorBuilderList() {
+        return new GetOperatorBuilderList();
+    }
+
+    /**
+     * Create an instance of {@link SetScheduler }
+     * 
+     */
+    public SetScheduler createSetScheduler() {
+        return new SetScheduler();
+    }
+
+    /**
+     * Create an instance of {@link GetLogicalQueryByName }
+     * 
+     */
+    public GetLogicalQueryByName createGetLogicalQueryByName() {
+        return new GetLogicalQueryByName();
+    }
+
+    /**
+     * Create an instance of {@link Login }
+     * 
+     */
+    public Login createLogin() {
+        return new Login();
+    }
+
+    /**
+     * Create an instance of {@link GetSourcesResponse }
+     * 
+     */
+    public GetSourcesResponse createGetSourcesResponse() {
+        return new GetSourcesResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetNameResponse }
+     * 
+     */
+    public GetNameResponse createGetNameResponse() {
+        return new GetNameResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetRegisteredSchedulingStrategies }
+     * 
+     */
+    public GetRegisteredSchedulingStrategies createGetRegisteredSchedulingStrategies() {
+        return new GetRegisteredSchedulingStrategies();
+    }
+
+    /**
+     * Create an instance of {@link StartAllClosedQueries }
+     * 
+     */
+    public StartAllClosedQueries createStartAllClosedQueries() {
+        return new StartAllClosedQueries();
+    }
+
+    /**
+     * Create an instance of {@link GetRegisteredBufferPlacementStrategiesIDsResponse }
+     * 
+     */
+    public GetRegisteredBufferPlacementStrategiesIDsResponse createGetRegisteredBufferPlacementStrategiesIDsResponse() {
+        return new GetRegisteredBufferPlacementStrategiesIDsResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetLogicalQueryIdsResponse }
+     * 
+     */
+    public GetLogicalQueryIdsResponse createGetLogicalQueryIdsResponse() {
+        return new GetLogicalQueryIdsResponse();
     }
 
     /**
@@ -325,99 +325,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RemoveQueryResponse }
+     * Create an instance of {@link GetPlanResponse }
      * 
      */
-    public RemoveQueryResponse createRemoveQueryResponse() {
-        return new RemoveQueryResponse();
+    public GetPlanResponse createGetPlanResponse() {
+        return new GetPlanResponse();
     }
 
     /**
-     * Create an instance of {@link GetInstalledQueries }
+     * Create an instance of {@link GetRegisteredSchedulingStrategiesResponse }
      * 
      */
-    public GetInstalledQueries createGetInstalledQueries() {
-        return new GetInstalledQueries();
-    }
-
-    /**
-     * Create an instance of {@link GetLogicalQueryByNameResponse }
-     * 
-     */
-    public GetLogicalQueryByNameResponse createGetLogicalQueryByNameResponse() {
-        return new GetLogicalQueryByNameResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetConnectionInformation }
-     * 
-     */
-    public GetConnectionInformation createGetConnectionInformation() {
-        return new GetConnectionInformation();
-    }
-
-    /**
-     * Create an instance of {@link StopQueryResponse }
-     * 
-     */
-    public StopQueryResponse createStopQueryResponse() {
-        return new StopQueryResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetPlan }
-     * 
-     */
-    public GetPlan createGetPlan() {
-        return new GetPlan();
-    }
-
-    /**
-     * Create an instance of {@link RemoveQuery }
-     * 
-     */
-    public RemoveQuery createRemoveQuery() {
-        return new RemoveQuery();
-    }
-
-    /**
-     * Create an instance of {@link GetLogicalQueryIds }
-     * 
-     */
-    public GetLogicalQueryIds createGetLogicalQueryIds() {
-        return new GetLogicalQueryIds();
-    }
-
-    /**
-     * Create an instance of {@link AddQueryResponse }
-     * 
-     */
-    public AddQueryResponse createAddQueryResponse() {
-        return new AddQueryResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetLogicalQuery }
-     * 
-     */
-    public GetLogicalQuery createGetLogicalQuery() {
-        return new GetLogicalQuery();
-    }
-
-    /**
-     * Create an instance of {@link StartAllClosedQueriesResponse }
-     * 
-     */
-    public StartAllClosedQueriesResponse createStartAllClosedQueriesResponse() {
-        return new StartAllClosedQueriesResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetCurrentSchedulerID }
-     * 
-     */
-    public GetCurrentSchedulerID createGetCurrentSchedulerID() {
-        return new GetCurrentSchedulerID();
+    public GetRegisteredSchedulingStrategiesResponse createGetRegisteredSchedulingStrategiesResponse() {
+        return new GetRegisteredSchedulingStrategiesResponse();
     }
 
     /**
@@ -429,219 +349,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IsRunningResponse }
+     * Create an instance of {@link StartAllClosedQueriesResponse }
      * 
      */
-    public IsRunningResponse createIsRunningResponse() {
-        return new IsRunningResponse();
-    }
-
-    /**
-     * Create an instance of {@link GraphNode }
-     * 
-     */
-    public GraphNode createGraphNode() {
-        return new GraphNode();
-    }
-
-    /**
-     * Create an instance of {@link LoginResponse }
-     * 
-     */
-    public LoginResponse createLoginResponse() {
-        return new LoginResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetRegisteredBufferPlacementStrategiesIDsResponse }
-     * 
-     */
-    public GetRegisteredBufferPlacementStrategiesIDsResponse createGetRegisteredBufferPlacementStrategiesIDsResponse() {
-        return new GetRegisteredBufferPlacementStrategiesIDsResponse();
-    }
-
-    /**
-     * Create an instance of {@link SetScheduler }
-     * 
-     */
-    public SetScheduler createSetScheduler() {
-        return new SetScheduler();
-    }
-
-    /**
-     * Create an instance of {@link GetCurrentSchedulingStrategyIDResponse }
-     * 
-     */
-    public GetCurrentSchedulingStrategyIDResponse createGetCurrentSchedulingStrategyIDResponse() {
-        return new GetCurrentSchedulingStrategyIDResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetLogicalQueryByIdResponse }
-     * 
-     */
-    public GetLogicalQueryByIdResponse createGetLogicalQueryByIdResponse() {
-        return new GetLogicalQueryByIdResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetQueryBuildConfigurationNames }
-     * 
-     */
-    public GetQueryBuildConfigurationNames createGetQueryBuildConfigurationNames() {
-        return new GetQueryBuildConfigurationNames();
-    }
-
-    /**
-     * Create an instance of {@link GetInstalledQueriesResponse }
-     * 
-     */
-    public GetInstalledQueriesResponse createGetInstalledQueriesResponse() {
-        return new GetInstalledQueriesResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetRegisteredSchedulersResponse }
-     * 
-     */
-    public GetRegisteredSchedulersResponse createGetRegisteredSchedulersResponse() {
-        return new GetRegisteredSchedulersResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetLogicalQueryIdsResponse }
-     * 
-     */
-    public GetLogicalQueryIdsResponse createGetLogicalQueryIdsResponse() {
-        return new GetLogicalQueryIdsResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetLogicalQueryByName }
-     * 
-     */
-    public GetLogicalQueryByName createGetLogicalQueryByName() {
-        return new GetLogicalQueryByName();
-    }
-
-    /**
-     * Create an instance of {@link GetRegisteredBufferPlacementStrategiesIDs }
-     * 
-     */
-    public GetRegisteredBufferPlacementStrategiesIDs createGetRegisteredBufferPlacementStrategiesIDs() {
-        return new GetRegisteredBufferPlacementStrategiesIDs();
-    }
-
-    /**
-     * Create an instance of {@link AddQuery }
-     * 
-     */
-    public AddQuery createAddQuery() {
-        return new AddQuery();
-    }
-
-    /**
-     * Create an instance of {@link Logout }
-     * 
-     */
-    public Logout createLogout() {
-        return new Logout();
-    }
-
-    /**
-     * Create an instance of {@link GetSupportedQueryParsers }
-     * 
-     */
-    public GetSupportedQueryParsers createGetSupportedQueryParsers() {
-        return new GetSupportedQueryParsers();
-    }
-
-    /**
-     * Create an instance of {@link GetName }
-     * 
-     */
-    public GetName createGetName() {
-        return new GetName();
-    }
-
-    /**
-     * Create an instance of {@link GetQueryBuildConfigurationNamesResponse }
-     * 
-     */
-    public GetQueryBuildConfigurationNamesResponse createGetQueryBuildConfigurationNamesResponse() {
-        return new GetQueryBuildConfigurationNamesResponse();
-    }
-
-    /**
-     * Create an instance of {@link ConnectionInformation }
-     * 
-     */
-    public ConnectionInformation createConnectionInformation() {
-        return new ConnectionInformation();
-    }
-
-    /**
-     * Create an instance of {@link SdfSchemaResponse }
-     * 
-     */
-    public SdfSchemaResponse createSdfSchemaResponse() {
-        return new SdfSchemaResponse();
-    }
-
-    /**
-     * Create an instance of {@link SdfSchemaInformation }
-     * 
-     */
-    public SdfSchemaInformation createSdfSchemaInformation() {
-        return new SdfSchemaInformation();
-    }
-
-    /**
-     * Create an instance of {@link SdfDatatypeInformation }
-     * 
-     */
-    public SdfDatatypeInformation createSdfDatatypeInformation() {
-        return new SdfDatatypeInformation();
-    }
-
-    /**
-     * Create an instance of {@link BooleanResponse }
-     * 
-     */
-    public BooleanResponse createBooleanResponse() {
-        return new BooleanResponse();
-    }
-
-    /**
-     * Create an instance of {@link SdfAttributeInformation }
-     * 
-     */
-    public SdfAttributeInformation createSdfAttributeInformation() {
-        return new SdfAttributeInformation();
-    }
-
-    /**
-     * Create an instance of {@link StringListResponse }
-     * 
-     */
-    public StringListResponse createStringListResponse() {
-        return new StringListResponse();
-    }
-
-    /**
-     * Create an instance of {@link LogicalQueryInfo }
-     * 
-     */
-    public LogicalQueryInfo createLogicalQueryInfo() {
-        return new LogicalQueryInfo();
-    }
-
-    /**
-     * Create an instance of {@link ConnectionInformationResponse }
-     * 
-     */
-    public ConnectionInformationResponse createConnectionInformationResponse() {
-        return new ConnectionInformationResponse();
+    public StartAllClosedQueriesResponse createStartAllClosedQueriesResponse() {
+        return new StartAllClosedQueriesResponse();
     }
 
     /**
@@ -653,11 +365,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StringResponse }
+     * Create an instance of {@link GetLogicalQueryByIdResponse }
      * 
      */
-    public StringResponse createStringResponse() {
-        return new StringResponse();
+    public GetLogicalQueryByIdResponse createGetLogicalQueryByIdResponse() {
+        return new GetLogicalQueryByIdResponse();
     }
 
     /**
@@ -669,6 +381,38 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link StringResponse }
+     * 
+     */
+    public StringResponse createStringResponse() {
+        return new StringResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetLogicalQuery }
+     * 
+     */
+    public GetLogicalQuery createGetLogicalQuery() {
+        return new GetLogicalQuery();
+    }
+
+    /**
+     * Create an instance of {@link SdfDatatypeInformation }
+     * 
+     */
+    public SdfDatatypeInformation createSdfDatatypeInformation() {
+        return new SdfDatatypeInformation();
+    }
+
+    /**
+     * Create an instance of {@link StopExecution }
+     * 
+     */
+    public StopExecution createStopExecution() {
+        return new StopExecution();
+    }
+
+    /**
      * Create an instance of {@link IntegerCollectionResponse }
      * 
      */
@@ -677,11 +421,379 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link OperatorBuilderInformation }
+     * 
+     */
+    public OperatorBuilderInformation createOperatorBuilderInformation() {
+        return new OperatorBuilderInformation();
+    }
+
+    /**
+     * Create an instance of {@link SdfSchemaResponse }
+     * 
+     */
+    public SdfSchemaResponse createSdfSchemaResponse() {
+        return new SdfSchemaResponse();
+    }
+
+    /**
+     * Create an instance of {@link Logout }
+     * 
+     */
+    public Logout createLogout() {
+        return new Logout();
+    }
+
+    /**
+     * Create an instance of {@link GetRegisteredBufferPlacementStrategiesIDs }
+     * 
+     */
+    public GetRegisteredBufferPlacementStrategiesIDs createGetRegisteredBufferPlacementStrategiesIDs() {
+        return new GetRegisteredBufferPlacementStrategiesIDs();
+    }
+
+    /**
+     * Create an instance of {@link StartExecution }
+     * 
+     */
+    public StartExecution createStartExecution() {
+        return new StartExecution();
+    }
+
+    /**
+     * Create an instance of {@link StartExecutionResponse }
+     * 
+     */
+    public StartExecutionResponse createStartExecutionResponse() {
+        return new StartExecutionResponse();
+    }
+
+    /**
+     * Create an instance of {@link SourceListResponse }
+     * 
+     */
+    public SourceListResponse createSourceListResponse() {
+        return new SourceListResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetSupportedQueryParsers }
+     * 
+     */
+    public GetSupportedQueryParsers createGetSupportedQueryParsers() {
+        return new GetSupportedQueryParsers();
+    }
+
+    /**
+     * Create an instance of {@link GetLogicalQueryIds }
+     * 
+     */
+    public GetLogicalQueryIds createGetLogicalQueryIds() {
+        return new GetLogicalQueryIds();
+    }
+
+    /**
+     * Create an instance of {@link StringListResponse }
+     * 
+     */
+    public StringListResponse createStringListResponse() {
+        return new StringListResponse();
+    }
+
+    /**
+     * Create an instance of {@link OperatorBuilderListResponse }
+     * 
+     */
+    public OperatorBuilderListResponse createOperatorBuilderListResponse() {
+        return new OperatorBuilderListResponse();
+    }
+
+    /**
+     * Create an instance of {@link StopQueryResponse }
+     * 
+     */
+    public StopQueryResponse createStopQueryResponse() {
+        return new StopQueryResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetCurrentSchedulerID }
+     * 
+     */
+    public GetCurrentSchedulerID createGetCurrentSchedulerID() {
+        return new GetCurrentSchedulerID();
+    }
+
+    /**
+     * Create an instance of {@link GetInfos }
+     * 
+     */
+    public GetInfos createGetInfos() {
+        return new GetInfos();
+    }
+
+    /**
+     * Create an instance of {@link GetPlan }
+     * 
+     */
+    public GetPlan createGetPlan() {
+        return new GetPlan();
+    }
+
+    /**
+     * Create an instance of {@link IsRunning }
+     * 
+     */
+    public IsRunning createIsRunning() {
+        return new IsRunning();
+    }
+
+    /**
+     * Create an instance of {@link GetLogicalQueryResponse }
+     * 
+     */
+    public GetLogicalQueryResponse createGetLogicalQueryResponse() {
+        return new GetLogicalQueryResponse();
+    }
+
+    /**
+     * Create an instance of {@link LogoutResponse }
+     * 
+     */
+    public LogoutResponse createLogoutResponse() {
+        return new LogoutResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetInstalledQueries }
+     * 
+     */
+    public GetInstalledQueries createGetInstalledQueries() {
+        return new GetInstalledQueries();
+    }
+
+    /**
+     * Create an instance of {@link IsRunningResponse }
+     * 
+     */
+    public IsRunningResponse createIsRunningResponse() {
+        return new IsRunningResponse();
+    }
+
+    /**
+     * Create an instance of {@link SdfSchemaInformation }
+     * 
+     */
+    public SdfSchemaInformation createSdfSchemaInformation() {
+        return new SdfSchemaInformation();
+    }
+
+    /**
+     * Create an instance of {@link AddQuery }
+     * 
+     */
+    public AddQuery createAddQuery() {
+        return new AddQuery();
+    }
+
+    /**
      * Create an instance of {@link StringArray }
      * 
      */
     public StringArray createStringArray() {
         return new StringArray();
+    }
+
+    /**
+     * Create an instance of {@link LogicalQueryInfo }
+     * 
+     */
+    public LogicalQueryInfo createLogicalQueryInfo() {
+        return new LogicalQueryInfo();
+    }
+
+    /**
+     * Create an instance of {@link GetOutputSchemaByQueryIdResponse }
+     * 
+     */
+    public GetOutputSchemaByQueryIdResponse createGetOutputSchemaByQueryIdResponse() {
+        return new GetOutputSchemaByQueryIdResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetInfosResponse }
+     * 
+     */
+    public GetInfosResponse createGetInfosResponse() {
+        return new GetInfosResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetQueryBuildConfigurationNames }
+     * 
+     */
+    public GetQueryBuildConfigurationNames createGetQueryBuildConfigurationNames() {
+        return new GetQueryBuildConfigurationNames();
+    }
+
+    /**
+     * Create an instance of {@link LoginResponse }
+     * 
+     */
+    public LoginResponse createLoginResponse() {
+        return new LoginResponse();
+    }
+
+    /**
+     * Create an instance of {@link StopExecutionResponse }
+     * 
+     */
+    public StopExecutionResponse createStopExecutionResponse() {
+        return new StopExecutionResponse();
+    }
+
+    /**
+     * Create an instance of {@link SdfAttributeInformation }
+     * 
+     */
+    public SdfAttributeInformation createSdfAttributeInformation() {
+        return new SdfAttributeInformation();
+    }
+
+    /**
+     * Create an instance of {@link BooleanResponse }
+     * 
+     */
+    public BooleanResponse createBooleanResponse() {
+        return new BooleanResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetOutputSchemaBySource }
+     * 
+     */
+    public GetOutputSchemaBySource createGetOutputSchemaBySource() {
+        return new GetOutputSchemaBySource();
+    }
+
+    /**
+     * Create an instance of {@link StartQueryResponse }
+     * 
+     */
+    public StartQueryResponse createStartQueryResponse() {
+        return new StartQueryResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetLogicalQueryByNameResponse }
+     * 
+     */
+    public GetLogicalQueryByNameResponse createGetLogicalQueryByNameResponse() {
+        return new GetLogicalQueryByNameResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetCurrentSchedulingStrategyIDResponse }
+     * 
+     */
+    public GetCurrentSchedulingStrategyIDResponse createGetCurrentSchedulingStrategyIDResponse() {
+        return new GetCurrentSchedulingStrategyIDResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetOperatorBuilderListResponse }
+     * 
+     */
+    public GetOperatorBuilderListResponse createGetOperatorBuilderListResponse() {
+        return new GetOperatorBuilderListResponse();
+    }
+
+    /**
+     * Create an instance of {@link StopQuery }
+     * 
+     */
+    public StopQuery createStopQuery() {
+        return new StopQuery();
+    }
+
+    /**
+     * Create an instance of {@link GetOutputSchemaByQueryId }
+     * 
+     */
+    public GetOutputSchemaByQueryId createGetOutputSchemaByQueryId() {
+        return new GetOutputSchemaByQueryId();
+    }
+
+    /**
+     * Create an instance of {@link GetSources }
+     * 
+     */
+    public GetSources createGetSources() {
+        return new GetSources();
+    }
+
+    /**
+     * Create an instance of {@link GetOutputSchemaBySourceResponse }
+     * 
+     */
+    public GetOutputSchemaBySourceResponse createGetOutputSchemaBySourceResponse() {
+        return new GetOutputSchemaBySourceResponse();
+    }
+
+    /**
+     * Create an instance of {@link ParameterInfo }
+     * 
+     */
+    public ParameterInfo createParameterInfo() {
+        return new ParameterInfo();
+    }
+
+    /**
+     * Create an instance of {@link SourceInformation }
+     * 
+     */
+    public SourceInformation createSourceInformation() {
+        return new SourceInformation();
+    }
+
+    /**
+     * Create an instance of {@link StartQuery }
+     * 
+     */
+    public StartQuery createStartQuery() {
+        return new StartQuery();
+    }
+
+    /**
+     * Create an instance of {@link GetOutputSchemaResponse }
+     * 
+     */
+    public GetOutputSchemaResponse createGetOutputSchemaResponse() {
+        return new GetOutputSchemaResponse();
+    }
+
+    /**
+     * Create an instance of {@link SetSchedulerResponse }
+     * 
+     */
+    public SetSchedulerResponse createSetSchedulerResponse() {
+        return new SetSchedulerResponse();
+    }
+
+    /**
+     * Create an instance of {@link ConnectionInformation }
+     * 
+     */
+    public ConnectionInformation createConnectionInformation() {
+        return new ConnectionInformation();
+    }
+
+    /**
+     * Create an instance of {@link GetInstalledSourcesResponse }
+     * 
+     */
+    public GetInstalledSourcesResponse createGetInstalledSourcesResponse() {
+        return new GetInstalledSourcesResponse();
     }
 
     /**
@@ -700,6 +812,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "graphNode")
     public JAXBElement<GraphNode> createGraphNode(GraphNode value) {
         return new JAXBElement<GraphNode>(_GraphNode_QNAME, GraphNode.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSourcesResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getSourcesResponse")
+    public JAXBElement<GetSourcesResponse> createGetSourcesResponse(GetSourcesResponse value) {
+        return new JAXBElement<GetSourcesResponse>(_GetSourcesResponse_QNAME, GetSourcesResponse.class, null, value);
     }
 
     /**
@@ -811,15 +932,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Logout }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "logout")
-    public JAXBElement<Logout> createLogout(Logout value) {
-        return new JAXBElement<Logout>(_Logout_QNAME, Logout.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AddQuery }{@code >}}
      * 
      */
@@ -829,12 +941,39 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Logout }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "logout")
+    public JAXBElement<Logout> createLogout(Logout value) {
+        return new JAXBElement<Logout>(_Logout_QNAME, Logout.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetRegisteredBufferPlacementStrategiesIDs }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getRegisteredBufferPlacementStrategiesIDs")
     public JAXBElement<GetRegisteredBufferPlacementStrategiesIDs> createGetRegisteredBufferPlacementStrategiesIDs(GetRegisteredBufferPlacementStrategiesIDs value) {
         return new JAXBElement<GetRegisteredBufferPlacementStrategiesIDs>(_GetRegisteredBufferPlacementStrategiesIDs_QNAME, GetRegisteredBufferPlacementStrategiesIDs.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetOutputSchemaBySource }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getOutputSchemaBySource")
+    public JAXBElement<GetOutputSchemaBySource> createGetOutputSchemaBySource(GetOutputSchemaBySource value) {
+        return new JAXBElement<GetOutputSchemaBySource>(_GetOutputSchemaBySource_QNAME, GetOutputSchemaBySource.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetOutputSchemaByQueryIdResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getOutputSchemaByQueryIdResponse")
+    public JAXBElement<GetOutputSchemaByQueryIdResponse> createGetOutputSchemaByQueryIdResponse(GetOutputSchemaByQueryIdResponse value) {
+        return new JAXBElement<GetOutputSchemaByQueryIdResponse>(_GetOutputSchemaByQueryIdResponse_QNAME, GetOutputSchemaByQueryIdResponse.class, null, value);
     }
 
     /**
@@ -862,6 +1001,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getName")
     public JAXBElement<GetName> createGetName(GetName value) {
         return new JAXBElement<GetName>(_GetName_QNAME, GetName.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetOperatorBuilderList }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getOperatorBuilderList")
+    public JAXBElement<GetOperatorBuilderList> createGetOperatorBuilderList(GetOperatorBuilderList value) {
+        return new JAXBElement<GetOperatorBuilderList>(_GetOperatorBuilderList_QNAME, GetOperatorBuilderList.class, null, value);
     }
 
     /**
@@ -982,6 +1130,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSources }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getSources")
+    public JAXBElement<GetSources> createGetSources(GetSources value) {
+        return new JAXBElement<GetSources>(_GetSources_QNAME, GetSources.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetOutputSchemaByQueryId }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getOutputSchemaByQueryId")
+    public JAXBElement<GetOutputSchemaByQueryId> createGetOutputSchemaByQueryId(GetOutputSchemaByQueryId value) {
+        return new JAXBElement<GetOutputSchemaByQueryId>(_GetOutputSchemaByQueryId_QNAME, GetOutputSchemaByQueryId.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IsRunning }{@code >}}
      * 
      */
@@ -1036,21 +1202,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetOutputSchemaResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getOutputSchemaResponse")
-    public JAXBElement<GetOutputSchemaResponse> createGetOutputSchemaResponse(GetOutputSchemaResponse value) {
-        return new JAXBElement<GetOutputSchemaResponse>(_GetOutputSchemaResponse_QNAME, GetOutputSchemaResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetInstalledSources }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getInstalledSources")
     public JAXBElement<GetInstalledSources> createGetInstalledSources(GetInstalledSources value) {
         return new JAXBElement<GetInstalledSources>(_GetInstalledSources_QNAME, GetInstalledSources.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetOutputSchemaResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getOutputSchemaResponse")
+    public JAXBElement<GetOutputSchemaResponse> createGetOutputSchemaResponse(GetOutputSchemaResponse value) {
+        return new JAXBElement<GetOutputSchemaResponse>(_GetOutputSchemaResponse_QNAME, GetOutputSchemaResponse.class, null, value);
     }
 
     /**
@@ -1096,6 +1262,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "stopExecutionResponse")
     public JAXBElement<StopExecutionResponse> createStopExecutionResponse(StopExecutionResponse value) {
         return new JAXBElement<StopExecutionResponse>(_StopExecutionResponse_QNAME, StopExecutionResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetOperatorBuilderListResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getOperatorBuilderListResponse")
+    public JAXBElement<GetOperatorBuilderListResponse> createGetOperatorBuilderListResponse(GetOperatorBuilderListResponse value) {
+        return new JAXBElement<GetOperatorBuilderListResponse>(_GetOperatorBuilderListResponse_QNAME, GetOperatorBuilderListResponse.class, null, value);
     }
 
     /**
@@ -1213,6 +1388,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "login")
     public JAXBElement<Login> createLogin(Login value) {
         return new JAXBElement<Login>(_Login_QNAME, Login.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetOutputSchemaBySourceResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getOutputSchemaBySourceResponse")
+    public JAXBElement<GetOutputSchemaBySourceResponse> createGetOutputSchemaBySourceResponse(GetOutputSchemaBySourceResponse value) {
+        return new JAXBElement<GetOutputSchemaBySourceResponse>(_GetOutputSchemaBySourceResponse_QNAME, GetOutputSchemaBySourceResponse.class, null, value);
     }
 
     /**

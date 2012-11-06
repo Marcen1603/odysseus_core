@@ -31,7 +31,9 @@ import javax.xml.bind.annotation.XmlType;
     "successful"
 })
 @XmlSeeAlso({
+    OperatorBuilderListResponse.class,
     SdfSchemaResponse.class,
+    SourceListResponse.class,
     BooleanResponse.class,
     StringListResponse.class,
     ConnectionInformationResponse.class,
