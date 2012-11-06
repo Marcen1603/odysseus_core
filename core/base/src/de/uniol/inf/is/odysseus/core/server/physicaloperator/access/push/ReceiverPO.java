@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
-import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -30,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
+@SuppressWarnings("deprecation")
 public class ReceiverPO<R, W> extends AbstractSource<W> implements
 		 ITransferHandler<W> {
 
@@ -85,9 +85,9 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 	}
 
 //	@Override
-//	public boolean isOpened() {
-//		return super.isOpen();
-//	}
+	public boolean isOpened() {
+		return super.isOpen();
+	}
 
 	@Override
 	public synchronized void process_open() throws OpenFailedException {
@@ -96,11 +96,11 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 			try {
 				if (protocolHandler != null) {
 					protocolHandler.open();
-				} //else {
-//					objectHandler.clear();
-//					inputDataHandler.init();
-//					accessHandler.open(this);
-//				}
+				} else {
+					objectHandler.clear();
+					inputDataHandler.init();
+					//accessHandler.open(this);
+				}
 				opened = true;
 			} catch (Exception e) {
 				throw new OpenFailedException(e);
@@ -118,11 +118,11 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 				if (protocolHandler != null) {
 					protocolHandler.close();
 				}
-//				else {
-//					accessHandler.close(this);
-//					inputDataHandler.done();
-//					objectHandler.clear();
-//				}
+				else {
+					//accessHandler.close(this);
+					inputDataHandler.done();
+					objectHandler.clear();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -130,9 +130,9 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 	}
 
 //	@Override
-//	public void done() {
-//		propagateDone();
-//	}
+	public void done() {
+		propagateDone();
+	}
 
 	@Override
 	public synchronized void transfer(W toTransfer) {
@@ -140,12 +140,12 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 	}
 
 //	@Override
-//	public void process(R object) throws ClassNotFoundException {
-//		if (isOpen()) {
-//			inputDataHandler
-//					.process(object, objectHandler, accessHandler, this);
-//		}
-//	}
+	public void process(R object) throws ClassNotFoundException {
+		if (isOpen()) {
+			inputDataHandler
+					.process(object, objectHandler, accessHandler, this);
+		}
+	}
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
