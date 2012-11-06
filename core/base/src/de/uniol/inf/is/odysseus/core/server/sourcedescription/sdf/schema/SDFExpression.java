@@ -74,6 +74,7 @@ public class SDFExpression implements Serializable, IClone {
 	 * @param attributeResolver
 	 * @throws ParseException
 	 */
+	@Deprecated
 	public SDFExpression(String URI, String value, IAttributeResolver attributeResolver, IExpressionParser expressionParser) throws SDFExpressionParseException {
 		init(null, value, attributeResolver.getSchema(), expressionParser);
 	}
@@ -94,6 +95,7 @@ public class SDFExpression implements Serializable, IClone {
 	 * @param attributeResolver
 	 * @throws ParseException
 	 */
+    @Deprecated
 	public SDFExpression(String URI, String value, IExpressionParser expressionParser) throws SDFExpressionParseException {
 		init(null, value, null, expressionParser);
 	}
@@ -109,6 +111,7 @@ public class SDFExpression implements Serializable, IClone {
 		}
 	}
 
+	@Deprecated
     public SDFExpression(IExpression<?> expression, IAttributeResolver attributeResolver, IExpressionParser expressionParser) {
 		init(expression, null, attributeResolver.getSchema(), expressionParser);
 	}
@@ -117,11 +120,18 @@ public class SDFExpression implements Serializable, IClone {
         init(expression, null, schema, expressionParser);
     }
 
+    @Deprecated
 	public SDFExpression(IExpression<?> expression, IAttributeResolver attributeResolver, IExpressionParser expressionParser, String expressionString) {
 		init(expression, null, attributeResolver.getSchema(), expressionParser);
 		this.expressionString = expressionString;
 	}
 
+    public SDFExpression(IExpression<?> expression, SDFSchema schema, IExpressionParser expressionParser,
+            String expressionString) {
+        init(expression, null, schema, expressionParser);
+        this.expressionString = expressionString;
+    }
+	   
 	private void init(IExpression<?> expre, String value, SDFSchema schema, IExpressionParser expressionParser) {
 		this.expressionParser = expressionParser;
 		if (expre != null) {
@@ -142,8 +152,16 @@ public class SDFExpression implements Serializable, IClone {
                 IExpression<?> tmpExpression = expressionParser.parse(expressionString, null);
                 List<SDFAttribute> attribs = new ArrayList<SDFAttribute>();
                 for (Variable var : tmpExpression.getVariables()) {
-                    SDFAttribute a = new SDFAttribute(null, var.getIdentifier(), var.getReturnType());
-                    attribs.add(a);
+                    String[] split = var.getIdentifier().split(Pattern.quote("."));
+                    if (split.length > 2) {
+                        attribs.add(new SDFAttribute(null, split[split.length - 1], var.getReturnType()));
+                    }
+                    else if (split.length == 2) {
+                        attribs.add(new SDFAttribute(split[0], split[1], var.getReturnType()));
+                    }
+                    else if (split.length == 1) {
+                        attribs.add(new SDFAttribute(null, split[0], var.getReturnType()));
+                    }
                 }
                 this.schema = new SDFSchema("", attribs);
 

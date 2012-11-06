@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.server.mep.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +23,6 @@ import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
@@ -33,10 +30,9 @@ import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 public class ExpressionBuilderVisitor implements MEPImplVisitor {
 
     private Map<String, Variable> symbolTable = new HashMap<String, Variable>();
-    private SDFSchema    schema;
+    private final SDFSchema       schema;
 
     public ExpressionBuilderVisitor(SDFSchema schema) {
-        // TODO Auto-generated constructor stub
         this.schema = schema;
     }
 
@@ -57,40 +53,60 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
         int arity = node.jjtGetNumChildren();
         IExpression<?>[] expressions = new IExpression[arity];
 
-        for (IFunction<?> function : functions) {
-            List<SDFDatatype> parameter = new ArrayList<SDFDatatype>();
-            for (int i = 0; i < arity; ++i) {
-                // pass the accepted types of this function for the current
-                // argument
-                expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this, function.getAcceptedTypes(i));
-                SDFDatatype returnType = null;
-                if (expressions[i] == null) {
-                    throw new IllegalArgumentException("invalid parameter for function: " + node.getSymbol());
-                }
-                if (expressions[i].isFunction()) {
-                    returnType = expressions[i].toFunction().getReturnType();
-                }
-                else if (expressions[i].isConstant()) {
-                    returnType = expressions[i].toConstant().getReturnType();
-                }
-                else {
-                    Variable variable = expressions[i].toVariable();
-                    if (schema != null) {
-                        SDFAttribute attribute = schema.findAttribute(variable.getIdentifier());
-                        returnType = attribute.getDatatype();
-                    }
-                    else {
-                        returnType = variable.getReturnType();
-                    }
-                }
-                parameter.add(returnType);
-            }
-            selectedFunction = MEP.getFunction(function.getSymbol(), parameter);
-            function.setArguments(expressions);
+        // if (schema != null) {
+        // for (IFunction<?> function : functions) {
+        // List<SDFDatatype> parameter = new ArrayList<SDFDatatype>();
+        // for (int i = 0; i < arity; ++i) {
+        // // pass the accepted types of this function for the current
+        // // argument
+        // expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this,
+        // function.getAcceptedTypes(i));
+        // SDFDatatype returnType = null;
+        // if (expressions[i] == null) {
+        // throw new IllegalArgumentException("invalid parameter for function: "
+        // + node.getSymbol());
+        // }
+        // if (expressions[i].isFunction()) {
+        // returnType = expressions[i].toFunction().getReturnType();
+        // }
+        // else if (expressions[i].isConstant()) {
+        // returnType = expressions[i].toConstant().getReturnType();
+        // }
+        // else {
+        // Variable variable = expressions[i].toVariable();
+        // SDFAttribute attribute =
+        // schema.findAttribute(variable.getIdentifier());
+        // if (attribute != null) {
+        // returnType = attribute.getDatatype();
+        // }
+        // else {
+        // System.out.println("Attribute is null " + variable);
+        // returnType = variable.getReturnType();
+        // }
+        // }
+        // parameter.add(returnType);
+        // }
+        // selectedFunction = MEP.getFunction(function.getSymbol(), parameter);
+        // function.setArguments(expressions);
+        // }
+        // if (selectedFunction != null) {
+        // selectedFunction.setArguments(expressions);
+        // }
+        // }
+        // else {
+        selectedFunction = functions.get(0);
+        if (selectedFunction == null) {
+            throw new IllegalArgumentException("no such function: " + symbol);
         }
-        if (selectedFunction != null) {
-            selectedFunction.setArguments(expressions);
+        for (int i = 0; i < arity; ++i) {
+            // pass the accepted types of this function for the current
+            // argument
+            expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this, selectedFunction.getAcceptedTypes(i));
         }
+
+        selectedFunction.setArguments(expressions);
+        // }
+
         return selectedFunction;
     }
 
