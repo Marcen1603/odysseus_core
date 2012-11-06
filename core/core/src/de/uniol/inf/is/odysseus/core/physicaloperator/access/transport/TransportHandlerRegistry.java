@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+
 public class TransportHandlerRegistry {
 
 	static Logger logger = LoggerFactory.getLogger(TransportHandlerRegistry.class);
@@ -44,10 +46,10 @@ public class TransportHandlerRegistry {
 		handlers.remove(handler.getName().toLowerCase());
 	}
 	
-	static public ITransportHandler getInstance(String name, ITransportPattern transportPattern, Map<String, String> options){
+	static public ITransportHandler getInstance(String name, IProtocolHandler<?> protocolHandler, Map<String, String> options){
 		ITransportHandler ret = handlers.get(name.toLowerCase());
 		if (ret != null){
-			return ret.createInstance(transportPattern, options);
+			return ret.createInstance(protocolHandler, options);
 		}
 		logger.error("No handler with name "+name+" found!");
 		return null;
