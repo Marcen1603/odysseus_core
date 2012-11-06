@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.loadshedding.monitoring.AvgInputRate;
 import de.uniol.inf.is.odysseus.loadshedding.strategy.SimpleLoadSheddingStrategy;
 
@@ -62,7 +62,7 @@ public class LoadManager {
 	}
 	
 	
-	public void addCapacities(IPartialPlan plan) {
+	public void addCapacities(IPhysicalQuery plan) {
 		
 		AvgInputRate avgInput = new AvgInputRate(this);
 		

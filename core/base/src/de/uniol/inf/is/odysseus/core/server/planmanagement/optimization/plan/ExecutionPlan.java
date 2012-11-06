@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.AbstractPlanReoptimizeRule;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
@@ -59,16 +58,6 @@ public class ExecutionPlan implements IExecutionPlan {
 	private boolean open = false;
 
 	/**
-	 * List of all parts of this execution plan. Used for scheduling.
-	 */
-	final List<IPartialPlan> partialPlans;
-
-	/**
-	 * List of all parts of this execution plan. Used for scheduling.
-	 */
-	final List<IPartialPlan> partialPlansNotToSchedule;
-
-	/**
 	 * List of all leaf sources that need to be scheduled periodically.
 	 */
 	final List<IIterableSource<?>> leafSources;
@@ -94,8 +83,6 @@ public class ExecutionPlan implements IExecutionPlan {
 			.synchronizedList(new ArrayList<AbstractPlanReoptimizeRule>());
 
 	public ExecutionPlan() {
-		partialPlans = new ArrayList<IPartialPlan>();
-		partialPlansNotToSchedule = new ArrayList<IPartialPlan>();
 		leafSources = new ArrayList<IIterableSource<?>>();
 		queries = Collections
 				.synchronizedMap(new HashMap<Integer, IPhysicalQuery>());
@@ -107,9 +94,6 @@ public class ExecutionPlan implements IExecutionPlan {
 		this.open = otherPlan.open;
 		this.leafSources = new ArrayList<IIterableSource<?>>(
 				otherPlan.leafSources);
-		this.partialPlans = new ArrayList<IPartialPlan>(otherPlan.partialPlans);
-		this.partialPlansNotToSchedule = new ArrayList<IPartialPlan>(
-				otherPlan.partialPlans);
 		if (otherPlan.roots != null) {
 			this.roots = new HashSet<IPhysicalOperator>(otherPlan.roots);
 		}
@@ -126,17 +110,6 @@ public class ExecutionPlan implements IExecutionPlan {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.core.server.physicaloperator.plan.IExecutionPlan#
-	 * getPartialPlans()
-	 */
-	@Override
-	public List<IPartialPlan> getPartialPlans() {
-		return Collections.unmodifiableList(this.partialPlans);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.plan.IExecutionPlan#getSources
 	 * ()
@@ -144,28 +117,6 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public List<IIterableSource<?>> getLeafSources() {
 		return Collections.unmodifiableList(this.leafSources);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.plan.IExecutionPlan
-	 * #setPartialPlans(java.util.List)
-	 */
-	@Override
-	public void setPartialPlans(List<IPartialPlan> patialPlans) {
-		this.open = false;
-		this.partialPlans.clear();
-		this.partialPlansNotToSchedule.clear();
-		for (IPartialPlan plan : patialPlans) {
-			if (plan.hasIteratableSources()) {
-				this.partialPlans.add(plan);
-			} else {
-				this.partialPlansNotToSchedule.add(plan);
-			}
-		}
-		updateRoots();
-
 	}
 
 	/*
@@ -192,11 +143,8 @@ public class ExecutionPlan implements IExecutionPlan {
 
 	private void updateRoots() {
 		roots = new HashSet<IPhysicalOperator>();
-		for (IPartialPlan partialPlan : this.partialPlans) {
-			roots.addAll(partialPlan.getQueryRoots());
-		}
-		for (IPartialPlan partialPlan : this.partialPlansNotToSchedule) {
-			roots.addAll(partialPlan.getQueryRoots());
+		for (IPhysicalQuery q: getQueries()){
+			roots.addAll(q.getRoots());
 		}
 	}
 
@@ -230,12 +178,6 @@ public class ExecutionPlan implements IExecutionPlan {
 		return this.queries.remove(queryID);
 	}
 
-	
-	@Override
-	@Deprecated
-	public IPhysicalQuery getQuery(int queryID) {
-		return getQueryById(queryID);
-	}
 	
 	/*
 	 * (non-Javadoc)

@@ -32,18 +32,18 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractExecListScheduling;
 
 public class ChainScheduling extends AbstractExecListScheduling {
 
-	public ChainScheduling(IPartialPlan plan) {
+	public ChainScheduling(IPhysicalQuery plan) {
 		super(plan);
 	}
 	
 	@Override
 	protected List<IIterableSource<?>> calculateExecutionList(
-			IPartialPlan plan) {
+			IPhysicalQuery plan) {
 
 		// Calc for every leaf (!) operator the path to the root (inkl. virtual operators)
 		Map<IIterableSource<?>, List<ISource<?>>> virtualOps = new HashMap<IIterableSource<?>, List<ISource<?>>>();

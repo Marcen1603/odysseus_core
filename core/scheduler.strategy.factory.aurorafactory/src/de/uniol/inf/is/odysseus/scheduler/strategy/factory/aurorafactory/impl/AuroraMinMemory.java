@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractExecListScheduling;
 
 public class AuroraMinMemory extends AbstractExecListScheduling {
@@ -50,13 +50,13 @@ public class AuroraMinMemory extends AbstractExecListScheduling {
 //	}
 	
 	
-	public AuroraMinMemory(IPartialPlan plan) {
+	public AuroraMinMemory(IPhysicalQuery plan) {
 		super(plan);
 	}
 
 	@Override
 	protected List<IIterableSource<?>> calculateExecutionList(
-			IPartialPlan operators) {
+			IPhysicalQuery operators) {
 		// TODO Auto-generated method stub
 		return null;
 	}

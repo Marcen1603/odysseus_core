@@ -26,16 +26,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPhysicalQueryScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.IQuerySharing;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.QuerySharing;
 
@@ -47,7 +45,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.QuerySharing
  * @author Thomas Vogelgesang
  * 
  */
-public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
+public class SLAPartialPlanScheduling implements IPhysicalQueryScheduling,
 		ISLAViolationEventDistributor, IPlanModificationListener, ISchedulingEventListener {
 	// ----------------------------------------------------------------------------------------
 	// Logging
@@ -254,7 +252,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		for (IScheduling scheduling : this.plans) {
 			// calculate sla conformance for all queries
 			// Attention: it is expected that 1 partial plan contains 1 query
-			IPhysicalQuery query = scheduling.getPlan().getQueries().get(0);
+			IPhysicalQuery query = scheduling.getPlan();
 			if (query.isOpened()) {
 				SLARegistryInfo data = this.registry.getData(query);
 				
@@ -322,8 +320,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		}
 		// set tmestamp of last execution
 		if (next != null) {
-			SLARegistryInfo data = this.registry.getData(next.getPlan()
-					.getQueries().get(0));
+			SLARegistryInfo data = this.registry.getData(next.getPlan());
 			data.setLastExecTimeStamp(System.currentTimeMillis());
 		}
 
@@ -481,7 +478,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 * returns a copy of the scheduler
 	 */
 	@Override
-	public IPartialPlanScheduling clone() {
+	public IPhysicalQueryScheduling clone() {
 		return new SLAPartialPlanScheduling(this);
 	}
 
@@ -582,25 +579,25 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		this.starvationFreedom = starvationFreedom;
 	}
 
-	/**
-	 * returns the partial plan that represents the given query in scheduling.
-	 * it is expected that each partial plan contains only one query. this
-	 * method is required because some objects still need the partial plan (e.g.
-	 * for finding buffers)
-	 * 
-	 * @param query
-	 *            the given query
-	 * @return the partial plan that represents the given query in scheduling or
-	 *         null if no partial plan was found for the given query
-	 */
-	@Deprecated
-	public IPartialPlan getPartialPlan(ILogicalQuery query) {
-		for (IScheduling sched : this.plans) {
-			if (sched.getPlan().getQueries().equals(query))
-				return sched.getPlan();
-		}
-		return null;
-	}
+//	/**
+//	 * returns the partial plan that represents the given query in scheduling.
+//	 * it is expected that each partial plan contains only one query. this
+//	 * method is required because some objects still need the partial plan (e.g.
+//	 * for finding buffers)
+//	 * 
+//	 * @param query
+//	 *            the given query
+//	 * @return the partial plan that represents the given query in scheduling or
+//	 *         null if no partial plan was found for the given query
+//	 */
+//	@Deprecated
+//	public IPhysicalQuery getPartialPlan(ILogicalQuery query) {
+//		for (IScheduling sched : this.plans) {
+//			if (sched.getPlan().getQueries().equals(query))
+//				return sched.getPlan();
+//		}
+//		return null;
+//	}
 
 	/**
 	 * updates the underlying data structures if the effort of query sharing

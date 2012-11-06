@@ -15,7 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 
 /**
@@ -36,7 +36,7 @@ public interface ISchedulingFactory {
 	 *            Priority with which physical plan which should be scheduled.
 	 * @return New created a specific {@link IScheduling}.
 	 */
-	public IScheduling create(IPartialPlan plan, long priority);
+	public IScheduling create(IPhysicalQuery plan, long priority);
 
 	/**
 	 * ID of this factory. Should be unique.

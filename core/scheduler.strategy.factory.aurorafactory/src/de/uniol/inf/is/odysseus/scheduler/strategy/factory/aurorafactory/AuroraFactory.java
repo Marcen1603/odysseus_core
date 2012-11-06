@@ -19,7 +19,7 @@ import java.util.Dictionary;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.AbstractSchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.AuroraMinCost;
@@ -63,7 +63,7 @@ public class AuroraFactory extends AbstractSchedulingFactory {
 	}
 	
 	@Override
-	public IScheduling create(IPartialPlan plan, long priority) {
+	public IScheduling create(IPhysicalQuery plan, long priority) {
 		switch(strategy){
 		case MIN_LATENCY:
 			return new AuroraMinLatency(plan);

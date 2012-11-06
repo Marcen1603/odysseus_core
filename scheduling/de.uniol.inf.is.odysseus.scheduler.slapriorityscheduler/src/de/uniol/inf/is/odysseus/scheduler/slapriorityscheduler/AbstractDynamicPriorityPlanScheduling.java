@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.CurrentPlanPriorityComperator;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPhysicalQueryScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationLogger;
 
 abstract public class AbstractDynamicPriorityPlanScheduling implements
-		IPartialPlanScheduling, ISLAViolationEventDistributor {
+		IPhysicalQueryScheduling, ISLAViolationEventDistributor {
 	
 	Logger logger = LoggerFactory.getLogger(AbstractDynamicPriorityPlanScheduling.class);
 
@@ -80,7 +80,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 			// Init with Base Priority
 			scheduling.getPlan().setCurrentPriority(
 					scheduling.getPlan().getBasePriority());
-			IPhysicalQuery query = scheduling.getPlan().getQueries().get(0);
+			IPhysicalQuery query = scheduling.getPlan();
 			if (!this.extendedQueries.contains(query)) {
 				// add SLA conformance operator to plan for monitoring
 				this.extendedQueries.add(query);
@@ -175,7 +175,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 	}
 
 	@Override
-	abstract public IPartialPlanScheduling clone();
+	abstract public IPhysicalQueryScheduling clone();
 
 	@Override
 	public void queueSLAViolationEvent(SLAViolationEvent event) {

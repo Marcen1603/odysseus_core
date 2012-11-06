@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
 
 /**
@@ -43,7 +43,7 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 			.getLogger(AbstractScheduling.class);
 
 	private List<ISchedulingEventListener> schedulingEventListener = new ArrayList<ISchedulingEventListener>();
-	private IPartialPlan plan = null;
+	private IPhysicalQuery plan = null;
 	protected boolean isPlanChanged = true;
 	/**
 	 * BitVector for every source, is set to false, if no data is available
@@ -66,7 +66,7 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 	 */
 	boolean blocked = false;
 
-	public AbstractScheduling(IPartialPlan plan) {
+	public AbstractScheduling(IPhysicalQuery plan) {
 		this.plan = plan;
 		prepareSources();
 	}
@@ -205,7 +205,7 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 	public abstract boolean isDone();
 
 	@Override
-	public IPartialPlan getPlan() {
+	public IPhysicalQuery getPlan() {
 		return plan;
 	}
 

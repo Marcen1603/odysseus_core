@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -55,7 +56,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.FileSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -69,7 +69,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
@@ -502,10 +501,10 @@ public class OdysseusConsole implements CommandProvider,
 
 		ci.println("");
 		i = 1;
-		ci.println("Registered PartialPlans:");
-		for (IPartialPlan partialPlan : plan.getPartialPlans()) {
+		ci.println("Registered Physical Queries:");
+		for (IPhysicalQuery p : plan.getQueries()) {
 			ci.println(i++ + ": ");
-			ci.println(partialPlan.toString());
+			ci.println(p.toString());
 		}
 	}
 

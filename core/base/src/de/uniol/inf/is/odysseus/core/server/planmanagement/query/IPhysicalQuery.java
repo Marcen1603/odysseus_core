@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -83,6 +84,16 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 	public List<IPhysicalOperator> getPhysicalChilds();
 
 	/**
+	 * Methods for scheduling 
+	 */
+	
+	public List<IIterableSource<?>> getIterableSources();
+	public boolean hasIteratableSources();
+	public IIterableSource<?> getIterableSource(int id);
+	public int getSourceId(IIterableSource<?> source);
+	public List<IIterableSource<?>> getLeafSources();
+
+	/**
 	 * Removes the ownership of this query and the registered child operators.
 	 * After this method this query has no relationship to any operator.
 	 */
@@ -133,6 +144,10 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 	public void replaceRoot(IPhysicalOperator op1, IPhysicalOperator op2);
 
 	public int getPriority();
+	
+	public long getCurrentPriority();
+	public void setCurrentPriority(long newPriority);
+	public long getBasePriority();
 
 	public boolean containsCycles();
 
@@ -151,4 +166,5 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 	 * @return
 	 */
 	public Object getParameter(String name);
+
 }

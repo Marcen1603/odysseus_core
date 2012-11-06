@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.i
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractDynamicScheduling;
 
 /**
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractDynamicSc
 
 public class BiggestQueueScheduling extends AbstractDynamicScheduling {
 	
-	public BiggestQueueScheduling(IPartialPlan plan) {
+	public BiggestQueueScheduling(IPhysicalQuery plan) {
 		super(plan);
 	}
 

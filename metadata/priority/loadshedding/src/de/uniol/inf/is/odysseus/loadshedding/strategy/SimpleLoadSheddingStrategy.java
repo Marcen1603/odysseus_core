@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.loadshedding.strategy;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.loadshedding.DirectLoadSheddingBuffer;
 import de.uniol.inf.is.odysseus.loadshedding.ILoadSheddingStrategy;
 
@@ -27,7 +27,7 @@ public class SimpleLoadSheddingStrategy implements ILoadSheddingStrategy{
 	}
 	
 	@Override
-	public double calcCapacity(IPartialPlan plan) {
+	public double calcCapacity(IPhysicalQuery plan) {
 		// TODO Selektivitaet momentan immer als 1 angesetzt. Muss noch (wie Anzahl gelesener Elemente)
 		// ueberwacht werden
 		

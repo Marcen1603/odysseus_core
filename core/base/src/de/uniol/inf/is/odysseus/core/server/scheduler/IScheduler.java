@@ -15,16 +15,17 @@
   */
 package de.uniol.inf.is.odysseus.core.server.scheduler;
 
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.event.IEventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
  * IScheduler describes a scheduler for scheduling physical plans. A scheduler
- * uses {@link IPartialPlan} and {@link IIterableSource}. It can be started and
+ * uses {@link IPhysicalQuery} and {@link IIterableSource}. It can be started and
  * stopped.
  * 
  * @author Wolf Bauer
@@ -73,9 +74,9 @@ public interface IScheduler extends IErrorEventHandler, IEventHandler {
 	 * @param partialPlans
 	 *            Partial plans for scheduling (pipes and roots).
 	 */
-	public void setPartialPlans(List<IPartialPlan> partialPlans);
+	public void setPartialPlans(Collection<IPhysicalQuery> partialPlans);
 
-	public List<IPartialPlan> getPartialPlans();
+	public Collection<IPhysicalQuery> getPartialPlans();
 
 	
 }

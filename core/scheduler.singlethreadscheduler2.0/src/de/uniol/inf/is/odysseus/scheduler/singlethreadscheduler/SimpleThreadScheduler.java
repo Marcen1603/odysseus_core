@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -29,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.SchedulingException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
@@ -54,7 +55,7 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 			"scheduler_trainSize", 1);
 
 	Logger logger = LoggerFactory.getLogger(SimpleThreadScheduler.class);
-	final IPartialPlanScheduling[] planScheduling;
+	final IPhysicalQueryScheduling[] planScheduling;
 
 	/**
 	 * Thread for execution the registered partial plans.
@@ -68,7 +69,7 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 
 	private List<IIterableSource<?>> sourcesToScheduleBackup;
 
-	private List<IPartialPlan> partialPlansBackup;
+	private Collection<IPhysicalQuery> partialPlansBackup;
 	
 	/**
 	 * Creates a new SingleThreadScheduler.
@@ -79,7 +80,7 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	 * @throws IOException
 	 */
 	public SimpleThreadScheduler(ISchedulingFactory schedulingStrategieFactory,
-			IPartialPlanScheduling[] planScheduling) {
+			IPhysicalQueryScheduling[] planScheduling) {
 		super(schedulingStrategieFactory);
 		this.planScheduling = planScheduling;
 	}
@@ -155,7 +156,7 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	 */
 	@Override
 	protected synchronized void process_setPartialPlans(
-			List<IPartialPlan> partialPlans) {
+			Collection<IPhysicalQuery> partialPlans) {
 		this.partialPlansBackup = partialPlans;
 		logger.debug("Setting new Plans to schedule :" + partialPlans);
 		
@@ -169,7 +170,7 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 			// These strategies are used for scheduling partial plans.
 			// Round Robin assigment to scheduler
 			int counter = 0;
-			for (IPartialPlan partialPlan : partialPlans) {
+			for (IPhysicalQuery partialPlan : partialPlans) {
 				logger.debug("setPartialPlans create new Parts with Scheduling "
 						+ schedulingFactory.getName()+" assigned to thread "+counter);
 				final IScheduling scheduling = schedulingFactory.create(
@@ -259,7 +260,7 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		for (IPartialPlanScheduling sched : this.planScheduling) {
+		for (IPhysicalQueryScheduling sched : this.planScheduling) {
 			if (sched instanceof IPlanModificationListener) {
 				((IPlanModificationListener) sched)
 				.planModificationEvent(eventArgs);

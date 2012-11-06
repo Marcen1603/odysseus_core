@@ -53,7 +53,7 @@ public class SingleThreadSchedulerFactoryRR extends AbstractSchedulerFactory {
 			ISchedulingFactory schedulingStrategy) {
 		int executorThreadsCount = (int) OdysseusConfiguration
 				.getLong("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
-		IPartialPlanScheduling[] scheduling = new RoundRobinPlanScheduling[executorThreadsCount];
+		IPhysicalQueryScheduling[] scheduling = new RoundRobinPlanScheduling[executorThreadsCount];
 		for(int i=0;i<scheduling.length;i++){
 			scheduling[i] = new RoundRobinPlanScheduling();
 		}

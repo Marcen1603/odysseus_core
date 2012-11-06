@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 
-abstract public class AbstractPartialPlanScheduling implements IPartialPlanScheduling, ISchedulingEventListener, IClone {
+abstract public class AbstractPartialPlanScheduling implements IPhysicalQueryScheduling, ISchedulingEventListener, IClone {
 
 	final private Set<IScheduling> pausedPlans;
 	
@@ -51,7 +51,7 @@ abstract public class AbstractPartialPlanScheduling implements IPartialPlanSched
 	}
 	
 	@Override
-	abstract public IPartialPlanScheduling clone();
+	abstract public IPhysicalQueryScheduling clone();
 
 
 }

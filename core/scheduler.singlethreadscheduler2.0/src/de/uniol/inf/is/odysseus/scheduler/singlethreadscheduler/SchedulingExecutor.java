@@ -25,7 +25,7 @@ class SchedulingExecutor extends Thread {
 
 	static Logger logger = LoggerFactory.getLogger(SchedulingExecutor.class);
 
-	final private IPartialPlanScheduling planScheduling;
+	final private IPhysicalQueryScheduling planScheduling;
 	private long timeSlicePerStrategy;
 	private SimpleThreadScheduler caller;
 	private int trainsize;
@@ -34,7 +34,7 @@ class SchedulingExecutor extends Thread {
 
 	private boolean interrupt;
 
-	public SchedulingExecutor(IPartialPlanScheduling planScheduling,
+	public SchedulingExecutor(IPhysicalQueryScheduling planScheduling,
 			long timeSlicePerStrategy,
 			SimpleThreadScheduler caller, int trainsize) {
 		this.planScheduling = planScheduling;

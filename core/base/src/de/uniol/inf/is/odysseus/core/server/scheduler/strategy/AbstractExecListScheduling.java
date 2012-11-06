@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 abstract public class AbstractExecListScheduling extends
 		AbstractScheduling {
@@ -42,7 +42,7 @@ abstract public class AbstractExecListScheduling extends
 	protected Iterator<IIterableSource<?>> iterator;
 	private IIterableSource<?> curSource = null;
 
-	public AbstractExecListScheduling(IPartialPlan plan) {
+	public AbstractExecListScheduling(IPhysicalQuery plan) {
 		super(plan);
 		executionList = calculateExecutionList(plan);
 		// Nur die Operatoren im Plan d�rfen gescheduled werden (in den abgeleiten Methoden Aufruf entfernen)
@@ -72,7 +72,7 @@ abstract public class AbstractExecListScheduling extends
 	}
 
 	abstract protected List<IIterableSource<?>> calculateExecutionList(
-			IPartialPlan operators);
+			IPhysicalQuery operators);
 
 	protected synchronized Iterator<IIterableSource<?>> getExecutionListIterator() {
 		return executionList.iterator();

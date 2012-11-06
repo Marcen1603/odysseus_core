@@ -29,12 +29,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractExecListScheduling;
 
 public class GreedyScheduling extends AbstractExecListScheduling {
 
-	public GreedyScheduling(IPartialPlan plan) {
+	public GreedyScheduling(IPhysicalQuery plan) {
 		super(plan);
 	}
 
@@ -62,7 +62,7 @@ public class GreedyScheduling extends AbstractExecListScheduling {
 	}
 	
 	@Override
-	protected List<IIterableSource<?>> calculateExecutionList(IPartialPlan plan) {
+	protected List<IIterableSource<?>> calculateExecutionList(IPhysicalQuery plan) {
 		
 		// Calc for every leaf (!) operator the path to the root (inkl. virtual operators)
 		Map<IIterableSource<?>, List<ISource<?>>> virtualOps = new HashMap<IIterableSource<?>, List<ISource<?>>>();

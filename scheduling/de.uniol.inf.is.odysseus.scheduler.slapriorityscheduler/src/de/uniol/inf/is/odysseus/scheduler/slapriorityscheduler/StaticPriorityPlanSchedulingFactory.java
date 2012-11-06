@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPhysicalQueryScheduling;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SimpleThreadScheduler;
 import de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler.prioritystrategy.StaticPriorityPlanScheduling;
 
@@ -29,7 +29,7 @@ public class StaticPriorityPlanSchedulingFactory extends AbstractSchedulerFactor
 	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring) {
 		int executorThreadsCount = (int) OdysseusConfiguration
 				.getLong("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
-		IPartialPlanScheduling[] scheduling = new StaticPriorityPlanScheduling[executorThreadsCount];
+		IPhysicalQueryScheduling[] scheduling = new StaticPriorityPlanScheduling[executorThreadsCount];
 		for(int i=0;i<scheduling.length;i++){
 			scheduling[i] = new StaticPriorityPlanScheduling();
 		}

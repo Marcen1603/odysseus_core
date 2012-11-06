@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Random;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractExecListScheduling;
 /**
  * Calculates an intial random strategy
@@ -30,13 +30,13 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractExecListS
 
 public class StaticRandomScheduling extends AbstractExecListScheduling {
 
-	public StaticRandomScheduling(IPartialPlan plan) {
+	public StaticRandomScheduling(IPhysicalQuery plan) {
 		super(plan);
 	}
 
 	@Override
 	protected List<IIterableSource<?>> calculateExecutionList(
-			IPartialPlan operators) {
+			IPhysicalQuery operators) {
 		List<IIterableSource<?>> ops = new LinkedList<IIterableSource<?>>(operators.getIterableSources());
 		List<IIterableSource<?>> execList = new LinkedList<IIterableSource<?>>();
 		Random rnd = new Random(System.currentTimeMillis());

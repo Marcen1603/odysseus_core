@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractDynamicScheduling;
 
 /**
@@ -31,9 +31,9 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractDynamicSc
 public class DynamicRandomScheduling extends AbstractDynamicScheduling {
 
 	static private Random rnd = new Random(System.currentTimeMillis());
-	private IPartialPlan plan;
+	private IPhysicalQuery plan;
 		
-	public DynamicRandomScheduling(IPartialPlan plan) {
+	public DynamicRandomScheduling(IPhysicalQuery plan) {
 		super(plan);	
 		this.plan = plan;
 	}

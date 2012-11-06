@@ -23,7 +23,6 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.PartialPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 
@@ -68,8 +67,7 @@ public class QuerySharing implements IQuerySharing {
 
 	@Override
 	public void setPriority(IScheduling plan, double priority) {
-		this.priorities.put(plan.getPlan().getQueries().get(0), new Double(
-				priority));
+		this.priorities.put(plan.getPlan(), new Double(priority));
 		this.plans.add(plan);
 	}
 
@@ -84,16 +82,15 @@ public class QuerySharing implements IQuerySharing {
 	public void refreshEffortTable(List<IScheduling> plans) {
 		this.effortMap.clear();
 		for (IScheduling plan : plans) {
-			IPhysicalQuery query = plan.getPlan().getQueries().get(0);
+			IPhysicalQuery query = plan.getPlan();
 			for (IScheduling otherPlan : plans) {
-				IPhysicalQuery otherQuery = otherPlan.getPlan().getQueries().get(0);
+				IPhysicalQuery otherQuery = otherPlan.getPlan();
 				// check if plan and otherPlan share operators. iff true
 				// calculate effort rate of the sharing between these queries
 				// and add result to map
-				Set<IPhysicalQuery> participating = ((PartialPlan) plan.getPlan())
-						.getParticpatingQueries();
+				IPhysicalQuery participating = plan.getPlan();
 
-				if (plan != otherPlan && participating.contains(otherPlan)) {
+				if (plan != otherPlan && participating == otherPlan) {
 					// calc effort:
 					// determine shared operators
 					Set<IPhysicalOperator> sharedOps = query
@@ -118,8 +115,8 @@ public class QuerySharing implements IQuerySharing {
 					double effortRate = sharedCostSum / allCostSum;
 
 					// save effort rate in map
-					Pair<IPhysicalQuery, IPhysicalQuery> key = new Pair<IPhysicalQuery, IPhysicalQuery>(query,
-							otherQuery);
+					Pair<IPhysicalQuery, IPhysicalQuery> key = new Pair<IPhysicalQuery, IPhysicalQuery>(
+							query, otherQuery);
 					this.effortMap.put(key, effortRate);
 				}
 			}
@@ -136,10 +133,8 @@ public class QuerySharing implements IQuerySharing {
 		double nextPrio = 0.0;
 
 		for (IScheduling plan : this.plans) {
-			PartialPlan pp = (PartialPlan) plan.getPlan();
-			Double tmpPrio = this.priorities.get(pp);
-			double tempPrio = this.calcPriority(pp.getQueries().get(0), pp
-					.getParticpatingQueries(), tmpPrio == null ? 0.0 : tmpPrio);
+			IPhysicalQuery pp = plan.getPlan();
+			double tempPrio = this.priorities.get(pp);
 			if (tempPrio > nextPrio) {
 				nextPrio = tempPrio;
 				nextPlan = plan;
@@ -149,36 +144,5 @@ public class QuerySharing implements IQuerySharing {
 		return nextPlan;
 	}
 
-	/**
-	 * calculates the priority of a given query considering the effort of query
-	 * sharing
-	 * 
-	 * @param query
-	 *            the query
-	 * @param participatingQueries
-	 *            set of queries, that share operators with the given query
-	 * @param prio
-	 *            the priority of the given query calculated by the standard
-	 *            algorithm
-	 * @return the priority under consideration of query sharing effort
-	 */
-	private double calcPriority(IPhysicalQuery query, Set<IPhysicalQuery> participatingQueries,
-			double prio) {
-		double newPrio = prio;
-		// lookup all query sharing effort rates, multiply rates with prios
-		// and add result to newPrio
-		for (IPhysicalQuery otherQuery : participatingQueries) {
-			if (!query.equals(otherQuery)) {
-				Pair<IPhysicalQuery, IPhysicalQuery> key = new Pair<IPhysicalQuery, IPhysicalQuery>(query,
-						otherQuery);
-				Double effort = this.effortMap.get(key);
-				Double otherPrio = this.priorities.get(otherQuery);
-				newPrio += (effort == null ? 0.0 : effort)
-						* (otherPrio == null ? 0.0 : otherPrio);
-			}
-		}
-
-		return newPrio;
-	}
 
 }

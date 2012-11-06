@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 
-public interface IPartialPlanScheduling extends IClone{
+public interface IPhysicalQueryScheduling extends IClone{
 
 	void clear();
 
@@ -33,6 +33,6 @@ public interface IPartialPlanScheduling extends IClone{
 	void removePlan(IScheduling plan);
 
 	@Override
-    IPartialPlanScheduling clone();
+	IPhysicalQueryScheduling clone();
 
 }

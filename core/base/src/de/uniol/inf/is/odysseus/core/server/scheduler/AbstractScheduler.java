@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.scheduler;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
@@ -84,7 +85,7 @@ public abstract class AbstractScheduler implements
 
 	private List<IIterableSource<?>> sources;
 
-	private List<IPartialPlan> partialPlans;
+	private Collection<IPhysicalQuery> partialPlans;
 	
 	private final EventHandler eventHandler;
 
@@ -282,18 +283,18 @@ public abstract class AbstractScheduler implements
 			List<IIterableSource<?>> sources);
 
 	@Override
-	final public void setPartialPlans(List<IPartialPlan> partialPlans) {
+	final public void setPartialPlans(Collection<IPhysicalQuery> partialPlans) {
 		this.partialPlans = partialPlans;
 		process_setPartialPlans(partialPlans);
 	}
 
 	abstract protected void process_setPartialPlans(
-			List<IPartialPlan> partialPlans);
+			Collection<IPhysicalQuery> partialPlans);
 
 	@Override
-	final public List<IPartialPlan> getPartialPlans() {
+	final public Collection<IPhysicalQuery> getPartialPlans() {
 		if (partialPlans != null){
-			return Collections.unmodifiableList(partialPlans);
+			return Collections.unmodifiableCollection(partialPlans);
 		}
 		
 		return null;

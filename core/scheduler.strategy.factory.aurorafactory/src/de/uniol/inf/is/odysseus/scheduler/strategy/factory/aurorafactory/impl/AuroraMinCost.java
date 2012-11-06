@@ -23,17 +23,17 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractExecListScheduling;
 
 public class AuroraMinCost extends AbstractExecListScheduling {
 
-	public AuroraMinCost(IPartialPlan plan) {
+	public AuroraMinCost(IPhysicalQuery plan) {
 		super(plan);
 	}
 
 	@Override
-	protected List<IIterableSource<?>> calculateExecutionList(IPartialPlan plan) {
+	protected List<IIterableSource<?>> calculateExecutionList(IPhysicalQuery plan) {
 		List<IIterableSource<?>> execList = new LinkedList<IIterableSource<?>>();
 		for (IPhysicalOperator curRoot : plan.getRoots()) {
 			if(curRoot.isSink()){

@@ -24,18 +24,18 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractExecListScheduling;
 
 public class AuroraMinLatency extends AbstractExecListScheduling {
 
-	public AuroraMinLatency(IPartialPlan plan) {
+	public AuroraMinLatency(IPhysicalQuery plan) {
 		super(plan);
 	}
 	
 	@Override
 	protected List<IIterableSource<?>> calculateExecutionList(
-			IPartialPlan plan) {
+			IPhysicalQuery plan) {
 		List<IIterableSource<?>> toSchedule = plan.getIterableSources();
 
 		List<IIterableSource<?>> execList = init(toSchedule);

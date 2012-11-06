@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractExecListScheduling;
 
 /**
@@ -28,12 +28,12 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractExecListS
  */
 public class RoundRobinScheduling extends AbstractExecListScheduling {
 
-	public RoundRobinScheduling(IPartialPlan operators) {
+	public RoundRobinScheduling(IPhysicalQuery operators) {
 		super(operators);
 	}
 
 	@Override
-	protected List<IIterableSource<?>> calculateExecutionList(IPartialPlan operators) {
+	protected List<IIterableSource<?>> calculateExecutionList(IPhysicalQuery operators) {
 		return new LinkedList<IIterableSource<?>>(operators.getIterableSources());
 	}
 	

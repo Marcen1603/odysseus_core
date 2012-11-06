@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPhysicalQueryScheduling;
 
-public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
+public class RoundRobinPlanScheduling implements IPhysicalQueryScheduling,
 		ISchedulingEventListener, IClone {
 
 	Logger logger = LoggerFactory.getLogger(RoundRobinPlanScheduling.class);

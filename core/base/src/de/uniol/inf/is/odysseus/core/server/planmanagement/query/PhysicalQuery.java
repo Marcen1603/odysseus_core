@@ -36,9 +36,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IDefaultRootStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -57,7 +59,18 @@ public class PhysicalQuery implements IPhysicalQuery {
 	private ILogicalQuery query;
 	final private IPhysicalOperator defaultRoot;
 	final private IDefaultRootStrategy defaultRootStrategy;
-	private int priority;
+
+	/**
+	 * 
+	 */
+	private int basePriority;
+	
+	/**
+	 * Priority with which the objects should be scheduled.
+	 */
+	private long currentPriority;
+
+	
 	private boolean containsCycles;
 
 	/**
@@ -85,6 +98,18 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 */
 	transient private List<IPhysicalOperator> roots;
 
+	/**
+	 * Sources which should be scheduled.
+	 */
+	final private ArrayList<IIterableSource<?>> iterableSources = new ArrayList<IIterableSource<?>>();;
+	
+	final private ArrayList<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
+
+	/**
+	 * Cache Ids for Sources to speed up getSourceID
+	 */
+	private Map<IIterableSource<?>, Integer> sourceIds;
+	
 	/**
 	 * List of objects which respond to reoptimize requests.
 	 */
@@ -127,6 +152,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		this.defaultRoot = defaultRoot;
 		this.defaultRootStrategy = defaultRootStrategy;
 		initializePhysicalRoots(physicalPlan);
+		determineIteratableSources(physicalPlan);
 	}
 
 	public PhysicalQuery(ILogicalQuery query,
@@ -140,11 +166,49 @@ public class PhysicalQuery implements IPhysicalQuery {
 		this.defaultRoot = defaultRoot;
 		this.defaultRootStrategy = defaultRootStrategy;
 		this.user = query.getUser();
-		this.priority = query.getPriority();
+		this.basePriority = query.getPriority();
+		this.currentPriority = query.getPriority();
 		this.containsCycles = query.containsCycles();
 		initializePhysicalRoots(physicalPlan);
+		determineIteratableSources(physicalPlan);
 	}
 	
+	
+	
+	private void determineIteratableSources(
+			List<IPhysicalOperator> physicalPlan) {
+		List<IPhysicalOperator> queryOps = new ArrayList<IPhysicalOperator>(
+				getPhysicalChilds());
+		queryOps.addAll(getRoots());
+		Set<IOperatorOwner> owners = new HashSet<IOperatorOwner>();
+		
+		for (IPhysicalOperator operator : queryOps) {
+			owners.addAll(operator.getOwner());
+			IIterableSource<?> iterableSource = null;
+			if (operator instanceof IIterableSource) {
+				iterableSource = (IIterableSource<?>) operator;
+				// IterableSource is a Pipe
+				if (iterableSource.isSink()
+						&& !iterableSources.contains(iterableSource)) {
+					iterableSources.add(iterableSource);
+				} else if (!iterableSource.isSink() // IterableSource
+													// is a
+													// global Source
+						&& !leafSources.contains(iterableSource)) {
+					leafSources.add(iterableSource);
+				}
+			}
+		}
+		
+		this.sourceIds = new HashMap<IIterableSource<?>, Integer>();
+		for (int i = 0; i < iterableSources.size(); i++) {
+			sourceIds.put(iterableSources.get(i), i); // Iterator does not
+														// garantee order ...
+														// (?)
+		}
+
+	}
+
 	@Override
 	public String getName() {
 		if (query != null){
@@ -611,9 +675,27 @@ public class PhysicalQuery implements IPhysicalQuery {
 	// return qbConfig;
 	// }
 
+	// --------------------------------------------------------
+	// Query Priority
+	// --------------------------------------------------------
 	@Override
 	public int getPriority() {
-		return priority;
+		return basePriority;
+	}
+	
+	@Override
+	public void setCurrentPriority(long newPriority) {
+		this.currentPriority = newPriority;
+	}
+	
+	@Override
+	public long getCurrentPriority() {
+		return currentPriority;
+	}
+
+	@Override
+	public long getBasePriority() {
+		return this.basePriority;
 	}
 
 	@Override
@@ -639,5 +721,40 @@ public class PhysicalQuery implements IPhysicalQuery {
 		}
 		return param;
 	}
+	
+	///-------------------------------------------------------
+	// Iteratable Sources for Scheduling
+	// -------------------------------------------------------
+	@Override
+	public boolean hasIteratableSources() {
+		return iterableSources != null && iterableSources.size() > 0;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.core.server.physicaloperator.plan.IPhysicalQuery#
+	 * getIterableSource()
+	 */
+	@Override
+	public List<IIterableSource<?>> getIterableSources() {
+		return Collections.unmodifiableList(iterableSources);
+	}
 
+	@Override
+	public IIterableSource<?> getIterableSource(int id) {
+		return iterableSources.get(id);
+	}
+
+	@Override
+	public synchronized int getSourceId(IIterableSource<?> source) {
+		Integer id = sourceIds.get(source);
+		return id != null ? id : -1;
+	}
+
+	@Override
+	public List<IIterableSource<?>> getLeafSources() {
+		return Collections.unmodifiableList(leafSources);
+	}
+	
 }

@@ -15,13 +15,13 @@
   */
 package de.uniol.inf.is.odysseus.core.server.scheduler.strategy;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
 
 public interface IScheduling {
 	public boolean schedule(long maxTime);
 	public boolean schedule(long maxTime, int trainSize);
-	public IPartialPlan getPlan();
+	public IPhysicalQuery getPlan();
 	boolean isSchedulingPaused();
 	boolean isSchedulingBlocked();
 	public void addSchedulingEventListener(ISchedulingEventListener eventListener);

@@ -19,14 +19,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 abstract public class AbstractDynamicScheduling extends
 		AbstractScheduling {
 
 	protected List<IIterableSource<?>> operators;
 	
-	public AbstractDynamicScheduling(IPartialPlan plan) {
+	public AbstractDynamicScheduling(IPhysicalQuery plan) {
 		super(plan);
 		operators = new LinkedList<IIterableSource<?>>(plan.getIterableSources());
 	}

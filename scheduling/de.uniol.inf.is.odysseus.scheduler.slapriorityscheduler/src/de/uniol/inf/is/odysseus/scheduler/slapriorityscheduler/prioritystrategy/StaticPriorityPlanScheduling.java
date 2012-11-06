@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.ListIterator;
 
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPhysicalQueryScheduling;
 
-public class StaticPriorityPlanScheduling implements IPartialPlanScheduling {
+public class StaticPriorityPlanScheduling implements IPhysicalQueryScheduling {
 
 	List<List<IScheduling>> plans = Collections
 			.synchronizedList(new ArrayList<List<IScheduling>>());

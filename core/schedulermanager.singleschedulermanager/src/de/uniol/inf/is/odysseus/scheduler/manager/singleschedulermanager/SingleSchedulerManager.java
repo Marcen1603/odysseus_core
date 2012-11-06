@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -33,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
@@ -142,11 +143,11 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
     @Override
     public void setActiveScheduler(String schedulerToSet, String schedulingStrategyToSet, IExecutionPlan executionPlan) {
         List<IIterableSource<?>> leafSources = executionPlan != null ? executionPlan.getLeafSources() : null;
-        List<IPartialPlan> partialPlans = executionPlan != null ? executionPlan.getPartialPlans() : null;
+        Collection<IPhysicalQuery> partialPlans = executionPlan != null ? executionPlan.getQueries() : null;
         setActiveScheduler(schedulerToSet, schedulingStrategyToSet, leafSources, partialPlans);
     }
 
-    private void setActiveScheduler(String schedulerToSet, String schedulingStrategyToSet, List<IIterableSource<?>> leafSources, List<IPartialPlan> partialPlans) {
+    private void setActiveScheduler(String schedulerToSet, String schedulingStrategyToSet, List<IIterableSource<?>> leafSources, Collection<IPhysicalQuery> partialPlans) {
         Set<String> schedulers = getScheduler();
         Set<String> strats = getSchedulingStrategy();
 
@@ -282,10 +283,10 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
      */
     @Override
     public void refreshScheduling(IExecutionPlan execPlan) throws NoSchedulerLoadedException {
-        refreshScheduling(execPlan.getLeafSources(), execPlan.getPartialPlans());
+        refreshScheduling(execPlan.getLeafSources(), execPlan.getQueries());
     }
 
-    public void refreshScheduling(List<IIterableSource<?>> leafSources, List<IPartialPlan> partialPlans) {
+    public void refreshScheduling(List<IIterableSource<?>> leafSources, Collection<IPhysicalQuery> partialPlans) {
         this.logger.debug("Refresh Scheduling. Set Sources");
         this.activeScheduler.setLeafSources(leafSources);
         this.logger.debug("Refresh Scheduling. Set Partial Plans");

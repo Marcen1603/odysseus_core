@@ -33,10 +33,6 @@ IReoptimizeHandler<IPlanReoptimizeListener> {
 
 	public List<IIterableSource<?>> getLeafSources();
 
-	public void setPartialPlans(List<IPartialPlan> patialPlans);
-
-	public List<IPartialPlan> getPartialPlans();
-
 	/**
 	 * Returns a set of all registered roots. The size can be different to the
 	 * count of registered queries because a root could be used by more then one
@@ -71,19 +67,6 @@ IReoptimizeHandler<IPlanReoptimizeListener> {
 	 * @param allQueries
 	 */
 	void addQueries(List<IPhysicalQuery> allQueries);
-
-	
-	/**
-	 * Returns a modifiable query with the defined ID.
-	 * 
-	 * @param queryID
-	 *            ID of the searched modifiable query
-	 * @return The query with the defined ID or null if no query is found.
-	 *
-	 * @deprecated use getQueryById
-	 */
-	@Deprecated
-	public IPhysicalQuery getQuery(int queryID);
 	
 	
 	/**
