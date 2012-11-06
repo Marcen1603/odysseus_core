@@ -1,44 +1,33 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.sink;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
-public class SenderPO extends AbstractSink<IStreamObject<?>> {
+public class SenderPO<T extends IStreamObject<?>> extends AbstractSink<T> {
     static Logger               LOG = LoggerFactory.getLogger(SenderPO.class);
-    private IDataHandler<?>     dataHandler;
-    private IProtocolHandler<?> protocolHandler;
+    private IProtocolHandler<T> protocolHandler;
 
-    public SenderPO() {
-    }
-
-    public SenderPO(IProtocolHandler<?> protocolHandler, IDataHandler<?> dataHandler) {
+    public SenderPO(IProtocolHandler<T> protocolHandler) {
         this.protocolHandler = protocolHandler;
-        this.dataHandler = dataHandler;
     }
 
-    public SenderPO(SenderPO senderPO) {
+    public SenderPO(SenderPO<T> senderPO) {
         super();
-        // protocolHandler = (IProtocolHandler<W>)
-        // senderPO.protocolHandler.clone();
+        this.protocolHandler = senderPO.protocolHandler;
     }
 
     @Override
-    protected void process_next(IStreamObject<?> object, int port) {
-
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
-        dataHandler.writeData(buffer, object);
+    protected void process_next(T object, int port) {
         try {
-            protocolHandler.write(buffer.array());
+            protocolHandler.write(object);
         }
         catch (IOException e) {
             LOG.error(e.getMessage(), e);
@@ -50,10 +39,6 @@ public class SenderPO extends AbstractSink<IStreamObject<?>> {
     public void processPunctuation(PointInTime timestamp, int port) {
         // TODO Auto-generated method stub
 
-    }
-
-    public void setProtocolHandler(IProtocolHandler<?> ph) {
-        this.protocolHandler = ph;
     }
 
     @Override
@@ -85,8 +70,8 @@ public class SenderPO extends AbstractSink<IStreamObject<?>> {
     }
 
     @Override
-    public AbstractSink<IStreamObject<?>> clone() {
-        return new SenderPO(this);
+    public AbstractSink<T> clone() {
+        return new SenderPO<T>(this);
     }
 
 }
