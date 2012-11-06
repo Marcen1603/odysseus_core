@@ -60,7 +60,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSilab;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuples;
-import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 
 /**
  * @author Jonas Jacobi
@@ -258,47 +257,48 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTSocket node, Object data) throws QueryParseException {
-		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
-		int port = -1;
-		if (node.jjtGetNumChildren() >= 2) {
-			// sollte ASTInteger sein
-			port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
-
-		} else {
-			if (host.contains(":")) {
-				String[] parts = host.split(":");
-				host = parts[0];
-				port = Integer.parseInt(parts[1]);
-			}
-		}
-		AccessAO source = null;
-		if (node.useTupleMode()) {
-			source = new AccessAO(name,
-					"RelationalInputStreamAccessPO",null);
-		} else if (node.useMVMode()) {
-			source = new AccessAO(name,
-					"RelationalAtomicDataInputStreamAccessMVPO",null);
-		} else {
-			source = new AccessAO(
-							name,
-							RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
-		}
-		initSource(source, host, port);
-		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
-		ILogicalOperator op = addTimestampAO(source);
-		try {
-			dd.setStream(name, op, caller);
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		return data;
+		throw new QueryParseException("SOCKET is no longer supported by CQL. Use PQL instead to create such sources!");
+//		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
+//		int port = -1;
+//		if (node.jjtGetNumChildren() >= 2) {
+//			// sollte ASTInteger sein
+//			port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
+//
+//		} else {
+//			if (host.contains(":")) {
+//				String[] parts = host.split(":");
+//				host = parts[0];
+//				port = Integer.parseInt(parts[1]);
+//			}
+//		}
+//		AccessAO source = null;
+//		if (node.useTupleMode()) {
+//			source = new AccessAO(name,
+//					"RelationalInputStreamAccessPO",null);
+//		} else if (node.useMVMode()) {
+//			source = new AccessAO(name,
+//					"RelationalAtomicDataInputStreamAccessMVPO",null);
+//		} else {
+//			source = new AccessAO(
+//							name,
+//							RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
+//		}
+//		initSource(source, host, port);
+//		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
+//		ILogicalOperator op = addTimestampAO(source);
+//		try {
+//			dd.setStream(name, op, caller);
+//		} catch (DataDictionaryException e) {
+//			throw new QueryParseException(e.getMessage());
+//		}
+//		return data;
 	}
 
-	private void initSource(AccessAO source, String host, int port) {
-		source.setPort(port);
-		source.setHost(host);
-		source.setOutputSchema(new SDFSchema(name, this.attributes));
-	}
+//	private void initSource(AccessAO source, String host, int port) {
+//		source.setPort(port);
+//		source.setHost(host);
+//		source.setOutputSchema(new SDFSchema(name, this.attributes));
+//	}
 
 	@Override
 	public Object visit(ASTChannel node, Object data)
