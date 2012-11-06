@@ -33,7 +33,7 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 
 	private static final long serialVersionUID = -6847322746263006915L;
 	/**
-	 * Gibt an, ob die Attribute der SP leer sind - die SP also keinerlei Zugriff gewährt.
+	 * Gibt an, ob die Attribute der SP leer sind - die SP also keinerlei Zugriff gewï¿½hrt.
 	 */
 	private Boolean isEmpty;
 	
@@ -67,18 +67,19 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 		KeyValueObject<IMetaAttribute> additional = new KeyValueObject<IMetaAttribute>();
 //		additional.setAttribute("userRoles", userRoles);
 		additional.setAttribute("streamname", schema.getURI());
-		// Alle Rollen als Attribut hinzufügen. Wenn Benutzer sie besitzt dann Wert true, sonst false...???
+		// Alle Rollen als Attribut hinzufï¿½gen. Wenn Benutzer sie besitzt dann Wert true, sonst false...???
 		for(String userRole:userRoles) {
 			additional.setAttribute("has_" + userRole, true);
 		}		
 		return ((RelationalPredicate)getPredicateAttribute("predicate")).evaluate(newTuple, additional);
 	}
 	
-	public IPredicate<?> createPredicate(String exprString) {		
+	public IPredicate<?> createPredicate(String exprString) {	
+	       SDFSchema schema = new SDFSchema("tupleToEvaluate", 
+	                new SDFAttribute("", "ts", new SDFDatatype("Long")));
 		RelationalPredicate pred = new RelationalPredicate(new SDFExpression(
-				"", exprString, MEP.getInstance()));
-		SDFSchema schema = new SDFSchema("tupleToEvaluate", 
-				new SDFAttribute("", "ts", new SDFDatatype("Long")));
+				"", exprString, schema, MEP.getInstance()));
+
 		pred.init(schema, null, false);
 		return pred;
 	}
@@ -99,7 +100,7 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	
 	public Boolean isEmpty() {
 		if(isEmpty == null) {
-			// isEmpty überprüfen!!!
+			// isEmpty ï¿½berprï¿½fen!!!
 		} 
 		return false;
 	}
