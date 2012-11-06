@@ -74,7 +74,6 @@ public class SDFExpression implements Serializable, IClone {
 	 * @param attributeResolver
 	 * @throws ParseException
 	 */
-	@Deprecated
 	public SDFExpression(String URI, String value, IAttributeResolver attributeResolver, IExpressionParser expressionParser) throws SDFExpressionParseException {
 		init(null, value, attributeResolver.getSchema(), expressionParser);
 	}
@@ -95,7 +94,6 @@ public class SDFExpression implements Serializable, IClone {
 	 * @param attributeResolver
 	 * @throws ParseException
 	 */
-    @Deprecated
 	public SDFExpression(String URI, String value, IExpressionParser expressionParser) throws SDFExpressionParseException {
 		init(null, value, null, expressionParser);
 	}
@@ -120,8 +118,7 @@ public class SDFExpression implements Serializable, IClone {
         init(expression, null, schema, expressionParser);
     }
 
-    @Deprecated
-	public SDFExpression(IExpression<?> expression, IAttributeResolver attributeResolver, IExpressionParser expressionParser, String expressionString) {
+  	public SDFExpression(IExpression<?> expression, IAttributeResolver attributeResolver, IExpressionParser expressionParser, String expressionString) {
 		init(expression, null, attributeResolver.getSchema(), expressionParser);
 		this.expressionString = expressionString;
 	}
