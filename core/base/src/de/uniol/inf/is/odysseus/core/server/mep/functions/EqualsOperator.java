@@ -24,7 +24,8 @@ import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 
 	private static final long serialVersionUID = 6011800156304578501L;
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT };
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.STRING
+	    };
 
 	private boolean isNumeric = false;
 
