@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.AbstractLayer;
 
 public class ChoroplethLayer extends AbstractLayer {
+	private static final long serialVersionUID = -141382995153984284L;
 	// private static final Logger LOG =
 	// LoggerFactory.getLogger(ChoroplethLayer.class);
 	private LinkedList<GeometryAndValue> geometryAndValueList = null;

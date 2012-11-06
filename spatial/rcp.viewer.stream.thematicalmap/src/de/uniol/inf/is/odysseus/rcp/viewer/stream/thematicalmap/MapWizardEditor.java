@@ -1,32 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.thematicalmap;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Geometry;
-
-import de.uniol.inf.is.odysseus.core.ISubscription;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
-import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
-//import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.AbstractLayer;
-import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 public class MapWizardEditor{// extends StreamMapEditor{
 //	protected static final Logger LOG = LoggerFactory.getLogger(MapWizardEditor.class);

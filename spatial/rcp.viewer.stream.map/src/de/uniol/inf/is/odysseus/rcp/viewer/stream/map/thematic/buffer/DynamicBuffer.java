@@ -43,7 +43,7 @@ public class DynamicBuffer {
 
 	public void addTuple(LayerUpdater layerUpdater, IStreamObject<? extends ITimeInterval> element) {
 		PointInTime start = element.getMetadata().getStart();
-		PointInTime end = element.getMetadata().getEnd();
+//		PointInTime end = element.getMetadata().getEnd();
 		
 		if(startPointInTime==null || start.before(startPointInTime)){
 			startPointInTime=start;
@@ -139,23 +139,25 @@ public class DynamicBuffer {
 		
 		for (LayerUpdater element : puffer.keySet()) {
 			DefaultTISweepArea<IStreamObject<? extends ITimeInterval>> sweep = puffer.get(element);
-			Iterator<IStreamObject<? extends ITimeInterval>> iter = sweep.queryOverlaps(interval);
-			
-			ArrayList<IStreamObject<? extends ITimeInterval>> elementList = new ArrayList<>();
-			while(iter.hasNext()){
-				elementList.add(iter.next());
-			}
-			
-			for (ILayer iLayer : element) {
-				if(iLayer instanceof ChoroplethLayer){
-					ChoroplethLayer layer = (ChoroplethLayer)iLayer;
-					layer.clean();
-					
-					for (IStreamObject<? extends ITimeInterval> iStreamObject : elementList) {
-						layer.addTuple((Tuple<?>) iStreamObject);
-					}
-					
-				}				
+			if(sweep!=null){
+				Iterator<IStreamObject<? extends ITimeInterval>> iter = sweep.queryOverlaps(interval);
+				
+				ArrayList<IStreamObject<? extends ITimeInterval>> elementList = new ArrayList<>();
+				while(iter.hasNext()){
+					elementList.add(iter.next());
+				}
+				
+				for (ILayer iLayer : element) {
+					if(iLayer instanceof ChoroplethLayer){
+						ChoroplethLayer layer = (ChoroplethLayer)iLayer;
+						layer.clean();
+						
+						for (IStreamObject<? extends ITimeInterval> iStreamObject : elementList) {
+							layer.addTuple((Tuple<?>) iStreamObject);
+						}
+						
+					}				
+				}
 			}
 		}
 	}

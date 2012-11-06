@@ -14,12 +14,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MapQueryFilesView extends AbstractStreamMapEditorViewPart {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MapQueryFilesView.class);
+//	private static final Logger LOG = LoggerFactory.getLogger(MapQueryFilesView.class);
 
 	private TreeViewer treeViewer;
 

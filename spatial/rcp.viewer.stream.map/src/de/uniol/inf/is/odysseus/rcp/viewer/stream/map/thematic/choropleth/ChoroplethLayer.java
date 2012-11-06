@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.choropleth;
 import java.util.LinkedList;
 
 import org.eclipse.swt.graphics.GC;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -28,7 +26,7 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 public class ChoroplethLayer extends AbstractLayer{
 	private static final long serialVersionUID = 7347374438979210810L;
 
-	private static final Logger LOG = LoggerFactory.getLogger(ChoroplethLayer.class);
+//	private static final Logger LOG = LoggerFactory.getLogger(ChoroplethLayer.class);
 	
 	private ScreenTransformation transformation = null;
 	private ScreenManager screenManager = null;

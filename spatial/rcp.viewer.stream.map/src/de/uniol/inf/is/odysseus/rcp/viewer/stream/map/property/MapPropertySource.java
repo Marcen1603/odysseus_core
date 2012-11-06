@@ -3,17 +3,15 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.property;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
-
 public class MapPropertySource implements IPropertySource {
 
-	private final StreamMapEditorPart editor;
+//	private final StreamMapEditorPart editor;
 	
 
 	
-	public MapPropertySource(StreamMapEditorPart editor) {
-	    this.editor = editor;
-    }
+//	public MapPropertySource(StreamMapEditorPart editor) {
+//	    this.editor = editor;
+//    }
 	
 	
 	@Override

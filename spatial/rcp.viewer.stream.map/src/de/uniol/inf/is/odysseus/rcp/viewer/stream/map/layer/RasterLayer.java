@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
-import java.util.logging.Logger;
-
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
@@ -36,8 +34,7 @@ public class RasterLayer extends AbstractLayer {
 	
 	private static final long serialVersionUID = 7482299307627103992L;
 
-	private static final Logger LOG = Logger
-			.getLogger(RasterLayer.class.getName());
+//	private static final Logger LOG = Logger.getLogger(RasterLayer.class.getName());
 
 	private TileServer tileServer;
 

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.commands;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -13,21 +12,14 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.LayerOrderTrayDialog;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.LayerPropertyDialog;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyTitleDialog;
 
 
 public class AddSourceCommand extends AbstractHandler implements IHandler {
@@ -37,9 +29,9 @@ public class AddSourceCommand extends AbstractHandler implements IHandler {
 		
 		StreamMapEditorPart editor = (StreamMapEditorPart) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getActiveEditor();
 		
-		Shell shell = editor.getScreenManager().getDisplay().getActiveShell(); 
+//		Shell shell = editor.getScreenManager().getDisplay().getActiveShell(); 
 		
-		ISession user = OdysseusRCPPlugIn.getActiveSession();
+//		ISession user = OdysseusRCPPlugIn.getActiveSession();
 		IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		IServerExecutor serverExecutor = null;
 		

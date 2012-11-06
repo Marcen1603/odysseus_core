@@ -2,29 +2,16 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views;
 
 import java.util.LinkedList;
 
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.part.ViewPart;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.OdysseusMapPlugIn;
@@ -35,10 +22,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOut
 
 public class CopyOfMapLayerView extends ViewPart {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CopyOfMapLayerView.class);
-	private StreamMapEditorPart editor;
+//	private static final Logger LOG = LoggerFactory.getLogger(CopyOfMapLayerView.class);
+//	private StreamMapEditorPart editor;
 	private MapEditorModel model;
-	private TableViewer viewer;
+//	private TableViewer viewer;
 	private TreeViewer treeViewer;
 	private Composite container;
 	

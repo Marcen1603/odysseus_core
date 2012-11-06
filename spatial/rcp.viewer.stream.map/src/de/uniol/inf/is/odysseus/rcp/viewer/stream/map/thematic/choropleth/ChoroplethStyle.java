@@ -27,5 +27,12 @@ public class ChoroplethStyle extends PolygonStyle{
 		draw(gc, list, getLineColor(), getFillColor());
 	}
 
-	public final static ChoroplethStyle defaultChoroplethStyle = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 100, 149, 237), 50);
+	public int getTransparency() {
+		return transparency;
+	}
+	public void setTransparency(int transparency) {
+		this.transparency = transparency;
+	}
+
+	public final static ChoroplethStyle defaultChoroplethStyle = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 0, 255, 0), 255);
 }

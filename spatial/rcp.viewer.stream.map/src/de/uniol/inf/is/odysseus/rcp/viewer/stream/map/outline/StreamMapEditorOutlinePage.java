@@ -149,7 +149,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 	new String("http://oatile2.mqcdn.com/tiles/1.0.0/sat/"), new String("http://otile2.mqcdn.com/tiles/1.0.0/osm/"), new String("http://tile.opencyclemap.org/cycle/"), new String("http://tile2.opencyclemap.org/transport/"), new String("http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/1/256/"), new String("http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/2/256/"), new String("http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/3/256/"), new String("http://otile1.mqcdn.com/tiles/1.0.0/osm/"), new String("http://oatile1.mqcdn.com/naip/"), new String("http://oatile1.mqcdn.com/naip/"), new String("http://tile.openstreetmap.org/") };
 
 	private void fillContextMenu(final IMenuManager mgr) {
-		ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
+//		ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
 
 //		if (i.getFirstElement() instanceof SDFAttribute) {
 //			mgr.add(new Action("To VectorLayer") {
