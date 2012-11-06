@@ -25,28 +25,38 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 /**
- * @author Jan Sören Schwarz
+ * @author Jan Sï¿½ren Schwarz
  *
  * @param <T>
  */
-public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
+public class SASizeByteBufferHandler<T extends ByteBuffer> extends SizeByteBufferHandler<T> {
 
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
 	private SAByteBufferHandler<T> objectHandler;
 	/**
-	 * Gibt an, ob das gerade übertragene Tupel eine Security Punctuation ist
+	 * Gibt an, ob das gerade ï¿½bertragene Tupel eine Security Punctuation ist
 	 */
 	private Boolean isSP = null;
 	private String spType = "attribute";
 	private ByteBuffer isSPBuffer = ByteBuffer.allocate(4);
+	
+    public SASizeByteBufferHandler() {
+        super();
+    }
 
-	@Override
+    public SASizeByteBufferHandler(ITransportDirection direction, IAccessPattern access) {
+        super(direction, access);
+    }
+
+    @Override
 	public void open() throws UnknownHostException, IOException {
 		sizeBuffer.clear();
 		size = -1;
@@ -89,14 +99,14 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 			while (buffer.remaining() > 0) {
 
 //				System.out.println(buffer);
-				// size ist dann ungleich -1 wenn die vollständige
-				// Größeninformation übertragen wird
+				// size ist dann ungleich -1 wenn die vollstï¿½ndige
+				// Grï¿½ï¿½eninformation ï¿½bertragen wird
 				// Ansonsten schon mal soweit einlesen
 				if (size == -1) {
 					while (sizeBuffer.position() < 4 && buffer.remaining() > 0) {
 						sizeBuffer.put(buffer.get());
 					}
-					// Wenn alles übertragen
+					// Wenn alles ï¿½bertragen
 					if (sizeBuffer.position() == 4) {
 						sizeBuffer.flip();
 						size = sizeBuffer.getInt();
@@ -106,12 +116,12 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 					}
 				}
 
-				// nach der Größeninformation wird die SP-Flag übertragen
+				// nach der Grï¿½ï¿½eninformation wird die SP-Flag ï¿½bertragen
 				if(isSP == null) {
 					while (isSPBuffer.position() < 4 && buffer.remaining() > 0) {
 						isSPBuffer.put(buffer.get());
 					}
-					// Wenn alles übertragen
+					// Wenn alles ï¿½bertragen
 					if (isSPBuffer.position() == 4) {
 						isSPBuffer.flip();
 						int getInt = isSPBuffer.getInt();
@@ -129,7 +139,7 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 				// sein!
 				// Und Size kann gesetzt worden sein
 				if (size != -1 && isSP != null) {
-					// Ist das was dazukommt kleiner als die finale Größe?
+					// Ist das was dazukommt kleiner als die finale Grï¿½ï¿½e?
 										
 //					System.out.println("SizeByteBufferHandler - buffer.remaining: " + buffer.remaining());
 //					System.out.println("SizeByteBufferHandler - size: " + size);
@@ -140,7 +150,7 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 						objectHandler.put(buffer);
 					} else {
 						// Splitten (wir sind mitten in einem Objekt
-						// 1. alles bis zur Grenze dem Handler übergeben
+						// 1. alles bis zur Grenze dem Handler ï¿½bergeben
 //						 logger.debug(" "+(size-currentSize));
 //						System.out.println("SizeByteBuffer - Buffer: " + buffer);
 						objectHandler.put(buffer, size - currentSize);
@@ -171,16 +181,13 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 	}
 	
 	@Override
-	public IProtocolHandler<T> createInstance(Map<String, String> options,
-			ITransportHandler transportHandler, IDataHandler<T> dataHandler,
-			ITransferHandler<T> transfer) {
-		SASizeByteBufferHandler<T> instance = new SASizeByteBufferHandler<T>();
+	   public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
+	            Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+		SASizeByteBufferHandler<T> instance = new SASizeByteBufferHandler<T>(direction,access);
 		instance.setDataHandler(dataHandler);
-		instance.setTransportHandler(transportHandler);
 		instance.setTransfer(transfer);
 		instance.objectHandler = new SAByteBufferHandler<T>(dataHandler);
 		instance.setByteOrder(options.get("byteorder"));
-		transportHandler.addListener(instance);
 		return instance;
 	}
 	
