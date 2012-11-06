@@ -83,7 +83,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 						options);
 			} else {
 				transportHandler = TransportHandlerRegistry.getInstance(
-						operator.getTransportHandler(), ITransportPattern.PULL,
+						operator.getTransportHandler(), ITransportPattern.PUSH,
 						options);
 			}
 			if (transportHandler == null) {
