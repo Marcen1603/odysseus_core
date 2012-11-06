@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 
 public interface IPredicateBuilder {
 	public IPredicate<?> createPredicate(IAttributeResolver resolver,

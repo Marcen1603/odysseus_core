@@ -16,8 +16,8 @@
 package de.uniol.inf.is.odysseus.parser.pql.priority;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
 
 public class PriorityPredicateBuilder implements IPredicateBuilder {
 

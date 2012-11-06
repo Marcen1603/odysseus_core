@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -120,7 +121,7 @@ public class SDFExpression implements Serializable, IClone {
 		}else{
 			// Try to determine own attribute resolver from expression
 			try {
-				IExpression<?> tmpExpression = expressionParser.parse(expressionString);
+				IExpression<?> tmpExpression = expressionParser.parse(expressionString,null);
 				this.attributeResolver = new DirectAttributeResolver(tmpExpression.getVariables());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
@@ -134,7 +135,7 @@ public class SDFExpression implements Serializable, IClone {
 			String result = substituteAggregations(this.expressionString, aliasToAggregationAttributeMapping);
 
 			try {
-				this.expression = expressionParser.parse(result);
+				this.expression = expressionParser.parse(result,this.attributeResolver);
 				expressionString = expressionString.toString();
 			} catch (Throwable e) {
 				System.err.println("Expr: " + this.expressionString);

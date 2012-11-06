@@ -16,7 +16,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema;
+package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>

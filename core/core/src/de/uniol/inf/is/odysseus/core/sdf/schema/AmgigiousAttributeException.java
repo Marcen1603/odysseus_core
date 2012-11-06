@@ -13,18 +13,38 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema;
-
-import java.io.Serializable;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+/**
+ * 
+ */
+package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 /**
- * @author Jonas Jacobi
- *
+ * @author Christian Kuka <christian.kuka@offis.de>
+ * 
  */
-public interface IAttributeResolver extends Serializable {
+public class AmgigiousAttributeException extends RuntimeException {
 
-	public SDFAttribute getAttribute(String name) throws AmgigiousAttributeException, NoSuchAttributeException;
-	public IAttributeResolver clone() ;
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 795606483718194631L;
+
+	private final String attribute;
+
+	/**
+	 * @param message
+	 * @param cause
+	 */
+	public AmgigiousAttributeException(String attribute) {
+		super();
+		this.attribute = attribute;
+	}
+
+	/**
+	 * @return the attribute
+	 */
+	public String getAttribute() {
+		return attribute;
+	}
+
 }

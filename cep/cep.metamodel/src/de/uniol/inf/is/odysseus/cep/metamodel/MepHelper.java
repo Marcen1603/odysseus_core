@@ -27,7 +27,7 @@ public class MepHelper {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static IExpression initMEPExpressionFromLabel(String label, Map<CepVariable, Variable> symbolTable /*INOUT*/) throws ParseException {
-		IExpression expression = MEP.getInstance().parse(transformToMepVar(label));
+		IExpression expression = MEP.getInstance().parse(transformToMepVar(label),null);
 		Set<Variable> v = expression.getVariables();
 		for (Variable s : v) {
 			symbolTable.put(transformToOutVar(s.getIdentifier()), s);

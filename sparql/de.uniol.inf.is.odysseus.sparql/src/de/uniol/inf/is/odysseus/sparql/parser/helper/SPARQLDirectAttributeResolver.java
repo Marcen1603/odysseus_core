@@ -15,11 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.sparql.parser.helper;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.AmgigiousAttributeException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.NoSuchAttributeException;
 
 /**
  * This attribute resolver is the same as the DirectAttributeResolver
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.NoSuchA
  * is, because in SPARQL attributes with the same name always have the
  * same value. In SPARQL only equi joins are allowed.
  * 
- * @author André Bolles
+ * @author Andrï¿½ Bolles
  *
  */
 public class SPARQLDirectAttributeResolver extends DirectAttributeResolver{

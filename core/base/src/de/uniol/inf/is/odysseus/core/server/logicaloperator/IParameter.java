@@ -21,8 +21,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.io.Serializable;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
 
 /**
  * @author Jonas Jacobi
