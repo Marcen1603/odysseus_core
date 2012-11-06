@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class CSVProtocolHandler<T extends ByteBuffer> extends LineProtocolHandler<T> {
+public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 
     private char    textDelimiter;
     private char    delimiter;
