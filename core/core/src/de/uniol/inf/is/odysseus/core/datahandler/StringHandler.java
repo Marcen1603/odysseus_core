@@ -59,7 +59,11 @@ public class StringHandler extends AbstractDataHandler<String> {
 	public String readData(String string) {
 		return string;
 	}
-	
+
+    @Override
+    public void writeData(List<String> output, Object data) {
+        output.add((String) data);
+    }
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		String s = (String) data;

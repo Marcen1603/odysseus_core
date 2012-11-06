@@ -55,6 +55,10 @@ public class LongHandler extends AbstractDataHandler<Long> {
 		return Long.parseLong(string);
 	}
 
+    @Override
+    public void writeData(List<String> output, Object data) {
+        output.add(((Number) data).toString());
+    }
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		//System.out.println("write Long Data "+((Number)data).longValue());

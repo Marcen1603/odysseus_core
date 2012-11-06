@@ -54,6 +54,11 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 		return Integer.parseInt(string);
 	}
 
+    @Override
+    public void writeData(List<String> output, Object data) {
+        output.add(((Number) data).toString());
+    }
+    
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		// System.out.println("write Integer Data "+(Integer)data);

@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
- * @author André Bolles, Marco Grawunder
+ * @author Andrï¿½ Bolles, Marco Grawunder
  * 
  */
 public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
@@ -136,6 +136,41 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		throw new RuntimeException("Sorry. Currently not implemented");
 	}
 
+    /*
+     * (non-Javadoc)
+     * @see
+     * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#writeData
+     * (java.util.List, java.lang.Object)
+     */
+    @Override
+    public void writeData(List<String> output, Object data) {
+        Tuple<?> r = (Tuple<?>) data;
+
+        synchronized (output) {
+            for (int i = 0; i < dataHandlers.length; i++) {
+                dataHandlers[i].writeData(output, r.getAttribute(i));
+            }
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#writeData
+     * (java.lang.StringBuilder, java.lang.Object)
+     */
+    @Override
+    public void writeData(StringBuilder string, Object data) {
+        super.writeData(string, data);
+        Tuple<?> r = (Tuple<?>) data;
+
+        synchronized (string) {
+            for (int i = 0; i < dataHandlers.length; i++) {
+                dataHandlers[i].writeData(string, r.getAttribute(i));
+            }
+        }
+    }
+    
 	/*
 	 * (non-Javadoc)
 	 * 

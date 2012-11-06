@@ -61,6 +61,15 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 		return readData(input.get(0));
 	}
 	
+	@Override
+	public void writeData(StringBuilder string, Object data) {
+	    string.append(data);
+	}
+	
+    @Override
+    public void writeData(List<String> output, Object data) {
+        output.add(data.toString());
+    }
 	
 	@Override
 	public boolean isPrototype() {

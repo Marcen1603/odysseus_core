@@ -58,6 +58,11 @@ public class DoubleHandler extends AbstractDataHandler<Double> {
 		return d;
 	}
 
+    @Override
+    public void writeData(List<String> output, Object data) {
+        output.add(((Number) data).toString());
+    }
+	
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		//System.out.println("write Double Data "+(Double)data);

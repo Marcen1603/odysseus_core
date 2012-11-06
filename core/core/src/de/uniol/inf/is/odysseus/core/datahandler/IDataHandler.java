@@ -29,6 +29,8 @@ public interface IDataHandler<T> {
 	public T readData(List<String> input);
 	public T readData(String string);
 	public void writeData(ByteBuffer buffer, Object data);
+	public void writeData(StringBuilder string, Object data);
+	public void writeData(List<String> output, Object data);
 	public List<String> getSupportedDataTypes();
 	public int memSize(Object attribute);
 	public IDataHandler<T> createInstance(SDFSchema schema);
