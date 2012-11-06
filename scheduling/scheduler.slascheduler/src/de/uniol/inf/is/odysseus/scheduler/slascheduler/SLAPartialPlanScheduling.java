@@ -16,8 +16,11 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
@@ -44,7 +48,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.QuerySharing
  * 
  */
 public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
-		ISLAViolationEventDistributor, IPlanModificationListener {
+		ISLAViolationEventDistributor, IPlanModificationListener, ISchedulingEventListener {
 	// ----------------------------------------------------------------------------------------
 	// Logging
 	// ----------------------------------------------------------------------------------------
@@ -114,6 +118,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	private LinkedList<Pair<IScheduling, Double>> queue;
 	@SuppressWarnings("unused")
 	private int numberOfQueueScheds = 0;
+	
+	final private Set<IScheduling> pausedPlans;
+	private ReentrantLock lock = new ReentrantLock();
 
 	/**
 	 * creates a new sla-based partial plan scheduler
@@ -150,6 +157,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		}
 		this.addSLAViolationEventListener(new SLAViolationLogger());
 		this.queue = new LinkedList<Pair<IScheduling, Double>>();
+		
+		pausedPlans = new HashSet<IScheduling>();
 //		// init csv logger
 //		SLATestLogger.initCSVLogger("scheduler0", 1000000, 0, "Query", "oc",
 //				"mg", "sf", "prio", "conformance", "service level");
@@ -180,6 +189,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 				.clone();
 		this.querySharing = schedule.querySharing;
 		this.queue = schedule.queue;
+		
+		this.pausedPlans = new HashSet<IScheduling>(schedule.pausedPlans);
 	}
 
 	/**
@@ -187,7 +198,13 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 */
 	@Override
 	public synchronized void clear() {
+		lock.lock();
 		this.plans.clear();
+		for (IScheduling plan : plans) {
+			plan.removeSchedulingEventListener(this);
+		}
+		pausedPlans.clear();
+		lock.unlock();
 	}
 
 	/**
@@ -220,10 +237,20 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		while (!this.eventQueue.isEmpty()) {
 			this.fireSLAViolationEvent(this.eventQueue.pop());
 		}
+		
+		synchronized (pausedPlans) {
+			while (this.pausedPlans.size() == this.plans.size()) {
+				try {
+					this.pausedPlans.wait(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
 		IScheduling next = null;
 		double nextPrio = -1;
-
+		
 		for (IScheduling scheduling : this.plans) {
 			// calculate sla conformance for all queries
 			// Attention: it is expected that 1 partial plan contains 1 query
@@ -446,6 +473,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	public synchronized void removePlan(IScheduling plan) {
 		this.plans.remove(plan);
 		this.refreshQuerySharing();
+		pausedPlans.remove(plan);
+		plan.removeSchedulingEventListener(this);
 	}
 
 	/**
@@ -587,5 +616,18 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		getLogger().debug("plan modified event");
 		this.registry.planModificationEvent(eventArgs);
+	}
+
+	@Override
+	public void scheddulingPossible(IScheduling sched) {
+		synchronized (pausedPlans) {
+			pausedPlans.remove(sched);
+			pausedPlans.notifyAll();
+		}
+	}
+
+	@Override
+	public void nothingToSchedule(IScheduling sched) {
+		pausedPlans.add(sched);
 	}
 }
