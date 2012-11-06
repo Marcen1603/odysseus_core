@@ -63,6 +63,7 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 
 	public ReceiverPO(IProtocolHandler<W> protocolHandler) {
 		this.protocolHandler = protocolHandler;
+		this.protocolHandler.setTransfer(this);
 	}
 
 	public ReceiverPO() {

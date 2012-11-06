@@ -20,6 +20,7 @@ import java.net.UnknownHostException;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -46,6 +47,8 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener {
 
     void setTransportHandler(ITransportHandler transportHandler);
 
+    void setTransfer(ITransferHandler<T> transfer);
+    
     ITransportDirection getDirection();
 
     IAccessPattern getAccess();
