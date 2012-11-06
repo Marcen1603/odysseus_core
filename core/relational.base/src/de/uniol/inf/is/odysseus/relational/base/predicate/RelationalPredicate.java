@@ -228,7 +228,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 	@Override
 	public boolean equals(IPredicate<Tuple<?>> pred) {
 		// Falls die Expressions nicht identisch sind, ist dennoch eine
-		// inhaltliche Äquivalenz möglich
+		// inhaltliche ï¿½quivalenz mï¿½glich
 		if (!this.equals((Object) pred)) {
 			// boolean isContainedIn1 = this.isContainedIn(pred);
 			// boolean isContainedIn2 = pred.isContainedIn(this);
@@ -245,11 +245,11 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 		}
 		RelationalPredicate rp2 = (RelationalPredicate) o;
 
-		// Komplexe Prädikate
+		// Komplexe Prï¿½dikate
 		// AND
 		if (this.isAndPredicate()) {
 			// Z.B. ist a in b enthalten, falls a= M && N und b = M oder b=N ist
-			// (Zusätzliche Verschärfung bestehender Prädikate)
+			// (Zusï¿½tzliche Verschï¿½rfung bestehender Prï¿½dikate)
 			if (!rp2.isAndPredicate()) {
 				List<IPredicate> spred = splitPredicate();
 
@@ -260,10 +260,10 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 				}
 				return false;
 			}
-			// TODO: Noch mal überprüfen
-			// // Falls es sich beim anderen Prädikat ebenfalls um ein
-			// AndPredicate handelt, müssen beide Prädikate verglichen werden
-			// (inklusiver aller "Unterprädikate")
+			// TODO: Noch mal ï¿½berprï¿½fen
+			// // Falls es sich beim anderen Prï¿½dikat ebenfalls um ein
+			// AndPredicate handelt, mï¿½ssen beide Prï¿½dikate verglichen werden
+			// (inklusiver aller "Unterprï¿½dikate")
 			// if(o instanceof AndPredicate) {
 			// AndPredicate<T> ap = (AndPredicate<T>) o;
 			//
@@ -272,10 +272,10 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 			// ArrayList<IPredicate<?>> a = extractAllPredicates(this);
 			// ArrayList<IPredicate<?>> b = extractAllPredicates(ap);
 			//
-			// // Für JEDES Prädikat aus dem anderen AndPredicate muss ein
-			// enthaltenes Prädikat in diesem AndPredicate gefunden werden
-			// // (Nur weitere Verschärfungen sind zulässig, deshalb darf keine
-			// Bedingung des anderen Prädikats stärker sein)
+			// // Fï¿½r JEDES Prï¿½dikat aus dem anderen AndPredicate muss ein
+			// enthaltenes Prï¿½dikat in diesem AndPredicate gefunden werden
+			// // (Nur weitere Verschï¿½rfungen sind zulï¿½ssig, deshalb darf keine
+			// Bedingung des anderen Prï¿½dikats stï¿½rker sein)
 			// for(IPredicate<?> predb : b) {
 			// // if(predb instanceof OrPredicate) {
 			// // return false;
@@ -311,7 +311,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 			}
 			return false;
 		}
-		// BASIS-Prädikat
+		// BASIS-Prï¿½dikat
 		// Unterschiedliche Anzahl Attribute
 		if (this.getAttributes().size() != rp2.getAttributes().size()) {
 			return false;
@@ -370,13 +370,13 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 								&& c1.compareTo(c2) == 0) {
 							return true;
 						}
-						// Funktion größer-als
+						// Funktion grï¿½ï¿½er-als
 						if (symbol1.equals(">")
 								&& (symbol2.equals(">") || symbol2.equals(">="))
 								&& c1 >= c2) {
 							return true;
 						}
-						// Funktion größer-gleich-als
+						// Funktion grï¿½ï¿½er-gleich-als
 						if (symbol1.equals(">=")
 								&& ((symbol2.equals(">=") && c1 >= c2) || (symbol2
 										.equals(">") && c1 > c2))) {
@@ -414,13 +414,13 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 								&& c1.compareTo(c2) == 0) {
 							return true;
 						}
-						// Funktion größer-als
+						// Funktion grï¿½ï¿½er-als
 						if (symbol1.equals(">")
 								&& (symbol2.equals(">") || symbol2.equals(">="))
 								&& c1 <= c2) {
 							return true;
 						}
-						// Funktion größer-gleich-als
+						// Funktion grï¿½ï¿½er-gleich-als
 						if (symbol1.equals(">=")
 								&& ((symbol2.equals(">=") && c1 <= c2) || (symbol2
 										.equals(">") && c1 < c2))) {
@@ -438,14 +438,14 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 						Double c2 = Double.parseDouble(firstArgument2
 								.toString());
 
-						// F1 kleiner-als, F2 größer-als oder größer-gleich-als
+						// F1 kleiner-als, F2 grï¿½ï¿½er-als oder grï¿½ï¿½er-gleich-als
 						if (symbol1.equals("<")
 								&& (symbol2.equals(">") || symbol2.equals(">="))
 								&& c1 <= c2) {
 							return true;
 						}
-						// F1 kleiner-gleich-als, F2 größer-als oder
-						// größer-gleich-als
+						// F1 kleiner-gleich-als, F2 grï¿½ï¿½er-als oder
+						// grï¿½ï¿½er-gleich-als
 						if (symbol1.equals("<=")
 								&& (symbol2.equals(">") && c1 < c2)
 								|| (symbol2.equals(">=")) && c1 <= c2) {
@@ -457,13 +457,13 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 								&& c1.compareTo(c2) == 0) {
 							return true;
 						}
-						// F1 größer-als, F2 kleiner-als oder kleiner-gleich-als
+						// F1 grï¿½ï¿½er-als, F2 kleiner-als oder kleiner-gleich-als
 						if (symbol1.equals(">")
 								&& (symbol2.equals("<") || symbol2.equals("<="))
 								&& c1 >= c2) {
 							return true;
 						}
-						// F1 größer-gleich-als, F2 kleiner-als oder
+						// F1 grï¿½ï¿½er-gleich-als, F2 kleiner-als oder
 						// kleiner-gleich-als
 						if (symbol1.equals(">=")
 								&& (symbol2.equals("<") && c1 > c2)
@@ -484,15 +484,15 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 						Double c2 = Double.parseDouble(secondArgument2
 								.toString());
 
-						// F1 kleiner-als, F2 größer-als oder größer-gleich-als
+						// F1 kleiner-als, F2 grï¿½ï¿½er-als oder grï¿½ï¿½er-gleich-als
 						if (symbol1.equals("<")
 								&& (symbol2.equals(">") || symbol2.equals(">="))
 								&& c1 >= c2) {
 							return true;
 						}
 
-						// F1 kleiner-gleich-als, F2 größer-als oder
-						// größer-gleich-als
+						// F1 kleiner-gleich-als, F2 grï¿½ï¿½er-als oder
+						// grï¿½ï¿½er-gleich-als
 						if (symbol1.equals("<=")
 								&& (symbol2.equals(">") && c1 > c2)
 								|| (symbol2.equals(">=")) && c1 >= c2) {
@@ -506,14 +506,14 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 							return true;
 						}
 
-						// F1 größer-als, F2 kleiner-als oder kleiner-gleich-als
+						// F1 grï¿½ï¿½er-als, F2 kleiner-als oder kleiner-gleich-als
 						if (symbol1.equals(">")
 								&& (symbol2.equals("<") || symbol2.equals("<="))
 								&& c1 <= c2) {
 							return true;
 						}
 
-						// F1 größer-gleich-als, F2 kleiner-als oder
+						// F1 grï¿½ï¿½er-gleich-als, F2 kleiner-als oder
 						// kleiner-gleich-als
 						if (symbol1.equals(">=")
 								&& (symbol2.equals("<") && c1 < c2)
@@ -610,7 +610,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 							.getArgument(1));
 				} else {
 					SDFExpression expr = new SDFExpression(curExpression,
-							expression.getAttributeResolver(),
+							expression.getSchema(),
 							MEP.getInstance());
 					result.add(new RelationalPredicate(expr));
 				}

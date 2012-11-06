@@ -15,8 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.mep;
 
-import de.uniol.inf.is.odysseus.core.mep.ParseException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * This interface encapsulates different expression parsers
@@ -30,10 +29,10 @@ public interface IExpressionParser {
 	 * Parse a String expression
 	 * 
 	 * @param expressionStr The expression to parse
-	 * @param attributeResolver 
+	 * @param schema The {@link SDFSchema schema} of the expression
 	 * @return an IExpression object that contains the parsed expression
 	 * @throws ParseException 
 	 */
-	IExpression<?> parse(String expressionStr, IAttributeResolver attributeResolver) throws ParseException;
+	IExpression<?> parse(String expressionStr, SDFSchema schema) throws ParseException;
 
 }

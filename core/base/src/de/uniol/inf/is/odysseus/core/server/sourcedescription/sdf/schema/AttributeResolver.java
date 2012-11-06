@@ -60,6 +60,12 @@ public class AttributeResolver implements IAttributeResolver {
 		this.attributes = new HashSet<SDFAttribute>(attributeResolver.attributes);
 	}
 
+    @Override
+    public SDFSchema getSchema() {
+        SDFSchema schema = new SDFSchema("", this.attributes);
+        return schema;
+    }
+    
 	public ILogicalOperator getSource(String name) {
 		return this.sources.get(name);
 	}

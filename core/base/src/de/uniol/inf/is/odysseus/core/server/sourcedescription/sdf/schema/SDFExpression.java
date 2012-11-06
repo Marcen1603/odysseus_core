@@ -61,8 +61,11 @@ public class SDFExpression implements Serializable, IClone {
 	 */
 	private int[] attributePositions;
 
-	private IAttributeResolver attributeResolver;
+//	private IAttributeResolver attributeResolver;
 
+	/** The schema */
+	private SDFSchema schema;
+	
 	transient private IExpressionParser expressionParser;
 
 	/**
@@ -72,9 +75,19 @@ public class SDFExpression implements Serializable, IClone {
 	 * @throws ParseException
 	 */
 	public SDFExpression(String URI, String value, IAttributeResolver attributeResolver, IExpressionParser expressionParser) throws SDFExpressionParseException {
-		init(null, value, attributeResolver, expressionParser);
+		init(null, value, attributeResolver.getSchema(), expressionParser);
 	}
 
+	   /**
+     * @param URI
+     * @param value
+     * @param schema
+     * @throws ParseException
+     */
+    public SDFExpression(String URI, String value, SDFSchema schema, IExpressionParser expressionParser) throws SDFExpressionParseException {
+        init(null, value, schema, expressionParser);
+    }
+    
 	/**
 	 * @param URI
 	 * @param value
@@ -86,7 +99,7 @@ public class SDFExpression implements Serializable, IClone {
 	}
 
 	public SDFExpression(SDFExpression expression) throws SDFExpressionParseException {
-		init(expression.expression, expression.expressionString, expression.attributeResolver, expression.expressionParser);
+		init(expression.expression, expression.expressionString, expression.getSchema(), expression.expressionParser);
 
 		if (expression.attributePositions != null) {
 			this.attributePositions = new int[expression.attributePositions.length];
@@ -96,16 +109,20 @@ public class SDFExpression implements Serializable, IClone {
 		}
 	}
 
-	public SDFExpression(IExpression<?> expression, IAttributeResolver attributeResolver, IExpressionParser expressionParser) {
-		init(expression, null, attributeResolver, expressionParser);
+    public SDFExpression(IExpression<?> expression, IAttributeResolver attributeResolver, IExpressionParser expressionParser) {
+		init(expression, null, attributeResolver.getSchema(), expressionParser);
 	}
+    
+    public SDFExpression(IExpression<?> expression, SDFSchema schema, IExpressionParser expressionParser) {
+        init(expression, null, schema, expressionParser);
+    }
 
 	public SDFExpression(IExpression<?> expression, IAttributeResolver attributeResolver, IExpressionParser expressionParser, String expressionString) {
-		init(expression, null, attributeResolver, expressionParser);
+		init(expression, null, attributeResolver.getSchema(), expressionParser);
 		this.expressionString = expressionString;
 	}
 
-	private void init(IExpression<?> expre, String value, IAttributeResolver attributeResolver, IExpressionParser expressionParser) {
+	private void init(IExpression<?> expre, String value, SDFSchema schema, IExpressionParser expressionParser) {
 		this.expressionParser = expressionParser;
 		if (expre != null) {
 			this.expression = expre;
@@ -116,26 +133,33 @@ public class SDFExpression implements Serializable, IClone {
 		this.varCounter = 0;
 		this.variableArrayList = new ArrayList<Variable>();
 		this.attributes = new ArrayList<SDFAttribute>();
-		if (attributeResolver != null){
-			this.attributeResolver = attributeResolver.clone();
-		}else{
-			// Try to determine own attribute resolver from expression
-			try {
-				IExpression<?> tmpExpression = expressionParser.parse(expressionString,null);
-				this.attributeResolver = new DirectAttributeResolver(tmpExpression.getVariables());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+        if (schema != null) {
+            this.schema = schema.clone();
+        }
+        else {
+            // Try to determine own attribute resolver from expression
+            try {
+                IExpression<?> tmpExpression = expressionParser.parse(expressionString, null);
+                List<SDFAttribute> attribs = new ArrayList<SDFAttribute>();
+                for (Variable var : tmpExpression.getVariables()) {
+                    SDFAttribute a = new SDFAttribute(null, var.getIdentifier(), var.getReturnType());
+                    attribs.add(a);
+                }
+                this.schema = new SDFSchema("", attribs);
+
+            }
+            catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
 
 		Map<String, String> aliasToAggregationAttributeMapping = new HashMap<String, String>();
 
 		if (expression == null) {
 			String result = substituteAggregations(this.expressionString, aliasToAggregationAttributeMapping);
-
 			try {
-				this.expression = expressionParser.parse(result,this.attributeResolver);
+				this.expression = expressionParser.parse(result, this.schema);
 				expressionString = expressionString.toString();
 			} catch (Throwable e) {
 				System.err.println("Expr: " + this.expressionString);
@@ -151,6 +175,11 @@ public class SDFExpression implements Serializable, IClone {
 
 	}
 
+
+    public SDFSchema getSchema() {
+        return this.schema;
+    }
+    
 	private String substituteAggregations(String value, Map<String, String> inverseAliasMappings) {
 		String result = "";
 		{
@@ -166,7 +195,7 @@ public class SDFExpression implements Serializable, IClone {
 					continue;
 				}
 
-				SDFAttribute attribute = this.attributeResolver.getAttribute(group);
+				SDFAttribute attribute = this.schema.findAttribute(group);
 				if (attribute == null) {
 					System.err.println("no such attribute: " + group);
 					throw new SDFExpressionParseException("No such attribute: " + group);
@@ -194,7 +223,7 @@ public class SDFExpression implements Serializable, IClone {
 			if (inverseAliasMappings.containsKey(name)) {
 				name = inverseAliasMappings.get(name);
 			}
-			SDFAttribute curAttribute = this.attributeResolver.getAttribute(name);
+			SDFAttribute curAttribute = this.schema.findAttribute(name);
 			if (curAttribute == null && name == "t") {
 				this.attributes.add(new SDFAttribute(null, "t", SDFDatatype.OBJECT));
 			} else {
@@ -299,7 +328,7 @@ public class SDFExpression implements Serializable, IClone {
 		return this.expression;
 	}
 
-	public IAttributeResolver getAttributeResolver() {
-		return attributeResolver;
-	}
+//	public IAttributeResolver getAttributeResolver() {
+//		return attributeResolver;
+//	}
 }

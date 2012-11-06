@@ -30,8 +30,8 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.AbsoluteFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.AndOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.CeilFunction;
@@ -92,7 +92,7 @@ public class MEP implements IExpressionParser {
     }
 
     @Override
-    public IExpression<?> parse(String expressionStr, IAttributeResolver attributeResolver) throws ParseException {
+    public IExpression<?> parse(String expressionStr, SDFSchema schema) throws ParseException {
         MEPImpl impl = new MEPImpl(new StringReader(expressionStr));
         SimpleNode expressionNode;
         try {
@@ -101,7 +101,7 @@ public class MEP implements IExpressionParser {
         catch (Exception e) {
             throw new de.uniol.inf.is.odysseus.core.mep.ParseException(e);
         }
-        ExpressionBuilderVisitor builder = new ExpressionBuilderVisitor(attributeResolver);
+        ExpressionBuilderVisitor builder = new ExpressionBuilderVisitor(schema);
         IExpression<?> expression = (IExpression<?>) expressionNode.jjtAccept(builder, null);
         return ExpressionOptimizer.simplifyExpression(expression);
     }

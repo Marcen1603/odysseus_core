@@ -27,16 +27,17 @@ import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 
 public class ExpressionBuilderVisitor implements MEPImplVisitor {
 
     private Map<String, Variable> symbolTable = new HashMap<String, Variable>();
-    private IAttributeResolver    attributeResolver;
+    private SDFSchema    schema;
 
-    public ExpressionBuilderVisitor(IAttributeResolver attributeResolver) {
+    public ExpressionBuilderVisitor(SDFSchema schema) {
         // TODO Auto-generated constructor stub
-        this.attributeResolver = attributeResolver;
+        this.schema = schema;
     }
 
     @Override
@@ -74,8 +75,8 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
                 }
                 else {
                     Variable variable = expressions[i].toVariable();
-                    if (attributeResolver != null) {
-                        SDFAttribute attribute = attributeResolver.getAttribute(variable.getIdentifier());
+                    if (schema != null) {
+                        SDFAttribute attribute = schema.findAttribute(variable.getIdentifier());
                         returnType = attribute.getDatatype();
                     }
                     else {
@@ -83,7 +84,6 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
                     }
                 }
                 parameter.add(returnType);
-                System.out.println("Expression: " + i + " " + expressions[i] + " => " + returnType);
             }
             selectedFunction = MEP.getFunction(function.getSymbol(), parameter);
             function.setArguments(expressions);
