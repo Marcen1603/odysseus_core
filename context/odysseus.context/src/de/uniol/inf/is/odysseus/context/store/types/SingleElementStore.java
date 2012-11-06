@@ -22,14 +22,7 @@ public class SingleElementStore<T extends Tuple<? extends ITimeInterval>> extend
     @Override
     public void insertValue(T value) {
         if (validateSchemaSizeOfValue(value)) {
-            if (this.tuple == null) {
-                this.tuple = value;
-            }
-            else {
-                if (value.getMetadata().getStart().afterOrEquals(this.tuple.getMetadata().getStart())) {
-                    this.tuple = value;
-                }
-            }
+            this.tuple = value;
             notifyListener();
         }
         else {
@@ -37,29 +30,32 @@ public class SingleElementStore<T extends Tuple<? extends ITimeInterval>> extend
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> getValues(ITimeInterval timeinterval) {
         List<T> list = new ArrayList<T>();
         if (this.tuple != null) {
-            list.add(this.tuple);
+            list.add((T)this.tuple.clone());
         }
         return list;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> getLastValues() {
         List<T> list = new ArrayList<T>();
         if (this.tuple == null) {
-            list.add(this.tuple);
+            list.add((T)this.tuple.clone());
         }
         return list;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> getAllValues() {
         List<T> list = new ArrayList<T>();
         if (this.tuple == null) {
-            list.add(this.tuple);
+            list.add((T)this.tuple.clone());
         }
         return list;
     }
