@@ -22,14 +22,14 @@ public class LayerUpdater extends ArrayList<ILayer> implements IStreamElementLis
     
     private static final Logger LOG = LoggerFactory.getLogger(LayerUpdater.class);
     
-	private final IStreamMapEditor streamMapEditor;
+//	private final IStreamMapEditor streamMapEditor;
 	private final IStreamConnection<Object> connection;
 	private final IPhysicalQuery query;
 	private final DynamicBuffer dynamicBuffer;
 	
 	public LayerUpdater(IStreamMapEditor streamMapEditor,IPhysicalQuery query, IStreamConnection<Object> connection, DynamicBuffer dynamicBuffer) {
 		super();
-		this.streamMapEditor = streamMapEditor;
+//		this.streamMapEditor = streamMapEditor;
 		this.connection = connection;
 		this.query = query;
 		this.dynamicBuffer = dynamicBuffer;
@@ -48,6 +48,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements IStreamElementLis
     }
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void streamElementRecieved(Object element, int port) {
 		if (!(element instanceof Tuple<?>)) {

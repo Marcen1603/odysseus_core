@@ -83,6 +83,7 @@ public class MapEditorModel extends ModelObject {
 		screenManager.getCanvas().redraw();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static MapEditorModel open(IFile file, StreamMapEditorPart editor) {
 		MapEditorModel newModel = new MapEditorModel();
 		String output = "";
@@ -165,7 +166,6 @@ public class MapEditorModel extends ModelObject {
 								Collection<?> list = ((ISink<?>) operator).getSubscribedToSource();
 
 								for (Object obj : list) {
-									@SuppressWarnings("unchecked")
 									PhysicalSubscription<ISource<?>> sub = (PhysicalSubscription<ISource<?>>) obj;
 									subs.add(new PhysicalSubscription<ISource<?>>(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema()));
 								}
@@ -173,6 +173,7 @@ public class MapEditorModel extends ModelObject {
 								throw new IllegalArgumentException("could not identify type of content of node " + operator);
 							}
 						}
+						
 						DefaultStreamConnection connection = new DefaultStreamConnection(subs);
 						newModel.addConnection(connection, phyQuery, editor);
 					}
@@ -441,13 +442,13 @@ public class MapEditorModel extends ModelObject {
 
 			// Dann ausf�hren
 			variables = new HashMap<String, Object>();
-			int counter = 1;
+//			int counter = 1;
 			for (PreParserStatement stmt : statements) {
 				// monitor.subTask("Executing (" + counter + " / " +
 				// statements.size() + ")");
 				stmt.execute(variables, user, OdysseusRCPEditorTextPlugIn.getScriptParser());
 				// monitor.worked(1);
-				counter++;
+//				counter++;
 			}
 		} catch (OdysseusScriptException ex) {
 			

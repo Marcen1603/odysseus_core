@@ -19,8 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Display;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 
@@ -31,8 +29,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
  */
 final class GeometryPaintListener implements PaintListener {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(GeometryPaintListener.class);
+//	private static final Logger LOG = LoggerFactory.getLogger(GeometryPaintListener.class);
 	
 	/**
 	 * 

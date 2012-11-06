@@ -209,6 +209,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		}
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void addConnection(IPhysicalQuery query) {
 		List<IPhysicalOperator>ops = query.getRoots();
 		mapModel.addConnection(new DefaultStreamConnection(ops), query, this);
