@@ -21,59 +21,97 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+
 abstract public class AbstractTransportHandler implements ITransportHandler {
 
-	private List<ITransportHandlerListener<?>> transportHandlerListener = new ArrayList<ITransportHandlerListener<?>>();
-	private int openCounter = 0;
-	
-	
-	@Override
-	public void addListener(ITransportHandlerListener<?> listener) {
-		this.transportHandlerListener.add(listener);
-	}
+    private final List<ITransportHandlerListener> transportHandlerListener = new ArrayList<ITransportHandlerListener>();
+    private int                                openCounter              = 0;
+    private final ITransportExchangePattern    exchangePattern;
 
-	@Override
-	public void removeListener(ITransportHandlerListener<?> listener) {
-		this.transportHandlerListener.remove(listener);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void fireProcess(ByteBuffer message){
-		for (ITransportHandlerListener<?> l: transportHandlerListener){
-			((ITransportHandlerListener<ByteBuffer>)l).process(message);
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void fireOnConnect(){
-		for (ITransportHandlerListener<?> l: transportHandlerListener){
-			((ITransportHandlerListener<ByteBuffer>)l).onConnect(this);
-		}
-	}
-	@SuppressWarnings("unchecked")
-	public void fireOnDisconnect(){
-		for (ITransportHandlerListener<?> l: transportHandlerListener){
-			((ITransportHandlerListener<ByteBuffer>)l).onDisonnect(this);
-		}
-	}
-	
-	final synchronized public void open() throws UnknownHostException, IOException {
-		if (openCounter == 0){
-			process_open();
-		}
-		openCounter++;		
-	}
-	
-	abstract public void process_open() throws UnknownHostException, IOException;
+    public AbstractTransportHandler() {
+        this.exchangePattern = null;
+    }
 
-	@Override
-	final synchronized public void close() throws IOException {
-		openCounter--;
-		if (openCounter == 0){
-			process_close();
-		}
-	}
-	
-	abstract public void process_close() throws IOException;
-	
+    public AbstractTransportHandler(IProtocolHandler<?> protocolHandler) {
+        this.exchangePattern = protocolHandler.getExchangePattern();
+        protocolHandler.setTransportHandler(this);
+        addListener(protocolHandler);
+    }
+
+    @Override
+    public void addListener(ITransportHandlerListener listener) {
+        this.transportHandlerListener.add(listener);
+    }
+
+    @Override
+    public void removeListener(ITransportHandlerListener listener) {
+        this.transportHandlerListener.remove(listener);
+    }
+
+    public void fireProcess(ByteBuffer message) {
+        for (ITransportHandlerListener l : transportHandlerListener) {
+            ((ITransportHandlerListener) l).process(message);
+        }
+    }
+
+    public void fireOnConnect() {
+        for (ITransportHandlerListener l : transportHandlerListener) {
+            ((ITransportHandlerListener) l).onConnect(this);
+        }
+    }
+
+    public void fireOnDisconnect() {
+        for (ITransportHandlerListener l : transportHandlerListener) {
+            ((ITransportHandlerListener) l).onDisonnect(this);
+        }
+    }
+
+    
+    @Override
+    public ITransportExchangePattern getExchangePattern() {
+        return this.exchangePattern;
+    }
+
+    final synchronized public void open() throws UnknownHostException, IOException {
+        if (openCounter == 0) {
+            if (getExchangePattern().equals(ITransportExchangePattern.InOnly)
+                    || getExchangePattern().equals(ITransportExchangePattern.InOptionalOut)
+                    || getExchangePattern().equals(ITransportExchangePattern.InOut)) {
+                processInOpen();
+            }
+            if (getExchangePattern().equals(ITransportExchangePattern.OutOnly)
+                    || getExchangePattern().equals(ITransportExchangePattern.OutOptionalIn)
+                    || getExchangePattern().equals(ITransportExchangePattern.InOut)) {
+                processOutOpen();
+            }
+        }
+        openCounter++;
+    }
+
+    abstract public void processInOpen() throws IOException;
+
+    abstract public void processOutOpen() throws IOException;
+
+    @Override
+    final synchronized public void close() throws IOException {
+        openCounter--;
+        if (openCounter == 0) {
+            if (getExchangePattern().equals(ITransportExchangePattern.InOnly)
+                    || getExchangePattern().equals(ITransportExchangePattern.InOptionalOut)
+                    || getExchangePattern().equals(ITransportExchangePattern.InOut)) {
+                processInClose();
+            }
+            if (getExchangePattern().equals(ITransportExchangePattern.OutOnly)
+                    || getExchangePattern().equals(ITransportExchangePattern.OutOptionalIn)
+                    || getExchangePattern().equals(ITransportExchangePattern.InOut)) {
+                processOutClose();
+            }
+        }
+    }
+
+    abstract public void processInClose() throws IOException;
+
+    abstract public void processOutClose() throws IOException;
+
 }

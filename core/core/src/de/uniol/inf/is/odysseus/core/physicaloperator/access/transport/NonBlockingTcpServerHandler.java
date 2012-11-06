@@ -17,162 +17,115 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
-import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
-import de.uniol.inf.is.odysseus.core.connection.IConnection;
-import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.NioTcpServer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+
 /**
  * Handler for generic TCP Server
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class NonBlockingTcpServerHandler extends AbstractTransportHandler
-		implements IAccessConnectionHandler<ByteBuffer>, IConnectionListener, IAccessConnectionListener<ByteBuffer> {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(NonBlockingTcpServerHandler.class);
-	private NioTcpServer server;
-	private String host;
-	private int port;
-	private boolean open;
+public class NonBlockingTcpServerHandler extends AbstractTransportHandler implements
+        IAccessConnectionListener<ByteBuffer> {
+    private static final Logger LOG = LoggerFactory.getLogger(NonBlockingTcpServerHandler.class);
+    private NioTcpServer        server;
+    private String              host;
+    private int                 port;
 
-	public NonBlockingTcpServerHandler() {
+    public NonBlockingTcpServerHandler() {
+        super();
+    }
 
-	}
+    public NonBlockingTcpServerHandler(IProtocolHandler<?> protocolHandler) {
+        super(protocolHandler);
+    }
 
-	public NonBlockingTcpServerHandler(Map<String, String> options) {
-		try {
-			this.server = NioTcpServer.getInstance();
-		} catch (IOException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		this.host = options.get("host");
-		this.port = Integer.parseInt(options.get("port"));
-	}
+    @Override
+    public void send(byte[] message) throws IOException {
+        server.write(this, message);
+    }
 
-	public NonBlockingTcpServerHandler(
-			NonBlockingTcpServerHandler nonBlockingTcpServerHandler) {
-		this.server = nonBlockingTcpServerHandler.server;
-		this.host = nonBlockingTcpServerHandler.host;
-		this.port = nonBlockingTcpServerHandler.port;
-	}
+    @Override
+    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        NonBlockingTcpServerHandler handler = new NonBlockingTcpServerHandler(protocolHandler);
 
-	@Override
-	public void send(byte[] message) throws IOException {
-		server.write(this, message);
-	}
+        try {
+            handler.server = NioTcpServer.getInstance();
+        }
+        catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        handler.host = options.containsKey("host") ? options.get("host") : "127.0.0.1";
+        handler.port = options.containsKey("port") ? Integer.parseInt(options.get("port")) : 8080;
+        return handler;
+    }
 
-	@Override
-	public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
-		return new NonBlockingTcpServerHandler(options);
-	}
+    @Override
+    public InputStream getInputStream() {
+        throw new IllegalArgumentException("Currently not implemented");
+    }
 
-	@Override
-	public InputStream getInputStream() {
-		throw new IllegalArgumentException("Currently not implemented");
-	}
+    @Override
+    public String getName() {
+        return "TCPServer";
+    }
 
-	@Override
-	public String getName() {
-		return "TCPServer";
-	}
+    @Override
+    public void process(ByteBuffer buffer) throws ClassNotFoundException {
+        super.fireProcess(buffer);
+    }
 
-	@Override
-	public void process(ByteBuffer buffer) throws ClassNotFoundException {
-		super.fireProcess(buffer);
-	}
+    @Override
+    public void done() {
 
-	@Override
-	public void done() {
+    }
 
-	}
+    @Override
+    public OutputStream getOutputStream() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public boolean isOpened() {
-		return open;
-	}
+    @Override
+    public void processInOpen() throws UnknownHostException, IOException {
+        InetSocketAddress address = new InetSocketAddress(host, port);
+        try {
+            server.bind(address, this);
+        }
+        catch (IOException e) {
+            throw new OpenFailedException(e);
+        }
+    }
 
-	@Override
-	public void process_open() {
-		InetSocketAddress address = new InetSocketAddress(host, port);
-		try {
-			server.bind(address, this);
-			this.open = true;
-		} catch (IOException e) {
-			throw new OpenFailedException(e);
-		}
-	}
+    @Override
+    public void processOutOpen() throws UnknownHostException, IOException {
+        InetSocketAddress address = new InetSocketAddress(host, port);
+        try {
+            server.bind(address, this);
+        }
+        catch (IOException e) {
+            throw new OpenFailedException(e);
+        }
+    }
 
-	@Override
-	public void process_close() {
-		server.close(this);
-	}
+    @Override
+    public void processInClose() throws IOException {
+        server.close(this);
+    }
 
-	@Override
-	public NonBlockingTcpServerHandler clone() {
-		return new NonBlockingTcpServerHandler(this);
-	}
-
-	@Override
-	public void notify(IConnection connection, ConnectionMessageReason reason) {
-		switch (reason) {
-		case ConnectionAbort:
-			super.fireOnDisconnect();
-			break;
-		case ConnectionClosed:
-			super.fireOnDisconnect();
-			break;
-		case ConnectionRefused:
-			super.fireOnDisconnect();
-			break;
-		case ConnectionOpened:
-			super.fireOnConnect();
-			break;
-		default:
-			break;
-		}
-	}
-
-	@Override
-	public void open(IAccessConnectionListener<ByteBuffer> caller)
-			throws OpenFailedException {
-		this.process_open();		
-	}
-
-	@Override
-	public void close(IAccessConnectionListener<ByteBuffer> caller)
-			throws IOException {
-		this.process_close();
-	}
-
-	@Override
-	public void reconnect() {
-		this.process_close();
-		this.process_open();
-	}
-
-	@Override
-	public String getUser() {
-		return "";
-	}
-
-	@Override
-	public String getPassword() {
-		return "";
-	}
-
-	@Override
-	public IAccessConnectionHandler<ByteBuffer> getInstance(
-			Map<String, String> options) {
-		return new NonBlockingTcpServerHandler(options);
-	}
+    @Override
+    public void processOutClose() throws IOException {
+        server.close(this);
+    }
 }

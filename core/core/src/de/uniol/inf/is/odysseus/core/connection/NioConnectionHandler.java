@@ -117,7 +117,8 @@ public class NioConnectionHandler implements IAccessConnectionHandler<ByteBuffer
 	@Override
 	public void reconnect() {
 		if (caller != null) {
-			if (caller.isOpened() && this.autoReconnect) {
+		//	if (caller.isOpened() && this.autoReconnect) {
+			    if ( this.autoReconnect) {
 				if (waitingForNextReconnect < 0) {
 					waitingForNextReconnect = 0;
 				}
@@ -128,15 +129,15 @@ public class NioConnectionHandler implements IAccessConnectionHandler<ByteBuffer
 				} catch (InterruptedException e1) {
 				}
 				logger.info("Trying to reconnect...");
-				caller.process_close();
-				try {
-					caller.process_open();
-				} catch (OpenFailedException e) {
-					if (e.getCause() instanceof IOException) {
-						reconnect();
-					}
-					e.printStackTrace();
-				}
+				//caller.processClose();
+//				try {
+//					caller.processOpen();
+//				} catch (OpenFailedException e) {
+//					if (e.getCause() instanceof IOException) {
+//						reconnect();
+//					}
+//					e.printStackTrace();
+//				}
 				// failed again... increase waittime
 				waitingForNextReconnect = ((tries * tries) * 100);
 				tries++;

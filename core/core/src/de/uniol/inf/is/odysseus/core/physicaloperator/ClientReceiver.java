@@ -552,10 +552,10 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	}
 
 
-	@Override
-	public boolean isOpened() {
-		return this.isOpen();
-	}
+//	@Override
+//	public boolean isOpened() {
+//		return this.isOpen();
+//	}
 
 	// ------------------------------------------------------------------------
 	// OPEN
@@ -590,14 +590,14 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		}
 		if (!isOpen()) {
 			// fire(openInitEvent);
-			process_open();
+			processOpen();
 			// fire(openDoneEvent);
 			open.set(true);
 		}
 	}
 	
-	@Override
-	public void process_open() throws OpenFailedException {
+	//@Override
+	public void processOpen() throws OpenFailedException {
 		getLogger().debug("Process_open");
 		if (!opened) {
 			try {
@@ -630,7 +630,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			if (activeSinkSubscriptions.size() == 0) {
 				getLogger().debug("Closing " + toString());
 				// fire(this.closeInitEvent);
-				this.process_close();
+				this.processClose();
 				open.set(false);
 				//stopMonitoring();
 				// fire(this.closeDoneEvent);
@@ -638,8 +638,8 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		}
 	}
 	
-	@Override
-	public void process_close() {
+	//@Override
+	public void processClose() {
 		getLogger().debug("Process_close");
 		if (opened) {
 			try {

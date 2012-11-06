@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
@@ -27,90 +29,115 @@ import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.CloseFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
-public class NonBlockingTcpHandler extends AbstractTransportHandler implements IConnectionListener, IAccessConnectionListener<ByteBuffer> {
+public class NonBlockingTcpHandler extends AbstractTransportHandler implements IConnectionListener,
+        IAccessConnectionListener<ByteBuffer> {
 
-	static NioConnection nioConnection = null;
-	private String host;
-	private int port;
-	private String user;
-	private String password;
-	@SuppressWarnings("unused")
-	private boolean autoconnect;
-	private boolean open;
-	
-	@Override
-	public void send(byte[] message) throws IOException {
-	}
+    static NioConnection nioConnection = null;
+    private String       host;
+    private int          port;
+    private String       user;
+    private String       password;
+    @SuppressWarnings("unused")
+    private boolean      autoconnect;
+    private boolean      open;
 
-	@Override
-	public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
-		NonBlockingTcpHandler handler = new NonBlockingTcpHandler();
-		try {
-			NonBlockingTcpHandler.nioConnection = NioConnection.getInstance();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		NonBlockingTcpHandler.nioConnection.addConnectionListener(handler);
-		handler.host = options.get("host");
+    public NonBlockingTcpHandler() {
+        super();
+    }
+
+    public NonBlockingTcpHandler(IProtocolHandler<?> protocolHandler) {
+        super(protocolHandler);
+    }
+
+    @Override
+    public void send(byte[] message) throws IOException {
+    }
+
+    @Override
+    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        NonBlockingTcpHandler handler = new NonBlockingTcpHandler(protocolHandler);
+        try {
+            NonBlockingTcpHandler.nioConnection = NioConnection.getInstance();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        NonBlockingTcpHandler.nioConnection.addConnectionListener(handler);
+        handler.host = options.get("host");
 		if (options.get("port") == null){
 			throw new IllegalArgumentException("Port must be set");
 		}
-		handler.port = Integer.parseInt(options.get("port"));
-		handler.autoconnect = Boolean.parseBoolean(options.get("autoconnect"));
-		handler.user = options.get("user");
-		handler.password = options.get("password");
-		return handler;
-	}
+        handler.port = Integer.parseInt(options.get("port"));
+        handler.autoconnect = Boolean.parseBoolean(options.get("autoconnect"));
+        handler.user = options.get("user");
+        handler.password = options.get("password");
+        return handler;
+    }
 
-	@Override
-	public InputStream getInputStream() {
-		return null;
-	}
+    @Override
+    public InputStream getInputStream() {
+        return null;
+    }
 
-	@Override
-	public String getName() {
-		return "NonBlockingTcp";
-	}
+    @Override
+    public String getName() {
+        return "NonBlockingTcp";
+    }
 
-	@Override
-	public void process_open() throws OpenFailedException {
-		try {
-			nioConnection.connectToServer(this, host, port, user, password);
-		} catch (Exception e) {
-			throw new OpenFailedException(e);
-		}		
-		this.open = true;
-	}
+    @Override
+    public void processInOpen() throws OpenFailedException {
+        try {
+            nioConnection.connectToServer(this, host, port, user, password);
+        }
+        catch (Exception e) {
+            throw new OpenFailedException(e);
+        }
+        this.open = true;
+    }
 
-	@Override
-	public void process_close() throws CloseFailedException {
-		try {
-			nioConnection.disconnectFromServer(this);
-			open = false;
-		} catch (IOException e) {
-			throw new CloseFailedException(e);
-		}
-	}
+    @Override
+    public void processInClose() throws CloseFailedException {
+        try {
+            nioConnection.disconnectFromServer(this);
+            open = false;
+        }
+        catch (IOException e) {
+            throw new CloseFailedException(e);
+        }
+    }
 
-	@Override
-	public void notify(IConnection connection, ConnectionMessageReason reason) {
-		// TODO: Reconnect??
-	}
+    @Override
+    public void processOutClose() throws IOException {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void process(ByteBuffer buffer) throws ClassNotFoundException {
-		super.fireProcess(buffer);
-	}
+    }
 
-	@Override
-	public void done() {
-		// TODO: Done
-	}
+    @Override
+    public void processOutOpen() throws UnknownHostException, IOException {
+        // TODO Auto-generated method stub
 
-	@Override
-	public boolean isOpened() {
-		return open;
-	}
+    }
+
+    @Override
+    public void notify(IConnection connection, ConnectionMessageReason reason) {
+        // TODO: Reconnect??
+    }
+
+    @Override
+    public void process(ByteBuffer buffer) throws ClassNotFoundException {
+        super.fireProcess(buffer);
+    }
+
+    @Override
+    public void done() {
+        // TODO: Done
+    }
+
+    @Override
+    public OutputStream getOutputStream() {
+        return null;
+    }
 
 }

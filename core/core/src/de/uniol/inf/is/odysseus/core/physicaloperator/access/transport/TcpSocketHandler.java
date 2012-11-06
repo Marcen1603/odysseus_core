@@ -17,9 +17,12 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Map;
+
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 public class TcpSocketHandler extends AbstractTransportHandler {
 
@@ -27,23 +30,14 @@ public class TcpSocketHandler extends AbstractTransportHandler {
 	private int port;
 	private Socket socket;
 	
-	
 	public TcpSocketHandler() {
-		// Needed for DS
+        // TODO Auto-generated constructor stub
+    }
+	public TcpSocketHandler(IProtocolHandler<?> protocolHandler) {
+		super(protocolHandler);
 	}
 
-	@Override
-	public void process_open() throws UnknownHostException, IOException {
-		socket = new Socket(this.hostname, this.port);
-	}
 
-	@Override
-	public void process_close() throws IOException {
-		if (socket != null) {
-			socket.getInputStream().close();
-			socket.close();
-		}
-	}
 
 	@Override
 	public void send(byte[] message) throws IOException {
@@ -51,8 +45,8 @@ public class TcpSocketHandler extends AbstractTransportHandler {
 	}
 
 	@Override
-	public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
-		TcpSocketHandler th = new TcpSocketHandler();
+	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		TcpSocketHandler th = new TcpSocketHandler(protocolHandler);
 		th.hostname = options.get("host");
 		th.port = Integer.parseInt(options.get("port"));
 		return th;
@@ -74,5 +68,37 @@ public class TcpSocketHandler extends AbstractTransportHandler {
 	public String getName() {
 		return "TCP";
 	}
+
+    @Override
+    public OutputStream getOutputStream() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void processInOpen() throws UnknownHostException, IOException {
+        socket = new Socket(this.hostname, this.port);
+    }
+
+    @Override
+    public void processOutOpen() throws UnknownHostException, IOException {
+        socket = new Socket(this.hostname, this.port);
+    }
+
+    @Override
+    public void processInClose() throws IOException {
+        if (socket != null) {
+            socket.getInputStream().close();
+            socket.close();
+        }
+    }
+
+    @Override
+    public void processOutClose() throws IOException {
+        if (socket != null) {
+            socket.getInputStream().close();
+            socket.close();
+        }
+    }
 	
 }

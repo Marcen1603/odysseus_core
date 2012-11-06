@@ -17,47 +17,92 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.UnknownHostException;
+import java.io.OutputStream;
 import java.util.Map;
+
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 public class FileHandler extends AbstractTransportHandler {
 
-	String filename;
-	FileInputStream in;
+    String           filename;
+    FileInputStream  in;
+    FileOutputStream out;
 
-	@Override
-	public void process_open() throws UnknownHostException, IOException {
-		final File file = new File(filename);
-		in = new FileInputStream(file);
-	}
+    public FileHandler() {
+        super();
+    }
 
-	@Override
-	public void process_close() throws IOException {
-		in.close();
-	}
+    public FileHandler(IProtocolHandler<?> protocolHandler) {
+        super(protocolHandler);
+    }
 
-	@Override
-	public void send(byte[] message) throws IOException {
-		throw new IllegalArgumentException("Currently not implemented");
-	}
+    @Override
+    public void processInOpen() throws  IOException {
+        final File file = new File(filename);
+        try {
+            in = new FileInputStream(file);
+            fireOnConnect();
+        }
+        catch (Exception e) {
+            fireOnDisconnect();
+            throw e;
+        }
+    }
 
-	@Override
-	public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
-		FileHandler fh = new FileHandler();
-		fh.filename = options.get("filename");
-		return fh;
-	}
+    @Override
+    public void processOutOpen() throws  IOException {
+        final File file = new File(filename);
+        try {
+            out = new FileOutputStream(file, true);
+            fireOnConnect();
+        }
+        catch (Exception e) {
+            fireOnDisconnect();
+            throw e;
+        }
+    }
 
-	@Override
-	public InputStream getInputStream() {
-		return in;
-	}
+    @Override
+    public void processInClose() throws IOException {
+        fireOnDisconnect();
+        in.close();
+    }
 
-	@Override
-	public String getName() {
-		return "File";
-	}
+    @Override
+    public void processOutClose() throws IOException {
+        fireOnDisconnect();
+        out.flush();
+        out.close();
+    }
+
+    @Override
+    public void send(byte[] message) throws IOException {
+        out.write(message);
+    }
+
+    @Override
+    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        FileHandler fh = new FileHandler(protocolHandler);
+        fh.filename = options.get("filename");
+        return fh;
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        return in;
+    }
+
+    @Override
+    public OutputStream getOutputStream() {
+        return out;
+    }
+
+    @Override
+    public String getName() {
+        return "File";
+    }
 
 }

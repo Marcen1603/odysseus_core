@@ -19,7 +19,4 @@ package de.uniol.inf.is.odysseus.core.connection;
 public interface IAccessConnectionListener<T>{
 	public void process(T buffer) throws ClassNotFoundException;
 	public void done();
-	boolean isOpened();
-	public void process_close();
-	public void process_open();	
 }

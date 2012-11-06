@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.wrapper.html.physicaloperator.access;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.UnknownHostException;
@@ -27,9 +28,10 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -44,42 +46,20 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
     private PipedOutputStream pipeOutput;
     private String            uri;
     @SuppressWarnings("unused")
-	private ITransportPattern transportPattern;
+    private IAccessPattern    transportPattern;
 
     /**
  * 
  */
     public HTTPTransportHandler() {
-
+        super();
     }
 
     /**
-     * @param options
+     * @param protocolHandler
      */
-    public HTTPTransportHandler(ITransportPattern transportPattern, Map<String, String> options) {
-        this.uri = options.get("uri");
-        this.transportPattern = transportPattern;
-        this.pipeInput = new PipedInputStream();
-        try {
-            this.pipeOutput = new PipedOutputStream(this.pipeInput);
-        }
-        catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * @param httpTransportHandler
-     */
-    public HTTPTransportHandler(HTTPTransportHandler httpTransportHandler) {
-        this.uri = httpTransportHandler.uri;
-        this.pipeInput = new PipedInputStream();
-        try {
-            this.pipeOutput = new PipedOutputStream(this.pipeInput);
-        }
-        catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-        }
+    public HTTPTransportHandler(IProtocolHandler<?> protocolHandler) {
+        super(protocolHandler);
     }
 
     @Override
@@ -95,8 +75,17 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
     }
 
     @Override
-    public ITransportHandler createInstance(ITransportPattern transportPattern, Map<String, String> options) {
-        return new HTTPTransportHandler(transportPattern, options);
+    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+        HTTPTransportHandler handler = new HTTPTransportHandler(protocolHandler);
+        handler.uri = options.get("uri");
+        handler.pipeInput = new PipedInputStream();
+        try {
+            handler.pipeOutput = new PipedOutputStream(handler.pipeInput);
+        }
+        catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return handler;
     }
 
     @Override
@@ -110,7 +99,12 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
     }
 
     @Override
-    public void process_open() throws UnknownHostException, IOException {
+    public OutputStream getOutputStream() {
+        return this.pipeOutput;
+    }
+
+    @Override
+    public void processInOpen() throws UnknownHostException, IOException {
         GetMethod request = new GetMethod(this.uri);
         this.client.executeMethod(request);
         try {
@@ -123,7 +117,20 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
     }
 
     @Override
-    public void process_close() throws IOException {
+    public void processOutOpen() throws UnknownHostException, IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void processInClose() throws IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void processOutClose() throws IOException {
+        // TODO Auto-generated method stub
 
     }
 
