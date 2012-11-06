@@ -15,41 +15,25 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.connection.AccessConnectionHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
-import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
-import de.uniol.inf.is.odysseus.core.objecthandler.InputDataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.objecthandler.ObjectHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IToObjectInputStreamTransformer;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IToStringArrayTransformer;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransformer;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.InputHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.TransformerRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.IInputHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.Activator;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -90,7 +74,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 
         String accessPOName = operator.getSourcename();
         ISource accessPO = null;
-        if (Activator.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+        if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
             accessPO = new AccessPO(protocolHandler);
         }
         else {
@@ -268,8 +252,8 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 
     @Override
     public boolean isExecutable(AccessAO operator, TransformationConfiguration config) {
-        return (getDataDictionary().getAccessPlan(operator.getSourcename()) == null && operator.getWrapper() != null && (Activator.GENERIC_PULL
-                .equalsIgnoreCase(operator.getWrapper()) || Activator.GENERIC_PUSH.equalsIgnoreCase(operator
+        return (getDataDictionary().getAccessPlan(operator.getSourcename()) == null && operator.getWrapper() != null && (Constants.GENERIC_PULL
+                .equalsIgnoreCase(operator.getWrapper()) || Constants.GENERIC_PUSH.equalsIgnoreCase(operator
                 .getWrapper())));
     }
 
@@ -300,7 +284,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
     private IProtocolHandler<?> getProtocolHandler(AccessAO operator, IDataHandler<?> dataHandler) {
         IProtocolHandler<?> protocolHandler = null;
         if (operator.getProtocolHandler() != null) {
-            if (Activator.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+            if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
                 protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
                         ITransportDirection.IN, IAccessPattern.PULL, operator.getOptionsMap(), dataHandler);
             }
