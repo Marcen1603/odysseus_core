@@ -19,47 +19,79 @@ import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> {
+    private final ITransportDirection direction;
+    private final IAccessPattern      access;
+    private ITransportHandler         transportHandler;
+    private IDataHandler<T>           dataHandler;
+    private ITransferHandler<T>       transfer;
 
-	private ITransportHandler transportHandler;
-	private IDataHandler<T> dataHandler;
-	private ITransferHandler<T> transfer;
+    public AbstractProtocolHandler() {
+        direction = null;
+        access = null;
+    }
 
-	
-	final protected ITransportHandler getTransportHandler() {
-		return transportHandler;
-	}
-	
-	final protected void setTransportHandler(ITransportHandler transportHandler) {
-		this.transportHandler = transportHandler;
-	}
-	
-	final protected IDataHandler<T> getDataHandler() {
-		return dataHandler;
-	}
-	
-	final protected void setDataHandler(IDataHandler<T> dataHandler) {
-		this.dataHandler = dataHandler;
-	}
-	
-	final protected ITransferHandler<T> getTransfer() {
-		return transfer;
-	}
-	
-	final protected void setTransfer(ITransferHandler<T> transfer) {
-		this.transfer = transfer;
-	}
-	
-	@Override
-	public boolean hasNext() throws IOException {
-		return false;
-	}
+    public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access) {
+        this.direction = direction;
+        this.access = access;
+    }
 
-	@Override
-	public T getNext() throws IOException {
-		return null;
-	}
-	
+    final protected ITransportHandler getTransportHandler() {
+        return transportHandler;
+    }
+
+    final protected IDataHandler<T> getDataHandler() {
+        return dataHandler;
+    }
+
+    final protected void setDataHandler(IDataHandler<T> dataHandler) {
+        this.dataHandler = dataHandler;
+    }
+
+    final protected ITransferHandler<T> getTransfer() {
+        return transfer;
+    }
+
+    final protected void setTransfer(ITransferHandler<T> transfer) {
+        this.transfer = transfer;
+    }
+
+    public final void setTransportHandler(ITransportHandler transportHandler) {
+        this.transportHandler = transportHandler;
+    }
+
+    @Override
+    public ITransportDirection getDirection() {
+        return this.direction;
+    }
+
+    @Override
+    public IAccessPattern getAccess() {
+        return this.access;
+    }
+
+    @Override
+    public boolean hasNext() throws IOException {
+        throw new RuntimeException("Sorry. Currently not implemented");
+    }
+
+    @Override
+    public T getNext() throws IOException {
+        throw new RuntimeException("Sorry. Currently not implemented");
+    }
+
+    @Override
+    public void write(T object) throws IOException {
+        throw new RuntimeException("Sorry. Currently not implemented");
+    }
+
+    @Override
+    public ITransportExchangePattern getExchangePattern() {
+        return ITransportExchangePattern.InOnly;
+    }
 }

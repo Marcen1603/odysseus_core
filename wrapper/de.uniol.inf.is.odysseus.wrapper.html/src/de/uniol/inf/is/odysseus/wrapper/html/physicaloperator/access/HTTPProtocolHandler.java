@@ -25,18 +25,21 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * @param <T>
  */
-public class HTTPProtocolHandler<T> extends AbstractProtocolHandler<T> implements ITransportHandlerListener<ByteBuffer> {
+public class HTTPProtocolHandler extends AbstractProtocolHandler<Tuple<? extends IMetaAttribute>> {
     private static final Logger LOG = LoggerFactory.getLogger(HTTPProtocolHandler.class);
     private String              url;
     private BufferedReader      reader;
@@ -46,7 +49,11 @@ public class HTTPProtocolHandler<T> extends AbstractProtocolHandler<T> implement
  * 
  */
     public HTTPProtocolHandler() {
+        super();
+    }
 
+    public HTTPProtocolHandler(ITransportDirection direction, IAccessPattern access) {
+        super(direction, access);
     }
 
     @Override
@@ -55,14 +62,14 @@ public class HTTPProtocolHandler<T> extends AbstractProtocolHandler<T> implement
     }
 
     @Override
-    public IProtocolHandler<T> createInstance(Map<String, String> options, ITransportHandler transportHandler,
-            IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-        HTTPProtocolHandler<T> instance = new HTTPProtocolHandler<T>();
+    public IProtocolHandler<Tuple<? extends IMetaAttribute>> createInstance(ITransportDirection direction,
+            IAccessPattern access, Map<String, String> options,
+            IDataHandler<Tuple<? extends IMetaAttribute>> dataHandler,
+            ITransferHandler<Tuple<? extends IMetaAttribute>> transfer) {
+        HTTPProtocolHandler instance = new HTTPProtocolHandler(direction, access);
         instance.url = options.get("url");
         instance.setDataHandler(dataHandler);
-        instance.setTransportHandler(transportHandler);
         instance.setTransfer(transfer);
-        transportHandler.addListener(instance);
         return instance;
     }
 
@@ -73,19 +80,14 @@ public class HTTPProtocolHandler<T> extends AbstractProtocolHandler<T> implement
     }
 
     @Override
-    public void process(ByteBuffer message) {
-        getTransfer().transfer(getDataHandler().readData(message));
-    }
-
-    @Override
     public boolean hasNext() throws IOException {
-        write(this.url.getBytes());
+        getTransportHandler().send(this.url.getBytes());
         delay();
         return getTransportHandler().getInputStream().available() > 0;
     }
 
     @Override
-    public T getNext() throws IOException {
+    public Tuple<? extends IMetaAttribute> getNext() throws IOException {
         StringBuilder builder = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
@@ -101,8 +103,9 @@ public class HTTPProtocolHandler<T> extends AbstractProtocolHandler<T> implement
     }
 
     @Override
-    public void write(byte[] message) throws IOException {
-        getTransportHandler().send(message);
+    public void write(Tuple<? extends IMetaAttribute> object) throws IOException {
+        // TODO Implement HTML serializer
+        throw new IllegalArgumentException("Currently not implemented");
     }
 
     /**
@@ -138,6 +141,12 @@ public class HTTPProtocolHandler<T> extends AbstractProtocolHandler<T> implement
                 LOG.error(e.getMessage(), e);
             }
         }
+    }
+
+    @Override
+    public void process(ByteBuffer message) {
+        getTransfer().transfer(getDataHandler().readData(message));
+
     }
 
 }

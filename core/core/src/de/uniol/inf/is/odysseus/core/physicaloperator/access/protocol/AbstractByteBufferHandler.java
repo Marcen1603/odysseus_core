@@ -15,24 +15,33 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandler<T> implements ITransportHandlerListener<ByteBuffer>{
-	
-	protected ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
+abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandler<T> {
 
-	public void setByteOrder(ByteOrder byteOrder) {
-		this.byteOrder = byteOrder;
-	}
-	
-	protected void setByteOrder(String byteOrderTxt) {
-		if ("LITTLE_ENDIAN".equalsIgnoreCase(byteOrderTxt)){
-			byteOrder = ByteOrder.LITTLE_ENDIAN;
-		}else{
-			byteOrder = ByteOrder.BIG_ENDIAN;
-		}
-	}
+    protected ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
+
+    public AbstractByteBufferHandler() {
+        super();
+    }
+
+    public AbstractByteBufferHandler(ITransportDirection direction, IAccessPattern access) {
+        super(direction, access);
+    }
+
+    public void setByteOrder(ByteOrder byteOrder) {
+        this.byteOrder = byteOrder;
+    }
+
+    protected void setByteOrder(String byteOrderTxt) {
+        if ("LITTLE_ENDIAN".equalsIgnoreCase(byteOrderTxt)) {
+            byteOrder = ByteOrder.LITTLE_ENDIAN;
+        }
+        else {
+            byteOrder = ByteOrder.BIG_ENDIAN;
+        }
+    }
 }

@@ -19,12 +19,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
@@ -36,7 +39,15 @@ public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	protected BufferedReader reader;
 
-	/*
+    public SunspotProtocolHandler() {
+        super();
+    }
+    
+	public SunspotProtocolHandler(ITransportDirection direction, IAccessPattern access) {
+       super(direction,access);
+    }
+
+    /*
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
@@ -69,37 +80,37 @@ public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
-	 * IProtocolHandler#write(byte[])
-	 */
-	@Override
-	public void write(byte[] message) throws IOException {
-		throw new IllegalArgumentException("Currently not implemented");
-	}
+    /*
+     * (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
+     * AbstractProtocolHandler#write(java.lang.Object)
+     */
+    @Override
+    public void write(T object) throws IOException {
+        throw new IllegalArgumentException("Currently not implemented");
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
-	 * IProtocolHandler#createInstance(java.util.Map,
-	 * de.uniol.inf.is.odysseus.core
-	 * .physicaloperator.access.transport.ITransportHandler,
-	 * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler,
-	 * de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
+     * IProtocolHandler
+     * #createInstance(de.uniol.inf.is.odysseus.core.physicaloperator
+     * .access.transport.ITransportDirection,
+     * de.uniol.inf.is.odysseus.core.physicaloperator
+     * .access.transport.IAccessPattern, java.util.Map,
+     * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler,
+     * de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler)
+     */
 	@Override
-	public IProtocolHandler<T> createInstance(Map<String, String> options, ITransportHandler transportHandler, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-		SunspotProtocolHandler<T> instance = new SunspotProtocolHandler<T>();
+	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
+	        Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+		SunspotProtocolHandler<T> instance = new SunspotProtocolHandler<T>(direction,access);
 
 		// 2 mal?!
 		// instance.setDataHandler(dataHandler);
 		// instance.setTransportHandler(transportHandler);
 		// instance.setTransfer(transfer);
 
-		instance.setTransportHandler(transportHandler);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
 
@@ -116,5 +127,23 @@ public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public String getName() {
 		return "Sunspot";
 	}
+
+    @Override
+    public void onConnect(ITransportHandler caller) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onDisonnect(ITransportHandler caller) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void process(ByteBuffer message) {
+       getTransfer().transfer(getDataHandler().readData(message));
+        
+    }
 
 }

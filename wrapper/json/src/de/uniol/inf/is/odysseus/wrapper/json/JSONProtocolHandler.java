@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class JSONProtocolHandler extends
@@ -132,24 +135,18 @@ public class JSONProtocolHandler extends
 	}
 
 	@Override
-	public void write(byte[] message) throws IOException {
+	public void write(KeyValueObject<? extends IMetaAttribute> object) throws IOException {
 		throw new IllegalArgumentException("Currently not implemented");
 	}
 
 	@Override
-	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
-			Map<String, String> options, ITransportHandler transportHandler,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,
-			ITransferHandler<KeyValueObject<? extends IMetaAttribute>> transfer) {
+    public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(ITransportDirection direction,
+            IAccessPattern access, Map<String, String> options,
+            IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,
+            ITransferHandler<KeyValueObject<? extends IMetaAttribute>> transfer) {
 		JSONProtocolHandler instance = new JSONProtocolHandler();
 		instance.setDataHandler(dataHandler);
-		instance.setTransportHandler(transportHandler);
 		instance.setTransfer(transfer);
-
-		instance.setTransportHandler(transportHandler);
-		instance.setDataHandler(dataHandler);
-		instance.setTransfer(transfer);
-
 		return instance;
 	}
 
@@ -173,4 +170,25 @@ public class JSONProtocolHandler extends
 		convert(object, out, "");
 		System.out.println(out);
 	}
+
+
+
+
+    @Override
+    public void onConnect(ITransportHandler caller) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onDisonnect(ITransportHandler caller) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void process(ByteBuffer message) {
+        // TODO Auto-generated method stub
+        
+    }
 }

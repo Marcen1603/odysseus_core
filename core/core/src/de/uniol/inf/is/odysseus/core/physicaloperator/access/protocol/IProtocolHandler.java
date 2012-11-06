@@ -21,17 +21,35 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
 
-public interface IProtocolHandler <T> {
-	
-	public void open() throws UnknownHostException, IOException;
-	public void close() throws IOException;
-	public boolean hasNext() throws IOException;
-	public T getNext() throws IOException;
-	public void write(byte[] message) throws IOException;;
-	public IProtocolHandler<T> createInstance(Map<String, String> options, ITransportHandler transportHandler, IDataHandler<T> dataHandler, ITransferHandler<T> transfer);
-	
-	String getName();
-	
+public interface IProtocolHandler<T> extends ITransportHandlerListener {
+
+    public void open() throws UnknownHostException, IOException;
+
+    public void close() throws IOException;
+
+    public boolean hasNext() throws IOException;
+
+    public T getNext() throws IOException;
+
+    public void write(T object) throws IOException;
+
+    public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
+            Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer);
+
+    public ITransportExchangePattern getExchangePattern();
+
+    void setTransportHandler(ITransportHandler transportHandler);
+
+    ITransportDirection getDirection();
+
+    IAccessPattern getAccess();
+
+    String getName();
+
 }

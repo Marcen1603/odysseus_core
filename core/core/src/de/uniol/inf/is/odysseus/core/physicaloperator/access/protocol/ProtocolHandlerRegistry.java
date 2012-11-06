@@ -25,7 +25,8 @@ import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
 public class ProtocolHandlerRegistry {
 
@@ -48,22 +49,22 @@ public class ProtocolHandlerRegistry {
 		handlers.remove(handler.getName().toLowerCase());
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	static public IProtocolHandler<?> getInstance(String name, Map<String, String> options, 
-			ITransportHandler transportHandler, IDataHandler dataHandler, ITransferHandler transfer){
-		IProtocolHandler<?> ret = handlers.get(name.toLowerCase());
-		if (ret != null){
-			return ret.createInstance(options, transportHandler, dataHandler, transfer);
-		}
-		logger.error("No handler with name "+name+" found!");
-		return null;
-	}
-	
-	@SuppressWarnings({ "rawtypes"})
-	static public IProtocolHandler<?> getInstance(String name, Map<String, String> options, 
-			ITransportHandler transportHandler, IDataHandler dataHandler){
-		return getInstance(name, options, transportHandler, dataHandler, null);
-	}
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    static public IProtocolHandler<?> getInstance(String name, ITransportDirection direction, IAccessPattern access,
+            Map<String, String> options, IDataHandler dataHandler, ITransferHandler transfer) {
+        IProtocolHandler<?> ret = handlers.get(name.toLowerCase());
+        if (ret != null) {
+            return ret.createInstance(direction, access, options, dataHandler, transfer);
+        }
+        logger.error("No handler with name " + name + " found!");
+        return null;
+    }
+
+    @SuppressWarnings({ "rawtypes" })
+    static public IProtocolHandler<?> getInstance(String name, ITransportDirection direction, IAccessPattern access,
+            Map<String, String> options, IDataHandler dataHandler) {
+        return getInstance(name, direction, access, options, dataHandler, null);
+    }
 	
 	public static ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(handlers.keySet());

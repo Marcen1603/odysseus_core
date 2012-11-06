@@ -27,90 +27,110 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T>{
-	private static final Logger LOG = LoggerFactory
-			.getLogger(MarkerByteBufferHandler.class);
-	protected ByteBufferHandler<T> objectHandler;
-	protected byte start;
-	protected byte end;
-	
-	@Override
-	public void open() throws UnknownHostException, IOException {	
-		getTransportHandler().open();
-	}
+public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
-	@Override
-	public void close() throws IOException {
-		getTransportHandler().close();
-	}
+    private static final Logger    LOG = LoggerFactory.getLogger(MarkerByteBufferHandler.class);
+    protected ByteBufferHandler<T> objectHandler;
+    protected byte                 start;
+    protected byte                 end;
 
-	@Override
-	public void write(byte[] message) throws IOException {
-		throw new IllegalArgumentException("Currently not implemented");
-	}
-	
-	@Override
-	public IProtocolHandler<T> createInstance(Map<String, String> options,
-			ITransportHandler transportHandler, IDataHandler<T> dataHandler,
-			ITransferHandler<T> transfer) {
-		MarkerByteBufferHandler<T> instance = new MarkerByteBufferHandler<T>();
-		instance.setDataHandler(dataHandler);
-		instance.setTransportHandler(transportHandler);
-		instance.setTransfer(transfer);
-		instance.objectHandler = new ByteBufferHandler<T>(dataHandler);
-		transportHandler.addListener(instance);
-		instance.start = Byte.parseByte(options.get("start"));
-		instance.end = Byte.parseByte(options.get("end"));
-		instance.setByteOrder(options.get("byteorder"));
-		return instance;
-	}
+    public MarkerByteBufferHandler() {
+        super();
+    }
 
-	@Override
-	public String getName() {
-		return "MarkerByteBuffer";
-	}
+    public MarkerByteBufferHandler(ITransportDirection direction, IAccessPattern access) {
+        super(direction, access);
+    }
 
-	@Override
-	public void onConnect(ITransportHandler caller) {
-	}
+    @Override
+    public void open() throws UnknownHostException, IOException {
+        getTransportHandler().open();
+    }
 
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-	}
+    @Override
+    public void close() throws IOException {
+        getTransportHandler().close();
+    }
 
-	@Override
-	public void process(ByteBuffer message) {
-		try {
-			int pos = 0;
-			while (message.remaining() > 0) {
-				byte value = message.get();
-				if (value == end) {
-					int endPosition = message.position() - 1;
-					message.position(pos);
-					objectHandler.put(message, endPosition - pos);
-					message.position(endPosition + 1);
-					pos = message.position();
-					getTransfer().transfer(objectHandler.create());
-				}
-				if (value == start) {
-					objectHandler.clear();
-					pos = message.position();
-				}
-			}
-			if (pos >= 0) {
-				message.position(pos);
-				objectHandler.put(message);
-			}
-		} catch (IOException e) {
-			LOG.error(e.getMessage(), e);
-		} catch (BufferUnderflowException e) {
-			LOG.error(e.getMessage(), e);
-		} catch (ClassNotFoundException e) {
-			LOG.error(e.getMessage(), e);
-		}
+    @Override
+    public void write(T object) throws IOException {
+        throw new IllegalArgumentException("Currently not implemented");
+    }
 
-	}
+    @Override
+    public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
+            Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+        MarkerByteBufferHandler<T> instance = new MarkerByteBufferHandler<T>(direction, access);
+        instance.setDataHandler(dataHandler);
+        instance.setTransfer(transfer);
+        instance.objectHandler = new ByteBufferHandler<T>(dataHandler);
+        instance.start = Byte.parseByte(options.get("start"));
+        instance.end = Byte.parseByte(options.get("end"));
+        instance.setByteOrder(options.get("byteorder"));
+        return instance;
+    }
 
+    @Override
+    public String getName() {
+        return "MarkerByteBuffer";
+    }
+
+    @Override
+    public void onConnect(ITransportHandler caller) {
+    }
+
+    @Override
+    public void onDisonnect(ITransportHandler caller) {
+    }
+
+    @Override
+    public void process(ByteBuffer message) {
+        try {
+            int pos = 0;
+            while (message.remaining() > 0) {
+                byte value = message.get();
+                if (value == end) {
+                    int endPosition = message.position() - 1;
+                    message.position(pos);
+                    objectHandler.put(message, endPosition - pos);
+                    message.position(endPosition + 1);
+                    pos = message.position();
+                    getTransfer().transfer(objectHandler.create());
+                }
+                if (value == start) {
+                    objectHandler.clear();
+                    pos = message.position();
+                }
+            }
+            if (pos >= 0) {
+                message.position(pos);
+                objectHandler.put(message);
+            }
+        }
+        catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        catch (BufferUnderflowException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        catch (ClassNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+    }
+
+    @Override
+    public ITransportExchangePattern getExchangePattern() {
+        if (this.getDirection().equals(ITransportDirection.IN)) {
+            return ITransportExchangePattern.InOnly;
+        }
+        else {
+            return ITransportExchangePattern.OutOnly;
+        }
+    }
 }
