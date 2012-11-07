@@ -79,7 +79,8 @@ public class TSenderAORule extends AbstractTransformationRule<SenderAO> {
             throw new TransformationException("No transport handler " + operator.getTransportHandler() + " found.");
         }
 
-        ISink<?> senderPO = new SenderPO(protocolHandler);
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+		ISink<?> senderPO = new SenderPO(protocolHandler);
         defaultExecute(operator, senderPO, config, true, true);
     }
 
