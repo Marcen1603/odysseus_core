@@ -75,7 +75,7 @@ public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
 
 	@Override
 	protected void process_close() {
-
+		isRunning = false;
 	}
 
 	@Override
