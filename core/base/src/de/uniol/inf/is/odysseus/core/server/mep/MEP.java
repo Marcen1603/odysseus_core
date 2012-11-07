@@ -200,7 +200,7 @@ public class MEP implements IExpressionParser {
             functionStore.remove(signature);
         }
         else {
-            throw new IllegalArgumentException("no definition of function " + symbol);
+        	getLogger().warn("Tried to unregister function {}, which was not registered before", symbol);
         }
     }
 
