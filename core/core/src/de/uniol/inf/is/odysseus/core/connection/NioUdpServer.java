@@ -18,13 +18,16 @@ package de.uniol.inf.is.odysseus.core.connection;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,115 +38,127 @@ import org.slf4j.LoggerFactory;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class NioUdpServer extends Thread implements IConnection {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(NioUdpServer.class);
-	static NioUdpServer instance = null;
-	private Map<IAccessConnectionListener<ByteBuffer>, NioUdpConnection> receiverMap = new ConcurrentHashMap<IAccessConnectionListener<ByteBuffer>, NioUdpConnection>();
+    private static final Logger                                          LOG          = LoggerFactory
+                                                                                              .getLogger(NioUdpServer.class);
+    static NioUdpServer                                                  instance     = null;
+    private Map<IAccessConnectionListener<ByteBuffer>, NioUdpConnection> receiverMap  = new ConcurrentHashMap<IAccessConnectionListener<ByteBuffer>, NioUdpConnection>();
+    private Queue<NioUdpConnection>                                      deferredList = new ConcurrentLinkedQueue<NioUdpConnection>();
+    private int                                                          readBufferSize;
+    private int                                                          writeBufferSize;
+    private Selector                                                     selector;
+    private boolean                                                      doRouting    = true;
+    private long                                                         timeout      = 40;
 
-	private int readBufferSize;
-	private int writeBufferSize;
-	private Selector selector;
-	private boolean doRouting = true;
-	private long timeout = 40;
+    public static synchronized NioUdpServer getInstance() throws IOException {
+        if (instance == null) {
+            instance = new NioUdpServer(1024, 1024);
+            instance.start();
+        }
+        return instance;
+    }
 
-	public static synchronized NioUdpServer getInstance() throws IOException {
-		if (instance == null) {
-			instance = new NioUdpServer(1024, 1024);
-			instance.start();
-		}
-		return instance;
-	}
+    public void bind(InetSocketAddress address, IAccessConnectionListener<ByteBuffer> listener) throws IOException {
+        DatagramChannel channel = selector.provider().openDatagramChannel();
+        channel.socket().bind(address);
+        NioUdpConnection connection = new NioUdpConnection(selector, channel, readBufferSize, writeBufferSize, listener);
+        this.receiverMap.put(listener, connection);
+        selector.wakeup();
+    }
 
-	public void bind(InetSocketAddress address,
-			IAccessConnectionListener<ByteBuffer> listener) throws IOException {
-		DatagramChannel channel = selector.provider().openDatagramChannel();
-		channel.socket().bind(address);
-		NioUdpConnection connection = new NioUdpConnection(selector, channel,
-				readBufferSize, writeBufferSize, listener);
-		this.receiverMap.put(listener, connection);
-		selector.wakeup();
-	}
+    public void connect(InetSocketAddress address, IAccessConnectionListener<ByteBuffer> listener) throws IOException {
+        NioUdpConnection connection = new NioUdpConnection(selector, address, this.readBufferSize,
+                this.writeBufferSize, listener);
+        this.receiverMap.put(listener, connection);
+        deferredList.add(connection);
+        selector.wakeup();
+    }
 
-	public void connect(InetSocketAddress address,
-			IAccessConnectionListener<ByteBuffer> listener) throws IOException {
-		NioUdpConnection connection = new NioUdpConnection(selector, address,
-				this.readBufferSize, this.writeBufferSize, listener);
-		this.receiverMap.put(listener, connection);
-		selector.wakeup();
-	}
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
 
-	public void setTimeout(long timeout) {
-		this.timeout = timeout;
-	}
+    public long getTimeout() {
+        return timeout;
+    }
 
-	public long getTimeout() {
-		return timeout;
-	}
+    public void stopRouting() {
+        doRouting = false;
+        selector.wakeup();
+    }
 
-	public void stopRouting() {
-		doRouting = false;
-		selector.wakeup();
-	}
+    public void write(IAccessConnectionListener<ByteBuffer> sink, byte[] message) {
+        receiverMap.get(sink).write(message);
+    }
 
-	public void write(IAccessConnectionListener<ByteBuffer> sink, byte[] message) {
-		receiverMap.get(sink).write(message);
-	}
+    public void close(IAccessConnectionListener<ByteBuffer> sink) {
+        receiverMap.remove(sink).close();
+    }
 
-	public void close(IAccessConnectionListener<ByteBuffer> sink) {
-		receiverMap.remove(sink).close();
-	}
+    @Override
+    public void run() {
+        while ((!Thread.interrupted()) && (doRouting)) {
+            try {
+                int select = 0;
+                if (timeout > 0) {
+                    select = this.selector.select(timeout);
+                }
+                else {
+                    select = this.selector.select();
+                }
+                processRegister(this.selector);
+                if (select > 0) {
+                    Set<SelectionKey> keys = selector.selectedKeys();
+                    Iterator<SelectionKey> iter = keys.iterator();
+                    while (iter.hasNext()) {
+                        SelectionKey selectionKey = iter.next();
+                        iter.remove();
+                        Object attachment = selectionKey.attachment();
+                        if (attachment != null) {
+                            NioUdpConnection connection = (NioUdpConnection) attachment;
+                            if ((selectionKey.isValid()) && (selectionKey.isReadable())) {
+                                ByteBuffer buffer = connection.read();
+                                try {
+                                    connection.getListener().process(buffer);
+                                }
+                                catch (ClassNotFoundException e) {
+                                    LOG.error(e.getMessage(), e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (IOException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+    }
 
-	@Override
-	public void run() {
-		while ((!Thread.interrupted()) && (doRouting)) {
-			try {
-				int select = 0;
-				if (timeout > 0) {
-					select = selector.select(timeout);
-				} else {
-					select = selector.selectNow();
-				}
-				if (select > 0) {
-					Set<SelectionKey> keys = selector.selectedKeys();
-					synchronized (keys) {
-						for (Iterator<SelectionKey> iter = keys.iterator(); iter
-								.hasNext();) {
-							SelectionKey selectionKey = iter.next();
-							iter.remove();
+    private void processRegister(Selector selector) {
+        while (deferredList.size() > 0) {
+            NioUdpConnection connection = deferredList.poll();
+            try {
+                connection.register(selector);
+            }
+            catch (ClosedChannelException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+    }
 
-							NioUdpConnection connection = (NioUdpConnection) selectionKey
-									.attachment();
-							int ops = selectionKey.readyOps();
+    private NioUdpServer(int readBufferSize, int writeBufferSize) {
+        this.readBufferSize = readBufferSize;
+        this.writeBufferSize = writeBufferSize;
+        try {
+            this.selector = Selector.open();
+        }
+        catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
+    }
 
-							if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
-								ByteBuffer buffer = connection.read();
-								try {
-									connection.getListener().process(buffer);
-								} catch (ClassNotFoundException e) {
-									LOG.error(e.getMessage(), e);
-								}
-							}
-						}
-					}
-				}
-			} catch (IOException e) {
-				LOG.error(e.getMessage(), e);
-			}
-		}
-	}
-
-	private NioUdpServer(int readBufferSize, int writeBufferSize) {
-		this.readBufferSize = readBufferSize;
-		this.writeBufferSize = writeBufferSize;
-		try {
-			this.selector = Selector.open();
-		} catch (IOException e) {
-			LOG.error(e.getMessage(), e);
-		}
-	}
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
-	}
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
+    }
 }

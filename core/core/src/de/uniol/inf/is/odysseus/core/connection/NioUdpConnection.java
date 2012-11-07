@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.connection;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -59,8 +60,8 @@ public class NioUdpConnection implements IConnection {
 			int readBufferSize, int writeBufferSize,
 			IAccessConnectionListener<ByteBuffer> listener) throws IOException {
 		this.listener = listener;
-		this.readBuffer = ByteBuffer.allocateDirect(readBufferSize);
-		this.writeBuffer = ByteBuffer.allocateDirect(writeBufferSize);
+		this.readBuffer = ByteBuffer.allocate(readBufferSize);
+		this.writeBuffer = ByteBuffer.allocate(writeBufferSize);
 		this.channel = channel;
 		this.channel.configureBlocking(false);
 		this.selectionKey = this.channel.register(selector,
@@ -94,7 +95,11 @@ public class NioUdpConnection implements IConnection {
 		}
 		return nbytes;
 	}
-
+	
+    public void register(Selector selector) throws ClosedChannelException {
+        this.selectionKey.attach(this);
+    }
+    
 	public void close() {
 		if (this.channel != null) {
 			try {
