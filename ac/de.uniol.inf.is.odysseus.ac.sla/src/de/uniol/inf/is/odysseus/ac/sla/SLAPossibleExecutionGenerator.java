@@ -12,13 +12,10 @@ import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 
-public class SLAPossibleExecutionGenerator implements
-		IPossibleExecutionGenerator {
+public class SLAPossibleExecutionGenerator implements IPossibleExecutionGenerator {
 
 	@Override
-	public List<IPossibleExecution> getPossibleExecutions(
-			IAdmissionControl sender, Map<IPhysicalQuery, ICost> queryCosts,
-			ICost maxCost) {
+	public List<IPossibleExecution> getPossibleExecutions(IAdmissionControl sender, Map<IPhysicalQuery, ICost> queryCosts, ICost overallCost, ICost maxCost) {
 
 		List<IPossibleExecution> result = new ArrayList<>();
 		IPhysicalQuery mostExpensiveQuery = null;
@@ -30,7 +27,7 @@ public class SLAPossibleExecutionGenerator implements
 
 			if (sla != null) {
 				double killPenalty = sla.getQueryKillPenalty().getCost();
-				
+
 				if (killPenalty == maxPenalty) {
 					ICost queryCost = queryCosts.get(q);
 					int compare = queryCost.compareTo(maxQueryCost);
@@ -45,10 +42,10 @@ public class SLAPossibleExecutionGenerator implements
 				}
 			}
 		}
-		
+
 		IPossibleExecution possibleExec = StandardPossibleExecution.stopOneQuery(queryCosts, mostExpensiveQuery);
 		result.add(possibleExec);
-		
+
 		return result;
 	}
 
