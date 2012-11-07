@@ -56,6 +56,7 @@ public class RandomStreamClientHandler extends StreamClientHandler {
 
 	@Override
 	public void close() {
+		isGenerating = false;
 	}
 
 	@Override
