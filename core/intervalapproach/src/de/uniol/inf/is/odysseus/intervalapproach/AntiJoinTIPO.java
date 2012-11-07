@@ -19,13 +19,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea;
@@ -33,7 +34,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.EqualsPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
 ///**
 // * @author Jonas Jacobi
@@ -89,6 +89,10 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 				new MetadataComparator<ITimeInterval>());
 		PointInTime startTime = PointInTime.getZeroTime();
 		this.highestStart = new PointInTime[] { startTime, startTime };
+	}
+	
+	public ISweepArea<T>[] getAreas() {
+		return sa;
 	}
 
 	//
