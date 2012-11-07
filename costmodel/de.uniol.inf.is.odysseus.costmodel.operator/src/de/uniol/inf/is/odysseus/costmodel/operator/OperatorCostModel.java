@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hyperic.sigar.CpuPerc;
-import org.hyperic.sigar.Sigar;
-import org.hyperic.sigar.SigarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,26 +58,28 @@ public class OperatorCostModel implements ICostModel {
 	private final int processorCount;
 	private final int schedulerThreadCount;
 	private final long memory;
-	
-	private final Sigar sigar = new Sigar();
+
+	private final CPUUsage cpuUsage = new CPUUsage();
 	private final Runtime runtime = Runtime.getRuntime();
 
 	/**
 	 * Standardkonstruktor.
 	 */
-	public OperatorCostModel() {	
+	public OperatorCostModel() {
 		Runtime runtime = Runtime.getRuntime();
 		processorCount = runtime.availableProcessors();
 		schedulerThreadCount = OdysseusConfiguration.getInt("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
 
 		LOG.debug("Number of Processors available: {} ", processorCount);
 		LOG.debug("Number of Scheduler Threads: {}", schedulerThreadCount);
-		if( processorCount > schedulerThreadCount ) {
+		if (processorCount > schedulerThreadCount) {
 			LOG.warn("Number of processors exceeds the number of threads used by simpleThreadScheduler. This can result in performance loss.");
 		}
 
 		memory = runtime.totalMemory();
 		LOG.debug("Memory in bytes: {}", memory);
+
+		cpuUsage.start();
 	}
 
 	@Override
@@ -181,17 +180,8 @@ public class OperatorCostModel implements ICostModel {
 
 	@Override
 	public ICost getOverallCost() {
-		try {
-			double mem = runtime.totalMemory() - runtime.freeMemory();
-			
-			CpuPerc perc = sigar.getCpuPerc();
-			double cpu = ( perc.getUser() ) * processorCount;
-			return new OperatorCost(mem, cpu);
-			
-		} catch (SigarException ex) {
-			LOG.error("Could not get infos about cpus");
-			return new OperatorCost(0,0);
-		}
+		double mem = runtime.totalMemory() - runtime.freeMemory();
+		return new OperatorCost(mem, cpuUsage.getCpuMeanUsage());
 	}
 
 	// holt eine Liste der Histogramme der Attribute, die in der Anfrage
@@ -284,23 +274,21 @@ public class OperatorCostModel implements ICostModel {
 		}
 	}
 
-
 }
 
-
-//System.out.println();
-//for (IPhysicalOperator op : operators) {
+// System.out.println();
+// for (IPhysicalOperator op : operators) {
 //
-//	OperatorEstimation estimation = estimatedOperators.get(op);
-//	double s = estimation.getSelectivity();
-//	double r = estimation.getDataStream().getDataRate();
-//	double g = estimation.getDataStream().getIntervalLength();
-//	double cpu = estimation.getDetailCost().getProcessorCost();
-//	double mem = estimation.getDetailCost().getMemoryCost();
+// OperatorEstimation estimation = estimatedOperators.get(op);
+// double s = estimation.getSelectivity();
+// double r = estimation.getDataStream().getDataRate();
+// double g = estimation.getDataStream().getIntervalLength();
+// double cpu = estimation.getDetailCost().getProcessorCost();
+// double mem = estimation.getDetailCost().getMemoryCost();
 //
-//	System.out.println(String.format("%-20s : s = %-8.6f, r = %-10.6f, g = %-10.6f, cpu = %-10.6f, mem = %-10.6f ", op.getClass().getSimpleName(), s, r, g, cpu, mem));
-//}
+// System.out.println(String.format("%-20s : s = %-8.6f, r = %-10.6f, g = %-10.6f, cpu = %-10.6f, mem = %-10.6f ",
+// op.getClass().getSimpleName(), s, r, g, cpu, mem));
+// }
 //
-//System.out.println("Aggregated: " + aggCost);
-
+// System.out.println("Aggregated: " + aggCost);
 

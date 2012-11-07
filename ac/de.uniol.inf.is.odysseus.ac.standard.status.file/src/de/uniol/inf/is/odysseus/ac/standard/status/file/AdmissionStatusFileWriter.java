@@ -76,6 +76,8 @@ public class AdmissionStatusFileWriter implements IAdmissionStatusListener {
 	private static void writeHeader(PrintWriter out) {
 		out.print("Timetstamp");
 		out.print(SEPARATOR);
+		out.print("Elapsed time");
+		out.print(SEPARATOR);
 		out.print("Added Query Count");
 		out.print(SEPARATOR);
 		out.print("Running Query Count");

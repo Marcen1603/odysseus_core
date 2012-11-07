@@ -39,3 +39,4 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  org.slf4j
 Service-Component: OSGI-INF/OperatorCostModel.xml, OSGI-INF/OperatorEstimator.xml, OSGI-INF/PostOptimizationAction.xml
 Export-Package: de.uniol.inf.is.odysseus.costmodel.operator
+Require-Bundle: com.google.guava;bundle-version="12.0.0"
