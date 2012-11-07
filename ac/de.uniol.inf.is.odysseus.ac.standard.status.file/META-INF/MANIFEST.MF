@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: File
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.ac.standard.status.file
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.ac.standard.status.file.AdmissionStatusFilePlugIn
+Bundle-Vendor: Admission Status File Writer
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: de.uniol.inf.is.odysseus.ac.standard,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.costmodel,
+ org.osgi.framework;version="1.3.0"
+Service-Component: OSGI-INF/acstatusfilewriter.xml
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
+ com.google.guava;bundle-version="12.0.0"
