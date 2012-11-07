@@ -60,8 +60,9 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 	private static final Logger LOG = LoggerFactory.getLogger(StandardAC.class);
 	private static final long ESTIMATION_TOO_OLD_MILLIS = 3000;
-	private static final double UNDERLOAD_FACTOR = 0.6;
-	private static final double UNDERLOAD_USER_FACTOR = 0.6;
+	private static final double UNDERLOAD_FACTOR = 0.80;
+	private static final double UNDERLOAD_USER_FACTOR = 0.80;
+	private static final double EVENT_BUFFERING_COUNT = 3;
 
 	private Map<String, ICostModel> costModels = Maps.newHashMap();
 	private ICostModel selectedCostModel;
@@ -82,6 +83,9 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	private final List<IAdmissionListener> listeners = Lists.newArrayList();
 	private final List<IAdmissionStatusListener> statusListeners = Lists.newArrayList();
 	private final long startTime = System.currentTimeMillis();
+
+	private long overloadEventBuffer = 0;
+	private final Map<IUser, Long> userOverloadEventBuffer = Maps.newHashMap();
 
 	@Override
 	public ICost getCost(IPhysicalQuery query) {
@@ -158,11 +162,11 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			}
 		}
 
-		if( !statusListeners.isEmpty() ) {
+		if (!statusListeners.isEmpty()) {
 			fireAdmissionStatus(userMaximumCostFactors);
 		}
 
-		System.out.println(queryCosts.size() + "; " + runningQueryCosts.size() + "; " + actCost);
+//		System.out.println(queryCosts.size() + "; " + runningQueryCosts.size() + "; " + actCost);
 
 		// check, if user-load is too heavy
 		for (IUser user : userCosts.keySet()) {
@@ -176,9 +180,14 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 				LOG.warn("Costs for user {} are too high: {}", user.getName(), userCost);
 				LOG.warn("Maximum allowed for user: {}", maxUserCost);
 
-				fireOverloadUserEvent(user);
+				incrementUserEventBuffer(userOverloadEventBuffer, user);
+				if (getUserEventBuffer(userOverloadEventBuffer, user) >= EVENT_BUFFERING_COUNT) {
+					fireOverloadUserEvent(user);
+				}
 
 			} else {
+				resetUserEventBuffer(userOverloadEventBuffer, user);
+
 				ICost userUnderloadCost = maxUserCost.fraction(UNDERLOAD_USER_FACTOR);
 				if (isGreater(userUnderloadCost, userCost)) {
 					LOG.debug("Cost for user {} is below underload-level: {}", user.getName(), underloadCost);
@@ -193,16 +202,41 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			// too high load now!
 			LOG.warn("Cost is too high. MaxCost = {}", maxCost);
 
-			fireOverloadEvent();
-		} else if (isGreater(underloadCost, actCost)) {
-			LOG.debug("Cost is below underload-level: {}", underloadCost);
-			fireUnderloadEvent();
+			overloadEventBuffer++;
+			if( overloadEventBuffer >= EVENT_BUFFERING_COUNT ) {
+				fireOverloadEvent();
+			}
+		} else {
+			overloadEventBuffer = 0;
+			
+			if (isGreater(underloadCost, actCost)) {
+				LOG.debug("Cost is below underload-level: {}", underloadCost);
+				fireUnderloadEvent();
+			}
 		}
 
 		if (LOG.isDebugEnabled()) {
 			long elapsedTime = System.currentTimeMillis() - startTimestamp;
 			LOG.debug("Updatetime: {} ms", elapsedTime);
 		}
+	}
+
+	private static void incrementUserEventBuffer(Map<IUser, Long> buffer, IUser user) {
+		Long eventBuffer = buffer.get(user);
+		if (eventBuffer == null) {
+			buffer.put(user, 1L);
+		} else {
+			buffer.put(user, eventBuffer + 1);
+		}
+	}
+
+	private static long getUserEventBuffer(Map<IUser, Long> buffer, IUser user) {
+		Long eventBuffer = buffer.get(user);
+		return eventBuffer != null ? eventBuffer : 0L;
+	}
+
+	private static void resetUserEventBuffer(Map<IUser, Long> buffer, IUser user) {
+		buffer.put(user, 0L);
 	}
 
 	@Override
@@ -339,17 +373,17 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			LOG.debug("Executor unbound");
 		}
 	}
-	
-	public void bindAdmissionStatusListener( IAdmissionStatusListener listener ) {
-		synchronized(statusListeners) {
+
+	public void bindAdmissionStatusListener(IAdmissionStatusListener listener) {
+		synchronized (statusListeners) {
 			statusListeners.add(listener);
 		}
 		LOG.debug("Status listener {} bound.", listener);
 	}
-	
-	public void unbindAdmissionStatusListener( IAdmissionStatusListener listener ) {
-		synchronized(statusListeners) {
-			if( statusListeners.contains(listener)) {
+
+	public void unbindAdmissionStatusListener(IAdmissionStatusListener listener) {
+		synchronized (statusListeners) {
+			if (statusListeners.contains(listener)) {
 				statusListeners.remove(listener);
 				LOG.debug("Status listener {} unbound.", listener);
 			}
@@ -423,39 +457,28 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		return isGreater(getActualCost(), getMaximumCost());
 	}
 
-	private void fireAdmissionStatus(Map<IUser,ICost> maxUserCosts) {
+	private void fireAdmissionStatus(Map<IUser, ICost> maxUserCosts) {
 		Map<IUser, ICost> underloadCosts = Maps.newHashMap();
-		for( IUser user : maxUserCosts.keySet() ) {
+		for (IUser user : maxUserCosts.keySet()) {
 			underloadCosts.put(user, maxUserCosts.get(user).fraction(UNDERLOAD_USER_FACTOR));
 		}
-		
+
 		long ts = System.currentTimeMillis();
-		AdmissionStatus status = new AdmissionStatus(
-				runningQueryCosts.size(),
-				queryCosts.size() - runningQueryCosts.size(),
-				queryCosts.size(),
-				actCost,
-				maxCost,
-				underloadCost,
-				ImmutableMap.copyOf(userCosts),
-				ImmutableMap.copyOf(maxUserCosts),
-				ImmutableMap.copyOf(underloadCosts),
-				ImmutableMap.copyOf(queryCosts),
-				ts,
-				ts - startTime,
-				selectedCostModel.getClass().getSimpleName());
-		
-		synchronized(statusListeners ) {
-			for( IAdmissionStatusListener listener : statusListeners ) {
+		AdmissionStatus status = new AdmissionStatus(runningQueryCosts.size(), queryCosts.size() - runningQueryCosts.size(), queryCosts.size(), actCost, maxCost, underloadCost,
+				ImmutableMap.copyOf(userCosts), ImmutableMap.copyOf(maxUserCosts), ImmutableMap.copyOf(underloadCosts), ImmutableMap.copyOf(queryCosts), ts, ts - startTime, selectedCostModel
+						.getClass().getSimpleName());
+
+		synchronized (statusListeners) {
+			for (IAdmissionStatusListener listener : statusListeners) {
 				try {
 					listener.updateAdmissionStatus(this, status);
-				} catch( Throwable t ) {
+				} catch (Throwable t) {
 					LOG.error("Exception during invoking admission status listener", t);
 				}
 			}
 		}
 	}
-	
+
 	private ICost estimateCost(List<IPhysicalOperator> operators, boolean onUpdate) {
 		if (getSelectedCostModel() == null) {
 			throw new IllegalStateException("No CostModel selected.");
