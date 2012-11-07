@@ -91,6 +91,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadl
 public class StandardExecutor extends AbstractExecutor implements IAdmissionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StandardExecutor.class);
+	private static final long ADMISSION_REACTION_INTERVAL_MILLIS = 10000; 
 
 	private ReloadLog reloadLog;
 
@@ -116,6 +117,8 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 	private IAdmissionReaction admissionReaction = null;
 	private final Map<IUser, List<IPhysicalQuery>> stoppedQueriesByAC = Maps.newHashMap();
+	private long lastAdmissionReaction;
+	
 
 	private Map<ILogicalQuery, QueryBuildConfiguration> queryBuildParameter = new HashMap<ILogicalQuery, QueryBuildConfiguration>();
 
@@ -551,7 +554,6 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 		if (admissionControl != null) {
 			if (!admissionControl.canStartQuery(queryToStart)) {
-				LOG.error("Could not start query since it will potencially overload the system");
 				throw new RuntimeException("Query due of admission control not started");
 			}
 		}
@@ -865,45 +867,48 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 	@Override
 	public void overloadUserOccured(IAdmissionControl sender, IUser user) {
-		if (admissionReaction != null) {
+		if (admissionReaction != null && System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS ) {
 			List<IPossibleExecution> possibilities = sender.getPossibleExecutions(user);
-			IPossibleExecution execution = admissionReaction.react(possibilities);
-
-			for (IPhysicalQuery query : execution.getStoppingQueries()) {
-				try {
-					stopQuery(query.getID(), query.getSession());
-
-					IUser usr = query.getSession().getUser();
-					if (stoppedQueriesByAC.containsKey(usr)) {
-						stoppedQueriesByAC.get(usr).add(query);
-					} else {
-						List<IPhysicalQuery> queries = Lists.newArrayList();
-						queries.add(query);
-						stoppedQueriesByAC.put(usr, queries);
+			if( !possibilities.isEmpty() ) {
+				IPossibleExecution execution = admissionReaction.react(possibilities);
+	
+				for (IPhysicalQuery query : execution.getStoppingQueries()) {
+					try {
+						stopQuery(query.getID(), query.getSession());
+						lastAdmissionReaction = System.currentTimeMillis();
+	
+						IUser usr = query.getSession().getUser();
+						if (stoppedQueriesByAC.containsKey(usr)) {
+							stoppedQueriesByAC.get(usr).add(query);
+						} else {
+							List<IPhysicalQuery> queries = Lists.newArrayList();
+							queries.add(query);
+							stoppedQueriesByAC.put(usr, queries);
+						}
+					} catch (RuntimeException ex) {
 					}
-				} catch (Throwable t) {
-					LOG.error("Could not stop query {] by admission control", query.getID(), t);
 				}
+			} else {
+				LOG.error("Could not reduce load since no possible execution generated");
 			}
 		}
 	}
 
 	@Override
 	public void underloadUserOccured(IAdmissionControl sender, IUser user) {
-		if (!stoppedQueriesByAC.isEmpty()) {
+		if (!stoppedQueriesByAC.isEmpty() && System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS) {
 			Collection<IPhysicalQuery> stoppedQueries = determineStoppedQueries(user, stoppedQueriesByAC);
 			for (IPhysicalQuery stoppedQuery : stoppedQueries) {
 				try {
-					if (!stoppedQuery.isOpened()) {
-						startQuery(stoppedQuery.getID(), stoppedQuery.getSession());
-					}
-
+					startQuery(stoppedQuery.getID(), stoppedQuery.getSession());
+					lastAdmissionReaction = System.currentTimeMillis();
+					
 					IUser usr = stoppedQuery.getSession().getUser();
-					if (stoppedQueriesByAC.containsKey(usr)) {
-						stoppedQueriesByAC.get(usr).remove(stoppedQuery);
-					}
-				} catch (Throwable t) {
-					LOG.error("Could not start query {} which was stopped by admission control", stoppedQuery.getID(), t);
+					stoppedQueriesByAC.get(usr).remove(stoppedQuery);
+					
+					break;
+				} catch (RuntimeException ex) {
+					LOG.error("Could not start query again", ex);
 				}
 			}
 		}
