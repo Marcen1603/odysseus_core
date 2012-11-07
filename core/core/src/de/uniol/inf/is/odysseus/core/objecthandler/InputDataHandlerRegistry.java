@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
 
+@Deprecated
 public class InputDataHandlerRegistry{
 
 	static Logger logger = LoggerFactory.getLogger(InputDataHandlerRegistry.class);

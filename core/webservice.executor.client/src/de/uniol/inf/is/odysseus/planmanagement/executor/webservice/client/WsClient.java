@@ -87,7 +87,7 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
  * @author Merlin Wasmann
  * 
  */
-
+@SuppressWarnings("deprecation")
 public class WsClient implements IExecutor, IClientExecutor {
 
 	protected static Logger _logger = null;

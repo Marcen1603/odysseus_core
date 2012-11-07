@@ -62,6 +62,7 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
  * 
  * @author Merlin Wasmann
  */
+@SuppressWarnings("deprecation")
 public class ClientReceiver<R, W> implements ISource<W>,
 		IAccessConnectionListener<R>, ITransferHandler<W>, IPhysicalOperator {
 

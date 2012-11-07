@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
+@Deprecated
 public class NioConnectionHandler implements IAccessConnectionHandler<ByteBuffer>, IConnectionListener {
 
 	Logger logger = LoggerFactory.getLogger(NioConnectionHandler.class);

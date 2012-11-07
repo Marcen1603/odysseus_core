@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 public class RuleProvider implements ITransformRuleProvider{
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();

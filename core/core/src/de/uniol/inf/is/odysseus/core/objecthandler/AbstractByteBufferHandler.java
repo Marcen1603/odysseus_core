@@ -19,6 +19,7 @@ import java.nio.ByteOrder;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
 
+@Deprecated
 abstract public class AbstractByteBufferHandler<R,W> implements IInputDataHandler<R,W> {
 
 	protected ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;

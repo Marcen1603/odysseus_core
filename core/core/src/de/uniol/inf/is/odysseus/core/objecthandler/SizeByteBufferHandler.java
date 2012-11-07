@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 
+@Deprecated
 public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuffer,T> {
 
 	private int size = -1;

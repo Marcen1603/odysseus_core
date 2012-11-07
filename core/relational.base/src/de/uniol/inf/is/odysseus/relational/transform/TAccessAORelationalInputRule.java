@@ -46,6 +46,7 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 		ObjectStreamInputHandler input = new ObjectStreamInputHandler(accessAO.getHost(), accessAO.getPort(), accessAO.getLogin(), accessAO.getPassword());
 		ObjectDataHandler<Tuple<?>> dh = new ObjectDataHandler<Tuple<?>>();
 		dh.setPrototype(false);
+		@SuppressWarnings("deprecation")
 		ISource<?> accessPO = new AccessPO<ObjectInputStream,Tuple<?>>(input, new ObjectInputStream2ObjectInputStreamTransformer(), dh );	
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 

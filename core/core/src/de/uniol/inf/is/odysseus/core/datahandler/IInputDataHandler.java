@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 
-
+@Deprecated
 public interface IInputDataHandler<R,W> {
 
 	void init();

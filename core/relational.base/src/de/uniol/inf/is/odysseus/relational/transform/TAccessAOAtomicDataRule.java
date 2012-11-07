@@ -45,7 +45,7 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 		
 		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler(accessAO.getDataHandler(), accessAO.getOutputSchema());
 		
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "deprecation" })
 		ISource accessPO = new AccessPO(input, new ObjectInputStream2ObjectInputStreamTransformer(), 
 				dataHandler);
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
