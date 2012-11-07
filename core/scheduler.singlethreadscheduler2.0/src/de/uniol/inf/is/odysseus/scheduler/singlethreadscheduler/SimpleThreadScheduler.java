@@ -267,5 +267,9 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 			}
 		}
 	}
+	
+	public IPhysicalQueryScheduling[] getPlanScheduling() {
+		return planScheduling;
+	}
 
 }

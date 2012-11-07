@@ -39,4 +39,6 @@ public interface ICostFunction {
 	 */
 	public double mg(double conformance, SLA sla);
 
+	
+	public int getCurrentServiceLevelIndex(double conformance, SLA sla);
 }

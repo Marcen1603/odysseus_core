@@ -4,4 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecutionGenerator"/>
    </service>
+   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
 </scr:component>

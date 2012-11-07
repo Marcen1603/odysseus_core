@@ -89,6 +89,7 @@ public class SLAPartialPlanScheduling implements IPhysicalQueryScheduling,
 	 * registry for management of scheduling relevant information
 	 */
 	private SLARegistry registry;
+	
 	/**
 	 * name of starvation freedom function
 	 */
@@ -626,5 +627,9 @@ public class SLAPartialPlanScheduling implements IPhysicalQueryScheduling,
 	@Override
 	public void nothingToSchedule(IScheduling sched) {
 		pausedPlans.add(sched);
+	}
+	
+	public SLARegistry getRegistry() {
+		return registry;
 	}
 }
