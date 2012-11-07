@@ -30,7 +30,8 @@ import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 public class ExpressionBuilderVisitor implements MEPImplVisitor {
 
     private Map<String, Variable> symbolTable = new HashMap<String, Variable>();
-    private final SDFSchema       schema;
+    @SuppressWarnings("unused")
+	private final SDFSchema       schema;
 
     public ExpressionBuilderVisitor(SDFSchema schema) {
         this.schema = schema;
