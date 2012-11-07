@@ -80,7 +80,7 @@
             id="de.uniol.inf.is.odysseus.ui.perspective.spatial" 
             name="Spatial Queries" 
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.perspective.SpatialPerspective" 
-            icon="icons/MyIcon.gif"> 
+            > 
         </perspective> 
    </extension>
    <extension point="org.eclipse.ui.perspectiveExtensions">

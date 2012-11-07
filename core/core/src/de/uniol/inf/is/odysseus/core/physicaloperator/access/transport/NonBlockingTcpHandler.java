@@ -41,7 +41,8 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
     private String       password;
     @SuppressWarnings("unused")
     private boolean      autoconnect;
-    private boolean      open;
+    @SuppressWarnings("unused")
+	private boolean      open;
 
     public NonBlockingTcpHandler() {
         super();
