@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.core.connection;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -49,10 +48,18 @@ public class NioUdpServer extends Thread implements IConnection {
     private boolean                                                      doRouting    = true;
     private long                                                         timeout      = 40;
 
-    public static synchronized NioUdpServer getInstance() throws IOException {
+    public static synchronized NioUdpServer getInstance(int readBufferSize, int writeBufferSize) throws IOException {
         if (instance == null) {
-            instance = new NioUdpServer(1024, 1024);
+            instance = new NioUdpServer(readBufferSize, writeBufferSize);
             instance.start();
+        }
+        else {
+            if (writeBufferSize > instance.writeBufferSize) {
+                instance.writeBufferSize = writeBufferSize;
+            }
+            if (readBufferSize > instance.readBufferSize) {
+                instance.readBufferSize = readBufferSize;
+            }
         }
         return instance;
     }
@@ -105,7 +112,6 @@ public class NioUdpServer extends Thread implements IConnection {
                 else {
                     select = this.selector.select();
                 }
-                processRegister(this.selector);
                 if (select > 0) {
                     Set<SelectionKey> keys = selector.selectedKeys();
                     Iterator<SelectionKey> iter = keys.iterator();
@@ -124,23 +130,14 @@ public class NioUdpServer extends Thread implements IConnection {
                                     LOG.error(e.getMessage(), e);
                                 }
                             }
+                            else if ((selectionKey.isValid()) && (selectionKey.isWritable())) {
+                                connection.write();
+                            }
                         }
                     }
                 }
             }
             catch (IOException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
-    }
-
-    private void processRegister(Selector selector) {
-        while (deferredList.size() > 0) {
-            NioUdpConnection connection = deferredList.poll();
-            try {
-                connection.register(selector);
-            }
-            catch (ClosedChannelException e) {
                 LOG.error(e.getMessage(), e);
             }
         }

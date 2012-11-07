@@ -59,8 +59,10 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
     @Override
     public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
         NonBlockingTcpClientHandler handler = new NonBlockingTcpClientHandler(protocolHandler);
+        int readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 1024;
+        int writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 1024;
         try {
-            handler.client = NioTcpServer.getInstance();
+            handler.client = NioTcpServer.getInstance(readBufferSize, writeBufferSize);
         }
         catch (IOException e) {
             LOG.error(e.getMessage(), e);

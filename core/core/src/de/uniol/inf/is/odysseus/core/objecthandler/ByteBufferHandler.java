@@ -73,8 +73,11 @@ public class ByteBufferHandler<T> implements
 			// TODO: Effizientere ?berlaufbehandlung?
 			//logger.warn("ObjectHandler OVERFLOW");
 			ByteBuffer newBB = ByteBuffer.allocate((buffer.limit()+size+byteBuffer.position())*2);
+			int pos = byteBuffer.position();
+			byteBuffer.flip();
 			newBB.put(byteBuffer);
 			byteBuffer = newBB;
+			byteBuffer.position(pos);
 		}
 	}
 	
