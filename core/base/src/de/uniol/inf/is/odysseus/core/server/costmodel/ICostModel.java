@@ -47,6 +47,13 @@ public interface ICostModel {
 	 * @return Maximalkosten
 	 */
 	public ICost getMaximumCost();
+	
+	/**
+	 * Liefert Kosten, die nicht mit der Verarbeitung zu tun haben.
+	 * 
+	 * @return Hintergrundkosten
+	 */
+	public ICost getOverallCost();
 
 	/**
 	 * Liefert eine Instanz der Kosten des Kostenmodells mit 0.

@@ -45,5 +45,5 @@ public interface IPossibleExecutionGenerator {
 	 *            Maximal zulässige Kosten
 	 * @return Liste an möglichen Vorschlägen zur Überlastkompensation.
 	 */
-	public List<IPossibleExecution> getPossibleExecutions(IAdmissionControl sender, Map<IPhysicalQuery, ICost> queryCosts, ICost maxCost);
+	public List<IPossibleExecution> getPossibleExecutions(IAdmissionControl sender, Map<IPhysicalQuery, ICost> queryCosts, ICost overallCost, ICost maxCost);
 }
