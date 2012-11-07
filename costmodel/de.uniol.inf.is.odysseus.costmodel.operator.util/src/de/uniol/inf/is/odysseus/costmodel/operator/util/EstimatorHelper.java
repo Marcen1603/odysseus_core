@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea;
 
 /**
  * Diese Klasse bietet statische Methoden an, um zu einem gegebenen physischen
@@ -172,5 +173,18 @@ public final class EstimatorHelper {
 
 		return size;
 
+	}
+	
+	public static <T> int elementCountOfSweepAreas(ISweepArea<T>[] areas ) {
+		if( areas == null || areas.length == 0 ) {
+			return 0;
+		}
+		
+		int sum = 0;
+		for( ISweepArea<T> area : areas ) {
+			sum += area.size();
+		}
+		
+		return sum;
 	}
 }

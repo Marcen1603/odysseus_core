@@ -32,6 +32,9 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.costmodel.operator.util,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.relational.base.predicate,
+ org.hyperic.sigar,
+ org.hyperic.sigar.win32,
+ org.hyperic.sigar.win32.test,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Service-Component: OSGI-INF/OperatorCostModel.xml, OSGI-INF/OperatorEstimator.xml, OSGI-INF/PostOptimizationAction.xml

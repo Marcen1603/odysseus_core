@@ -1,4 +1,6 @@
 /*******************************************************************************
+
+
  * Copyright 2012 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +19,6 @@ package de.uniol.inf.is.odysseus.ac.standard;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,10 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
@@ -58,28 +60,28 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 	private static final Logger LOG = LoggerFactory.getLogger(StandardAC.class);
 	private static final long ESTIMATION_TOO_OLD_MILLIS = 3000;
-	private static final double UNDERLOAD_FACTOR = 0.9;
-	private static final double UNDERLOAD_USER_FACTOR = 0.9;
+	private static final double UNDERLOAD_FACTOR = 0.6;
+	private static final double UNDERLOAD_USER_FACTOR = 0.6;
 
-	private Map<String, ICostModel> costModels;
+	private Map<String, ICostModel> costModels = Maps.newHashMap();
 	private ICostModel selectedCostModel;
 	private IServerExecutor executor;
 
 	private ICost maxCost;
 	private ICost underloadCost;
 	private ICost actCost;
-	private boolean wasOverloaded;
 
 	private Map<IPhysicalQuery, ICost> queryCosts = Maps.newHashMap();
 	private Map<IPhysicalQuery, ICost> runningQueryCosts = Maps.newHashMap();
 	private Map<IPhysicalQuery, Long> timestamps = Maps.newHashMap();
 
 	private Map<IUser, ICost> userCosts = Maps.newHashMap();
-	private Map<IUser, Boolean> userWasOverloaded = Maps.newHashMap();
 
 	private IPossibleExecutionGenerator generator = new StandardPossibleExecutionGenerator();
 
-	private final List<IAdmissionListener> listeners = new ArrayList<IAdmissionListener>();
+	private final List<IAdmissionListener> listeners = Lists.newArrayList();
+	private final List<IAdmissionStatusListener> statusListeners = Lists.newArrayList();
+	private final long startTime = System.currentTimeMillis();
 
 	@Override
 	public ICost getCost(IPhysicalQuery query) {
@@ -123,34 +125,29 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	public synchronized void updateEstimations() {
 
 		long startTimestamp = System.currentTimeMillis();
+		actCost = selectedCostModel.getOverallCost();
 
-		// check execution plan as one query
-		List<IPhysicalOperator> operators = getAllOperators(executor);
-		actCost = estimateCost(operators, true);
-
-		// update query estimations
+		Map<IPhysicalQuery, ICost> newCostEstimations = Maps.newHashMap();
 		userCosts = Maps.newHashMap();
-		Map<IPhysicalQuery, ICost> map = Maps.newHashMap();
-		Map<IUser, Double> userMaximumCostFactors = Maps.newHashMap();
-		for (IPhysicalOperator op : operators) {
-			Optional<IPhysicalQuery> optQuery = getFirstActiveOwner(op.getOwner());
+		runningQueryCosts = Maps.newHashMap();
+		Map<IUser, ICost> userMaximumCostFactors = Maps.newHashMap();
 
-			if (optQuery.isPresent()) {
-				IPhysicalQuery query = optQuery.get();
-				ICost opCost = actCost.getCostOfOperator(op);
+		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries().toArray(new IPhysicalQuery[0])) {
+			if (query.isOpened()) {
+				ICost cost = estimateCost(getAllOperators(query), true);
+				newCostEstimations.put(query, cost);
+
 				IUser user = query.getSession().getUser();
-
-				map.put(query, mergeCosts(map.get(query), opCost));
-				userCosts.put(user, mergeCosts(userCosts.get(user), opCost));
+				userCosts.put(user, mergeCosts(userCosts.get(user), cost));
 
 				Optional<Double> optSLA = determineMaximumCostFactor(query);
 				if (optSLA.isPresent()) {
-					userMaximumCostFactors.put(user, optSLA.get());
+					userMaximumCostFactors.put(user, maxCost.fraction(optSLA.get()));
 				}
 			}
 		}
-		runningQueryCosts.putAll(map);
-		queryCosts.putAll(map);
+		runningQueryCosts.putAll(newCostEstimations);
+		queryCosts.putAll(newCostEstimations);
 
 		refreshTimestamps(timestamps, runningQueryCosts.keySet());
 
@@ -160,8 +157,12 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 				LOG.debug("Cost for {} : {}", user.getName(), userCosts.get(user));
 			}
 		}
-		
-		System.out.println(queryCosts.size() + "; " + runningQueryCosts.size() + "; " + actCost );
+
+		if( !statusListeners.isEmpty() ) {
+			fireAdmissionStatus(userMaximumCostFactors);
+		}
+
+		System.out.println(queryCosts.size() + "; " + runningQueryCosts.size() + "; " + actCost);
 
 		// check, if user-load is too heavy
 		for (IUser user : userCosts.keySet()) {
@@ -170,25 +171,19 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			}
 
 			ICost userCost = userCosts.get(user);
-			double factor = userMaximumCostFactors.get(user);
-			ICost maxUserCost = maxCost.fraction(factor);
+			ICost maxUserCost = userMaximumCostFactors.get(user);
 			if (isGreater(userCost, maxUserCost)) {
 				LOG.warn("Costs for user {} are too high: {}", user.getName(), userCost);
 				LOG.warn("Maximum allowed for user: {}", maxUserCost);
 
-				userWasOverloaded.put(user, true);
 				fireOverloadUserEvent(user);
 
 			} else {
-				Boolean b = userWasOverloaded.containsKey(user) ? userWasOverloaded.get(user) : false;
-				if (b) {
-					ICost userUnderloadCost = maxUserCost.fraction(UNDERLOAD_USER_FACTOR);
-					if (isGreater(userUnderloadCost, userCost)) {
-						LOG.debug("Cost for user {} is below underload-level: {}", user.getName(), underloadCost);
+				ICost userUnderloadCost = maxUserCost.fraction(UNDERLOAD_USER_FACTOR);
+				if (isGreater(userUnderloadCost, userCost)) {
+					LOG.debug("Cost for user {} is below underload-level: {}", user.getName(), underloadCost);
 
-						fireUnderloadUserEvent(user);
-						userWasOverloaded.put(user, false);
-					}
+					fireUnderloadUserEvent(user);
 				}
 			}
 		}
@@ -196,14 +191,11 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		// check, if system-load is too heavy
 		if (isGreater(actCost, maxCost)) {
 			// too high load now!
-			wasOverloaded = true;
-
 			LOG.warn("Cost is too high. MaxCost = {}", maxCost);
 
 			fireOverloadEvent();
-		} else if (wasOverloaded && isGreater(underloadCost, actCost)) {
+		} else if (isGreater(underloadCost, actCost)) {
 			LOG.debug("Cost is below underload-level: {}", underloadCost);
-			wasOverloaded = false;
 			fireUnderloadEvent();
 		}
 
@@ -215,15 +207,15 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 	@Override
 	public Set<String> getRegisteredCostModels() {
-		return getCostModels().keySet();
+		return costModels.keySet();
 	}
 
 	@Override
 	public synchronized void selectCostModel(String name) {
-		if (!getCostModels().containsKey(name))
+		if (!costModels.containsKey(name))
 			throw new RuntimeException("CostModel " + name + " not found");
 
-		selectedCostModel = getCostModels().get(name);
+		selectedCostModel = costModels.get(name);
 		maxCost = selectedCostModel.getMaximumCost();
 		actCost = selectedCostModel.getZeroCost();
 		underloadCost = maxCost.fraction(UNDERLOAD_FACTOR);
@@ -295,7 +287,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	 *            Neues Kostenmodell
 	 */
 	public void bindCostModel(ICostModel costModel) {
-		getCostModels().put(costModel.getClass().getSimpleName(), costModel);
+		costModels.put(costModel.getClass().getSimpleName(), costModel);
 		LOG.debug("Costmodel bound: " + costModel.getClass().getSimpleName());
 
 		if (getSelectedCostModel() == null) {
@@ -311,7 +303,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	 *            Das entfernte Kostenmodell
 	 */
 	public void unbindCostModel(ICostModel costModel) {
-		getCostModels().remove(costModel.getClass().getSimpleName());
+		costModels.remove(costModel.getClass().getSimpleName());
 
 		LOG.debug("Costmodel unbound: " + costModel.getClass().getSimpleName());
 	}
@@ -345,6 +337,34 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			this.executor = null;
 
 			LOG.debug("Executor unbound");
+		}
+	}
+	
+	public void bindAdmissionStatusListener( IAdmissionStatusListener listener ) {
+		synchronized(statusListeners) {
+			statusListeners.add(listener);
+		}
+		LOG.debug("Status listener {} bound.", listener);
+	}
+	
+	public void unbindAdmissionStatusListener( IAdmissionStatusListener listener ) {
+		synchronized(statusListeners) {
+			if( statusListeners.contains(listener)) {
+				statusListeners.remove(listener);
+				LOG.debug("Status listener {} unbound.", listener);
+			}
+		}
+	}
+
+	public void bindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
+		LOG.debug("Bound PossibleExecutionGenerator {}", generator);
+		this.generator = generator;
+	}
+
+	public void unbindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
+		if (this.generator == generator) {
+			this.generator = new StandardPossibleExecutionGenerator();
+			LOG.debug("Unbound PossibleExecutionGenerator {}. Using default now.", generator);
 		}
 	}
 
@@ -382,22 +402,10 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 	}
 
-	public void bindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
-		LOG.debug("Bound PossibleExecutionGenerator {}", generator);
-		this.generator = generator;
-	}
-
-	public void unbindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
-		if (this.generator == generator) {
-			this.generator = new StandardPossibleExecutionGenerator();
-			LOG.debug("Unbound PossibleExecutionGenerator {}. Using default now.", generator);
-		}
-	}
-
 	@Override
 	public List<IPossibleExecution> getPossibleExecutions(IUser user) {
 		if (user == null) {
-			return generator.getPossibleExecutions(this, runningQueryCosts, maxCost);
+			return generator.getPossibleExecutions(this, runningQueryCosts, actCost, maxCost);
 		} else {
 			Map<IPhysicalQuery, ICost> userQueries = Maps.newHashMap();
 			Optional<Double> optFactor = determineMaximumCostFactor(user);
@@ -406,7 +414,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 					userQueries.put(query, runningQueryCosts.get(query));
 				}
 			}
-			return generator.getPossibleExecutions(this, userQueries, maxCost.fraction(optFactor.isPresent() ? optFactor.get() : 1.0));
+			return generator.getPossibleExecutions(this, userQueries, actCost, maxCost.fraction(optFactor.isPresent() ? optFactor.get() : 1.0));
 		}
 	}
 
@@ -415,10 +423,37 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		return isGreater(getActualCost(), getMaximumCost());
 	}
 
-	private Map<String, ICostModel> getCostModels() {
-		if (costModels == null)
-			costModels = new HashMap<String, ICostModel>();
-		return costModels;
+	private void fireAdmissionStatus(Map<IUser,ICost> maxUserCosts) {
+		Map<IUser, ICost> underloadCosts = Maps.newHashMap();
+		for( IUser user : maxUserCosts.keySet() ) {
+			underloadCosts.put(user, maxUserCosts.get(user).fraction(UNDERLOAD_USER_FACTOR));
+		}
+		
+		long ts = System.currentTimeMillis();
+		AdmissionStatus status = new AdmissionStatus(
+				runningQueryCosts.size(),
+				queryCosts.size() - runningQueryCosts.size(),
+				queryCosts.size(),
+				actCost,
+				maxCost,
+				underloadCost,
+				ImmutableMap.copyOf(userCosts),
+				ImmutableMap.copyOf(maxUserCosts),
+				ImmutableMap.copyOf(underloadCosts),
+				ImmutableMap.copyOf(queryCosts),
+				ts,
+				ts - startTime,
+				selectedCostModel.getClass().getSimpleName());
+		
+		synchronized(statusListeners ) {
+			for( IAdmissionStatusListener listener : statusListeners ) {
+				try {
+					listener.updateAdmissionStatus(this, status);
+				} catch( Throwable t ) {
+					LOG.error("Exception during invoking admission status listener", t);
+				}
+			}
+		}
 	}
 	
 	private ICost estimateCost(List<IPhysicalOperator> operators, boolean onUpdate) {
@@ -428,7 +463,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 		long startTimestamp = System.currentTimeMillis();
 
-		ICostModel costModel = getCostModels().get(getSelectedCostModel());
+		ICostModel costModel = costModels.get(getSelectedCostModel());
 		ICost queryCost = costModel.estimateCost(operators, onUpdate);
 
 		if (LOG.isDebugEnabled()) {
@@ -534,11 +569,11 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			return Optional.absent();
 		}
 		SLA sla = SLADictionary.getInstance().getSLA(slaName);
-		Double factor = sla.getMaxAdmissionCostFactor();
-		if( factor < 0.0000001) {
-			factor = 1.0;
+		if (sla == null) {
+			return Optional.absent();
 		}
-		return sla != null ? Optional.of(factor) : Optional.<Double> absent();
+		Double factor = sla.getMaxAdmissionCostFactor();
+		return Optional.of(factor < 0.0000001 ? 1.0 : factor);
 	}
 
 	private static boolean isGreater(ICost first, ICost last) {
@@ -569,20 +604,6 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 	}
 
-	private static List<IPhysicalOperator> getAllOperators(IServerExecutor executor) {
-		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
-
-		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries().toArray(new IPhysicalQuery[0])) {
-			for (IPhysicalOperator op : query.getPhysicalChilds()) {
-				if (!operators.contains(op) && !op.getClass().getSimpleName().contains("DataSourceObserverSink") && op.getOwner().contains(query)) {
-					operators.add(op);
-				}
-			}
-		}
-
-		return operators;
-	}
-
 	private static List<IPhysicalOperator> getAllOperators(IPhysicalQuery query) {
 		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
 		// filter
@@ -591,16 +612,6 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 				operators.add(operator);
 		}
 		return operators;
-	}
-
-	private static Optional<IPhysicalQuery> getFirstActiveOwner(List<IOperatorOwner> owners) {
-		for (IOperatorOwner owner : owners) {
-			IPhysicalQuery q = (IPhysicalQuery) owner;
-			if (q.isOpened()) {
-				return Optional.of(q);
-			}
-		}
-		return Optional.absent();
 	}
 
 	private static void refreshTimestamps(Map<IPhysicalQuery, Long> timestamps, Collection<IPhysicalQuery> queriesToUpdate) {

@@ -44,4 +44,9 @@ public class QueryCountCostModel implements ICostModel {
 		return new QueryCountCost(0.0);
 	}
 
+	@Override
+	public ICost getOverallCost() {
+		return new QueryCountCost(0.0);
+	}
+
 }

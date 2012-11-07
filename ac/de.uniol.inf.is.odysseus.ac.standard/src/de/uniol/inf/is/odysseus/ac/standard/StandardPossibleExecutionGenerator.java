@@ -15,12 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.ac.standard;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -29,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecution;
 import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecutionGenerator;
 import de.uniol.inf.is.odysseus.core.server.ac.StandardPossibleExecution;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
-import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -42,56 +37,31 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  */
 public class StandardPossibleExecutionGenerator implements IPossibleExecutionGenerator {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(StandardPossibleExecutionGenerator.class);
-
 	@Override
-	public List<IPossibleExecution> getPossibleExecutions(IAdmissionControl ac, Map<IPhysicalQuery, ICost> queryCosts, ICost maxCost) {
+	public List<IPossibleExecution> getPossibleExecutions(IAdmissionControl ac, Map<IPhysicalQuery, ICost> queryCosts, ICost overallCost, ICost maxCost) {
 
 		List<IPossibleExecution> poss = Lists.newArrayList();
 
-		// first solution: all queries running!
-		ICost costSum = sum(queryCosts.values());
+		ICost highestCost = null;
+		IPhysicalQuery highestQuery = queryWithHighestCost(queryCosts, highestCost);
 
-		int cmp = costSum.compareTo(maxCost);
-		if (cmp == -1 || cmp == 0) {
-			poss.add(new StandardPossibleExecution(queryCosts.keySet(), new ArrayList<IPhysicalQuery>(), costSum));
-			LOGGER.debug("Possible Execution: execute all queries");
-		}
-
-		if (poss.isEmpty()) {
-			StandardAC stdAC = (StandardAC) ac;
-			ICostModel cm = stdAC.getSelectedCostModelInstance();
-			
-			List<IPhysicalQuery> runningQueries = Lists.newArrayList();
-			List<IPhysicalQuery> stoppingQueries = Lists.newArrayList();
-
-			ICost actSum = cm.getZeroCost();
-			for (IPhysicalQuery query : queryCosts.keySet()) {
-				ICost cost = queryCosts.get(query);
-				ICost newSum = actSum.merge(cost);
-				if (newSum.compareTo(maxCost) < 0) {
-					runningQueries.add(query);
-					actSum = newSum;
-				} else {
-					stoppingQueries.add(query);
-				}
-			}
-
-			poss.add(new StandardPossibleExecution(runningQueries, stoppingQueries, actSum));
+		if( highestQuery != null ) {
+			poss.add(StandardPossibleExecution.stopOneQuery(queryCosts, highestQuery));
 		}
 
 		return poss;
 	}
 
-	private static ICost sum(Iterable<ICost> queryCosts) {
-		ICost costSum = null;
-		for (ICost cost : queryCosts) {
-			if (costSum == null) {
-				costSum = cost;
-			} else {
-				costSum = costSum.merge(cost);
-			}
+	private static IPhysicalQuery queryWithHighestCost(Map<IPhysicalQuery, ICost> queryCosts, ICost highestCost) {
+		IPhysicalQuery highestQuery = null;
+		for (IPhysicalQuery query : queryCosts.keySet()) {
+			ICost cost = queryCosts.get(query);
+
+			if( highestCost == null || cost.compareTo(highestCost) > 0) {
+				highestCost = cost;
+				highestQuery = query;
+			} 
 		}
-		return costSum;
+		return highestQuery;
 	}
 }

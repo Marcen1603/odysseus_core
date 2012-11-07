@@ -38,6 +38,7 @@ public class DifferencePOEstimator implements IOperatorEstimator<AntiJoinTIPO> {
 		return AntiJoinTIPO.class;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public OperatorEstimation estimateOperator(AntiJoinTIPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		
@@ -65,33 +66,7 @@ public class DifferencePOEstimator implements IOperatorEstimator<AntiJoinTIPO> {
 		}
 		estimation.setSelectivity(selectivity);
 
-//		IDataStream c0 = prevOp1.getDataStream();
-//		IDataStream c1 = prevOp2.getDataStream();
-//		double selectivity = EstimatorHelper.getSelectivityMetadata(instance);
-//		double falsePropability = selectivity * c0.getIntervalLength();; //WS, dass zwei Tupel unterschiedlich sind
-//		System.out.format("%-8.6f, ", selectivity);
-//		
-//		double truePropability = 1.0;
-//		for (SDFAttribute attribute : instance.getOutputSchema()) {
-//			truePropability *= getEqualsSelectivity(prevOp1.getHistograms().get(attribute), prevOp2.getHistograms().get(attribute));
-//		}
-//		double falsePropability2 = (1 - truePropability);
-//		double output = c0.getDataRate() * ( c1.getDataRate() * c1.getIntervalLength() * falsePropability2 );
-//		double selectivity2 = output / ( c0.getDataRate() * c1.getDataRate() * c1.getIntervalLength() * c0.getIntervalLength()) ;
-//		System.out.format("%-8.6f\n", selectivity2);
-//		
-//		falsePropability = falsePropability >= 0 ? falsePropability : falsePropability2; 
-//		estimation.setSelectivity(selectivity);
-
-
 		/** 2. Histograms **/
-//		System.out.println("DifferencePO - INPUT");
-//		for (SDFAttribute attribute : prevOp1.getHistograms().keySet()) {
-//			System.out.println(attribute);
-//			System.out.println( prevOp1.getHistograms().get(attribute).toString());
-//			System.out.println();
-//		}
-//		
 		Map<SDFAttribute, IHistogram> histograms = new HashMap<SDFAttribute, IHistogram>();
 		for( SDFAttribute attribute : prevOp1.getHistograms().keySet() ) {
 			IHistogram histogram = prevOp1.getHistograms().get(attribute).clone();
@@ -104,13 +79,6 @@ public class DifferencePOEstimator implements IOperatorEstimator<AntiJoinTIPO> {
 			histograms.put(attribute, histogram);
 		}
 		
-//		System.out.println("DifferencePO - OUTPUT");
-//		for (SDFAttribute attribute : histograms.keySet()) {
-//			System.out.println(attribute);
-//			System.out.println( histograms.get(attribute).toString());
-//			System.out.println();
-//		}
-//
 		estimation.setHistograms(histograms);
 				
 		/** 3. Datastream **/
@@ -123,17 +91,6 @@ public class DifferencePOEstimator implements IOperatorEstimator<AntiJoinTIPO> {
 		double intervalLength = ( Math.abs( prevStream.getIntervalLength() - prevStream2.getIntervalLength())) / 2.0;
 		estimation.setDataStream(new DataStream(instance, datarate, intervalLength));
 
-//		IDataStream prevStream = prevOp1.getDataStream();
-//		IDataStream prevStream2 = prevOp2.getDataStream();
-//		double datarate = EstimatorHelper.getDatarateMetadata(instance);
-//		double datarate2 = prevStream.getDataRate() * falsePropability;
-//		System.out.format("%-8.6f,", datarate);
-//		System.out.format("%-8.6f%n", datarate2);
-//		
-//		double intervalLength = ( Math.abs( prevStream.getIntervalLength() - prevStream2.getIntervalLength())) / 2.0;
-//		estimation.setDataStream(new DataStream(instance, datarate >= 0 ? datarate : datarate2, intervalLength));
-
-		
 		/** 4. DetailCost **/
 		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 //		System.out.format("%-8.6f\n", cpu);
@@ -148,7 +105,12 @@ public class DifferencePOEstimator implements IOperatorEstimator<AntiJoinTIPO> {
 							 c1.getDataRate() * c0.getDataRate() * c0.getIntervalLength() );
 			CPURateSaver.getInstance().set(instance.getClass().getSimpleName(), cpu);
 		}
-		double memCost = EstimatorHelper.sizeInBytes(instance.getOutputSchema()) * ( c0.getDataRate() * c0.getIntervalLength() + c1.getDataRate() * c1.getIntervalLength());
+		double memCost = 0.0;
+		if( !instance.isOpen() ) {
+			memCost = EstimatorHelper.sizeInBytes(instance.getOutputSchema()) * ( c0.getDataRate() * c0.getIntervalLength() + c1.getDataRate() * c1.getIntervalLength());
+		} else {
+			memCost = EstimatorHelper.sizeInBytes(instance.getOutputSchema()) * EstimatorHelper.elementCountOfSweepAreas(instance.getAreas());
+		}
 		estimation.setDetailCost(new OperatorDetailCost(instance, memCost, cpuCost));
 		
 		return estimation;

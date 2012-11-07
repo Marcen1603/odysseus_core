@@ -17,16 +17,25 @@ package de.uniol.inf.is.odysseus.costmodel.operator.relational;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+
+import de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator;
 
 
 public class Activator implements BundleActivator {
 
+	@SuppressWarnings("rawtypes")
+	ServiceRegistration<IOperatorEstimator> registerService;
+	
 	@Override
 	public void start(BundleContext context) throws Exception {
+		registerService = context.registerService(IOperatorEstimator.class, new BufferedPipeEstimator(), null);
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
+		context.ungetService(registerService.getReference());
+		registerService = null;
 	}
 
 }

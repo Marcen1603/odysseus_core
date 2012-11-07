@@ -45,4 +45,9 @@ public class OpCountCostModel implements ICostModel {
 		return new OpCountCost(0);
 	}
 
+	@Override
+	public ICost getOverallCost() {
+		return new OpCountCost(0);
+	}
+
 }
