@@ -27,17 +27,27 @@ import de.uniol.inf.is.odysseus.interval_latency.IntervalLatency;
 
 public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
 
-	private ArrayList<Integer> elementCounts = new ArrayList<Integer>();
-	private ArrayList<Long> frequencies = new ArrayList<Long>();
-	private long delay;
-	private boolean isRunning;
+	private static class ProducerThread extends Thread {
 
-	private final Thread t = new Thread() {
+		private boolean isRunning;
+		private List<Integer> elementCounts;
+		private List<Long> frequencies;
+		private long delay;
+		private TestproducerPO instance;
+
+		public ProducerThread(TestproducerPO instance, List<Integer> elementCounts, List<Long> frequencies, long delay) {
+			this.elementCounts = elementCounts;
+			this.frequencies = frequencies;
+			this.delay = delay;
+			this.instance = instance;
+			this.isRunning = true;
+		}
+
 		@Override
 		public void run() {
 			delayStart(delay);
 			long lastTime = System.nanoTime();
-			for (int j = 0; j < elementCounts.size() && isRunning ; ++j) {
+			for (int j = 0; j < elementCounts.size() && isRunning; ++j) {
 				Integer count = elementCounts.get(j);
 				Long frequency = frequencies.get(j);
 				long offset = 1000000000 / frequency;
@@ -55,14 +65,41 @@ public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
 						waitSomeTime(offset);
 					}
 					lastTime = expectedTime;
-					transfer(r);
+					instance.transfer(r);
 				}
 			}
-			if( isRunning ) {
-				propagateDone();
+			if (isRunning) {
+				instance.propagateDone();
 			}
 		}
-	};
+
+		public void stopGeneration() {
+			isRunning = false;
+		}
+
+		private static void delayStart(long delay) {
+			if (delay > 0) {
+				try {
+					Thread.sleep(delay);
+				} catch (InterruptedException ex) {
+				}
+			}
+		}
+		
+		private static void waitSomeTime(long offset) {
+			try {
+				Thread.sleep(offset / 1000000);
+			} catch (InterruptedException ex) {
+			}
+		}
+
+	}
+
+	private ArrayList<Integer> elementCounts = new ArrayList<Integer>();
+	private ArrayList<Long> frequencies = new ArrayList<Long>();
+	private long delay;
+
+	private ProducerThread t;
 
 	public TestproducerPO(long delay) {
 		this.delay = delay;
@@ -75,23 +112,17 @@ public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
 
 	@Override
 	protected void process_close() {
-		isRunning = false;
+		t.stopGeneration();
+		t = null;
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		isRunning = true;
-		
-		t.setPriority(7); // 7 is over normal
+		t = new ProducerThread(this, elementCounts, frequencies, delay);
+
+		t.setPriority(7);
 		t.setDaemon(true);
 		t.start();
-	}
-
-	private static void waitSomeTime(long offset) {
-		try {
-			Thread.sleep(offset / 1000000);
-		} catch (InterruptedException ex) {
-		}
 	}
 
 	@Override
@@ -109,12 +140,4 @@ public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
 		return new SDFMetaAttributeList(super.getMetaAttributeSchema().getURI(), metalist);
 	}
 
-	private static void delayStart(long delay) {
-		if (delay > 0) {
-			try {
-				Thread.sleep(delay);
-			} catch (InterruptedException ex) {
-			}
-		}
-	}
 }
