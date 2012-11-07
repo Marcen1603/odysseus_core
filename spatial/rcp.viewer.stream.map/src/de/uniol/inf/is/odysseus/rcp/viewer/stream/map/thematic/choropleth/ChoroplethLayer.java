@@ -147,7 +147,7 @@ public class ChoroplethLayer extends AbstractLayer{
 	public void draw(GC gc) {
 		synchronized (choroplethList) {
 			if(legend==null){
-				legend = new ChoroplethLegend();
+				legend = new ChoroplethLegend(visualizationSDFAttribute.getQualName());
 			}
 			for (Choropleth choropleth : choroplethList) {
 				drawChoropleth(choropleth, gc);
@@ -213,6 +213,10 @@ public class ChoroplethLayer extends AbstractLayer{
 				screenManager.getCanvas().redraw();
 			}
 		});
+	}
+
+	public SDFAttribute getVisualizationSDFAttribute() {
+		return visualizationSDFAttribute;
 	}
 	
 

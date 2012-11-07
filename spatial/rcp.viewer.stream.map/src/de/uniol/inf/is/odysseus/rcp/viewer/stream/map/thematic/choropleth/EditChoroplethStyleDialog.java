@@ -390,7 +390,7 @@ public class EditChoroplethStyleDialog extends Dialog{
 			
 			Label valueLabel = new Label(mainComposite, SWT.NONE);
 			valueLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			valueLabel.setText("attribute");
+			valueLabel.setText(legend.getAttributeName());
 			valueLabel.moveAbove(labelElse);
 			valueLabelList.add(valueLabel);
 			final Button operatorButton = new Button(mainComposite,SWT.NONE);
@@ -466,7 +466,7 @@ public class EditChoroplethStyleDialog extends Dialog{
 	
 	private void applyLegend(){
 		
-		ChoroplethLegend newLegend = new ChoroplethLegend();
+		ChoroplethLegend newLegend = new ChoroplethLegend(layer.getVisualizationSDFAttribute().getQualName());
 		newLegend.legendList = new LinkedList<>();
 		for(int i=0;i<valueLabelList.size();i++){
 			Predicate predicate = new Predicate(valueLabelList.get(i).getText(),operatorButtonList.get(i).getText(),Integer.parseInt(valueTextList.get(i).getText()));
