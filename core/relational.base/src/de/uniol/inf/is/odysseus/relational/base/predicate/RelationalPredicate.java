@@ -610,7 +610,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 							.getArgument(1));
 				} else {
 					SDFExpression expr = new SDFExpression(curExpression,
-							expression.getSchema(),
+							expression.getAttributeResolver(),
 							MEP.getInstance());
 					result.add(new RelationalPredicate(expr));
 				}
@@ -627,7 +627,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 	    SDFAttribute a = new SDFAttribute("", "a", SDFDatatype.DOUBLE);
 	       SDFSchema schema = new SDFSchema("", a);
 		RelationalPredicate pred = new RelationalPredicate(new SDFExpression(
-				"", "a>b",schema, MEP.getInstance()));
+				"", "a>b", MEP.getInstance()));
 		
 
 		pred.init(schema, null, false);

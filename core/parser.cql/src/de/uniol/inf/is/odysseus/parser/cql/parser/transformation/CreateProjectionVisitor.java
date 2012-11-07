@@ -138,7 +138,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		for (SDFAttribute attribute : _top.getOutputSchema().getAttributes()) {
 			aliasAttributes.add(attribute);
 			outputAttributes.add(attribute);
-			expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver.getSchema(), MEP.getInstance()));
+			expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
 		}
 		return null;
 	}
@@ -163,7 +163,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			if (node.getValue().contains(".")) {				
 				datatype = SDFDatatype.DOUBLE;				
 			}
-			SDFExpression exp = new SDFExpression(new Constant<String>(node.getValue(), datatype), this.attributeResolver.getSchema(), MEP.getInstance(), aliasExpression.getAlias());			
+			SDFExpression exp = new SDFExpression(new Constant<String>(node.getValue(), datatype), this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());			
 			expressions.add(exp);
 			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), datatype);			
 			outputAttributes.add(attribute);
