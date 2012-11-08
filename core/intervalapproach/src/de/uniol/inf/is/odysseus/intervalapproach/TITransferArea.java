@@ -125,8 +125,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public void newHeartbeat(PointInTime heartbeat, int inPort) {
 		PointInTime minimum = null;
 		synchronized (minTs) {
-			minTs.set(inPort,heartbeat);
-			minimum = getMinTs();			
+			minTs.set(inPort, heartbeat);
+			minimum = getMinTs();
 		}
 		sendData(minimum);
 	}
@@ -137,14 +137,19 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				// don't use an iterator, it does NOT guarantee ordered
 				// traversal!
 				W elem = this.outputQueue.peek();
+				boolean elementsSend = false;
 				while (elem != null
 						&& elem.getMetadata().getStart()
 								.beforeOrEquals(minimum)) {
 					this.outputQueue.poll();
 					po.transfer(elem, outputPort);
 					elem = this.outputQueue.peek();
+					elementsSend = true;
 				}
-				po.sendPunctuation(minimum, outputPort);
+				// Avoid unnecessary  punctuations
+				if (!elementsSend) {
+					po.sendPunctuation(minimum, outputPort);
+				}
 				// Set marker to time stamp of the last send object
 				watermark = minimum;
 			}
@@ -163,7 +168,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				}
 				minimum = PointInTime.min(minimum, p);
 			}
-			return minimum;			
+			return minimum;
 		}
 	}
 
