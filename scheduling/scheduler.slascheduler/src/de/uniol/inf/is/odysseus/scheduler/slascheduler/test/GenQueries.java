@@ -79,6 +79,8 @@ public class GenQueries {
 	private static final boolean INCREMENTAL_QUERY_ADD_MODE = true;
 	private static final int INCREMENTAL_QUERY_ADD_MODE_SLEEPTIME = 5000;
 
+	private static final boolean ADD_CALC_LATENCY = false;
+
 	private static String odysseusDefaultHome = String.format("%s/%sodysseus/",
 			System.getProperty("user.home"),
 			getDot(System.getProperty("os.name")));
@@ -314,10 +316,18 @@ public class GenQueries {
 			}
 
 		}
-		sb.append(" = benchmark({selectivity = ").append(OP_SELECTIVITY)
+		sb.append(" = ");
+		if (ADD_CALC_LATENCY) {
+			sb.append("calclatency(");
+		}
+		sb.append("benchmark({selectivity = ").append(OP_SELECTIVITY)
 				.append(", time = ").append(OP_PROCESSING_TIME)
 				.append("},puffer").append(number)
-				.append(formatSubnumber(subnumber)).append(")").append(NEWLINE);
+				.append(formatSubnumber(subnumber)).append(")");
+		if (ADD_CALC_LATENCY) {
+			sb.append("");
+		}
+		sb.append(NEWLINE);
 		statsNumBenchmarks++;
 		return sb.toString();
 	}
