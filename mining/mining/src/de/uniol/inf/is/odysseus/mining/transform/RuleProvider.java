@@ -36,6 +36,7 @@ public class RuleProvider implements ITransformRuleProvider{
 		rules.add(new TFrequentItemsetLatencyRule());
 		rules.add(new TRuleGenerationAORule());
 		rules.add(new TStatCounterAORule());
+		rules.add(new TClassificationLearnAORule());
 		return rules;
 	}
 
