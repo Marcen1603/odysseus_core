@@ -173,7 +173,7 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 		if (schedulable.cardinality() == 0) {
 			if (schedulingPaused == false) {
 				schedulingPaused = true;
-				logger.debug("Scheduling paused, nothing to schedule");
+//				logger.debug("Scheduling paused, nothing to schedule");
 				synchronized (schedulingEventListener) {
 					for (ISchedulingEventListener l : schedulingEventListener) {
 						l.nothingToSchedule(this);
