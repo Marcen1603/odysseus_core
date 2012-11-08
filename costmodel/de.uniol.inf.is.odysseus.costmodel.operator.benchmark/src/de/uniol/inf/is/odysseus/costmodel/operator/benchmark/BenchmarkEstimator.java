@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.operator.DataStream;
 import de.uniol.inf.is.odysseus.costmodel.operator.IDataStream;
 import de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModelCfg;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorDetailCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
