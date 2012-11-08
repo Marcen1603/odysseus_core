@@ -42,4 +42,5 @@ public class ScatterPlotChart extends AbstractXYChart {
 	public String getViewID() {
 		return VIEW_ID_PREFIX+".scatterplotchart";
 	}		
+		
 }

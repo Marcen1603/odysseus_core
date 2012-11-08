@@ -28,6 +28,8 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
@@ -42,6 +44,7 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 	private Integer choosenYValuePort = 0;
 	private Integer choosenSeriePort = 0;
 	private boolean considerTimeValidity = false;
+	private PointInTime lastPurge = PointInTime.getZeroTime();
 
 	@Override
 	public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes) {
@@ -66,13 +69,21 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 	}
 
 	@Override
-	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, int port) {
+	protected void processElement(final List<Double> tuple, final IMetaAttribute metadata, int port) {
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					if (considerTimeValidity) {
-						purgeSeries();
+					if (considerTimeValidity) {						
+						if(metadata instanceof TimeInterval){
+							PointInTime start = ((TimeInterval)metadata).getStart();
+							PointInTime end = ((TimeInterval)metadata).getEnd();
+							if(start.afterOrEquals(lastPurge)){
+								dataset.removeAllSeries();								
+								lastPurge = end;
+							}
+							
+						}
 					}
 					String key = "-";
 					XYSeries currentserie;
@@ -100,10 +111,7 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 		});
 
 	}
-
-	private void purgeSeries() {
-		
-	}
+	
 
 	private boolean containsSeriesWithKey(Comparable<?> key) {
 		for (Object o : dataset.getSeries()) {

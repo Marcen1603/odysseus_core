@@ -70,7 +70,7 @@ public class ChooseWorkspaceDialogExtended extends ChooseWorkspaceDialog {
 			}
 	
 			return instanceLoc.set(new URL("file", null, selection), true);
-		} catch( Exception ex ) {
+		} catch( Exception ex ) {			
 			LOG.error("Could not release and set location", ex);
 			return false;
 		}
