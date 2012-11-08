@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,36 +90,40 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 	@Override
 	public synchronized void addInputPort(int port) {
 		if (minTsForPort.get(port) == null) {
-			getLogger().debug("Added new input port "+port+" current min "+minTs);
+			getLogger().debug(
+					"Added new input port " + port + " current min " + minTs);
 			this.minTsForPort.put(port, null);
 		} else {
-			throw new IllegalArgumentException("Port "+port+" is already in use!!");
+			throw new IllegalArgumentException("Port " + port
+					+ " is already in use!!");
 		}
 	}
 
 	@Override
 	public synchronized void removeInputPort(int port) {
-		getLogger().debug("Removed input port "+port);
+		getLogger().debug("Removed input port " + port);
 		this.minTsForPort.remove(port);
 	}
-	
+
 	@Override
 	public synchronized void newElement(T object, int inPort) {
-		//getLogger().debug("New Element "+object+" Port="+inPort+" current min "+minTs);
+		// getLogger().debug("New Element "+object+" Port="+inPort+" current min "+minTs);
 		// Remove all elements that are before minTS
 		// can happen if a new source is appended at runtime
 		PointInTime ts = object.getMetadata().getStart();
-		if (minTsForPort.containsKey(inPort)){
-		if (minTs == null || !ts.before(minTs) ) {
-			inputQueue.add(new Pair<T, Integer>(object, inPort));
-			newHeartbeat(ts, inPort);
+		if (minTsForPort.containsKey(inPort)) {
+			if (minTs == null || !ts.before(minTs)) {
+				inputQueue.add(new Pair<T, Integer>(object, inPort));
+				newHeartbeat(ts, inPort);
+			} else {
+				getLogger().warn(
+						"Removed out of time element " + object + " from port "
+								+ inPort);
+			}
 		} else {
 			getLogger().warn(
-					"Removed out of time element " + object + " from port "
+					"Removed element " + object + " for not registered port "
 							+ inPort);
-		}
-		}else{
-			getLogger().warn("Removed element "+object+" for not registered port "+inPort);
 		}
 	}
 
@@ -155,6 +159,7 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 					// don't use an iterator, it does NOT guarantee ordered
 					// traversal!
 					IPair<T, Integer> elem = this.inputQueue.peek();
+					boolean elementsSend = false;
 					while (elem != null
 							&& elem.getE1().getMetadata().getStart()
 									.beforeOrEquals(minTs)) {
@@ -163,8 +168,12 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 						po.process_internal(elem.getE1(), elem.getE2());
 						// getLogger().debug("Process "+elem.getE1()+" on Port "+elem.getE2());
 						elem = this.inputQueue.peek();
+						elementsSend = true;
 					}
-					po.process_newHeartbeat(minTs);
+					// Avoid unnecessary punctuations!
+					if (elementsSend) {
+						po.process_newHeartbeat(minTs);
+					}
 				}
 			}
 		}
@@ -215,14 +224,14 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 		startSource(area, 0, 4, 1000, maxSleep);
 
 		Thread.sleep(10);
-		
+
 		Thread.sleep(10);
 		area.addInputPort(5);
 		area.addInputPort(6);
 		startSource(area, 5, 5, 1000, maxSleep);
 		startSource(area, 0, 6, 1000, maxSleep);
 
-	    area.removeInputPort(3);
+		area.removeInputPort(3);
 	}
 
 	private static void startSource(
@@ -251,8 +260,8 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 
 }
 
-class TestClass<R extends IStreamObject<? extends ITimeInterval>>
-		implements IProcessInternal<R> {
+class TestClass<R extends IStreamObject<? extends ITimeInterval>> implements
+		IProcessInternal<R> {
 
 	PointInTime lastElement = null;
 
