@@ -73,7 +73,7 @@ public class Latency implements ILatency{
 	
 	@Override
 	public String toString(){
-		return this.lend > this.lstart? "[" + this.lstart + ", " + this.lend + "[" + (this.lend - this.lstart):"oo";
+		return "[" + this.lstart + ", " + this.lend + "[" + (this.lend > this.lstart?  (this.lend - this.lstart):"oo");
 	}
 	
 	@Override
