@@ -64,6 +64,8 @@ public class StateMachine<E> implements Serializable {
 	 * Definiert das Ausgabeschema der CEP-Anfrage. Darf nicht null sein.
 	 */
 	private OutputScheme outputScheme;
+	
+	private CepVariable endsAtVar;
 
 	private EEventSelectionStrategy eventSelectionStrategy;
 
@@ -223,6 +225,14 @@ public class StateMachine<E> implements Serializable {
 
 	public long getWindowSize() {
 		return windowSize;
+	}
+	
+	public void setEndsAtVar(CepVariable endsAtVar) {
+		this.endsAtVar = endsAtVar;
+	}
+	
+	public CepVariable getEndsAtVar() {
+		return endsAtVar;
 	}
 
 	@Override

@@ -121,6 +121,10 @@ public class CepVariable implements Serializable{
 	 */
 	public CepVariable() {
 	}
+	
+	public CepVariable restrictToVariable() {
+		return new CepVariable(null,null,attributename,null);
+	}
 
 	/**
 	 * gibt den Namen der Variablen, auf die sich der Eintrag bezieht, in der
@@ -340,6 +344,8 @@ public class CepVariable implements Serializable{
 			return false;
 		return true;
 	}
+
+
 
 	
 }

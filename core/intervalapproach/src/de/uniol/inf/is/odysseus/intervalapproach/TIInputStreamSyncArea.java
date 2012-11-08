@@ -170,10 +170,10 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 						elem = this.inputQueue.peek();
 						elementsSend = true;
 					}
-					// Avoid unnecessary punctuations!
-					if (!elementsSend) {
-						po.process_newHeartbeat(minTs);
-					}
+//					// Avoid unnecessary punctuations!
+//					if (!elementsSend) {
+//						po.process_newHeartbeat(minTs);
+//					}
 				}
 			}
 		}

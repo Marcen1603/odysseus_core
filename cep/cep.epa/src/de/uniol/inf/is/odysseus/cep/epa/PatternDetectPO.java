@@ -318,6 +318,14 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 						break;
 					}
 				}
+				if (sm.getEndsAtVar() != null){
+					Object value = getValue(port, instance, sm.getEndsAtVar());
+					// Read from input Stream
+					if (value == null){
+						value = getValueFromEvent(event, port, sm.getEndsAtVar().getVariableName());
+					}
+					//System.err.println(instance+ " End end currently not supported "+sm.getEndsAtVar()+" = "+value);
+				}
 				/**
 				 * update variables
 				 */
@@ -408,19 +416,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 			// logger.debug("Setting Value for "+varName);
 
 			Object newValue = null;
-			if (varName.isActEventName()) {
-				newValue = this.eventReader.get(port).getValue(
-						varName.getVariableName(), object);
-
-				// logger.debug("Setze " + varName + " auf " + newValue +
-				// " from " + object);
-
-				if (newValue == null) {
-					return false;
-				}
-			} else { // historic
-				newValue = getValue(port, instance, varName);
-			}
+			newValue = getValueForVariable(object, instance, port, varName);
 			// I think, this can only happend, if there is an error in
 			// the expression (wrong var name used)
 			if (newValue == null) {
@@ -435,6 +431,62 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 		return true;
 	}
 
+	protected Object getValueForVariable(R object,
+			StateMachineInstance<R> instance, int port, CepVariable varName) {
+		Object newValue;
+		if (varName.isActEventName()) {
+			
+			newValue = getValueFromEvent(object, port, varName.getVariableName());
+
+			// logger.debug("Setze " + varName + " auf " + newValue +
+			// " from " + object);
+		} else { // historic
+			newValue = getValue(port, instance, varName);
+		}
+		return newValue;
+	}
+
+	protected Object getValueFromEvent(R object, int port, String varName) {
+		Object newValue;
+		newValue = this.eventReader.get(port).getValue(
+				varName, object);
+		return newValue;
+	}
+
+	private Object getValue(int port, StateMachineInstance<R> instance,
+			CepVariable varName) {
+		/*
+		 * Two Cases: Var is in symbol table Var is from consumed event
+		 */
+
+		Object value = instance.getSymTab().getValue(varName);
+		if (value == null) {
+			// String[] split = varName.split(CepVariable.getSeperator());
+			// int index = split[2].isEmpty() ? -1 : Integer.parseInt(split[2]);
+			MatchedEvent<R> event = instance.getMatchingTrace().getEvent(
+					varName.getStateIdentifier(), varName.getIndex());
+			if (event != null) {
+				IEventReader<R, ?> eventR = this.eventReader.get(port);
+				if (port > 0) {
+					eventR = this.eventReader.get(port);
+				} else {
+					// For final Results ... find Event-Reader
+					String type = this.stateMachines.get(0)
+							.getState(varName.getStateIdentifier()).getType();
+					for (IEventReader<R, ?> r : eventReader.values()) {
+						if (r.getType().equals(type)) {
+							eventR = r;
+							break;
+						}
+					}
+				}
+				value = eventR.getValue(varName.getAttribute(),
+						event.getEvent());
+			}
+		}
+		return value;
+	}
+	
 	private LinkedList<W> validateFinalStates(R event,
 			LinkedList<StateMachineInstance<R>> outdatedInstances,
 			LinkedList<StateMachineInstance<R>> outofWindowInstances, int port) {
@@ -559,39 +611,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 		outdatedInstances.add(instance);
 	}
 
-	private Object getValue(int port, StateMachineInstance<R> instance,
-			CepVariable varName) {
-		/*
-		 * Two Cases: Var is in symbol table Var is from consumed event
-		 */
 
-		Object value = instance.getSymTab().getValue(varName);
-		if (value == null) {
-			// String[] split = varName.split(CepVariable.getSeperator());
-			// int index = split[2].isEmpty() ? -1 : Integer.parseInt(split[2]);
-			MatchedEvent<R> event = instance.getMatchingTrace().getEvent(
-					varName.getStateIdentifier(), varName.getIndex());
-			if (event != null) {
-				IEventReader<R, ?> eventR = this.eventReader.get(port);
-				if (port > 0) {
-					eventR = this.eventReader.get(port);
-				} else {
-					// For final Results ... find Event-Reader
-					String type = this.stateMachines.get(0)
-							.getState(varName.getStateIdentifier()).getType();
-					for (IEventReader<R, ?> r : eventReader.values()) {
-						if (r.getType().equals(type)) {
-							eventR = r;
-							break;
-						}
-					}
-				}
-				value = eventR.getValue(varName.getAttribute(),
-						event.getEvent());
-			}
-		}
-		return value;
-	}
 
 	/**
 	 * Liefert das Factory-Objekt für komplexe Events.

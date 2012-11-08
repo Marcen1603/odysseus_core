@@ -30,6 +30,7 @@ tokens{
 	PREV;
 	FIRST;
 	CURRENT;
+	ENDSAT;
 }
 
 	
@@ -65,13 +66,17 @@ createStmt
 	: CREATE VIEW NAME queryStmt -> ^(CREATEVIEW NAME queryStmt);
 	
 
-queryStmt:  patternPart wherePart? withinPart? returnPart -> ^(QUERY patternPart wherePart? withinPart? returnPart)
+queryStmt:  patternPart wherePart? withinPart? endsAtPart? returnPart -> ^(QUERY patternPart wherePart? withinPart? endsAtPart? returnPart)
 	;
 	
 		
 withinPart
 	: WITHIN NUMBER timeunit? -> ^(WITHIN NUMBER timeunit?)
 	;
+	
+endsAtPart
+  : ENDS AT attributeTerm -> ^(ENDSAT attributeTerm)
+  ;
 	
 timeunit: WEEK|DAY|HOUR|MINUTE|SECOND|MILLISECOND;
 	

@@ -177,6 +177,20 @@ private Transition getTransition(PathAttribute attr, State s) {
 	}
 	return t;
 }
+
+private String transformToString(PathAttribute p){
+      String op = p.getAggregation();
+      String a = p.getStatename();
+      String i = p.getKleenePart();
+      if ("[i]".equals(i)) {
+        i = "";
+      } else if ("[i-1]".equals(i)) {
+        i = "-1";
+      }
+      String path = p.getPath();
+      return CepVariable.getStringFor(op, a, i, a
+          + "." + path);
+}
 }
 
 @rulecatch {
@@ -217,7 +231,7 @@ kleeneAttributeState = new HashMap<String, String>();
 List<String> sourceNames = new ArrayList<String>();
 }
   :
-  ^(QUERY patternPart[patternDetectAO, sourceNames] wherePart[patternDetectAO] withinPart[patternDetectAO] returnPart[patternDetectAO])
+  ^(QUERY patternPart[patternDetectAO, sourceNames] wherePart[patternDetectAO] endsAtPart[patternDetectAO] withinPart[patternDetectAO] returnPart[patternDetectAO])
   
    {
     // Initialize Schema
@@ -692,6 +706,17 @@ withinPart[PatternDetectAO patternDetectAO]
   |
   ;
 
+endsAtPart[PatternDetectAO patternDetectAO]
+@init {
+List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
+}
+:
+^(ENDSAT attributeTerm[retAttr]
+ )
+ {
+  patternDetectAO.getStateMachine().setEndsAtVar(new CepVariable(transformToString(retAttr.get(0))));
+ };
+
 returnPart[PatternDetectAO patternDetectAO]
 @init {
 List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
@@ -705,17 +730,9 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
     List<SDFAttribute> attrList = new ArrayList<SDFAttribute>();
     
     for (PathAttribute p : retAttr) {
-    	String op = p.getAggregation();
-    	String a = p.getStatename();
-    	String i = p.getKleenePart();
-    	if ("[i]".equals(i)) {
-    		i = "";
-    	} else if ("[i-1]".equals(i)) {
-    		i = "-1";
-    	}
-    	String path = p.getPath();
-    	e = new RelationalMEPOutputSchemeEntry(CepVariable.getStringFor(op, a, i, a
-    			+ "." + path));
+      String variable = transformToString(p);       
+      
+    	e = new RelationalMEPOutputSchemeEntry(variable);
     	scheme.append(e);
     	// TODO: Set correct Datatypes
     	SDFAttribute attr = new SDFAttribute(null, e.getLabel(), SDFDatatype.STRING);
