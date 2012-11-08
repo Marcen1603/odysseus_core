@@ -51,8 +51,8 @@ public class GenQueries {
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final double OP_SELECTIVITY = 1.0;
 	public static final int OP_PROCESSING_TIME = 35 * 100000; // realistic 1500
-	private static final int NUMBER_OF_USERS = 100;
-	private static final int NUMBER_OF_QUERIES_PER_USER = 10;
+	private static final int NUMBER_OF_USERS = 10;
+	private static final int NUMBER_OF_QUERIES_PER_USER = 4;
 	private static final int NUMBER_OF_SLAS = 3;
 	private static final double[] SLA_VARIANCE = { 0.1, 0.3, 0.6 };
 	private static final int[] PRIO_FOR_SLA_NO = { 6, 3, 1 };
@@ -79,7 +79,7 @@ public class GenQueries {
 	private static final boolean INCREMENTAL_QUERY_ADD_MODE = true;
 	private static final int INCREMENTAL_QUERY_ADD_MODE_SLEEPTIME = 5000;
 
-	private static final boolean ADD_CALC_LATENCY = false;
+	private static final boolean ADD_CALC_LATENCY = true;
 
 	private static String odysseusDefaultHome = String.format("%s/%sodysseus/",
 			System.getProperty("user.home"),
@@ -325,7 +325,7 @@ public class GenQueries {
 				.append("},puffer").append(number)
 				.append(formatSubnumber(subnumber)).append(")");
 		if (ADD_CALC_LATENCY) {
-			sb.append("");
+			sb.append(")");
 		}
 		sb.append(NEWLINE);
 		statsNumBenchmarks++;
