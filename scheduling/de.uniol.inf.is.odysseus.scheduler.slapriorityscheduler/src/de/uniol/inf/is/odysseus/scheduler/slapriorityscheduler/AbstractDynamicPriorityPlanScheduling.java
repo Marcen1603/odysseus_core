@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.CurrentPlanPriorityComperator;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
@@ -41,7 +42,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationLogger;
 
 abstract public class AbstractDynamicPriorityPlanScheduling implements
-		IPhysicalQueryScheduling, ISLAViolationEventDistributor {
+		IPhysicalQueryScheduling, ISLAViolationEventDistributor, ISchedulingEventListener {
 	
 	Logger logger = LoggerFactory.getLogger(AbstractDynamicPriorityPlanScheduling.class);
 
@@ -54,11 +55,14 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 	private List<ISLAViolationEventListener> listeners;
 	private Set<IPhysicalQuery> extendedQueries = new HashSet<IPhysicalQuery>();
 	private List<ISLAConformance> conformances = new ArrayList<ISLAConformance>();
+	
+	final private Set<IScheduling> pausedPlans;
 
 	public AbstractDynamicPriorityPlanScheduling() {
 		queue = new LinkedList<IScheduling>();
 		this.listeners = new ArrayList<ISLAViolationEventListener>();
 		this.addSLAViolationEventListener(new SLAViolationLogger());
+		this.pausedPlans = new HashSet<IScheduling>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -69,6 +73,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 				.clone();
 		this.listeners = new ArrayList<ISLAViolationEventListener>(
 				dynamicPriorityPlanScheduling.listeners);
+		this.pausedPlans = new HashSet<IScheduling>(dynamicPriorityPlanScheduling.pausedPlans);
 	}
 
 	abstract protected void updatePriority(IScheduling current);
@@ -95,6 +100,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 					this.conformances.add(conformance);
 				}
 			}
+			scheduling.addSchedulingEventListener(this);
 		}
 	}
 
@@ -102,12 +108,26 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 	public void clear() {
 		synchronized (queue) {
 			logger.debug("clearing queue");
+			for (IScheduling plan : queue) {
+				plan.removeSchedulingEventListener(this);
+			}
+			pausedPlans.clear();
 			queue.clear();
 		}
 	}
 
 	@Override
 	public IScheduling nextPlan() {
+		synchronized (pausedPlans) {
+			while (pausedPlans.size() == queue.size()) {
+				try {
+					pausedPlans.wait(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		synchronized (conformances) {
 			for (ISLAConformance conformance : this.conformances) {
 				conformance.checkViolation();
@@ -172,6 +192,10 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 		synchronized (queue) {
 			queue.remove(plan);
 		}
+		synchronized (pausedPlans) {
+			pausedPlans.remove(plan);
+			plan.removeSchedulingEventListener(this);	
+		}
 	}
 
 	@Override
@@ -198,6 +222,19 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 	public boolean removeSLAViolationEventListener(
 			ISLAViolationEventListener listener) {
 		return this.listeners.remove(listener);
+	}
+	
+	@Override
+	public void nothingToSchedule(IScheduling sched) {
+		pausedPlans.add(sched);
+	}
+
+	@Override
+	public void scheddulingPossible(IScheduling sched) {
+		synchronized (pausedPlans) {
+			pausedPlans.remove(sched);
+			pausedPlans.notifyAll();
+		}
 	}
 
 }
