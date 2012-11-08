@@ -5,8 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.stream.map;singleton:=t
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Stephan Jansen
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.OdysseusMapPlugIn
-Import-Package: com.google.common.base,
- de.uniol.inf.is.odysseus.core,
+Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.sdf.schema,
@@ -42,7 +41,8 @@ Require-Bundle: org.eclipse.ui,
  de.uniol.inf.is.odysseus.rcp.editor.text.cql;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.rcp.editor.text.pql;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.rcp.editor;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0",
+ com.google.guava;bundle-version="12.0.0"
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.map,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer,
