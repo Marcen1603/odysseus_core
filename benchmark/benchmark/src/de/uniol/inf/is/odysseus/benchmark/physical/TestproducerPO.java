@@ -56,7 +56,6 @@ public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
 					r.setAttribute(0, i);
 					IntervalLatency meta = new IntervalLatency();
 					long expectedTime = lastTime + offset;
-					meta.setLatencyStart(expectedTime);
 					r.setMetadata(meta);
 					if (offset < 1000000) {
 						while (expectedTime > System.nanoTime()) {
@@ -65,6 +64,7 @@ public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
 						waitSomeTime(offset);
 					}
 					lastTime = expectedTime;
+					meta.setLatencyStart(System.nanoTime());
 					instance.transfer(r);
 				}
 			}
