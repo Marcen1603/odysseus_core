@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 public class ClassificationProvider extends StreamClientHandler{
 
 	private BufferedReader in;
+	private long counter = 0L;
 
 
 	@Override
@@ -45,7 +46,7 @@ public class ClassificationProvider extends StreamClientHandler{
 				return null;
 			}
 			String[] rawTuple = line.split(",");
-			long timestamp = 1L;
+			long timestamp = counter;
 			
 			tuple.addAttribute(new Long(timestamp));
 			tuple.addAttribute(new String(rawTuple[0]));
@@ -60,6 +61,7 @@ public class ClassificationProvider extends StreamClientHandler{
 			}
 			List<DataTuple> list = new ArrayList<DataTuple>();
 			list.add(tuple);
+			counter++;
 			return list;
 		} catch (IOException e) {
 			e.printStackTrace();
