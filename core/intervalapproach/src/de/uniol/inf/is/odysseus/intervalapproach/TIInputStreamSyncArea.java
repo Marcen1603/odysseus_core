@@ -171,7 +171,7 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 						elementsSend = true;
 					}
 					// Avoid unnecessary punctuations!
-					if (elementsSend) {
+					if (!elementsSend) {
 						po.process_newHeartbeat(minTs);
 					}
 				}
