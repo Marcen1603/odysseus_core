@@ -58,12 +58,13 @@ public class BenchmarkEstimator implements IOperatorEstimator<BenchmarkPO> {
 		}
 		estimation.setDataStream(new DataStream(instance, datarate, prevStream.getIntervalLength()));	
 		
-		double cpu = instance.getProcessingTime() / 1000000000.0f;
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 		double cpuCost = 0.0;
-		if( cpu < 0.0 )
-			cpuCost = OperatorCostModelCfg.getInstance().getStandardCpuCost() * datarate;
-		else
+		if( cpu < 0.0 ) {
+			cpuCost = instance.getProcessingTime() / 1000000000.0f * datarate;
+		} else {
 			cpuCost = cpu * datarate;
+		}
 		
 		estimation.setDetailCost(new OperatorDetailCost(instance, instance.getMemoryUsage(), cpuCost));
 
