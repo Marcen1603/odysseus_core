@@ -37,6 +37,7 @@ public class RuleProvider implements ITransformRuleProvider{
 		rules.add(new TRuleGenerationAORule());
 		rules.add(new TStatCounterAORule());
 		rules.add(new TClassificationLearnAORule());
+		rules.add(new TClassificationAORule());
 		return rules;
 	}
 

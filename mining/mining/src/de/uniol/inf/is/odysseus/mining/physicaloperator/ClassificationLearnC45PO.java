@@ -116,7 +116,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 					}
 				}
 				// get the best split for the root
-				TreeNode root = new TreeNode(null);
+				TreeNode root = new TreeNode();
 				getNextSplit(pool, allAttributes, root);
 				logger.debug("Best split order is: ");
 				root.printSubTree();
@@ -157,7 +157,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			// ... get only the subset for this value
 			List<Tuple<M>> subset = getSubset(pool, bestSplitAt, value);
 			// and create a node for each possible value
-			TreeNode node = new TreeNode(null);
+			TreeNode node = new TreeNode();
 
 			parent.addChild(value, node);
 			// check, if all values of the class-attribute are equal...

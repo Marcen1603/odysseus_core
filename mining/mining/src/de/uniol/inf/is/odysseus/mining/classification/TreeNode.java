@@ -33,8 +33,8 @@ public class TreeNode {
 	
 	private Map<Object, TreeNode> childs = new HashMap<Object, TreeNode>(); 
 	
-	public TreeNode(SDFAttribute attribute){
-		this.attribute = attribute;
+	public TreeNode(){
+		
 	}
 	
 	public SDFAttribute getAttribute() {
@@ -46,7 +46,7 @@ public class TreeNode {
 	}
 	
 	public void setAttribute(SDFAttribute attribute) {
-		this.attribute = attribute;
+		this.attribute = new SDFAttribute(null, attribute.getAttributeName(), attribute.getDatatype());	
 	}
 	
 	public TreeNode getChild(Object value){
