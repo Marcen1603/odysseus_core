@@ -118,8 +118,8 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				// get the best split for the root
 				TreeNode root = new TreeNode();
 				getNextSplit(pool, allAttributes, root);
-				logger.debug("Best split order is: ");
-				root.printSubTree();
+				logger.trace("Best split order is: ");
+				//root.printSubTree();
 
 				Tuple<M> newtuple = new Tuple<M>(1, false);
 				@SuppressWarnings("unchecked")
@@ -143,13 +143,13 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	}
 
 	private void getNextSplit(List<Tuple<M>> pool, List<SDFAttribute> attributesToCheck, TreeNode parent) {
-		logger.debug("----------------------------------");
-		logger.debug("Check for " + parent.getAttribute());
+		logger.trace("----------------------------------");
+		logger.trace("Check for " + parent.getAttribute());
 
 		ArrayList<SDFAttribute> attributes = new ArrayList<>(attributesToCheck);
-		logger.debug("open: " + attributes);
+		logger.trace("open: " + attributes);
 		SDFAttribute bestSplitAt = getBestSplit(pool, attributes);
-		logger.debug("best: " + bestSplitAt);
+		logger.trace("best: " + bestSplitAt);
 		attributes.remove(bestSplitAt);
 		parent.setAttribute(bestSplitAt);
 		// for each possible value of the split attribute...
@@ -204,7 +204,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 
 	private SDFAttribute getBestSplit(List<Tuple<M>> pool, List<SDFAttribute> attributes) {
 		double entropyT = entropy(pool);
-		logger.debug("entropy(T)=" + entropyT);
+		logger.trace("entropy(T)=" + entropyT);
 		double maxWGain = 0;
 		SDFAttribute bestAttribute = null;
 		// for each attribute!
@@ -223,10 +223,10 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				double ent = entropy(subpool);
 				double relh = ((double) subpool.size()) / pool.size();
 				sum = sum + (relh * ent);
-				logger.debug("Entropy(" + attribute + ", " + value + ") = " + ent);
+				logger.trace("Entropy(" + attribute + ", " + value + ") = " + ent);
 			}
 			double wgain = entropyT - sum;
-			logger.debug("wgain = (" + attribute + ") = " + wgain);
+			logger.trace("wgain = (" + attribute + ") = " + wgain);
 			if (wgain > maxWGain) {
 				maxWGain = wgain;
 				bestAttribute = attribute;
