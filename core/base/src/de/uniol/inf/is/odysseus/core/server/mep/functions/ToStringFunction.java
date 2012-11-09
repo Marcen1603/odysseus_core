@@ -45,7 +45,7 @@ public class ToStringFunction extends AbstractFunction<String> {
 		return SDFDatatype.STRING;
 	}
 	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
+	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.INTEGER, SDFDatatype.SHORT, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
 	
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){

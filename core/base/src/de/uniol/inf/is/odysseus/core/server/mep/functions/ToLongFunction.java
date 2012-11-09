@@ -52,7 +52,7 @@ public class ToLongFunction extends AbstractFunction<Long> {
 		return SDFDatatype.LONG;
 	}
 
-	private static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.STRING, SDFDatatype.BOOLEAN};
+	private static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.DOUBLE, SDFDatatype.SHORT, SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.STRING, SDFDatatype.BOOLEAN};
 	
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){
