@@ -83,6 +83,14 @@ public interface IAdmissionControl {
 	 * @return Maximalkosten
 	 */
 	public ICost getMaximumCost();
+	
+	/**
+	 * Liefert den Schwellwert an Kosten, die - wenn unterschritten - für ein erneutes
+	 * Starten vom AC gestoppter Anfragen sorgt.
+	 * 
+	 * @return Minimalkosten
+	 */
+	public ICost getMinimumCost();
 
 	/**
 	 * Liefert eine Liste der Namen aller vorhandenden Kostenmodelle zurÃ¼ck. Der
