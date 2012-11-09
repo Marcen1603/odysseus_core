@@ -19,8 +19,16 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		StreamServer server = new StreamServer(54321, new ClassificationProvider());
-		server.start();
+		StreamServer train = new StreamServer(54321, new ClassificationProvider());
+		train.start();
+		StreamServer test= new StreamServer(54322, new ClassificationProvider());
+		test.start();
+		
+		StreamServer adultTrain = new StreamServer(54324, new AdultDataProvider("adult.data"));
+		adultTrain.start();
+		StreamServer adultTest = new StreamServer(54325, new AdultDataProvider("adult.test"));
+		adultTest.start();
+		
 	}
 
 	/*
