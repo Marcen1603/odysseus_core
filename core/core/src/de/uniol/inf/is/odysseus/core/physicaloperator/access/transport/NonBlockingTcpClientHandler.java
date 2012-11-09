@@ -26,7 +26,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
+import de.uniol.inf.is.odysseus.core.connection.IConnection;
+import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.NioTcpServer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -37,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class NonBlockingTcpClientHandler extends AbstractTransportHandler implements
-        IAccessConnectionListener<ByteBuffer> {
+        IAccessConnectionListener<ByteBuffer>, IConnectionListener {
     private static final Logger LOG = LoggerFactory.getLogger(NonBlockingTcpClientHandler.class);
     private NioTcpServer        client;
     private String              host;
@@ -130,6 +133,26 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
     @Override
     public void processOutClose() throws IOException {
         this.client.close(this);
+    }
+
+    @Override
+    public void notify(IConnection connection, ConnectionMessageReason reason) {
+        switch (reason) {
+            case ConnectionAbort:
+                super.fireOnDisconnect();
+                break;
+            case ConnectionClosed:
+                super.fireOnDisconnect();
+                break;
+            case ConnectionRefused:
+                super.fireOnDisconnect();
+                break;
+            case ConnectionOpened:
+                super.fireOnConnect();
+                break;
+            default:
+                break;
+        }
     }
 
 }
