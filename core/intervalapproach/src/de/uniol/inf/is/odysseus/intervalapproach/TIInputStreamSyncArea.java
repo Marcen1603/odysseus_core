@@ -171,9 +171,9 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 						elementsSend = true;
 					}
 //					// Avoid unnecessary punctuations!
-//					if (!elementsSend) {
-//						po.process_newHeartbeat(minTs);
-//					}
+					if (!elementsSend) {
+						po.process_newHeartbeat(minTs);
+					}
 				}
 			}
 		}

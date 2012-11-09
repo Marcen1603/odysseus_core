@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.cep.epa.event.CEPEventAgent;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
-import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.ICepCondition;
 import de.uniol.inf.is.odysseus.cep.metamodel.IOutputSchemeEntry;
@@ -38,10 +37,10 @@ import de.uniol.inf.is.odysseus.cep.metamodel.MEPCondition;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
@@ -183,6 +182,21 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 
 	@Override
 	public synchronized void process_internal(R event, int port) {
+		process_internal(event, event.getMetadata().getStart(), port);
+	}
+
+	@Override
+	public synchronized void processPunctuation(PointInTime timestamp, int port) {
+		inputStreamSyncArea.newHeartbeat(timestamp, port);
+		outputTransferArea.newHeartbeat(timestamp, port);
+	}
+
+	@Override
+	public void process_newHeartbeat(PointInTime pointInTime) {
+		process_internal(null, pointInTime, -1);
+	}
+
+	private void process_internal(R event, PointInTime heartbeat, int port) {
 		synchronized (stateMachines) {
 			LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
 			LinkedList<StateMachineInstance<R>> outofWindowInstances = new LinkedList<StateMachineInstance<R>>();
@@ -196,33 +210,34 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 				// if (logger.isDebugEnabled())
 				// logger.debug(this.getStats());
 
-				// Bevor ueberhaupt eine Instanz angelegt wird, testen, ob
-				// mindestens
-				// die Typbedingung erfuellt ist
-				boolean createNewInstance = false;
-				for (Transition transition : sm.getInitialState()
-						.getTransitions()) {
+				if (event != null) {
+					// Bevor ueberhaupt eine Instanz angelegt wird, testen, ob
+					// mindestens
+					// die Typbedingung erfuellt ist
+					boolean createNewInstance = false;
+					for (Transition transition : sm.getInitialState()
+							.getTransitions()) {
 
-					if (transition.getCondition().checkEventTypeWithPort(port)) {
-						createNewInstance = true;
-						break;
+						if (transition.getCondition().checkEventTypeWithPort(
+								port)) {
+							createNewInstance = true;
+							break;
+						}
 					}
+					if (createNewInstance) {
+						logger.trace(this + ":Created New Initial Instance");
+						StateMachineInstance<R> newInstance = new StateMachineInstance<R>(
+								sm, event.getMetadata().getStart());
+						addInstance(sm, newInstance);
+					}
+
+					validateTransitions(sm, event, port, heartbeat,
+							outdatedInstances, outofWindowInstances,
+							branchedInstances);
+
+					addInstances(sm, branchedInstances);
+
 				}
-				if (createNewInstance) {
-					logger.trace(this + ":Created New Initial Instance");
-					StateMachineInstance<R> newInstance = new StateMachineInstance<R>(
-							sm, getEventReader().get(port).getTime(event));
-					addInstance(sm, newInstance);
-				}
-				if (event == null)
-					throw new InvalidEventException(
-							"The event to be processed is null.");
-
-				validateTransitions(sm, event, outdatedInstances,
-						outofWindowInstances, branchedInstances, port);
-
-				addInstances(sm, branchedInstances);
-
 			}
 			LinkedList<W> complexEvents = null;
 			complexEvents = validateFinalStates(event, outdatedInstances,
@@ -243,11 +258,6 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 				heartbeatGenerationStrategy.generateHeartbeat(event, this);
 			}
 		}
-	}
-
-	@Override
-	public void process_newHeartbeat(PointInTime pointInTime) {
-		sendPunctuation(pointInTime);
 	}
 
 	public void setHeartbeatGenerationStrategy(
@@ -293,10 +303,11 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 		smInstances.get(sm).remove(stateMachineInstance);
 	}
 
-	private void validateTransitions(StateMachine<R> sm, R event,
+	private void validateTransitions(StateMachine<R> sm, R event, int port,
+			PointInTime heartbeat,
 			LinkedList<StateMachineInstance<R>> outdatedInstances,
 			LinkedList<StateMachineInstance<R>> outofWindowInstances,
-			LinkedList<StateMachineInstance<R>> branchedInstances, int port) {
+			LinkedList<StateMachineInstance<R>> branchedInstances) {
 
 		for (StateMachineInstance<R> instance : this.getInstances(sm)) {
 			if (logger.isTraceEnabled())
@@ -304,11 +315,10 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 			List<Transition> transitionsToTake = new ArrayList<Transition>();
 			boolean outOfTime = false;
 
-			outOfTime = checkOutOfWindow(sm,
-					eventReader.get(port).getTime(event), event,
+			outOfTime = checkOutOfWindow(sm, heartbeat, event,
 					outofWindowInstances, port, instance, outOfTime);
-			
-			if (!outOfTime) {
+
+			if (event != null && !outOfTime) {
 				for (Transition transition : instance.getCurrentState()
 						.getTransitions()) {
 					/**
@@ -391,13 +401,14 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 		}
 	}
 
-	protected boolean checkOutOfWindow(StateMachine<R> sm, long currentTime,
-			R event, LinkedList<StateMachineInstance<R>> outofWindowInstances,
-			int port, StateMachineInstance<R> instance, boolean outOfTime) {
+	protected boolean checkOutOfWindow(StateMachine<R> sm,
+			PointInTime currentTime, R event,
+			LinkedList<StateMachineInstance<R>> outofWindowInstances, int port,
+			StateMachineInstance<R> instance, boolean outOfTime) {
 		// Check Time
 		if (sm.getWindowSize() > 0) {
-			if (currentTime < (instance.getStartTimestamp() + sm
-					.getWindowSize())) {
+			if (currentTime.before(instance.getStartTimestamp().sum(
+					sm.getWindowSize()))) {
 				// logger.debug(instance + " Out of Window ...");
 				this.eventAgent
 						.fireCEPEvent(CEPEvent.MACHINE_ABORTED, instance);
@@ -416,7 +427,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 			// " End end currently not supported "+sm.getEndsAtVar()+" = "+value);
 
 			MEPCondition c = sm.getEndsAtCondition();
-			c.setValue(StateMachine.current, Long.valueOf(currentTime));
+			c.setValue(StateMachine.current, currentTime.getMainPoint());
 			c.setValue(StateMachine.maxTime, value);
 			if (c.evaluate()) {
 				// logger.debug(instance + " Out of Window ...");
@@ -709,12 +720,6 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 	@Override
 	public PatternDetectPO<R, W> clone() {
 		return new PatternDetectPO<R, W>(this);
-	}
-
-	@Override
-	public synchronized void processPunctuation(PointInTime timestamp, int port) {
-		inputStreamSyncArea.newHeartbeat(timestamp, port);
-		outputTransferArea.newHeartbeat(timestamp, port);
 	}
 
 }

@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 /**
  * Die StateMachineInstance repräsentiert eine Instanz des an den EPA
@@ -55,7 +56,7 @@ public class StateMachineInstance<R> {
 	 * Referenz auf den Puffer für bereits konsumierte Events
 	 */
 	final private MatchingTrace<R> matchingTrace;
-	final private long startTimestamp;
+	final private PointInTime startTimestamp;
 	
 	final private StateMachine<R> stateMachine;
 
@@ -67,7 +68,7 @@ public class StateMachineInstance<R> {
 	 *            werden soll
 	 */
 	public StateMachineInstance(StateMachine<R> stateMachine,
-			long startTimestamp) {
+			PointInTime startTimestamp) {
 		this.currentState = stateMachine.getInitialState();
 		this.matchingTrace = new MatchingTrace<R>(stateMachine.getStates());
 		this.symTab = new SymbolTable<R>(stateMachine.getSymTabScheme(true));
@@ -242,7 +243,7 @@ public class StateMachineInstance<R> {
 		return new StateMachineInstance<R>(this);
 	}
 
-	public long getStartTimestamp() {
+	public PointInTime getStartTimestamp() {
 		return startTimestamp;
 	}
 

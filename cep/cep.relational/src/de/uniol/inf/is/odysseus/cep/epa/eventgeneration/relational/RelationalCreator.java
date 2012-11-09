@@ -62,7 +62,13 @@ public class RelationalCreator<R extends IStreamObject<?>> extends AbstractCompl
 		}
 
 		Tuple ret = new Tuple(attributes, false);
-		ret.setMetadata((IMetaAttribute) event.getMetadata().clone());
+		if (event != null){
+			ret.setMetadata((IMetaAttribute) event.getMetadata().clone());
+		}else{
+			// TODO: What to do, if not an event has led to the creation of the event but
+			// a hearbeat (e.g. for out of time instances)
+			System.err.println(this+" WARNING: The created event has no metadata!!");
+		}
 		//System.out.println("EVENT "+ret);
 		return ret;
 	}
