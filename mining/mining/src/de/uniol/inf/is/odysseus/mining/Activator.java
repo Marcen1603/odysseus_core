@@ -47,12 +47,14 @@ public class Activator implements BundleActivator {
 	
 	public void bindDataDictionary(IDataDictionary dd){				
 		dd.addDatatype(MiningDatatypes.FREQUENT_ITEM_SET.getURI(), MiningDatatypes.FREQUENT_ITEM_SET);
-		dd.addDatatype(MiningDatatypes.ASSOCIATION_RULE.getURI(), MiningDatatypes.ASSOCIATION_RULE);	
+		dd.addDatatype(MiningDatatypes.ASSOCIATION_RULE.getURI(), MiningDatatypes.ASSOCIATION_RULE);
+		dd.addDatatype(MiningDatatypes.CLASSIFICATION_TREE.getURI(), MiningDatatypes.CLASSIFICATION_TREE);	
 	}
 	
 	public void unbindDataDictionary(IDataDictionary dd){
 		dd.removeDatatype(MiningDatatypes.FREQUENT_ITEM_SET.getURI());
 		dd.removeDatatype(MiningDatatypes.ASSOCIATION_RULE.getURI());
+		dd.removeDatatype(MiningDatatypes.CLASSIFICATION_TREE.getURI());
 	}
 
 }

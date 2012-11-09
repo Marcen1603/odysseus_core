@@ -20,17 +20,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.core.collection.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.mining.classification.TreeNode;
 import de.uniol.inf.is.odysseus.mining.util.CounterList;
 
 /**
@@ -39,12 +42,17 @@ import de.uniol.inf.is.odysseus.mining.util.CounterList;
  */
 public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
+	private static Logger logger = LoggerFactory.getLogger(ClassificationLearnC45PO.class);
+
 	private SDFAttribute classAttribute;
+	private IMetadataMergeFunction<M> metadatamergefunction;
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 
 	private SDFSchema inputSchema;
 	private Map<SDFAttribute, List<Object>> partitions = new HashMap<SDFAttribute, List<Object>>();
 	private int clazzPosition;
+
+	private PointInTime lastCut = PointInTime.getZeroTime();
 
 	/**
 	 * @param classAttribute
@@ -57,6 +65,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	public ClassificationLearnC45PO(ClassificationLearnC45PO<M> old) {
 		this.classAttribute = old.classAttribute;
 		this.inputSchema = old.inputSchema;
+		this.metadatamergefunction = old.metadatamergefunction.clone();
 	}
 
 	@Override
@@ -77,51 +86,129 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	@Override
 	protected synchronized void process_next(Tuple<M> object, int port) {
 		PointInTime currentTime = object.getMetadata().getStart();
-		Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
-		List<Tuple<M>> pool = new ArrayList<>();
-		while (qualifies.hasNext()) {
-			Tuple<M> next = qualifies.next();
-			for (int i = 0; i < object.size(); i++) {
-				SDFAttribute attribute = this.inputSchema.get(i);
-				Object value = next.getAttribute(i);
-				if (!this.partitions.get(attribute).contains(value)) {
-					this.partitions.get(attribute).add(value);
-				}
-			}
-			pool.add(next);
-		}
-		if (pool.size() > 0) {
-			List<SDFAttribute> allAttributes = new ArrayList<>();
-			List<SDFAttribute> splitOrder = new ArrayList<>();
-			for (SDFAttribute attribute : inputSchema) {
-				if(!attribute.equals(classAttribute)){
-					allAttributes.add(attribute);
-				}
-			}
-			while(!allAttributes.isEmpty()){
-				SDFAttribute bestSplitAt = getBestSplit(pool, allAttributes);
-				System.out.println("BEST SPLIT: "+bestSplitAt);
-				splitOrder.add(bestSplitAt);
-				allAttributes.remove(bestSplitAt);
-			}
-			System.out.println("Best split order is: ");
-			for(SDFAttribute a : splitOrder){
-				System.out.println(a);
-			}
-			
-		}
+		process_data(currentTime);
 		sweepArea.insert(object);
+	}
+
+	private synchronized void process_data(PointInTime currentTime) {
+		if (currentTime.after(lastCut)) {
+			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
+			List<Tuple<M>> pool = new ArrayList<>();
+			while (qualifies.hasNext()) {
+				Tuple<M> next = qualifies.next();
+				for (int i = 0; i < next.size(); i++) {
+					SDFAttribute attribute = this.inputSchema.get(i);
+					Object value = next.getAttribute(i);
+					if (!this.partitions.get(attribute).contains(value)) {
+						this.partitions.get(attribute).add(value);
+					}
+				}
+				pool.add(next);
+			}
+			if (pool.size() > 0) {
+				PointInTime totalMin = lastCut;
+				PointInTime totalMax = currentTime;
+				// fill all attributes - without class-attribute
+				List<SDFAttribute> allAttributes = new ArrayList<>();
+				for (SDFAttribute attribute : inputSchema) {
+					if (!attribute.equals(classAttribute)) {
+						allAttributes.add(attribute);
+					}
+				}
+				// get the best split for the root
+				TreeNode root = new TreeNode(null);
+				getNextSplit(pool, allAttributes, root);
+				logger.debug("Best split order is: ");
+				root.printSubTree();
+
+				Tuple<M> newtuple = new Tuple<M>(1, false);
+				@SuppressWarnings("unchecked")
+				M meta = (M) pool.get(pool.size() - 1).getMetadata().clone();
+				meta.setStartAndEnd(totalMin, totalMax);
+				newtuple.setMetadata(meta);
+				newtuple.setAttribute(0, root);
+				transfer(newtuple);
+
+				lastCut = currentTime;
+				sweepArea.purgeElementsBefore(currentTime);
+			}
+		}
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		process_data(timestamp);
+		super.processPunctuation(timestamp, port);
 
 	}
 
-	
-	private SDFAttribute getBestSplit(List<Tuple<M>> pool, List<SDFAttribute> attributes){
+	private void getNextSplit(List<Tuple<M>> pool, List<SDFAttribute> attributesToCheck, TreeNode parent) {
+		logger.debug("----------------------------------");
+		logger.debug("Check for " + parent.getAttribute());
+
+		ArrayList<SDFAttribute> attributes = new ArrayList<>(attributesToCheck);
+		logger.debug("open: " + attributes);
+		SDFAttribute bestSplitAt = getBestSplit(pool, attributes);
+		logger.debug("best: " + bestSplitAt);
+		attributes.remove(bestSplitAt);
+		parent.setAttribute(bestSplitAt);
+		// for each possible value of the split attribute...
+		for (Object value : this.partitions.get(bestSplitAt)) {
+			// ... get only the subset for this value
+			List<Tuple<M>> subset = getSubset(pool, bestSplitAt, value);
+			// and create a node for each possible value
+			TreeNode node = new TreeNode(null);
+
+			parent.addChild(value, node);
+			// check, if all values of the class-attribute are equal...
+			if (onlyOneClassLeft(subset)) {
+				if (subset.size() > 0) {
+					node.setClazz(subset.get(0).getAttribute(clazzPosition));
+				}
+			} else {
+				// ... else find next split
+				getNextSplit(subset, attributes, node);
+			}
+
+		}
+	}
+
+	/**
+	 * @param subset
+	 * @return
+	 */
+	private boolean onlyOneClassLeft(List<Tuple<M>> subset) {
+		Object found = null;
+		for (Tuple<M> t : subset) {
+			Object clazz = t.getAttribute(clazzPosition);
+			if (found == null) {
+				found = clazz;
+			} else if (!found.equals(clazz)) {
+				return false;
+			}
+
+		}
+		return true;
+	}
+
+	private List<Tuple<M>> getSubset(List<Tuple<M>> set, SDFAttribute attribute, Object value) {
+		List<Tuple<M>> subset = new ArrayList<>();
+		int index = this.inputSchema.indexOf(attribute);
+		for (Tuple<M> t : set) {
+			if (t.getAttribute(index).equals(value)) {
+				subset.add(t);
+			}
+		}
+		return subset;
+	}
+
+	private SDFAttribute getBestSplit(List<Tuple<M>> pool, List<SDFAttribute> attributes) {
 		double entropyT = entropy(pool);
-		System.out.println("entropy(T)=" + entropyT);		
+		logger.debug("entropy(T)=" + entropyT);
 		double maxWGain = 0;
-		SDFAttribute bestAttribute = null; 
+		SDFAttribute bestAttribute = null;
 		// for each attribute!
-		for (SDFAttribute attribute : attributes) {				
+		for (SDFAttribute attribute : attributes) {
 			int position = this.inputSchema.indexOf(attribute);
 			// for each possible value of attribute, calculate the entropy
 			double sum = 0;
@@ -134,22 +221,21 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				}
 				// calc entropy
 				double ent = entropy(subpool);
-				double relh = ((double)subpool.size())/pool.size();
-				sum = sum + (relh*ent);
-				System.out.println("Entropy(" + attribute + ", " + value + ") = " + ent);
+				double relh = ((double) subpool.size()) / pool.size();
+				sum = sum + (relh * ent);
+				logger.debug("Entropy(" + attribute + ", " + value + ") = " + ent);
 			}
 			double wgain = entropyT - sum;
-			System.out.println("wgain = (" + attribute + ") = " + wgain);
-			if(wgain>maxWGain){
+			logger.debug("wgain = (" + attribute + ") = " + wgain);
+			if (wgain > maxWGain) {
 				maxWGain = wgain;
 				bestAttribute = attribute;
 			}
 		}
 		return bestAttribute;
-		
+
 	}
-	
-	
+
 	private double entropy(List<Tuple<M>> pool) {
 
 		CounterList<Object> counts = new CounterList<>();

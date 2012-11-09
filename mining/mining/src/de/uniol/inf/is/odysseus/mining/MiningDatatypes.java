@@ -25,5 +25,6 @@ public class MiningDatatypes {
 	
 	public static final SDFDatatype FREQUENT_ITEM_SET = new SDFDatatype("FrequentItemSet");
 	public static final SDFDatatype ASSOCIATION_RULE = new SDFDatatype("AssociationRule");
+	public static final SDFDatatype CLASSIFICATION_TREE = new SDFDatatype("ClassificationTree");
 
 }
