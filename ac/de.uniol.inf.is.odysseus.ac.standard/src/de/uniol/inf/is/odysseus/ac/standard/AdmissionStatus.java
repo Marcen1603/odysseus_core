@@ -82,7 +82,7 @@ public final class AdmissionStatus {
 		return maxCost;
 	}
 
-	public ICost getUnderloadCost() {
+	public ICost getMinCost() {
 		return underloadCost;
 	}
 

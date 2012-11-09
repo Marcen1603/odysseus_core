@@ -69,7 +69,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	private IServerExecutor executor;
 
 	private ICost maxCost;
-	private ICost underloadCost;
+	private ICost minCost;
 	private ICost actCost;
 
 	private Map<IPhysicalQuery, ICost> queryCosts = Maps.newHashMap();
@@ -166,8 +166,6 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			fireAdmissionStatus(userMaximumCostFactors);
 		}
 
-//		System.out.println(queryCosts.size() + "; " + runningQueryCosts.size() + "; " + actCost);
-
 		// check, if user-load is too heavy
 		for (IUser user : userCosts.keySet()) {
 			if (!userMaximumCostFactors.containsKey(user)) {
@@ -190,7 +188,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 				ICost userUnderloadCost = maxUserCost.fraction(UNDERLOAD_USER_FACTOR);
 				if (isGreater(userUnderloadCost, userCost)) {
-					LOG.debug("Cost for user {} is below underload-level: {}", user.getName(), underloadCost);
+					LOG.debug("Cost for user {} is below underload-level: {}", user.getName(), minCost);
 
 					fireUnderloadUserEvent(user);
 				}
@@ -209,8 +207,8 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		} else {
 			overloadEventBuffer = 0;
 			
-			if (isGreater(underloadCost, actCost)) {
-				LOG.debug("Cost is below underload-level: {}", underloadCost);
+			if (isGreater(minCost, actCost)) {
+				LOG.debug("Cost is below underload-level: {}", minCost);
 				fireUnderloadEvent();
 			}
 		}
@@ -252,11 +250,11 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		selectedCostModel = costModels.get(name);
 		maxCost = selectedCostModel.getMaximumCost();
 		actCost = selectedCostModel.getZeroCost();
-		underloadCost = maxCost.fraction(UNDERLOAD_FACTOR);
+		minCost = maxCost.fraction(UNDERLOAD_FACTOR);
 
 		LOG.debug("CostModel {} selected", name);
 		LOG.debug("Maximum cost allowed: {}", maxCost);
-		LOG.debug("Cost for underload-event after overload: {}", underloadCost);
+		LOG.debug("Cost for underload-event after overload: {}", minCost);
 	}
 
 	@Override
@@ -457,6 +455,11 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		return isGreater(getActualCost(), getMaximumCost());
 	}
 
+	@Override
+	public ICost getMinimumCost() {
+		return minCost;
+	}
+
 	private void fireAdmissionStatus(Map<IUser, ICost> maxUserCosts) {
 		Map<IUser, ICost> underloadCosts = Maps.newHashMap();
 		for (IUser user : maxUserCosts.keySet()) {
@@ -464,7 +467,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 
 		long ts = System.currentTimeMillis();
-		AdmissionStatus status = new AdmissionStatus(runningQueryCosts.size(), queryCosts.size() - runningQueryCosts.size(), queryCosts.size(), actCost, maxCost, underloadCost,
+		AdmissionStatus status = new AdmissionStatus(runningQueryCosts.size(), queryCosts.size() - runningQueryCosts.size(), queryCosts.size(), actCost, maxCost, minCost,
 				ImmutableMap.copyOf(userCosts), ImmutableMap.copyOf(maxUserCosts), ImmutableMap.copyOf(underloadCosts), ImmutableMap.copyOf(queryCosts), ts, ts - startTime, selectedCostModel
 						.getClass().getSimpleName());
 

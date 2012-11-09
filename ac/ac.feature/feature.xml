@@ -98,7 +98,7 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.ac.standard.status.file"
+         id="de.uniol.inf.is.odysseus.rcp.ac"
          download-size="0"
          install-size="0"
          version="0.0.0"

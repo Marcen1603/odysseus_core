@@ -104,7 +104,7 @@ public class AdmissionStatusFileWriter implements IAdmissionStatusListener {
 
 		ICost actCost = status.getActCost();
 		ICost maxCost = status.getMaxCost();
-		ICost underloadCost = status.getUnderloadCost();
+		ICost underloadCost = status.getMinCost();
 		long timestamp = status.getTimestamp();
 		long runningTime = status.getRunningTime();
 
