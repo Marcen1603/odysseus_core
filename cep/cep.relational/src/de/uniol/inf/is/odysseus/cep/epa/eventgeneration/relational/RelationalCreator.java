@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational;
 
 import de.uniol.inf.is.odysseus.cep.epa.MatchingTrace;
@@ -24,7 +24,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
-public class RelationalCreator<R extends IStreamObject<?>> extends AbstractComplexEventFactory<R,Tuple<? extends ITimeInterval>> {
+public class RelationalCreator<R extends IStreamObject<?>> extends
+		AbstractComplexEventFactory<R, Tuple<? extends ITimeInterval>> {
 
 	/**
 	 * Erzeugt einen neuen Creator für relationale Tupel vom Typ
@@ -35,22 +36,29 @@ public class RelationalCreator<R extends IStreamObject<?>> extends AbstractCompl
 	}
 
 	@Override
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	public Tuple<? extends ITimeInterval> createComplexEvent(OutputScheme outputscheme,
-			MatchingTrace<R> matchingTrace, SymbolTable symTab, R event) {
-//		MatchedEvent<R> lastEvent = matchingTrace.getLastEvent();
-//		System.out.println("--------------------------------------------------------------------------");
-//		System.out.println("RelationalCreator ");
-//	
-//		List<MatchedEvent<R>> eList = new LinkedList<MatchedEvent<R>>();
-//		MatchedEvent<R> event = lastEvent;
-//		eList.add(event);
-//		while ((event = event.getPrevious()) != null){
-//			eList.add(event);
-//		}
-//		Collections.reverse(eList);
-//		System.out.println("Matched Events "+eList);		
-//		System.out.println("--------------------------------------------------------------------------");
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Tuple<? extends ITimeInterval> createComplexEvent(
+			OutputScheme outputscheme, MatchingTrace<R> matchingTrace,
+			SymbolTable symTab, R e) {
+		R event = e;
+		if (event == null) {
+			if (matchingTrace.getLastEvent() != null) {
+				event = matchingTrace.getLastEvent().getEvent();
+			}
+		}
+		// MatchedEvent<R> lastEvent = matchingTrace.getLastEvent();
+		// System.out.println("--------------------------------------------------------------------------");
+		// System.out.println("RelationalCreator ");
+		//
+		// List<MatchedEvent<R>> eList = new LinkedList<MatchedEvent<R>>();
+		// MatchedEvent<R> event = lastEvent;
+		// eList.add(event);
+		// while ((event = event.getPrevious()) != null){
+		// eList.add(event);
+		// }
+		// Collections.reverse(eList);
+		// System.out.println("Matched Events "+eList);
+		// System.out.println("--------------------------------------------------------------------------");
 		Object[] attributes = new Object[outputscheme.getEntries().size()];
 		for (int i = 0; i < outputscheme.getEntries().size(); i++) {
 			/*
@@ -62,14 +70,10 @@ public class RelationalCreator<R extends IStreamObject<?>> extends AbstractCompl
 		}
 
 		Tuple ret = new Tuple(attributes, false);
-		if (event != null){
+		if (event != null) {
 			ret.setMetadata((IMetaAttribute) event.getMetadata().clone());
-		}else{
-			// TODO: What to do, if not an event has led to the creation of the event but
-			// a hearbeat (e.g. for out of time instances)
-			System.err.println(this+" WARNING: The created event has no metadata!!");
 		}
-		//System.out.println("EVENT "+ret);
+		// System.out.println("EVENT "+ret);
 		return ret;
 	}
 
