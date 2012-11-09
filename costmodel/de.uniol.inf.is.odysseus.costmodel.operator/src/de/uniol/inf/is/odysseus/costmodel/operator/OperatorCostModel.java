@@ -87,7 +87,6 @@ public class OperatorCostModel implements ICostModel {
 		double mem = memory * OperatorCostModelCfg.getInstance().getMemHeadroom();
 		double cpu = processorCount * OperatorCostModelCfg.getInstance().getCpuHeadroom();
 		OperatorCost max = new OperatorCost(mem, cpu);
-		System.out.println("Maximum costs: " + max + "");
 		return max;
 	}
 
