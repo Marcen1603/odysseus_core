@@ -82,7 +82,10 @@ public class ClassificationTreePO<M extends ITimeInterval> extends AbstractPipe<
 	private Object classify(Tuple<M> tuple){
 		
 		TreeNode currentNode = this.classificationTree;
-		while(currentNode.getClazz()==null){			
+		while(currentNode.getClazz()==null){		
+			if(currentNode.getAttribute()==null){
+				System.out.println("NULL!!!!");
+			}
 			int index = this.inputSchema.indexOf(this.inputSchema.findAttribute(currentNode.getAttribute().getAttributeName()));
 			Object val = tuple.getAttribute(index);
 			currentNode = currentNode.getChild(val);

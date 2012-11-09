@@ -78,7 +78,15 @@ public class TreeNode {
 	}
 
 	public void setClazz(Object clazz) {
+		if(clazz==null){
+			System.out.println("WARN: CLAZZ IS NULL!");
+		}
 		this.clazz = clazz;
+	}
+	
+	@Override
+	public String toString() {
+		return "attribute="+attribute+", class="+clazz+" children="+this.childs.size();		
 	}
 		 
 

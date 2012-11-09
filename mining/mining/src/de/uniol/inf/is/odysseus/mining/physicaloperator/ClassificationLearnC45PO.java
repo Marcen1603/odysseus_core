@@ -77,10 +77,17 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 
+		initPartitions();
+		this.clazzPosition = inputSchema.indexOf(classAttribute);
+	}
+
+	/**
+	 * 
+	 */
+	private void initPartitions() {
 		for (SDFAttribute attribute : this.inputSchema) {
 			this.partitions.put(attribute, new ArrayList<Object>());
-		}
-		this.clazzPosition = inputSchema.indexOf(classAttribute);
+		}		
 	}
 
 	@Override
@@ -92,6 +99,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 
 	private synchronized void process_data(PointInTime currentTime) {
 		if (currentTime.after(lastCut)) {
+			initPartitions();
 			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
 			List<Tuple<M>> pool = new ArrayList<>();
 			while (qualifies.hasNext()) {
@@ -119,7 +127,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				TreeNode root = new TreeNode();
 				getNextSplit(pool, allAttributes, root);
 				logger.trace("Best split order is: ");
-				//root.printSubTree();
+				
 
 				Tuple<M> newtuple = new Tuple<M>(1, false);
 				@SuppressWarnings("unchecked")
@@ -127,8 +135,9 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				meta.setStartAndEnd(totalMin, totalMax);
 				newtuple.setMetadata(meta);
 				newtuple.setAttribute(0, root);
+				root.printSubTree();
 				transfer(newtuple);
-
+				
 				lastCut = currentTime;
 				sweepArea.purgeElementsBefore(currentTime);
 			}
@@ -150,6 +159,9 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 		logger.trace("open: " + attributes);
 		SDFAttribute bestSplitAt = getBestSplit(pool, attributes);
 		logger.trace("best: " + bestSplitAt);
+		if(bestSplitAt==null){
+			System.out.println("SPLIT IS NULL?!");
+		}
 		attributes.remove(bestSplitAt);
 		parent.setAttribute(bestSplitAt);
 		// for each possible value of the split attribute...
@@ -164,6 +176,8 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			if (onlyOneClassLeft(subset)) {
 				if (subset.size() > 0) {
 					node.setClazz(subset.get(0).getAttribute(clazzPosition));
+				}else{
+					System.out.println("SHOULD NOT HAPPEN");
 				}
 			} else {
 				// ... else find next split
@@ -227,7 +241,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			}
 			double wgain = entropyT - sum;
 			logger.trace("wgain = (" + attribute + ") = " + wgain);
-			if (wgain > maxWGain) {
+			if (wgain >= maxWGain) {
 				maxWGain = wgain;
 				bestAttribute = attribute;
 			}
