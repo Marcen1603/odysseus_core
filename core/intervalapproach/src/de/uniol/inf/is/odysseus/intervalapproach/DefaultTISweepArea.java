@@ -210,6 +210,44 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 		return retval.iterator();
 	}
+	
+	public Iterator<T> extractElementsStartingAfter(PointInTime validity) {
+		ArrayList<T> retval = new ArrayList<T>();
+		synchronized (getElements()) {
+			Iterator<T> li = getElements().iterator();
+			while (li.hasNext()) {
+				T s_hat = li.next();
+				// Alle Elemente entfernen, die nicht mehr verschnitten werden
+				// k�nnen (also davor liegen)
+				if (s_hat.getMetadata().getStart().after(validity)) {
+					retval.add(s_hat);
+					li.remove();
+				} else {
+					break;
+				}
+			}
+		}
+		return retval.iterator();
+	}
+	
+	public Iterator<T> extractElementsStartingAfterOrEquals(PointInTime validity) {
+		ArrayList<T> retval = new ArrayList<T>();
+		synchronized (getElements()) {
+			Iterator<T> li = getElements().iterator();
+			while (li.hasNext()) {
+				T s_hat = li.next();
+				// Alle Elemente entfernen, die nicht mehr verschnitten werden
+				// k�nnen (also davor liegen)
+				if (s_hat.getMetadata().getStart().afterOrEquals(validity)) {
+					retval.add(s_hat);
+					li.remove();
+				} else {
+					break;
+				}
+			}
+		}
+		return retval.iterator();
+	}
 
 	/**
 	 * @return the min start timestamp of all elements currently in the sweep
