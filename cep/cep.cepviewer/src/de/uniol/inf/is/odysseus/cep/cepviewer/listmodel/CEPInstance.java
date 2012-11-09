@@ -221,7 +221,7 @@ public class CEPInstance {
 	 * @return the time stamp the representedinstance was created
 	 */
 	public long getStartTimestamp() {
-		return this.instance.getStartTimestamp();
+		return this.instance.getStartTimestamp().getMainPoint();
 	}
 
 	/**
