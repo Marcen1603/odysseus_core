@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.ICepCondition;
 import de.uniol.inf.is.odysseus.cep.metamodel.IOutputSchemeEntry;
+import de.uniol.inf.is.odysseus.cep.metamodel.MEPCondition;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
@@ -62,7 +63,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 	Logger logger = LoggerFactory.getLogger(PatternDetectPO.class);
 
 	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
-	
+
 	/**
 	 * Factory zum erzeugen komplexer Events
 	 */
@@ -189,7 +190,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 			for (StateMachine<R> sm : stateMachines) {
 
 				if (logger.isTraceEnabled())
-					logger.trace(this+"-------------------> NEXT EVENT from "
+					logger.trace(this + "-------------------> NEXT EVENT from "
 							+ eventReader.get(port).getType() + ": " + event
 							+ " " + port);
 				// if (logger.isDebugEnabled())
@@ -208,7 +209,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 					}
 				}
 				if (createNewInstance) {
-					logger.trace(this+":Created New Initial Instance");
+					logger.trace(this + ":Created New Initial Instance");
 					StateMachineInstance<R> newInstance = new StateMachineInstance<R>(
 							sm, getEventReader().get(port).getTime(event));
 					addInstance(sm, newInstance);
@@ -234,11 +235,11 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 			if (complexEvents.size() > 0) {
 				for (W e : complexEvents) {
 					if (logger.isDebugEnabled()) {
-						logger.debug(this+":Created Event: " + e);
+						logger.debug(this + ":Created Event: " + e);
 					}
 					outputTransferArea.transfer(e);
 				}
-			}else{
+			} else {
 				heartbeatGenerationStrategy.generateHeartbeat(event, this);
 			}
 		}
@@ -248,24 +249,24 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 	public void process_newHeartbeat(PointInTime pointInTime) {
 		sendPunctuation(pointInTime);
 	}
-	
+
 	public void setHeartbeatGenerationStrategy(
 			IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy) {
 		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
 	}
-	
+
 	private void removeInstances(StateMachine<R> sm,
 			LinkedList<StateMachineInstance<R>> instances) {
 		for (StateMachineInstance<R> i : instances) {
-//			if (onlyOneMatchPerInstance) {
-//				// Remove all depending instances
-//				LinkedList<StateMachineInstance<R>> toRemove = branchingBuffer
-//						.getAllNestedStateMachineInstances(i);
-//				branchingBuffer.removeAllNestedBranches(i);
-//				for (StateMachineInstance<R> r : toRemove) {
-//					removeInstance(sm, r);
-//				}
-//			}
+			// if (onlyOneMatchPerInstance) {
+			// // Remove all depending instances
+			// LinkedList<StateMachineInstance<R>> toRemove = branchingBuffer
+			// .getAllNestedStateMachineInstances(i);
+			// branchingBuffer.removeAllNestedBranches(i);
+			// for (StateMachineInstance<R> r : toRemove) {
+			// removeInstance(sm, r);
+			// }
+			// }
 			removeInstance(sm, i);
 		}
 	}
@@ -279,14 +280,16 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 
 	private void addInstance(StateMachine<R> sm,
 			StateMachineInstance<R> stateMachineInstance) {
-		this.eventAgent.fireCEPEvent(CEPEvent.ADD_MASCHINE, stateMachineInstance);
+		this.eventAgent.fireCEPEvent(CEPEvent.ADD_MASCHINE,
+				stateMachineInstance);
 		smInstances.get(sm).add(stateMachineInstance);
 	}
 
 	private void removeInstance(StateMachine<R> sm,
 			StateMachineInstance<R> stateMachineInstance) {
-		logger.trace(this+":Remove Instance " + stateMachineInstance);
-		this.eventAgent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, stateMachineInstance);
+		logger.trace(this + ":Remove Instance " + stateMachineInstance);
+		this.eventAgent.fireCEPEvent(CEPEvent.MACHINE_ABORTED,
+				stateMachineInstance);
 		smInstances.get(sm).remove(stateMachineInstance);
 	}
 
@@ -297,71 +300,55 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 
 		for (StateMachineInstance<R> instance : this.getInstances(sm)) {
 			if (logger.isTraceEnabled())
-				logger.trace(this+":Validating " + instance);
+				logger.trace(this + ":Validating " + instance);
 			List<Transition> transitionsToTake = new ArrayList<Transition>();
 			boolean outOfTime = false;
 
-			for (Transition transition : instance.getCurrentState()
-					.getTransitions()) {
-
-				// Check Time
-				if (sm.getWindowSize() > 0) {
-					if (!transition.getCondition().checkTime(
-							instance.getStartTimestamp(),
-							eventReader.get(port).getTime(event),
-							sm.getWindowSize())) {
-						// logger.debug(instance + " Out of Window ...");
-						this.eventAgent.fireCEPEvent(CEPEvent.MACHINE_ABORTED,
-								instance);
-						outofWindowInstances.add(instance);
-						outOfTime = true;
-						break;
-					}
-				}
-				if (sm.getEndsAtVar() != null){
-					Object value = getValue(port, instance, sm.getEndsAtVar());
-					// Read from input Stream
-					if (value == null){
-						value = getValueFromEvent(event, port, sm.getEndsAtVar().getVariableName());
-					}
-					//System.err.println(instance+ " End end currently not supported "+sm.getEndsAtVar()+" = "+value);
-				}
-				/**
-				 * update variables
-				 */
-				try {
-					boolean allVarSet = updateVariables(event, instance,
-							transition, port);
-					// take the transition if all variables are set and the
-					// condition evaluates to true
-					// OR: if not all variables are set (== condition cannot be
-					// evaluated --> false) and
-					// the condition is negated (e.g. in _ignore transitions)
-					if ((!allVarSet && transition.getCondition().isNegate())
-							|| (allVarSet && transition.evaluate(port))) {
-						transitionsToTake.add(transition);
-						// if (logger.isDebugEnabled())
-						// logger.debug(instance + " Transition true: "
-						// + transition.getCondition().getLabel());
-						//
-						// }
-						// else {
-						// logger.debug(instance + " Transition false: "
-						// + transition.getCondition().getLabel());
-					}
-
-				} catch (Exception e) {
-					// System.out.println(transition.getCondition().getLabel());
-					e.printStackTrace();
-					throw new ConditionEvaluationException(
-							"Cannot evaluate condition "
-									+ transition.getCondition(), e);
-				}
-			} // for (Transition transition...)
+			outOfTime = checkOutOfWindow(sm,
+					eventReader.get(port).getTime(event), event,
+					outofWindowInstances, port, instance, outOfTime);
+			
 			if (!outOfTime) {
+				for (Transition transition : instance.getCurrentState()
+						.getTransitions()) {
+					/**
+					 * update variables
+					 */
+					try {
+						boolean allVarSet = updateVariables(event, instance,
+								transition, port);
+						// take the transition if all variables are set and the
+						// condition evaluates to true
+						// OR: if not all variables are set (== condition cannot
+						// be
+						// evaluated --> false) and
+						// the condition is negated (e.g. in _ignore
+						// transitions)
+						if ((!allVarSet && transition.getCondition().isNegate())
+								|| (allVarSet && transition.evaluate(port))) {
+							transitionsToTake.add(transition);
+							// if (logger.isDebugEnabled())
+							// logger.debug(instance + " Transition true: "
+							// + transition.getCondition().getLabel());
+							//
+							// }
+							// else {
+							// logger.debug(instance + " Transition false: "
+							// + transition.getCondition().getLabel());
+						}
+
+					} catch (Exception e) {
+						// System.out.println(transition.getCondition().getLabel());
+						e.printStackTrace();
+						throw new ConditionEvaluationException(
+								"Cannot evaluate condition "
+										+ transition.getCondition(), e);
+					}
+				} // for (Transition transition...)
+
 				if (transitionsToTake.isEmpty()) {
 					if (logger.isTraceEnabled())
-						logger.trace(this+":No transition on " + instance);
+						logger.trace(this + ":No transition on " + instance);
 
 					// no transition on this instance, mark for removal
 					outdatedInstances.add(instance);
@@ -371,8 +358,8 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 						// execute transition
 						instance.takeTransition(transitionsToTake.remove(0),
 								event, eventReader.get(port));
-						this.eventAgent
-								.fireCEPEvent(CEPEvent.CHANGE_STATE, instance);
+						this.eventAgent.fireCEPEvent(CEPEvent.CHANGE_STATE,
+								instance);
 					} else {
 						// execute possible further transitions on new instances
 						// because it must be cloned from current instance,
@@ -390,18 +377,57 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 						// Now its save to update current Transition
 						instance.takeTransition(transitionsToTake.remove(0),
 								event, eventReader.get(port));
-						this.eventAgent
-								.fireCEPEvent(CEPEvent.CHANGE_STATE, instance);
+						this.eventAgent.fireCEPEvent(CEPEvent.CHANGE_STATE,
+								instance);
 					}
 				}
 			}
 			if (logger.isTraceEnabled()) {
-				logger.trace(this+":After Taking Transitions " + instance);
+				logger.trace(this + ":After Taking Transitions " + instance);
 				for (StateMachineInstance<R> s : branchedInstances) {
-					logger.debug(this+":Branched Instances " + s);
+					logger.debug(this + ":Branched Instances " + s);
 				}
 			}
 		}
+	}
+
+	protected boolean checkOutOfWindow(StateMachine<R> sm, long currentTime,
+			R event, LinkedList<StateMachineInstance<R>> outofWindowInstances,
+			int port, StateMachineInstance<R> instance, boolean outOfTime) {
+		// Check Time
+		if (sm.getWindowSize() > 0) {
+			if (currentTime < (instance.getStartTimestamp() + sm
+					.getWindowSize())) {
+				// logger.debug(instance + " Out of Window ...");
+				this.eventAgent
+						.fireCEPEvent(CEPEvent.MACHINE_ABORTED, instance);
+				outofWindowInstances.add(instance);
+				outOfTime = true;
+			}
+		}
+		if (sm.getEndsAtVar() != null) {
+			Object value = getValue(port, instance, sm.getEndsAtVar());
+			// Read from input Stream
+			if (value == null && event != null) {
+				value = getValueFromEvent(event, port, sm.getEndsAtVar()
+						.getVariableName());
+			}
+			// System.err.println(instance+
+			// " End end currently not supported "+sm.getEndsAtVar()+" = "+value);
+
+			MEPCondition c = sm.getEndsAtCondition();
+			c.setValue(StateMachine.current, Long.valueOf(currentTime));
+			c.setValue(StateMachine.maxTime, value);
+			if (c.evaluate()) {
+				// logger.debug(instance + " Out of Window ...");
+				this.eventAgent
+						.fireCEPEvent(CEPEvent.MACHINE_ABORTED, instance);
+				outofWindowInstances.add(instance);
+				outOfTime = true;
+			}
+
+		}
+		return outOfTime;
 	}
 
 	// update Variables in transition. If no values is found for at least one
@@ -435,8 +461,9 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 			StateMachineInstance<R> instance, int port, CepVariable varName) {
 		Object newValue;
 		if (varName.isActEventName()) {
-			
-			newValue = getValueFromEvent(object, port, varName.getVariableName());
+
+			newValue = getValueFromEvent(object, port,
+					varName.getVariableName());
 
 			// logger.debug("Setze " + varName + " auf " + newValue +
 			// " from " + object);
@@ -448,8 +475,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 
 	protected Object getValueFromEvent(R object, int port, String varName) {
 		Object newValue;
-		newValue = this.eventReader.get(port).getValue(
-				varName, object);
+		newValue = this.eventReader.get(port).getValue(varName, object);
 		return newValue;
 	}
 
@@ -486,7 +512,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 		}
 		return value;
 	}
-	
+
 	private LinkedList<W> validateFinalStates(R event,
 			LinkedList<StateMachineInstance<R>> outdatedInstances,
 			LinkedList<StateMachineInstance<R>> outofWindowInstances, int port) {
@@ -503,9 +529,10 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 			for (State negBeforeFinal : negState) {
 				for (StateMachineInstance<R> instance : outofWindowInstances) {
 					if (instance.getCurrentState().equals(negBeforeFinal)) {
-						logger.debug(this+":Instance terminated with negative last state --> fire");
-						createEvent(event, outdatedInstances, port, complexEvents,
-								instance);
+						logger.debug(this
+								+ ":Instance terminated with negative last state --> fire");
+						createEvent(event, outdatedInstances, port,
+								complexEvents, instance);
 						// Hint: The corresponding automata is already outdated,
 						// because it does not have this negative state
 						// TODO: What about transisitions?
@@ -531,7 +558,8 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 
 				if (instance.getCurrentState().isAccepting()) {
 					if (logger.isDebugEnabled()) {
-						logger.debug(this+":Reached final state in negative instance "
+						logger.debug(this
+								+ ":Reached final state in negative instance "
 								+ instance);
 					}
 					// if there is an accepting instance in the first list, DO
@@ -547,8 +575,8 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 							break;
 						}
 						// No accepting instance found --> fire event
-						createEvent(event, outdatedInstances, port, complexEvents,
-								negativeInstance);
+						createEvent(event, outdatedInstances, port,
+								complexEvents, negativeInstance);
 						outdatedInstances.add(instance);
 					}
 
@@ -566,9 +594,10 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 
 			if (instance.getCurrentState().isAccepting()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug(this+":Reached final state in " + instance);
+					logger.debug(this + ":Reached final state in " + instance);
 				}
-				createEvent(event, outdatedInstances, port, complexEvents, instance);
+				createEvent(event, outdatedInstances, port, complexEvents,
+						instance);
 				// depending on matching strategy add all instances to outdated
 				// else further events would be created
 				if (onlyOneMatchPerInstance) {
@@ -594,24 +623,20 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 				if (value != null) {
 					entry.setValue(varName, value);
 				} else {
-					logger.warn(this+":Variable " + varName + " has no value!");
+					logger.warn(this + ":Variable " + varName
+							+ " has no value!");
 				}
 			}
 		}
-		complexEvents
-				.add(this.complexEventFactory.createComplexEvent(
-						this.stateMachines.get(0).getOutputScheme(),
-						instance.getMatchingTrace(),
-						instance.getSymTab(),
-						event));
+		complexEvents.add(this.complexEventFactory.createComplexEvent(
+				this.stateMachines.get(0).getOutputScheme(),
+				instance.getMatchingTrace(), instance.getSymTab(), event));
 		/*
 		 * An dieser Stelle muss die Instanz, die zum Complex Event gefuehrt
 		 * hat, als veraltet markiert werden.
 		 */
 		outdatedInstances.add(instance);
 	}
-
-
 
 	/**
 	 * Liefert das Factory-Objekt für komplexe Events.
@@ -680,7 +705,6 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 	public List<StateMachineInstance<R>> getInstances(StateMachine<R> sm) {
 		return Collections.unmodifiableList(smInstances.get(sm));
 	}
-
 
 	@Override
 	public PatternDetectPO<R, W> clone() {

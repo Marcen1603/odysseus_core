@@ -37,6 +37,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class StateMachine<E> implements Serializable {
+	
+	public static final CepVariable current = new CepVariable("", -1, "current", null);
+	public static final CepVariable maxTime = new CepVariable("", -1, "maxTime", null);
 
 	private static final long serialVersionUID = 6012448345909786996L;
 
@@ -66,6 +69,7 @@ public class StateMachine<E> implements Serializable {
 	private OutputScheme outputScheme;
 	
 	private CepVariable endsAtVar;
+	private MEPCondition endsAtCondition ;
 
 	private EEventSelectionStrategy eventSelectionStrategy;
 
@@ -233,6 +237,14 @@ public class StateMachine<E> implements Serializable {
 	
 	public CepVariable getEndsAtVar() {
 		return endsAtVar;
+	}
+	
+	public void setEndsAtCondition(MEPCondition endsAtCondition) {
+		this.endsAtCondition = endsAtCondition;
+	}
+	
+	public MEPCondition getEndsAtCondition() {
+		return endsAtCondition;
 	}
 
 	@Override

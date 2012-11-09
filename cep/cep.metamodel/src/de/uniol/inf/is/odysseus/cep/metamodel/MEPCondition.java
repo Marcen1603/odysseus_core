@@ -102,7 +102,7 @@ public abstract class MEPCondition extends AbstractCondition{
 	}
 	
 	
-	private boolean evaluate() {
+	public boolean evaluate() {
 		return expression.getValue();
 	}
 

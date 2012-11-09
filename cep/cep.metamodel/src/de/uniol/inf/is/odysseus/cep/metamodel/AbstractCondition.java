@@ -101,16 +101,6 @@ abstract public class AbstractCondition implements ICepCondition {
 		return true;
 	}
 
-	@Override
-	public boolean checkTime(long start, long current, long windowsize) {
-		boolean ret = current < (start + windowsize);
-		// WAS SOLL DAS DENN?? Erstmal auskommentiert ...
-		// Automat muss _immer_ verworfen werden, wenn es aus dem Fenster herausfaellt, oder?
-		//		boolean ret = isNegate() ? current >= (start + windowsize)
-//				: current < (start + windowsize);
-		// System.out.println("checkTime "+start+" "+current+" "+windowsize+" --> "+ret);
-		return ret;
-	}
 
 	@Override
 	abstract public boolean isNegate();

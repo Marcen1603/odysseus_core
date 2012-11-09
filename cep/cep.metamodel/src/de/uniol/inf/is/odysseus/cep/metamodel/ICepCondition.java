@@ -59,14 +59,6 @@ public interface ICepCondition extends ICepExpression<Boolean>,Serializable{
 	 */
 	void setEventPort(int eventPort);
 	
-	/**
-	 * 
-	 * @param start
-	 * @param current
-	 * @param windowsize
-	 * @return start + windowsize < current;
-	 */
-	public boolean checkTime(long start, long current, long windowsize);
 	boolean checkEventType(String eventType);
 	boolean checkEventTypeWithPort(int port);	
 

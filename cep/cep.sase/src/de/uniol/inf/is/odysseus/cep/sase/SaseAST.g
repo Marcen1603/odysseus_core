@@ -714,7 +714,10 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
 ^(ENDSAT attributeTerm[retAttr]
  )
  {
-  patternDetectAO.getStateMachine().setEndsAtVar(new CepVariable(transformToString(retAttr.get(0))));
+  CepVariable var = new CepVariable(transformToString(retAttr.get(0)));
+  patternDetectAO.getStateMachine().setEndsAtVar(var);
+  RelationalMEPCondition endsAtCondition = new RelationalMEPCondition(StateMachine.current.getVariableName() +" > "+ StateMachine.maxTime.getVariableName());
+  patternDetectAO.getStateMachine().setEndsAtCondition(endsAtCondition);
  };
 
 returnPart[PatternDetectAO patternDetectAO]

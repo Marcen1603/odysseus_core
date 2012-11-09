@@ -33,7 +33,11 @@ public class RelationalMEPCondition extends MEPCondition {
 	@Override
 	@SuppressWarnings({"rawtypes"})
 	public void setValue(CepVariable varName, Object newValue) {
-		super.setValue(varName,((Tuple)newValue).getAttribute(0));
+		if (newValue instanceof Tuple){
+			super.setValue(varName,((Tuple)newValue).getAttribute(0));
+		}else{
+			super.setValue(varName, newValue);
+		}
 	}
 
 	

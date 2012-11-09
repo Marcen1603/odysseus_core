@@ -1,4 +1,4 @@
-// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-11-08 09:52:04
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-11-09 08:43:09
 
 /********************************************************************************** 
   * Copyright 2011 The Odysseus Team
@@ -2118,7 +2118,10 @@ public class SaseAST extends TreeParser {
 
 
 
-              patternDetectAO.getStateMachine().setEndsAtVar(new CepVariable(transformToString(retAttr.get(0))));
+              CepVariable var = new CepVariable(transformToString(retAttr.get(0)));
+              patternDetectAO.getStateMachine().setEndsAtVar(var);
+              RelationalMEPCondition endsAtCondition = new RelationalMEPCondition(StateMachine.current.getVariableName() +" > "+ StateMachine.maxTime.getVariableName());
+              patternDetectAO.getStateMachine().setEndsAtCondition(endsAtCondition);
              
 
             }
@@ -2139,7 +2142,7 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "returnPart"
-    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:720:1: returnPart[PatternDetectAO patternDetectAO] : ( ^( RETURN ( attributeTerm[retAttr] )* (value= NAME )? ) |);
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:723:1: returnPart[PatternDetectAO patternDetectAO] : ( ^( RETURN ( attributeTerm[retAttr] )* (value= NAME )? ) |);
     public final void returnPart(PatternDetectAO patternDetectAO) throws RecognitionException {
         CommonTree value=null;
 
@@ -2147,7 +2150,7 @@ public class SaseAST extends TreeParser {
         List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
 
         try {
-            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:724:3: ( ^( RETURN ( attributeTerm[retAttr] )* (value= NAME )? ) |)
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:727:3: ( ^( RETURN ( attributeTerm[retAttr] )* (value= NAME )? ) |)
             int alt20=2;
             int LA20_0 = input.LA(1);
 
@@ -2166,13 +2169,13 @@ public class SaseAST extends TreeParser {
             }
             switch (alt20) {
                 case 1 :
-                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:725:3: ^( RETURN ( attributeTerm[retAttr] )* (value= NAME )? )
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:728:3: ^( RETURN ( attributeTerm[retAttr] )* (value= NAME )? )
                     {
                     match(input,RETURN,FOLLOW_RETURN_in_returnPart1413); 
 
                     if ( input.LA(1)==Token.DOWN ) {
                         match(input, Token.DOWN, null); 
-                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:725:12: ( attributeTerm[retAttr] )*
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:728:12: ( attributeTerm[retAttr] )*
                         loop18:
                         do {
                             int alt18=2;
@@ -2185,7 +2188,7 @@ public class SaseAST extends TreeParser {
 
                             switch (alt18) {
                         	case 1 :
-                        	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:725:12: attributeTerm[retAttr]
+                        	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:728:12: attributeTerm[retAttr]
                         	    {
                         	    pushFollow(FOLLOW_attributeTerm_in_returnPart1415);
                         	    attributeTerm(retAttr);
@@ -2202,7 +2205,7 @@ public class SaseAST extends TreeParser {
                         } while (true);
 
 
-                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:725:41: (value= NAME )?
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:728:41: (value= NAME )?
                         int alt19=2;
                         int LA19_0 = input.LA(1);
 
@@ -2211,7 +2214,7 @@ public class SaseAST extends TreeParser {
                         }
                         switch (alt19) {
                             case 1 :
-                                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:725:41: value= NAME
+                                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:728:41: value= NAME
                                 {
                                 value=(CommonTree)match(input,NAME,FOLLOW_NAME_in_returnPart1421); 
 
@@ -2250,7 +2253,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:749:3: 
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:752:3: 
                     {
                     }
                     break;
