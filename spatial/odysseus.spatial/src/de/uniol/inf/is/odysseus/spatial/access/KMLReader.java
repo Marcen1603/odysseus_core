@@ -157,7 +157,7 @@ class KMLHandler extends DefaultHandler {
 	 */
 	public void startElement(String uri, String name, String qName,
 			Attributes atts) throws SAXException {
-		if (name.equalsIgnoreCase(GMLConstants.GML_POLYGON)) {
+		if (name.equalsIgnoreCase(GMLConstants.GML_POLYGON) || name.equalsIgnoreCase(GMLConstants.GML_POINT)) {
 			currGeomHandler = new GMLHandler(fact, null);
 		}
 		if (currGeomHandler != null)
