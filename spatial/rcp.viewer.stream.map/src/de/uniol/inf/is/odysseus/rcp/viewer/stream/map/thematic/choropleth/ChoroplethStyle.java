@@ -11,7 +11,6 @@ public class ChoroplethStyle extends PolygonStyle{
 	public ChoroplethStyle(int lineWidth, Color lineColor, Color fillColor, int transparency) {
 		super(lineWidth, lineColor, fillColor);
 		this.transparency = transparency;
-		// TODO Auto-generated constructor stub
 	}
 	public ChoroplethStyle(ChoroplethStyle style) {
 		super(style.getLineWidth(), style.getLineColor(), style.getFillColor());
@@ -34,5 +33,5 @@ public class ChoroplethStyle extends PolygonStyle{
 		this.transparency = transparency;
 	}
 
-	public final static ChoroplethStyle defaultChoroplethStyle = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 0, 255, 0), 255);
+	public final static ChoroplethStyle DEFAULTCHOROPLETHSTYLE = new ChoroplethStyle(1, new Color(Display.getCurrent(), 0, 0, 0), new Color(Display.getCurrent(), 0, 255, 0), 255);
 }

@@ -121,26 +121,13 @@ public class ChoroplethLayer extends AbstractLayer{
 
 	@Override
 	public void removeLast() {
-		// TODO Auto-generated method stub
-		
+		choroplethList.removeLast();
 	}
 
 	@Override
 	public int getTupleCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return choroplethList.size();
 	}
-
-//	@Override
-//	public void addElement(Object object) {
-//		Tuple<?> tuple =  ((Tuple<?>)object);
-//		Geometry geometry = (Geometry)tuple.getAttribute(geometrieAttributeIndex);
-//		System.out.println(geometry);
-//		Integer value = (Integer)tuple.getAttribute(visualizationAttributeIndex);
-//		System.out.println(value);
-//		Choropleth choropleth = new Choropleth(geometry, value);
-//		choroplethList.add(choropleth);
-//	}
 	
 	
 	@Override
@@ -156,11 +143,11 @@ public class ChoroplethLayer extends AbstractLayer{
 	}
 
 	private void drawChoropleth(Choropleth choropleth, GC gc) {
-		if (choropleth.getGeometry() instanceof Polygon) {
-			drawChoroplethPolygon((Polygon)choropleth.getGeometry(), choropleth.getValue(), gc);
+		if (choropleth.getPolygon() instanceof Polygon) {
+			drawChoroplethPolygon((Polygon)choropleth.getPolygon(), choropleth.getValue(), gc);
 		} 
-		else if (choropleth.getGeometry() instanceof GeometryCollection) {
-			drawChoroplethPolygonCollection((GeometryCollection) choropleth.getGeometry(), choropleth.getValue(), gc);
+		else if (choropleth.getPolygon() instanceof GeometryCollection) {
+			drawChoroplethPolygonCollection((GeometryCollection) choropleth.getPolygon(), choropleth.getValue(), gc);
 		}
 	}
 	private void drawChoroplethPolygonCollection(GeometryCollection geometryCollection, Integer value, GC gc) {
@@ -177,11 +164,7 @@ public class ChoroplethLayer extends AbstractLayer{
 		}
 		
 		Style style = legend.getStyleForValue(value);
-		style.draw(gc, list);
-		
-		
-//		this.style.setActiveStyle(polygon);
-//		this.style.draw(gc, list);	
+		style.draw(gc, list);	
 
 	}
 	private int[] drawLinearRing(LineString lineString, GC gc) {

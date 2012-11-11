@@ -30,6 +30,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.choropleth.ChoroplethLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.choropleth.EditChoroplethStyleDialog;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.diagram.DiagramLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.diagram.EditDiagramStyleSettings;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.location.EditLocationStyleDialog;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.location.LocationLayer;
 
 public class MapLayerView extends AbstractStreamMapEditorViewPart {
 
@@ -228,6 +232,22 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 				public void run(){
 					ChoroplethLayer layer = (ChoroplethLayer)i.getFirstElement();
 					EditChoroplethStyleDialog dialog = new EditChoroplethStyleDialog(Display.getCurrent().getActiveShell(), layer);
+					dialog.open();
+				}
+			});
+		}else if(i.getFirstElement() instanceof LocationLayer){
+			mgr.add(new Action("Edit Settings") {
+				public void run(){
+					LocationLayer layer = (LocationLayer)i.getFirstElement();
+					EditLocationStyleDialog dialog = new EditLocationStyleDialog(Display.getCurrent().getActiveShell(), layer);
+					dialog.open();
+				}
+			});
+		}else if(i.getFirstElement() instanceof DiagramLayer){
+			mgr.add(new Action("Edit Settings") {
+				public void run(){
+					DiagramLayer layer = (DiagramLayer)i.getFirstElement();
+					EditDiagramStyleSettings dialog = new EditDiagramStyleSettings(Display.getCurrent().getActiveShell(), layer);
 					dialog.open();
 				}
 			});

@@ -93,4 +93,20 @@ public class PointStyle extends Style {
 		return getImage(list);
 	}
 
+	public SHAPE getShape() {
+		return shape;
+	}
+
+	public void setShape(SHAPE shape) {
+		this.shape = shape;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
 }

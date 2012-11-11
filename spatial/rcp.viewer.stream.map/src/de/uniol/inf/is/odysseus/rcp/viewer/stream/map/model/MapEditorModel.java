@@ -52,6 +52,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerTypeRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.buffer.DynamicBuffer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.choropleth.ChoroplethLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.diagram.DiagramLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.location.LocationLayer;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
@@ -313,18 +315,9 @@ public class MapEditorModel extends ModelObject {
 				 LOG.debug(connection.getQuery().getLogicalQuery().getQueryText());
 				 LOG.debug(layerConfiguration.getQuery());
 				if (connection.getQuery().getLogicalQuery().getQueryText().equals(layerConfiguration.getQuery())) {
-
-					// Connect the Stream to the iStreamListner
 					schema = connection.getConnection().getSubscriptions().get(0).getSchema();
-					// AttributeResolver resolver = new AttributeResolver();
-					// resolver.addSource(connection.getConnection().getSubscriptions().get(0).getSchema().getURI(),
-					// (ILogicalOperator)
-					// connection.getQuery().getLogicalQuery().getLogicalPlan().getSubscriptions().toArray()[0]);
-					// resolver.addAttributes(schema);
-					// attribute =
-					// resolver.getAttribute(layerConfiguration.getAttribute());
-					
-					
+
+
 					//0. Element in layerConfiguration.getAttribute()
 					SDFAttribute geometrieAttribute = null;
 					//1. Element in layerConfiguration.getAttribute()
@@ -332,14 +325,7 @@ public class MapEditorModel extends ModelObject {
 					
 					for (SDFAttribute tmpAttribute : schema) {
 						if (tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute().get(0))) {
-							
 							geometrieAttribute = tmpAttribute;
-//							layer = LayerTypeRegistry.getLayer(attribute.getDatatype());
-//							layer.setConfiguration(layerConfiguration);
-//
-//							layer.init(null, schema, attribute);
-//
-//							connection.add(layer);
 						}else if(tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute().get(1))){
 							visualizationAttribute = tmpAttribute;
 						}
@@ -347,6 +333,70 @@ public class MapEditorModel extends ModelObject {
 					if(screenManager!=null && geometrieAttribute!=null && visualizationAttribute!=null){
 						layer = new ChoroplethLayer(layerConfiguration);
 						((ChoroplethLayer)layer).init(screenManager, schema, geometrieAttribute, visualizationAttribute);
+						connection.add(layer);
+					}
+				}
+			}
+		}
+		if (layerConfiguration.getType() == 3) {
+			for (LayerUpdater connection : connections.values()) {
+				 LOG.debug(connection.getQuery().getLogicalQuery().getQueryText());
+				 LOG.debug(layerConfiguration.getQuery());
+				if (connection.getQuery().getLogicalQuery().getQueryText().equals(layerConfiguration.getQuery())) {
+					schema = connection.getConnection().getSubscriptions().get(0).getSchema();
+
+
+					//0. Element in layerConfiguration.getAttribute()
+					SDFAttribute geometrieAttribute = null;
+					//1. Element in layerConfiguration.getAttribute()
+					SDFAttribute visualizationAttribute = null;
+					
+					for (SDFAttribute tmpAttribute : schema) {
+						if (tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute().get(0))) {
+							geometrieAttribute = tmpAttribute;
+						}else if(tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute().get(1))){
+							visualizationAttribute = tmpAttribute;
+						}
+					}
+					if(screenManager!=null && geometrieAttribute!=null && visualizationAttribute!=null){
+						layer = new LocationLayer(layerConfiguration);
+						((LocationLayer)layer).init(screenManager, schema, geometrieAttribute, visualizationAttribute);
+						connection.add(layer);
+					}
+				}
+			}
+		}
+		if (layerConfiguration.getType() == 4) {
+			for (LayerUpdater connection : connections.values()) {
+				 LOG.debug(connection.getQuery().getLogicalQuery().getQueryText());
+				 LOG.debug(layerConfiguration.getQuery());
+				if (connection.getQuery().getLogicalQuery().getQueryText().equals(layerConfiguration.getQuery())) {
+					schema = connection.getConnection().getSubscriptions().get(0).getSchema();
+
+
+					//0. Element in layerConfiguration.getAttribute()
+					SDFAttribute geometryAttribute = null;
+					//1. - x. Element in layerConfiguration.getAttribute()
+					LinkedList<SDFAttribute> visualizationAttributeList = new LinkedList<>();
+					
+					for (SDFAttribute tmpAttribute : schema) {
+						for(int i=0;i<layerConfiguration.getAttribute().size();i++){
+							String attributeName = layerConfiguration.getAttribute().get(i);
+							
+							if(i==0){
+								if (tmpAttribute.getAttributeName().equals(attributeName)) {
+									geometryAttribute = tmpAttribute;
+								}
+							}else{
+								if(tmpAttribute.getAttributeName().equals(attributeName)){
+									visualizationAttributeList.add(tmpAttribute);
+								}
+							}
+						}
+					}
+					if(screenManager!=null && geometryAttribute!=null && visualizationAttributeList!=null){
+						layer = new DiagramLayer(layerConfiguration);
+						((DiagramLayer)layer).init(screenManager, schema, geometryAttribute, visualizationAttributeList);
 						connection.add(layer);
 					}
 				}
@@ -374,7 +424,7 @@ public class MapEditorModel extends ModelObject {
 			LOG.debug("Bind Query: " + query.getLogicalQuery().getQueryText());
 			
 			
-//			update DynamicPuffer
+//			update DynamicBuffer
 			dynamicBuffer.addConnection(String.valueOf(query.hashCode()), updater);
 		}
 		firePropertyChange(MAP, null, this);

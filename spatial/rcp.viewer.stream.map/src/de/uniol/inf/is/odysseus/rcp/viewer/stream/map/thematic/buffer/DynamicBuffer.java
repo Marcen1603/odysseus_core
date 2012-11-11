@@ -14,8 +14,11 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.choropleth.ChoroplethLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.diagram.DiagramLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.location.LocationLayer;
 
 public class DynamicBuffer {
 //	private static final Logger LOG = LoggerFactory.getLogger(DynamicBuffer.class);
@@ -54,7 +57,7 @@ public class DynamicBuffer {
 		
 		screenManager.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				timeSliderControl.updateSliderRange(startPointInTime, endPointInTime);
+				timeSliderControl.updateSliderRange(new PointInTime(startPointInTime.getMainPoint()-1), endPointInTime);
 			}
 		});
 		
@@ -148,15 +151,35 @@ public class DynamicBuffer {
 				}
 				
 				for (ILayer iLayer : element) {
-					if(iLayer instanceof ChoroplethLayer){
+					if(iLayer instanceof VectorLayer){
+						VectorLayer layer = (VectorLayer)iLayer;
+						layer.clean();
+						
+						for (IStreamObject<? extends ITimeInterval> iStreamObject : elementList) {
+							layer.addTuple((Tuple<?>) iStreamObject);
+						}
+					}else if(iLayer instanceof ChoroplethLayer){
 						ChoroplethLayer layer = (ChoroplethLayer)iLayer;
 						layer.clean();
 						
 						for (IStreamObject<? extends ITimeInterval> iStreamObject : elementList) {
 							layer.addTuple((Tuple<?>) iStreamObject);
 						}
+					}else if(iLayer instanceof LocationLayer){
+						LocationLayer layer = (LocationLayer)iLayer;
+						layer.clean();
 						
-					}				
+						for (IStreamObject<? extends ITimeInterval> iStreamObject : elementList) {
+							layer.addTuple((Tuple<?>) iStreamObject);
+						}
+					}else if(iLayer instanceof DiagramLayer){
+						DiagramLayer layer = (DiagramLayer)iLayer;
+						layer.clean();
+						
+						for (IStreamObject<? extends ITimeInterval> iStreamObject : elementList) {
+							layer.addTuple((Tuple<?>) iStreamObject);
+						}
+					}
 				}
 			}
 		}

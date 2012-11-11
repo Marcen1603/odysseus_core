@@ -65,7 +65,7 @@ public class ChoroplethLegend{
 		return legendList.size();
 	}
 	public ChoroplethStyle getStyleForValue(Integer value){
-		ChoroplethStyle style = new ChoroplethStyle(ChoroplethStyle.defaultChoroplethStyle);
+		ChoroplethStyle style = new ChoroplethStyle(ChoroplethStyle.DEFAULTCHOROPLETHSTYLE);
 		for (ChoroplethLegendEntry entry : legendList) {
 			if(entry.getPredicate().isTrue(value)){
 				style = entry.getStyle();

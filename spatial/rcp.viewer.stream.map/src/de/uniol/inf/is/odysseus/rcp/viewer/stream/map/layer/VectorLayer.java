@@ -227,7 +227,7 @@ public class VectorLayer extends AbstractLayer{
 	}
 	
 	public void clean() {
-		LOG.debug("(CLEAN)Current Geometries:" + geometries.size());
+//		LOG.debug("(CLEAN)Current Geometries:" + geometries.size());
 		synchronized (geometries) {
 			this.geometries.clear();
 		}
