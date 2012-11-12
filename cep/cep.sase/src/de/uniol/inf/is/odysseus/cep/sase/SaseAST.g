@@ -231,7 +231,7 @@ kleeneAttributeState = new HashMap<String, String>();
 List<String> sourceNames = new ArrayList<String>();
 }
   :
-  ^(QUERY patternPart[patternDetectAO, sourceNames] wherePart[patternDetectAO] endsAtPart[patternDetectAO] withinPart[patternDetectAO] returnPart[patternDetectAO])
+  ^(QUERY patternPart[patternDetectAO, sourceNames] wherePart[patternDetectAO] withinPart[patternDetectAO] endsAtPart[patternDetectAO] returnPart[patternDetectAO])
   
    {
     // Initialize Schema
@@ -697,7 +697,6 @@ withinPart[PatternDetectAO patternDetectAO]
       )
     )?
    )
-  
    {
     Long time = getTime(value.getText(), unit);
     getLogger().debug("Setting Windowsize to " + time + " milliseconds");
@@ -718,7 +717,9 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
   patternDetectAO.getStateMachine().setEndsAtVar(var);
   RelationalMEPCondition endsAtCondition = new RelationalMEPCondition(StateMachine.current.getVariableName() +" > "+ StateMachine.maxTime.getVariableName());
   patternDetectAO.getStateMachine().setEndsAtCondition(endsAtCondition);
- };
+ }
+ |
+ ;
 
 returnPart[PatternDetectAO patternDetectAO]
 @init {
