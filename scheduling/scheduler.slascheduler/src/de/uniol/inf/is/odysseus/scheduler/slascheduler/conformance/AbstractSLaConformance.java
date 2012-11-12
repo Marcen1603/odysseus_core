@@ -191,7 +191,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 			double conformance = this.getConformance();
 			System.err.println(conformance);
 			List<ServiceLevel> serviceLevels = this.getSLA().getServiceLevel();
-			for (int i = serviceLevels.size() - 1; i >= 0; i--) {
+			for (int i = serviceLevels.size() - 1; i >= 0 && !violated; i--) {
 				if (this.getSLA().getScope().thresholdIsMin()) {
 					if (!this.hasRunInWindow
 							&& (this.windowEnd - this.getTimestampOfOldestBufferedElement()) > this.maxLatency) {
@@ -209,7 +209,6 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 						this.violation(serviceLevels.get(i).getPenalty()
 								.getCost(), i + 1, conformance);
 						violated = true;
-						break;
 					}
 				} else {
 					if (!this.hasRunInWindow
@@ -224,7 +223,6 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 						this.violation(serviceLevels.get(i).getPenalty()
 								.getCost(), i + 1, conformance);
 						violated = true;
-						break;
 					}
 				}
 			}
