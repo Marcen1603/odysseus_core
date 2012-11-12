@@ -18,5 +18,4 @@
    <implementation class="de.uniol.inf.is.odysseus.ac.updater.ACUpdaterPlugIn"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
    <reference bind="bindAdmissionControl" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl" name="IAdmissionControl" policy="static" unbind="unbindAdmissionControl"/>
-   <reference bind="bindAdmissionReaction" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionReaction" name="IAdmissionReaction" policy="static" unbind="unbindAdmissionReaction"/>
 </scr:component>
