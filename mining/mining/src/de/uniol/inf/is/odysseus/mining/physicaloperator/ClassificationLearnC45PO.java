@@ -183,8 +183,8 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		process_data(timestamp);
-		super.processPunctuation(timestamp, port);
+//		process_data(timestamp);
+//		super.processPunctuation(timestamp, port);
 
 	}
 
