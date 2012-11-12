@@ -25,7 +25,6 @@ import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
@@ -207,7 +206,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 			ILogicalOperator curInputOperator = curInputOperatorItem.operator;
 			op.subscribeToSource(curInputOperator, curEntry.getKey(),
 					curInputOperatorItem.outputPort,
-					curInputOperator.getOutputSchema());
+					curInputOperator.getOutputSchema(curInputOperatorItem.outputPort));
 		}
 
 		return op;
@@ -215,24 +214,24 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	abstract protected ILogicalOperator createOperatorInternal();
 
-	protected void initOperatorCreation(Map<String, Object> parameters2,
-			List<ILogicalOperator> inputOps) {
-		IAttributeResolver attributeResolver = buildAttributeResolver(inputOps);
-		for (IParameter<?> parameter : parameters) {
-			parameter.setAttributeResolver(attributeResolver);
-			parameter.setDataDictionary(dataDictionary);
-		}
-	}
+//	protected void initOperatorCreation(Map<String, Object> parameters2,
+//			List<ILogicalOperator> inputOps) {
+//		IAttributeResolver attributeResolver = buildAttributeResolver(inputOps);
+//		for (IParameter<?> parameter : parameters) {
+//			parameter.setAttributeResolver(attributeResolver);
+//			parameter.setDataDictionary(dataDictionary);
+//		}
+//	}
 
-	private static IAttributeResolver buildAttributeResolver(
-			List<ILogicalOperator> inputOps) {
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		for (ILogicalOperator op : inputOps) {
-			attributes.addAll(op.getOutputSchema().getAttributes());
-		}
-		SDFSchema schema = new SDFSchema("", attributes);
-		return new DirectAttributeResolver(schema);
-	}
+//	private static IAttributeResolver buildAttributeResolver(
+//			List<ILogicalOperator> inputOps) {
+//		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+//		for (ILogicalOperator op : inputOps) {
+//			attributes.addAll(op.getOutputSchema().getAttributes());
+//		}
+//		SDFSchema schema = new SDFSchema("", attributes);
+//		return new DirectAttributeResolver(schema);
+//	}
 
 	@Override
 	public void setInputOperator(int inputPort, ILogicalOperator operator,
