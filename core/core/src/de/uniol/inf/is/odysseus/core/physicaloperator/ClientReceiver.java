@@ -188,6 +188,11 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			this.owners.add(owner);
 		}
 	}
+	
+	@Override
+	public void addOwner(Collection<IOperatorOwner> owner) {
+		this.owners.addAll(owner);
+	}
 
 	@Override
 	public void removeOwner(IOperatorOwner owner) {

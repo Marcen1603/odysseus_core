@@ -122,21 +122,17 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 	 * 
 	 * @param planMonitor
 	 */
-	@SuppressWarnings("rawtypes")
-	public IPlanMonitor getPlanMonitor(String name);
+	public IPlanMonitor<?> getPlanMonitor(String name);
 
 	/**
 	 * Get List of all plan monitors
 	 */
-	@SuppressWarnings("rawtypes")
-	public Collection<IPlanMonitor> getPlanMonitors();
+	public Collection<IPlanMonitor<?>> getPlanMonitors();
 
 	ISession getSession();
 	void setSession(ISession user);
 	
 	boolean isOwner(ISession session);
-
-	//public QueryBuildConfiguration getBuildParameter();
 
 	void addChild(IPhysicalOperator child);
 

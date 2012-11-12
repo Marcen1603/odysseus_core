@@ -560,6 +560,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
+		sink.addOwner(this.getOwner());
 		addActiveSubscription(sub);
 		connectedSinks.add(sub);
 	}
@@ -654,6 +655,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		if (!this.owners.contains(owner)) {
 			this.owners.add(owner);
 		}
+		Collections.sort(owners, OperatorOwnerComparator.getInstance());
+	}
+	
+	@Override
+	public void addOwner(Collection<IOperatorOwner> owner) {
+		this.owners.addAll(owner);
 		Collections.sort(owners, OperatorOwnerComparator.getInstance());
 	}
 

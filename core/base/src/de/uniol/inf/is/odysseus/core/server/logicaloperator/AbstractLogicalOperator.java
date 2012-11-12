@@ -309,6 +309,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			this.owners.add(owner);
 		}
 	}
+	
+	@Override
+	public void addOwner(Collection<IOperatorOwner> owner) {
+		this.owners.addAll(owner);
+	}
 
 	private void initOwner() {
 		owners = new IdentityArrayList<IOperatorOwner>();

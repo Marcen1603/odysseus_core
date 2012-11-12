@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltpara
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Configuration;
@@ -55,22 +54,7 @@ public class QueryBuildConfiguration extends
 		
 		if (!contains(ParameterTransformationConfiguration.class)) {
 			set(new ParameterTransformationConfiguration(null));
-		}
-
-		// if no default root is set, 
-		// we need no default root strategy
-		if (!contains(ParameterDefaultRoot.class)) {
-			set(new ParameterDefaultRoot(null));
-			set(new ParameterDefaultRootStrategy(null));
-		}
-		// if there is a default root, but no default root
-		// strategy, we add a clone strategy, that clones
-		// the default root and adds a copy to each root of
-		// the query
-		else if(!contains(ParameterDefaultRootStrategy.class)){
-			set(new ParameterDefaultRootStrategy(new CloneDefaultRootStrategy()));
-		}
-			
+		}		
 
 		if (!contains(ParameterParserID.class)) {
 			set(new ParameterParserID(""));
@@ -109,22 +93,6 @@ public class QueryBuildConfiguration extends
 		this(configuration.toArray(new IQueryBuildSetting<?>[0]), name);
 	}
 
-	/**
-	 * Returns a physical root for the physical plan of a query.
-	 * 
-	 * @return A physical root for the physical plan of a query.
-	 */
-	public IPhysicalOperator getDefaultRoot() {
-		return get(ParameterDefaultRoot.class).getValue();
-	}
-	
-	public int getDefaultRootInPort() {
-		ParameterDefaultRoot parameter = get(ParameterDefaultRoot.class);
-		if (parameter == null) {
-			return 0;
-		}
-		return parameter.getPort();
-	}
 
 	/**
 	 * Returns a priority for the query.
@@ -167,10 +135,6 @@ public class QueryBuildConfiguration extends
 	
 	public IBufferPlacementStrategy getBufferPlacementStrategy(){
 		return getBufferPlacementParameter().getValue();
-	}
-	
-	public IDefaultRootStrategy getDefaultRootStrategy(){
-		return get(ParameterDefaultRootStrategy.class).getValue();
 	}
 	
 }

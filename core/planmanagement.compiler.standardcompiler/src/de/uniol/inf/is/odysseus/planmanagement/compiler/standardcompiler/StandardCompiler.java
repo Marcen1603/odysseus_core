@@ -252,7 +252,7 @@ public class StandardCompiler implements ICompiler {
 
 		ArrayList<IPhysicalOperator> physicalPlan = this.transformation.transform(copyPlan, transformationConfiguration, caller, dd);
 		
-		IPhysicalQuery transformedQuery = new PhysicalQuery(query, physicalPlan, null, null);
+		IPhysicalQuery transformedQuery = new PhysicalQuery(query, physicalPlan);
 		return transformedQuery;
 	}
 	

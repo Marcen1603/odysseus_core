@@ -400,6 +400,12 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	}
 
 	@Override
+	public void addOwner(Collection<IOperatorOwner> owner) {
+		this.owners.addAll(owner);
+		Collections.sort(owners, OperatorOwnerComparator.getInstance());
+	}
+	
+	@Override
 	public void removeOwner(IOperatorOwner owner) {
 		while (this.owners.remove(owner)) {
 			// Remove all owners

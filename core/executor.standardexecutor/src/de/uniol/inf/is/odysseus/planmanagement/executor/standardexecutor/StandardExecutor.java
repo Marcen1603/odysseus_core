@@ -444,7 +444,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			QueryBuildConfiguration queryBuildConfiguration = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
 			ArrayList<IPhysicalQuery> newQueries = new ArrayList<IPhysicalQuery>();
 
-			IPhysicalQuery query = new PhysicalQuery(physicalPlan, queryBuildConfiguration.getDefaultRoot(), queryBuildConfiguration.getDefaultRootStrategy());
+			IPhysicalQuery query = new PhysicalQuery(physicalPlan);
 			query.setSession(user);
 			query.addReoptimizeListener(this);
 			newQueries.add(query);

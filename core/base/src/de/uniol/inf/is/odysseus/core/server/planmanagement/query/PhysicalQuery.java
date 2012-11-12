@@ -41,7 +41,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IDefaultRootStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -56,21 +55,29 @@ public class PhysicalQuery implements IPhysicalQuery {
 		return _logger;
 	}
 
+	/**
+	 * The logical query, this physical query is build from
+	 */
 	private ILogicalQuery query;
-	final private IPhysicalOperator defaultRoot;
-	final private IDefaultRootStrategy defaultRootStrategy;
 
 	/**
-	 * 
+	 * The name of the query
+	 */
+	private String name = "";
+	
+	/**
+	 * Priority for the query
 	 */
 	private int basePriority;
 	
 	/**
-	 * Priority with which the objects should be scheduled.
+	 * Current priority, e.g. used by scheduling
 	 */
 	private long currentPriority;
 
-	
+	/**
+	 * If the query contains cycles, other handling is needed
+	 */
 	private boolean containsCycles;
 
 	/**
@@ -99,10 +106,13 @@ public class PhysicalQuery implements IPhysicalQuery {
 	transient private List<IPhysicalOperator> roots;
 
 	/**
-	 * Sources which should be scheduled.
+	 * Sources that should be scheduled.
 	 */
 	final private ArrayList<IIterableSource<?>> iterableSources = new ArrayList<IIterableSource<?>>();;
 	
+	/**
+	 * Sources that are leafs
+	 */
 	final private ArrayList<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
 
 	/**
@@ -126,11 +136,24 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	transient Map<String, IPOEventListener> poEventListener = new HashMap<String, IPOEventListener>();
 
-	@SuppressWarnings("rawtypes")
-	transient public Map<String, IPlanMonitor> planmonitors = new HashMap<String, IPlanMonitor>();
+	/**
+	 * What monitors are installed on this plan
+	 */
+	transient public Map<String, IPlanMonitor<?>> planmonitors = new HashMap<String, IPlanMonitor<?>>();
 
+	/**
+	 * Is the query running (open is called already)
+	 */
 	private boolean opened = false;
+	
+	/**
+	 * Who has send the query
+	 */
 	private ISession user;
+	
+	/**
+	 * To avoid dependencies, some values are only set as key value pairs
+	 */
 	final private Map<String, Object> parameters = new HashMap<String, Object>();
 
 	/**
@@ -142,40 +165,40 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * @param parameters
 	 *            {@link QueryBuildConfiguration} for creating the query
 	 */
-	public PhysicalQuery(List<IPhysicalOperator> physicalPlan,
-			IPhysicalOperator defaultRoot,
-			IDefaultRootStrategy defaultRootStrategy) {
+	public PhysicalQuery(List<IPhysicalOperator> physicalPlan) {
 		// Query created directly from physical plans get a negative query id to
 		// distinct from query created from logical queries (and garantee that
 		// logical and corresponding physical queries have the same id)
 		id = (-1)*idCounter++;
-		this.defaultRoot = defaultRoot;
-		this.defaultRootStrategy = defaultRootStrategy;
 		initializePhysicalRoots(physicalPlan);
-		determineIteratableSources(physicalPlan);
+		determineIteratableSourcesAndLeafs(physicalPlan);
 	}
 
+	/**
+	 * Create a new physical query 
+	 * @param query The logical query that is the origin of the query
+	 * @param physicalPlan The physical plan
+	 */
 	public PhysicalQuery(ILogicalQuery query,
-			ArrayList<IPhysicalOperator> physicalPlan,
-			IPhysicalOperator defaultRoot,
-			IDefaultRootStrategy defaultRootStrategy) {
-		//id = idCounter++;
+			ArrayList<IPhysicalOperator> physicalPlan) {
 		// logical and physical query must have the same id!
 		id = query.getID();
 		this.query = query;
-		this.defaultRoot = defaultRoot;
-		this.defaultRootStrategy = defaultRootStrategy;
 		this.user = query.getUser();
 		this.basePriority = query.getPriority();
 		this.currentPriority = query.getPriority();
 		this.containsCycles = query.containsCycles();
 		initializePhysicalRoots(physicalPlan);
-		determineIteratableSources(physicalPlan);
+		determineIteratableSourcesAndLeafs(physicalPlan);
 	}
 	
-	
-	
-	private void determineIteratableSources(
+	/**
+	 * Some operators need to be scheduled typically buffers
+	 * To allow other processing of operators that are sources
+	 * these leafSources are treated different
+	 * @param physicalPlan
+	 */
+	private void determineIteratableSourcesAndLeafs(
 			List<IPhysicalOperator> physicalPlan) {
 		List<IPhysicalOperator> queryOps = new ArrayList<IPhysicalOperator>(
 				getPhysicalChilds());
@@ -214,7 +237,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		if (query != null){
 			return query.getName();
 		}
-		return "";
+		return name;
 	}
 
 	/*
@@ -242,56 +265,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 */
 	@Override
 	public List<IPhysicalOperator> setRoots(List<IPhysicalOperator> roots) {
-		getLogger().debug("setRoots " + roots);
 		this.roots = roots;
-		// set default root (e. g. defined Sinks)
-		if (defaultRoot != null) {
-
-			ArrayList<IPhysicalOperator> newRoots = new ArrayList<IPhysicalOperator>();
-			// default root must be set for each root now
-			for (IPhysicalOperator oldRoot : this.roots) {
-				// register default root TODO hier koennen fehler
-				// uebersprungen
-				// werden, wenn
-				// root keine source ist
-				if (defaultRoot != null && defaultRoot.isSink()
-						&& oldRoot.isSource()) {
-					IPhysicalOperator cloned = defaultRootStrategy
-							.connectDefaultRootToSource((ISink<?>) defaultRoot,
-									oldRoot);
-					// ((ISink) defaultRoot).subscribeToSource((ISource)
-					// oldRoot, 0,
-					// 0, oldRoot.getOutputSchema());
-					// this.root = defaultRoot;
-
-					// only add the default root
-					// to the list of new roots, if
-					// it has been cloned. We only
-					// want to have different roots
-					// in the list of roots of this
-					// query.
-					if (!containsReference(newRoots, cloned)) {
-						newRoots.add(cloned);
-					}
-				}
-			}
-			// this.roots = newRoots;
-		}
-		// getLogger().debug("setRoots " + roots);
 		return this.roots;
-	}
-
-	/**
-	 * Checks, whether a reference to an object is already contained in a list.
-	 */
-	private static boolean containsReference(List<?> listOfObj, Object obj) {
-		for (Object o : listOfObj) {
-			if (o == obj) {
-				return true;
-			}
-		}
-		return false;
-
 	}
 
 	/*
@@ -602,15 +577,13 @@ public class PhysicalQuery implements IPhysicalQuery {
 		this.planmonitors.put(name, planMonitor);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public IPlanMonitor getPlanMonitor(String name) {
+	public IPlanMonitor<?> getPlanMonitor(String name) {
 		return this.planmonitors.get(name);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Collection<IPlanMonitor> getPlanMonitors() {
+	public Collection<IPlanMonitor<?>> getPlanMonitors() {
 		return Collections.unmodifiableCollection(planmonitors.values());
 	}
 

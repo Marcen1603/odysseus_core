@@ -17,11 +17,14 @@ package de.uniol.inf.is.odysseus.core.streamconnection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import sun.awt.util.IdentityArrayList;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -40,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
@@ -60,6 +64,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> implements ISi
 	private boolean hasExceptions = false;
 	private boolean isOpen = true;
 	
+	final transient protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
+
 	
 	public DefaultStreamConnection(IPhysicalOperator operator) {
 		this(Lists.newArrayList(operator));
@@ -262,37 +268,73 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> implements ISi
 		return isOpen;
 	}
 
+	// ------------------------------------------------------------------------
+	// Owner Management
+	// ------------------------------------------------------------------------
+
 	@Override
 	public void addOwner(IOperatorOwner owner) {
+		if (!this.owners.contains(owner)) {
+			this.owners.add(owner);
+		}
+		Collections.sort(owners, OperatorOwnerComparator.getInstance());
+
 	}
 
 	@Override
+	public void addOwner(Collection<IOperatorOwner> owner) {
+		this.owners.addAll(owner);
+		Collections.sort(owners, OperatorOwnerComparator.getInstance());
+	}
+	
+	@Override
 	public void removeOwner(IOperatorOwner owner) {
+		while (this.owners.remove(owner)) {
+			// Remove all owners
+		}
+		Collections.sort(owners, OperatorOwnerComparator.getInstance());
 	}
 
 	@Override
 	public void removeAllOwners() {
+		this.owners.clear();
 	}
 
 	@Override
-	public boolean isOwnedBy(IOperatorOwner owner) {
-		return false;
+	final public boolean isOwnedBy(IOperatorOwner owner) {
+		return this.owners.contains(owner);
 	}
 
 	@Override
-	public boolean hasOwner() {
-		return false;
+	final public boolean hasOwner() {
+		return !this.owners.isEmpty();
 	}
 
 	@Override
-	public List<IOperatorOwner> getOwner() {
-		return Lists.newArrayList();
+	final public List<IOperatorOwner> getOwner() {
+		return Collections.unmodifiableList(this.owners);
 	}
 
+	/**
+	 * Returns a ","-separated string of the owner IDs.
+	 * 
+	 * @param owner
+	 *            Owner which have IDs.
+	 * @return ","-separated string of the owner IDs.
+	 */
 	@Override
 	public String getOwnerIDs() {
-		return "";
+		StringBuffer result = new StringBuffer();
+		for (IOperatorOwner iOperatorOwner : owners) {
+			if (result.length() > 0) {
+				result.append(", ");
+			}
+			result.append(iOperatorOwner.getID());
+		}
+		return result.toString();
 	}
+	
+	
 
 	@Override
 	public Collection<String> getProvidedMonitoringData() {

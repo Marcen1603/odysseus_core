@@ -56,7 +56,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.FileSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -72,7 +71,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
@@ -808,22 +806,9 @@ public class OdysseusConsole implements CommandProvider,
 	private void addQuery(String q) {
 		try {
 			resetBuildConfig();
-			if (outputputFilename == null || outputputFilename.length() == 0) {
-				this.executor
-						.getQueryBuildConfiguration(defaultBuildConfiguration)
-						.getConfiguration()
-						.add(new ParameterDefaultRoot(new ConsoleSink()));
-				this.executor.addQuery(q, parser(), currentUser,
-						defaultBuildConfiguration);
-			} else {
-				this.executor
-						.getQueryBuildConfiguration(defaultBuildConfiguration)
-						.getConfiguration()
-						.add(new ParameterDefaultRoot(new FileSinkPO(
-								outputputFilename, "", -1, true, false)));
-				this.executor.addQuery(q, parser(), currentUser,
-						defaultBuildConfiguration);
-			}
+			this.executor.addQuery(q, parser(), currentUser,
+					defaultBuildConfiguration);
+
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -911,21 +896,22 @@ public class OdysseusConsole implements CommandProvider,
 			q.append(args[i]).append(" ");
 		}
 		try {
+			// TODO: FIXME!
 			resetBuildConfig();
 			if (args[args.length - 1].toUpperCase().equals("<S>")) {
 				q.append(args[args.length - 2]).append(" ");
-				this.executor
-						.getQueryBuildConfiguration(defaultBuildConfiguration)
-						.getConfiguration()
-						.add(new ParameterDefaultRoot(new ConsoleSink()));
+//				this.executor
+//						.getQueryBuildConfiguration(defaultBuildConfiguration)
+//						.getConfiguration()
+//						.add(new ParameterDefaultRoot(new ConsoleSink()));
 				this.executor.addQuery(q.toString(), parser(), currentUser,
 						defaultBuildConfiguration);
 			} else if (args[args.length - 2].toUpperCase().equals("<F>")) {
-				this.executor
-						.getQueryBuildConfiguration(defaultBuildConfiguration)
-						.getConfiguration()
-						.add(new ParameterDefaultRoot(new FileSinkPO(
-								args[args.length - 1], "", -1, true, false)));
+//				this.executor
+//						.getQueryBuildConfiguration(defaultBuildConfiguration)
+//						.getConfiguration()
+//						.add(new ParameterDefaultRoot(new FileSinkPO(
+//								args[args.length - 1], "", -1, true, false)));
 				this.executor.addQuery(q.toString(), parser(), currentUser,
 						defaultBuildConfiguration);
 
@@ -1139,8 +1125,8 @@ public class OdysseusConsole implements CommandProvider,
 			} else if (args[i].equalsIgnoreCase("-r")) {
 				restructure = Boolean.getBoolean(args[i + 1]);
 				i++;
-			} else if (args[i].equalsIgnoreCase("S")) {
-				params.add(new ParameterDefaultRoot(new ConsoleSink()));
+//			} else if (args[i].equalsIgnoreCase("S")) {
+//				params.add(new ParameterDefaultRoot(new ConsoleSink()));
 			} else if (args[i].equalsIgnoreCase("-m")) {
 				// boolean withMeta = Boolean.getBoolean(args[i + 1]);
 				i++;
@@ -1712,14 +1698,14 @@ public class OdysseusConsole implements CommandProvider,
 	private void addQueryWithEclipseConsoleOutput(String query) {
 		try {
 
-			Class<?> eclipseConsoleSink = Class
-					.forName("de.uniol.inf.is.odysseus.broker.console.client.EclipseConsoleSink");
-			Object ecs = eclipseConsoleSink.newInstance();
-			IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
+//			Class<?> eclipseConsoleSink = Class
+//					.forName("de.uniol.inf.is.odysseus.broker.console.client.EclipseConsoleSink");
+//			Object ecs = eclipseConsoleSink.newInstance();
+//			IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
 
 			resetBuildConfig();
-			this.executor.getQueryBuildConfiguration(defaultBuildConfiguration)
-					.getConfiguration().add(new ParameterDefaultRoot(ecSink));
+//			this.executor.getQueryBuildConfiguration(defaultBuildConfiguration)
+//					.getConfiguration().add(new ParameterDefaultRoot(ecSink));
 			this.executor.addQuery(query, parser(), currentUser,
 					defaultBuildConfiguration);
 		} catch (ClassNotFoundException e) {

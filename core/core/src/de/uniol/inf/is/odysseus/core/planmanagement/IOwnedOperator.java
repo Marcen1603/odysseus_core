@@ -15,9 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.core.planmanagement;
 
+import java.util.Collection;
 import java.util.List;
-
-import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 
 
 /**
@@ -36,6 +35,13 @@ public interface IOwnedOperator {
 	 * @param owner Owner which should be added.
 	 */
 	public void addOwner(IOperatorOwner owner);
+
+	/**
+	 * Adds an owner to this operator.
+	 * 
+	 * @param owner Owner which should be added.
+	 */
+	public void addOwner(Collection<IOperatorOwner> owner);
 
 	/**
 	 * Removes an owner from this operator.
