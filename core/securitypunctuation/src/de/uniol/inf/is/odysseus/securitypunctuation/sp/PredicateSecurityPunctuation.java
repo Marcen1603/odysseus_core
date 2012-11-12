@@ -78,7 +78,7 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	       SDFSchema schema = new SDFSchema("tupleToEvaluate", 
 	                new SDFAttribute("", "ts", new SDFDatatype("Long")));
 		RelationalPredicate pred = new RelationalPredicate(new SDFExpression(
-				"", exprString,  MEP.getInstance()));
+				exprString,  MEP.getInstance()));
 
 		pred.init(schema, null, false);
 		return pred;

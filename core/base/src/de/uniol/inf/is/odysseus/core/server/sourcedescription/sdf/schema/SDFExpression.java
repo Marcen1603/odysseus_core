@@ -96,7 +96,7 @@ public class SDFExpression implements Serializable, IClone {
      * @param attributeResolver
      * @throws ParseException
      */
-    public SDFExpression(String URI, String value, IExpressionParser expressionParser)
+    public SDFExpression(String value, IExpressionParser expressionParser)
             throws SDFExpressionParseException {
         init(null, value, null, expressionParser);
     }

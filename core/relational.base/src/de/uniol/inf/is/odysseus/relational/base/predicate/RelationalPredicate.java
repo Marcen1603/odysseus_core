@@ -627,7 +627,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 	    SDFAttribute a = new SDFAttribute("", "a", SDFDatatype.DOUBLE);
 	       SDFSchema schema = new SDFSchema("", a);
 		RelationalPredicate pred = new RelationalPredicate(new SDFExpression(
-				"", "a>b", MEP.getInstance()));
+				 "a>b", MEP.getInstance()));
 		
 
 		pred.init(schema, null, false);
