@@ -15,13 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.ac;
 
-import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
  * Zentrale Schnittstelle der Admission Control in Odysseus. Die aktuelle
@@ -137,21 +135,6 @@ public interface IAdmissionControl {
 	 *            geschieht nichts.
 	 */
 	public void removeListener(IAdmissionListener listener);
-
-	/**
-	 * Liefert eine Liste von {@link IPossibleExecution}, welche Vorschläge von
-	 * Anfragekombinationen beinhaltet. Jede Kombination schlägt vor, welche
-	 * Anfragen gestoppt werden sollten, um eine Überlastung zu vermeiden. Bei
-	 * jedem Aufruf wird die Liste neu generiert. Ist aktuelle keine Überlastung
-	 * vorhanden, so wird nur ein Vorschlag - alle Anfragen auszuführen -
-	 * zurückgegeben.
-	 * 
-	 * @param user User, welcher angibt, welche Anfragen genau betrachtet werden m�ssen.
-	 * 
-	 * @return Liste an Vorschlägen, welche Anfragen laufen und welche Anfragen
-	 *         gestoppt werden sollten, um eine Überlastung aufzulösen.
-	 */
-	public List<IPossibleExecution> getPossibleExecutions(IUser user);
 	
 	/**
 	 * Liefert <code>true</code>, wenn die letzte Kostensch�tzung eine �berlastung

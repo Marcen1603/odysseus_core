@@ -35,8 +35,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
-import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecution;
-import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecutionGenerator;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -77,8 +75,6 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	private Map<IPhysicalQuery, Long> timestamps = Maps.newHashMap();
 
 	private Map<IUser, ICost> userCosts = Maps.newHashMap();
-
-	private IPossibleExecutionGenerator generator = new StandardPossibleExecutionGenerator();
 
 	private final List<IAdmissionListener> listeners = Lists.newArrayList();
 	private final List<IAdmissionStatusListener> statusListeners = Lists.newArrayList();
@@ -388,18 +384,6 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 	}
 
-	public void bindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
-		LOG.debug("Bound PossibleExecutionGenerator {}", generator);
-		this.generator = generator;
-	}
-
-	public void unbindPossibleExecutionGenerator(IPossibleExecutionGenerator generator) {
-		if (this.generator == generator) {
-			this.generator = new StandardPossibleExecutionGenerator();
-			LOG.debug("Unbound PossibleExecutionGenerator {}. Using default now.", generator);
-		}
-	}
-
 	/**
 	 * Liefert den aktuell registrierten Executor oder <code>null</code>.
 	 * 
@@ -431,22 +415,6 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	public void removeListener(IAdmissionListener listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
-		}
-	}
-
-	@Override
-	public List<IPossibleExecution> getPossibleExecutions(IUser user) {
-		if (user == null) {
-			return generator.getPossibleExecutions(this, runningQueryCosts, actCost, maxCost);
-		} else {
-			Map<IPhysicalQuery, ICost> userQueries = Maps.newHashMap();
-			Optional<Double> optFactor = determineMaximumCostFactor(user);
-			for (IPhysicalQuery query : runningQueryCosts.keySet()) {
-				if (query.getSession().getUser().equals(user)) {
-					userQueries.put(query, runningQueryCosts.get(query));
-				}
-			}
-			return generator.getPossibleExecutions(this, userQueries, actCost, maxCost.fraction(optFactor.isPresent() ? optFactor.get() : 1.0));
 		}
 	}
 

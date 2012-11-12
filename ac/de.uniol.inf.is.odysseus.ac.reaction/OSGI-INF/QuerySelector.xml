@@ -14,9 +14,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.ac.reaction.LeastLossReaction">
-   <implementation class="de.uniol.inf.is.odysseus.ac.reaction.LeastLossReaction"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.ac.reaction.SingleQuerySelector">
+   <implementation class="de.uniol.inf.is.odysseus.ac.reaction.SingleQuerySelector"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionReaction"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector"/>
    </service>
 </scr:component>

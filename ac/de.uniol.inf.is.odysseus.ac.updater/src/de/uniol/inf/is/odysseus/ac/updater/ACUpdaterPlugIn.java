@@ -20,7 +20,6 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
-import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionReaction;
 
 /**
  * Activator-Class for ac.updater-Plugin.
@@ -32,7 +31,6 @@ public class ACUpdaterPlugIn implements BundleActivator {
 
 	private static IAdmissionControl admissionControl;
 	private static IExecutor executor;
-	private static IAdmissionReaction admissionReaction;
 	
 	private static ACUpdater updater;
 	
@@ -89,19 +87,5 @@ public class ACUpdaterPlugIn implements BundleActivator {
 	
 	public static IExecutor getExecutor() {
 		return executor;
-	}
-	
-	public void bindAdmissionReaction( IAdmissionReaction ar ) {
-		admissionReaction = ar;
-	}
-	
-	public void unbindAdmissionReaction( IAdmissionReaction ar ) {
-		if( ar == admissionReaction ) {
-			admissionReaction = null;
-		}
-	}
-	
-	public static IAdmissionReaction getAdmissionReaction() {
-		return admissionReaction;
 	}
 }

@@ -1,15 +1,12 @@
 package de.uniol.inf.is.odysseus.ac.sla;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
-import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecution;
-import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecutionGenerator;
-import de.uniol.inf.is.odysseus.core.server.ac.StandardPossibleExecution;
-import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
@@ -20,20 +17,20 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLARegistry;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLARegistryInfo;
 
-public class SLAPossibleExecutionGenerator implements IPossibleExecutionGenerator {
+public class SLAPossibleExecutionGenerator implements IAdmissionQuerySelector {
 	
 	private SLARegistry slaRegistry;
 
 	@Override
-	public List<IPossibleExecution> getPossibleExecutions(
-			IAdmissionControl sender, Map<IPhysicalQuery, ICost> queryCosts,
-			ICost overallCost, ICost maxCost) {
-	
-		List<IPossibleExecution> result = new ArrayList<>();
+	public ImmutableList<IPhysicalQuery> determineQueriesToStop(IAdmissionControl admissionControl, List<IPhysicalQuery> runningQueries) {
+		if( runningQueries.isEmpty() ) {
+			return ImmutableList.of();
+		}
+		
 		IPhysicalQuery mostExpensiveQuery = null;
 		double maxPenalty = -1.0;
 
-		for (IPhysicalQuery q : queryCosts.keySet()) {
+		for (IPhysicalQuery q : runningQueries) {
 			SLA sla = (SLA) q.getParameter(SLA.class.getName());
 			SLARegistryInfo info = this.slaRegistry.getData(q);
 			
@@ -49,11 +46,13 @@ public class SLAPossibleExecutionGenerator implements IPossibleExecutionGenerato
 				}
 			}
 		}
+		
+		return ImmutableList.of(mostExpensiveQuery);
+	}
 
-		IPossibleExecution possibleExec = StandardPossibleExecution.stopOneQuery(queryCosts, mostExpensiveQuery);
-		result.add(possibleExec);
-
-		return result;
+	@Override
+	public ImmutableList<IPhysicalQuery> determineQueriesToStart(IAdmissionControl admissionControl, List<IPhysicalQuery> stoppedQueries) {
+		return null;
 	}
 	
 	private double getCostOfServiceLevel(SLARegistryInfo info, SLA sla) {
@@ -86,5 +85,6 @@ public class SLAPossibleExecutionGenerator implements IPossibleExecutionGenerato
 	public void unbindExecutor(IExecutor executor) {
 		this.slaRegistry = null;
 	}
+
 
 }

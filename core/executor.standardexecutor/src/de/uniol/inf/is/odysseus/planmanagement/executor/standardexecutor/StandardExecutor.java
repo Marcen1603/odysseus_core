@@ -27,6 +27,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -40,8 +42,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
-import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionReaction;
-import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecution;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -85,13 +86,14 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadl
  * 
  * - adding new queries - control scheduling, optimization and query processing
  * - send events of intern changes - providing execution informations
+ * - providing and executing admission control reactions if possible
  * 
- * @author Wolf Bauer, Jonas Jacobi, Tobias Witt, Marco Grawunder
+ * @author Wolf Bauer, Jonas Jacobi, Tobias Witt, Marco Grawunder, Timo Michelsen (AC)
  */
 public class StandardExecutor extends AbstractExecutor implements IAdmissionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StandardExecutor.class);
-	private static final long ADMISSION_REACTION_INTERVAL_MILLIS = 10000; 
+	private static final long ADMISSION_REACTION_INTERVAL_MILLIS = 10000;
 
 	private ReloadLog reloadLog;
 
@@ -115,20 +117,19 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		}
 	}
 
-	private IAdmissionReaction admissionReaction = null;
+	private IAdmissionQuerySelector admissionQuerySelector = null;
 	private final Map<IUser, List<IPhysicalQuery>> stoppedQueriesByAC = Maps.newHashMap();
 	private long lastAdmissionReaction;
-	
 
 	private Map<ILogicalQuery, QueryBuildConfiguration> queryBuildParameter = new HashMap<ILogicalQuery, QueryBuildConfiguration>();
 
-	public void bindAdmissionReaction(IAdmissionReaction reaction) {
-		admissionReaction = reaction;
+	public void bindAdmissionQuerySelector(IAdmissionQuerySelector selector) {
+		admissionQuerySelector = selector;
 	}
 
-	public void unbindAdmissionReaction(IAdmissionReaction reaction) {
-		if (admissionReaction == reaction) {
-			admissionReaction = null;
+	public void unbindAdmissionQuerySelector(IAdmissionQuerySelector selector) {
+		if (admissionQuerySelector == selector) {
+			admissionQuerySelector = null;
 		}
 	}
 
@@ -867,16 +868,17 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 	@Override
 	public void overloadUserOccured(IAdmissionControl sender, IUser user) {
-		if (admissionReaction != null && System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS ) {
-			List<IPossibleExecution> possibilities = sender.getPossibleExecutions(user);
-			if( !possibilities.isEmpty() ) {
-				IPossibleExecution execution = admissionReaction.react(possibilities);
-	
-				for (IPhysicalQuery query : execution.getStoppingQueries()) {
+		if (admissionQuerySelector != null && System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS) {
+
+			List<IPhysicalQuery> runningQueries = determineRunningQueries(user);
+			List<IPhysicalQuery> queriesToStop = admissionQuerySelector.determineQueriesToStop(admissionControl, runningQueries);
+
+			if (queriesToStop != null && !queriesToStop.isEmpty()) {
+				for (IPhysicalQuery query : queriesToStop) {
 					try {
 						stopQuery(query.getID(), query.getSession());
 						lastAdmissionReaction = System.currentTimeMillis();
-	
+
 						IUser usr = query.getSession().getUser();
 						if (stoppedQueriesByAC.containsKey(usr)) {
 							stoppedQueriesByAC.get(usr).add(query);
@@ -886,30 +888,36 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 							stoppedQueriesByAC.put(usr, queries);
 						}
 					} catch (RuntimeException ex) {
+						LOG.error("Could not stop query {} by admission control", query.getID(), ex);
 					}
 				}
 			} else {
-				LOG.error("Could not reduce load since no possible execution generated");
+				LOG.error("Could not reduce load since no query can be stopped");
 			}
 		}
 	}
 
 	@Override
 	public void underloadUserOccured(IAdmissionControl sender, IUser user) {
-		if (!stoppedQueriesByAC.isEmpty() && System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS) {
-			Collection<IPhysicalQuery> stoppedQueries = determineStoppedQueries(user, stoppedQueriesByAC);
-			for (IPhysicalQuery stoppedQuery : stoppedQueries) {
-				try {
-					startQuery(stoppedQuery.getID(), stoppedQuery.getSession());
-					lastAdmissionReaction = System.currentTimeMillis();
-					
-					IUser usr = stoppedQuery.getSession().getUser();
-					stoppedQueriesByAC.get(usr).remove(stoppedQuery);
-					
-					break;
-				} catch (RuntimeException ex) {
-					LOG.error("Could not start query again", ex);
+		if (admissionQuerySelector != null && !stoppedQueriesByAC.isEmpty() && System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS) {
+			List<IPhysicalQuery> stoppedQueries = determineStoppedQueries(user, stoppedQueriesByAC);
+			List<IPhysicalQuery> queriesToStart = admissionQuerySelector.determineQueriesToStart(admissionControl, stoppedQueries);
+			
+			if( queriesToStart != null && !queriesToStart.isEmpty()) {
+				for (IPhysicalQuery stoppedQuery : queriesToStart) {
+					try {
+						startQuery(stoppedQuery.getID(), stoppedQuery.getSession());
+						lastAdmissionReaction = System.currentTimeMillis();
+	
+						IUser usr = stoppedQuery.getSession().getUser();
+						stoppedQueriesByAC.get(usr).remove(stoppedQuery);
+	
+					} catch (RuntimeException ex) {
+						LOG.error("Could not start query again", ex);
+					}
 				}
+			} else {
+				LOG.warn("Could not increase load since no stoppped query can be started again.");
 			}
 		}
 	}
@@ -931,6 +939,22 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	@Override
 	public SDFSchema getOutputSchema(int queryId) {
 		return getLogicalQueryById(queryId).getLogicalPlan().getOutputSchema();
+	}
+
+	private List<IPhysicalQuery> determineRunningQueries(IUser user) {
+		Builder<IPhysicalQuery> builder = ImmutableList.<IPhysicalQuery>builder();
+		for(IPhysicalQuery query : getExecutionPlan().getQueries() ) {
+			if( user == null ) {
+				if( query.isOpened() ) {
+					builder.add(query);
+				}
+			} else {
+				if( query.isOpened() && query.getSession().getUser().equals(user)) {
+					builder.add(query);
+				}
+			}
+		}
+		return builder.build();
 	}
 
 	private static List<IPhysicalQuery> determineStoppedQueries(IUser user, Map<IUser, List<IPhysicalQuery>> stoppedQueries) {
