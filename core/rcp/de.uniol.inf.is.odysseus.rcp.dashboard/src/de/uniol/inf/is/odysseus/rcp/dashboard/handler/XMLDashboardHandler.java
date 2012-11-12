@@ -68,7 +68,6 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	private static final String Y_ATTRIBUTE_NAME = "y";
 	private static final String WIDTH_ATTRIBUTE_NAME = "w";
 	private static final String HEIGHT_ATTRIBUTE_NAME = "h";
-	private static final String TITLE_ATTRIBUTE_NAME = "title";
 	private static final String FILE_ATTRIBUTE_NAME = "file";
 
 	@Override
@@ -93,8 +92,6 @@ public class XMLDashboardHandler implements IDashboardHandler {
 						throw new DashboardHandlerException("File of DashboardPart to load is null or empty!");
 					}
 
-					String title = getAttribute(dashboardNode, TITLE_ATTRIBUTE_NAME, null);
-
 					int x = tryToInteger(getAttribute(dashboardNode, X_ATTRIBUTE_NAME, "0"), 0);
 					int y = tryToInteger(getAttribute(dashboardNode, Y_ATTRIBUTE_NAME, "0"), 0);
 					int w = tryToInteger(getAttribute(dashboardNode, WIDTH_ATTRIBUTE_NAME, "100"), 100);
@@ -104,7 +101,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 					IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
 
 					IDashboardPart dashboardPart = partHandler.load(FileUtil.read(dashboardPartFile));
-					DashboardPartPlacement plc = new DashboardPartPlacement(dashboardPart, fileName, title, x, y, w, h);
+					DashboardPartPlacement plc = new DashboardPartPlacement(dashboardPart, fileName, x, y, w, h);
 					dashboard.add(plc);
 				}
 			}
@@ -181,7 +178,6 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		element.setAttribute(Y_ATTRIBUTE_NAME, String.valueOf(placement.getY()));
 		element.setAttribute(WIDTH_ATTRIBUTE_NAME, String.valueOf(placement.getWidth()));
 		element.setAttribute(HEIGHT_ATTRIBUTE_NAME, String.valueOf(placement.getHeight()));
-		element.setAttribute(TITLE_ATTRIBUTE_NAME, placement.getTitle());
 		element.setAttribute(FILE_ATTRIBUTE_NAME, placement.getFilename());
 		rootElement.appendChild(element);
 	}

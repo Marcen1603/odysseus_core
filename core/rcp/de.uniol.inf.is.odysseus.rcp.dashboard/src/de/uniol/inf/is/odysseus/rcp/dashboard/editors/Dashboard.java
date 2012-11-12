@@ -40,7 +40,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -324,11 +323,9 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 		Composite outerContainer = createDashboardPartOuterContainer(dashboardComposite, dashboardPartPlace);
 		containers.put(dashboardPartPlace, outerContainer);
 
-		createContainerDecoration(outerContainer, dashboardPartPlace);
 		Composite innerContainer = getDashboardPartInnerContainer(outerContainer);
 
 		dashboardPartPlace.getDashboardPart().createPartControl(innerContainer, toolBar);
-		innerContainer.setToolTipText(dashboardPartPlace.getTitle());
 
 		addControlsToMap(outerContainer, dashboardPartPlace, controlsMap);
 
@@ -394,14 +391,6 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 		dashboardComposite.layout();
 		dashboardComposite.redraw();
 		fireChangedEvent();
-	}
-
-	private static void createContainerDecoration(Composite outerContainer, DashboardPartPlacement dashboardPartPlace) {
-		if (dashboardPartPlace.hasTitle()) {
-			Label titleLabel = new Label(outerContainer, SWT.NONE);
-			titleLabel.setText(dashboardPartPlace.getTitle());
-			titleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		}
 	}
 
 	private static Composite createDashboardPartOuterContainer(Composite dashboardComposite, DashboardPartPlacement dashboardPartPlace) {

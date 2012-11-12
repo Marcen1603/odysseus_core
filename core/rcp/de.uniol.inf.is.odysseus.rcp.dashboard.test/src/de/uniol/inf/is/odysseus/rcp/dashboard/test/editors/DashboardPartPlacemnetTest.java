@@ -17,9 +17,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.test.editors;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertNull;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -32,66 +29,46 @@ public class DashboardPartPlacemnetTest {
 
 	@Test
 	public void testConstructor() {
-		new DashboardPartPlacement(new TestDashboardPart(), "File", "Title", 100, 100, 200, 200);
+		new DashboardPartPlacement(new TestDashboardPart(), "File", 100, 100, 200, 200);
 	}
-	
-	@Test( dataProvider = "constructorInvalidPlacementDataDataProvider", expectedExceptions = IllegalArgumentException.class)
+
+	@Test(dataProvider = "constructorInvalidPlacementDataDataProvider", expectedExceptions = IllegalArgumentException.class)
 	public void testConstructorInvalidPlacementData(int x, int y, int w, int h) {
-		new DashboardPartPlacement(new TestDashboardPart(),  "File", "Title", x, y, w, h);
+		new DashboardPartPlacement(new TestDashboardPart(), "File", x, y, w, h);
 	}
-	
-	@Test( expectedExceptions = NullPointerException.class )
+
+	@Test(expectedExceptions = NullPointerException.class)
 	public void testConstructorNullArgs() {
-		new DashboardPartPlacement(null, "File", "Title", 100, 100, 100, 100);
-	}
-	
-	@Test
-	public void testConstructorEmptyTitle() {
-		DashboardPartPlacement place = new DashboardPartPlacement(new TestDashboardPart(), "File", null, 100, 100, 200, 200);
-		assertNull(place.getTitle());
-		assertFalse(place.hasTitle());
+		new DashboardPartPlacement(null, "File", 100, 100, 100, 100);
 	}
 
 	@Test
 	public void testGetterAndSetter() {
-		IDashboardPart part = new TestDashboardPart(); 
-		DashboardPartPlacement place = new DashboardPartPlacement(part, "File", "Title", 100, 200, 300, 400);
+		IDashboardPart part = new TestDashboardPart();
+		DashboardPartPlacement place = new DashboardPartPlacement(part, "File", 100, 200, 300, 400);
 		assertEquals(place.getDashboardPart(), part);
-		assertEquals(place.getTitle(), "Title");
 		assertEquals(place.getX(), 100);
 		assertEquals(place.getY(), 200);
 		assertEquals(place.getWidth(), 300);
 		assertEquals(place.getHeight(), 400);
 		assertEquals(place.getFilename(), "File");
-		assertTrue(place.hasTitle());
-		
+
 		place.setX(99);
 		assertEquals(place.getX(), 99);
-		
+
 		place.setY(199);
 		assertEquals(place.getY(), 199);
-		
+
 		place.setHeight(399);
 		assertEquals(place.getHeight(), 399);
-		
+
 		place.setWidth(499);
 		assertEquals(place.getWidth(), 499);
-		
-		place.setTitle("Moin");
-		assertEquals(place.getTitle(), "Moin");
-		place.setTitle(null);
-		assertNull(place.getTitle());
-		assertFalse(place.hasTitle());
 	}
-	
+
 	@SuppressWarnings("unused")
 	@DataProvider
 	private static Object[][] constructorInvalidPlacementDataDataProvider() {
-		return new Object[][] {
-				{-1, 1, 1, 1},	
-				{1, -1, 1, 1},	
-				{1, 1, -1, 1},	
-				{1, 1, 1, -1},	
-		};
+		return new Object[][] { { -1, 1, 1, 1 }, { 1, -1, 1, 1 }, { 1, 1, -1, 1 }, { 1, 1, 1, -1 }, };
 	}
 }

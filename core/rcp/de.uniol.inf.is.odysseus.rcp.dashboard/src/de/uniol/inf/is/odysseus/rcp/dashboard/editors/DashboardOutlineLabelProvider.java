@@ -24,8 +24,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 
 public class DashboardOutlineLabelProvider implements ILabelProvider {
 
-	private static final String NO_TITLE_TEXT = "[No title]";
-
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 	}
@@ -55,7 +53,7 @@ public class DashboardOutlineLabelProvider implements ILabelProvider {
 	public String getText(Object element) {
 		if( element instanceof DashboardPartPlacement ) {
 			DashboardPartPlacement placement = (DashboardPartPlacement)element;
-			return placement.hasTitle() ? placement.getTitle() : NO_TITLE_TEXT;
+			return placement.getDashboardPart().getClass().getSimpleName();
 		} else if( element instanceof String ) {
 			return (String)element;
 		}
