@@ -50,7 +50,7 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 	/** Creates a new instance of SlidingDeltaWindowPO */
 	public SlidingPeriodicWindowTIPO(WindowAO logical) {
 		super(logical);
-		this.windowSlide = TimeUnit.MICROSECONDS.convert(logical.getWindowSlide(), logical.getTimeUnit());
+		this.windowSlide = TimeUnit.MILLISECONDS.convert(logical.getWindowSlide(), logical.getTimeUnit());
 		setName(getName() + " slide=" + windowSlide);
 	}
 
