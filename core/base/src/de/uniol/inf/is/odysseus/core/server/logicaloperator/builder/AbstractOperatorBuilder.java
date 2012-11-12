@@ -150,7 +150,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 			// TODO: this is not suitable for JOINs, because it is not an union 
 			for (InputOperatorItem opItem : inputOperators.values()) {
 				schema = SDFSchema.union(schema,
-						opItem.operator.getOutputSchema());
+						opItem.operator.getOutputSchema(opItem.outputPort));
 			}
 			IAttributeResolver attributeResolver = new DirectAttributeResolver(
 					schema);
