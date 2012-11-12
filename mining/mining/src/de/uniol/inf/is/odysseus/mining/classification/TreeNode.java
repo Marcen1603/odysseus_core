@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
@@ -31,7 +33,7 @@ public class TreeNode {
 	
 	private Object clazz;
 	
-	private Map<Object, TreeNode> childs = new HashMap<Object, TreeNode>(); 
+	private Map<IPredicate<Tuple<?>>, TreeNode> childs = new HashMap<IPredicate<Tuple<?>>, TreeNode>(); 
 	
 	public TreeNode(){
 		
@@ -41,16 +43,29 @@ public class TreeNode {
 		return attribute;
 	}
 	
-	public void addChild(Object value, TreeNode childNode){
-		this.childs.put(value, childNode);
+	public void addChild(IPredicate<Tuple<?>> predicate, TreeNode childNode){
+		this.childs.put(predicate, childNode);
 	}
 	
 	public void setAttribute(SDFAttribute attribute) {
 		this.attribute = new SDFAttribute(null, attribute.getAttributeName(), attribute.getDatatype());	
 	}
 	
-	public TreeNode getChild(Object value){
-		return this.childs.get(value);
+	public TreeNode getMatchingChild(Tuple<?> tuple){
+		for(Entry<IPredicate<Tuple<?>>, TreeNode> e : this.childs.entrySet()){
+			System.out.println("check: ");
+			System.out.println("predicate: "+e.getKey());
+			System.out.println("tuple: "+tuple);
+			if(e.getKey().evaluate(tuple)){
+				
+				return e.getValue(); 
+			}
+		}
+		return null;
+	}
+	
+	public TreeNode getChild(IPredicate<Tuple<?>> predicate){
+		return this.childs.get(predicate);
 	}
 
 	public Collection<TreeNode> getChildNodes() {
@@ -67,7 +82,7 @@ public class TreeNode {
 	public void printSubTree(String indent){
 		System.out.println(indent+"Node: "+attribute);
 		System.out.println(indent+"value: "+clazz);
-		for(Entry<Object, TreeNode> e : this.childs.entrySet()){
+		for(Entry<IPredicate<Tuple<?>>, TreeNode> e : this.childs.entrySet()){
 			System.out.println(indent+" - "+e.getKey()+" ");
 			e.getValue().printSubTree(indent+"   ");
 		}

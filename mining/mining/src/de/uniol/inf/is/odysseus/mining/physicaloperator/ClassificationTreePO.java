@@ -17,6 +17,9 @@ package de.uniol.inf.is.odysseus.mining.physicaloperator;
 
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -31,6 +34,7 @@ import de.uniol.inf.is.odysseus.mining.classification.TreeNode;
  */
 public class ClassificationTreePO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
+	private static Logger logger = LoggerFactory.getLogger(ClassificationTreePO.class);
 	private static final int TREE_PORT = 1;
 	private TreeNode classificationTree;
 	private SDFSchema inputSchema;
@@ -84,13 +88,11 @@ public class ClassificationTreePO<M extends ITimeInterval> extends AbstractPipe<
 		TreeNode currentNode = this.classificationTree;
 		while(currentNode.getClazz()==null){		
 			if(currentNode.getAttribute()==null){
-				System.out.println("NULL!!!!");
-			}
-			int index = this.inputSchema.indexOf(this.inputSchema.findAttribute(currentNode.getAttribute().getAttributeName()));
-			Object val = tuple.getAttribute(index);
-			currentNode = currentNode.getChild(val);
-			if(currentNode==null){
-				System.out.println("WARN, value "+val+" is unknown, so that the tuple could not be classified, tuple: "+tuple);
+				logger.error("there is no attribute for the node");
+			}		
+			currentNode = currentNode.getMatchingChild(tuple);
+			if(currentNode==null){				
+				logger.warn("value is unknown, so that the tuple could not be classified, tuple: "+tuple);
 				return null;
 			}
 		}

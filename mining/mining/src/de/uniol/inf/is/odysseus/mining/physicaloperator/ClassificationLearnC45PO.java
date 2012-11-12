@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.mining.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,11 +31,14 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.classification.TreeNode;
 import de.uniol.inf.is.odysseus.mining.util.CounterList;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
  * @author Dennis Geesen
@@ -49,7 +53,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 
 	private SDFSchema inputSchema;
-	private Map<SDFAttribute, List<Object>> partitions = new HashMap<SDFAttribute, List<Object>>();
+	private Map<SDFAttribute, List<Object>> seenvalues = new HashMap<SDFAttribute, List<Object>>();
 	private int clazzPosition;
 
 	private PointInTime lastCut = PointInTime.getZeroTime();
@@ -77,17 +81,17 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 
-		initPartitions();
+		init();
 		this.clazzPosition = inputSchema.indexOf(classAttribute);
 	}
 
 	/**
 	 * 
 	 */
-	private void initPartitions() {
+	private void init() {
 		for (SDFAttribute attribute : this.inputSchema) {
-			this.partitions.put(attribute, new ArrayList<Object>());
-		}		
+			this.seenvalues.put(attribute, new ArrayList<Object>());
+		}
 	}
 
 	@Override
@@ -99,21 +103,30 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 
 	private synchronized void process_data(PointInTime currentTime) {
 		if (currentTime.after(lastCut)) {
-			initPartitions();
+			init();
+			// get all elements from the sweep area that can be processed
 			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
 			List<Tuple<M>> pool = new ArrayList<>();
+			// look at each tuple and ...
 			while (qualifies.hasNext()) {
 				Tuple<M> next = qualifies.next();
+				// ... read all values for each attribute
 				for (int i = 0; i < next.size(); i++) {
 					SDFAttribute attribute = this.inputSchema.get(i);
 					Object value = next.getAttribute(i);
-					if (!this.partitions.get(attribute).contains(value)) {
-						this.partitions.get(attribute).add(value);
+					// ... and save them
+					if (!this.seenvalues.get(attribute).contains(value)) {
+						this.seenvalues.get(attribute).add(value);
 					}
 				}
+				// finally, the pool is our current list of tuples that have to
+				// be used
 				pool.add(next);
 			}
+			// we need at least one tuple for building a tree
 			if (pool.size() > 0) {
+				// first, we need to calculate possible split points for
+				// continuous valued attributes
 				PointInTime totalMin = lastCut;
 				PointInTime totalMax = currentTime;
 				// fill all attributes - without class-attribute
@@ -127,7 +140,6 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				TreeNode root = new TreeNode();
 				getNextSplit(pool, allAttributes, root);
 				logger.trace("Best split order is: ");
-				
 
 				Tuple<M> newtuple = new Tuple<M>(1, false);
 				@SuppressWarnings("unchecked")
@@ -135,13 +147,38 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				meta.setStartAndEnd(totalMin, totalMax);
 				newtuple.setMetadata(meta);
 				newtuple.setAttribute(0, root);
-				root.printSubTree();
+				//root.printSubTree();
 				transfer(newtuple);
-				
+
 				lastCut = currentTime;
 				sweepArea.purgeElementsBefore(currentTime);
 			}
 		}
+	}
+
+	private List<Double> calcSplitPoints(SDFAttribute attribute) {
+		// we assume that numeric is a continuous valued
+		if (attribute.getDatatype().isNumeric()) {
+			// take the list of values
+			List<Double> values = new ArrayList<Double>();
+			for (Object v : this.seenvalues.get(attribute)) {
+				Number n = (Number) v;
+				values.add(n.doubleValue());
+			}
+			if (values.size() == 1) {
+				return values;
+			}
+			// sort them
+			Collections.sort(values);
+			// calculate midpoints
+			List<Double> midpoints = new ArrayList<Double>();
+			for (int i = 0; i < values.size() - 1; i++) {
+				double midpoint = (values.get(i) + values.get(i + 1)) / 2;
+				midpoints.add(midpoint);
+			}
+			return midpoints;
+		}
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -154,29 +191,31 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	private void getNextSplit(List<Tuple<M>> pool, List<SDFAttribute> attributesToCheck, TreeNode parent) {
 		logger.trace("----------------------------------");
 		logger.trace("Check for " + parent.getAttribute());
-
 		ArrayList<SDFAttribute> attributes = new ArrayList<>(attributesToCheck);
 		logger.trace("open: " + attributes);
-		SDFAttribute bestSplitAt = getBestSplit(pool, attributes);
+		// first, calculate splitting points for pool and attributes!
+		Map<SDFAttribute, List<RelationalPredicate>> splittingPoints = calculateSplittingPoints(pool, attributes);
+		// the, find the best split
+		SDFAttribute bestSplitAt = getBestSplit(pool, attributes, splittingPoints);
 		logger.trace("best: " + bestSplitAt);
-		if(bestSplitAt==null){
-			System.out.println("SPLIT IS NULL?!");
+		if (bestSplitAt == null) {
+			logger.error("something went wrong: attribute for best split cannot be null!");
 		}
 		attributes.remove(bestSplitAt);
 		parent.setAttribute(bestSplitAt);
 		// for each possible value of the split attribute...
-		for (Object value : this.partitions.get(bestSplitAt)) {
+		for (RelationalPredicate splitPredicate : splittingPoints.get(bestSplitAt)) {
 			// ... get only the subset for this value
-			List<Tuple<M>> subset = getSubset(pool, bestSplitAt, value);
+			List<Tuple<M>> subset = getSubset(pool, bestSplitAt, splitPredicate);
 			// and create a node for each possible value
 			TreeNode node = new TreeNode();
 
-			parent.addChild(value, node);
+			parent.addChild(splitPredicate, node);
 			// check, if all values of the class-attribute are equal...
 			if (onlyOneClassLeft(subset)) {
 				if (subset.size() > 0) {
 					node.setClazz(subset.get(0).getAttribute(clazzPosition));
-				}else{
+				} else {
 					System.out.println("SHOULD NOT HAPPEN");
 				}
 			} else {
@@ -185,8 +224,54 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			}
 
 		}
+
 	}
 
+	/**
+	 * @param pool
+	 * @param attributes
+	 * @return
+	 */
+	private Map<SDFAttribute, List<RelationalPredicate>> calculateSplittingPoints(List<Tuple<M>> pool, ArrayList<SDFAttribute> attributes) {
+		Map<SDFAttribute, List<RelationalPredicate>> splittingPoints = new HashMap<>();
+		for (SDFAttribute attribute : attributes) {
+			List<Object> values = new ArrayList<>();
+			int index = this.inputSchema.indexOf(attribute);
+			for (Tuple<M> t : pool) {
+				Object o = t.getAttribute(index);
+				if(!values.contains(o)){
+					values.add(o);
+				}
+			}
+			splittingPoints.put(attribute, new ArrayList<RelationalPredicate>());
+			if (attribute.getDatatype().isNumeric()) {
+				double bestmidpoint = getBestSplitPointForContinuous(attribute, pool);
+				String smallerExprString = attribute.getAttributeName() + " <= " + bestmidpoint;
+				SDFExpression smallerExpression = new SDFExpression(smallerExprString, MEP.getInstance());
+				RelationalPredicate smallerRelationalPredicate = new RelationalPredicate(smallerExpression);
+				smallerRelationalPredicate.init(inputSchema, null);
+				splittingPoints.get(attribute).add(smallerRelationalPredicate);
+
+				String greaterExprString = attribute.getAttributeName() + " > " + bestmidpoint;
+				SDFExpression greaterExpression = new SDFExpression(greaterExprString, MEP.getInstance());
+				RelationalPredicate greaterRelationalPredicate = new RelationalPredicate(greaterExpression);
+				greaterRelationalPredicate.init(inputSchema, null);
+				splittingPoints.get(attribute).add(greaterRelationalPredicate);
+			} else {
+				for (Object value : values) {
+					String exprString = attribute.getAttributeName() + " == '" + value+"'";
+					SDFExpression expression = new SDFExpression(exprString, MEP.getInstance());
+					RelationalPredicate relationalPredicate = new RelationalPredicate(expression);
+					relationalPredicate.init(inputSchema, null);
+					splittingPoints.get(attribute).add(relationalPredicate);
+				}
+			}
+
+		}
+		return splittingPoints;
+	}
+
+	
 	/**
 	 * @param subset
 	 * @return
@@ -205,39 +290,38 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 		return true;
 	}
 
-	private List<Tuple<M>> getSubset(List<Tuple<M>> set, SDFAttribute attribute, Object value) {
-		List<Tuple<M>> subset = new ArrayList<>();
-		int index = this.inputSchema.indexOf(attribute);
+	private List<Tuple<M>> getSubset(List<Tuple<M>> set, SDFAttribute attribute, RelationalPredicate splitPredicate) {
+		List<Tuple<M>> subset = new ArrayList<>();		
 		for (Tuple<M> t : set) {
-			if (t.getAttribute(index).equals(value)) {
+			if (splitPredicate.evaluate(t)) {
 				subset.add(t);
 			}
 		}
 		return subset;
 	}
 
-	private SDFAttribute getBestSplit(List<Tuple<M>> pool, List<SDFAttribute> attributes) {
+	private SDFAttribute getBestSplit(List<Tuple<M>> pool, List<SDFAttribute> attributes, Map<SDFAttribute, List<RelationalPredicate>> splittingPredicates) {
 		double entropyT = entropy(pool);
 		logger.trace("entropy(T)=" + entropyT);
 		double maxWGain = 0;
 		SDFAttribute bestAttribute = null;
 		// for each attribute!
 		for (SDFAttribute attribute : attributes) {
-			int position = this.inputSchema.indexOf(attribute);
+			logger.trace("checking attribute " + attribute + "...");			
 			// for each possible value of attribute, calculate the entropy
 			double sum = 0;
-			for (Object value : this.partitions.get(attribute)) {
+			for (RelationalPredicate splitPredicate : splittingPredicates.get(attribute)) {
 				List<Tuple<M>> subpool = new ArrayList<>();
 				for (Tuple<M> t : pool) {
-					if (t.getAttribute(position).equals(value)) {
+					if (splitPredicate.evaluate(t)) {
 						subpool.add(t);
 					}
 				}
-				// calc entropy
+				// calculate entropy
 				double ent = entropy(subpool);
 				double relh = ((double) subpool.size()) / pool.size();
 				sum = sum + (relh * ent);
-				logger.trace("Entropy(" + attribute + ", " + value + ") = " + ent);
+				logger.trace("Entropy(" + attribute + ", " + splitPredicate + ") = " + ent);
 			}
 			double wgain = entropyT - sum;
 			logger.trace("wgain = (" + attribute + ") = " + wgain);
@@ -247,7 +331,31 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			}
 		}
 		return bestAttribute;
+	}
 
+	private double getBestSplitPointForContinuous(SDFAttribute attribute, List<Tuple<M>> pool) {
+		double bestSplit = 0.0;
+		double bestMidpoint = 0.0;
+		int attributePosition = this.inputSchema.indexOf(attribute);
+		List<Double> midpoints = calcSplitPoints(attribute);
+		for (double midpoint : midpoints) {
+			List<Tuple<M>> d1 = new ArrayList<>();
+			List<Tuple<M>> d2 = new ArrayList<>();
+			for (Tuple<M> t : pool) {
+				double tupleValue = ((Number)t.getAttribute(attributePosition)).doubleValue();
+				if (tupleValue <= midpoint) {
+					d1.add(t);
+				} else {
+					d2.add(t);
+				}
+			}
+			double infoA = ((d1.size() / (double) pool.size()) * entropy(d1)) + ((d2.size() / (double) pool.size()) * entropy(d2));
+			if (infoA >= bestSplit) {
+				bestSplit = infoA;
+				bestMidpoint = midpoint;
+			}
+		}
+		return bestMidpoint;
 	}
 
 	private double entropy(List<Tuple<M>> pool) {
@@ -258,16 +366,21 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			Object o = t.getAttribute(this.clazzPosition);
 			counts.count(o);
 		}
-
+		logger.trace("   entryopy-calculation: total size: "+pool.size());
 		double entropy = 0.0;
-		for (Object clazz : this.partitions.get(classAttribute)) {
+		for (Object clazz : this.seenvalues.get(classAttribute)) {
 			double count = counts.getCount(clazz);
 			if (count != 0) {
-				double frac = count / counts.getTotalCount();
+				logger.trace("   entryopy-calculation: count for "+clazz+": "+count);
+				logger.trace("   entryopy-calculation: count for all: "+ counts.getTotalCount());
+				double frac = count / counts.getTotalCount();				
+				logger.trace("   entryopy-calculation: probability: "+ frac);
 				double e = -1 * frac * (Math.log(frac) / Math.log(2.0));
+				logger.trace("   entryopy-calculation: part: "+ e);
 				entropy += e;
 			}
 		}
+		logger.trace("   entryopy-calculation: result: "+ entropy);
 
 		return entropy;
 	}
