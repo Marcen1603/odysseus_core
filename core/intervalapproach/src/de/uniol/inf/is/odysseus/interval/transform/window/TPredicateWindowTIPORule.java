@@ -35,7 +35,7 @@ public class TPredicateWindowTIPORule extends
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void execute(WindowAO operator, TransformationConfiguration config) {
-		PredicateWindowTIPO window = new PredicateWindowTIPO(operator.getStartCondition(), operator.getEndCondition(), operator.getWindowSize(), operator.isSameStarttime());
+		PredicateWindowTIPO window = new PredicateWindowTIPO(operator.getStartCondition(), operator.getEndCondition(), operator.getWindowSize(), operator.isSameStarttime(), operator.getTimeUnit());
 		defaultExecute(operator, window, config, true, true);
 	}
 

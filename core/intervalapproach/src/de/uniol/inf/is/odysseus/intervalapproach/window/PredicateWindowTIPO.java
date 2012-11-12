@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -52,14 +53,14 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	private boolean openedWindow;
 
 	public PredicateWindowTIPO(IPredicate<? super T> start,
-			IPredicate<? super T> end, long maxWindowTime, boolean sameStarttime) {
+			IPredicate<? super T> end, long maxWindowTime, boolean sameStarttime, TimeUnit unit) {
 		this.start = start.clone();
 		if (end != null) {
 			this.end = end.clone();
 		} else {
 			this.end = null;
 		}
-		this.maxWindowTime = maxWindowTime;
+		this.maxWindowTime = TimeUnit.MILLISECONDS.convert(maxWindowTime, unit);
 		this.sameStarttime = sameStarttime;
 	}
 

@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.intervalapproach.window;
 
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
@@ -31,8 +33,8 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	protected final boolean partitioned;
 
 	public AbstractWindowTIPO(WindowAO ao) {
-		this.windowSize = ao.getWindowSize();
-		this.windowAdvance = ao.getWindowAdvance();
+		this.windowSize = TimeUnit.MILLISECONDS.convert(ao.getWindowSize(), ao.getTimeUnit());
+		this.windowAdvance = TimeUnit.MILLISECONDS.convert(ao.getWindowAdvance(), ao.getTimeUnit());
 		// this.windowAO = ao;
 		this.windowType = ao.getWindowType();
 		this.partitioned = ao.isPartitioned();

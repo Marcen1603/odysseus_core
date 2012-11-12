@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -43,6 +44,8 @@ public class WindowAO extends UnaryLogicalOp {
 
 	private long windowAdvance = -1;
 
+	private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+	
 	// For predicate based windows
 	private IPredicate<?> startCondition;
 	private IPredicate<?> endCondition;
@@ -151,6 +154,15 @@ public class WindowAO extends UnaryLogicalOp {
 	@Parameter(type = PredicateParameter.class, name = "END", optional = true)
 	public void setEndCondition(IPredicate<?> endCondition) {
 		this.endCondition = endCondition;
+	}
+	
+	@Parameter(type = PredicateParameter.class, name = "Unit", optional = true)
+	public void setUnit(String unit){
+		this.timeUnit = TimeUnit.valueOf(unit);
+	}
+	
+	public TimeUnit getTimeUnit() {
+		return timeUnit;
 	}
 
 	public IPredicate<?> getEndCondition() {
