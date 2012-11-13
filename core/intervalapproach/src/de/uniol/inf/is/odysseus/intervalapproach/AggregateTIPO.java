@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<?>>
-		extends AggregatePO<Q, R, W> implements IHasMetadataMergeFunction<Q>{
+		extends AggregatePO<Q, R, W> implements IHasMetadataMergeFunction<Q> {
 
 	protected IMetadataMergeFunction<Q> metadataMerge;
 
@@ -162,6 +162,10 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 	protected synchronized void updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			R elemToAdd) {
+		System.err.println("");
+		System.err
+				.println("-------------------------------------------------------------------------");
+		System.err.println("INPUT " + elemToAdd);
 		assert (elemToAdd != null);
 		R newElement = elemToAdd;
 		Q t_probe = elemToAdd.getMetadata();
@@ -234,7 +238,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 						if (p1.newElement()) {
 							// Insert new Element with interval from start to
 							// start
-							// 
+							//
 							Q meta = elemToAdd.getMetadata();
 							@SuppressWarnings("unchecked")
 							Q newMeta = (Q) meta.clone();
@@ -265,6 +269,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 						// element for new time interval
 						if (lastPartialAggregate == null) {
 							System.err.println("ONLY FOR DEBUGGER!!");
+							System.err.println(sa.toString());
 						}
 						Q newMeta = metadataMerge.mergeMetadata(
 								lastPartialAggregate.getMetadata(),
@@ -296,18 +301,21 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 							saInsert(sa, lastPartialAggregate, newTI);
 						}
 					}
-				} // if (p1.point.before(p2.point))
+					// Remember the last seen partial aggregate (not the new
+					// element)
+					lastPartialAggregate = (p1.newElement()) ? lastPartialAggregate
+							: p1.element_agg;
+				} else { // if (p1.point.before(p2.point))
+					lastPartialAggregate = (p2.newElement())? lastPartialAggregate: p2.element_agg;
+				}
 
-				// Remember the last seen partial aggregate (not the new
-				// element)
-				lastPartialAggregate = (p1.newElement()) ? lastPartialAggregate
-						: p1.element_agg;
 				p1 = p2;
 			}
 		}
 		if (logger.isTraceEnabled()) {
 			logger.trace(sa.toString());
 		}
+		System.err.println(sa.toString());
 	}
 
 	// Updates SA by splitting all partial aggregates before split point
