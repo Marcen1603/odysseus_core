@@ -133,9 +133,9 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	public void setPredicates(List<IPredicate<?>> predicates){
+	public void setPredicates(List<IPredicate<?>> predi){
 		predicates.clear();
-		predicates.addAll(predicates);
+		predicates.addAll(predi);
 	}
 	
 	@Override
