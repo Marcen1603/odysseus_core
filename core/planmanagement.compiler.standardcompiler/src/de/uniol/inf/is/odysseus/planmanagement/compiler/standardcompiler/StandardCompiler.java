@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -240,7 +240,7 @@ public class StandardCompiler implements ICompiler {
 
 		
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(query);
-		AbstractGraphWalker walker = new AbstractGraphWalker();
+		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
 		ILogicalOperator copyPlan = copyVisitor.getResult();
 		

@@ -27,12 +27,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
-public class AbstractGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<S, H>, H extends ISubscription<S>>{
+public class GenericGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<S, H>, H extends ISubscription<S>>{
 
 	List<S> visited;
 	List<IPhysicalOperator> visitedPhysical;
 	
-	public AbstractGraphWalker(){
+	public GenericGraphWalker(){
 		this.visited = new IdentityArrayList<S>();
 		this.visitedPhysical = new IdentityArrayList<IPhysicalOperator>();
 	}

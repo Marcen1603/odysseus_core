@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
-import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.FindQueryRootsVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -114,7 +114,7 @@ public class TransformationExecutor implements ITransformation {
 
 		for (IPhysicalOperator physicalPO : roots.values()) {
 			IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
-			AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
+			GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
 			walker.prefixWalkPhysical(physicalPO, visitor);
 			plan = visitor.getResult();
 			// Prefix Walker finds only roots that are not part of another query

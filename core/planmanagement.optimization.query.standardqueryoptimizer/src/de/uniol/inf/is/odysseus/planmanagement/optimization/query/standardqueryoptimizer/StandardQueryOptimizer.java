@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exceptio
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 
 /**
@@ -94,7 +94,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
 				query);
 		@SuppressWarnings("rawtypes")
-		AbstractGraphWalker walker = new AbstractGraphWalker();
+		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalk(originalPlan, copyVisitor);
 		ILogicalOperator copiedPlan = copyVisitor.getResult();
 

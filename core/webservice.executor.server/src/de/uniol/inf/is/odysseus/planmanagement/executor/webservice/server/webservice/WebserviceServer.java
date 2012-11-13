@@ -70,7 +70,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception.WebserviceException;
@@ -399,7 +399,7 @@ public class WebserviceServer {
 				GraphNodeVisitor<IPhysicalOperator> visitor = new GraphNodeVisitor<IPhysicalOperator>();
 				visitor.setIdCounter(idCounter);
 				@SuppressWarnings("rawtypes")
-				AbstractGraphWalker walker = new AbstractGraphWalker();
+				GenericGraphWalker walker = new GenericGraphWalker();
 				walker.prefixWalkPhysical(op, visitor);
 				graph.addRootNode(visitor.getResult());
 				idCounter = visitor.getIdCounter();

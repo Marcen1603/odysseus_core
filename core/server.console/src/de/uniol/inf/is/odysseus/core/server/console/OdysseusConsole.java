@@ -74,7 +74,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.PrintGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
@@ -1065,7 +1065,7 @@ public class OdysseusConsole implements CommandProvider,
 
 				// DEBUG: Print the logical plan.
 				PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
-				AbstractGraphWalker walker = new AbstractGraphWalker();
+				GenericGraphWalker walker = new GenericGraphWalker();
 				for (ILogicalQuery plan : plans) {
 					System.out.println("PRINT PARTIAL PLAN: ");
 					walker.prefixWalk(plan.getLogicalPlan(), pv);

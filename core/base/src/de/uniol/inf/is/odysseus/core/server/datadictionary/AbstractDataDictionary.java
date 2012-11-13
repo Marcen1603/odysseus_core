@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.StoreException;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.NullUserException;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.RemoveOwnersGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
@@ -237,7 +237,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				// Remove Owner from View
 				RemoveOwnersGraphVisitor<ILogicalOperator> visitor = new RemoveOwnersGraphVisitor<ILogicalOperator>();
 				@SuppressWarnings("rawtypes")
-				AbstractGraphWalker walker = new AbstractGraphWalker();
+				GenericGraphWalker walker = new GenericGraphWalker();
 				walker.prefixWalk(topOperator, visitor);
 				synchronized (viewDefinitions) {
 					this.viewDefinitions.put(viewname, topOperator);
@@ -270,7 +270,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
 					null);
 			@SuppressWarnings("rawtypes")
-			AbstractGraphWalker walker = new AbstractGraphWalker();
+			GenericGraphWalker walker = new GenericGraphWalker();
 			walker.prefixWalk(logicalPlan, copyVisitor);
 			return copyVisitor.getResult();
 		}
