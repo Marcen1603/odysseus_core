@@ -16,16 +16,24 @@
 package de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 
 public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 	
@@ -61,14 +69,27 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 		return null;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void connect() {
-		source.connectSink(this, 0, 0, source.getOutputSchema());
-		getLogger().debug("Source " + source + " connected");
+		Optional<ISource> connectingSource = getMetadataUpdatePOAsSource(source);
+		if( connectingSource.isPresent() ) {
+			connectingSource.get().connectSink((ISink) this, 0, 0, connectingSource.get().getOutputSchema());
+			getLogger().debug("Source {} connected", source);					
+		} else {
+			getLogger().error("Could not connect to {}", source);
+		}
 	}
+
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void disconnect() {
-		source.disconnectSink(this, 0, 0, source.getOutputSchema());
-		getLogger().debug("Source " + source + " disconnected");
+		Optional<ISource> connectingSource = getMetadataUpdatePOAsSource(source);
+		if( connectingSource.isPresent() ) {
+			connectingSource.get().disconnectSink(this, 0, 0, connectingSource.get().getOutputSchema());
+			getLogger().debug("Source {} disconnected", source);
+		} else {
+			getLogger().error("Could not disconnect from {}", source);
+		}
 	}
 
 	public void addListener( IDataSourceObserverListener listener ) {
@@ -106,5 +127,34 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 				listener.punctuationElementRecieved(this, element, port);
 			}
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Optional<IPhysicalOperator> getNextOperator(IPhysicalOperator operator, Class<? extends IPhysicalOperator> opClass) {
+		if( operator.isSource() ) {
+			ISource<?> source = (ISource<?>)operator;
+			Collection<?> subs = source.getSubscriptions();
+			for( Object sub : subs ) {
+				PhysicalSubscription<? extends ISink<?>> physSub = (PhysicalSubscription<? extends ISink<?>>)sub;
+				IPhysicalOperator target = (IPhysicalOperator)physSub.getTarget();
+				if( target.getClass().equals(opClass)) {
+					return Optional.of(target);
+				}
+			}
+		}
+		return Optional.absent();
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private static Optional<ISource> getMetadataUpdatePOAsSource(ISource<?> source) {
+		Optional<IPhysicalOperator> metadataCreationPO = getNextOperator(source, MetadataCreationPO.class);
+		if( metadataCreationPO.isPresent() ) {
+			Optional<IPhysicalOperator> metadataUpdatePO = getNextOperator(metadataCreationPO.get(), MetadataUpdatePO.class);
+			if( metadataUpdatePO.isPresent() ) {
+				IPhysicalOperator op = metadataUpdatePO.get();
+				return Optional.of((ISource)op);
+			}
+		}
+		return Optional.absent();
 	}
 }
