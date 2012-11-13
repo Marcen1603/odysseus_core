@@ -49,8 +49,7 @@ public class ReloadLog {
 
 	private static Logger logger = LoggerFactory.getLogger(ReloadLog.class);
 	public static final String LOG_FILENAME = OdysseusConfiguration.get("reloadLogStoreFilename");
-	
-	
+
 	private List<QueryEntry> queries = new ArrayList<QueryEntry>();
 
 	public ReloadLog() {
@@ -58,13 +57,14 @@ public class ReloadLog {
 
 	public void queryAdded(String query, String buildConfig, String parserID, ISession user) {
 		logger.debug("Query added to log: " + query);
-
 		QueryEntry qe = new QueryEntry();
 		qe.parserID = parserID;
 		qe.query = query;
 		qe.transCfgID = buildConfig;
 		qe.username = user.getUser().getName();
-		queries.add(qe);
+		synchronized (queries) {
+			queries.add(qe);
+		}
 		saveState();
 	}
 
@@ -72,9 +72,11 @@ public class ReloadLog {
 		FileWriter writer = null;
 		try {
 			logger.debug("Save queries in log.");
-			writer = new FileWriter(LOG_FILENAME);			
-			for (QueryEntry e : this.queries) {
-				writer.write(e.toString());
+			synchronized (queries) {
+				writer = new FileWriter(LOG_FILENAME);
+				for (QueryEntry e : this.queries) {
+					writer.write(e.toString());
+				}
 			}
 		} catch (Exception ex) {
 			logger.error("Error while saving queries for reload", ex);
@@ -92,12 +94,14 @@ public class ReloadLog {
 
 	public void removeQuery(String queryText) {
 		logger.debug("Removing query from log: " + queryText);
-		Iterator<QueryEntry> iterator = this.queries.iterator();
-		while (iterator.hasNext()) {
-			if (iterator.next().query.equals(queryText)) {
-				iterator.remove();
+		synchronized (queries) {
+			Iterator<QueryEntry> iterator = this.queries.iterator();
+			while (iterator.hasNext()) {
+				if (iterator.next().query.equals(queryText)) {
+					iterator.remove();
+				}
 			}
-		}		
-		saveState();
+			saveState();
+		}
 	}
 }
