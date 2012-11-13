@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
@@ -126,6 +127,10 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	@Override
 	public void punctuationElementRecieved(PointInTime point, int port) {
+	}
+	
+	@Override
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
 	}
 
 	@Override

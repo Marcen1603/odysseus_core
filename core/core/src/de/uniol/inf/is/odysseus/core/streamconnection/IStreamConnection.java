@@ -33,7 +33,6 @@ public interface IStreamConnection<In> {
 	
 	public void addStreamElementListener( IStreamElementListener<In> listener );
 	public void removeStreamElementListener( IStreamElementListener<In> listener );
-	public void notifyListeners( In element, int port );
 	
 	public List<ISubscription<? extends ISource<In>>> getSubscriptions();
 	

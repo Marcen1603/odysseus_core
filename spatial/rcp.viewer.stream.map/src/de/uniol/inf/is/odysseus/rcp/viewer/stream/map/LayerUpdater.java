@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
@@ -92,4 +93,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements IStreamElementLis
 		
 	}
 	
+	@Override
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	}
 }

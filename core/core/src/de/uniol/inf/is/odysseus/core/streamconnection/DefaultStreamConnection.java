@@ -17,56 +17,41 @@ package de.uniol.inf.is.odysseus.core.streamconnection;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.awt.util.IdentityArrayList;
-
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
-import de.uniol.inf.is.odysseus.core.event.IEvent;
-import de.uniol.inf.is.odysseus.core.event.IEventListener;
-import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
-import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
-public class DefaultStreamConnection<In extends IStreamObject<?>> implements ISink<In>, IStreamConnection<In> {
+public class DefaultStreamConnection<In extends IStreamObject<?>> extends ListenerSink<In> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamConnection.class);
 
 	private final List<ISubscription<? extends ISource<In>>> subscriptions;
 
 	private boolean connected = false;
-	private boolean enabled = false;
+	private boolean enabled = true;
 
 	private ArrayList<In> collectedObjects = new ArrayList<In>();
 	private ArrayList<Integer> collectedPorts = new ArrayList<Integer>();
 	private List<ISubscription<? extends ISource<In>>> connectedSubscriptions = Lists.newArrayList();
 
 	private final Collection<IStreamElementListener<In>> listeners = new ArrayList<IStreamElementListener<In>>();
-	private boolean hasExceptions = false;
 	private boolean isOpen = true;
-	
-	final transient protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 
-	
 	public DefaultStreamConnection(IPhysicalOperator operator) {
 		this(Lists.newArrayList(operator));
 	}
@@ -79,8 +64,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> implements ISi
 	}
 
 	@Override
-	public List<ISubscription<? extends ISource<In>>> getSubscriptions() {
-		return subscriptions;
+	public final ImmutableList<ISubscription<? extends ISource<In>>> getSubscriptions() {
+		return ImmutableList.copyOf(subscriptions);
 	}
 
 	@Override
@@ -111,69 +96,37 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> implements ISi
 
 	@Override
 	public void process(In element, int port) {
-		if (hasExceptions)
-			return;
-
-		if (enabled) {
-			// Objekt zwischenspeichern und nicht verarbeiten lassen
-			synchronized (collectedObjects) {
-				collectedObjects.add(element);
-				collectedPorts.add(port);
-			}
+		if (!enabled) {
+			collectElement(element, port);
 
 		} else {
-			try {
-				notifyListeners(element, port);
-			} catch (Exception ex) {
-				LOG.error("Bei der Verarbeitung des Datenelements " + element.toString() + " trat eine Exception auf!", ex);
-				hasExceptions = true;
-			}
+			notifyListeners(element, port);
 		}
 	}
 
 	@Override
 	public void disable() {
-		enabled = true;
+		enabled = false;
 	}
 
 	@Override
 	public void enable() {
-		enabled = false;
-		if (collectedObjects.size() > 0) {
-			synchronized (collectedObjects) {
-				// gesammelte Daten nachträglich verarbeiten lassen
-				for (int i = 0; i < collectedObjects.size(); i++) {
-					process(collectedObjects.get(i), collectedPorts.get(i));
-				}
-				collectedObjects.clear();
-				collectedPorts.clear();
-			}
-		}
+		enabled = true;
+		processCollectedElements();
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return !enabled;
+		return enabled;
 	}
 
 	@Override
 	public void addStreamElementListener(IStreamElementListener<In> listener) {
-		if (listener == null)
-			return;
+		Preconditions.checkNotNull(listener, "Listener to add to DefaultStreamConnection must not be null!");
 
 		synchronized (listeners) {
-			if (!listeners.contains(listener))
+			if (!listeners.contains(listener)) {
 				listeners.add(listener);
-		}
-	}
-
-	@Override
-	public void notifyListeners(In element, int port) {
-		LOG.debug("Receiving element from port {}: {}", port, element);
-		synchronized (listeners) {
-			for (IStreamElementListener<In> l : listeners) {
-				if (l != null)
-					l.streamElementRecieved(element, port);
 			}
 		}
 	}
@@ -181,15 +134,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> implements ISi
 	@Override
 	public void removeStreamElementListener(IStreamElementListener<In> listener) {
 		synchronized (listeners) {
-			if (listeners.contains(listener))
-				listeners.remove(listener);
+			listeners.remove(listener);
 		}
-
-	}
-
-	@Override
-	public DefaultStreamConnection<In> clone() {
-		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 	@Override
@@ -199,225 +145,12 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> implements ISi
 
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
-	}
-
-	public void notifyListenersPunctuation(PointInTime point, int port) {
-		LOG.debug("Receiving punctuation from port {}: {}", port, point);
-		synchronized (listeners) {
-			for (IStreamElementListener<In> l : listeners) {
-				if (l != null)
-					l.punctuationElementRecieved(point, port);
-			}
-		}
-	}
-
-	@Override
-	public final boolean isSource() {
-		return false;
-	}
-
-	@Override
-	public final boolean isSink() {
-		return true;
-	}
-
-	@Override
-	public final boolean isPipe() {
-		return isSink() && isSource();
-	}
-
-	@Override
-	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		return false;
-	}
-
-	@Override
-	public String getName() {
-		return "DefaultStreamConnection";
-	}
-
-	@Override
-	public void setName(String name) {
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getOutputSchema(0);
-	}
-
-	@Override
-	public SDFSchema getOutputSchema(int port) {
-		return null;
-	}
-
-	@Override
-	public final Map<Integer, SDFSchema> getOutputSchemas() {
-		return null;
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema, int port) {
+		notifyListenersSecurityPunctuation(sp, port);
 	}
 
 	@Override
 	public boolean isOpen() {
 		return isOpen;
-	}
-
-	// ------------------------------------------------------------------------
-	// Owner Management
-	// ------------------------------------------------------------------------
-
-	@Override
-	public void addOwner(IOperatorOwner owner) {
-		if (!this.owners.contains(owner)) {
-			this.owners.add(owner);
-		}
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
-
-	}
-
-	@Override
-	public void addOwner(Collection<IOperatorOwner> owner) {
-		this.owners.addAll(owner);
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
-	}
-	
-	@Override
-	public void removeOwner(IOperatorOwner owner) {
-		while (this.owners.remove(owner)) {
-			// Remove all owners
-		}
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
-	}
-
-	@Override
-	public void removeAllOwners() {
-		this.owners.clear();
-	}
-
-	@Override
-	final public boolean isOwnedBy(IOperatorOwner owner) {
-		return this.owners.contains(owner);
-	}
-
-	@Override
-	final public boolean hasOwner() {
-		return !this.owners.isEmpty();
-	}
-
-	@Override
-	final public List<IOperatorOwner> getOwner() {
-		return Collections.unmodifiableList(this.owners);
-	}
-
-	/**
-	 * Returns a ","-separated string of the owner IDs.
-	 * 
-	 * @param owner
-	 *            Owner which have IDs.
-	 * @return ","-separated string of the owner IDs.
-	 */
-	@Override
-	public String getOwnerIDs() {
-		StringBuffer result = new StringBuffer();
-		for (IOperatorOwner iOperatorOwner : owners) {
-			if (result.length() > 0) {
-				result.append(", ");
-			}
-			result.append(iOperatorOwner.getID());
-		}
-		return result.toString();
-	}
-	
-	
-
-	@Override
-	public Collection<String> getProvidedMonitoringData() {
-		return Lists.newArrayList();
-	}
-
-	@Override
-	public boolean providesMonitoringData(String type) {
-		return false;
-	}
-
-	@Override
-	public <T> IMonitoringData<T> getMonitoringData(String type) {
-		return null;
-	}
-
-	@Override
-	public void createAndAddMonitoringData(@SuppressWarnings("rawtypes") IPeriodicalMonitoringData item, long period) {
-	}
-
-	@Override
-	public void addMonitoringData(String type, IMonitoringData<?> item) {
-	}
-
-	@Override
-	public void removeMonitoringData(String type) {
-	}
-
-	@Override
-	public void subscribe(IEventListener listener, IEventType type) {
-	}
-
-	@Override
-	public void unsubscribe(IEventListener listener, IEventType type) {
-	}
-
-	@Override
-	public void subscribeToAll(IEventListener listener) {
-	}
-
-	@Override
-	public void unSubscribeFromAll(IEventListener listener) {
-	}
-
-	@Override
-	public void fire(IEvent<?, ?> event) {
-	}
-
-	@Override
-	public void subscribeToSource(ISource<? extends In> source, int sinkInPort, int sourceOutPort, SDFSchema schema) {
-	}
-
-	@Override
-	public void unsubscribeFromSource(PhysicalSubscription<ISource<? extends In>> subscription) {
-	}
-
-	@Override
-	public void unsubscribeFromAllSources() {
-	}
-
-	@Override
-	public void unsubscribeFromSource(ISource<? extends In> source, int sinkInPort, int sourceOutPort, SDFSchema schema) {
-	}
-
-	@Override
-	public Collection<PhysicalSubscription<ISource<? extends In>>> getSubscribedToSource() {
-		return Lists.newArrayList();
-	}
-
-	@Override
-	public PhysicalSubscription<ISource<? extends In>> getSubscribedToSource(int i) {
-		return null;
-	}
-
-	@Override
-	public void process(Collection<? extends In> object, int port) {
-		for (In obj : object) {
-			process(obj, port);
-		}
-	}
-
-	@Override
-	public void done(int port) {
 	}
 
 	@Override
@@ -431,18 +164,57 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> implements ISi
 	public void close() {
 		LOG.debug("Closing");
 		isOpen = false;
-		
-		for( ISubscription<? extends ISource<In>> s : connectedSubscriptions.toArray(new ISubscription[0])) {
+
+		for (ISubscription<? extends ISource<In>> s : connectedSubscriptions.toArray(new ISubscription[0])) {
 			disconnect(s, this);
 		}
 	}
 
+	protected final void notifyListeners(In element, int port) {
+		LOG.debug("Receiving element from port {}: {}", port, element);
+		synchronized (listeners) {
+			for (IStreamElementListener<In> l : listeners) {
+				try {
+					l.streamElementRecieved(element, port);
+				} catch (Throwable t) {
+					LOG.error("Exception during invoking listener for DefaultStreamConnection", t);
+				}
+			}
+		}
+	}
+
+	protected final void notifyListenersPunctuation(PointInTime point, int port) {
+		LOG.debug("Receiving punctuation from port {}: {}", port, point);
+		synchronized (listeners) {
+			for (IStreamElementListener<In> l : listeners) {
+				try {
+					l.punctuationElementRecieved(point, port);
+				} catch (Throwable t) {
+					LOG.error("Exception during invoking punctuation listener for DefaultStreamConnection", t);
+				}
+			}
+		}
+	}
+
+	protected final void notifyListenersSecurityPunctuation(ISecurityPunctuation sp, int port) {
+		LOG.debug("Receiving security punctuation from port {}: {}", port, sp);
+		synchronized (listeners) {
+			for (IStreamElementListener<In> l : listeners) {
+				try {
+					l.securityPunctuationElementRecieved(sp, port);
+				} catch (Throwable t) {
+					LOG.error("Exception during invoking security punctuation listener for DefaultStreamConnection", t);
+				}
+			}
+		}		
+	}
+	
 	private void connect(ISubscription<? extends ISource<In>> s, ISink<In> sink) {
-		if( connectedSubscriptions.contains(s)) {
+		if (connectedSubscriptions.contains(s)) {
 			LOG.warn("Tried to connect to {} multiple times.", s);
 			return;
 		}
-		
+
 		LOG.debug("Connecting to {}.", s.getTarget());
 		s.getTarget().connectSink(sink, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
 		connectedSubscriptions.add(s);
@@ -452,6 +224,26 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> implements ISi
 		LOG.debug("Disconnecting from {}.", s.getTarget());
 		s.getTarget().disconnectSink(sink, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
 		connectedSubscriptions.remove(s);
+	}
+
+	private void collectElement(In element, int port) {
+		synchronized (collectedObjects) {
+			collectedObjects.add(element);
+			collectedPorts.add(port);
+		}
+	}
+
+	private void processCollectedElements() {
+		if (collectedObjects.size() > 0) {
+			synchronized (collectedObjects) {
+				// gesammelte Daten nachträglich verarbeiten lassen
+				for (int i = 0; i < collectedObjects.size(); i++) {
+					process(collectedObjects.get(i), collectedPorts.get(i));
+				}
+				collectedObjects.clear();
+				collectedPorts.clear();
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")

@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 
@@ -116,6 +117,16 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	public void punctuationElementRecieved(PointInTime point, int port) {
 		synchronized (pendingElements) {
 			pendingElements.add("Punctuation: " + point);
+			if (!isInfinite() && pendingElements.size() > maxElements) {
+				pendingElements.remove(0);
+			}
+		}
+	}
+	
+	@Override
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+		synchronized (pendingElements) {
+			pendingElements.add("Security Punctuation: " + sp);
 			if (!isInfinite() && pendingElements.size() > maxElements) {
 				pendingElements.remove(0);
 			}

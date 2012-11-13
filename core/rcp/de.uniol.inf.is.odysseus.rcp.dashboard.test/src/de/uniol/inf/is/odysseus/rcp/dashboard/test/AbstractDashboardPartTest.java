@@ -34,6 +34,7 @@ import com.google.common.collect.ImmutableList;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
@@ -56,6 +57,10 @@ public class AbstractDashboardPartTest {
 
 		@Override
 		public void settingChanged(String settingName, Object oldValue, Object newValue) {
+		}
+
+		@Override
+		public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
 		}
 	}
 	

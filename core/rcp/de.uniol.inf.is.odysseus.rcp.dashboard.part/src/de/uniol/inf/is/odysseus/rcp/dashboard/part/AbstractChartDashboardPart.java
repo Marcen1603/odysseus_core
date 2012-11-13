@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
@@ -82,12 +83,27 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 			}
 		});
 	}
+	
+	@Override
+	public void securityPunctuationElementRecieved(final ISecurityPunctuation sp, final int port) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (!chartComposite.isDisposed()) {
+					addSecurityPunctuationToChart(sp, port);
+				}
+			}
+		});
+	}
+
+	protected void addPunctuationToChart(PointInTime punctuation, int port) {
+	}
+	protected void addSecurityPunctuationToChart(ISecurityPunctuation punctuation, int port) {
+	}
 
 	protected abstract Dataset createDataset();
 	protected abstract JFreeChart createChart();
 	protected abstract void decorateChart(JFreeChart chart);
 	protected abstract void startChart(List<IPhysicalOperator> physicalRoots) throws Exception;
 	protected abstract void addStreamElementToChart(Tuple<?> element, int port);
-	protected abstract void addPunctuationToChart(PointInTime punctuation, int port);
-
 }

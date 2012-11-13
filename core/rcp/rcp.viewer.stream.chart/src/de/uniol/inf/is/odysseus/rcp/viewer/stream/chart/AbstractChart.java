@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
@@ -149,6 +150,10 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	@Override
 	public void punctuationElementRecieved(PointInTime point, int port) {
 
+	}
+	
+	@Override
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
 	}
 	
 	@Override

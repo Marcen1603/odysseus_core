@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.ToolBar;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 public class NoSettingsDashboardPart extends AbstractDashboardPart {
@@ -42,5 +43,9 @@ public class NoSettingsDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void settingChanged(String settingName, Object oldValue, Object newValue) {
 		
+	}
+
+	@Override
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
 	}
 }

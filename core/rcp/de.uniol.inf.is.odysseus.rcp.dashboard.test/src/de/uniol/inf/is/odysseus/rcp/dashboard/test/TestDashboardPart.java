@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
@@ -85,14 +86,15 @@ public class TestDashboardPart implements IDashboardPart {
 
 	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider file) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public IDashboardPartQueryTextProvider getQueryTextProvider() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
 	}
 
 }

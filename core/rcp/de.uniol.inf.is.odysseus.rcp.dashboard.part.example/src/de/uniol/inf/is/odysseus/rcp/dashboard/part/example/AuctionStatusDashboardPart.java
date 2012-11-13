@@ -38,6 +38,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 public class AuctionStatusDashboardPart extends AbstractDashboardPart implements PaintListener {
@@ -95,6 +96,10 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 
 	}
 
+	@Override
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	}
+	
 	@Override
 	public void paintControl(PaintEvent e) {
 		synchronized (markerMap) {
@@ -154,5 +159,4 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 
 		});
 	}
-
 }
