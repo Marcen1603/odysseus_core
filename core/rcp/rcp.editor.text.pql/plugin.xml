@@ -17,6 +17,7 @@
             allowMultiple="false"
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLOperatorView"
+            icon="icons/operator.png"
             id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLOperatorView"
             name="PQL Operators"
             restorable="true">
