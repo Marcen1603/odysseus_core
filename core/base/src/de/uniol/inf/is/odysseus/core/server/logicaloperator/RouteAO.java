@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
@@ -33,6 +34,12 @@ public class RouteAO extends UnaryLogicalOp {
 	
 	public RouteAO(RouteAO routeAO){
 		super(routeAO);
+	}
+	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		// since it is a routing, schema is always from input port 0
+		return super.getOutputSchemaIntern(0);
 	}
 
 	@Override
