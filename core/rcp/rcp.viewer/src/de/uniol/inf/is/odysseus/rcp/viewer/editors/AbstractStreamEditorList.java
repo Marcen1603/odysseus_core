@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.rcp.viewer.editors;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
@@ -142,8 +141,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 			if( pendingElements.isEmpty()) {
 				return;
 			}
-			
-			Point sel = text.getSelection();
+						
 			for( String element : pendingElements ) {
 				text.append(element + "\n");
 				receivedElements++;
@@ -152,18 +150,13 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 					String txt = text.getText();
 					int pos = txt.indexOf("\n");
 					txt = txt.substring(pos+1);
-					text.setText(txt);
-
-					if( sel.x != sel.y ) {
-						sel.x = Math.max(sel.x - pos, 0);
-						sel.y = Math.max(sel.y - pos, 0);
-					}
-					
+					text.setText(txt);					
 					receivedElements--;
 				}
 			}
-			text.setSelection(sel);
+			text.setSelection(text.getCharCount());		
 			pendingElements.clear();
+			
 		}
 	}
 
