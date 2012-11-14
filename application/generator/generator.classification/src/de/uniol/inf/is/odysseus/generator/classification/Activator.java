@@ -24,10 +24,12 @@ public class Activator implements BundleActivator {
 		StreamServer test= new StreamServer(54322, new ClassificationProvider());
 		test.start();
 		
-		StreamServer adultTrain = new StreamServer(54324, new AdultDataProvider("adult.data"));
+		StreamServer adultTrain = new StreamServer(54324, new AdultDataProvider("adult.data", 0, 0), 5000, "adult.data");
 		adultTrain.start();
-		StreamServer adultTest = new StreamServer(54325, new AdultDataProvider("adult.test"));
+		StreamServer adultTest = new StreamServer(54325, new AdultDataProvider("adult.test", 0, 1), 5000, "adult.test");
 		adultTest.start();
+		
+		//BenchmarkController.getInstance().start();
 		
 	}
 

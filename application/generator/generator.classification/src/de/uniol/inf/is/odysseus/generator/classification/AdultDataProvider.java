@@ -35,14 +35,20 @@ public class AdultDataProvider extends StreamClientHandler{
 	private BufferedReader in;
 	private long counter = 0L;
 	private String filename;
+	private long wait;
+	private int order;
 
 
 	public AdultDataProvider(AdultDataProvider old){
 		this.filename = old.filename;
+		this.wait = old.wait;
+		this.order = old.order;
 	}
 	
-	public AdultDataProvider(String filename){
+	public AdultDataProvider(String filename, long wait, int order){
 		this.filename = filename;
+		this.wait = wait;
+		this.order = order;
 	}
 	
 	@Override
@@ -51,9 +57,21 @@ public class AdultDataProvider extends StreamClientHandler{
 		String line;
 		try {
 			line = in.readLine();	
-			if(line==null){
+			if(line==null || line.trim().isEmpty()){
+				// System.out.println("number of items: "+counter);
+				System.out.println("end of file reached");
+				double throughput = super.getLastThroughput();
+				BenchmarkController.getInstance().instanceFinished(this, throughput);
 				return null;
 			}
+			if (counter >= BenchmarkController.getInstance().breakAfter()) {
+				System.out.println("reached "+counter+" lines!");
+				super.printStats();
+				double throughput = super.getLastThroughput();
+				BenchmarkController.getInstance().instanceFinished(this, throughput);				
+				return null;
+			}
+			
 			String[] rawTuple = line.split(",");
 			long timestamp = counter;
 			
@@ -87,9 +105,9 @@ public class AdultDataProvider extends StreamClientHandler{
 			//native-country
 			tuple.addAttribute(new String(rawTuple[13]));
 			//income (the class attribute)
-			tuple.addAttribute(new String(rawTuple[14]));
+			tuple.addAttribute(new String(rawTuple[14].trim()));
 			try {
-				Thread.sleep(100);
+				Thread.sleep(wait);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -97,14 +115,17 @@ public class AdultDataProvider extends StreamClientHandler{
 			list.add(tuple);
 			counter++;
 			return list;
-		} catch (IOException e) {
+		} catch (Exception e) {
+			System.err.println("Error in line: "+counter);
 			e.printStackTrace();
+			
 		}
 		return null;
 	}
 
 	@Override
 	public void init() {	
+		BenchmarkController.getInstance().addHandler(this.order, this);
 		URL fileURL = Activator.getContext().getBundle().getEntry("/data/"+this.filename);
 		try {
 			InputStream inputStream = fileURL.openConnection().getInputStream();
