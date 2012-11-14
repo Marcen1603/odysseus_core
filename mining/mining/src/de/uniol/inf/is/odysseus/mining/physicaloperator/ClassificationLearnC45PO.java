@@ -127,8 +127,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			if (pool.size() > 0) {
 				// first, we need to calculate possible split points for
 				// continuous valued attributes
-				PointInTime totalMin = lastCut;
-				PointInTime totalMax = currentTime;
+				PointInTime totalMin = lastCut;				
 				// fill all attributes - without class-attribute
 				List<SDFAttribute> allAttributes = new ArrayList<>();
 				for (SDFAttribute attribute : inputSchema) {
@@ -144,10 +143,10 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				Tuple<M> newtuple = new Tuple<M>(1, false);
 				@SuppressWarnings("unchecked")
 				M meta = (M) pool.get(pool.size() - 1).getMetadata().clone();
-				meta.setStartAndEnd(totalMin, totalMax);
+				meta.setStartAndEnd(totalMin, PointInTime.getInfinityTime());
 				newtuple.setMetadata(meta);
 				newtuple.setAttribute(0, root);
-				//root.printSubTree();
+				// root.printSubTree();
 				transfer(newtuple);
 
 				lastCut = currentTime;
@@ -183,8 +182,8 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-//		process_data(timestamp);
-//		super.processPunctuation(timestamp, port);
+		// process_data(timestamp);
+		// super.processPunctuation(timestamp, port);
 
 	}
 
@@ -207,24 +206,42 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 		for (RelationalPredicate splitPredicate : splittingPoints.get(bestSplitAt)) {
 			// ... get only the subset for this value
 			List<Tuple<M>> subset = getSubset(pool, bestSplitAt, splitPredicate);
-			// and create a node for each possible value
-			TreeNode node = new TreeNode();
-
-			parent.addChild(splitPredicate, node);
-			// check, if all values of the class-attribute are equal...
-			if (onlyOneClassLeft(subset)) {
-				if (subset.size() > 0) {
+			// if subset size is zero, we do not need this node...
+			if (subset.size() > 0) {
+				// however, if its not, then create a node for each possible
+				// value
+				TreeNode node = new TreeNode();
+				// and connect it to the parent node
+				parent.addChild(splitPredicate, node);
+				// check, if all values of the class-attribute are equal...
+				if (onlyOneClassLeft(subset)) {
+					// ... if so, we can set the class (create a leaf)
 					node.setClazz(subset.get(0).getAttribute(clazzPosition));
 				} else {
-					System.out.println("SHOULD NOT HAPPEN");
+					// ... else find next split, if there are attributes left...
+					if (attributes.size() > 0) {
+						getNextSplit(subset, attributes, node);
+					} else {
+						// if there are no attributes left, force a leaf with most frequent class
+						node.setClazz(getMostFrequentClass(subset));
+					}
 				}
-			} else {
-				// ... else find next split
-				getNextSplit(subset, attributes, node);
 			}
 
 		}
 
+	}
+
+	/**
+	 * @param subset
+	 * @return
+	 */
+	private Object getMostFrequentClass(List<Tuple<M>> subset) {
+		CounterList<Object> counter = new CounterList<>();
+		for (Tuple<M> t : subset) {
+			counter.count(t.getAttribute(this.clazzPosition));
+		}
+		return counter.getMostFrequent();
 	}
 
 	/**
@@ -239,7 +256,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			int index = this.inputSchema.indexOf(attribute);
 			for (Tuple<M> t : pool) {
 				Object o = t.getAttribute(index);
-				if(!values.contains(o)){
+				if (!values.contains(o)) {
 					values.add(o);
 				}
 			}
@@ -259,7 +276,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				splittingPoints.get(attribute).add(greaterRelationalPredicate);
 			} else {
 				for (Object value : values) {
-					String exprString = attribute.getAttributeName() + " == '" + value+"'";
+					String exprString = attribute.getAttributeName() + " == '" + value + "'";
 					SDFExpression expression = new SDFExpression(exprString, MEP.getInstance());
 					RelationalPredicate relationalPredicate = new RelationalPredicate(expression);
 					relationalPredicate.init(inputSchema, null);
@@ -271,7 +288,6 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 		return splittingPoints;
 	}
 
-	
 	/**
 	 * @param subset
 	 * @return
@@ -291,7 +307,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	}
 
 	private List<Tuple<M>> getSubset(List<Tuple<M>> set, SDFAttribute attribute, RelationalPredicate splitPredicate) {
-		List<Tuple<M>> subset = new ArrayList<>();		
+		List<Tuple<M>> subset = new ArrayList<>();
 		for (Tuple<M> t : set) {
 			if (splitPredicate.evaluate(t)) {
 				subset.add(t);
@@ -307,7 +323,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 		SDFAttribute bestAttribute = null;
 		// for each attribute!
 		for (SDFAttribute attribute : attributes) {
-			logger.trace("checking attribute " + attribute + "...");			
+			logger.trace("checking attribute " + attribute + "...");
 			// for each possible value of attribute, calculate the entropy
 			double sum = 0;
 			for (RelationalPredicate splitPredicate : splittingPredicates.get(attribute)) {
@@ -342,7 +358,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			List<Tuple<M>> d1 = new ArrayList<>();
 			List<Tuple<M>> d2 = new ArrayList<>();
 			for (Tuple<M> t : pool) {
-				double tupleValue = ((Number)t.getAttribute(attributePosition)).doubleValue();
+				double tupleValue = ((Number) t.getAttribute(attributePosition)).doubleValue();
 				if (tupleValue <= midpoint) {
 					d1.add(t);
 				} else {
@@ -366,21 +382,21 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			Object o = t.getAttribute(this.clazzPosition);
 			counts.count(o);
 		}
-		logger.trace("   entryopy-calculation: total size: "+pool.size());
+		logger.trace("   entryopy-calculation: total size: " + pool.size());
 		double entropy = 0.0;
 		for (Object clazz : this.seenvalues.get(classAttribute)) {
 			double count = counts.getCount(clazz);
 			if (count != 0) {
-				logger.trace("   entryopy-calculation: count for "+clazz+": "+count);
-				logger.trace("   entryopy-calculation: count for all: "+ counts.getTotalCount());
-				double frac = count / counts.getTotalCount();				
-				logger.trace("   entryopy-calculation: probability: "+ frac);
+				logger.trace("   entryopy-calculation: count for " + clazz + ": " + count);
+				logger.trace("   entryopy-calculation: count for all: " + counts.getTotalCount());
+				double frac = count / counts.getTotalCount();
+				logger.trace("   entryopy-calculation: probability: " + frac);
 				double e = -1 * frac * (Math.log(frac) / Math.log(2.0));
-				logger.trace("   entryopy-calculation: part: "+ e);
+				logger.trace("   entryopy-calculation: part: " + e);
 				entropy += e;
 			}
 		}
-		logger.trace("   entryopy-calculation: result: "+ entropy);
+		logger.trace("   entryopy-calculation: result: " + entropy);
 
 		return entropy;
 	}

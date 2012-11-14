@@ -53,9 +53,9 @@ public class TreeNode {
 	
 	public TreeNode getMatchingChild(Tuple<?> tuple){
 		for(Entry<IPredicate<Tuple<?>>, TreeNode> e : this.childs.entrySet()){
-			System.out.println("check: ");
-			System.out.println("predicate: "+e.getKey());
-			System.out.println("tuple: "+tuple);
+//			System.out.println("check: ");
+//			System.out.println("predicate: "+e.getKey());
+//			System.out.println("tuple: "+tuple);
 			if(e.getKey().evaluate(tuple)){
 				
 				return e.getValue(); 

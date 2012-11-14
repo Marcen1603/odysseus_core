@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.mining.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Dennis Geesen
@@ -40,6 +41,20 @@ public class CounterList<T> {
 
 	public int getTotalCount() {
 		return this.totalCount;
+	}
+	
+	public T getMostFrequent(){
+		int max = 0;
+		T maxT = null;
+		for(Entry<T, Integer> e : this.counts.entrySet()){
+			int currentCount = e.getValue().intValue();
+			if(currentCount>=max){
+				max = currentCount;
+				maxT = e.getKey();
+			}
+		}
+		
+		return maxT;
 	}
 
 	public int getCount(T object) {
