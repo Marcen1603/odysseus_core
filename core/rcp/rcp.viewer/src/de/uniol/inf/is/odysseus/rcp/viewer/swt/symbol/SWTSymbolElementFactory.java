@@ -26,12 +26,13 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTArrowSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTCircleSymbolElement;
-import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTLineConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTFillCircleSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTFillRectSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTImageSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTInvisibleSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTLineConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTOwnerSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTOwnerTextSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTRectSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTSelectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTSelectivitySymbolElement;
@@ -81,6 +82,9 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		
 		if( type.equals( "text" ))
 			element = new SWTTextSymbolElement<C>(getColorFromParams(params));
+		
+		if( type.equals( "ownerText" ))
+			element = new SWTOwnerTextSymbolElement<C>();
 		
 		if( type.equals("ownerRectangle"))
 			element = new SWTOwnerSymbolElement<C>();

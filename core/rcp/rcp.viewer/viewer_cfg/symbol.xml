@@ -19,11 +19,7 @@
 	<Default>
 		<Size width="160" height="27"/>
 		<SymbolElement type="ownerRectangle"/>
-		<SymbolElement type="text">
-			<Parameter key="r" value="255"/>
-			<Parameter key="g" value="255"/>
-			<Parameter key="b" value="255"/>
-		</SymbolElement>
+		<SymbolElement type="ownerText"/>
 	</Default>
 	
 			

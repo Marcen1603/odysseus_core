@@ -15,8 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
@@ -24,22 +25,18 @@ import org.eclipse.swt.widgets.Display;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
-public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
+public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 
 	private Font font;
 	
 	private int lastWidth;
 	private int lastTextWidth;
 	private int lastTextHeight;
-	
-	private Color color;
-	
-	public SWTTextSymbolElement(Color color){
-		this.color = color;
-	}
 	
 	@Override
 	public void draw(Vector position, int width, int height, float zoomFactor) {
@@ -90,11 +87,26 @@ public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		if( font != null ) {
 			final int x = ((int)position.getX()) + (width / 2) - (lastTextWidth / 2); 
 			final int y = ((int)position.getY()) + (height / 2) - ( lastTextHeight / 2);
+			final int ownerID = determineFirstOwnerID(getNodeView().getModelNode().getContent());
 
 			gc.setFont(font);
-			gc.setForeground(color);
+			gc.setForeground(OwnerColorManager.getOwnerTextColor(ownerID));
 			gc.drawText(name, x, y, true);
 		}
+	}
+
+	private static int determineFirstOwnerID(Object content) {
+		if( !(content instanceof IOwnedOperator)) {
+			return 0;
+		}
+		
+		IOwnedOperator op = (IOwnedOperator)content;
+		List<IOperatorOwner> owner = op.getOwner();
+		if( !owner.isEmpty() ) {
+			return owner.get(0).getID();
+		}
+		
+		return 0;
 	}
 
 	private static String getRealName(IPhysicalOperator operator) {

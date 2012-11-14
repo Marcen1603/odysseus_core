@@ -25,8 +25,8 @@ import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
 public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
@@ -37,26 +37,9 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 	
 	private static final int RECT_ROUND_SIZE_PIXELS = 20;
 
-	private static final Color OWNER_BORDER_COLOR = getSystemColor(SWT.COLOR_BLACK);
-	private static final Color OWNERLESS_FILL_COLOR = getSystemColor(SWT.COLOR_WHITE);
+	private static final Color OWNER_BORDER_COLOR = PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_BLACK);
+	private static final Color OWNERLESS_FILL_COLOR = PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_WHITE);
 	
-	private static final Color[] OWNER_COLORS = new Color[] { 
-			getSystemColor(SWT.COLOR_DARK_BLUE), 
-			getSystemColor(SWT.COLOR_DARK_CYAN), 
-			getSystemColor(SWT.COLOR_DARK_GRAY), 
-			getSystemColor(SWT.COLOR_DARK_GREEN),
-			getSystemColor(SWT.COLOR_DARK_MAGENTA), 
-			getSystemColor(SWT.COLOR_DARK_YELLOW), 
-			getSystemColor(SWT.COLOR_DARK_RED), 
-			getSystemColor(SWT.COLOR_BLACK),
-			getSystemColor(SWT.COLOR_BLUE), 
-			getSystemColor(SWT.COLOR_GREEN), 
-			getSystemColor(SWT.COLOR_RED),
-			getSystemColor(SWT.COLOR_YELLOW), 
-			getSystemColor(SWT.COLOR_GRAY), 
-			getSystemColor(SWT.COLOR_MAGENTA),  
-			getSystemColor(SWT.COLOR_CYAN),  };
-
 	@Override
 	public void draw(Vector position, int width, int height, float zoomFactor) {
 		List<Integer> ownerIDs = determineOwnerIDs(getNodeView().getModelNode().getContent());
@@ -85,7 +68,7 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		GC gc = getActualGC();
 		int round = (int)(RECT_ROUND_SIZE_PIXELS * zoomFactor);
 
-		gc.setBackground(OWNER_COLORS[ownerID % OWNER_COLORS.length]);
+		gc.setBackground(OwnerColorManager.getOwnerBackgroundColor(ownerID));
 		gc.fillRoundRectangle((int) pos.getX(), (int) pos.getY(), width, height, round, round);
 	}
 
@@ -111,7 +94,7 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 	}
 
 	private static void drawOwnerCicle(GC actualGC, int x, int y, float zoomFactor, Integer ownerID) {
-		actualGC.setBackground(OWNER_COLORS[ownerID % OWNER_COLORS.length]);
+		actualGC.setBackground(OwnerColorManager.getOwnerBackgroundColor(ownerID));
 		actualGC.setForeground(OWNER_BORDER_COLOR);
 
 		int realRadius = (int) (OWNER_CIRCLE_RADIUS_PIXELS * zoomFactor);
@@ -120,11 +103,11 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 	}
 
 	private static List<Integer> determineOwnerIDs(Object content) {
-		if (!(content instanceof IPhysicalOperator)) {
+		if (!(content instanceof IOwnedOperator)) {
 			return Lists.newArrayList();
 		}
 
-		IPhysicalOperator operator = (IPhysicalOperator) content;
+		IOwnedOperator operator = (IOwnedOperator) content;
 
 		List<Integer> ownerIDs = Lists.newArrayList();
 		for (IOperatorOwner owner : operator.getOwner()) {
@@ -136,7 +119,4 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		return ownerIDs;
 	}
 
-	private static Color getSystemColor(int color) {
-		return PlatformUI.getWorkbench().getDisplay().getSystemColor(color);
-	}
 }
