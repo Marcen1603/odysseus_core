@@ -68,11 +68,9 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
-            canFinishEarly="false"
             category="de.uniol.inf.is.odysseus.rcp.wizard.category"
             class="de.uniol.inf.is.odysseus.rcp.editor.text.wizards.OdysseusScriptWizard"
             finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
-            hasPages="true"
             icon="Icons/text.gif"
             id="de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptWizard"
             name="Odysseus Script"
@@ -119,6 +117,14 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="CTRL+R">
       </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonWizard
+            type="new"
+            wizardId="de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptWizard">
+         <enablement></enablement>
+      </commonWizard>
    </extension>
  
 
