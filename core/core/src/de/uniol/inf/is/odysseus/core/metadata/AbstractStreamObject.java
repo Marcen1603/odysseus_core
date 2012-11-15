@@ -9,21 +9,20 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 
 	private static final long serialVersionUID = 1480009485404803793L;
 
-	private boolean inOrder = true;
-	private Map<String, Object> metadataMap = new HashMap<String, Object>();
+	final private Map<String, Object> metadataMap = new HashMap<String, Object>();
 	private T metadata = null;
-	private Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+	final private Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
 
 	public AbstractStreamObject() {
 	}
 	
 	@SuppressWarnings("unchecked")
 	protected AbstractStreamObject(AbstractStreamObject<T> other) {
-		this.inOrder = other.inOrder;
-		this.metadataMap = new HashMap<>(other.metadataMap);
+		this.metadataMap.putAll(other.metadataMap);
 		if (other.metadata != null) {
 			this.metadata = (T) other.metadata.clone();
 		}
+		this.additionalContent.putAll(other.additionalContent);
 	}
 
 	@Override
