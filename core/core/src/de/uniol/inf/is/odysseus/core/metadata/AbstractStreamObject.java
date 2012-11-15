@@ -66,7 +66,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 
     @Override
     public void setAdditionalContent(Map<String, Serializable> additionalContent) {
-        this.additionalContent = additionalContent;
+        this.additionalContent.putAll(additionalContent);
     }
 
 	abstract public AbstractStreamObject<T> clone();
