@@ -28,7 +28,7 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.rcp.wizard;
+package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
