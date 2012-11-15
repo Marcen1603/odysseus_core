@@ -12,7 +12,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 	private boolean inOrder = true;
 	private Map<String, Object> metadataMap = new HashMap<String, Object>();
 	private T metadata = null;
-	private Map<String, Serializable> additionalContent;
+	private Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
 
 	public AbstractStreamObject() {
 	}
