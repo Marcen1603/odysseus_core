@@ -15,6 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.core.mep;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 
@@ -52,6 +55,19 @@ public interface IFunction<T> extends IExpression<T> {
 	 */
 	public IExpression<?> getArgument(int argumentPosition);
 	
+	/**
+	 * Set the additional content
+	 * @param additionalContent The additional content
+	 */
+    public void setAdditionalContent(Map<String, Serializable> additionalContent);
+
+    /**
+     * Get the additional content if present
+     * @param name The name (key) of the additional content
+     * @return The additional content
+     */
+    public Serializable getAdditionalContent(String name);
+    
 	/**
 	 * Gets the types that are accepted at the position
 	 * @param argPos the argument position

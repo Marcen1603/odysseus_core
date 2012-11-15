@@ -15,7 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.core.server.mep;
 
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.mep.Constant;
@@ -31,6 +33,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	 */
 	private static final long serialVersionUID = 3805396798229438499L;
 	private IExpression<?>[] arguments;
+    private Map<String, Serializable> additionalContent;
 
 	@Override
 	final public void setArguments(IExpression<?>... arguments) {
@@ -54,6 +57,16 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public IExpression<?>[] getArguments() {
 		return arguments;
 	}
+	
+    @Override
+    public void setAdditionalContent(Map<String, Serializable> additionalContent) {
+        this.additionalContent = additionalContent;
+    }
+
+    @Override
+    public Serializable getAdditionalContent(String name) {
+        return additionalContent.get(name);
+    }
 
 	@SuppressWarnings("unchecked")
 	final protected <S> S getInputValue(int argumentPos) {

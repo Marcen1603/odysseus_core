@@ -40,7 +40,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	private static final long serialVersionUID = 7119095568322125441L;
 
 	protected Object[] attributes;
-	protected Serializable additionalContent;
+
 	protected int memSize = -1;
 
 	private boolean containsNull = false;
@@ -171,7 +171,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			Tuple<T> newTuple = new Tuple<T>(newAttrs.length, false);
 			newTuple.setAttributes(newAttrs);
 			newTuple.setMetadata((T) this.getMetadata().clone());
-			newTuple.setAdditionalContent(additionalContent);
+			newTuple.setAdditionalContent(getAdditionalContent());
 			return newTuple;
 		}
 		this.attributes = newAttrs;
@@ -184,7 +184,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			Tuple<T> newTuple = new Tuple<T>(newAttrs.length, false);
 			newTuple.setAttributes(newAttrs);
 			newTuple.setMetadata((T) this.getMetadata().clone());
-			newTuple.setAdditionalContent(additionalContent);
+			newTuple.setAdditionalContent(getAdditionalContent());
 			return newTuple;
 		}
 		this.attributes = newAttrs;
@@ -204,17 +204,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.valueChanged = true;
 	}
 
-	// -----------------------------------------------------------------
-	// additional content
-	// -----------------------------------------------------------------
 
-	public Serializable getAdditionalContent() {
-		return additionalContent;
-	}
-
-	public void setAdditionalContent(Serializable additionalContent) {
-		this.additionalContent = additionalContent;
-	}
 
 	// -----------------------------------------------------------------
 	// Vergleichsmethoden
@@ -351,8 +341,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		}
 		retBuff.append(" | sz=" + (memSize == -1 ? "(-)" : memSize));
 		retBuff.append(" | META | " + getMetadata());
-		if (additionalContent != null) {
-			retBuff.append("|ADD|" + additionalContent);
+		if (getAdditionalContent() != null) {
+			retBuff.append("|ADD|" + getAdditionalContent());
 		}
 		return retBuff.toString();
 	}
@@ -440,7 +430,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 				}
 			}
 		}
-		this.additionalContent = copy.additionalContent;
+		this.setAdditionalContent(copy.getAdditionalContent());
 	}
 
 	/**

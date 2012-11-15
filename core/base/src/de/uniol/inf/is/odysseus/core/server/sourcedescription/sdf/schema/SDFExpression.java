@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class SDFExpression implements Serializable, IClone {
 
     private List<SDFAttribute>          attributes;
 
+    private Map<String,Serializable>    additionalContent;
     /**
      * Using prediction functions you know in advance of query processing, which
      * attributes have to be used and where they are located in the schema. So
@@ -294,6 +296,14 @@ public class SDFExpression implements Serializable, IClone {
         this.value = object;
     }
 
+    private void setAdditionalContent(Map<String, Serializable> additionalContent) {
+        this.additionalContent = Collections.unmodifiableMap(additionalContent);
+    }
+
+    public Serializable getAdditionalContent(String name) {
+        return this.additionalContent.get(name);
+    }
+    
     @SuppressWarnings("unchecked")
     public <T> T getValue() {
         return (T) this.value;
@@ -329,6 +339,14 @@ public class SDFExpression implements Serializable, IClone {
         setValue(expression.getValue());
     }
 
+    public void bindAdditionalContent(Map<String, Serializable> additionalContent) {
+        if (expression instanceof Constant) {
+            return;
+        }
+
+        setAdditionalContent(additionalContent);
+    }
+    
     public ArrayList<Variable> getVariables() {
         return this.variableArrayList;
     }

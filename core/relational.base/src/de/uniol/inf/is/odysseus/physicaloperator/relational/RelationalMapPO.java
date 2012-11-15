@@ -80,6 +80,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					values[j] = object.getAttribute(this.variables[i][j]);
 				}
+				this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
 				this.expressions[i].bindVariables(values);
 				outputVal.setAttribute(i, this.expressions[i].getValue());
 				if (this.expressions[i].getType().requiresDeepClone()) {

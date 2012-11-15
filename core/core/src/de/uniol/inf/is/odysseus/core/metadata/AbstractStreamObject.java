@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.metadata;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 	private boolean inOrder = true;
 	private Map<String, Object> metadataMap = new HashMap<String, Object>();
 	private T metadata = null;
+	private Map<String, Serializable> additionalContent;
 
 	public AbstractStreamObject() {
 	}
@@ -43,6 +45,29 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 	public void setMetadata(T metadata) {
 		this.metadata = metadata;
 	}
+	
+	   // -----------------------------------------------------------------
+    // additional content
+    // -----------------------------------------------------------------
+    @Override
+    public Serializable getAdditionalContent(String name) {
+        return this.additionalContent.get(name);
+    }
+
+    @Override
+    public void setAdditionalContent(String name, Serializable content) {
+        this.additionalContent.put(name, content);
+    }
+
+    @Override
+    public Map<String, Serializable> getAdditionalContent() {
+        return additionalContent;
+    }
+
+    @Override
+    public void setAdditionalContent(Map<String, Serializable> additionalContent) {
+        this.additionalContent = additionalContent;
+    }
 
 	abstract public AbstractStreamObject<T> clone();
 

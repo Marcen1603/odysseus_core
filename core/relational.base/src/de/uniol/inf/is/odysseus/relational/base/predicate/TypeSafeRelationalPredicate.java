@@ -15,7 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.relational.base.predicate;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
@@ -59,6 +62,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 				values[i] = input.getAttribute(this.attributePositions[i]);
 			}
 		}
+		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
@@ -70,6 +74,11 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 			Tuple<?> r = fromRightChannel[i] ? right : left;
 			values[i] = r.getAttribute(this.attributePositions[i]);
 		}
+		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+        additionalContent.putAll(left.getAdditionalContent());
+        additionalContent.putAll(right.getAdditionalContent());
+        
+        this.expression.bindAdditionalContent(additionalContent);
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}

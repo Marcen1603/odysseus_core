@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.relational.base.predicate;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -156,6 +157,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(this.attributePositions[i]);
 		}
+		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
@@ -167,6 +169,11 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 			Tuple<?> r = fromRightChannel[i] ? right : left;
 			values[i] = r.getAttribute(this.attributePositions[i]);
 		}
+		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+        additionalContent.putAll(left.getAdditionalContent());
+        additionalContent.putAll(right.getAdditionalContent());
+        
+        this.expression.bindAdditionalContent(additionalContent);
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
@@ -182,7 +189,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 						.getURI());
 			}
 		}
-
+		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
