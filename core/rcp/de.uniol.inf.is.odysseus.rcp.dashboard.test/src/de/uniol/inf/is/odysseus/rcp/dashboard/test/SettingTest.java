@@ -16,10 +16,13 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.test;
 
 import static org.testng.Assert.*;
+
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.SettingDescriptor;
+import de.uniol.inf.is.odysseus.testng.TestUtil;
 
 public class SettingTest {
 
@@ -44,6 +47,38 @@ public class SettingTest {
 		
 		setting.reset();
 		assertEquals(setting.get(), (Integer)100, "Value after reset differs from default value!");
+	}
+	
+	@Test(dataProvider = "convertValueDataProvider")
+	public void testConvertValue(String value, String type, Object realValue) throws Throwable {
+		Object result = TestUtil.invoke("convertValue", Setting.class, value, type);
+		
+		if( realValue != null ) {
+			assertEquals(result.getClass(), realValue.getClass());
+			assertEquals(result, realValue);
+		} else {
+			assertNull(result);
+		}
+	}
+	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testConvertValueUnknownType() throws Throwable {
+		TestUtil.invoke("convertValue", Setting.class, "100", "SomeUnknownType");
+	}
+	
+	@SuppressWarnings("unused")
+	@DataProvider
+	private static Object[][] convertValueDataProvider() {
+		return new Object[][] {
+				{ "100", "Integer", 100},	
+				{ "100", "Long", 100L},	
+				{ "100.0", "Double", 100.0},	
+				{ "true", "Boolean", true},	
+				{ "100", "Float", 100.0f},	
+				{ "Moin", "String", "Moin"},	
+				{ null, "String", null},
+				{ null, "Integer", null},
+		};
 	}
 	
 	private static SettingDescriptor<Integer> newSettingDescriptor() {

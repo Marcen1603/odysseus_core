@@ -6,5 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Fragment-Host: de.uniol.inf.is.odysseus.rcp.dashboard;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.core.securitypunctuation,
+Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
+ de.uniol.inf.is.odysseus.core.planmanagement.executor.exception,
+ de.uniol.inf.is.odysseus.core.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.sdf.schema,
+ de.uniol.inf.is.odysseus.core.securitypunctuation,
  de.uniol.inf.is.odysseus.testng
