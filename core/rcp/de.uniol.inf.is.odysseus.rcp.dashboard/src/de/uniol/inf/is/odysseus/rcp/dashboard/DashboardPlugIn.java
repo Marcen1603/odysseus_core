@@ -48,22 +48,17 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
-		extensionResolver = new DashboardPartExtensionPointResolver();
-		Platform.getExtensionRegistry().addListener(extensionResolver, DashboardPlugIn.EXTENSION_POINT_ID);
-		
-		imageManager = new ImageManager(context.getBundle());
-		imageManager.register("dashboardPart", "icons/dashboardPart.jpg");
+		startImpl(context);
 	}
 
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
 		
-		Platform.getExtensionRegistry().removeListener(extensionResolver);
-		
-		imageManager.disposeAll();
-		imageManager = null;
+		stopImpl();
 	}
+
+	
 	public void bindScriptParser( IOdysseusScriptParser parser ) {
 		LOG.debug("ScriptParser {} bound." , parser);
 		
@@ -107,5 +102,19 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 	public static ImageManager getImageManager() {
 		return imageManager;
 	}
+
+	private static void startImpl(BundleContext context) {
+		extensionResolver = new DashboardPartExtensionPointResolver();
+		Platform.getExtensionRegistry().addListener(extensionResolver, DashboardPlugIn.EXTENSION_POINT_ID);
+		
+		imageManager = new ImageManager(context.getBundle());
+		imageManager.register("dashboardPart", "icons/dashboardPart.jpg");
+	}
 	
+	private static void stopImpl() {
+		Platform.getExtensionRegistry().removeListener(extensionResolver);
+		
+		imageManager.disposeAll();
+		imageManager = null;
+	}
 }

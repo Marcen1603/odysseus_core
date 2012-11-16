@@ -57,7 +57,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
-import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.DashboardPartDescriptor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
@@ -346,12 +345,11 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
 	private static void appendConfiguration(Configuration config, Document doc, Element rootElement) {
 		for (String name : config.getNames()) {
-			Setting<?> setting = config.getSetting(name);
 
 			Element settingElement = doc.createElement(SETTING_XML_ELEMENT);
 			settingElement.setAttribute(SETTING_NAME_XML_ATTRIBUTE, name);
 
-			Object value = setting.get();
+			Object value = config.get(name);
 			settingElement.setAttribute(SETTING_VALUE_XML_ATTRIBUTE, value != null ? value.toString() : NULL_SETTING);
 			rootElement.appendChild(settingElement);
 		}

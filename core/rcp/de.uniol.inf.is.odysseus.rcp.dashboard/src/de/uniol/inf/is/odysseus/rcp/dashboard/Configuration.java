@@ -103,13 +103,6 @@ public class Configuration {
 		}
 	}
 	
-	public Setting<?> getSetting( String settingName ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
-		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
-		
-		return getSettingImpl(settingName);
-	}
-	
 	public void addListener( IConfigurationListener listener ) {
 		Preconditions.checkNotNull(listener, "Listener must not be null!");
 		synchronized(listeners) {
