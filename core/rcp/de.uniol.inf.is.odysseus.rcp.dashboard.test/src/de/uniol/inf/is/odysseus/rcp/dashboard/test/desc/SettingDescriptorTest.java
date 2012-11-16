@@ -87,11 +87,9 @@ public class SettingDescriptorTest {
 		assertEquals(desc.getType(), type);
 	}
 	
-	@Test(dataProvider = "invalidTypeDefaultValueDataProvider", expectedExceptions = IllegalArgumentException.class)
+	@Test(dataProvider = "invalidTypeDefaultValueDataProvider", expectedExceptions = {IllegalArgumentException.class, NullPointerException.class} )
 	public void testInvalidTypeDefaultValueCombinations(Object defValue, String type) {
 		new SettingDescriptor<Object>("SettingName", "SettingDescription", type, defValue, true, true);
-		
-		fail();
 	}
 	
 	@SuppressWarnings("unused")
@@ -131,6 +129,8 @@ public class SettingDescriptorTest {
 				{ 100.0f, "Double"},
 				{ 100.0f, "Long"},
 				{ true, "String"},
+				{ "Waka", ""},
+				{ "Waka", null},
 		};
 	}
 }

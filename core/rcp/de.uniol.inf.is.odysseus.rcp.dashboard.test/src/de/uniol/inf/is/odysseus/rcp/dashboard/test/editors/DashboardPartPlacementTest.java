@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
 import de.uniol.inf.is.odysseus.rcp.dashboard.test.TestDashboardPart;
 
-public class DashboardPartPlacemnetTest {
+public class DashboardPartPlacementTest {
 
 	@Test
 	public void testConstructor() {
@@ -38,8 +38,18 @@ public class DashboardPartPlacemnetTest {
 	}
 
 	@Test(expectedExceptions = NullPointerException.class)
-	public void testConstructorNullArgs() {
+	public void testConstructorNullDashboardPartArg() {
 		new DashboardPartPlacement(null, "File", 100, 100, 100, 100);
+	}
+	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testConstructorNullFilenameArg() {
+		new DashboardPartPlacement(new TestDashboardPart(), null, 100, 100, 100, 100);
+	}
+	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testConstructorEmptyFilenameArg() {
+		new DashboardPartPlacement(new TestDashboardPart(), "", 100, 100, 100, 100);
 	}
 
 	@Test

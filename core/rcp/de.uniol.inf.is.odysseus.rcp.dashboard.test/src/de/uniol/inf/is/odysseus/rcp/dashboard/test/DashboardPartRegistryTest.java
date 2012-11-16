@@ -23,8 +23,10 @@ import static org.testng.Assert.assertTrue;
 import java.util.List;
 
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
@@ -64,6 +66,16 @@ public class DashboardPartRegistryTest {
 		assertFalse(DashboardPartRegistry.isRegistered(dashboardPartClass));
 		assertFalse(DashboardPartRegistry.isRegistered(descriptor.getName()));
 	}
+	
+	@Test
+	public void testUnregisterByClass() throws Throwable {
+		DashboardPartRegistry.register(dashboardPartClass, descriptor);
+		
+		DashboardPartRegistry.unregister(dashboardPartClass);
+
+		assertFalse(DashboardPartRegistry.isRegistered(dashboardPartClass));
+		assertFalse(DashboardPartRegistry.isRegistered(descriptor.getName()));
+	}
 
 	@Test
 	public void testUnneededUnregister() {
@@ -71,6 +83,13 @@ public class DashboardPartRegistryTest {
 
 		assertFalse(DashboardPartRegistry.isRegistered(dashboardPartClass));
 		assertFalse(DashboardPartRegistry.isRegistered(descriptor.getName()));
+	}
+	
+	@Test
+	public void testUnneededUnregisterByClass() throws Throwable {
+		DashboardPartRegistry.unregister(TestDashboardPart2.class);
+		
+		assertFalse(DashboardPartRegistry.isRegistered(TestDashboardPart2.class));
 	}
 
 	@Test
@@ -127,14 +146,49 @@ public class DashboardPartRegistryTest {
 		DashboardPartRegistry.createDashboardPart("Waka");
 	}
 	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testCreateDashboardPartNullArgs() throws Throwable {
+		DashboardPartRegistry.createDashboardPart(null);
+	}
+	
+	@Test(expectedExceptions = InstantiationException.class, dataProvider = "invalidDashboardPartClasses")
+	public void testCreateInvalidDashboardPart(Class<? extends IDashboardPart> dashboardPartClass ) throws Throwable {
+		DashboardPartRegistry.register(dashboardPartClass, descriptor);
+		
+		DashboardPartRegistry.createDashboardPart(descriptor.getName());
+	}
+	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testCreateDashboardPartEmptyString() throws Throwable {
+		DashboardPartRegistry.createDashboardPart("");
+	}
+	
 	@Test(expectedExceptions = NullPointerException.class)
 	public void testRegisterNullArgs() {
 		DashboardPartRegistry.register(null, null);
 	}
 	
 	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testRegisterClassTwice() throws Throwable {
+		DashboardPartDescriptor desc2 = newDashboardPartDescriptor();
+		DashboardPartRegistry.register(TestDashboardPart2.class, desc2);
+		DashboardPartRegistry.register(TestDashboardPart2.class, descriptor);
+	}
+	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testRegisterDescriptorTwice() throws Throwable {
+		DashboardPartRegistry.register(TestDashboardPart2.class, descriptor);
+		DashboardPartRegistry.register(TestDashboardPart.class, descriptor);
+	}
+	
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testUnregisterNullArgs() {
 		DashboardPartRegistry.unregister((String)null);
+	}
+	
+	@Test(expectedExceptions = NullPointerException.class)
+	public void testUnregisterByClassNullArgs() {
+		DashboardPartRegistry.unregister((Class<? extends IDashboardPart>)null);
 	}
 	
 	@Test(expectedExceptions = IllegalArgumentException.class)
@@ -143,8 +197,29 @@ public class DashboardPartRegistryTest {
 	}
 	
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testGetDashboardPartClassNullArgs() {
+	public void testGetDashboardPartDescriptorNullArgs() {
 		DashboardPartRegistry.getDashboardPartDescriptor(null);
+	}
+	
+	@Test
+	public void testGetDashboardPartClass() throws Throwable {
+		DashboardPartRegistry.register(dashboardPartClass, descriptor);
+		
+		Optional<Class<? extends IDashboardPart>> optClass = DashboardPartRegistry.getDashboardPartClass(descriptor.getName());
+		assertTrue( optClass.isPresent());
+		
+		Optional<Class<? extends IDashboardPart>> optClass2 = DashboardPartRegistry.getDashboardPartClass("No one here");
+		assertFalse( optClass2.isPresent() );
+	}
+	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testGetDashboardPartClassNullArgs() throws Throwable {
+		DashboardPartRegistry.getDashboardPartClass(null);
+	}
+	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testGetDashboardPartClassEmptyString() throws Throwable {
+		DashboardPartRegistry.getDashboardPartClass("");
 	}
 
 	private static DashboardPartDescriptor newDashboardPartDescriptor() {
@@ -159,5 +234,14 @@ public class DashboardPartRegistryTest {
 
 	private static <T> SettingDescriptor<T> newSettingDescriptor(String settingName, String type, T defaultValue) {
 		return new SettingDescriptor<T>(settingName, "Description", type, defaultValue, false, true);
+	}
+	
+	@SuppressWarnings("unused")
+	@DataProvider
+	private static Object[][] invalidDashboardPartClasses() {
+		return new Object[][] {
+				{ InvalidTestDashboardPart.class},	
+				{ InvalidTestDashboardPart2.class},	
+		};
 	}
 }

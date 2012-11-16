@@ -47,6 +47,8 @@ public final class DashboardPartDescriptor {
 	
 	public DashboardPartDescriptor( String name, String description, List<SettingDescriptor<?>> settingDescriptors) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name of DashboardPartDescriptor is null or empty!");
+		Preconditions.checkNotNull(settingDescriptors, "List of setting descriptors must not be null or empty!");
+		
 		this.name = name;
 		
 		if( Strings.isNullOrEmpty(description)) {
@@ -54,12 +56,6 @@ public final class DashboardPartDescriptor {
 			description = DEFAULT_DESCRIPTION + " " + name;
 		}
 		this.description = description;
-		
-		if( settingDescriptors == null ) {
-			LOG.warn("List of setting descriptors for DashboardPartDescriptor {} is empty.", name);
-			settingDescriptors = Lists.newArrayList();
-		}
-		
 		this.settingDescriptors = createSettingsMap( settingDescriptors );
 	}
 	

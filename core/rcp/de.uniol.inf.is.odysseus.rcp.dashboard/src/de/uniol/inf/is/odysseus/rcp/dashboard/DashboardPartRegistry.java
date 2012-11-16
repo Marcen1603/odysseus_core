@@ -44,15 +44,11 @@ public class DashboardPartRegistry {
 	
 	private static final Map<String, Registration> registeredParts = Maps.newHashMap();
 	
-	public DashboardPartRegistry() {
-		// probably automatically invoked by declarative 
-		// services or extension point resolvers
-	}
-	
 	public static void register( Class<? extends IDashboardPart> dashboardPartClass, DashboardPartDescriptor descriptor ) {
 		Preconditions.checkNotNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
 		Preconditions.checkNotNull(descriptor, "Descriptor of DashboardPart must not be null!");
 		Preconditions.checkArgument(!isRegistered(dashboardPartClass), "DashboardPartClass %s already registered!", dashboardPartClass);
+		Preconditions.checkArgument(!isRegistered(descriptor.getName()), "DashboardPartClass %s already registered!", dashboardPartClass);
 		
 		registeredParts.put(descriptor.getName(), new Registration(dashboardPartClass, descriptor));
 		LOG.debug("Registered DashboardPart {}.", descriptor.getName());

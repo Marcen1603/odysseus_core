@@ -40,10 +40,21 @@ public class DashboardPartDescriptorTest {
 		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", newEmptySettingDescriptorList());
 		assertNotNull(desc);
 	}
+	
+	@Test
+	public void testSmallConstructor() throws Throwable {
+		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description");
+		assertNotNull(desc);
+	}
 
-	@Test(expectedExceptions = IllegalArgumentException.class)
+	@Test(expectedExceptions = {IllegalArgumentException.class, NullPointerException.class})
 	public void testConstructorNullArgs() {
 		new DashboardPartDescriptor(null, null, null);
+	}
+	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testEmptyNameConstructor() throws Throwable {
+		new DashboardPartDescriptor("", "Description");
 	}
 
 	@Test
