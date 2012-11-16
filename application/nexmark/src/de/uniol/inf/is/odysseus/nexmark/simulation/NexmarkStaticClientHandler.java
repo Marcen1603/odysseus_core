@@ -14,20 +14,20 @@
  * limitations under the License.
  ******************************************************************************/
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.nexmark.simulation;
 
 import java.io.IOException;
@@ -45,11 +45,11 @@ import org.xml.sax.SAXException;
 
 import de.uniol.inf.is.odysseus.nexmark.Activator;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.metadata.Container;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 import de.uniol.inf.is.odysseus.nexmark.xml.DOMHelp;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 class TagMap {
@@ -93,7 +93,8 @@ public class NexmarkStaticClientHandler extends Thread {
 	private NodeIterator xpathNodeIterator = null;
 
 	private long newStart = 0;
-	//private long lastStart = 0;
+
+	// private long lastStart = 0;
 
 	// private Socket connection;
 
@@ -137,12 +138,13 @@ public class NexmarkStaticClientHandler extends Thread {
 
 			if (document != null) {
 				Node node = DOMHelp.parseString(document, false);
-				xpathNodeIterator = XPathAPI.selectNodeIterator(node, tagMap.xpathExpression);
+				xpathNodeIterator = XPathAPI.selectNodeIterator(node,
+						tagMap.xpathExpression);
 
-				Container<Node, ITimeInterval> container;
+				Pair<Node, ITimeInterval> pair;
 				try {
-					while ((container = process_next()) != null) {
-						Tuple<ITimeInterval> tuple = toRelationalTuple(container);
+					while ((pair = process_next()) != null) {
+						Tuple<ITimeInterval> tuple = toRelationalTuple(pair);
 						client.writeObject(tuple, true);
 					}
 					client.writeObject(null, true);
@@ -166,15 +168,15 @@ public class NexmarkStaticClientHandler extends Thread {
 		tagMap = categoryTagMap;
 	}
 
-
 	/**
 	 * Transformiert eine Node Struktur in ein Relationales Tupel
 	 */
 	private Tuple<ITimeInterval> toRelationalTuple(
-			Container<Node, ITimeInterval> container) {
-		Tuple<ITimeInterval> r = new Tuple<ITimeInterval>(tagMap.map.size(), false);
-		r.setMetadata(container.getMetadata());
-		Node cargo = container.cargo;
+			Pair<Node, ITimeInterval> pair) {
+		Tuple<ITimeInterval> r = new Tuple<ITimeInterval>(tagMap.map.size(),
+				false);
+		r.setMetadata(pair.getE2());
+		Node cargo = pair.getE1();
 		NodeList nl = cargo.getFirstChild().getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node in = nl.item(i);
@@ -215,8 +217,8 @@ public class NexmarkStaticClientHandler extends Thread {
 	 * @throws SAXException
 	 * @throws TransformerException
 	 */
-	private Node process_node() throws IOException, ParserConfigurationException, SAXException,
-			TransformerException {
+	private Node process_node() throws IOException,
+			ParserConfigurationException, SAXException, TransformerException {
 		// Hier gibt es jetzt mehrere Situationen
 		// 1. es gibt ein Dokument, welches verarbeitet wird
 		// d.h. xpathNodeIterator ist ungleich null
@@ -230,12 +232,11 @@ public class NexmarkStaticClientHandler extends Thread {
 			// TODO: debug(DOMHelp.dumpNode(n_neu, false));
 			return n_neu;
 		}
-        return null;
+		return null;
 	}
 
 	/**
-	 * Erstellt einen Container fuer eine Node und fuegt einen Zeitstempel
-	 * hinzu.
+	 * Erstellt einen fuer eine Node und fuegt einen Zeitstempel hinzu.
 	 * 
 	 * @return
 	 * @throws IOException
@@ -244,7 +245,7 @@ public class NexmarkStaticClientHandler extends Thread {
 	 * @throws SAXException
 	 * @throws TransformerException
 	 */
-	private Container<Node, ITimeInterval> process_next() throws IOException {
+	private Pair<Node, ITimeInterval> process_next() throws IOException {
 		Node n = null;
 		try {
 			n = process_node();
@@ -256,22 +257,21 @@ public class NexmarkStaticClientHandler extends Thread {
 			e.printStackTrace();
 		}
 
-		Container<Node, ITimeInterval> retval = null;
+		Pair<Node, ITimeInterval> retval = null;
 		if (n != null) {
 			// Achtung! Alle Zeitstempel muessen sich unterscheiden
 			// deswegen hier merken, was der letzte Zeistempel war und wenn der
 			// gleich ist
 			// auch den zweiten Wert verwenden!
 			newStart = System.currentTimeMillis();
-//			if (lastStart == newStart) {
-//				subpoint++;
-//			} else {
-//				subpoint = 0;
-//			}
-			retval = new Container<Node, ITimeInterval>(n);
-			retval.setMetadata(new TimeInterval(new PointInTime(newStart),
-					PointInTime.getInfinityTime()));
-			//lastStart = newStart;
+			// if (lastStart == newStart) {
+			// subpoint++;
+			// } else {
+			// subpoint = 0;
+			// }
+			retval = new Pair<Node, ITimeInterval>(n, new TimeInterval(
+					new PointInTime(newStart), PointInTime.getInfinityTime()));
+			// lastStart = newStart;
 		}
 
 		return retval;
