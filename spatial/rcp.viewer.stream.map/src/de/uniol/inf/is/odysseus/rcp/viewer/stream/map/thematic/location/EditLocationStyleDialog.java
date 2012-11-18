@@ -386,10 +386,6 @@ public class EditLocationStyleDialog extends Dialog{
 		legend = newLegend;
 		layer.updateLegend(legend);
 		revertLegend();
-		
-		for (LocationLegendEntry element : legend.legendList) {
-			System.out.println(element.toString());
-		}
 	}
 //	private void loadLegend(){
 //		

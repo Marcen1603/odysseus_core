@@ -13,20 +13,15 @@ import com.vividsolutions.jts.geom.Polygon;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.AbstractLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 public class ChoroplethLayer extends AbstractLayer{
 	private static final long serialVersionUID = 7347374438979210810L;
-
-//	private static final Logger LOG = LoggerFactory.getLogger(ChoroplethLayer.class);
 	
 	private ScreenTransformation transformation = null;
 	private ScreenManager screenManager = null;
@@ -34,7 +29,6 @@ public class ChoroplethLayer extends AbstractLayer{
 	private int geometrieAttributeIndex = 0;
 	private SDFAttribute visualizationSDFAttribute = null;
 	private int visualizationAttributeIndex = 0;
-	private Style style = null;
 	
 	private LinkedList<Choropleth> choroplethList = new LinkedList<Choropleth>();
 	private ChoroplethLegend legend;
@@ -57,20 +51,6 @@ public class ChoroplethLayer extends AbstractLayer{
 	@Override
 	public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
 //		UNUSED
-		
-		//		if(screenManager != null){
-//			this.screenManager = screenManager;
-//			this.transformation = screenManager.getTransformation();
-//		}
-//		if(schema != null && attribute != null){
-//			this.sdfAttribute = attribute;
-//			this.idx = schema.indexOf(attribute);
-//		}
-//		if(this.screenManager != null && this.sdfAttribute != null){
-//			this.style = initStyle();
-//			this.name =  this.sdfAttribute.getAttributeName();
-//			this.active = true;
-//		}
 	}
 	public void init(ScreenManager screenManager, SDFSchema schema,
 			SDFAttribute geometrieAttribute,SDFAttribute visualizationAttribute) {
@@ -85,25 +65,9 @@ public class ChoroplethLayer extends AbstractLayer{
 			this.visualizationAttributeIndex = schema.indexOf(visualizationAttribute);
 		}
 		if(this.screenManager != null && this.geometrieSDFAttribute != null && this.visualizationSDFAttribute!=null){
-			this.style = initStyle();
 			this.name =  this.configuration.getName()+" [Choropleth("+this.geometrieSDFAttribute.getAttributeName()+","+this.visualizationSDFAttribute.getAttributeName()+")]";
 			this.active = true;
 		}
-	}
-	private Style initStyle(){
-		if(configuration.getStyle() == null){
-			SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) geometrieSDFAttribute.getDatatype();
-			if (spatialDatatype.isPolygon()) {
-				style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), null);
-			} else if (spatialDatatype.isMultiPolygon()) {
-				style = new CollectionStyle();
-				style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
-			} else if (spatialDatatype.isSpatial()) {
-				style = new CollectionStyle();
-				style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
-			}
-		}	
-		return style;
 	}
 
 	@Override
@@ -186,7 +150,6 @@ public class ChoroplethLayer extends AbstractLayer{
 		return path;
 	}
 	public void clean() {
-//		LOG.debug("(CLEAN)Current Choroplethes:" + choroplethList.size());
 		synchronized (choroplethList) {
 			this.choroplethList.clear();
 		}

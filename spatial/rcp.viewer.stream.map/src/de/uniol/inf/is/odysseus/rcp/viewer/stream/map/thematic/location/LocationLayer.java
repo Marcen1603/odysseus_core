@@ -11,15 +11,10 @@ import com.vividsolutions.jts.geom.Point;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.AbstractLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PointStyle;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
@@ -32,7 +27,6 @@ public class LocationLayer extends AbstractLayer {
 	private int geometrieAttributeIndex = 0;
 	private SDFAttribute visualizationSDFAttribute = null;
 	private int visualizationAttributeIndex = 0;
-	private Style style = null;
 	
 	private LinkedList<Location> locationList = new LinkedList<Location>();
 	private LocationLegend legend;
@@ -69,28 +63,9 @@ public class LocationLayer extends AbstractLayer {
 			this.visualizationAttributeIndex = schema.indexOf(visualizationAttribute);
 		}
 		if(this.screenManager != null && this.geometrieSDFAttribute != null && this.visualizationSDFAttribute!=null){
-			this.style = initStyle();
 			this.name =  this.configuration.getName()+" [Location("+this.geometrieSDFAttribute.getAttributeName()+","+this.visualizationSDFAttribute.getAttributeName()+")]";
 			this.active = true;
 		}
-	}
-	
-	private Style initStyle(){
-		if(configuration.getStyle() == null){
-			SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) geometrieSDFAttribute.getDatatype();
-			if (spatialDatatype.isPoint()) {
-				style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor());
-			} else if (spatialDatatype.isMultiPoint()) {
-				style = new CollectionStyle();
-				style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
-			} else if (spatialDatatype.isSpatial()) {
-				style = new CollectionStyle();
-				style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
-				style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
-				style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
-			}
-		}
-		return style;
 	}
 	
 
