@@ -113,11 +113,28 @@ public class ChoroplethLayer extends AbstractLayer{
 
 	@Override
 	public void addTuple(Tuple<?> tuple) {
-		Choropleth choropleth = new Choropleth((Geometry)tuple.getAttribute(geometrieAttributeIndex),(Integer)tuple.getAttribute(visualizationAttributeIndex));	
+		Geometry geometry = (Geometry)tuple.getAttribute(geometrieAttributeIndex);
+		Integer value = (Integer)tuple.getAttribute(visualizationAttributeIndex);
+		addChoroplethToList(geometry, value);
+	}
+	
+	private void addChoroplethToList(Geometry geometry, Integer value){
+		if(geometry instanceof Polygon){
+			Choropleth choropleth = new Choropleth((Polygon) geometry, value);
+			addChoroplethToList(choropleth);
+		}else if(geometry instanceof GeometryCollection){
+			for (int i = 0; i < geometry.getNumGeometries(); i++) {
+				addChoroplethToList(geometry.getGeometryN(i), value);
+			}
+		}
+	}
+	
+	private void addChoroplethToList(Choropleth choropleth){
 		synchronized (choroplethList) {
 			this.choroplethList.offer(choropleth);
 		}
 	}
+	
 
 	@Override
 	public void removeLast() {
@@ -143,20 +160,10 @@ public class ChoroplethLayer extends AbstractLayer{
 	}
 
 	private void drawChoropleth(Choropleth choropleth, GC gc) {
-		if (choropleth.getPolygon() instanceof Polygon) {
-			drawChoroplethPolygon((Polygon)choropleth.getPolygon(), choropleth.getValue(), gc);
-		} 
-		else if (choropleth.getPolygon() instanceof GeometryCollection) {
-			drawChoroplethPolygonCollection((GeometryCollection) choropleth.getPolygon(), choropleth.getValue(), gc);
-		}
-	}
-	private void drawChoroplethPolygonCollection(GeometryCollection geometryCollection, Integer value, GC gc) {
-		for (int i = 0; i < geometryCollection.getNumGeometries(); i++) {
-			drawChoropleth((new Choropleth(geometryCollection.getGeometryN(i), value)), gc);
-		}
+		drawChoropleth(choropleth.getPolygon(), choropleth.getValue(), gc);
 	}
 	
-	private void drawChoroplethPolygon(Polygon polygon, Integer value, GC gc) {
+	private void drawChoropleth(Polygon polygon, Integer value, GC gc) {
 		int[][] list = new int[polygon.getNumInteriorRing() + 1][];
 		list[0] = drawLinearRing(polygon.getExteriorRing(), gc);
 		for (int n = 0; n < polygon.getNumInteriorRing(); n++) {

@@ -101,7 +101,23 @@ public class LocationLayer extends AbstractLayer {
 
 	@Override
 	public void addTuple(Tuple<?> tuple) {
-		Location location = new Location((Geometry)tuple.getAttribute(geometrieAttributeIndex),(Integer)tuple.getAttribute(visualizationAttributeIndex));
+		Geometry geometry = (Geometry)tuple.getAttribute(geometrieAttributeIndex);
+		Integer value = (Integer)tuple.getAttribute(visualizationAttributeIndex);
+		addPointToList(geometry, value);
+	}
+	
+	private void addPointToList(Geometry geometry, Integer value){
+		if(geometry instanceof Point){
+			Location location = new Location((Point) geometry, value);
+			addLocationToList(location);
+		}else if(geometry instanceof GeometryCollection){
+			for (int i = 0; i < geometry.getNumGeometries(); i++) {
+				addPointToList(geometry.getGeometryN(i), value);
+			}
+		}
+	}
+	
+	private void addLocationToList(Location location){
 		synchronized (locationList) {
 			this.locationList.offer(location);
 		}
@@ -130,21 +146,10 @@ public class LocationLayer extends AbstractLayer {
 	}
 
 	private void drawLocation(Location location, GC gc) {
-		if (location.getLocation() instanceof Point) {
-			drawLocationPoint((Point)location.getLocation(), location.getValue(), gc);
-		} else if (location.getLocation() instanceof GeometryCollection) {
-			drawLocationPointCollection((GeometryCollection)location.getLocation(), location.getValue(), gc);
-		} 
+		drawLocation(location.getLocation(), location.getValue(), gc);
 	}
 
-	private void drawLocationPointCollection(GeometryCollection geometryCollection,
-			Integer value, GC gc) {
-		for(int i=0;i<geometryCollection.getNumGeometries();i++){
-			drawLocation(new Location(geometryCollection.getGeometryN(i), value), gc);
-		}
-	}
-
-	private void drawLocationPoint(Point location, Integer value, GC gc) {
+	private void drawLocation(Point location, Integer value, GC gc) {
 		int[] uv = transformation.transformCoord(location.getCoordinate(),location.getSRID());
 		Style style = legend.getStyleForValue(value);
 		style.draw(gc, uv);

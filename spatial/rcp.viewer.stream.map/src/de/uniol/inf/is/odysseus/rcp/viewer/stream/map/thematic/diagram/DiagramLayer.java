@@ -95,11 +95,26 @@ public class DiagramLayer extends AbstractLayer{
 
 	@Override
 	public void addTuple(Tuple<?> tuple) {
+		Geometry geometry = (Geometry)tuple.getAttribute(geometrieAttributeIndex);
 		LinkedList<Integer> valueList = new LinkedList<>();
 		for(int i=0; i<visualizationAttributeIndex.size();i++){
 			valueList.add((Integer)tuple.getAttribute(visualizationAttributeIndex.get(i)));
 		}
-		Diagram diagram = new Diagram((Geometry)tuple.getAttribute(geometrieAttributeIndex), valueList);
+		addDiagramToList(geometry, valueList);
+	}
+	
+	private void addDiagramToList(Geometry geometry, LinkedList<Integer> valueList){
+		if(geometry instanceof Point){
+			Diagram diagram = new Diagram((Point) geometry, valueList);
+			addDiagramToList(diagram);
+		}else if(geometry instanceof GeometryCollection){
+			for (int i = 0; i < geometry.getNumGeometries(); i++) {
+				addDiagramToList(geometry.getGeometryN(i), valueList);
+			}
+		}
+	}
+	
+	private void addDiagramToList(Diagram diagram){
 		synchronized (diagramList) {
 			this.diagramList.offer(diagram);
 		}
@@ -115,22 +130,12 @@ public class DiagramLayer extends AbstractLayer{
 	}
 
 	private void drawDiagram(Diagram element, GC gc) {
-		if(element.getLocation() instanceof Point){
-			drawDiagram((Point)element.getLocation(),element.getValueList(), gc);
-		}else if(element.getLocation() instanceof GeometryCollection){
-			drawDiagramCollection((GeometryCollection) element.getLocation(), element.getValueList(),  gc);
-		}
+		drawDiagram(element.getLocation(),element.getValueList(), gc);
 	}
 
 	private void drawDiagram(Point location, LinkedList<Integer> valueList, GC gc) {
 		int[] uv = transformation.transformCoord(location.getCoordinate(),location.getSRID());
 		style.draw(gc, uv, valueList);
-	}
-
-	private void drawDiagramCollection(GeometryCollection location, LinkedList<Integer> valueList, GC gc) {
-		for (int i = 0; i < location.getNumGeometries(); i++) {
-			drawDiagram((new Diagram(location.getGeometryN(i), valueList)), gc);
-		}
 	}
 
 	@Override

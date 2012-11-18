@@ -2,20 +2,20 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.diagram;
 
 import java.util.LinkedList;
 
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 public class Diagram {
-	private Geometry location;
+	private Point location;
 	private LinkedList<Integer> valueList;
-	public Diagram(Geometry location, LinkedList<Integer> valueList) {
+	public Diagram(Point location, LinkedList<Integer> valueList) {
 		super();
 		this.location = location;
 		this.valueList = valueList;
 	}
-	public Geometry getLocation() {
+	public Point getLocation() {
 		return location;
 	}
-	public void setLocation(Geometry location) {
+	public void setLocation(Point location) {
 		this.location = location;
 	}
 	public LinkedList<Integer> getValueList() {

@@ -1,19 +1,19 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.location;
 
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 public class Location {
-	private Geometry location;
+	private Point location;
 	private Integer value;
-	public Location(Geometry location, Integer value) {
+	public Location(Point location, Integer value) {
 		super();
 		this.location = location;
 		this.value = value;
 	}
-	public Geometry getLocation() {
+	public Point getLocation() {
 		return location;
 	}
-	public void setLocation(Geometry location) {
+	public void setLocation(Point location) {
 		this.location = location;
 	}
 	public Integer getValue() {

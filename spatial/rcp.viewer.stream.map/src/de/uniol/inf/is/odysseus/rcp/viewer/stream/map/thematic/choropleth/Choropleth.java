@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.choropleth;
 
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygon;
 
 public class Choropleth {
-	private Geometry polygon;
+	private Polygon polygon;
 	private Integer value;
-	public Geometry getPolygon() {
+	public Polygon getPolygon() {
 		return polygon;
 	}
-	public void setPolygon(Geometry polygon) {
+	public void setPolygon(Polygon polygon) {
 		this.polygon = polygon;
 	}
 	public Integer getValue() {
@@ -17,7 +17,7 @@ public class Choropleth {
 	public void setValue(Integer value) {
 		this.value = value;
 	}
-	public Choropleth(Geometry polygon, Integer value) {
+	public Choropleth(Polygon polygon, Integer value) {
 		super();
 		this.polygon = polygon;
 		this.value = value;
