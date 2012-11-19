@@ -43,7 +43,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>> e
 //	private static final Logger logger = LoggerFactory.getLogger(LeftJoinTIPO.class);
 	
 	private HashMap<T, PointInTime> left_t_tilde;
-	private ILeftMergeFunction<T> dataMerge;
+	private ILeftMergeFunction<T,M> dataMerge;
 //	private JoinTISweepArea<T>[] joinAreas;
 	
 	private SDFSchema leftSchema;
@@ -73,7 +73,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>> e
 	}
 	
 	
-	public LeftJoinTIPO(LeftMergeFunction<T> dataMerge,
+	public LeftJoinTIPO(LeftMergeFunction<T, M> dataMerge,
 			IMetadataMergeFunction<M> metadataMerge,
 			ITransferArea<T,T> transferFunction, ITimeIntervalSweepArea<T>[] areas) {
 		super(dataMerge, metadataMerge, transferFunction, areas);
@@ -132,7 +132,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>> e
 		
 				while (qualifies.hasNext()) {
 					T next = qualifies.next();
-					T merged = merge(object, next, leftRight);
+					T merged = dataMerge.merge(object, next, metadataMerge, leftRight);
 					
 					if(merged.getMetadata().getStart().after(t_tilde)){
 						T leftUnbound = null;
@@ -194,7 +194,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>> e
 		while(qualifies.hasNext()){
 			T e_hat = qualifies.next(); // es werden nur kompatible Partner zurueckgeliefert, die auch nach einem Join das Join Praedikat erfuellen
 			PointInTime e_hat_t_tilde = this.left_t_tilde.get(e_hat);
-			T merged = this.merge(e_hat, object, leftRight);
+			T merged = dataMerge.merge(e_hat, object, metadataMerge, leftRight);
 			if(merged.getMetadata().getStart().after(e_hat_t_tilde)){
 				T leftUnbound = null;
 				leftUnbound = this.dataMerge.createLeftFilledUp((T) e_hat.clone());
@@ -235,27 +235,6 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>> e
 //			this.left_t_tilde.put(newEntry.getE1(), newEntry.getE2());
 //		}
 		
-	}
-
-	@Override
-	protected T merge(T left, T right, Order order) {
-//		if (logger.isTraceEnabled()) {
-//			logger.trace("LeftJoinTIPO (" + hashCode() + ") start merging: " + left
-//					+ " AND " + right);
-//		}
-		T mergedData;
-		M mergedMetadata;
-		if (order == Order.LeftRight) {
-			mergedData = dataMerge.merge(left, right);
-			mergedMetadata = metadataMerge.mergeMetadata(left.getMetadata(),
-					right.getMetadata());
-		} else {
-			mergedData = dataMerge.merge(right, left);
-			mergedMetadata = metadataMerge.mergeMetadata(right.getMetadata(),
-					left.getMetadata());
-		}
-		mergedData.setMetadata(mergedMetadata);
-		return mergedData;
 	}
 
 	@Override
@@ -307,12 +286,12 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>> e
         return getSubscribedToSource(0).isDone()  && areas[1].isEmpty();
 	}
 	
-	public void setDataMerge(ILeftMergeFunction<T> dataMerge){
+	public void setDataMerge(ILeftMergeFunction<T, M> dataMerge){
 		this.dataMerge = dataMerge;
 	}
 	
 	@Override
-    public ILeftMergeFunction<T> getDataMerge(){
+    public ILeftMergeFunction<T, M> getDataMerge(){
 		return this.dataMerge;
 	}
 }

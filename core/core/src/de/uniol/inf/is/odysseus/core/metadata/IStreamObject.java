@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.Order;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -58,6 +58,10 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 	 */
 	Object getMetadata(String name);
 
+	void setMetadataMap(Map<String, Object> metaMap);
+	Map<String, Object> getMetadataMap();
+
+	
     /**
      * Retrieve attached additional content data
      * 
@@ -90,4 +94,11 @@ public interface IStreamObject<M extends IMetaAttribute> extends
      *            The content
      */
     void setAdditionalContent(String name, Serializable content);
+    
+    /**
+     * 
+     */
+    IStreamObject<M> merge(IStreamObject<M> left, IStreamObject<M> right, IMetadataMergeFunction<M> metamerge, Order order);
+
+
 }

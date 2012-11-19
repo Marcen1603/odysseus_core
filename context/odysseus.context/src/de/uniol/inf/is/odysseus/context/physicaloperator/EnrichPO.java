@@ -56,13 +56,13 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectA
 public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> implements IHasMetadataMergeFunction<M> {
 
 	private IContextStore<Tuple<M>> store;
-	protected IDataMergeFunction<Tuple<M>> dataMerge;
+	protected IDataMergeFunction<Tuple<M>, M> dataMerge;
 	protected IMetadataMergeFunction<M> metadataMerge;
 	private List<String> attribtues;
 	private int[] restrictList;
 	private boolean outer;
 
-	public EnrichPO(IContextStore<Tuple<M>> store, boolean outer, IDataMergeFunction<Tuple<M>> dataMerge, CombinedMergeFunction<M> metadataMerge, List<String> attributes) {
+	public EnrichPO(IContextStore<Tuple<M>> store, boolean outer, IDataMergeFunction<Tuple<M>, M> dataMerge, CombinedMergeFunction<M> metadataMerge, List<String> attributes) {
 		super();
 		this.store = store;
 		this.metadataMerge = metadataMerge;
@@ -86,13 +86,13 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 		List<Tuple<M>> values = this.store.getValues(ti);
 		for (Tuple<M> value : values) {			
 			Tuple<M> res = value.restrict(this.restrictList, true);
-			Tuple<M> newElement = merge(object, res, Order.LeftRight);		
+			Tuple<M> newElement = dataMerge.merge(object, res, metadataMerge, Order.LeftRight);		
 			transfer(newElement);
 		}
 		if(values.size()==0 && outer){
 			Tuple<M> nullTuple = new Tuple<M>(this.restrictList.length, false);
 			nullTuple.setMetadata((M) object.getMetadata());
-			Tuple<M> newElement = merge(object, nullTuple, Order.LeftRight);		
+			Tuple<M> newElement = dataMerge.merge(object, nullTuple, metadataMerge, Order.LeftRight);		
 			transfer(newElement);
 		}
 	}
@@ -114,26 +114,6 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 			i++;
 		}			
 		this.restrictList= ret;
-	}
-
-	protected Tuple<M> merge(Tuple<M> left, Tuple<M> right, Order order) {
-		// if (logger.isTraceEnabled()) {
-		// logger.trace("JoinTIPO (" + hashCode() + ") start merging: " + left
-		// + " AND " + right);
-		// }
-		Tuple<M> mergedData;
-		M mergedMetadata;
-		if (order == Order.LeftRight) {
-			mergedData = dataMerge.merge(left, right);
-			 mergedMetadata = metadataMerge.mergeMetadata(left.getMetadata(),
-			 right.getMetadata());
-			//mergedMetadata = left.getMetadata();
-		} else {
-			mergedData = dataMerge.merge(right, left);
-			mergedMetadata = metadataMerge.mergeMetadata(right.getMetadata(), left.getMetadata());
-		}
-		mergedData.setMetadata(mergedMetadata);
-		return mergedData;
 	}
 
 	@Override

@@ -67,12 +67,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	protected ITimeIntervalSweepArea<T>[] areas;
 	protected IPredicate<? super T> joinPredicate;
 
-	protected IDataMergeFunction<T> dataMerge;
+	protected IDataMergeFunction<T, K> dataMerge;
 	protected IMetadataMergeFunction<K> metadataMerge;
 	protected ITransferArea<T, T> transferFunction;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
-	public JoinTIPO(IDataMergeFunction<T> dataMerge,
+	public JoinTIPO(IDataMergeFunction<T, K> dataMerge,
 			IMetadataMergeFunction<K> metadataMerge,
 			ITransferArea<T, T> transferFunction,
 			ITimeIntervalSweepArea<T>[] areas) {
@@ -112,11 +112,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	}
 
-	public IDataMergeFunction<T> getDataMerge() {
+	public IDataMergeFunction<T, K> getDataMerge() {
 		return dataMerge;
 	}
 
-	public void setDataMerge(IDataMergeFunction<T> dataMerge) {
+	public void setDataMerge(IDataMergeFunction<T, K> dataMerge) {
 		this.dataMerge = dataMerge;
 	}
 
@@ -211,29 +211,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 		while (qualifies.hasNext()) {
 			T next = qualifies.next();
-			T newElement = merge(object, next, order);
+			T newElement = dataMerge.merge(object, next, metadataMerge, order);
 			transferFunction.transfer(newElement);
 		}
-	}
-
-	protected T merge(T left, T right, Order order) {
-		// if (logger.isTraceEnabled()) {
-		// logger.trace("JoinTIPO (" + hashCode() + ") start merging: " + left
-		// + " AND " + right);
-		// }
-		T mergedData;
-		K mergedMetadata;
-		if (order == Order.LeftRight) {
-			mergedData = dataMerge.merge(left, right);
-			mergedMetadata = metadataMerge.mergeMetadata(left.getMetadata(),
-					right.getMetadata());
-		} else {
-			mergedData = dataMerge.merge(right, left);
-			mergedMetadata = metadataMerge.mergeMetadata(right.getMetadata(),
-					left.getMetadata());
-		}
-		mergedData.setMetadata(mergedMetadata);
-		return mergedData;
 	}
 
 	@Override

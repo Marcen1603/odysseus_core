@@ -15,9 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-public interface ILeftMergeFunction<T extends IClone> extends IDataMergeFunction<T>{
+public interface ILeftMergeFunction<T extends IStreamObject<K>, K extends IMetaAttribute> extends IDataMergeFunction<T,K>{
 
 	public T createLeftFilledUp(T left);
 	

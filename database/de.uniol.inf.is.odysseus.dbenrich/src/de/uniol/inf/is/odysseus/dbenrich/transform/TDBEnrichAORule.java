@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.dbenrich.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.UseLeftInputMetadata;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
@@ -35,9 +37,11 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 			TransformationConfiguration transformConfig) {
 		// System.out.println("transform; " + logical.getDebugString());
 
-		IDataMergeFunction<Tuple<ITimeInterval>> dataMergeFunction = new RelationalMergeFunction<ITimeInterval>(
+		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = new RelationalMergeFunction<ITimeInterval>(
 				logical.getOutputSchema().size());
 
+		IMetadataMergeFunction<ITimeInterval> metaMerge = new UseLeftInputMetadata<>();
+		
 		IReadOnlyCache<ComplexParameterKey, Tuple<?>[]> cacheManager = createCache(logical);
 
 		// Maybe check, if operator is already existent (when is it 100% equal?)
@@ -51,6 +55,7 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 				logical.getExpirationTime(),
 				logical.getRemovalStrategy(),
 				dataMergeFunction,
+				metaMerge,
 				cacheManager);
 
 		physical.setOutputSchema(logical.getOutputSchema());

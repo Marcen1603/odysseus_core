@@ -39,5 +39,5 @@ public class LatencyBenchmarkResult extends AbstractBenchmarkResult<ILatency> {
 	public LatencyBenchmarkResult clone() {
 		return new LatencyBenchmarkResult(getStatistics());
 	}
-		
+			
 }

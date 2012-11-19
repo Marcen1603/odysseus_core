@@ -60,7 +60,7 @@ public class TEnrichAORule extends AbstractTransformationRule<EnrichAO>{
 	@Override
 	public void execute(EnrichAO operator, TransformationConfiguration config) {
 		IContextStore<Tuple<ITimeInterval>> store = ContextStoreManager.getStore(operator.getStoreName());
-		IDataMergeFunction<Tuple<ITimeInterval>> dataMerge = new RelationalMergeFunction<ITimeInterval>(operator.getOutputSchema().size());		
+		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMerge = new RelationalMergeFunction<ITimeInterval>(operator.getOutputSchema().size());		
 		CombinedMergeFunction<ITimeInterval> metadataMerge = new CombinedMergeFunction<ITimeInterval>();		
 		metadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
 		EnrichPO<ITimeInterval> enrich = new EnrichPO<ITimeInterval>(store, operator.isOuter(), dataMerge, metadataMerge, operator.getAttributes());		

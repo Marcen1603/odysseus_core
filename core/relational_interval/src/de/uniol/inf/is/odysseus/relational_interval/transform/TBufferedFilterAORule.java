@@ -15,9 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferedFilterAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.BufferedFilterPO;
@@ -37,7 +38,7 @@ public class TBufferedFilterAORule extends AbstractTransformationRule<BufferedFi
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(BufferedFilterAO operator, TransformationConfiguration config) {
-		IDataMergeFunction<?> dataMerge = new RelationalLeftMergeFunction<ITimeInterval>(operator.getInputSchema(0), operator.getInputSchema(1), operator.getOutputSchema());
+		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMerge = new RelationalLeftMergeFunction<ITimeInterval>(operator.getInputSchema(0), operator.getInputSchema(1), operator.getOutputSchema());
 		// IMetadataMergeFunction<?> metaDataMerge = new UseLeftInputMetadata();
 		CombinedMergeFunction metaDataMerge = new CombinedMergeFunction();
 		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());

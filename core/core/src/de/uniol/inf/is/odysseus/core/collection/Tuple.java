@@ -23,8 +23,10 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.util.Primes;
 
 /**
@@ -47,6 +49,88 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	private boolean valueChanged = true;
 
 	private boolean requiresDeepClone;
+
+	// -----------------------------------------------------------------
+	// Konstruktoren
+	// -----------------------------------------------------------------
+
+	/**
+	 * Allows subclasses to call the implicit super constructor. To not allow
+	 * other classes to use the constructor it is protected.
+	 */
+	protected Tuple() {
+		requiresDeepClone = false;
+	}
+
+	/**
+	 * Erzeugt ein leeres Tuple ohne Schemainformationen
+	 * 
+	 * @param attributeCount
+	 *            Anzahl der Attribute des Tuples
+	 * @param requiresDeepClone
+	 *            if true, each copy of this tuple will call clone on each
+	 *            attribute
+	 */
+	public Tuple(int attributeCount, boolean requiresDeepClone) {
+		this.attributes = new Object[attributeCount];
+		this.requiresDeepClone = requiresDeepClone;
+	}
+
+	public Tuple(Tuple<T> copy) {
+		this(copy, null, copy.requiresDeepClone);
+	}
+
+	/**
+	 * Creates a new Tuple without copying the attributes from
+	 * the other tuple but using the given Attributes
+	 * @param copy
+	 * @param newAttributes
+	 * @param requiresDeepClone
+	 */
+	private Tuple(Tuple<T> copy, Object[] newAttributes,
+			boolean requiresDeepClone) {
+		super(copy);
+		this.requiresDeepClone = requiresDeepClone;
+		if (newAttributes != null) {
+			this.attributes = newAttributes;
+		} else {
+			int attributeLength = copy.attributes.length;
+			this.attributes = new Object[attributeLength];
+			if (!requiresDeepClone) {
+				System.arraycopy(copy.attributes, 0, this.attributes, 0,
+						attributeLength);
+			} else {
+				// Perform Deep-Clone if the object is part of Odysseus or null
+				// (CKu)
+				for (int i = 0; i < attributeLength; i++) {
+					if ((copy.attributes[i] == null)
+							|| (!copy.attributes[i].getClass().getName()
+									.startsWith("de.uniol.inf.is.odysseus", 0))) {
+						this.attributes[i] = copy.attributes[i];
+					} else {
+						this.attributes[i] = ((IClone) copy.attributes[i]).clone();
+					}
+				}
+			}
+		}
+		this.valueChanged = copy.valueChanged;
+		this.containsNull = copy.containsNull;
+	}
+
+	/**
+	 * Erzeugt ein neues Tuple mit Attributen und ohne Schemainformationen
+	 * 
+	 * @param attributes
+	 *            Attributbelegung des neuen Tuples
+	 * @param requiresDeepClone
+	 *            if true, each copy of this tuple will call clone on each
+	 *            attribute
+	 */
+	public Tuple(Object[] attributes, boolean requiresDeepClone) {
+		this.attributes = attributes.clone();
+		this.requiresDeepClone = requiresDeepClone;
+		// calcSize();
+	}
 
 	// -----------------------------------------------------------------
 	// static Hilfsmethoden
@@ -161,30 +245,21 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 *            indicates if create a copy
 	 * @return the extended tuple
 	 */
-	@SuppressWarnings("unchecked")
 	public Tuple<T> append(Object object, boolean createNew) {
 		Object[] newAttrs = Arrays.copyOf(this.attributes,
 				this.attributes.length + 1);
 		newAttrs[this.attributes.length] = object;
-
 		if (createNew) {
-			Tuple<T> newTuple = new Tuple<T>(newAttrs.length, false);
-			newTuple.setAttributes(newAttrs);
-			newTuple.setMetadata((T) this.getMetadata().clone());
-			newTuple.setAdditionalContent(getAdditionalContent());
+			Tuple<T> newTuple = new Tuple<T>(this, newAttrs, false);
 			return newTuple;
 		}
 		this.attributes = newAttrs;
 		return this;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Tuple<T> restrictCreation(boolean createNew, Object[] newAttrs) {
 		if (createNew) {
-			Tuple<T> newTuple = new Tuple<T>(newAttrs.length, false);
-			newTuple.setAttributes(newAttrs);
-			newTuple.setMetadata((T) this.getMetadata().clone());
-			newTuple.setAdditionalContent(getAdditionalContent());
+			Tuple<T> newTuple = new Tuple<T>(this, newAttrs, false);
 			return newTuple;
 		}
 		this.attributes = newAttrs;
@@ -203,8 +278,61 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.attributes = attributes;
 		this.valueChanged = true;
 	}
+	
+	public Object[] getAttributes() {
+		return attributes;
+	}
 
+	public boolean containsNull() {
+		if (this.valueChanged) {
+			for (Object o : this.attributes) {
+				if (o == null) {
+					this.containsNull = true;
+					break;
+				}
+			}
+		}
+		return this.containsNull;
+	}
 
+	public void setRequiresDeepClone(boolean requiresDeepClone) {
+		this.requiresDeepClone = requiresDeepClone;
+	}
+
+	public boolean requiresDeepClone() {
+		return this.requiresDeepClone;
+	}
+	
+	@Override
+	protected IStreamObject<T> process_merge(IStreamObject<T> left,
+			IStreamObject<T> right, Order order) {
+		if (order == Order.LeftRight){
+			return processMergeInternal((Tuple<T>)left, (Tuple<T>)right);
+		}else{
+			return processMergeInternal((Tuple<T>)right, (Tuple<T>)left);			
+		}
+	}
+	
+	private IStreamObject<T> processMergeInternal(Tuple<T> left, Tuple<T> right){
+		Object[] newAttributes = mergeAttributes(left != null ? left.getAttributes(): null, 
+				right != null ? right.getAttributes() : null);
+		Tuple<T> r = new Tuple<T>(newAttributes, left.requiresDeepClone()
+				|| right.requiresDeepClone());
+		return r;		
+	}
+	
+	private Object[] mergeAttributes(Object[] leftAttributes, Object[] rightAttributes){
+		Object[] newAttributes = new Object[leftAttributes.length+rightAttributes.length];
+		if (leftAttributes != null) {
+			System.arraycopy(leftAttributes, 0, newAttributes, 0,
+					leftAttributes.length);
+		}
+		if (rightAttributes != null) {
+			System.arraycopy(rightAttributes, 0, newAttributes, leftAttributes.length
+					, rightAttributes.length);
+		}
+		return newAttributes;
+	}
 
 	// -----------------------------------------------------------------
 	// Vergleichsmethoden
@@ -341,7 +469,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		}
 		retBuff.append(" | sz=" + (memSize == -1 ? "(-)" : memSize));
 		retBuff.append(" | META | " + getMetadata());
-		if (getAdditionalContent() != null) {
+		if (getAdditionalContent().size() > 0 ) {
 			retBuff.append("|ADD|" + getAdditionalContent());
 		}
 		return retBuff.toString();
@@ -381,73 +509,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		return ret.toString();
 	}
 
-	// -----------------------------------------------------------------
-	// Konstruktoren
-	// -----------------------------------------------------------------
-
-	/**
-	 * Allows subclasses to call the implicit super constructor. To not allow
-	 * other classes to use the constructor it is protected.
-	 */
-	protected Tuple() {
-		requiresDeepClone = false;
-	}
-
-	/**
-	 * Erzeugt ein leeres Tuple ohne Schemainformationen
-	 * 
-	 * @param attributeCount
-	 *            Anzahl der Attribute des Tuples
-	 * @param requiresDeepClone
-	 *            if true, each copy of this tuple will call clone on each
-	 *            attribute
-	 */
-	public Tuple(int attributeCount, boolean requiresDeepClone) {
-		this.attributes = new Object[attributeCount];
-		this.requiresDeepClone = requiresDeepClone;
-	}
-
-	public Tuple(Tuple<T> copy) {
-		super(copy);
-		int attributeLength = copy.attributes.length;
-		this.requiresDeepClone = copy.requiresDeepClone;
-		this.attributes = new Object[attributeLength];
-		this.valueChanged = copy.valueChanged;
-		this.containsNull = copy.containsNull;
-		if (!requiresDeepClone) {
-			System.arraycopy(copy.attributes, 0, this.attributes, 0,
-					attributeLength);
-		} else {
-			// Perform Deep-Clone if the object is part of Odysseus or null
-			// (CKu)
-			for (int i = 0; i < attributeLength; i++) {
-				if ((copy.attributes[i] == null)
-						|| (!copy.attributes[i].getClass().getName()
-								.startsWith("de.uniol.inf.is.odysseus", 0))) {
-					this.attributes[i] = copy.attributes[i];
-				} else {
-					this.attributes[i] = ((IClone) copy.attributes[i]).clone();
-				}
-			}
-		}
-		this.setAdditionalContent(copy.getAdditionalContent());
-	}
-
-	/**
-	 * Erzeugt ein neues Tuple mit Attributen und ohne Schemainformationen
-	 * 
-	 * @param attributes
-	 *            Attributbelegung des neuen Tuples
-	 * @param requiresDeepClone
-	 *            if true, each copy of this tuple will call clone on each
-	 *            attribute
-	 */
-	public Tuple(Object[] attributes, boolean requiresDeepClone) {
-		this.attributes = attributes.clone();
-		this.requiresDeepClone = requiresDeepClone;
-		// calcSize();
-	}
-
 	@Override
 	public final int hashCode() {
 		int ret = 0;
@@ -460,27 +521,5 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		return ret;
 	}
 
-	public Object[] getAttributes() {
-		return attributes;
-	}
 
-	public boolean containsNull() {
-		if (this.valueChanged) {
-			for (Object o : this.attributes) {
-				if (o == null) {
-					this.containsNull = true;
-					break;
-				}
-			}
-		}
-		return this.containsNull;
-	}
-
-	public void setRequiresDeepClone(boolean requiresDeepClone) {
-		this.requiresDeepClone = requiresDeepClone;
-	}
-
-	public boolean requiresDeepClone() {
-		return this.requiresDeepClone;
-	}
 }

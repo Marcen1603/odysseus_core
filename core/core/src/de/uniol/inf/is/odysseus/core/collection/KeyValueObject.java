@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  * This class is used to represent objects as simple key value pairs
@@ -83,14 +85,12 @@ implements Serializable{
 		return this.attributes.size();
 	}
 	
-	// ----------------------------------
-	// static
-	// ----------------------------------
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static KeyValueObject<?> merge(KeyValueObject<?> left, KeyValueObject<?> right){
-		KeyValueObject<?> merged = new KeyValueObject(left);
-		merged.attributes.putAll(right.attributes);
+	@Override
+	protected IStreamObject<T> process_merge(IStreamObject<T> left,
+			IStreamObject<T> right, Order order) {
+		KeyValueObject<T> merged = new KeyValueObject<T>((KeyValueObject<T>) left);
+		merged.attributes.putAll(((KeyValueObject<T>)right).attributes);
 		return merged;
 	}
 	

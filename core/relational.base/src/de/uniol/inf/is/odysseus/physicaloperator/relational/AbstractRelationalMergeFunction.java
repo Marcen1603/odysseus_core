@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
-public abstract class AbstractRelationalMergeFunction<T extends Tuple<M>, M extends IMetaAttribute> implements IDataMergeFunction<T> {
+public abstract class AbstractRelationalMergeFunction<T extends Tuple<M>, M extends IMetaAttribute> implements IDataMergeFunction<T, M> {
 
 	protected int schemaSize;
 	

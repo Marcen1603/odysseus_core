@@ -15,7 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
@@ -27,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
  * @author Jonas Jacobi
  */
 public class RelationalMergeFunction<M extends IMetaAttribute> extends AbstractRelationalMergeFunction<Tuple<M>, M> implements
-		IDataMergeFunction<Tuple<M>> {
+		IDataMergeFunction<Tuple<M>, M> {
 
 
 	public RelationalMergeFunction(int resultSchemaSize) {
@@ -40,13 +42,9 @@ public class RelationalMergeFunction<M extends IMetaAttribute> extends AbstractR
 	
 
 	@Override
-	public Tuple<M> merge(Tuple<M> left,
-			Tuple<M> right) {
-		Object[] newAttributes = super.mergeAttributes(left != null ? left.getAttributes(): null, 
-				right != null ? right.getAttributes() : null);
-		Tuple<M> r = new Tuple<M>(newAttributes, left.requiresDeepClone()
-				|| right.requiresDeepClone());
-		return r;
+	public Tuple<M> merge(Tuple<M> left, Tuple<M> right,
+			IMetadataMergeFunction<M> metamerge, Order order) {
+		return (Tuple<M>) left.merge(left, right, metamerge, order);
 	}
 	
 	@Override

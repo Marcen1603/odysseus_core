@@ -56,7 +56,7 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 	private final IPredicate<R> leftLowPredicate;
 	private final IPredicate<R> rightHighPredicate;
 	private final IPredicate<R> rightLowPredicate;
-	private IDataMergeFunction<R> dataMerge;
+	private IDataMergeFunction<R,K> dataMerge;
 	private IMetadataMergeFunction<K> metadataMerge;
 	private IInputStreamSyncArea<R> inputStreamSyncArea;
 	protected ITransferArea<R, R> outputTransferArea;
@@ -105,10 +105,10 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 			}
 		} else {
 			if (this.lasthigh != null && this.rightHighPredicate.evaluate(object)) {
-				R newElement = merge(lasthigh, object, Order.LeftRight);
+				R newElement = dataMerge.merge(lasthigh, object, metadataMerge, Order.LeftRight);
 				transfer(newElement);
 			} else if (this.lastlow != null && this.rightLowPredicate.evaluate(object)) {
-				R newElement = merge(lastlow, object, Order.LeftRight);
+				R newElement = dataMerge.merge(lastlow, object, metadataMerge, Order.LeftRight);
 				outputTransferArea.transfer(newElement);
 			}
 		}
@@ -119,24 +119,6 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 		super.process_open();
 		inputStreamSyncArea.init(this);
 		outputTransferArea.init(this);
-	}
-
-	protected R merge(R left, R right, Order order) {
-		// if (logger.isTraceEnabled()) {
-		// logger.trace("JoinTIPO (" + hashCode() + ") start merging: " + left
-		// + " AND " + right);
-		// }
-		R mergedData;
-		K mergedMetadata;
-		if (order == Order.LeftRight) {
-			mergedData = dataMerge.merge(left, right);
-			mergedMetadata = metadataMerge.mergeMetadata(left.getMetadata(), right.getMetadata());
-		} else {
-			mergedData = dataMerge.merge(right, left);
-			mergedMetadata = metadataMerge.mergeMetadata(right.getMetadata(), left.getMetadata());
-		}
-		mergedData.setMetadata(mergedMetadata);
-		return mergedData;
 	}
 
 	@Override
@@ -156,7 +138,7 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 		return new ChangeCorrelatePO<K, R>(this);
 	}
 
-	public IDataMergeFunction<R> getDataMerge() {
+	public IDataMergeFunction<R, K> getDataMerge() {
 		return dataMerge;
 	}
 
@@ -164,7 +146,7 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 		return metadataMerge;
 	}
 
-	public void setDataMerge(IDataMergeFunction<R> dataMerge) {
+	public void setDataMerge(IDataMergeFunction<R, K> dataMerge) {
 		this.dataMerge = dataMerge;
 	}
 

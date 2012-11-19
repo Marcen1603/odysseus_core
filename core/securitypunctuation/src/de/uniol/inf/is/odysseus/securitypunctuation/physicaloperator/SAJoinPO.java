@@ -105,7 +105,7 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				} 				
 				ISecurityPunctuation newSP = sp.intersect(otherSP, newTS);
 				if(newSP != null && !newSP.isEmpty()) {
-					T newElement = merge(object, next, order);	
+					T newElement =  dataMerge.merge(object, next, metadataMerge, order);	
 					//Tupel mit komplett auseinander liegenden Intervallen können nicht gemerged werden!!!
 					//Dann wäre getStart() == null...
 					if(newElement.getMetadata() != null) { 				

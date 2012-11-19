@@ -39,12 +39,12 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K
 	private final long deliverTime;
 	private PointInTime deliverUntil = null;
 
-	final IDataMergeFunction<R> dataMerge;
+	final IDataMergeFunction<R, K> dataMerge;
 	final IMetadataMergeFunction<K> metadataMerge;
 
 	private R trigger = null;
 
-	public BufferedFilterPO(IPredicate<? super R> predicate, long bufferTime, long deliverTime, IDataMergeFunction<R> dataMerge, IMetadataMergeFunction<K> metadataMerge) {
+	public BufferedFilterPO(IPredicate<? super R> predicate, long bufferTime, long deliverTime, IDataMergeFunction<R, K> dataMerge, IMetadataMergeFunction<K> metadataMerge) {
 		super();
 		this.predicate = predicate.clone();
 		this.bufferTime = bufferTime;
@@ -121,7 +121,7 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K
 			if (deliverUntil != null && buffer.size() > 0) {
 				R toTest = buffer.get(0);
 				while (toTest != null && toTest.getMetadata().getStart().beforeOrEquals(deliverUntil)) {
-					R toTransfer = merge(trigger, toTest, Order.LeftRight);
+					R toTransfer = dataMerge.merge(trigger, toTest, metadataMerge, Order.LeftRight);
 					transfer(toTransfer);
 					buffer.remove(0);
 					toTest = buffer.size() > 0? buffer.get(0):null;
@@ -130,23 +130,6 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K
 		}
 	}
 
-	protected R merge(R left, R right, Order order) {
-		// if (logger.isTraceEnabled()) {
-		// logger.trace("JoinTIPO (" + hashCode() + ") start merging: " + left
-		// + " AND " + right);
-		// }
-		R mergedData;
-		K mergedMetadata;
-		if (order == Order.LeftRight) {
-			mergedData = dataMerge.merge(left, right);
-			mergedMetadata = metadataMerge.mergeMetadata(left.getMetadata(), right.getMetadata());
-		} else {
-			mergedData = dataMerge.merge(right, left);
-			mergedMetadata = metadataMerge.mergeMetadata(right.getMetadata(), left.getMetadata());
-		}
-		mergedData.setMetadata(mergedMetadata);
-		return mergedData;
-	}
 
 	@Override
 	public BufferedFilterPO<K, R> clone() {

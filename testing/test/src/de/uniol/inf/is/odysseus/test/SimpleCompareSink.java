@@ -89,6 +89,9 @@ public class SimpleCompareSink extends AbstractSink<IStreamObject<?>> implements
 					System.err.println("Difference at " + line.compareTo(input));
 					sinkListener.processingError(line, input);
 				}
+//				else{
+//					System.err.println(line);
+//				}
 
 				if (compareInput.isEmpty()) {
 					this.done(port);

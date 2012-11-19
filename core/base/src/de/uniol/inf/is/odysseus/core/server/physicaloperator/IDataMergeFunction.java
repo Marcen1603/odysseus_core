@@ -15,11 +15,14 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
+
 /**
  * @author Jonas Jacobi
  */
-public interface IDataMergeFunction<T> {
-	public T merge(T left, T right);
+public interface IDataMergeFunction<T,M> {
+	public T merge(T left, T right, IMetadataMergeFunction<M> metamerge, Order order);
 	public void init();
-	public IDataMergeFunction<T> clone();
+	public IDataMergeFunction<T,M> clone();
 }

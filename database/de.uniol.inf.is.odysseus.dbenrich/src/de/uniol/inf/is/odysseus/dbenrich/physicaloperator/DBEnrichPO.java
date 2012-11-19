@@ -3,11 +3,13 @@ package de.uniol.inf.is.odysseus.dbenrich.physicaloperator;
 import java.util.Arrays;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ComplexParameterKey;
@@ -25,7 +27,8 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final long expirationTime;
 	private final String removalStrategy;
 	// Fully initialized after process_open()
-	private final IDataMergeFunction<Tuple<T>> dataMergeFunction;
+	private final IDataMergeFunction<Tuple<T>, T> dataMergeFunction;
+	private final IMetadataMergeFunction<T> metaMergeFunction;
 	private final IReadOnlyCache<ComplexParameterKey, Tuple<?>[]> cacheManager;
 	/** The positions of the db query parameters in the inputTuple attributes,
 	 * ordered as in the db query */
@@ -34,7 +37,8 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	public DBEnrichPO(String connectionName, String query,
 			List<String> variables, boolean noCache, boolean multiTupleOutput, 
 			int cacheSize, long expirationTime, String removalStrategy,
-			IDataMergeFunction<Tuple<T>> dataMergeFunction,
+			IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
+			IMetadataMergeFunction<T> metaMergeFunction,
 			IReadOnlyCache<ComplexParameterKey, Tuple<?>[]> cacheManager) {
 		super();
 		this.connectionName = connectionName;
@@ -46,6 +50,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.expirationTime = expirationTime;
 		this.removalStrategy = removalStrategy;
 		this.dataMergeFunction = dataMergeFunction;
+		this.metaMergeFunction = metaMergeFunction;
 		this.cacheManager = cacheManager;
 		this.parameterPositions = new int[variables.size()];
 	}
@@ -61,6 +66,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.expirationTime = dBEnrichPO.expirationTime;
 		this.removalStrategy = dBEnrichPO.removalStrategy;
 		this.dataMergeFunction = dBEnrichPO.dataMergeFunction.clone();
+		this.metaMergeFunction = dBEnrichPO.metaMergeFunction.clone();
 		this.cacheManager = dBEnrichPO.cacheManager; // better provide clone();
 		this.parameterPositions = Arrays.copyOf(
 				dBEnrichPO.parameterPositions,
@@ -97,7 +103,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 			// System.out.println("Tuple(dbcache): " + dbTupels[i]);
 
 			Tuple<T> outputTuple = dataMergeFunction.merge(
-					inputTuple, (Tuple<T>)dbTupels[i]);
+					inputTuple, (Tuple<T>)dbTupels[i], metaMergeFunction, Order.LeftRight);
 			// The the metadata of the inputtuple
 			outputTuple.setMetadata((T)inputTuple.getMetadata().clone());
 

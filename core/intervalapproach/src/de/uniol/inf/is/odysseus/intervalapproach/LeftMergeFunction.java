@@ -15,11 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
-import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 
-public abstract class LeftMergeFunction<T extends IClone> implements ILeftMergeFunction<T>{
+public abstract class LeftMergeFunction<T extends IStreamObject<K>, K extends IMetaAttribute> implements ILeftMergeFunction<T,K>{
 
 	protected SDFSchema leftSchema;
 	protected SDFSchema rightSchema;
@@ -32,20 +33,17 @@ public abstract class LeftMergeFunction<T extends IClone> implements ILeftMergeF
 		this.resultSchema = resultSchema;
 	}
 	
-	public LeftMergeFunction(LeftMergeFunction<T> mf){
+	public LeftMergeFunction(LeftMergeFunction<T,K> mf){
 		this.leftSchema = mf.leftSchema.clone();
 		this.rightSchema = mf.rightSchema.clone();
 		this.resultSchema = mf.resultSchema.clone();
 	}
 	
 	@Override
-	public abstract T merge(T left, T right);
-	
-	@Override
     public abstract T createLeftFilledUp(T left);
 	
 	@Override
-	public LeftMergeFunction<T> clone() {
+	public LeftMergeFunction<T,K> clone() {
 		throw new RuntimeException("Clone Not implemented yet");
 	}
 }
