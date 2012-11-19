@@ -18,40 +18,10 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.sa;
 import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
 public interface ISweepArea<T> extends Iterable<T> {
-
-	/**
-	 * LeftRight is the same as isLeftArea == false RightLeft is the same as
-	 * isLeftArea == true
-	 * 
-	 * In a join, the sweepArea method queryCopy will be called with LeftRight,
-	 * if the passed element is from the left input stream. It will be called
-	 * with RightLeft, if the passed element is from the right input stream.
-	 * 
-	 */
-	public static enum Order {
-		LeftRight, RightLeft;
-		public Order inverse() {
-			if (this.ordinal() == LeftRight.ordinal()) {
-				return RightLeft;
-			}
-            return LeftRight;
-		}
-
-		public static Order fromOrdinal(int i) {
-			switch (i) {
-			case 0:
-				return LeftRight;
-			case 1:
-				return RightLeft;
-			default:
-				throw new IllegalArgumentException(
-						"illegal ordinal value for Order");
-			}
-		}
-	}
 
 	public void init();
 

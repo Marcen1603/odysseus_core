@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.core.Order;
 
 /**
  * Der JoinOperator kann zwar von den Generics her gesehen unabhaengig von Daten- und

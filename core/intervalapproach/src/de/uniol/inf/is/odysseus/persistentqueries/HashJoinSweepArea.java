@@ -23,12 +23,13 @@ import java.util.List;
 
 import com.google.common.collect.LinkedHashMultimap;
 
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * This sweep area is used for equi joins over non-windowed streams.
@@ -155,7 +156,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> query(Tuple<? extends ITimeInterval> element,
-			de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order order) {
+			de.uniol.inf.is.odysseus.core.Order order) {
 		LinkedList<Tuple<? extends ITimeInterval>> result = new LinkedList<Tuple<? extends ITimeInterval>>();
 		synchronized(this.elements){
 			Tuple<? extends ITimeInterval> keyTuple = element.restrict(this.queryRestrictList, true);

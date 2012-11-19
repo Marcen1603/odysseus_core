@@ -89,7 +89,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	@Override
 	public Iterator<T> extractElements(
 			T element,
-			de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order order) {
+			de.uniol.inf.is.odysseus.core.Order order) {
 		return extractElementsBefore(element.getMetadata().getStart());
 	}
 
@@ -133,7 +133,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	@Override
 	public void purgeElements(
 			T element,
-			de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order order) {
+			de.uniol.inf.is.odysseus.core.Order order) {
 		if (element.getMetadata().getPriority() == 0) {
 			purgeElementsBefore(element.getMetadata().getStart());
 		}
@@ -143,7 +143,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	@Override
 	public Iterator<T> query(
 			T element,
-			de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order order) {
+			de.uniol.inf.is.odysseus.core.Order order) {
 		Number pos = element.getAttribute(externalIdPosition);
 		Collection<T> idFits = this.elements.get(pos.longValue());
 
@@ -165,7 +165,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	@Override
 	public Iterator<T> queryCopy(
 			T element,
-			de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order order) {
+			de.uniol.inf.is.odysseus.core.Order order) {
 		return query(element, order);
 	}
 
