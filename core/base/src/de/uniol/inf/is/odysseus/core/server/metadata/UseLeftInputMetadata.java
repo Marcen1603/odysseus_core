@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
+
 public class UseLeftInputMetadata<T> implements IMetadataMergeFunction<T> {
 
 	

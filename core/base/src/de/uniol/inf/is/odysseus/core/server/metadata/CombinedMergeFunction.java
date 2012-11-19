@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 
 public class CombinedMergeFunction<T extends IClone> implements
 		IMetadataMergeFunction<T>, IClone {

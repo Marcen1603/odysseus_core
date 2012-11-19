@@ -13,17 +13,13 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.metadata;
+package de.uniol.inf.is.odysseus.core.metadata;
 
-/**
- * 
- * @author Marco Grawunder
- *
- * @param <T>
- * @deprecated Use de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction instead!
- */
+public interface IMetadataMergeFunction<T> {
 
-@Deprecated
+	public T mergeMetadata(T left, T right);
+	
+	public void init();
 
-public interface IMetadataMergeFunction<T> extends de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction<T>{
+	public IMetadataMergeFunction<T> clone();
 }
