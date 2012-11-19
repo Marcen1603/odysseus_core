@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
  * @author Dennis Geesen
  * 
  */
+@SuppressWarnings({"unused"})
 public class BenchmarkController {
 
 	private static BenchmarkController instance = null;
