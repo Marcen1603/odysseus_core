@@ -462,7 +462,6 @@ public class WebserviceServer {
 			e.printStackTrace();
 			return null;
 		}
-		return graph;
 	}
 
 	public QueryResponse getLogicalQuery(
