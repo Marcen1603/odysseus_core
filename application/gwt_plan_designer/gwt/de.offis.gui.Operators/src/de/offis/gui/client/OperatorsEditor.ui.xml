@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.operatorGroupName {
+			font-weight: bold;
+			color: white;
+			font-size: 20px;
+			
+		}
+	</ui:style>
+	<g:HTMLPanel ui:field="html">
+		<div id='content'>
+			<div id='header'></div>
+			<div id='mainArea'></div>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder>

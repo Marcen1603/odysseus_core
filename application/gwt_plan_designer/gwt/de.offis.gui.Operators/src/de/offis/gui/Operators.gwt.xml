@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+    <!-- Inherit the core Web Toolkit stuff.	-->
+    <inherits name='com.google.gwt.user.User' />
+
+    <!-- Other module inherits                                      -->
+    <inherits name="com.google.gwt.xml.XML" />
+    <inherits name='de.offis.gwtsvgeditor.SvgEditor'/>
+    <inherits name='de.offis.RichUI'/>
+    <inherits name="de.offis.GWT-SCAI" />
+    
+    
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <set-property name="gwt.logging.popupHandler" value="DISABLED" />
+    
+<!-- 	<inherits name='com.google.gwt.user.theme.clean.Clean' /> -->
+<!-- 	<inherits name="com.google.gwt.user.theme.clean.CleanResources"/> -->
+
+	<!-- Specify packages that contain Client-Code -->
+	<source path="client"/>
+	<source path="shared"/>
+	
+    <!-- Specify the app entry point class.                         -->
+    <entry-point class="de.offis.gui.client.Operators"/>
+</module>

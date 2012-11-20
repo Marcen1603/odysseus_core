@@ -1,0 +1,18 @@
+Aktueller Stand des GWT-Plandesigners:
+
+Der Plandesigner wurde ursprünglich von Alexander Funke für SCAMPI entwickelt. 
+Er sollte erweitert werden um auch mit Odysseus als Schnittstelle arbeiten zu können.
+Dazu wurde auf Odysseus-Seite eine Version des Webservice-Clients entwickelt (gwt-client). 
+Mit diesem Client sollte der Plandesigner kommunizieren.
+
+Derzeit wird initial vom Plandesigner ein Plan, der die Nexmark-Quellen registriert an einen gestarteten Odysseus-Server gesendet.
+Dieser Plan kommt dort an und die Quellen sind registriert.
+Der GWT-Client ist in den Plandesigner integriert und enthält Funktionen um aus dem internen Format des Plandesigners PQL zu generieren.
+Diese wurden noch nicht getestet und können daher Fehler enthalten.
+
+Future Work:
+- Komponenten im Plandesigner laden, damit ein Plan erstellt werden kann.
+- Testen ob der PQL-Übersetzer korrekt arbeitet
+- Antworten von Odysseus interpretieren und dem Nutzer präsentieren
+- Plane in PQL von Odysseus im Plandesigner empfangen, ins interene Format übersetzen und dem Nutzer präsentieren
+- Quellen aus Odysseus im Plandesigner empfangen und dem Nutzer präsentieren
