@@ -97,7 +97,10 @@ public final class SettingDescriptor<T> {
 		return type;
 	}
 	
-	private static boolean checkDefaultValueWithType(Object value, String type) {
-		return value.getClass().getSimpleName().equalsIgnoreCase(type);		
+	private static boolean checkDefaultValueWithType(Object defaultValue, String type) {
+		if( defaultValue == null ) {
+			return true;
+		}
+		return defaultValue.getClass().getSimpleName().equalsIgnoreCase(type);		
 	}
 }

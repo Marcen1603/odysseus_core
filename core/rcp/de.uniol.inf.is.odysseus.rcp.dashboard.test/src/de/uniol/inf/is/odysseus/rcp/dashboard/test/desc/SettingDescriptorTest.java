@@ -79,6 +79,14 @@ public class SettingDescriptorTest {
 		assertEquals(setting.get(), (Integer)100);
 	}
 	
+	@Test
+	public void testDefaultValueAsNull() throws Throwable {
+		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "Description", "Integer",null, true, true);
+		Setting<Integer> setting = desc.createSetting();
+		assertNotNull(setting);
+		assertNull(setting.get());
+	}
+	
 	@Test(dataProvider = "typeDefaultValueDataProvider")
 	public void testTypeDefaultValueCombinations(Object defValue, String type) {
 		SettingDescriptor<Object> desc = new SettingDescriptor<Object>("SettingName", "SettingDescription", type, defValue, true, true);
