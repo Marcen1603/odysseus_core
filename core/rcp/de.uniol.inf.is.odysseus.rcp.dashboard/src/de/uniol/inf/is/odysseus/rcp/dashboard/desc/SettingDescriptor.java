@@ -49,7 +49,6 @@ public final class SettingDescriptor<T> {
 	
 	public SettingDescriptor( String name, String description, String type, T defaultValue, boolean optional, boolean editable ) {
 		
-		Preconditions.checkNotNull(defaultValue, "DefaultValue must not be null!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name of SettingDescriptor must not be null or empty!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(type), "Type of SettingDescriptor must not be null or empty!");
 		Preconditions.checkArgument(SUPPORTED_TYPES.contains(type.toLowerCase()), "Type %s not supported!", type);
