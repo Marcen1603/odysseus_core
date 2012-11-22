@@ -91,7 +91,7 @@ public class RoundRobinPlanScheduling implements IPhysicalQueryScheduling,
 				try {
 					pausedPlans.wait(1000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}
 		}
