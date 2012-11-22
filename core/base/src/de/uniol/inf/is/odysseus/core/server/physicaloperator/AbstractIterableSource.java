@@ -15,6 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -22,7 +24,9 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 public abstract class AbstractIterableSource<T> extends AbstractSource<T>
 		implements IIterableSource<T> {
 
+	private ReentrantLock lock = new ReentrantLock();
 
+	
 	public AbstractIterableSource() {
 
 	}
@@ -31,4 +35,13 @@ public abstract class AbstractIterableSource<T> extends AbstractSource<T>
 		super(source);
 	}
 
+	@Override
+	public boolean tryLock() {
+		return lock.tryLock();
+	}
+	
+	@Override
+	public void unlock(){
+		lock.unlock();
+	}
 }

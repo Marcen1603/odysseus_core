@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -24,6 +25,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 public abstract class AbstractIterablePipe<R extends IStreamObject<?>, W extends IStreamObject<?>> extends AbstractPipe<R, W>
 		implements IIterableSource<W> {
 	protected List<IOperatorOwner> deactivateRequestControls = new Vector<IOperatorOwner>();
+	
+	private ReentrantLock lock = new ReentrantLock();
 	
 	public AbstractIterablePipe(){}
 	
@@ -40,5 +43,15 @@ public abstract class AbstractIterablePipe<R extends IStreamObject<?>, W extends
 	@Override
 	public boolean isDone() {
 		return super.isDone();
+	}
+	
+	@Override
+	public boolean tryLock() {
+		return lock.tryLock();
+	}
+	
+	@Override
+	public void unlock(){
+		lock.unlock();
 	}
 }

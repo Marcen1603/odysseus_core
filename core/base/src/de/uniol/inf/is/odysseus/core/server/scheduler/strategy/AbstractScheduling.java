@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.server.scheduler.strategy;
 
 import java.util.ArrayList;
@@ -37,7 +37,8 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
  * 
  * @author Jonas Jacobi, Marco Grawunder
  */
-public abstract class AbstractScheduling implements IScheduling,ITrainScheduling, IEventListener {
+public abstract class AbstractScheduling implements IScheduling,
+		ITrainScheduling, IEventListener {
 
 	static private Logger logger = LoggerFactory
 			.getLogger(AbstractScheduling.class);
@@ -111,15 +112,14 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 
 		long endTime = System.currentTimeMillis() + maxTime;
 		IIterableSource<?> nextSource = nextSource();
-		while (nextSource != null
-				&& System.currentTimeMillis() < endTime) {
+		while (nextSource != null && System.currentTimeMillis() < endTime) {
 			// System.out.println("Process ISource "+nextSource+" b="+nextSource.isBlocked()+" n="+nextSource.hasNext());
 			if (nextSource.isDone()) {
 				sourceDone(nextSource);
 			} else if (nextSource.isBlocked()) {
 				logger.debug(nextSource + " blocked");
 				updateBlocked(plan.getSourceId(nextSource));
-			}else if (nextSource.isOpen() && nextSource.hasNext()) {
+			} else if (nextSource.isOpen() && nextSource.hasNext()) {
 				// logger.debug(nextSource + " process");
 				nextSource.transferNext();
 			} else {
@@ -130,7 +130,7 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 		}
 		return isDone();
 	}
-	
+
 	@Override
 	public boolean schedule(long maxTime, int trainSize) {
 		// if the underlying plan has changed, we need to call
@@ -142,21 +142,28 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 
 		long endTime = System.currentTimeMillis() + maxTime;
 		IIterableSource<?> nextSource = nextSource();
-		while (nextSource != null
-				&& System.currentTimeMillis() < endTime) {
-			if (nextSource.isDone()) {
-				sourceDone(nextSource);
-			} else if (nextSource.isBlocked()) {
-				updateBlocked(plan.getSourceId(nextSource));
-			} else if (nextSource.isOpen() && nextSource.hasNext()) {
-				// batch processing of tuple train
-				int numScheds = 0;
-				do {
-					numScheds++;
-					nextSource.transferNext();
-				} while (nextSource.hasNext() && numScheds < trainSize);
-			} else {
-				updateSchedulable(nextSource);
+		while (nextSource != null && System.currentTimeMillis() < endTime) {
+			try {
+				if (nextSource.tryLock()) {
+					if (nextSource.isDone()) {
+						sourceDone(nextSource);
+					} else if (nextSource.isBlocked()) {
+						updateBlocked(plan.getSourceId(nextSource));
+					} else if (nextSource.isOpen() && nextSource.hasNext()) {
+						// batch processing of tuple train
+						int numScheds = 0;
+						do {
+							numScheds++;
+							nextSource.transferNext();
+						} while (nextSource.hasNext() && numScheds < trainSize);
+					} else {
+						updateSchedulable(nextSource);
+					}
+				}
+			} catch (Exception e) {
+				throw e;
+			} finally {
+				nextSource.unlock();
 			}
 			nextSource = nextSource();
 		}
@@ -167,13 +174,14 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 		int id = plan.getSourceId(nextSource);
 		if (id >= 0) {
 			schedulable.set(id, false);
-		}else{
-			logger.warn(nextSource+" not Part of plan "+plan.getIterableSources());
+		} else {
+			logger.warn(nextSource + " not Part of plan "
+					+ plan.getIterableSources());
 		}
 		if (schedulable.cardinality() == 0) {
 			if (schedulingPaused == false) {
 				schedulingPaused = true;
-//				logger.debug("Scheduling paused, nothing to schedule");
+				// logger.debug("Scheduling paused, nothing to schedule");
 				synchronized (schedulingEventListener) {
 					for (ISchedulingEventListener l : schedulingEventListener) {
 						l.nothingToSchedule(this);
@@ -230,7 +238,7 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 		IIterableSource<?> s = (IIterableSource<?>) poEvent.getSender();
 		int index = plan.getSourceId(s);
 		if (poEvent.getEventType() == POEventType.CloseDone) {
-			//sourceDone(s);
+			// sourceDone(s);
 
 		} else {
 			synchronized (notBlocked) {
@@ -256,7 +264,7 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 						schedulable.set(index, true);
 						if (schedulingPaused && !s.isBlocked()) {
 							schedulingPaused = false;
-							//logger.debug("Scheduling reactivated");
+							// logger.debug("Scheduling reactivated");
 							for (ISchedulingEventListener l : schedulingEventListener) {
 								l.scheddulingPossible(this);
 							}
@@ -279,7 +287,7 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 
 	@Override
 	public boolean isSchedulable() {
-		// TODO: 
+		// TODO:
 		return true;
 	}
 

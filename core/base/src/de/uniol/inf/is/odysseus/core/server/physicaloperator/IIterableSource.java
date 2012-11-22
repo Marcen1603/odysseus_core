@@ -40,41 +40,7 @@ public interface IIterableSource<T> extends ISource<T> {
 	 * Returns true, if ISource has all Input processed
 	 */
 	public boolean isDone();
-	
-//	/**
-//	 * Activates this operator if it could be done.
-//	 * 
-//	 * @param operatorControl
-//	 *            Control which wants to activate this operator.
-//	 */
-//	public void activateRequest(IOperatorOwner operatorControl);
-//
-//	/**
-//	 * Deactivates this operator if it could be done (e. g. no other query needs
-//	 * this one).
-//	 * 
-//	 * @param operatorControl
-//	 *            Control which wants to activate this operator.
-//	 */
-//	public void deactivateRequest(IOperatorOwner operatorControl);
-//
-//	/**
-//	 * Checks if an control currently requests a deactivation of this operator.
-//	 * 
-//	 * @param operatorControl
-//	 *            Control for the check.
-//	 * @return TRUE: Control currently requests a deactivation of this operator.
-//	 *         FALSE: else
-//	 */
-//	public boolean deactivateRequestedBy(IOperatorOwner operatorControl);
-//
-//	/**
-//	 * Indicates if this operator is currently active.
-//	 * 
-//	 * @return TRUE: operator is currently active. FALSE: else
-//	 */
-//	public boolean isActive();
-	
+		
 	/**
 	 * Indicates if the operator is currently blocked (i.e. does not produce elements)
 	 * @return
@@ -93,5 +59,16 @@ public interface IIterableSource<T> extends ISource<T> {
 	 */
 	@Override
 	public void unblock();
+	
+	/**
+	 * Try to get a Lock 
+	 * @return
+	 */
+	public boolean tryLock();
+	
+	/**
+	 * Release Lock
+	 */
+	public void unlock();
 }
 

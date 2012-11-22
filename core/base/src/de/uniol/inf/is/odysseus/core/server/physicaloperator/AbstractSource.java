@@ -69,7 +69,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	private String name = null;
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 	protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
-
+	
 	// --------------------------------------------------------------------
 	// Logging
 	// --------------------------------------------------------------------
@@ -758,4 +758,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		// in general there is no metadata
 		return new SDFMetaAttributeList();
 	}
+	
+	
 }
