@@ -75,6 +75,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerThanOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SqrtValue;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SquareValue;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.SubStringFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.TangensFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToByteFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToDegrees;
@@ -192,6 +193,7 @@ public class MEP implements IExpressionParser {
 
         registerFunction(new IsNullFunction());
 
+        registerFunction(new SubStringFunction());
         registerFunction(new DebsDateFormatParse());
 
     }
