@@ -19,16 +19,16 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
 /**
- * Returns the hyperbolic tangent of a double value
+ * Returns the hyperbolic sine of a double value
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class HyperbolicTangensFunction extends AbstractFunction<Double> {
+public class HyperbolicSinusFunction extends AbstractFunction<Double> {
 
     /**
      * 
      */
-    private static final long          serialVersionUID = -7974250275482913506L;
+    private static final long          serialVersionUID = -7505484909265341674L;
     private static final SDFDatatype[] accTypes         = new SDFDatatype[] { SDFDatatype.DOUBLE, SDFDatatype.BYTE,
             SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG };
 
@@ -50,12 +50,12 @@ public class HyperbolicTangensFunction extends AbstractFunction<Double> {
 
     @Override
     public String getSymbol() {
-        return "tanh";
+        return "sinh";
     }
 
     @Override
     public Double getValue() {
-        return Math.tanh(getNumericalInputValue(0));
+        return Math.sinh(getNumericalInputValue(0));
     }
 
     @Override

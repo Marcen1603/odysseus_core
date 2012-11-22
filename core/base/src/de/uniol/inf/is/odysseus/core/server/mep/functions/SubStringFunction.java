@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
 /**
- * Returns a new string that is a substring of this string
+ * Returns a new string that is a substring of the value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */

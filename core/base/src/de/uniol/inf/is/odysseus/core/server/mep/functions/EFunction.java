@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
 /**
- * Return the double value that is closer than any other to e
+ * Returns the double value that is closer than any other to e
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
