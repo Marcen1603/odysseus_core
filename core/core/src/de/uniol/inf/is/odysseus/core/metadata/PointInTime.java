@@ -111,10 +111,12 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		return this.point;
 	}
 
+	@Override
 	public boolean before(PointInTime time) {
 		return before(this, time);
 	}
 
+	@Override
 	public boolean beforeOrEquals(PointInTime time) {
 		return beforeOrEquals(this, time);
 	}
@@ -123,10 +125,12 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		return equals(this, time);
 	}
 
+	@Override
 	public boolean after(PointInTime time) {
 		return before(time, this);
 	}
 
+	@Override
 	public boolean afterOrEquals(PointInTime time) {
 		return beforeOrEquals(time, this);
 	}
