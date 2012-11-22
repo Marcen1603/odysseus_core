@@ -54,6 +54,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.FloorFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.GetAbsoluteValue;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.GreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.GreaterThanOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.HourFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.HyperbolicCosinusFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.HyperbolicSinusFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.HyperbolicTangensFunction;
@@ -62,6 +63,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.IsNullFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.LikeFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.LogFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MinusOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.MinuteFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ModuloOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MonthFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MultiplicationOperator;
@@ -73,6 +75,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.PlusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.PowerOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.RandomFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.RoundFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.SecondFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SinusFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerThanOperator;
@@ -130,13 +133,13 @@ public class MEP implements IExpressionParser {
     private static FunctionStore                        functionStore = new FunctionStore();
     static {
         getLogger().debug("Register Base Function");
-
+        /** Boolean Functions */
         registerFunction(new AndOperator());
         registerFunction(new OrOperator());
 
         registerFunction(new EqualsOperator());
         registerFunction(new NotEqualsOperator());
-
+        /** Math Functions */
         registerFunction(new GreaterThanOperator());
         registerFunction(new SmallerThanOperator());
         registerFunction(new GreaterEqualsOperator());
@@ -194,19 +197,31 @@ public class MEP implements IExpressionParser {
         registerFunction(new ToRadians());
         registerFunction(new ToDegrees());
 
+        registerFunction(new IsNullFunction());
+        
+        /** String Functions */
         registerFunction(new LikeFunction());
         registerFunction(new ContainsFunction());
-
-        registerFunction(new IsNullFunction());
-
+        
         registerFunction(new SubStringFunction());
+        
+        /** Date Functions */
         registerFunction(new DebsDateFormatParse());
         
+        registerFunction(new SecondFunction());
+        registerFunction(new MinuteFunction());
+        registerFunction(new HourFunction());
         registerFunction(new MonthFunction());
         registerFunction(new YearFunction());
 
     }
 
+    /**
+     * Register a MEP function instance
+     * 
+     * @param function
+     *            The function instance
+     */
     public static void registerFunction(IFunction<?> function) {
         String symbol = function.getSymbol();
         List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
@@ -231,6 +246,12 @@ public class MEP implements IExpressionParser {
         functions.remove(symbol.toUpperCase());
     }
 
+    /**
+     * Unregister a MEP function instance
+     * 
+     * @param function
+     *            The function instance
+     */
     public static void unregisterFunction(IFunction<?> function) {
         String symbol = function.getSymbol();
         List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
