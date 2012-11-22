@@ -15,27 +15,27 @@
  */
 package de.uniol.inf.is.odysseus.core.server.mep.functions;
 
+import java.util.Calendar;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
 /**
- * Returns a new string that is a substring of the value.
+ * Returns the month
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class SubStringFunction extends AbstractFunction<String> {
+public class MonthFunction extends AbstractFunction<Integer> {
 
     /**
      * 
      */
-    private static final long            serialVersionUID = 2270358376473789092L;
-    private static final SDFDatatype[][] accTypes         = new SDFDatatype[][] { { SDFDatatype.STRING },
-            { SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG },
-            { SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG } };
+    private static final long          serialVersionUID = -3089145220450028398L;
+    private static final SDFDatatype[] accTypes         = new SDFDatatype[] {};
 
     @Override
     public int getArity() {
-        return 3;
+        return 0;
     }
 
     @Override
@@ -43,26 +43,26 @@ public class SubStringFunction extends AbstractFunction<String> {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
-        if (argPos > this.getArity()) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
-                    + " argument(s): a string and the begin and end index");
+        if (argPos >= 0) {
+            throw new IllegalArgumentException(this.getSymbol() + " has no argument(s).");
         }
-        return accTypes[argPos];
+        return accTypes;
     }
 
     @Override
     public String getSymbol() {
-        return "substring";
+        return "month";
     }
 
     @Override
-    public String getValue() {
-        return ((String) getInputValue(0)).substring(getNumericalInputValue(1).intValue(), getNumericalInputValue(2)
-                .intValue());
+    public Integer getValue() {
+        // The first month is 1 not 0
+        return Calendar.getInstance().get(Calendar.MONTH + 1);
     }
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.STRING;
+        return SDFDatatype.INTEGER;
     }
+
 }

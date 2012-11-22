@@ -63,6 +63,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.LikeFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.LogFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MinusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ModuloOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.MonthFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MultiplicationOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.NotEqualsOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.NotOperator;
@@ -88,6 +89,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.ToRadians;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToShortFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToStringFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.UnaryMinusOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.YearFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.impl.ExpressionBuilderVisitor;
 import de.uniol.inf.is.odysseus.core.server.mep.impl.MEPImpl;
 import de.uniol.inf.is.odysseus.core.server.mep.impl.SimpleNode;
@@ -199,6 +201,9 @@ public class MEP implements IExpressionParser {
 
         registerFunction(new SubStringFunction());
         registerFunction(new DebsDateFormatParse());
+        
+        registerFunction(new MonthFunction());
+        registerFunction(new YearFunction());
 
     }
 
