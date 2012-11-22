@@ -114,19 +114,27 @@ public abstract class AbstractScheduling implements IScheduling,
 		IIterableSource<?> nextSource = nextSource();
 		while (nextSource != null && System.currentTimeMillis() < endTime) {
 			// System.out.println("Process ISource "+nextSource+" b="+nextSource.isBlocked()+" n="+nextSource.hasNext());
-			if (nextSource.isDone()) {
-				sourceDone(nextSource);
-			} else if (nextSource.isBlocked()) {
-				logger.debug(nextSource + " blocked");
-				updateBlocked(plan.getSourceId(nextSource));
-			} else if (nextSource.isOpen() && nextSource.hasNext()) {
-				// logger.debug(nextSource + " process");
-				nextSource.transferNext();
-			} else {
-				// logger.debug(nextSource + " nothing to process");
-				updateSchedulable(nextSource);
+			try {
+				if (nextSource.tryLock()) {
+					if (nextSource.isDone()) {
+						sourceDone(nextSource);
+					} else if (nextSource.isBlocked()) {
+						logger.debug(nextSource + " blocked");
+						updateBlocked(plan.getSourceId(nextSource));
+					} else if (nextSource.isOpen() && nextSource.hasNext()) {
+						// logger.debug(nextSource + " process");
+						nextSource.transferNext();
+					} else {
+						// logger.debug(nextSource + " nothing to process");
+						updateSchedulable(nextSource);
+					}
+					nextSource = nextSource();
+				}
+			} catch (Exception e) {
+				throw e;
+			} finally {
+				nextSource.unlock();
 			}
-			nextSource = nextSource();
 		}
 		return isDone();
 	}
