@@ -16,9 +16,9 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
@@ -45,7 +45,7 @@ public class SecurityShieldPO<T extends IStreamObject<? extends ITimeInterval>> 
 	}	
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {		
+	public void processPunctuation(IPunctuation punctuation, int port) {		
 	}
 
 	@Override

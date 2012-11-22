@@ -72,7 +72,7 @@ public class StrongOrderBufferedPipe<T extends IStreamObject<? extends IPriority
 			}
 		}
 		if (!transfered) {
-			PointInTime hearbeat = this.heartbeat.get();
+			PointInTime hearbeat = this.heartbeat.get().getTime();
 			if (hearbeat != null) {
 				sendPunctuation(heartbeat.getAndSet(null));
 			}

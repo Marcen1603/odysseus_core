@@ -27,11 +27,12 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 
 /**
  * This is the physical sliding delta window po. It returns elements after a
@@ -143,7 +144,7 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 	}
 
 	@Override
-	public synchronized void processPunctuation(PointInTime timestamp, int port) {
-		process(timestamp);
+	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
+		process(punctuation.getTime());
 	}
 }

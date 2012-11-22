@@ -21,10 +21,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
@@ -128,11 +129,11 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		if (maxWindowTime > 0
 				&& PointInTime.plus(queue.get(0).getMetadata().getStart(),
-						maxWindowTime).afterOrEquals(timestamp)) {
-			produceData(timestamp);
+						maxWindowTime).afterOrEquals(punctuation.getTime())) {
+			produceData(punctuation.getTime());
 		}
 
 	}

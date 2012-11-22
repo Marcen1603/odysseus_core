@@ -34,8 +34,8 @@ import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -325,7 +325,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void sendPunctuation(PointInTime punctuation) {
+	public void sendPunctuation(IPunctuation punctuation) {
 		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
 			sub.getTarget()
 					.processPunctuation(punctuation, sub.getSinkInPort());
@@ -333,7 +333,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void sendPunctuation(PointInTime punctuation, int outPort) {
+	public void sendPunctuation(IPunctuation punctuation, int outPort) {
 		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
 			if (sub.getSourceOutPort() == outPort) {
 				sub.getTarget().processPunctuation(punctuation,

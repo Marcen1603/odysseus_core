@@ -15,14 +15,14 @@
   */
 package de.uniol.inf.is.odysseus.core.streamconnection;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 
 public interface IStreamElementListener<In> {
 
 	public void streamElementRecieved( In element, int port );
-	public void punctuationElementRecieved(PointInTime point, int port);
+	public void punctuationElementRecieved(IPunctuation point, int port);
 	public void securityPunctuationElementRecieved( ISecurityPunctuation sp, int port );
 	
 }

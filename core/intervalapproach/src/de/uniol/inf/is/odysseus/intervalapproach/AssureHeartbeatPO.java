@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
@@ -103,14 +104,15 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 
-	public void sendPunctuation(PointInTime timestamp) {
+	public void sendPunctuation(IPunctuation punctuation) {
+		PointInTime timestamp = punctuation.getTime();
 		//System.err.println("Send Punctuation " + timestamp);
 		if (timestamp.afterOrEquals(getWatermark())) {
-			super.sendPunctuation(timestamp);
+			super.sendPunctuation(punctuation);
 			setWatermark(timestamp);
 			restartTimer();
 		}

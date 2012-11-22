@@ -20,22 +20,22 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 
 /**
@@ -281,9 +281,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	public synchronized void processPunctuation(PointInTime timestamp, int port) {
-		this.areas[port ^ 1].purgeElementsBefore(timestamp);
-		this.transferFunction.newHeartbeat(timestamp, port);
+	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
+		this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
+		this.transferFunction.newHeartbeat(punctuation.getTime(), port);
 		fire(this.processPunctuationDoneEvent);
 	}
 

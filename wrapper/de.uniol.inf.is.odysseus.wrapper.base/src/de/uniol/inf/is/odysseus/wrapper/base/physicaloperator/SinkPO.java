@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
@@ -74,7 +74,7 @@ public class SinkPO<T extends IMetaAttribute> extends AbstractSink<Tuple<TimeInt
     }
 
     @Override
-    public void processPunctuation(final PointInTime timestamp, final int port) {
+    public void processPunctuation(final IPunctuation punctuation, final int port) {
         // TODO Auto-generated method stub
 
     }

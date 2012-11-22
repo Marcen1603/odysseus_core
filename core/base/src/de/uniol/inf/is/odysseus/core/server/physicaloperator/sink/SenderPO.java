@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
@@ -36,7 +36,7 @@ public class SenderPO<T extends IStreamObject<?>> extends AbstractSink<T> {
     }
 
     @Override
-    public void processPunctuation(PointInTime timestamp, int port) {
+    public void processPunctuation(IPunctuation punctuation, int port) {
         // TODO Auto-generated method stub
 
     }

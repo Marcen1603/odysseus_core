@@ -30,19 +30,20 @@
 
 package de.uniol.inf.is.odysseus.intervalapproach;
 
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.Order;
 
 /**
  * 
@@ -122,9 +123,9 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		inputStreamSyncArea.newHeartbeat(timestamp, port);
-		outputTransferArea.newHeartbeat(timestamp, port);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		inputStreamSyncArea.newHeartbeat(punctuation.getTime(), port);
+		outputTransferArea.newHeartbeat(punctuation.getTime(), port);
 	}
 
 	@Override

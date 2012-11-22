@@ -32,8 +32,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
@@ -101,7 +101,7 @@ public class LineChartDashboardPart extends AbstractChartDashboardPart {
 	}
 
 	@Override
-	protected void addPunctuationToChart(PointInTime punctuation, int port) {
+	protected void addPunctuationToChart(IPunctuation punctuation, int port) {
 
 	}
 

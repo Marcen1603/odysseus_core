@@ -25,6 +25,7 @@ import java.util.Random;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -177,7 +178,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		// TODO Auto-generated method stub
 
 	}

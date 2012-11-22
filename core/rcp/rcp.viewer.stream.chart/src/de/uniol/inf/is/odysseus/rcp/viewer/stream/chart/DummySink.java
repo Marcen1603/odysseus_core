@@ -31,7 +31,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 /**
@@ -47,7 +47,7 @@ public class DummySink<T extends IStreamObject<?>> extends AbstractSink<T>{
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		// intentionally we won't do anything
 		
 	}

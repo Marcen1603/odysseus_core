@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.latency;
 
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 public class BenchmarkPOExt<R extends IStreamObject<? extends ILatency>> extends
@@ -122,7 +122,7 @@ public class BenchmarkPOExt<R extends IStreamObject<? extends ILatency>> extends
 	}
 	
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		long now = System.nanoTime();
 //		System.out.println("next punc in BPO: " + (now - last));
 		this.last = now;
@@ -149,7 +149,7 @@ public class BenchmarkPOExt<R extends IStreamObject<? extends ILatency>> extends
 //			}
 		}
 
-		sendPunctuation(timestamp);
+		sendPunctuation(punctuation);
 	}
 
 }

@@ -23,11 +23,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
@@ -258,7 +259,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {		
+	public void processPunctuation(IPunctuation punctuation, int port) {		
 //		processLock.lock();
 //		processData(timestamp);
 //		processLock.unlock();

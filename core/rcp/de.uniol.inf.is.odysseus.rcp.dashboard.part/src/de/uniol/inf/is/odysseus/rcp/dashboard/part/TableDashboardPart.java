@@ -40,8 +40,8 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
@@ -159,7 +159,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void punctuationElementRecieved(PointInTime point, int port) {
+	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 	}
 	
 	@Override

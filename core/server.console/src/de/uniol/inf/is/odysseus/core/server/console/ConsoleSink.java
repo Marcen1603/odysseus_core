@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.console;
  
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
@@ -46,8 +46,8 @@ public class ConsoleSink extends AbstractSink<IStreamObject<?>> {
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		System.out.println("Port:" + port + ", PUNCTUATION: " + timestamp);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		System.out.println("Port:" + port + ", PUNCTUATION: " + punctuation);
 	}
 
 	

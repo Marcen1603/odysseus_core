@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
@@ -358,7 +359,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation timestamp, int port) {
 	}
 
 	@Override

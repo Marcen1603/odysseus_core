@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.core.metadata;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+
 /**
  * 
  * This immutable class represents a simple point in time and that can be
@@ -26,7 +28,7 @@ import java.io.Serializable;
  * 
  */
 public class PointInTime implements Comparable<PointInTime>, Cloneable,
-		Serializable {
+		Serializable, IPunctuation {
 
 	private static final String INFINITY_SYMBOL = "oo";
 
@@ -35,12 +37,12 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	/**
 	 * A representation of this time
 	 */
-	final long point;
+	protected final long point;
 
 	/**
 	 * A marker if this point has not time, but is infinite
 	 */
-	final boolean isInfinite;
+	protected final boolean isInfinite;
 
 	/**
 	 * Constant for infinityTime
@@ -77,10 +79,10 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		point = -1;
 	}
 
-	// public PointInTime(PointInTime time) {
-	// this.point = time.point;
-	// this.isInfinite = time.isInfinite;
-	// }
+	protected PointInTime(PointInTime time) {
+		this.point = time.point;
+		this.isInfinite = time.isInfinite;
+	}
 
 	public boolean isInfinite() {
 		return isInfinite;
@@ -166,7 +168,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		}
 		return before;
 	}
-	
+
 	public static boolean equals(PointInTime left, PointInTime right) {
 		// Entweder gleich in den Werten oder unendlich
 		if (left.isInfinite) {
@@ -256,11 +258,10 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 			return this;
 		return new PointInTime(this.point + time.point);
 	}
-	
-	public static PointInTime plus(PointInTime time, long toAdd) {
-		return new PointInTime(time.point+toAdd);
-	}
 
+	public static PointInTime plus(PointInTime time, long toAdd) {
+		return new PointInTime(time.point + toAdd);
+	}
 
 	public PointInTime plus(int time) {
 		if (isInfinite)
@@ -297,5 +298,9 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		return ZERO.clone();
 	}
 
+	@Override
+	public PointInTime getTime() {
+		return this;
+	}
 
 }

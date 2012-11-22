@@ -37,7 +37,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
@@ -92,7 +92,7 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 	}
 
 	@Override
-	public void punctuationElementRecieved(PointInTime point, int port) {
+	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 
 	}
 

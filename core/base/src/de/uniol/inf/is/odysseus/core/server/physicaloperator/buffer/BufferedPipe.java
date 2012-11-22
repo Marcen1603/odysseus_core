@@ -26,8 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePipe;
@@ -49,7 +49,7 @@ public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePi
 
 	protected LinkedList<T> buffer = new LinkedList<T>();
 	protected Lock transferLock = new ReentrantLock();
-	protected AtomicReference<PointInTime> heartbeat = new AtomicReference<PointInTime>();
+	protected AtomicReference<IPunctuation> heartbeat = new AtomicReference<IPunctuation>();
 	private String buffername;
 
 	public BufferedPipe() {
@@ -188,8 +188,8 @@ public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePi
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		this.heartbeat.set(timestamp);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		this.heartbeat.set(punctuation);
 	}
 
 	@SuppressWarnings("rawtypes")

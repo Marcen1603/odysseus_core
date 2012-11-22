@@ -19,10 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
@@ -42,8 +43,8 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		validate(timestamp, port);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		validate(punctuation.getTime(), port);
 	}
 
 	@Override

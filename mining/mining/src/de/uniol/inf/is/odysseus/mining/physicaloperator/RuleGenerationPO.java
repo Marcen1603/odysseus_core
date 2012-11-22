@@ -20,9 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.frequentitem.AssociationRule;
@@ -205,8 +206,8 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	 */
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		processData(timestamp);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		processData(punctuation.getTime());
 	}
 
 	/*

@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
@@ -44,7 +44,7 @@ public class InvalidTestDashboardPart implements IDashboardPart {
 	}
 
 	@Override
-	public void punctuationElementRecieved(PointInTime point, int port) {
+	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 	}
 
 	@Override

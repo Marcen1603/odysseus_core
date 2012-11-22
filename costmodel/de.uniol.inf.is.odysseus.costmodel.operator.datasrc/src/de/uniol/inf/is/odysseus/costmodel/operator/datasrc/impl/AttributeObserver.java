@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.CombinedSampling;
@@ -96,7 +96,7 @@ public class AttributeObserver implements IDataSourceObserverListener {
 	}
 
 	@Override
-	public void punctuationElementRecieved(DataSourceObserverSink sender, PointInTime punctuation, int port) {
+	public void punctuationElementRecieved(DataSourceObserverSink sender, IPunctuation punctuation, int port) {
 
 	}
 

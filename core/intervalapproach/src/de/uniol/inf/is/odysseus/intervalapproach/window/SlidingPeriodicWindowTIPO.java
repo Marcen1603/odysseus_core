@@ -27,9 +27,10 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 
 /**
  * This is the physical sliding delta window po. This window is used to change
@@ -87,7 +88,7 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 	}
 
 	@Override
-	public synchronized void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
+	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 }

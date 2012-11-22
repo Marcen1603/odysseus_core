@@ -16,9 +16,9 @@
 package de.uniol.inf.is.odysseus.mining.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
@@ -85,7 +85,7 @@ public class StatCounterPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#processPunctuation(de.uniol.inf.is.odysseus.core.metadata.PointInTime, int)
 	 */
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		
 	}
 

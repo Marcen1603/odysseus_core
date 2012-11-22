@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
@@ -99,7 +99,7 @@ public class LatencyAverageConformance<T extends IStreamObject<?>> extends Abstr
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		// nothing to do
 	}
 

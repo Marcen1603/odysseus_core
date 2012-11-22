@@ -31,10 +31,10 @@
 package de.uniol.inf.is.odysseus.context.physicaloperator;
 
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 /**
  * 
@@ -64,8 +64,8 @@ public class StorePO<T extends Tuple<? extends ITimeInterval>> extends AbstractS
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		this.store.processTime(timestamp);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		this.store.processTime(punctuation.getTime());
 	}
 
 	@Override

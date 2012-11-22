@@ -34,8 +34,8 @@ import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -270,7 +270,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	protected abstract void process_next(R object, int port);
 
 	@Override
-	public abstract void processPunctuation(PointInTime timestamp, int port);
+	public abstract void processPunctuation(IPunctuation punctuation, int port);
 
 	@Override
 	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {

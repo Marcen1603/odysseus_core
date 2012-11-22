@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
@@ -105,7 +105,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		// IGNORE
 		// throw new RuntimeException("process punctuation not implemented");
 		// TODO: How to implement punctuations? New Concepts on client side

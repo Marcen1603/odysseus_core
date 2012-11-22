@@ -22,8 +22,8 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -51,8 +51,8 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 
 		@Override
-		public void processPunctuation(PointInTime timestamp, int port) {
-			AbstractPipe.this.delegatedProcessPunctuation(timestamp, port);
+		public void processPunctuation(IPunctuation punctuation, int port) {
+			AbstractPipe.this.delegatedProcessPunctuation(punctuation, port);
 		}
 
 		@Override
@@ -211,8 +211,8 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		process_next(object, port);
 	}
 
-	private void delegatedProcessPunctuation(PointInTime timestamp, int port) {
-		processPunctuation(timestamp, port);
+	private void delegatedProcessPunctuation(IPunctuation punctuation, int port) {
+		processPunctuation(punctuation, port);
 	}
 
 	private void delegatedProcessSecurityPunctuation(ISecurityPunctuation sp,
@@ -228,8 +228,8 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	abstract protected void process_next(R object, int port);
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port){
-		sendPunctuation(timestamp);
+	public void processPunctuation(IPunctuation punctuation, int port){
+		sendPunctuation(punctuation);
 	}
 
 	@Override

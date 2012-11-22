@@ -16,8 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 
 public class SinkPO<R extends IStreamObject<?>> extends AbstractSink<R> {
 
@@ -26,7 +25,7 @@ public class SinkPO<R extends IStreamObject<?>> extends AbstractSink<R> {
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {		
+	public void processPunctuation(IPunctuation punctuation, int port) {		
 	}
 
 	@Override

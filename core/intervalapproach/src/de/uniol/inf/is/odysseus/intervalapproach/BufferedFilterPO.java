@@ -18,16 +18,17 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.core.Order;
 
 public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K>> extends AbstractPipe<R, R> implements IHasMetadataMergeFunction<K>{
 
@@ -96,9 +97,9 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		produceData(timestamp);
-		sendPunctuation(timestamp);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		produceData(punctuation.getTime());
+		sendPunctuation(punctuation);
 	}
 
 	private void produceData(PointInTime timestamp) {

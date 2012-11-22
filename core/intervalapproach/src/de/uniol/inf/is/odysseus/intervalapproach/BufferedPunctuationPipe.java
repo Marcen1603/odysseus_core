@@ -24,11 +24,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
@@ -56,7 +56,7 @@ public class BufferedPunctuationPipe<T extends IStreamObject<M>, M extends ITime
 	
 	protected LinkedList<T> buffer = new LinkedList<T>();
 	protected Lock transferLock = new ReentrantLock();
-	protected LinkedList<PointInTime> punctuations = new LinkedList<PointInTime>();
+	protected LinkedList<IPunctuation> punctuations = new LinkedList<IPunctuation>();
 
 	public BufferedPunctuationPipe() {
 		super();
@@ -114,7 +114,7 @@ public class BufferedPunctuationPipe<T extends IStreamObject<M>, M extends ITime
 	
 	private boolean sendElement(){
 		if(!this.buffer.isEmpty() && (this.punctuations.isEmpty() || 
-				this.buffer.peek().getMetadata().getStart().beforeOrEquals(this.punctuations.peek()))){
+				this.buffer.peek().getMetadata().getStart().beforeOrEquals(this.punctuations.peek().getTime()))){
 			return true;
 		}
 		return false;
@@ -188,11 +188,10 @@ public class BufferedPunctuationPipe<T extends IStreamObject<M>, M extends ITime
 		return new BufferedPunctuationPipe<T, M>(this);
 	}
 
-	int p = 0;
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 //		System.out.println("Process Punc: " + p++);
-		this.punctuations.addLast(timestamp);
+		this.punctuations.addLast(punctuation);
 	}
 	
 	@Override

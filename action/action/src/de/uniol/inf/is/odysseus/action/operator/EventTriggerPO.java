@@ -30,10 +30,10 @@ import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter.ParameterType;
 import de.uniol.inf.is.odysseus.action.services.dataExtraction.IDataExtractor;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 /**
@@ -169,7 +169,7 @@ public class EventTriggerPO<T extends IStreamObject<?>> extends AbstractSink<T>{
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		// Do nothing. 
 	}
 }

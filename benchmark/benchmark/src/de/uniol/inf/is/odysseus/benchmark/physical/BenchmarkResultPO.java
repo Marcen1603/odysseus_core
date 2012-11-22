@@ -26,7 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResultFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
@@ -109,7 +109,7 @@ public class BenchmarkResultPO<M extends ILatency> extends
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 	}
 
 	@Override

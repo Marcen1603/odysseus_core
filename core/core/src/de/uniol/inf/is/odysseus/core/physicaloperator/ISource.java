@@ -20,7 +20,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.metadata.IHasMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
@@ -82,9 +81,9 @@ public interface ISource<T> extends IPhysicalOperator,
 	 */
 	public void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath);
 
-	public void sendPunctuation(PointInTime punctuation);
+	public void sendPunctuation(IPunctuation punctuation);
 
-	public void sendPunctuation(PointInTime punctuation, int outPort);
+	public void sendPunctuation(IPunctuation punctuation, int outPort);
 
 	/**
 	 * Removes several subscriptions in remove list to this source and

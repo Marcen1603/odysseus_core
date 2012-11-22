@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
@@ -169,7 +169,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 	}
 
 	@Override

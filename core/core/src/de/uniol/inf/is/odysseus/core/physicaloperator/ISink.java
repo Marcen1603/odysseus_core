@@ -19,7 +19,6 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 /**
@@ -59,7 +58,7 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	 */
 	public void done(int port);
 
-	public void processPunctuation(PointInTime timestamp, int port);
+	public void processPunctuation(IPunctuation punctuation, int port);
 
 	/**
 	 * Process an security punctuation.

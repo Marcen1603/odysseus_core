@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
@@ -55,8 +55,8 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 	}
 	
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		firePuntuationElementRecieveEvent(timestamp, port);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		firePuntuationElementRecieveEvent(punctuation, port);
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 		}
 	}
 	
-	protected final void firePuntuationElementRecieveEvent( PointInTime element, int port ) {
+	protected final void firePuntuationElementRecieveEvent( IPunctuation element, int port ) {
 		synchronized( listeners ) {
 			for( IDataSourceObserverListener listener : listeners ) {
 				listener.punctuationElementRecieved(this, element, port);

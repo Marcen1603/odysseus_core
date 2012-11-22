@@ -15,12 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 
@@ -64,8 +64,8 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		transferFunction.newHeartbeat(timestamp, port);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		transferFunction.newHeartbeat(punctuation.getTime(), port);
 	}
 	
 	@Override

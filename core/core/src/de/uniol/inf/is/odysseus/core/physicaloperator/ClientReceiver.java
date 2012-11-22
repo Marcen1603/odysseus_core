@@ -48,7 +48,6 @@ import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
@@ -380,7 +379,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void sendPunctuation(PointInTime punctuation) {
+	public void sendPunctuation(IPunctuation punctuation) {
 		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
 			sub.getTarget()
 					.processPunctuation(punctuation, sub.getSinkInPort());
@@ -388,7 +387,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	}
 
 	@Override
-	public void sendPunctuation(PointInTime punctuation, int outPort) {
+	public void sendPunctuation(IPunctuation punctuation, int outPort) {
 		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
 			if (sub.getSourceOutPort() == outPort) {
 				sub.getTarget().processPunctuation(punctuation,

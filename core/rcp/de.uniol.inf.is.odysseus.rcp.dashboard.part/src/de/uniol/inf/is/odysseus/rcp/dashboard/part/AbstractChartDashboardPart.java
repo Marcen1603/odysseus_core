@@ -17,8 +17,8 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
@@ -73,12 +73,12 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void punctuationElementRecieved(final PointInTime point, final int port) {
+	public void punctuationElementRecieved(final IPunctuation punctuation, final int port) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				if (!chartComposite.isDisposed()) {
-					addPunctuationToChart(point, port);
+					addPunctuationToChart(punctuation, port);
 				}
 			}
 		});
@@ -96,7 +96,7 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 		});
 	}
 
-	protected void addPunctuationToChart(PointInTime punctuation, int port) {
+	protected void addPunctuationToChart(IPunctuation punctuation, int port) {
 	}
 	protected void addSecurityPunctuationToChart(ISecurityPunctuation punctuation, int port) {
 	}

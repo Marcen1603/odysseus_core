@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 
@@ -213,7 +213,7 @@ public class P2PSinkPO<T extends IStreamObject<?>> extends AbstractSink<T> {
     }
 
     @Override
-    public void processPunctuation(PointInTime timestamp, int port) {
+    public void processPunctuation(IPunctuation punctuation, int port) {
         throw new RuntimeException("process punctuation not implemented");
     }
 

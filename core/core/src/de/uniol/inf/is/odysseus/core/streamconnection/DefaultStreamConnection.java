@@ -28,8 +28,8 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -139,8 +139,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		notifyListenersPunctuation(timestamp, port);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		notifyListenersPunctuation(punctuation, port);
 	}
 
 	@Override
@@ -183,7 +183,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		}
 	}
 
-	protected final void notifyListenersPunctuation(PointInTime point, int port) {
+	protected final void notifyListenersPunctuation(IPunctuation point, int port) {
 		LOG.debug("Receiving punctuation from port {}: {}", port, point);
 		synchronized (listeners) {
 			for (IStreamElementListener<In> l : listeners) {

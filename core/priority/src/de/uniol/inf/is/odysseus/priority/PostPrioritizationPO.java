@@ -15,9 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.priority;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 public class PostPrioritizationPO<K extends IPriority, T extends IStreamObject<? extends K>>
@@ -52,9 +52,9 @@ public class PostPrioritizationPO<K extends IPriority, T extends IStreamObject<?
 	}
 	
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		if (port == 0) {
-			sendPunctuation(timestamp);
+			sendPunctuation(punctuation);
 		}
 	}
 

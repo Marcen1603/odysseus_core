@@ -20,10 +20,10 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
@@ -168,7 +168,7 @@ public class PriorityBufferedPipe2<T extends IStreamObject<? extends IPriority>>
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		throw new RuntimeException("not implemented...");
 	}
 

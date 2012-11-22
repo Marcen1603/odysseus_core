@@ -36,9 +36,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
@@ -108,8 +109,8 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 	}	
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		transferFunction.newHeartbeat(timestamp, port);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		transferFunction.newHeartbeat(punctuation.getTime(), port);
 	}
 
 	@Override

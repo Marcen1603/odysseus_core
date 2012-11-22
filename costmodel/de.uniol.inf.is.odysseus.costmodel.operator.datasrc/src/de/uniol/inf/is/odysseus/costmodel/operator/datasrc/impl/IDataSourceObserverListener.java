@@ -16,10 +16,10 @@
 package de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 
 public interface IDataSourceObserverListener {
 
 	public void streamElementRecieved( DataSourceObserverSink sender, IStreamObject<?> element, int port );
-	public void punctuationElementRecieved( DataSourceObserverSink sender, PointInTime punctuation, int port );
+	public void punctuationElementRecieved( DataSourceObserverSink sender, IPunctuation punctuation, int port );
 }

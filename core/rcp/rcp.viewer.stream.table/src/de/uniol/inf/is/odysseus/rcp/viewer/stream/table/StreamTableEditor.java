@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -126,7 +126,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	}
 
 	@Override
-	public void punctuationElementRecieved(PointInTime point, int port) {
+	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 	}
 	
 	@Override

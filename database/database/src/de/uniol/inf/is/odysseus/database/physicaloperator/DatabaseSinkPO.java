@@ -37,17 +37,17 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.database.physicaloperator.access.DataTypeMappingHandlerRegistry;
 import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappingHandler;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * 
@@ -139,7 +139,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 	}
 
 	private void calcLatency(Tuple<ITimeInterval> tuple) {
