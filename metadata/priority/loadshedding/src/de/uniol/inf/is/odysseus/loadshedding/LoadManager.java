@@ -35,7 +35,7 @@ public class LoadManager {
 	
 	private ArrayList<AvgInputRate> avgInputs = new ArrayList<AvgInputRate>();
 	
-	private List<DirectLoadSheddingBuffer<?>> shedders = new ArrayList<DirectLoadSheddingBuffer<?>>();
+	private List<DirectLoadSheddingBufferPO<?>> shedders = new ArrayList<DirectLoadSheddingBufferPO<?>>();
 
 	private boolean isActive;
 	
@@ -146,7 +146,7 @@ public class LoadManager {
 	}	
 	
 	@SuppressWarnings({"rawtypes"})
-	public void addLoadShedder(DirectLoadSheddingBuffer shedder) {
+	public void addLoadShedder(DirectLoadSheddingBufferPO shedder) {
 		this.shedders.add(shedder);
 	}
 	

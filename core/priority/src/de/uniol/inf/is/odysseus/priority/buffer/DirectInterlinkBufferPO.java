@@ -19,19 +19,19 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferedPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
-public class DirectInterlinkBufferedPipe<T extends IStreamObject<? extends IPriority>>
-		extends BufferedPipe<T> {
+public class DirectInterlinkBufferPO<T extends IStreamObject<? extends IPriority>>
+		extends BufferPO<T> {
 	Lock directLinkLock = new ReentrantLock();
 
-	public DirectInterlinkBufferedPipe(
-			DirectInterlinkBufferedPipe<T> directInterlinkBufferedPipe) {
+	public DirectInterlinkBufferPO(
+			DirectInterlinkBufferPO<T> directInterlinkBufferedPipe) {
 		super(directInterlinkBufferedPipe);
 	}
 
-	public DirectInterlinkBufferedPipe() {
+	public DirectInterlinkBufferPO() {
 	}
 
 	@Override
@@ -62,8 +62,8 @@ public class DirectInterlinkBufferedPipe<T extends IStreamObject<? extends IPrio
 	}
 
 	@Override
-	public DirectInterlinkBufferedPipe<T> clone() {
-		return new DirectInterlinkBufferedPipe<T>(this);
+	public DirectInterlinkBufferPO<T> clone() {
+		return new DirectInterlinkBufferPO<T>(this);
 	}
 
 }

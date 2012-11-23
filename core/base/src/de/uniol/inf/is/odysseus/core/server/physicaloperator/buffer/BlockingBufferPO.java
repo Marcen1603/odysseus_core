@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-public class BlockingBufferedPipe<T extends IStreamObject<?>> extends BufferedPipe<T> {
+public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 
 	final long maxBufferSize;
 
-	public BlockingBufferedPipe(long maxBufferSize) {
+	public BlockingBufferPO(long maxBufferSize) {
 		this.maxBufferSize = maxBufferSize;
 	}
 

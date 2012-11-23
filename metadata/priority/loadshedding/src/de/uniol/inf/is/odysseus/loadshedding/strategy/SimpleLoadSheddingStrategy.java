@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.loadshedding.strategy;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.loadshedding.DirectLoadSheddingBuffer;
+import de.uniol.inf.is.odysseus.loadshedding.DirectLoadSheddingBufferPO;
 import de.uniol.inf.is.odysseus.loadshedding.ILoadSheddingStrategy;
 
 public class SimpleLoadSheddingStrategy implements ILoadSheddingStrategy{
@@ -44,19 +44,19 @@ public class SimpleLoadSheddingStrategy implements ILoadSheddingStrategy{
 
 	@SuppressWarnings({"rawtypes"})
 	@Override
-	public void activateLoadShedding(double percentToRemove, List<DirectLoadSheddingBuffer<?>> shedders) {
+	public void activateLoadShedding(double percentToRemove, List<DirectLoadSheddingBufferPO<?>> shedders) {
 		// Moeglichst einfach: ignoriere prozentuale Anzahl+Gewichtung und aktiviere einfach erst einmal
 		// fuer ein Element (d.h. einen Aufruf).
-		for(DirectLoadSheddingBuffer each : shedders) {
+		for(DirectLoadSheddingBufferPO each : shedders) {
 			each.setRate(1);
 		}
 
 	}
 
 	@Override
-	public void deactivateLoadShedding(List<DirectLoadSheddingBuffer<?>> shedders) {
-		for(DirectLoadSheddingBuffer<?> each : shedders) {
-			each.setRate(DirectLoadSheddingBuffer.NO_LOAD_SHEDDING);
+	public void deactivateLoadShedding(List<DirectLoadSheddingBufferPO<?>> shedders) {
+		for(DirectLoadSheddingBufferPO<?> each : shedders) {
+			each.setRate(DirectLoadSheddingBufferPO.NO_LOAD_SHEDDING);
 		}
 	}	
 

@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 public class OperatorBreak implements IBufferedPipeListener {
 
 	private ISource<?> operator;
-	private BufferedPipeWithListener<?> buffer;
+	private BufferPOWithListener<?> buffer;
 	private List<IOperatorBreakListener> listeners = new ArrayList<IOperatorBreakListener>();
 	private boolean isBreaked = false;
 	
@@ -51,7 +51,7 @@ public class OperatorBreak implements IBufferedPipeListener {
 		if (subCount == 1) {
 
 			// Neuer Buffer
-			buffer = new BufferedPipeWithListener();
+			buffer = new BufferPOWithListener();
 			buffer.addListener(this);
 
 			// Subscription erhalten, welchen wir ersetzen wollen
@@ -113,7 +113,7 @@ public class OperatorBreak implements IBufferedPipeListener {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected static void insertBuffer( ISource source, int sourceOutPort, ISink sink, int sinkInPort, BufferedPipeWithListener buffer ) {
+	protected static void insertBuffer( ISource source, int sourceOutPort, ISink sink, int sinkInPort, BufferPOWithListener buffer ) {
 		// Alte Verbindung entfernen
 		source.disconnectSink(sink, sinkInPort, sourceOutPort, source.getOutputSchema());
 		
@@ -123,7 +123,7 @@ public class OperatorBreak implements IBufferedPipeListener {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected static void removeBuffer( ISource source, int sourceOutPort, ISink sink, int sinkInPort, BufferedPipeWithListener buffer ) {
+	protected static void removeBuffer( ISource source, int sourceOutPort, ISink sink, int sinkInPort, BufferPOWithListener buffer ) {
 		// Alte Verbindungen trennen
 		buffer.disconnectSink(sink, sinkInPort, 0, buffer.getOutputSchema());
 		source.disconnectSink(buffer, 0, sourceOutPort, source.getOutputSchema());
@@ -208,7 +208,7 @@ public class OperatorBreak implements IBufferedPipeListener {
 	}
 
 	@Override
-	public void sizeChanged(BufferedPipeWithListener<?> buffer) {
+	public void sizeChanged(BufferPOWithListener<?> buffer) {
 		fireSizeEvent();
 	}
 	

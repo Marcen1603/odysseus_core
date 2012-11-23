@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferedPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorDetailCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
@@ -29,17 +29,17 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 
 @SuppressWarnings("rawtypes")
-public class BufferedPipeEstimator implements IOperatorEstimator<BufferedPipe> {
+public class BufferedPipeEstimator implements IOperatorEstimator<BufferPO> {
 
 	@Override
-	public Class<BufferedPipe> getOperatorClass() {
-		return BufferedPipe.class;
+	public Class<BufferPO> getOperatorClass() {
+		return BufferPO.class;
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(BufferedPipe instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	public OperatorEstimation estimateOperator(BufferPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		
-		OperatorEstimation estimation = new StandardOperatorEstimator<BufferedPipe>().estimateOperator(instance, prevOperators, baseHistograms);
+		OperatorEstimation estimation = new StandardOperatorEstimator<BufferPO>().estimateOperator(instance, prevOperators, baseHistograms);
 		
 		int memUsage = EstimatorHelper.sizeInBytes(instance.getOutputSchema()) * instance.size() + 4;
 		

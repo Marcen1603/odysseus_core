@@ -16,8 +16,8 @@
 package de.uniol.inf.is.odysseus.transform.rules;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BlockingBufferedPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferedPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BlockingBufferPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -33,11 +33,11 @@ public class TBufferedPipeRule extends AbstractTransformationRule<BufferAO> {
 
 	@Override
 	public void execute(BufferAO algebraOp, TransformationConfiguration trafo) {
-		BufferedPipe po = null;
+		BufferPO po = null;
 		if (algebraOp.getMaxBufferSize() > 0) {
-			po = new BlockingBufferedPipe(algebraOp.getMaxBufferSize());
+			po = new BlockingBufferPO(algebraOp.getMaxBufferSize());
 		} else {
-			po = new BufferedPipe();
+			po = new BufferPO();
 		}
 		po.setBufferName(algebraOp.getBuffername());
 		defaultExecute(algebraOp, po, trafo, true, true);	

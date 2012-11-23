@@ -29,8 +29,8 @@ public interface ILoadSheddingStrategy {
 
 	public double calcCapacity(IPhysicalQuery plan);
 
-	public void activateLoadShedding(double percentToRemove, List<DirectLoadSheddingBuffer<?>> shedders);
+	public void activateLoadShedding(double percentToRemove, List<DirectLoadSheddingBufferPO<?>> shedders);
 
-	public void deactivateLoadShedding(List<DirectLoadSheddingBuffer<?>> shedders);
+	public void deactivateLoadShedding(List<DirectLoadSheddingBufferPO<?>> shedders);
 	
 }

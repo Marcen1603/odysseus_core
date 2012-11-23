@@ -25,12 +25,12 @@ public class DirectInterlinkBufferPlacementStrategy extends
 
 	@Override
 	protected IBuffer<?> createNewBuffer() {
-		return new DirectInterlinkBufferedPipe<IStreamObject<IPriority>>();
+		return new DirectInterlinkBufferPO<IStreamObject<IPriority>>();
 	}
 	
 	@Override	
 	protected IBuffer<?> createNewSourceBuffer() {
-		return new DirectInterlinkBufferedPipe<IStreamObject<IPriority>>();
+		return new DirectInterlinkBufferPO<IStreamObject<IPriority>>();
 	}
 	
 	@Override

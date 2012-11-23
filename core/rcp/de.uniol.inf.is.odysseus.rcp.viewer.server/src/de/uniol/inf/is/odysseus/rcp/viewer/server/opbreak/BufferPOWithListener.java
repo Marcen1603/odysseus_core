@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferedPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 
-public class BufferedPipeWithListener<T extends IStreamObject<?>> extends BufferedPipe<T> {
+public class BufferPOWithListener<T extends IStreamObject<?>> extends BufferPO<T> {
 
 	private final List<IBufferedPipeListener> listeners = new ArrayList<IBufferedPipeListener>();
 	

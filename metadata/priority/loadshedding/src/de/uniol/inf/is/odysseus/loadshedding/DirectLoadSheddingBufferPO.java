@@ -19,10 +19,10 @@ import java.util.Random;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.priority.IPriority;
-import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
+import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferPO;
 
-public class DirectLoadSheddingBuffer<T extends IStreamObject<? extends IPriority>>
-extends DirectInterlinkBufferedPipe<T> {
+public class DirectLoadSheddingBufferPO<T extends IStreamObject<? extends IPriority>>
+extends DirectInterlinkBufferPO<T> {
 
 	public static final int NO_LOAD_SHEDDING = -1;
 
@@ -31,10 +31,10 @@ extends DirectInterlinkBufferedPipe<T> {
 	private int rate = NO_LOAD_SHEDDING;
 	private double weight = 0;
 
-	public DirectLoadSheddingBuffer(){}
+	public DirectLoadSheddingBufferPO(){}
 
-	public DirectLoadSheddingBuffer(
-			DirectLoadSheddingBuffer<T> directLoadSheddingBuffer) {
+	public DirectLoadSheddingBufferPO(
+			DirectLoadSheddingBufferPO<T> directLoadSheddingBuffer) {
 		super(directLoadSheddingBuffer);
 		rate = directLoadSheddingBuffer.rate;
 		weight = directLoadSheddingBuffer.weight;
@@ -85,8 +85,8 @@ extends DirectInterlinkBufferedPipe<T> {
 	}	
 	
 	@Override
-	public DirectLoadSheddingBuffer<T> clone(){
-		return new DirectLoadSheddingBuffer<T>(this);
+	public DirectLoadSheddingBufferPO<T> clone(){
+		return new DirectLoadSheddingBufferPO<T>(this);
 	}
 	
 }

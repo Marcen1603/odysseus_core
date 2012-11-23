@@ -22,10 +22,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.loadshedding.DirectLoadSheddingBuffer;
+import de.uniol.inf.is.odysseus.loadshedding.DirectLoadSheddingBufferPO;
 import de.uniol.inf.is.odysseus.loadshedding.LoadManager;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
-import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
+import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferPO;
 
 @SuppressWarnings({"rawtypes"})
 public class LoadSheddingBufferPlacement extends
@@ -55,17 +55,17 @@ public class LoadSheddingBufferPlacement extends
 	@Override
 	protected IBuffer<?> createNewBuffer() {
 		if (!placeLoadShedder) {
-			return new DirectInterlinkBufferedPipe();
+			return new DirectInterlinkBufferPO();
 		}
 
-		return new DirectLoadSheddingBuffer();
+		return new DirectLoadSheddingBufferPO();
 	}
 
 	@Override
 	protected void initBuffer(IBuffer buffer) {
-		if (buffer instanceof DirectLoadSheddingBuffer) {
+		if (buffer instanceof DirectLoadSheddingBufferPO) {
 			LoadManager.getInstance(null).addLoadShedder(
-					(DirectLoadSheddingBuffer) buffer);
+					(DirectLoadSheddingBufferPO) buffer);
 		}
 	}
 
