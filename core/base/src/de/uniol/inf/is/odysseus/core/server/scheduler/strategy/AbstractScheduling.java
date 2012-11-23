@@ -128,13 +128,14 @@ public abstract class AbstractScheduling implements IScheduling,
 						// logger.debug(nextSource + " nothing to process");
 						updateSchedulable(nextSource);
 					}
-					nextSource = nextSource();
 				}
 			} catch (Exception e) {
 				throw e;
 			} finally {
 				nextSource.unlock();
 			}
+			
+			nextSource = nextSource();
 		}
 		return isDone();
 	}
