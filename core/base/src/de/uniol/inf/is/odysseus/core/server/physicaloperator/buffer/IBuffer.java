@@ -15,7 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 
@@ -27,6 +29,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
  */
 public interface IBuffer<T extends IStreamObject<?>> extends IIterableSource<T>, IPipe<T, T> {
 	public int size();
-	public void transferNextBatch(int count);
-	public T peek();
+	IMetaAttribute peekMetadata();
+	IStreamable peek();
 }

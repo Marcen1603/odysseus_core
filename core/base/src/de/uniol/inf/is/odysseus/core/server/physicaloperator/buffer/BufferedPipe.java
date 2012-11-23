@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,16 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -35,8 +34,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePip
 /**
  * @author Jonas Jacobi
  */
-public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePipe<T, T>
-		implements IBuffer<T> {
+public class BufferedPipe<T extends IStreamObject<?>> extends
+		AbstractIterablePipe<T, T> implements IBuffer<T> {
 
 	volatile protected static Logger _logger = null;
 
@@ -47,9 +46,8 @@ public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePi
 		return _logger;
 	}
 
-	protected LinkedList<T> buffer = new LinkedList<T>();
+	protected LinkedList<IStreamable> buffer = new LinkedList<>();
 	protected Lock transferLock = new ReentrantLock();
-	protected AtomicReference<IPunctuation> heartbeat = new AtomicReference<IPunctuation>();
 	private String buffername;
 
 	public BufferedPipe() {
@@ -65,13 +63,13 @@ public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePi
 		final BufferedPipe<T> t = this;
 		this.addMonitoringData("selectivity",
 				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
-		
+
 	}
-	
+
 	public void setBufferName(String buffername) {
 		this.buffername = buffername;
 	}
-	
+
 	@Override
 	protected void process_close() {
 		synchronized (buffer) {
@@ -82,7 +80,7 @@ public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePi
 	@Override
 	final protected void process_open() throws OpenFailedException {
 		// super.process_open();
-		this.buffer = new LinkedList<T>();
+		this.buffer.clear();
 	}
 
 	@Override
@@ -94,9 +92,10 @@ public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePi
 			return false;
 		}
 
-		return !buffer.isEmpty() || this.heartbeat.get() != null;
+		return !buffer.isEmpty();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void transferNext() {
 		transferLock.lock();
@@ -104,17 +103,18 @@ public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePi
 			if (!this.buffer.isEmpty()) {
 				// the transfer might take some time, so pop element first and
 				// release lock on buffer instead of transfer(buffer.pop())
-				T element;
+				IStreamable element;
 				synchronized (this.buffer) {
 					element = buffer.pop();
 				}
-				// logger.debug(this+" transferNext() "+element);
-				transfer(element);
+				if (element.isPunctuation()) {
+					sendPunctuation((IPunctuation)element);
+				} else {
+					transfer((T)element);
+				}
 				if (isDone()) {
 					propagateDone();
 				}
-			} else {
-				sendPunctuation(heartbeat.getAndSet(null));
 			}
 		} finally {
 			transferLock.unlock();
@@ -144,7 +144,13 @@ public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePi
 	protected void process_next(T object, int port) {
 		transferLock.lock();
 		this.buffer.add(object);
-		this.heartbeat.set(null);
+		transferLock.unlock();
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		transferLock.lock();
+		this.buffer.add(punctuation);
 		transferLock.unlock();
 	}
 
@@ -158,39 +164,11 @@ public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePi
 	}
 
 	@Override
-	public void transferNextBatch(int count) {
-		List<T> out;
-		transferLock.lock();
-		if (count == this.buffer.size()) {
-			out = this.buffer;
-			this.buffer = new LinkedList<T>();
-		} else {
-			out = new ArrayList<T>(count);
-			if (count > size()) {
-				throw new IllegalArgumentException(
-						"cannot transfer more elements than size()");
-			}
-			for (int i = 0; i < count; ++i) {
-				out.add(this.buffer.remove());
-			}
-		}
-
-		transfer(out);
-		if (isDone()) {
-			propagateDone();
-		}
-		transferLock.unlock();
-	}
-
-	@Override
 	public BufferedPipe<T> clone() {
 		return new BufferedPipe<T>(this);
 	}
 
-	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
-		this.heartbeat.set(punctuation);
-	}
+
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -206,13 +184,31 @@ public class BufferedPipe<T extends IStreamObject<?>> extends AbstractIterablePi
 	}
 
 	@Override
-	public T peek() {
+	public IStreamable peek() {
 		transferLock.lock();
-		T p = this.buffer.peek();
+		IStreamable p = this.buffer.peek();
 		transferLock.unlock();
 		return p;
 	}
-
-
-
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public IMetaAttribute peekMetadata(){
+		transferLock.lock();
+		int i = buffer.size() -1;
+		IStreamable p = null;
+		// Find first non punctuation
+		while (i>=0 && (p = this.buffer.get(i)).isPunctuation()  ){
+			i--;
+		}
+		
+		IMetaAttribute meta = null;
+		if (p != null & !p.isPunctuation()){
+			meta = ((T)p).getMetadata();
+		}
+		transferLock.unlock();
+		return meta;		
+	}
+	
+	
 }

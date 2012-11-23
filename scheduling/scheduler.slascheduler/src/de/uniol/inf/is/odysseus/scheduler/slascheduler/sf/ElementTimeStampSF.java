@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
@@ -78,10 +77,8 @@ public class ElementTimeStampSF implements IStarvationFreedom {
 
 		// find element with oldest ts
 		for (IBuffer<?> buffer : this.buffers) {
-			Object head = buffer.peek();
-			if (head instanceof IStreamObject<?>) {
-				IStreamObject<?> metaContainer = (IStreamObject<?>) head;
-				IMetaAttribute metaData = metaContainer.getMetadata();
+			IMetaAttribute metaData = buffer.peekMetadata();
+			if (metaData  != null) {
 				if (metaData instanceof ILatency) {
 					ILatency latency = (ILatency) metaData;
 					long startTS = latency.getLatencyStart();

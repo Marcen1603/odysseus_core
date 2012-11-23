@@ -57,7 +57,6 @@ public class DirectInterlinkBufferedPipe<T extends IStreamObject<? extends IPrio
 		} else {
 			synchronized (this.buffer) {
 				this.buffer.add(object);
-				this.heartbeat.set(null);
 			}
 		}
 	}

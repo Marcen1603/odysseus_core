@@ -47,8 +47,8 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.GenQueries;
  * 
  * @param <T>
  */
-public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends AbstractSink<T>
-		implements ISLAConformance {
+public abstract class AbstractSLaConformance<T extends IStreamObject<?>>
+		extends AbstractSink<T> implements ISLAConformance {
 	/**
 	 * factor between nanoseconds and milliseconds
 	 */
@@ -79,9 +79,9 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	 * value of the longest latency defined in the sla
 	 */
 	private double maxLatency;
-	
+
 	private List<IBuffer<?>> buffers;
-	
+
 	private int numberOfPredictedElements;
 	/**
 	 * map containing all operator paths starting from a buffer
@@ -95,7 +95,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	 * update interval for path time map in millis
 	 */
 	private int pathTimeUpdateInterval;
-	private long lastUpdate; 
+	private long lastUpdate;
 
 	/**
 	 * default constructor
@@ -120,7 +120,8 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 		this.buffers = new ArrayList<IBuffer<?>>();
 		this.maxPathTimeMap = new HashMap<IBuffer<?>, Double>();
 		this.pathMap = new HashMap<>();
-		this.pathTimeUpdateInterval = Integer.parseInt(OdysseusConfiguration.get("sla_pathTimeUpdateInterval"));
+		this.pathTimeUpdateInterval = Integer.parseInt(OdysseusConfiguration
+				.get("sla_pathTimeUpdateInterval"));
 	}
 
 	/**
@@ -181,7 +182,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	 * conformance are reset.
 	 */
 	@Override
-    public void checkViolation() {
+	public void checkViolation() {
 		/*
 		 * most valuable service level is first list entry! so iterate reverse
 		 * over list to find the less valuable violated service level first
@@ -194,16 +195,25 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 			for (int i = serviceLevels.size() - 1; i >= 0 && !violated; i--) {
 				if (this.getSLA().getScope().thresholdIsMin()) {
 					if (!this.hasRunInWindow
-							&& (this.windowEnd - this.getTimestampOfOldestBufferedElement()) > this.maxLatency) {
+							&& (this.windowEnd - this
+									.getTimestampOfOldestBufferedElement()) > this.maxLatency) {
 						conformance = 0.0;
-						System.err.println("manual change of conformance: " + conformance);
-						System.err.println("ts element: " + this.getTimestampOfOldestBufferedElement() + " / window end: " + this.windowEnd);
-						System.err.println("diff: " + ( this.windowEnd - this.getTimestampOfOldestBufferedElement()));
-						System.err.println("has run in window" + this.hasRunInWindow);
+						System.err.println("manual change of conformance: "
+								+ conformance);
+						System.err.println("ts element: "
+								+ this.getTimestampOfOldestBufferedElement()
+								+ " / window end: " + this.windowEnd);
+						System.err
+								.println("diff: "
+										+ (this.windowEnd - this
+												.getTimestampOfOldestBufferedElement()));
+						System.err.println("has run in window"
+								+ this.hasRunInWindow);
 					} else {
-//						System.err.println("no manual change");
-//						System.err.println(this.hasRunInWindow);
-//						System.err.println(this.windowEnd - this.getTimestampOfOldestBufferedElement());
+						// System.err.println("no manual change");
+						// System.err.println(this.hasRunInWindow);
+						// System.err.println(this.windowEnd -
+						// this.getTimestampOfOldestBufferedElement());
 					}
 					if (serviceLevels.get(i).getThreshold() > conformance) {
 						this.violation(serviceLevels.get(i).getPenalty()
@@ -212,12 +222,20 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 					}
 				} else {
 					if (!this.hasRunInWindow
-							&& (this.windowEnd - this.getTimestampOfOldestBufferedElement()) > this.maxLatency) {
+							&& (this.windowEnd - this
+									.getTimestampOfOldestBufferedElement()) > this.maxLatency) {
 						conformance = Double.MAX_VALUE;
-						System.err.println("manual change of conformance: " + conformance);
-						System.err.println("ts element: " + this.getTimestampOfOldestBufferedElement() + " / window end: " + this.windowEnd);
-						System.err.println("diff: " + ( this.windowEnd - this.getTimestampOfOldestBufferedElement()));
-						System.err.println("has run in window" + this.hasRunInWindow);
+						System.err.println("manual change of conformance: "
+								+ conformance);
+						System.err.println("ts element: "
+								+ this.getTimestampOfOldestBufferedElement()
+								+ " / window end: " + this.windowEnd);
+						System.err
+								.println("diff: "
+										+ (this.windowEnd - this
+												.getTimestampOfOldestBufferedElement()));
+						System.err.println("has run in window"
+								+ this.hasRunInWindow);
 					}
 					if (serviceLevels.get(i).getThreshold() < conformance) {
 						this.violation(serviceLevels.get(i).getPenalty()
@@ -241,7 +259,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	public void reset() {
 		this.hasRunInWindow = false;
 	}
-	
+
 	/**
 	 * @return time stamp of oldest buffered element in nanoseconds
 	 */
@@ -250,9 +268,8 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 		for (IPhysicalOperator po : query.getAllOperators()) {
 			if (po instanceof IBuffer<?>) {
 				IBuffer<?> buffer = (IBuffer<?>) po;
-				IStreamObject<?> element = buffer.peek();
-				if (element != null) {
-					IMetaAttribute metadata = element.getMetadata();
+				IMetaAttribute metadata = buffer.peekMetadata();
+				if (metadata != null) {
 					if (metadata instanceof ILatency) {
 						ILatency latency = (ILatency) metadata;
 						long ts = latency.getLatencyStart();
@@ -277,7 +294,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	public void setBuffers(List<IBuffer<?>> buffers) {
 		this.buffers = buffers;
 	}
-	
+
 	protected List<IBuffer<?>> getBuffers() {
 		return this.buffers;
 	}
@@ -293,18 +310,21 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 		for (IBuffer<?> buffer : this.buffers) {
 			synchronized (buffer) {
 				if (buffer.size() > 0) {
-					IStreamObject<?> object = buffer.peek();
-					IMetaAttribute metadata = object.getMetadata();
-					if (metadata instanceof ILatency) {
-						ILatency latency = (ILatency) metadata;
-						long waitingTime = timestamp - latency.getLatencyStart();
-						double predictedLatency = calcLatency(waitingTime, buffer);
-						if (predictedLatency > max) {
-							max = predictedLatency;
+					IMetaAttribute metadata = buffer.peekMetadata();
+					if (metadata != null) {
+						if (metadata instanceof ILatency) {
+							ILatency latency = (ILatency) metadata;
+							long waitingTime = timestamp
+									- latency.getLatencyStart();
+							double predictedLatency = calcLatency(waitingTime,
+									buffer);
+							if (predictedLatency > max) {
+								max = predictedLatency;
+							}
+							this.numberOfPredictedElements += buffer.size();
+						} else {
+							throw new RuntimeException("Latency missing");
 						}
-						this.numberOfPredictedElements += buffer.size();
-					} else {
-						throw new RuntimeException("Latency missing");
 					}
 				}
 			}
@@ -322,21 +342,23 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 		long timestamp = System.nanoTime();
 		for (IBuffer<?> buffer : this.buffers) {
 			if (buffer.size() > 0) {
-				IStreamObject<?> object = buffer.peek();
-				IMetaAttribute metadata = object.getMetadata();
-				if (metadata instanceof ILatency) {
-					ILatency latency = (ILatency) metadata;
-					long waitingTime = timestamp - latency.getLatencyStart();
-					sum += calcLatency(waitingTime, buffer) * buffer.size();
-					this.numberOfPredictedElements += buffer.size();
-				} else {
-					throw new RuntimeException("Latency missing");
+				IMetaAttribute metadata = buffer.peekMetadata();
+				if (metadata != null) {
+					if (metadata instanceof ILatency) {
+						ILatency latency = (ILatency) metadata;
+						long waitingTime = timestamp
+								- latency.getLatencyStart();
+						sum += calcLatency(waitingTime, buffer) * buffer.size();
+						this.numberOfPredictedElements += buffer.size();
+					} else {
+						throw new RuntimeException("Latency missing");
+					}
 				}
 			}
 		}
 		return sum;
 	}
-	
+
 	/**
 	 * nanos
 	 */
@@ -344,10 +366,12 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	protected double getOpTime() {
 		return GenQueries.OP_PROCESSING_TIME;
 	}
-	
+
 	protected double getMaxPathTime(IBuffer<?> buffer) {
 		Double cachedTime = this.maxPathTimeMap.get(buffer);
-		if (cachedTime != null && (System.currentTimeMillis() < lastUpdate + pathTimeUpdateInterval)) {
+		if (cachedTime != null
+				&& (System.currentTimeMillis() < lastUpdate
+						+ pathTimeUpdateInterval)) {
 			return cachedTime.doubleValue();
 		} else {
 			double maxPathTime = calcMaxPathTime(buffer);
@@ -356,10 +380,10 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 			return maxPathTime;
 		}
 	}
-	
+
 	protected double calcMaxPathTime(IBuffer<?> buffer) {
 		double maxPathTime = 0.0;
-		
+
 		List<List<IPhysicalOperator>> paths = this.pathMap.get(buffer);
 		if (paths != null) {
 			for (List<IPhysicalOperator> path : paths) {
@@ -369,57 +393,62 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 				}
 			}
 		} else {
-			throw new RuntimeException("buffer " + buffer + " not in buffer map");
+			throw new RuntimeException("buffer " + buffer
+					+ " not in buffer map");
 		}
-		
+
 		return maxPathTime;
 	}
-	
+
 	private double getPathTime(List<IPhysicalOperator> path) {
 		double time = 0.0;
-		
+
 		for (IPhysicalOperator op : path) {
 			if (!(op instanceof ISLAConformance || op instanceof LatencyCalculationPipe<?>)) {
 				time += getMeanCPUTimeMetadataMilli(op);
 			}
 		}
-		
+
 		return time;
 	}
-	
+
 	/**
 	 * nanos
+	 * 
 	 * @param waitingTime
 	 * @return
 	 */
 	protected double calcLatency(double waitingTime, IBuffer<?> buffer) {
 		return waitingTime + getMaxPathTime(buffer);
 	}
-	
+
 	@Override
-    public int getNumberOfPredictedLatency() {
+	public int getNumberOfPredictedLatency() {
 		return numberOfPredictedElements;
 	}
-	
+
 	@Override
-    public int getNumberOfViolationsPredictedLatency() {
+	public int getNumberOfViolationsPredictedLatency() {
 		this.numberOfPredictedElements = 0;
 		int numViolations = 0;
 		long timestamp = System.nanoTime();
 		for (IBuffer<?> buffer : this.buffers) {
 			if (buffer.size() > 0) {
-				IStreamObject<?>  object = buffer.peek();
-				IMetaAttribute metadata = object.getMetadata();
-				if (metadata instanceof ILatency) {
-					ILatency latency = (ILatency) metadata;
-					long waitingTime = timestamp - latency.getLatencyStart();
-					double predictedLatency = calcLatency(waitingTime, buffer);
-					if (predictedLatency > this.maxLatency) {
-						numViolations += buffer.size();
+				IMetaAttribute metadata = buffer.peekMetadata();
+				if (metadata != null) {
+					if (metadata instanceof ILatency) {
+						ILatency latency = (ILatency) metadata;
+						long waitingTime = timestamp
+								- latency.getLatencyStart();
+						double predictedLatency = calcLatency(waitingTime,
+								buffer);
+						if (predictedLatency > this.maxLatency) {
+							numViolations += buffer.size();
+						}
+						this.numberOfPredictedElements += buffer.size();
+					} else {
+						throw new RuntimeException("Latency missing");
 					}
-					this.numberOfPredictedElements += buffer.size();
-				} else {
-					throw new RuntimeException("Latency missing");
 				}
 			}
 		}
@@ -427,10 +456,10 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	}
 
 	@Override
-	public void setPathMap(Map<IBuffer<?>, List<List<IPhysicalOperator>>> pathMap) {
+	public void setPathMap(
+			Map<IBuffer<?>, List<List<IPhysicalOperator>>> pathMap) {
 		this.pathMap = pathMap;
 	}
-	
 
 	/**
 	 * Liefert das Metadatum "median_processing_time" zum gegebenen physischen
@@ -439,26 +468,29 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 	 * zurückgegeben.
 	 * 
 	 * @param operator
-	 *            Physischer Operator, dessen Prozessorzeit zurückgegeben werden
-	 *            soll.
+	 *            Physischer Operator, dessen Prozessorzeit zurückgegeben
+	 *            werden soll.
 	 * @return Median der Prozessorzeiten des physischen Operators, oder -1,
 	 *         falls das Metadatum nicht existiert oder (noch) ungültig ist
 	 */
 
-	public static double getMeanCPUTimeMetadataSeconds(IPhysicalOperator operator) {
+	public static double getMeanCPUTimeMetadataSeconds(
+			IPhysicalOperator operator) {
 		return getMeanCPUTimeMetadataNano(operator) / 1000000000.0;
 	}
-	
+
 	public static double getMeanCPUTimeMetadataNano(IPhysicalOperator operator) {
 		double time = -1.0;
 		try {
-				// measure directly
-				IMonitoringData<Double> cpuTime = operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);
-				if (cpuTime != null && cpuTime.getValue() != null && !Double.isNaN(cpuTime.getValue())) {
-					time = cpuTime.getValue();
-				} else {
-					System.out.println("no cpuTime found");
-				} 
+			// measure directly
+			IMonitoringData<Double> cpuTime = operator
+					.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);
+			if (cpuTime != null && cpuTime.getValue() != null
+					&& !Double.isNaN(cpuTime.getValue())) {
+				time = cpuTime.getValue();
+			} else {
+				System.out.println("no cpuTime found");
+			}
 
 		} catch (NullPointerException ex) {
 			ex.printStackTrace();
@@ -466,7 +498,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>> extends
 
 		return time;
 	}
-	
+
 	public static double getMeanCPUTimeMetadataMilli(IPhysicalOperator operator) {
 		return getMeanCPUTimeMetadataNano(operator) / 1000000.0;
 	}

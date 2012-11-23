@@ -30,9 +30,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TBatchProducerAORule());
 		rules.add(new TBenchmarkAORule());
 		rules.add(new TBenchmarkDirectInterlinkBufferRule());
-		rules.add(new TBenchmarkOutofOrderBufferRule());
 		rules.add(new TBenchmarkPrioIdJoinAORule());
-		rules.add(new TBenchmarkStrongOrderBufferRule());
 		return rules;
 	}
 
