@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.Order;
  * @author Jonas Jacobi, Marco Grawunder
  */
 public interface IStreamObject<M extends IMetaAttribute> extends
-		IClone, Serializable {
+		IClone, Serializable, IStreamable {
 	/**
 	 * Gets the default meta data used processing purposes (e.g. timestamps, priority or latency)
 	 * This meta data is assigned to each object in the meta data creation po 

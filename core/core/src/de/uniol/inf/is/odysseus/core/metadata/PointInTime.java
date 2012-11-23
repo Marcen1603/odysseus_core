@@ -306,5 +306,10 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	public PointInTime getTime() {
 		return this;
 	}
+	
+	@Override
+	public boolean isPunctuation() {
+		return true;
+	}
 
 }

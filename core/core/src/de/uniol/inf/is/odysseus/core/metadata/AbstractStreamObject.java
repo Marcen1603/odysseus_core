@@ -128,4 +128,9 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 
 	abstract public AbstractStreamObject<T> clone();
 
+	@Override
+	public boolean isPunctuation() {
+		return false;
+	}
+	
 }
