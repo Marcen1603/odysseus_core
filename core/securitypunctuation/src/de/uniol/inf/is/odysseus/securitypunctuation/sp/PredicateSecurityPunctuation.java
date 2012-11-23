@@ -38,14 +38,16 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	private Boolean isEmpty;
 	
 	public PredicateSecurityPunctuation(Object[] objects, SDFSchema schema) {
+		super((long)objects[3]);
+		this.setAttribute("ts", (Long) objects[3]);
 		setSchema(schema);
 		setAttribute("predicate", createPredicate((String) objects[0]));
 		this.setAttribute("sign", (Integer) objects[1]);
 		this.setAttribute("mutable", (Integer) objects[2]);
-		this.setAttribute("ts", (Long) objects[3]);
 	}
 	
 	public PredicateSecurityPunctuation(PredicateSecurityPunctuation sp) {
+		super(sp);
 		setSchema(sp.getSchema());
 		setAttribute("predicate", sp.getPredicateAttribute("predicate"));
 		this.setAttribute("sign", sp.getIntegerAttribute("sign"));
@@ -54,7 +56,7 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 	
 	@Override
-	public ISecurityPunctuation clone() {
+	public PredicateSecurityPunctuation clone() {
 		return new PredicateSecurityPunctuation(this);
 	}
 	

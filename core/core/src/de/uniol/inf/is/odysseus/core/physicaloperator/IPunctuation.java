@@ -7,4 +7,6 @@ public interface IPunctuation extends ITimeComparable {
 
 	PointInTime getTime();
 	
+	IPunctuation clone();
+	
 }

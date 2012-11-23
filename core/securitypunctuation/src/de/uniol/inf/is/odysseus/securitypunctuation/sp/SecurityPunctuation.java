@@ -39,6 +39,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	private Boolean isEmpty;
 	
 	public SecurityPunctuation(Object[] objects, SDFSchema schema) {
+		super((Long) objects[1]);
 		setSchema(schema);
 		ArrayList<String> streamnameArrayList = new ArrayList<String>();
 		String[] streamname = ((String) objects[0]).split(",");
@@ -70,6 +71,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 
 	public SecurityPunctuation(SecurityPunctuation sp) {
+		super(sp);
 		setSchema(sp.getSchema());
 		setAttribute("streamname", sp.getAttribute("streamname"));
 		setAttribute("tupleStartTS", sp.getAttribute("tupleStartTS"));
@@ -85,6 +87,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	 * Creates an empty security punctuation that allows no access to the stream
 	 */
 	public SecurityPunctuation(SDFSchema schema, Long ts) {
+		super(ts);
 		setSchema(schema);
 		isEmpty = true;
 		this.setAttribute("sign", 1);

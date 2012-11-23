@@ -19,12 +19,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
-public abstract class AbstractSecurityPunctuation implements Serializable, ISecurityPunctuation {
+public abstract class AbstractSecurityPunctuation extends AbstractPunctuation implements Serializable, ISecurityPunctuation {
 	
+	public AbstractSecurityPunctuation(long point) {
+		super(point);
+	}
+
+	public AbstractSecurityPunctuation(PointInTime timestamp) {
+		super(timestamp);
+	}
+
 	private HashMap<String, Object> attributes = new HashMap<String, Object>();
 	private SDFSchema schema;
 		
