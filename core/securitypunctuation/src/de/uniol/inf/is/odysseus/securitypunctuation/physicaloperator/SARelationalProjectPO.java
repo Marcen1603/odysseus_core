@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -95,12 +96,19 @@ public class SARelationalProjectPO<T extends IStreamObject<? extends ITimeInterv
 	}
 	
 	@Override
-	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		if (punctuation instanceof SecurityPunctuation){
+			processSecurityPunctuation((ISecurityPunctuation)punctuation, port);
+		}
+		super.processPunctuation(punctuation, port);
+	}
+	
+	private void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		if(projectSPEvaluate(sp)) {
-			this.transferSecurityPunctuation(sp);
+			this.sendPunctuation(sp);
 			LOG.debug("sent SP in ProjectPO");
 		} else {
-			this.transferSecurityPunctuation(new SecurityPunctuation(sp.getSchema(), sp.getLongAttribute("ts")));
+			this.sendPunctuation(new SecurityPunctuation(sp.getSchema(), sp.getLongAttribute("ts")));
 			LOG.debug("sent Empty SP in ProjectPO");
 		}
 	}

@@ -19,7 +19,6 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 /**
  * Interface for data sinks in a query graph.
@@ -59,15 +58,6 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	public void done(int port);
 
 	public void processPunctuation(IPunctuation punctuation, int port);
-
-	/**
-	 * Process an security punctuation.
-	 * 
-	 * @param object
-	 *            the security punctuation to process
-	 * @param port
-	 */
-	public void processSecurityPunctuation(ISecurityPunctuation sp, int port);
 	
 	/**
 	 * Call open on a Sink. 	

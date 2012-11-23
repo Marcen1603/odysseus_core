@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
 
@@ -384,30 +383,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void transfer(Collection<T> object) {
 		transfer(object, 0);
-	}
-
-	@Override
-	public void transferSecurityPunctuation(ISecurityPunctuation sp) {
-		transferSecurityPunctuation(sp, 0);
-	}
-
-	@Override
-	public void transferSecurityPunctuation(ISecurityPunctuation sp,
-			int sourceOutPort) {
-		fire(this.pushInitEvent);
-		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
-			if (sink.getSourceOutPort() == sourceOutPort) {
-				try {
-					sink.getTarget().processSecurityPunctuation(sp,
-							sink.getSinkInPort());
-				} catch (Exception e) {
-					// Send object that could not be processed to the error port
-					e.printStackTrace();
-					transferSecurityPunctuation(sp, ERRORPORT);
-				}
-			}
-		}
-		fire(this.pushDoneEvent);
 	}
 
 	protected boolean needsClone(int port) {

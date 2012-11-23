@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -40,7 +41,7 @@ public class SASelectPO<T extends IStreamObject<? extends ITimeInterval>> extend
 			Long ts = object.getMetadata().getStart().getMainPoint();
 			ISecurityPunctuation sp = spCache.getMatchingSP(ts);
 			if(sp != null) {
-				super.processSecurityPunctuation(sp, port);
+				super.processPunctuation(sp, port);
 				spCache.cleanCache(sp.getLongAttribute("ts"));
 			}
 			transfer(object);
@@ -52,9 +53,13 @@ public class SASelectPO<T extends IStreamObject<? extends ITimeInterval>> extend
 	}
 	
 	@Override
-	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
-		spCache.add(sp);
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		if (punctuation instanceof ISecurityPunctuation){
+			spCache.add((ISecurityPunctuation)punctuation);			
+		}
+		super.processPunctuation(punctuation, port);
 	}
+	
 	
 	@Override
 	public String getName() {

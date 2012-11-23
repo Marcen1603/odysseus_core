@@ -160,7 +160,7 @@ public class SASizeByteBufferHandler<T extends ByteBuffer> extends SizeByteBuffe
 							getTransfer().transfer(objectHandler.create());
 						} else {
 //							System.out.println("SizeByteBuffer - isSP - Buffer: " + buffer);
-							getTransfer().transferSecurityPunctuation((ISecurityPunctuation) objectHandler.createSecurityAware(spType));
+							getTransfer().sendPunctuation((ISecurityPunctuation) objectHandler.createSecurityAware(spType));
 						}
 						size = -1;
 						sizeBuffer.clear();

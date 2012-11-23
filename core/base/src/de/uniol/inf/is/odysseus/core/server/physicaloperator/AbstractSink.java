@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.event.POPortEvent;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
 
@@ -272,9 +271,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	@Override
 	public abstract void processPunctuation(IPunctuation punctuation, int port);
 
-	@Override
-	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
-	}
 
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE

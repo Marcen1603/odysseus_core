@@ -15,12 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
-
 public interface ITransferHandler<W> {
 
 	void transfer(W toTransfer);
 	void sendPunctuation(IPunctuation punctuation);
-	void transferSecurityPunctuation(ISecurityPunctuation createSecurityPunctuation);
 
 }

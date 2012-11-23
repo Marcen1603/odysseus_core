@@ -54,7 +54,6 @@ import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 /**
  * ReceiverPO without AbstractSource but with ISource
@@ -353,25 +352,6 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	@Override
 	public void transfer(W object) {
 		transfer(object, 0);
-	}
-	
-	@Override
-	public void transferSecurityPunctuation(ISecurityPunctuation sp) {
-		transferSecurityPunctuation(sp, 0);
-	}
-
-	public void transferSecurityPunctuation(ISecurityPunctuation sp, int sourceOutPort) {
-		for (PhysicalSubscription<ISink<? super W>> sink : this.activeSinkSubscriptions) {
-			if (sink.getSourceOutPort() == sourceOutPort) {
-				try {
-					sink.getTarget().processSecurityPunctuation(sp, sink.getSinkInPort());
-				} catch (Exception e) {
-					// Send object that could not be processed to the error port
-					e.printStackTrace();
-					transferSecurityPunctuation(sp, ERRORPORT);
-				}
-			}
-		}
 	}
 
 	// ------------------------------------------------------------------------

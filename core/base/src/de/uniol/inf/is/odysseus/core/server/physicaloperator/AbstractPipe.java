@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -53,11 +52,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		@Override
 		public void processPunctuation(IPunctuation punctuation, int port) {
 			AbstractPipe.this.delegatedProcessPunctuation(punctuation, port);
-		}
-
-		@Override
-		public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
-			AbstractPipe.this.delegatedProcessSecurityPunctuation(sp, port);
 		}
 
 		@Override
@@ -215,11 +209,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		processPunctuation(punctuation, port);
 	}
 
-	private void delegatedProcessSecurityPunctuation(ISecurityPunctuation sp,
-			int port) {
-		processSecurityPunctuation(sp, port);
-	}
-
 	@Override
 	public void process(Collection<? extends R> object, int port) {
 		delegateSink.process(object, port);
@@ -230,11 +219,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port){
 		sendPunctuation(punctuation);
-	}
-
-	@Override
-	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
-		this.transferSecurityPunctuation(sp);
 	}
 
 	// ------------------------------------------------------------------------

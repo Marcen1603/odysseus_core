@@ -46,17 +46,19 @@ public class SecurityShieldPO<T extends IStreamObject<? extends ITimeInterval>> 
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {		
+		if (punctuation instanceof ISecurityPunctuation){
+			processSecurityPunctuation((ISecurityPunctuation)punctuation, port);
+		}
+	}
+
+	private void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
+		evaluator.addToCache(sp);
+		this.sendPunctuation(sp);
 	}
 
 	@Override
 	public AbstractPipe<T, T> clone() {
 		return new SecurityShieldPO<T>();
-	}
-
-	@Override
-	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
-		evaluator.addToCache(sp);
-		this.transferSecurityPunctuation(sp);
 	}
 	
 	@Override

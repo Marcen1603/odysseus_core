@@ -144,11 +144,6 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	}
 
 	@Override
-	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
-		notifyListenersSecurityPunctuation(sp, port);
-	}
-
-	@Override
 	public boolean isOpen() {
 		return isOpen;
 	}

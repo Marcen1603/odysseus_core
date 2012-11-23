@@ -21,7 +21,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.metadata.IHasMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 /**
  * Interface for data sources in a query graph.
@@ -65,16 +64,6 @@ public interface ISource<T> extends IPhysicalOperator,
 	public void transfer(Collection<T> object, int sourceOutPort);
 
 	public void transfer(Collection<T> object);
-	
-	/**
-	 * Calls {@link ISink#processSecurityPunctuation(T)} on all subscribed {@link ISink sinks}.
-	 * 
-	 * @param object
-	 *            the parameter for processNext.
-	 */
-	public void transferSecurityPunctuation(ISecurityPunctuation sp, int sourceOutPort);
-
-	public void transferSecurityPunctuation(ISecurityPunctuation sp);
 
 	/**
 	 * Close down the connection/do not read any more data

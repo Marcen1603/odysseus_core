@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.securitypunctuation.helper.BinarySecurityPunctuationCache;
@@ -34,7 +35,16 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	private BinarySecurityPunctuationCache spCache = new BinarySecurityPunctuationCache();
 	
 	@Override
-	public void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
+	public synchronized void processPunctuation(IPunctuation punctuation,
+			int port) {
+		if (punctuation instanceof ISecurityPunctuation){
+			processSecurityPunctuation((ISecurityPunctuation)punctuation, port);
+		}
+		super.processPunctuation(punctuation, port);
+	}
+	
+	
+	private void processSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		if(port >= 0 && port <= 1) {
 			spCache.add(sp, port);
 		}
@@ -109,7 +119,7 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 					//Tupel mit komplett auseinander liegenden Intervallen können nicht gemerged werden!!!
 					//Dann wäre getStart() == null...
 					if(newElement.getMetadata() != null) { 				
-						transferSecurityPunctuation(newSP);
+						sendPunctuation(newSP);
 						transferFunction.transfer(newElement);						
 						
 						LOG.debug("transfered Datatuple: " + newElement);
