@@ -90,10 +90,8 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 	 * builds a new sla scheduler
 	 */
 	@Override
-	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring) {
-		int executorThreadsCount = (int) OdysseusConfiguration
-				.getLong("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
-		IPhysicalQueryScheduling[] scheduling = new SLAPartialPlanScheduling[executorThreadsCount];
+	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring, int threadCount) {
+		IPhysicalQueryScheduling[] scheduling = new SLAPartialPlanScheduling[threadCount];
 		for(int i=0;i<scheduling.length;i++){
 			scheduling[i] = new SLAPartialPlanScheduling(starvationFreedomFuncName, prio,
 					decaySF, querySharing, querySharingCostModelName, 

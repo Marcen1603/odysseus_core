@@ -129,8 +129,6 @@ public abstract class AbstractScheduling implements IScheduling,
 						updateSchedulable(nextSource);
 					}
 				}
-			} catch (Exception e) {
-				throw e;
 			} finally {
 				nextSource.unlock();
 			}
@@ -169,8 +167,6 @@ public abstract class AbstractScheduling implements IScheduling,
 						updateSchedulable(nextSource);
 					}
 				}
-			} catch (Exception e) {
-				throw e;
 			} finally {
 				nextSource.unlock();
 			}

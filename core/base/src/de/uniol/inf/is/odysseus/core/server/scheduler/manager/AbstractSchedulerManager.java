@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
@@ -314,7 +315,11 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 				.get(schedulingStrategy);
 		if (sf != null && ssf != null) {
 			// create the new scheduler
-			IScheduler s = sf.createScheduler(ssf);
+			int executorThreadsCount = (int) OdysseusConfiguration.getLong("scheduler_simpleThreadScheduler_executorThreadsCount", -1);
+			if( executorThreadsCount <= 0 ) {
+				executorThreadsCount = Runtime.getRuntime().availableProcessors();
+			}
+			IScheduler s = sf.createScheduler(ssf, executorThreadsCount);
 			return s;
 		}
 		logger.error("No Scheduler created from " + scheduler + " "

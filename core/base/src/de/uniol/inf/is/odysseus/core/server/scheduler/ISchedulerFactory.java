@@ -36,7 +36,7 @@ public interface ISchedulerFactory {
 	 * @return A new specific {@link IScheduler} instance.
 	 */
 	public IScheduler createScheduler(
-			ISchedulingFactory schedulingFactoring);
+			ISchedulingFactory schedulingFactoring, int threadCount);
 
 	/**
 	 * Returns a name for this factory. This name should be unique.

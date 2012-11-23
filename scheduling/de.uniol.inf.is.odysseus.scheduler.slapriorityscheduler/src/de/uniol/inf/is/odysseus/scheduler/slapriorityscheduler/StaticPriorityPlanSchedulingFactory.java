@@ -15,7 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
@@ -26,10 +25,8 @@ import de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler.prioritystrategy.
 public class StaticPriorityPlanSchedulingFactory extends AbstractSchedulerFactory {
 
 	@Override
-	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring) {
-		int executorThreadsCount = (int) OdysseusConfiguration
-				.getLong("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
-		IPhysicalQueryScheduling[] scheduling = new StaticPriorityPlanScheduling[executorThreadsCount];
+	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring, int threadCount) {
+		IPhysicalQueryScheduling[] scheduling = new StaticPriorityPlanScheduling[threadCount];
 		for(int i=0;i<scheduling.length;i++){
 			scheduling[i] = new StaticPriorityPlanScheduling();
 		}

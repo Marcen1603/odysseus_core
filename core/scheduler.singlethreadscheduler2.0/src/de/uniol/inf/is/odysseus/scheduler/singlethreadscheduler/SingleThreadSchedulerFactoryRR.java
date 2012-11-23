@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
@@ -50,10 +49,8 @@ public class SingleThreadSchedulerFactoryRR extends AbstractSchedulerFactory {
 	 */
 	@Override
 	public IScheduler createScheduler(
-			ISchedulingFactory schedulingStrategy) {
-		int executorThreadsCount = (int) OdysseusConfiguration
-				.getLong("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
-		IPhysicalQueryScheduling[] scheduling = new RoundRobinPlanScheduling[executorThreadsCount];
+			ISchedulingFactory schedulingStrategy, int threadCount) {
+		IPhysicalQueryScheduling[] scheduling = new RoundRobinPlanScheduling[threadCount];
 		for(int i=0;i<scheduling.length;i++){
 			scheduling[i] = new RoundRobinPlanScheduling();
 		}
