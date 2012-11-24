@@ -16,8 +16,6 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
 import java.util.LinkedList;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +30,12 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.StaticValueMonitoringData
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePipe;
 
 /**
- * @author Jonas Jacobi
+ * This operator buffers elements. It buffers real stream elements and
+ * punctuations. The top element is always a real stream element, punctuations
+ * are send if they are on the top of the buffer.
+ * 
+ * 
+ * @author Jonas Jacobi, Marco Grawunder
  */
 public class BufferPO<T extends IStreamObject<?>> extends
 		AbstractIterablePipe<T, T> implements IBuffer<T> {
@@ -47,7 +50,6 @@ public class BufferPO<T extends IStreamObject<?>> extends
 	}
 
 	protected LinkedList<IStreamable> buffer = new LinkedList<>();
-	protected Lock transferLock = new ReentrantLock();
 	private String buffername;
 
 	public BufferPO() {
@@ -85,12 +87,14 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 	@Override
 	public boolean hasNext() {
-		if (!isOpen()) {
-			getLogger()
-					.error("hasNext call on not opened buffer! " + this + " "
-							+ buffer);
-			return false;
-		}
+
+		// Its not possible
+		// if (!isOpen()) {
+		// getLogger()
+		// .error("hasNext call on not opened buffer! " + this + " "
+		// + buffer);
+		// return false;
+		// }
 
 		return !buffer.isEmpty();
 	}
@@ -98,41 +102,42 @@ public class BufferPO<T extends IStreamObject<?>> extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public void transferNext() {
-		transferLock.lock();
-		try {
-			if (!this.buffer.isEmpty()) {
-				// the transfer might take some time, so pop element first and
-				// release lock on buffer instead of transfer(buffer.pop())
-				IStreamable element;
-				synchronized (this.buffer) {
-					element = buffer.pop();
-				}
-				if (element.isPunctuation()) {
-					sendPunctuation((IPunctuation)element);
-				} else {
-					transfer((T)element);
-				}
-				if (isDone()) {
-					propagateDone();
+		if (!this.buffer.isEmpty()) {
+			// the transfer might take some time, so pop element first and
+			// release lock on buffer instead of transfer(buffer.pop())
+			IStreamable element;
+			synchronized (this.buffer) {
+				element = buffer.pop();
+			}
+
+			if (element.isPunctuation()) {
+				sendPunctuation((IPunctuation) element);
+			} else {
+				transfer((T) element);
+			}
+
+			// the top element of a buffer must always be
+			// an real element, send punctuations immediately
+			synchronized (buffer) {
+				while (buffer.peek().isPunctuation()) {
+					sendPunctuation((IPunctuation) buffer.pop());
 				}
 			}
-		} finally {
-			transferLock.unlock();
+
+			if (isDone()) {
+				propagateDone();
+			}
 		}
 	}
 
 	@Override
 	public boolean isDone() {
-		transferLock.lock();
-		try {
-			boolean returnValue;
-			synchronized (this.buffer) {
-				returnValue = super.isDone() && this.buffer.isEmpty();
-			}
-			return returnValue;
-		} finally {
-			transferLock.unlock();
+		boolean returnValue;
+		synchronized (this.buffer) {
+			returnValue = super.isDone() && this.buffer.isEmpty();
 		}
+		return returnValue;
+
 	}
 
 	@Override
@@ -142,16 +147,28 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 	@Override
 	protected void process_next(T object, int port) {
-		transferLock.lock();
-		this.buffer.add(object);
-		transferLock.unlock();
+		synchronized (buffer) {
+			this.buffer.add(object);
+		}
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		transferLock.lock();
-		this.buffer.add(punctuation);
-		transferLock.unlock();
+		boolean sendDirectly = false;
+		synchronized (buffer) {
+			// Punctuations on top of buffer should be send immediately
+			// --> do not add punctuation to an empty buffer
+			if (!buffer.isEmpty()) {
+				this.buffer.add(punctuation);
+			} else {
+				sendDirectly = true;
+			}
+		}
+		// Avoid Sending of punctuations is inside the buffer lock ...
+		if (sendDirectly) {
+			sendPunctuation(punctuation);
+		}
+
 	}
 
 	@Override
@@ -168,8 +185,6 @@ public class BufferPO<T extends IStreamObject<?>> extends
 		return new BufferPO<T>(this);
 	}
 
-
-
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
@@ -185,30 +200,25 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 	@Override
 	public IStreamable peek() {
-		transferLock.lock();
-		IStreamable p = this.buffer.peek();
-		transferLock.unlock();
+		IStreamable p = null;
+		synchronized (buffer) {
+			p = this.buffer.peek();
+		}
 		return p;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public IMetaAttribute peekMetadata(){
-		transferLock.lock();
-		int i = buffer.size() -1;
+	public IMetaAttribute peekMetadata() {
 		IStreamable p = null;
-		// Find first non punctuation
-		while (i>=0 && (p = this.buffer.get(i)).isPunctuation()  ){
-			i--;
+		synchronized (buffer) {
+			p = buffer.peek();
 		}
-		
 		IMetaAttribute meta = null;
-		if (p != null & !p.isPunctuation()){
-			meta = ((T)p).getMetadata();
+		if (p != null & !p.isPunctuation()) {
+			meta = ((T) p).getMetadata();
 		}
-		transferLock.unlock();
-		return meta;		
+		return meta;
 	}
-	
-	
+
 }
