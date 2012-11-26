@@ -33,6 +33,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TSocketSinkAORule());
 		rules.add(new TCreateMetadataRule());
 		rules.add(new TDeleteRenameAORule());
+		rules.add(new TFilterAORule());
 		rules.add(new TSelectAORule());
 		rules.add(new TRouteAORule());
 		rules.add(new TTransformViewRule());
