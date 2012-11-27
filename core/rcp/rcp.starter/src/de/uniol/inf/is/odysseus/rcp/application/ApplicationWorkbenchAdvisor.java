@@ -21,7 +21,6 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
 
-import org.eclipselabs.p2.rcpupdate.utils.P2Util;
 
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.util.NavigatorHelper;
@@ -31,12 +30,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 		return new ApplicationWorkbenchWindowAdvisor(configurer);
-	}
-	
-	@Override
-	public void preStartup() {
-		P2Util.checkForUpdates();
-	}
+	}	
 
 	@Override
 	public String getInitialWindowPerspectiveId() {

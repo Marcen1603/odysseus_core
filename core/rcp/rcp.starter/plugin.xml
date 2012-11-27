@@ -216,9 +216,7 @@
          </menu>
          <menu
                id="help"
-               label="Help">
-            <command commandId="org.eclipselabs.p2.rcpupdate.install" style="push"/>
-        	<command commandId="org.eclipselabs.p2.rcpupdate.update" style="push"/>
+               label="Help">           
             <separator
                   name="HelpSeparator1"
                   visible="true">
