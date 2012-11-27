@@ -50,6 +50,7 @@ public class NioTcpServer extends Thread implements IConnection {
     private int                                                             writeBufferSize;
     private boolean                                                         doRouting    = true;
     private long                                                            timeout      = -1;
+    
 
     public static synchronized NioTcpServer getInstance(int readBufferSize, int writeBufferSize) throws IOException {
         if (instance == null) {
