@@ -9,7 +9,7 @@
             </actorProperties>
             <properties>
                 <property key="profile" value="Profile" />
-                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product.memorystore" />
+                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product.memorystore, de.uniol.inf.is.odysseus.core.feature.feature.group,de.uniol.inf.is.odysseus.relational.feature.feature.group,de.uniol.inf.is.odysseus.studio.feature.feature.group,de.uniol.inf.is.odysseus.scheduling.feature.feature.group,de.uniol.inf.is.odysseus.planmgmt.standard.feature.feature.group,de.uniol.inf.is.odysseus.datadictionary.mem.feature.feature.group,de.uniol.inf.is.odysseus.usermanagement.mem.feature.feature.group,org.eclipse.gef.feature.group,de.uniol.inf.is.odysseus.securitypunctuation.feature.feature.group" />
             </properties>            
             <products alias="destination" base="${buckminster.output}">
                 <path path="odysseus.${target.ws}.${target.os}.${target.arch}/" />
@@ -24,7 +24,7 @@
                 <attribute name="create.memoryproduct" />
             </prerequisites>
             <products alias="action.output" base="${buckminster.output}">
-                <path path="../../downloads/memorystore/odysseus.memorystore.${target.ws}.${target.os}.${target.arch}.zip" />
+                <path path="../../downloads/memorystore/odysseus.memorystoretest.${target.ws}.${target.os}.${target.arch}.zip" />
             </products>
         </public>
     
