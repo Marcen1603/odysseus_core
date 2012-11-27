@@ -21,7 +21,7 @@
                 <property key="targets" value="create.zip" />
             </actorProperties>
             <prerequisites alias="action.requirements">
-                <attribute name="create.memoryproduct" />
+                <attribute name="create.memoryproducttest" />
             </prerequisites>
             <products alias="action.output" base="${buckminster.output}">
                 <path path="../../downloads/memorystore/odysseus.memorystoretest.${target.ws}.${target.os}.${target.arch}.zip" />
