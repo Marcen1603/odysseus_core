@@ -160,10 +160,14 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		} else {
 			mathematicalExpressionNeeded = true;			
 			SDFDatatype datatype = SDFDatatype.LONG;
+			Constant<? extends Number> constant = null;
 			if (node.getValue().contains(".")) {				
-				datatype = SDFDatatype.DOUBLE;				
+				datatype = SDFDatatype.DOUBLE;	
+				constant = new Constant<Double>(Double.parseDouble(node.getValue()), datatype);
+			}else{
+				constant = new Constant<Long>(Long.parseLong(node.getValue()), datatype);
 			}
-			SDFExpression exp = new SDFExpression(new Constant<String>(node.getValue(), datatype), this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());			
+			SDFExpression exp = new SDFExpression(constant, this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());			
 			expressions.add(exp);
 			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), datatype);			
 			outputAttributes.add(attribute);
