@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.rcp.application;
 
-import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
@@ -23,8 +22,6 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 
@@ -57,21 +54,21 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		IStatusLineManager manager = getWindowConfigurer().getActionBarConfigurer().getStatusLineManager();
 		StatusBarManager.getInstance().setStatusLineManager(manager);
 
-		BundleContext bundleContext = Activator.getDefault().getBundle().getBundleContext();
-		ServiceReference<IProvisioningAgent> serviceReference = bundleContext.getServiceReference(IProvisioningAgent.class);
-		IProvisioningAgent agent = bundleContext.getService(serviceReference);
-		if (agent == null) {
-			System.out.println(">> no agent loaded!");
-			return;
-		}
-		// Adding the repositories to explore
-		if (!P2Util.addRepository(agent, "http://odysseus.informatik.uni-oldenburg.de/update/")) {
-			System.out.println(">> could no add repostory!");
-			return;
-		}
-		// scheduling job for updates
-		UpdateJob updateJob = new UpdateJob(agent);
-		updateJob.schedule();
+//		BundleContext bundleContext = Activator.getDefault().getBundle().getBundleContext();
+//		ServiceReference<IProvisioningAgent> serviceReference = bundleContext.getServiceReference(IProvisioningAgent.class);
+//		IProvisioningAgent agent = bundleContext.getService(serviceReference);
+//		if (agent == null) {
+//			System.out.println(">> no agent loaded!");
+//			return;
+//		}
+//		// Adding the repositories to explore
+//		if (!P2Util.addRepository(agent, "http://odysseus.informatik.uni-oldenburg.de/update/")) {
+//			System.out.println(">> could no add repostory!");
+//			return;
+//		}
+//		// scheduling job for updates
+//		UpdateJob updateJob = new UpdateJob(agent);
+//		updateJob.schedule();
 
 	}
 }
