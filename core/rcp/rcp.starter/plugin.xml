@@ -217,9 +217,6 @@
          <menu
                id="help"
                label="Help">
-            <separator
-                  name="additions">
-            </separator>
             <command commandId="org.eclipselabs.p2.rcpupdate.install" style="push"/>
         	<command commandId="org.eclipselabs.p2.rcpupdate.update" style="push"/>
             <separator
