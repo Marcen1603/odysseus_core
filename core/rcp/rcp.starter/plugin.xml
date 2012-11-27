@@ -220,6 +220,8 @@
             <separator
                   name="additions">
             </separator>
+            <command commandId="org.eclipselabs.p2.rcpupdate.install" style="push"/>
+        	<command commandId="org.eclipselabs.p2.rcpupdate.update" style="push"/>
             <separator
                   name="HelpSeparator1"
                   visible="true">
@@ -248,7 +250,7 @@
          </property>
          <property
                name="aboutText"
-               value="This is Odysseus Studio&#x0A;&#x0A;Help can be found here:&#x0A;&#x0A;http://odysseus.offis.uni-oldenburg.de/">
+               value="This is Odysseus Studio&#x0A;&#x0A;Help can be found here:&#x0A;&#x0A;http://odysseus.informatik.uni-oldenburg.de/">
          </property>
          <property
                name="windowImages"

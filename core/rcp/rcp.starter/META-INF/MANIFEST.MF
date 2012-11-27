@@ -4,7 +4,7 @@ Bundle-Name: Application
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.starter;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.application.Activator
-Bundle-Vendor: Timo Michelsen
+Bundle-Vendor: University of Oldenburg
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.google.guava;bundle-version="12.0.0"
@@ -15,6 +15,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.rcp.util,
  org.eclipse.ui.ide,
  org.eclipse.ui.internal.ide,
+ org.eclipselabs.p2.rcpupdate.utils,
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/executor.xml
