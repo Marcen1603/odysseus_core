@@ -12,7 +12,7 @@
 
 	<target name="create.product">
 		<property name="destination" location="${sp:destination}"/>
-		<property name="installableIUs" value="${iu},${features}" /> 
+		<property name="installableIUs" value="${iu}" /> 
 		<delete dir="${destination}"/>
 		<makeurl property="repository" file="${sp:repository}"/>
 		<mkdir dir="${destination}"/>
@@ -24,7 +24,6 @@
 		        <echo message="Repository:  ${repository}"/>  
 		        <echo message="Destination: ${destination}"/>  
 		        <echo message="Product:     ${iu}"/>  
-		        <echo message="Features:    ${features}"/>  
 		        <echo message="IUs:         ${installableIUs}"/>  
 		        <echo message="target:      ${target.os}.${target.ws}.${target.arch}"/>  
 		        <echo message="============================== Building RCP =============================="/>  
