@@ -21,20 +21,26 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
 
 public class MetadataRegistry {
 
+	private static Logger logger = LoggerFactory.getLogger(MetadataRegistry.class); 
+	
 	private static final String LOGGER_NAME = MetadataRegistry.class.getName();
 
 	private static Map<Set<String>, Class<? extends IMetaAttribute>> combinedMetadataTypes = new HashMap<Set<String>, Class<? extends IMetaAttribute>>();
 
-	@SafeVarargs
-	public static void addMetadataType(
-			Class<? extends IMetaAttribute> implementationType,
-			Class<? extends IMetaAttribute>... combinationOfInterfaces) {
-		HashSet<String> typeSet = toStringSet(combinationOfInterfaces);
+	public static void addMetadataType(IMetaAttribute type){
+		
+		logger.debug("New Metadatatype registered "+type.getClass());
+		
+		Class<? extends IMetaAttribute> implementationType = type.getClass();		
+		HashSet<String> typeSet = toStringSet(type.getClasses());
 		synchronized (combinedMetadataTypes) {
 			if (combinedMetadataTypes.containsKey(typeSet)
 					&& combinedMetadataTypes.get(typeSet) != implementationType) {

@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.interval_latency_priority;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
@@ -27,6 +29,11 @@ import de.uniol.inf.is.odysseus.priority.Priority;
 public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 		IPriority, Serializable {
 
+	@SuppressWarnings("unchecked")
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
+		ITimeInterval.class, ILatency.class, IPriority.class
+	};
+	
 	private static final long serialVersionUID = -4924797905689073685L;
 
 	private ILatency latency;
@@ -107,5 +114,10 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 	@Override
 	public final void setPriority(byte priority) {
 		this.prio.setPriority(priority);
+	}
+	
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return classes;
 	}
 }

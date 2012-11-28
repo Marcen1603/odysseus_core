@@ -18,7 +18,6 @@ Export-Package: de.uniol.inf.is.odysseus.interval.transform,
  de.uniol.inf.is.odysseus.intervalapproach.window,
  de.uniol.inf.is.odysseus.logicaloperator.intervalapproach,
  de.uniol.inf.is.odysseus.persistentqueries
-Bundle-Activator: de.uniol.inf.is.odysseus.intervalapproach.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"

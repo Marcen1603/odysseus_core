@@ -15,13 +15,17 @@
   */
 package de.uniol.inf.is.odysseus.latency;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
 public class Latency implements ILatency{
 
-	/**
-	 * 
-	 */
+
+	@SuppressWarnings("unchecked")
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
+		ILatency.class
+	};
+	
 	private static final long serialVersionUID = -3355802503979937479L;
 	private long lstart;
 	private long lend;
@@ -92,6 +96,11 @@ public class Latency implements ILatency{
 	@Override
 	public String csvToString(boolean withMetada) {
 		return this.csvToString();
+	}
+	
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return classes;
 	}
 
 }

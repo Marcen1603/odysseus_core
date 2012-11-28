@@ -15,10 +15,18 @@
   */
 package de.uniol.inf.is.odysseus.priority;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+
 public class Priority implements IPriority{
 	
 	private static final long serialVersionUID = 1837720176871400611L;
 
+	@SuppressWarnings("unchecked")
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
+		IPriority.class
+	};
+	
+	
 	byte prio;
 	
 	public Priority(){
@@ -63,4 +71,10 @@ public class Priority implements IPriority{
 	public String csvToString(boolean withMetadata){
 		return this.csvToString();
 	}
+	
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return classes;
+	}
+
 }

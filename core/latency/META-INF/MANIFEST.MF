@@ -22,7 +22,6 @@ Import-Package: de.uniol.inf.is.odysseus.core,
 Export-Package: de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.latency.logicaloperator,
  de.uniol.inf.is.odysseus.logicaloperator.latency
-Bundle-Activator: de.uniol.inf.is.odysseus.latency.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"

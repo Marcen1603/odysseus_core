@@ -15,6 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.interval_latency;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
@@ -24,6 +26,11 @@ import de.uniol.inf.is.odysseus.latency.Latency;
  */
 public class IntervalLatency extends TimeInterval implements ILatency {
 
+	@SuppressWarnings("unchecked")
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
+		ITimeInterval.class, ILatency.class
+	};
+	
 	private static final long serialVersionUID = -3129934770814427153L;
 	private final ILatency latency;
 	
@@ -81,6 +88,11 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 	@Override
 	public String getCSVHeader() {
 		return super.getCSVHeader()+";"+this.latency.getCSVHeader();
+	}
+	
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return classes;
 	}
 	
 }

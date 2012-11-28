@@ -19,8 +19,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-
 
 // TODO: Noch mal ber die Grenzen nachdenken (Wann <=, wann <)
 // TODO: Gibt es evtl. effizientere Algorithmen?
@@ -35,6 +33,12 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 
+	@SuppressWarnings("unchecked")
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
+		ITimeInterval.class
+	};
+	
+	
 	private static final long serialVersionUID = 2210545271466064814L;
 
 	private static final TimeInterval forever = new TimeInterval(
@@ -452,5 +456,9 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return this.csvToString();
 	}
 
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return classes;
+	}
 
 }
