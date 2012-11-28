@@ -31,8 +31,7 @@ Unless required by applicable law or agreed to in writing, software
    </url>
 
    <requires>
-      <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
-      <import plugin="org.eclipse.osgi.services"/>
+      <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier" match="greaterOrEqual"/>
    </requires>
 
    <plugin

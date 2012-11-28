@@ -31,7 +31,7 @@ Unless required by applicable law or agreed to in writing, software
    </url>
 
    <requires>
-      <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0"/>
+      <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
