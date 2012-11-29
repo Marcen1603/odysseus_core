@@ -91,9 +91,10 @@ public class MetadataRegistry {
 		}
 	}
 
-	public static void removeMetadataType(Class<? extends IMetaAttribute> type) {
+	public static void removeMetadataType(IMetaAttribute type) {
+		HashSet<String> typeSet = toStringSet(type.getClasses());
 		synchronized (combinedMetadataTypes) {
-			combinedMetadataTypes.remove(Collections.singleton(type));
+			combinedMetadataTypes.remove(typeSet);
 		}
 	}
 
