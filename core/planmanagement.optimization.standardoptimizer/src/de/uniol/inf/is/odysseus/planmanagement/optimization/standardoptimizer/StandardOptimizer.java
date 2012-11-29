@@ -57,9 +57,10 @@ public class StandardOptimizer extends AbstractOptimizer {
 			OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException {
 		List<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
+		
 		if (!queries.isEmpty()) {
-			for (ILogicalQuery query : queries) {
-				IPhysicalQuery optimized = this.queryOptimizer.optimizeQuery(executor, query, parameter, dd);
+			for (ILogicalQuery query : queries) {				
+				IPhysicalQuery optimized = this.queryOptimizer.optimizeQuery(executor, query, parameter, dd);		
 				doPostOptimizationActions(optimized, parameter);
 				optimizedQueries.add(optimized);
 			}

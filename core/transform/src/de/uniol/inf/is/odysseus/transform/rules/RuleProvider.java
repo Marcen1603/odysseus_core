@@ -36,7 +36,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TFilterAORule());
 		rules.add(new TSelectAORule());
 		rules.add(new TRouteAORule());
-		rules.add(new TTransformViewRule());
+		rules.add(new TAccessAOViewRule());
 		rules.add(new TUserDefinedOperatorPO());
 		rules.add(new TChangeDetectAORule());
 		rules.add(new TRenameAORule());

@@ -663,4 +663,10 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		}
 		return false;
 	}
+
+	@Override
+	public void unsubscribeFromAllSinks() {
+		// TODO Auto-generated method stub
+		
+	}
 }

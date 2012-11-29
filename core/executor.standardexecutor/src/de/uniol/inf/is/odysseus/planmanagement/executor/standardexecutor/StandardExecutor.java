@@ -247,10 +247,10 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			query.setQueryText(queryStr);
 			query.setUser(user);
 			query.setParameter(SLA.class.getName(), sla);
-			// this executor processes reoptimize requests
-			if (query instanceof IPhysicalQuery) {
-				((IPhysicalQuery) query).addReoptimizeListener(this);
-			}
+//			// this executor processes reoptimize requests
+//			if (query instanceof IPhysicalQuery) {
+//				((IPhysicalQuery) query).addReoptimizeListener(this);
+//			}
 		}
 
 		return queries;
@@ -279,7 +279,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		if (newQueries.isEmpty()) {
 			return optimizedQueries;
 		}
-
+		
 		// synchronize the process
 		this.executionPlanLock.lock();
 		try {

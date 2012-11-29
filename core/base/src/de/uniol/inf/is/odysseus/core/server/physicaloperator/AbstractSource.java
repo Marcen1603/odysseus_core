@@ -621,6 +621,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 				+ (blocked.get() ? "b" : "");
 	}
 
+	@Override
+	public void unsubscribeFromAllSinks() {
+		for (PhysicalSubscription<ISink<? super T>> s: this.sinkSubscriptions){
+			unsubscribeSink(s);
+		}
+		sinkSubscriptions.clear();
+	}
+	
 	// ------------------------------------------------------------------------
 	// Owner Management
 	// ------------------------------------------------------------------------
@@ -733,6 +741,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		// in general there is no metadata
 		return new SDFMetaAttributeList();
 	}
+	
 	
 	
 }

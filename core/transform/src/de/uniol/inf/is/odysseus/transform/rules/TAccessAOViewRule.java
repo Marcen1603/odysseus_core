@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.transform.engine.TransformationExecutor;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
+public class TAccessAOViewRule extends AbstractTransformationRule<AccessAO> {
 
 	@Override
 	public int getPriority() {
@@ -53,7 +53,10 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 //			e.printStackTrace();
 //		}
 		
+		// Clean up physical subscription for this plan!
 		
+			cPlan.clearPhysicalSubscriptions();
+			
 		// get the first root, since this is the physical operator for the passed plan
 		// and this will be the connection to the current plan.
 		if(roots.get(0).isSource()){

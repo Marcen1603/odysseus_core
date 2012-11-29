@@ -70,6 +70,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 			Collections.sort(queue, comperator);
 			Iterator<IScheduling> iter = queue.iterator();
 			synchronized (lastRun) {
+				// FIXME: If iter has no next, Exception will be thrown
 				lastRun.add(iter.next());
 				long prio = queue.get(0).getPlan().getCurrentPriority();
 				while (iter.hasNext()) {

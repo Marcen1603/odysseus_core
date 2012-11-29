@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.StoreException;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.NullUserException;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.util.ClearPhysicalSubscriptionsLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.RemoveOwnersGraphVisitor;
@@ -358,11 +359,19 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		return ao;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ILogicalOperator getStreamForTransformation(String name,
 			ISession caller) {
 		checkAccessRights(name, caller, DataDictionaryPermission.READ);
-		return streamDefinitions.get(name);
+		ILogicalOperator stream = streamDefinitions.get(name);
+		// TODO: This is not very good ...
+		// Do not copy Plan! Remove potential phyiscal subscription
+		ClearPhysicalSubscriptionsLogicalGraphVisitor<ILogicalOperator> copyVisitor = new ClearPhysicalSubscriptionsLogicalGraphVisitor<ILogicalOperator>();
+		@SuppressWarnings("rawtypes")
+		GenericGraphWalker walker = new GenericGraphWalker();
+		walker.prefixWalk(stream, copyVisitor);
+		return stream;
 	}
 
 	@Override
@@ -780,8 +789,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	// Methods for physical sinks and sources (moved from WrapperPlanFactory)
 	// ------------------------------------------------------------------------------
 
-	private static Map<String, ISource<?>> sources = new HashMap<String, ISource<?>>();
-	private static Map<String, ISink<?>> sinks = new HashMap<String, ISink<?>>();
+	private Map<String, ISource<?>> sources = new HashMap<String, ISource<?>>();
+	private Map<String, ISink<?>> sinks = new HashMap<String, ISink<?>>();
 
 	@Override
 	public synchronized ISource<?> getAccessPlan(String uri) {
@@ -810,7 +819,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		while (it.hasNext()) {
 			Entry<String, ISource<?>> curEntry = it.next();
 			if (!curEntry.getValue().hasOwner()) {
+				curEntry.getValue().unsubscribeFromAllSinks();
 				it.remove();
+				
 			}
 		}
 	}
