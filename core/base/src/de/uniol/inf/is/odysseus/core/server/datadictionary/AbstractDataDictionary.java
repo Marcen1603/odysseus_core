@@ -364,7 +364,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			ISession caller) {
 		checkAccessRights(name, caller, DataDictionaryPermission.READ);
 		// TODO: This is not very good ...
-		// Do not copy Plan! Remove potential phyiscal subscription		
+		// Do not copy Plan! Remove potential physical subscription		
 		return removePhysicalSubscriptions(streamDefinitions.get(name));
 	}
 	
