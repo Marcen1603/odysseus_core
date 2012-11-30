@@ -359,14 +359,17 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		return ao;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public ILogicalOperator getStreamForTransformation(String name,
 			ISession caller) {
 		checkAccessRights(name, caller, DataDictionaryPermission.READ);
-		ILogicalOperator stream = streamDefinitions.get(name);
 		// TODO: This is not very good ...
-		// Do not copy Plan! Remove potential phyiscal subscription
+		// Do not copy Plan! Remove potential phyiscal subscription		
+		return removePhysicalSubscriptions(streamDefinitions.get(name));
+	}
+	
+	@SuppressWarnings("unchecked")
+	private ILogicalOperator removePhysicalSubscriptions(ILogicalOperator stream) {
 		ClearPhysicalSubscriptionsLogicalGraphVisitor<ILogicalOperator> copyVisitor = new ClearPhysicalSubscriptionsLogicalGraphVisitor<ILogicalOperator>();
 		@SuppressWarnings("rawtypes")
 		GenericGraphWalker walker = new GenericGraphWalker();
@@ -539,7 +542,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	public ILogicalOperator getSinkTop(String sinkname, ISession caller)
 			throws DataDictionaryException {
 		if (this.sinkDefinitions.containsKey(sinkname)) {
-			return sinkDefinitions.get(sinkname);
+			return removePhysicalSubscriptions(sinkDefinitions.get(sinkname));
 		}
 
 		throw new DataDictionaryException("No such sink defined");
