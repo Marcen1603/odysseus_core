@@ -364,10 +364,15 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			ISession caller) {
 		checkAccessRights(name, caller, DataDictionaryPermission.READ);
 		// TODO: This is not very good ...
-		// Do not copy Plan! Remove potential physical subscription		
-		return removePhysicalSubscriptions(streamDefinitions.get(name));
+		// Do not copy Plan! Remove potential physical subscription
+		ILogicalOperator iLogicalOperator = streamDefinitions.get(name);
+		if (iLogicalOperator != null) {
+			return removePhysicalSubscriptions(iLogicalOperator);
+		} else {
+			return null;
+		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private ILogicalOperator removePhysicalSubscriptions(ILogicalOperator stream) {
 		ClearPhysicalSubscriptionsLogicalGraphVisitor<ILogicalOperator> copyVisitor = new ClearPhysicalSubscriptionsLogicalGraphVisitor<ILogicalOperator>();
@@ -824,7 +829,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			if (!curEntry.getValue().hasOwner()) {
 				curEntry.getValue().unsubscribeFromAllSinks();
 				it.remove();
-				
+
 			}
 		}
 	}
