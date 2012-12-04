@@ -35,8 +35,7 @@ public class PlanManagementException extends RuntimeException {
 	 * @param e original {@link Exception} which occurs. 
 	 */
 	public PlanManagementException(Exception e) {
-		this.initCause(e);
-		this.setStackTrace(e.getStackTrace());
+		super(e);
 	}
 
 	/**
