@@ -21,16 +21,20 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
+import de.uniol.inf.is.odysseus.core.connection.TCPConnector;
+import de.uniol.inf.is.odysseus.core.connection.ConnectorListener;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.IConnection;
 import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
-import de.uniol.inf.is.odysseus.core.connection.NioTcpServer;
+import de.uniol.inf.is.odysseus.core.connection.NioTcpConnection;
+import de.uniol.inf.is.odysseus.core.connection.TCPSelectorThread;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
@@ -40,38 +44,45 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class NonBlockingTcpClientHandler extends AbstractTransportHandler implements
-        IAccessConnectionListener<ByteBuffer>, IConnectionListener {
+        IAccessConnectionListener<ByteBuffer>, IConnectionListener, ConnectorListener {
     private static final Logger LOG = LoggerFactory.getLogger(NonBlockingTcpClientHandler.class);
-    private NioTcpServer        client;
+    private TCPSelectorThread      selector;
     private String              host;
     private int                 port;
+    private TCPConnector           connector;
+    private NioTcpConnection    connection;
+    private int                 readBufferSize;
+    private int                 writeBufferSize;
 
     public NonBlockingTcpClientHandler() {
         super();
     }
 
-    public NonBlockingTcpClientHandler(IProtocolHandler<?> protocolHandler) {
+    public NonBlockingTcpClientHandler(final IProtocolHandler<?> protocolHandler) {
         super(protocolHandler);
     }
 
     @Override
-    public void send(byte[] message) throws IOException {
-        client.write(this, message);
+    public void send(final byte[] message) throws IOException {
+        this.connection.write(message);
     }
 
     @Override
-    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-        NonBlockingTcpClientHandler handler = new NonBlockingTcpClientHandler(protocolHandler);
-        int readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 1024;
-        int writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 1024;
-        try {
-            handler.client = NioTcpServer.getInstance(readBufferSize, writeBufferSize);
-        }
-        catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-        }
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+        final NonBlockingTcpClientHandler handler = new NonBlockingTcpClientHandler(protocolHandler);
+        handler.readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 1024;
+        handler.writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 1024;
         handler.host = options.containsKey("host") ? options.get("host") : "127.0.0.1";
         handler.port = options.containsKey("port") ? Integer.parseInt(options.get("port")) : 8080;
+        try {
+            handler.selector = TCPSelectorThread.getInstance();
+            final InetSocketAddress address = new InetSocketAddress(handler.host, handler.port);
+            handler.connector = new TCPConnector(handler.selector, address, handler);
+        }
+        catch (final IOException e) {
+            NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+        }
+
         return handler;
     }
 
@@ -86,7 +97,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
     }
 
     @Override
-    public void process(ByteBuffer buffer) throws ClassNotFoundException {
+    public void process(final ByteBuffer buffer) throws ClassNotFoundException {
         super.fireProcess(buffer);
     }
 
@@ -103,40 +114,38 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
 
     @Override
     public void processInOpen() throws UnknownHostException, IOException {
-        InetSocketAddress address = new InetSocketAddress(host, port);
         try {
-            this.client.connect(address, this);
+            this.connector.connect();
         }
-        catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+        catch (final IOException e) {
+            NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
             throw new OpenFailedException(e);
         }
     }
 
     @Override
     public void processOutOpen() throws UnknownHostException, IOException {
-        InetSocketAddress address = new InetSocketAddress(host, port);
         try {
-            this.client.connect(address, this);
+            this.connector.connect();
         }
-        catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+        catch (final IOException e) {
+            NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
             throw new OpenFailedException(e);
         }
     }
 
     @Override
     public void processInClose() throws IOException {
-        this.client.close(this);
+        this.connector.disconnect();
     }
 
     @Override
     public void processOutClose() throws IOException {
-        this.client.close(this);
+        this.connector.disconnect();
     }
 
     @Override
-    public void notify(IConnection connection, ConnectionMessageReason reason) {
+    public void notify(final IConnection connection, final ConnectionMessageReason reason) {
         switch (reason) {
             case ConnectionAbort:
                 super.fireOnDisconnect();
@@ -153,6 +162,37 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
             default:
                 break;
         }
+    }
+
+    @Override
+    public void connectionEstablished(final TCPConnector connector, final SocketChannel sc) {
+        // TODO Auto-generated method stub
+        try {
+            sc.socket().setReceiveBufferSize(this.readBufferSize);
+            sc.socket().setSendBufferSize(this.writeBufferSize);
+            this.connection = new NioTcpConnection(sc, this.selector, this);
+        }
+        catch (final IOException e) {
+            NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+        }
+        super.fireOnConnect();
+    }
+
+    @Override
+    public void connectionFailed(final TCPConnector connector, final Exception cause) {
+        NonBlockingTcpClientHandler.LOG.error(cause.getMessage(), cause);
+    }
+
+    @Override
+    public void socketDisconnected(final NioTcpConnection nioTcpConnection) {
+        super.fireOnDisconnect();
+
+    }
+
+    @Override
+    public void socketException(final NioTcpConnection nioTcpConnection, final Exception ex) {
+        // TODO Auto-generated method stub
+
     }
 
 }

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.connection;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.PortUnreachableException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
@@ -46,7 +47,9 @@ public class NioUdpConnection implements IConnection {
         this.readBuffer = ByteBuffer.allocate(readBufferSize);
         this.writeBuffer = ByteBuffer.allocate(writeBufferSize);
         this.channel = selector.provider().openDatagramChannel();
+        try {
         this.channel.connect(address);
+        }catch(Exception e) {}
         this.channel.configureBlocking(false);
         this.selectionKey = this.channel.register(selector, SelectionKey.OP_READ);
         this.selectionKey.attach(this);
@@ -64,7 +67,11 @@ public class NioUdpConnection implements IConnection {
     }
 
     public ByteBuffer read() throws IOException {
-        this.channel.receive(readBuffer);
+        try {
+            this.channel.receive(readBuffer);
+        }
+        catch (PortUnreachableException e) {
+        }
         return readBuffer;
     }
 
@@ -83,12 +90,23 @@ public class NioUdpConnection implements IConnection {
             this.writeBuffer.flip();
 
             try {
-                while (writeBuffer.hasRemaining()) {
-                    int bytes = this.channel.write(writeBuffer);
-                    if (bytes == 0) {
-                        break;
+                if (this.channel.isConnected()) {
+                    while (writeBuffer.hasRemaining()) {
+
+                        int bytes = 0;
+                        try {
+                            bytes = this.channel.write(writeBuffer);
+                        }
+                        catch (PortUnreachableException e) {
+                        }
+                        if (bytes == 0) {
+                            break;
+                        }
+                        nbytes += bytes;
                     }
-                    nbytes += bytes;
+                }
+                else {
+                    System.out.println("Channel not connected for write");
                 }
                 writeBuffer.compact();
             }

@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.IConnection;
 import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.NioConnection;
+import de.uniol.inf.is.odysseus.core.connection.NioTcpConnection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.CloseFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -139,6 +140,18 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
     @Override
     public OutputStream getOutputStream() {
         return null;
+    }
+
+    @Override
+    public void socketDisconnected(NioTcpConnection nioTcpConnection) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void socketException(NioTcpConnection nioTcpConnection, Exception ex) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

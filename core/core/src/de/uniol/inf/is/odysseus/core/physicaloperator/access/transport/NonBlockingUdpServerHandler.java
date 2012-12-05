@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.IConnection;
 import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
+import de.uniol.inf.is.odysseus.core.connection.NioTcpConnection;
 import de.uniol.inf.is.odysseus.core.connection.NioUdpServer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -151,5 +152,17 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler implem
             default:
                 break;
         }
+    }
+
+    @Override
+    public void socketDisconnected(NioTcpConnection nioTcpConnection) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void socketException(NioTcpConnection nioTcpConnection, Exception ex) {
+        // TODO Auto-generated method stub
+        
     }
 }
