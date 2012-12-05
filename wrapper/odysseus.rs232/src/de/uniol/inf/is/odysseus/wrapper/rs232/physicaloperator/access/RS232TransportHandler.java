@@ -38,7 +38,6 @@ import java.util.TooManyListenersException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -48,8 +47,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class RS232TransportHandler extends AbstractTransportHandler implements SerialPortEventListener,
-        IAccessConnectionListener<ByteBuffer> {
+public class RS232TransportHandler extends AbstractTransportHandler implements SerialPortEventListener {
     /** How long to wait for the open to finish up. */
     public static final int    TIMEOUTSECONDS = 30;
     /** Logger */
@@ -140,16 +138,6 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
                 LOG.error(e.getMessage(), e);
             }
         }
-
-    }
-
-    @Override
-    public void process(ByteBuffer buffer) throws ClassNotFoundException {
-        super.fireProcess(buffer);
-    }
-
-    @Override
-    public void done() {
 
     }
 
