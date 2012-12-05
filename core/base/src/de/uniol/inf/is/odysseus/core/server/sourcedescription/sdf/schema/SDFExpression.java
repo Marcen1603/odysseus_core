@@ -55,6 +55,7 @@ public class SDFExpression implements Serializable, IClone {
 
     private List<SDFAttribute>          attributes;
 
+    /** The additional content*/
     private Map<String,Serializable>    additionalContent;
     /**
      * Using prediction functions you know in advance of query processing, which
@@ -296,10 +297,14 @@ public class SDFExpression implements Serializable, IClone {
         this.value = object;
     }
 
-    private void setAdditionalContent(Map<String, Serializable> additionalContent) {
-        this.additionalContent = Collections.unmodifiableMap(additionalContent);
-    }
-
+    /**
+     * Get the additional content under the given name (key)
+     * 
+     * @param name
+     *            The name (key) of the additional content
+     * @return The additional content under that name or <code>null</code> if no
+     *         additional content under that name exists
+     */
     public Serializable getAdditionalContent(String name) {
         return this.additionalContent.get(name);
     }
@@ -339,6 +344,12 @@ public class SDFExpression implements Serializable, IClone {
         setValue(expression.getValue());
     }
 
+    /**
+     * Bind the additional content to this expression
+     * 
+     * @param additionalContent
+     *            The additional content to bind
+     */
     public void bindAdditionalContent(Map<String, Serializable> additionalContent) {
         if (expression instanceof Constant) {
             return;
@@ -389,5 +400,15 @@ public class SDFExpression implements Serializable, IClone {
 
     public IAttributeResolver getAttributeResolver() {
         return attributeResolver;
+    }
+
+    /**
+     * Set the additional content
+     * 
+     * @param additionalContent
+     *            The additional content
+     */
+    private void setAdditionalContent(Map<String, Serializable> additionalContent) {
+        this.additionalContent = Collections.unmodifiableMap(additionalContent);
     }
 }
