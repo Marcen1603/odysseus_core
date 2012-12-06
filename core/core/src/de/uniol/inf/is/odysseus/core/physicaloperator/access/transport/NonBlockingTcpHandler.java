@@ -143,13 +143,13 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
     }
 
     @Override
-    public void socketDisconnected(NioTcpConnection nioTcpConnection) {
+    public void socketDisconnected() {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void socketException(NioTcpConnection nioTcpConnection, Exception ex) {
+    public void socketException( Exception ex) {
         // TODO Auto-generated method stub
         
     }

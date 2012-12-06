@@ -27,17 +27,17 @@ public class NioTcpConnection implements IConnection, ReadWriteSelectorHandler {
     private static final Logger                   LOG         = LoggerFactory.getLogger(NioTcpConnection.class);
     private ByteBuffer                            writeBuffer = null;
     private final ByteBuffer                      readBuffer;
-    protected final TCPSelectorThread                selector;
+    protected final SelectorThread                selector;
     private final SocketChannel                   channel;
-    private Object                                writeLock   = new Object();
     private IAccessConnectionListener<ByteBuffer> listener;
 
-    public NioTcpConnection(SocketChannel socketChannel, TCPSelectorThread selector,
+    public NioTcpConnection(SocketChannel socketChannel, SelectorThread selector,
             IAccessConnectionListener<ByteBuffer> listener) throws IOException {
         this.selector = selector;
         this.channel = socketChannel;
         this.listener = listener;
         readBuffer = ByteBuffer.allocate(channel.socket().getReceiveBufferSize());
+        writeBuffer = ByteBuffer.allocate(channel.socket().getSendBufferSize());
         // readBuffer.position(readBuffer.capacity());
         selector.registerChannelNow(channel, 0, this);
     }
@@ -51,7 +51,7 @@ public class NioTcpConnection implements IConnection, ReadWriteSelectorHandler {
             int readBytes = channel.read(readBuffer);
             if (readBytes == -1) {
                 close();
-                listener.socketDisconnected(this);
+                listener.socketDisconnected();
                 return;
             }
 
@@ -63,8 +63,8 @@ public class NioTcpConnection implements IConnection, ReadWriteSelectorHandler {
             // readBuffer.flip();
             processInBuffer();
         }
-        catch (IOException | ClassNotFoundException  ex) {
-            listener.socketException(this, ex);
+        catch (IOException | ClassNotFoundException ex) {
+            listener.socketException(ex);
             close();
         }
 
@@ -73,17 +73,21 @@ public class NioTcpConnection implements IConnection, ReadWriteSelectorHandler {
     @Override
     public void onWrite() {
         try {
-            int bytes = channel.write(writeBuffer);
-            if (writeBuffer.hasRemaining()) {
-                requestWrite();
-            }
-            else {
-                writeBuffer = null;
+            synchronized (writeBuffer) {
+                writeBuffer.flip();
+                channel.write(writeBuffer);
+                if (writeBuffer.hasRemaining()) {
+                    requestWrite();
+                }
+                else {
+                    writeBuffer.clear();
+                    resumeReading();
+                }
             }
         }
-        catch (IOException ioe) {
+        catch (IOException | ClassNotFoundException e) {
             close();
-            listener.socketException(this, ioe);
+            listener.socketException(e);
         }
     }
 
@@ -95,8 +99,14 @@ public class NioTcpConnection implements IConnection, ReadWriteSelectorHandler {
         selector.addChannelInterestNow(channel, SelectionKey.OP_WRITE);
     }
 
+    public void write(byte[] message) {
+        write(ByteBuffer.wrap(message));
+    }
+
     public void write(ByteBuffer packet) {
-        writeBuffer = packet;
+        synchronized (writeBuffer) {
+            writeBuffer.put(packet);
+        }
         onWrite();
     }
 
@@ -121,14 +131,6 @@ public class NioTcpConnection implements IConnection, ReadWriteSelectorHandler {
         listener.process(readBuffer);
         // readBuffer.clear();
         reactivateReading();
-    }
-
-    public int write(byte[] message) {
-        synchronized (writeLock) {
-            writeBuffer.put(message);
-        }
-        write(ByteBuffer.wrap(message));
-        return 0;
     }
 
 }

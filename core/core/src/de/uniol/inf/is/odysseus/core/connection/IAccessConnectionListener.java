@@ -20,7 +20,7 @@ public interface IAccessConnectionListener<T> {
 
     public void done();
 
-    public void socketDisconnected(NioTcpConnection nioTcpConnection);
+    public void socketDisconnected();
 
-    public void socketException(NioTcpConnection nioTcpConnection, Exception ex);
+    public void socketException(Exception ex);
 }

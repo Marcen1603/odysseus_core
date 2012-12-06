@@ -13,21 +13,21 @@ import java.util.List;
  * NIO Selector thread based on the work of
  * Nuno Santos, nfsantos@sapo.pt
  */
-public class TCPSelectorThread implements Runnable {
-    private static TCPSelectorThread instance;
+public class SelectorThread implements Runnable {
+    private static SelectorThread instance;
     private final Selector        selector;
     private final Thread          selectorThread;
     private final List<Runnable>  pendingInvocations = new ArrayList<Runnable>();
     private boolean               closeRequested;
 
-    public static synchronized TCPSelectorThread getInstance() throws IOException {
-        if (TCPSelectorThread.instance == null) {
-            TCPSelectorThread.instance = new TCPSelectorThread();
+    public static synchronized SelectorThread getInstance() throws IOException {
+        if (SelectorThread.instance == null) {
+            SelectorThread.instance = new SelectorThread();
         }
-        return TCPSelectorThread.instance;
+        return SelectorThread.instance;
     }
 
-    private TCPSelectorThread() throws IOException {
+    private SelectorThread() throws IOException {
         this.selector = Selector.open();
         this.selectorThread = new Thread(this);
         this.selectorThread.start();
@@ -39,7 +39,7 @@ public class TCPSelectorThread implements Runnable {
             @Override
             public void run() {
                 try {
-                    TCPSelectorThread.this.addChannelInterestNow(channel, interest);
+                    SelectorThread.this.addChannelInterestNow(channel, interest);
                 }
                 catch (final IOException e) {
                     errorHandler.handleError(e);
@@ -54,7 +54,7 @@ public class TCPSelectorThread implements Runnable {
             @Override
             public void run() {
                 try {
-                    TCPSelectorThread.this.removeChannelInterestNow(channel, interest);
+                    SelectorThread.this.removeChannelInterestNow(channel, interest);
                 }
                 catch (final IOException e) {
                     errorHandler.handleError(e);
@@ -69,7 +69,7 @@ public class TCPSelectorThread implements Runnable {
             @Override
             public void run() {
                 try {
-                    TCPSelectorThread.this.registerChannelNow(channel, selectionKeys, handlerInfo);
+                    SelectorThread.this.registerChannelNow(channel, selectionKeys, handlerInfo);
                 }
                 catch (final IOException e) {
                     errorHandler.handleError(e);

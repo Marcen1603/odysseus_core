@@ -16,12 +16,10 @@
 package de.uniol.inf.is.odysseus.core.connection;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.PortUnreachableException;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,113 +30,113 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class NioUdpConnection implements IConnection {
-    private static final Logger                   LOG       = LoggerFactory.getLogger(NioUdpConnection.class);
-    private SelectionKey                          selectionKey;
-    private DatagramChannel                       channel;
-    private Object                                writeLock = new Object();
-    private ByteBuffer                            readBuffer;
-    private ByteBuffer                            writeBuffer;
+public class NioUdpConnection implements IConnection, ReadWriteSelectorHandler {
+    private static final Logger                   LOG         = LoggerFactory.getLogger(NioUdpConnection.class);
+    private ByteBuffer                            writeBuffer = null;
+    private final ByteBuffer                      readBuffer;
+    protected final SelectorThread                selector;
+    private final DatagramChannel                 channel;
     private IAccessConnectionListener<ByteBuffer> listener;
 
-    public NioUdpConnection(Selector selector, InetSocketAddress address, int readBufferSize, int writeBufferSize,
+    public NioUdpConnection(DatagramChannel datagramChannel, SelectorThread selector,
             IAccessConnectionListener<ByteBuffer> listener) throws IOException {
+        this.selector = selector;
+        this.channel = datagramChannel;
         this.listener = listener;
-        this.readBuffer = ByteBuffer.allocate(readBufferSize);
-        this.writeBuffer = ByteBuffer.allocate(writeBufferSize);
-        this.channel = selector.provider().openDatagramChannel();
+        readBuffer = ByteBuffer.allocate(channel.socket().getReceiveBufferSize());
+        writeBuffer = ByteBuffer.allocate(channel.socket().getSendBufferSize());
+        // readBuffer.position(readBuffer.capacity());
+
+        // selector.registerChannelNow(channel, 0, this);
+        selector.registerChannel(this.channel, 0, this, new CallbackErrorHandler() {
+            public void handleError(final Exception ex) {
+                NioUdpConnection.this.listener.socketException(ex);
+            }
+        });
+    }
+
+    public void resumeReading() throws IOException, ClassNotFoundException {
+        processInBuffer();
+    }
+
+    public void onRead() {
         try {
-        this.channel.connect(address);
-        }catch(Exception e) {}
-        this.channel.configureBlocking(false);
-        this.selectionKey = this.channel.register(selector, SelectionKey.OP_READ);
-        this.selectionKey.attach(this);
+            SocketAddress address = channel.receive(readBuffer);
+            if (address == null) {
+                close();
+                listener.socketDisconnected();
+                return;
+            }
+            // readBuffer.flip();
+            processInBuffer();
+        }
+        catch (IOException | ClassNotFoundException ex) {
+            listener.socketException(ex);
+            close();
+        }
+
     }
 
-    public NioUdpConnection(Selector selector, DatagramChannel channel, int readBufferSize, int writeBufferSize,
-            IAccessConnectionListener<ByteBuffer> listener) throws IOException {
-        this.listener = listener;
-        this.readBuffer = ByteBuffer.allocate(readBufferSize);
-        this.writeBuffer = ByteBuffer.allocate(writeBufferSize);
-        this.channel = channel;
-        this.channel.configureBlocking(false);
-        this.selectionKey = this.channel.register(selector, SelectionKey.OP_READ);
-        this.selectionKey.attach(this);
-    }
-
-    public ByteBuffer read() throws IOException {
+    @Override
+    public void onWrite() {
         try {
-            this.channel.receive(readBuffer);
-        }
-        catch (PortUnreachableException e) {
-        }
-        return readBuffer;
-    }
-
-    public int write(byte[] message) {
-        int nbytes = 0;
-        synchronized (writeLock) {
-            writeBuffer.put(message);
-        }
-        nbytes = write();
-        return nbytes;
-    }
-
-    public int write() {
-        int nbytes = 0;
-        synchronized (writeLock) {
-            this.writeBuffer.flip();
-
-            try {
-                if (this.channel.isConnected()) {
-                    while (writeBuffer.hasRemaining()) {
-
-                        int bytes = 0;
-                        try {
-                            bytes = this.channel.write(writeBuffer);
-                        }
-                        catch (PortUnreachableException e) {
-                        }
-                        if (bytes == 0) {
-                            break;
-                        }
-                        nbytes += bytes;
-                    }
+            synchronized (writeBuffer) {
+                writeBuffer.flip();
+                channel.send(writeBuffer, channel.getRemoteAddress());
+                if (writeBuffer.hasRemaining()) {
+                    requestWrite();
                 }
                 else {
-                    System.out.println("Channel not connected for write");
+                    writeBuffer.clear();
+                    resumeReading();
                 }
-                writeBuffer.compact();
-            }
-            catch (IOException e) {
-                LOG.error(e.getMessage(), e);
-            }
-            if (writeBuffer.position() == 0) {
-                selectionKey.selector().wakeup();
-            }
-            else {
-                selectionKey.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE);
             }
         }
-        return nbytes;
+        catch (IOException | ClassNotFoundException e) {
+            close();
+            listener.socketException(e);
+        }
+    }
+
+    public DatagramChannel getDatagramChannel() {
+        return channel;
+    }
+
+    private void requestWrite() throws IOException {
+        selector.addChannelInterestNow(channel, SelectionKey.OP_WRITE);
+    }
+
+    public void write(byte[] message) {
+        write(ByteBuffer.wrap(message));
+    }
+
+    public void write(ByteBuffer packet) {
+        synchronized (writeBuffer) {
+            writeBuffer.put(packet);
+        }
+        onWrite();
     }
 
     public void close() {
-        if (this.channel != null) {
-            try {
-                this.channel.close();
-            }
-            catch (IOException e) {
-                LOG.error(e.getMessage(), e);
-            }
-            this.channel = null;
-            if (this.selectionKey != null) {
-                this.selectionKey.selector().wakeup();
-            }
+        try {
+            channel.close();
+        }
+        catch (IOException e) {
+            // Ignore
         }
     }
 
-    public IAccessConnectionListener<ByteBuffer> getListener() {
-        return listener;
+    public void disableReading() throws IOException {
+        selector.removeChannelInterestNow(channel, SelectionKey.OP_READ);
+    }
+
+    private void reactivateReading() throws IOException {
+        selector.addChannelInterestNow(channel, SelectionKey.OP_READ);
+    }
+
+    private void processInBuffer() throws IOException, ClassNotFoundException {
+        listener.process(readBuffer);
+        // readBuffer.clear();
+        reactivateReading();
     }
 }

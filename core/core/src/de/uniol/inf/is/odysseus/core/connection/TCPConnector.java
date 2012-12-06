@@ -6,13 +6,13 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
 public class TCPConnector implements ConnectorSelectorHandler {
-    private final ConnectorListener listener;
+    private final TCPConnectorListener listener;
     private final InetSocketAddress remoteAddress;
-    private final TCPSelectorThread    selectorThread;
+    private final SelectorThread selectorThread;
     private SocketChannel           channel;
 
-    public TCPConnector(final TCPSelectorThread selector, final InetSocketAddress remoteAddress,
-            final ConnectorListener listener) {
+    public TCPConnector(final SelectorThread selector, final InetSocketAddress remoteAddress,
+            final TCPConnectorListener listener) {
         this.selectorThread = selector;
         this.remoteAddress = remoteAddress;
         this.listener = listener;
@@ -21,11 +21,7 @@ public class TCPConnector implements ConnectorSelectorHandler {
     public void connect() throws IOException {
         this.channel = SocketChannel.open();
         this.channel.configureBlocking(false);
-        try {
-            this.channel.connect(this.remoteAddress);
-        }
-        catch (final Exception e) {
-        }
+        this.channel.connect(this.remoteAddress);
         this.selectorThread.registerChannel(this.channel, SelectionKey.OP_CONNECT, this, new CallbackErrorHandler() {
             public void handleError(final Exception ex) {
                 TCPConnector.this.listener.connectionFailed(TCPConnector.this, ex);

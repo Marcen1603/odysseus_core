@@ -18,20 +18,27 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectionKey;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.connection.AcceptorSelectorHandler;
+import de.uniol.inf.is.odysseus.core.connection.CallbackErrorHandler;
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.IConnection;
 import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
-import de.uniol.inf.is.odysseus.core.connection.NioTcpConnection;
-import de.uniol.inf.is.odysseus.core.connection.NioUdpServer;
+import de.uniol.inf.is.odysseus.core.connection.NioUdpConnection;
+import de.uniol.inf.is.odysseus.core.connection.SelectorThread;
+import de.uniol.inf.is.odysseus.core.connection.UDPAcceptor;
+import de.uniol.inf.is.odysseus.core.connection.UDPAcceptorListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
@@ -41,11 +48,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class NonBlockingUdpServerHandler extends AbstractTransportHandler implements
-        IAccessConnectionListener<ByteBuffer>, IConnectionListener {
-    private static final Logger LOG    = LoggerFactory.getLogger(NonBlockingUdpServerHandler.class);
-    private NioUdpServer        server = null;
-    private String              host;
-    private int                 port;
+        IAccessConnectionListener<ByteBuffer>, IConnectionListener, UDPAcceptorListener {
+    private static final Logger          LOG         = LoggerFactory.getLogger(NonBlockingUdpServerHandler.class);
+    private SelectorThread               selector;
+    // private String host;
+    private int                          port;
+    private UDPAcceptor                  acceptor;
+    private final List<NioUdpConnection> connections = new ArrayList<NioUdpConnection>();
+    private int                          readBufferSize;
+    private int                          writeBufferSize;
 
     public NonBlockingUdpServerHandler() {
         super();
@@ -57,22 +68,26 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler implem
 
     @Override
     public void send(byte[] message) throws IOException {
-        server.write(this, message);
+        for (final NioUdpConnection connection : this.connections) {
+            connection.write(message);
+        }
     }
 
     @Override
     public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
         NonBlockingUdpServerHandler handler = new NonBlockingUdpServerHandler(protocolHandler, options);
-        int readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 1024;
-        int writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 1024;
+        handler.readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 1024;
+        handler.writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 1024;
+        // handler.host = options.containsKey("host") ? options.get("host") :
+        // "127.0.0.1";
+        handler.port = options.containsKey("port") ? Integer.parseInt(options.get("port")) : 8080;
         try {
-            handler.server = NioUdpServer.getInstance(readBufferSize, writeBufferSize);
+            handler.selector = SelectorThread.getInstance();
+            handler.acceptor = new UDPAcceptor(handler.port, handler.selector, handler);
         }
         catch (IOException e) {
             LOG.error(e.getMessage(), e);
         }
-        handler.host = options.containsKey("host") ? options.get("host") : "127.0.0.1";
-        handler.port = options.containsKey("port") ? Integer.parseInt(options.get("port")) : 8080;
         return handler;
     }
 
@@ -104,9 +119,8 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler implem
 
     @Override
     public void processInOpen() throws UnknownHostException, IOException {
-        InetSocketAddress address = new InetSocketAddress(host, port);
         try {
-            server.bind(address, this);
+            this.acceptor.open();
         }
         catch (IOException e) {
             throw new OpenFailedException(e);
@@ -115,9 +129,8 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler implem
 
     @Override
     public void processOutOpen() throws UnknownHostException, IOException {
-        InetSocketAddress address = new InetSocketAddress(host, port);
         try {
-            server.bind(address, this);
+            this.acceptor.open();
         }
         catch (IOException e) {
             throw new OpenFailedException(e);
@@ -126,12 +139,12 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler implem
 
     @Override
     public void processInClose() throws IOException {
-        server.close(this);
+        this.acceptor.close();
     }
 
     @Override
     public void processOutClose() throws IOException {
-        server.close(this);
+        this.acceptor.close();
     }
 
     @Override
@@ -155,14 +168,39 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler implem
     }
 
     @Override
-    public void socketDisconnected(NioTcpConnection nioTcpConnection) {
+    public void socketDisconnected() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
-    public void socketException(NioTcpConnection nioTcpConnection, Exception ex) {
+    public void socketException(Exception ex) {
         // TODO Auto-generated method stub
-        
+
+    }
+
+    @Override
+    public void socketConnected(AcceptorSelectorHandler acceptor, DatagramChannel channel) {
+        try {
+            channel.socket().setReceiveBufferSize(this.readBufferSize);
+            channel.socket().setSendBufferSize(this.writeBufferSize);
+            final NioUdpConnection connection = new NioUdpConnection(channel, this.selector, this);
+            this.connections.add(connection);
+            selector.addChannelInterest(channel, SelectionKey.OP_READ, new CallbackErrorHandler() {
+                public void handleError(final Exception ex) {
+                    socketException(ex);
+                }
+            });
+        }
+        catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+    }
+
+    @Override
+    public void socketError(AcceptorSelectorHandler acceptor, Exception ex) {
+        // TODO Auto-generated method stub
+
     }
 }

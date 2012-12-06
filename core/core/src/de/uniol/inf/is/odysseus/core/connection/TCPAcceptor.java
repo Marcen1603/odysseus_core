@@ -9,12 +9,12 @@ import java.nio.channels.SocketChannel;
 
 public class TCPAcceptor implements AcceptorSelectorHandler {
 
-    private final TCPSelectorThread   ioThread;
+    private final SelectorThread   ioThread;
     private final int              port;
-    private final AcceptorListener listener;
+    private final TCPAcceptorListener listener;
     private ServerSocketChannel    serverSocketChannel;
 
-    public TCPAcceptor(final int port, final TCPSelectorThread ioThread, final AcceptorListener listener) {
+    public TCPAcceptor(final int port, final SelectorThread ioThread, final TCPAcceptorListener listener) {
         this.ioThread = ioThread;
         this.port = port;
         this.listener = listener;
