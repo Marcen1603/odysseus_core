@@ -21,9 +21,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Generic UDP *connection* allowing to send datagrams to an address and read
  * datagrams on a channel
@@ -31,24 +28,24 @@ import org.slf4j.LoggerFactory;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class NioUdpConnection implements IConnection, ReadWriteSelectorHandler {
-    private static final Logger                   LOG         = LoggerFactory.getLogger(NioUdpConnection.class);
-    private ByteBuffer                            writeBuffer = null;
-    private final ByteBuffer                      readBuffer;
-    protected final SelectorThread                selector;
-    private final DatagramChannel                 channel;
-    private IAccessConnectionListener<ByteBuffer> listener;
+    private ByteBuffer                                  writeBuffer = null;
+    private final ByteBuffer                            readBuffer;
+    protected final SelectorThread                      selector;
+    private final DatagramChannel                       channel;
+    private final IAccessConnectionListener<ByteBuffer> listener;
 
-    public NioUdpConnection(DatagramChannel datagramChannel, SelectorThread selector,
-            IAccessConnectionListener<ByteBuffer> listener) throws IOException {
+    public NioUdpConnection(final DatagramChannel datagramChannel, final SelectorThread selector,
+            final IAccessConnectionListener<ByteBuffer> listener) throws IOException {
         this.selector = selector;
         this.channel = datagramChannel;
         this.listener = listener;
-        readBuffer = ByteBuffer.allocate(channel.socket().getReceiveBufferSize());
-        writeBuffer = ByteBuffer.allocate(channel.socket().getSendBufferSize());
+        this.readBuffer = ByteBuffer.allocate(this.channel.socket().getReceiveBufferSize());
+        this.writeBuffer = ByteBuffer.allocate(this.channel.socket().getSendBufferSize());
         // readBuffer.position(readBuffer.capacity());
 
         // selector.registerChannelNow(channel, 0, this);
         selector.registerChannel(this.channel, 0, this, new CallbackErrorHandler() {
+            @SuppressWarnings("unused")
             public void handleError(final Exception ex) {
                 NioUdpConnection.this.listener.socketException(ex);
             }
@@ -56,23 +53,24 @@ public class NioUdpConnection implements IConnection, ReadWriteSelectorHandler {
     }
 
     public void resumeReading() throws IOException, ClassNotFoundException {
-        processInBuffer();
+        this.processInBuffer();
     }
 
+    @Override
     public void onRead() {
         try {
-            SocketAddress address = channel.receive(readBuffer);
+            final SocketAddress address = this.channel.receive(this.readBuffer);
             if (address == null) {
-                close();
-                listener.socketDisconnected();
+                this.close();
+                this.listener.socketDisconnected();
                 return;
             }
             // readBuffer.flip();
-            processInBuffer();
+            this.processInBuffer();
         }
         catch (IOException | ClassNotFoundException ex) {
-            listener.socketException(ex);
-            close();
+            this.listener.socketException(ex);
+            this.close();
         }
 
     }
@@ -80,63 +78,63 @@ public class NioUdpConnection implements IConnection, ReadWriteSelectorHandler {
     @Override
     public void onWrite() {
         try {
-            synchronized (writeBuffer) {
-                writeBuffer.flip();
-                channel.send(writeBuffer, channel.getRemoteAddress());
-                if (writeBuffer.hasRemaining()) {
-                    requestWrite();
+            synchronized (this.writeBuffer) {
+                this.writeBuffer.flip();
+                this.channel.send(this.writeBuffer, this.channel.getRemoteAddress());
+                if (this.writeBuffer.hasRemaining()) {
+                    this.requestWrite();
                 }
                 else {
-                    writeBuffer.clear();
-                    resumeReading();
+                    this.writeBuffer.clear();
+                    this.resumeReading();
                 }
             }
         }
         catch (IOException | ClassNotFoundException e) {
-            close();
-            listener.socketException(e);
+            this.close();
+            this.listener.socketException(e);
         }
     }
 
     public DatagramChannel getDatagramChannel() {
-        return channel;
+        return this.channel;
     }
 
     private void requestWrite() throws IOException {
-        selector.addChannelInterestNow(channel, SelectionKey.OP_WRITE);
+        this.selector.addChannelInterestNow(this.channel, SelectionKey.OP_WRITE);
     }
 
-    public void write(byte[] message) {
-        write(ByteBuffer.wrap(message));
+    public void write(final byte[] message) {
+        this.write(ByteBuffer.wrap(message));
     }
 
-    public void write(ByteBuffer packet) {
-        synchronized (writeBuffer) {
-            writeBuffer.put(packet);
+    public void write(final ByteBuffer packet) {
+        synchronized (this.writeBuffer) {
+            this.writeBuffer.put(packet);
         }
-        onWrite();
+        this.onWrite();
     }
 
     public void close() {
         try {
-            channel.close();
+            this.channel.close();
         }
-        catch (IOException e) {
-            // Ignore
+        catch (final IOException e) {
+            this.listener.socketException(e);
         }
     }
 
     public void disableReading() throws IOException {
-        selector.removeChannelInterestNow(channel, SelectionKey.OP_READ);
+        this.selector.removeChannelInterestNow(this.channel, SelectionKey.OP_READ);
     }
 
     private void reactivateReading() throws IOException {
-        selector.addChannelInterestNow(channel, SelectionKey.OP_READ);
+        this.selector.addChannelInterestNow(this.channel, SelectionKey.OP_READ);
     }
 
     private void processInBuffer() throws IOException, ClassNotFoundException {
-        listener.process(readBuffer);
+        this.listener.process(this.readBuffer);
         // readBuffer.clear();
-        reactivateReading();
+        this.reactivateReading();
     }
 }

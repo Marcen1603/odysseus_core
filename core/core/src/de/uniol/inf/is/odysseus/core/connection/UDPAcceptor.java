@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.core.connection;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.DatagramChannel;
-import java.nio.channels.SelectionKey;
 
 public class UDPAcceptor implements AcceptorSelectorHandler {
     private final SelectorThread      ioThread;
@@ -21,7 +20,7 @@ public class UDPAcceptor implements AcceptorSelectorHandler {
         this.datagramChannel = DatagramChannel.open();
         final InetSocketAddress address = new InetSocketAddress(this.port);
         this.datagramChannel.socket().bind(address);
-        onAccept();
+        this.onAccept();
     }
 
     @Override

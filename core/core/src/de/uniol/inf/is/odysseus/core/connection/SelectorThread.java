@@ -9,11 +9,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * NIO Selector thread based on the work of
  * Nuno Santos, nfsantos@sapo.pt
  */
 public class SelectorThread implements Runnable {
+    private static final Logger   LOG                = LoggerFactory.getLogger(SelectorThread.class);
     private static SelectorThread instance;
     private final Selector        selector;
     private final Thread          selectorThread;
@@ -183,7 +187,6 @@ public class SelectorThread implements Runnable {
                 selectedKeys = this.selector.select();
             }
             catch (final IOException ioe) {
-
                 ioe.printStackTrace();
                 continue;
             }
@@ -192,41 +195,33 @@ public class SelectorThread implements Runnable {
                 continue;
             }
 
-            final Iterator it = this.selector.selectedKeys().iterator();
-            while (it.hasNext()) {
-                final SelectionKey sk = (SelectionKey) it.next();
-                it.remove();
+            final Iterator<SelectionKey> iter = this.selector.selectedKeys().iterator();
+            while (iter.hasNext()) {
+                final SelectionKey sk = iter.next();
+                iter.remove();
                 try {
                     final int readyOps = sk.readyOps();
                     sk.interestOps(sk.interestOps() & ~readyOps);
                     final SelectorHandler handler = (SelectorHandler) sk.attachment();
 
                     if (sk.isAcceptable()) {
-
                         ((AcceptorSelectorHandler) handler).onAccept();
-
                     }
                     else if (sk.isConnectable()) {
-
                         ((ConnectorSelectorHandler) handler).onConnect();
-
                     }
                     else {
                         final ReadWriteSelectorHandler rwHandler = (ReadWriteSelectorHandler) handler;
-
                         if (sk.isReadable()) {
-
                             rwHandler.onRead();
                         }
-
                         if (sk.isValid() && sk.isWritable()) {
-
                             rwHandler.onWrite();
                         }
                     }
                 }
                 catch (final Throwable t) {
-                    t.printStackTrace();
+                    LOG.error(t.getMessage(), t);
                     return;
                 }
             }

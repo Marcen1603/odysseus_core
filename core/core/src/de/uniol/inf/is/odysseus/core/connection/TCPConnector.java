@@ -7,9 +7,9 @@ import java.nio.channels.SocketChannel;
 
 public class TCPConnector implements ConnectorSelectorHandler {
     private final TCPConnectorListener listener;
-    private final InetSocketAddress remoteAddress;
-    private final SelectorThread selectorThread;
-    private SocketChannel           channel;
+    private final InetSocketAddress    remoteAddress;
+    private final SelectorThread       selectorThread;
+    private SocketChannel              channel;
 
     public TCPConnector(final SelectorThread selector, final InetSocketAddress remoteAddress,
             final TCPConnectorListener listener) {
@@ -23,6 +23,7 @@ public class TCPConnector implements ConnectorSelectorHandler {
         this.channel.configureBlocking(false);
         this.channel.connect(this.remoteAddress);
         this.selectorThread.registerChannel(this.channel, SelectionKey.OP_CONNECT, this, new CallbackErrorHandler() {
+            @SuppressWarnings("unused")
             public void handleError(final Exception ex) {
                 TCPConnector.this.listener.connectionFailed(TCPConnector.this, ex);
             }

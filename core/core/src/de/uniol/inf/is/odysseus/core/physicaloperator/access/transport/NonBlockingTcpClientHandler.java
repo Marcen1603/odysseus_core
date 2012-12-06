@@ -28,14 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
-import de.uniol.inf.is.odysseus.core.connection.TCPConnectorListener;
 import de.uniol.inf.is.odysseus.core.connection.ConnectorSelectorHandler;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.IConnection;
 import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.NioTcpConnection;
-import de.uniol.inf.is.odysseus.core.connection.TCPConnector;
 import de.uniol.inf.is.odysseus.core.connection.SelectorThread;
+import de.uniol.inf.is.odysseus.core.connection.TCPConnector;
+import de.uniol.inf.is.odysseus.core.connection.TCPConnectorListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 public class NonBlockingTcpClientHandler extends AbstractTransportHandler implements
         IAccessConnectionListener<ByteBuffer>, IConnectionListener, TCPConnectorListener {
     private static final Logger LOG = LoggerFactory.getLogger(NonBlockingTcpClientHandler.class);
-    private SelectorThread   selector;
+    private SelectorThread      selector;
     private String              host;
     private int                 port;
     private TCPConnector        connector;
@@ -190,7 +190,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
     }
 
     @Override
-    public void socketException( final Exception e) {
+    public void socketException(final Exception e) {
         NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
     }
 

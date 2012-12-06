@@ -28,15 +28,15 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.connection.TCPAcceptorListener;
 import de.uniol.inf.is.odysseus.core.connection.AcceptorSelectorHandler;
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.IConnection;
 import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.NioTcpConnection;
-import de.uniol.inf.is.odysseus.core.connection.TCPAcceptor;
 import de.uniol.inf.is.odysseus.core.connection.SelectorThread;
+import de.uniol.inf.is.odysseus.core.connection.TCPAcceptor;
+import de.uniol.inf.is.odysseus.core.connection.TCPAcceptorListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 public class NonBlockingTcpServerHandler extends AbstractTransportHandler implements
         IAccessConnectionListener<ByteBuffer>, IConnectionListener, TCPAcceptorListener {
     private static final Logger          LOG         = LoggerFactory.getLogger(NonBlockingTcpServerHandler.class);
-    private SelectorThread            selector;
+    private SelectorThread               selector;
     // private String host;
     private int                          port;
     private TCPAcceptor                  acceptor;
@@ -187,12 +187,11 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler implem
 
     @Override
     public void socketDisconnected() {
-        // TODO Auto-generated method stub
-
+        super.fireOnDisconnect();
     }
 
     @Override
-    public void socketException( final Exception ex) {
+    public void socketException(final Exception ex) {
         NonBlockingTcpServerHandler.LOG.error(ex.getMessage(), ex);
     }
 

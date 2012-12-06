@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.IConnection;
 import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.NioConnection;
-import de.uniol.inf.is.odysseus.core.connection.NioTcpConnection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.CloseFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;

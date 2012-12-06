@@ -2,17 +2,16 @@ package de.uniol.inf.is.odysseus.core.connection;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
 public class TCPAcceptor implements AcceptorSelectorHandler {
 
-    private final SelectorThread   ioThread;
-    private final int              port;
+    private final SelectorThread      ioThread;
+    private final int                 port;
     private final TCPAcceptorListener listener;
-    private ServerSocketChannel    serverSocketChannel;
+    private ServerSocketChannel       serverSocketChannel;
 
     public TCPAcceptor(final int port, final SelectorThread ioThread, final TCPAcceptorListener listener) {
         this.ioThread = ioThread;
@@ -27,6 +26,7 @@ public class TCPAcceptor implements AcceptorSelectorHandler {
 
         this.ioThread.registerChannel(this.serverSocketChannel, SelectionKey.OP_ACCEPT, this,
                 new CallbackErrorHandler() {
+                    @SuppressWarnings("unused")
                     public void handleError(final Exception ex) {
                         TCPAcceptor.this.listener.socketError(TCPAcceptor.this, ex);
                     }
@@ -38,7 +38,6 @@ public class TCPAcceptor implements AcceptorSelectorHandler {
         SocketChannel channel = null;
         try {
             channel = this.serverSocketChannel.accept();
-            final Socket s = channel.socket();
             this.ioThread.addChannelInterestNow(this.serverSocketChannel, SelectionKey.OP_ACCEPT);
         }
         catch (final IOException e) {

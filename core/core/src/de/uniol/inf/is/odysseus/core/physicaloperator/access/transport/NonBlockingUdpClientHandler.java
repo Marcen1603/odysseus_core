@@ -59,18 +59,18 @@ public class NonBlockingUdpClientHandler extends AbstractTransportHandler implem
         super();
     }
 
-    public NonBlockingUdpClientHandler(IProtocolHandler<?> protocolHandler) {
+    public NonBlockingUdpClientHandler(final IProtocolHandler<?> protocolHandler) {
         super(protocolHandler);
     }
 
     @Override
-    public void send(byte[] message) throws IOException {
+    public void send(final byte[] message) throws IOException {
         this.connection.write(message);
     }
 
     @Override
-    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-        NonBlockingUdpClientHandler handler = new NonBlockingUdpClientHandler(protocolHandler);
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+        final NonBlockingUdpClientHandler handler = new NonBlockingUdpClientHandler(protocolHandler);
         handler.readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 1024;
         handler.writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 1024;
         handler.host = options.containsKey("host") ? options.get("host") : "127.0.0.1";
@@ -80,8 +80,8 @@ public class NonBlockingUdpClientHandler extends AbstractTransportHandler implem
             final InetSocketAddress address = new InetSocketAddress(handler.host, handler.port);
             handler.connector = new UDPConnector(handler.selector, address, handler);
         }
-        catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+        catch (final IOException e) {
+            NonBlockingUdpClientHandler.LOG.error(e.getMessage(), e);
         }
 
         return handler;
@@ -98,7 +98,7 @@ public class NonBlockingUdpClientHandler extends AbstractTransportHandler implem
     }
 
     @Override
-    public void process(ByteBuffer buffer) throws ClassNotFoundException {
+    public void process(final ByteBuffer buffer) throws ClassNotFoundException {
         super.fireProcess(buffer);
     }
 
@@ -109,28 +109,25 @@ public class NonBlockingUdpClientHandler extends AbstractTransportHandler implem
 
     @Override
     public OutputStream getOutputStream() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new IllegalArgumentException("Currently not implemented");
     }
 
     @Override
     public void processInOpen() throws UnknownHostException, IOException {
-        InetSocketAddress address = new InetSocketAddress(host, port);
         try {
             this.connector.connect();
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             throw new OpenFailedException(e);
         }
     }
 
     @Override
     public void processOutOpen() throws UnknownHostException, IOException {
-        InetSocketAddress address = new InetSocketAddress(host, port);
         try {
             this.connector.connect();
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             throw new OpenFailedException(e);
         }
     }
@@ -146,7 +143,7 @@ public class NonBlockingUdpClientHandler extends AbstractTransportHandler implem
     }
 
     @Override
-    public void notify(IConnection connection, ConnectionMessageReason reason) {
+    public void notify(final IConnection connection, final ConnectionMessageReason reason) {
         switch (reason) {
             case ConnectionAbort:
                 super.fireOnDisconnect();
@@ -172,28 +169,28 @@ public class NonBlockingUdpClientHandler extends AbstractTransportHandler implem
     }
 
     @Override
-    public void socketException(Exception cause) {
-        LOG.error(cause.getMessage(), cause);
+    public void socketException(final Exception cause) {
+        NonBlockingUdpClientHandler.LOG.error(cause.getMessage(), cause);
 
     }
 
     @Override
-    public void connectionEstablished(ConnectorSelectorHandler connector, DatagramChannel channel) {
+    public void connectionEstablished(final ConnectorSelectorHandler connector, final DatagramChannel channel) {
         try {
             channel.socket().setReceiveBufferSize(this.readBufferSize);
             channel.socket().setSendBufferSize(this.writeBufferSize);
             this.connection = new NioUdpConnection(channel, this.selector, this);
         }
-        catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+        catch (final IOException e) {
+            NonBlockingUdpClientHandler.LOG.error(e.getMessage(), e);
         }
 
         super.fireOnConnect();
     }
 
     @Override
-    public void connectionFailed(ConnectorSelectorHandler connector, Exception cause) {
-        LOG.error(cause.getMessage(), cause);
+    public void connectionFailed(final ConnectorSelectorHandler connector, final Exception cause) {
+        NonBlockingUdpClientHandler.LOG.error(cause.getMessage(), cause);
 
     }
 
