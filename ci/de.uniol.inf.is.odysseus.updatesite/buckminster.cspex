@@ -10,7 +10,7 @@
             </actorProperties>
             <properties>
                 <property key="profile" value="Profile" />
-                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product" />                
+                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product,de.uniol.inf.is.odysseus.product.memorystore.feature" />                
             </properties>
             <prerequisites alias="repository">
                 <attribute name="site.p2" />

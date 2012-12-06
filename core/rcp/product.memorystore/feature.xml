@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.product.memorystore"
+      id="de.uniol.inf.is.odysseus.product.memorystore.feature"
       label="Odysseus MemoryStore"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">

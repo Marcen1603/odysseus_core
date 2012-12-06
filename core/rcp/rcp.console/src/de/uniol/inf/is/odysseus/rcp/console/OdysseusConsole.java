@@ -19,6 +19,7 @@ import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -69,16 +70,16 @@ public class OdysseusConsole extends AppenderSkeleton {
 		return true;
 	}
 
-	
-
 	@Override
 	protected void append(LoggingEvent event) {
-		String message = this.layout.format(event);
-		String trace[];
-		outStream.print(message);
-		if ((trace = event.getThrowableStrRep()) != null) {
-			for (int i = 0; i < trace.length; i++) {				
-				outStream.println(trace[i]);				
+		if (PlatformUI.isWorkbenchRunning()) {
+			String message = this.layout.format(event);
+			String trace[];
+			outStream.print(message);
+			if ((trace = event.getThrowableStrRep()) != null) {
+				for (int i = 0; i < trace.length; i++) {
+					outStream.println(trace[i]);
+				}
 			}
 		}
 	}
