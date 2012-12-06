@@ -50,8 +50,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.application.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
-import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
 

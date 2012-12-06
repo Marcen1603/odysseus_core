@@ -318,5 +318,16 @@
          <enablement></enablement>
       </commonWizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.splashHandlers">
+      <splashHandler
+            class="de.uniol.inf.is.odysseus.rcp.startup.SplashHandler"
+            id="de.uniol.inf.is.odysseus.rcp.base.splashHandler">
+      </splashHandler>
+      <splashHandlerProductBinding
+            productId="de.uniol.inf.is.odysseus.rcp.starter.OdysseusStudio"
+            splashId="de.uniol.inf.is.odysseus.rcp.base.splashHandler">
+      </splashHandlerProductBinding>
+   </extension>
 
 </plugin>

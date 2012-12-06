@@ -21,8 +21,8 @@ import org.osgi.framework.BundleContext;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rcp.application.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
-import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 
 public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 
@@ -74,6 +74,8 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 	public static ISession getActiveSession() {
 		return activeSession;
 	}
+	
+	
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {

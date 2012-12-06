@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManag
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.application.StatusBarManager;
 
 public class DropAllSourcesCommand extends AbstractHandler {
 

@@ -28,7 +28,7 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.rcp.util;
+package de.uniol.inf.is.odysseus.rcp.application;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IWorkbenchPage;

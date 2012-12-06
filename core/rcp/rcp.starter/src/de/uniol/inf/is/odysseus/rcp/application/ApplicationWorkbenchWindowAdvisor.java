@@ -23,8 +23,6 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
-import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
-
 public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
@@ -54,21 +52,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		IStatusLineManager manager = getWindowConfigurer().getActionBarConfigurer().getStatusLineManager();
 		StatusBarManager.getInstance().setStatusLineManager(manager);
 
-//		BundleContext bundleContext = Activator.getDefault().getBundle().getBundleContext();
-//		ServiceReference<IProvisioningAgent> serviceReference = bundleContext.getServiceReference(IProvisioningAgent.class);
-//		IProvisioningAgent agent = bundleContext.getService(serviceReference);
-//		if (agent == null) {
-//			System.out.println(">> no agent loaded!");
-//			return;
-//		}
-//		// Adding the repositories to explore
-//		if (!P2Util.addRepository(agent, "http://odysseus.informatik.uni-oldenburg.de/update/")) {
-//			System.out.println(">> could no add repostory!");
-//			return;
-//		}
-//		// scheduling job for updates
-//		UpdateJob updateJob = new UpdateJob(agent);
-//		updateJob.schedule();
 
 	}
 }

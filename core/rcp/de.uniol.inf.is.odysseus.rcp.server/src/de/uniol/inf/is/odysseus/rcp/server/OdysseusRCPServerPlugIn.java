@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEven
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
-import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.application.StatusBarManager;
 
 /**
  * The activator class controls the plug-in life cycle

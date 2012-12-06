@@ -30,37 +30,25 @@ import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.rcp.Connect;
-import de.uniol.inf.is.odysseus.rcp.Login;
-import de.uniol.inf.is.odysseus.rcp.util.ConnectPreferencesManager;
-
 /**
  * This class controls all aspects of the application's execution
  */
 @SuppressWarnings("restriction")
 public class OdysseusApplication implements IApplication {
 
-	private static Logger LOG = LoggerFactory.getLogger(OdysseusApplication.class);
-	private static IExecutor executor;
+	private static Logger LOG = LoggerFactory.getLogger(OdysseusApplication.class);	
 
 	@Override
 	public synchronized Object start(IApplicationContext context) {
 
 		Display display = PlatformUI.createDisplay();
 		try {
-
-			waitForExecutor();
+			
 			if( !chooseWorkspace(display) ) {
 				return IApplication.EXIT_OK;
 			}
 
-			if (executor instanceof IClientExecutor) {
-				setClientConnection(display);
-			}
-
-			Login.loginWindow(display, false, false);
+			
 
 			return PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor()) 
 					== PlatformUI.RETURN_RESTART ? IApplication.EXIT_RESTART : IApplication.EXIT_OK; 
@@ -85,39 +73,7 @@ public class OdysseusApplication implements IApplication {
 					workbench.close();
 			}
 		});
-	}
-
-	public synchronized void bindExecutor(IExecutor exec) {
-		if (executor == null) {
-			executor = exec;
-			LOG.debug("Executor bound: " + exec);
-			notifyAll();
-		} else {
-			LOG.error("One executor already bound: " + executor);
-			LOG.error("Tried to bound new executor: " + exec);
-		}
-	}
-
-	public void unbindExecutor(IExecutor exec) {
-		if (executor == exec) {
-			exec = null;
-			LOG.debug("Executor unbound: " + exec);
-		} else {
-			LOG.error("Tried to unbound executor " + exec + " which is not bound here.");
-			LOG.error("Executor " + executor + " is bound.");
-		}
-	}
-
-	private static void setClientConnection(Display display) {
-		String wsdlLocation = "http://localhost:9669/odysseus?wsdl";
-		String service = "WebserviceServerService";
-		String serviceNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/";
-
-		ConnectPreferencesManager.getInstance().setWdslLocation(wsdlLocation);
-		ConnectPreferencesManager.getInstance().setService(service);
-		ConnectPreferencesManager.getInstance().setServiceNamespace(serviceNamespace);
-		Connect.connectWindow(display, false, false);
-	}
+	}	
 
 	private static boolean chooseWorkspace(Display display) {
 		try {
@@ -162,14 +118,5 @@ public class OdysseusApplication implements IApplication {
 			LOG.error("Could not release and set location", ex);
 			return false;
 		}
-	}
-	private static void waitForExecutor() {
-		while (executor == null) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+	}	
 }

@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.application.StatusBarManager;
 
 /**
  * Command for dropping all registered sinks at once.

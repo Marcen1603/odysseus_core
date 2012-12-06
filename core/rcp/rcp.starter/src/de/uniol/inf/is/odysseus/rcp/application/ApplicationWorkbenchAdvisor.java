@@ -21,10 +21,6 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
 
-
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.util.NavigatorHelper;
-
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	@Override
@@ -34,7 +30,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	@Override
 	public String getInitialWindowPerspectiveId() {
-		return OdysseusRCPPlugIn.QUERIES_PERSPECTIVE_ID;
+		return "de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective";
 	}
 
 	@Override

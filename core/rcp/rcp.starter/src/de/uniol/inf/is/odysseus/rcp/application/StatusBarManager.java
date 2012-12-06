@@ -13,7 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.status;
+package de.uniol.inf.is.odysseus.rcp.application;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +22,6 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.ui.PlatformUI;
-
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class StatusBarManager{
 
@@ -63,9 +60,9 @@ public class StatusBarManager{
 	}
 	
 	private void setStandardMessages() {
-		setMessage(StatusBarManager.EXECUTOR_ID, OdysseusNLS.NoExecutorFound);
-		setMessage(StatusBarManager.SCHEDULER_ID, OdysseusNLS.NoSchedulerFound);
-		setMessage(StatusBarManager.USER_ID, "User "+OdysseusRCPPlugIn.getActiveSession().getUser().getName());
+		setMessage(StatusBarManager.EXECUTOR_ID, "No executor found");
+		setMessage(StatusBarManager.SCHEDULER_ID, "No scheduler found");
+		setMessage(StatusBarManager.USER_ID, "anonymous");
 	}
 	
 	private void applyCache() {

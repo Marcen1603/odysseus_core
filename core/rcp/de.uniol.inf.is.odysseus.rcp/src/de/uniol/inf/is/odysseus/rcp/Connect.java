@@ -36,15 +36,15 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.rcp.application.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
-import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.ConnectPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.windows.ClientConnectionWindow;
 
 /**
  * 
  * @author Merlin Wasmann
- *
+ * 
  */
 
 public class Connect {
@@ -61,24 +61,19 @@ public class Connect {
 	private Connect() {
 	}
 
-	public static void connectWindow(Display parent, boolean forceShow,
-			boolean cancelOK) {
+	public static void connectWindow(Display parent, boolean forceShow, boolean cancelOK) {
 		// fetch data from prefs
-		String wsdlLocation = ConnectPreferencesManager.getInstance()
-				.getWsdlLocation();
+		String wsdlLocation = ConnectPreferencesManager.getInstance().getWsdlLocation();
 		String serviceNamespace = ConnectPreferencesManager.getInstance().getServiceNamespace();
 		String service = ConnectPreferencesManager.getInstance().getService();
 
-		if (wsdlLocation.length() > 0 && service.length() > 0 && serviceNamespace.length() > 0 && !forceShow
-				&& ConnectPreferencesManager.getInstance().getAutoConnect()) {
+		if (wsdlLocation.length() > 0 && service.length() > 0 && serviceNamespace.length() > 0 && !forceShow && ConnectPreferencesManager.getInstance().getAutoConnect()) {
 			if (!realConnect(wsdlLocation, service, serviceNamespace)) {
-				ClientConnectionWindow wnd = new ClientConnectionWindow(parent,
-						wsdlLocation, cancelOK);
+				ClientConnectionWindow wnd = new ClientConnectionWindow(parent, wsdlLocation, cancelOK);
 				wnd.show();
 			}
 		} else {
-			ClientConnectionWindow wnd = new ClientConnectionWindow(parent,
-					cancelOK);
+			ClientConnectionWindow wnd = new ClientConnectionWindow(parent, cancelOK);
 			wnd.show();
 		}
 	}
@@ -88,16 +83,14 @@ public class Connect {
 
 		boolean connected = false;
 		if (executor instanceof IClientExecutor) {
-			connected = ((IClientExecutor) executor).connect(wsdlLocation + ";"
-					+ serviceNamespace + ";" + service);
+			connected = ((IClientExecutor) executor).connect(wsdlLocation + ";" + serviceNamespace + ";" + service);
 		}
 
 		if (connected) {
 			// TODO: eventuell im OdysseusRCPPlugin was speichern
-			StatusBarManager.getInstance().setMessage(
-					OdysseusNLS.AutomaticallyConnectedTo + " " + wsdlLocation);
+			StatusBarManager.getInstance().setMessage(OdysseusNLS.AutomaticallyConnectedTo + " " + wsdlLocation);
 		}
-		
+
 		return connected;
 	}
 }
