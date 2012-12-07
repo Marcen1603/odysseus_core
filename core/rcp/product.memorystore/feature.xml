@@ -22,39 +22,30 @@
    </url>
 
    <includes
-         id="de.uniol.inf.is.odysseus.core.feature"
+         id="org.eclipse.platform"
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.relational.feature"
+         id="org.eclipse.rcp"
          version="0.0.0"/>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.studio.feature"
+   <plugin
+         id="de.uniol.inf.is.odysseus.slf4j"
+         download-size="0"
+         install-size="0"
          version="0.0.0"/>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.scheduling.feature"
-         version="0.0.0"/>
+   <plugin
+         id="de.uniol.inf.is.odysseus.rcp.starter"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.planmgmt.standard.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.datadictionary.mem.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.usermanagement.mem.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.gef"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.securitypunctuation.feature"
+   <plugin
+         id="com.google.guava"
+         download-size="0"
+         install-size="0"
          version="0.0.0"/>
 
 </feature>
