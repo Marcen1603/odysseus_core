@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +43,8 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	private Text text;
 
 	private int receivedElements;
-	private boolean showHeartbeats = false;
 	private final int maxElements;
+	private ToolItem showHeartbeatsToolbarItem;
 
 	private List<String> pendingElements = Lists.newLinkedList();
 
@@ -117,7 +118,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	@Override
 	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 		synchronized (pendingElements) {
-			if (!punctuation.isHeartbeat() || showHeartbeats) {
+			if (!punctuation.isHeartbeat() || showHeartbeatsToolbarItem.getSelection()) {
 				pendingElements.add("Punctuation: " + punctuation);
 				if (!isInfinite() && pendingElements.size() > maxElements) {
 					pendingElements.remove(0);
@@ -139,6 +140,8 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
 	@Override
 	public void initToolbar(ToolBar toolbar) {
+		showHeartbeatsToolbarItem = new ToolItem(toolbar, SWT.CHECK);
+	    showHeartbeatsToolbarItem.setText("Consider heartbeats");
 	}
 
 	private void refreshText() {
@@ -167,14 +170,6 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
 	private boolean isInfinite() {
 		return maxElements < 0;
-	}
-	
-	public void setShowHeartbeats(boolean showHeartbeats) {
-		this.showHeartbeats = showHeartbeats;
-	}
-	
-	public boolean isShowHeartbeats() {
-		return showHeartbeats;
 	}
 	
 	private static void waiting() {
