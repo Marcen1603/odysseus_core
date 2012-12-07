@@ -110,7 +110,7 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		transferFunction.newHeartbeat(punctuation.getTime(), port);
+		transferFunction.sendPunctuation(punctuation);
 	}
 
 	@Override

@@ -17,7 +17,9 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 
@@ -38,13 +40,28 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	 * @param object Das neue Objekt aus dem Eingabedatenstrom des Operators
 	 * @param port Port, auf dem das neue Objekt im Operator angekommen ist
 	 */
-	public void newElement(R object, int inPort);
+	public void newElement(IStreamable object, int inPort);
 
 	/**
 	 * Fuegt ein neues Element in den Heap ein.
 	 * @param object Objekt, das in den Heap eingefuegt werden soll.
 	 */
 	public void transfer(W object);
+
+	/**
+	 * To avoid packing time stamps into a punctuation, this
+	 * method can be used. It will not create a new punctuation!
+	 * @param heartbeat
+	 * @param inPort
+	 */
+	void newHeartbeat(PointInTime heartbeat, int inPort);
+
+	
+	/** Wenn eine Punctuation kommt, muss diese auch korrekt verwaltet werden
+	 * 
+	 * @param punctuation
+	 */
+	public void sendPunctuation(IPunctuation punctuation);		
 
 	public void done();
 
@@ -56,7 +73,7 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 
 	@Override
 	public ITransferArea<R,W> clone();
+
 	
-	public void newHeartbeat(PointInTime heartbeat, int inPort);	
 		
 }

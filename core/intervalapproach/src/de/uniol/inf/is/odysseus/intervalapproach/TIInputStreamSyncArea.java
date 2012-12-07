@@ -29,9 +29,12 @@ import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 
@@ -53,13 +56,20 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 	final protected Map<Integer, PointInTime> minTsForPort = new HashMap<Integer, PointInTime>();
 	private PointInTime minTs = null;
 	protected IProcessInternal<T> po;
-	private PriorityQueue<IPair<T, Integer>> inputQueue = new PriorityQueue<IPair<T, Integer>>(
-			10, new Comparator<IPair<T, Integer>>() {
+	private PriorityQueue<IPair<IStreamable, Integer>> inputQueue = new PriorityQueue<IPair<IStreamable, Integer>>(
+			10, new Comparator<IPair<IStreamable, Integer>>() {
+				@SuppressWarnings("unchecked")
 				@Override
-				public int compare(IPair<T, Integer> left,
-						IPair<T, Integer> right) {
-					return left.getE1().getMetadata()
-							.compareTo(right.getE1().getMetadata());
+				public int compare(IPair<IStreamable, Integer> left,
+						IPair<IStreamable, Integer> right) {
+					PointInTime l = left.getE1().isPunctuation() ? ((IPunctuation) left
+							.getE1()).getTime() : ((T) left.getE1())
+							.getMetadata().getStart();
+					PointInTime r = right.getE1().isPunctuation() ? ((IPunctuation) right
+							.getE1()).getTime() : ((T) right.getE1())
+							.getMetadata().getStart();
+
+					return l.compareTo(r);
 				}
 			});
 
@@ -105,15 +115,23 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 		this.minTsForPort.remove(port);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public synchronized void newElement(T object, int inPort) {
-		// getLogger().debug("New Element "+object+" Port="+inPort+" current min "+minTs);
+	public synchronized void newElement(IStreamable object, int inPort) {
+		//getLogger().debug("New Element "+object+" Port="+inPort+" current min "+minTs+" size"+inputQueue.size());
+
 		// Remove all elements that are before minTS
 		// can happen if a new source is appended at runtime
-		PointInTime ts = object.getMetadata().getStart();
+
+		PointInTime ts;
+		if (object.isPunctuation()) {
+			ts = ((IPunctuation) object).getTime();
+		} else {
+			ts = ((T) object).getMetadata().getStart();
+		}
 		if (minTsForPort.containsKey(inPort)) {
 			if (minTs == null || !ts.before(minTs)) {
-				inputQueue.add(new Pair<T, Integer>(object, inPort));
+				inputQueue.add(new Pair<IStreamable, Integer>(object, inPort));
 				newHeartbeat(ts, inPort);
 			} else {
 				getLogger().warn(
@@ -127,10 +145,15 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void done() {
-		for (IPair<T, Integer> element : inputQueue) {
-			po.process_internal(element.getE1(), element.getE2());
+		for (IPair<IStreamable, Integer> element : inputQueue) {
+			if (element.getE1().isPunctuation()) {
+				po.process_punctuation_intern((IPunctuation) element.getE1(), element.getE2());
+			} else {
+				po.process_internal((T) element.getE1(), element.getE2());
+			}
 		}
 		inputQueue.clear();
 	}
@@ -145,7 +168,7 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 		return new TIInputStreamSyncArea<T>(this);
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
 	public synchronized void newHeartbeat(PointInTime heartbeat, int inPort) {
 		if (minTs == null || !heartbeat.before(minTs)) {
 
@@ -158,21 +181,34 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 				synchronized (this.inputQueue) {
 					// don't use an iterator, it does NOT guarantee ordered
 					// traversal!
-					IPair<T, Integer> elem = this.inputQueue.peek();
+					IPair<IStreamable, Integer> elem = this.inputQueue.peek();
 					boolean elementsSend = false;
-					while (elem != null
-							&& elem.getE1().getMetadata().getStart()
+					while (elem != null)
+						if (elem.getE1().isPunctuation()) {
+							if (((IPunctuation) elem.getE1()).getTime().beforeOrEquals(minTs)) {
+								this.inputQueue.poll();
+								po.process_punctuation_intern((IPunctuation)elem.getE1(), elem.getE2());
+								elem = this.inputQueue.peek();
+							}else{
+								elem = null;
+							}
+							
+						} else {
+							if (((T) elem.getE1()).getMetadata().getStart()
 									.beforeOrEquals(minTs)) {
-						this.inputQueue.poll();
+								this.inputQueue.poll();
 
-						po.process_internal(elem.getE1(), elem.getE2());
-						// getLogger().debug("Process "+elem.getE1()+" on Port "+elem.getE2());
-						elem = this.inputQueue.peek();
-						elementsSend = true;
-					}
-//					// Avoid unnecessary punctuations!
+								po.process_internal((T)elem.getE1(), elem.getE2());
+								// getLogger().debug("Process "+elem.getE1()+" on Port "+elem.getE2());
+								elem = this.inputQueue.peek();
+								elementsSend = true;
+							}else{
+								elem = null;
+							}
+						}
+					// // Avoid unnecessary punctuations!
 					if (!elementsSend) {
-						po.process_newHeartbeat(minTs);
+						po.process_newHeartbeat(new Heartbeat(minTs));
 					}
 				}
 			}
@@ -272,10 +308,16 @@ class TestClass<R extends IStreamObject<? extends ITimeInterval>> implements
 	}
 
 	@Override
-	public void process_newHeartbeat(PointInTime pointInTime) {
-		validate(pointInTime, null);
+	public void process_newHeartbeat(Heartbeat pointInTime) {
+		validate(pointInTime.getTime(), null);
 	}
 
+	@Override
+	public void process_punctuation_intern(IPunctuation punctuation, int port) {
+		validate(punctuation.getTime(),null);
+	}
+
+	
 	private void validate(PointInTime start, R event) {
 		if (lastElement == null) {
 			lastElement = start;
@@ -288,5 +330,6 @@ class TestClass<R extends IStreamObject<? extends ITimeInterval>> implements
 			}
 		}
 	}
+
 
 }

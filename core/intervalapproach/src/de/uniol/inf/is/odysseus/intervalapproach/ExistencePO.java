@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Iterator;
@@ -33,14 +33,14 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea;
 
 /**
- * Works the same way as JoinTIPO, but only the left elements are passed
- * to the output stream. Furthermore, no duplicates will be produced. That means,
- * for each element on the left, only one element will be put into the result,
- * no matter if there is more than one element on the right.
+ * Works the same way as JoinTIPO, but only the left elements are passed to the
+ * output stream. Furthermore, no duplicates will be produced. That means, for
+ * each element on the left, only one element will be put into the result, no
+ * matter if there is more than one element on the right.
  * 
  * The semantic: If on the right there exist an element, so that the join
- * predicate is fullfilled, the corresponding left element will be put into
- * the result.
+ * predicate is fullfilled, the corresponding left element will be put into the
+ * result.
  * 
  * @author Jonas Jacobi, abolles, jan steinke
  * 
@@ -51,31 +51,32 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepAr
  */
 public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends AbstractPipe<T, T> {
-	private static Logger _logger =  null;
-	
-	private static Logger getLogger(){
-		if (_logger == null){
+	private static Logger _logger = null;
+
+	private static Logger getLogger() {
+		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(JoinTIPO.class);
 		}
 		return _logger;
 	}
-	
+
 	//
 	private static final int LEFT = 0;
 	//
 	private static final int RIGHT = 1;
-	
+
 	private ITemporalSweepArea<T>[] areas;
 	private IPredicate<? super T> joinPredicate;
 
-	protected ITransferArea<T,T> transferFunction;
-	
+	protected ITransferArea<T, T> transferFunction;
+
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
 	private int otherport = 0;
 
 	@SuppressWarnings("unchecked")
-	public ExistencePO(ITemporalSweepArea<T> leftArea, ITemporalSweepArea<T> rightArea) {
+	public ExistencePO(ITemporalSweepArea<T> leftArea,
+			ITemporalSweepArea<T> rightArea) {
 		this.areas = new ITemporalSweepArea[2];
 		this.areas[0] = leftArea;
 		this.areas[1] = rightArea;
@@ -121,7 +122,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 	}
 
-	public void setTransferFunction(ITransferArea<T,T> transferFunction) {
+	public void setTransferFunction(ITransferArea<T, T> transferFunction) {
 		this.transferFunction = transferFunction;
 		transferFunction.init(this);
 	}
@@ -132,7 +133,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	@SuppressWarnings({"unchecked"})
+	@SuppressWarnings({ "unchecked" })
 	protected void process_next(T object, int port) {
 
 		if (isDone()) {
@@ -147,7 +148,8 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 			return;
 		}
 		if (!isOpen()) {
-			getLogger().error("process next called on non open operator "+this);
+			getLogger().error(
+					"process next called on non open operator " + this);
 			return;
 		}
 		otherport = port ^ 1;
@@ -164,70 +166,70 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 				return;
 			}
 		}
-		
+
 		// differentiate between left and right
-		if(port == LEFT){
+		if (port == LEFT) {
 			Iterator<T> qualifies = areas[otherport].queryCopy(object, order);
 			K curMetadata = object.getMetadata();
 			boolean elementFull = false;
-			while(qualifies.hasNext()){
+			while (qualifies.hasNext()) {
 				T next = qualifies.next();
-				ITimeInterval newInterval = TimeInterval.intersection(curMetadata, next.getMetadata());
+				ITimeInterval newInterval = TimeInterval.intersection(
+						curMetadata, next.getMetadata());
 				// the merged interval can be null, if the following happens
 				// right stream:
-				// 1.       |---------------------|
-				// 2.           |--------|
+				// 1. |---------------------|
+				// 2. |--------|
 				// left stream:
-				// a.     |----------------------------|
+				// a. |----------------------------|
 				// results:
-				// (1,a)    |---------------------|
+				// (1,a) |---------------------|
 				// rest of validity of a:
-				//                                |----|
+				// |----|
 				// then (2,a) will be null, since it is covered
 				// be (1,a), one element per left input!
-				//              |--------|
-				//                                |----|
-				if(newInterval != null){
-					T clonedInput = (T)object.clone();
+				// |--------|
+				// |----|
+				if (newInterval != null) {
+					T clonedInput = (T) object.clone();
 					clonedInput.getMetadata().setStart(newInterval.getStart());
 					clonedInput.getMetadata().setEnd(newInterval.getEnd());
 					transferFunction.transfer(clonedInput);
-					if(newInterval.getEnd().before(curMetadata.getEnd())){
+					if (newInterval.getEnd().before(curMetadata.getEnd())) {
 						curMetadata.setStart(newInterval.getEnd());
-					}
-					else{
+					} else {
 						elementFull = true;
 						break;
 					}
 				}
 			}
-			
+
 			// the element has not been processed for the whole
 			// validity. Remember: each element on the left
 			// will be processed only once for each point in time
 			// of its validity.
-			if(!elementFull){
+			if (!elementFull) {
 				object.getMetadata().setStart(curMetadata.getStart());
 				object.getMetadata().setEnd(curMetadata.getEnd());
 				areas[port].insert(object);
 			}
-		}
-		else if(port == RIGHT){
+		} else if (port == RIGHT) {
 			Iterator<T> qualifies = areas[otherport].queryCopy(object, order);
-			//LinkedList<T> modifiedElemsOnLeft = new LinkedList<T>();
-			while(qualifies.hasNext()){
+			// LinkedList<T> modifiedElemsOnLeft = new LinkedList<T>();
+			while (qualifies.hasNext()) {
 				T next = qualifies.next();
 				K curMetadata = next.getMetadata();
-				ITimeInterval newInterval = TimeInterval.intersection(curMetadata, object.getMetadata());
+				ITimeInterval newInterval = TimeInterval.intersection(
+						curMetadata, object.getMetadata());
 				// here the interval cannot be null, because
 				// otherwise the element from the left would
 				// not be in qualifies.
-				
-				T clonedLeft = (T)next.clone();
+
+				T clonedLeft = (T) next.clone();
 				clonedLeft.getMetadata().setStart(newInterval.getStart());
 				clonedLeft.getMetadata().setEnd(newInterval.getEnd());
 				transferFunction.transfer(clonedLeft);
-				if(newInterval.getEnd().before(curMetadata.getEnd())){
+				if (newInterval.getEnd().before(curMetadata.getEnd())) {
 					areas[otherport].remove(next);
 					curMetadata.setStart(newInterval.getEnd());
 					next.getMetadata().setStart(curMetadata.getStart());
@@ -235,14 +237,14 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 					areas[otherport].insert(next);
 				}
 			}
-			
+
 			this.areas[port].insert(object);
-		}
-		else{
-			throw new RuntimeException("Invalid port '" + port + "' in ExistencePO.");
+		} else {
+			throw new RuntimeException("Invalid port '" + port
+					+ "' in ExistencePO.");
 		}
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		for (int i = 0; i < 2; ++i) {
@@ -265,7 +267,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 			if (getSubscribedToSource(0).isDone()) {
 				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
 			}
-            return getSubscribedToSource(0).isDone() && areas[1].isEmpty();
+			return getSubscribedToSource(0).isDone() && areas[1].isEmpty();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// Can happen if sources are unsubscribed while asking for done
 			// Ignore
@@ -296,19 +298,23 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
-		this.areas[port^1].purgeElementsBefore(punctuation.getTime());
-		this.transferFunction.newHeartbeat(punctuation.getTime(), port);
+	public synchronized void processPunctuation(IPunctuation punctuation,
+			int port) {
+		if (punctuation.isHeartbeat()) {
+			this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
+		}
+		this.transferFunction.newElement(punctuation, port);
 	}
-	
+
 	@Override
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(!(ipo instanceof ExistencePO)) {
+		if (!(ipo instanceof ExistencePO)) {
 			return false;
 		}
 		ExistencePO epo = (ExistencePO) ipo;
-		if(this.hasSameSources(epo) && this.joinPredicate.equals(epo.joinPredicate)) {
+		if (this.hasSameSources(epo)
+				&& this.joinPredicate.equals(epo.joinPredicate)) {
 			return true;
 		}
 		return false;

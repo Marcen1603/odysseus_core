@@ -15,6 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
@@ -29,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
  */
 public class ChangeDetectPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 
+	static final Logger logger = LoggerFactory.getLogger(ChangeDetectPO.class);
+	
 	R lastElement;
 	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
 	private boolean deliverFirstElement = false;
@@ -47,6 +52,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 
 	@Override
 	protected synchronized void process_next(R object, int port) {
+//		logger.debug("Process next: "+object);
 		if (lastElement == null) {
 			lastElement = object;
 			if (deliverFirstElement){

@@ -168,8 +168,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 				}
 			}
 		}
+		//transferArea.newElement(new Heartbeat(border),0);
 		transferArea.newHeartbeat(border, 0);
-
 		// System.out.println(this+"Found Bordertime "+border+" at timestamp "+timestamp);
 		// for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema,
 		// AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups

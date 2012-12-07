@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -48,7 +49,7 @@ public class NElementHeartbeatGeneration <K extends ITimeInterval, T extends ISt
 	public void generateHeartbeat(T object, ISource<?> source) {
 		if (counter % eachElement == 0){
 			counter = 0;
-			source.sendPunctuation(object.getMetadata().getStart());
+			source.sendPunctuation(new Heartbeat(object.getMetadata().getStart()));
 			logger.debug("Sending punctuation ... ");
 		}
 		counter++;

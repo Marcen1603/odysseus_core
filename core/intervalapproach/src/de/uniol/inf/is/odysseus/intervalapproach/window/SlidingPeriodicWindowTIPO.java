@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 
@@ -80,7 +81,7 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 
 		// Check if elements outside any window
 		if (object.getMetadata().getStart().before(p_start)) {
-			sendPunctuation(object.getMetadata().getStart());
+			sendPunctuation(new Heartbeat(object.getMetadata().getStart()));
 		} else {
 			object.getMetadata().setStartAndEnd(p_start, p_end);
 			transfer(object);

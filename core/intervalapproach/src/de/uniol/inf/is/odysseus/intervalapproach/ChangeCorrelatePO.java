@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -114,6 +114,11 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 			}
 		}
 	}
+	
+	@Override
+	public void process_punctuation_intern(IPunctuation punctuation, int port) {
+		// TODO: What to do with punctuations?
+	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
@@ -124,12 +129,11 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		inputStreamSyncArea.newHeartbeat(punctuation.getTime(), port);
-		outputTransferArea.newHeartbeat(punctuation.getTime(), port);
+		inputStreamSyncArea.newElement(punctuation, port);
 	}
 
 	@Override
-	public void process_newHeartbeat(PointInTime pointInTime) {
+	public void process_newHeartbeat(Heartbeat pointInTime) {
 		sendPunctuation(pointInTime);
 	}
 

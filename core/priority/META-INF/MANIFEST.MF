@@ -20,6 +20,6 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.priority,
  de.uniol.inf.is.odysseus.priority.buffer
-Service-Component: OSGI-INF/directinterlinkbufferplacement.xml, OSGI-INF/weakorderbufferplacement.xml, OSGI-INF/strongorderbufferplacement.xml, OSGI-INF/Priority.xml
+Service-Component: OSGI-INF/directinterlinkbufferplacement.xml, OSGI-INF/Priority.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

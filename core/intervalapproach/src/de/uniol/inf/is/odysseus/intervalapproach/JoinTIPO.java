@@ -281,9 +281,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
-		this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
-		this.transferFunction.newHeartbeat(punctuation.getTime(), port);
+	public synchronized void processPunctuation(IPunctuation punctuation,
+			int port) {
+		if (punctuation.isHeartbeat()) {
+			this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
+		}
+		this.transferFunction.newElement(punctuation, port);
 		fire(this.processPunctuationDoneEvent);
 	}
 

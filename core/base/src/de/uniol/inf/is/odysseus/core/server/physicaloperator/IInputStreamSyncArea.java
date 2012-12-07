@@ -16,8 +16,8 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 
 /**
  *	This class can be used to generate time order over different input streams. 
@@ -35,14 +35,14 @@ public interface IInputStreamSyncArea<T extends IStreamObject<?>> extends IClone
 	 * @param object the element top add
 	 * @param port the input port of the element
 	 */
-	public void newElement(T object, int inPort);
+	public void newElement(IStreamable object, int inPort);
 
-	/**
-	 * Can be called to state time progress 
-	 * @param heartbeat all following elements have a new time stamp 
-	 * @param inPort on this port
-	 */
-	public void newHeartbeat(PointInTime heartbeat, int inPort);
+//	/**
+//	 * Can be called to state time progress 
+//	 * @param heartbeat all following elements have a new time stamp 
+//	 * @param inPort on this port
+//	 */
+//	public void newHeartbeat(PointInTime heartbeat, int inPort);
 
 	/**
 	 * States the end of processing and leads to sending all elements from 

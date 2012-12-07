@@ -18,16 +18,16 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.core.Order;
 
 /**
  * Der JoinOperator kann zwar von den Generics her gesehen unabhaengig von Daten- und
@@ -101,10 +101,8 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>> e
 		}
 		
 		// man muss immer den minimalen Zeitstempel der linken SweepArea wählen
+		//transferFunction.newElement(new Heartbeat(this.areas[0].getMinTs()), port);
 		transferFunction.newHeartbeat(this.areas[0].getMinTs(), port);
-		
-//		transferFunction.newElement(object, port);
-		
 		synchronized (this) {
 			// status could change, if the other port was done and
 			// its sweeparea is now empty after purging

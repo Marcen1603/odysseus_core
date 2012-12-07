@@ -65,7 +65,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		transferFunction.newHeartbeat(punctuation.getTime(), port);
+		transferFunction.newElement(punctuation, port);
 	}
 	
 	@Override

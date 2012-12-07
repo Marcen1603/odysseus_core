@@ -26,11 +26,6 @@ import de.uniol.inf.is.odysseus.priority.IPriority;
  */
 public class PriorityTITransferArea<K extends ITimeInterval, R extends IStreamObject<K>, W extends IStreamObject<K>>
 		extends TITransferArea<R, W> {
-	
-	@Override
-	public void newElement(R object, int port) {
-		super.newElement(object, port);
-	}
 
 	@Override
 	public void transfer(W object) {

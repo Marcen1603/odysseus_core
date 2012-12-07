@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
 import sun.awt.util.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
-import de.uniol.inf.is.odysseus.core.connection.NioTcpConnection;
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;

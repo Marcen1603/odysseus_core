@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -60,7 +61,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 					if (!restart) {
 						PointInTime punctuation = getWatermark().sum(
 								applicationTimeDelay);
-						AssureHeartbeatPO.this.sendPunctuation(punctuation);
+						AssureHeartbeatPO.this.sendPunctuation(new Heartbeat(punctuation));
 					}
 				} catch (InterruptedException e) {
 					// e.printStackTrace();

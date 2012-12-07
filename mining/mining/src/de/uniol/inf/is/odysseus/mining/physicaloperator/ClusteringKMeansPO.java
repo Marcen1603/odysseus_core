@@ -158,7 +158,9 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 			}
 
 			// and invoke transfers
+			//this.transferFunctionMeans.newElement(new Heartbeat(currentTime), port);
 			this.transferFunctionMeans.newHeartbeat(currentTime, port);
+			//this.transferFunctionTuples.newElement(new Heartbeat(currentTime), port);
 			this.transferFunctionTuples.newHeartbeat(currentTime, port);
 		}
 		// finally, remove all things we do not need anymore

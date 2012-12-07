@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
@@ -134,7 +135,7 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 				}
 				// Send punctuation. New start is known!
 				if (lastSlide > 0) {
-					sendPunctuation(p_end);
+					sendPunctuation(new Heartbeat(p_end));
 				}
 
 				this.lastSlide = slide;

@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.core.metadata;
 
 import java.io.Serializable;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-
 /**
  * 
  * This immutable class represents a simple point in time and that can be
@@ -28,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
  * 
  */
 public class PointInTime implements Comparable<PointInTime>, Cloneable,
-		Serializable, IPunctuation {
+		Serializable, ITimeComparable {
 
 	private static final String INFINITY_SYMBOL = "oo";
 
@@ -302,14 +300,5 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		return ZERO.clone();
 	}
 
-	@Override
-	public PointInTime getTime() {
-		return this;
-	}
-	
-	@Override
-	public boolean isPunctuation() {
-		return true;
-	}
 
 }

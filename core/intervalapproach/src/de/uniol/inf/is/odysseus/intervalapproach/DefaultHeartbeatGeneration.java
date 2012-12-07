@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -29,7 +30,7 @@ public class DefaultHeartbeatGeneration<K extends ITimeInterval, T extends IStre
 	
 	@Override
 	public void generateHeartbeat(T object, ISource<?> source) {
-		source.sendPunctuation(object.getMetadata().getStart());
+		source.sendPunctuation(new Heartbeat(object.getMetadata().getStart()));
 		logger.debug("Send Heartbeat"+object.getMetadata().getStart());
 	}
 

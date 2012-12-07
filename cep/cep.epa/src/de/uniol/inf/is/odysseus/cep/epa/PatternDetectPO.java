@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -187,14 +188,20 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 	}
 
 	@Override
-	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
-		inputStreamSyncArea.newHeartbeat(punctuation.getTime(), port);
-		outputTransferArea.newHeartbeat(punctuation.getTime(), port);
+	public synchronized void processPunctuation(IPunctuation punctuation,
+			int port) {
+		//inputStreamSyncArea.newHeartbeat(punctuation.getTime(), port);
+		inputStreamSyncArea.newElement(punctuation, port);
 	}
 
 	@Override
-	public void process_newHeartbeat(PointInTime pointInTime) {
-		process_internal(null, pointInTime, -1);
+	public void process_newHeartbeat(Heartbeat pointInTime) {
+		process_internal(null, pointInTime.getTime(), -1);
+	}
+
+	@Override
+	public void process_punctuation_intern(IPunctuation punctuation, int port) {
+		outputTransferArea.newElement(punctuation, port);
 	}
 
 	private void process_internal(R event, PointInTime heartbeat, int port) {
@@ -256,7 +263,9 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 					outputTransferArea.transfer(e);
 				}
 			} else {
-				heartbeatGenerationStrategy.generateHeartbeat(event, this);
+				if (event != null) {
+					heartbeatGenerationStrategy.generateHeartbeat(event, this);
+				}
 			}
 		}
 	}

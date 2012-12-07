@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
@@ -420,5 +421,10 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		LOG.debug("" + this.getIntegerAttribute("sign"));
 		LOG.debug("" + this.getIntegerAttribute("mutable"));
 		LOG.debug("" + this.getLongAttribute("ts"));
+	}
+
+	@Override
+	public AbstractPunctuation clone() {
+		throw new IllegalArgumentException("Clone not supported!");
 	}
 }

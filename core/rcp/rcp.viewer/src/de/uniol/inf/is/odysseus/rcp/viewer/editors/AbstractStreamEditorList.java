@@ -36,14 +36,15 @@ import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
 	static Logger LOG = LoggerFactory.getLogger(AbstractStreamEditorList.class);
-	
+
 	private static final int REFRESH_INTERVAL_MILLIS = 1000;
 
 	private Text text;
 
 	private int receivedElements;
+	private boolean showHeartbeats = false;
 	private final int maxElements;
-	
+
 	private List<String> pendingElements = Lists.newLinkedList();
 
 	public AbstractStreamEditorList(int maxElements) {
@@ -52,7 +53,8 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+		text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL
+				| SWT.V_SCROLL | SWT.WRAP);
 		text.setEditable(false);
 		text.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
@@ -115,15 +117,18 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	@Override
 	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 		synchronized (pendingElements) {
-			pendingElements.add("Punctuation: " + punctuation);
-			if (!isInfinite() && pendingElements.size() > maxElements) {
-				pendingElements.remove(0);
+			if (!punctuation.isHeartbeat() || showHeartbeats) {
+				pendingElements.add("Punctuation: " + punctuation);
+				if (!isInfinite() && pendingElements.size() > maxElements) {
+					pendingElements.remove(0);
+				}
 			}
 		}
 	}
-	
+
 	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp,
+			int port) {
 		synchronized (pendingElements) {
 			pendingElements.add("Security Punctuation: " + sp);
 			if (!isInfinite() && pendingElements.size() > maxElements) {
@@ -137,33 +142,41 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	}
 
 	private void refreshText() {
-		synchronized(pendingElements) {
-			if( pendingElements.isEmpty()) {
+		synchronized (pendingElements) {
+			if (pendingElements.isEmpty()) {
 				return;
 			}
-						
-			for( String element : pendingElements ) {
+
+			for (String element : pendingElements) {
 				text.append(element + "\n");
 				receivedElements++;
 
-				if( !isInfinite() && receivedElements > maxElements ) {
+				if (!isInfinite() && receivedElements > maxElements) {
 					String txt = text.getText();
 					int pos = txt.indexOf("\n");
-					txt = txt.substring(pos+1);
-					text.setText(txt);					
+					txt = txt.substring(pos + 1);
+					text.setText(txt);
 					receivedElements--;
 				}
 			}
-			text.setSelection(text.getCharCount());		
+			text.setSelection(text.getCharCount());
 			pendingElements.clear();
-			
+
 		}
 	}
 
 	private boolean isInfinite() {
 		return maxElements < 0;
 	}
-
+	
+	public void setShowHeartbeats(boolean showHeartbeats) {
+		this.showHeartbeats = showHeartbeats;
+	}
+	
+	public boolean isShowHeartbeats() {
+		return showHeartbeats;
+	}
+	
 	private static void waiting() {
 		try {
 			Thread.sleep(REFRESH_INTERVAL_MILLIS);

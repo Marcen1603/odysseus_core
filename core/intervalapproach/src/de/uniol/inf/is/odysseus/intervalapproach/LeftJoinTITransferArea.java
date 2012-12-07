@@ -15,38 +15,52 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.intervalapproach;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
-public class LeftJoinTITransferArea <R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
-	extends TITransferArea<R, W>{
+public class LeftJoinTITransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
+		extends TITransferArea<R, W> {
 
-	
-	/**
-	 * removes all elements whose start timestamp is before heartbeat
-	 */
-	@Override
-    public void newHeartbeat(PointInTime heartbeat, int inPort) {
-		PointInTime minimum = heartbeat;
-		if (minimum != null) {
-			synchronized (this.outputQueue) {
-				boolean wasElementSent = false;
-				// don't use an iterator, it does NOT guarantee ordered
-				// traversal!
-				W elem = this.outputQueue.peek();
-				while (elem != null && elem.getMetadata() != null
-						&& elem.getMetadata().getStart()
-								.beforeOrEquals(minimum)) {
-					this.outputQueue.poll();
-					wasElementSent = true;
-					po.transfer(elem);
-					elem = this.outputQueue.peek();
-				}
-				if (wasElementSent) {
-					po.sendPunctuation(minimum);
-				}
-			}
-		}
-	}
+//	/**
+//	 * removes all elements whose start timestamp is before heartbeat
+//	 */
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public void newHeartbeat(PointInTime heartbeat, int inPort) {
+//		// FIXME: Why is this method overwritten??
+//		PointInTime minimum = heartbeat;
+//		if (minimum != null) {
+//			synchronized (this.outputQueue) {
+//				boolean wasElementSent = false;
+//				// don't use an iterator, it does NOT guarantee ordered
+//				// traversal!
+//				IStreamable elem = this.outputQueue.peek();
+//				while (elem != null) {
+//					if (elem.isPunctuation()) {
+//						if (((IPunctuation)elem).getTime().beforeOrEquals(minimum)){
+//							this.outputQueue.poll();
+//							po.sendPunctuation((IPunctuation) elem);
+//							elem = this.outputQueue.peek();
+//						}else{
+//							elem = null;
+//						}
+//					} else {
+//						if (((W) elem).getMetadata() != null
+//								&& ((W) elem).getMetadata().getStart()
+//										.beforeOrEquals(minimum)) {
+//							this.outputQueue.poll();
+//							wasElementSent = true;
+//							po.transfer((W) elem);
+//							elem = this.outputQueue.peek();
+//						} else {
+//							elem = null;
+//						}
+//					}
+//				}
+//				if (wasElementSent) {
+//					po.sendPunctuation(new Heartbeat(minimum));
+//				}
+//			}
+//		}
+//	}
 }

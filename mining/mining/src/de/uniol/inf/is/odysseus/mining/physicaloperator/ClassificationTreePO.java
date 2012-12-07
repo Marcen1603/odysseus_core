@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -77,9 +77,14 @@ public class ClassificationTreePO<M extends ITimeInterval> extends AbstractPipe<
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		inputStreamSyncArea.newHeartbeat(punctuation.getTime(), port);
+		inputStreamSyncArea.newElement(punctuation, port);
 	}
 
+	@Override
+	public void process_punctuation_intern(IPunctuation punctuation, int port) {
+		// TODO: What to do with punctuations?
+	}
+	
 	private Object classify(Tuple<M> tuple) {
 
 		TreeNode currentNode = this.classificationTree;
@@ -120,7 +125,7 @@ public class ClassificationTreePO<M extends ITimeInterval> extends AbstractPipe<
 	}
 
 	@Override
-	public void process_newHeartbeat(PointInTime pointInTime) {		
+	public void process_newHeartbeat(Heartbeat pointInTime) {		
 	}
 
 }

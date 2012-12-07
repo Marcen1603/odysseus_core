@@ -27,6 +27,11 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public abstract class AbstractSecurityPunctuation extends AbstractPunctuation implements Serializable, ISecurityPunctuation {
 	
+	private HashMap<String, Object> attributes = new HashMap<String, Object>();
+	private SDFSchema schema;
+		
+	private static final long serialVersionUID = 1069899975287225287L;
+	
 	public AbstractSecurityPunctuation(long point) {
 		super(point);
 	}
@@ -34,12 +39,11 @@ public abstract class AbstractSecurityPunctuation extends AbstractPunctuation im
 	public AbstractSecurityPunctuation(PointInTime timestamp) {
 		super(timestamp);
 	}
+	
+	public AbstractSecurityPunctuation(AbstractSecurityPunctuation punct){
+		super(punct);
+	}
 
-	private HashMap<String, Object> attributes = new HashMap<String, Object>();
-	private SDFSchema schema;
-		
-	private static final long serialVersionUID = 1069899975287225287L;
-		
 	public Object getAttribute(String key) {
 		return attributes.get(key);
 	}

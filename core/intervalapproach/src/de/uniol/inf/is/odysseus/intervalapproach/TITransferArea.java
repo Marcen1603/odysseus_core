@@ -15,16 +15,22 @@
  */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
@@ -35,6 +41,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
 		implements ITransferArea<R, W> {
 
+	static final Logger logger = LoggerFactory.getLogger(TITransferArea.class);
+
 	// remember the last time stamp for each input port
 	// can contain null, if no element is seen
 	final protected List<PointInTime> minTs;
@@ -43,8 +51,19 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	// the operator that uses this sink
 	protected AbstractSource<W> po;
 	// Store to reorder elements
-	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
-			new MetadataComparator<ITimeInterval>());
+	protected PriorityQueue<IStreamable> outputQueue = new PriorityQueue<IStreamable>(
+			11, new Comparator<IStreamable>() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public int compare(IStreamable left, IStreamable right) {
+					PointInTime l = left.isPunctuation() ? ((IPunctuation) left)
+							.getTime() : ((W) left).getMetadata().getStart();
+					PointInTime r = right.isPunctuation() ? ((IPunctuation) right)
+							.getTime() : ((W) right).getMetadata().getStart();
+
+					return l.compareTo(r);
+				}
+			});
 	// to which port the data should be send
 	private int outputPort = 0;
 
@@ -78,9 +97,15 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		minTs.add(null);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void newElement(R object, int inPort) {
-		PointInTime start = object.getMetadata().getStart();
+	public void newElement(IStreamable object, int inPort) {
+		PointInTime start;
+		if (object.isPunctuation()) {
+			start = ((IPunctuation) object).getTime();
+		} else {
+			start = ((R) object).getMetadata().getStart();
+		}
 		// watermark is needed if new sources are connected at runtime
 		// if watermark == null no object has ever been transferred --> init
 		// phase
@@ -105,9 +130,30 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	}
 
 	@Override
+	public void sendPunctuation(IPunctuation punctuation) {
+		synchronized (this.outputQueue) {
+			logger.debug("New Punctuation " + punctuation);
+			// watermark is needed if new sources are connected at runtime
+			// if watermark == null no object has ever been transferred --> init
+			// phase
+			// else treat only objects that are at least from time watermark
+			if (watermark == null
+					|| punctuation.getTime().afterOrEquals(watermark)) {
+				outputQueue.add(punctuation);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public void done() {
 		while (!this.outputQueue.isEmpty()) {
-			po.transfer(this.outputQueue.poll(), outputPort);
+			IStreamable elem = this.outputQueue.poll();
+			if (elem.isPunctuation()) {
+				po.sendPunctuation((IPunctuation) elem);
+			} else {
+				po.transfer((W) this.outputQueue.poll(), outputPort);
+			}
 		}
 	}
 
@@ -131,24 +177,52 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		sendData(minimum);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void sendData(PointInTime minimum) {
 		if (minimum != null) {
 			synchronized (this.outputQueue) {
 				// don't use an iterator, it does NOT guarantee ordered
 				// traversal!
-				W elem = this.outputQueue.peek();
+				IStreamable elem = this.outputQueue.peek();
 				boolean elementsSend = false;
-				while (elem != null
-						&& elem.getMetadata().getStart()
-								.beforeOrEquals(minimum)) {
-					this.outputQueue.poll();
-					po.transfer(elem, outputPort);
-					elem = this.outputQueue.peek();
-					elementsSend = true;
+				while (elem != null) {
+					if (elem.isPunctuation()) {
+						if (((IPunctuation) elem).getTime().beforeOrEquals(
+								minimum)) {
+							this.outputQueue.poll();
+							// Avoid sending "outdated" heartbeats
+							while (((IPunctuation) elem).isHeartbeat()) {
+								IStreamable nextElem = outputQueue.peek();
+								if (nextElem.isPunctuation()
+										&& ((IPunctuation) elem).isHeartbeat()
+										&& ((IPunctuation) elem).getTime()
+												.afterOrEquals(minimum)) {
+									elem = nextElem;
+								} else {
+									break;
+								}
+							}
+							po.sendPunctuation((IPunctuation) elem);
+							elem = this.outputQueue.peek();
+						} else {
+							elem = null;
+						}
+					} else {
+						if (((W) elem).getMetadata() != null
+								&& ((W) elem).getMetadata().getStart()
+										.beforeOrEquals(minimum)) {
+							this.outputQueue.poll();
+							elementsSend = true;
+							po.transfer((W) elem);
+							elem = this.outputQueue.peek();
+						} else {
+							elem = null;
+						}
+					}
 				}
-				// Avoid unnecessary  punctuations
+				// Avoid unnecessary punctuations
 				if (!elementsSend) {
-					po.sendPunctuation(minimum, outputPort);
+					po.sendPunctuation(new Heartbeat(minimum), outputPort);
 				}
 				// Set marker to time stamp of the last send object
 				watermark = minimum;

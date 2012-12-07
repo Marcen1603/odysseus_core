@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -59,7 +60,7 @@ public class PunctuationPO<T extends IStreamObject<? extends ITimeInterval>>
 				if (tuple.getMetadata().getStart().after(punctuationTime)) {
 					punctuationTime = tuple.getMetadata().getStart();
 				}
-				sendPunctuation(punctuationTime);
+				sendPunctuation(new Heartbeat(punctuationTime));
 			}
 		}
 		synchronized (this) {
