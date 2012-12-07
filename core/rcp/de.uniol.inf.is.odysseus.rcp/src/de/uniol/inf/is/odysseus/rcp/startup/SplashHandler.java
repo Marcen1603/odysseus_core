@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.splash.AbstractSplashHandler;
 
 import de.uniol.inf.is.odysseus.rcp.Login;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 /**
  * @author Dennis Geesen
@@ -32,7 +33,7 @@ public class SplashHandler extends AbstractSplashHandler {
 	public void init(Shell splash) {	
 		super.init(splash);
 		// waiting for executor...
-		
+		OdysseusRCPPlugIn.waitForExecutorLock.lock();
 		Display display = splash.getDisplay();
 		Login.loginWindow(display, false, false);
 	}
