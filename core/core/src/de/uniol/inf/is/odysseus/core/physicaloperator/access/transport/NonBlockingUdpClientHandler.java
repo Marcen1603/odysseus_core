@@ -71,8 +71,8 @@ public class NonBlockingUdpClientHandler extends AbstractTransportHandler implem
     @Override
     public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
         final NonBlockingUdpClientHandler handler = new NonBlockingUdpClientHandler(protocolHandler);
-        handler.readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 1024;
-        handler.writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 1024;
+        handler.readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 10240;
+        handler.writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 10240;
         handler.host = options.containsKey("host") ? options.get("host") : "127.0.0.1";
         handler.port = options.containsKey("port") ? Integer.parseInt(options.get("port")) : 8080;
         try {

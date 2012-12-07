@@ -126,7 +126,7 @@ public class NioTcpConnection implements IConnection, ReadWriteSelectorHandler {
 
     private void processInBuffer() throws IOException, ClassNotFoundException {
         this.listener.process(this.readBuffer);
-        // readBuffer.clear();
+        readBuffer.clear();
         this.reactivateReading();
     }
 

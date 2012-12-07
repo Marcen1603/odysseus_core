@@ -177,7 +177,7 @@ public class SelectorThread implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (!Thread.interrupted()) {
             this.doInvocations();
             if (this.closeRequested) {
                 return;
@@ -186,15 +186,13 @@ public class SelectorThread implements Runnable {
             try {
                 selectedKeys = this.selector.select();
             }
-            catch (final IOException ioe) {
-                ioe.printStackTrace();
+            catch (final IOException e) {
+                LOG.error(e.getMessage(), e);
                 continue;
             }
-
             if (selectedKeys == 0) {
                 continue;
             }
-
             final Iterator<SelectionKey> iter = this.selector.selectedKeys().iterator();
             while (iter.hasNext()) {
                 final SelectionKey sk = iter.next();
