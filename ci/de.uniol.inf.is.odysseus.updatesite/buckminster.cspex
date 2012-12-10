@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cspecExtension xmlns:com="http://www.eclipse.org/buckminster/Common-1.0"
-                    xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
+<cspecExtension xmlns:com="http://www.eclipse.org/buckminster/Common-1.0" xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
     <actions>
     
     	<public name="create.product" actor="ant">
@@ -10,7 +9,7 @@
             </actorProperties>
             <properties>
                 <property key="profile" value="Profile" />
-                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product" />                
+                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product,de.uniol.inf.is.odysseus.core.feature,de.uniol.inf.is.odysseus.relational.feature,de.uniol.inf.is.odysseus.studio.feature,de.uniol.inf.is.odysseus.planmgmt.standard.feature,de.uniol.inf.is.odysseus.scheduling.feature,de.uniol.inf.is.odysseus.datadictionary.mem.feature,de.uniol.inf.is.odysseus.usermanagement.mem.feature" />                
             </properties>
             <prerequisites alias="repository">
                 <attribute name="site.p2" />
