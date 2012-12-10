@@ -14,8 +14,7 @@
             <property name="installableIUs" value="${iu},${features}" />          
             <property name="destination" location="${sp:destination}"/>  
             <delete dir="${destination}"/>  
-            <mkdir dir="${destination}"/>  
-        	<echo message="Make URL:  ${sp:updateSite}"/>
+            <mkdir dir="${destination}"/>          	
             <makeurl property="repository" file="/opt/jenkins/output/updatesite"/>  
             <echoproperties/>  
             <echo message="============================== RCP Settings =============================="/>  
