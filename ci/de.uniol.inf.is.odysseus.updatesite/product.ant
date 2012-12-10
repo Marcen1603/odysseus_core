@@ -25,7 +25,7 @@
             <echo message="IUs:         ${installableIUs}"/>  
             <echo message="target:      ${target.os}.${target.ws}.${target.arch}"/>  
             <echo message="============================== Building RCP =============================="/>  
-            <java jar="${equinox.launcher.jar}" fork="true" failonerror="true" >  
+            <java jar="${equinox.launcher.jar}" fork="true" failonerror="true" logError="true">  
                 <arg value="-application"/>  
                 <arg value="org.eclipse.equinox.p2.director"/>  
                 <arg value="-repository"/>  
