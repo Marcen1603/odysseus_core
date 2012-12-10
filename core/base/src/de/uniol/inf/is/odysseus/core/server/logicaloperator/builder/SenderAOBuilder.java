@@ -18,8 +18,10 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 /**
  * Operator builder for the {@link SenderAO}
@@ -31,6 +33,8 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
      * 
      */
     private static final long           serialVersionUID = 7352271768755308949L;
+    /** The sink name */
+    private final StringParameter       sinkName         = new StringParameter("SINK", REQUIREMENT.MANDATORY);
     /** Name of the wrapper */
     private final StringParameter       wrapper          = new StringParameter("WRAPPER", REQUIREMENT.OPTIONAL);
     /** Name of the data handler */
@@ -51,7 +55,8 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
     public SenderAOBuilder() {
         super("SENDER", 1, Integer.MAX_VALUE);
         // Add the supported parameters
-        this.addParameters(this.options, this.dataHandler, this.transportHandler, this.protocolHandler, this.wrapper);
+        this.addParameters(this.sinkName, this.options, this.dataHandler, this.transportHandler, this.protocolHandler,
+                this.wrapper);
     }
 
     /*
@@ -87,21 +92,31 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
      */
     @Override
     protected ILogicalOperator createOperatorInternal() {
-        final ILogicalOperator ao = this.createNewSenderAO();
+        final String sinkName = this.sinkName.getValue();
+        if (this.getDataDictionary().containsViewOrStream(sinkName, this.getCaller())) {
+            try {
+                return this.getDataDictionary().getViewOrStream(sinkName, this.getCaller());
+            }
+            catch (final DataDictionaryException e) {
+                throw new QueryParseException(e.getMessage());
+            }
+        }
+        final ILogicalOperator ao = this.createNewSenderAO(sinkName);
         return ao;
     }
 
     /**
      * @return A new instance of {@link SenderAO} with the defined parameter
      */
-    private ILogicalOperator createNewSenderAO() {
+    private ILogicalOperator createNewSenderAO(final String sinkName) {
         final HashMap<String, String> optionsMap = new HashMap<String, String>();
         if (this.options.hasValue()) {
             for (final Option option : this.options.getValue()) {
                 optionsMap.put(option.getName().toLowerCase(), option.getValue());
             }
         }
-        final SenderAO ao = new SenderAO(this.wrapper.getValue(), optionsMap);
+        this.getDataDictionary().addSourceType(sinkName, "RelationalStreaming");
+        final SenderAO ao = new SenderAO(sinkName, this.wrapper.getValue(), optionsMap);
         if (this.dataHandler.hasValue()) {
             ao.setDataHandler(this.dataHandler.getValue());
         }

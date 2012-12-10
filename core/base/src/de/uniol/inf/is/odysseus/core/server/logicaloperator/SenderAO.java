@@ -34,7 +34,7 @@ public class SenderAO extends AbstractLogicalOperator {
      * 
      */
     private static final long   serialVersionUID = -6830784739913623456L;
-
+    private String              sink             = null;
     private String              dataHandler      = "Tuple";
     private String              protocolHandler;
     private String              transportHandler;
@@ -59,12 +59,15 @@ public class SenderAO extends AbstractLogicalOperator {
     /**
      * Creates a new {@link SenderAO} with the given wrapper and options
      * 
+     * @param sink
+     *            The sink name
      * @param wrapper
      *            The wrapper name
      * @param optionsMap
      *            The options
      */
-    public SenderAO(String wrapper, Map<String, String> optionsMap) {
+    public SenderAO(String sink, String wrapper, Map<String, String> optionsMap) {
+        this.sink = sink;
         this.wrapper = wrapper;
         this.optionsMap = optionsMap;
     }
@@ -73,6 +76,8 @@ public class SenderAO extends AbstractLogicalOperator {
      * Creates a new {@link SenderAO} with the given wrapper, data handler, and
      * options
      * 
+     * @param sink
+     *            The sink name
      * @param wrapper
      *            The wrapper name
      * @param dataHandler
@@ -80,7 +85,8 @@ public class SenderAO extends AbstractLogicalOperator {
      * @param optionsMap
      *            The options
      */
-    public SenderAO(String wrapper, String dataHandler, Map<String, String> optionsMap) {
+    public SenderAO(String sink, String wrapper, String dataHandler, Map<String, String> optionsMap) {
+        this.sink = sink;
         this.wrapper = wrapper;
         this.dataHandler = dataHandler;
         this.optionsMap = optionsMap;
@@ -93,11 +99,40 @@ public class SenderAO extends AbstractLogicalOperator {
      *            The {@link SenderAO} instance
      */
     public SenderAO(SenderAO senderAO) {
+        this.sink = senderAO.sink;
         this.wrapper = senderAO.wrapper;
         this.dataHandler = senderAO.dataHandler;
         this.optionsMap = senderAO.optionsMap;
         this.protocolHandler = senderAO.protocolHandler;
         this.transportHandler = senderAO.transportHandler;
+    }
+
+    /**
+     * @return The sink name
+     */
+    public String getSinkname() {
+        return sink;
+    }
+
+    /**
+     * Set the sink name
+     * 
+     * @param sink
+     *            The sink name
+     */
+    public void setSink(String sink) {
+        this.sink = sink;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+     * #getName()
+     */
+    @Override
+    public String getName() {
+        return getSinkname();
     }
 
     /**
@@ -205,5 +240,16 @@ public class SenderAO extends AbstractLogicalOperator {
     @Override
     public AbstractLogicalOperator clone() {
         return new SenderAO(this);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+     * #toString()
+     */
+    @Override
+    public String toString() {
+        return getName() + " (" + this.wrapper + ")";
     }
 }
