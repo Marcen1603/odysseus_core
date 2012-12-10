@@ -2,7 +2,7 @@
 <cspecExtension xmlns:com="http://www.eclipse.org/buckminster/Common-1.0" xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
 
 
-	dependencies>  
+	<dependencies>  
         <dependency name="de.uniol.inf.is.odysseus.updatesite" componentType="eclipse.feature" />  
     </dependencies>  
     <actions>
