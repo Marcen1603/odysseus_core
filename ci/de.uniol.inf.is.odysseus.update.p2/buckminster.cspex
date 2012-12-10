@@ -8,7 +8,7 @@
                 <property key="targets" value="publish.p2" />
             </actorProperties>
             <properties>
-                <property key="source" value="/opt/jenkins/output/result/site.p2/" />
+                <property key="source" value="${buckminster.output}/site.p2/" />
                 <property key="destination" value="/opt/jenkins/output/updatesite" />
             </properties>
             <prerequisites alias="repository">
