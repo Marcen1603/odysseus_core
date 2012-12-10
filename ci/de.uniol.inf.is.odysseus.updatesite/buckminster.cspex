@@ -3,7 +3,7 @@
 
 
 	<dependencies>  
-        <dependency name="de.uniol.inf.is.odysseus.updatesite" componentType="eclipse.feature" />  
+        <dependency name="de.uniol.inf.is.odysseus.update.p2" componentType="eclipse.feature" />  
     </dependencies>  
     <actions>
     
@@ -13,17 +13,17 @@
                 <property key="buildFile" value="product.ant" />  
                 <property key="targets" value="create.product" />  
             </actorProperties>  
-            <properties>  
-                <property key="profile" value="Profile" />  
-                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product" />  
-                <property key="features" value="" />  
-            </properties>  
-            <prerequisites alias="updateSite">  
-                <attribute name="site.p2.publish" component="de.uniol.inf.is.odysseus.updatesite" />  
+           <properties>  
+                <property key="profile" value="${product.profile}" />  
+                <property key="iu" value="${product.id}" />  
+                <property key="features" value="${product.features}" />  
+            </properties>   
+           <prerequisites alias="updateSite">  
+                <attribute name="site.p2.publish" component="de.uniol.inf.is.odysseus.update.p2" />  
             </prerequisites>  
-            <products alias="destination" base="${buckminster.output}">  
+            <products alias="destination" base="${product.destination}">  
                 <path path="${product.name}.${target.ws}.${target.os}.${target.arch}/" />  
-            </products>  
+            </products>
         </public>  
   
         <public name="create.product.zip" actor="ant">  
@@ -34,7 +34,7 @@
             <prerequisites alias="action.requirements">  
                 <attribute name="create.product" />  
             </prerequisites>  
-            <products alias="action.output" base="${buckminster.output}">  
+            <products alias="action.output" base="${product.destination}">  
                 <path path="../../downloads/memorystore/odysseus.${target.ws}.${target.os}.${target.arch}.zip" />  
             </products>  
         </public>  
