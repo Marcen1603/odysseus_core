@@ -16,7 +16,7 @@
             <delete dir="${destination}"/>  
             <mkdir dir="${destination}"/>  
         	<echo message="Make URL:  ${sp:updateSite}"/>
-            <makeurl property="repository" file="${sp:updateSite}"/>  
+            <makeurl property="repository" file="/opt/jenkins/output/updatesite"/>  
             <echoproperties/>  
             <echo message="============================== RCP Settings =============================="/>  
             <echo message="Repository:  ${repository}"/>  
