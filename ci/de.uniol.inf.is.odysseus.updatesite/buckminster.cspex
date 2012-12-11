@@ -5,10 +5,8 @@
 	<dependencies>  
         <dependency name="de.uniol.inf.is.odysseus.update.p2" componentType="eclipse.feature" />  
     </dependencies>  
-    <actions>
-    
-    
-    <public name="create.product" actor="ant">  
+    <actions>    
+    	<public name="create.product" actor="ant">  
             <actorProperties>  
                 <property key="buildFile" value="product.ant" />  
                 <property key="targets" value="create.product" />  
@@ -23,7 +21,7 @@
             </prerequisites>  
             <products alias="destination" base="${product.destination}">  
                 <path path="${product.name}.${target.ws}.${target.os}.${target.arch}/" />  
-            </products>
+            </products>            
         </public>  
   
         <public name="create.product.zip" actor="ant">  
@@ -37,127 +35,6 @@
             <products alias="action.output" base="${product.zipdestination}">  
                 <path path="odysseus.${target.ws}.${target.os}.${target.arch}.zip" />  
             </products>  
-        </public>  
-    
-    	
-    
-    
-        <public name="create.memoryproduct" actor="ant">
-            <actorProperties>
-                <property key="buildFile" value="product.ant" />
-                <property key="targets" value="create.product" />
-            </actorProperties>
-            <properties>
-                <property key="profile" value="Profile" />
-                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product.memorystore" />                
-            </properties>
-            <prerequisites alias="repository">
-                <attribute name="site.p2" />
-            </prerequisites>
-            <products alias="destination" base="${buckminster.output}">
-                <path path="odysseus.${target.ws}.${target.os}.${target.arch}/" />
-            </products>
-        </public>
-        <public name="create.memoryproduct.zip" actor="ant">
-            <actorProperties>
-                <property key="buildFileId" value="buckminster.pdetasks" />
-                <property key="targets" value="create.zip" />
-            </actorProperties>
-            <prerequisites alias="action.requirements">
-                <attribute name="create.memoryproduct" />
-            </prerequisites>
-            <products alias="action.output" base="${buckminster.output}">
-                <path path="../../downloads/memorystore/odysseus.memorystore.${target.ws}.${target.os}.${target.arch}.zip" />
-            </products>
-        </public>
-        
-        <public name="create.fileproduct" actor="ant">
-            <actorProperties>
-                <property key="buildFile" value="product.ant" />
-                <property key="targets" value="create.product" />
-            </actorProperties>
-            <properties>
-                <property key="profile" value="Profile" />
-                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product.filestore" />
-            </properties>
-            <prerequisites alias="repository">
-                <attribute name="site.p2" />
-            </prerequisites>
-            <products alias="destination" base="${buckminster.output}">
-                <path path="odysseus.filestore.${target.ws}.${target.os}.${target.arch}/" />
-            </products>
-        </public>
-        <public name="create.fileproduct.zip" actor="ant">
-            <actorProperties>
-                <property key="buildFileId" value="buckminster.pdetasks" />
-                <property key="targets" value="create.zip" />
-            </actorProperties>
-            <prerequisites alias="action.requirements">
-                <attribute name="create.fileproduct" />
-            </prerequisites>
-            <products alias="action.output" base="${buckminster.output}">
-                <path path="../../downloads/filestore/odysseus.filestore.${target.ws}.${target.os}.${target.arch}.zip" />
-            </products>
-        </public>
-        
-        
-        <public name="create.serverproduct" actor="ant">
-            <actorProperties>
-                <property key="buildFile" value="product.ant" />
-                <property key="targets" value="create.product" />
-            </actorProperties>
-            <properties>
-                <property key="profile" value="Profile" />
-                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product.server.memorystore" />
-            </properties>
-            <prerequisites alias="repository">
-                <attribute name="site.p2" />
-            </prerequisites>
-            <products alias="destination" base="${buckminster.output}">
-                <path path="odysseus.server.${target.ws}.${target.os}.${target.arch}/" />
-            </products>
-        </public>
-        <public name="create.serverproduct.zip" actor="ant">
-            <actorProperties>
-                <property key="buildFileId" value="buckminster.pdetasks" />
-                <property key="targets" value="create.zip" />
-            </actorProperties>
-            <prerequisites alias="action.requirements">
-                <attribute name="create.serverproduct" />
-            </prerequisites>
-            <products alias="action.output" base="${buckminster.output}">
-                <path path="../../downloads/server/odysseus.server.${target.ws}.${target.os}.${target.arch}.zip" />
-            </products>
-        </public>
-        
-        <public name="create.clientproduct" actor="ant">
-            <actorProperties>
-                <property key="buildFile" value="product.ant" />
-                <property key="targets" value="create.product" />
-            </actorProperties>
-            <properties>
-                <property key="profile" value="Profile" />
-                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product.filestore" />
-            </properties>
-            <prerequisites alias="repository">
-                <attribute name="site.p2" />
-            </prerequisites>
-            <products alias="destination" base="${buckminster.output}">
-                <path path="odysseus.client.${target.ws}.${target.os}.${target.arch}/" />
-            </products>
-        </public>
-        <public name="create.clientproduct.zip" actor="ant">
-            <actorProperties>
-                <property key="buildFileId" value="buckminster.pdetasks" />
-                <property key="targets" value="create.zip" />
-            </actorProperties>
-            <prerequisites alias="action.requirements">
-                <attribute name="create.clientproduct" />
-            </prerequisites>
-            <products alias="action.output" base="${buckminster.output}">
-                <path path="../../downloads/client/odysseus.client.${target.ws}.${target.os}.${target.arch}.zip" />
-            </products>
-        </public>
-        
+        </public>      
     </actions>
 </cspecExtension>
