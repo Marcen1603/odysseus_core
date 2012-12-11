@@ -42,7 +42,6 @@ Unless required by applicable law or agreed to in writing, software
       <import plugin="de.uniol.inf.is.odysseus.spatial" version="1.0.0" match="greaterOrEqual"/>
       <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
       <import feature="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
-      <import plugin="de.uniol.inf.is.odysseus.database.spatial"/>
    </requires>
 
    <plugin
