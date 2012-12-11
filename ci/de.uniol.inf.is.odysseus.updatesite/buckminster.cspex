@@ -34,8 +34,8 @@
             <prerequisites alias="action.requirements">  
                 <attribute name="create.product" />  
             </prerequisites>  
-            <products alias="action.output" base="${product.destination}">  
-                <path path="../../downloads/memorystore/odysseus.${target.ws}.${target.os}.${target.arch}.zip" />  
+            <products alias="action.output" base="${product.zipdestination}">  
+                <path path="odysseus.${target.ws}.${target.os}.${target.arch}.zip" />  
             </products>  
         </public>  
     

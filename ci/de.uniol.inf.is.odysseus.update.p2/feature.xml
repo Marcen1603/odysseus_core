@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.update.p2"
-      label="P2"
+      label="Odysseus P2 Update"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -22,6 +22,30 @@
 
    <includes
          id="de.uniol.inf.is.odysseus.core.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.relational.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.studio.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.scheduling.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.planmgmt.standard.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.datadictionary.mem.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.usermanagement.mem.feature"
          version="0.0.0"/>
 
 </feature>
