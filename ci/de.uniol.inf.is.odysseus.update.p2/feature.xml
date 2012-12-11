@@ -17,10 +17,6 @@
    </license>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.memorystore.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.core.feature"
          version="0.0.0"/>
 
@@ -46,6 +42,10 @@
 
    <includes
          id="de.uniol.inf.is.odysseus.usermanagement.mem.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.product.platform.feature"
          version="0.0.0"/>
 
 </feature>
