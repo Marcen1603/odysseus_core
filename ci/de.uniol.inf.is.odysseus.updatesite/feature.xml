@@ -140,7 +140,7 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.memorystore.feature"
+         id="de.uniol.inf.is.odysseus.product.platform.feature"
          version="0.0.0"/>
 
 </feature>
