@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.uniol.inf.is.odysseus.product.filestore.feature"
+      label="FileStore Product Feature"
+      version="1.0.0.qualifier"
+      provider-name="University of Oldenburg">
+
+   <description>
+      This feature bundles all features that are needed by the file
+store product. Therefore, it is just a container and does not
+provide any functionality by itself.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.core.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.relational.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.studio.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.datadictionary.filestore.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.planmgmt.standard.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.scheduling.feature"
+         version="0.0.0"/>
+
+</feature>
