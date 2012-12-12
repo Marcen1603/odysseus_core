@@ -5,8 +5,13 @@
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      This feature provides the data dictionary for Odysseus. This version
+of the datadictionary is persisted, so that e.g. all installed
+sources and sinks are restored on restart. 
+
+Note that there is also a memory-based data dictionary that may not 
+be installed simultaneously.
    </description>
 
    <copyright>

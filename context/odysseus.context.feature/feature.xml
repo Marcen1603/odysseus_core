@@ -5,8 +5,8 @@
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      This feature adds a store for context based (slowly changing) information and provides a store- and enrich-operator that can be used for writing to and reading from the store
    </description>
 
    <copyright>

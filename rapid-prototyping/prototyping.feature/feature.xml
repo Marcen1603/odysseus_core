@@ -5,8 +5,8 @@
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      The prototyping feature adds operators for rapid prototyping of new processing concepts. This includes a simple operator for user defined functions and the possibility to define aggregates (with its init, merge and evaluate steps) in other languages (like JavaScript or Ruby).
    </description>
 
    <copyright>

@@ -5,8 +5,8 @@
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      The database feature allows to connect to databases over JDBC and provides sink and source operators to read and write databases.
    </description>
 
    <copyright>

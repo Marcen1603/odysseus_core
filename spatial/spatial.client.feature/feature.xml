@@ -5,8 +5,8 @@
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      Provides spatial features for clients, e.g. a map viewer
    </description>
 
    <copyright>

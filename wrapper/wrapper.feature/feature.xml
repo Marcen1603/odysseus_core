@@ -6,8 +6,8 @@
       provider-name="University of Oldenburg"
       plugin="de.uniol.inf.is.odysseus.rcp.starter">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      This feature holds a set of wrapper, which may be an access protocol or data handlers.
    </description>
 
    <copyright>

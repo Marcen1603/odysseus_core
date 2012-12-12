@@ -4,8 +4,8 @@
       label="Securitypunctuation Feature"
       version="1.0.0.qualifier">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      Adds security punctuations to express grants or denial of access rights to different parts of a stream or a tuple.
    </description>
 
    <copyright>

@@ -5,8 +5,8 @@
       version="1.0.0.0"
       provider-name="University of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      This features provides the possibility to test Odysseus by running predefined queries and testing the results.
    </description>
 
    <copyright>

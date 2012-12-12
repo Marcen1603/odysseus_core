@@ -5,8 +5,9 @@
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      This is not a feature for Odysseus, but rather a stand-alone data provider that is a benchmark called NEXMark
+See also http://datalab.cs.pdx.edu/niagara/NEXMark/
    </description>
 
    <copyright>

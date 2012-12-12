@@ -5,8 +5,10 @@
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      This feature provides the user management for Odysseus. This feature persists all user settings so that they are restored on restarts. 
+
+Notice that there is also a memory-based user management that may not be installed simultaneously.
    </description>
 
    <copyright>

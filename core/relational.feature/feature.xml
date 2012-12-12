@@ -5,8 +5,8 @@
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      This feature allows Odysseus to process relational tuples. This includes also a set of relational based operators.
    </description>
 
    <copyright>

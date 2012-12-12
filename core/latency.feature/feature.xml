@@ -5,8 +5,8 @@
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      This feature adds latency calculation to the processing. Each incoming element is annotated with the point in time when the element enters. The latency calculation operator can be used to set the point in time when the element leaves the system and calculates the latency from the difference.
    </description>
 
    <copyright>

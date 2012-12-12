@@ -5,8 +5,8 @@
       version="1.0.0.qualifier"
       provider-name="Universtity of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      This feature provides a framework to invoke actions over webservices
    </description>
 
    <copyright>
