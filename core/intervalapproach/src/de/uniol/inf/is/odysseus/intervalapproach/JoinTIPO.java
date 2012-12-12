@@ -27,8 +27,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
-import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
@@ -54,7 +52,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSwe
 public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends AbstractPipe<T, T> implements IHasPredicate,
 		IHasMetadataMergeFunction<K> {
-	private final POEvent processPunctuationDoneEvent;
 	private static Logger _logger = null;
 
 	private static Logger getLogger() {
@@ -72,6 +69,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	protected ITransferArea<T, T> transferFunction;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
+	private boolean inOrder = true;
+
+	// ------------------------------------------------------------------------------------
+
+	public JoinTIPO() {
+
+	}
+
 	public JoinTIPO(IDataMergeFunction<T, K> dataMerge,
 			IMetadataMergeFunction<K> metadataMerge,
 			ITransferArea<T, T> transferFunction,
@@ -80,19 +85,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
 		this.areas = areas;
-		this.processPunctuationDoneEvent = new POEvent(this,
-				POEventType.ProcessPunctuationDone);
-	}
-
-	public JoinTIPO() {
-		this.processPunctuationDoneEvent = new POEvent(this,
-				POEventType.ProcessPunctuationDone);
 	}
 
 	public JoinTIPO(JoinTIPO<K, T> join) {
 		super(join);
-		this.processPunctuationDoneEvent = new POEvent(this,
-				POEventType.ProcessPunctuationDone);
 		this.areas = join.areas.clone();
 		int i = 0;
 		for (ITimeIntervalSweepArea<T> ja : join.areas) {
@@ -159,6 +155,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		this.transferFunction = transferFunction;
 	}
 
+	public void setOutOfOrder(boolean outOfOrder) {
+		this.inOrder = !outOfOrder;
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -186,10 +186,13 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		int otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
-		synchronized (this.areas[otherport]) {
-			areas[otherport].purgeElements(object, order);
-		}
 
+		if (inOrder) {
+			synchronized (this.areas[otherport]) {
+				areas[otherport].purgeElements(object, order);
+			}
+		}
+		
 		synchronized (this) {
 			// status could change, if the other port was done and
 			// its sweeparea is now empty after purging
@@ -287,7 +290,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 			this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
 		}
 		this.transferFunction.newElement(punctuation, port);
-		fire(this.processPunctuationDoneEvent);
 	}
 
 	@SuppressWarnings("unchecked")
