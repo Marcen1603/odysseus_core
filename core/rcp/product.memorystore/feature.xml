@@ -18,7 +18,7 @@
    </license>
 
    <url>
-      <update url="http://odysseus.informatik.uni-oldenburg.de/update/"/>
+      <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update/"/>
    </url>
 
    <includes
