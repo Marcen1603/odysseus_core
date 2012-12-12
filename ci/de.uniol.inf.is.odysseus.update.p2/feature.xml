@@ -32,15 +32,7 @@ limitations under the License.
    </url>
 
    <includes
-         id="de.uniol.inf.is.odysseus.core.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.relational.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.studio.feature"
          version="0.0.0"/>
 
    <includes
@@ -48,7 +40,39 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.planmgmt.standard.feature"
+         id="de.uniol.inf.is.odysseus.product.memorystore.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.ac.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.cep.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.cep.studio.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.context.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.core.client.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.core.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.database.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.datadictionary.filestore.feature"
          version="0.0.0"/>
 
    <includes
@@ -56,7 +80,23 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.usermanagement.mem.feature"
+         id="de.uniol.inf.is.odysseus.dwd.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.latency.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.mining.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.planmgmt.standard.feature"
          version="0.0.0"/>
 
    <includes
@@ -64,7 +104,47 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.memorystore.feature"
+         id="de.uniol.inf.is.odysseus.prototyping.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.scai.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.securitypunctuation.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.sparql.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.spatial.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.studio.client.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.studio.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.usermanagement.mem.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.wrapper.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.wrapper.protobuf.feature"
          version="0.0.0"/>
 
 </feature>
