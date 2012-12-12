@@ -33,7 +33,9 @@ public class SplashHandler extends AbstractSplashHandler {
 	public void init(Shell splash) {	
 		super.init(splash);
 		// waiting for executor...
+		System.out.println("waiting for executor to login");
 		OdysseusRCPPlugIn.waitForExecutorLock.lock();
+		System.out.println("logging in...");
 		Display display = splash.getDisplay();
 		Login.loginWindow(display, false, false);
 	}
