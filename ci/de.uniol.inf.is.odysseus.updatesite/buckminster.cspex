@@ -32,7 +32,7 @@
             <prerequisites alias="action.requirements">  
                 <attribute name="create.memorystore.product" />  
             </prerequisites>  
-            <products alias="action.output" base="${product.zipdestination}">  
+            <products alias="action.output" base="${product.zipdestination}/memorystore">  
                 <path path="odysseus.memorystore.${target.ws}.${target.os}.${target.arch}.zip" />  
             </products>  
         </public> 
@@ -64,7 +64,7 @@
             <prerequisites alias="action.requirements">  
                 <attribute name="create.filestore.product" />  
             </prerequisites>  
-            <products alias="action.output" base="${product.zipdestination}">  
+            <products alias="action.output" base="${product.zipdestination}/filestore">  
                 <path path="odysseus.filestore.${target.ws}.${target.os}.${target.arch}.zip" />  
             </products>  
         </public> 
@@ -96,7 +96,7 @@
             <prerequisites alias="action.requirements">  
                 <attribute name="create.memorystore.server.product" />  
             </prerequisites>  
-            <products alias="action.output" base="${product.zipdestination}">  
+            <products alias="action.output" base="${product.zipdestination}/server-memorystore">  
                 <path path="odysseus.memorystore.server.${target.ws}.${target.os}.${target.arch}.zip" />  
             </products>  
         </public> 
@@ -128,7 +128,7 @@
             <prerequisites alias="action.requirements">  
                 <attribute name="create.memorystore.client.product" />  
             </prerequisites>  
-            <products alias="action.output" base="${product.zipdestination}">  
+            <products alias="action.output" base="${product.zipdestination}/client-memorystore">  
                 <path path="odysseus.memorystore.client.${target.ws}.${target.os}.${target.arch}.zip" />  
             </products>  
         </public>              
