@@ -15,7 +15,7 @@
             <property name="destination" location="${sp:destination}"/>  
             <delete dir="${destination}"/>  
             <mkdir dir="${destination}"/>          	
-            <makeurl property="repository" file="/opt/jenkins/output/updatesite"/>  
+            <makeurl property="repository" file="/opt/jenkins/output/nightly/update"/>  
             <echoproperties/>  
             <echo message="============================== RCP Settings =============================="/>  
             <echo message="Repository:  ${repository}"/>  
