@@ -101,6 +101,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.ToNumberFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToRadians;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToShortFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToStringFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.UUIDFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.UnaryMinusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.UpperFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.WeekFunction;
@@ -238,6 +239,8 @@ public class MEP implements IExpressionParser {
         registerFunction(new MD5Function());
         registerFunction(new SHA1Function());
         registerFunction(new SHA256Function());
+        
+        registerFunction(new UUIDFunction());
 
     }
 
