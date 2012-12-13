@@ -16,53 +16,58 @@
 package de.uniol.inf.is.odysseus.core.server.mep.functions;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
 /**
- * Returns the current system time specific month
+ * Extracts the month part of the date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class MonthFunction extends AbstractFunction<Integer> {
 
-    /**
+	/**
      * 
      */
-    private static final long          serialVersionUID = -3089145220450028398L;
-    private static final SDFDatatype[] accTypes         = new SDFDatatype[] {};
+	private static final long serialVersionUID = -3089145220450028398L;
+	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DATE };
 
-    @Override
-    public int getArity() {
-        return 0;
-    }
+	@Override
+	public int getArity() {
+		return 1;
+	}
 
-    @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
-        if (argPos < 0) {
-            throw new IllegalArgumentException("negative argument index not allowed");
-        }
-        if (argPos >= 0) {
-            throw new IllegalArgumentException(this.getSymbol() + " has no argument(s).");
-        }
-        return accTypes;
-    }
+	@Override
+	public SDFDatatype[] getAcceptedTypes(int argPos) {
+		if (argPos < 0) {
+			throw new IllegalArgumentException(
+					"negative argument index not allowed");
+		}
+		if (argPos > this.getArity()) {
+			throw new IllegalArgumentException(this.getSymbol() + " has only "
+					+ this.getArity() + " argument(s): a date");
+		}
+		return accTypes;
+	}
 
-    @Override
-    public String getSymbol() {
-        return "month";
-    }
+	@Override
+	public String getSymbol() {
+		return "month";
+	}
 
-    @Override
-    public Integer getValue() {
-        // The first month is 1 not 0
-        return Calendar.getInstance().get(Calendar.MONTH + 1);
-    }
+	@Override
+	public Integer getValue() {
+		// The first month is 1 not 0
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime((Date) getInputValue(0));
+		return calendar.get(Calendar.MONTH + 1);
+	}
 
-    @Override
-    public SDFDatatype getReturnType() {
-        return SDFDatatype.INTEGER;
-    }
+	@Override
+	public SDFDatatype getReturnType() {
+		return SDFDatatype.INTEGER;
+	}
 
 }

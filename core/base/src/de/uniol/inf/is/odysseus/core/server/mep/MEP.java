@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.ArcTangensFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.CeilFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ContainsFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.CosinusFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.CurDateFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DayFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DebsDateFormatParse;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DivisionOperator;
@@ -227,6 +228,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new MonthFunction());
         registerFunction(new YearFunction());
         registerFunction(new NowFunction());
+        registerFunction(new CurDateFunction());
 
     }
 

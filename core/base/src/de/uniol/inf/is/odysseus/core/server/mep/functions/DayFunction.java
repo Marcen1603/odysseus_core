@@ -16,12 +16,13 @@
 package de.uniol.inf.is.odysseus.core.server.mep.functions;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
 /**
- * Returns the current system time specific day
+ * Extracts the day part of the date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
@@ -31,11 +32,11 @@ public class DayFunction extends AbstractFunction<Integer> {
 	 * 
 	 */
 	private static final long serialVersionUID = -6576541212390310506L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {};
+	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DATE };
 
 	@Override
 	public int getArity() {
-		return 0;
+		return 1;
 	}
 
 	@Override
@@ -44,9 +45,9 @@ public class DayFunction extends AbstractFunction<Integer> {
 			throw new IllegalArgumentException(
 					"negative argument index not allowed");
 		}
-		if (argPos >= 0) {
-			throw new IllegalArgumentException(this.getSymbol()
-					+ " has no argument(s).");
+		if (argPos > this.getArity()) {
+			throw new IllegalArgumentException(this.getSymbol() + " has only "
+					+ this.getArity() + " argument(s): a date");
 		}
 		return accTypes;
 	}
@@ -58,7 +59,9 @@ public class DayFunction extends AbstractFunction<Integer> {
 
 	@Override
 	public Integer getValue() {
-		return Calendar.getInstance().get(Calendar.DATE);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime((Date) getInputValue(0));
+		return calendar.get(Calendar.DATE);
 	}
 
 	@Override

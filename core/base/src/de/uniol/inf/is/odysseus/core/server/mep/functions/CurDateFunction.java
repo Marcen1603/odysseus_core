@@ -22,21 +22,21 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
 /**
- * Extracts the year part of the date
+ * Returns the current system time specific date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class YearFunction extends AbstractFunction<Integer> {
+public class CurDateFunction extends AbstractFunction<Date> {
 
 	/**
-     * 
-     */
-	private static final long serialVersionUID = -1800299483260669086L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DATE };
+	 * 
+	 */
+	private static final long serialVersionUID = -4345526267977522373L;
+	private static final SDFDatatype[] accTypes = new SDFDatatype[] {};
 
 	@Override
 	public int getArity() {
-		return 1;
+		return 0;
 	}
 
 	@Override
@@ -45,28 +45,26 @@ public class YearFunction extends AbstractFunction<Integer> {
 			throw new IllegalArgumentException(
 					"negative argument index not allowed");
 		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s): a date");
+		if (argPos >= 0) {
+			throw new IllegalArgumentException(this.getSymbol()
+					+ " has no argument(s).");
 		}
 		return accTypes;
 	}
 
 	@Override
 	public String getSymbol() {
-		return "year";
+		return "curdate";
 	}
 
 	@Override
-	public Integer getValue() {
+	public Date getValue() {
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime((Date) getInputValue(0));
-		return calendar.get(Calendar.YEAR);
+		return calendar.getTime();
 	}
 
 	@Override
 	public SDFDatatype getReturnType() {
-		return SDFDatatype.INTEGER;
+		return SDFDatatype.DATE;
 	}
-
 }
