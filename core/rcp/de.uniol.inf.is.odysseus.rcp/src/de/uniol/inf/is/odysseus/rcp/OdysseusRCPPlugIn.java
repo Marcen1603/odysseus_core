@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp;
 
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -64,7 +65,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 	private static ISession activeSession;
 	private static ImageManager imageManager;
 	
-	public static ReentrantLock waitForExecutorLock = new ReentrantLock();
+	public static Semaphore waitForExecutorLock = new Semaphore(0);
 
 	public static OdysseusRCPPlugIn getDefault() {
 		return instance;
@@ -82,9 +83,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		super.start(bundleContext);
-		// this bundle has the lock for executor until it is loaded
-		waitForExecutorLock.lock();
+		super.start(bundleContext);		
 		// Bilder registrieren
 		imageManager = new ImageManager(bundleContext.getBundle());
 		
@@ -120,7 +119,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 	public void bindExecutor(IExecutor ex) throws PlanManagementException {
 		executor = ex;		
 		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, OdysseusNLS.Executor + " " + executor.getName() + " " + OdysseusNLS.Ready);
-		waitForExecutorLock.unlock();
+		waitForExecutorLock.release();			
 	}
 
 	public void unbindExecutor(IExecutor ex) {

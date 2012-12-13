@@ -21,9 +21,14 @@ import java.util.Map;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.StatusLineContributionItem;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPage;
 
 public class StatusBarManager implements IWindowListener {
 
@@ -136,9 +141,12 @@ public class StatusBarManager implements IWindowListener {
 
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
-	public void windowOpened(IWorkbenchWindow window) {
-		this.manager = window.getActivePage().getActiveEditor().getEditorSite().getActionBars().getStatusLineManager();
+	public void windowOpened(IWorkbenchWindow window) {		
+		WorkbenchPage wp = (WorkbenchPage) window.getActivePage();				
+		IActionBars ab = wp.getActionBars();
+		this.manager = ab.getStatusLineManager();		
 		initManager();
 
 	}
