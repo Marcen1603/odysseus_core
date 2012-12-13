@@ -44,7 +44,7 @@ public class QueriesPerspective implements IPerspectiveFactory {
 
 		// Wizards
 		layout.addNewWizardShortcut(OdysseusRCPPlugIn.WIZARD_PROJECT_ID);
-
+				
 	}
 
 }

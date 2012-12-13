@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.application.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.util.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.windows.LoginWindow;
@@ -72,8 +71,6 @@ public class Login {
 	public static ISession realLogin(String username, String password) {
 		try {
 			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
-
-			// TODO: Kann der Executor hier noch nicht gebunden sein??
 
 			ISession user = null;
 			user = executor.login(username, password.getBytes());

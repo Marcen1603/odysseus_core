@@ -23,7 +23,6 @@ import org.osgi.framework.BundleContext;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.application.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class OdysseusRCPPlugIn extends AbstractUIPlugin {
@@ -95,6 +94,9 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 		imageManager.register("percentile", "icons/document-tag.png");
 		imageManager.register("view", "icons/table.png");
 
+		
+		
+		
 		instance = this;
 	}
 
@@ -116,7 +118,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 	}
 
 	public void bindExecutor(IExecutor ex) throws PlanManagementException {
-		executor = ex;
+		executor = ex;		
 		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, OdysseusNLS.Executor + " " + executor.getName() + " " + OdysseusNLS.Ready);
 		waitForExecutorLock.unlock();
 	}

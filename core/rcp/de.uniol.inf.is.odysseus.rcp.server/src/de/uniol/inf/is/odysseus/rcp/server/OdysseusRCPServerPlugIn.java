@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEven
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
-import de.uniol.inf.is.odysseus.rcp.application.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -111,7 +111,7 @@ public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventL
 	}
 	
 	private void prepareServerExecutor() {
-		StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, determineStatusManagerExecutorInfo());
+		//StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, determineStatusManagerExecutorInfo());
 
 		if (serverExecutor.getSchedulerManager() != null) {
 			serverExecutor.getSchedulerManager().subscribeToAll(this);
