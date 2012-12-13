@@ -69,6 +69,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.MonthFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MultiplicationOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.NotEqualsOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.NotOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.NowFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.OrOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.PIFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.PlusOperator;
@@ -213,6 +214,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new HourFunction());
         registerFunction(new MonthFunction());
         registerFunction(new YearFunction());
+        registerFunction(new NowFunction());
 
     }
 
