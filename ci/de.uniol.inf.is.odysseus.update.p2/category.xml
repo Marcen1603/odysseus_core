@@ -147,6 +147,12 @@
    <feature url="features/de.uniol.inf.is.odysseus.product.filestore.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.filestore.feature" version="1.0.0.qualifier">
       <category name="de.uniol.inf.is.odysseus.update.category.products"/>
    </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.product.memorystore.server.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.memorystore.server.feature" version="1.0.0.qualifier">
+      <category name="de.uniol.inf.is.odysseus.update.category.products"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.product.memorystore.client.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.memorystore.client.feature" version="1.0.0.qualifier">
+      <category name="de.uniol.inf.is.odysseus.update.category.products"/>
+   </feature>
    <category-def name="de.uniol.inf.is.odysseus.update.category.products" label="Product Definitions"/>
    <category-def name="de.uniol.inf.is.odysseus.update.category.applications" label="Applications"/>
    <category-def name="de.uniol.inf.is.odysseus.update.category.features" label="Odysseus"/>

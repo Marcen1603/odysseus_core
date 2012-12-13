@@ -151,4 +151,12 @@ limitations under the License.
          id="de.uniol.inf.is.odysseus.product.filestore.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.product.memorystore.server.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.product.memorystore.client.feature"
+         version="0.0.0"/>
+
 </feature>
