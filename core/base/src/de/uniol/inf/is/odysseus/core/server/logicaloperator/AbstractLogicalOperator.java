@@ -523,6 +523,32 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		// Nothing special in logical Operators
 		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
+	
+	@Override
+	public void updateSchemaInfos(){
+		updateSchemaInfos(this);
+	}
+	
+	static private void updateSchemaInfos(ILogicalOperator sink) {
+		for (int i = 0; i < sink.getNumberOfInputs(); i++) {
+			LogicalSubscription sub = sink.getSubscribedToSource(i);
+			ILogicalOperator source = sub.getTarget();
+			if (sub.getSchema() == null) {
+				if (source.getOutputSchema() == null) {
+					updateSchemaInfos(source);
+				} else {
+					// Set Schema for both directions (sink to source and source
+					// to sink)!
+					sub.setSchema(source.getOutputSchema());
+					for (LogicalSubscription sourceSub : source.getSubscriptions()) {
+						if (sourceSub.getTarget() == sink) {
+							sourceSub.setSchema(source.getOutputSchema());
+						}
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	public String toString() {

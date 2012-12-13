@@ -68,28 +68,30 @@ static private int jjMoveStringLiteralDfa0_0()
    switch(curChar)
    {
       case 40:
-         return jjStopAtPos(0, 21);
+         return jjStopAtPos(0, 22);
       case 41:
-         return jjStopAtPos(0, 23);
+         return jjStopAtPos(0, 24);
       case 42:
          return jjStopAtPos(0, 11);
       case 43:
          return jjStopAtPos(0, 9);
       case 44:
-         return jjStopAtPos(0, 22);
+         return jjStopAtPos(0, 23);
       case 45:
          return jjStartNfaWithStates_0(0, 10, 20);
       case 47:
          return jjStopAtPos(0, 12);
       case 58:
-         jjmatchedKind = 26;
+         jjmatchedKind = 27;
          return jjMoveStringLiteralDfa1_0(0x180000L);
+      case 60:
+         return jjMoveStringLiteralDfa1_0(0x200000L);
       case 61:
          return jjStopAtPos(0, 18);
       case 91:
-         return jjStopAtPos(0, 24);
-      case 93:
          return jjStopAtPos(0, 25);
+      case 93:
+         return jjStopAtPos(0, 26);
       case 123:
          return jjStopAtPos(0, 16);
       case 125:
@@ -107,6 +109,10 @@ static private int jjMoveStringLiteralDfa1_0(long active0)
    }
    switch(curChar)
    {
+      case 45:
+         if ((active0 & 0x200000L) != 0L)
+            return jjStopAtPos(1, 21);
+         break;
       case 58:
          return jjMoveStringLiteralDfa2_0(active0, 0x80000L);
       case 61:
@@ -372,15 +378,15 @@ static final int[] jjnextStates = {
 /** Token literal values. */
 public static final String[] jjstrLiteralImages = {
 "", null, null, null, null, null, null, null, null, "\53", "\55", "\52", 
-"\57", null, null, null, "\173", "\175", "\75", "\72\72\75", "\72\75", "\50", "\54", 
-"\51", "\133", "\135", "\72", };
+"\57", null, null, null, "\173", "\175", "\75", "\72\72\75", "\72\75", "\74\55", 
+"\50", "\54", "\51", "\133", "\135", "\72", };
 
 /** Lexer state names. */
 public static final String[] lexStateNames = {
    "DEFAULT",
 };
 static final long[] jjtoToken = {
-   0x7ff7f21L, 
+   0xfff7f21L, 
 };
 static final long[] jjtoSkip = {
    0x1eL, 

@@ -204,6 +204,12 @@ public interface ILogicalOperator extends IOwnedOperator,
 	 */
 	public String getDoc();
 
+	/**
+	 * This method can be used to reinit the schema infos
+	 * all currently not set schemata are calced new
+	 */
+	void updateSchemaInfos();
+
 
 
 }

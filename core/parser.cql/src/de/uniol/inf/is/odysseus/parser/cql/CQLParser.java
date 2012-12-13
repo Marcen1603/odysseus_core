@@ -24,8 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -39,7 +39,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.sla.Metric;
@@ -1179,7 +1178,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throw new QueryParseException(e.getMessage());
 		}
 		sinkInput.subscribeToSource(top, -1, 0, top.getOutputSchema());
-		updateSchemaInfos(sink);
+		sink.updateSchemaInfos();
 		// if database -> be sure, that the schemas are equal
 		if (sink.getClass().getCanonicalName().equals("de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO")) {
 			invokeDatabaseVisitor(ASTStreamToStatement.class, node, sink);
@@ -1193,26 +1192,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return plans;
 	}
 
-	private void updateSchemaInfos(ILogicalOperator sink) {
-		for (int i = 0; i < sink.getNumberOfInputs(); i++) {
-			LogicalSubscription sub = sink.getSubscribedToSource(i);
-			ILogicalOperator source = sub.getTarget();
-			if (sub.getSchema() == null) {
-				if (source.getOutputSchema() == null) {
-					updateSchemaInfos(source);
-				} else {
-					// Set Schema for both directions (sink to source and source
-					// to sink)!
-					sub.setSchema(source.getOutputSchema());
-					for (LogicalSubscription sourceSub : source.getSubscriptions()) {
-						if (sourceSub.getTarget() == sink) {
-							sourceSub.setSchema(source.getOutputSchema());
-						}
-					}
-				}
-			}
-		}
-	}
 
 	@Override
 	public Object visit(ASTLoginPassword node, Object data) throws QueryParseException {
