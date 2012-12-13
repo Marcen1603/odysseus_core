@@ -9,11 +9,26 @@
             </actorProperties>
             <properties>
                 <property key="source" value="${buckminster.output}/site.p2/" />
-                <property key="destination" value="/opt/jenkins/output/updatesite" />
+                <property key="destination" value="/opt/jenkins/output/nightly/update" />
             </properties>
             <prerequisites alias="repository">
                 <attribute name="site.p2" />
             </prerequisites>
         </public>
+        
+        <public name="site.p2.publish.hourly" actor="ant">
+            <actorProperties>
+                <property key="buildFile" value="publishUpdateSite.ant" />
+                <property key="targets" value="publish.p2" />
+            </actorProperties>
+            <properties>
+                <property key="source" value="${buckminster.output}/site.p2/" />
+                <property key="destination" value="/opt/jenkins/output/hourly/update" />
+            </properties>
+            <prerequisites alias="repository">
+                <attribute name="site.p2" />
+            </prerequisites>
+        </public>
+        
     </actions>
 </cspecExtension>
