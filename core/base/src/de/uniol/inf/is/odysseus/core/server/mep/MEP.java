@@ -61,8 +61,10 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.HyperbolicSinusFunctio
 import de.uniol.inf.is.odysseus.core.server.mep.functions.HyperbolicTangensFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.IfFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.IsNullFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.LengthFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.LikeFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.LogFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.LowerFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MinusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MinuteFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ModuloOperator;
@@ -94,6 +96,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.ToRadians;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToShortFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToStringFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.UnaryMinusOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.UpperFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.YearFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.impl.ExpressionBuilderVisitor;
 import de.uniol.inf.is.odysseus.core.server.mep.impl.MEPImpl;
@@ -206,6 +209,9 @@ public class MEP implements IExpressionParser {
         registerFunction(new ContainsFunction());
         
         registerFunction(new SubStringFunction());
+        registerFunction(new LengthFunction());
+        registerFunction(new UpperFunction());
+        registerFunction(new LowerFunction());
         
         /** Date Functions */
         registerFunction(new DebsDateFormatParse());
