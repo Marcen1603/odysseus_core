@@ -98,6 +98,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.ToShortFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToStringFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.UnaryMinusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.UpperFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.WeekFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.YearFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.impl.ExpressionBuilderVisitor;
 import de.uniol.inf.is.odysseus.core.server.mep.impl.MEPImpl;
@@ -222,6 +223,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new MinuteFunction());
         registerFunction(new HourFunction());
         registerFunction(new DayFunction());
+        registerFunction(new WeekFunction());
         registerFunction(new MonthFunction());
         registerFunction(new YearFunction());
         registerFunction(new NowFunction());
