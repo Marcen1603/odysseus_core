@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
 /**
- * Return the seconds
+ * Return the current system time specific second
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */

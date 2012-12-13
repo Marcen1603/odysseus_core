@@ -20,7 +20,7 @@ import java.util.Calendar;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 /**
- * Return the minutes
+ * Return the current system time specific minutes
  * @author Christian Kuka <christian@kuka.cc>
  *
  */

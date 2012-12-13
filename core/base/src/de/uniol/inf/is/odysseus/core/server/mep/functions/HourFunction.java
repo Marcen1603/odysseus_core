@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
 /**
- * Returns the hours
+ * Returns the current system time specific hour
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */

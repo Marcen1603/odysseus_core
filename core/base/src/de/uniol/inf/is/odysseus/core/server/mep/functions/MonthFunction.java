@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
 /**
- * Returns the month
+ * Returns the current system time specific month
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
