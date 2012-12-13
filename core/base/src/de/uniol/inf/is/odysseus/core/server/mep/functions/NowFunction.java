@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.server.mep.functions;
 
-import java.util.Calendar;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
