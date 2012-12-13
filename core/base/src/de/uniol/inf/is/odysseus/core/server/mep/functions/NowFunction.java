@@ -49,7 +49,7 @@ public class NowFunction extends AbstractFunction<Long> {
 
 	@Override
 	public String getSymbol() {
-		return "year";
+		return "now";
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class NowFunction extends AbstractFunction<Long> {
 
 	@Override
 	public SDFDatatype getReturnType() {
-		return SDFDatatype.INTEGER;
+		return SDFDatatype.LONG;
 	}
 
 }
