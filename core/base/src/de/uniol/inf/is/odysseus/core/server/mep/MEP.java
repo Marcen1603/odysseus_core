@@ -66,6 +66,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.LengthFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.LikeFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.LogFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.LowerFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.MD5Function;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MinusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MinuteFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ModuloOperator;
@@ -81,6 +82,8 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.PlusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.PowerOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.RandomFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.RoundFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.SHA1Function;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.SHA256Function;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SecondFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SinusFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerEqualsOperator;
@@ -231,6 +234,10 @@ public class MEP implements IExpressionParser {
         registerFunction(new NowFunction());
         registerFunction(new CurDateFunction());
         registerFunction(new NanoTimeFunction());
+        
+        registerFunction(new MD5Function());
+        registerFunction(new SHA1Function());
+        registerFunction(new SHA256Function());
 
     }
 
