@@ -43,8 +43,8 @@ public class LengthFunction extends AbstractFunction<Integer> {
 					"negative argument index not allowed");
 		}
 		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol()
-					+ " has one argument.");
+			throw new IllegalArgumentException(this.getSymbol() + " has only "
+					+ this.getArity() + " argument(s): a string");
 		}
 		return accTypes;
 	}
