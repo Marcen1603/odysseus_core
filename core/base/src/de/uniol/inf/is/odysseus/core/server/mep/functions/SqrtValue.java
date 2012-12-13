@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 /*
  * Diese Klasse dient dazu, aus einem �bergebenen Double-Wert die Wurzel zu ziehen.
  */
+@Deprecated
 public class SqrtValue extends AbstractFunction<Object>{
 
 	/**

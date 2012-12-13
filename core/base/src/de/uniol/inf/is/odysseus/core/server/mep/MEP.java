@@ -83,6 +83,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.SecondFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SinusFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerThanOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.SqrtFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SqrtValue;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SquareValue;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SubStringFunction;
@@ -158,6 +159,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new ModuloOperator());
 
         registerFunction(new PowerOperator());
+        registerFunction(new SqrtFunction());
 
         registerFunction(new NotOperator());
         registerFunction(new UnaryMinusOperator());
