@@ -33,7 +33,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 
 	private int[][] variables;
 	private SDFExpression[] expressions;
-	private SDFSchema inputSchema;
+	private final SDFSchema inputSchema;
 
 	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions) {
 		this.inputSchema = inputSchema;
@@ -59,6 +59,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	}
 
 	public RelationalMapPO(RelationalMapPO<T> relationalMapPO) {
+	    this.inputSchema = relationalMapPO.inputSchema.clone();
 		init(relationalMapPO.inputSchema ,relationalMapPO.expressions);
 	}
 
