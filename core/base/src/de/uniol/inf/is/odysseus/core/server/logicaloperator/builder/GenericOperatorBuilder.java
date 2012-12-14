@@ -63,10 +63,12 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 				}
 
 				String name = parameterAnnotation.name();
+				String doc = parameterAnnotation.doc();
 				// remove 'set' from set method to get the property name,
 				// if no explicit name was set
 				name = (name.isEmpty() ? method.getName().substring(3) : name).toUpperCase();
 				parameter.setName(name);
+				parameter.setDoc(doc);
 				REQUIREMENT requirement = parameterAnnotation.optional() ? REQUIREMENT.OPTIONAL : REQUIREMENT.MANDATORY;
 
 				parameter.setRequirement(requirement);

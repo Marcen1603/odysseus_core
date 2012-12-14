@@ -34,12 +34,7 @@ public class PQLOperatorsLabelProvider extends CellLabelProvider {
 			return ((IOperatorBuilder) element).getDoc();
 		}
 		if (element instanceof IParameter) {
-			IParameter<?> param = (IParameter<?>) element;
-			String name = param.getName().toUpperCase();
-			if (!param.isMandatory()) {
-				name = "[Optional] " + name;
-			}
-			return name;
+			return ((IParameter<?>) element).getDoc();
 		}
 		if (element instanceof String) {
 			return (String) element;

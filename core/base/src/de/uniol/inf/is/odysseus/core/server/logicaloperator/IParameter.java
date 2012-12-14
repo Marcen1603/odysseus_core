@@ -32,6 +32,8 @@ public interface IParameter<T> extends Serializable {
 	public static enum USAGE {RECENT, DEPRECATED}
 	public void setName(String name);
 	public String getName();
+	public void setDoc(String doc);
+	public String getDoc();
 	public IParameter.REQUIREMENT getRequirement();
 	public void setRequirement(REQUIREMENT requirement);
 	public void setUsage(USAGE usage);

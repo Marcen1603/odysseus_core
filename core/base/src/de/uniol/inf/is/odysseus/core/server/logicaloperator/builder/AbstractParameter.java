@@ -30,8 +30,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
  */
 public abstract class AbstractParameter<T> implements IParameter<T> {
 
+	private static final String DEFAULT_DOC_TEXT = "No description";
+	
 	private static final long serialVersionUID = -5259685918656067407L;
 	private String name;
+	private String doc;
 	private REQUIREMENT requirement = REQUIREMENT.OPTIONAL;
 	private USAGE usage = USAGE.RECENT;
 	private T value;
@@ -40,10 +43,16 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	private final List<Exception> errors;
 	private final List<Exception> warnings;
 	protected Object inputValue;
-
+	
 	public AbstractParameter(String name, REQUIREMENT requirement, USAGE usage) {
+		this(name, requirement, usage, null);
+	}
+	
+	public AbstractParameter(String name, REQUIREMENT requirement, USAGE usage, String doc) {
 		setName(name);
 		setRequirement(requirement);
+		setDoc(doc);
+		
 		this.requirement = requirement;
 		this.usage = usage;
 		value = null;
@@ -65,6 +74,14 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public void setName(String name) {
 		this.name = name.toUpperCase();
 	}
+	
+	@Override
+	public void setDoc(String doc ) {
+		this.doc = doc;
+		if( this.doc == null || this.doc.isEmpty() ) {
+			this.doc = DEFAULT_DOC_TEXT;
+		}
+	}
 
 	@Override
 	public void setRequirement(REQUIREMENT requirement) {
@@ -80,6 +97,11 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	@Override
 	public String getName() {
 		return this.name;
+	}
+	
+	@Override
+	public String getDoc() {
+		return doc;
 	}
 
 	@Override

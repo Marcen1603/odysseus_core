@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, name = "JOIN")
+@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, name = "JOIN", doc = "Operator to combine two datastreams")
 public class JoinAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 3710951139395164614L;
@@ -50,7 +50,7 @@ public class JoinAO extends BinaryLogicalOp {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	@Parameter(type = PredicateParameter.class, optional = true)
+	@Parameter(type = PredicateParameter.class, optional = true, doc = "Predicate to filter combinations")
 	public synchronized void setPredicate(IPredicate joinPredicate) {
 		super.setPredicate(joinPredicate);
 	}
