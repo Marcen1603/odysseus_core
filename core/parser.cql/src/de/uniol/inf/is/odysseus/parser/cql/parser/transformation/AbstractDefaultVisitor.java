@@ -732,4 +732,14 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTAssignSLAStatement node, Object data) throws QueryParseException {
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTJDBCConnection node, Object data) throws QueryParseException {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabaseConnectionCheck node, Object data) throws QueryParseException {
+		return null;
+	}
 }

@@ -22,6 +22,8 @@ public interface NewSQLParserVisitor
   public Object visit(ASTDatabaseSinkOptions node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTFileSink node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTCreateDatabaseConnection node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+  public Object visit(ASTDatabaseConnectionCheck node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+  public Object visit(ASTJDBCConnection node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTCreateFromDatabase node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTDatabaseTimeSensitiv node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTCreateViewStatement node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -129,4 +131,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTIdentifierList node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTRevokeStatement node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 }
-/* JavaCC - OriginalChecksum=3241310e8d563e3f2091132ece81784d (do not edit this line) */
+/* JavaCC - OriginalChecksum=77f4ae3fbf749b064c6688a879980866 (do not edit this line) */

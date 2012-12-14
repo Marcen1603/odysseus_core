@@ -1334,4 +1334,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return null;
 	}
 
+	@Override
+	public Object visit(ASTJDBCConnection node, Object data) throws QueryParseException {
+		return invokeDatabaseVisitor(ASTJDBCConnection.class, node, data);
+	}
+
+	@Override
+	public Object visit(ASTDatabaseConnectionCheck node, Object data) throws QueryParseException {
+		return invokeDatabaseVisitor(ASTDatabaseConnectionCheck.class, node, data);
+	}
+
 }
