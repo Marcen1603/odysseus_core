@@ -31,8 +31,8 @@ public class ToCartesianCoordinate extends AbstractFunction<Coordinate> {
 	 */
 	private static final long serialVersionUID = 2881839260208999355L;
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFDatatype.DOUBLE, SDFDatatype.INTEGER },
-			{ SDFDatatype.DOUBLE, SDFDatatype.INTEGER } };
+			{ SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER },
+			{ SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER } };
 
 	@Override
 	public int getArity() {

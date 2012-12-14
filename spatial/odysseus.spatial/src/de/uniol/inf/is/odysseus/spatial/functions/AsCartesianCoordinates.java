@@ -15,6 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.spatial.functions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -65,15 +68,21 @@ public class AsCartesianCoordinates extends AbstractFunction<Geometry> {
 		PolarCoordinate[] coordinates = (PolarCoordinate[]) this
 				.getInputValue(0);
 
-		final Coordinate[] points = new Coordinate[coordinates.length];
+		final List<Coordinate> points = new ArrayList<Coordinate>();
+		Coordinate lastPoint = null;
 		for (int i = 0; i < coordinates.length; i++) {
 			PolarCoordinate coordinate = coordinates[i];
 			final Coordinate point = new Coordinate();
-			point.x = coordinate.r * Math.cos(Math.toRadians(coordinate.a));
-			point.y = coordinate.r * Math.sin(Math.toRadians(coordinate.a));
-			points[i] = point;
+			point.x = coordinate.r * Math.cos(coordinate.a);
+			point.y = coordinate.r * Math.sin(coordinate.a);
+			if ((lastPoint == null) || (!point.equals2D(lastPoint))) {
+				points.add(point);
+				lastPoint = point;
+			}
+
 		}
-		return this.geometryFactory.createMultiPoint(points);
+		return this.geometryFactory.createMultiPoint(points
+				.toArray(new Coordinate[points.size()]));
 	}
 
 	@Override

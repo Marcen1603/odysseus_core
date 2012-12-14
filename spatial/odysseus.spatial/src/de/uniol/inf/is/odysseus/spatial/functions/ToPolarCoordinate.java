@@ -29,8 +29,8 @@ public class ToPolarCoordinate extends AbstractFunction<PolarCoordinate> {
 	 */
 	private static final long serialVersionUID = 7736127847801899025L;
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFDatatype.DOUBLE, SDFDatatype.INTEGER },
-			{ SDFDatatype.DOUBLE, SDFDatatype.INTEGER } };
+			{ SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER },
+			{ SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER } };
 
 	@Override
 	public int getArity() {
@@ -46,7 +46,7 @@ public class ToPolarCoordinate extends AbstractFunction<PolarCoordinate> {
 		if (argPos > this.getArity()) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity()
-					+ " argument(s): The radius and the angle");
+					+ " argument(s): The radius and the angle in radian");
 		}
 		return accTypes[argPos];
 	}
