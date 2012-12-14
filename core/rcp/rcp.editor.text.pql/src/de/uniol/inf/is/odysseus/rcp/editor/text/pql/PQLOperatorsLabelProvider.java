@@ -18,70 +18,83 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.pql;
 
 import java.util.Set;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 
-public class PQLOperatorsLabelProvider implements ILabelProvider {
+public class PQLOperatorsLabelProvider extends CellLabelProvider {
 
 	@Override
-	public void addListener(ILabelProviderListener listener) {
-	}
-
-	@Override
-	public void dispose() {
-	}
-
-	@Override
-	public boolean isLabelProperty(Object element, String property) {
-		return false;
-	}
-
-	@Override
-	public void removeListener(ILabelProviderListener listener) {
-	}
-
-	@Override
-	public Image getImage(Object element) {
-		if( element instanceof IOperatorBuilder ) {
-			return PQLEditorTextPlugIn.getImageManager().get("pqlOperator");
+	public String getToolTipText(Object element) {
+		if (element instanceof IOperatorBuilder) {
+			return ((IOperatorBuilder) element).getDoc();
 		}
-		if( element instanceof IParameter ) {
-			if( ((IParameter<?>)element).isMandatory() ) {
-				return PQLEditorTextPlugIn.getImageManager().get("pqlAttribute");
-			} else {
-				return PQLEditorTextPlugIn.getImageManager().get("pqlOptionalAttribute");
-			}
-		}
-		
-		return null;
-	}
-
-	@Override
-	public String getText(Object element) {
-		if( element instanceof IOperatorBuilder ) {
-			return ((IOperatorBuilder)element).getName().toUpperCase();
-		}
-		if( element instanceof IParameter ) {
-			IParameter<?> param = (IParameter<?>)element;
+		if (element instanceof IParameter) {
+			IParameter<?> param = (IParameter<?>) element;
 			String name = param.getName().toUpperCase();
-			if( !param.isMandatory() ) {
+			if (!param.isMandatory()) {
 				name = "[Optional] " + name;
 			}
 			return name;
 		}
-		if( element instanceof String ) {
-			return (String)element;
+		if (element instanceof String) {
+			return (String) element;
 		}
-		
-		if( element instanceof Set ) {
+
+		if (element instanceof Set) {
 			return "Set";
 		}
-		
+
 		return null;
+	}
+	
+	@Override
+	public Point getToolTipShift(Object object) {
+		return new Point(5,5);
+	}
+	
+	@Override
+	public int getToolTipDisplayDelayTime(Object object) {
+		return 250;
+	}
+	
+	@Override
+	public void update(ViewerCell cell) {
+		Object element = cell.getElement();
+		String text = "";
+		Image image = null;
+		if (element instanceof IOperatorBuilder) {
+			text = ((IOperatorBuilder) element).getName().toUpperCase();
+			image = PQLEditorTextPlugIn.getImageManager().get("pqlOperator");
+		}
+		if (element instanceof IParameter) {
+			IParameter<?> param = (IParameter<?>) element;
+			String name = param.getName().toUpperCase();
+			if (!param.isMandatory()) {
+				name = "[Optional] " + name;
+			}
+			text = name;
+			
+			if( ((IParameter<?>)element).isMandatory() ) {
+				image = PQLEditorTextPlugIn.getImageManager().get("pqlAttribute");
+			} else {
+				image = PQLEditorTextPlugIn.getImageManager().get("pqlOptionalAttribute");
+			}
+		}
+		if (element instanceof String) {
+			text = (String) element;
+		}
+
+		if (element instanceof Set) {
+			text = "Set";
+		}
+
+		cell.setText(text);
+		cell.setImage(image);
 	}
 
 }

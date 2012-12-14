@@ -51,4 +51,6 @@ public interface IOperatorBuilder extends Serializable {
 	public IOperatorBuilder cleanCopy();
 	
 	public String getName();
+	
+	public String getDoc();
 }

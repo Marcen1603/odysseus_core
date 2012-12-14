@@ -26,4 +26,5 @@ public @interface LogicalOperator {
 	public String name();
 	public int minInputPorts();
 	public int maxInputPorts();
+	public String doc() default "";
 }

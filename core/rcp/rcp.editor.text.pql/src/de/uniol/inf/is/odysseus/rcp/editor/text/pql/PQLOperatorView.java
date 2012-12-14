@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
@@ -28,6 +29,7 @@ public class PQLOperatorView extends ViewPart {
 
 		treeViewer = new TreeViewer(parent);
 		treeViewer.setContentProvider(contentProvider);
+		ColumnViewerToolTipSupport.enableFor(treeViewer);
 		treeViewer.setLabelProvider(new PQLOperatorsLabelProvider());
 
 		treeViewer.setInput(determineInput());

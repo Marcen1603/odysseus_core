@@ -242,9 +242,12 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 			}
 			logger.debug("Create GenericOperatorBuilder Builder for " + curOp
 					+ " with parameters " + parameters);
+			String doc = logicalOperatorAnnotation.doc();
+			if( doc == null || doc.isEmpty() ) {
+				logger.warn("Documentation for {} not available!", logicalOperatorAnnotation.name());
+			}
 			GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp, logicalOperatorAnnotation.name(), parameters, logicalOperatorAnnotation.minInputPorts(),
-					logicalOperatorAnnotation.maxInputPorts());
-
+					logicalOperatorAnnotation.maxInputPorts(), doc);
 			OperatorBuilderFactory.addOperatorBuilder(builder);
 		}catch(NoClassDefFoundError e){			
 			e.printStackTrace();

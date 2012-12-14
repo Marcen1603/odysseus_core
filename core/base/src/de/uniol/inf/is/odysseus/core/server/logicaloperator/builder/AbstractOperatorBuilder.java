@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -37,6 +39,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	private static final long serialVersionUID = 5166465410911961680L;
+
+	private static final String DEFAULT_DOC_TEXT = "No documentation available";
 
 	private Set<IParameter<?>> parameters;
 	private List<Exception> errors;
@@ -53,9 +57,19 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	private IDataDictionary dataDictionary;
 
 	private String name;
+	private String doc;
+	
+	public AbstractOperatorBuilder( String name, int minPortCount, int maxPortCount ) {
+		this(name, minPortCount, maxPortCount, null);
+	}
 
-	public AbstractOperatorBuilder(String name, int minPortCount, int maxPortCount) {
+	public AbstractOperatorBuilder(String name, int minPortCount, int maxPortCount, String doc) {
 		this.name = name;
+		this.doc = doc;
+		if( Strings.isNullOrEmpty(this.doc)) {
+			this.doc = DEFAULT_DOC_TEXT;
+		}
+		
 		if (minPortCount > maxPortCount) {
 			throw new IllegalArgumentException(
 					"minimum number of ports may not be higher than maximum number");
@@ -81,6 +95,10 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	public String getName(){
 		return this.name;
+	}
+	
+	public String getDoc() {
+		return this.doc;
 	}
 	
 	protected void addError(Exception e) {
