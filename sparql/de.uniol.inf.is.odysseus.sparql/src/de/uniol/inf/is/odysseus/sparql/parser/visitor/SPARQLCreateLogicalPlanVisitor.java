@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 import de.uniol.inf.is.odysseus.relational.base.predicate.TypeSafeRelationalPredicate;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.DuplicateElimination;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
@@ -1387,7 +1386,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 			// "SPARQL_Access_Socket"));
 			accAO = new AccessAO(
 					node.getStreamName(),
-					RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,
+					"",
 					null);
 			accAO.setHost(socket.getHost());
 			accAO.setPort(socket.getPort());
@@ -1398,7 +1397,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 			// "SPARQL_ACCESS_Channel"));
 			accAO = new AccessAO(
 					streamName,
-					RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,
+					"",
 					null);
 			accAO.setHost(channel.getHost());
 			accAO.setPort(channel.getPort());
@@ -1422,7 +1421,6 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 		accAO.setOutputSchema(outputSchema);
 
 		// before adding the acces operator, add the corresponding entity
-		dd.addSourceType(streamName, accAO.getWrapper());
 		dd.addEntitySchema(streamName, outputSchema, user);
 
 		TimestampAO op = addTimestampAO(accAO);

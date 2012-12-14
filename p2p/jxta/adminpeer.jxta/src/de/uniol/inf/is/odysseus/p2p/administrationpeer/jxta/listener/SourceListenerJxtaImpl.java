@@ -117,7 +117,6 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 							logger.debug("Adding to DD " + adv.getSourceName()
 									+ " " + sourceType);
 							
-							dd.addSourceType(viewname, sourceType);
 							if (adv.isView()) {
 								dd.setView(viewname, topOperator,
 										caller);

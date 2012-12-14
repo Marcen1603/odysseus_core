@@ -148,8 +148,6 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			}
 		}
 
-		getDataDictionary().addSourceType(sourceName, "RelationalStreaming");
-
 		AccessAO ao = new AccessAO(sourceName, wrapperName, optionsMap);
 
 		if (outputschema.hasValue()) {

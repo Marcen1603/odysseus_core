@@ -116,7 +116,6 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		node.jjtGetChild(1).jjtAccept(this, data);
 		SDFSchema outschema = new SDFSchema(name, attributes);
-		dd.addSourceType(name, "RelationalStreaming");
 		dd.addEntitySchema(name, outschema, caller);
 
 		for (int i = startOtherValues; i < node.jjtGetNumChildren(); ++i) {
@@ -131,7 +130,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			throws QueryParseException {
 		try {
 			FixedSetAccessAO newPO = new FixedSetAccessAO(name,
-					dd.getSourceType(name), node.getTuples(attributes));
+					"FixedSetAccessAO", node.getTuples(attributes));
 			SDFSchema outputSchema = new SDFSchema(name, attributes);
 			newPO.setOutputSchema(outputSchema);
 			dd.setStream(name, newPO, caller);

@@ -67,16 +67,17 @@ public class SourcesViewLabelProvider implements ILabelProvider {
 			sb.append(entry.getKey()).append(" [")
 					.append(entry.getValue().getClass().getSimpleName())
 					.append("]");
-			if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
-				IUser user = ((IServerExecutor)OdysseusRCPPlugIn.getExecutor())
-						.getDataDictionary().getCreator(entry.getKey());
-				if (user != null) {
-					sb.append("Created by ").append(
-							user.getName());
-				} else {
-					sb.append("Created by no user ??");
-				}
-			}
+			// Creator is now part of name!
+			//			if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
+//				IUser user = ((IServerExecutor)OdysseusRCPPlugIn.getExecutor())
+//						.getDataDictionary().getCreator(entry.getKey());
+//				if (user != null) {
+//					sb.append("Created by ").append(
+//							user.getName());
+//				} else {
+//					sb.append("Created by no user ??");
+//				}
+//			}
 			return sb.toString();
 		}
 		if (element instanceof SDFAttribute) {

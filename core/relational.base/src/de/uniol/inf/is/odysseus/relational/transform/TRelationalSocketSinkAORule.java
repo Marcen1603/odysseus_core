@@ -47,7 +47,7 @@ public class TRelationalSocketSinkAORule extends
 			TransformationConfiguration config) {
 
 		// Is this sink already translated?
-		ISink<?> socketSinkPO = getDataDictionary().getSink(operator
+		ISink<?> socketSinkPO = getDataDictionary().getSinkplan(operator
 				.getSinkName());
 
 		if (socketSinkPO == null) {
@@ -60,7 +60,7 @@ public class TRelationalSocketSinkAORule extends
 					objectHandler, operator.getConnectToServer());
 
 			socketSinkPO.setOutputSchema(operator.getOutputSchema());
-			getDataDictionary().putSink(operator.getName(), socketSinkPO);
+			getDataDictionary().putSinkplan(operator.getName(), socketSinkPO);
 		}
 		Collection<ILogicalOperator> toUpdate = config
 				.getTransformationHelper().replace(operator, socketSinkPO,true);

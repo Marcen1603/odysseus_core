@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTAssignSLAStatement extends SimpleNode {
   public ASTAssignSLAStatement(int id) {
     super(id);

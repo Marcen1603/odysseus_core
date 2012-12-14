@@ -115,7 +115,6 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
                 optionsMap.put(option.getName().toLowerCase(), option.getValue());
             }
         }
-        this.getDataDictionary().addSourceType(sinkName, "RelationalStreaming");
         final SenderAO ao = new SenderAO(sinkName, this.wrapper.getValue(), optionsMap);
         if (this.dataHandler.hasValue()) {
             ao.setDataHandler(this.dataHandler.getValue());

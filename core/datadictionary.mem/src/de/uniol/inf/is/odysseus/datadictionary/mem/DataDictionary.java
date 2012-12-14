@@ -52,11 +52,6 @@ public class DataDictionary extends AbstractDataDictionary {
 	}
 
 	@Override
-	protected IStore<String, String> createSourceTypeMapStore() {
-		return newMemoryStore();
-	}
-
-	@Override
 	protected IStore<String, SDFDatatype> createDatatypesStore() {
 		return newMemoryStore();
 	}

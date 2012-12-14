@@ -55,10 +55,7 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy {
 			}
 			return true;
 		}
-		// keine Quellen werden verwaltet
-		if (dd.emptySourceTypeMap()) {
-			return true;
-		}
+
         return false;
 	}
 

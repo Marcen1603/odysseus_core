@@ -61,11 +61,6 @@ public class DataDictionary extends AbstractDataDictionary {
 	}
 
 	@Override
-	protected IStore<String, String> createSourceTypeMapStore() {
-		return tryCreateFileStore("sourceTypeMapFilename");
-	}
-
-	@Override
 	protected IStore<String, SDFDatatype> createDatatypesStore() {
 		return tryCreateFileStore("datatypesFromDatatypesFilename");
 	}

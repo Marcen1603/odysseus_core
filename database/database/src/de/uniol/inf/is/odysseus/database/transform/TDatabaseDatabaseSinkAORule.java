@@ -51,12 +51,12 @@ public class TDatabaseDatabaseSinkAORule extends AbstractTransformationRule<Data
 
 	@Override
 	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) {
-		ISink<?> sinkPO = getDataDictionary().getSink(operator.getSinkName());
+		ISink<?> sinkPO = getDataDictionary().getSinkplan(operator.getSinkName());
 
 		if (sinkPO == null) {
 			sinkPO = new DatabaseSinkPO(operator.getConnectionName(), operator.getTablename(), operator.isDrop(), operator.isTruncate());			
 			sinkPO.setOutputSchema(operator.getOutputSchema());
-			getDataDictionary().putSink(operator.getSinkName(), sinkPO);
+			getDataDictionary().putSinkplan(operator.getSinkName(), sinkPO);
 		}
 		replace(operator, sinkPO, config);		
 		retract(operator);		

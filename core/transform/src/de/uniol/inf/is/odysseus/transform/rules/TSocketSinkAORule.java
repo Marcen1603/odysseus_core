@@ -39,7 +39,7 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 		try {
 
 			// Is this sink already translated?
-			ISink<?> socketSinkPO = getDataDictionary().getSink(operator
+			ISink<?> socketSinkPO = getDataDictionary().getSinkplan(operator
 					.getSinkName());
 
 			if (socketSinkPO == null) {
@@ -55,7 +55,7 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 						operator.isLoginNeeded(), null, operator.getConnectToServer());
 
 				socketSinkPO.setOutputSchema(operator.getOutputSchema());
-				getDataDictionary().putSink(operator.getName(), socketSinkPO);
+				getDataDictionary().putSinkplan(operator.getName(), socketSinkPO);
 			}
 			defaultExecute(operator, socketSinkPO, config, true, true);
 		} catch (Exception e) {

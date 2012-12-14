@@ -71,22 +71,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
 		if (dd.containsViewOrStream(sourceString, caller)) {
-
-			String sourceType = dd.getSourceType(sourceString);
-
-			if ("RelationalStreaming".equalsIgnoreCase(sourceType)) {
-				relationalStreamingSource(node, sourceString);
-				return null;
-			} else if ("brokerStreaming".equalsIgnoreCase(sourceType)) {
-				brokerStreamingSource(node, data);
-				return null;
-			} else if ("ObjectRelationalStreaming".equalsIgnoreCase(sourceType)) {
-				relationalStreamingSource(node, sourceString);
-				return null;
-			} else {
-				throw new QueryParseException("unknown type of source '"
-						+ sourceType + "' for source: " + sourceString);
-			}
+			relationalStreamingSource(node, sourceString);
+			return null;
 		} else {
 			throw new QueryParseException("Unkown Source " + sourceString);
 		}
@@ -99,7 +85,9 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		try {
 			access = dd.getViewOrStream(sourceName, caller);
 			if (access instanceof AccessAO) {
-				((AccessAO) access).setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));;
+				((AccessAO) access).setDataHandler(new TupleDataHandler()
+						.getSupportedDataTypes().get(0));
+				;
 			}
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());
@@ -255,35 +243,4 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		return null;
 	}
 
-	private Object brokerStreamingSource(ASTSimpleSource node, Object data)
-			throws QueryParseException {
-		try {
-			Class<?> brokerSourceVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
-			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
-					ISession.class);
-			m.invoke(bsv, caller);
-			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary",
-					IDataDictionary.class);
-			m.invoke(bsv, dd);
-
-			m = brokerSourceVisitor.getDeclaredMethod("visit",
-					ASTSimpleSource.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-					.invoke(bsv, node, data);
-
-			ASTIdentifier ident = (ASTIdentifier) node.jjtGetChild(0);
-			String name = ident.getName();
-			this.attributeResolver.addSource(name, sourceOp);
-		} catch (ClassNotFoundException ex) {
-			throw new QueryParseException(
-					"Brokerplugin is missing in CQL parser.", ex.getCause());
-		} catch (Exception e) {
-			throw new QueryParseException(
-					"Error while creating broker as source.", e.getCause());
-		}
-
-		return null;
-	}
 }

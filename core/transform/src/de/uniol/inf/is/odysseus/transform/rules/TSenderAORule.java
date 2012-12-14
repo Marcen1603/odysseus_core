@@ -82,7 +82,7 @@ public class TSenderAORule extends AbstractTransformationRule<SenderAO> {
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
 		ISink<?> senderPO = new SenderPO(protocolHandler);
-        getDataDictionary().putSink(senderPOName, senderPO);
+        getDataDictionary().putSinkplan(senderPOName, senderPO);
         defaultExecute(operator, senderPO, config, true, true);
     }
 

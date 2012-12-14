@@ -276,7 +276,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
         {
           {if (true) throw new QueryParseException("multiple definition of view '" + nameStr + "'");}
         }
-        dd.addSourceType(nameStr, "RelationalStreaming");
         dd.addEntitySchema(nameStr, op.getOutputSchema(), getUser());
         if (isSharedSource)
         {

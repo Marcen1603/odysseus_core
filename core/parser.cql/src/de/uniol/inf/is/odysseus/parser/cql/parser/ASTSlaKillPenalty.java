@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTSlaKillPenalty extends SimpleNode {
   public ASTSlaKillPenalty(int id) {
     super(id);
