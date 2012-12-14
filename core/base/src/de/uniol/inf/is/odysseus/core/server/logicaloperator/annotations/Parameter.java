@@ -76,4 +76,6 @@ public @interface Parameter {
 	 */
 	@SuppressWarnings("rawtypes")
 	Class<? extends IParameter> keytype() default StringParameter.class;
+	
+	String doc() default "No description";
 }
