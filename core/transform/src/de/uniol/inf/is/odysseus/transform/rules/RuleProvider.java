@@ -42,7 +42,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TRenameAORule());
 		rules.add(new TSinkAORule());
 		rules.add(new TBufferedPipeRule());
-		rules.add(new TSenderAORule());
+		rules.add(new TSenderAOGenericRule());
 		return rules;
 	}
 

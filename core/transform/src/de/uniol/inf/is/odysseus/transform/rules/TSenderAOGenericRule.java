@@ -41,8 +41,8 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class TSenderAORule extends AbstractTransformationRule<SenderAO> {
-    static Logger LOG = LoggerFactory.getLogger(TSenderAORule.class);
+public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
+    static Logger LOG = LoggerFactory.getLogger(TSenderAOGenericRule.class);
 
     /*
      * (non-Javadoc)
@@ -62,6 +62,7 @@ public class TSenderAORule extends AbstractTransformationRule<SenderAO> {
     @Override
     public void execute(SenderAO operator, TransformationConfiguration config) {
         String senderPOName = operator.getSinkname();
+
         IDataHandler<?> dataHandler = getDataHandler(operator);
         if (dataHandler == null) {
             LOG.error("No data handler {} found.", operator.getDataHandler());
@@ -79,9 +80,8 @@ public class TSenderAORule extends AbstractTransformationRule<SenderAO> {
             LOG.error("No transport handler {} found.", operator.getTransportHandler());
             throw new TransformationException("No transport handler " + operator.getTransportHandler() + " found.");
         }
-
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-		ISink<?> senderPO = new SenderPO(protocolHandler);
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        ISink<?> senderPO = new SenderPO(protocolHandler);
         getDataDictionary().putSinkplan(senderPOName, senderPO);
         defaultExecute(operator, senderPO, config, true, true);
     }
@@ -94,7 +94,9 @@ public class TSenderAORule extends AbstractTransformationRule<SenderAO> {
      */
     @Override
     public boolean isExecutable(SenderAO operator, TransformationConfiguration config) {
-        return operator.isAllPhysicalInputSet();
+        return (getDataDictionary().getSinkplan(operator.getSinkname()) == null && operator.getWrapper() != null && (Constants.GENERIC_PULL
+                .equalsIgnoreCase(operator.getWrapper()) || Constants.GENERIC_PUSH.equalsIgnoreCase(operator
+                .getWrapper())));
     }
 
     /*
