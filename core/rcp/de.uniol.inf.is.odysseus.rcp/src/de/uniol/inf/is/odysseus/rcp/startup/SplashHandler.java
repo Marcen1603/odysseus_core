@@ -34,7 +34,7 @@ public class SplashHandler extends AbstractSplashHandler {
 		super.init(splash);
 		// waiting for executor...		
 		try {
-			OdysseusRCPPlugIn.waitForExecutorLock.acquire();
+			OdysseusRCPPlugIn.waitForExecutor();
 		} catch (InterruptedException e) {			
 			e.printStackTrace();
 		}		
