@@ -10,7 +10,7 @@
 
 Help can be found here:
 
-http://odysseus.offis.uni-oldenburg.de/
+http://odysseus.informatik.uni-oldenburg.de/
       </text>
    </aboutInfo>
 
@@ -30,6 +30,7 @@ http://odysseus.offis.uni-oldenburg.de/
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>

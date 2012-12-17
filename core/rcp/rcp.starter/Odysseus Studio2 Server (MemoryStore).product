@@ -10,7 +10,7 @@
 
 Help can be found here:
 
-http://odysseus.offis.uni-oldenburg.de/
+http://odysseus.informatik.uni-oldenburg.de/
       </text>
    </aboutInfo>
 
@@ -41,6 +41,7 @@ http://odysseus.offis.uni-oldenburg.de/
             winLargeLow="/de.uniol.inf.is.odysseus.rcp.starter/icons/48_48_8.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
