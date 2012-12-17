@@ -23,9 +23,6 @@ import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.server.OdysseusRCPServerPlugIn;
 
 public class SourcesViewLabelProvider implements ILabelProvider {
