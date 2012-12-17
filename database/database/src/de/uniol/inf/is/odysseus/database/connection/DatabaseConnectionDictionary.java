@@ -115,6 +115,12 @@ public class DatabaseConnectionDictionary {
 		this.fireChangeEvent();
 	}
 	
+	public void removeFactory(String dbms){
+		dbms = dbms.toUpperCase();
+		this.factories.remove(dbms);
+		this.fireChangeEvent();
+	}
+	
 	public Set<String> getConnectionFactoryNames(){
 		return this.factories.keySet();
 	}
@@ -126,6 +132,12 @@ public class DatabaseConnectionDictionary {
 	public void addConnection(String name, IDatabaseConnection connection){		
 		name = name.toUpperCase();
 		this.connections.put(name, connection);
+		this.fireChangeEvent();
+	}
+	
+	public void removeConnection(String name){
+		name = name.toUpperCase();
+		this.connections.remove(name);
 		this.fireChangeEvent();
 	}
 	

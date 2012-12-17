@@ -54,7 +54,7 @@ public class TDatabaseDatabaseSinkAORule extends AbstractTransformationRule<Data
 		ISink<?> sinkPO = getDataDictionary().getSinkplan(operator.getSinkName());
 
 		if (sinkPO == null) {
-			sinkPO = new DatabaseSinkPO(operator.getConnectionName(), operator.getTablename(), operator.isDrop(), operator.isTruncate());			
+			sinkPO = new DatabaseSinkPO(operator.getConnection(), operator.getTablename(), operator.isDrop(), operator.isTruncate());			
 			sinkPO.setOutputSchema(operator.getOutputSchema());
 			getDataDictionary().putSinkplan(operator.getSinkName(), sinkPO);
 		}

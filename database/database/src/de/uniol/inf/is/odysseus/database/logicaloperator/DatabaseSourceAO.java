@@ -32,66 +32,81 @@ package de.uniol.inf.is.odysseus.database.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
  * 
  * @author Dennis Geesen Created at: 28.10.2011
  */
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="DATABASESOURCE")
-public class DatabaseSourceAO extends AbstractLogicalOperator{
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DATABASESOURCE")
+public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	
-	
-
 	private static final long serialVersionUID = -5800479007184861697L;
+
 	private boolean timesensitiv = false;
-
-	private IDatabaseConnection connection;
-
 	private String tablename;
-	private long waitMillis;
+	private long waitMillis = 0;
 	private String name;
 
-	public DatabaseSourceAO(String name, IDatabaseConnection connection, String tablename, boolean timesensitiv, long waitMillis) {
-		this.name = name;
-		this.connection = connection;
-		this.tablename = tablename;
-		this.timesensitiv = timesensitiv;
+	public DatabaseSourceAO() {
+
+	}
+
+	public DatabaseSourceAO(DatabaseSourceAO ds) {
+		super(ds);
+		this.timesensitiv = ds.timesensitiv;
+		this.tablename = ds.tablename;
+		this.waitMillis = ds.waitMillis;
+		this.name = ds.name;
+		
+	}
+
+	@Parameter(type = StringParameter.class, name = "table")
+	public void setTableName(String tableName) {
+		this.tablename = tableName;
+	}
+
+	
+	@Parameter(type = LongParameter.class, name ="waiteach", optional = true)
+	public void setWaitInMillis(long waitMillis){
 		this.waitMillis = waitMillis;
-
+	}
+	
+	@Parameter(type = StringParameter.class, name ="sourcename")
+	public void setSourceName(String name){
+		this.name = name;
 	}
 
-	public DatabaseSourceAO(DatabaseSourceAO original) {
-		this.name = original.name;
-		this.connection = original.connection;
-		this.timesensitiv = original.timesensitiv;
-		this.tablename = original.tablename;
-		this.waitMillis = original.waitMillis;
-	}
-
-	public IDatabaseConnection getConnection() {
-		return connection;
+	public String getSourceName(){
+		return this.name;
 	}
 
 	public String getTableName() {
 		return tablename;
-	}
-	
-	@Override
-	public AbstractLogicalOperator clone() {
-		return new DatabaseSourceAO(this);
-	}
+	}	
 
 	public boolean isTimesensitiv() {
 		return timesensitiv;
 	}
 
-	public String getSourceName() {
-		return this.name;
+	public long getWaitMillis() {
+		return this.waitMillis;
 	}
 
-	public long getWaitMillis(){
-		return this.waitMillis;
+	
+
+	@Override
+	public AbstractLogicalOperator clone() {
+		return new DatabaseSourceAO(this);
+	}
+
+	/**
+	 * @param isTimeSensitive
+	 */
+	public void setTimeSensitive(boolean isTimeSensitive) {
+		this.timesensitiv = isTimeSensitive;		
 	}
 
 }

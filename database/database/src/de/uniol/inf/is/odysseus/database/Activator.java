@@ -46,7 +46,7 @@ public class Activator implements BundleActivator {
 		DatabaseConnectionDictionary.getInstance().addFactory("postgresql", new PostgresConnectionFactory());
 		DatabaseConnectionDictionary.getInstance().addFactory("oracle", new OracleConnectionFactory());
 		
-		//Mappings Database -> Odysseus
+		//Mappings Database -> Odysseus		
 		DatatypeRegistry.getInstance().registerDatabaseToStream(Types.ARRAY, SDFDatatype.OBJECT);
 		DatatypeRegistry.getInstance().registerDatabaseToStream(Types.BIGINT, SDFDatatype.LONG);
 		DatatypeRegistry.getInstance().registerDatabaseToStream(Types.BINARY, SDFDatatype.LONG);
@@ -109,5 +109,8 @@ public class Activator implements BundleActivator {
 	@Override
     public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+		DatabaseConnectionDictionary.getInstance().removeFactory("mysql");
+		DatabaseConnectionDictionary.getInstance().removeFactory("postgresql");
+		DatabaseConnectionDictionary.getInstance().removeFactory("oracle");
 	}
 }

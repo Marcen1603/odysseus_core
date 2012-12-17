@@ -30,6 +30,7 @@
 
 package de.uniol.inf.is.odysseus.database.rcp.views;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -67,50 +68,61 @@ public class DatabaseConnectionsViewContentProvider implements ITreeContentProvi
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		
-		if (parentElement instanceof IViewSite) {		
+
+		if (parentElement instanceof IViewSite) {
 			List<Object> objects = new ArrayList<Object>();
-			for(Entry<String, IDatabaseConnection> c : DatabaseConnectionDictionary.getInstance().getConnections().entrySet()){
+			for (Entry<String, IDatabaseConnection> c : DatabaseConnectionDictionary.getInstance().getConnections().entrySet()) {
 				objects.add(new DatabaseConnectionViewEntry(c.getKey(), c.getValue()));
 			}
 			return objects.toArray();
 		}
-		
-		
+
 		if (parentElement instanceof DatabaseConnectionViewEntry) {
-			DatabaseConnectionViewEntry e = (DatabaseConnectionViewEntry)parentElement;			
+			DatabaseConnectionViewEntry e = (DatabaseConnectionViewEntry) parentElement;
 			List<Object> objects = new ArrayList<Object>();
 			objects.add(new DatabaseInformationsViewEntry(e.getConnection()));
 			objects.add(new DatabaseTablesViewEntry(e.getConnection()));
-			return objects.toArray();			
-		}		
-		
-		if(parentElement instanceof DatabaseInformationsViewEntry){
+			return objects.toArray();
+		}
+
+		if (parentElement instanceof DatabaseInformationsViewEntry) {
 			DatabaseInformationsViewEntry e = (DatabaseInformationsViewEntry) parentElement;
 			List<Object> objects = new ArrayList<Object>();
-			for(Entry<String, String> entry : e.getConnection().getInformation().entrySet()){
-				objects.add(new DatabaseInformationItemViewEntry(entry.getKey(), entry.getValue()));
+			try {
+				for (Entry<String, String> entry : e.getConnection().getInformation().entrySet()) {
+					objects.add(new DatabaseInformationItemViewEntry(entry.getKey(), entry.getValue()));
+				}
+			} catch (SQLException ex) {
+				ex.printStackTrace();
 			}
-			return objects.toArray();					
-		}		
-		if(parentElement instanceof DatabaseTablesViewEntry){
-			List<Object> objects = new ArrayList<Object>();
-			DatabaseTablesViewEntry e = (DatabaseTablesViewEntry) parentElement;
-			for(String str : e.getConnection().getTables()){
-				objects.add(new DatabaseTableItemViewEntry(str,e.getConnection()));
-			}			
 			return objects.toArray();
 		}
-		
-		if(parentElement instanceof DatabaseTableItemViewEntry){
+		if (parentElement instanceof DatabaseTablesViewEntry) {
+			List<Object> objects = new ArrayList<Object>();
+			try {
+				DatabaseTablesViewEntry e = (DatabaseTablesViewEntry) parentElement;
+				for (String str : e.getConnection().getTables()) {
+					objects.add(new DatabaseTableItemViewEntry(str, e.getConnection()));
+				}
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+			return objects.toArray();
+		}
+
+		if (parentElement instanceof DatabaseTableItemViewEntry) {
 			DatabaseTableItemViewEntry e = (DatabaseTableItemViewEntry) parentElement;
 			List<Object> objects = new ArrayList<Object>();
-			for(SDFAttribute a : e.getDatabaseConnection().getSchema(e.getName())){
-				objects.add(a.getAttributeName()+": "+a.getDatatype());
+			try {
+				for (SDFAttribute a : e.getDatabaseConnection().getSchema(e.getName())) {
+					objects.add(a.getAttributeName() + ": " + a.getDatatype());
+				}
+			} catch (SQLException ex) {
+				ex.printStackTrace();
 			}
 			return objects.toArray();
 		}
-		
+
 		return new Object[0];
 
 	}
@@ -125,13 +137,13 @@ public class DatabaseConnectionsViewContentProvider implements ITreeContentProvi
 		if (element instanceof DatabaseConnectionViewEntry) {
 			return true;
 		}
-		if (element instanceof DatabaseInformationsViewEntry){
+		if (element instanceof DatabaseInformationsViewEntry) {
 			return true;
 		}
-		if (element instanceof DatabaseTablesViewEntry){
+		if (element instanceof DatabaseTablesViewEntry) {
 			return true;
 		}
-		if (element instanceof DatabaseTableItemViewEntry){
+		if (element instanceof DatabaseTableItemViewEntry) {
 			return true;
 		}
 		return false;

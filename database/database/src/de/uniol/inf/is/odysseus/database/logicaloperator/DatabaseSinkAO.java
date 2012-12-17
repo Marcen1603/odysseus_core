@@ -42,12 +42,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * Created at: 20.10.2011
  */
 @LogicalOperator(name = "DATABASESINK", minInputPorts = 1, maxInputPorts = 1)
-public class DatabaseSinkAO extends AbstractLogicalOperator{
+public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	
 	private static final long serialVersionUID = -6513851256783092870L;
 	
-	private String tablename;
-	private String connectionName;
+	private String tablename;	
 	private String sinkName;
 	private boolean truncate;
 	private boolean drop;
@@ -56,21 +55,10 @@ public class DatabaseSinkAO extends AbstractLogicalOperator{
 		super();
 	}
 
-	
-	public DatabaseSinkAO(String sinkName, String connectionName, String tablename, boolean drop, boolean truncate) {
-		super();
-		this.sinkName = sinkName;
-		this.connectionName = connectionName;
-		this.tablename = tablename;		
-		this.drop = drop;
-		this.truncate = truncate;
-	}
-
 	public DatabaseSinkAO(DatabaseSinkAO old) {
 		super(old);		
 		this.sinkName = old.getSinkName();
-		this.tablename = old.tablename;
-		this.connectionName = old.connectionName;
+		this.tablename = old.tablename;		
 		this.drop = old.drop;
 		this.truncate = old.truncate;
 	}
@@ -83,10 +71,6 @@ public class DatabaseSinkAO extends AbstractLogicalOperator{
 	
 	public String getTablename() {
 		return this.tablename;
-	}
-
-	public String getConnectionName(){
-		return this.connectionName;
 	}
 	
 	public boolean isDrop() {
@@ -104,12 +88,7 @@ public class DatabaseSinkAO extends AbstractLogicalOperator{
 	@Parameter(name = "TABLE", type = StringParameter.class, optional = false)
 	public void setTablename(String tablename) {
 		this.tablename = tablename;
-	}
-
-	@Parameter(name = "CONNECTION", type = StringParameter.class, optional = false)
-	public void setConnectionName(String connectionName) {
-		this.connectionName = connectionName;
-	}
+	}	
 
 	@Parameter(name = "SINKNAME", type = StringParameter.class, optional = false)
 	public void setSinkName(String sinkName) {

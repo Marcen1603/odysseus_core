@@ -32,12 +32,14 @@ package de.uniol.inf.is.odysseus.database.connection;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
@@ -55,68 +57,92 @@ public class DatabaseConnection implements IDatabaseConnection {
 
 	private static Logger logger = LoggerFactory.getLogger(DatabaseConnection.class);
 
-	protected Connection connection;
+ 
+	private boolean connected = false;
+	// do NOT change this to protected or public!!
+	private Connection connection;
 	// protected HashMap<SDFDatatype, String> datatypeMappings = new
 	// HashMap<SDFDatatype, String>();
 	protected List<DatatypeMapping> ds2dbMapping = new ArrayList<DatatypeMapping>();
+	private String connString;
 
-	public DatabaseConnection(Connection connection) {
-		this.connection = connection;
+	private Properties connectionProps;
+
+	public DatabaseConnection(String jdbcString, Properties props) {
+		this.connString = jdbcString;
+		this.connectionProps = props;
+	}
+
+	public DatabaseConnection(String jdbcString, String username, String password) {
+		this.connString = jdbcString;
+		connectionProps = new Properties();
+		connectionProps.put("user", username);
+		connectionProps.put("password", password);
+	}
+
+	public DatabaseConnection(String jdbcString, String username) {
+		this.connString = jdbcString;
+		connectionProps = new Properties();
 	}
 
 	@Override
-    public Connection getConnection() {
+	public Connection getConnection() throws SQLException {
+		assertConnection();
 		return this.connection;
 	}
 
-	public String getDBMSSpecificType(int jdbcType) {
+	public boolean testConnection() {
 		try {
-			DatabaseMetaData dmd = this.connection.getMetaData();
-			ResultSet r = dmd.getTypeInfo();
-			while (r.next()) {
-				int type = r.getInt("DATA_TYPE");
-				String dbmsSpecificName = r.getString("TYPE_NAME");
-				
-				String params = r.getString("CREATE_PARAMS").trim();
-				String fullName = dbmsSpecificName;
-				if(!params.isEmpty()){
-					if(params.startsWith("(M)")){
-						fullName = fullName+"(128)";
-					}
-				}
-			//	System.out.println(r.getString("TYPE_NAME") + " | " + r.getString("CREATE_PARAMS")+" --> "+fullName);
-				if(type==jdbcType){
-					return fullName;
-				}				
-			}			
+			assertConnection();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public String getDBMSSpecificType(int jdbcType) throws SQLException {
+		assertConnection();
+		DatabaseMetaData dmd = this.connection.getMetaData();
+		ResultSet r = dmd.getTypeInfo();
+		while (r.next()) {
+			int type = r.getInt("DATA_TYPE");
+			String dbmsSpecificName = r.getString("TYPE_NAME");
+
+			String params = r.getString("CREATE_PARAMS").trim();
+			String fullName = dbmsSpecificName;
+			if (!params.isEmpty()) {
+				if (params.startsWith("(M)")) {
+					fullName = fullName + "(128)";
+				}
+			}
+			// System.out.println(r.getString("TYPE_NAME") + " | " +
+			// r.getString("CREATE_PARAMS")+" --> "+fullName);
+			if (type == jdbcType) {
+				return fullName;
+			}
 		}
 		return null;
 	}
-	
 
 	@Override
-	public void createTable(String tablename, SDFSchema schema) {
-		try {
-			Statement st = connection.createStatement();
-			String table = "CREATE TABLE " + tablename + "(";
-			String sep = "";
-			for (SDFAttribute attribute : schema) {
-				table = table + sep + attribute.getAttributeName() + " ";
-				table = table + getDBMSSpecificType(DatatypeRegistry.getInstance().getJDBCDatatype(attribute.getDatatype()));
-				sep = ", ";
-			}
-			table = table + ")";	
-			st.executeUpdate(table);			
-		} catch (SQLException s) {
-			s.printStackTrace();
+	public void createTable(String tablename, SDFSchema schema) throws SQLException {
+		assertConnection();
+		Statement st = connection.createStatement();
+		String table = "CREATE TABLE " + tablename + "(";
+		String sep = "";
+		for (SDFAttribute attribute : schema) {
+			table = table + sep + attribute.getAttributeName() + " ";
+			table = table + getDBMSSpecificType(DatatypeRegistry.getInstance().getJDBCDatatype(attribute.getDatatype()));
+			sep = ", ";
 		}
+		table = table + ")";
+		st.executeUpdate(table);
 	}
 
 	@Override
-    public boolean tableExists(String tablename) {
+	public boolean tableExists(String tablename) {
 		try {
+			assertConnection();
 			DatabaseMetaData meta = connection.getMetaData();
 			ResultSet res = meta.getTables(null, null, null, new String[] { "TABLE" });
 			while (res.next()) {
@@ -131,125 +157,122 @@ public class DatabaseConnection implements IDatabaseConnection {
 	}
 
 	@Override
-    public SDFSchema getSchema(String tablename) {
+	public SDFSchema getSchema(String tablename) throws SQLException {
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-		try {
-			DatabaseMetaData meta = connection.getMetaData();
-			ResultSet rs = meta.getColumns(null, null, tablename, null);
-			while (rs.next()) {
-				String name = rs.getString("COLUMN_NAME");
-				SDFDatatype dt = DatatypeRegistry.getInstance().getSDFDatatype(rs.getInt("DATA_TYPE"));
-				SDFAttribute a = new SDFAttribute(null,name, dt);
-				attrs.add(a);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		assertConnection();
+		DatabaseMetaData meta = connection.getMetaData();
+		ResultSet rs = meta.getColumns(null, null, tablename, null);
+		while (rs.next()) {
+			String name = rs.getString("COLUMN_NAME");
+			SDFDatatype dt = DatatypeRegistry.getInstance().getSDFDatatype(rs.getInt("DATA_TYPE"));
+			SDFAttribute a = new SDFAttribute(null, name, dt);
+			attrs.add(a);
 		}
 		SDFSchema schema = new SDFSchema(tablename, attrs);
 		return schema;
-	}	
+	}
 
 	@Override
-    public boolean equalSchemas(String tablename, SDFSchema schema) {
-		try {
-			DatabaseMetaData meta = connection.getMetaData();
-			int i = 0;
-			ResultSet rsColumns = meta.getColumns(null, null, tablename, null);
-			while (rsColumns.next()) {
-				if (i >= schema.size()) {
-					// unterschiedliche anzahl
+	public boolean equalSchemas(String tablename, SDFSchema schema) throws SQLException {
+
+		assertConnection();
+		DatabaseMetaData meta = connection.getMetaData();
+		int i = 0;
+		ResultSet rsColumns = meta.getColumns(null, null, tablename, null);
+		while (rsColumns.next()) {
+			if (i >= schema.size()) {
+				// unterschiedliche anzahl
+				return false;
+			}
+			int dbType = rsColumns.getInt("DATA_TYPE");
+			SDFDatatype dt = schema.get(i).getDatatype();
+
+			if (!DatatypeRegistry.getInstance().isValidStreamToDatabaseMapping(dt, dbType)) {
+				// stream to db mapping does not exist, but maybe other
+				// direction?
+				if (!DatatypeRegistry.getInstance().isValidDatabaseToStreamMapping(dbType, dt)) {
+					// both combinations were not found
+					logger.error("Expected types for stream and database are not equal for");
+					logger.error("- database: " + dbType + " <--> local: " + dt);
+					logger.error("- see also in java.sql.Types!");
+					logger.error("- database: " + rsColumns.getShort("COLUMN_NAME") + " <--> local: " + schema.get(i).getAttributeName());
 					return false;
 				}
-				int dbType = rsColumns.getInt("DATA_TYPE");
-				SDFDatatype dt = schema.get(i).getDatatype();
-
-				if (!DatatypeRegistry.getInstance().isValidStreamToDatabaseMapping(dt, dbType)) {
-					// stream to db mapping does not exist, but maybe other
-					// direction?
-					if (!DatatypeRegistry.getInstance().isValidDatabaseToStreamMapping(dbType, dt)) {
-						// both combinations were not found
-						logger.error("Expected types for stream and database are not equal for");
-						logger.error("- database: " + dbType + " <--> local: " + dt);
-						logger.error("- see also in java.sql.Types!");
-						logger.error("- database: " + rsColumns.getShort("COLUMN_NAME") + " <--> local: " + schema.get(i).getAttributeName());
-						return false;
-					}
-				}
-				i++;
 			}
-			return true;
-		} catch (SQLException e) {
-			return false;
+			i++;
 		}
+		return true;
 	}
 
 	@Override
-    public void dropTable(String tablename) {
+	public void dropTable(String tablename) throws SQLException {
 		Statement stmt;
-		try {
-			stmt = this.connection.createStatement();
-			stmt.executeUpdate("DROP TABLE " + tablename);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		assertConnection();
+		stmt = this.connection.createStatement();
+		stmt.executeUpdate("DROP TABLE " + tablename);
+
 	}
 
 	@Override
-    public void truncateTable(String tablename) {
+	public void truncateTable(String tablename) throws SQLException {
 		Statement stmt;
-		try {
-			stmt = this.connection.createStatement();
-			stmt.executeUpdate("TRUNCATE TABLE " + tablename);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		assertConnection();
+		stmt = this.connection.createStatement();
+		stmt.executeUpdate("TRUNCATE TABLE " + tablename);
+
 	}
 
 	@Override
-	public Map<String, String> getInformation() {
+	public Map<String, String> getInformation() throws SQLException {
 		Map<String, String> infos = new TreeMap<String, String>();
-		try {
-			DatabaseMetaData dmd = this.connection.getMetaData();
-			infos.put("Database Product Name", dmd.getDatabaseProductName());
-			infos.put("Database Product Version", dmd.getDatabaseProductVersion());
-			infos.put("Driver Name", dmd.getDriverName());
-			infos.put("Driver Version", dmd.getDriverVersion());
-			infos.put("URL", dmd.getURL());
-			infos.put("Username", dmd.getUserName());
+		assertConnection();
+		DatabaseMetaData dmd = this.connection.getMetaData();
+		infos.put("Database Product Name", dmd.getDatabaseProductName());
+		infos.put("Database Product Version", dmd.getDatabaseProductVersion());
+		infos.put("Driver Name", dmd.getDriverName());
+		infos.put("Driver Version", dmd.getDriverVersion());
+		infos.put("URL", dmd.getURL());
+		infos.put("Username", dmd.getUserName());
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 		return infos;
 	}
 
 	@Override
-    public List<String> getTables() {
+	public List<String> getTables() throws SQLException {
 		List<String> tables = new ArrayList<String>();
-		try {
-			DatabaseMetaData meta = connection.getMetaData();
-			ResultSet res = meta.getTables(null, null, null, new String[] { "TABLE" });
-			while (res.next()) {
-				tables.add(res.getString("TABLE_NAME"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		assertConnection();
+		DatabaseMetaData meta = connection.getMetaData();
+		ResultSet res = meta.getTables(null, null, null, new String[] { "TABLE" });
+		while (res.next()) {
+			tables.add(res.getString("TABLE_NAME"));
 		}
+
 		return tables;
 	}
 
 	@Override
-    public List<String> getSchemas() {
+	public List<String> getSchemas() throws SQLException {
 		List<String> tables = new ArrayList<String>();
-		try {
-			DatabaseMetaData meta = connection.getMetaData();
-			ResultSet res = meta.getSchemas();
-			while (res.next()) {
-				tables.add(res.getString("TABLE_SCHEM"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		assertConnection();
+		DatabaseMetaData meta = connection.getMetaData();
+		ResultSet res = meta.getSchemas();
+		while (res.next()) {
+			tables.add(res.getString("TABLE_SCHEM"));
 		}
 		return tables;
+	}
+
+	private void assertConnection() throws SQLException {
+		if (!this.connected) {
+			this.connection = DriverManager.getConnection(connString, connectionProps);
+			this.connected = true;
+		}
+
+	}
+
+	@Override
+	public void checkProperties() throws SQLException{		
+		Connection con = DriverManager.getConnection(connString, connectionProps);		
+		con.close();				
 	}
 }

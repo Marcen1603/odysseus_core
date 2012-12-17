@@ -44,7 +44,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.database.physicaloperator.access.DataTypeMappingHandlerRegistry;
 import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappingHandler;
@@ -56,7 +55,7 @@ import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappin
 public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 
 	private static Logger logger = LoggerFactory.getLogger(DatabaseSinkPO.class);
-	private IDatabaseConnection connection;
+	
 	private Connection jdbcConnection;
 	private PreparedStatement preparedStatement;
 
@@ -64,14 +63,14 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 
 	private int counter = 1;
 	private long summe = 0L;
-	private String connctionName;
+	private IDatabaseConnection connection;
 	private String tablename;
 	private boolean truncate;
 	private boolean drop;
 	private volatile boolean opened = false;
 
-	public DatabaseSinkPO(String connectionName,String tablename, boolean drop, boolean truncate) {		
-		this.connctionName = connectionName;
+	public DatabaseSinkPO(IDatabaseConnection connection ,String tablename, boolean drop, boolean truncate) {		
+		this.connection = connection;
 		this.tablename = tablename;	
 		this.truncate = truncate;
 		this.drop = drop;
@@ -79,7 +78,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	}
 
 	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {		
-		this.connctionName = databaseSinkPO.connctionName;
+		this.connection = databaseSinkPO.connection;
 		this.tablename = databaseSinkPO.tablename;		
 		this.drop = databaseSinkPO.drop;
 		this.truncate = databaseSinkPO.truncate;
@@ -90,8 +89,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		try {			
-			this.connection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(connctionName);
+		try {						
 			if (!this.connection.tableExists(tablename)) {
 				this.connection.createTable(tablename, getOutputSchema());
 			} else {
@@ -118,11 +116,19 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	}
 
 	private void dropTable() {
-		this.connection.dropTable(this.tablename);
+		try {
+			this.connection.dropTable(this.tablename);
+		} catch (SQLException e) {			
+			e.printStackTrace();
+		}
 	}
 	
 	private void truncateTable() {
-		this.connection.truncateTable(this.tablename);
+		try {
+			this.connection.truncateTable(this.tablename);
+		} catch (SQLException e) {		
+			e.printStackTrace();
+		}
 	}
 
 	private String createPreparedStatement() {

@@ -31,6 +31,7 @@
 package de.uniol.inf.is.odysseus.database.connection;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -43,14 +44,16 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  */
 public interface IDatabaseConnection {
 
-	public void createTable(String tablename, SDFSchema schema);
-	public void truncateTable(String tablename);
-	public void dropTable(String tablename);
+	public void createTable(String tablename, SDFSchema schema) throws SQLException;
+	public void truncateTable(String tablename) throws SQLException;
+	public void dropTable(String tablename) throws SQLException;
 	public boolean tableExists(String tablename);
-	public boolean equalSchemas(String tablename, SDFSchema schema);	
-	public Connection getConnection();	
-	public Map<String, String> getInformation();	
-	public List<String> getTables();
-	public List<String> getSchemas();
-	public SDFSchema getSchema(String tablename);
+	public boolean equalSchemas(String tablename, SDFSchema schema) throws SQLException;	
+	public Connection getConnection() throws SQLException;	
+	public Map<String, String> getInformation() throws SQLException;	
+	public List<String> getTables() throws SQLException;
+	public List<String> getSchemas() throws SQLException;
+	public SDFSchema getSchema(String tablename) throws SQLException;
+	public boolean testConnection() throws SQLException;	
+	public void checkProperties() throws SQLException;
 }

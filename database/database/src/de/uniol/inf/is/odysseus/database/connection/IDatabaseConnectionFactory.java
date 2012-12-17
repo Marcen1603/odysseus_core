@@ -30,7 +30,6 @@
 
 package de.uniol.inf.is.odysseus.database.connection;
 
-import java.sql.SQLException;
 
 /**
  * 
@@ -39,5 +38,5 @@ import java.sql.SQLException;
  */
 public interface IDatabaseConnectionFactory {
 	
-	public IDatabaseConnection createConnection(String server, int port, String database, String user, String password) throws SQLException;	
+	public IDatabaseConnection createConnection(String server, int port, String database, String user, String password);	
 }

@@ -95,11 +95,11 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 		String s = "SELECT ";
 		String sep = "";
 		for (SDFAttribute a : this.getOutputSchema()) {
-			String name = "\""+a.getAttributeName()+"\"";
+			String name = "`"+a.getAttributeName()+"`";
 			s = s + sep + name;
 			sep = ", ";
 		}
-		s = s + " FROM \"" + tablename + "\"";
+		s = s + " FROM `" + tablename + "`";
 		return s;
 	}
 
