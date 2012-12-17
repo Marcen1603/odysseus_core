@@ -18,9 +18,11 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -68,6 +70,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	private String name = null;
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 	protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
+	private Set<String> uniqueIds = new HashSet<>();
 	
 	// --------------------------------------------------------------------
 	// Logging
@@ -697,6 +700,23 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return result.toString();
 	}
 
+	// ------------------------------------------------------------------------
+	// Id Management
+	// ------------------------------------------------------------------------
+
+	@Override
+	public void addUniqueId(String id) {
+		if (this.uniqueIds.contains(id)){
+			throw new IllegalArgumentException("Id already set exception!");
+		}
+		this.uniqueIds.add(id);
+	}
+	
+	@Override
+	public Set<String> getUniqueIds() {
+		return uniqueIds;
+	}
+	
 	// ------------------------------------------------------------------------
 	// Other Methods
 	// ------------------------------------------------------------------------

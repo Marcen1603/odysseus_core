@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -681,5 +682,17 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public void unsubscribeFromAllSinks() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void addUniqueId(String id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Set<String> getUniqueIds() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -78,9 +78,17 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 
 			StringBuffer owner = new StringBuffer("Part of Query: ");
 			for (IOperatorOwner o : node.getModelNode().getContent().getOwner()) {
-				owner.append("#" + o.getID()).append(" ");
+				owner.append("#").append(o.getID()).append(" ");
 			}
-			children.add(new OwnerWrapper(owner.toString()));
+			children.add(new StringWrapper(owner.toString()));
+			if (node.getModelNode().getContent().getUniqueIds().size() > 0) {
+				StringBuffer ids = new StringBuffer("UIDs: ");
+				for (String id : node.getModelNode().getContent()
+						.getUniqueIds()) {
+					ids.append(id).append(" ");
+				}
+				children.add(new StringWrapper(ids.toString()));
+			}
 
 			// Add Metadatainformation
 			for (String type : node.getModelNode().getContent()
@@ -190,8 +198,8 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 
 }
 
-class OwnerWrapper {
-	public OwnerWrapper(String string) {
+class StringWrapper {
+	public StringWrapper(String string) {
 		this.content = string;
 	}
 

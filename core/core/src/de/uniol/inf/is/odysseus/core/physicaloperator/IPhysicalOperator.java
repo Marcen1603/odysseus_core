@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
 import java.util.Map;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.event.IEventHandler;
@@ -57,5 +58,8 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	public IPhysicalOperator clone();
 	
 	public boolean isOpen();
+
+	void addUniqueId(String id);
+	Set<String> getUniqueIds();
 
 }

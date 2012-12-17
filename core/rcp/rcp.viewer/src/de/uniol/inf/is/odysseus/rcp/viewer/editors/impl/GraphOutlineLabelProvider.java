@@ -56,7 +56,7 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			return OdysseusRCPViewerPlugIn.getImageManager().get("attribute");
 		}
 		
-		if (element instanceof OwnerWrapper){
+		if (element instanceof StringWrapper){
 			return OdysseusRCPViewerPlugIn.getImageManager().get("partof_icon");
 		}
 
@@ -143,8 +143,8 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			return type + " = " + valueString;
 		}
 		
-		if (element instanceof OwnerWrapper){
-			return ((OwnerWrapper)element).content;
+		if (element instanceof StringWrapper){
+			return ((StringWrapper)element).content;
 		}
 		
 		if( element instanceof StringNode ) {

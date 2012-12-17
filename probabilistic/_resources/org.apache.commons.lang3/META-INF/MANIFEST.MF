@@ -38,3 +38,4 @@ X-Compile-Target-JDK: 1.5
 Created-By: Apache Maven Bundle Plugin
 Specification-Title: Commons Lang
 Built-By: hen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

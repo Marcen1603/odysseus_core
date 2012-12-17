@@ -19,4 +19,4 @@ class ASTJDBCConnection extends SimpleNode {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=ebf200706df90398a65144b19aa61846 (do not edit this line) */
+/* JavaCC - OriginalChecksum=e77da3df1ce69652239cc0637ab80046 (do not edit this line) */

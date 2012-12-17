@@ -19,4 +19,4 @@ class ASTDatabaseConnectionCheck extends SimpleNode {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=bbfd629abdd4b63c735a2f5a4660bf20 (do not edit this line) */
+/* JavaCC - OriginalChecksum=381d06ea1abc2a362ec9349e4a0ac274 (do not edit this line) */

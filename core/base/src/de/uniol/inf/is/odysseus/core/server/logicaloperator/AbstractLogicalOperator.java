@@ -71,7 +71,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	private String name = null;
-
+	private String uniqueIdentifier = null;
+	
 	private List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
 
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
@@ -84,6 +85,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		initOwner();
 		owners.addAll(op.owners);
 		this.outputSchema = op.outputSchema;
+		this.uniqueIdentifier = op.uniqueIdentifier;
 	}
 
 	public AbstractLogicalOperator() {
@@ -245,6 +247,17 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.name = name;
 	}
 
+	@Override
+	@Parameter(name="Id", type = StringParameter.class, optional = true)
+	final public void setUniqueIdenfier(String id) {
+		this.uniqueIdentifier = id;
+	}
+	
+	@Override
+	final public String getUniqueIdentifier() {
+		return uniqueIdentifier;
+	}
+	
 	@Override
 	public boolean isAllPhysicalInputSet() {
 		for (Integer i : this.subscribedToSource.keySet()) {

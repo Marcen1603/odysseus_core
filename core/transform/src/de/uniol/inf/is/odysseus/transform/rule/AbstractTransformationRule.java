@@ -38,13 +38,27 @@ public abstract class AbstractTransformationRule<T> extends
 
 	protected void defaultExecute(ILogicalOperator logical,
 			IPhysicalOperator physical, TransformationConfiguration config,
-			boolean retract, boolean insert) {
+			boolean retract, boolean insert, boolean ignoreSinkInput) {
+		// Check if operator has an id and if this id is not already defined
+		// Attention, id can be null
+		String id = logical.getUniqueIdentifier()==null?null:getDataDictionary().createUserUri(logical.getUniqueIdentifier(), getCaller());  
+		
+		if (id != null){
+			if (getDataDictionary().containsOperator(id)){
+				throw new TransformationException("Operator with id "+id+" is already registered.");
+			}else{
+				getDataDictionary().setOperator(id, physical);
+				physical.addUniqueId(id);
+			}
+		}
+		
 		physical.setOutputSchema(logical.getOutputSchema());
 		if (logical.getOutputSchema() != null){
 			logger.warn("Operator "+logical+" has not output schema");
 		}
 		physical.setName(logical.getName());
-		replace(logical, physical, config);
+		
+		replace(logical, physical, config, ignoreSinkInput);
 		if (retract) {
 			retract(logical);
 		}
@@ -52,21 +66,33 @@ public abstract class AbstractTransformationRule<T> extends
 			insert(physical);
 		}
 	}
+	
+	protected void defaultExecute(ILogicalOperator logical,
+			IPhysicalOperator physical, TransformationConfiguration config,
+			boolean retract, boolean insert) {
+		defaultExecute(logical, physical, config, retract, insert, false);
+	}
 
 	protected void replace(ILogicalOperator oldOperator,
 			IPhysicalOperator newOperator,
 			TransformationConfiguration transformationConfig) {
+		replace(oldOperator, newOperator, transformationConfig, false);
+	}
+	
+	protected void replace(ILogicalOperator oldOperator,
+			IPhysicalOperator newOperator,
+			TransformationConfiguration transformationConfig, boolean ignoreSinkInput) {
 
 		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>();
 		if (newOperator.isPipe()) {
 			toUpdate = transformationConfig.getTransformationHelper().replace(
-					oldOperator, (IPipe<?, ?>) newOperator);
+					oldOperator, (IPipe<?, ?>) newOperator, ignoreSinkInput);
 		} else if (newOperator.isSource()) {
 			toUpdate = transformationConfig.getTransformationHelper().replace(
 					oldOperator, (ISource<?>) newOperator);
 		} else if (newOperator.isSink()) {
 			toUpdate = transformationConfig.getTransformationHelper().replace(
-					oldOperator, (ISink<?>) newOperator);
+					oldOperator, (ISink<?>) newOperator, ignoreSinkInput);
 		} else {
 			LoggerSystem.printlog("ERROR");
 			throw new RuntimeException(

@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
 /**
@@ -30,14 +31,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
  * @param <R>
  *            The type of the objects to filter
  */
-public class ChangeDetectPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
+public class ChangeDetectPO<R extends IStreamObject<?>> extends
+		AbstractPipe<R, R> {
 
 	static final Logger logger = LoggerFactory.getLogger(ChangeDetectPO.class);
-	
+
 	R lastElement;
 	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
 	private boolean deliverFirstElement = false;
-	
+
 	public ChangeDetectPO() {
 	}
 
@@ -52,21 +54,21 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 
 	@Override
 	protected synchronized void process_next(R object, int port) {
-//		logger.debug("Process next: "+object);
+		// logger.debug("Process next: "+object);
 		if (lastElement == null) {
 			lastElement = object;
-			if (deliverFirstElement){
+			if (deliverFirstElement) {
 				transfer(object);
 			}
 		} else {
 			if (object != null && areDifferent(object, lastElement)) {
 				lastElement = object;
 				transfer(object);
-			}else{
+			} else {
 				heartbeatGenerationStrategy.generateHeartbeat(object, this);
 			}
 		}
-		
+
 	}
 
 	protected boolean areDifferent(R object, R lastElement) {
@@ -82,7 +84,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 	public AbstractPipe<R, R> clone() {
 		return new ChangeDetectPO<R>(this);
 	}
-	
+
 	public IHeartbeatGenerationStrategy<R> getHeartbeatGenerationStrategy() {
 		return heartbeatGenerationStrategy;
 	}
@@ -91,9 +93,25 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 			IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy) {
 		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
 	}
-	
+
 	public void setDeliverFirstElement(boolean deliverFirstElement) {
 		this.deliverFirstElement = deliverFirstElement;
+	}
+
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof ChangeDetectPO)) {
+			return false;
+		}
+		@SuppressWarnings("unchecked")
+		ChangeDetectPO<R> rppo = (ChangeDetectPO<R>) ipo;
+		if (this.hasSameSources(ipo)
+				&& this.deliverFirstElement == rppo.deliverFirstElement
+				&& this.heartbeatGenerationStrategy.equals(rppo.heartbeatGenerationStrategy)) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

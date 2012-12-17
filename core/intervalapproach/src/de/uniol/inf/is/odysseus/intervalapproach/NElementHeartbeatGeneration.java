@@ -61,4 +61,29 @@ public class NElementHeartbeatGeneration <K extends ITimeInterval, T extends ISt
 		return new NElementHeartbeatGeneration<K, T>(this);
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + eachElement;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		@SuppressWarnings("rawtypes")
+		NElementHeartbeatGeneration other = (NElementHeartbeatGeneration) obj;
+		if (eachElement != other.eachElement)
+			return false;
+		return true;
+	}
+
+	
+	
 }

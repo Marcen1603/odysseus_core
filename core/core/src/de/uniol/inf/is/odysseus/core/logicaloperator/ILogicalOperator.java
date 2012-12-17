@@ -209,6 +209,18 @@ public interface ILogicalOperator extends IOwnedOperator,
 	 * all currently not set schemata are calced new
 	 */
 	void updateSchemaInfos();
+	
+	/**
+	 * Each operator can have a unique id 
+	 * @param id
+	 */
+	void setUniqueIdenfier(String id);
+
+	/**
+	 * Each operator can have a unique id 
+	 * @param id
+	 */
+	String getUniqueIdentifier();
 
 
 

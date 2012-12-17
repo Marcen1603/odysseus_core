@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.streamconnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -268,5 +269,14 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		}
 
 		return subs;
+	}
+
+	@Override
+	public void addUniqueId(String id) {		
+	}
+
+	@Override
+	public Set<String> getUniqueIds() {
+		return null;
 	}
 }

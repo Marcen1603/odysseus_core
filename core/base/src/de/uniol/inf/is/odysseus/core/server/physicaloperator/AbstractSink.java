@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -63,6 +65,8 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 
 	final transient protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
+	private Set<String> uniqueIds = new HashSet<>();
+
 
 	private volatile boolean allInputsDone = false;
 
@@ -448,6 +452,24 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		return result.toString();
 	}
 
+	// ------------------------------------------------------------------------
+	// Id Management
+	// ------------------------------------------------------------------------
+
+	@Override
+	public void addUniqueId(String id) {
+		if (this.uniqueIds.contains(id)){
+			throw new IllegalArgumentException("Id already set exception!");
+		}
+		this.uniqueIds.add(id);
+	}
+	
+	@Override
+	public Set<String> getUniqueIds() {
+		return uniqueIds;
+	}
+
+	
 	// ------------------------------------------------------------------------
 	// Subscription management
 	// ------------------------------------------------------------------------

@@ -22,6 +22,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.datadictionary.IAddDataType;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -34,6 +35,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public interface IDataDictionary extends IAddDataType {
 
+	String createUserUri(String resource, ISession caller);
+	
 	// -------------------------------------------------------------------------
 	// Entity Management
 	// -------------------------------------------------------------------------
@@ -146,6 +149,15 @@ public interface IDataDictionary extends IAddDataType {
 
 //	boolean isCreatorOfObject(String caller, String objecturi);
 
+	// ----------------------------------------------------------
+	// Operatormanagement
+	// ----------------------------------------------------------
+	
+	boolean containsOperator(String id);
+	void setOperator(String id, IPhysicalOperator physical);
+	void removeOperator(String id);
+	IPhysicalOperator getOperator(String id);
+	
 	// ------------------------------------------
 	// Physical sinks and sources (from WrapperPlanFactory)
 	// ------------------------------------------
@@ -172,5 +184,8 @@ public interface IDataDictionary extends IAddDataType {
 	void addListener(IDataDictionaryListener listener);
 
 	void removeListener(IDataDictionaryListener listener);
+
+
+
 
 }

@@ -19,4 +19,4 @@ class ASTDropDatabaseConnection extends SimpleNode {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=622297f678d9f9990adc7f77a91a8405 (do not edit this line) */
+/* JavaCC - OriginalChecksum=86f1b725dcacab259c3337cae383b98d (do not edit this line) */
