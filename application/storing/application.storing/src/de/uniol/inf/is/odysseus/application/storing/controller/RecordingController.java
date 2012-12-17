@@ -48,7 +48,6 @@ import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
-
 /**
  * 
  * @author Dennis Geesen Created at: 09.11.2011
@@ -150,33 +149,36 @@ public class RecordingController {
 		record.setSinkQueries(sinkQueries);
 		record.setStreamToQueries(streamToQueries);
 	}
-	
-	public void dropRecording(String name, boolean dropTable) throws RecordingException{		
+
+	public void dropRecording(String name, boolean dropTable) throws RecordingException {
 		RecordEntry record = recordings.get(name);
-		if(!record.isStopped()){
+		if (!record.isStopped()) {
 			stopRecording(name);
 		}
-		if(!record.isPlayingStopped()){
+		if (!record.isPlayingStopped()) {
 			stopPlaying(name);
 		}
-		if(dropTable){			
+		if (dropTable) {
 			IDatabaseConnection connection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(record.getDatabaseConnection());
-			if(connection != null){
-				if(connection.tableExists(record.getTableName())){
-					connection.dropTable(record.getTableName());
+			if (connection != null) {
+				try {
+					if (connection.tableExists(record.getTableName())) {
+						connection.dropTable(record.getTableName());
+					}
+				} catch (Exception e) {
+					throw new RecordingException("There is no connection named \"" + record.getDatabaseConnection() + "\"\nCreate the connection with that name before!");
 				}
-			}else{
-				throw new RecordingException("There is no connection named \""+record.getDatabaseConnection()+"\"\nCreate the connection with that name before!");
+			} else {
+				throw new RecordingException("There is no connection named \"" + record.getDatabaseConnection() + "\"\nCreate the connection with that name before!");
 			}
 		}
 		recordings.remove(name);
 		fireChangedEvent();
 	}
-	
+
 	@SuppressWarnings("unused")
-	private void deployPlayingQueries(RecordEntry record) throws PlanManagementException{
-		
-		
+	private void deployPlayingQueries(RecordEntry record) throws PlanManagementException {
+
 	}
 
 	public void createRecording(String recordingName, String databaseConnection, String tableName, String fromStream) {

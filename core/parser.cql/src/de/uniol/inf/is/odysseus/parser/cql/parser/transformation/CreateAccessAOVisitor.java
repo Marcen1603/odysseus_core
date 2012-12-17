@@ -66,8 +66,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTSimpleSource node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSimpleSource node, Object data) throws QueryParseException {
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
 		if (dd.containsViewOrStream(sourceString, caller)) {
@@ -79,15 +78,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	}
 
-	private void relationalStreamingSource(ASTSimpleSource node,
-			String sourceName) {
+	private void relationalStreamingSource(ASTSimpleSource node, String sourceName) {
 		ILogicalOperator access;
 		try {
 			access = dd.getViewOrStream(sourceName, caller);
 			if (access instanceof AccessAO) {
-				((AccessAO) access).setDataHandler(new TupleDataHandler()
-						.getSupportedDataTypes().get(0));
-				;
+				((AccessAO) access).setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));				
 			}
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());
@@ -97,8 +93,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		if (node.hasAlias()) {
 			inputOp = new RenameAO();
 			inputOp.subscribeToSource(access, 0, 0, access.getOutputSchema());
-			((RenameAO) inputOp).setOutputSchema(createAliasSchema(
-					node.getAlias(), access));
+			((RenameAO) inputOp).setOutputSchema(createAliasSchema(node.getAlias(), access));
 			sourceName = node.getAlias();
 		}
 
@@ -109,8 +104,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		this.attributeResolver.addSource(sourceName, inputOp);
 	}
 
-	private static WindowAO createWindow(ASTWindow windowNode,
-			ILogicalOperator inputOp) {
+	private static WindowAO createWindow(ASTWindow windowNode, ILogicalOperator inputOp) {
 		WindowAO window = new WindowAO();
 		window.subscribeToSource(inputOp, 0, 0, inputOp.getOutputSchema());
 
@@ -132,8 +126,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 					}
 				}
 				if (!found) {
-					throw new IllegalArgumentException(
-							"invalid partioning attribute");
+					throw new IllegalArgumentException("invalid partioning attribute");
 				}
 			}
 			window.setPartitionBy(partitionAttributes);
@@ -169,15 +162,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	// }
 
 	@Override
-	public Object visit(ASTSubselect node, Object data)
-			throws QueryParseException {
-		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node
-				.jjtGetChild(0);
+	public Object visit(ASTSubselect node, Object data) throws QueryParseException {
+		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node.jjtGetChild(0);
 		CQLParser v = new CQLParser();
 		v.setUser(caller);
 		v.setDataDictionary(dd);
-		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(
-				childNode, null);
+		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(childNode, null);
 
 		Node asNode = node.jjtGetChild(1);
 		if (asNode instanceof ASTWindow) {
@@ -193,51 +183,39 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		return null;
 	}
 
-	private static SDFSchema createAliasSchema(String alias,
-			ILogicalOperator access) {
+	private static SDFSchema createAliasSchema(String alias, ILogicalOperator access) {
 		// Keep the original Type not the alias
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute attribute : access.getOutputSchema()) {
-			SDFAttribute newAttribute = (SDFAttribute) attribute.clone(alias,
-					attribute.getAttributeName());
+			SDFAttribute newAttribute = (SDFAttribute) attribute.clone(alias, attribute.getAttributeName());
 			// newAttribute.setSourceName(alias);
 			attributes.add(newAttribute);
 		}
-		SDFSchema schema = new SDFSchema(access.getOutputSchema().getURI(),
-				attributes);
+		SDFSchema schema = new SDFSchema(access.getOutputSchema().getURI(), attributes);
 		return schema;
 	}
 
 	@Override
-	public Object visit(ASTBrokerSource node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
 		try {
-			Class<?> brokerSourceVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
-					ISession.class);
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
 			m.invoke(bsv, caller);
-			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary",
-					IDataDictionary.class);
+			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m.invoke(bsv, dd);
 
-			m = brokerSourceVisitor.getDeclaredMethod("visit",
-					ASTBrokerSource.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-					.invoke(bsv, node, data);
+			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTBrokerSource.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
 			Node child = node.jjtGetChild(0);
-			ASTIdentifier ident = (ASTIdentifier) child.jjtGetChild(child
-					.jjtGetNumChildren() - 1);
+			ASTIdentifier ident = (ASTIdentifier) child.jjtGetChild(child.jjtGetNumChildren() - 1);
 			String name = ident.getName();
 			this.attributeResolver.addSource(name, sourceOp);
 		} catch (ClassNotFoundException ex) {
-			throw new QueryParseException(
-					"Brokerplugin is missing in CQL parser.", ex.getCause());
+			throw new QueryParseException("Brokerplugin is missing in CQL parser.", ex.getCause());
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new QueryParseException(
-					"Error while accessing broker as source.", e.getCause());
+			throw new QueryParseException("Error while accessing broker as source.", e.getCause());
 		}
 
 		return null;
