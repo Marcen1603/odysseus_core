@@ -33,7 +33,6 @@ public class SDFSpatialDatatype extends SDFDatatype{
 	
 	public SDFSpatialDatatype(SDFDatatype sdfDatatype) {
 		super(sdfDatatype);
-		// TODO Auto-generated constructor stub
 	}
 
 
