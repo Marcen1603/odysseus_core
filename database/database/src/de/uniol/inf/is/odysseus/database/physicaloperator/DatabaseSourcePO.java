@@ -51,26 +51,23 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 
 	private IDatabaseConnection connection;
-	private String tablename;
-	private boolean timesensitive;
+	private String tablename;	
 	private Connection jdbcConnection;
 	private PreparedStatement preparedStatement;
 	private TransferThread thread;
 	private long waitTimeMillis;
 
-	public DatabaseSourcePO(String tableName, IDatabaseConnection connection, boolean timesensitive, long waitTimeMillis) {
+	public DatabaseSourcePO(String tableName, IDatabaseConnection connection, long waitTimeMillis) {
 		super();
 		this.tablename = tableName;
-		this.connection = connection;
-		this.timesensitive = timesensitive;
+		this.connection = connection;		
 		this.waitTimeMillis  = waitTimeMillis;
 	}
 
 	public DatabaseSourcePO(DatabaseSourcePO databaseSourcePO) {
 		super(databaseSourcePO);
 		this.connection = databaseSourcePO.connection;
-		this.tablename = databaseSourcePO.tablename;
-		this.timesensitive = databaseSourcePO.timesensitive;
+		this.tablename = databaseSourcePO.tablename;		
 		this.waitTimeMillis = databaseSourcePO.waitTimeMillis;
 	}
 

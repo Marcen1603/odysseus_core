@@ -30,9 +30,17 @@
 
 package de.uniol.inf.is.odysseus.database.logicaloperator;
 
+import java.sql.SQLException;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -44,23 +52,19 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	
 	private static final long serialVersionUID = -5800479007184861697L;
-
-	private boolean timesensitiv = false;
 	private String tablename;
 	private long waitMillis = 0;
-	private String name;
+	private boolean fetchAttributes = true;
+	private List<SDFAttribute> givenSchema;	
 
 	public DatabaseSourceAO() {
 
 	}
 
 	public DatabaseSourceAO(DatabaseSourceAO ds) {
-		super(ds);
-		this.timesensitiv = ds.timesensitiv;
+		super(ds);		
 		this.tablename = ds.tablename;
 		this.waitMillis = ds.waitMillis;
-		this.name = ds.name;
-		
 	}
 
 	@Parameter(type = StringParameter.class, name = "table")
@@ -72,41 +76,55 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	@Parameter(type = LongParameter.class, name ="waiteach", optional = true)
 	public void setWaitInMillis(long waitMillis){
 		this.waitMillis = waitMillis;
+	}		
+	
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = true)
+	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
+		this.givenSchema  = outputSchema;
+		this.fetchAttributes = false;
+		setOutputSchema(new SDFSchema("", outputSchema));
 	}
 	
-	@Parameter(type = StringParameter.class, name ="sourcename")
-	public void setSourceName(String name){
-		this.name = name;
-	}
-
-	public String getSourceName(){
-		return this.name;
+	@Parameter(type = BooleanParameter.class, name="FETCH_ATTRIBUTES", optional = true)
+	public void setFetchAttributes(boolean fetch){
+		this.fetchAttributes  = fetch;
 	}
 
 	public String getTableName() {
 		return tablename;
 	}	
 
-	public boolean isTimesensitiv() {
-		return timesensitiv;
-	}
-
 	public long getWaitMillis() {
 		return this.waitMillis;
 	}
-
-	
 
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new DatabaseSourceAO(this);
 	}
-
-	/**
-	 * @param isTimeSensitive
-	 */
-	public void setTimeSensitive(boolean isTimeSensitive) {
-		this.timesensitiv = isTimeSensitive;		
+	
+	@Override
+	public boolean isValid() {	
+		boolean valid = super.isValid();
+		if(this.givenSchema == null && this.fetchAttributes == false){
+			addError(new IllegalParameterException("You have to either use ATTRIBUTES to define a schema or to use FETCH_ATTRIBUTES to invoke fetching the schema from the database"));
+			valid = false;
+		}		
+		return valid;
 	}
+	
+	@Override
+	public void initialize() {	
+		super.initialize();
+		if(this.fetchAttributes){
+			try {
+				SDFSchema schema = getConnection().getSchema(tablename);
+				this.setOutputSchema(schema);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 
 }

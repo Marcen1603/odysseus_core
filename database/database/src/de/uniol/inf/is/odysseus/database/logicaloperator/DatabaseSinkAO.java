@@ -46,8 +46,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	
 	private static final long serialVersionUID = -6513851256783092870L;
 	
-	private String tablename;	
-	private String sinkName;
+	private String tablename;		
 	private boolean truncate;
 	private boolean drop;
 	
@@ -56,8 +55,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	}
 
 	public DatabaseSinkAO(DatabaseSinkAO old) {
-		super(old);		
-		this.sinkName = old.getSinkName();
+		super(old);				
 		this.tablename = old.tablename;		
 		this.drop = old.drop;
 		this.truncate = old.truncate;
@@ -80,20 +78,12 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	public boolean isTruncate(){
 		return this.truncate;
 	}
-
-	public String getSinkName() {
-		return sinkName;
-	}
+	
 
 	@Parameter(name = "TABLE", type = StringParameter.class, optional = false)
 	public void setTablename(String tablename) {
 		this.tablename = tablename;
-	}	
-
-	@Parameter(name = "SINKNAME", type = StringParameter.class, optional = false)
-	public void setSinkName(String sinkName) {
-		this.sinkName = sinkName;
-	}
+	}		
 
 	@Parameter(name = "TRUNCATE", type = BooleanParameter.class, optional = true)
 	public void setTruncate(boolean truncate) {

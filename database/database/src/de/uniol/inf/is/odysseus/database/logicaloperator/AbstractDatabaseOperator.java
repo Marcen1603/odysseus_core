@@ -49,17 +49,17 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	private String type = "";
 	private String db = "";
 	private int port = -1;
-	private String host;
-	private String connectionName;
+	private String host = "";
+	private String connectionName = "";
 	private boolean lazyConnectionCheck = true;
-
-	private boolean lazyConnCheck;
+	
 
 	public AbstractDatabaseOperator() {
 
 	}
 
 	public AbstractDatabaseOperator(AbstractDatabaseOperator ds) {		
+		super(ds);
 		this.jdbc = ds.jdbc;
 		this.password = ds.password;
 		this.user = ds.user;
@@ -113,7 +113,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	
 	@Parameter(type = BooleanParameter.class, name = "lazy_connection_check", optional = true)
 	public void setLazyConnCheck(boolean lazyConnCheck) {
-		this.lazyConnCheck = lazyConnCheck;
+		this.lazyConnectionCheck = lazyConnCheck;
 	}
 	
 	
@@ -219,7 +219,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 				}
 				
 			}
-			if(!this.lazyConnCheck){
+			if(!this.lazyConnectionCheck){
 				IDatabaseConnection connection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(connectionName);
 				try {
 					connection.checkProperties();

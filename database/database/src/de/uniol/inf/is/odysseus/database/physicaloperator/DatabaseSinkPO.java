@@ -131,8 +131,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 		}
 	}
 
-	private String createPreparedStatement() {
-		// String s = "INSERT INTO  \"GEESEN\".\"testtable\" VALUES(";
+	private String createPreparedStatement() { 
 		String s = "INSERT INTO " + this.tablename + " VALUES(";
 		int count = super.getOutputSchema().size();
 		String sep = "";

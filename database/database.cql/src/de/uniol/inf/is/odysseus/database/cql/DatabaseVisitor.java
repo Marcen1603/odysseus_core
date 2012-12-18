@@ -50,7 +50,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateFromDatabase;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseConnectionCheck;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseSink;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseSinkOptions;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseTimeSensitiv;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDropDatabaseConnection;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
@@ -86,13 +85,9 @@ public class DatabaseVisitor extends CQLParser {
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
 		String name = (String) data;
 		String connectionName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		String tableName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-		boolean isTimeSensitive = false;
+		String tableName = ((ASTIdentifier) node.jjtGetChild(1)).getName();		
 		long waitMillis = 0L;
-		if (node.jjtGetNumChildren() > 2) {
-			if (node.jjtGetChild(2) instanceof ASTDatabaseTimeSensitiv) {
-				isTimeSensitive = true;
-			}
+		if (node.jjtGetNumChildren() > 2) {			
 			if (node.jjtGetChild(2) instanceof ASTTime) {
 				ASTTime time = (ASTTime) node.jjtGetChild(2);
 				String value = time.jjtGetValue().toString();
@@ -104,8 +99,7 @@ public class DatabaseVisitor extends CQLParser {
 		DatabaseSourceAO source = new DatabaseSourceAO();
 		source.setName(name);
 		source.setConnectionName(connectionName);
-		source.setTableName(tableName);
-		source.setTimeSensitive(isTimeSensitive);
+		source.setTableName(tableName);		
 		source.setWaitInMillis(waitMillis);		
 		if(!source.isValid()){			
 			if(source.getErrors().size()>0){
@@ -124,9 +118,8 @@ public class DatabaseVisitor extends CQLParser {
 	}
 
 	@Override
-	public Object visit(ASTDatabaseSink node, Object data) throws QueryParseException {
-		String sinkName = (String) data;
-
+	public Object visit(ASTDatabaseSink node, Object data) throws QueryParseException {		
+		String name = (String) data;
 		String connectionName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String tableName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		boolean drop = false;
@@ -146,20 +139,13 @@ public class DatabaseVisitor extends CQLParser {
 
 		// all checks passed (no exception) --> generate AO
 		DatabaseSinkAO sinkAO = new DatabaseSinkAO();
-		// sinkName, connectionName, tableName, drop, truncate
-		sinkAO.setSinkName(sinkName);
+		// sinkName, connectionName, tableName, drop, truncate		
 		sinkAO.setConnectionName(connectionName);
 		sinkAO.setTablename(tableName);
 		sinkAO.setDrop(drop);
 		sinkAO.setTruncate(truncate);		
-//		ILogicalOperator transformMeta = new TimestampToPayloadAO();
-	//	sinkAO.subscribeToSource(transformMeta, 0, 0, null);
-		try {
-			getDataDictionary().addSink(sinkName, sinkAO, getCaller());
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		return null;
+		getDataDictionary().addSink(name, sinkAO, getCaller());
+		return sinkAO;
 	}
 
 	@Override

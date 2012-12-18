@@ -51,19 +51,8 @@ public class TDatabaseSourceAORule extends AbstractTransformationRule<DatabaseSo
 
 	@Override
 	public void execute(DatabaseSourceAO accessAO, TransformationConfiguration config) {
-		String accessPOName = accessAO.getSourceName();	
-		ISource<?> accessPO = null;		
-		if (getDataDictionary().getAccessPlan(accessAO.getSourceName()) == null) {
-			accessPO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(), accessAO.isTimesensitiv(), accessAO.getWaitMillis());
-			accessPO.setOutputSchema(accessAO.getOutputSchema());
-			getDataDictionary().putAccessPlan(accessPOName, accessPO);
-		} else {
-			accessPO = getDataDictionary().getAccessPlan(accessPOName);
-		}
-
-		replace(accessAO, accessPO, config);
-		insert(accessPO);
-		retract(accessAO);
+		ISource<?> accessPO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(), accessAO.getWaitMillis());
+		defaultExecute(accessAO, accessPO, config, true, true);		
 	}
 
 	@Override

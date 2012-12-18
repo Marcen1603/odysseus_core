@@ -27,6 +27,10 @@ public class CreateSDFAttributeParameter extends
 	private static final long serialVersionUID = -544787040358885000L;
 	private IDataDictionary dd;
 
+	public CreateSDFAttributeParameter(){
+		
+	}
+	
 	public CreateSDFAttributeParameter(String name, REQUIREMENT requirement, IDataDictionary dd, USAGE usage) {
 		super(name, requirement,usage);
 		this.dd = dd;
