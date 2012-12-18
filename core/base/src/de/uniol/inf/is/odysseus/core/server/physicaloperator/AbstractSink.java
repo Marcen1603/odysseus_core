@@ -67,6 +67,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	private volatile boolean allInputsDone = false;
 	final private OwnerHandler ownerHandler;
+	final private List<IOperatorOwner> openFor = new ArrayList<>();
 
 	// --------------------------------------------------------------------
 	// Logging
@@ -196,13 +197,13 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	public void open() throws OpenFailedException {
 		open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
 	}
-	
+
 	public void open(IOperatorOwner owner) throws OpenFailedException {
 		List<IOperatorOwner> forOwners = null;
-		if (owner != null){
+		if (owner != null) {
 			forOwners = new ArrayList<>();
 			forOwners.add(owner);
-		}else{
+		} else {
 			forOwners = getOwner();
 		}
 		open(new ArrayList<PhysicalSubscription<ISink<?>>>(), forOwners);
@@ -210,6 +211,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	protected void open(List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) throws OpenFailedException {
+		openFor.addAll(forOwners);
 		// getLogger().debug("open() " + this);
 		// The operator can already be initialized from former calls
 		if (!isOpen()) {
@@ -311,15 +313,20 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	public void close(List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
+		openFor.removeAll(forOwners);
 		if (this.sinkOpen.get()) {
 			try {
 				callCloseOnChildren(callPath, forOwners);
-				process_close();
-				stopMonitoring();
+				if (openFor.size() == 0) {
+					process_close();
+					stopMonitoring();
+				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			} finally {
-				this.sinkOpen.set(false);
+				if (openFor.size() == 0) {
+					this.sinkOpen.set(false);
+				}
 			}
 		}
 	}
@@ -550,7 +557,13 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 			subscription.getTarget().unsubscribeSink(this.getInstance(),
 					subscription.getSinkInPort(),
 					subscription.getSourceOutPort(), subscription.getSchema());
+			sourceUnsubscribed(subscription);
 		}
+	}
+
+	protected void sourceUnsubscribed(
+			PhysicalSubscription<ISource<? extends R>> subscription) {
+		// Implement this method if need to react to source unsubscription
 	}
 
 	@Override

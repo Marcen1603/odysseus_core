@@ -68,7 +68,9 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	public void init(AbstractPipe<R,W> source);
 	
 	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub);
+	public void removeInput(PhysicalSubscription<ISource<? extends R>> sub);
 
+	
 	public int size();
 
 	@Override

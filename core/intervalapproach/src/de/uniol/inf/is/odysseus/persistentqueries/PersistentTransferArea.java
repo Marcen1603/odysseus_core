@@ -63,6 +63,12 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 		throw new IllegalArgumentException(
 				"Adding of inputs currently not implemented");
 	}
+	
+	@Override
+	public void removeInput(PhysicalSubscription<ISource<? extends R>> sub) {
+		throw new IllegalArgumentException(
+				"Removing of inputs currently not implemented");
+	}
 
 	@Override
 	public void init(AbstractPipe<R, W> po) {

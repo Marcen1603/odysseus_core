@@ -61,6 +61,11 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 
 		@Override
+		protected void process_close() {
+			AbstractPipe.this.delegatedProcessClose();
+		}
+
+		@Override
 		protected void setInputPortCount(int ports) {
 			super.setInputPortCount(ports);
 		}
@@ -101,6 +106,12 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 		public boolean sinkIsOpen() {
 			return super.isOpen();
+		}
+
+		@Override
+		protected void sourceUnsubscribed(
+				PhysicalSubscription<ISource<? extends R>> subscription) {
+			AbstractPipe.this.sourceUnsubscribed(subscription);
 		}
 	}
 
@@ -167,17 +178,18 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		reconnectSinks();
 		this.delegateSink.open();
 	}
-	
+
 	@Override
 	final public void open(IOperatorOwner owner) throws OpenFailedException {
+
 		reconnectSinks();
 		this.delegateSink.open(owner);
 	}
-	
+
 	@Override
 	final public void open(ISink<? super W> caller, int sourcePort,
-			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
-			throws OpenFailedException {
+			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) throws OpenFailedException {
 		// First: Call open for the source part. Activate subscribers and call
 		// process_open
 		super.open(caller, sourcePort, sinkPort, callPath, forOwners);
@@ -252,15 +264,19 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		// only if all sinksubscriptions are closed
 		// close this operator too
 		this.delegateSink.close(owner);
-		if (!hasOpenSinkSubscriptions()) {
-			// is this process_close correct?
-			process_close();
-			// The are cases where elements are connected that
-			// are no roots of this query
-			// here we need to call close by hand
-			closeAllSinkSubscriptions();
-			open.set(false);
-		}
+		// if (!hasOpenSinkSubscriptions()) {
+		// // is this process_close correct?
+		// process_close();
+		// // The are cases where elements are connected that
+		// // are no roots of this query
+		// // here we need to call close by hand
+		// closeAllSinkSubscriptions();
+		// open.set(false);
+		// }
+	}
+
+	public void delegatedProcessClose() {
+		process_close();
 	}
 
 	@Override
@@ -308,14 +324,18 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	protected void newSourceSubscribed(
 			PhysicalSubscription<ISource<? extends R>> sub) {
-		this.delegateSink.newSourceSubscribed(sub);
+		// Override if needed
 	}
 
 	@Override
 	public void unsubscribeFromSource(
 			PhysicalSubscription<ISource<? extends R>> subscription) {
 		this.delegateSink.unsubscribeFromSource(subscription);
+		// Override if needed
+	}
 
+	protected void sourceUnsubscribed(
+			PhysicalSubscription<ISource<? extends R>> sub) {
 	}
 
 	@Override

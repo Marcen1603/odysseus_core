@@ -52,6 +52,12 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 	}
 	
 	@Override
+	protected void sourceUnsubscribed(
+			PhysicalSubscription<ISource<? extends R>> sub) {
+		transferFunction.removeInput(sub);
+	}
+	
+	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		transferFunction.init(this);

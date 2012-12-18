@@ -730,4 +730,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 		return Collections.unmodifiableList(leafSources);
 	}
 	
+	@Override
+	public String toString() {
+		return "PQuery Id "+getID();
+	}
 }

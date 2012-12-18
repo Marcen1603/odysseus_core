@@ -16,8 +16,8 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	// remember the last time stamp for each input port
 	// can contain null, if no element is seen
-	final protected List<PointInTime> minTs;
+	final protected Map<Integer, PointInTime> minTs;
 	// states the time stamp of the last send object
 	private PointInTime watermark = null;
 	// the operator that uses this sink
@@ -68,11 +68,11 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	private int outputPort = 0;
 
 	public TITransferArea() {
-		minTs = new LinkedList<>();
+		minTs = new HashMap<>();
 	}
 
 	private TITransferArea(TITransferArea<R, W> tiTransferFunction) {
-		minTs = new LinkedList<>(tiTransferFunction.minTs);
+		minTs = new HashMap<>(tiTransferFunction.minTs);
 		outputQueue.addAll(tiTransferFunction.outputQueue);
 	}
 
@@ -84,9 +84,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public void init(AbstractPipe<R, W> po) {
 		synchronized (outputQueue) {
 			this.po = po;
-			int size = po.getSubscribedToSource().size();
-			for (int i = 0; i < size; i++) {
-				this.minTs.add(null);
+			for (PhysicalSubscription<ISource<? extends R>>  sub : po.getSubscribedToSource()){
+				this.minTs.put(sub.getSinkInPort(),null);
 			}
 			this.outputQueue.clear();
 		}
@@ -94,7 +93,12 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub) {
-		minTs.add(null);
+		this.minTs.put(sub.getSinkInPort(),null);
+	}
+	
+	@Override
+	public void removeInput(PhysicalSubscription<ISource<? extends R>> sub) {
+		this.minTs.remove(sub.getSinkInPort());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -171,7 +175,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public void newHeartbeat(PointInTime heartbeat, int inPort) {
 		PointInTime minimum = null;
 		synchronized (minTs) {
-			minTs.set(inPort, heartbeat);
+			minTs.put(inPort, heartbeat);
 			minimum = getMinTs();
 		}
 		sendData(minimum);
@@ -233,7 +237,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	private PointInTime getMinTs() {
 		synchronized (minTs) {
 			PointInTime minimum = minTs.get(0);
-			for (PointInTime p : minTs) {
+			for (PointInTime p : minTs.values()) {
 				// if one element has no value, no element
 				// has been read from this input port
 				// --> no data can be send
