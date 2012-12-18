@@ -417,7 +417,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 			StateMachineInstance<R> instance, boolean outOfTime) {
 		// Check Time
 		if (sm.getWindowSize() > 0) {
-			if (currentTime.before(instance.getStartTimestamp().sum(
+			if (currentTime.after(instance.getStartTimestamp().sum(
 					sm.getWindowSize()))) {
 				// logger.debug(instance + " Out of Window ...");
 				this.eventAgent
