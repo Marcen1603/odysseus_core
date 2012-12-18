@@ -23,6 +23,10 @@ public class TAppendToPhysicalAORule extends AbstractTransformationRule<AppendTo
 		// other queries --> Need a concept!!
 		IPhysicalOperator po = getDataDictionary().getOperator(appendTo);
 		if (po == null){
+			po = getDataDictionary().getOperator(getDataDictionary().createUserUri(appendTo, getCaller()));
+		}
+		
+		if (po == null){
 			throw new TransformationException("Operator "+appendTo+" to append not found!");
 		}
 		defaultExecute(operator, po, config, true, true, true);
