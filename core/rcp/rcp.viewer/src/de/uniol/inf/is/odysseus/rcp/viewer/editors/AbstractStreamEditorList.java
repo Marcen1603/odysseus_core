@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.editors;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
@@ -44,7 +46,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
 	private int receivedElements;
 	private final int maxElements;
-	private ToolItem showHeartbeatsToolbarItem;
+	private boolean showHeartbeats = true;
 
 	private List<String> pendingElements = Lists.newLinkedList();
 
@@ -118,7 +120,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	@Override
 	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 		synchronized (pendingElements) {
-			if (!punctuation.isHeartbeat() || showHeartbeatsToolbarItem.getSelection()) {
+			if (!punctuation.isHeartbeat() || showHeartbeats) {
 				pendingElements.add("Punctuation: " + punctuation);
 				if (!isInfinite() && pendingElements.size() > maxElements) {
 					pendingElements.remove(0);
@@ -140,8 +142,15 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
 	@Override
 	public void initToolbar(ToolBar toolbar) {
-		showHeartbeatsToolbarItem = new ToolItem(toolbar, SWT.CHECK);
+		final ToolItem showHeartbeatsToolbarItem = new ToolItem(toolbar, SWT.CHECK);
 	    showHeartbeatsToolbarItem.setText("Consider heartbeats");
+	    showHeartbeatsToolbarItem.setSelection(showHeartbeats); // to set default value
+	    showHeartbeatsToolbarItem.addSelectionListener(new SelectionAdapter() {
+	    	@Override
+	    	public void widgetSelected(SelectionEvent e) {
+	    		showHeartbeats = showHeartbeatsToolbarItem.getSelection();
+	    	}
+	    });
 	}
 
 	private void refreshText() {
