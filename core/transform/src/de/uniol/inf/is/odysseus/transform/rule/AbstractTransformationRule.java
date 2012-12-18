@@ -53,7 +53,7 @@ public abstract class AbstractTransformationRule<T> extends
 		}
 		
 		physical.setOutputSchema(logical.getOutputSchema());
-		if (logical.getOutputSchema() != null){
+		if (logical.getOutputSchema() == null){
 			logger.warn("Operator "+logical+" has not output schema");
 		}
 		physical.setName(logical.getName());
