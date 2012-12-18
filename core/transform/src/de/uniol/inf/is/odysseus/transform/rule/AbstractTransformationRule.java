@@ -41,6 +41,31 @@ public abstract class AbstractTransformationRule<T> extends
 			boolean retract, boolean insert, boolean ignoreSinkInput) {
 		// Check if operator has an id and if this id is not already defined
 		// Attention, id can be null
+		handleOperatorID(logical, physical);
+		
+		updatePhysicalOperator(logical, physical);
+		
+		replace(logical, physical, config, ignoreSinkInput);
+		
+		if (retract) {
+			retract(logical);
+		}
+		if (insert) {
+			insert(physical);
+		}
+	}
+
+	protected void updatePhysicalOperator(ILogicalOperator logical,
+			IPhysicalOperator physical) {
+		physical.setOutputSchema(logical.getOutputSchema());
+		if (logical.getOutputSchema() == null){
+			logger.warn("Operator "+logical+" has not output schema");
+		}
+		physical.setName(logical.getName());
+	}
+
+	protected void handleOperatorID(ILogicalOperator logical,
+			IPhysicalOperator physical) {
 		String id = logical.getUniqueIdentifier()==null?null:getDataDictionary().createUserUri(logical.getUniqueIdentifier(), getCaller());  
 		
 		if (id != null){
@@ -50,20 +75,6 @@ public abstract class AbstractTransformationRule<T> extends
 				getDataDictionary().setOperator(id, physical);
 				physical.addUniqueId(id);
 			}
-		}
-		
-		physical.setOutputSchema(logical.getOutputSchema());
-		if (logical.getOutputSchema() == null){
-			logger.warn("Operator "+logical+" has not output schema");
-		}
-		physical.setName(logical.getName());
-		
-		replace(logical, physical, config, ignoreSinkInput);
-		if (retract) {
-			retract(logical);
-		}
-		if (insert) {
-			insert(physical);
 		}
 	}
 	

@@ -29,7 +29,14 @@ public class TAppendToPhysicalAORule extends AbstractTransformationRule<AppendTo
 		if (po == null){
 			throw new TransformationException("Operator "+appendTo+" to append not found!");
 		}
-		defaultExecute(operator, po, config, true, true, true);
+		
+		//defaultExecute(operator, po, config, true, true, true);
+
+		handleOperatorID(operator, po);
+		replace(operator, po , config, true);
+		retract(operator);
+		insert(po);
+
 	}
 
 	@Override
