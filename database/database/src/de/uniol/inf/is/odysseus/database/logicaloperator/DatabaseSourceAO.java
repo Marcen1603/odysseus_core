@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * 
  * @author Dennis Geesen Created at: 28.10.2011
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DATABASESOURCE")
+@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "DATABASESOURCE")
 public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	
 	private static final long serialVersionUID = -5800479007184861697L;
