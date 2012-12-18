@@ -151,11 +151,17 @@ public class PatternDetectAO<T> extends AbstractLogicalOperator{
 				if (name == null){
 					throw new IllegalArgumentException("Input stream must have a type.");
 				}
-				if (!types.contains(name)) {
-					throw new IllegalArgumentException("Type " + name
-							+ " no input for Operator");
+				String name2 = name.substring(name.indexOf(".")+1);
+				String value = null;
+				if (types.contains(name)){
+					value = name;
+				}else if (types.contains(name2)){
+					value = name2;
+				}else{
+					throw new IllegalArgumentException("Type " + name + " or "+name2
+							+ " are no input for Operator");
 				}
-				this.setInputTypeName(s.getSinkInPort(), name);
+				this.setInputTypeName(s.getSinkInPort(), value);
 			}
 		}
 		
