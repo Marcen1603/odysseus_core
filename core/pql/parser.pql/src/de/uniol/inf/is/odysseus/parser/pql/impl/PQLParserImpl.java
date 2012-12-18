@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryExcepti
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AppendToPhysicalAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -253,7 +254,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       break;
     case 21:
       jj_consume_token(21);
-          subscribeToSink = true;
+      subscribeToSink = true;
       break;
     default:
       jj_la1[2] = jj_gen;
@@ -288,18 +289,16 @@ public class PQLParserImpl implements PQLParserImplConstants {
         //get access operator for view, so other operators don't get subscribed
         //to top operator of the view
         op = dd.getViewOrStream(nameStr, getUser());
-      }else if (subscribeToSink){
-      // TODO: Dies ist Quatsch, genauso wie im CQL Pendant!!
-        nameStr = name.image;
-        IDataDictionary dd = getDataDictionary();
-        ILogicalOperator sink = dd.getSinkInput(nameStr, getUser());
-        // Remark: Currently there is no syntax to allow another sourceOutput port than 0
-        int sourceOutputPort = 0;
-        sink.subscribeToSource(op, -1, sourceOutputPort, op.getOutputSchema());
-        sink.updateSchemaInfos();
-        op = dd.getSinkTop(nameStr, getUser());
-      }else
+      }
+      else
       {
+        if (subscribeToSink)
+        {
+          nameStr = name.image;
+          AppendToPhysicalAO appendOp = new AppendToPhysicalAO();
+          appendOp.setAppendTo(nameStr);
+          appendOp.subscribeToSource(op, 0, 0, op.getOutputSchema());
+        }
         namedOpParameters.put(nameStr.toUpperCase(), parameters);
         namedOps.put(nameStr.toUpperCase(), op);
       }
