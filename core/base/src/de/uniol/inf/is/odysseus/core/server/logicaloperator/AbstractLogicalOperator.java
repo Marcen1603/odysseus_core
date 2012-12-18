@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
-import sun.awt.util.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -39,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializeProperty
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializePropertyList;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
@@ -53,8 +53,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	private static final long serialVersionUID = -4425148851059140851L;
 
-	transient private List<IOperatorOwner> owners;
-
+	final private OwnerHandler ownerHandler;
+	
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
 	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();
 
@@ -82,14 +82,13 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			this.predicates.add(pred.clone());
 		}
 		setName(op.getName());
-		initOwner();
-		owners.addAll(op.owners);
+		this.ownerHandler = new OwnerHandler(op.ownerHandler);
 		this.outputSchema = op.outputSchema;
 		this.uniqueIdentifier = op.uniqueIdentifier;
 	}
 
 	public AbstractLogicalOperator() {
-		initOwner();
+		ownerHandler = new OwnerHandler();
 	}
 
 	/*
@@ -234,6 +233,14 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return name;
 	}
 
+	// -----------------------------------------------------------------------------------------------
+	// Owner delegates
+	// -----------------------------------------------------------------------------------------------
+	
+	
+	
+	// -----------------------------------------------------------------------------------------------
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -245,6 +252,42 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Parameter(name="Name", type = StringParameter.class, optional = true)
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public void addOwner(IOperatorOwner owner) {
+		ownerHandler.addOwner(owner);
+	}
+
+	public void addOwner(Collection<IOperatorOwner> owner) {
+		ownerHandler.addOwner(owner);
+	}
+
+	public void removeOwner(IOperatorOwner owner) {
+		ownerHandler.removeOwner(owner);
+	}
+
+	public void removeAllOwners() {
+		ownerHandler.removeAllOwners();
+	}
+
+	public boolean isOwnedBy(IOperatorOwner owner) {
+		return ownerHandler.isOwnedBy(owner);
+	}
+
+	public boolean isOwnedByAny(List<IOperatorOwner> owners) {
+		return ownerHandler.isOwnedByAny(owners);
+	}
+
+	public boolean hasOwner() {
+		return ownerHandler.hasOwner();
+	}
+
+	public List<IOperatorOwner> getOwner() {
+		return ownerHandler.getOwner();
+	}
+
+	public String getOwnerIDs() {
+		return ownerHandler.getOwnerIDs();
 	}
 
 	@Override
@@ -313,70 +356,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return this.physSubscriptionTo.get(port);
 	}
 
-	@Override
-	public void addOwner(IOperatorOwner owner) {
-		if (this.owners == null) {
-			initOwner();
-		}
-		if (!this.owners.contains(owner)) {
-			this.owners.add(owner);
-		}
-	}
-	
-	@Override
-	public void addOwner(Collection<IOperatorOwner> owner) {
-		this.owners.addAll(owner);
-	}
-
-	private void initOwner() {
-		owners = new IdentityArrayList<IOperatorOwner>();
-	}
-
-	@Override
-	public void removeOwner(IOperatorOwner owner) {
-		this.owners.remove(owner);
-	}
-
-	@Override
-	public void removeAllOwners() {
-		this.owners.clear();
-	}
-
-	@Override
-	public boolean isOwnedBy(IOperatorOwner owner) {
-		return this.owners.contains(owner);
-	}
-
-	@Override
-	public boolean hasOwner() {
-		return this.owners.size() > 0;
-	}
-
-	@Override
-	public List<IOperatorOwner> getOwner() {
-		return Collections.unmodifiableList(this.owners);
-	}
-
-	/**
-	 * Returns a ","-separated string of the owner IDs.
-	 * 
-	 * @param owners
-	 *            Owner which have IDs.
-	 * @return ","-separated string of the owner IDs.
-	 */
-	@Override
-	public String getOwnerIDs() {
-		StringBuffer result = new StringBuffer();
-		if (owners != null) { // TODO: WARUM??
-			for (IOperatorOwner iOperatorOwner : owners) {
-				if (result.length() > 0) {
-					result.append(", ");
-				}
-				result.append(iOperatorOwner.getID());
-			}
-		}
-		return result.toString();
-	}
 
 	// "delegatable this", used for the delegate sink
 	protected ILogicalOperator getInstance() {

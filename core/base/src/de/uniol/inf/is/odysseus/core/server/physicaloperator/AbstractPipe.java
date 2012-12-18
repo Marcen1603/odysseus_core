@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -76,12 +77,12 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 
 		@Override
-		public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
+		public void close(List<PhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners) {
 			// Do not (!) call close on AbstractSink! It would immediately
 			// call process_close (this should only be done by the
 			// source-Part of AbstractPipe)
 			if (isOpen()) {
-				callCloseOnChildren(callPath);
+				callCloseOnChildren(callPath, forOwners);
 			}
 			sinkOpen.set(false);
 			
@@ -227,9 +228,9 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	@Override
 	final public void close(ISink<? super W> caller, int sourcePort,
-			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath) {
-		this.delegateSink.close(callPath);
-		super.close(caller, sourcePort, sinkPort, callPath);
+			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners) {
+		this.delegateSink.close(callPath, forOwners);
+		super.close(caller, sourcePort, sinkPort, callPath, forOwners);
 	}
 
 	@Override

@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,7 +31,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.awt.util.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
@@ -46,7 +45,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POPortEvent;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
+import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
@@ -54,8 +53,8 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataPro
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractMonitoringDataProvider
-		implements ISink<R> {
+public abstract class AbstractSink<R extends IStreamObject<?>> extends
+		AbstractMonitoringDataProvider implements ISink<R> {
 
 	final private List<PhysicalSubscription<ISource<? extends R>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends R>>>();
 
@@ -64,11 +63,10 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	private String name;
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 
-	final transient protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 	private Set<String> uniqueIds = new HashSet<>();
 
-
 	private volatile boolean allInputsDone = false;
+	final private OwnerHandler ownerHandler;
 
 	// --------------------------------------------------------------------
 	// Logging
@@ -136,11 +134,13 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	public AbstractSink() {
 		openInitEvent = new POEvent(getInstance(), POEventType.OpenInit);
 		openDoneEvent = new POEvent(getInstance(), POEventType.OpenDone);
+		ownerHandler = new OwnerHandler();
 	}
 
 	public AbstractSink(AbstractSink<R> other) {
 		openInitEvent = new POEvent(getInstance(), POEventType.OpenInit);
 		openDoneEvent = new POEvent(getInstance(), POEventType.OpenDone);
+		ownerHandler = new OwnerHandler(other.ownerHandler);
 		init(other);
 	}
 
@@ -148,7 +148,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		noInputPorts = other.noInputPorts;
 		name = other.name;
 		this.outputSchema = createCleanClone(other.outputSchema);
-		owners.addAll(other.owners);
 		allInputsDone = false;
 	}
 
@@ -209,9 +208,10 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		}
 		// In every case, the sink is now open (no need to check, its cheaper to
 		// always set this value to true
-		// Hint: The operator can be opened by another method (c.f. AbstractPipe)
+		// Hint: The operator can be opened by another method (c.f.
+		// AbstractPipe)
 		this.sinkOpen.set(true);
-		
+
 		// Call open on all registered sources0
 		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			// Check if callPath contains this call already to avoid cycles
@@ -261,7 +261,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		process_next(object, port);
 		fire(processDoneEvent[port]);
 	}
-	
 
 	@Override
 	public void process(Collection<? extends R> object, int port) {
@@ -275,43 +274,48 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	@Override
 	public abstract void processPunctuation(IPunctuation punctuation, int port);
 
-
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE
 	// ------------------------------------------------------------------------
 
 	@Override
 	public void close() {
-		close(new ArrayList<PhysicalSubscription<ISink<?>>>());
+		close(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
 	}
 
-	public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
+	public void close(List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) {
 		if (this.sinkOpen.get()) {
-			try {		
-				callCloseOnChildren(callPath);
+			try {
+				callCloseOnChildren(callPath, forOwners);
 				process_close();
-				stopMonitoring();				
+				stopMonitoring();
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			} finally {
 				this.sinkOpen.set(false);
 			}
 		}
-	}	
+	}
 
 	protected void callCloseOnChildren(
-			List<PhysicalSubscription<ISink<?>>> callPath) {
+			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) {
 		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (!containsSubscription(callPath, getInstance(),
 					sub.getSourceOutPort(), sub.getSinkInPort())) {
 				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(),
 						sub.getSinkInPort(), sub.getSourceOutPort(), null));
-				sub.getTarget().close(getInstance(), sub.getSourceOutPort(),
-						sub.getSinkInPort(), callPath);
+				// Call close only on sources from the list of owners
+				if (sub.getTarget().isOwnedByAny(forOwners)) {
+					sub.getTarget().close(getInstance(),
+							sub.getSourceOutPort(), sub.getSinkInPort(),
+							callPath, forOwners);
+				}
 			}
 		}
 	}
-	
+
 	protected void process_close() {
 		// Empty Default Implementation
 	}
@@ -385,72 +389,12 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	final public Map<Integer, SDFSchema> getOutputSchemas() {
 		return Collections.unmodifiableMap(this.outputSchema);
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Owner Management
 	// ------------------------------------------------------------------------
 
-	@Override
-	public void addOwner(IOperatorOwner owner) {
-		if (!this.owners.contains(owner)) {
-			this.owners.add(owner);
-		}
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
 
-	}
-
-	@Override
-	public void addOwner(Collection<IOperatorOwner> owner) {
-		this.owners.addAll(owner);
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
-	}
-	
-	@Override
-	public void removeOwner(IOperatorOwner owner) {
-		while (this.owners.remove(owner)) {
-			// Remove all owners
-		}
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
-	}
-
-	@Override
-	public void removeAllOwners() {
-		this.owners.clear();
-	}
-
-	@Override
-	final public boolean isOwnedBy(IOperatorOwner owner) {
-		return this.owners.contains(owner);
-	}
-
-	@Override
-	final public boolean hasOwner() {
-		return !this.owners.isEmpty();
-	}
-
-	@Override
-	final public List<IOperatorOwner> getOwner() {
-		return Collections.unmodifiableList(this.owners);
-	}
-
-	/**
-	 * Returns a ","-separated string of the owner IDs.
-	 * 
-	 * @param owner
-	 *            Owner which have IDs.
-	 * @return ","-separated string of the owner IDs.
-	 */
-	@Override
-	public String getOwnerIDs() {
-		StringBuffer result = new StringBuffer();
-		for (IOperatorOwner iOperatorOwner : owners) {
-			if (result.length() > 0) {
-				result.append(", ");
-			}
-			result.append(iOperatorOwner.getID());
-		}
-		return result.toString();
-	}
 
 	// ------------------------------------------------------------------------
 	// Id Management
@@ -458,18 +402,53 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 
 	@Override
 	public void addUniqueId(String id) {
-		if (this.uniqueIds.contains(id)){
+		if (this.uniqueIds.contains(id)) {
 			throw new IllegalArgumentException("Id already set exception!");
 		}
 		this.uniqueIds.add(id);
 	}
-	
+
+	public void addOwner(IOperatorOwner owner) {
+		ownerHandler.addOwner(owner);
+	}
+
+	public void addOwner(Collection<IOperatorOwner> owner) {
+		ownerHandler.addOwner(owner);
+	}
+
+	public void removeOwner(IOperatorOwner owner) {
+		ownerHandler.removeOwner(owner);
+	}
+
+	public void removeAllOwners() {
+		ownerHandler.removeAllOwners();
+	}
+
+	public boolean isOwnedBy(IOperatorOwner owner) {
+		return ownerHandler.isOwnedBy(owner);
+	}
+
+	public boolean isOwnedByAny(List<IOperatorOwner> owners) {
+		return ownerHandler.isOwnedByAny(owners);
+	}
+
+	public boolean hasOwner() {
+		return ownerHandler.hasOwner();
+	}
+
+	public List<IOperatorOwner> getOwner() {
+		return ownerHandler.getOwner();
+	}
+
+	public String getOwnerIDs() {
+		return ownerHandler.getOwnerIDs();
+	}
+
 	@Override
 	public Set<String> getUniqueIds() {
 		return uniqueIds;
 	}
 
-	
 	// ------------------------------------------------------------------------
 	// Subscription management
 	// ------------------------------------------------------------------------
@@ -501,10 +480,11 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 					schema);
 			newSourceSubscribed(sub);
 		}
-		
+
 	}
-	
-	protected void newSourceSubscribed(PhysicalSubscription<ISource<? extends R>> sub){
+
+	protected void newSourceSubscribed(
+			PhysicalSubscription<ISource<? extends R>> sub) {
 		// Implement this method if need to react to new source subscription
 	}
 

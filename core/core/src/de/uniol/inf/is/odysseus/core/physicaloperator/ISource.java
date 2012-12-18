@@ -20,6 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.metadata.IHasMetaAttribute;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -68,7 +69,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	/**
 	 * Close down the connection/do not read any more data
 	 */
-	public void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath);
+	public void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners);
 
 	public void sendPunctuation(IPunctuation punctuation);
 
@@ -124,5 +125,6 @@ public interface ISource<T> extends IPhysicalOperator,
 	boolean isBlocked();
 
 	public void unsubscribeFromAllSinks();
+
 
 }

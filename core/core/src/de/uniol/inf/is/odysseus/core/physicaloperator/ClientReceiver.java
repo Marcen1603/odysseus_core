@@ -42,7 +42,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.awt.util.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
@@ -53,6 +52,7 @@ import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -78,7 +78,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	private String name = null;
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 
-	protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
+	final private OwnerHandler ownerHandler;
 
 	private AtomicBoolean blocked = new AtomicBoolean(false);
 
@@ -109,6 +109,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		this.accessHandler = accessHandler;
 		this.name = "ClientReceiver " + accessHandler;
 		this.opened = false;
+		this.ownerHandler = new OwnerHandler();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -117,6 +118,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		inputDataHandler = other.inputDataHandler.clone();
 		accessHandler = (IAccessConnectionHandler<R>) other.clone();
 		opened = other.opened;
+		this.ownerHandler = new OwnerHandler(other.ownerHandler);
 	}
 
 	@Override
@@ -181,55 +183,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	// Owner Management
 	// ------------------------------------------------------------------------
 
-	@Override
-	public void addOwner(IOperatorOwner owner) {
-		if (!this.owners.contains(owner)) {
-			this.owners.add(owner);
-		}
-	}
-	
-	@Override
-	public void addOwner(Collection<IOperatorOwner> owner) {
-		this.owners.addAll(owner);
-	}
 
-	@Override
-	public void removeOwner(IOperatorOwner owner) {
-		while (this.owners.remove(owner))
-			;
-	}
-
-	@Override
-	public void removeAllOwners() {
-		this.owners.clear();
-	}
-
-	@Override
-	public boolean isOwnedBy(IOperatorOwner owner) {
-		return this.owners.contains(owner);
-	}
-
-	@Override
-	public boolean hasOwner() {
-		return !this.owners.isEmpty();
-	}
-
-	@Override
-	public List<IOperatorOwner> getOwner() {
-		return Collections.unmodifiableList(this.owners);
-	}
-
-	@Override
-	public String getOwnerIDs() {
-		StringBuffer res = new StringBuffer();
-		for (IOperatorOwner owner : owners) {
-			if (res.length() > 0) {
-				res.append(", ");
-			}
-			res.append(owner.getID());
-		}
-		return res.toString();
-	}
 
 	// ------------------------------------------------------------------------
 	// MONITORING
@@ -238,6 +192,50 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	@Override
 	public Collection<String> getProvidedMonitoringData() {
 		return null;
+	}
+
+	public void addOwner(IOperatorOwner owner) {
+		ownerHandler.addOwner(owner);
+	}
+
+	public void addOwner(Collection<IOperatorOwner> owner) {
+		ownerHandler.addOwner(owner);
+	}
+
+	public void removeOwner(IOperatorOwner owner) {
+		ownerHandler.removeOwner(owner);
+	}
+
+	public void removeAllOwners() {
+		ownerHandler.removeAllOwners();
+	}
+
+	public boolean isOwnedBy(IOperatorOwner owner) {
+		return ownerHandler.isOwnedBy(owner);
+	}
+
+	public int hashCode() {
+		return ownerHandler.hashCode();
+	}
+
+	public boolean isOwnedByAny(List<IOperatorOwner> owners) {
+		return ownerHandler.isOwnedByAny(owners);
+	}
+
+	public boolean hasOwner() {
+		return ownerHandler.hasOwner();
+	}
+
+	public List<IOperatorOwner> getOwner() {
+		return ownerHandler.getOwner();
+	}
+
+	public String getOwnerIDs() {
+		return ownerHandler.getOwnerIDs();
+	}
+
+	public boolean equals(Object obj) {
+		return ownerHandler.equals(obj);
 	}
 
 	@Override
@@ -604,7 +602,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public void close(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath) {
+			List<PhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners) {
 		PhysicalSubscription<ISink<? super W>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
 		if (sub == null) {

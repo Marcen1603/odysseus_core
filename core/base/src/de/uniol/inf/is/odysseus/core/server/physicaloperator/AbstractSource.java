@@ -24,14 +24,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.awt.util.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
@@ -45,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
+import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
@@ -69,8 +67,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	protected AtomicBoolean open = new AtomicBoolean(false);
 	private String name = null;
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
-	protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 	private Set<String> uniqueIds = new HashSet<>();
+	
+	final private OwnerHandler ownerHandler;
 	
 	// --------------------------------------------------------------------
 	// Logging
@@ -152,6 +151,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------
 
 	public AbstractSource() {
+		this.ownerHandler = new OwnerHandler();
 	}
 
 	public AbstractSource(AbstractSource<T> source) {
@@ -159,7 +159,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		this.blocked = new AtomicBoolean();
 		this.blocked.set(source.blocked.get());
 		this.name = source.name;
-		this.owners = new Vector<IOperatorOwner>(source.owners);
+		this.ownerHandler = new OwnerHandler(source.ownerHandler);
 	}
 
 	@Override
@@ -409,7 +409,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void close(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath) {
+			List<PhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners) {
 		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
 		if (sub == null) {
@@ -636,69 +636,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// Owner Management
 	// ------------------------------------------------------------------------
 
-	@Override
-	public void addOwner(IOperatorOwner owner) {
-		if (!this.owners.contains(owner)) {
-			this.owners.add(owner);
-		}
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
-	}
 	
-	@Override
-	public void addOwner(Collection<IOperatorOwner> owner) {
-		this.owners.addAll(owner);
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
-	}
-
-	@Override
-	public void removeOwner(IOperatorOwner owner) {
-		// remove all occurrences
-		while (this.owners.remove(owner)) {
-		}
-		// synchronized (this.deactivateRequestControls) {
-		// this.deactivateRequestControls.remove(owner);
-		// }
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
-	}
-
-	@Override
-	public void removeAllOwners() {
-		this.owners.clear();
-	}
-
-	@Override
-	public boolean isOwnedBy(IOperatorOwner owner) {
-		return this.owners.contains(owner);
-	}
-
-	@Override
-	public boolean hasOwner() {
-		return !this.owners.isEmpty();
-	}
-
-	@Override
-	public List<IOperatorOwner> getOwner() {
-		return Collections.unmodifiableList(this.owners);
-	}
-
-	/**
-	 * Returns a ","-separated string of the owner IDs.
-	 * 
-	 * @param owner
-	 *            Owner which have IDs.
-	 * @return ","-separated string of the owner IDs.
-	 */
-	@Override
-	public String getOwnerIDs() {
-		StringBuffer result = new StringBuffer();
-		for (IOperatorOwner iOperatorOwner : owners) {
-			if (result.length() > 0) {
-				result.append(", ");
-			}
-			result.append(iOperatorOwner.getID());
-		}
-		return result.toString();
-	}
 
 	// ------------------------------------------------------------------------
 	// Id Management
@@ -712,6 +650,42 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		this.uniqueIds.add(id);
 	}
 	
+	public void addOwner(IOperatorOwner owner) {
+		ownerHandler.addOwner(owner);
+	}
+
+	public void addOwner(Collection<IOperatorOwner> owner) {
+		ownerHandler.addOwner(owner);
+	}
+
+	public void removeOwner(IOperatorOwner owner) {
+		ownerHandler.removeOwner(owner);
+	}
+
+	public void removeAllOwners() {
+		ownerHandler.removeAllOwners();
+	}
+
+	public boolean isOwnedBy(IOperatorOwner owner) {
+		return ownerHandler.isOwnedBy(owner);
+	}
+
+	public boolean isOwnedByAny(List<IOperatorOwner> owners) {
+		return ownerHandler.isOwnedByAny(owners);
+	}
+
+	public boolean hasOwner() {
+		return ownerHandler.hasOwner();
+	}
+
+	public List<IOperatorOwner> getOwner() {
+		return ownerHandler.getOwner();
+	}
+
+	public String getOwnerIDs() {
+		return ownerHandler.getOwnerIDs();
+	}
+
 	@Override
 	public Set<String> getUniqueIds() {
 		return uniqueIds;

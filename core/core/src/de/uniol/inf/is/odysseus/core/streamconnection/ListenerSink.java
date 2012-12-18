@@ -17,13 +17,9 @@
 package de.uniol.inf.is.odysseus.core.streamconnection;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-
-import sun.awt.util.IdentityArrayList;
 
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
@@ -35,13 +31,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
+import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public abstract class ListenerSink<In extends IStreamObject<?>> implements ISink<In>, IStreamConnection<In>{
+public abstract class ListenerSink<In extends IStreamObject<?>> extends OwnerHandler implements ISink<In>, IStreamConnection<In>{
 
-	final transient protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 
 	@Override
 	public DefaultStreamConnection<In> clone() {
@@ -100,71 +94,7 @@ public abstract class ListenerSink<In extends IStreamObject<?>> implements ISink
 	public void setOutputSchema(SDFSchema outputSchema, int port) {
 	}
 	
-	// ------------------------------------------------------------------------
-	// Owner Management
-	// ------------------------------------------------------------------------
 
-	@Override
-	public void addOwner(IOperatorOwner owner) {
-		if (!this.owners.contains(owner)) {
-			this.owners.add(owner);
-		}
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
-
-	}
-
-	@Override
-	public void addOwner(Collection<IOperatorOwner> owner) {
-		this.owners.addAll(owner);
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
-	}
-
-	@Override
-	public void removeOwner(IOperatorOwner owner) {
-		while (this.owners.remove(owner)) {
-			// Remove all owners
-		}
-		Collections.sort(owners, OperatorOwnerComparator.getInstance());
-	}
-
-	@Override
-	public void removeAllOwners() {
-		this.owners.clear();
-	}
-
-	@Override
-	final public boolean isOwnedBy(IOperatorOwner owner) {
-		return this.owners.contains(owner);
-	}
-
-	@Override
-	final public boolean hasOwner() {
-		return !this.owners.isEmpty();
-	}
-
-	@Override
-	final public List<IOperatorOwner> getOwner() {
-		return Collections.unmodifiableList(this.owners);
-	}
-
-	/**
-	 * Returns a ","-separated string of the owner IDs.
-	 * 
-	 * @param owner
-	 *            Owner which have IDs.
-	 * @return ","-separated string of the owner IDs.
-	 */
-	@Override
-	public String getOwnerIDs() {
-		StringBuffer result = new StringBuffer();
-		for (IOperatorOwner iOperatorOwner : owners) {
-			if (result.length() > 0) {
-				result.append(", ");
-			}
-			result.append(iOperatorOwner.getID());
-		}
-		return result.toString();
-	}
 	@Override
 	public Collection<String> getProvidedMonitoringData() {
 		return Lists.newArrayList();

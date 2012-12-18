@@ -63,6 +63,15 @@ public interface IOwnedOperator {
 	 * @return TRUE: This operator is owned by the owner. FALSE: else
 	 */
 	public boolean isOwnedBy(IOperatorOwner owner);
+	
+	/**
+	 * Checks if this operator is owned by a specific owner.
+	 * 
+	 * @param owners List of owners which should be checked.
+	 * @return TRUE: This operator is owned by the owner. FALSE: else
+	 */
+	public boolean isOwnedByAny(List<IOperatorOwner> owners);
+
 
 	/**
 	 * Indicatives if this operator has at least one owner.
