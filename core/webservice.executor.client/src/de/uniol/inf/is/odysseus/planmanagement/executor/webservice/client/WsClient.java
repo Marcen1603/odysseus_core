@@ -396,7 +396,7 @@ public class WsClient implements IExecutor, IClientExecutor {
 			} else {
 				ClientReceiver receiver = new ClientReceiver(new ByteBufferHandler(tdh), new SizeByteBufferHandler(), new NioConnectionHandler(adr.getHostName(), adr.getPort(),
 						false, null, null));
-				receiver.open(null, 0, 0, null);
+				receiver.open(null, 0, 0, null, null);
 				receivers.put(queryId, receiver);
 				return Optional.of(receiver);
 			}

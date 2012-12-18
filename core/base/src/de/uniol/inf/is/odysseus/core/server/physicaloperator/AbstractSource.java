@@ -238,7 +238,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void open(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath)
+			List<PhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
 			throws OpenFailedException {
 
 		// Hint: ignore callPath on sources because the source does not call any

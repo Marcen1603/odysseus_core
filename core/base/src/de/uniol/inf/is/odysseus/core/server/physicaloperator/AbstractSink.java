@@ -194,11 +194,22 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// ------------------------------------------------------------------------
 	@Override
 	public void open() throws OpenFailedException {
-		open(new ArrayList<PhysicalSubscription<ISink<?>>>());
+		open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
+	}
+	
+	public void open(IOperatorOwner owner) throws OpenFailedException {
+		List<IOperatorOwner> forOwners = null;
+		if (owner != null){
+			forOwners = new ArrayList<>();
+			forOwners.add(owner);
+		}else{
+			forOwners = getOwner();
+		}
+		open(new ArrayList<PhysicalSubscription<ISink<?>>>(), forOwners);
 	}
 
-	protected void open(List<PhysicalSubscription<ISink<?>>> callPath)
-			throws OpenFailedException {
+	protected void open(List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) throws OpenFailedException {
 		// getLogger().debug("open() " + this);
 		// The operator can already be initialized from former calls
 		if (!isOpen()) {
@@ -217,10 +228,13 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 			// Check if callPath contains this call already to avoid cycles
 			if (!containsSubscription(callPath, getInstance(),
 					sub.getSourceOutPort(), sub.getSinkInPort())) {
+
 				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(),
 						sub.getSinkInPort(), sub.getSourceOutPort(), null));
-				sub.getTarget().open(getInstance(), sub.getSourceOutPort(),
-						sub.getSinkInPort(), callPath);
+				if (sub.getTarget().isOwnedByAny(forOwners)) {
+					sub.getTarget().open(getInstance(), sub.getSourceOutPort(),
+							sub.getSinkInPort(), callPath, forOwners);
+				}
 			}
 		}
 	}
@@ -285,15 +299,16 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	@Override
 	public void close(IOperatorOwner id) {
-		List<IOperatorOwner> owner = new ArrayList<>();
-		if (id != null){
-		owner.add(id);
-		}else{
+		List<IOperatorOwner> owner;
+		if (id != null) {
+			owner = new ArrayList<>();
+			owner.add(id);
+		} else {
 			owner = getOwner();
 		}
 		close(new ArrayList<PhysicalSubscription<ISink<?>>>(), owner);
 	}
-	
+
 	public void close(List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		if (this.sinkOpen.get()) {
@@ -404,8 +419,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// ------------------------------------------------------------------------
 	// Owner Management
 	// ------------------------------------------------------------------------
-
-
 
 	// ------------------------------------------------------------------------
 	// Id Management

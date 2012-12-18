@@ -65,6 +65,11 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	 *  
 	*/
 	public void open() throws OpenFailedException;
+	
+	/**
+	 * Call close for a distinct owner 
+	 */
+	public void open(IOperatorOwner id);
 
 	/**
 	 * Close called on a sink has no parameter 

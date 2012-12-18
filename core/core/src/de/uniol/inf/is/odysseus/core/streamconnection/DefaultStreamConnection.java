@@ -155,6 +155,12 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		LOG.debug("Opening");
 		isOpen = true;
 	}
+	
+	@Override
+	public void open(IOperatorOwner id) {
+		LOG.warn("Opening with operator owner not implemented");
+		open();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

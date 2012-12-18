@@ -553,7 +553,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public void open(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath)
+			List<PhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
 			throws OpenFailedException {
 		// Hint: ignore callPath on sources because the source does not call any
 		// subscription

@@ -167,17 +167,23 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		reconnectSinks();
 		this.delegateSink.open();
 	}
-
+	
+	@Override
+	final public void open(IOperatorOwner owner) throws OpenFailedException {
+		reconnectSinks();
+		this.delegateSink.open(owner);
+	}
+	
 	@Override
 	final public void open(ISink<? super W> caller, int sourcePort,
-			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath)
+			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
 			throws OpenFailedException {
 		// First: Call open for the source part. Activate subscribers and call
 		// process_open
-		super.open(caller, sourcePort, sinkPort, callPath);
+		super.open(caller, sourcePort, sinkPort, callPath, forOwners);
 		// Second: Call open for the sink part. Call open on connected sources
 		// and do not call process_open
-		this.delegateSink.open(callPath);
+		this.delegateSink.open(callPath, forOwners);
 
 	}
 
