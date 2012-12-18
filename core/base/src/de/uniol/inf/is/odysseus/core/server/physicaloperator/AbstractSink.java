@@ -283,6 +283,17 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		close(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
 	}
 
+	@Override
+	public void close(IOperatorOwner id) {
+		List<IOperatorOwner> owner = new ArrayList<>();
+		if (id != null){
+		owner.add(id);
+		}else{
+			owner = getOwner();
+		}
+		close(new ArrayList<PhysicalSubscription<ISink<?>>>(), owner);
+	}
+	
 	public void close(List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		if (this.sinkOpen.get()) {

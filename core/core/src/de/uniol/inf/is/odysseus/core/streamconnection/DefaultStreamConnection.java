@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public class DefaultStreamConnection<In extends IStreamObject<?>> extends ListenerSink<In> {
@@ -164,6 +165,12 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		for (ISubscription<? extends ISource<In>> s : connectedSubscriptions.toArray(new ISubscription[0])) {
 			disconnect(s, this);
 		}
+	}
+	
+	@Override
+	public void close(IOperatorOwner id) {
+		LOG.warn("Closing with operator owner not implemented");
+		close();
 	}
 
 	protected final void notifyListeners(In element, int port) {

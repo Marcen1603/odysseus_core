@@ -459,7 +459,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			// following sources will not be called any more.
 			if (curRoot.isSink()) {
 				if (curRoot.isOpen()) {
-					((ISink<?>) curRoot).close();
+					((ISink<?>) curRoot).close(query);
 				}
 			} else {
 				throw new IllegalArgumentException(

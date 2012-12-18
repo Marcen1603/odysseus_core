@@ -632,6 +632,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		sinkSubscriptions.clear();
 	}
 	
+	protected boolean hasOpenSinkSubscriptions() {
+		return connectedSinks.size() != activeSinkSubscriptions.size();
+	}
+	
 	// ------------------------------------------------------------------------
 	// Owner Management
 	// ------------------------------------------------------------------------

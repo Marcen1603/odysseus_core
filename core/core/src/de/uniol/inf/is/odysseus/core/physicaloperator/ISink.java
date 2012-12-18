@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 
 /**
  * Interface for data sinks in a query graph.
@@ -69,5 +70,10 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	 * Close called on a sink has no parameter 
 	 */
 	public void close();
+
+	/**
+	 * Call close for a distinct owner 
+	 */
+	public void close(IOperatorOwner id);
 
 }

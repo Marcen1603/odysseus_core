@@ -36,8 +36,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStreamObject<?>> extends AbstractSource<W> implements
-		IPipe<R, W> {
+public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStreamObject<?>>
+		extends AbstractSource<W> implements IPipe<R, W> {
 
 	// ------------------------------------------------------------------------
 	// Delegation to simulate multiple inheritance
@@ -60,7 +60,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 			AbstractPipe.this.delegatedProcessOpen();
 		}
 
-		
 		@Override
 		protected void setInputPortCount(int ports) {
 			super.setInputPortCount(ports);
@@ -77,7 +76,8 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 
 		@Override
-		public void close(List<PhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners) {
+		public void close(List<PhysicalSubscription<ISink<?>>> callPath,
+				List<IOperatorOwner> forOwners) {
 			// Do not (!) call close on AbstractSink! It would immediately
 			// call process_close (this should only be done by the
 			// source-Part of AbstractPipe)
@@ -85,24 +85,23 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 				callCloseOnChildren(callPath, forOwners);
 			}
 			sinkOpen.set(false);
-			
+
 		}
 
 		@Override
 		public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 			return AbstractPipe.this.delegatedIsSemanticallyEqual(ipo);
 		}
-		
+
 		// Needed because isOpen needs to be called from AbstractPipe
 		@Override
 		public boolean isOpen() {
 			return AbstractPipe.this.isOpen();
 		}
-		
-		public boolean sinkIsOpen(){
+
+		public boolean sinkIsOpen() {
 			return super.isOpen();
 		}
-
 	}
 
 	public enum OutputMode {
@@ -166,18 +165,20 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	@Override
 	final public void open() throws OpenFailedException {
 		reconnectSinks();
-		this.delegateSink.open();		
+		this.delegateSink.open();
 	}
 
 	@Override
 	final public void open(ISink<? super W> caller, int sourcePort,
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath)
 			throws OpenFailedException {
-		// First: Call open for the source part. Activate subscribers and call process_open
+		// First: Call open for the source part. Activate subscribers and call
+		// process_open
 		super.open(caller, sourcePort, sinkPort, callPath);
-		// Second: Call open for the sink part. Call open on connected sources and do not call process_open
+		// Second: Call open for the sink part. Call open on connected sources
+		// and do not call process_open
 		this.delegateSink.open(callPath);
-		
+
 	}
 
 	public void delegatedProcessOpen() throws OpenFailedException {
@@ -218,7 +219,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	abstract protected void process_next(R object, int port);
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port){
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
 	}
 
@@ -228,24 +229,36 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	@Override
 	final public void close(ISink<? super W> caller, int sourcePort,
-			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners) {
+			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) {
 		this.delegateSink.close(callPath, forOwners);
 		super.close(caller, sourcePort, sinkPort, callPath, forOwners);
 	}
 
 	@Override
-	final public void close() {		
-		this.delegateSink.close();
-		process_close();
-		// The are cases where elements are connected that 
-		// are no roots of this query 
-		// here we need to call close by hand
-		closeAllSinkSubscriptions();
-		open.set(false);
+	final public void close() {
+		close(null);
 	}
 
 	@Override
-	protected void process_close() {			
+	final public void close(IOperatorOwner owner) {
+		// Hint: This method can be called inside a plan
+		// only if all sinksubscriptions are closed
+		// close this operator too
+		this.delegateSink.close(owner);
+		if (!hasOpenSinkSubscriptions()) {
+			// is this process_close correct?
+			process_close();
+			// The are cases where elements are connected that
+			// are no roots of this query
+			// here we need to call close by hand
+			closeAllSinkSubscriptions();
+			open.set(false);
+		}
+	}
+
+	@Override
+	protected void process_close() {
 	}
 
 	@Override
@@ -287,10 +300,11 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 				schema);
 	}
 
-	protected void newSourceSubscribed(PhysicalSubscription<ISource<? extends R>> sub){
+	protected void newSourceSubscribed(
+			PhysicalSubscription<ISource<? extends R>> sub) {
 		this.delegateSink.newSourceSubscribed(sub);
 	}
-	
+
 	@Override
 	public void unsubscribeFromSource(
 			PhysicalSubscription<ISource<? extends R>> subscription) {
@@ -394,22 +408,22 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		if (thisSubs.size() != otherSubs.size()) {
 			return false;
 		}
-		
-		
-		
+
 		// Iteration �ber die Subscriptions zu Quellen
 		for (PhysicalSubscription<?> s1 : thisSubs) {
 			boolean foundmatch = false;
 			for (PhysicalSubscription<?> s2 : otherSubs) {
-				if (s1.equals(s2)){
-				
-//				// Subscription enth�lt gleiche Quelle und gleiche Ports
-//				if (((ISource<?>) s1.getTarget()) == ((ISource<?>) s2
-//						.getTarget())
-//						&& s1.getSinkInPort() == s2.getSinkInPort()
-//						&& s1.getSourceOutPort() == s2.getSourceOutPort()
-//						&& ((s1.getSchema() == null && s2.getSchema() == null) || (s1
-//								.getSchema().compareTo(s2.getSchema())) == 0)) {
+				if (s1.equals(s2)) {
+
+					// // Subscription enth�lt gleiche Quelle und gleiche
+					// Ports
+					// if (((ISource<?>) s1.getTarget()) == ((ISource<?>) s2
+					// .getTarget())
+					// && s1.getSinkInPort() == s2.getSinkInPort()
+					// && s1.getSourceOutPort() == s2.getSourceOutPort()
+					// && ((s1.getSchema() == null && s2.getSchema() == null) ||
+					// (s1
+					// .getSchema().compareTo(s2.getSchema())) == 0)) {
 					foundmatch = true;
 				}
 			}
