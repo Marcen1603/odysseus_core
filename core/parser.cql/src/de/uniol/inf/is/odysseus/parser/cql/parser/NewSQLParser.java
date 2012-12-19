@@ -5679,12 +5679,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
     finally { jj_save(46, xla); }
   }
 
-  static private boolean jj_3R_183() {
-    if (jj_3R_96()) return true;
-    if (jj_scan_token(K_DEFAULT)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_43() {
     if (jj_scan_token(K_CREATE)) return true;
     if (jj_scan_token(K_CONTEXT)) return true;
@@ -7430,6 +7424,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 
   static private boolean jj_3R_69() {
     if (jj_3R_119()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_183() {
+    if (jj_3R_96()) return true;
+    if (jj_scan_token(K_DEFAULT)) return true;
     return false;
   }
 
