@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.benchmark.BenchmarkException;
-import de.uniol.inf.is.odysseus.benchmark.physical.IntegrationPipe;
 import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResultFactory;
 import de.uniol.inf.is.odysseus.benchmark.result.LatencyBenchmarkResultFactory;
@@ -46,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.MergePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -152,7 +152,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 
 		ISink sinkPO = latency;
 		if (!resultPerQuery) {
-			IntegrationPipe integration = new IntegrationPipe();
+			MergePO integration = new MergePO();
 			integration.subscribeSink(latency, 0, 0, latency.getOutputSchema());
 			sinkPO = integration;
 			this.sinks.add(sink);

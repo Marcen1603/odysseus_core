@@ -13,7 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.benchmark.physical;
+package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -22,13 +22,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class IntegrationPipe extends AbstractPipe<IStreamObject<?>,IStreamObject<?>> {
+public class MergePO extends AbstractPipe<IStreamObject<?>,IStreamObject<?>> {
 
 	private int curPort = 0;
 
 	@Override
-	public IntegrationPipe clone() {
-		return new IntegrationPipe();
+	public MergePO clone() {
+		return new MergePO();
 	}
 
 	@Override
@@ -51,9 +51,5 @@ public class IntegrationPipe extends AbstractPipe<IStreamObject<?>,IStreamObject
 		}
 	}
 	
-	@Override
-	protected void process_done(int port) {
-		super.process_done(port);
-	}
 	
 }
