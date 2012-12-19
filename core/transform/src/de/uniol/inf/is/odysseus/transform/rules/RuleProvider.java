@@ -43,6 +43,8 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TSinkAORule());
 		rules.add(new TBufferedPipeRule());
 		rules.add(new TSenderAOGenericRule());
+		rules.add(new TSenderAOViewRule());
+		rules.add(new TSenderAOExistsRule());
 		rules.add(new TAppendToPhysicalAORule());
 		return rules;
 	}

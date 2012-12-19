@@ -57,192 +57,184 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 @SuppressWarnings("deprecation")
 public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
-    static Logger LOG = LoggerFactory.getLogger(TAccessAOGenericRule.class);
+	static Logger LOG = LoggerFactory.getLogger(TAccessAOGenericRule.class);
 
-    @Override
-    public int getPriority() {
-        return 0;
-    }
+	@Override
+	public int getPriority() {
+		return 0;
+	}
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    public void execute(AccessAO operator, TransformationConfiguration config) {
-        String accessPOName = operator.getSourcename();
-        ISource accessPO = null;
-        if (operator.getTransportHandler() != null) {
-            IDataHandler<?> dataHandler = getDataHandler(operator);
-            if (dataHandler == null) {
-                LOG.error("No data handler {} found.", operator.getDataHandler());
-                throw new TransformationException("No data handler " + operator.getDataHandler() + " found.");
-            }
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void execute(AccessAO operator, TransformationConfiguration config) {
+		String accessPOName = operator.getSourcename();
+		ISource accessPO = null;
+		if (operator.getTransportHandler() != null) {
+			IDataHandler<?> dataHandler = getDataHandler(operator);
+			if (dataHandler == null) {
+				LOG.error("No data handler {} found.", operator.getDataHandler());
+				throw new TransformationException("No data handler " + operator.getDataHandler() + " found.");
+			}
 
-            IProtocolHandler<?> protocolHandler = getProtocolHandler(operator, dataHandler);
-            if (protocolHandler == null) {
-                LOG.error("No protocol handler {} found.", operator.getProtocolHandler());
-                throw new TransformationException("No protocol handler " + operator.getProtocolHandler() + " found.");
-            }
+			IProtocolHandler<?> protocolHandler = getProtocolHandler(operator, dataHandler);
+			if (protocolHandler == null) {
+				LOG.error("No protocol handler {} found.", operator.getProtocolHandler());
+				throw new TransformationException("No protocol handler " + operator.getProtocolHandler() + " found.");
+			}
 
-            ITransportHandler transportHandler = getTransportHandler(operator, protocolHandler);
-            if (transportHandler == null) {
-                LOG.error("No transport handler {} found.", operator.getTransportHandler());
-                throw new TransformationException("No transport handler " + operator.getTransportHandler() + " found.");
-            }
+			ITransportHandler transportHandler = getTransportHandler(operator, protocolHandler);
+			if (transportHandler == null) {
+				LOG.error("No transport handler {} found.", operator.getTransportHandler());
+				throw new TransformationException("No transport handler " + operator.getTransportHandler() + " found.");
+			}
 
-            if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-                accessPO = new AccessPO(protocolHandler);
-            }
-            else {
-                accessPO = new ReceiverPO(protocolHandler);
-            }
+			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+				accessPO = new AccessPO(protocolHandler);
+			} else {
+				accessPO = new ReceiverPO(protocolHandler);
+			}
 
-        }
-        else {
-            LOG.warn("DEPRECATED: Use new generic AccessAO style!");
-            accessPO = executeDeprecated(operator, config);
+		} else {
+			LOG.warn("DEPRECATED: Use new generic AccessAO style!");
+			accessPO = executeDeprecated(operator, config);
 
-        }
-        getDataDictionary().putAccessPlan(accessPOName, accessPO);
-        defaultExecute(operator, accessPO, config, true, true);
-    }
+		}
+		getDataDictionary().putAccessPlan(accessPOName, accessPO);
+		defaultExecute(operator, accessPO, config, true, true);
+	}
 
-    @Override
-    public boolean isExecutable(AccessAO operator, TransformationConfiguration config) {
-        return (getDataDictionary().getAccessPlan(operator.getSourcename()) == null && operator.getWrapper() != null && (Constants.GENERIC_PULL
-                .equalsIgnoreCase(operator.getWrapper()) || Constants.GENERIC_PUSH.equalsIgnoreCase(operator
-                .getWrapper())));
-    }
+	@Override
+	public boolean isExecutable(AccessAO operator, TransformationConfiguration config) {
+		if(getDataDictionary().getAccessPlan(operator.getSourcename()) == null){
+			if(operator.getWrapper()!=null){
+				if(Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())){
+					return true;
+				}
+				if(Constants.GENERIC_PUSH.equalsIgnoreCase(operator.getWrapper())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-    @Override
-    public String getName() {
-        return "AccessAO (generic) --> AccessPO";
-    }
+	@Override
+	public String getName() {
+		return "AccessAO (generic) --> AccessPO";
+	}
 
-    @Override
-    public IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.ACCESS;
-    }
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.ACCESS;
+	}
 
-    @Override
-    public Class<? super AccessAO> getConditionClass() {
-        return AccessAO.class;
-    }
+	@Override
+	public Class<? super AccessAO> getConditionClass() {
+		return AccessAO.class;
+	}
 
-    private ITransportHandler getTransportHandler(AccessAO operator, IProtocolHandler<?> protocolHandler) {
-        ITransportHandler transportHandler = null;
-        if (operator.getTransportHandler() != null) {
-            transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(), protocolHandler,
-                    operator.getOptionsMap());
-        }
-        return transportHandler;
-    }
+	private ITransportHandler getTransportHandler(AccessAO operator, IProtocolHandler<?> protocolHandler) {
+		ITransportHandler transportHandler = null;
+		if (operator.getTransportHandler() != null) {
+			transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(), protocolHandler, operator.getOptionsMap());
+		}
+		return transportHandler;
+	}
 
-    private IProtocolHandler<?> getProtocolHandler(AccessAO operator, IDataHandler<?> dataHandler) {
-        IProtocolHandler<?> protocolHandler = null;
-        if (operator.getProtocolHandler() != null) {
-            if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-                protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
-                        ITransportDirection.IN, IAccessPattern.PULL, operator.getOptionsMap(), dataHandler);
-            }
-            else {
-                protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
-                        ITransportDirection.IN, IAccessPattern.PUSH, operator.getOptionsMap(), dataHandler);
-            }
-        }
-        return protocolHandler;
-    }
+	private IProtocolHandler<?> getProtocolHandler(AccessAO operator, IDataHandler<?> dataHandler) {
+		IProtocolHandler<?> protocolHandler = null;
+		if (operator.getProtocolHandler() != null) {
+			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(), ITransportDirection.IN, IAccessPattern.PULL, operator.getOptionsMap(),
+						dataHandler);
+			} else {
+				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(), ITransportDirection.IN, IAccessPattern.PUSH, operator.getOptionsMap(),
+						dataHandler);
+			}
+		}
+		return protocolHandler;
+	}
 
-    private IDataHandler<?> getDataHandler(AccessAO operator) {
-        IDataHandler<?> dataHandler = null;
-        if (operator.getDataHandler() != null) {
-            if (operator.getInputSchema() != null) {
-                dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getInputSchema());
-            }
-            else if (operator.getOutputSchema() != null) {
-                dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
-            }
-        }
-        return dataHandler;
-    }
+	private IDataHandler<?> getDataHandler(AccessAO operator) {
+		IDataHandler<?> dataHandler = null;
+		if (operator.getDataHandler() != null) {
+			if (operator.getInputSchema() != null) {
+				dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getInputSchema());
+			} else if (operator.getOutputSchema() != null) {
+				dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
+			}
+		}
+		return dataHandler;
+	}
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private ISource executeDeprecated(AccessAO operator, TransformationConfiguration config) {
-        ISource accessPO = null;
-        // older generic accessao style
-        if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-            IInputHandler inputHandlerPrototype = InputHandlerRegistry.getInputHandler(operator.getInput());
-            if (inputHandlerPrototype == null) {
-                throw new TransformationException("No input handler " + operator.getInput() + " found.");
-            }
-            IInputHandler input = inputHandlerPrototype.getInstance(operator.getOptionsMap());
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private ISource executeDeprecated(AccessAO operator, TransformationConfiguration config) {
+		ISource accessPO = null;
+		// older generic accessao style
+		if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+			IInputHandler inputHandlerPrototype = InputHandlerRegistry.getInputHandler(operator.getInput());
+			if (inputHandlerPrototype == null) {
+				throw new TransformationException("No input handler " + operator.getInput() + " found.");
+			}
+			IInputHandler input = inputHandlerPrototype.getInstance(operator.getOptionsMap());
 
-            IDataHandler dataHandler = null;
-            if (operator.getDataHandler() != null) {
-                if (operator.getInputSchema() != null) {
-                    dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(),
-                            operator.getInputSchema());
-                }
-                else {
-                    dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(),
-                            operator.getOutputSchema());
-                }
+			IDataHandler dataHandler = null;
+			if (operator.getDataHandler() != null) {
+				if (operator.getInputSchema() != null) {
+					dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getInputSchema());
+				} else {
+					dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
+				}
 
-                if (dataHandler == null) {
-                    throw new TransformationException("No data handler " + operator.getDataHandler() + " found.");
-                }
-            }
+				if (dataHandler == null) {
+					throw new TransformationException("No data handler " + operator.getDataHandler() + " found.");
+				}
+			}
 
-            ITransformer transformerPrototype = TransformerRegistry.getTransformer(operator.getTransformer());
-            if (transformerPrototype == null) {
-                throw new TransformationException("No transformer " + operator.getTransformer() + " found.");
-            }
-            ITransformer transformer = transformerPrototype.getInstance(operator.getOptionsMap(),
-                    operator.getOutputSchema());
+			ITransformer transformerPrototype = TransformerRegistry.getTransformer(operator.getTransformer());
+			if (transformerPrototype == null) {
+				throw new TransformationException("No transformer " + operator.getTransformer() + " found.");
+			}
+			ITransformer transformer = transformerPrototype.getInstance(operator.getOptionsMap(), operator.getOutputSchema());
 
-            if (transformer instanceof IToStringArrayTransformer) {
-                accessPO = new AccessPO(input, (IToStringArrayTransformer) transformer, dataHandler);
-            }
-            else if (transformer instanceof IToObjectInputStreamTransformer) {
-                accessPO = new AccessPO(input, (IToObjectInputStreamTransformer) transformer, dataHandler);
-            }
+			if (transformer instanceof IToStringArrayTransformer) {
+				accessPO = new AccessPO(input, (IToStringArrayTransformer) transformer, dataHandler);
+			} else if (transformer instanceof IToObjectInputStreamTransformer) {
+				accessPO = new AccessPO(input, (IToObjectInputStreamTransformer) transformer, dataHandler);
+			}
 
-        }
-        else { // must be generic push, else isExecutable would not had
-               // returned true
+		} else { // must be generic push, else isExecutable would not had
+					// returned true
 
-            IDataHandler concreteHandler = null;
-            if (operator.getInputSchema() != null && operator.getInputSchema().size() > 0) {
-                concreteHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(),
-                        operator.getInputSchema());
-            }
-            else {
-                concreteHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(),
-                        operator.getOutputSchema());
-            }
+			IDataHandler concreteHandler = null;
+			if (operator.getInputSchema() != null && operator.getInputSchema().size() > 0) {
+				concreteHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getInputSchema());
+			} else {
+				concreteHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
+			}
 
-            IAccessConnectionHandler connectionPrototype = AccessConnectionHandlerRegistry.get(operator
-                    .getAccessConnectionHandler());
-            if (connectionPrototype == null) {
-                throw new TransformationException("No access connection handler "
-                        + operator.getAccessConnectionHandler() + " found.");
-            }
-            IAccessConnectionHandler connection = connectionPrototype.getInstance(operator.getOptionsMap());
+			IAccessConnectionHandler connectionPrototype = AccessConnectionHandlerRegistry.get(operator.getAccessConnectionHandler());
+			if (connectionPrototype == null) {
+				throw new TransformationException("No access connection handler " + operator.getAccessConnectionHandler() + " found.");
+			}
+			IAccessConnectionHandler connection = connectionPrototype.getInstance(operator.getOptionsMap());
 
-            IObjectHandler objectHandlerPrototype = ObjectHandlerRegistry.get(operator.getObjectHandler());
-            if (objectHandlerPrototype == null) {
-                throw new TransformationException("No object handler " + operator.getObjectHandler() + " found!");
-            }
+			IObjectHandler objectHandlerPrototype = ObjectHandlerRegistry.get(operator.getObjectHandler());
+			if (objectHandlerPrototype == null) {
+				throw new TransformationException("No object handler " + operator.getObjectHandler() + " found!");
+			}
 
-            IObjectHandler objectHandler = objectHandlerPrototype.getInstance(concreteHandler);
+			IObjectHandler objectHandler = objectHandlerPrototype.getInstance(concreteHandler);
 
-            IInputDataHandler inputDataHandlerPrototype = InputDataHandlerRegistry.get(operator.getInputDataHandler());
-            if (inputDataHandlerPrototype == null) {
-                throw new TransformationException("No input data handler " + operator.getInputDataHandler() + " found");
-            }
+			IInputDataHandler inputDataHandlerPrototype = InputDataHandlerRegistry.get(operator.getInputDataHandler());
+			if (inputDataHandlerPrototype == null) {
+				throw new TransformationException("No input data handler " + operator.getInputDataHandler() + " found");
+			}
 
-            IInputDataHandler inputDataHandler = inputDataHandlerPrototype.getInstance(operator.getOptionsMap());
+			IInputDataHandler inputDataHandler = inputDataHandlerPrototype.getInstance(operator.getOptionsMap());
 
-            accessPO = new ReceiverPO(objectHandler, inputDataHandler, connection);
-        }
-        return accessPO;
-    }
+			accessPO = new ReceiverPO(objectHandler, inputDataHandler, connection);
+		}
+		return accessPO;
+	}
 }

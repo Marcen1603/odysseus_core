@@ -92,12 +92,24 @@ public class TAccessAOViewRule extends AbstractTransformationRule<AccessAO> {
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		if(getDataDictionary().getAccessPlan(accessAO.getSourcename())==null){
-			ILogicalOperator view = getDataDictionary().getStreamForTransformation(accessAO.getSourcename(), getCaller());
-			if(view!=null){		
-				if(view.getSubscribedToSource().size()!=1 || (!view.getSubscribedToSource(0).getTarget().equals(accessAO))){
-					return true;
-				}
+			ILogicalOperator stream = getDataDictionary().getStreamForTransformation(accessAO.getSourcename(), getCaller());
+			// is there a suitable stream to transform and is this a view
+			if(stream!=null && (accessAO.getWrapper()==null || accessAO.getWrapper().isEmpty())){
+				return true;
 			}
+//			if(view!=null){
+//				// check if this call is the transformation of the view itself
+//				
+//				if(view.getSubscribedToSource().size()==0){
+//					if(!view.equals(accessAO)){
+//						return true;
+//					}
+//				}else{
+//					if (view.getSubscribedToSource().size() != 1 || (!view.getSubscribedToSource(0).getTarget().equals(accessAO))) {
+//						return true;
+//					}
+//				}
+//			}
 		}
 		return false;
 	}

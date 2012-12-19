@@ -94,10 +94,18 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
      */
     @Override
     public boolean isExecutable(SenderAO operator, TransformationConfiguration config) {
-        return (getDataDictionary().getSinkplan(operator.getSinkname()) == null && operator.getWrapper() != null && (Constants.GENERIC_PULL
-                .equalsIgnoreCase(operator.getWrapper()) || Constants.GENERIC_PUSH.equalsIgnoreCase(operator
-                .getWrapper())));
-    }
+		if(getDataDictionary().getSinkplan(operator.getSinkname()) == null){
+			if(operator.getWrapper()!=null){
+				if(Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())){
+					return true;
+				}
+				if(Constants.GENERIC_PUSH.equalsIgnoreCase(operator.getWrapper())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
     /*
      * (non-Javadoc)
