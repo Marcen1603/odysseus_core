@@ -18,8 +18,7 @@ package de.uniol.inf.is.odysseus.core.streamconnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +37,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
-public class DefaultStreamConnection<In extends IStreamObject<?>> extends ListenerSink<In> {
+public class DefaultStreamConnection<In extends IStreamObject<?>> extends
+		ListenerSink<In> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamConnection.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(DefaultStreamConnection.class);
 
 	private final List<ISubscription<? extends ISource<In>>> subscriptions;
 
@@ -49,7 +50,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 
 	private ArrayList<In> collectedObjects = new ArrayList<In>();
 	private ArrayList<Integer> collectedPorts = new ArrayList<Integer>();
-	private List<ISubscription<? extends ISource<In>>> connectedSubscriptions = Lists.newArrayList();
+	private List<ISubscription<? extends ISource<In>>> connectedSubscriptions = Lists
+			.newArrayList();
 
 	private final Collection<IStreamElementListener<In>> listeners = new ArrayList<IStreamElementListener<In>>();
 	private boolean isOpen = true;
@@ -59,8 +61,10 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	}
 
 	public DefaultStreamConnection(Collection<IPhysicalOperator> operators) {
-		Preconditions.checkNotNull(operators, "List of operators must not be null!");
-		Preconditions.checkArgument(!operators.isEmpty(), "List of operators must not be empty!");
+		Preconditions.checkNotNull(operators,
+				"List of operators must not be null!");
+		Preconditions.checkArgument(!operators.isEmpty(),
+				"List of operators must not be empty!");
 
 		subscriptions = determineSubscriptions(operators);
 	}
@@ -124,7 +128,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 
 	@Override
 	public void addStreamElementListener(IStreamElementListener<In> listener) {
-		Preconditions.checkNotNull(listener, "Listener to add to DefaultStreamConnection must not be null!");
+		Preconditions.checkNotNull(listener,
+				"Listener to add to DefaultStreamConnection must not be null!");
 
 		synchronized (listeners) {
 			if (!listeners.contains(listener)) {
@@ -155,7 +160,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		LOG.debug("Opening");
 		isOpen = true;
 	}
-	
+
 	@Override
 	public void open(IOperatorOwner id) {
 		LOG.warn("Opening with operator owner not implemented");
@@ -168,11 +173,12 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		LOG.debug("Closing");
 		isOpen = false;
 
-		for (ISubscription<? extends ISource<In>> s : connectedSubscriptions.toArray(new ISubscription[0])) {
+		for (ISubscription<? extends ISource<In>> s : connectedSubscriptions
+				.toArray(new ISubscription[0])) {
 			disconnect(s, this);
 		}
 	}
-	
+
 	@Override
 	public void close(IOperatorOwner id) {
 		LOG.warn("Closing with operator owner not implemented");
@@ -186,7 +192,9 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 				try {
 					l.streamElementRecieved(element, port);
 				} catch (Throwable t) {
-					LOG.error("Exception during invoking listener for DefaultStreamConnection", t);
+					LOG.error(
+							"Exception during invoking listener for DefaultStreamConnection",
+							t);
 				}
 			}
 		}
@@ -199,25 +207,30 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 				try {
 					l.punctuationElementRecieved(point, port);
 				} catch (Throwable t) {
-					LOG.error("Exception during invoking punctuation listener for DefaultStreamConnection", t);
+					LOG.error(
+							"Exception during invoking punctuation listener for DefaultStreamConnection",
+							t);
 				}
 			}
 		}
 	}
 
-	protected final void notifyListenersSecurityPunctuation(ISecurityPunctuation sp, int port) {
+	protected final void notifyListenersSecurityPunctuation(
+			ISecurityPunctuation sp, int port) {
 		LOG.debug("Receiving security punctuation from port {}: {}", port, sp);
 		synchronized (listeners) {
 			for (IStreamElementListener<In> l : listeners) {
 				try {
 					l.securityPunctuationElementRecieved(sp, port);
 				} catch (Throwable t) {
-					LOG.error("Exception during invoking security punctuation listener for DefaultStreamConnection", t);
+					LOG.error(
+							"Exception during invoking security punctuation listener for DefaultStreamConnection",
+							t);
 				}
 			}
-		}		
+		}
 	}
-	
+
 	private void connect(ISubscription<? extends ISource<In>> s, ISink<In> sink) {
 		if (connectedSubscriptions.contains(s)) {
 			LOG.warn("Tried to connect to {} multiple times.", s);
@@ -225,13 +238,16 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		}
 
 		LOG.debug("Connecting to {}.", s.getTarget());
-		s.getTarget().connectSink(sink, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
+		s.getTarget().connectSink(sink, s.getSinkInPort(),
+				s.getSourceOutPort(), s.getSchema());
 		connectedSubscriptions.add(s);
 	}
 
-	private void disconnect(ISubscription<? extends ISource<In>> s, ISink<In> sink) {
+	private void disconnect(ISubscription<? extends ISource<In>> s,
+			ISink<In> sink) {
 		LOG.debug("Disconnecting from {}.", s.getTarget());
-		s.getTarget().disconnectSink(sink, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
+		s.getTarget().disconnectSink(sink, s.getSinkInPort(),
+				s.getSourceOutPort(), s.getSchema());
 		connectedSubscriptions.remove(s);
 	}
 
@@ -256,28 +272,37 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <In> List<ISubscription<? extends ISource<In>>> determineSubscriptions(Collection<IPhysicalOperator> operators) {
-		List<ISubscription<? extends ISource<In>>> subscriptions = Lists.newLinkedList();
+	private static <In> List<ISubscription<? extends ISource<In>>> determineSubscriptions(
+			Collection<IPhysicalOperator> operators) {
+		List<ISubscription<? extends ISource<In>>> subscriptions = Lists
+				.newLinkedList();
 		for (IPhysicalOperator operator : operators) {
-			subscriptions.addAll((Collection<? extends ISubscription<? extends ISource<In>>>) determineSubscriptions(operator));
+			subscriptions
+					.addAll((Collection<? extends ISubscription<? extends ISource<In>>>) determineSubscriptions(operator));
 		}
 		return subscriptions;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <In> List<ISubscription<? extends ISource<In>>> determineSubscriptions(IPhysicalOperator operator) {
-		Preconditions.checkArgument(operator.isSink() || operator.isSource(), "Operator must be sink and/or source!");
+	private static <In> List<ISubscription<? extends ISource<In>>> determineSubscriptions(
+			IPhysicalOperator operator) {
+		Preconditions.checkArgument(operator.isSink() || operator.isSource(),
+				"Operator must be sink and/or source!");
 
 		List<ISubscription<? extends ISource<In>>> subs = Lists.newLinkedList();
 
 		if (operator.isSource()) {
-			subs.add((ISubscription<? extends ISource<In>>) new PhysicalSubscription<ISource<?>>((ISource<?>) operator, 0, 0, operator.getOutputSchema()));
+			subs.add((ISubscription<? extends ISource<In>>) new PhysicalSubscription<ISource<?>>(
+					(ISource<?>) operator, 0, 0, operator.getOutputSchema()));
 		} else {
-			Collection<?> subscriptions = ((ISink<?>) operator).getSubscribedToSource();
+			Collection<?> subscriptions = ((ISink<?>) operator)
+					.getSubscribedToSource();
 
 			for (Object subscription : subscriptions) {
 				PhysicalSubscription<ISource<?>> sub = (PhysicalSubscription<ISource<?>>) subscription;
-				subs.add((ISubscription<? extends ISource<In>>) new PhysicalSubscription<ISource<?>>(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema()));
+				subs.add((ISubscription<? extends ISource<In>>) new PhysicalSubscription<ISource<?>>(
+						sub.getTarget(), sub.getSinkInPort(), sub
+								.getSourceOutPort(), sub.getSchema()));
 			}
 		}
 
@@ -285,11 +310,20 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	}
 
 	@Override
-	public void addUniqueId(String id) {		
+	public void addUniqueId(IOperatorOwner owner, String id) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public Set<String> getUniqueIds() {
+	public void removeUniqueId(IOperatorOwner key) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public Map<IOperatorOwner, String> getUniqueIds() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

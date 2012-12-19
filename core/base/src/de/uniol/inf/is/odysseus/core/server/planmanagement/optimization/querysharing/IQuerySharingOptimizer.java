@@ -18,10 +18,11 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysh
 import java.util.Collection;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public interface IQuerySharingOptimizer {
-	public void applyQuerySharing(Collection<IPhysicalQuery> oldPlan, OptimizationConfiguration conf);
-	public void applyQuerySharing(Collection<IPhysicalQuery> oldPlan, List<IPhysicalQuery> newQueries, OptimizationConfiguration conf);
+	public void applyQuerySharing(Collection<IPhysicalQuery> oldPlan, OptimizationConfiguration conf, IDataDictionary dd);
+	public void applyQuerySharing(Collection<IPhysicalQuery> oldPlan, List<IPhysicalQuery> newQueries, OptimizationConfiguration conf, IDataDictionary dd);
 }

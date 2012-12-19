@@ -69,7 +69,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			if (qso != null
 					&& parameter.getParameterPerformQuerySharing() != null
 					&& parameter.getParameterPerformQuerySharing().getValue()) {
-				qso.applyQuerySharing(currentExecPlan.getQueries(), optimizedQueries, parameter);
+				qso.applyQuerySharing(currentExecPlan.getQueries(), optimizedQueries, parameter, dd);
 			}
 			// Add new queries to the execution plan and optimize new plan
 			currentExecPlan.addQueries(optimizedQueries);

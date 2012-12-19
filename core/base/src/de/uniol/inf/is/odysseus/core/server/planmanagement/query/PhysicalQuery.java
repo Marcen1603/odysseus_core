@@ -734,4 +734,15 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public String toString() {
 		return "PQuery Id "+getID();
 	}
+
+	@Override
+	public int compareTo(IOperatorOwner query) {
+		if (this.id < query.getID()) {
+			return -1;
+		}
+		if (this.id > query.getID()) {
+			return 1;
+		}
+		return 0;
+	}
 }

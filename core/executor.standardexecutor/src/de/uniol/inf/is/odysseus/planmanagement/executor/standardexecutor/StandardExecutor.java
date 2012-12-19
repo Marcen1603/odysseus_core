@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -577,6 +579,7 @@ public class StandardExecutor extends AbstractExecutor implements
 				// that have no owners (but are potentially still connected!)
 				List<IPhysicalOperator> ops = queryToRemove.getPhysicalChilds();
 				for (IPhysicalOperator p : ops) {
+					List<IOperatorOwner> toRemove = new ArrayList<>();
 					if (!p.hasOwner()) {
 						if (p.isSink()) {
 							((ISink<?>) p).unsubscribeFromAllSources();
@@ -584,9 +587,25 @@ public class StandardExecutor extends AbstractExecutor implements
 						if (p.isSource()) {
 							((ISource<?>) p).unsubscribeFromAllSinks();
 						}
-						for (String id : p.getUniqueIds()) {
-							getDataDictionary().removeOperator(id);
+						for (Entry<IOperatorOwner, String> id : p
+								.getUniqueIds().entrySet()) {
+							getDataDictionary().removeOperator(id.getValue());
+							toRemove.add(id.getKey());
 						}
+					} else { // Remove ids from query sharing with this removed
+								// query
+						for (Entry<IOperatorOwner, String> id : p
+								.getUniqueIds().entrySet()) {
+							if (id.getKey().getID() == queryToRemove.getID()) {
+								getDataDictionary().removeOperator(
+										id.getValue());
+								toRemove.add(id.getKey());
+							}
+						}
+
+					}
+					for (IOperatorOwner id:toRemove){
+						p.removeUniqueId(id);
 					}
 				}
 				if (queryToRemove.getLogicalQuery() != null) {

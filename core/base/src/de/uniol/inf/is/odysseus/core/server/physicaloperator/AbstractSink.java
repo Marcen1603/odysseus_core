@@ -19,11 +19,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -63,7 +61,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	private String name;
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 
-	private Set<String> uniqueIds = new HashSet<>();
+	private Map<IOperatorOwner,String> uniqueIds = new TreeMap<>();
 
 	private volatile boolean allInputsDone = false;
 	final private OwnerHandler ownerHandler;
@@ -427,18 +425,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// Owner Management
 	// ------------------------------------------------------------------------
 
-	// ------------------------------------------------------------------------
-	// Id Management
-	// ------------------------------------------------------------------------
-
-	@Override
-	public void addUniqueId(String id) {
-		if (this.uniqueIds.contains(id)) {
-			throw new IllegalArgumentException("Id already set exception!");
-		}
-		this.uniqueIds.add(id);
-	}
-
 	public void addOwner(IOperatorOwner owner) {
 		ownerHandler.addOwner(owner);
 	}
@@ -474,9 +460,26 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	public String getOwnerIDs() {
 		return ownerHandler.getOwnerIDs();
 	}
+	
+	// ------------------------------------------------------------------------
+	// Id Management
+	// ------------------------------------------------------------------------
 
 	@Override
-	public Set<String> getUniqueIds() {
+	public void addUniqueId(IOperatorOwner owner, String id) {
+		if (this.uniqueIds.containsKey(owner)) {
+			throw new IllegalArgumentException("Id already set exception!");
+		}
+		this.uniqueIds.put(owner, id);
+	}
+
+	@Override
+	public void removeUniqueId(IOperatorOwner key) {
+		uniqueIds.remove(key);
+	}
+	
+	@Override
+	public Map<IOperatorOwner,String> getUniqueIds() {
 		return uniqueIds;
 	}
 

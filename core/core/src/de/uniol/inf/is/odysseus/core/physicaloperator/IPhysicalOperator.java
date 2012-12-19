@@ -16,11 +16,11 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
 import java.util.Map;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.event.IEventHandler;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringDataProvider;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -59,7 +59,8 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	
 	public boolean isOpen();
 
-	void addUniqueId(String id);
-	Set<String> getUniqueIds();
+	void addUniqueId(IOperatorOwner owner, String id);
+	void removeUniqueId(IOperatorOwner key);
+	Map<IOperatorOwner,String> getUniqueIds();
 
 }

@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Wolf Bauer, Marco Grawunder
  * 
  */
-public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializable, Comparable<ILogicalQuery>{
+public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializable, Comparable<IOperatorOwner>{
 
 	/**
 	 * ID of this query. Should be unique.

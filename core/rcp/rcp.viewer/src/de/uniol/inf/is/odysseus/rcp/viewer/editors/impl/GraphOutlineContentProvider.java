@@ -83,9 +83,9 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			children.add(new StringWrapper(owner.toString()));
 			if (node.getModelNode().getContent().getUniqueIds().size() > 0) {
 				StringBuffer ids = new StringBuffer("UIDs: ");
-				for (String id : node.getModelNode().getContent()
-						.getUniqueIds()) {
-					ids.append(id).append(" ");
+				for (Entry<IOperatorOwner, String> id : node.getModelNode().getContent()
+						.getUniqueIds().entrySet()) {
+					ids.append(id.getKey()+"-->"+id.getValue()).append(" ");
 				}
 				children.add(new StringWrapper(ids.toString()));
 			}

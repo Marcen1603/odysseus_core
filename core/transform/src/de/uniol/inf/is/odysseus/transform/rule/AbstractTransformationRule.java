@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
@@ -33,8 +34,9 @@ import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 
 public abstract class AbstractTransformationRule<T> extends
 		AbstractRule<T, TransformationConfiguration> {
-	
-	static Logger logger = LoggerFactory.getLogger(AbstractTransformationRule.class);
+
+	static Logger logger = LoggerFactory
+			.getLogger(AbstractTransformationRule.class);
 
 	protected void defaultExecute(ILogicalOperator logical,
 			IPhysicalOperator physical, TransformationConfiguration config,
@@ -42,11 +44,11 @@ public abstract class AbstractTransformationRule<T> extends
 		// Check if operator has an id and if this id is not already defined
 		// Attention, id can be null
 		handleOperatorID(logical, physical);
-		
+
 		updatePhysicalOperator(logical, physical);
-		
+
 		replace(logical, physical, config, ignoreSinkInput);
-		
+
 		if (retract) {
 			retract(logical);
 		}
@@ -58,26 +60,31 @@ public abstract class AbstractTransformationRule<T> extends
 	protected void updatePhysicalOperator(ILogicalOperator logical,
 			IPhysicalOperator physical) {
 		physical.setOutputSchema(logical.getOutputSchema());
-		if (logical.getOutputSchema() == null){
-			logger.warn("Operator "+logical+" has not output schema");
+		if (logical.getOutputSchema() == null) {
+			logger.warn("Operator " + logical + " has not output schema");
 		}
 		physical.setName(logical.getName());
 	}
 
 	protected void handleOperatorID(ILogicalOperator logical,
 			IPhysicalOperator physical) {
-		String id = logical.getUniqueIdentifier()==null?null:getDataDictionary().createUserUri(logical.getUniqueIdentifier(), getCaller());  
-		
-		if (id != null){
-			if (getDataDictionary().containsOperator(id)){
-				throw new TransformationException("Operator with id "+id+" is already registered.");
-			}else{
+		String id = logical.getUniqueIdentifier() == null ? null
+				: getDataDictionary().createUserUri(
+						logical.getUniqueIdentifier(), getCaller());
+
+		if (id != null) {
+			if (getDataDictionary().containsOperator(id)) {
+				throw new TransformationException("Operator with id " + id
+						+ " is already registered.");
+			} else {
 				getDataDictionary().setOperator(id, physical);
-				physical.addUniqueId(id);
+				for (IOperatorOwner owner : logical.getOwner()) {
+					physical.addUniqueId(owner, id);
+				}
 			}
 		}
 	}
-	
+
 	protected void defaultExecute(ILogicalOperator logical,
 			IPhysicalOperator physical, TransformationConfiguration config,
 			boolean retract, boolean insert) {
@@ -89,10 +96,11 @@ public abstract class AbstractTransformationRule<T> extends
 			TransformationConfiguration transformationConfig) {
 		replace(oldOperator, newOperator, transformationConfig, false);
 	}
-	
+
 	protected void replace(ILogicalOperator oldOperator,
 			IPhysicalOperator newOperator,
-			TransformationConfiguration transformationConfig, boolean ignoreSinkInput) {
+			TransformationConfiguration transformationConfig,
+			boolean ignoreSinkInput) {
 
 		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>();
 		if (newOperator.isPipe()) {
