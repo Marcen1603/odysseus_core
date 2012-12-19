@@ -41,13 +41,6 @@ public class SenderAO extends AbstractLogicalOperator {
     private Map<String, String> optionsMap;
     private String              wrapper;
 
-    /**
-     * @param po
-     *            The {@link AbstractLogicalOperator} operator
-     */
-    public SenderAO(AbstractLogicalOperator po) {
-        super(po);
-    }
 
     /**
      * Default constructor
@@ -99,6 +92,7 @@ public class SenderAO extends AbstractLogicalOperator {
      *            The {@link SenderAO} instance
      */
     public SenderAO(SenderAO senderAO) {
+    	super(senderAO);
         this.sink = senderAO.sink;
         this.wrapper = senderAO.wrapper;
         this.dataHandler = senderAO.dataHandler;

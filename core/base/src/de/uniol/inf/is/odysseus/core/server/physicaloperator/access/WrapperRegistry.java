@@ -19,5 +19,9 @@ public class WrapperRegistry {
 	static public List<String> getWrapperNames(){
 		return Collections.unmodifiableList(wrapperNames);
 	}
+	
+	static public boolean containsWrapper(String name){
+		return wrapperNames.contains(name);
+	}
 
 }

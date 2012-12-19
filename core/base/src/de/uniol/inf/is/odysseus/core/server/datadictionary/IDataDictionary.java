@@ -36,22 +36,19 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 public interface IDataDictionary extends IAddDataType {
 
 	String createUserUri(String resource, ISession caller);
-	
+
 	// -------------------------------------------------------------------------
 	// Entity Management
 	// -------------------------------------------------------------------------
-	void addEntitySchema(String uri, SDFSchema entity, ISession user)
-			throws PermissionException;
+	void addEntitySchema(String uri, SDFSchema entity, ISession user) throws PermissionException;
 
-	SDFSchema getEntitySchema(String uri, ISession caller)
-			throws PermissionException, DataDictionaryException;
+	SDFSchema getEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException;
 
 	// -------------------------------------------------------------------------
 	// View and Stream Management
 	// -------------------------------------------------------------------------
 
-	ILogicalOperator getViewOrStream(String viewname, ISession caller)
-			throws DataDictionaryException;
+	ILogicalOperator getViewOrStream(String viewname, ISession caller) throws DataDictionaryException;
 
 	ILogicalOperator removeViewOrStream(String viewname, ISession caller);
 
@@ -65,8 +62,7 @@ public interface IDataDictionary extends IAddDataType {
 
 	// boolean isView(String name);
 
-	void setView(String viewname, ILogicalOperator topOperator, ISession caller)
-			throws DataDictionaryException;
+	void setView(String viewname, ILogicalOperator topOperator, ISession caller) throws DataDictionaryException;
 
 	Set<Entry<String, ILogicalOperator>> getViews(ISession caller);
 
@@ -76,34 +72,31 @@ public interface IDataDictionary extends IAddDataType {
 	// Stream Management
 	// -------------------------------------------------------------------------
 
-	void setStream(String streamname, ILogicalOperator plan, ISession caller)
-			throws DataDictionaryException;
+	void setStream(String streamname, ILogicalOperator plan, ISession caller) throws DataDictionaryException;
 
 	Set<Entry<String, ILogicalOperator>> getStreams(ISession caller);
 
 	ILogicalOperator getStreamForTransformation(String name, ISession caller);
 
-	AccessAO getStream(String viewname, ISession caller)
-			throws DataDictionaryException;
+	AccessAO getStream(String viewname, ISession caller) throws DataDictionaryException;
 
 	// -------------------------------------------------------------------------
 	// Sink Management
 	// -------------------------------------------------------------------------
 
-	void addSink(String sinkname, ILogicalOperator sink, ISession caller)
-			throws DataDictionaryException;
+	void addSink(String sinkname, ILogicalOperator sink, ISession caller) throws DataDictionaryException;
 
 	ILogicalOperator removeSink(String name, ISession caller);
 
 	Set<Entry<String, ILogicalOperator>> getSinks(ISession caller);
 
-	ILogicalOperator getSinkTop(String sinkname, ISession caller)
-			throws DataDictionaryException;
+	ILogicalOperator getSinkTop(String sinkname, ISession caller) throws DataDictionaryException;
 
-	ILogicalOperator getSinkInput(String sinkname, ISession caller)
-			throws DataDictionaryException;
+	ILogicalOperator getSinkInput(String sinkname, ISession caller) throws DataDictionaryException;
+	
+	ILogicalOperator getSinkForTransformation(String name, ISession caller);
 
-	boolean existsSink(String sinkname, ISession caller);
+	boolean containsSink(String sinkname, ISession caller);
 
 	// -------------------------------------------------------------------------
 	// Datatype Management
@@ -134,7 +127,7 @@ public interface IDataDictionary extends IAddDataType {
 	// Rights Management
 	// -------------------------------------------------------------------------
 
-	 IUser getCreator(String resource);
+	IUser getCreator(String resource);
 
 	/**
 	 * checks if the given user has higher permission as the given action. Calls
@@ -147,17 +140,20 @@ public interface IDataDictionary extends IAddDataType {
 	 */
 	boolean hasSuperAction(DataDictionaryPermission action, ISession user);
 
-//	boolean isCreatorOfObject(String caller, String objecturi);
+	// boolean isCreatorOfObject(String caller, String objecturi);
 
 	// ----------------------------------------------------------
 	// Operatormanagement
 	// ----------------------------------------------------------
-	
+
 	boolean containsOperator(String id);
+
 	void setOperator(String id, IPhysicalOperator physical);
+
 	void removeOperator(String id);
+
 	IPhysicalOperator getOperator(String id);
-	
+
 	// ------------------------------------------
 	// Physical sinks and sources (from WrapperPlanFactory)
 	// ------------------------------------------
@@ -184,8 +180,5 @@ public interface IDataDictionary extends IAddDataType {
 	void addListener(IDataDictionaryListener listener);
 
 	void removeListener(IDataDictionaryListener listener);
-
-
-
 
 }

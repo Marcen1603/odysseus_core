@@ -373,8 +373,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public ILogicalOperator getStreamForTransformation(String name,
-			ISession caller) {
+	public ILogicalOperator getStreamForTransformation(String name, ISession caller) {
 		checkAccessRights(name, caller, DataDictionaryPermission.READ);
 		// TODO: This is not very good ...
 		// Do not copy Plan! Remove potential physical subscription
@@ -581,6 +580,22 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
+	public ILogicalOperator getSinkForTransformation(String name, ISession caller) {
+		checkAccessRights(name, caller, DataDictionaryPermission.READ);
+		// TODO: This is not very good ...
+		// Do not copy Plan! Remove potential physical subscription		
+		ILogicalOperator iLogicalOperator = sinkDefinitions.get(name);
+		if (iLogicalOperator == null) {
+			iLogicalOperator = sinkDefinitions.get(createUserUri(name, caller));
+		}
+		if (iLogicalOperator != null) {
+			return removePhysicalSubscriptions(iLogicalOperator);
+		} else {
+			return null;
+		}
+	}
+	
+	@Override
 	public ILogicalOperator getSinkTop(String sinkname, ISession caller)
 			throws DataDictionaryException {
 		if (this.sinkDefinitions.containsKey(sinkname)) {
@@ -611,7 +626,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public boolean existsSink(String sinkname, ISession caller) {
+	public boolean containsSink(String sinkname, ISession caller) {
 		return this.sinkDefinitions.containsKey(sinkname) || this.sinkDefinitions.containsKey(createUserUri(sinkname, caller));
 	}
 

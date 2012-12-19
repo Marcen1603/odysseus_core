@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.USAGE;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 /**
@@ -251,14 +252,14 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		} else {
 			if (type.hasValue() && adapter.hasValue() && wrapper.hasValue()) {
 				addError(new IllegalArgumentException(
-						"to much information for the creation of source "
+						"too much information for the creation of source "
 								+ sourceName
 								+ ". expecting wrapper OR type OR adapter."));
 				return false;
 			}
 			if (!type.hasValue() && !adapter.hasValue() && !wrapper.hasValue()) {
 				addError(new IllegalArgumentException(
-						"to less information for the creation of source "
+						"too less information for the creation of source "
 								+ sourceName
 								+ ". expecting wrapper, type or adapter."));
 				return false;
@@ -276,6 +277,13 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 					.getValue().size()) {
 				addError(new IllegalArgumentException(
 						"For each attribute there must be at least one reader in the input schema"));
+				return false;
+			}
+		}
+		
+		if(this.wrapper.hasValue()){
+			if(!WrapperRegistry.containsWrapper(this.wrapper.getValue())){
+				addError(new IllegalParameterException("Wrapper "+this.wrapper.getValue()+" is unknown"));
 				return false;
 			}
 		}
