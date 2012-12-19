@@ -16,121 +16,127 @@ public interface NewSQLParserTreeConstants
   public int JJTCREATESTATEMENT = 9;
   public int JJTLOGINPASSWORD = 10;
   public int JJTCREATESINKSTATEMENT = 11;
-  public int JJTSOCKETSINK = 12;
-  public int JJTDATABASESINK = 13;
-  public int JJTDATABASESINKOPTIONS = 14;
-  public int JJTFILESINK = 15;
-  public int JJTCREATEDATABASECONNECTION = 16;
-  public int JJTDROPDATABASECONNECTION = 17;
-  public int JJTDATABASECONNECTIONCHECK = 18;
-  public int JJTJDBCCONNECTION = 19;
-  public int JJTCREATEFROMDATABASE = 20;
-  public int JJTDATABASETIMESENSITIV = 21;
-  public int JJTCREATEVIEWSTATEMENT = 22;
-  public int JJTCREATESENSOR = 23;
-  public int JJTORSCHEMADEFINITION = 24;
-  public int JJTRECORDDEFINITION = 25;
-  public int JJTRECORDENTRYDEFINITION = 26;
-  public int JJTLISTDEFINITION = 27;
-  public int JJTATTRDEFINITION = 28;
-  public int JJTATTRIBUTEDEFINITIONS = 29;
-  public int JJTATTRIBUTEDEFINITION = 30;
-  public int JJTTIMEDTUPLES = 31;
-  public int JJTTIMEDTUPLE = 32;
-  public int JJTTIMEINTERVAL = 33;
-  public int JJTSOCKET = 34;
-  public int JJTSILAB = 35;
-  public int JJTCHANNEL = 36;
-  public int JJTAUTORECONNECT = 37;
-  public int JJTHOST = 38;
-  public int JJTFILESOURCE = 39;
-  public int JJTSIMPLETUPLE = 40;
-  public int JJTVOID = 41;
-  public int JJTATTRIBUTETYPE = 42;
-  public int JJTMVCOVARIANCEROW = 43;
-  public int JJTCOVARIANCEROW = 44;
-  public int JJTDATEFORMAT = 45;
-  public int JJTSETOPERATOR = 46;
-  public int JJTSELECTCLAUSE = 47;
-  public int JJTPROJECTIONMATRIX = 48;
-  public int JJTPROJECTIONVECTOR = 49;
-  public int JJTFROMCLAUSE = 50;
-  public int JJTWHERECLAUSE = 51;
-  public int JJTGROUPBYCLAUSE = 52;
-  public int JJTHAVINGCLAUSE = 53;
-  public int JJTSELECTALL = 54;
-  public int JJTRENAMEDEXPRESSION = 55;
-  public int JJTAS = 56;
-  public int JJTMATRIXEXPRESSION = 57;
-  public int JJTPREDICATE = 58;
-  public int JJTSIMPLEPREDICATE = 59;
-  public int JJTBASICPREDICATE = 60;
-  public int JJTPROBABILITYPREDICATE = 61;
-  public int JJTPRIORITY = 62;
-  public int JJTORPREDICATE = 63;
-  public int JJTANDPREDICATE = 64;
-  public int JJTNOTPREDICATE = 65;
-  public int JJTQUANTIFICATIONPREDICATE = 66;
-  public int JJTANYPREDICATE = 67;
-  public int JJTALLPREDICATE = 68;
-  public int JJTINPREDICATE = 69;
-  public int JJTEXISTS = 70;
-  public int JJTELEMENTPRIORITIES = 71;
-  public int JJTELEMENTPRIORITY = 72;
-  public int JJTDEFAULTPRIORITY = 73;
-  public int JJTTUPLE = 74;
-  public int JJTTIME = 75;
-  public int JJTTUPLESET = 76;
-  public int JJTQUANTIFICATIONOPERATOR = 77;
-  public int JJTEXPRESSION = 78;
-  public int JJTSIMPLETOKEN = 79;
-  public int JJTFUNCTIONEXPRESSION = 80;
-  public int JJTFUNCTIONNAME = 81;
-  public int JJTAGGREGATEEXPRESSION = 82;
-  public int JJTAGGREGATEFUNCTION = 83;
-  public int JJTDISTINCTEXPRESSION = 84;
-  public int JJTSIMPLESOURCE = 85;
-  public int JJTSUBSELECT = 86;
-  public int JJTSTREAMSQLWINDOW = 87;
-  public int JJTPARTITION = 88;
-  public int JJTADVANCE = 89;
-  public int JJTSLIDE = 90;
-  public int JJTIDENTIFIER = 91;
-  public int JJTINTEGER = 92;
-  public int JJTNUMBER = 93;
-  public int JJTSTRING = 94;
-  public int JJTCOMPAREOPERATOR = 95;
-  public int JJTSPATIALCOMPAREOPERATOR = 96;
-  public int JJTCREATEBROKER = 97;
-  public int JJTBROKERSOURCE = 98;
-  public int JJTBROKERASSOURCE = 99;
-  public int JJTBROKERSELECTINTO = 100;
-  public int JJTBROKERSIMPLESOURCE = 101;
-  public int JJTBROKERQUEUE = 102;
-  public int JJTMETRIC = 103;
-  public int JJTCREATEUSERSTATEMENT = 104;
-  public int JJTALTERUSERSTATEMENT = 105;
-  public int JJTDROPUSERSTATEMENT = 106;
-  public int JJTCREATESLASTATEMENT = 107;
-  public int JJTSLAMETRICDEF = 108;
-  public int JJTSLASCOPEDEF = 109;
-  public int JJTSLAWINDOWDEF = 110;
-  public int JJTSLASERVICELEVELDEF = 111;
-  public int JJTSLAPENALTYDEF = 112;
-  public int JJTSLAMAXADMISSIONCOSTFACTOR = 113;
-  public int JJTSLAKILLPENALTY = 114;
-  public int JJTASSIGNSLASTATEMENT = 115;
-  public int JJTDROPSTREAMSTATEMENT = 116;
-  public int JJTDROPVIEWSTATEMENT = 117;
-  public int JJTCREATEROLESTATEMENT = 118;
-  public int JJTIFEXISTS = 119;
-  public int JJTIFNOTEXISTS = 120;
-  public int JJTDROPROLESTATEMENT = 121;
-  public int JJTGRANTROLESTATEMENT = 122;
-  public int JJTREVOKEROLESTATEMENT = 123;
-  public int JJTGRANTSTATEMENT = 124;
-  public int JJTIDENTIFIERLIST = 125;
-  public int JJTREVOKESTATEMENT = 126;
+  public int JJTSPECIFICSINK = 12;
+  public int JJTACCESSSOURCE = 13;
+  public int JJTSENDERSINK = 14;
+  public int JJTOPTIONS = 15;
+  public int JJTOPTION = 16;
+  public int JJTSOCKETSINK = 17;
+  public int JJTDATABASESINK = 18;
+  public int JJTDATABASESINKOPTIONS = 19;
+  public int JJTFILESINK = 20;
+  public int JJTCREATEDATABASECONNECTION = 21;
+  public int JJTDROPDATABASECONNECTION = 22;
+  public int JJTDATABASECONNECTIONCHECK = 23;
+  public int JJTJDBCCONNECTION = 24;
+  public int JJTCREATEFROMDATABASE = 25;
+  public int JJTDATABASETIMESENSITIV = 26;
+  public int JJTCREATEVIEWSTATEMENT = 27;
+  public int JJTCREATESENSOR = 28;
+  public int JJTORSCHEMADEFINITION = 29;
+  public int JJTRECORDDEFINITION = 30;
+  public int JJTRECORDENTRYDEFINITION = 31;
+  public int JJTLISTDEFINITION = 32;
+  public int JJTATTRDEFINITION = 33;
+  public int JJTATTRIBUTEDEFINITIONS = 34;
+  public int JJTATTRIBUTEDEFINITION = 35;
+  public int JJTTIMEDTUPLES = 36;
+  public int JJTTIMEDTUPLE = 37;
+  public int JJTTIMEINTERVAL = 38;
+  public int JJTSOCKET = 39;
+  public int JJTSILAB = 40;
+  public int JJTCHANNEL = 41;
+  public int JJTAUTORECONNECT = 42;
+  public int JJTHOST = 43;
+  public int JJTFILESOURCE = 44;
+  public int JJTSIMPLETUPLE = 45;
+  public int JJTVOID = 46;
+  public int JJTATTRIBUTETYPE = 47;
+  public int JJTMVCOVARIANCEROW = 48;
+  public int JJTCOVARIANCEROW = 49;
+  public int JJTDATEFORMAT = 50;
+  public int JJTSETOPERATOR = 51;
+  public int JJTSELECTCLAUSE = 52;
+  public int JJTPROJECTIONMATRIX = 53;
+  public int JJTPROJECTIONVECTOR = 54;
+  public int JJTFROMCLAUSE = 55;
+  public int JJTWHERECLAUSE = 56;
+  public int JJTGROUPBYCLAUSE = 57;
+  public int JJTHAVINGCLAUSE = 58;
+  public int JJTSELECTALL = 59;
+  public int JJTRENAMEDEXPRESSION = 60;
+  public int JJTAS = 61;
+  public int JJTMATRIXEXPRESSION = 62;
+  public int JJTPREDICATE = 63;
+  public int JJTSIMPLEPREDICATE = 64;
+  public int JJTBASICPREDICATE = 65;
+  public int JJTPROBABILITYPREDICATE = 66;
+  public int JJTPRIORITY = 67;
+  public int JJTORPREDICATE = 68;
+  public int JJTANDPREDICATE = 69;
+  public int JJTNOTPREDICATE = 70;
+  public int JJTQUANTIFICATIONPREDICATE = 71;
+  public int JJTANYPREDICATE = 72;
+  public int JJTALLPREDICATE = 73;
+  public int JJTINPREDICATE = 74;
+  public int JJTEXISTS = 75;
+  public int JJTELEMENTPRIORITIES = 76;
+  public int JJTELEMENTPRIORITY = 77;
+  public int JJTDEFAULTPRIORITY = 78;
+  public int JJTTUPLE = 79;
+  public int JJTTIME = 80;
+  public int JJTTUPLESET = 81;
+  public int JJTQUANTIFICATIONOPERATOR = 82;
+  public int JJTEXPRESSION = 83;
+  public int JJTSIMPLETOKEN = 84;
+  public int JJTFUNCTIONEXPRESSION = 85;
+  public int JJTFUNCTIONNAME = 86;
+  public int JJTAGGREGATEEXPRESSION = 87;
+  public int JJTAGGREGATEFUNCTION = 88;
+  public int JJTDISTINCTEXPRESSION = 89;
+  public int JJTSIMPLESOURCE = 90;
+  public int JJTSUBSELECT = 91;
+  public int JJTSTREAMSQLWINDOW = 92;
+  public int JJTPARTITION = 93;
+  public int JJTADVANCE = 94;
+  public int JJTSLIDE = 95;
+  public int JJTIDENTIFIER = 96;
+  public int JJTQUOTEDIDENTIFIER = 97;
+  public int JJTINTEGER = 98;
+  public int JJTNUMBER = 99;
+  public int JJTSTRING = 100;
+  public int JJTCOMPAREOPERATOR = 101;
+  public int JJTSPATIALCOMPAREOPERATOR = 102;
+  public int JJTCREATEBROKER = 103;
+  public int JJTBROKERSOURCE = 104;
+  public int JJTBROKERASSOURCE = 105;
+  public int JJTBROKERSELECTINTO = 106;
+  public int JJTBROKERSIMPLESOURCE = 107;
+  public int JJTBROKERQUEUE = 108;
+  public int JJTMETRIC = 109;
+  public int JJTCREATEUSERSTATEMENT = 110;
+  public int JJTALTERUSERSTATEMENT = 111;
+  public int JJTDROPUSERSTATEMENT = 112;
+  public int JJTCREATESLASTATEMENT = 113;
+  public int JJTSLAMETRICDEF = 114;
+  public int JJTSLASCOPEDEF = 115;
+  public int JJTSLAWINDOWDEF = 116;
+  public int JJTSLASERVICELEVELDEF = 117;
+  public int JJTSLAPENALTYDEF = 118;
+  public int JJTSLAMAXADMISSIONCOSTFACTOR = 119;
+  public int JJTSLAKILLPENALTY = 120;
+  public int JJTASSIGNSLASTATEMENT = 121;
+  public int JJTDROPSTREAMSTATEMENT = 122;
+  public int JJTDROPVIEWSTATEMENT = 123;
+  public int JJTCREATEROLESTATEMENT = 124;
+  public int JJTIFEXISTS = 125;
+  public int JJTIFNOTEXISTS = 126;
+  public int JJTDROPROLESTATEMENT = 127;
+  public int JJTGRANTROLESTATEMENT = 128;
+  public int JJTREVOKEROLESTATEMENT = 129;
+  public int JJTGRANTSTATEMENT = 130;
+  public int JJTIDENTIFIERLIST = 131;
+  public int JJTREVOKESTATEMENT = 132;
 
 
   public String[] jjtNodeName = {
@@ -146,6 +152,11 @@ public interface NewSQLParserTreeConstants
     "CreateStatement",
     "LoginPassword",
     "CreateSinkStatement",
+    "SpecificSink",
+    "AccessSource",
+    "SenderSink",
+    "Options",
+    "Option",
     "SocketSink",
     "DatabaseSink",
     "DatabaseSinkOptions",
@@ -226,6 +237,7 @@ public interface NewSQLParserTreeConstants
     "Advance",
     "Slide",
     "Identifier",
+    "QuotedIdentifier",
     "Integer",
     "Number",
     "String",
@@ -263,4 +275,4 @@ public interface NewSQLParserTreeConstants
     "RevokeStatement",
   };
 }
-/* JavaCC - OriginalChecksum=845f38354813747b86c139705279ada1 (do not edit this line) */
+/* JavaCC - OriginalChecksum=1d62d279a5f1ea60e259df7233e0126c (do not edit this line) */

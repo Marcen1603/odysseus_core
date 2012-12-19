@@ -20,8 +20,10 @@ import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -32,11 +34,14 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileSinkAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IntersectionAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
@@ -274,6 +279,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTCreateStatement node, Object data) throws QueryParseException {
+		int sourceDefinitionNodeAt = node.jjtGetNumChildren()-1;
+		if(node.jjtGetChild(node.jjtGetNumChildren()-1) instanceof ASTLoginPassword){
+			sourceDefinitionNodeAt--;
+		}
+		if(node.jjtGetChild(sourceDefinitionNodeAt) instanceof ASTAccessSource){	
+			ASTAccessSource accessNode = (ASTAccessSource) node.jjtGetChild(sourceDefinitionNodeAt);
+			this.visit(accessNode, node);
+		}
 		CreateStreamVisitor v = new CreateStreamVisitor(caller, dataDictionary);
 		return v.visit(node, data);
 	}
@@ -331,8 +344,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTAttributeDefinitions node, Object data) throws QueryParseException {
-		return null;
+	public List<SDFAttribute> visit(ASTAttributeDefinitions node, Object data) throws QueryParseException {
+		CreateStreamVisitor csv = new CreateStreamVisitor(getCaller(), getDataDictionary());
+		csv.visit(node, data);
+		return csv.getAttributes();		
 	}
 
 	@Override
@@ -1168,26 +1183,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		ASTSelectStatement statement = (ASTSelectStatement) node.jjtGetChild(1);
 		ILogicalOperator top = (ILogicalOperator) visit(statement, data);
 
-		ILogicalOperator sink;
-		// Append plan to input and update subscriptions
-		ILogicalOperator sinkInput;
-		try {
-			sink = dataDictionary.getSinkTop(sinkName, caller);
-			sinkInput = dataDictionary.getSinkInput(sinkName, caller);
-		} catch (Exception e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		sinkInput.subscribeToSource(top, -1, 0, top.getOutputSchema());
-		sink.updateSchemaInfos();
-		// if database -> be sure, that the schemas are equal
-		if (sink.getClass().getCanonicalName().equals("de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO")) {
-			invokeDatabaseVisitor(ASTStreamToStatement.class, node, sink);
-		}
-
+		SenderAO sender = new SenderAO();
+		sender.setSink(sinkName);		
+		sender.subscribeToSource(top, 0, 0, top.getOutputSchema());		
 		LogicalQuery query = new LogicalQuery();
 		query.setParserId(getLanguage());
-		query.setLogicalPlan(sink, true);
-
+		query.setLogicalPlan(sender, true);
 		plans.add(query);
 		return plans;
 	}
@@ -1347,6 +1348,101 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTDropDatabaseConnection node, Object data) throws QueryParseException {
 		return invokeDatabaseVisitor(ASTDropDatabaseConnection.class, node, data);
+	}
+
+	@Override
+	public Object visit(ASTSenderSink node, Object data) throws QueryParseException {
+		String name = (String) data;
+		ASTAttributeDefinitions defs = (ASTAttributeDefinitions) node.jjtGetChild(0);
+		String wrapper = ((ASTQuotedIdentifier) node.jjtGetChild(1)).getUnquotedName();
+		String protocol = ((ASTQuotedIdentifier) node.jjtGetChild(2)).getUnquotedName();
+		String transport = ((ASTQuotedIdentifier) node.jjtGetChild(3)).getUnquotedName();
+		String datahandler = ((ASTQuotedIdentifier) node.jjtGetChild(4)).getUnquotedName();
+		List<SDFAttribute> schema = visit(defs, null);		
+		SDFSchema outputSchema = new SDFSchema(name, schema);
+		
+		Map<String, String> options = new HashMap<>();
+		if(node.jjtGetChild(node.jjtGetNumChildren()-1) instanceof ASTOptions){
+			ASTOptions optionsNode = (ASTOptions) node.jjtGetChild(node.jjtGetNumChildren()-1);
+			options = visit(optionsNode, null);
+		}
+		// build ao
+		SenderAO sender = new SenderAO();
+		sender.setDataHandler(datahandler);
+		sender.setProtocolHandler(protocol);
+		sender.setWrapper(wrapper);
+		sender.setTransportHandler(transport);
+		sender.setName(name);
+		sender.setOutputSchema(outputSchema);
+		sender.setOptions(options);
+		sender.setSink(name);
+		
+		getDataDictionary().addSink(name, sender, getCaller());
+		
+		return null;
+	}
+
+	@Override
+	public Map<String, String> visit(ASTOptions node, Object data) throws QueryParseException {
+		Map<String, String> options = new HashMap<String, String>();
+		node.childrenAccept(this, options);
+		return options;
+	}
+
+	@Override
+	public Object visit(ASTOption node, Object data) throws QueryParseException {
+		@SuppressWarnings("unchecked")
+		Map<String, String> options = (Map<String, String>) data;
+		String key = ((ASTQuotedIdentifier)node.jjtGetChild(0)).getUnquotedName();
+		String value = ((ASTQuotedIdentifier)node.jjtGetChild(1)).getUnquotedName();
+		options.put(key, value);
+		return options;
+	}
+
+	@Override
+	public Object visit(ASTSpecificSink node, Object data) throws QueryParseException {
+		return node.jjtAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTQuotedIdentifier node, Object data) throws QueryParseException {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTAccessSource node, Object data) throws QueryParseException {
+		ASTCreateStatement createNode = (ASTCreateStatement) data;
+		String sourceName = ((ASTIdentifier)createNode.jjtGetChild(0)).getName();
+		
+		ASTAttributeDefinitions defs = (ASTAttributeDefinitions) createNode.jjtGetChild(1);
+		List<SDFAttribute> schema = visit(defs, null);		
+		SDFSchema outputSchema = new SDFSchema(sourceName, schema);
+		
+		
+		getDataDictionary().addEntitySchema(sourceName, outputSchema, caller);
+		
+		String wrapper = ((ASTQuotedIdentifier) node.jjtGetChild(0)).getUnquotedName();
+		String protocol = ((ASTQuotedIdentifier) node.jjtGetChild(1)).getUnquotedName();
+		String transport = ((ASTQuotedIdentifier) node.jjtGetChild(2)).getUnquotedName();
+		String datahandler = ((ASTQuotedIdentifier) node.jjtGetChild(3)).getUnquotedName();
+		Map<String, String> options = new HashMap<>();
+		if(node.jjtGetChild(node.jjtGetNumChildren()-1) instanceof ASTOptions){
+			ASTOptions optionsNode = (ASTOptions) node.jjtGetChild(node.jjtGetNumChildren()-1);
+			options = visit(optionsNode, null);
+		}
+		
+		if(!WrapperRegistry.containsWrapper(wrapper)){
+			throw new QueryParseException("Wrapper "+wrapper+" is unknown.");
+		}
+		
+		AccessAO access = new AccessAO(sourceName, wrapper, options);
+		access.setProtocolHandler(protocol);
+		access.setDataHandler(datahandler);
+		access.setTransportHandler(transport);
+		access.setOutputSchema(outputSchema);
+		getDataDictionary().setStream(sourceName, access, getCaller());
+		
+		return null;
 	}
 
 }

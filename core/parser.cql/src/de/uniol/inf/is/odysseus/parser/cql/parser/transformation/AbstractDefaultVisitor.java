@@ -747,4 +747,34 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTDropDatabaseConnection node, Object data) throws QueryParseException {		
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTSenderSink node, Object data) throws QueryParseException {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTOptions node, Object data) throws QueryParseException {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTOption node, Object data) throws QueryParseException {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTSpecificSink node, Object data) throws QueryParseException {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTQuotedIdentifier node, Object data) throws QueryParseException {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTAccessSource node, Object data) throws QueryParseException {
+		return null;
+	}
 }
