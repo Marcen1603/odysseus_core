@@ -46,7 +46,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
 	private int receivedElements;
 	private final int maxElements;
-	private boolean showHeartbeats = true;
+	private boolean showHeartbeats = false;
 
 	private List<String> pendingElements = Lists.newLinkedList();
 
