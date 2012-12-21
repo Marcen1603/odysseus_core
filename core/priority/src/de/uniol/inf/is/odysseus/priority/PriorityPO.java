@@ -78,9 +78,9 @@ public class PriorityPO<K extends IPriority, T extends IStreamObject<K>>
 
 	private void processPrioritizedElement(T next) {
 		transfer(next, 1);
-		if (isPunctuationActive) {
+		if (isPunctuationActive && isInOrder()) {
 			ITimeInterval time = (ITimeInterval) next.getMetadata();
-			sendPunctuation(new Heartbeat(time.getStart()));
+			sendPunctuation(Heartbeat.createNewHeartbeat(time.getStart()));
 		}
 	}
 

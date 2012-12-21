@@ -30,7 +30,7 @@ public class DefaultHeartbeatGeneration<K extends ITimeInterval, T extends IStre
 	
 	@Override
 	public void generateHeartbeat(T object, ISource<?> source) {
-		source.sendPunctuation(new Heartbeat(object.getMetadata().getStart()));
+		source.sendPunctuation(Heartbeat.createNewHeartbeat(object.getMetadata().getStart()));
 		logger.debug("Send Heartbeat"+object.getMetadata().getStart());
 	}
 

@@ -53,6 +53,8 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 		return _logger;
 	}
 
+	private boolean inOrder = true;
+	
 	final protected Map<Integer, PointInTime> minTsForPort = new HashMap<Integer, PointInTime>();
 	private PointInTime minTs = null;
 	protected IProcessInternal<T> po;
@@ -207,8 +209,8 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 							}
 						}
 					// // Avoid unnecessary punctuations!
-					if (!elementsSend) {
-						po.process_newHeartbeat(new Heartbeat(minTs));
+					if (!elementsSend && isInOrder()) {
+						po.process_newHeartbeat(Heartbeat.createNewHeartbeat(minTs));
 					}
 				}
 			}
@@ -235,6 +237,16 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 			throw new RuntimeException("Input streams are out of order! "
 					+ minTs + " " + minimum);
 		}
+	}
+	
+	@Override
+	public boolean isInOrder() {
+		return inOrder;
+	}
+	
+	@Override
+	public void setInOrder(boolean isInOrder) {
+		this.inOrder = isInOrder;
 	}
 
 	public static void main(String[] args) throws InterruptedException {

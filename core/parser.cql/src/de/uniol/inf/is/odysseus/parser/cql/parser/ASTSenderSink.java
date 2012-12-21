@@ -19,4 +19,4 @@ class ASTSenderSink extends SimpleNode {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=473a04ac061c39528989fa910e84e523 (do not edit this line) */
+/* JavaCC - OriginalChecksum=4389f1a322edb3c3e8fff01154774d51 (do not edit this line) */

@@ -4,11 +4,11 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 final public class Heartbeat extends AbstractPunctuation {
 
-	public Heartbeat(long point) {
+	private Heartbeat(long point) {
 		super(point);
 	}
 
-	public Heartbeat(PointInTime point) {
+	private Heartbeat(PointInTime point) {
 		super(point);
 	}
 
@@ -27,4 +27,13 @@ final public class Heartbeat extends AbstractPunctuation {
 		return "Heartbeat "+getTime();
 	}
 
+	static public Heartbeat createNewHeartbeat(long point){
+		return new Heartbeat(point);
+	}
+	
+	static public Heartbeat createNewHeartbeat(PointInTime point){
+		return new Heartbeat(point);
+	}
+	
+	
 }

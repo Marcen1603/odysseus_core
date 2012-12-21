@@ -61,7 +61,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 					if (!restart) {
 						PointInTime punctuation = getWatermark().sum(
 								applicationTimeDelay);
-						AssureHeartbeatPO.this.sendPunctuation(new Heartbeat(punctuation));
+						AssureHeartbeatPO.this.sendPunctuation(Heartbeat.createNewHeartbeat(punctuation));
 					}
 				} catch (InterruptedException e) {
 					// e.printStackTrace();

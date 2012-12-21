@@ -59,7 +59,6 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TLeftJoinAORule());
 		rules.add(new TLeftJoinTIPOAddMetadataMergeRule());
 		
-		rules.add(new TPunctuationAORule());
 		rules.add(new TAssureHeartbeatAORule());
 		
 		rules.add(new TChangeCorrelateAORule());

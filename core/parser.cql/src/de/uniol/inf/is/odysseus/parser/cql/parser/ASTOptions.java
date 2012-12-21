@@ -19,4 +19,4 @@ class ASTOptions extends SimpleNode {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=dacf24e8626fe3ecc8a2543e45a35c71 (do not edit this line) */
+/* JavaCC - OriginalChecksum=9614bcd2b51e767048294bcc0fe34e3b (do not edit this line) */

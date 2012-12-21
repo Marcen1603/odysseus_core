@@ -81,7 +81,9 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 
 		// Check if elements outside any window
 		if (object.getMetadata().getStart().before(p_start)) {
-			sendPunctuation(new Heartbeat(object.getMetadata().getStart()));
+			if (isInOrder()){
+				sendPunctuation(Heartbeat.createNewHeartbeat(object.getMetadata().getStart()));
+			}
 		} else {
 			object.getMetadata().setStartAndEnd(p_start, p_end);
 			transfer(object);

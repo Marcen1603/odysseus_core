@@ -44,6 +44,8 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
 			new MetadataComparator<ITimeInterval>());
 
+	boolean inOrder = true; 
+	
 	public PersistentTransferArea() {
 	}
 
@@ -140,8 +142,8 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 					po.transfer(elem);
 					elem = this.outputQueue.peek();
 				}
-				if (wasElementSent) {
-					po.sendPunctuation(new Heartbeat(minimum));
+				if (wasElementSent && isInOrder()) {
+					po.sendPunctuation(Heartbeat.createNewHeartbeat(minimum));
 				}
 			}
 		}
@@ -161,4 +163,15 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 		return minimum;
 	}
 
+	@Override
+	public boolean isInOrder() {
+		return inOrder;
+	}
+	
+	@Override
+	public void setInOrder(boolean isInOrder) {
+		this.inOrder = isInOrder;
+	}
+	
+	
 }

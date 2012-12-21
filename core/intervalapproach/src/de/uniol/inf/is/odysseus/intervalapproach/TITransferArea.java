@@ -66,6 +66,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			});
 	// to which port the data should be send
 	private int outputPort = 0;
+	
+	private boolean inOrder = true; 
 
 	public TITransferArea() {
 		minTs = new HashMap<>();
@@ -225,8 +227,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 					}
 				}
 				// Avoid unnecessary punctuations
-				if (!elementsSend) {
-					po.sendPunctuation(new Heartbeat(minimum), outputPort);
+				if (!elementsSend && isInOrder()) {
+					po.sendPunctuation(Heartbeat.createNewHeartbeat(minimum), outputPort);
 				}
 				// Set marker to time stamp of the last send object
 				watermark = minimum;
@@ -250,4 +252,14 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		}
 	}
 
+	@Override
+	public boolean isInOrder() {
+		return inOrder;
+	}
+	
+	@Override
+	public void setInOrder(boolean isInOrder) {
+		this.inOrder = isInOrder;
+	}
+	
 }

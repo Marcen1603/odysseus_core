@@ -19,4 +19,4 @@ class ASTSpecificSink extends SimpleNode {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=477acf7f865fcaf63bc7d04edff2c7d0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=45bcf5761bf0b7d4f2069305d44c8277 (do not edit this line) */

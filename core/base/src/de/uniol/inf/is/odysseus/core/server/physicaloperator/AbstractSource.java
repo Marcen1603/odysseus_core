@@ -69,6 +69,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	
 	final private OwnerHandler ownerHandler;
 	
+	private boolean inOrder = true;
+	
 	// --------------------------------------------------------------------
 	// Logging
 	// --------------------------------------------------------------------
@@ -695,6 +697,18 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public Map<IOperatorOwner,String> getUniqueIds() {
 		return uniqueIds;
+	}
+	
+	// ------------------------------------------------------------------------
+	// Order
+	// ------------------------------------------------------------------------
+	
+	public boolean isInOrder(){
+		return inOrder;
+	}
+	
+	public void setInOrder(boolean isInOrder){
+		this.inOrder = isInOrder;
 	}
 	
 	// ------------------------------------------------------------------------

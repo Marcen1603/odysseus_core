@@ -19,4 +19,4 @@ class ASTAccessSource extends SimpleNode {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=ac523969be80ab8f84c8f9e8967b7196 (do not edit this line) */
+/* JavaCC - OriginalChecksum=a4ed67aeffa7199502c1ced05f5ed1f2 (do not edit this line) */

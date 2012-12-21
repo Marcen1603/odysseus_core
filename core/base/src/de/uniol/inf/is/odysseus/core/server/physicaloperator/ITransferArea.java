@@ -76,6 +76,11 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	@Override
 	public ITransferArea<R,W> clone();
 
+	/**
+	 * Order
+	 */
+	public void setInOrder(boolean isInOrder);
+	public boolean isInOrder();
 	
 		
 }

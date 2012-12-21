@@ -134,8 +134,8 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 					transfer(elem);
 				}
 				// Send punctuation. New start is known!
-				if (lastSlide > 0) {
-					sendPunctuation(new Heartbeat(p_end));
+				if (lastSlide > 0 && isInOrder()) {
+					sendPunctuation(Heartbeat.createNewHeartbeat(p_end));
 				}
 
 				this.lastSlide = slide;

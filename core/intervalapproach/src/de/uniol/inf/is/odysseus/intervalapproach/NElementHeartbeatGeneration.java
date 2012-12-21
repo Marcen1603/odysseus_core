@@ -49,7 +49,7 @@ public class NElementHeartbeatGeneration <K extends ITimeInterval, T extends ISt
 	public void generateHeartbeat(T object, ISource<?> source) {
 		if (counter % eachElement == 0){
 			counter = 0;
-			source.sendPunctuation(new Heartbeat(object.getMetadata().getStart()));
+			source.sendPunctuation(Heartbeat.createNewHeartbeat(object.getMetadata().getStart()));
 			logger.debug("Sending punctuation ... ");
 		}
 		counter++;

@@ -70,8 +70,13 @@ public interface IInputStreamSyncArea<T extends IStreamObject<?>> extends IClone
 	
 	public int size();
 
+	
 	@Override
 	public IInputStreamSyncArea<T> clone();
+
+	boolean isInOrder();
+
+	void setInOrder(boolean isInOrder);
 	
 
 	
