@@ -190,7 +190,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 	@Override
 	public synchronized void processPunctuation(IPunctuation punctuation,
 			int port) {
-		//inputStreamSyncArea.newHeartbeat(punctuation.getTime(), port);
+		// inputStreamSyncArea.newHeartbeat(punctuation.getTime(), port);
 		inputStreamSyncArea.newElement(punctuation, port);
 	}
 
@@ -435,16 +435,17 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 			}
 			// System.err.println(instance+
 			// " End end currently not supported "+sm.getEndsAtVar()+" = "+value);
-
-			MEPCondition c = sm.getEndsAtCondition();
-			c.setValue(StateMachine.current, currentTime.getMainPoint());
-			c.setValue(StateMachine.maxTime, value);
-			if (c.evaluate()) {
-				// logger.debug(instance + " Out of Window ...");
-				this.eventAgent
-						.fireCEPEvent(CEPEvent.MACHINE_ABORTED, instance);
-				outofWindowInstances.add(instance);
-				outOfTime = true;
+			if (value != null) {
+				MEPCondition c = sm.getEndsAtCondition();
+				c.setValue(StateMachine.current, currentTime.getMainPoint());
+				c.setValue(StateMachine.maxTime, value);
+				if (c.evaluate()) {
+					// logger.debug(instance + " Out of Window ...");
+					this.eventAgent.fireCEPEvent(CEPEvent.MACHINE_ABORTED,
+							instance);
+					outofWindowInstances.add(instance);
+					outOfTime = true;
+				}
 			}
 
 		}
