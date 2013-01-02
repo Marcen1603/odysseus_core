@@ -5,12 +5,13 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
+ * 
  */
-public class SMinFunction extends AbstractFunction<Tuple<?>> {
+public class SMinFunction extends AbstractFunction<Double> {
 	/**
 	 * 
 	 */
@@ -45,17 +46,17 @@ public class SMinFunction extends AbstractFunction<Tuple<?>> {
 	}
 
 	@Override
-	public Tuple<?> getValue() {
+	public Double getValue() {
 		@SuppressWarnings("unchecked")
 		List<Tuple<?>> tuples = (List<Tuple<?>>) getInputValue(0);
 		Integer pos = getNumericalInputValue(1).intValue();
 		Tuple<?> minTuple = tuples.get(0).restrict(pos, true);
-		Tuple<?> result = null;
+		Double result = minTuple.getAttribute(0);
 		for (Tuple<?> tuple : tuples) {
 			Tuple<?> other = tuple.restrict(pos, true);
 			if (minTuple.compareTo(other) > 0) {
 				minTuple = other;
-				result = tuple;
+				result = other.getAttribute(0);
 			}
 		}
 		return result;
@@ -63,6 +64,6 @@ public class SMinFunction extends AbstractFunction<Tuple<?>> {
 
 	@Override
 	public SDFDatatype getReturnType() {
-		return SDFDatatype.TUPLE;
+		return SDFDatatype.DOUBLE;
 	}
 }
