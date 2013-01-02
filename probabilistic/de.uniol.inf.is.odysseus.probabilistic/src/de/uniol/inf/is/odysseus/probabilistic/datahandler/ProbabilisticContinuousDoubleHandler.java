@@ -19,7 +19,8 @@ public class ProbabilisticContinuousDoubleHandler extends AbstractDataHandler<Pr
         ProbabilisticContinuousDoubleHandler.types.add("ProbabilisticContinuousFloat");
     }
 
-    @Override
+    @SuppressWarnings("unused")
+	@Override
     public ProbabilisticContinuousDouble readData(final ObjectInputStream inputStream) throws IOException {
         final int length = inputStream.readInt();
         final List<NormalDistribution> mixtures = new ArrayList<NormalDistribution>(length);
@@ -34,7 +35,8 @@ public class ProbabilisticContinuousDoubleHandler extends AbstractDataHandler<Pr
         //   return new ProbabilisticContinuousDouble(mixtures);
     }
 
-    @Override
+    @SuppressWarnings("unused")
+	@Override
     public ProbabilisticContinuousDouble readData(final String string) {
         final String[] continuousValues = string.split(";");
         final List<NormalDistribution> mixtures = new ArrayList<NormalDistribution>(continuousValues.length);
@@ -50,7 +52,8 @@ public class ProbabilisticContinuousDoubleHandler extends AbstractDataHandler<Pr
         //   return new ProbabilisticContinuousDouble(mixtures);
     }
 
-    @Override
+    @SuppressWarnings("unused")
+	@Override
     public ProbabilisticContinuousDouble readData(final ByteBuffer buffer) {
         final int length = buffer.getInt();
         final List<NormalDistribution> mixtures = new ArrayList<NormalDistribution>(length);
@@ -67,7 +70,8 @@ public class ProbabilisticContinuousDoubleHandler extends AbstractDataHandler<Pr
 
     @Override
     public void writeData(final ByteBuffer buffer, final Object data) {
-        final ProbabilisticContinuousDouble value = (ProbabilisticContinuousDouble) data;
+        @SuppressWarnings("unused")
+		final ProbabilisticContinuousDouble value = (ProbabilisticContinuousDouble) data;
       //  buffer.putInt(value.getMixtures().size());
      //   for (final NormalDistribution mixture : value.getMixtures()) {
             // buffer.put(mixture.getCovarianceMatrixId());
@@ -78,7 +82,8 @@ public class ProbabilisticContinuousDoubleHandler extends AbstractDataHandler<Pr
 
     @Override
     public int memSize(final Object attribute) {
-        final ProbabilisticContinuousDouble value = (ProbabilisticContinuousDouble) attribute;
+        @SuppressWarnings("unused")
+		final ProbabilisticContinuousDouble value = (ProbabilisticContinuousDouble) attribute;
         return 0;
         //  return (Integer.SIZE * value.getMixtures().size() * (Byte.SIZE + Integer.SIZE + Double.SIZE)) / 8;
     }

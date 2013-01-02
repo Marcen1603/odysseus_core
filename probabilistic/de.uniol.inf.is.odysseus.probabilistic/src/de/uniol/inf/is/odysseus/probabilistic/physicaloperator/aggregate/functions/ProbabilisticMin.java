@@ -65,7 +65,7 @@ public class ProbabilisticMin<R extends Comparable<R>, W> extends AbstractAggreg
         while (i < l) {
             final double k = Math.log(b[i]) / Math.log(1 + e);
             int q = 0;
-            bins = bins;
+           // bins = bins;
             while (k == (Math.log(b[i]) / Math.log(1 + e))) {
                 q = q + p[i];
                 i++;
@@ -74,7 +74,8 @@ public class ProbabilisticMin<R extends Comparable<R>, W> extends AbstractAggreg
         return bins;
     }
 
-    private double estimateMin() {
+    @SuppressWarnings({ "unused", "rawtypes" })
+	private double estimateMin() {
         final List p = new ArrayList();
 
         while (!p.isEmpty()) {

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;

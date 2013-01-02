@@ -7,7 +7,12 @@ import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticDouble;
 
 public class ProbabilisticPlusOperator extends AbstractBinaryOperator<ProbabilisticDouble> {
 
-    @Override
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4132289779552462641L;
+
+	@Override
     public boolean isCommutative() {
         // TODO Auto-generated method stub
         return false;

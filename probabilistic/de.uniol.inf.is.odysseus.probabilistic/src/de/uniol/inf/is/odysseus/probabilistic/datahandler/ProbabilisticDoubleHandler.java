@@ -34,7 +34,8 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
     @Override
     public ProbabilisticDouble readData(final ObjectInputStream inputStream) throws IOException {
         final int length = inputStream.readInt();
-        final Pair<Double, Double>[] values = new Pair[length];
+        @SuppressWarnings("unchecked")
+		final Pair<Double, Double>[] values = new Pair[length];
         for (int i = 0; i < length; i++) {
             final Double value = inputStream.readDouble();
             final Double probability = inputStream.readDouble();
@@ -46,7 +47,8 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
     @Override
     public ProbabilisticDouble readData(final String string) {
         final String[] discreteValues = string.split(";");
-        final Pair<Double, Double>[] values = new Pair[discreteValues.length];
+        @SuppressWarnings("unchecked")
+		final Pair<Double, Double>[] values = new Pair[discreteValues.length];
         for (int i = 0; i < discreteValues.length; i++) {
             final String[] discreteValue = discreteValues[i].split(":");
             values[i] = new Pair<Double, Double>(Double.parseDouble(discreteValue[0]),
@@ -58,7 +60,8 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
     @Override
     public ProbabilisticDouble readData(final ByteBuffer buffer) {
         final int length = buffer.getInt();
-        final Pair<Double, Double>[] values = new Pair[length];
+        @SuppressWarnings("unchecked")
+		final Pair<Double, Double>[] values = new Pair[length];
         for (int i = 0; i < length; i++) {
             final Double value = buffer.getDouble();
             final Double probability = buffer.getDouble();

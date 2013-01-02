@@ -25,48 +25,48 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregat
  */
 public class Activator implements BundleActivator {
 
-    private static BundleContext                     context;
-    private static IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry;
+	private static BundleContext context;
+	private static IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry;
 
-    static BundleContext getContext() {
-        return Activator.context;
-    }
+	static BundleContext getContext() {
+		return Activator.context;
+	}
 
-    public static IAggregateFunctionBuilderRegistry getAggregateFunctionBuilderRegistry() {
-        return Activator.aggregateFunctionBuilderRegistry;
-    }
+	public static IAggregateFunctionBuilderRegistry getAggregateFunctionBuilderRegistry() {
+		return Activator.aggregateFunctionBuilderRegistry;
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-     * )
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void start(final BundleContext bundleContext) throws Exception {
-        Activator.context = bundleContext;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+	 * )
+	 */
+	@Override
+	public void start(final BundleContext bundleContext) throws Exception {
+		Activator.context = bundleContext;
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void stop(final BundleContext bundleContext) throws Exception {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	@Override
+	public void stop(final BundleContext bundleContext) throws Exception {
 
-        Activator.context = null;
-    }
+		Activator.context = null;
+	}
 
-    public void bindAggregateFunctionBuilderRegistry(
-            final IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
-        Activator.aggregateFunctionBuilderRegistry = aggregateFunctionBuilderRegistry;
-    }
+	public void bindAggregateFunctionBuilderRegistry(
+			final IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
+		Activator.aggregateFunctionBuilderRegistry = aggregateFunctionBuilderRegistry;
+	}
 
-    public void unbindAggregateFunctionBuilderRegistry(
-            final IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
-        Activator.aggregateFunctionBuilderRegistry = null;
-    }
+	public void unbindAggregateFunctionBuilderRegistry(
+			final IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
+		Activator.aggregateFunctionBuilderRegistry = null;
+	}
 }

@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import org.apache.commons.math3.linear.RealMatrix;
 
-import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
-
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */

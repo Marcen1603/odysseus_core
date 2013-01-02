@@ -43,126 +43,147 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>
  */
-public class ProbabilisticProjectPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
-    Logger                  logger = LoggerFactory.getLogger(ProbabilisticProjectPO.class);
-    private final int[]     restrictList;
-    private final SDFSchema inputSchema;
-    private Integer[]       continuousAttributes;
-    private RealMatrix[]    projectMatrixes;
-    private Object[]        projectedOutContinuousAttributes;
+public class ProbabilisticProjectPO<T extends IMetaAttribute> extends
+		AbstractPipe<Tuple<T>, Tuple<T>> {
+	Logger logger = LoggerFactory.getLogger(ProbabilisticProjectPO.class);
+	private final int[] restrictList;
+	private final SDFSchema inputSchema;
+	private Integer[] continuousAttributes;
+	private RealMatrix[] projectMatrixes;
+	private Object[] projectedOutContinuousAttributes;
 
-    // private final int[] restrictMatrix
+	// private final int[] restrictMatrix
 
-    public ProbabilisticProjectPO(SDFSchema inputSchema, final int[] restrictList) {
-        this.inputSchema = inputSchema;
-        this.restrictList = restrictList;
-        init();
-    }
+	public ProbabilisticProjectPO(SDFSchema inputSchema,
+			final int[] restrictList) {
+		this.inputSchema = inputSchema;
+		this.restrictList = restrictList;
+		init();
+	}
 
-    public ProbabilisticProjectPO(final ProbabilisticProjectPO<T> probabilisticProjectPO) {
-        super();
-        final int length = probabilisticProjectPO.restrictList.length;
-        this.inputSchema = probabilisticProjectPO.inputSchema.clone();
-        this.restrictList = new int[length];
-        System.arraycopy(probabilisticProjectPO.restrictList, 0, this.restrictList, 0, length);
-        init();
-    }
+	public ProbabilisticProjectPO(
+			final ProbabilisticProjectPO<T> probabilisticProjectPO) {
+		super();
+		final int length = probabilisticProjectPO.restrictList.length;
+		this.inputSchema = probabilisticProjectPO.inputSchema.clone();
+		this.restrictList = new int[length];
+		System.arraycopy(probabilisticProjectPO.restrictList, 0,
+				this.restrictList, 0, length);
+		init();
+	}
 
-    @Override
-    public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
-        return OutputMode.MODIFIED_INPUT;
-    }
+	@Override
+	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
+	}
 
-    @Override
-    protected void process_next(final Tuple<T> object, final int port) {
-        // TODO Integrate over projected attributes
-        final IProbabilistic probabilistic = (IProbabilistic) object.getMetadata();
+	@SuppressWarnings({ "unchecked", "unused", "rawtypes" })
+	@Override
+	protected void process_next(final Tuple<T> object, final int port) {
+		// TODO Integrate over projected attributes
+		final IProbabilistic probabilistic = (IProbabilistic) object
+				.getMetadata();
 
-        // TODO integrate/approximate over projected out attributes to calc TEP
-        final ProbabilisticTuple<T> out = ((ProbabilisticTuple) object).restrict(this.restrictList, false);
+		// TODO integrate/approximate over projected out attributes to calc TEP
+		final ProbabilisticTuple<T> out = ((ProbabilisticTuple) object)
+				.restrict(this.restrictList, false);
 
-        Object[] newAttrs = new Object[this.restrictList.length];
-        List processedContinuousAttributes = new ArrayList(this.continuousAttributes.length);
-        for (int i = 0; i < this.restrictList.length; i++) {
-            int index = Arrays.binarySearch(this.continuousAttributes, this.restrictList[i]);
-            if (index >= 0) {
-                if (!processedContinuousAttributes.contains(this.restrictList[i])) {
-                    ProbabilisticContinuousDouble attribute = (ProbabilisticContinuousDouble) object.getAttributes()[this.restrictList[i]];
-                    NormalDistributionMixture distribution = attribute.getDistribution();
-                    int dimension = distribution.getDimension();
-                    int[] dependingAttributes = distribution.getAttributes();
-                    int newDimension = 0;
-                    for (int j = 0; j < dependingAttributes.length; j++) {
-                        if (Arrays.binarySearch(this.projectedOutContinuousAttributes, dependingAttributes[j]) >= 0) {
+		Object[] newAttrs = new Object[this.restrictList.length];
+		List processedContinuousAttributes = new ArrayList(
+				this.continuousAttributes.length);
+		for (int i = 0; i < this.restrictList.length; i++) {
+			int index = Arrays.binarySearch(this.continuousAttributes,
+					this.restrictList[i]);
+			if (index >= 0) {
+				if (!processedContinuousAttributes
+						.contains(this.restrictList[i])) {
+					ProbabilisticContinuousDouble attribute = (ProbabilisticContinuousDouble) object
+							.getAttributes()[this.restrictList[i]];
+					NormalDistributionMixture distribution = attribute
+							.getDistribution();
+					int dimension = distribution.getDimension();
+					int[] dependingAttributes = distribution.getAttributes();
+					int newDimension = 0;
+					for (int j = 0; j < dependingAttributes.length; j++) {
+						if (Arrays.binarySearch(
+								this.projectedOutContinuousAttributes,
+								dependingAttributes[j]) >= 0) {
 
-                        }
-                        else {
-                            newDimension++;
-                        }
-                        processedContinuousAttributes.add(dependingAttributes[j]);
-                    }
+						} else {
+							newDimension++;
+						}
+						processedContinuousAttributes
+								.add(dependingAttributes[j]);
+					}
 
-                    RealMatrix projectMatrix = MatrixUtils.createRealMatrix(dimension, newDimension);
-                    for (NormalDistribution mixture : distribution.getMixtures().keySet()) {
-                        RealMatrix covarianceMatrix = CovarianceMatrixUtils.toMatrix(mixture.getCovarianceMatrix());
-                        mixture.setCovarianceMatrix(CovarianceMatrixUtils.fromMatrix(projectMatrix.multiply(
-                                covarianceMatrix).multiply(projectMatrix.transpose())));
-                    }
-                }
-            }
-            else {
-                newAttrs[i] = object.getAttributes()[this.restrictList[i]];
-            }
-        }
+					RealMatrix projectMatrix = MatrixUtils.createRealMatrix(
+							dimension, newDimension);
+					for (NormalDistribution mixture : distribution
+							.getMixtures().keySet()) {
+						RealMatrix covarianceMatrix = CovarianceMatrixUtils
+								.toMatrix(mixture.getCovarianceMatrix());
+						mixture.setCovarianceMatrix(CovarianceMatrixUtils
+								.fromMatrix(projectMatrix.multiply(
+										covarianceMatrix).multiply(
+										projectMatrix.transpose())));
+					}
+				}
+			} else {
+				newAttrs[i] = object.getAttributes()[this.restrictList[i]];
+			}
+		}
 
-        // MatrixUtils.createRealMatrix();
+		// MatrixUtils.createRealMatrix();
 
-        for (int index : continuousAttributes) {
-            RealMatrix projectMatrix = projectMatrixes[index];
-            int dimension = ((ProbabilisticContinuousDouble) out.getAttribute(index)).getDistribution().getDimension();
+		for (int index : continuousAttributes) {
+			RealMatrix projectMatrix = projectMatrixes[index];
+			int dimension = ((ProbabilisticContinuousDouble) out
+					.getAttribute(index)).getDistribution().getDimension();
 
-            Map<NormalDistribution, Double> mixtures = ((ProbabilisticContinuousDouble) out.getAttribute(index))
-                    .getDistribution().getMixtures();
+			Map<NormalDistribution, Double> mixtures = ((ProbabilisticContinuousDouble) out
+					.getAttribute(index)).getDistribution().getMixtures();
 
-            for (NormalDistribution distribution : mixtures.keySet()) {
-                RealMatrix covarianceMatrix = CovarianceMatrixUtils.toMatrix(distribution.getCovarianceMatrix());
+			for (NormalDistribution distribution : mixtures.keySet()) {
+				RealMatrix covarianceMatrix = CovarianceMatrixUtils
+						.toMatrix(distribution.getCovarianceMatrix());
 
-                RealMatrix newCovarianceMatrix = projectMatrix.multiply(covarianceMatrix).multiply(
-                        projectMatrix.transpose());
-            }
-        }
+				RealMatrix newCovarianceMatrix = projectMatrix.multiply(
+						covarianceMatrix).multiply(projectMatrix.transpose());
+			}
+		}
 
-        this.transfer(out);
-    }
+		this.transfer(out);
+	}
 
-    private void init() {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void init() {
 
-        List projectedOutContinuousAttributes = new ArrayList();
-        List<Integer> continuousAttributes = new ArrayList<Integer>();
-        List restrictList = Arrays.asList(this.restrictList);
+		List projectedOutContinuousAttributes = new ArrayList();
+		List<Integer> continuousAttributes = new ArrayList<Integer>();
+		List restrictList = Arrays.asList(this.restrictList);
 
-        for (int i = 0; i < this.inputSchema.getAttributes().size(); i++) {
-            SDFAttribute attribute = this.inputSchema.getAttribute(i);
-            SDFDatatype datatype = attribute.getDatatype();
-            if ((SDFProbabilisticDatatype.class.equals(datatype.getClass()))
-                    && (((SDFProbabilisticDatatype) datatype).isContinuous())) {
-                if (!restrictList.contains(i)) {
-                    projectedOutContinuousAttributes.add(i);
-                }
-                else {
-                    continuousAttributes.add((Integer) i);
-                }
-            }
-        }
-        this.continuousAttributes = continuousAttributes.toArray(new Integer[continuousAttributes.size()]);
-        this.projectedOutContinuousAttributes = projectedOutContinuousAttributes
-                .toArray(new Integer[projectedOutContinuousAttributes.size()]);
-        Arrays.sort(this.continuousAttributes);
-    }
+		for (int i = 0; i < this.inputSchema.getAttributes().size(); i++) {
+			SDFAttribute attribute = this.inputSchema.getAttribute(i);
+			SDFDatatype datatype = attribute.getDatatype();
+			if ((SDFProbabilisticDatatype.class.equals(datatype.getClass()))
+					&& (((SDFProbabilisticDatatype) datatype).isContinuous())) {
+				if (!restrictList.contains(i)) {
+					projectedOutContinuousAttributes.add(i);
+				} else {
+					continuousAttributes.add((Integer) i);
+				}
+			}
+		}
+		this.continuousAttributes = continuousAttributes
+				.toArray(new Integer[continuousAttributes.size()]);
+		this.projectedOutContinuousAttributes = projectedOutContinuousAttributes
+				.toArray(new Integer[projectedOutContinuousAttributes.size()]);
+		Arrays.sort(this.continuousAttributes);
+	}
 
-    @Override
-    public ProbabilisticProjectPO<T> clone() {
-        return new ProbabilisticProjectPO<T>(this);
-    }
+	@Override
+	public ProbabilisticProjectPO<T> clone() {
+		return new ProbabilisticProjectPO<T>(this);
+	}
 
 }

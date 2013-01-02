@@ -68,7 +68,8 @@ public class ProbabilisticIntegrate extends AbstractFunction<Double> {
         return accTypes[argPos];
     }
 
-    private double cumulativeProbability(final ProbabilisticContinuousDouble distribution, final RealVector lowerBound,
+    @SuppressWarnings("unused")
+	private double cumulativeProbability(final ProbabilisticContinuousDouble distribution, final RealVector lowerBound,
             final RealVector upperBound) {
 
         double probability = 0.0;
@@ -139,7 +140,8 @@ public class ProbabilisticIntegrate extends AbstractFunction<Double> {
      * 
      * @param args
      */
-    public static void main(String[] args) {
+    @SuppressWarnings("unused")
+	public static void main(String[] args) {
         ProbabilisticIntegrate function = new ProbabilisticIntegrate();
 
         int variate = 4;

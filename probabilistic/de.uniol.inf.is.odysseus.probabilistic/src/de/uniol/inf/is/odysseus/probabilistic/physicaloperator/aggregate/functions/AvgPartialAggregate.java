@@ -418,7 +418,8 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
         return result;
     }
 
-    private boolean checkLemma29(final Polynomial gTilde, final double z0) {
+    @SuppressWarnings("unused")
+	private boolean checkLemma29(final Polynomial gTilde, final double z0) {
         AvgPartialAggregate.LOG.debug("Check Lemma 2.9");
         boolean result = true;
 
@@ -553,7 +554,8 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
      * 
      * @param args
      */
-    public static void main(final String[] args) {
+    @SuppressWarnings("rawtypes")
+	public static void main(final String[] args) {
         final double epsilon = 0.004;
         final double result = 1.45;
         double avg;
