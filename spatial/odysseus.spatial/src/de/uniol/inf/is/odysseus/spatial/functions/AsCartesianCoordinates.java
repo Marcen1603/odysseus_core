@@ -65,13 +65,14 @@ public class AsCartesianCoordinates extends AbstractFunction<Geometry> {
 
 	@Override
 	public Geometry getValue() {
-		PolarCoordinate[] coordinates = (PolarCoordinate[]) this
+		@SuppressWarnings("unchecked")
+		List<PolarCoordinate> coordinates = (List<PolarCoordinate>) this
 				.getInputValue(0);
 
 		final List<Coordinate> points = new ArrayList<Coordinate>();
 		Coordinate lastPoint = null;
-		for (int i = 0; i < coordinates.length; i++) {
-			PolarCoordinate coordinate = coordinates[i];
+		for (int i = 0; i < coordinates.size(); i++) {
+			PolarCoordinate coordinate = coordinates.get(i);
 			final Coordinate point = new Coordinate();
 			point.x = coordinate.r * Math.cos(coordinate.a);
 			point.y = coordinate.r * Math.sin(coordinate.a);

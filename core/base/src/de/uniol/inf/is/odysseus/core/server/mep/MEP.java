@@ -84,6 +84,8 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.RandomFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.RoundFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SHA1Function;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SHA256Function;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.SMaxFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.SMinFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SecondFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SinusFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerEqualsOperator;
@@ -242,6 +244,8 @@ public class MEP implements IExpressionParser {
         
         registerFunction(new UUIDFunction());
 
+        registerFunction(new SMinFunction());
+        registerFunction(new SMaxFunction());
     }
 
     /**
