@@ -14,7 +14,7 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
 	private static final long serialVersionUID = 537104992550497486L;
 	private int distribution;
 
-	public ProbabilisticContinuousDouble(int distribution) {
+	public ProbabilisticContinuousDouble(final int distribution) {
 		this.distribution = distribution;
 	}
 
@@ -31,7 +31,7 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("(");
-		sb.append(distribution);
+		sb.append(this.distribution);
 		sb.append(")");
 		return sb.toString();
 	}
@@ -41,7 +41,7 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
 		return new ProbabilisticContinuousDouble(this);
 	}
 
-	public void setDistribution(int distribution) {
+	public void setDistribution(final int distribution) {
 		this.distribution = distribution;
 	}
 }
