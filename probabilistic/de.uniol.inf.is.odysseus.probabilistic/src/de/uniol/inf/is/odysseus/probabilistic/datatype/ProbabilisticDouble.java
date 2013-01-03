@@ -2,12 +2,13 @@ package de.uniol.inf.is.odysseus.probabilistic.datatype;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticDouble implements Serializable, Cloneable {
+public class ProbabilisticDouble implements Serializable, IClone {
 	/**
 	 * 
 	 */
