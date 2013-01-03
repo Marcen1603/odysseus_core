@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functi
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
@@ -27,64 +27,68 @@ import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticDouble;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticSum extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+public class ProbabilisticSum extends
+		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long                     serialVersionUID = 6272207178324419258L;
-    private static Map<Integer, ProbabilisticSum> instances        = new HashMap<Integer, ProbabilisticSum>();
-    private final int                             pos;
+	private static final long serialVersionUID = 6272207178324419258L;
+	private static Map<Integer, ProbabilisticSum> instances = new HashMap<Integer, ProbabilisticSum>();
+	private final int pos;
 
-    public static ProbabilisticSum getInstance(final int pos) {
-        ProbabilisticSum ret = ProbabilisticSum.instances.get(pos);
-        if (ret == null) {
-            ret = new ProbabilisticSum(pos);
-            ProbabilisticSum.instances.put(pos, ret);
-        }
-        return ret;
-    }
+	public static ProbabilisticSum getInstance(final int pos) {
+		ProbabilisticSum ret = ProbabilisticSum.instances.get(pos);
+		if (ret == null) {
+			ret = new ProbabilisticSum(pos);
+			ProbabilisticSum.instances.put(pos, ret);
+		}
+		return ret;
+	}
 
-    protected ProbabilisticSum(final int pos) {
-        super("SUM");
-        this.pos = pos;
-    }
+	protected ProbabilisticSum(final int pos) {
+		super("SUM");
+		this.pos = pos;
+	}
 
-    @Override
-    public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-        final SumPartialAggregate<Tuple<?>> pa = new SumPartialAggregate<Tuple<?>>();
+	@Override
+	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
+		final SumPartialAggregate<Tuple<?>> pa = new SumPartialAggregate<Tuple<?>>();
 
-        for (final Pair<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues()) {
-            pa.add(value.getE1(), value.getE2());
-        }
-        return pa;
-    }
+		for (final IPair<Double, Double> value : ((ProbabilisticDouble) in
+				.getAttribute(this.pos)).getValues()) {
+			pa.add(value.getE1(), value.getE2());
+		}
+		return pa;
+	}
 
-    @Override
-    public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
-            final boolean createNew) {
-        SumPartialAggregate<Tuple<?>> pa = null;
-        if (createNew) {
-            pa = new SumPartialAggregate<Tuple<?>>(((SumPartialAggregate<Tuple<?>>) p).getSum());
-        }
-        else {
-            pa = (SumPartialAggregate<Tuple<?>>) p;
-        }
+	@Override
+	public IPartialAggregate<Tuple<?>> merge(
+			final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
+			final boolean createNew) {
+		SumPartialAggregate<Tuple<?>> pa = null;
+		if (createNew) {
+			pa = new SumPartialAggregate<Tuple<?>>(
+					((SumPartialAggregate<Tuple<?>>) p).getSum());
+		} else {
+			pa = (SumPartialAggregate<Tuple<?>>) p;
+		}
 
-        for (final Pair<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues()) {
-            pa.add(value.getE1(), value.getE2());
-        }
+		for (final IPair<Double, Double> value : ((ProbabilisticDouble) toMerge
+				.getAttribute(this.pos)).getValues()) {
+			pa.add(value.getE1(), value.getE2());
+		}
 
-        return pa;
-    }
+		return pa;
+	}
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
-        final SumPartialAggregate<Tuple<?>> pa = (SumPartialAggregate<Tuple<?>>) p;
-        final Tuple<?> r = new Tuple(1, false);
-        r.setAttribute(0, new Double(pa.getSum()));
-        return r;
-    }
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
+		final SumPartialAggregate<Tuple<?>> pa = (SumPartialAggregate<Tuple<?>>) p;
+		final Tuple<?> r = new Tuple(1, false);
+		r.setAttribute(0, new Double(pa.getSum()));
+		return r;
+	}
 
 }
