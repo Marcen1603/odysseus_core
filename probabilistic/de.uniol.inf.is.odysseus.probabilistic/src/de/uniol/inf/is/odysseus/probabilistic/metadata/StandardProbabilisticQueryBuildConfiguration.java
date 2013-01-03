@@ -36,7 +36,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  */
 public class StandardProbabilisticQueryBuildConfiguration extends AbstractQueryBuildConfiguration {
 
-    @SuppressWarnings("unchecked")
     public StandardProbabilisticQueryBuildConfiguration() {
         this.settings.add(new ParameterTransformationConfiguration(new TransformationConfiguration("probabilistic",
                 ITimeInterval.class, IProbabilistic.class)));

@@ -24,7 +24,8 @@ public class Evidence<T extends Comparable<T>> implements Serializable, Cloneabl
         this.events.add(event);
     }
 
-    public Evidence(final T... events) {
+    @SuppressWarnings("unchecked")
+	public Evidence(final T... events) {
         for (final T event : events) {
             this.events.add(event);
         }
