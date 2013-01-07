@@ -32,15 +32,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationExcepti
 import de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 
-public abstract class AbstractTransformationRule<T> extends
-		AbstractRule<T, TransformationConfiguration> {
+public abstract class AbstractTransformationRule<T> extends AbstractRule<T, TransformationConfiguration> {
 
-	static Logger logger = LoggerFactory
-			.getLogger(AbstractTransformationRule.class);
+	static Logger logger = LoggerFactory.getLogger(AbstractTransformationRule.class);
 
-	protected void defaultExecute(ILogicalOperator logical,
-			IPhysicalOperator physical, TransformationConfiguration config,
-			boolean retract, boolean insert, boolean ignoreSinkInput) {
+	protected void defaultExecute(ILogicalOperator logical, IPhysicalOperator physical, TransformationConfiguration config, boolean retract, boolean insert, boolean ignoreSinkInput) {
 		// Check if operator has an id and if this id is not already defined
 		// Attention, id can be null
 		handleOperatorID(logical, physical);
@@ -57,8 +53,7 @@ public abstract class AbstractTransformationRule<T> extends
 		}
 	}
 
-	protected void updatePhysicalOperator(ILogicalOperator logical,
-			IPhysicalOperator physical) {
+	protected void updatePhysicalOperator(ILogicalOperator logical, IPhysicalOperator physical) {
 		physical.setOutputSchema(logical.getOutputSchema());
 		if (logical.getOutputSchema() == null) {
 			logger.warn("Operator " + logical + " has not output schema");
@@ -66,16 +61,12 @@ public abstract class AbstractTransformationRule<T> extends
 		physical.setName(logical.getName());
 	}
 
-	protected void handleOperatorID(ILogicalOperator logical,
-			IPhysicalOperator physical) {
-		String id = logical.getUniqueIdentifier() == null ? null
-				: getDataDictionary().createUserUri(
-						logical.getUniqueIdentifier(), getCaller());
+	protected void handleOperatorID(ILogicalOperator logical, IPhysicalOperator physical) {
+		String id = logical.getUniqueIdentifier() == null ? null : getDataDictionary().createUserUri(logical.getUniqueIdentifier(), getCaller());
 
 		if (id != null) {
 			if (getDataDictionary().containsOperator(id)) {
-				throw new TransformationException("Operator with id " + id
-						+ " is already registered.");
+				throw new TransformationException("Operator with id " + id + " is already registered.");
 			} else {
 				getDataDictionary().setOperator(id, physical);
 				for (IOperatorOwner owner : logical.getOwner()) {
@@ -85,40 +76,26 @@ public abstract class AbstractTransformationRule<T> extends
 		}
 	}
 
-	protected void defaultExecute(ILogicalOperator logical,
-			IPhysicalOperator physical, TransformationConfiguration config,
-			boolean retract, boolean insert) {
+	protected void defaultExecute(ILogicalOperator logical, IPhysicalOperator physical, TransformationConfiguration config, boolean retract, boolean insert) {
 		defaultExecute(logical, physical, config, retract, insert, false);
 	}
 
-	protected void replace(ILogicalOperator oldOperator,
-			IPhysicalOperator newOperator,
-			TransformationConfiguration transformationConfig) {
+	protected void replace(ILogicalOperator oldOperator, IPhysicalOperator newOperator, TransformationConfiguration transformationConfig) {
 		replace(oldOperator, newOperator, transformationConfig, false);
 	}
 
-	protected void replace(ILogicalOperator oldOperator,
-			IPhysicalOperator newOperator,
-			TransformationConfiguration transformationConfig,
-			boolean ignoreSinkInput) {
+	protected void replace(ILogicalOperator oldOperator, IPhysicalOperator newOperator, TransformationConfiguration transformationConfig, boolean ignoreSinkInput) {
 
 		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>();
 		if (newOperator.isPipe()) {
-			toUpdate = transformationConfig.getTransformationHelper().replace(
-					oldOperator, (IPipe<?, ?>) newOperator, ignoreSinkInput);
+			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (IPipe<?, ?>) newOperator, ignoreSinkInput);
 		} else if (newOperator.isSource()) {
-			toUpdate = transformationConfig.getTransformationHelper().replace(
-					oldOperator, (ISource<?>) newOperator);
+			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (ISource<?>) newOperator);
 		} else if (newOperator.isSink()) {
-			toUpdate = transformationConfig.getTransformationHelper().replace(
-					oldOperator, (ISink<?>) newOperator, ignoreSinkInput);
+			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (ISink<?>) newOperator, ignoreSinkInput);
 		} else {
 			LoggerSystem.printlog("ERROR");
-			throw new RuntimeException(
-					new TransformationException(
-							"replace in rule \""
-									+ getName()
-									+ "\" failed because the new operator is not an ISink, ISource or IPipe!"));
+			throw new RuntimeException(new TransformationException("replace in rule \"" + getName() + "\" failed because the new operator is not an ISink, ISource or IPipe!"));
 		}
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
