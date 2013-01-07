@@ -27,9 +27,8 @@ public class SDFSpatialDatatype extends SDFDatatype{
 	private static final long serialVersionUID = 6644927317015629981L;
 
 	public SDFSpatialDatatype(String URI) {
-		super(URI);
+		super(URI, true);
 	}
-
 	
 	public SDFSpatialDatatype(SDFDatatype sdfDatatype) {
 		super(sdfDatatype);
@@ -37,11 +36,11 @@ public class SDFSpatialDatatype extends SDFDatatype{
 
 
 	public SDFSpatialDatatype(String datatypeName, KindOfDatatype type, SDFSchema schema) {
-		super(datatypeName, type, schema);
+		super(datatypeName, type, schema, true);
 	}
 
 	public SDFSpatialDatatype(String datatypeName, KindOfDatatype type, SDFDatatype subType) {
-		super(datatypeName, type, subType);
+		super(datatypeName, type, subType, true);
 	}
 
 	public static final SDFDatatype SPATIAL_COORDINATE = new SDFSpatialDatatype("SpatialCoordinate", SDFDatatype.KindOfDatatype.BEAN, 
