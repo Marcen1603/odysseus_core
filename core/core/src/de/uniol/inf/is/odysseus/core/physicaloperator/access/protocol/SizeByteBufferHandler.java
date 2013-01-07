@@ -21,6 +21,9 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
@@ -30,7 +33,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
-
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SizeByteBufferHandler.class);
     private int                  size        = -1;
     private ByteBuffer           sizeBuffer  = ByteBuffer.allocate(4);
     private int                  currentSize = 0;
@@ -76,16 +80,17 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
     }
 
     @Override
-    public void process(ByteBuffer buffer) {
+    public void process(ByteBuffer message) {
+ 	   message.flip();
         try {
-            while (buffer.remaining() > 0) {
+            while (message.remaining() > 0) {
 
                 // size ist dann ungleich -1 wenn die vollst�ndige
                 // Gr��eninformation �bertragen wird
                 // Ansonsten schon mal soweit einlesen
                 if (size == -1) {
-                    while (sizeBuffer.position() < 4 && buffer.remaining() > 0) {
-                        sizeBuffer.put(buffer.get());
+                    while (sizeBuffer.position() < 4 && message.remaining() > 0) {
+                        sizeBuffer.put(message.get());
                     }
                     // Wenn alles �bertragen
                     if (sizeBuffer.position() == 4) {
@@ -98,15 +103,15 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
                 // Und Size kann gesetzt worden sein
                 if (size != -1) {
                     // Ist das was dazukommt kleiner als die finale Gr��e?
-                    if (currentSize + buffer.remaining() < size) {
-                        currentSize = currentSize + buffer.remaining();
-                        objectHandler.put(buffer);
+                    if (currentSize + message.remaining() < size) {
+                        currentSize = currentSize + message.remaining();
+                        objectHandler.put(message);
                     }
                     else {
                         // Splitten (wir sind mitten in einem Objekt
                         // 1. alles bis zur Grenze dem Handler �bergeben
                         // logger.debug(" "+(size-currentSize));
-                        objectHandler.put(buffer, size - currentSize);
+                        objectHandler.put(message, size - currentSize);
                         // 2. das fertige Objekt weiterleiten
                         getTransfer().transfer(objectHandler.create());
                         size = -1;
@@ -118,14 +123,15 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
             }
         }
         catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         catch (BufferUnderflowException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
+        message.clear();
     }
 
     @Override
