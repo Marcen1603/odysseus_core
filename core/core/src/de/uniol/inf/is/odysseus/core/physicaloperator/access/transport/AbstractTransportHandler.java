@@ -49,11 +49,12 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
         this.transportHandlerListener.remove(listener);
     }
 
-    public void fireProcess(ByteBuffer message) {
-        for (ITransportHandlerListener l : transportHandlerListener) {
-            ((ITransportHandlerListener) l).process(message);
-        }
-    }
+	public void fireProcess(ByteBuffer message) {
+		for (ITransportHandlerListener l : transportHandlerListener) {
+			message.flip();
+			((ITransportHandlerListener) l).process(message);
+		}
+	}
 
     public void fireOnConnect() {
         for (ITransportHandlerListener l : transportHandlerListener) {

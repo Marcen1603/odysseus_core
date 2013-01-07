@@ -90,7 +90,6 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
     @Override
     public void process(ByteBuffer message) {
-    	   message.flip();
            int startPosition = 0;
            while (message.remaining() > 0) {
                byte value = message.get();
@@ -139,7 +138,6 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
                    LOG.error(e.getMessage(), e);
                }
            }
-           message.clear();
     }
 
     @Override

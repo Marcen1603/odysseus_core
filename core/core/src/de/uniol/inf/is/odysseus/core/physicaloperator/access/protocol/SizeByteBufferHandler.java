@@ -81,7 +81,6 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
     @Override
     public void process(ByteBuffer message) {
- 	   message.flip();
         try {
             while (message.remaining() > 0) {
 
@@ -131,7 +130,6 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
         catch (ClassNotFoundException e) {
             LOG.error(e.getMessage(), e);
         }
-        message.clear();
     }
 
     @Override
