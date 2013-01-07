@@ -269,7 +269,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	private Tuple<T> restrictCreation(boolean createNew, Object[] newAttrs) {
 		if (createNew) {
-			Tuple<T> newTuple = new Tuple<T>(this, newAttrs, false);
+			Tuple<T> newTuple = new Tuple<T>(this, newAttrs, requiresDeepClone);
 			return newTuple;
 		}
 		this.attributes = newAttrs;
