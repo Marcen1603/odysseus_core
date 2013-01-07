@@ -92,16 +92,22 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		super(copy);
 		this.requiresDeepClone = requiresDeepClone;
 		if (newAttributes != null) {
-			int attributeLength = newAttributes.length;
-			this.attributes = new Object[attributeLength];
-			for (int i = 0; i < attributeLength; i++) {
-				if ((newAttributes[i] == null)
-						|| (!newAttributes[i].getClass().getName()
-								.startsWith("de.uniol.inf.is.odysseus", 0))) {
-					this.attributes[i] = newAttributes[i];
-				} else {
-					this.attributes[i] = ((IClone) newAttributes[i]).clone();
+			if (requiresDeepClone) {
+				int attributeLength = newAttributes.length;
+				this.attributes = new Object[attributeLength];
+
+				for (int i = 0; i < attributeLength; i++) {
+					if ((newAttributes[i] == null)
+							|| (!newAttributes[i].getClass().getName()
+									.startsWith("de.uniol.inf.is.odysseus", 0))) {
+						this.attributes[i] = newAttributes[i];
+					} else {
+						this.attributes[i] = ((IClone) newAttributes[i])
+								.clone();
+					}
 				}
+			} else {
+				this.attributes = newAttributes;
 			}
 		} else {
 			int attributeLength = copy.attributes.length;
