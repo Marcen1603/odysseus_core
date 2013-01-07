@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Cloning
 Bundle-SymbolicName: com.rits.cloning
 Bundle-Version: 1.8.5
+Bundle-ClassPath: cloning-1.8.5.jar
 Export-Package: com.rits.cloning,
  com.rits.perspectives
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

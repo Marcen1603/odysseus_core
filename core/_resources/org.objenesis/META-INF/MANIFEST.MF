@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Objenesis
 Bundle-SymbolicName: org.objenesis
 Bundle-Version: 1.2.0
+Bundle-ClassPath: objenesis-1.2.jar
 Export-Package: org.objenesis,
  org.objenesis.instantiator,
  org.objenesis.instantiator.basic,
