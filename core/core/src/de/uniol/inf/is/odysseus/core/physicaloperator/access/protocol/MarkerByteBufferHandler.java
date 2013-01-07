@@ -90,38 +90,56 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
     @Override
     public void process(ByteBuffer message) {
-        try {
-            int pos = 0;
-            while (message.remaining() > 0) {
-                byte value = message.get();
-                if (value == end) {
-                    int endPosition = message.position() - 1;
-                    message.position(pos);
-                    objectHandler.put(message, endPosition - pos);
-                    message.position(endPosition + 1);
-                    pos = message.position();
-                    getTransfer().transfer(objectHandler.create());
-                }
-                if (value == start) {
-                    objectHandler.clear();
-                    pos = message.position();
-                }
-            }
-            if (pos >= 0) {
-                message.position(pos);
-                objectHandler.put(message);
-            }
-        }
-        catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-        }
-        catch (BufferUnderflowException e) {
-            LOG.error(e.getMessage(), e);
-        }
-        catch (ClassNotFoundException e) {
-            LOG.error(e.getMessage(), e);
-        }
-
+    	   message.flip();
+           int startPosition = 0;
+           while (message.remaining() > 0) {
+               byte value = message.get();
+               if (value == end) {
+                   int endPosition = message.position() - 2;
+                   message.position(startPosition);
+                   try {
+                       objectHandler.put(message, endPosition - message.position() + 1);
+                   }
+                   catch (IOException e) {
+                       LOG.error(e.getMessage(), e);
+                   }
+                   message.position(endPosition + 2);
+                   startPosition = message.position() + 1;
+                   T object = null;
+                   try {
+                       object = objectHandler.create();
+                   }
+                   catch (BufferUnderflowException e) {
+                       LOG.error(e.getMessage(), e);
+                   }
+                   catch (IOException e) {
+                       LOG.error(e.getMessage(), e);
+                   }
+                   catch (ClassNotFoundException e) {
+                       LOG.error(e.getMessage(), e);
+                   }
+                   if (object != null) {
+                       getTransfer().transfer(object);
+                   }
+                   else {
+                       LOG.error("Empty object");
+                   }
+               }
+               if (value == start) {
+                   objectHandler.clear();
+                   startPosition = message.position();
+               }
+           }
+           if (startPosition < message.limit()) {
+               message.position(startPosition);
+               try {
+                   objectHandler.put(message);
+               }
+               catch (IOException e) {
+                   LOG.error(e.getMessage(), e);
+               }
+           }
+           message.clear();
     }
 
     @Override
