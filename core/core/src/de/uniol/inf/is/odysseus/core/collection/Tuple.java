@@ -20,9 +20,9 @@ import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import com.rits.cloning.Cloner;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
-import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
@@ -49,7 +49,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	private boolean valueChanged = true;
 
 	private boolean requiresDeepClone;
-
+	private final Cloner cloner;
 	// -----------------------------------------------------------------
 	// Konstruktoren
 	// -----------------------------------------------------------------
@@ -60,6 +60,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 */
 	protected Tuple() {
 		requiresDeepClone = false;
+		cloner = null;
 	}
 
 	/**
@@ -74,6 +75,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public Tuple(int attributeCount, boolean requiresDeepClone) {
 		this.attributes = new Object[attributeCount];
 		this.requiresDeepClone = requiresDeepClone;
+		if (this.requiresDeepClone) {
+			this.cloner = new Cloner();
+		}else {
+			this.cloner = null;
+		}
 	}
 
 	public Tuple(Tuple<T> copy) {
@@ -91,42 +97,25 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			boolean requiresDeepClone) {
 		super(copy);
 		this.requiresDeepClone = requiresDeepClone;
+		if (this.requiresDeepClone) {
+			this.cloner = new Cloner();
+		} else {
+			this.cloner = null;
+		}
 		if (newAttributes != null) {
-			if (requiresDeepClone) {
-				int attributeLength = newAttributes.length;
-				this.attributes = new Object[attributeLength];
-
-				for (int i = 0; i < attributeLength; i++) {
-					if ((newAttributes[i] == null)
-							|| (!newAttributes[i].getClass().getName()
-									.startsWith("de.uniol.inf.is.odysseus", 0))) {
-						this.attributes[i] = newAttributes[i];
-					} else {
-						this.attributes[i] = ((IClone) newAttributes[i])
-								.clone();
-					}
-				}
-			} else {
+			if (!requiresDeepClone) {
 				this.attributes = newAttributes;
+			} else {
+				this.attributes = cloner.deepClone(copy.attributes);
 			}
 		} else {
-			int attributeLength = copy.attributes.length;
-			this.attributes = new Object[attributeLength];
 			if (!requiresDeepClone) {
+				int attributeLength = copy.attributes.length;
+				this.attributes = new Object[attributeLength];
 				System.arraycopy(copy.attributes, 0, this.attributes, 0,
 						attributeLength);
 			} else {
-				// Perform Deep-Clone if the object is part of Odysseus or null
-				// (CKu)
-				for (int i = 0; i < attributeLength; i++) {
-					if ((copy.attributes[i] == null)
-							|| (!copy.attributes[i].getClass().getName()
-									.startsWith("de.uniol.inf.is.odysseus", 0))) {
-						this.attributes[i] = copy.attributes[i];
-					} else {
-						this.attributes[i] = ((IClone) copy.attributes[i]).clone();
-					}
-				}
+				this.attributes = cloner.deepClone(copy.attributes);
 			}
 		}
 		this.valueChanged = copy.valueChanged;
@@ -146,6 +135,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.attributes = attributes.clone();
 		this.requiresDeepClone = requiresDeepClone;
 		// calcSize();
+		if (this.requiresDeepClone) {
+			this.cloner = new Cloner();
+		}else {
+			this.cloner = null;
+		}
 	}
 
 	// -----------------------------------------------------------------

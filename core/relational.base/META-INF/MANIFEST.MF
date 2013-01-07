@@ -4,7 +4,8 @@ Bundle-Name: Relational Base Plug-in
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.relational.base;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.relational.base.Activator
-Import-Package: de.uniol.inf.is.odysseus.core,
+Import-Package: com.rits.cloning,
+ de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.mep,
  de.uniol.inf.is.odysseus.core.metadata,
