@@ -260,7 +260,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 				this.attributes.length + 1);
 		newAttrs[this.attributes.length] = object;
 		if (createNew) {
-			Tuple<T> newTuple = new Tuple<T>(this, newAttrs, false);
+			Tuple<T> newTuple = new Tuple<T>(this, newAttrs, requiresDeepClone);
 			return newTuple;
 		}
 		this.attributes = newAttrs;
