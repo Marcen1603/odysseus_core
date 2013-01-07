@@ -83,6 +83,7 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.securitypunctuation.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.benchmark.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.ac.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

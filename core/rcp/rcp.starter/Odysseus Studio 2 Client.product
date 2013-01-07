@@ -100,6 +100,7 @@ http://odysseus.informatik.uni-oldenburg.de/
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.product.memorystore.client.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier"/>
    </features>
 
 
