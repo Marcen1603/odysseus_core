@@ -273,6 +273,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
     public boolean isShort() {
         return this.getURI().equals(SHORT.getURI());
     }
+    
+    public boolean isByte() {
+        return this.getURI().equals(BYTE.getURI());
+    }
 	   
 	public boolean isString() {
 		return this.getURI().equals(STRING.getURI());
