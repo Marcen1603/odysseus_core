@@ -33,13 +33,18 @@ package umontreal.iro.lecuyer.util;
  * 
  */
 public class Num {
-   private static final double XBIG = 40.0;
-   private static final double SQPI_2 = 0.88622692545275801; // Sqrt(Pi)/2
-   private static final double RACPI = 1.77245385090551602729; // sqrt(Pi)
-   private static final double LOG_SQPI_2 = -0.1207822376352453; // Ln(Sqrt(Pi)/2)
-   private static final double LOG4 = 1.3862943611198906;   // Ln(4)
-   private static final double LOG_PI = 1.14472988584940017413; // Ln(Pi)
-   private static final double PIsur2 = Math.PI/2.0;
+	private static final double XBIG = 40.0;
+	@SuppressWarnings("unused")
+	private static final double SQPI_2 = 0.88622692545275801; // Sqrt(Pi)/2
+	private static final double RACPI = 1.77245385090551602729; // sqrt(Pi)
+	@SuppressWarnings("unused")
+	private static final double LOG_SQPI_2 = -0.1207822376352453; // Ln(Sqrt(Pi)/2)
+	@SuppressWarnings("unused")
+	private static final double LOG4 = 1.3862943611198906; // Ln(4)
+	@SuppressWarnings("unused")
+	private static final double LOG_PI = 1.14472988584940017413; // Ln(Pi)
+	@SuppressWarnings("unused")
+	private static final double PIsur2 = Math.PI / 2.0;
 
    private static final double UNSIX = 1.0/6.0;
    private static final double QUARAN = 1.0/42.0;

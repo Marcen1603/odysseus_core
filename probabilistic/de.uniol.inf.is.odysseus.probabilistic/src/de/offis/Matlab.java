@@ -40,7 +40,7 @@ public class Matlab {
 		int n = r.getRowDimension();
 		
 		//[ ch as bs ] = chlrdr( r, a, b );
-		chlrdrReturn r2 = chlrdr( r, a, b );
+		ChlrdrReturn r2 = chlrdr( r, a, b );
 		double ct = r2.ch.get(1, 1); 
 		double ai = r2.as.get(1); 
 		double bi = r2.bs.get(1); 
@@ -115,7 +115,7 @@ public class Matlab {
 //				returns an m-by-n-by-p-by-... array. r = rand returns a scalar. r = rand(size(A)) 
 //				returns an array the same size as A.
 		
-		// TODO schauen ob diese methode äquivalent zu mathlabs rand(n) ist.
+		// TODO schauen ob diese methode ï¿½quivalent zu mathlabs rand(n) ist.
 		double[] temp = new double[n];
 		Random r = new Random();
 		for(int i = 0 ; i < n ; i++){
@@ -269,7 +269,7 @@ public class Matlab {
 		return -sqrt(2)*Num.erfcInv(2*p);
 	}
 	
-	public static chlrdrReturn chlrdr(Matrix r, Matrix a, Matrix b){
+	public static ChlrdrReturn chlrdr(Matrix r, Matrix a, Matrix b){
 		//function [ c, ap, bp ] = chlrdr( R, a, b )
 				//%
 				//%  Computes permuted lower Cholesky factor c for R which may be singular, 
@@ -386,13 +386,14 @@ public class Matlab {
 				      y.set(k, 0);
 				   }
 				}
-		return new chlrdrReturn(c, ap, bp);
+		return new ChlrdrReturn(c, ap, bp);
 	}
 	
 
 	
 
 
+	@SuppressWarnings("unused")
 	private static double eps(int i) {
 		// TODO Auto-generated method stub
 		return 0;
