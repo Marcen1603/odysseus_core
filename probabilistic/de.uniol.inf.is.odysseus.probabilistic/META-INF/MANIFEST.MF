@@ -7,13 +7,15 @@ Bundle-Activator: de.uniol.inf.is.odysseus.probabilistic.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core
+ de.uniol.inf.is.odysseus.core,
+ com.google.guava;bundle-version="12.0.0"
 Import-Package: com.rits.cloning,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  org.apache.commons.math3.distribution,
  org.apache.commons.math3.linear,
+ org.apache.commons.math3.special,
  org.osgi.framework,
  org.slf4j
 Service-Component: OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml,OSGI-INF/DatatypeProvider.xml,OSGI-INF/ProbabilisticDoubleDataHandler.xml,OSGI-INF/ProbabilisticContinuousDoubleDataHandler.xml,OSGI-INF/CovarianceMatrixDataHandler.xml,OSGI-INF/MultivariateCovarianceMatrixDataHandler.xml,OSGI-INF/ProbabilisticMultivariateContinuousDoubleDataHandler.xml,

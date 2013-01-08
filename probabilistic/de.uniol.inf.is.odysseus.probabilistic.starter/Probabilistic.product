@@ -73,6 +73,7 @@ limitations under the License.
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.core.feature"/>
+      <feature id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.relational.feature"/>
       <feature id="de.uniol.inf.is.odysseus.studio.feature"/>
       <feature id="de.uniol.inf.is.odysseus.scheduling.feature"/>

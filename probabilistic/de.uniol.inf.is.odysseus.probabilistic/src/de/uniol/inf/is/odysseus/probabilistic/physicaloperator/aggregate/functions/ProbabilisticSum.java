@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functi
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
@@ -55,9 +55,9 @@ public class ProbabilisticSum extends
 	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
 		final SumPartialAggregate<Tuple<?>> pa = new SumPartialAggregate<Tuple<?>>();
 
-		for (final IPair<Double, Double> value : ((ProbabilisticDouble) in
-				.getAttribute(this.pos)).getValues()) {
-			pa.add(value.getE1(), value.getE2());
+		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in
+				.getAttribute(this.pos)).getValues().entrySet()) {
+			pa.add(value.getKey(), value.getValue());
 		}
 		return pa;
 	}
@@ -74,9 +74,9 @@ public class ProbabilisticSum extends
 			pa = (SumPartialAggregate<Tuple<?>>) p;
 		}
 
-		for (final IPair<Double, Double> value : ((ProbabilisticDouble) toMerge
-				.getAttribute(this.pos)).getValues()) {
-			pa.add(value.getE1(), value.getE2());
+		for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge
+				.getAttribute(this.pos)).getValues().entrySet()) {
+			pa.add(value.getKey(), value.getValue());
 		}
 
 		return pa;
