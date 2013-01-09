@@ -174,6 +174,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			dd.addDatatype(SDFDatatype.START_TIMESTAMP.getURI(), SDFDatatype.START_TIMESTAMP);
 			dd.addDatatype(SDFDatatype.START_TIMESTAMP_STRING.getURI(), SDFDatatype.START_TIMESTAMP_STRING);
 			dd.addDatatype(SDFDatatype.SHORT.getURI(), SDFDatatype.SHORT);
+			dd.addDatatype(SDFDatatype.BYTE.getURI(), SDFDatatype.BYTE);
 
 			dd.addDatatype(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
 			dd.addDatatype(SDFDatatype.MV.getURI(), SDFDatatype.MV);
