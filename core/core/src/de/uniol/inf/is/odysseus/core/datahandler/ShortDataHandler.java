@@ -24,43 +24,42 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
-public class IntegerHandler extends AbstractDataHandler<Integer> {
+public class ShortDataHandler extends AbstractDataHandler<Short> {
 	static protected List<String> types = new ArrayList<String>();
-	static {
-		types.add("Integer");		
+	static {		
+		types.add("Short");		
 	}
 
 	@Override
-	public IDataHandler<Integer> getInstance(SDFSchema schema) {
-		return new IntegerHandler();
+	public IDataHandler<Short> getInstance(SDFSchema schema) {
+		return new ShortDataHandler();
 	}
 	
 	@Override
-	public Integer readData(ObjectInputStream inputStream) throws IOException {
-		return inputStream.readInt();
+	public Short readData(ObjectInputStream inputStream) throws IOException {
+		return inputStream.readShort();
 	}
 	
 	@Override
-	public Integer readData(ByteBuffer buffer) {
-		int i = buffer.getInt();
-		// System.out.println("read Int Data: "+i);
+	public Short readData(ByteBuffer buffer) {
+		short i = buffer.getShort();
 		return i;
 	}
 
 	@Override
-	public Integer readData(String string) {
-		return Integer.parseInt(string);
+	public Short readData(String string) {
+		return Short.parseShort(string);
 	}
 
     @Override
     public void writeData(List<String> output, Object data) {
-        output.add(((Number) data).toString());
+        output.add(((Short) data).toString());
     }
     
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		// System.out.println("write Integer Data "+(Integer)data);
-		buffer.putInt(((Number) data).intValue());
+		buffer.putShort(((Number) data).shortValue());
 	}
 
 	@Override
@@ -70,7 +69,7 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 
 	@Override
 	public int memSize(Object attribute) {
-		return Integer.SIZE / 8;
+		return Short.SIZE / 8;
 	}
 
 }

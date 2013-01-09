@@ -99,6 +99,8 @@ public class DataHandlerRegistry {
 	 */
 	public static void initDefaultHandler(){
 		registerDataHandler(new BooleanHandler());
+		registerDataHandler(new ByteDataHandler());
+		registerDataHandler(new ShortDataHandler());
 		registerDataHandler(new DateHandler());
 		registerDataHandler(new DoubleHandler());
 		registerDataHandler(new IntegerHandler());
