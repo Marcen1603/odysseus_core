@@ -1401,7 +1401,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTSpecificSink node, Object data) throws QueryParseException {
-		return node.jjtAccept(this, data);
+		return node.jjtGetChild(0).jjtAccept(this, data);		
 	}
 
 	@Override

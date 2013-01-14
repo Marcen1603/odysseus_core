@@ -108,6 +108,7 @@ public class DatabaseVisitor extends CQLParser {
 				throw new QueryParseException("Source not correctly set. Check connection and parameters!");
 			}
 		}
+		source.initialize();
 		try {
 			getDataDictionary().setStream(name, source, getCaller());
 		} catch (DataDictionaryException e) {
@@ -143,7 +144,15 @@ public class DatabaseVisitor extends CQLParser {
 		sinkAO.setConnectionName(connectionName);
 		sinkAO.setTablename(tableName);
 		sinkAO.setDrop(drop);
-		sinkAO.setTruncate(truncate);		
+		sinkAO.setTruncate(truncate);	
+		if(!sinkAO.isValid()){			
+			if(sinkAO.getErrors().size()>0){
+				throw new QueryParseException("Source not correctly set", sinkAO.getErrors().get(0));
+			}else{
+				throw new QueryParseException("Source not correctly set. Check connection and parameters!");
+			}
+		}
+		sinkAO.initialize();
 		getDataDictionary().addSink(name, sinkAO, getCaller());
 		return sinkAO;
 	}

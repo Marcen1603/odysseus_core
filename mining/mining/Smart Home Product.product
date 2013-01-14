@@ -106,6 +106,7 @@ http://odysseus.informatik.uni-oldenburg.de/
    </plugins>
 
    <features>
+      <feature id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.datadictionary.mem.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.usermanagement.mem.feature" version="1.0.0.qualifier"/>
@@ -123,7 +124,6 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.wrapper.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.benchmark.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier"/>
    </features>
 
 

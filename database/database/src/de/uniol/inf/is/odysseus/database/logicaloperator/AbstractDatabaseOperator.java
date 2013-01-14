@@ -41,7 +41,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	private static Logger logger = LoggerFactory.getLogger(DatabaseSourceAO.class);
 
 	private static final long serialVersionUID = -7206781357206560261L;
-	private IDatabaseConnection dabasaeconnection;
+	private IDatabaseConnection databaseconnection;
 	
 	private String jdbc = "";
 	private String password = "";
@@ -69,6 +69,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 		this.host = ds.host;
 		this.connectionName = ds.connectionName;
 		this.lazyConnectionCheck = ds.lazyConnectionCheck;
+		this.databaseconnection = ds.databaseconnection;
 	}
 
 	@Parameter(type = StringParameter.class, name = "jdbc", optional = true)
@@ -118,7 +119,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	
 	
 	public IDatabaseConnection getConnection(){
-		return this.dabasaeconnection;
+		return this.databaseconnection;
 	}
 	
 	
@@ -153,11 +154,11 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 		if (!this.user.isEmpty()) {
 			connectionProps.put("password", password);
 		}
-		this.dabasaeconnection = new DatabaseConnection(this.jdbc, connectionProps);
+		this.databaseconnection = new DatabaseConnection(this.jdbc, connectionProps);
 	}
 
 	private void createWithReusingConnection() {
-		this.dabasaeconnection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(connectionName);
+		this.databaseconnection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(connectionName);
 	}
 
 	@Override
