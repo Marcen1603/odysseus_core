@@ -36,7 +36,7 @@ public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 
 	@Override
 	public String getSymbol() {
-		return "==";
+		return "=";
 	}
 
 	@Override
