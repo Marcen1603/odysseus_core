@@ -19,7 +19,7 @@ public class PQLOperatorView extends ViewPart {
 
 	private TreeViewer treeViewer;
 	private boolean showOptionalParameters = true;
-	private boolean alphaSort = false;
+	private boolean alphaSort = true;
 
 	private PQLOperatorsContentProvider contentProvider;
 
@@ -32,7 +32,7 @@ public class PQLOperatorView extends ViewPart {
 		ColumnViewerToolTipSupport.enableFor(treeViewer);
 		treeViewer.setLabelProvider(new PQLOperatorsLabelProvider());
 
-		treeViewer.setInput(determineInput());
+		treeViewer.setInput(sortInput(determineInput()));
 	}
 
 	@Override

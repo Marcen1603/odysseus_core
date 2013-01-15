@@ -104,6 +104,10 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.pql.commands.ToggleSortPQLOperatorsCommand"
             id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.ToggleSortPQLOperators"
             name="Sort PQL Operators">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:true"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
       </command>
       <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.pql.commands.ShowPQLAccessStatementWindowHandler"
