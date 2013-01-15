@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project default="feature_export" name="build">
-	<target name="feature_export">
-		<pde.exportFeatures destination="F:\Deploy\repository" exportSource="false" exportType="directory" features="de.offis.salsa.feature,de.uniol.inf.is.odysseus.action.feature,de.uniol.inf.is.odysseus.admissioncontrol.feature,de.uniol.inf.is.odysseus.benchmark.feature,de.uniol.inf.is.odysseus.cep.feature,de.uniol.inf.is.odysseus.core.feature,de.uniol.inf.is.odysseus.database.feature,de.uniol.inf.is.odysseus.latency.feature,de.uniol.inf.is.odysseus.mining.feature,de.uniol.inf.is.odysseus.nexmark.feature,de.uniol.inf.is.odysseus.p2p.ap.feature,de.uniol.inf.is.odysseus.p2p.op.feature,de.uniol.inf.is.odysseus.p2p.tp.feature,de.uniol.inf.is.odysseus.planmgmt.standard.feature,de.uniol.inf.is.odysseus.priority.feature,de.uniol.inf.is.odysseus.relational,de.uniol.inf.is.odysseus.scheduling.feature,de.uniol.inf.is.odysseus.sensorregistry.feature,de.uniol.inf.is.odysseus.sparql.feature,de.uniol.inf.is.odysseus.storing.feature,de.uniol.inf.is.odysseus.studio.feature,de.uniol.inf.is.odysseus.webservice.client.feature,de.uniol.inf.is.odysseus.webservice.feature,de.uniol.inf.is.odysseus.wrapper.feature" qualifier="201112091455" useJARFormat="true"/>
-	</target>
-</project>
