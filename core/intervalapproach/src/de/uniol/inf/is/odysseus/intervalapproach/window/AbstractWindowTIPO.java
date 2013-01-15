@@ -32,7 +32,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	protected final WindowType windowType;
 	protected final boolean partitioned;
 
-	public AbstractWindowTIPO(WindowAO ao) {
+	public AbstractWindowTIPO(WindowAO ao) {				
 		this.windowSize = TimeUnit.MILLISECONDS.convert(ao.getWindowSize(), ao.getTimeUnit());
 		this.windowAdvance = TimeUnit.MILLISECONDS.convert(ao.getWindowAdvance(), ao.getTimeUnit());
 		// this.windowAO = ao;
@@ -42,6 +42,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	}
 
 	public AbstractWindowTIPO(AbstractWindowTIPO<T> window) {
+		super(window);
 		this.windowSize = window.windowSize;
 		this.windowAdvance = window.windowAdvance;
 		// this.windowAO = window.windowAO.clone();

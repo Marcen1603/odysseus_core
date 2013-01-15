@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "WINDOW")
 public class WindowAO extends UnaryLogicalOp {
@@ -70,6 +71,7 @@ public class WindowAO extends UnaryLogicalOp {
 		this.startCondition = windowPO.startCondition;
 		this.endCondition = windowPO.endCondition;
 		this.sameStarttime = windowPO.sameStarttime;
+		this.timeUnit = windowPO.timeUnit;
 	}
 
 	public WindowAO() {
@@ -156,7 +158,7 @@ public class WindowAO extends UnaryLogicalOp {
 		this.endCondition = endCondition;
 	}
 	
-	@Parameter(type = PredicateParameter.class, name = "Unit", optional = true)
+	@Parameter(type = StringParameter.class, name = "Unit", optional = true)
 	public void setUnit(String unit){
 		this.timeUnit = TimeUnit.valueOf(unit);
 	}
