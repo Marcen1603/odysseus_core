@@ -45,6 +45,25 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	public void setName(String name);
 	
 	/**
+	 * gets a Map of simple information that may used by the GUI
+	 * @return a map of key-value pairs
+	 */
+	public Map<String, String> getInfos();
+	/**
+	 * sets a map of key-value pairs for additional information
+	 * @param infos a map with key-value pairs
+	 */
+	public void setInfos(Map<String, String> infos);
+	
+	/**
+	 * adds a key value pair to the information map
+	 * @param key the name of the information
+	 * @param value the value of the information
+	 */
+	public void addInfo(String key, Object value);
+	
+	
+	/**
 	 * Schemarelated methods
 	 * @return
 	 */

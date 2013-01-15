@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.editors.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -37,8 +38,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public class GraphOutlineContentProvider implements ITreeContentProvider {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(GraphOutlineContentProvider.class);
+	private static final Logger LOG = LoggerFactory.getLogger(GraphOutlineContentProvider.class);
 	private IOdysseusGraphView activeGraph;
 
 	@Override
@@ -62,18 +62,14 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			Collection<Object> children = new ArrayList<Object>();
 
 			// Add Schemainformation
-			if (node.getModelNode().getContent().getOutputSchemas() != null
-					&& node.getModelNode().getContent().getOutputSchemas()
-							.size() > 0) {
-				for (Entry<Integer, SDFSchema> e : node.getModelNode()
-						.getContent().getOutputSchemas().entrySet()) {
+			if (node.getModelNode().getContent().getOutputSchemas() != null && node.getModelNode().getContent().getOutputSchemas().size() > 0) {
+				for (Entry<Integer, SDFSchema> e : node.getModelNode().getContent().getOutputSchemas().entrySet()) {
 					if (e.getValue() != null) {
 						children.add(e.getValue());
 					}
 				}
 			} else {
-				LOG.error("No output Schema for {}!", node.getModelNode()
-						.getContent());
+				LOG.error("No output Schema for {}!", node.getModelNode().getContent());
 			}
 
 			StringBuffer owner = new StringBuffer("Part of Query: ");
@@ -83,34 +79,38 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			children.add(new StringWrapper(owner.toString()));
 			if (node.getModelNode().getContent().getUniqueIds().size() > 0) {
 				StringBuffer ids = new StringBuffer("UIDs: ");
-				for (Entry<IOperatorOwner, String> id : node.getModelNode().getContent()
-						.getUniqueIds().entrySet()) {
-					ids.append(id.getKey()+"-->"+id.getValue()).append(" ");
+				for (Entry<IOperatorOwner, String> id : node.getModelNode().getContent().getUniqueIds().entrySet()) {
+					ids.append(id.getKey() + "-->" + id.getValue()).append(" ");
 				}
 				children.add(new StringWrapper(ids.toString()));
 			}
 
 			// Add Metadatainformation
-			for (String type : node.getModelNode().getContent()
-					.getProvidedMonitoringData()) {
-				children.add(node.getModelNode().getContent()
-						.getMonitoringData(type));
+			for (String type : node.getModelNode().getContent().getProvidedMonitoringData()) {
+				children.add(node.getModelNode().getContent().getMonitoringData(type));
 			}
 			// Add Subscriptions to sources
 			if (node.getModelNode().getContent().isSink()) {
 				ISink<?> sink = (ISink<?>) node.getModelNode().getContent();
-				Collection<? extends ISubscription<?>> subs = sink
-						.getSubscribedToSource();
+				Collection<? extends ISubscription<?>> subs = sink.getSubscribedToSource();
 				children.addAll(subs);
 			}
 
 			// toString-Representation
-			children.add(new StringNode(node.getModelNode().getContent()
-					.toString()));
+			children.add(new StringNode(node.getModelNode().getContent().toString()));
+
+			// additional information
+			if (!node.getModelNode().getContent().getInfos().isEmpty()) {
+				children.add(node.getModelNode().getContent().getInfos());
+			}
 
 			return children.toArray();
 		}
 
+		if (parentElement instanceof Map) {
+			return ((Map<?, ?>) parentElement).entrySet().toArray();
+		}
+		
 		if (parentElement instanceof StringNode) {
 			return new Object[] { ((StringNode) parentElement).getContent() };
 		}
@@ -126,8 +126,7 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 
 		if (parentElement instanceof SDFAttribute) {
 			if (((SDFAttribute) parentElement).getDatatype().hasSchema()) {
-				return ((SDFAttribute) parentElement).getDatatype().getSchema()
-						.toArray();
+				return ((SDFAttribute) parentElement).getDatatype().getSchema().toArray();
 			}
 		}
 
@@ -167,11 +166,12 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 		}
 		if (element instanceof Collection<?>)
 			return true;
+		if (element instanceof Map)
+			return true;
 		if (element instanceof SDFSchema)
 			return true;
 		if (element instanceof SDFAttribute) {
-			return ((SDFAttribute) element).getDatatype()
-					.getSubattributeCount() > 0;
+			return ((SDFAttribute) element).getDatatype().getSubattributeCount() > 0;
 		}
 		if (element instanceof StringNode) {
 			return true;

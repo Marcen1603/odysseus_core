@@ -59,6 +59,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	protected int noInputPorts = -1;
 
 	private String name;
+	private Map<String, String> infos = new TreeMap<>();
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 
 	private Map<IOperatorOwner,String> uniqueIds = new TreeMap<>();
@@ -146,6 +147,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	protected void init(AbstractSink<R> other) {
 		noInputPorts = other.noInputPorts;
 		name = other.name;
+		this.infos = new TreeMap<>(other.infos);
 		this.outputSchema = createCleanClone(other.outputSchema);
 		allInputsDone = false;
 	}
@@ -390,6 +392,20 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	@Override
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	@Override
+	public Map<String, String> getInfos() {		
+		return infos;	
+	}
+	
+	@Override
+	public void addInfo(String key, Object value) {
+		this.infos.put(key, value.toString());		
+	}
+		
+	public void setInfos(Map<String, String> infos) {
+		this.infos = infos;
 	}
 
 	@Override

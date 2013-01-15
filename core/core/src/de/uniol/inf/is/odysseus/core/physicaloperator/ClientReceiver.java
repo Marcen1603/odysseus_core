@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -84,6 +85,8 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	final private List<PhysicalSubscription<ISink<? super W>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super W>>>();
 	// Only active subscription are served on transfer
 	final private List<PhysicalSubscription<ISink<? super W>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super W>>>();
+
+	private Map<String, String> infos = new TreeMap<String, String>();
 	
 	// --------------------------------------------------------------------
 	// Logging
@@ -696,5 +699,20 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public Map<IOperatorOwner,String> getUniqueIds() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Map<String, String> getInfos() {
+		return infos;
+	}
+	
+	@Override
+	public void addInfo(String key, Object value) {
+		this.infos.put(key, value.toString());
+	}
+
+	@Override
+	public void setInfos(Map<String, String> infos) {
+		this.infos = infos;		
 	}
 }

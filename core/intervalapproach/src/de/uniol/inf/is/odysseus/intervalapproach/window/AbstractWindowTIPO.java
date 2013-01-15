@@ -39,6 +39,11 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 		this.windowType = ao.getWindowType();
 		this.partitioned = ao.isPartitioned();
 		setName(getName() + " s=" + windowSize + " a=" + windowAdvance);
+		addInfo("size", windowSize);
+		addInfo("advance", windowAdvance);
+		addInfo("type", windowType);
+		addInfo("partitioned", partitioned);
+		addInfo("used unit", ao.getTimeUnit());
 	}
 
 	public AbstractWindowTIPO(AbstractWindowTIPO<T> window) {

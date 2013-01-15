@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	private final Collection<IStreamElementListener<In>> listeners = new ArrayList<IStreamElementListener<In>>();
 	private boolean isOpen = true;
+
+	private Map<String, String> infos;
 
 	public DefaultStreamConnection(IPhysicalOperator operator) {
 		this(Lists.newArrayList(operator));
@@ -307,6 +310,21 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		}
 
 		return subs;
+	}
+	
+	@Override
+	public Map<String, String> getInfos() {
+		return infos;
+	}
+	
+	@Override
+	public void addInfo(String key, Object value) {
+		this.infos.put(key, value.toString());
+	}
+
+	@Override
+	public void setInfos(Map<String, String> infos) {		
+		this.infos = infos;		
 	}
 
 	@Override
