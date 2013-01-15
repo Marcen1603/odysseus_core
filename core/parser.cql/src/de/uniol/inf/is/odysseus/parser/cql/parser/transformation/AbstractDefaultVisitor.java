@@ -29,14 +29,14 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 			return "!=";
 		}
 		if (string.equals("=")) {
-			return "==";
+			return "=";
 		}
 		return string;
 	}
 
 	public static String toInverseCompareOperator(String string) {
 		if (string.equals("<>")) {
-			return "==";
+			return "=";
 		}
 		if (string.equals("=")) {
 			return "!=";

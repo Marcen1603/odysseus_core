@@ -28,7 +28,7 @@ public class ASTCompareOperator extends SimpleNode {
 
 	public void setOperator(String operator) {
 		if (operator.equals("=")) {
-			this.operator = "==";
+			this.operator = "=";
 			return;
 		}
 		if (operator.equals("<>")) {
