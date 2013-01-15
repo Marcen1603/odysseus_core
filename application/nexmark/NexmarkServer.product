@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Nexmark Server" uid="Nexmark Server" id="de.uniol.inf.is.odysseus.nexmark.product" application="de.uniol.inf.is.odysseus.nexmark.application" useFeatures="false" includeLaunchers="true">
+<product name="Nexmark Server" uid="Nexmark Server" id="de.uniol.inf.is.odysseus.nexmark.product" application="de.uniol.inf.is.odysseus.nexmark.application" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog -gcf /config/NEXMarkGeneratorConfiguration_SLOW.properties -pr 65440 -useNIO</programArgs>
+      <programArgs>-console -debug -nl ${target.nl} -data @noDefault -noExit</programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx512m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
+
 
    <launcher name="nexmark">
       <solaris/>
@@ -81,34 +82,16 @@ This Software contains parts of the nexmark generator
    </license>
 
    <plugins>
-      <plugin id="com.google.guava"/>
-      <plugin id="de.uniol.inf.is.odysseus.core"/>
-      <plugin id="de.uniol.inf.is.odysseus.core.server"/>
-      <plugin id="de.uniol.inf.is.odysseus.nexmark"/>
-      <plugin id="de.uniol.inf.is.odysseus.slf4j"/>
-      <plugin id="javax.activation"/>
-      <plugin id="javax.mail"/>
-      <plugin id="javax.servlet"/>
-      <plugin id="org.eclipse.core.contenttype"/>
-      <plugin id="org.eclipse.core.jobs"/>
-      <plugin id="org.eclipse.core.runtime"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
-      <plugin id="org.eclipse.equinox.app"/>
-      <plugin id="org.eclipse.equinox.common"/>
-      <plugin id="org.eclipse.equinox.ds"/>
-      <plugin id="org.eclipse.equinox.preferences"/>
-      <plugin id="org.eclipse.equinox.registry"/>
-      <plugin id="org.eclipse.equinox.util"/>
-      <plugin id="org.eclipse.osgi"/>
-      <plugin id="org.eclipse.osgi.services"/>
    </plugins>
 
+   <features>
+      <feature id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.nexmark.feature" version="1.0.0.qualifier"/>
+   </features>
+
    <configurations>
-      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
-      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="1" />
-      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
+      <plugin id="de.uniol.inf.is.odysseus.core" autoStart="true" startLevel="0" />
    </configurations>
 
 </product>
