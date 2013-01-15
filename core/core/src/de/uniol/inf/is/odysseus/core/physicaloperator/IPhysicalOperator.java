@@ -45,7 +45,7 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	public void setName(String name);
 	
 	/**
-	 * gets a Map of simple information that may used by the GUI
+	 * gets a Map of simple information that may be used by the GUI
 	 * @return a map of key-value pairs
 	 */
 	public Map<String, String> getInfos();

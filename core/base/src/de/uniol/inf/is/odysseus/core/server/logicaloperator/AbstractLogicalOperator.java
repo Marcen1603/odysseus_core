@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.Vector;
 
@@ -69,6 +70,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public Map<Integer, IPhysicalOperator> getPhysInputOperators() {
 		return physInputOperators;
 	}
+	
+	private Map<String, String> infos = new TreeMap<String, String>();
 
 	private String name = null;
 	private String uniqueIdentifier = null;
@@ -85,6 +88,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.ownerHandler = new OwnerHandler(op.ownerHandler);
 		this.outputSchema = op.outputSchema;
 		this.uniqueIdentifier = op.uniqueIdentifier;
+		this.infos = new TreeMap<String, String>(op.infos);
 	}
 
 	public AbstractLogicalOperator() {
@@ -715,4 +719,20 @@ public abstract class AbstractLogicalOperator implements Serializable,
 				"No documentation available for the logical operator %s",
 				getClass().getCanonicalName());
 	}
+	
+	@Override
+	public Map<String, String> getInfos() {	
+		return infos;
+	}
+	
+	@Override
+	public void addInfo(String key, Object value) {
+		this.infos.put(key, value.toString());
+	}
+	
+	@Override
+	public void setInfos(Map<String, String> infos) {
+		this.infos = infos;
+	}
+	
 }

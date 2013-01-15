@@ -226,7 +226,12 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 					curInputOperatorItem.outputPort,
 					curInputOperator.getOutputSchema(curInputOperatorItem.outputPort));
 		}
-
+		// set all parameters as infos
+		for(IParameter<?> p : this.parameters){
+			if(p.hasValue()){
+				op.addInfo(p.getName(), p.getValue());
+			}
+		}
 		return op;
 	}
 

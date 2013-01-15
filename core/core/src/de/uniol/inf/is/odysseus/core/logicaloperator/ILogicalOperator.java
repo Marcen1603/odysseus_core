@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.logicaloperator;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
@@ -53,6 +54,24 @@ public interface ILogicalOperator extends IOwnedOperator,
 	 * @param name The name of the operator to set
 	 */
 	public void setName(String name);
+	
+	/**
+	 * Gets a Map of simple information that may be used by the GUI
+	 * @return a map of key-value pairs
+	 */
+	public Map<String, String> getInfos();
+	/**
+	 * sets a map of key-value pairs for additional information
+	 * @param infos a map with key-value pairs
+	 */
+	public void setInfos(Map<String, String> infos);
+	
+	/**
+	 * adds a key value pair to the information map
+	 * @param key the name of the information
+	 * @param value the value of the information
+	 */
+	public void addInfo(String key, Object value);
 
 	/**
 	 * How many inputs has this logical operator at call time 

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.transform.rule;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,7 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 			logger.warn("Operator " + logical + " has not output schema");
 		}
 		physical.setName(logical.getName());
+		physical.getInfos().putAll(logical.getInfos());
 	}
 
 	protected void handleOperatorID(ILogicalOperator logical, IPhysicalOperator physical) {
