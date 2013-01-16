@@ -66,14 +66,6 @@ public class ChooseOperatorWindow {
 				}
 			}
 
-			private IPhysicalOperator determineSelection(List<RadioButtonOperatorPair> checkBoxes) {
-				for( RadioButtonOperatorPair pair : checkBoxes ) {
-					if( pair.radioButton.getSelection()) {
-						return pair.operator;
-					}
-				}
-				throw new IllegalStateException("No physical operator chosen!");
-			}
 		});
 		
 		processWindow();
@@ -163,6 +155,16 @@ public class ChooseOperatorWindow {
 		button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		return button;
 	}
+	
+	private static IPhysicalOperator determineSelection(List<RadioButtonOperatorPair> checkBoxes) {
+		for( RadioButtonOperatorPair pair : checkBoxes ) {
+			if( pair.radioButton.getSelection()) {
+				return pair.operator;
+			}
+		}
+		throw new IllegalStateException("No physical operator chosen!");
+	}
+
 }
 
 class RadioButtonOperatorPair {
