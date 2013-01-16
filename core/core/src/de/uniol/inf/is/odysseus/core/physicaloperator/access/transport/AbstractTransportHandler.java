@@ -51,6 +51,7 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 
 	public void fireProcess(ByteBuffer message) {
 		for (ITransportHandlerListener l : transportHandlerListener) {
+			message.flip();
 			((ITransportHandlerListener) l).process(message);
 		}
 	}

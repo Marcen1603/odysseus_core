@@ -249,7 +249,8 @@ public class NioConnection extends Thread implements IConnection {
 			synchronized (buffer) {
 				buffer.clear();
 				while (socketChannel.isConnected() && (count = socketChannel.read(buffer)) > 0) {
-					buffer.flip();
+					// this first flip is done by the handler (AbstractTransportHandler)
+					//buffer.flip();
 					os.process(buffer);
 					buffer.clear();
 				}
