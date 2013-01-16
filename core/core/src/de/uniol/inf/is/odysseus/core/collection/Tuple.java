@@ -415,6 +415,18 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		}
 		return true;
 	}
+	
+	static public boolean equalsAt(Tuple<?> left, Tuple<?> right, int[] comparePositions) {
+		for (int i:comparePositions){
+			Object a = left.getAttribute(i);
+			Object b = right.getAttribute(i);
+			if (!a.equals(b)){
+				return false;
+			}
+		}
+		return true;
+	}
+
 
 	/**
 	 * Liefert 0 wenn die beiden Attributlisten gleich sind ansonsten das erste
