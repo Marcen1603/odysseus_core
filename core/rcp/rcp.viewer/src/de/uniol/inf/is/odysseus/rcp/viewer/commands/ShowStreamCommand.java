@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
-import de.uniol.inf.is.odysseus.rcp.viewer.commands.windows.ChooseOperatorWindow;
+import de.uniol.inf.is.odysseus.rcp.viewer.editors.ChooseOperatorWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.StreamEditorRegistry;
@@ -64,11 +64,6 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 			List<Object> selections = SelectionProvider.getSelection(event);
 			nextSelection: for (Object selectedObject : selections) {
 
-//				if (selectedObject instanceof IPhysicalQuery) {
-//					IPhysicalQuery query = (IPhysicalQuery) selectedObject;
-//					optionalOpForStream = chooseOperator(query.getRoots());
-//				}
-				
 				if( selectedObject instanceof Integer ) {
                     Integer queryID = (Integer)selectedObject;
                     IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
