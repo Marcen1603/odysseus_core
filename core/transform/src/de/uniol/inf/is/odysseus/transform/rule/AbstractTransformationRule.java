@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.transform.rule;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
