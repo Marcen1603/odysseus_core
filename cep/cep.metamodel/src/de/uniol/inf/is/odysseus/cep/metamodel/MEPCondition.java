@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 
 public abstract class MEPCondition extends AbstractCondition{
@@ -55,13 +54,13 @@ public abstract class MEPCondition extends AbstractCondition{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setLabel(String label) {
+	public void setLabel(String label){
 		super.setLabel((label == null || label.length() == 0) ? "true" : label);
-		try {
+//		try {
 			expression = MepHelper.initMEPExpressionFromLabel(getLabel(), symbolTable);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	@Override
