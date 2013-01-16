@@ -18,6 +18,9 @@ package de.uniol.inf.is.odysseus.core.server.mep.functions;
 
 public class EqualsOperator2 extends EqualsOperator {
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -554431221703732387L;
 
 	@Override
