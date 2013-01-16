@@ -47,7 +47,7 @@ public abstract class AbstractCommand extends AbstractHandler {
 			view.initWithOperator(observingOperator);
 			return view;
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("Could not show view for chart", e);
 		}
 		return null;
 	}		
