@@ -96,7 +96,7 @@ public class ChooseOperatorWindow {
 		label.setText("Query has more than one sink. Choose one operator\nto show the stream from.");
 		
 		radioOperatorPairs = createRadioButtons(wnd, operators);
-		createRadioButtons(wnd);
+		createButtons(wnd);
 
 		wnd.pack();
 		return wnd;
@@ -123,7 +123,7 @@ public class ChooseOperatorWindow {
 		return checkBox;
 	}
 
-	private void createRadioButtons(final Shell wnd) {
+	private void createButtons(final Shell wnd) {
 		Composite composite = new Composite(wnd, SWT.NONE);
 		composite.setLayoutData(new GridData());
 		composite.setLayout(new GridLayout(2, true));
