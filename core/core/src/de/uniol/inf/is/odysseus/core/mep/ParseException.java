@@ -21,7 +21,7 @@ package de.uniol.inf.is.odysseus.core.mep;
  * @author Jonas Jacobi
  *
  */
-public class ParseException extends Exception {
+public class ParseException extends RuntimeException {
 
 	private static final long serialVersionUID = -7832093047514492062L;
 
