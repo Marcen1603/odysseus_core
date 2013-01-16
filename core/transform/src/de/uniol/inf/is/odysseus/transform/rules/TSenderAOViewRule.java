@@ -94,7 +94,7 @@ public class TSenderAOViewRule extends AbstractTransformationRule<SenderAO> {
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.ACCESS;
+		return TransformRuleFlowGroup.SENDER;
 	}
 
 	@Override
