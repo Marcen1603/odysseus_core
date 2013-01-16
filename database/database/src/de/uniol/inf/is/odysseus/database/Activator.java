@@ -87,7 +87,7 @@ public class Activator implements BundleActivator {
 	
 		//Mappings Odysseus -> DBMS
 		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFDatatype.BOOLEAN, Types.BOOLEAN);
-		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFDatatype.BYTE, Types.BINARY);
+		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFDatatype.BYTE, Types.TINYINT);
 		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFDatatype.DATE, Types.DATE);
 		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFDatatype.DOUBLE, Types.DOUBLE);
 		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFDatatype.END_TIMESTAMP, Types.BIGINT);
@@ -99,6 +99,8 @@ public class Activator implements BundleActivator {
 		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFDatatype.STRING, Types.VARCHAR);
 		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFDatatype.TIMESTAMP, Types.BIGINT);	
 		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFDatatype.START_TIMESTAMP, Types.BIGINT);
+		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFDatatype.SHORT, Types.TINYINT);
+		
 		
 	}
 

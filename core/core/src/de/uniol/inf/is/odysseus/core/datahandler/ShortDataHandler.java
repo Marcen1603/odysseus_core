@@ -63,7 +63,7 @@ public class ShortDataHandler extends AbstractDataHandler<Short> {
 	}
 
 	@Override
-	final public List<String> getSupportedDataTypes() {
+	final public List<String> getSupportedDataTypes() {		
 		return types;
 	}
 
