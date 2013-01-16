@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
@@ -43,6 +45,13 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 	/** Name of the protocol handler */
 	private final StringParameter protocolHandler = new StringParameter("PROTOCOL", REQUIREMENT.OPTIONAL);
 
+	/**
+	 * Optional Schema definition, if there is no direct input operator (for
+	 * later binding)
+	 */
+	private final ListParameter<SDFAttribute> schema = new ListParameter<SDFAttribute>("SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter("ATTRIBUTE",
+			REQUIREMENT.MANDATORY, getDataDictionary()));
+
 	/** Options as key value map */
 	private final ListParameter<Option> options = new ListParameter<Option>("OPTIONS", REQUIREMENT.OPTIONAL, new CreateOptionParameter("OPTION", REQUIREMENT.MANDATORY));
 
@@ -50,9 +59,9 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 	 * Default constructor for the operator builder
 	 */
 	public SenderAOBuilder() {
-		super("SENDER", 1, Integer.MAX_VALUE);
+		super("SENDER", 0, Integer.MAX_VALUE);
 		// Add the supported parameters
-		this.addParameters(this.sinkName, this.options, this.dataHandler, this.transportHandler, this.protocolHandler, this.wrapper);
+		this.addParameters(this.sinkName, this.options, this.dataHandler, this.transportHandler, this.protocolHandler, this.wrapper, this.schema);
 	}
 
 	/*
@@ -75,6 +84,12 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 	 */
 	@Override
 	protected boolean internalValidation() {
+		if (this.getInputOperatorCount() == 0) {
+			if (!this.schema.hasValue()) {
+				this.addError(new IllegalArgumentException("schema parameter has to be set, if there is no input operator."));
+				return false;
+			}
+		}
 		if (!this.wrapper.hasValue()) {
 			this.addError(new IllegalArgumentException("to less information for the creation of sender. expecting wrapper."));
 			return false;
@@ -84,6 +99,7 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 				return false;
 			}
 		}
+		
 		return true;
 	}
 
@@ -100,6 +116,9 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 			return this.getDataDictionary().getSinkInput(sinkName, getCaller());
 		}
 		final ILogicalOperator ao = this.createNewSenderAO(sinkName);
+		if(this.getInputOperatorCount()==0){
+			this.getDataDictionary().addSink(sinkName, ao, getCaller());
+		}
 		return ao;
 	}
 
@@ -125,7 +144,9 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 		if (this.protocolHandler.hasValue()) {
 			ao.setProtocolHandler(this.protocolHandler.getValue());
 		}
+		if(this.schema.hasValue()){
+			ao.setOutputSchema(new SDFSchema(sinkName,this.schema.getValue()));
+		}		
 		return ao;
 	}
-
 }

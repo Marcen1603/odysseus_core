@@ -129,7 +129,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	 */
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
+		return TransformRuleFlowGroup.SENDER;
 	}
 
 	/*
