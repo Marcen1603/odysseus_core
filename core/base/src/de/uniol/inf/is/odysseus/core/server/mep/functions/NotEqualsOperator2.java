@@ -15,70 +15,13 @@
   */
 package de.uniol.inf.is.odysseus.core.server.mep.functions;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractBinaryOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 
-public class NotEqualsOperator2 extends AbstractBinaryOperator<Boolean> {
+public class NotEqualsOperator2 extends NotEqualsOperator {
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.STRING
-    };
-	private static final long serialVersionUID = -1508977830046773571L;
-
-	@Override
-	public int getPrecedence() {
-		return 9;
-	}
+	private static final long serialVersionUID = 7945221506609744353L;
 
 	@Override
 	public String getSymbol() {
 		return "<>";
-	}
-
-	@Override
-	public Boolean getValue() {
-		return !getInputValue(0).equals(getInputValue(1));
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.BOOLEAN;
-	}
-
-	@Override
-	public de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
-		return ASSOCIATIVITY.LEFT_TO_RIGHT;
-	}
-
-	@Override
-	public boolean isCommutative() {
-		return true;
-	}
-
-	@Override
-	public boolean isAssociative() {
-		return false;
-	}
-
-	@Override
-	public boolean isLeftDistributiveWith(IOperator<Boolean> operator) {
-		return false;
-	}
-
-	@Override
-	public boolean isRightDistributiveWith(IOperator<Boolean> operator) {
-		return false;
-	}
-	
-	
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos){
-		if(argPos < 0){
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if(argPos > this.getArity()-1){
-			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
-		}
-        return accTypes;
 	}
 }
