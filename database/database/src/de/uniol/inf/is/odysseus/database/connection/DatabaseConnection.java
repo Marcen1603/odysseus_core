@@ -57,13 +57,12 @@ public class DatabaseConnection implements IDatabaseConnection {
 
 	private static Logger logger = LoggerFactory.getLogger(DatabaseConnection.class);
 
- 
 	private boolean connected = false;
 	// do NOT change this to protected or public!!
 	private Connection connection;
 	// protected HashMap<SDFDatatype, String> datatypeMappings = new
 	// HashMap<SDFDatatype, String>();
-	protected List<DatatypeMapping> ds2dbMapping = new ArrayList<DatatypeMapping>();
+
 	private String connString;
 
 	private Properties connectionProps;
@@ -132,7 +131,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 		String sep = "";
 		for (SDFAttribute attribute : schema) {
 			table = table + sep + attribute.getAttributeName() + " ";
-			table = table + getDBMSSpecificType(DatatypeRegistry.getInstance().getJDBCDatatype(attribute.getDatatype()));
+			table = table + getDBMSSpecificType(DatatypeRegistry.getDataHandler(attribute.getDatatype()).getDefaultSQLDatatype());
 			sep = ", ";
 		}
 		table = table + ")";
@@ -164,7 +163,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 		ResultSet rs = meta.getColumns(null, null, tablename, null);
 		while (rs.next()) {
 			String name = rs.getString("COLUMN_NAME");
-			SDFDatatype dt = DatatypeRegistry.getInstance().getSDFDatatype(rs.getInt("DATA_TYPE"));
+			SDFDatatype dt = DatatypeRegistry.getSDFDatatype(rs.getInt("DATA_TYPE"));
 			SDFAttribute a = new SDFAttribute(null, name, dt);
 			attrs.add(a);
 		}
@@ -187,17 +186,13 @@ public class DatabaseConnection implements IDatabaseConnection {
 			int dbType = rsColumns.getInt("DATA_TYPE");
 			SDFDatatype dt = schema.get(i).getDatatype();
 
-			if (!DatatypeRegistry.getInstance().isValidStreamToDatabaseMapping(dt, dbType)) {
-				// stream to db mapping does not exist, but maybe other
-				// direction?
-				if (!DatatypeRegistry.getInstance().isValidDatabaseToStreamMapping(dbType, dt)) {
-					// both combinations were not found
-					logger.error("Expected types for stream and database are not equal for");
-					logger.error("- database: " + dbType + " <--> local: " + dt);
-					logger.error("- see also in java.sql.Types!");
-					logger.error("- database: " + rsColumns.getShort("COLUMN_NAME") + " <--> local: " + schema.get(i).getAttributeName());
-					return false;
-				}
+			if (!DatatypeRegistry.mappingExists(dt, dbType)) {
+				// both combinations were not found
+				logger.error("Expected types for stream and database are not equal for");
+				logger.error("- database: " + dbType + " <--> local: " + dt);
+				logger.error("- see also in java.sql.Types!");
+				logger.error("- database: " + rsColumns.getShort("COLUMN_NAME") + " <--> local: " + schema.get(i).getAttributeName());
+				return false;
 			}
 			i++;
 		}
@@ -271,8 +266,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 	}
 
 	@Override
-	public void checkProperties() throws SQLException{		
-		Connection con = DriverManager.getConnection(connString, connectionProps);		
-		con.close();				
+	public void checkProperties() throws SQLException {
+		Connection con = DriverManager.getConnection(connString, connectionProps);
+		con.close();
 	}
 }

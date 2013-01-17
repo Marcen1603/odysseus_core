@@ -22,26 +22,25 @@ import java.sql.Types;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
-/**
- * @author Stephan Jansen
- *
- */
-public class FloatDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Float> {
+
+public class ShortDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Short> {
 	
 	
-	public FloatDataTypeMappingHandler(){
-		super(SDFDatatype.FLOAT, Types.REAL);
-		addAdditionalSQLDatatype(Types.FLOAT);		
-	}		
-		
+	public ShortDataTypeMappingHandler(){
+		super(SDFDatatype.SHORT, Types.SMALLINT);		
+	}
+	
+	
 	@Override
 	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {
-		preparedStatement.setFloat(position, (Float) value);
+		preparedStatement.setShort(position, (Short) value);
 	}
 
+
 	@Override
-	public Float getValue(ResultSet result, int position) throws SQLException {
-		return result.getFloat(position);
+	public Short getValue(ResultSet result, int position) throws SQLException {
+		return result.getShort(position);
 	}
+	
 
 }

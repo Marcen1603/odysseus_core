@@ -16,15 +16,24 @@
 package de.uniol.inf.is.odysseus.database.physicaloperator.access;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
  * @author Stephan Jansen
  *
  */
-public interface IDataTypeMappingHandler {
-	public void mapValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException;
-
-	public List<String> getSupportedDataTypes();
+public interface IDataTypeMappingHandler<T> {
+	
+	
+	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException;
+	public T getValue(ResultSet result, int position) throws SQLException;
+	public List<SDFDatatype> getSupportedSDFDataTypes();
+	public List<Integer> getSupportedSQLDataTypes();		
+	public SDFDatatype getDefaultSDFDatatype();
+	public int getDefaultSQLDatatype();
+	
 }

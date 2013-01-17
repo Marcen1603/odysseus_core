@@ -16,41 +16,49 @@
 package de.uniol.inf.is.odysseus.database.spatial.physicaloperator.access;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Types;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
 
-import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappingHandler;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.AbstractDatatypeMappingHandler;
+import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
-public class SpatialDataTypeMappingHandler implements IDataTypeMappingHandler{
-	static protected List<String> types = new ArrayList<String>();
-	static{
-		types.add("SpatialGeometry");
-		types.add("SpatialGeometryCollection");
+public class SpatialDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Geometry>{
+	
 
-		types.add("SpatialPoint");
-		types.add("SpatialLineString");
-		types.add("SpatialPolygon");
+	public SpatialDataTypeMappingHandler(){
 		
-		types.add("SpatialMultiPoint");
-		types.add("SpatialMultiLineString");
-		types.add("SpatialMutliPolygon");
+		super(SDFSpatialDatatype.SPATIAL_GEOMETRY, Types.VARBINARY);
+		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION);
+
+		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_POINT);
+		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_LINE_STRING);
+		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_POLYGON);
+		
+		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_MULTI_POINT);
+		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING);
+		addAdditionalSDFDatatype(SDFSpatialDatatype.SPATIAL_MULTI_POLYGON);
 	}
-	private static WKBWriter wkbwriter = new WKBWriter();
+	private WKBWriter wkbwriter = new WKBWriter();
+	private WKBReader wkbreader = new WKBReader();
 	
 	@Override
-	public void mapValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {
-		preparedStatement.setBytes(position, wkbwriter.write((Geometry)value));
-		
+	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {
+		preparedStatement.setBytes(position, wkbwriter.write((Geometry) value));		
 	}
 
 	@Override
-	public List<String> getSupportedDataTypes() {
-		// TODO Auto-generated method stub
-		return types;
+	public Geometry getValue(ResultSet result, int position) throws SQLException {
+		try {
+			return wkbreader.read(result.getBytes(position));
+		} catch (ParseException e) {
+			throw new SQLException(e);			
+		}		
 	}
 
 }

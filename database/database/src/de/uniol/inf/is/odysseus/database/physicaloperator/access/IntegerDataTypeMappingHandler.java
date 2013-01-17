@@ -16,31 +16,30 @@
 package de.uniol.inf.is.odysseus.database.physicaloperator.access;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Types;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
-/**
- * @author Stephan Jansen
- *
- */
-public class IntegerDataTypeMappingHandler implements IDataTypeMappingHandler{
-	static protected List<String> types = new ArrayList<String>(1);
-	static{
-		types.add(SDFDatatype.INTEGER.getURI());
+
+public class IntegerDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Integer> {
+	
+	
+	public IntegerDataTypeMappingHandler(){
+		super(SDFDatatype.INTEGER, Types.INTEGER);		
+	}		
+	
+	@Override
+	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {
+		preparedStatement.setInt(position, (Integer) value);		
 	}
 	
 	@Override
-	public void mapValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {
-		preparedStatement.setInt(position, (Integer) value);
+	public Integer getValue(ResultSet result, int position) throws SQLException {
+		return result.getInt(position);
 	}
 
-	@Override
-	public List<String> getSupportedDataTypes() {
-		// TODO Auto-generated method stub
-		return types;
-	}
+	
 
 }

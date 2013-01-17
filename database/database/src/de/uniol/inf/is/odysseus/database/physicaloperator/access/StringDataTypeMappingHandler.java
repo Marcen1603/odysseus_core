@@ -16,31 +16,48 @@
 package de.uniol.inf.is.odysseus.database.physicaloperator.access;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Types;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
-/**
- * @author Stephan Jansen
- *
- */
-public class StringDataTypeMappingHandler implements IDataTypeMappingHandler{
-	static protected List<String> types = new ArrayList<String>(1);
-	static{
-		types.add(SDFDatatype.STRING.getURI());
+public class StringDataTypeMappingHandler extends AbstractDatatypeMappingHandler<String> {
+
+	public StringDataTypeMappingHandler() {
+		super(SDFDatatype.STRING, Types.VARCHAR);
+		
+		
+		addAdditionalSDFDatatype(SDFDatatype.START_TIMESTAMP_STRING);
+		addAdditionalSDFDatatype(SDFDatatype.END_TIMESTAMP_STRING);
+
+		
+		addAdditionalSQLDatatype(Types.CHAR);
+		addAdditionalSQLDatatype(Types.LONGVARCHAR);
+
+		addAdditionalSQLDatatype(Types.LONGNVARCHAR);
+		addAdditionalSQLDatatype(Types.NCHAR);
+		addAdditionalSQLDatatype(Types.NVARCHAR);
+
 	}
-	
+
 	@Override
-	public void mapValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {
+	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {
 		preparedStatement.setString(position, (String) value);
 	}
 
 	@Override
-	public List<String> getSupportedDataTypes() {
-		// TODO Auto-generated method stub
-		return types;
+	public String getValue(ResultSet result, int position) throws SQLException {
+		switch (result.getMetaData().getColumnType(position)) {
+		case Types.LONGNVARCHAR:
+			return result.getNString(position);
+		case Types.NVARCHAR:
+			return result.getNString(position);
+		case Types.NCHAR:
+			return result.getNString(position);
+		default:
+			return result.getString(position);
+		}
 	}
 
 }
