@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 public class RenameAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 4218605858465342011L;
-	private List<String> aliases;
+	private List<String> aliases = new ArrayList<>();
 	private boolean aliasesAsPairs = false;
 	private String typeName;
 	private boolean calculated = false;
@@ -57,7 +57,7 @@ public class RenameAO extends UnaryLogicalOp {
 		aliasesAsPairs = ao.aliasesAsPairs;
 	}
 
-	@Parameter(type = StringParameter.class, isList = true)
+	@Parameter(type = StringParameter.class, isList = true, optional = true)
 	public void setAliases(List<String> aliases) {
 		this.aliases = aliases;
 	}
@@ -66,9 +66,9 @@ public class RenameAO extends UnaryLogicalOp {
 	public void setType(String typeName) {
 		this.typeName = typeName;
 	}
-	
+
 	@Parameter(name = "Pairs", type = BooleanParameter.class, optional = true)
-	public void setPairs( boolean aliasesAsPairs ) {
+	public void setPairs(boolean aliasesAsPairs) {
 		this.aliasesAsPairs = aliasesAsPairs;
 	}
 
@@ -93,35 +93,49 @@ public class RenameAO extends UnaryLogicalOp {
 
 	@Override
 	public void initialize() {
-		if( !aliasesAsPairs ) {
+		if (!aliasesAsPairs) {
 			SDFSchema inputSchema = getInputSchema();
-			if (inputSchema.size() != aliases.size()) {
-				throw new IllegalArgumentException("number of aliases does not match number of input attributes for rename");
+			if (!aliases.isEmpty()) {
+				if (inputSchema.size() != aliases.size()) {
+					throw new IllegalArgumentException("number of aliases does not match number of input attributes for rename");
+				}
+				Iterator<SDFAttribute> it = inputSchema.iterator();
+				List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+				for (String str : aliases) {
+					// use clone, so we have a datatype etc.
+					SDFAttribute attribute = it.next().clone(null, str);
+					attrs.add(attribute);
+				}
+				String uri = typeName != null ? typeName : inputSchema.getURI();
+				setOutputSchema(new SDFSchema(uri, attrs));
+			} else {
+				//
+				if (typeName == null) {
+					throw new IllegalArgumentException("if aliases for attributes is not used, type must be used to rename anyway");
+				}
+				// only set type name!
+				List<SDFAttribute> attrs = Lists.newArrayList();
+				for (SDFAttribute oldAttr : inputSchema) {
+					SDFAttribute newOne = new SDFAttribute(typeName, oldAttr.getAttributeName(), oldAttr);
+					attrs.add(newOne);
+				}
+				setOutputSchema(new SDFSchema(typeName, attrs));
 			}
-			Iterator<SDFAttribute> it = inputSchema.iterator();
-			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-			for (String str : aliases) {
-				// use clone, so we have a datatype etc.
-				SDFAttribute attribute = it.next().clone(null, str);
-				attrs.add(attribute);
-			}
-			String uri = typeName != null ? typeName : inputSchema.getURI();
-			setOutputSchema(new SDFSchema(uri, attrs));
 		} else {
 			SDFSchema inputSchema = getInputSchema();
-			if( aliases.isEmpty() ) {
+			if (aliases.isEmpty()) {
 				throw new IllegalArgumentException("number of aliases interpreted as pairs must be at least two");
 			}
 			if (aliases.size() % 2 != 0) {
 				throw new IllegalArgumentException("number of aliases interpreted as pairs must be even");
 			}
-			
+
 			Map<String, String> aliasesMap = toMap(aliases);
-			
+
 			List<SDFAttribute> attrs = Lists.newArrayList();
-			for( SDFAttribute oldAttr : inputSchema ) {
+			for (SDFAttribute oldAttr : inputSchema) {
 				String alias = aliasesMap.get(oldAttr.getAttributeName());
-				if( alias != null ) {
+				if (alias != null) {
 					// alias found!
 					SDFAttribute newAttr = oldAttr.clone(null, alias);
 					attrs.add(newAttr);
@@ -139,10 +153,10 @@ public class RenameAO extends UnaryLogicalOp {
 		return new RenameAO(this);
 	}
 
-	private static Map<String, String> toMap( List<String> aliases ) {
+	private static Map<String, String> toMap(List<String> aliases) {
 		Map<String, String> map = Maps.newHashMap();
-		for( int i = 0; i < aliases.size(); i+=2) {
-			map.put(aliases.get(i), aliases.get(i+1));
+		for (int i = 0; i < aliases.size(); i += 2) {
+			map.put(aliases.get(i), aliases.get(i + 1));
 		}
 		return map;
 	}
