@@ -56,7 +56,7 @@ public class SpatialDatabaseConnection extends DatabaseConnection {
 				if (d.getClass().getSimpleName().equals("SDFSpatialDatatype"))
 					table = table + "GEOMETRY";
 				else
-					table = table + getDBMSSpecificType(DatatypeRegistry.getInstance().getJDBCDatatype(attribute.getDatatype()));
+					table = table + getDBMSSpecificType(DatatypeRegistry.getSQLDatatype(attribute.getDatatype()));
 				sep = ", ";
 			}
 			table = table + ")";	
