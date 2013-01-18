@@ -15,12 +15,16 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 
 /**
  * This operator can reduce traffic. It lets an event pass if its different than
@@ -35,10 +39,13 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		AbstractPipe<R, R> {
 
 	static final Logger logger = LoggerFactory.getLogger(ChangeDetectPO.class);
-
-	R lastElement;
+	
+	private R lastElement = null;
+	private Map<Integer,R> lastElements = new HashMap<Integer, R>();
 	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
 	private boolean deliverFirstElement = false;
+	private IGroupProcessor<R, R> groupProcessor = null;
+	
 
 	public ChangeDetectPO() {
 	}
@@ -52,23 +59,43 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		return OutputMode.INPUT;
 	}
 
+	public void setGroupProcessor(IGroupProcessor<R,R> groupProcessor) {
+		this.groupProcessor = groupProcessor;
+	}
+	
 	@Override
 	protected synchronized void process_next(R object, int port) {
 		// logger.debug("Process next: "+object);
-		if (lastElement == null) {
-			lastElement = object;
+		R newLastElement = null;
+		R lastElem = null;
+		Integer groupID = null;
+		// Optimization: Use HashMap only if grouping is used
+		if (groupProcessor != null){
+			groupID = groupProcessor.getGroupID(object);
+			lastElem = lastElements.get(groupID);
+		}else{
+			lastElem = lastElement;
+		}
+		
+		if (lastElem == null) {
+			newLastElement = object;
 			if (deliverFirstElement) {
 				transfer(object);
 			}
 		} else {
-			if (object != null && areDifferent(object, lastElement)) {
-				lastElement = object;
+			if (object != null && areDifferent(object, lastElem)) {
+				newLastElement = object;
 				transfer(object);
 			} else {
 				heartbeatGenerationStrategy.generateHeartbeat(object, this);
 			}
 		}
 
+		if (groupID != null){
+			lastElements.put(groupID, newLastElement);
+		}else{
+			lastElement = newLastElement;
+		}
 	}
 
 	protected boolean areDifferent(R object, R lastElement) {
@@ -77,7 +104,8 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		this.lastElement = null;
+		this.lastElements.clear();
+		groupProcessor.init();
 	}
 
 	@Override

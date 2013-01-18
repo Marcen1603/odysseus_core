@@ -15,8 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.relational_interval;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ChangeDetectPO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ChangeDetectPO;
 
 public class RelationalChangeDetectPO extends ChangeDetectPO<Tuple<?>> {
 
@@ -39,7 +39,6 @@ public class RelationalChangeDetectPO extends ChangeDetectPO<Tuple<?>> {
 
 	protected boolean areDifferent(Tuple<?> object, Tuple<?> lastElement){
 		return !Tuple.equalsAt(object, lastElement, comparePositions);
-	}
-		
+	}		
 	
 }

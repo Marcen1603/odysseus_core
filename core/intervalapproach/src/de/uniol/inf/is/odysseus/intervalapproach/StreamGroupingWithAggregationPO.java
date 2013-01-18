@@ -49,14 +49,14 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private int dumpAtValueCount = -1;
 	private long createOutputCounter = 0;
 
-	public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
-			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
-			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
-			IGroupProcessor<R, W> grProcessor) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations);
-		setGroupProcessor(grProcessor);
-		transferArea = new TITransferArea<W, W>();
-	}
+//	public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
+//			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
+//			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
+//			IGroupProcessor<R, W> grProcessor) {
+//		super(inputSchema, outputSchema, groupingAttributes, aggregations);
+//		setGroupProcessor(grProcessor);
+//		transferArea = new TITransferArea<W, W>();
+//	}
 
 	public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
 			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,

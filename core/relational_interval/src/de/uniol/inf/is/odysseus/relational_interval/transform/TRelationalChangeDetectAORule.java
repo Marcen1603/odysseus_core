@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalAbsoluteNumericChangeDetectPO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalChangeDetectPO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalRelativeNumericChangeDetectPO;
@@ -52,6 +53,13 @@ public class TRelationalChangeDetectAORule extends
 					operator.getHeartbeatRate()));
 		}
 		po.setDeliverFirstElement(operator.isDeliverFirstElement());
+		if (operator.getGroupingAttributes().size() > 0){
+			RelationalGroupProcessor r = new RelationalGroupProcessor(
+					operator.getInputSchema(), operator.getOutputSchema(),
+					operator.getGroupingAttributes(),
+					null);
+			po.setGroupProcessor(r);
+		}
 		defaultExecute(operator, po, config, true, true);
 	}
 

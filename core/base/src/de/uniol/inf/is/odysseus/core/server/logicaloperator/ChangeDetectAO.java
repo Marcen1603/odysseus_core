@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -44,12 +45,14 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	private boolean isRelativeTolerance = false;
 	private int rate;
 	private boolean deliverFirstElement = false;
+	private List<SDFAttribute> groupingAttributes = new ArrayList<>();
 
 	public ChangeDetectAO(ChangeDetectAO po) {
 		super(po);
 		attributes = po.attributes;
 		this.rate = po.rate;
 		this.deliverFirstElement = po.deliverFirstElement;
+		this.groupingAttributes = new ArrayList<>(po.getGroupingAttributes());
 	}
 
 	public ChangeDetectAO() {
@@ -82,6 +85,16 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	public void setDeliverFirstElement(boolean deliverFirstElement) {
 		this.deliverFirstElement = deliverFirstElement;
 	}
+	
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	public void setGroupingAttributes(List<SDFAttribute> attributes) {
+		this.groupingAttributes = attributes;
+	}
+	
+	public List<SDFAttribute> getGroupingAttributes() {
+		return groupingAttributes;
+	}
+
 	
 	@Parameter(type = DoubleParameter.class, name = "tolerance", optional = true)
 	public void setTolerance(double tolerance) {
