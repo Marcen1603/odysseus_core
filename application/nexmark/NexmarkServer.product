@@ -3,11 +3,12 @@
 
 <product name="Nexmark Server" uid="Nexmark Server" id="de.uniol.inf.is.odysseus.nexmark.product" application="de.uniol.inf.is.odysseus.nexmark.application" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug -nl ${target.nl} -data @noDefault -noExit</programArgs>
+      <programArgs>-console -debug -nl ${target.nl} -data @noDefault -noExit  -gcf  &quot;/config/NEXMarkGeneratorConfiguration_SLOW.properties&quot; -useNIO &quot;true&quot; -pr 65440</programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx512m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
@@ -21,6 +22,7 @@
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>

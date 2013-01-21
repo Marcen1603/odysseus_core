@@ -26,14 +26,17 @@ public class NexmarkApplication implements IApplication {
 	public Object start(IApplicationContext context) throws Exception {
 		context.applicationRunning();
 		System.out.println("starting....");		
-		String[] args = new String[6];
-		args[0] = "-gcf";
-		args[1] = "/config/NEXMarkGeneratorConfiguration_SLOW.properties";
-		args[2] = "-useNIO";
-		args[3] = "true";
-		args[4] = "-pr";
-		args[5] = "65440";
-		//String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);		
+//		String[] args = new String[6];
+//		args[0] = "-gcf";
+//		args[1] = "/config/NEXMarkGeneratorConfiguration_SLOW.properties";
+//		args[2] = "-useNIO";
+//		args[3] = "true";
+//		args[4] = "-pr";
+//		args[5] = "65440";
+		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);		
+//		for (String s: args2){
+//			System.err.println(s);
+//		}
 		NexmarkServer.main(args);
 		return IApplicationContext.EXIT_ASYNC_RESULT;
 	}
