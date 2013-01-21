@@ -56,4 +56,9 @@ public class MEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 		symbolTable.get(varName).bind(newValue);
 	}
 
+	@Override
+	public String toString() {
+		return ""+expression;
+	}
+	
 }

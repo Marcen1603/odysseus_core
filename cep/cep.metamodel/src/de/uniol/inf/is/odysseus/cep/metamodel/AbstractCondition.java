@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
+
 /**
  * Diese Klasse kapselt die Transitionsbedingung.
  * 
@@ -40,7 +41,7 @@ abstract public class AbstractCondition implements ICepCondition {
 	}
 
 	@Override
-	public void setLabel(String label) {
+	public void setLabel(String label){
 		this.label = label;
 	}
 
