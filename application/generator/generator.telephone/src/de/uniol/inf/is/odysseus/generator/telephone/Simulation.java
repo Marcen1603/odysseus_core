@@ -11,6 +11,8 @@ public class Simulation extends Thread implements ICallDecriptionRecordReceiver 
 	final private int parallelCallCount;
 	final private Random random = new Random(1);
 
+	final List<ICallDecriptionRecordReceiver> listeners = new ArrayList<>();
+	
 	public Simulation(int parallelCallCount, int noOfTelefones) {
 		for (int i = 0; i < noOfTelefones; i++) {
 			available.add("No " + i);
@@ -54,7 +56,9 @@ public class Simulation extends Thread implements ICallDecriptionRecordReceiver 
 			currentCalls--;
 		}
 		cdr.ts = System.currentTimeMillis();
-		System.out.println(cdr);
+		for (ICallDecriptionRecordReceiver l: listeners){
+			l.newCDR(cdr);
+		}
 		synchronized (this) {
 			notifyAll();
 		}
@@ -63,10 +67,18 @@ public class Simulation extends Thread implements ICallDecriptionRecordReceiver 
 	public static void main(String[] args) {
 		System.err.print("Init ");
 		long start = System.currentTimeMillis();
-		Simulation sim = new Simulation(5000000, 50000000);
+		Simulation sim = new Simulation(5000000, 7000000);
 		System.err.println(" took "+((System.currentTimeMillis()-start)/60)+" seconds");
 		System.err.println("Starting ");
 		sim.start();
+	}
+
+	public void addListener(ICallDecriptionRecordReceiver listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeListener(ICallDecriptionRecordReceiver listener){
+		listeners.remove(listener);
 	}
 
 }

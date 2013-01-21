@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.generator.telephone;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.generator.StreamServer;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -17,6 +19,8 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		StreamServer server = new StreamServer(65321, new TelephoneDataProvider(5000000, 7000000, 10));
+		server.start();
 	}
 
 	/*
