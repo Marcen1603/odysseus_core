@@ -178,18 +178,17 @@ private Transition getTransition(PathAttribute attr, State s) {
 	return t;
 }
 
-private String transformToString(PathAttribute p){
-      String op = p.getAggregation();
-      String a = p.getStatename();
-      String i = p.getKleenePart();
-      if ("[i]".equals(i)) {
-        i = "";
-      } else if ("[i-1]".equals(i)) {
-        i = "-1";
-      }
-      String path = p.getPath();
-      return CepVariable.getStringFor(op, a, i, a
-          + "." + path);
+private String transformToString(PathAttribute p) {
+	String op = p.getAggregation();
+	String a = p.getStatename();
+	String i = p.getKleenePart();
+	if ("[i]".equals(i)) {
+		i = "";
+	} else if ("[i-1]".equals(i)) {
+		i = "-1";
+	}
+	String path = p.getPath();
+	return CepVariable.getStringFor(op, a, i, a + "." + path);
 }
 }
 
@@ -207,10 +206,10 @@ this.attachSources = attachSources;
   ^(CREATEVIEW n=NAME q=query) // Create a new Logical View
   
    {
-    try{
-        dd.setView(n.getText(), q, user);
-    }catch(DataDictionaryException e){
-        throw new QueryParseException(e.getMessage());
+    try {
+    	dd.setView(n.getText(), q, user);
+    } catch (DataDictionaryException e) {
+    	throw new QueryParseException(e.getMessage());
     }
     getLogger().debug("Created New View " + n + " " + q);
     $op = q;
@@ -244,7 +243,8 @@ List<String> sourceNames = new ArrayList<String>();
     		getLogger().debug("Bind " + sn + " to Port " + port);
     		try {
     			ILogicalOperator ao = dd.getViewOrStream(sn, user);
-    			patternDetectAO.subscribeToSource(ao, port, 0, ao.getOutputSchema());
+    			patternDetectAO
+    					.subscribeToSource(ao, port, 0, ao.getOutputSchema());
     			patternDetectAO.setInputTypeName(port, sn);
     			port++;
     		} catch (Exception e) {
@@ -283,7 +283,7 @@ List<State> states = new LinkedList<State>();
     			RelationalMEPCondition con = new RelationalMEPCondition("");
     			con.setEventType(source.getType());
     			con.setEventPort(sourceNames.indexOf(source.getType()));
-    			// TODO: Ist das mit dem EAction.discard immer richtig?
+    			// TODO: Ist das mit dem EAction.discard/consumeBufferWrite immer richtig?
     			source.addTransition(new Transition(source.getId() + "_proceed",
     					dest, con, EAction.discard));
     			con = new RelationalMEPCondition("");
@@ -335,7 +335,7 @@ state[List<State> states, List<String> sourceNames]
     	throw new RuntimeException("Double attribute definition " + _attributeName);
     }
    }
-  | 
+  |
   ^(KSTATE statename=NAME plusSign=PLUS attrName=NAME bl=BBRACKETLEFT br=BBRACKETRIGHT not=NOTSIGN?)
   
    {
@@ -456,10 +456,11 @@ List assignExpressions = new ArrayList();
     	}
     }
     if (compareExpressions.size() > 0) {
-      StringBuffer errorHelper = new StringBuffer();
-      for (AttributeExpression exp: compareExpressions){
-        errorHelper.append("\nAttributes "+exp.getAttributes()+" in "+ exp.getFullExpression()+" correspond to no state!");
-      }
+    	StringBuffer errorHelper = new StringBuffer();
+    	for (AttributeExpression exp : compareExpressions) {
+    		errorHelper.append("\nAttributes " + exp.getAttributes() + " in "
+    				+ exp.getFullExpression() + " correspond to no state!");
+    	}
     	throw new QueryParseException("One or more expressions are not valid "
     			+ errorHelper);
     }
@@ -571,10 +572,10 @@ List<PathAttribute> tmpAttrib = new ArrayList<PathAttribute>();
                {
                 exp.append(num.getText());
                }
-  | bool=BOOLEAN
-  {
-    exp.append(bool.getText());
-  }
+  | bool=BOOLEAN 
+                 {
+                  exp.append(bool.getText());
+                 }
   | lit=STRING_LITERAL 
                        {
                         exp.append(lit.getText());
@@ -590,19 +591,29 @@ StringBuffer name = new StringBuffer();
   ^(KMEMBER kAttributeUsage[name,usage] member=NAME)
   
    {
-    PathAttribute p = new PathAttribute(name.toString(), usage.toString(),
-    		member.getText(), Write.class.getSimpleName().toUpperCase());
-    attribs.add(p);
-    name = new StringBuffer();
-    usage = new StringBuffer();
+    if (kleeneAttributeState.get(name.toString()) != null) {
+    	PathAttribute p = new PathAttribute(name.toString(), usage.toString(),
+    			member.getText(), Write.class.getSimpleName().toUpperCase());
+    	attribs.add(p);
+    	name = new StringBuffer();
+    	usage = new StringBuffer();
+    } else {
+    	throw new QueryParseException("Attribute " + name.toString()
+    			+ " does not exist!");
+    }
    }
   |
   ^(MEMBER attribName=NAME member=NAME)
   
    {
-    PathAttribute p = new PathAttribute(attribName.getText(), null,
-    		member.getText(), Write.class.getSimpleName().toUpperCase());
-    attribs.add(p);
+    if (simpleAttributeState.get(attribName.getText()) != null) {
+    	PathAttribute p = new PathAttribute(attribName.getText(), null,
+    			member.getText(), Write.class.getSimpleName().toUpperCase());
+    	attribs.add(p);
+    } else {
+    	throw new QueryParseException("Attribute " + attribName.getText()
+    			+ " does not exist!");
+    }
    }
   |
   ^(
@@ -697,6 +708,7 @@ withinPart[PatternDetectAO patternDetectAO]
       )
     )?
    )
+  
    {
     Long time = getTime(value.getText(), unit);
     getLogger().debug("Setting Windowsize to " + time + " milliseconds");
@@ -709,17 +721,19 @@ endsAtPart[PatternDetectAO patternDetectAO]
 @init {
 List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
 }
-:
-^(ENDSAT attributeTerm[retAttr]
- )
- {
-  CepVariable var = new CepVariable(transformToString(retAttr.get(0)));
-  patternDetectAO.getStateMachine().setEndsAtVar(var);
-  RelationalMEPCondition endsAtCondition = new RelationalMEPCondition(StateMachine.current.getVariableName() +" > "+ StateMachine.maxTime.getVariableName());
-  patternDetectAO.getStateMachine().setEndsAtCondition(endsAtCondition);
- }
- |
- ;
+  :
+  ^(ENDSAT attributeTerm[retAttr])
+  
+   {
+    CepVariable var = new CepVariable(transformToString(retAttr.get(0)));
+    patternDetectAO.getStateMachine().setEndsAtVar(var);
+    RelationalMEPCondition endsAtCondition = new RelationalMEPCondition(
+    		StateMachine.current.getVariableName() + " > "
+    				+ StateMachine.maxTime.getVariableName());
+    patternDetectAO.getStateMachine().setEndsAtCondition(endsAtCondition);
+   }
+  |
+  ;
 
 returnPart[PatternDetectAO patternDetectAO]
 @init {
@@ -734,8 +748,8 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
     List<SDFAttribute> attrList = new ArrayList<SDFAttribute>();
     
     for (PathAttribute p : retAttr) {
-      String variable = transformToString(p);       
-      
+    	String variable = transformToString(p);
+    
     	e = new RelationalMEPOutputSchemeEntry(variable);
     	scheme.append(e);
     	// TODO: Set correct Datatypes
@@ -743,8 +757,7 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
     	attrList.add(attr);
     }
     String name = value != null && value.getText() != null ? value.getText() : "";
-    SDFSchema outputSchema = new SDFSchema(
-    		name, attrList);
+    SDFSchema outputSchema = new SDFSchema(name, attrList);
     ;
     patternDetectAO.getStateMachine().setOutputScheme(scheme);
     patternDetectAO.setOutputSchemaIntern(outputSchema);
