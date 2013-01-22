@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * IExecutor stellt die Hauptschnittstelle fuer externe Anwendungen zu Odysseus
  * da. Es werden Funktionen zur Bearbeitung von Anfragen, Steuerung der
  * Ausfuehrung und Konfigurationen zur Verfuegung gestellt. Weiterhin bietet
- * diese Schnittstelle diverse Moeglichkeit, um Nachrichten ueber aenderungen
+ * diese Schnittstelle diverse Moeglichkeiten, um Nachrichten ueber aenderungen
  * innerhalb von Odysseus zu erhalten.
  * 
  * @author Wolf Bauer, Marco Grawunder
