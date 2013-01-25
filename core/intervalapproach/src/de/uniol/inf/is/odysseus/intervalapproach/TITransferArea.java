@@ -131,6 +131,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			if (watermark == null
 					|| object.getMetadata().getStart().afterOrEquals(watermark)) {
 				outputQueue.add(object);
+				sendData();
 			}
 		}
 	}
@@ -146,6 +147,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			if (watermark == null
 					|| punctuation.getTime().afterOrEquals(watermark)) {
 				outputQueue.add(punctuation);
+				sendData();
 			}
 		}
 	}
@@ -175,14 +177,20 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void newHeartbeat(PointInTime heartbeat, int inPort) {
-		PointInTime minimum = null;
 		synchronized (minTs) {
 			minTs.put(inPort, heartbeat);
+		}
+		sendData();
+	}
+
+	private void sendData(){
+		PointInTime minimum = null;
+		synchronized (minTs) {
 			minimum = getMinTs();
 		}
 		sendData(minimum);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	protected void sendData(PointInTime minimum) {
 		if (minimum != null) {
