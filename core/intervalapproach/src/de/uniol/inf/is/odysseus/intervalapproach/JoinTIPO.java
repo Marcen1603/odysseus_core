@@ -166,6 +166,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	@Override
 	protected void process_next(T object, int port) {
+		
+		transferFunction.newElement(object, port);
 
 		if (isDone()) {
 			// TODO bei den sources abmelden ?? MG: Warum??
@@ -178,11 +180,13 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 			// werden muss, man also ressourcen spart
 			return;
 		}
-		if (!isOpen()) {
-			getLogger().error(
-					"process next called on non opened operator " + this
-							+ " with " + object + " from " + port);
-			return;
+		if (getLogger().isDebugEnabled()){
+			if (!isOpen()) {
+				getLogger().error(
+						"process next called on non opened operator " + this
+								+ " with " + object + " from " + port);
+				return;
+			}
 		}
 		int otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
@@ -206,7 +210,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 			synchronized (this.areas[otherport]) {
 				qualifies = areas[otherport].queryCopy(object, order);
 			}
-			transferFunction.newElement(object, port);
+			// Warum erst hier?
+			//transferFunction.newElement(object, port);
 			synchronized (areas[port]) {
 				areas[port].insert(object);
 			}
