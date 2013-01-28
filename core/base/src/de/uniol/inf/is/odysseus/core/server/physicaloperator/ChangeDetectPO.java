@@ -90,10 +90,12 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 			}
 		}
 
-		if (groupID != null) {
-			lastElements.put(groupID, newLastElement);
-		} else {
-			lastElement = newLastElement;
+		if (newLastElement != null) {
+			if (groupID != null) {
+				lastElements.put(groupID, newLastElement);
+			} else {
+				lastElement = newLastElement;
+			}
 		}
 	}
 
