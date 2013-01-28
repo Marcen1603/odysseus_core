@@ -39,13 +39,12 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		AbstractPipe<R, R> {
 
 	static final Logger logger = LoggerFactory.getLogger(ChangeDetectPO.class);
-	
+
 	private R lastElement = null;
-	private Map<Integer,R> lastElements = new HashMap<Integer, R>();
+	private Map<Integer, R> lastElements = new HashMap<Integer, R>();
 	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
 	private boolean deliverFirstElement = false;
 	private IGroupProcessor<R, R> groupProcessor = null;
-	
 
 	public ChangeDetectPO() {
 	}
@@ -59,10 +58,10 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		return OutputMode.INPUT;
 	}
 
-	public void setGroupProcessor(IGroupProcessor<R,R> groupProcessor) {
+	public void setGroupProcessor(IGroupProcessor<R, R> groupProcessor) {
 		this.groupProcessor = groupProcessor;
 	}
-	
+
 	@Override
 	protected synchronized void process_next(R object, int port) {
 		// logger.debug("Process next: "+object);
@@ -70,13 +69,13 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		R lastElem = null;
 		Integer groupID = null;
 		// Optimization: Use HashMap only if grouping is used
-		if (groupProcessor != null){
+		if (groupProcessor != null) {
 			groupID = groupProcessor.getGroupID(object);
 			lastElem = lastElements.get(groupID);
-		}else{
+		} else {
 			lastElem = lastElement;
 		}
-		
+
 		if (lastElem == null) {
 			newLastElement = object;
 			if (deliverFirstElement) {
@@ -91,9 +90,9 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 			}
 		}
 
-		if (groupID != null){
+		if (groupID != null) {
 			lastElements.put(groupID, newLastElement);
-		}else{
+		} else {
 			lastElement = newLastElement;
 		}
 	}
@@ -105,7 +104,9 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 	@Override
 	protected void process_open() throws OpenFailedException {
 		this.lastElements.clear();
-		groupProcessor.init();
+		if (groupProcessor != null) {
+			groupProcessor.init();
+		}
 	}
 
 	@Override
@@ -135,7 +136,8 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		ChangeDetectPO<R> rppo = (ChangeDetectPO<R>) ipo;
 		if (this.hasSameSources(ipo)
 				&& this.deliverFirstElement == rppo.deliverFirstElement
-				&& this.heartbeatGenerationStrategy.equals(rppo.heartbeatGenerationStrategy)) {
+				&& this.heartbeatGenerationStrategy
+						.equals(rppo.heartbeatGenerationStrategy)) {
 			return true;
 		}
 
