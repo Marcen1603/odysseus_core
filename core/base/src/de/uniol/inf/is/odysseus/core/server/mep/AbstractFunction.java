@@ -1,21 +1,22 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.server.mep;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +34,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	 */
 	private static final long serialVersionUID = 3805396798229438499L;
 	private IExpression<?>[] arguments;
-    private Map<String, Serializable> additionalContent;
+	private Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
 
 	@Override
 	final public void setArguments(IExpression<?>... arguments) {
@@ -41,13 +42,13 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 			throw new IllegalArgumentException(
 					"illegal number of arguments for function " + getSymbol());
 		}
-		
+
 		this.arguments = new IExpression<?>[getArity()];
-		for( int i = 0; i < arguments.length; i++ ) {
+		for (int i = 0; i < arguments.length; i++) {
 			setArgument(i, arguments[i]);
 		}
 	}
-	
+
 	@Override
 	public void setArgument(int argumentPosition, IExpression<?> argument) {
 		this.arguments[argumentPosition] = argument;
@@ -57,16 +58,16 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public IExpression<?>[] getArguments() {
 		return arguments;
 	}
-	
-    @Override
-    public void setAdditionalContent(Map<String, Serializable> additionalContent) {
-        this.additionalContent = additionalContent;
-    }
 
-    @Override
-    public Serializable getAdditionalContent(String name) {
-        return additionalContent.get(name);
-    }
+	@Override
+	public Map<String, Serializable> getAdditionalContents() {
+		return additionalContent;
+	}
+
+	@Override
+	public Serializable getAdditionalContent(String name) {
+		return additionalContent.get(name);
+	}
 
 	@SuppressWarnings("unchecked")
 	final protected <S> S getInputValue(int argumentPos) {
@@ -90,18 +91,17 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 		return variables;
 	}
-	
+
 	@Override
 	public Variable getVariable(String name) {
 		Set<Variable> variables = getVariables();
-		for(Variable curVar : variables){
+		for (Variable curVar : variables) {
 			if (curVar.getIdentifier().equals(name)) {
 				return curVar;
 			}
 		}
 		return null;
 	}
-	
 
 	@Override
 	public String toString() {
@@ -124,12 +124,12 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public boolean optimizeConstantParameter() {
 		return true;
 	}
-	
+
 	@Override
 	public IExpression<?> getArgument(int argumentPosition) {
 		return this.arguments[argumentPosition];
 	}
-	
+
 	@Override
 	public boolean isVariable() {
 		return false;

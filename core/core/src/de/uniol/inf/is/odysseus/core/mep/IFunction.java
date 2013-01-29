@@ -55,16 +55,16 @@ public interface IFunction<T> extends IExpression<T> {
 	 */
 	public IExpression<?> getArgument(int argumentPosition);
 	
-	/**
-	 * Set the additional content
-	 * @param additionalContent The additional content
-	 */
-    public void setAdditionalContent(Map<String, Serializable> additionalContent);
-
+    /**
+     * Get the additional content if present
+     * @return The additional content
+     */
+    public Map<String, Serializable> getAdditionalContents();
+    
     /**
      * Get the additional content if present
      * @param name The name (key) of the additional content
-     * @return The additional content
+     * @return The additional content at the given name
      */
     public Serializable getAdditionalContent(String name);
     
