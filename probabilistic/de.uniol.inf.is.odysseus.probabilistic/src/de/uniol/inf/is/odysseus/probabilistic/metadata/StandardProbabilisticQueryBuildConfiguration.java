@@ -34,29 +34,32 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class StandardProbabilisticQueryBuildConfiguration extends AbstractQueryBuildConfiguration {
+public class StandardProbabilisticQueryBuildConfiguration extends
+		AbstractQueryBuildConfiguration {
 
-    public StandardProbabilisticQueryBuildConfiguration() {
-        this.settings.add(new ParameterTransformationConfiguration(new TransformationConfiguration("probabilistic",
-                ITimeInterval.class, IProbabilistic.class)));
-        this.settings.add(ParameterDoRewrite.TRUE);
-        this.settings.add(ParameterPerformQuerySharing.TRUE);
-        this.settings.add(ParameterAllowRestructuringOfCurrentPlan.TRUE);
-        this.settings.add(ParameterShareSimilarOperators.FALSE);
-    }
+	public StandardProbabilisticQueryBuildConfiguration() {
+		this.settings.add(new ParameterTransformationConfiguration(
+				new TransformationConfiguration("probabilistic",
+						ITimeInterval.class, IProbabilistic.class)));
+		this.settings.add(ParameterDoRewrite.TRUE);
+		this.settings.add(ParameterPerformQuerySharing.TRUE);
+		this.settings.add(ParameterAllowRestructuringOfCurrentPlan.TRUE);
+		this.settings.add(ParameterShareSimilarOperators.FALSE);
+	}
 
-    public StandardProbabilisticQueryBuildConfiguration(final List<IQueryBuildSetting<?>> settings) {
-        this.settings.addAll(settings);
-    }
+	public StandardProbabilisticQueryBuildConfiguration(
+			final List<IQueryBuildSetting<?>> settings) {
+		this.settings.addAll(settings);
+	}
 
-    @Override
-    public String getName() {
-        return "StandardProbabilistic";
-    }
+	@Override
+	public String getName() {
+		return "StandardProbabilistic";
+	}
 
-    @Override
-    public IQueryBuildConfiguration clone() {
-        return new StandardProbabilisticQueryBuildConfiguration(this.settings);
-    }
+	@Override
+	public IQueryBuildConfiguration clone() {
+		return new StandardProbabilisticQueryBuildConfiguration(this.settings);
+	}
 
 }

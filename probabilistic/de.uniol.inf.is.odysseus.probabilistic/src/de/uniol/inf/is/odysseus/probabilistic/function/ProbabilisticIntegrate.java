@@ -5,20 +5,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.math.genz.Matrix;
+import de.uniol.inf.is.odysseus.probabilistic.math.genz.QSIMVN;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
-public class ProbabilisticIntegrate extends AbstractFunction<Double> {
+public class ProbabilisticIntegrate extends
+		AbstractProbabilisticFunction<Double> {
 
 	/**
      * 
@@ -74,85 +78,52 @@ public class ProbabilisticIntegrate extends AbstractFunction<Double> {
 			final RealVector lowerBound, final RealVector upperBound) {
 
 		double probability = 0.0;
-		// int dimension = distribution.getDistribution().getDimension();
-		// if (dimension == 1) {
-		// for (Entry<NormalDistribution, Double> mixture :
-		// distribution.getDistribution().getMixtures().entrySet()) {
-		//
-		// CovarianceMatrix covarianceMatrix =
-		// mixture.getKey().getCovarianceMatrix();
-		// double std =
-		// covarianceMatrix.getEntries()[distribution.getDimension()];
-		//
-		// org.apache.commons.math3.distribution.NormalDistribution
-		// normalDistribution = new
-		// org.apache.commons.math3.distribution.NormalDistribution(
-		// mixture.getKey().getMean()[distribution.getDimension()], std);
-		//
-		// probability += mixture.getValue()
-		// *
-		// normalDistribution.cumulativeProbability(lowerBound.getEntry(distribution.getDimension()),
-		// upperBound.getEntry(distribution.getDimension()));
-		// }
-		// }
-		// else {
-		// // FIXME Re-check code!!!!
-		// for (Entry<NormalDistribution, Double> mixture :
-		// distribution.getDistribution().getMixtures().entrySet()) {
-		// RealMatrix covarianceMatrix =
-		// CovarianceMatrixUtils.toMatrix(mixture.getKey().getCovarianceMatrix());
-		// RealVector meanVector =
-		// MatrixUtils.createRealVector(mixture.getKey().getMean());
-		// // Perform Alan Genz algorithm for MV
-		// }
-		//
-		// }
-		// // Clone Test
-		// ProbabilisticContinuousDouble a = distribution;
-		// ProbabilisticContinuousDouble b = new
-		// ProbabilisticContinuousDouble(a.getDimension() - 1,
-		// a.getDistribution());
-		//
-		// // IDEA: after clone use a MEP function that propagates the
-		// distribution among the attributes (little hack!)
-		// // Use a Probabilistic tuple and overwrite clone method!!
-		// ProbabilisticContinuousDouble clone = a.clone();
-		// a.getDistribution().setScale(0.5);
-		//
-		// ProbabilisticContinuousDouble cloneB = new
-		// ProbabilisticContinuousDouble(clone.getDimension() - 1,
-		// clone.getDistribution());
-		//
-		// a.getDistribution().setSupport(a.getDimension(), new Interval(3.0,
-		// 5.0));
-		// clone.getDistribution().setSupport(clone.getDimension(), new
-		// Interval(7.0, 8.0));
-		// System.out.println(clone);
-		// System.out.println(cloneB);
-		// System.out.println(a);
-		// System.out.println(b);
-		// System.out.println(clone.getDistribution().getSupport());
-		// System.out.println(cloneB.getDistribution().getSupport());
-		// System.out.println(a.getDistribution().getSupport());
-		// System.out.println(b.getDistribution().getSupport());
-		// assert (clone.getDistribution().getScale() !=
-		// a.getDistribution().getScale());
-		// assert (clone.getDistribution().getScale() !=
-		// b.getDistribution().getScale());
-		// assert (a.getDistribution().getScale() ==
-		// b.getDistribution().getScale());
-		// assert (clone.getDistribution().getScale() ==
-		// cloneB.getDistribution().getScale());
-		//
-		// assert (!clone.getDistribution().equals(a.getDistribution()));
-		// assert (!clone.getDistribution().equals(b.getDistribution()));
-		// assert (a.getDistribution().equals(b.getDistribution()));
-		//
-		// assert (clone.getDistribution().equals(cloneB.getDistribution()));
-		//
-		// System.out.println(clone.getDistribution().getScale() + "!=" +
-		// a.getDistribution().getScale() + "=="
-		// + b.getDistribution().getScale());
+
+		NormalDistributionMixture mixtures = getDistributions(distribution
+				.getDistribution());
+		int dimension = mixtures.getDimension();
+		if (dimension == 1) {
+			probability = univariateCumulativeProbability(mixtures,
+					lowerBound.getEntry(0), upperBound.getEntry(0));
+		} else {
+			probability = multivariateCumulativeProbability(mixtures,
+					lowerBound, upperBound);
+		}
+		return probability;
+	}
+
+	private double univariateCumulativeProbability(
+			final NormalDistributionMixture distribution,
+			final double lowerBound, final double upperBound) {
+		double probability = 0.0;
+		for (Entry<NormalDistribution, Double> mixture : distribution
+				.getMixtures().entrySet()) {
+			NormalDistribution normalDistribution = mixture.getKey();
+			Double weight = mixture.getValue();
+			org.apache.commons.math3.distribution.NormalDistribution tmpDistribution = new org.apache.commons.math3.distribution.NormalDistribution(
+					normalDistribution.getMean()[0], normalDistribution
+							.getCovarianceMatrix().getEntries()[0]);
+			probability += tmpDistribution.cumulativeProbability(lowerBound,
+					upperBound) * weight;
+		}
+		return probability;
+	}
+
+	private double multivariateCumulativeProbability(
+			final NormalDistributionMixture distribution,
+			final RealVector lowerBound, final RealVector upperBound) {
+		double probability = 0.0;
+		for (Entry<NormalDistribution, Double> mixture : distribution
+				.getMixtures().entrySet()) {
+			NormalDistribution normalDistribution = mixture.getKey();
+			Double weight = mixture.getValue();
+			Matrix covarianceMatrix = new Matrix(normalDistribution
+					.getCovarianceMatrix().getMatrix().getData());
+			Matrix lower = new Matrix(new double[][] { lowerBound.toArray() });
+			Matrix upper = new Matrix(new double[][] { upperBound.toArray() });
+			probability += QSIMVN.qsimvn(5000, covarianceMatrix, lower, upper).p
+					* weight;
+		}
 		return probability;
 	}
 

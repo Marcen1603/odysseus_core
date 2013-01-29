@@ -47,6 +47,16 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
 	/**
 	 * 
+	 * @param attributeCount
+	 * @param b
+	 */
+	public ProbabilisticTuple(final int attributeCount, final boolean b) {
+		super(attributeCount, b);
+		this.distributions = null;
+	}
+
+	/**
+	 * 
 	 * @param attributes
 	 * @param b
 	 */
@@ -407,8 +417,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 			int dimension = newDistributions[i].getDimension();
 			int[] newAttrsPos = new int[dimension];
 			for (int j = 0; j < dimension; j++) {
-				newAttrsPos[j] = newDistributions[i].getAttribute(j)
-						+ offset;
+				newAttrsPos[j] = newDistributions[i].getAttribute(j) + offset;
 			}
 			newDistributions[i].setAttributes(newAttrsPos);
 		}

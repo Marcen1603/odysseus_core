@@ -26,20 +26,23 @@ import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
  */
 public class RuleProvider implements ITransformRuleProvider {
 
-    @Override
-    public List<IRule<?, ?>> getRules() {
-        final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
-        rules.add(new TProbabilisticAORule());
-        rules.add(new TAggregateProbabilisticRule());
-        rules.add(new TJoinProbabilisticRule());
+	@Override
+	public List<IRule<?, ?>> getRules() {
+		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
+		rules.add(new TProbabilisticAORule());
+		
+		rules.add(new TProbabilisticValidatorRule());
 
-        // Select AO -> PO Rule
-        rules.add(new TSelectAORule());
-        // Project AO -> PO Rule
-        rules.add(new TProjectAORule());
-        // Map AO -> PO Rule
-        rules.add(new TMapAORule());
-        return rules;
-    }
+		rules.add(new TAggregateProbabilisticRule());
+		rules.add(new TJoinProbabilisticRule());
+
+		// Select AO -> PO Rule
+		rules.add(new TSelectAORule());
+		// Project AO -> PO Rule
+		rules.add(new TProjectAORule());
+		// Map AO -> PO Rule
+		rules.add(new TMapAORule());
+		return rules;
+	}
 
 }

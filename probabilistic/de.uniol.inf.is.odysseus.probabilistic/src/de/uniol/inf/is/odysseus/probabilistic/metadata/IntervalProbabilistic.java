@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
 /**
@@ -29,6 +31,9 @@ public class IntervalProbabilistic extends TimeInterval implements
 	 * 
 	 */
 	private static final long serialVersionUID = -9030157268224460919L;
+	@SuppressWarnings("unchecked")
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[] {
+			ITimeInterval.class, IProbabilistic.class };
 	private final IProbabilistic probabilistic;
 
 	public IntervalProbabilistic() {
@@ -73,4 +78,8 @@ public class IntervalProbabilistic extends TimeInterval implements
 		this.probabilistic.setExistence(existence);
 	}
 
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return classes;
+	}
 }

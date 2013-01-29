@@ -25,69 +25,69 @@ import de.uniol.inf.is.odysseus.probabilistic.math.PBox;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class Probabilistic implements IProbabilistic {
-    @SuppressWarnings("unused")
-    private final Map<Integer, PBox> pBoxes           = new HashMap<Integer, PBox>();
-
-    /**
+	/**
 	 * 
 	 */
-    private static final long        serialVersionUID = -147594856639774242L;
+	private static final long serialVersionUID = -147594856639774242L;
+	@SuppressWarnings("unchecked")
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IProbabilistic.class };
+	@SuppressWarnings("unused")
+	private final Map<Integer, PBox> pBoxes = new HashMap<Integer, PBox>();
 
-    /** Tuple existence probability */
-    private double                   existence;
+	/** Tuple existence probability */
+	private double existence;
 
-    public Probabilistic() {
-        this.existence = 1.0;
-    }
+	public Probabilistic() {
+		this.existence = 1.0;
+	}
 
-    public Probabilistic(final int size) {
-        this.existence = 1.0;
-    }
+	public Probabilistic(final double existence) {
+		this.existence = existence;
+	}
 
-    public Probabilistic(final Probabilistic probability) {
-        this.existence = probability.existence;
+	public Probabilistic(final Probabilistic probability) {
+		this.existence = probability.existence;
 
-    }
+	}
 
-    @Override
-    public String csvToString() {
-        return "" + this.existence;
-    }
+	@Override
+	public String csvToString() {
+		return "" + this.existence;
+	}
 
-    @Override
-    public String csvToString(final boolean withMetada) {
-        return this.csvToString();
-    }
+	@Override
+	public String csvToString(final boolean withMetada) {
+		return this.csvToString();
+	}
 
-    @Override
-    public String getCSVHeader() {
-        return "probability";
-    }
+	@Override
+	public String getCSVHeader() {
+		return "probability";
+	}
 
-    @Override
-    public IProbabilistic clone() {
-        return new Probabilistic(this);
-    }
+	@Override
+	public IProbabilistic clone() {
+		return new Probabilistic(this);
+	}
 
-    @Override
-    public double getExistence() {
-        return this.existence;
-    }
+	@Override
+	public double getExistence() {
+		return this.existence;
+	}
 
-    @Override
-    public void setExistence(final double existence) {
-        this.existence = existence;
-    }
+	@Override
+	public void setExistence(final double existence) {
+		this.existence = existence;
+	}
 
-    @Override
-    public String toString() {
-        return "TEP: " + this.existence;
-    }
+	@Override
+	public String toString() {
+		return "TEP: " + this.existence;
+	}
 
-    @Override
-    public Class<? extends IMetaAttribute>[] getClasses() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return classes;
+	}
 
 }

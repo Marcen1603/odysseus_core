@@ -17,87 +17,109 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>
  */
-public class ProbabilisticMapPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
-    private int[][]         variables;
-    private SDFExpression[] expressions;
-    private SDFSchema       inputSchema;
+public class ProbabilisticMapPO<T extends IMetaAttribute> extends
+		AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 
-    public ProbabilisticMapPO(final SDFSchema inputSchema, final SDFExpression[] expressions) {
-        this.inputSchema = inputSchema;
-        this.init(inputSchema, expressions);
-    }
+	private int[][] variables;
+	private SDFProbabilisticExpression[] expressions;
+	private final SDFSchema inputSchema;
 
-    public ProbabilisticMapPO(final ProbabilisticMapPO<T> probabilisticMapPO) {
-        this.init(probabilisticMapPO.inputSchema, probabilisticMapPO.expressions);
-    }
+	public ProbabilisticMapPO(SDFSchema inputSchema, SDFExpression[] expressions) {
+		this.inputSchema = inputSchema;
+		init(inputSchema, expressions);
+	}
 
-    @Override
-    public OutputMode getOutputMode() {
-        return OutputMode.NEW_ELEMENT;
-    }
+	private void init(SDFSchema schema, SDFExpression[] expressions) {
+		this.expressions = new SDFProbabilisticExpression[expressions.length];
+		for (int i = 0; i < expressions.length; ++i) {
+			this.expressions[i] = new SDFProbabilisticExpression(expressions[i]);
+		}
+		this.variables = new int[expressions.length][];
+		int i = 0;
+		for (SDFExpression expression : expressions) {
+			List<SDFAttribute> neededAttributes = expression.getAllAttributes();
+			int[] newArray = new int[neededAttributes.size()];
+			this.variables[i++] = newArray;
+			int j = 0;
+			for (SDFAttribute curAttribute : neededAttributes) {
+				newArray[j++] = schema.indexOf(curAttribute);
+			}
+		}
+	}
 
-    @Override
-    protected void process_next(final Tuple<T> object, final int port) {
-        // TODO Auto-generated method stub
+	public ProbabilisticMapPO(ProbabilisticMapPO<T> probabilisticMapPO) {
+		this.inputSchema = probabilisticMapPO.inputSchema.clone();
+		init(probabilisticMapPO.inputSchema, probabilisticMapPO.expressions);
+	}
 
-    }
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
+	}
 
-    @Override
-    public AbstractPipe<Tuple<T>, Tuple<T>> clone() {
-        return new ProbabilisticMapPO<T>(this);
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	final protected void process_next(ProbabilisticTuple<T> object, int port) {
+		ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, false);
+		outputVal.setMetadata((T) object.getMetadata().clone());
+		synchronized (this.expressions) {
+			for (int i = 0; i < this.expressions.length; ++i) {
+				Object[] values = new Object[this.variables[i].length];
+				for (int j = 0; j < this.variables[i].length; ++j) {
+					values[j] = object.getAttribute(this.variables[i][j]);
+				}
+				this.expressions[i].bindDistributions(object
+						.getDistributions());
+				this.expressions[i].bindAdditionalContent(object
+						.getAdditionalContent());
+				this.expressions[i].bindVariables(values);
+				outputVal.setAttribute(i, this.expressions[i].getValue());
+				if (this.expressions[i].getType().requiresDeepClone()) {
+					outputVal.setRequiresDeepClone(true);
+				}
+			}
+		}
+		transfer(outputVal);
+	}
 
-    @Override
-    @SuppressWarnings({ "rawtypes" })
-    public boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
-        if (!(ipo instanceof RelationalMapPO)) {
-            return false;
-        }
-        final ProbabilisticMapPO pmpo = (ProbabilisticMapPO) ipo;
-        if (this.hasSameSources(pmpo) && (this.inputSchema.compareTo(pmpo.inputSchema) == 0)) {
-            if (this.expressions.length == pmpo.expressions.length) {
-                for (int i = 0; i < this.expressions.length; i++) {
-                    if (!this.expressions[i].equals(pmpo.expressions[i])) {
-                        return false;
-                    }
-                }
-            }
-            else {
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public ProbabilisticMapPO<T> clone() {
+		return new ProbabilisticMapPO<T>(this);
+	}
 
-    private void init(final SDFSchema schema, final SDFExpression[] expressions) {
-        this.expressions = new SDFExpression[expressions.length];
-        for (int i = 0; i < expressions.length; ++i) {
-            this.expressions[i] = expressions[i].clone();
-        }
-        this.variables = new int[expressions.length][];
-        int i = 0;
-        for (final SDFExpression expression : expressions) {
-            final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
-            final int[] newArray = new int[neededAttributes.size()];
-            this.variables[i++] = newArray;
-            int j = 0;
-            for (final SDFAttribute curAttribute : neededAttributes) {
-                newArray[j++] = schema.indexOf(curAttribute);
-            }
-        }
-    }
+	@Override
+	@SuppressWarnings({ "rawtypes" })
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof ProbabilisticMapPO)) {
+			return false;
+		}
+		ProbabilisticMapPO mapPo = (ProbabilisticMapPO) ipo;
+		if (this.hasSameSources(mapPo)
+				&& this.inputSchema.compareTo(mapPo.inputSchema) == 0) {
+			if (this.expressions.length == mapPo.expressions.length) {
+				for (int i = 0; i < this.expressions.length; i++) {
+					if (!this.expressions[i].equals(mapPo.expressions[i])) {
+						return false;
+					}
+				}
+			} else {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
 }
