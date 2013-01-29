@@ -46,7 +46,8 @@ public class TApplicationTimestampRule extends
 					.getInputSchema().indexOf(timestampAO.getEndTimestamp())
 					: -1;
 			mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(
-					pos, posEnd, clearEnd, timestampAO.getDateFormat());
+					pos, posEnd, clearEnd, timestampAO.getDateFormat(),
+					timestampAO.getTimezone());
 		} else {
 
 			int year = schema.indexOf(timestampAO.getStartTimestampYear());
@@ -60,7 +61,7 @@ public class TApplicationTimestampRule extends
 			int factor = timestampAO.getFactor();
 			mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(
 					year, month, day, hour, minute, second, millisecond,
-					factor, clearEnd);
+					factor, clearEnd, timestampAO.getTimezone());
 		}
 
 		MetadataUpdatePO<?, ?> po = new MetadataUpdatePO<ITimeInterval, Tuple<? extends ITimeInterval>>(

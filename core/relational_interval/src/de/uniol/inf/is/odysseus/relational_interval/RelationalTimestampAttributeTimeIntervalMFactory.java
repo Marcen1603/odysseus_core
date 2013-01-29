@@ -19,7 +19,7 @@ import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -48,9 +48,10 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	final private int factor;
 
 	final private boolean clearEnd;
+	final private TimeZone timezone;
 
 	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos,
-			int endAttrPos, boolean clearEnd, String dateFormat) {
+			int endAttrPos, boolean clearEnd, String dateFormat, String timezone) {
 		this.startAttrPos = startAttrPos;
 		this.endAttrPos = endAttrPos;
 		
@@ -59,7 +60,11 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		}else{
 			df = null;
 		}
-
+        if (timezone != null) {
+        	this.timezone = TimeZone.getTimeZone(timezone);
+        } else {
+        	this.timezone = TimeZone.getTimeZone("UTC");
+        }
 		startTimestampYearPos = -1;
 		startTimestampMonthPos = -1;
 		startTimestampDayPos = -1;
@@ -76,7 +81,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			int startTimestampYear, int startTimestampMonth,
 			int startTimestampDay, int startTimestampHour,
 			int startTimestampMinute, int startTimestampSecond,
-			int startTimestampMillisecond, int factor, boolean clearEnd) {
+			int startTimestampMillisecond, int factor, boolean clearEnd, String timezone) {
 		this.startAttrPos = -1;
 		this.endAttrPos = -1;
 
@@ -92,6 +97,11 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		this.clearEnd = clearEnd;
 
 		df = null;
+        if (timezone != null) {
+        	this.timezone = TimeZone.getTimeZone(timezone);
+        } else {
+        	this.timezone = TimeZone.getTimeZone("UTC");
+        }
 	}
 
 	@Override
@@ -102,7 +112,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 
 		if (startTimestampYearPos >= 0) {
 
-			Calendar cal = new GregorianCalendar();
+			Calendar cal = Calendar.getInstance(this.timezone);
 			int year = inElem.getAttribute(startTimestampYearPos);
 			int month = inElem.getAttribute(startTimestampMonthPos);
 			int day = (Integer) (startTimestampDayPos > 0 ? inElem
@@ -172,6 +182,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		int result = 1;
 		result = prime * result + (clearEnd ? 1231 : 1237);
 		result = prime * result + ((df == null) ? 0 : df.hashCode());
+		result = prime * result + ((timezone == null) ? 0 : timezone.hashCode());
 		result = prime * result + endAttrPos;
 		result = prime * result + factor;
 		result = prime * result + startAttrPos;
@@ -200,6 +211,11 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			if (other.df != null)
 				return false;
 		} else if (!df.equals(other.df))
+			return false;
+		if (timezone == null) {
+			if (other.timezone != null)
+				return false;
+		} else if (!timezone.equals(other.timezone))
 			return false;
 		if (endAttrPos != other.endAttrPos)
 			return false;

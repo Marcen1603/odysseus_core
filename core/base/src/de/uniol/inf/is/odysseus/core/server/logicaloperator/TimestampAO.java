@@ -31,7 +31,8 @@ public class TimestampAO extends UnaryLogicalOp {
 	private SDFAttribute endTimestamp;
 	// an optional String representation of the date format
 	private String dateFormat;
-	
+	/** The timezone to use */
+	private String timezone;
 	// To be used if timestamps are seperated
 	private SDFAttribute startTimestampYear;
 	private SDFAttribute startTimestampMonth;
@@ -57,6 +58,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		this.isUsingNoTime = ao.isUsingNoTime;
 		this.clearEnd = ao.clearEnd;
 		this.dateFormat = ao.dateFormat;
+		this.timezone = ao.timezone;
 		startTimestampYear= ao.startTimestampYear;
 		startTimestampMonth= ao.startTimestampMonth;
 		startTimestampDay= ao.startTimestampDay;
@@ -227,6 +229,14 @@ public class TimestampAO extends UnaryLogicalOp {
 		this.dateFormat = dateFormat;
 	}
 	
+	public String getTimezone() {
+		return dateFormat;
+	}
+	
+	@Parameter(type = StringParameter.class, name = "timezone", isList = false, optional = true)
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
+	}
 
 	public String getStandardName() {
 		if (isUsingSystemTime){
