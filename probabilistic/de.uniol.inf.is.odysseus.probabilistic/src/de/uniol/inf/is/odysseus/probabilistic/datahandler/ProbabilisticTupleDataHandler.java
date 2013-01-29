@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,147 +31,242 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticTupleDataHandler extends AbstractDataHandler<ProbabilisticTuple<?>> {
-    static protected List<String> types        = new ArrayList<String>();
-    static {
-        ProbabilisticDoubleHandler.types.add("ProbabilisticTuple");
-    }
+public class ProbabilisticTupleDataHandler extends
+		AbstractDataHandler<ProbabilisticTuple<?>> {
+	static protected List<String> types = new ArrayList<String>();
+	static {
+		ProbabilisticDoubleHandler.types.add("ProbabilisticTuple");
+	}
 
-    IDataHandler<?>[]             dataHandlers = null;
+	private IDataHandler<?>[] dataHandlers = null;
+	private ProbabilisticDistributionHandler probabilisticDistributionHandler = new ProbabilisticDistributionHandler();
+	private int maxDistributions;
 
-    // Default Constructor for declarative Service needed
-    public ProbabilisticTupleDataHandler() {
-    }
+	// Default Constructor for declarative Service needed
+	public ProbabilisticTupleDataHandler() {
+	}
 
-    private ProbabilisticTupleDataHandler(SDFSchema schema) {
-        this.createDataHandler(schema);
-    }
+	private ProbabilisticTupleDataHandler(SDFSchema schema) {
+		this.createDataHandler(schema);
+	}
 
-    public void init(SDFSchema schema) {
-        if (dataHandlers == null) {
-            createDataHandler(schema);
-        }
-        else {
-            throw new RuntimeException("TupleDataHandler is immutable. Values already set");
-        }
-    }
+	public void init(SDFSchema schema) {
+		if (dataHandlers == null) {
+			createDataHandler(schema);
+		} else {
+			throw new RuntimeException(
+					"ProbabilisticTupleDataHandler is immutable. Values already set");
+		}
+	}
 
-    public void init(List<String> schema) {
-        if (dataHandlers == null) {
-            createDataHandler(schema);
-        }
-        else {
-            throw new RuntimeException("TupleDataHandler is immutable. Values already set");
-        }
-    }
+	public void init(List<String> schema) {
+		if (dataHandlers == null) {
+			createDataHandler(schema);
+		} else {
+			throw new RuntimeException(
+					"TupleDataHandler is immutable. Values already set");
+		}
+	}
 
-    @Override
-    public ProbabilisticTuple<?> readData(ByteBuffer buffer) {
-        ProbabilisticTuple<?> r = null;
-        synchronized (buffer) {
-            Object[] attributes = new Object[dataHandlers.length];
-            for (int i = 0; i < dataHandlers.length; i++) {
-                attributes[i] = dataHandlers[i].readData(buffer);
-            }
-            r = new ProbabilisticTuple<IMetaAttribute>(attributes, false);
-        }
-        return r;
-    }
+	@Override
+	public ProbabilisticTuple<?> readData(ByteBuffer buffer) {
+		ProbabilisticTuple<?> r = null;
+		synchronized (buffer) {
+			Object[] attributes = new Object[dataHandlers.length];
+			for (int i = 0; i < dataHandlers.length; i++) {
+				attributes[i] = dataHandlers[i].readData(buffer);
+			}
+			NormalDistributionMixture[] distribution = new NormalDistributionMixture[this.maxDistributions];
+			int distributions = 0;
+			for (int i = 0; i < this.maxDistributions; i++) {
+				if (buffer.hasRemaining()) {
+					distribution[i] = probabilisticDistributionHandler
+							.readData(buffer);
+					distributions = i;
+				}
+			}
+			r = new ProbabilisticTuple<IMetaAttribute>(attributes, false);
+			r.setDistributions(Arrays.copyOfRange(distribution, 0,
+					distributions));
+		}
+		return r;
+	}
 
-    @Override
-    public ProbabilisticTuple<?> readData(ObjectInputStream inputStream) throws IOException {
-        Object[] attributes = new Object[dataHandlers.length];
-        for (int i = 0; i < this.dataHandlers.length; i++) {
-            attributes[i] = dataHandlers[i].readData(inputStream);
-        }
-        return new ProbabilisticTuple<IMetaAttribute>(attributes, false);
-    }
+	@Override
+	public ProbabilisticTuple<?> readData(ObjectInputStream inputStream)
+			throws IOException {
+		ProbabilisticTuple<?> r = null;
+		Object[] attributes = new Object[dataHandlers.length];
+		for (int i = 0; i < this.dataHandlers.length; i++) {
+			attributes[i] = dataHandlers[i].readData(inputStream);
+		}
+		NormalDistributionMixture[] distribution = new NormalDistributionMixture[this.maxDistributions];
+		int distributions = 0;
+		for (int i = 0; i < this.maxDistributions; i++) {
+			if (inputStream.available() > 0) {
+				distribution[i] = probabilisticDistributionHandler
+						.readData(inputStream);
+				distributions = i;
+			}
+		}
+		r = new ProbabilisticTuple<IMetaAttribute>(attributes, false);
+		r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
+		return r;
+	}
 
-    @Override
-    public ProbabilisticTuple<?> readData(String string) {
-        throw new RuntimeException("Sorry. Currently not implemented");
-    }
+	@Override
+	public ProbabilisticTuple<?> readData(String string) {
+		throw new RuntimeException("Sorry. Currently not implemented");
+	}
 
-    @Override
-    public void writeData(ByteBuffer buffer, Object data) {
-        ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) data;
+	@Override
+	public ProbabilisticTuple<?> readData(String[] input) {
+		ProbabilisticTuple<?> r = null;
+		Object[] attributes = new Object[dataHandlers.length];
+		for (int i = 0; i < attributes.length; i++) {
+			attributes[i] = dataHandlers[i].readData(input[i]);
+		}
+		NormalDistributionMixture[] distribution = new NormalDistributionMixture[this.maxDistributions];
+		int distributions = 0;
+		for (int i = attributes.length; i < input.length; i++) {
+			distribution[attributes.length - i] = probabilisticDistributionHandler
+					.readData(input[i]);
+			distributions = i;
+		}
+		r = new ProbabilisticTuple<IMetaAttribute>(attributes, false);
+		r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
+		return r;
+	}
 
-        int size = memSize(r);
+	@Override
+	public ProbabilisticTuple<?> readData(List<String> input) {
+		ProbabilisticTuple<?> r = null;
+		Object[] attributes = new Object[dataHandlers.length];
+		for (int i = 0; i < attributes.length; i++) {
+			attributes[i] = dataHandlers[i].readData(input.get(i));
+		}
+		NormalDistributionMixture[] distribution = new NormalDistributionMixture[this.maxDistributions];
+		int distributions = 0;
+		for (int i = attributes.length; i < input.size(); i++) {
+			distribution[attributes.length - i] = probabilisticDistributionHandler
+					.readData(input.get(i));
+			distributions = i;
+		}
+		r = new ProbabilisticTuple<IMetaAttribute>(attributes, false);
+		r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
+		return r;
+	}
 
-        if (size > buffer.capacity()) {
-            buffer = ByteBuffer.allocate(size * 2);
-        }
+	@Override
+	public void writeData(ByteBuffer buffer, Object data) {
+		ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) data;
 
-        synchronized (buffer) {
-            for (int i = 0; i < dataHandlers.length; i++) {
-                dataHandlers[i].writeData(buffer, r.getAttribute(i));
-            }
-        }
-    }
+		int size = memSize(r);
 
-    @Override
-    public int memSize(Object attribute) {
-        ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) attribute;
-        int size = 0;
-        for (int i = 0; i < dataHandlers.length; i++) {
-            size += dataHandlers[i].memSize(r.getAttribute(i));
-        }
-        return size;
-    }
+		if (size > buffer.capacity()) {
+			buffer = ByteBuffer.allocate(size * 2);
+		}
 
-    @Override
-    public List<String> getSupportedDataTypes() {
-        return Collections.unmodifiableList(ProbabilisticTupleDataHandler.types);
-    }
+		synchronized (buffer) {
+			for (int i = 0; i < dataHandlers.length; i++) {
+				dataHandlers[i].writeData(buffer, r.getAttribute(i));
+			}
+			for (int i = 0; i < r.getDistributions().length; i++) {
+				probabilisticDistributionHandler.writeData(buffer,
+						r.getDistribution(i));
+			}
 
-    @Override
-    protected IDataHandler<ProbabilisticTuple<?>> getInstance(SDFSchema schema) {
-        return new ProbabilisticTupleDataHandler(schema);
-    }
+		}
+	}
 
-    private void createDataHandler(SDFSchema schema) {
-        this.dataHandlers = new IDataHandler<?>[schema.size()];
-        int i = 0;
-        for (SDFAttribute attribute : schema) {
+	@Override
+	public int memSize(Object attribute) {
+		ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) attribute;
+		int size = 0;
+		for (int i = 0; i < dataHandlers.length; i++) {
+			size += dataHandlers[i].memSize(r.getAttribute(i));
+		}
+		for (int i = 0; i < r.getDistributions().length; i++) {
+			size += probabilisticDistributionHandler.memSize(r
+					.getDistribution(i));
+		}
+		return size;
+	}
 
-            SDFDatatype type = attribute.getDatatype();
-            String uri = attribute.getDatatype().getURI(false);
-            ;
+	@Override
+	public List<String> getSupportedDataTypes() {
+		return Collections
+				.unmodifiableList(ProbabilisticTupleDataHandler.types);
+	}
 
-            // is this really needed??
-            if (type.isTuple()) {
-                uri = "TUPLE";
-            }
-            else if (type.isMultiValue()) {
-                uri = "MULTI_VALUE";
-            }
+	@Override
+	protected IDataHandler<ProbabilisticTuple<?>> getInstance(SDFSchema schema) {
+		return new ProbabilisticTupleDataHandler(schema);
+	}
 
-            if (!DataHandlerRegistry.containsDataHandler(uri)) {
-                throw new IllegalArgumentException("Unregistered datatype " + uri);
-            }
+	private void createDataHandler(SDFSchema schema) {
+		this.dataHandlers = new IDataHandler<?>[schema.size()];
+		this.maxDistributions = 0;
+		int i = 0;
+		for (SDFAttribute attribute : schema) {
 
-            dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", attribute));
+			final SDFDatatype type = attribute.getDatatype();
+			final SDFProbabilisticDatatype probabilisticType;
+			if (type.getClass() == SDFProbabilisticDatatype.class) {
+				probabilisticType = (SDFProbabilisticDatatype) attribute
+						.getDatatype();
+			} else {
+				probabilisticType = null;
+			}
 
-        }
-    }
+			String uri = attribute.getDatatype().getURI(false);
 
-    private void createDataHandler(List<String> schema) {
-        this.dataHandlers = new IDataHandler<?>[schema.size()];
-        int i = 0;
-        for (String attribute : schema) {
+			// is this really needed??
+			if (type.isTuple()) {
+				uri = "TUPLE";
+			} else if (type.isMultiValue()) {
+				uri = "MULTI_VALUE";
+			}
+			if (probabilisticType != null) {
+				if (probabilisticType.isContinuous()) {
+					maxDistributions++;
+				}
+			}
+			if (!DataHandlerRegistry.containsDataHandler(uri)) {
+				throw new IllegalArgumentException("Unregistered datatype "
+						+ uri);
+			}
 
-            IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(attribute, (SDFSchema) null);
+			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri,
+					new SDFSchema("", attribute));
 
-            if (handler == null) {
-                throw new IllegalArgumentException("Unregistered datatype " + attribute);
-            }
+		}
+	}
 
-            this.dataHandlers[i++] = handler;
-        }
-    }
+	private void createDataHandler(List<String> schema) {
+		this.dataHandlers = new IDataHandler<?>[schema.size()];
+		this.maxDistributions = 0;
+		int i = 0;
+		for (String attribute : schema) {
+
+			IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(
+					attribute, (SDFSchema) null);
+
+			if (handler == null) {
+				throw new IllegalArgumentException("Unregistered datatype "
+						+ attribute);
+			}
+			if (handler.getClass() == ProbabilisticContinuousDoubleHandler.class) {
+				maxDistributions++;
+			}
+			this.dataHandlers[i++] = handler;
+		}
+	}
 
 }
