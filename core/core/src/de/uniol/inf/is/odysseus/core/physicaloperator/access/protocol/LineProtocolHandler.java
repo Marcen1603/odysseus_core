@@ -33,120 +33,125 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
-    protected BufferedReader reader;
-    protected BufferedWriter writer;
-    private long             delay;
+	protected BufferedReader reader;
+	protected BufferedWriter writer;
+	private long delay;
 
-    public LineProtocolHandler() {
-        super();
-    }
+	public LineProtocolHandler() {
+		super();
+	}
 
-    public LineProtocolHandler(ITransportDirection direction, IAccessPattern access) {
-        super(direction, access);
-    }
+	public LineProtocolHandler(ITransportDirection direction,
+			IAccessPattern access) {
+		super(direction, access);
+	}
 
-    @Override
-    public void open() throws UnknownHostException, IOException {
-        getTransportHandler().open();
-        if (getDirection().equals(ITransportDirection.IN)) {
-            reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
-        }
-        else {
-            writer = new BufferedWriter(new OutputStreamWriter(getTransportHandler().getOutputStream()));
-        }
-    }
+	@Override
+	public void open() throws UnknownHostException, IOException {
+		getTransportHandler().open();
+		if (getDirection().equals(ITransportDirection.IN)) {
+			if ((this.getAccess().equals(IAccessPattern.PULL))
+					|| (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+				reader = new BufferedReader(new InputStreamReader(
+						getTransportHandler().getInputStream()));
+			}
+		} else {
+			writer = new BufferedWriter(new OutputStreamWriter(
+					getTransportHandler().getOutputStream()));
+		}
+	}
 
-    @Override
-    public void close() throws IOException {
-        if (getDirection().equals(ITransportDirection.IN)) {
-            reader.close();
-        }
-        else {
-            writer.close();
-        }
-        getTransportHandler().close();
-    }
+	@Override
+	public void close() throws IOException {
+		if (getDirection().equals(ITransportDirection.IN)) {
+			if (reader != null) {
+				reader.close();
+			}
+		} else {
+			writer.close();
+		}
+		getTransportHandler().close();
+	}
 
-    @Override
-    public boolean hasNext() throws IOException {
-        return reader.ready();
-    }
+	@Override
+	public boolean hasNext() throws IOException {
+		return reader.ready();
+	}
 
-    @Override
-    public T getNext() throws IOException {
-        delay();
-        if (reader.ready()) {
-            return getDataHandler().readData(reader.readLine());
-        }
-        else {
-            return null;
-        }
-    }
+	@Override
+	public T getNext() throws IOException {
+		delay();
+		if (reader.ready()) {
+			return getDataHandler().readData(reader.readLine());
+		} else {
+			return null;
+		}
+	}
 
-    @Override
-    public void write(T object) throws IOException {
-        writer.write(object.toString());
-    }
+	@Override
+	public void write(T object) throws IOException {
+		writer.write(object.toString());
+	}
 
-    protected void delay() {
-        if (delay > 0) {
-            try {
-                Thread.sleep(delay);
-            }
-            catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	protected void delay() {
+		if (delay > 0) {
+			try {
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
-    @Override
-    public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
-            Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-        LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction, access);
-        instance.setDataHandler(dataHandler);
-        instance.setTransfer(transfer);
-        instance.setDelay(Long.parseLong(options.get("delay")));
+	@Override
+	public IProtocolHandler<T> createInstance(ITransportDirection direction,
+			IAccessPattern access, Map<String, String> options,
+			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction,
+				access);
+		instance.setDataHandler(dataHandler);
+		instance.setTransfer(transfer);
+		instance.setDelay(Long.parseLong(options.get("delay")));
 
-        return instance;
-    }
+		return instance;
+	}
 
-    @Override
-    public String getName() {
-        return "Line";
-    }
+	@Override
+	public String getName() {
+		return "Line";
+	}
 
-    public long getDelay() {
-        return delay;
-    }
+	public long getDelay() {
+		return delay;
+	}
 
-    public void setDelay(long delay) {
-        this.delay = delay;
-    }
+	public void setDelay(long delay) {
+		this.delay = delay;
+	}
 
-    @Override
-    public ITransportExchangePattern getExchangePattern() {
-        if (this.getDirection().equals(ITransportDirection.IN)) {
-            return ITransportExchangePattern.InOnly;
-        }
-        else {
-            return ITransportExchangePattern.OutOnly;
-        }
-    }
+	@Override
+	public ITransportExchangePattern getExchangePattern() {
+		if (this.getDirection().equals(ITransportDirection.IN)) {
+			return ITransportExchangePattern.InOnly;
+		} else {
+			return ITransportExchangePattern.OutOnly;
+		}
+	}
 
-    @Override
-    public void onConnect(ITransportHandler caller) {
-        // TODO Auto-generated method stub
+	@Override
+	public void onConnect(ITransportHandler caller) {
+		// TODO Auto-generated method stub
 
-    }
+	}
 
-    @Override
-    public void onDisonnect(ITransportHandler caller) {
-        // TODO Auto-generated method stub
+	@Override
+	public void onDisonnect(ITransportHandler caller) {
+		// TODO Auto-generated method stub
 
-    }
+	}
 
-    @Override
-    public void process(ByteBuffer message) {
-        getTransfer().transfer(getDataHandler().readData(message));
-    }
+	@Override
+	public void process(ByteBuffer message) {
+		getTransfer().transfer(getDataHandler().readData(message));
+	}
 }
