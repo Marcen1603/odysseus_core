@@ -75,7 +75,7 @@ public class AsPolarCoordinates extends AbstractFunction<PolarCoordinate[]> {
 			if (angle >= 360.0) {
 				angle -= ((int) (angle / 360.0)) * 360;
 			}
-			polarCoordinates.add(new PolarCoordinate(radius, angle));
+			polarCoordinates.add(new PolarCoordinate(radius,Math.toRadians(angle)));
 		}
 		return null;
 	}

@@ -22,7 +22,9 @@ public class PolarCoordinate implements Serializable, Cloneable {
 	 * 
 	 */
 	private static final long serialVersionUID = -2570425136506579259L;
+	/** The radius */
 	public Double r;
+	/** The angle in Radiant */
 	public Double a;
 
 	public PolarCoordinate(Double r, Double a) {
@@ -77,6 +79,5 @@ public class PolarCoordinate implements Serializable, Cloneable {
 	public String toString() {
 		return "(" + r + ", " + a + "°)";
 	}
-	
-	
+
 }
