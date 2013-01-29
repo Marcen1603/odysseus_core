@@ -45,7 +45,7 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
     public IAggregateFunction<?, ?> createAggFunction(final AggregateFunction key, final int[] pos) {
         IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
         if (key.getName().equalsIgnoreCase(ProbabilisticConstants.NAMESPACE + "AVG")) {
-
+        	 aggFunc = ProbabilisticAvg.getInstance(pos[0]);
         }
         else if (key.getName().equalsIgnoreCase(ProbabilisticConstants.NAMESPACE + "SUM")) {
             aggFunc = ProbabilisticSum.getInstance(pos[0]);
@@ -54,13 +54,13 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
             aggFunc = ProbabilisticCount.getInstance(pos[0]);
         }
         else if (key.getName().equalsIgnoreCase(ProbabilisticConstants.NAMESPACE + "MIN")) {
-
+        	 throw new IllegalArgumentException("MIN Aggregatefunction not implemented");
         }
         else if (key.getName().equalsIgnoreCase(ProbabilisticConstants.NAMESPACE + "MAX")) {
-
+        	 throw new IllegalArgumentException("MAX Aggregatefunction not implemented");
         }
         else if (key.getName().equalsIgnoreCase(ProbabilisticConstants.NAMESPACE + "STDDEV")) {
-
+        	 throw new IllegalArgumentException("STDDEV Aggregatefunction not implemented");
         }
         else {
             throw new IllegalArgumentException("No such Aggregatefunction");
