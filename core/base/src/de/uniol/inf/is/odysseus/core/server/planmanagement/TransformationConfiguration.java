@@ -26,21 +26,33 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class TransformationConfiguration {
 	private final Set<String> metaTypes;
-	private final String dataType;
+	private final Set<String> dataTypes;
 	private Map<String, Object> options;
 	private ITransformationHelper transformHelper;
 
-	public TransformationConfiguration(ITransformationHelper transformHelper, String dataType, String... metaTypes) {
-		this.dataType = dataType;
+	public TransformationConfiguration(ITransformationHelper transformHelper,
+			String dataType, String... metaTypes) {
+		this(transformHelper, toSet(new String[] { dataType }), metaTypes);
+	}
+	
+	public TransformationConfiguration(ITransformationHelper transformHelper, Set<String> dataTypes, String... metaTypes) {
+		this.dataTypes = dataTypes;
 		this.metaTypes = toSet(metaTypes);
 		this.options = new HashMap<String, Object>();	
 		this.transformHelper = transformHelper;
 	}
+	
 
 	@SafeVarargs
 	public TransformationConfiguration(ITransformationHelper transformHelper, final String dataType,
 			Class<? extends IMetaAttribute>... metaTypes) {
-		this.dataType = dataType;
+		this(transformHelper, toSet(new String[] { dataType }), metaTypes);
+	}
+
+	@SafeVarargs
+	public TransformationConfiguration(ITransformationHelper transformHelper, final Set<String> dataTypes,
+			Class<? extends IMetaAttribute>... metaTypes) {
+		this.dataTypes = dataTypes;
 		HashSet<String> tmp = new HashSet<String>();
 		for(Class<? extends IMetaAttribute> type : metaTypes) {
 			tmp.add(type.getName());
@@ -51,7 +63,11 @@ public class TransformationConfiguration {
 	}
 
 	public TransformationConfiguration(String dataType, String... metaTypes) {
-		this.dataType = dataType;
+		this(toSet(new String[] { dataType }), metaTypes);
+	}
+	
+	public TransformationConfiguration(Set<String> dataTypes, String... metaTypes) {
+		this.dataTypes = dataTypes;
 		this.metaTypes = toSet(metaTypes);
 		this.options = new HashMap<String, Object>();	
 		this.transformHelper = new StandardTransformationHelper();
@@ -60,7 +76,13 @@ public class TransformationConfiguration {
 	@SafeVarargs
 	public TransformationConfiguration(final String dataType,
 			Class<? extends IMetaAttribute>... metaTypes) {
-		this.dataType = dataType;
+		this(toSet(new String[] { dataType }), metaTypes);
+	}
+	
+	@SafeVarargs
+	public TransformationConfiguration(final Set<String> dataTypes,
+			Class<? extends IMetaAttribute>... metaTypes) {
+		this.dataTypes = dataTypes;
 		HashSet<String> tmp = new HashSet<String>();
 		for(Class<? extends IMetaAttribute> type : metaTypes) {
 			tmp.add(type.getName());
@@ -83,8 +105,8 @@ public class TransformationConfiguration {
 				.asList(strings)));
 	}
 
-	public String getDataType() {
-		return dataType;
+	public Set<String> getDataTypes() {
+		return dataTypes;
 	}
 
 	public Set<String> getMetaTypes() {
@@ -95,9 +117,15 @@ public class TransformationConfiguration {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("data type: ");
-		builder.append(this.dataType);
-		builder.append("; metadata types: ");
 		int i = 0;
+		for (String s : dataTypes) {
+			if (++i > 1) {
+				builder.append(", ");
+			}
+			builder.append(s);
+		}
+		builder.append("; metadata types: ");
+		i = 0;
 		for (String s : metaTypes) {
 			if (++i > 1) {
 				builder.append(", ");

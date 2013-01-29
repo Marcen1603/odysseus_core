@@ -40,7 +40,7 @@ public class TRelationalTimestampToPayloadRule extends AbstractTransformationRul
 	@Override
 	public boolean isExecutable(TimestampToPayloadAO operator,
 			TransformationConfiguration config) {
-		if(config.getDataType().equals("relational") && config.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
+		if(config.getDataTypes().contains("relational") && config.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
 			if(operator.isAllPhysicalInputSet()){
 					return true;				
 			}

@@ -39,14 +39,14 @@ public class RDeleteProjectionWithoutFunctionRule extends AbstractRewriteRule<Pr
 		for (ILogicalOperator o:toUpdate){
 			update(o);
 		}		 
-		// Den ProjectAO aus dem working memory löschen
+		// Den ProjectAO aus dem working memory lï¿½schen
 		retract(proj);
 		
 	}
 
 	@Override
 	public boolean isExecutable(ProjectAO proj, RewriteConfiguration transformConfig) {
-		return transformConfig.getQueryBuildConfiguration().getTransformationConfiguration().getDataType().equals(Relational.RELATIONAL) 
+		return transformConfig.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL) 
 				&& proj.getInputSchema().equals(proj.getOutputSchema());
 	}
 

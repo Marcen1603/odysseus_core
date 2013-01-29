@@ -49,7 +49,7 @@ public class TBufferedFilterAORule extends AbstractTransformationRule<BufferedFi
 
 	@Override
 	public boolean isExecutable(BufferedFilterAO operator, TransformationConfiguration config) {
-		return config.getDataType().equals("relational") && operator.isAllPhysicalInputSet();
+		return config.getDataTypes().contains("relational") && operator.isAllPhysicalInputSet();
 	}
 
 	@Override

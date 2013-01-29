@@ -60,7 +60,7 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 
 	@Override
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
-		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataType().equals(Relational.RELATIONAL)){
+		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)){
 			return false;
 		}
 		

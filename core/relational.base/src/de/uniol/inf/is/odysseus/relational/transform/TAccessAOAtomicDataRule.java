@@ -55,7 +55,7 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {		
-		if(transformConfig.getDataType().equals(Relational.RELATIONAL) && getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null){
+		if(transformConfig.getDataTypes().contains(Relational.RELATIONAL) && getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null){
 			if(accessAO.getWrapper().equals("")){
 				return true;
 			}

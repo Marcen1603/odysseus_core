@@ -128,7 +128,7 @@ public class TLeftJoinAOSetSARule extends
 	@Override
 	public boolean isExecutable(LeftJoinTIPO operator,
 			TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataType().equals("relational")
+		if (transformConfig.getDataTypes().contains("relational")
 				&& transformConfig.getMetaTypes().contains(
 						ITimeInterval.class.getCanonicalName())) {
 			if (operator.getAreas() == null) {

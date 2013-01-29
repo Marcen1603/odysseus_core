@@ -59,13 +59,13 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 			insert(newSel);
 		}
 		sel.setPredicate(preds.get(preds.size() - 1));
-		// neuen SelectAO einfügen, anderen updaten
+		// neuen SelectAO einfï¿½gen, anderen updaten
 		update(sel);
 	}
 
 	@Override
 	public boolean isExecutable(SelectAO operator, RewriteConfiguration config) {
-		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataType().equals(Relational.RELATIONAL)){
+		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)){
 			return false;
 		}
 		IPredicate pred = operator.getPredicate();

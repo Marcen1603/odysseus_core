@@ -40,7 +40,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public boolean isExecutable(MapAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getDataType().equals(Relational.RELATIONAL)){
+		if(transformConfig.getDataTypes().contains(Relational.RELATIONAL)){
 			if(operator.getPhysSubscriptionTo()!=null){
 				return true;
 			}

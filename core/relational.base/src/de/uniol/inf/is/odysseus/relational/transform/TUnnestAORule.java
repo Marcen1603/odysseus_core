@@ -75,7 +75,7 @@ public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
      */
     @Override
     public boolean isExecutable(final UnNestAO operator, final TransformationConfiguration config) {
-        return config.getDataType().equals(Relational.RELATIONAL) && operator.isAllPhysicalInputSet();
+        return config.getDataTypes().contains(Relational.RELATIONAL) && operator.isAllPhysicalInputSet();
     }
 
     @Override

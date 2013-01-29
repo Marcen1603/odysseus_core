@@ -59,7 +59,7 @@ public class TChangeCorrelateInsertDataMergeFunctionRule extends AbstractTransfo
 
 	@Override
 	public boolean isExecutable(ChangeCorrelatePO<ITimeInterval, Tuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getDataType().equals("relational")){
+		if(transformConfig.getDataTypes().contains("relational")){
 			if(operator.getDataMerge()==null){
 				return true;
 			}

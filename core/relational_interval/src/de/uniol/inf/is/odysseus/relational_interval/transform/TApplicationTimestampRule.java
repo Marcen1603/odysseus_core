@@ -72,7 +72,7 @@ public class TApplicationTimestampRule extends
 	@Override
 	public boolean isExecutable(TimestampAO operator,
 			TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataType().equals("relational")) {
+		if (transformConfig.getDataTypes().contains("relational")) {
 			if (transformConfig.getMetaTypes().contains(
 					ITimeInterval.class.getCanonicalName())) {
 				if (operator.isAllPhysicalInputSet()) {

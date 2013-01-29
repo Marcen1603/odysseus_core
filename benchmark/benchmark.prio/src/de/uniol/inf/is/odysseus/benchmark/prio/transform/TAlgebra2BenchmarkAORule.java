@@ -55,7 +55,7 @@ public class TAlgebra2BenchmarkAORule extends
 	@Override
 	public boolean isExecutable(ILogicalOperator operator,
 			TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataType().equals("benchmark")
+		if (transformConfig.getDataTypes().contains("benchmark")
 				&& transformConfig.getMetaTypes().contains(
 						IPriority.class.getName())) {
 			if (operator.isAllPhysicalInputSet() == true) {

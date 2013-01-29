@@ -36,7 +36,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 
     @Override
     public boolean isExecutable(final ProjectAO operator, final TransformationConfiguration transformConfig) {
-        if (transformConfig.getDataType().equals(TransformUtil.DATATYPE)) {
+        if (transformConfig.getDataTypes().contains(TransformUtil.DATATYPE)) {
             if (operator.isAllPhysicalInputSet()) {
                 return true;
             }

@@ -42,7 +42,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	@Override
 	public boolean isExecutable(ProjectAO operator,
 			TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataType().equals("relational")) {
+		if (transformConfig.getDataTypes().contains("relational")) {
 			if (operator.isAllPhysicalInputSet()) {
 				if (transformConfig.getOption("isSecurityAware") != null) {
 					if (transformConfig.getOption("isSecurityAware")) {

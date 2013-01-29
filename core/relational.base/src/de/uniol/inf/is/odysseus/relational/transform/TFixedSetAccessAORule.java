@@ -42,7 +42,7 @@ public class TFixedSetAccessAORule extends AbstractTransformationRule<FixedSetAc
 
 	@Override
 	public boolean isExecutable(FixedSetAccessAO<?> accessAO, TransformationConfiguration transformConfig) {
-		return (transformConfig.getDataType().equals(Relational.RELATIONAL) && getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null);
+		return (transformConfig.getDataTypes().contains(Relational.RELATIONAL) && getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null);
 	}
 
 	@Override

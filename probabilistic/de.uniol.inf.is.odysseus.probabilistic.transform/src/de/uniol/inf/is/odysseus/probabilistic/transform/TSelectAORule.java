@@ -51,7 +51,7 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	@Override
 	public boolean isExecutable(final SelectAO operator,
 			final TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataType().equals(TransformUtil.DATATYPE)) {
+		if (transformConfig.getDataTypes().contains(TransformUtil.DATATYPE)) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
 			}

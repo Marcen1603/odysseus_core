@@ -70,7 +70,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 						posArray[i] = inputSchema.indexOf(attr);
 					}
 					IAggregateFunctionBuilderRegistry registry = Activator.getAggregateFunctionBuilderRegistry();
-					IAggregateFunctionBuilder builder = registry.getBuilder(transformConfig.getDataType(),p.getE2().getName());
+					IAggregateFunctionBuilder builder = registry.getBuilder(Relational.RELATIONAL,p.getE2().getName());
 					if (builder == null){
 						throw new RuntimeException("Could not find a builder for "+p.getE2().getName());
 					}
@@ -87,7 +87,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 	@Override
 	public boolean isExecutable(AggregatePO operator,
 			TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataType().equals(Relational.RELATIONAL)) {
+		if (transformConfig.getDataTypes().contains(Relational.RELATIONAL)) {
 			if (operator.getGroupProcessor() == null) {
 				return true;
 			}

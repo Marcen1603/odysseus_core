@@ -39,7 +39,7 @@ public class TSAJoinPOInsertDataMergeRule extends AbstractTransformationRule<SAJ
 
 	@Override
 	public boolean isExecutable(SAJoinPO<ITimeInterval, Tuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getDataType().equals("relational")){
+		if(transformConfig.getDataTypes().contains("relational")){
 			if(operator.getDataMerge()==null){
 				if (transformConfig.getOption("isSecurityAware") != null) {
 					if (transformConfig.getOption("isSecurityAware")) {

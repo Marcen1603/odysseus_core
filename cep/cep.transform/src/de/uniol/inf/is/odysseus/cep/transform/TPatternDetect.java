@@ -77,7 +77,7 @@ public class TPatternDetect extends AbstractTransformationRule<PatternDetectAO> 
 	@Override
 	public boolean isExecutable(PatternDetectAO operator,
 			TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataType().equals("relational")) {
+		if (transformConfig.getDataTypes().contains("relational")) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
 			}

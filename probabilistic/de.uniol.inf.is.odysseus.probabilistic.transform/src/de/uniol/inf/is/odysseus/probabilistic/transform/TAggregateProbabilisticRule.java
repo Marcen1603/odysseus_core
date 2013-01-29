@@ -53,7 +53,7 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
                         posArray[i] = inputSchema.indexOf(attr);
                     }
                     final IAggregateFunctionBuilderRegistry registry = Activator.getAggregateFunctionBuilderRegistry();
-                    final IAggregateFunctionBuilder builder = registry.getBuilder(config.getDataType(),
+                    final IAggregateFunctionBuilder builder = registry.getBuilder(TransformUtil.DATATYPE,
                             ProbabilisticConstants.NAMESPACE + p.getE2().getName());
                     if (builder == null) {
                         throw new RuntimeException("Could not find a builder for " + p.getE2().getName());
@@ -71,7 +71,7 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 
     @Override
     public boolean isExecutable(final AggregateTIPO<?, ?, ?> operator, final TransformationConfiguration config) {
-        if (config.getDataType().equals(TransformUtil.DATATYPE)) {
+        if (config.getDataTypes().contains(TransformUtil.DATATYPE)) {
             if (operator.getGroupProcessor() == null) {
                 return true;
             }

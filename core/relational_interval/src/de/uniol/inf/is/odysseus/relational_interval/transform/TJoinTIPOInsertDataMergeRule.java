@@ -39,7 +39,7 @@ public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<Joi
 
 	@Override
 	public boolean isExecutable(JoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getDataType().equals("relational")){
+		if(transformConfig.getDataTypes().contains("relational")){
 			if(operator.getDataMerge()==null){
 				return true;
 			}

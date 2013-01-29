@@ -50,7 +50,7 @@ public class RSwitchProjectionWindowRule extends AbstractRewriteRule<WindowAO> {
 
 	@Override
 	public boolean isExecutable(WindowAO win, RewriteConfiguration config) {
-		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataType().equals(Relational.RELATIONAL)){
+		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)){
 			return false;
 		}
 		for (ProjectAO proj : this.getAllOfSameTyp(new ProjectAO())) {

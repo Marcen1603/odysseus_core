@@ -58,7 +58,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 	
 	@Override
 	public boolean isExecutable(SelectAO operator, RewriteConfiguration config) {
-		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataType().equals(Relational.RELATIONAL)){
+		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)){
 			return false;
 		}
 		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {

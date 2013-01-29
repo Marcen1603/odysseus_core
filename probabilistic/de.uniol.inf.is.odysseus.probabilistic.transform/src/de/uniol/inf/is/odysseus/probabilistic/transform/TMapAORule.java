@@ -50,7 +50,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	@Override
 	public boolean isExecutable(final MapAO operator,
 			final TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataType().equals(TransformUtil.DATATYPE)) {
+		if (transformConfig.getDataTypes().contains(TransformUtil.DATATYPE)) {
 			if (operator.getPhysSubscriptionTo() != null) {
 				return true;
 			}
