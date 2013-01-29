@@ -52,7 +52,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	public ProbabilisticTuple(final int attributeCount, final boolean b) {
 		super(attributeCount, b);
-		this.distributions = null;
+		this.distributions = new NormalDistributionMixture[0];
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	public ProbabilisticTuple(final Object[] attributes, final boolean b) {
 		super(attributes, b);
-		this.distributions = null;
+		this.distributions = new NormalDistributionMixture[0];
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	public ProbabilisticTuple(final ProbabilisticTuple<T> copy,
 			final Object[] newAttrs, final boolean b) {
 		super(copy);
-		this.distributions = null;
+		this.distributions = new NormalDistributionMixture[0];
 	}
 
 	/**
@@ -106,11 +106,14 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 				this.distributions[i] = newDistrs[i].clone();
 			}
 		} else {
-			for (int i = 0; i < copy.distributions.length; i++) {
-				this.distributions[i] = copy.distributions[i].clone();
+			if (copy.distributions != null) {
+				for (int i = 0; i < copy.distributions.length; i++) {
+					this.distributions[i] = copy.distributions[i].clone();
+				}
+			} else {
+				this.distributions = new NormalDistributionMixture[0];
 			}
 		}
-
 	}
 
 	/**
@@ -119,8 +122,13 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	public ProbabilisticTuple(final ProbabilisticTuple<T> copy) {
 		super(copy);
-		for (int i = 0; i < copy.distributions.length; i++) {
-			this.distributions[i] = copy.distributions[i].clone();
+		if (copy.distributions != null) {
+			this.distributions = new NormalDistributionMixture[copy.distributions.length];
+			for (int i = 0; i < copy.distributions.length; i++) {
+				this.distributions[i] = copy.distributions[i].clone();
+			}
+		} else {
+			this.distributions = new NormalDistributionMixture[0];
 		}
 	}
 
@@ -447,6 +455,34 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		this.attributes = newAttrs;
 		this.distributions = newDistrs;
 		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.collection.Tuple#clone()
+	 */
+	@Override
+	public ProbabilisticTuple<T> clone() {
+		return new ProbabilisticTuple<T>(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.collection.Tuple#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuffer retBuff = new StringBuffer();
+		retBuff.append(super.toString());
+		if (getDistributions().length > 0) {
+			retBuff.append("|DIS|");
+			for (int i = 0; i < getDistributions().length; i++) {
+				retBuff.append(getDistribution(i));
+			}
+		}
+		return retBuff.toString();
 	}
 
 	/**********************************************************************************

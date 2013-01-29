@@ -42,8 +42,13 @@ public class ProbabilisticIntegrate extends
 	public Double getValue() {
 		ProbabilisticContinuousDouble continuousDouble = (ProbabilisticContinuousDouble) this
 				.getInputValue(0);
-		RealVector lowerBound = (RealVector) this.getInputValue(1);
-		RealVector upperBound = (RealVector) this.getInputValue(2);
+		System.out.println(this.getInputValue(1));
+		System.out.println(((double[][]) this.getInputValue(1)).length);
+		MatrixUtils.createRealVector(((double[][]) this.getInputValue(1))[0]);
+		RealVector lowerBound = MatrixUtils.createRealVector(((double[][]) this
+				.getInputValue(1))[0]);
+		RealVector upperBound = MatrixUtils.createRealVector(((double[][]) this
+				.getInputValue(2))[0]);
 		return cumulativeProbability(continuousDouble, lowerBound, upperBound);
 	}
 
@@ -121,7 +126,7 @@ public class ProbabilisticIntegrate extends
 					.getCovarianceMatrix().getMatrix().getData());
 			Matrix lower = new Matrix(new double[][] { lowerBound.toArray() });
 			Matrix upper = new Matrix(new double[][] { upperBound.toArray() });
-			probability += QSIMVN.qsimvn(5000, covarianceMatrix, lower, upper).p
+			probability += QSIMVN.QSIMVN(5000, covarianceMatrix, lower, upper).p
 					* weight;
 		}
 		return probability;
@@ -167,7 +172,7 @@ public class ProbabilisticIntegrate extends
 		// }
 		Map<String, Serializable> content = new HashMap<String, Serializable>();
 		// content.put("covariance_matrix_store", covarianceMatrixStore);
-		function.setAdditionalContent(content);
+		//function.setAdditionalContent(content);
 		function.setArguments(
 				new Constant<ProbabilisticContinuousDouble>(
 						mixtureDistribution,

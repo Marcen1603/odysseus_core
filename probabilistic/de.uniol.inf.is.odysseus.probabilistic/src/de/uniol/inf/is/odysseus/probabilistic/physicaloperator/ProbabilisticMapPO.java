@@ -37,16 +37,28 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends
 	private SDFProbabilisticExpression[] expressions;
 	private final SDFSchema inputSchema;
 
+	public ProbabilisticMapPO(SDFSchema inputSchema,
+			SDFProbabilisticExpression[] expressions) {
+		this.inputSchema = inputSchema;
+		init(inputSchema, expressions);
+	}
+
 	public ProbabilisticMapPO(SDFSchema inputSchema, SDFExpression[] expressions) {
 		this.inputSchema = inputSchema;
 		init(inputSchema, expressions);
 	}
 
 	private void init(SDFSchema schema, SDFExpression[] expressions) {
-		this.expressions = new SDFProbabilisticExpression[expressions.length];
+		SDFProbabilisticExpression[] probabilisticExpressions = new SDFProbabilisticExpression[expressions.length];
 		for (int i = 0; i < expressions.length; ++i) {
-			this.expressions[i] = new SDFProbabilisticExpression(expressions[i]);
+			probabilisticExpressions[i] = new SDFProbabilisticExpression(
+					expressions[i]);
 		}
+		init(schema, probabilisticExpressions);
+	}
+
+	private void init(SDFSchema schema, SDFProbabilisticExpression[] expressions) {
+		this.expressions = expressions;
 		this.variables = new int[expressions.length][];
 		int i = 0;
 		for (SDFExpression expression : expressions) {
@@ -73,7 +85,8 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends
 	@SuppressWarnings("unchecked")
 	@Override
 	final protected void process_next(ProbabilisticTuple<T> object, int port) {
-		ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, false);
+		ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(
+				this.expressions.length, false);
 		outputVal.setMetadata((T) object.getMetadata().clone());
 		synchronized (this.expressions) {
 			for (int i = 0; i < this.expressions.length; ++i) {
@@ -81,8 +94,8 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					values[j] = object.getAttribute(this.variables[i][j]);
 				}
-				this.expressions[i].bindDistributions(object
-						.getDistributions());
+				this.expressions[i]
+						.bindDistributions(object.getDistributions());
 				this.expressions[i].bindAdditionalContent(object
 						.getAdditionalContent());
 				this.expressions[i].bindVariables(values);
@@ -92,6 +105,7 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends
 				}
 			}
 		}
+		outputVal.setDistributions(object.getDistributions().clone());
 		transfer(outputVal);
 	}
 
