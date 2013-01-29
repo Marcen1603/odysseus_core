@@ -6,66 +6,71 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ * 
+ */
 public class TCPAcceptor implements AcceptorSelectorHandler {
+	private final SelectorThread ioThread;
+	private final int port;
+	private final TCPAcceptorListener listener;
+	private ServerSocketChannel serverSocketChannel;
 
-    private final SelectorThread      ioThread;
-    private final int                 port;
-    private final TCPAcceptorListener listener;
-    private ServerSocketChannel       serverSocketChannel;
+	public TCPAcceptor(final int port, final SelectorThread ioThread,
+			final TCPAcceptorListener listener) {
+		this.ioThread = ioThread;
+		this.port = port;
+		this.listener = listener;
+	}
 
-    public TCPAcceptor(final int port, final SelectorThread ioThread, final TCPAcceptorListener listener) {
-        this.ioThread = ioThread;
-        this.port = port;
-        this.listener = listener;
-    }
+	public void open() throws IOException {
+		this.serverSocketChannel = ServerSocketChannel.open();
+		final InetSocketAddress address = new InetSocketAddress(this.port);
+		this.serverSocketChannel.socket().bind(address, 100);
 
-    public void open() throws IOException {
-        this.serverSocketChannel = ServerSocketChannel.open();
-        final InetSocketAddress address = new InetSocketAddress(this.port);
-        this.serverSocketChannel.socket().bind(address, 100);
+		this.ioThread.registerChannel(this.serverSocketChannel,
+				SelectionKey.OP_ACCEPT, this, new CallbackErrorHandler() {
+					@SuppressWarnings("unused")
+					public void handleError(final Exception ex) {
+						TCPAcceptor.this.listener.socketError(TCPAcceptor.this,
+								ex);
+					}
+				});
+	}
 
-        this.ioThread.registerChannel(this.serverSocketChannel, SelectionKey.OP_ACCEPT, this,
-                new CallbackErrorHandler() {
-                    @SuppressWarnings("unused")
-                    public void handleError(final Exception ex) {
-                        TCPAcceptor.this.listener.socketError(TCPAcceptor.this, ex);
-                    }
-                });
-    }
+	@Override
+	public void onAccept() {
+		SocketChannel channel = null;
+		try {
+			channel = this.serverSocketChannel.accept();
+			this.ioThread.addChannelInterestNow(this.serverSocketChannel,
+					SelectionKey.OP_ACCEPT);
+		} catch (final IOException e) {
+			this.listener.socketError(this, e);
+		}
+		if (channel != null) {
+			this.listener.socketConnected(this, channel);
+		}
+	}
 
-    @Override
-    public void onAccept() {
-        SocketChannel channel = null;
-        try {
-            channel = this.serverSocketChannel.accept();
-            this.ioThread.addChannelInterestNow(this.serverSocketChannel, SelectionKey.OP_ACCEPT);
-        }
-        catch (final IOException e) {
-            this.listener.socketError(this, e);
-        }
-        if (channel != null) {
-            this.listener.socketConnected(this, channel);
-        }
-    }
-
-    public void close() {
-        try {
-            this.ioThread.blockingInvoke(new Runnable() {
-                @Override
-                public void run() {
-                    if (TCPAcceptor.this.serverSocketChannel != null) {
-                        try {
-                            TCPAcceptor.this.serverSocketChannel.close();
-                        }
-                        catch (final IOException e) {
-                            // Ignore
-                        }
-                    }
-                }
-            });
-        }
-        catch (final InterruptedException e) {
-            // Ignore
-        }
-    }
+	public void close() {
+		try {
+			this.ioThread.blockingInvoke(new Runnable() {
+				@Override
+				public void run() {
+					if (TCPAcceptor.this.serverSocketChannel != null) {
+						try {
+							TCPAcceptor.this.serverSocketChannel.close();
+						} catch (final IOException e) {
+							TCPAcceptor.this.listener.socketError(
+									TCPAcceptor.this, e);
+						}
+					}
+				}
+			});
+		} catch (final InterruptedException e) {
+			listener.socketError(this, e);
+		}
+	}
 }

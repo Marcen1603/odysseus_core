@@ -28,113 +28,135 @@ import java.nio.channels.SelectionKey;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class NioUdpConnection implements IConnection, ReadWriteSelectorHandler {
-    private ByteBuffer                                  writeBuffer = null;
-    private final ByteBuffer                            readBuffer;
-    protected final SelectorThread                      selector;
-    private final DatagramChannel                       channel;
-    private final IAccessConnectionListener<ByteBuffer> listener;
+	private ByteBuffer writeBuffer = null;
+	private final ByteBuffer readBuffer;
+	protected final SelectorThread selector;
+	private DatagramChannel channel;
+	private final IAccessConnectionListener<ByteBuffer> listener;
 
-    public NioUdpConnection(final DatagramChannel datagramChannel, final SelectorThread selector,
-            final IAccessConnectionListener<ByteBuffer> listener) throws IOException {
-        this.selector = selector;
-        this.channel = datagramChannel;
-        this.listener = listener;
-        this.readBuffer = ByteBuffer.allocate(this.channel.socket().getReceiveBufferSize());
-        this.writeBuffer = ByteBuffer.allocate(this.channel.socket().getSendBufferSize());
-        // readBuffer.position(readBuffer.capacity());
+	public NioUdpConnection(final DatagramChannel datagramChannel,
+			final SelectorThread selector,
+			final IAccessConnectionListener<ByteBuffer> listener)
+			throws IOException {
+		this.selector = selector;
+		this.channel = datagramChannel;
+		this.listener = listener;
+		this.readBuffer = ByteBuffer.allocate(this.channel.socket()
+				.getReceiveBufferSize());
+		this.writeBuffer = ByteBuffer.allocate(this.channel.socket()
+				.getSendBufferSize());
+		// readBuffer.position(readBuffer.capacity());
 
-        // selector.registerChannelNow(channel, 0, this);
-        selector.registerChannel(this.channel, 0, this, new CallbackErrorHandler() {
-            @SuppressWarnings("unused")
-            public void handleError(final Exception ex) {
-                NioUdpConnection.this.listener.socketException(ex);
-            }
-        });
-    }
+		selector.registerChannel(this.channel, SelectionKey.OP_READ, this,
+				new CallbackErrorHandler() {
+					@SuppressWarnings("unused")
+					public void handleError(final Exception ex) {
+						NioUdpConnection.this.listener.socketException(ex);
+					}
+				});
+	}
 
-    public void resumeReading() throws IOException, ClassNotFoundException {
-        this.processInBuffer();
-    }
+	public void resumeReading() throws IOException, ClassNotFoundException {
+		this.processInBuffer();
+	}
 
-    @Override
-    public void onRead() {
-        try {
-            final SocketAddress address = this.channel.receive(this.readBuffer);
-            if (address == null) {
-                this.close();
-                this.listener.socketDisconnected();
-                return;
-            }
-            // readBuffer.flip();
-            this.processInBuffer();
-        }
-        catch (IOException | ClassNotFoundException ex) {
-            this.listener.socketException(ex);
-            this.close();
-        }
+	@Override
+	public void onRead() {
+		try {
+			final SocketAddress address = this.channel.receive(this.readBuffer);
+			if (address == null) {
+				this.close();
+				this.listener.socketDisconnected();
+				return;
+			}
+			this.processInBuffer();
+		} catch (IOException | ClassNotFoundException ex) {
+			this.listener.socketException(ex);
+			this.close();
+		}
 
-    }
+	}
 
-    @Override
-    public void onWrite() {
-        try {
-            synchronized (this.writeBuffer) {
-                this.writeBuffer.flip();
-                this.channel.send(this.writeBuffer, this.channel.getRemoteAddress());
-                if (this.writeBuffer.hasRemaining()) {
-                    this.requestWrite();
-                }
-                else {
-                    this.writeBuffer.clear();
-                    this.resumeReading();
-                }
-            }
-        }
-        catch (IOException | ClassNotFoundException e) {
-            this.close();
-            this.listener.socketException(e);
-        }
-    }
+	@Override
+	public void onWrite() {
+		try {
+			synchronized (this.writeBuffer) {
+				this.writeBuffer.flip();
+				DatagramChannel channel = DatagramChannel.open();
+				channel.send(this.writeBuffer, this.channel.getRemoteAddress());
+				if (this.writeBuffer.hasRemaining()) {
+					this.selector.addChannelInterestNow(this.channel,
+							SelectionKey.OP_WRITE);
+				} else {
+					this.writeBuffer.clear();
+					// this.resumeReading();
+				}
+			}
+		} catch (IOException e) {
+			this.close();
+			this.listener.socketException(e);
+		}
+	}
 
-    public DatagramChannel getDatagramChannel() {
-        return this.channel;
-    }
+	public DatagramChannel getDatagramChannel() {
+		return this.channel;
+	}
 
-    private void requestWrite() throws IOException {
-        this.selector.addChannelInterestNow(this.channel, SelectionKey.OP_WRITE);
-    }
+	private void requestWrite() throws IOException {
+		this.selector.addChannelInterest(this.channel, SelectionKey.OP_WRITE,
+				new CallbackErrorHandler() {
+					@SuppressWarnings("unused")
+					public void handleError(final Exception ex) {
+						NioUdpConnection.this.listener.socketException(ex);
+					}
+				});
+	}
 
-    public void write(final byte[] message) {
-        this.write(ByteBuffer.wrap(message));
-    }
+	public void write(final byte[] message) throws IOException {
+		this.write(ByteBuffer.wrap(message));
+	}
 
-    public void write(final ByteBuffer packet) {
-        synchronized (this.writeBuffer) {
-            this.writeBuffer.put(packet);
-        }
-        this.onWrite();
-    }
+	public void write(final ByteBuffer packet) throws IOException {
+		synchronized (this.writeBuffer) {
+			this.writeBuffer.put(packet);
+		}
+		this.requestWrite();
+	}
 
-    public void close() {
-        try {
-            this.channel.close();
-        }
-        catch (final IOException e) {
-            this.listener.socketException(e);
-        }
-    }
+	public void close() {
+		try {
+			this.selector.removeChannelInterest(this.channel,
+					SelectionKey.OP_READ, new CallbackErrorHandler() {
+						@SuppressWarnings("unused")
+						public void handleError(final Exception ex) {
+							NioUdpConnection.this.listener.socketException(ex);
+						}
+					});
+			this.selector.removeChannelInterest(this.channel,
+					SelectionKey.OP_WRITE, new CallbackErrorHandler() {
+						@SuppressWarnings("unused")
+						public void handleError(final Exception ex) {
+							NioUdpConnection.this.listener.socketException(ex);
+						}
+					});
+			this.channel.close();
+		} catch (final IOException e) {
+			this.listener.socketException(e);
+		}
+	}
 
-    public void disableReading() throws IOException {
-        this.selector.removeChannelInterestNow(this.channel, SelectionKey.OP_READ);
-    }
+	public void disableReading() throws IOException {
+		this.selector.removeChannelInterestNow(this.channel,
+				SelectionKey.OP_READ);
+	}
 
-    private void reactivateReading() throws IOException {
-        this.selector.addChannelInterestNow(this.channel, SelectionKey.OP_READ);
-    }
+	private void reactivateReading() throws IOException {
+		this.selector.addChannelInterestNow(this.channel, SelectionKey.OP_READ);
+	}
 
-    private void processInBuffer() throws IOException, ClassNotFoundException {
-        this.listener.process(this.readBuffer);
-        // readBuffer.clear();
-        this.reactivateReading();
-    }
+	private void processInBuffer() throws IOException, ClassNotFoundException {
+		this.listener.process(this.readBuffer);
+		readBuffer.clear();
+		this.reactivateReading();
+	}
 }

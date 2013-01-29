@@ -45,154 +45,169 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class NonBlockingTcpServerHandler extends AbstractTransportHandler implements
-        IAccessConnectionListener<ByteBuffer>, IConnectionListener, TCPAcceptorListener {
-    private static final Logger          LOG         = LoggerFactory.getLogger(NonBlockingTcpServerHandler.class);
-    private SelectorThread               selector;
-    // private String host;
-    private int                          port;
-    private TCPAcceptor                  acceptor;
-    private final List<NioTcpConnection> connections = new ArrayList<NioTcpConnection>();
-    private int                          readBufferSize;
-    private int                          writeBufferSize;
+public class NonBlockingTcpServerHandler extends AbstractTransportHandler
+		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener,
+		TCPAcceptorListener {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(NonBlockingTcpServerHandler.class);
+	private SelectorThread selector;
+	// private String host;
+	private int port;
+	private TCPAcceptor acceptor;
+	private final List<NioTcpConnection> connections = new ArrayList<NioTcpConnection>();
+	private int readBufferSize;
+	private int writeBufferSize;
 
-    public NonBlockingTcpServerHandler() {
-        super();
-    }
+	public NonBlockingTcpServerHandler() {
+		super();
+	}
 
-    public NonBlockingTcpServerHandler(final IProtocolHandler<?> protocolHandler) {
-        super(protocolHandler);
-    }
+	public NonBlockingTcpServerHandler(final IProtocolHandler<?> protocolHandler) {
+		super(protocolHandler);
+	}
 
-    @Override
-    public void send(final byte[] message) throws IOException {
-        for (final NioTcpConnection connection : this.connections) {
-            connection.write(message);
-        }
-    }
+	@Override
+	public void send(final byte[] message) throws IOException {
+		for (final NioTcpConnection connection : this.connections) {
+			connection.write(message);
+		}
+	}
 
-    @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
-        final NonBlockingTcpServerHandler handler = new NonBlockingTcpServerHandler(protocolHandler);
-        handler.readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 10240;
-        handler.writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 10240;
-        // handler.host = options.containsKey("host") ? options.get("host") :
-        // "127.0.0.1";
-        handler.port = options.containsKey("port") ? Integer.parseInt(options.get("port")) : 8080;
-        try {
-            handler.selector = SelectorThread.getInstance();
-            handler.acceptor = new TCPAcceptor(handler.port, handler.selector, handler);
-        }
-        catch (final IOException e) {
-            NonBlockingTcpServerHandler.LOG.error(e.getMessage(), e);
-        }
+	@Override
+	public ITransportHandler createInstance(
+			final IProtocolHandler<?> protocolHandler,
+			final Map<String, String> options) {
+		final NonBlockingTcpServerHandler handler = new NonBlockingTcpServerHandler(
+				protocolHandler);
+		handler.readBufferSize = options.containsKey("read") ? Integer
+				.parseInt(options.get("read")) : 10240;
+		handler.writeBufferSize = options.containsKey("write") ? Integer
+				.parseInt(options.get("write")) : 10240;
+		// handler.host = options.containsKey("host") ? options.get("host") :
+		// "127.0.0.1";
+		handler.port = options.containsKey("port") ? Integer.parseInt(options
+				.get("port")) : 8080;
+		try {
+			handler.selector = SelectorThread.getInstance();
+			handler.acceptor = new TCPAcceptor(handler.port, handler.selector,
+					handler);
+		} catch (final IOException e) {
+			NonBlockingTcpServerHandler.LOG.error(e.getMessage(), e);
+		}
 
-        return handler;
-    }
+		return handler;
+	}
 
-    @Override
-    public InputStream getInputStream() {
-        throw new IllegalArgumentException("Currently not implemented");
-    }
+	@Override
+	public InputStream getInputStream() {
+		throw new IllegalArgumentException("Currently not implemented");
+	}
 
-    @Override
-    public String getName() {
-        return "TCPServer";
-    }
+	@Override
+	public String getName() {
+		return "TCPServer";
+	}
 
-    @Override
-    public void process(final ByteBuffer buffer) throws ClassNotFoundException {
-        super.fireProcess(buffer);
-    }
+	@Override
+	public void process(final ByteBuffer buffer) throws ClassNotFoundException {
+		super.fireProcess(buffer);
+	}
 
-    @Override
-    public void done() {
+	@Override
+	public void done() {
 
-    }
+	}
 
-    @Override
-    public OutputStream getOutputStream() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public OutputStream getOutputStream() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public void processInOpen() throws UnknownHostException, IOException {
-        try {
-            this.acceptor.open();
-        }
-        catch (final IOException e) {
-            throw new OpenFailedException(e);
-        }
-    }
+	@Override
+	public void processInOpen() throws UnknownHostException, IOException {
+		try {
+			this.acceptor.open();
+		} catch (final IOException e) {
+			throw new OpenFailedException(e);
+		}
+	}
 
-    @Override
-    public void processOutOpen() throws UnknownHostException, IOException {
-        try {
-            this.acceptor.open();
-        }
-        catch (final IOException e) {
-            throw new OpenFailedException(e);
-        }
-    }
+	@Override
+	public void processOutOpen() throws UnknownHostException, IOException {
+		try {
+			this.acceptor.open();
+		} catch (final IOException e) {
+			throw new OpenFailedException(e);
+		}
+	}
 
-    @Override
-    public void processInClose() throws IOException {
-        this.acceptor.close();
-    }
+	@Override
+	public void processInClose() throws IOException {
+		this.acceptor.close();
+		for (NioTcpConnection connection : this.connections) {
+			connection.close();
+		}
+	}
 
-    @Override
-    public void processOutClose() throws IOException {
-        this.acceptor.close();
-    }
+	@Override
+	public void processOutClose() throws IOException {
+		this.acceptor.close();
+		for (NioTcpConnection connection : this.connections) {
+			connection.close();
+		}
+	}
 
-    @Override
-    public void notify(final IConnection connection, final ConnectionMessageReason reason) {
-        switch (reason) {
-            case ConnectionAbort:
-                super.fireOnDisconnect();
-                break;
-            case ConnectionClosed:
-                super.fireOnDisconnect();
-                break;
-            case ConnectionRefused:
-                super.fireOnDisconnect();
-                break;
-            case ConnectionOpened:
-                super.fireOnConnect();
-                break;
-            default:
-                break;
-        }
-    }
+	@Override
+	public void notify(final IConnection connection,
+			final ConnectionMessageReason reason) {
+		switch (reason) {
+		case ConnectionAbort:
+			super.fireOnDisconnect();
+			break;
+		case ConnectionClosed:
+			super.fireOnDisconnect();
+			break;
+		case ConnectionRefused:
+			super.fireOnDisconnect();
+			break;
+		case ConnectionOpened:
+			super.fireOnConnect();
+			break;
+		default:
+			break;
+		}
+	}
 
-    @Override
-    public void socketConnected(final AcceptorSelectorHandler acceptor, final SocketChannel channel) {
-        try {
-            channel.socket().setReceiveBufferSize(this.readBufferSize);
-            channel.socket().setSendBufferSize(this.writeBufferSize);
-            final NioTcpConnection connection = new NioTcpConnection(channel, this.selector, this);
-            this.connections.add(connection);
-            connection.resumeReading();
-        }
-        catch (IOException | ClassNotFoundException e) {
-            NonBlockingTcpServerHandler.LOG.error(e.getMessage(), e);
-        }
-    }
+	@Override
+	public void socketConnected(final AcceptorSelectorHandler acceptor,
+			final SocketChannel channel) {
+		try {
+			channel.socket().setReceiveBufferSize(this.readBufferSize);
+			channel.socket().setSendBufferSize(this.writeBufferSize);
+			final NioTcpConnection connection = new NioTcpConnection(channel,
+					this.selector, this);
+			this.connections.add(connection);
+			connection.resumeReading();
+		} catch (IOException | ClassNotFoundException e) {
+			NonBlockingTcpServerHandler.LOG.error(e.getMessage(), e);
+		}
+	}
 
-    @Override
-    public void socketError(final AcceptorSelectorHandler acceptor, final Exception ex) {
-        NonBlockingTcpServerHandler.LOG.error(ex.getMessage(), ex);
-    }
+	@Override
+	public void socketError(final AcceptorSelectorHandler acceptor,
+			final Exception ex) {
+		NonBlockingTcpServerHandler.LOG.error(ex.getMessage(), ex);
+	}
 
-    @Override
-    public void socketDisconnected() {
-        super.fireOnDisconnect();
-    }
+	@Override
+	public void socketDisconnected() {
+		super.fireOnDisconnect();
+	}
 
-    @Override
-    public void socketException(final Exception ex) {
-        NonBlockingTcpServerHandler.LOG.error(ex.getMessage(), ex);
-    }
+	@Override
+	public void socketException(final Exception ex) {
+		NonBlockingTcpServerHandler.LOG.error(ex.getMessage(), ex);
+	}
 
 }

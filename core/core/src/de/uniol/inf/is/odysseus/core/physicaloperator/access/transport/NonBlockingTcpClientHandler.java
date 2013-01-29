@@ -67,7 +67,11 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 
 	@Override
 	public void send(final byte[] message) throws IOException {
-		this.connection.write(message);
+		if (this.connection != null) {
+			this.connection.write(message);
+		} else {
+			NonBlockingTcpClientHandler.LOG.error("Not connected");
+		}
 	}
 
 	@Override
@@ -114,7 +118,6 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 
 	@Override
 	public void done() {
-		// TODO Auto-generated method stub
 
 	}
 

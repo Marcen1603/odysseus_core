@@ -47,159 +47,178 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class NonBlockingUdpServerHandler extends AbstractTransportHandler implements
-        IAccessConnectionListener<ByteBuffer>, IConnectionListener, UDPAcceptorListener {
-    private static final Logger          LOG         = LoggerFactory.getLogger(NonBlockingUdpServerHandler.class);
-    private SelectorThread               selector;
-    // private String host;
-    private int                          port;
-    private UDPAcceptor                  acceptor;
-    private final List<NioUdpConnection> connections = new ArrayList<NioUdpConnection>();
-    private int                          readBufferSize;
-    private int                          writeBufferSize;
+public class NonBlockingUdpServerHandler extends AbstractTransportHandler
+		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener,
+		UDPAcceptorListener {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(NonBlockingUdpServerHandler.class);
+	private SelectorThread selector;
+	// private String host;
+	private int port;
+	private UDPAcceptor acceptor;
+	private final List<NioUdpConnection> connections = new ArrayList<NioUdpConnection>();
+	private int readBufferSize;
+	private int writeBufferSize;
 
-    public NonBlockingUdpServerHandler() {
-        super();
-    }
+	public NonBlockingUdpServerHandler() {
+		super();
+	}
 
-    public NonBlockingUdpServerHandler(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
-        super(protocolHandler);
-    }
+	public NonBlockingUdpServerHandler(
+			final IProtocolHandler<?> protocolHandler,
+			final Map<String, String> options) {
+		super(protocolHandler);
+	}
 
-    @Override
-    public void send(final byte[] message) throws IOException {
-        for (final NioUdpConnection connection : this.connections) {
-            connection.write(message);
-        }
-    }
+	@Override
+	public void send(final byte[] message) throws IOException {
+		for (final NioUdpConnection connection : this.connections) {
+			connection.write(message);
+		}
+	}
 
-    @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
-        final NonBlockingUdpServerHandler handler = new NonBlockingUdpServerHandler(protocolHandler, options);
-        handler.readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 10240;
-        handler.writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 10240;
-        // handler.host = options.containsKey("host") ? options.get("host") :
-        // "127.0.0.1";
-        handler.port = options.containsKey("port") ? Integer.parseInt(options.get("port")) : 8080;
-        try {
-            handler.selector = SelectorThread.getInstance();
-            handler.acceptor = new UDPAcceptor(handler.port, handler.selector, handler);
-        }
-        catch (final IOException e) {
-            NonBlockingUdpServerHandler.LOG.error(e.getMessage(), e);
-        }
-        return handler;
-    }
+	@Override
+	public ITransportHandler createInstance(
+			final IProtocolHandler<?> protocolHandler,
+			final Map<String, String> options) {
+		final NonBlockingUdpServerHandler handler = new NonBlockingUdpServerHandler(
+				protocolHandler, options);
+		handler.readBufferSize = options.containsKey("read") ? Integer
+				.parseInt(options.get("read")) : 10240;
+		handler.writeBufferSize = options.containsKey("write") ? Integer
+				.parseInt(options.get("write")) : 10240;
+		// handler.host = options.containsKey("host") ? options.get("host") :
+		// "127.0.0.1";
+		handler.port = options.containsKey("port") ? Integer.parseInt(options
+				.get("port")) : 8080;
+		try {
+			handler.selector = SelectorThread.getInstance();
+			handler.acceptor = new UDPAcceptor(handler.port, handler.selector,
+					handler);
+		} catch (final IOException e) {
+			NonBlockingUdpServerHandler.LOG.error(e.getMessage(), e);
+		}
+		return handler;
+	}
 
-    @Override
-    public InputStream getInputStream() {
-        throw new IllegalArgumentException("Currently not implemented");
-    }
+	@Override
+	public InputStream getInputStream() {
+		throw new IllegalArgumentException("Currently not implemented");
+	}
 
-    @Override
-    public String getName() {
-        return "UDPServer";
-    }
+	@Override
+	public String getName() {
+		return "UDPServer";
+	}
 
-    @Override
-    public void process(final ByteBuffer buffer) throws ClassNotFoundException {
-        super.fireProcess(buffer);
-    }
+	@Override
+	public void process(final ByteBuffer buffer) throws ClassNotFoundException {
+		super.fireProcess(buffer);
+	}
 
-    @Override
-    public void done() {
+	@Override
+	public void done() {
 
-    }
+	}
 
-    @Override
-    public OutputStream getOutputStream() {
-        throw new IllegalArgumentException("Currently not implemented");
-    }
+	@Override
+	public OutputStream getOutputStream() {
+		throw new IllegalArgumentException("Currently not implemented");
+	}
 
-    @Override
-    public void processInOpen() throws UnknownHostException, IOException {
-        try {
-            this.acceptor.open();
-        }
-        catch (final IOException e) {
-            throw new OpenFailedException(e);
-        }
-    }
+	@Override
+	public void processInOpen() throws UnknownHostException, IOException {
+		try {
+			this.acceptor.open();
+		} catch (final IOException e) {
+			throw new OpenFailedException(e);
+		}
+	}
 
-    @Override
-    public void processOutOpen() throws UnknownHostException, IOException {
-        try {
-            this.acceptor.open();
-        }
-        catch (final IOException e) {
-            throw new OpenFailedException(e);
-        }
-    }
+	@Override
+	public void processOutOpen() throws UnknownHostException, IOException {
+		try {
+			this.acceptor.open();
+		} catch (final IOException e) {
+			throw new OpenFailedException(e);
+		}
+	}
 
-    @Override
-    public void processInClose() throws IOException {
-        this.acceptor.close();
-    }
+	@Override
+	public void processInClose() throws IOException {
+		this.acceptor.close();
+		for (NioUdpConnection connection : this.connections) {
+			connection.close();
+		}
+	}
 
-    @Override
-    public void processOutClose() throws IOException {
-        this.acceptor.close();
-    }
+	@Override
+	public void processOutClose() throws IOException {
+		this.acceptor.close();
+		for (NioUdpConnection connection : this.connections) {
+			connection.close();
+		}
+	}
 
-    @Override
-    public void notify(final IConnection connection, final ConnectionMessageReason reason) {
-        switch (reason) {
-            case ConnectionAbort:
-                super.fireOnDisconnect();
-                break;
-            case ConnectionClosed:
-                super.fireOnDisconnect();
-                break;
-            case ConnectionRefused:
-                super.fireOnDisconnect();
-                break;
-            case ConnectionOpened:
-                super.fireOnConnect();
-                break;
-            default:
-                break;
-        }
-    }
+	@Override
+	public void notify(final IConnection connection,
+			final ConnectionMessageReason reason) {
+		switch (reason) {
+		case ConnectionAbort:
+			super.fireOnDisconnect();
+			break;
+		case ConnectionClosed:
+			super.fireOnDisconnect();
+			break;
+		case ConnectionRefused:
+			super.fireOnDisconnect();
+			break;
+		case ConnectionOpened:
+			super.fireOnConnect();
+			break;
+		default:
+			break;
+		}
+	}
 
-    @Override
-    public void socketDisconnected() {
-        super.fireOnDisconnect();
-    }
+	@Override
+	public void socketDisconnected() {
+		super.fireOnDisconnect();
+	}
 
-    @Override
-    public void socketException(final Exception ex) {
-        NonBlockingUdpServerHandler.LOG.error(ex.getMessage(), ex);
+	@Override
+	public void socketException(final Exception ex) {
+		NonBlockingUdpServerHandler.LOG.error(ex.getMessage(), ex);
 
-    }
+	}
 
-    @Override
-    public void socketConnected(final AcceptorSelectorHandler acceptor, final DatagramChannel channel) {
-        try {
-            channel.socket().setReceiveBufferSize(this.readBufferSize);
-            channel.socket().setSendBufferSize(this.writeBufferSize);
-            final NioUdpConnection connection = new NioUdpConnection(channel, this.selector, this);
-            this.connections.add(connection);
-            this.selector.addChannelInterest(channel, SelectionKey.OP_READ, new CallbackErrorHandler() {
-                @SuppressWarnings("unused")
-                public void handleError(final Exception ex) {
-                    NonBlockingUdpServerHandler.this.socketException(ex);
-                }
-            });
-        }
-        catch (final IOException e) {
-            NonBlockingUdpServerHandler.LOG.error(e.getMessage(), e);
-        }
+	@Override
+	public void socketConnected(final AcceptorSelectorHandler acceptor,
+			final DatagramChannel channel) {
+		try {
+			channel.socket().setReceiveBufferSize(this.readBufferSize);
+			channel.socket().setSendBufferSize(this.writeBufferSize);
+			final NioUdpConnection connection = new NioUdpConnection(channel,
+					this.selector, this);
+			this.connections.add(connection);
+			this.selector.addChannelInterest(channel, SelectionKey.OP_READ,
+					new CallbackErrorHandler() {
+						@SuppressWarnings("unused")
+						public void handleError(final Exception ex) {
+							NonBlockingUdpServerHandler.this
+									.socketException(ex);
+						}
+					});
+		} catch (final IOException e) {
+			NonBlockingUdpServerHandler.LOG.error(e.getMessage(), e);
+		}
 
-    }
+	}
 
-    @Override
-    public void socketError(final AcceptorSelectorHandler acceptor, final Exception ex) {
-        NonBlockingUdpServerHandler.LOG.error(ex.getMessage(), ex);
+	@Override
+	public void socketError(final AcceptorSelectorHandler acceptor,
+			final Exception ex) {
+		NonBlockingUdpServerHandler.LOG.error(ex.getMessage(), ex);
 
-    }
+	}
 }
