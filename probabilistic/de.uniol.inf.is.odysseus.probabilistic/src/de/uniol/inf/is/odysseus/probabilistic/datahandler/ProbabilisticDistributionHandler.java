@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
@@ -43,12 +44,13 @@ public class ProbabilisticDistributionHandler extends
 				size);
 		final int dimension = buffer.getInt();
 		for (int m = 0; m < size; m++) {
-			final double probability = buffer.getDouble();
+			final double weight = buffer.getDouble();
 			final double[] mean = new double[dimension];
 			for (int i = 0; i < mean.length; i++) {
 				mean[i] = buffer.getDouble();
 			}
-			final double[] entries = new double[dimension];
+			final double[] entries = new double[CovarianceMatrixUtils
+					.getCovarianceTiangleSizeFromDimension(dimension)];
 			for (int i = 0; i < entries.length; i++) {
 				entries[i] = buffer.getDouble();
 			}
@@ -56,7 +58,7 @@ public class ProbabilisticDistributionHandler extends
 			CovarianceMatrix covarianceMatrix = new CovarianceMatrix(entries);
 			NormalDistribution distribution = new NormalDistribution(mean,
 					covarianceMatrix);
-			mixtures.put(distribution, probability);
+			mixtures.put(distribution, weight);
 		}
 		double scale = buffer.getDouble();
 		Interval[] support = new Interval[dimension];
@@ -87,7 +89,7 @@ public class ProbabilisticDistributionHandler extends
 				size);
 		final int dimension = inputStream.readInt();
 		for (int m = 0; m < size; m++) {
-			final double probability = inputStream.readDouble();
+			final double weight = inputStream.readDouble();
 			final double[] mean = new double[dimension];
 			for (int i = 0; i < mean.length; i++) {
 				mean[i] = inputStream.readDouble();
@@ -100,7 +102,7 @@ public class ProbabilisticDistributionHandler extends
 			CovarianceMatrix covarianceMatrix = new CovarianceMatrix(entries);
 			NormalDistribution distribution = new NormalDistribution(mean,
 					covarianceMatrix);
-			mixtures.put(distribution, probability);
+			mixtures.put(distribution, weight);
 		}
 		double scale = inputStream.readDouble();
 		Interval[] support = new Interval[dimension];

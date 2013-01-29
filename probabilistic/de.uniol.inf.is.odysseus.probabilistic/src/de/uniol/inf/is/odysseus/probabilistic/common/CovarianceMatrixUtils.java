@@ -57,6 +57,30 @@ public final class CovarianceMatrixUtils {
 		return covarianceMatrix;
 	}
 
+	/**
+	 * Returns the number of elements of the triangle of a covariance matrix
+	 * with the given dimension
+	 * 
+	 * @param dimension
+	 *            The dimension
+	 * @return The number of elements in the triangle
+	 */
+	public static int getCovarianceTiangleSizeFromDimension(int dimension) {
+		return (int) (0.5 * dimension * (dimension + 1));
+	}
+
+	/**
+	 * Return the dimension for a covariance matrix build up with the given
+	 * triangle
+	 * 
+	 * @param triangleSize
+	 *            The number of elements in the triangle
+	 * @return The dimension of the covariance matrix
+	 */
+	public static int getCovarianceDimensionFromTriangleSize(int triangleSize) {
+		return (int) (0.5 * (Math.sqrt(8 * triangleSize + 1) - 1));
+	}
+
 	private CovarianceMatrixUtils() {
 	}
 }

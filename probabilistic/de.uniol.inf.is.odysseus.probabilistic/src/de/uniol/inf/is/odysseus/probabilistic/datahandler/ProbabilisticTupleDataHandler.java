@@ -41,7 +41,7 @@ public class ProbabilisticTupleDataHandler extends
 		AbstractDataHandler<ProbabilisticTuple<?>> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
-		ProbabilisticDoubleHandler.types.add("ProbabilisticTuple");
+		ProbabilisticTupleDataHandler.types.add("ProbabilisticTuple");
 	}
 
 	private IDataHandler<?>[] dataHandlers = null;
@@ -84,12 +84,15 @@ public class ProbabilisticTupleDataHandler extends
 			}
 			NormalDistributionMixture[] distribution = new NormalDistributionMixture[this.maxDistributions];
 			int distributions = 0;
+			try {
 			for (int i = 0; i < this.maxDistributions; i++) {
 				if (buffer.hasRemaining()) {
 					distribution[i] = probabilisticDistributionHandler
 							.readData(buffer);
-					distributions = i;
+					distributions ++;
 				}
+			}}catch(Exception e) {
+				e.printStackTrace();
 			}
 			r = new ProbabilisticTuple<IMetaAttribute>(attributes, false);
 			r.setDistributions(Arrays.copyOfRange(distribution, 0,

@@ -36,7 +36,7 @@ public class CovarianceMatrix implements Serializable, Cloneable {
 
 	public CovarianceMatrix(final double[] entries) {
 		this.entries = entries;
-		this.size = (int) (-0.5 + Math.sqrt(0.25 + (this.entries.length * 2)));
+		this.size = CovarianceMatrixUtils.getCovarianceDimensionFromTriangleSize(this.entries.length);
 		this.distributions = new NormalDistribution[this.size];
 	}
 
