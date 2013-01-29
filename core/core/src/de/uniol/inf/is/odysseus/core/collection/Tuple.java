@@ -476,7 +476,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	// -----------------------------------------------------------------
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		StringBuffer retBuff = new StringBuffer();
 		if (attributes.length > 0) {
 			retBuff.append(this.attributes[0] == null ? "" : this.attributes[0]);
