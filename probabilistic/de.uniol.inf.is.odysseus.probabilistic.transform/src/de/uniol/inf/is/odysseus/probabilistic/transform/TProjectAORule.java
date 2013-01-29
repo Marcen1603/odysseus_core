@@ -24,11 +24,9 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 
     @Override
     public void execute(final ProjectAO projectAO, final TransformationConfiguration transformConfig) {
-
         IPhysicalOperator projectPO;
         if (this.isContinuous(projectAO)) {
             projectPO = new ProbabilisticProjectPO<IMetaAttribute>(null, projectAO.determineRestrictList());
-
         }
         else {
             projectPO = new RelationalProjectPO<IMetaAttribute>(projectAO.determineRestrictList());

@@ -18,19 +18,17 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>
  */
 public class ProbabilisticProjectPO<T extends IMetaAttribute> extends
-		AbstractPipe<Tuple<T>, Tuple<T>> {
+		AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 	Logger logger = LoggerFactory.getLogger(ProbabilisticProjectPO.class);
 	private final int[] restrictList;
 	private final SDFSchema inputSchema;
@@ -58,17 +56,10 @@ public class ProbabilisticProjectPO<T extends IMetaAttribute> extends
 	}
 
 	@Override
-	protected void process_next(final Tuple<T> object, final int port) {
-		// TODO Integrate over projected attributes
-		@SuppressWarnings("unused")
-		final IProbabilistic probabilistic = (IProbabilistic) object
-				.getMetadata();
-
-		// TODO integrate/approximate over projected out attributes to calc TEP
-
-		final ProbabilisticTuple<T> out = ((ProbabilisticTuple<T>) object)
-				.restrict(this.restrictList, false);
-
+	protected void process_next(final ProbabilisticTuple<T> object,
+			final int port) {
+		final ProbabilisticTuple<T> out = object.restrict(this.restrictList,
+				false);
 		this.transfer(out);
 	}
 
