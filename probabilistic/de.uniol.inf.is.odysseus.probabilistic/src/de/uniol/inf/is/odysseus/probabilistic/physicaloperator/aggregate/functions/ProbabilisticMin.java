@@ -20,20 +20,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
+ * 
+ *         FIXME Implement probabilistic Min aggregation function
  */
-public class ProbabilisticMin<R extends Comparable<R>, W> extends
-		AbstractAggregateFunction<R, W> {
+public class ProbabilisticMin extends
+		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -4241950598685654559L;
 	private static Map<Integer, ProbabilisticMin> instances = new HashMap<Integer, ProbabilisticMin>();
+	@SuppressWarnings("unused")
 	private final int pos;
 
 	public static ProbabilisticMin getInstance(final int pos) {
@@ -51,22 +55,22 @@ public class ProbabilisticMin<R extends Comparable<R>, W> extends
 	}
 
 	@Override
-	public IPartialAggregate<R> init(final R in) {
-		return new ElementPartialAggregate<R>(in);
+	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
+		return new ElementPartialAggregate<Tuple<?>>(in);
 	}
 
 	@Override
-	public IPartialAggregate<R> merge(final IPartialAggregate<R> p,
-			final R toMerge, final boolean createNew) {
-		final ElementPartialAggregate<R> pa = null;
+	public IPartialAggregate<Tuple<?>> merge(
+			final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
+			final boolean createNew) {
+		final ElementPartialAggregate<Tuple<?>> pa = null;
 
 		return pa;
 	}
 
 	@Override
-	public W evaluate(final IPartialAggregate<R> p) {
-		@SuppressWarnings("unchecked")
-		final ElementPartialAggregate<W> pa = (ElementPartialAggregate<W>) p;
+	public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
+		final ElementPartialAggregate<Tuple<?>> pa = (ElementPartialAggregate<Tuple<?>>) p;
 		return pa.getElem();
 	}
 

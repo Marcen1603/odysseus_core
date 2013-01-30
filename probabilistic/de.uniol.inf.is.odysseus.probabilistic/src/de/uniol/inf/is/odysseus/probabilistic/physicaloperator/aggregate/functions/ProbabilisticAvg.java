@@ -34,16 +34,16 @@ public class ProbabilisticAvg extends
 	 * 
 	 */
 	private static final long serialVersionUID = -2188835286391575126L;
-	private static Map<Integer, ProbabilisticCount> instances = new HashMap<Integer, ProbabilisticCount>();
+	private static Map<Integer, ProbabilisticAvg> instances = new HashMap<Integer, ProbabilisticAvg>();
 	// TODO Move to a global configuration
 	private static final double ERROR = 0.25;
 	private static final double BOUND = 0.75;
 	private final int pos;
 
-	public static ProbabilisticCount getInstance(final int pos) {
-		ProbabilisticCount ret = ProbabilisticAvg.instances.get(pos);
+	public static ProbabilisticAvg getInstance(final int pos) {
+		ProbabilisticAvg ret = ProbabilisticAvg.instances.get(pos);
 		if (ret == null) {
-			ret = new ProbabilisticCount(pos);
+			ret = new ProbabilisticAvg(pos);
 			ProbabilisticAvg.instances.put(pos, ret);
 		}
 		return ret;
