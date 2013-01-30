@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.relational.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
@@ -25,21 +25,22 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TMapAORule extends AbstractTransformationRule<MapAO> {
+public class TStateMapAORule extends AbstractTransformationRule<StateMapAO> {
 
 	@Override
 	public int getPriority() {	
-		return 0;
+		// Must be higher Prio than Map because MapRule fires before StateMap Rule
+		return 10;
 	}
 
 	@Override
-	public void execute(MapAO mapAO, TransformationConfiguration transformConfig) {
-		RelationalMapPO<?> mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]), false);
+	public void execute(StateMapAO mapAO, TransformationConfiguration transformConfig) {
+		RelationalMapPO<?> mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]), true);
 		defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(MapAO operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(StateMapAO operator, TransformationConfiguration transformConfig) {
 		if(transformConfig.getDataTypes().contains(Relational.RELATIONAL)){
 			if(operator.getPhysSubscriptionTo()!=null){
 				return true;
@@ -50,7 +51,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public String getName() {
-		return "MapAO -> RelationalMapPO";
+		return "StateMapAO -> RelationalMapPO";
 	}
 	
 	@Override
@@ -59,8 +60,8 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	}
 	
 	@Override
-	public Class<? super MapAO> getConditionClass() {	
-		return MapAO.class;
+	public Class<? super StateMapAO> getConditionClass() {	
+		return StateMapAO.class;
 	}
 
 }

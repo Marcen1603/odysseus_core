@@ -33,6 +33,7 @@ public class RuleProvider implements ITransformRuleProvider{
 		rules.add(new TAccessAORelationalByteBufferRule());
 		rules.add(new TFixedSetAccessAORule());
 		rules.add(new TAggregatePORule());
+		rules.add(new TStateMapAORule());
 		rules.add(new TMapAORule());
 		rules.add(new TProjectAORule());	
 		rules.add(new TRelationalSocketSinkAORule());

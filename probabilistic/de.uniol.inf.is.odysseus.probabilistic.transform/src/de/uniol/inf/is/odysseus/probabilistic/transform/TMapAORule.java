@@ -42,7 +42,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 					mapAO.getInputSchema(), expressions);
 		} else {
 			mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(),
-					mapAO.getExpressions().toArray(new SDFExpression[0]));
+					mapAO.getExpressions().toArray(new SDFExpression[0]), false);
 		}
 		this.defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}

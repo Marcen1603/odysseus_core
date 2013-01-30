@@ -135,4 +135,5 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
         }
         return this.condtionClass;
     }
+ 
 }
