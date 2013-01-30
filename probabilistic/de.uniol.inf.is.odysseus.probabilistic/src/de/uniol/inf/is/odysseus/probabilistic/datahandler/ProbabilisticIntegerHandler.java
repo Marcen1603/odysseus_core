@@ -12,70 +12,72 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticDouble;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticInteger;
 
 /**
+ * 
  * @author Christian Kuka <christian.kuka@offis.de>
+ * 
  */
-public class ProbabilisticDoubleHandler extends
-		AbstractDataHandler<ProbabilisticDouble> {
+public class ProbabilisticIntegerHandler extends
+		AbstractDataHandler<ProbabilisticInteger> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
-		ProbabilisticDoubleHandler.types.add("ProbabilisticDouble");
+		ProbabilisticIntegerHandler.types.add("ProbabilisticInteger");
 	}
 
 	@Override
-	public IDataHandler<ProbabilisticDouble> getInstance(final SDFSchema schema) {
-		return new ProbabilisticDoubleHandler();
+	public IDataHandler<ProbabilisticInteger> getInstance(final SDFSchema schema) {
+		return new ProbabilisticIntegerHandler();
 	}
 
-	public ProbabilisticDoubleHandler() {
+	public ProbabilisticIntegerHandler() {
 		super();
 	}
 
 	@Override
-	public ProbabilisticDouble readData(final ObjectInputStream inputStream)
+	public ProbabilisticInteger readData(final ObjectInputStream inputStream)
 			throws IOException {
 		final int length = inputStream.readInt();
-		final Map<Double, Double> values = new HashMap<Double, Double>();
+		final Map<Integer, Double> values = new HashMap<Integer, Double>();
 		for (int i = 0; i < length; i++) {
-			final Double value = inputStream.readDouble();
+			final Integer value = inputStream.readInt();
 			final Double probability = inputStream.readDouble();
 			values.put(value, probability);
 		}
-		return new ProbabilisticDouble(values);
+		return new ProbabilisticInteger(values);
 	}
 
 	@Override
-	public ProbabilisticDouble readData(final String string) {
+	public ProbabilisticInteger readData(final String string) {
 		final String[] discreteValues = string.split(";");
-		final Map<Double, Double> values = new HashMap<Double, Double>();
+		final Map<Integer, Double> values = new HashMap<Integer, Double>();
 		for (int i = 0; i < discreteValues.length; i++) {
 			final String[] discreteValue = discreteValues[i].split(":");
-			values.put(Double.parseDouble(discreteValue[0]),
+			values.put(Integer.parseInt(discreteValue[0]),
 					Double.parseDouble(discreteValue[1]));
 		}
-		return new ProbabilisticDouble(values);
+		return new ProbabilisticInteger(values);
 	}
 
 	@Override
-	public ProbabilisticDouble readData(final ByteBuffer buffer) {
+	public ProbabilisticInteger readData(final ByteBuffer buffer) {
 		final int length = buffer.getInt();
-		final Map<Double, Double> values = new HashMap<Double, Double>();
+		final Map<Integer, Double> values = new HashMap<Integer, Double>();
 		for (int i = 0; i < length; i++) {
-			final Double value = buffer.getDouble();
+			final Integer value = buffer.getInt();
 			final Double probability = buffer.getDouble();
 			values.put(value, probability);
 		}
-		return new ProbabilisticDouble(values);
+		return new ProbabilisticInteger(values);
 	}
 
 	@Override
 	public void writeData(final ByteBuffer buffer, final Object data) {
-		final ProbabilisticDouble values = (ProbabilisticDouble) data;
+		final ProbabilisticInteger values = (ProbabilisticInteger) data;
 		buffer.putInt(values.getValues().size());
-		for (final Entry<Double, Double> value : values.getValues().entrySet()) {
-			buffer.putDouble(value.getKey());
+		for (final Entry<Integer, Double> value : values.getValues().entrySet()) {
+			buffer.putInt(value.getKey());
 			buffer.putDouble(value.getValue());
 		}
 	}
@@ -87,7 +89,7 @@ public class ProbabilisticDoubleHandler extends
 
 	@Override
 	public int memSize(final Object attribute) {
-		return (((ProbabilisticDouble) attribute).getValues().size()
-				* Double.SIZE * 2) / 8;
+		return (((ProbabilisticInteger) attribute).getValues().size() * (Integer.SIZE + Double.SIZE)) / 8;
 	}
+
 }

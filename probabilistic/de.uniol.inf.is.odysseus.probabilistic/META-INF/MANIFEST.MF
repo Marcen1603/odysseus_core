@@ -17,8 +17,8 @@ Import-Package: com.rits.cloning,
  org.apache.commons.math3.special,
  org.osgi.framework,
  org.slf4j
-Service-Component: OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml,OSGI-INF/ProbabilisticDatatypeProvider.xml,OSGI-INF/ProbabilisticDoubleDataHandler.xml,OSGI-INF/ProbabilisticContinuousDoubleDataHandler.xml,OSGI-INF/Probabilistic.xml,OSGI-INF/ProbabilisticFunctionProvider.xml,OSGI-INF/IntervalProbabilistic.xml,
- OSGI-INF/ProbabilisticTupleDataHandler.xml
+Service-Component: OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml,OSGI-INF/ProbabilisticDatatypeProvider.xml,OSGI-INF/ProbabilisticContinuousDoubleDataHandler.xml,OSGI-INF/Probabilistic.xml,OSGI-INF/ProbabilisticFunctionProvider.xml,OSGI-INF/IntervalProbabilistic.xml,
+ OSGI-INF/ProbabilisticTupleDataHandler.xml,OSGI-INF/ProbabilisticDoubleDataHandler.xml,OSGI-INF/ProbabilisticFloatDataHandler.xml,OSGI-INF/ProbabilisticLongDataHandler.xml,OSGI-INF/ProbabilisticIntegerDataHandler.xml,OSGI-INF/ProbabilisticShortDataHandler.xml,OSGI-INF/ProbabilisticByteDataHandler.xml,OSGI-INF/ProbabilisticStringDataHandler.xml
 Export-Package: de.uniol.inf.is.odysseus.probabilistic,
  de.uniol.inf.is.odysseus.probabilistic.datatype,
  de.uniol.inf.is.odysseus.probabilistic.logicaloperator,
