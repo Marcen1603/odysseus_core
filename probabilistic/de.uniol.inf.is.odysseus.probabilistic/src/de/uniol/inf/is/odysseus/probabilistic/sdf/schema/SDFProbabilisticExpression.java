@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.probabilistic.sdf.schema;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
