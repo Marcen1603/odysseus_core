@@ -5,6 +5,8 @@ import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 public class SQIMVN extends AbstractFunction<Double> {
+
+	private static final long serialVersionUID = 1L;
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE },
 			{ SDFProbabilisticDatatype.MULTIVARIATE_COVARIANCE_MATRIX },
