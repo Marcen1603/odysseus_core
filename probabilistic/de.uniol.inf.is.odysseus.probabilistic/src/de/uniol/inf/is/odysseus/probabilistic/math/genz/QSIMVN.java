@@ -21,12 +21,12 @@ public class QSIMVN {
 
 		Matrix b = new Matrix(new double[][] { { 1 }, { 2 }, { 3 }, { 4 } });
 
-		QSIMVNResult ret = QSIMVN(5000, R, a, b);
+		QSIMVNResult ret = cumulativeProbability(5000, R, a, b);
 		System.out.println("p = " + ret.p + "   e = "
 				+ new DecimalFormat("#.###############").format(ret.e));
 	}
 
-	public static QSIMVNResult QSIMVN(int m, Matrix r, Matrix a, Matrix b) {
+	public static QSIMVNResult cumulativeProbability(int m, Matrix r, Matrix a, Matrix b) {
 		// [n, n] = size(r);
 		// size of r must be quadratic i guess ...
 		int n = r.getRowDimension();

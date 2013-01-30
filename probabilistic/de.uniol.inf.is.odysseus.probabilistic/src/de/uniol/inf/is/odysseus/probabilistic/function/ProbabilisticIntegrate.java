@@ -126,7 +126,7 @@ public class ProbabilisticIntegrate extends
 					.getCovarianceMatrix().getMatrix().getData());
 			Matrix lower = new Matrix(new double[][] { lowerBound.toArray() });
 			Matrix upper = new Matrix(new double[][] { upperBound.toArray() });
-			probability += QSIMVN.QSIMVN(5000, covarianceMatrix, lower, upper).p
+			probability += QSIMVN.cumulativeProbability(5000, covarianceMatrix, lower, upper).p
 					* weight;
 		}
 		return probability;
