@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -49,6 +50,8 @@ public class SDFExpression implements Serializable, IClone {
 	/** The additional content */
 	private Map<String, Serializable> additionalContent;
 
+	/** The meta attributes */
+	private IMetaAttribute[] metaAttribute;
 	private int varCounter;
 	private IExpression<?> expression;
 
@@ -221,8 +224,9 @@ public class SDFExpression implements Serializable, IClone {
 			setValue(expression.getValue());
 		}
 		if (this.expression instanceof IFunction) {
-			setAdditionalContent(((IFunction<?>) expression)
-					.getAdditionalContents());
+			IFunction<?> function = (IFunction<?>) expression;
+			setAdditionalContent(function.getAdditionalContents());
+			setMetaAttribute(function.getMetaAttributeContainer());
 		}
 	}
 
@@ -377,6 +381,21 @@ public class SDFExpression implements Serializable, IClone {
 		this.additionalContent.putAll(additionalContent);
 	}
 
+	/**
+	 * Bind the meta attribute to this expression
+	 * 
+	 * @param metaAttribute
+	 *            The meta attributes to bind
+	 */
+	public void bindMetaAttribute(IMetaAttribute metaAttribute) {
+		if ((getMEPExpression() instanceof Constant)
+				|| (getMEPExpression() instanceof Variable)) {
+			return;
+		}
+
+		this.metaAttribute[0] = metaAttribute;
+	}
+
 	public ArrayList<Variable> getVariables() {
 		return this.variableArrayList;
 	}
@@ -451,5 +470,16 @@ public class SDFExpression implements Serializable, IClone {
 	private void setAdditionalContent(
 			Map<String, Serializable> additionalContent) {
 		this.additionalContent = additionalContent;
+	}
+
+	/**
+	 * Set the meta attribute
+	 * 
+	 * @param metaAttribute
+	 *            The meta attribute
+	 */
+	private void setMetaAttribute(
+			IMetaAttribute[] metaAttribute) {
+		this.metaAttribute = metaAttribute;
 	}
 }

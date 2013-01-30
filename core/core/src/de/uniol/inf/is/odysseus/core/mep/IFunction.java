@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.mep;
 import java.io.Serializable;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 
@@ -68,6 +69,13 @@ public interface IFunction<T> extends IExpression<T> {
      */
     public Serializable getAdditionalContent(String name);
     
+    /**
+     * Get the meta attribute of the tuple if present
+     * @return The meta attribute
+     */
+    public IMetaAttribute getMetaAttribute();
+	public IMetaAttribute[] getMetaAttributeContainer();
+	
 	/**
 	 * Gets the types that are accepted at the position
 	 * @param argPos the argument position
@@ -95,4 +103,5 @@ public interface IFunction<T> extends IExpression<T> {
 	 * if the call to the function with a constant parameter can deliver different results 
 	 */
 	public boolean optimizeConstantParameter();
+
 }

@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public abstract class AbstractFunction<T> implements IFunction<T> {
 
@@ -35,7 +36,8 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	private static final long serialVersionUID = 3805396798229438499L;
 	private IExpression<?>[] arguments;
 	private Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
-
+	private IMetaAttribute[] metaAttribute = new IMetaAttribute[1];
+	
 	@Override
 	final public void setArguments(IExpression<?>... arguments) {
 		if (arguments.length != getArity()) {
@@ -63,12 +65,22 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public Map<String, Serializable> getAdditionalContents() {
 		return additionalContent;
 	}
-
+	
 	@Override
 	public Serializable getAdditionalContent(String name) {
 		return additionalContent.get(name);
 	}
 
+	@Override
+	public IMetaAttribute[] getMetaAttributeContainer() {
+		return metaAttribute;
+	}
+	
+	@Override
+	public IMetaAttribute getMetaAttribute() {
+		return metaAttribute[0];
+	}
+	
 	@SuppressWarnings("unchecked")
 	final protected <S> S getInputValue(int argumentPos) {
 		return (S) arguments[argumentPos].getValue();

@@ -132,6 +132,8 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 				}
 				
 				try{
+					this.expressions[i].bindMetaAttribute(object
+							.getMetadata());
 					this.expressions[i].bindAdditionalContent(object
 						.getAdditionalContent());
 					this.expressions[i].bindVariables(values);

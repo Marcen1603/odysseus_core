@@ -94,6 +94,7 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					values[j] = object.getAttribute(this.variables[i][j]);
 				}
+				this.expressions[i].bindMetaAttribute(object.getMetadata());
 				this.expressions[i]
 						.bindDistributions(object.getDistributions());
 				this.expressions[i].bindAdditionalContent(object

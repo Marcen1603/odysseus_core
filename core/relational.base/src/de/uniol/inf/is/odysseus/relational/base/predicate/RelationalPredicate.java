@@ -157,6 +157,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(this.attributePositions[i]);
 		}
+		this.expression.bindMetaAttribute(input.getMetadata());
 		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
@@ -173,6 +174,8 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
         additionalContent.putAll(left.getAdditionalContent());
         additionalContent.putAll(right.getAdditionalContent());
         
+        // FIXME Merge meta data
+        //this.expression.bindMetaAttribute();
         this.expression.bindAdditionalContent(additionalContent);
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
@@ -189,6 +192,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 						.getURI());
 			}
 		}
+		this.expression.bindMetaAttribute(input.getMetadata());
 		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
