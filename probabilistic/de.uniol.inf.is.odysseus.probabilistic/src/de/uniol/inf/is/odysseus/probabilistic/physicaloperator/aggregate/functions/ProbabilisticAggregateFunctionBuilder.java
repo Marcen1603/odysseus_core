@@ -26,46 +26,83 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunctionBuilder {
-    private static Collection<String> names = new LinkedList<String>();
-    {
-    };
+public class ProbabilisticAggregateFunctionBuilder implements
+		IAggregateFunctionBuilder {
+	private static Collection<String> names = new LinkedList<String>();
+	{
+	};
 
-    @Override
-    public String getDatamodel() {
-        return "relational";
-    }
+	@Override
+	public String getDatamodel() {
+		return "relational";
+	}
 
-    @Override
-    public Collection<String> getFunctionNames() {
-        return ProbabilisticAggregateFunctionBuilder.names;
-    }
+	@Override
+	public Collection<String> getFunctionNames() {
+		return ProbabilisticAggregateFunctionBuilder.names;
+	}
 
-    @Override
-    public IAggregateFunction<?, ?> createAggFunction(final AggregateFunction key, final int[] pos) {
-        IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
-        if (key.getName().equalsIgnoreCase(ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "AVG")) {
-        	 aggFunc = ProbabilisticAvg.getInstance(pos[0]);
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "SUM")) {
-            aggFunc = ProbabilisticSum.getInstance(pos[0]);
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "COUNT")) {
-            aggFunc = ProbabilisticCount.getInstance(pos[0]);
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "MIN")) {
-        	 throw new IllegalArgumentException("MIN Aggregatefunction not implemented");
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "MAX")) {
-        	 throw new IllegalArgumentException("MAX Aggregatefunction not implemented");
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "STDDEV")) {
-        	 throw new IllegalArgumentException("STDDEV Aggregatefunction not implemented");
-        }
-        else {
-            throw new IllegalArgumentException("No such Aggregatefunction");
-        }
-        return aggFunc;
-    }
-
+	@Override
+	public IAggregateFunction<?, ?> createAggFunction(
+			final AggregateFunction key, final int[] pos) {
+		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
+		if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "AVG")) {
+			aggFunc = ProbabilisticAvg.getInstance(pos[0]);
+		} else if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "SUM")) {
+			aggFunc = ProbabilisticSum.getInstance(pos[0]);
+		} else if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "COUNT")) {
+			aggFunc = ProbabilisticCount.getInstance(pos[0]);
+		} else if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "MIN")) {
+			aggFunc = ProbabilisticMin.getInstance(pos[0]);
+			throw new IllegalArgumentException(
+					"MIN Aggregatefunction not implemented");
+		} else if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "MAX")) {
+			aggFunc = ProbabilisticMax.getInstance(pos[0]);
+			throw new IllegalArgumentException(
+					"MAX Aggregatefunction not implemented");
+		} else if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "STDDEV")) {
+			aggFunc = ProbabilisticStdDev.getInstance(pos[0]);
+			throw new IllegalArgumentException(
+					"STDDEV Aggregatefunction not implemented");
+		} else if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.CONTINUOUS_PROBABILISTIC_NAMESPACE
+						+ "AVG")) {
+			throw new IllegalArgumentException(
+					"AVG Aggregatefunction not implemented");
+		} else if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.CONTINUOUS_PROBABILISTIC_NAMESPACE
+						+ "SUM")) {
+			throw new IllegalArgumentException(
+					"SUM Aggregatefunction not implemented");
+		} else if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.CONTINUOUS_PROBABILISTIC_NAMESPACE
+						+ "COUNT")) {
+			throw new IllegalArgumentException(
+					"COUNT Aggregatefunction not implemented");
+		} else if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.CONTINUOUS_PROBABILISTIC_NAMESPACE
+						+ "MIN")) {
+			throw new IllegalArgumentException(
+					"MIN Aggregatefunction not implemented");
+		} else if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.CONTINUOUS_PROBABILISTIC_NAMESPACE
+						+ "MAX")) {
+			throw new IllegalArgumentException(
+					"MAX Aggregatefunction not implemented");
+		} else if (key.getName().equalsIgnoreCase(
+				ProbabilisticConstants.CONTINUOUS_PROBABILISTIC_NAMESPACE
+						+ "STDDEV")) {
+			throw new IllegalArgumentException(
+					"STDDEV Aggregatefunction not implemented");
+		} else {
+			throw new IllegalArgumentException("No such Aggregatefunction");
+		}
+		return aggFunc;
+	}
 }
