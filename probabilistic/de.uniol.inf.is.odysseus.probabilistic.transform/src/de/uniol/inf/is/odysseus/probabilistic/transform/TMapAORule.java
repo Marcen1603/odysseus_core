@@ -29,6 +29,14 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	@Override
 	public void execute(final MapAO mapAO,
 			final TransformationConfiguration transformConfig) {
+		SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[mapAO
+				.getExpressions().size()];
+		for (int i = 0; i < expressions.length; i++) {
+			expressions[i] = new SDFProbabilisticExpression(mapAO
+					.getExpressions().get(i));
+		}
+		IPhysicalOperator mapPO = new ProbabilisticMapPO<IMetaAttribute>(
+				mapAO.getInputSchema(), expressions);
 
 		IPhysicalOperator mapPO;
 		if (this.isProbabilistic(mapAO)) {
@@ -42,7 +50,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 					mapAO.getInputSchema(), expressions);
 		} else {
 			mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(),
-					mapAO.getExpressions().toArray(new SDFExpression[0]), false);
+					mapAO.getExpressions().toArray(new SDFExpression[0]));
 		}
 		this.defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
@@ -50,7 +58,8 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	@Override
 	public boolean isExecutable(final MapAO operator,
 			final TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataTypes().contains(TransformUtil.DATATYPE)) {
+		if ((transformConfig.getDataTypes().contains(TransformUtil.DATATYPE))
+				&& (this.isProbabilistic(operator))) {
 			if (operator.getPhysSubscriptionTo() != null) {
 				return true;
 			}
