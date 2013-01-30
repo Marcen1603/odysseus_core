@@ -68,7 +68,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	}
 	
 	
-	@Parameter(type = IntegerParameter.class, name = "heartbeatrate")
+	@Parameter(type = IntegerParameter.class, name = "heartbeatrate", optional = true)
 	public void setHeartbeatRate(int rate){
 		this.rate = rate;
 	}
