@@ -29,22 +29,22 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 
-@LogicalOperator(name = "ENRICH", minInputPorts = 1, maxInputPorts = 1)
-public class EnrichAO extends AbstractLogicalOperator {
+@LogicalOperator(name = "CONTEXTENRICH", minInputPorts = 1, maxInputPorts = 1)
+public class ContextEnrichAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -6701002329614782111L;
 	private String storeName;
 	private List<String> attributes;
 	private boolean outer = false;
 
-	public EnrichAO(EnrichAO op) {
+	public ContextEnrichAO(ContextEnrichAO op) {
 		super(op);
 		this.storeName = op.storeName;
 		this.attributes = op.attributes;
 		this.outer = op.outer;
 	}
 
-	public EnrichAO() {
+	public ContextEnrichAO() {
 		super();
 	}
 
@@ -93,7 +93,7 @@ public class EnrichAO extends AbstractLogicalOperator {
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new EnrichAO(this);
+		return new ContextEnrichAO(this);
 	}
 
 	public String getStoreName() {

@@ -46,7 +46,7 @@ public class RuleProvider implements ITransformRuleProvider{
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		ArrayList<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
-		rules.add(new TEnrichAORule());
+		rules.add(new TContextEnrichAORule());
 		rules.add(new TStoreAORule());
 		return rules;
 	}

@@ -53,7 +53,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectA
  * 
  * @author Dennis Geesen Created at: 27.04.2012
  */
-public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> implements IHasMetadataMergeFunction<M> {
+public class ContextEnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> implements IHasMetadataMergeFunction<M> {
 
 	private IContextStore<Tuple<M>> store;
 	protected IDataMergeFunction<Tuple<M>, M> dataMerge;
@@ -62,7 +62,7 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 	private int[] restrictList;
 	private boolean outer;
 
-	public EnrichPO(IContextStore<Tuple<M>> store, boolean outer, IDataMergeFunction<Tuple<M>, M> dataMerge, CombinedMergeFunction<M> metadataMerge, List<String> attributes) {
+	public ContextEnrichPO(IContextStore<Tuple<M>> store, boolean outer, IDataMergeFunction<Tuple<M>, M> dataMerge, CombinedMergeFunction<M> metadataMerge, List<String> attributes) {
 		super();
 		this.store = store;
 		this.metadataMerge = metadataMerge;
@@ -71,7 +71,7 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 		this.outer = outer;
 	}
 
-	public EnrichPO(EnrichPO<M> enrichPO) {
+	public ContextEnrichPO(ContextEnrichPO<M> enrichPO) {
 		super();
 		this.store = enrichPO.store;
 		this.metadataMerge = enrichPO.metadataMerge.clone();
@@ -139,8 +139,8 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 	}
 
 	@Override
-	public EnrichPO<M> clone() {
-		return new EnrichPO<M>(this);
+	public ContextEnrichPO<M> clone() {
+		return new ContextEnrichPO<M>(this);
 	}
 
 	@Override

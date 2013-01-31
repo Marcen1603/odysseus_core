@@ -30,17 +30,17 @@
 
 package de.uniol.inf.is.odysseus.context.transform;
 
-import de.uniol.inf.is.odysseus.context.logicaloperator.EnrichAO;
-import de.uniol.inf.is.odysseus.context.physicaloperator.EnrichPO;
+import de.uniol.inf.is.odysseus.context.logicaloperator.ContextEnrichAO;
+import de.uniol.inf.is.odysseus.context.physicaloperator.ContextEnrichPO;
 import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -50,7 +50,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Dennis Geesen
  * Created at: 27.04.2012
  */
-public class TEnrichAORule extends AbstractTransformationRule<EnrichAO>{
+public class TContextEnrichAORule extends AbstractTransformationRule<ContextEnrichAO>{
 
 	@Override
 	public int getPriority() {
@@ -58,17 +58,17 @@ public class TEnrichAORule extends AbstractTransformationRule<EnrichAO>{
 	}
 
 	@Override
-	public void execute(EnrichAO operator, TransformationConfiguration config) {
+	public void execute(ContextEnrichAO operator, TransformationConfiguration config) {
 		IContextStore<Tuple<ITimeInterval>> store = ContextStoreManager.getStore(operator.getStoreName());
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMerge = new RelationalMergeFunction<ITimeInterval>(operator.getOutputSchema().size());		
 		CombinedMergeFunction<ITimeInterval> metadataMerge = new CombinedMergeFunction<ITimeInterval>();		
 		metadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
-		EnrichPO<ITimeInterval> enrich = new EnrichPO<ITimeInterval>(store, operator.isOuter(), dataMerge, metadataMerge, operator.getAttributes());		
+		ContextEnrichPO<ITimeInterval> enrich = new ContextEnrichPO<ITimeInterval>(store, operator.isOuter(), dataMerge, metadataMerge, operator.getAttributes());		
 		defaultExecute(operator, enrich, config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(EnrichAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(ContextEnrichAO operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 
@@ -83,8 +83,9 @@ public class TEnrichAORule extends AbstractTransformationRule<EnrichAO>{
 	}
 	
 	@Override
-	public Class<? super EnrichAO> getConditionClass() {
-		return EnrichAO.class;	
+	public Class<? super ContextEnrichAO> getConditionClass() {
+		return ContextEnrichAO.class;	
 	}
+
 
 }
