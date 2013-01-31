@@ -38,6 +38,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		List<IRule<?,?>> rules = new ArrayList<IRule<?,?>>();
 		rules.add(new TDifferenceAORule());
 		rules.add(new TExistenceAORule());
+		rules.add(new TCoalesceAORule());
 		rules.add(new TStreamGroupingWithAggregationTIPORule());
 		rules.add(new TSystemTimestampRule());
 		rules.add(new TUnionTIPORule());
