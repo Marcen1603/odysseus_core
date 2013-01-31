@@ -350,14 +350,13 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 		}
 	}
 
-	private PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> saInsert(
+	private void saInsert(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> elem,
 			Q t) {
 		// System.out.println("SA Insert "+elem+" "+t);
 		elem.setMetadata(t);
 		sa.insert(elem);
-		return elem;
 	}
 
 }
