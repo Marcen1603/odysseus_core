@@ -43,11 +43,11 @@ public final class CovarianceMatrixUtils {
 	}
 
 	public static CovarianceMatrix fromMatrix(RealMatrix matrix) {
-		int size = matrix.getColumnDimension();
+		int dimension = matrix.getColumnDimension();
 		int left = 0;
-		int right = size;
-		double[] entries = new double[size];
-		for (int i = 0; i < size; i++) {
+		int right = dimension;
+		double[] entries = new double[CovarianceMatrixUtils.getCovarianceTiangleSizeFromDimension(dimension)];
+		for (int i = 0; i < dimension; i++) {
 			final double[] row = matrix.getRow(i);
 			System.arraycopy(row, i, entries, left, right);
 			left += right;
