@@ -459,7 +459,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		}
 
 		synchronized (streamDefinitions) {
-			if (this.streamDefinitions.containsKey(viewname)) {
+			if (this.streamDefinitions.containsKey(viewname) || streamDefinitions.containsKey(createUserUri(viewname, caller))) {
 				ILogicalOperator op;
 				checkAccessRights(viewname, caller,
 						DataDictionaryPermission.REMOVE_STREAM);
