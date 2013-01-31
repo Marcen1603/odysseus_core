@@ -21,6 +21,7 @@ public class TCoalesceAORule extends AbstractTransformationRule<CoalesceAO> {
 	public void execute(CoalesceAO operator, TransformationConfiguration config) {
 		CoalescePO<ITimeInterval> po = new CoalescePO<ITimeInterval>(operator.getInputSchema(0), operator.getOutputSchemaIntern(0) , operator.getGroupingAttributes(),
 				operator.getAggregations());
+		po.setPredicate(operator.getPredicate());
 		// TODO: Think about it
 		//po.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());
 		defaultExecute(operator, po, config, true, true);

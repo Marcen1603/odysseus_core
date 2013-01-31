@@ -37,7 +37,7 @@ public class CoalescePO<M extends ITimeInterval> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	public void setPredicate(IPredicate<? extends IStreamObject<M>> predicate) {
+	public void setPredicate(@SuppressWarnings("rawtypes") IPredicate predicate) {
 		this.predicate = predicate;
 	}
 
