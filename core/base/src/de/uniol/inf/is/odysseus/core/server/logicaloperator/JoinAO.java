@@ -48,10 +48,10 @@ public class JoinAO extends BinaryLogicalOp {
 		super(joinPO);
 	}
 
-	@SuppressWarnings("rawtypes")
+
 	@Override
 	@Parameter(type = PredicateParameter.class, optional = true, doc = "Predicate to filter combinations")
-	public synchronized void setPredicate(IPredicate joinPredicate) {
+	public synchronized void setPredicate(IPredicate<?> joinPredicate) {
 		super.setPredicate(joinPredicate);
 	}
 
