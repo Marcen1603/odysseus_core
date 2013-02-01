@@ -89,6 +89,10 @@ public class DataTuple {
 		this.attributes.add(Integer.parseInt(string));		
 	}
 
+	public void addShort(short value){
+		this.attributes.add(value);
+	}
+	
 	public void addDouble(Double value) {
 		this.attributes.add(value);
 	}
@@ -170,6 +174,8 @@ public class DataTuple {
 			return Long.SIZE / 8;
 		if (attObject instanceof Boolean)
 			return Integer.SIZE / 8;
+		if (attObject instanceof Short)
+			return Short.SIZE / 8;
 		if (attObject instanceof String)
 			return ((String) attObject).length() * 2 // Unicode!
 					+ Integer.SIZE / 8; // F�r die L�ngeninformation

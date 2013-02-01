@@ -78,13 +78,18 @@ public class RegressionGenerator extends StreamClientHandler{
 
 	@Override
 	public List<DataTuple> next() {
-		DataTuple tuple = new DataTuple();
+		DataTuple tuple = new DataTuple();		
 		// number / time (long)
 		tuple.addLong(timeGenerator.nextValue());
 		// temp (double)
 		tuple.addDouble(xGenerator.nextValue());
 		// humidity (integer)
 		tuple.addDouble(yGenerator.nextValue());
+		
+		tuple.addByte((byte)92);
+		
+		tuple.addShort((short)92);
+		
 		System.out.println(tuple);
 		try {
 			Thread.sleep(1000);

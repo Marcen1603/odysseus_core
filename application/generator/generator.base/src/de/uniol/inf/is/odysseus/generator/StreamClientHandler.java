@@ -232,6 +232,8 @@ public abstract class StreamClientHandler extends Thread {
 				}
 			} else if (data instanceof Double) {
 				bytebuffer.putDouble((Double) data);
+			} else if (data instanceof Short) {
+				bytebuffer.putShort((Short) data);
 			} else if (data instanceof Long) {
 				bytebuffer.putLong((Long) data);
 			} else if (data instanceof String) {
