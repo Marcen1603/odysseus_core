@@ -98,7 +98,8 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			try {
 				Thread.sleep(delay);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				// interrupting the delay might be correct
+				//e.printStackTrace();
 			}
 		}
 	}
