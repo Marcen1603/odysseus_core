@@ -46,6 +46,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TSenderAOViewRule());
 		rules.add(new TSenderAOExistsRule());
 		rules.add(new TAppendToPhysicalAORule());
+		rules.add(new TEnrichAORule());
 		return rules;
 	}
 
