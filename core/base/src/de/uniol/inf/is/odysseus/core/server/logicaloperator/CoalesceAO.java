@@ -2,10 +2,12 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 @LogicalOperator(name = "COALESCE", minInputPorts = 1, maxInputPorts = 1)
@@ -25,6 +27,13 @@ public class CoalesceAO extends AggregateAO {
 		for (SDFAttribute a : attributes) {
 			addGroupingAttribute(a);
 		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	@Parameter(type=PredicateParameter.class)
+	public void setPredicate(IPredicate predicate) {
+			super.setPredicate(predicate);
 	}
 	
 	@Override
