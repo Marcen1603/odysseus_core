@@ -13,13 +13,14 @@ import org.slf4j.LoggerFactory;
 public class P2PNewPlugIn implements BundleActivator {
 
 	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
-	
+	private static final String JXTA_LOGGER_NAME = "net.jxta";
+	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.WARNING;
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNewPlugIn.class);
 	
 	private NetworkManager manager;
 	
 	public void start(BundleContext bundleContext) throws Exception {
-		loadOwnLogProperties(bundleContext.getBundle());
+		configureLogging(bundleContext.getBundle());
 		
 		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, "Odysseus JXTA");
 		PeerGroup peerGroup = manager.startNetwork();
@@ -32,8 +33,15 @@ public class P2PNewPlugIn implements BundleActivator {
 		LOG.debug("JXTA-Network stopped");
 	}
 
-	private static void loadOwnLogProperties(Bundle bundle) {
+	private static void configureLogging(Bundle bundle) {
+		java.util.logging.Logger jxtaLogger = java.util.logging.Logger.getLogger(JXTA_LOGGER_NAME);
+		if(jxtaLogger != null ) {
+			jxtaLogger.setLevel(JXTA_LOG_LEVEL);
+		} else {
+			LOG.warn("Could not get JXTA-Logger for setting level to {}", JXTA_LOG_LEVEL);
+		}
 		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
+		
 	}
 
 }
