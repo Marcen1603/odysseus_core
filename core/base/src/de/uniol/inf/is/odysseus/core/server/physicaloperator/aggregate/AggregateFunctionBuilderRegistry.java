@@ -38,10 +38,10 @@ public class AggregateFunctionBuilderRegistry implements
 		// System.out.println("Found new AggregateBuilder " + builder);
 		for (String functionName : functionNames) {
 			Pair<String, String> key = new Pair<String, String>(datamodel,
-					functionName);
+					functionName.toUpperCase());
 			if (!builders.containsKey(key)) {
 				builders.put(key, builder);
-				aggregateFunctionNames.add(functionName);
+				aggregateFunctionNames.add(functionName.toUpperCase());
 				buildAggregatePattern();
 				// System.out.println("Binding " + key);
 			} else {
@@ -96,7 +96,7 @@ public class AggregateFunctionBuilderRegistry implements
 	public IAggregateFunctionBuilder getBuilder(String datamodel,
 			String functionName) {
 		Pair<String, String> key = new Pair<String, String>(datamodel,
-				functionName);
+				functionName.toUpperCase());
 		return builders.get(key);
 	}
 
