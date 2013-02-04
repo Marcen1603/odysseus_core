@@ -56,5 +56,10 @@ public class AvgSumPartialAggregate<R> implements IPartialAggregate<R> {
 		return new AvgSumPartialAggregate<R>(this);
 	}
 	
+	@Override
+	public String toString() {
+		return "SUM= "+aggValue+" COUNT="+aggCount;
+	}
+	
 
 }
