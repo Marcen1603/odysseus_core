@@ -12,11 +12,13 @@ import org.slf4j.LoggerFactory;
 
 public class P2PNewPlugIn implements BundleActivator {
 
+	private static final int PEER_DISCOVER_INTERVAL_MILLIS = 20000;
 	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
 	private static final String JXTA_LOGGER_NAME = "net.jxta";
 	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.WARNING;
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNewPlugIn.class);
 	
+	private PeerDiscoveryThread peerDiscoveryThread;
 	private NetworkManager manager;
 	
 	public void start(BundleContext bundleContext) throws Exception {
@@ -25,10 +27,15 @@ public class P2PNewPlugIn implements BundleActivator {
 		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, "Odysseus JXTA");
 		PeerGroup peerGroup = manager.startNetwork();
 		
+		peerDiscoveryThread = new PeerDiscoveryThread(peerGroup.getDiscoveryService(), PEER_DISCOVER_INTERVAL_MILLIS);
+		peerDiscoveryThread.start();
+		
 		LOG.debug("JXTA-Network started. Peer is in group '{}'", peerGroup);
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {
+		peerDiscoveryThread.stopRunning();
+		
 		manager.stopNetwork();
 		LOG.debug("JXTA-Network stopped");
 	}
@@ -43,5 +50,4 @@ public class P2PNewPlugIn implements BundleActivator {
 		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
 		
 	}
-
 }
