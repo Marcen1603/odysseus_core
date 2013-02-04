@@ -13,6 +13,13 @@ public class CoalesceAO extends AggregateAO {
 
 	private static final long serialVersionUID = 6314887685476173038L;
 
+	public CoalesceAO() {
+	}
+	
+	public CoalesceAO(CoalesceAO coalesceAO) {
+		super(coalesceAO);
+	}
+
 	@Parameter(name = "ATTR", optional = false, type = ResolvedSDFAttributeParameter.class, isList = true)
 	public void setGroupingAttributes(List<SDFAttribute> attributes) {
 		for (SDFAttribute a : attributes) {
@@ -29,5 +36,10 @@ public class CoalesceAO extends AggregateAO {
 		}
 			
 		return super.isValid();
+	}
+	
+	@Override
+	public CoalesceAO clone() {
+		return new CoalesceAO(this);
 	}
 }
