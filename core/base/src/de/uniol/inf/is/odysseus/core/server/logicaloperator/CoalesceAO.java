@@ -20,7 +20,7 @@ public class CoalesceAO extends AggregateAO {
 		super(coalesceAO);
 	}
 
-	@Parameter(name = "ATTR", optional = false, type = ResolvedSDFAttributeParameter.class, isList = true)
+	@Parameter(name = "ATTR", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
 	public void setGroupingAttributes(List<SDFAttribute> attributes) {
 		for (SDFAttribute a : attributes) {
 			addGroupingAttribute(a);
