@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
