@@ -89,7 +89,6 @@ public class CoalescePO<M extends ITimeInterval> extends
 				newP.setMetadata(currentPartialAggregates.getMetadata());
 				currentPartialAggregates = newP;
 			}
-			System.err.println(currentPartialAggregates);
 			if (predicate.evaluate(object)) {
 				PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(currentPartialAggregates);
 				// create IStreamObject
@@ -99,7 +98,6 @@ public class CoalescePO<M extends ITimeInterval> extends
 				metadata.setEnd(object.getMetadata().getEnd());
 				out.setMetadata(metadata);
 				transfer(out);
-				System.err.println("---> "+out);
 				currentPartialAggregates = null;
 			}
 
