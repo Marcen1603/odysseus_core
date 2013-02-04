@@ -61,7 +61,9 @@ public class CoalescePO<M extends ITimeInterval> extends
 
 			if (currentPartialAggregates != null
 					&& currentGroupID == lastGroupID) {
-				currentPartialAggregates = calcMerge(currentPartialAggregates, object);
+				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(currentPartialAggregates, object);
+				newP.setMetadata(currentPartialAggregates.getMetadata());
+				currentPartialAggregates = newP;
 			} else {
 				if (currentPartialAggregates != null) {
 					PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(currentPartialAggregates);
@@ -83,7 +85,9 @@ public class CoalescePO<M extends ITimeInterval> extends
 				currentPartialAggregates = calcInit(object);
 				currentPartialAggregates.setMetadata(object.getMetadata());
 			}else{
-				currentPartialAggregates = calcMerge(currentPartialAggregates, object);
+				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(currentPartialAggregates, object);
+				newP.setMetadata(currentPartialAggregates.getMetadata());
+				currentPartialAggregates = newP;
 			}
 			System.err.println(currentPartialAggregates);
 			if (predicate.evaluate(object)) {
