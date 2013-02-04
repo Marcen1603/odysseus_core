@@ -31,7 +31,7 @@ public class DebsIntensityCalc extends AbstractFunction<String> {
 	
 	@Override
 	public int getArity() {
-		return 0;
+		return 1;
 	}
 
 	@Override
