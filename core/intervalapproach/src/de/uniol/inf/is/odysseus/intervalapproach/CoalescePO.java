@@ -70,8 +70,8 @@ public class CoalescePO<M extends ITimeInterval> extends
 					// create IStreamObject
 					IStreamObject<M> out = getGroupProcessor()
 							.createOutputElement(lastGroupID, result);
-					M metadata = currentPartialAggregates.getMetadata();
-					metadata.setEnd(object.getMetadata().getStart());
+					M metadata = object.getMetadata();
+					metadata.setStart(currentPartialAggregates.getMetadata().getStart());
 					out.setMetadata(metadata);
 					transfer(out);
 				}
@@ -94,8 +94,8 @@ public class CoalescePO<M extends ITimeInterval> extends
 				// create IStreamObject
 				IStreamObject<M> out = getGroupProcessor()
 						.createOutputElement(lastGroupID, result);
-				M metadata = currentPartialAggregates.getMetadata();
-				metadata.setEnd(object.getMetadata().getEnd());
+				M metadata = object.getMetadata();
+				metadata.setStart(currentPartialAggregates.getMetadata().getStart());
 				out.setMetadata(metadata);
 				transfer(out);
 				currentPartialAggregates = null;
