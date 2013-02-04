@@ -46,6 +46,7 @@ public class CoalescePO<M extends ITimeInterval> extends
 		if (this.predicate != null) {
 			this.predicate.init();
 		}
+		getGroupProcessor().init();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -76,6 +77,7 @@ public class CoalescePO<M extends ITimeInterval> extends
 				currentPartialAggregates = calcInit(object);
 				currentPartialAggregates.setMetadata(object.getMetadata());
 			}
+			lastGroupID = currentGroupID;
 		} else { // Mode predicate
 			if (currentPartialAggregates == null) {
 				currentPartialAggregates = calcInit(object);
