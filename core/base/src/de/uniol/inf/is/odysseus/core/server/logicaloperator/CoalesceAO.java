@@ -31,7 +31,7 @@ public class CoalesceAO extends AggregateAO {
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	@Parameter(type=PredicateParameter.class)
+	@Parameter(type=PredicateParameter.class, optional = true)
 	public void setPredicate(IPredicate predicate) {
 			super.setPredicate(predicate);
 	}
