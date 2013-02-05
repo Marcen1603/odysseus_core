@@ -34,7 +34,6 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static final PeerID PEER_ID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID, PEER_NAME.getBytes());
 
 	private PeerDiscoveryThread peerDiscoveryThread;
-	private PeerAdvertisementThread peerAdvThread;
 	private NetworkManager manager;
 
 	public void start(BundleContext bundleContext) throws Exception {
@@ -50,9 +49,6 @@ public class P2PNewPlugIn implements BundleActivator {
 		LOG.debug("JXTA-Network started. Peer {} is in group '{}'", PEER_NAME, subGroup);
 
 		DiscoveryService discoveryService = subGroup.getDiscoveryService();
-		
-//		peerAdvThread = new PeerAdvertisementThread(3 *1000, discoveryService, PEER_ID, SUBGROUP_ID);
-//		peerAdvThread.start();
 		
 		peerDiscoveryThread = new PeerDiscoveryThread(discoveryService, 3 * 1000);
 		peerDiscoveryThread.start();

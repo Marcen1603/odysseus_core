@@ -48,7 +48,7 @@ public class PeerDiscoveryThread extends RepeatingJobThread implements Discovery
 	
 	@Override
 	public void doJob() {
-		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 1, this);
+		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, this);
 	}
 	
 	@Override
@@ -69,6 +69,5 @@ public class PeerDiscoveryThread extends RepeatingJobThread implements Discovery
 			}
 			
 		}
-		LOG.info("\n");
 	}
 }
