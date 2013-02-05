@@ -16,15 +16,8 @@
 
 package de.uniol.inf.is.odysseus.p2p_new;
 
+import java.io.IOException;
 import java.util.Enumeration;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
@@ -33,6 +26,12 @@ import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.protocol.PeerAdvertisement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+
 public class PeerManager implements IPeerManager, DiscoveryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
@@ -40,7 +39,6 @@ public class PeerManager implements IPeerManager, DiscoveryListener {
 
 	private final DiscoveryService discoveryService;
 	private final PeerDiscoveryThread peerDiscoveryThread;
-	private final List<String> peerList = Lists.newArrayList(); 
 
 	public PeerManager(DiscoveryService discoveryService) {
 		this.discoveryService = Preconditions.checkNotNull(discoveryService);
@@ -50,43 +48,65 @@ public class PeerManager implements IPeerManager, DiscoveryListener {
 		peerDiscoveryThread.start();
 	}
 
-	public void stop() {
+	public final void stop() {
 		discoveryService.removeDiscoveryListener(this);
 		peerDiscoveryThread.stopRunning();
 	}
 
 	@Override
-	public void discoverPeers() {
+	public final void discoverPeers() {
 		peerDiscoveryThread.doJob();
 	}
 
 	@Override
-	public void discoveryEvent(DiscoveryEvent event) {
-		DiscoveryResponseMsg response = event.getResponse();
-		Enumeration<Advertisement> advs = response.getAdvertisements();
-		while (advs.hasMoreElements()) {
-			Advertisement adv = advs.nextElement();
+	public final void discoveryEvent(DiscoveryEvent event) {
+		try {
+			DiscoveryResponseMsg response = event.getResponse();
+			Enumeration<Advertisement> advs = response.getAdvertisements();
+			while (advs.hasMoreElements()) {
+				Advertisement adv = advs.nextElement();
 
-			if (adv instanceof PeerAdvertisement) {
-				processPeerAdvertisement((PeerAdvertisement) adv);
-			} else {
-				processOtherAdvertisement(adv);
+				if (adv instanceof PeerAdvertisement) {
+					processPeerAdvertisement((PeerAdvertisement) adv);
+				} else {
+					processOtherAdvertisement(adv);
+				}
+
 			}
-
+		} catch (IOException exception) {
+			LOG.error("Could not process discovery event", exception);
 		}
 	}
 
 	@Override
 	public ImmutableList<String> getPeers() {
-		return ImmutableList.copyOf(peerList);
+		try {
+			Enumeration<Advertisement> localAdvs = discoveryService.getLocalAdvertisements(DiscoveryService.PEER, null, null);
+			return extractPeerNames(localAdvs);
+		} catch (IOException ex) {
+			LOG.error("Could not get list of peers", ex);
+			return ImmutableList.of();
+		}
+
 	}
 
-	protected void processPeerAdvertisement(PeerAdvertisement adv) {
-		LOG.info("Got PeerAdvertisement {}", adv);
+	protected void processPeerAdvertisement(PeerAdvertisement adv) throws IOException {
+		LOG.info("Got PeerAdvertisement from peer {}", adv.getName());
+		discoveryService.publish(adv, PEER_DISCOVER_INTERVAL_MILLIS, PEER_DISCOVER_INTERVAL_MILLIS);
 	}
 
 	protected void processOtherAdvertisement(Advertisement adv) {
 		LOG.info("Got advertisement of class {} : {} ", adv.getClass(), adv);
 	}
 
+	private static ImmutableList<String> extractPeerNames(Enumeration<Advertisement> localAdvs) {
+		ImmutableList.Builder<String> names = ImmutableList.builder();
+
+		while (localAdvs.hasMoreElements()) {
+			PeerAdvertisement peerAdvertisement = (PeerAdvertisement) localAdvs.nextElement();
+			names.add(peerAdvertisement.getName());
+		}
+
+		return names.build();
+	}
 }
