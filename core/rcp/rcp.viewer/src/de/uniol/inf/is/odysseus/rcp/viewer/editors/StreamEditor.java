@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.viewer.editors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,27 +28,38 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
+import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 
-public class StreamEditor extends EditorPart {
+public class StreamEditor extends EditorPart implements IStreamElementListener<Object> {
 
 	private IStreamEditorInput input;
 	private IStreamEditorType editorType;
 	private ToolBar toolBar;
 	private Composite parent;
-	
-	public StreamEditor() {}
+
+	private boolean autoFocus = false;
+	private boolean onFocusing = false;
+
+	public StreamEditor() {
+	}
 
 	@Override
-	public void doSave(IProgressMonitor monitor) {}
+	public void doSave(IProgressMonitor monitor) {
+	}
 
 	@Override
-	public void doSaveAs() {}
+	public void doSaveAs() {
+	}
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
@@ -57,11 +68,12 @@ public class StreamEditor extends EditorPart {
 
 		this.input = ((IStreamEditorInput) input);
 		setPartName(this.input.getName());
-		
-		this.editorType = ((StreamEditorInput)this.input).getEditorType();
+
+		this.editorType = ((StreamEditorInput) this.input).getEditorType();
 		this.editorType.init(this, this.input);
-		
+
 		this.input.getStreamConnection().addStreamElementListener(this.editorType);
+		this.input.getStreamConnection().addStreamElementListener(this);
 	}
 
 	@Override
@@ -77,60 +89,60 @@ public class StreamEditor extends EditorPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		this.parent = parent;
-		
+
 		GridLayout layout = new GridLayout();
 		parent.setLayout(layout);
-		
+
 		createToolBar();
-		
+
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new FillLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		editorType.createPartControl(composite);
-		
+
 		input.getStreamConnection().connect();
-	}
-	
-	protected final ToolItem createToolBarButton( Image  img) {
-		ToolItem item = new ToolItem(toolBar, SWT.PUSH);
-		item.setImage(img);
-		return item;
 	}
 
 	@Override
 	public void setFocus() {
 		editorType.setFocus();
+
 	}
-	
+
 	@Override
 	public void dispose() {
 		editorType.dispose();
+		this.input.getStreamConnection().removeStreamElementListener(this);
 		this.input.getStreamConnection().removeStreamElementListener(this.editorType);
 		input.getStreamConnection().disconnect();
 	}
-	
+
 	public IStreamEditorInput getInput() {
 		return input;
 	}
 
-	private void createToolBar() {
-		if( toolBar == null ) {
-			toolBar = new ToolBar( getParent(), SWT.BORDER);
-			fillToolBar( toolBar );
-		}
+	@Override
+	public void streamElementRecieved(Object element, int port) {
+		setFocusAsync();
 	}
-	
-	protected final Composite getParent() {
-		return parent;
+
+	@Override
+	public void punctuationElementRecieved(IPunctuation point, int port) {
+		setFocusAsync();
 	}
-	
-	protected void fillToolBar( ToolBar bar ) {
-		final ToolItem button = createToolBarButton(OdysseusRCPViewerPlugIn.getImageManager().get("stopStream"));
+
+	@Override
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+		setFocusAsync();
+	}
+
+	protected void fillToolBar(ToolBar bar) {
+		final ToolItem button = createToolBarButton(bar, OdysseusRCPViewerPlugIn.getImageManager().get("stopStream"));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if( input.getStreamConnection().isConnected()) {
+				if (input.getStreamConnection().isConnected()) {
 					input.getStreamConnection().disconnect();
 					button.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("startStream"));
 				} else {
@@ -139,7 +151,57 @@ public class StreamEditor extends EditorPart {
 				}
 			}
 		});
-		
+		final ToolItem autoShowButton = createToolBarButton(bar, OdysseusRCPViewerPlugIn.getImageManager().get("autoFocusActivate"));
+		autoShowButton.setToolTipText("Show on changes");
+		autoShowButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (autoFocus) {
+					autoShowButton.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("autoFocusActivate"));
+					autoShowButton.setToolTipText("Show on changes");
+					autoFocus = false;
+				} else {
+					autoShowButton.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("autoFocusDeactivate"));
+					autoShowButton.setToolTipText("Do not show on changes");
+					autoFocus = true;
+				}
+			}
+		});
+
 		editorType.initToolbar(bar);
+	}
+
+	protected final Composite getParent() {
+		return parent;
+	}
+
+	private void setFocusAsync() {
+		if (!autoFocus || onFocusing) {
+			return;
+		}
+
+		onFocusing = true;
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				IWorkbenchPage page = getSite().getPage();
+				page.activate(StreamEditor.this);
+				onFocusing = false;
+			}
+		});
+
+	}
+
+	private void createToolBar() {
+		if (toolBar == null) {
+			toolBar = new ToolBar(getParent(), SWT.BORDER);
+			fillToolBar(toolBar);
+		}
+	}
+
+	private static final ToolItem createToolBarButton(ToolBar tb, Image img) {
+		ToolItem item = new ToolItem(tb, SWT.PUSH);
+		item.setImage(img);
+		return item;
 	}
 }

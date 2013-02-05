@@ -59,6 +59,8 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 		imageManager = new ImageManager(bundle);
 		imageManager.register("stopStream", "Icons/control-stop.png");
 		imageManager.register("startStream", "Icons/control.png");
+		imageManager.register("autoFocusActivate", "Icons/autoFocusActivate.png");
+		imageManager.register("autoFocusDeactivate", "Icons/autoFocusDeactivate.png");
 		imageManager.register("metadata", "icons/metadata.gif");
 		imageManager.register("attribute", "icons/status.png");
 		imageManager.register("predicate", "icons/status.png");
