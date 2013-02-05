@@ -39,6 +39,7 @@ public class RuleProvider implements ITransformRuleProvider{
 		rules.add(new TRelationalSocketSinkAORule());
 		rules.add(new TEnrichAddDataMergeFunctionRule());
 		rules.add(new TUnnestAORule());
+		rules.add(new TConvolutionFilterAORule());
 		return rules;
 	}
 
