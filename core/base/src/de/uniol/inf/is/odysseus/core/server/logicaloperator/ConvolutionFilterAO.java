@@ -100,7 +100,8 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 	}
 
 	private SDFExpression getLogarithmicFunction(double mean, double deviation) {
-		String function = "(1/(" + deviation + "*sqrt(2*PI())))*(1/x)*E()^((-1/2)*((ln(x-" + mean + "))/" + deviation + ")^2)";
+		// log must be the natural log (ln) with base e!
+		String function = "(1/(" + deviation + "*sqrt(2*PI())))*(1/x)*E()^((-1/2)*((log(x-" + mean + "))/" + deviation + ")^2)";
 		SDFExpression gauss = new SDFExpression(function, MEP.getInstance());
 		return gauss;
 	}
