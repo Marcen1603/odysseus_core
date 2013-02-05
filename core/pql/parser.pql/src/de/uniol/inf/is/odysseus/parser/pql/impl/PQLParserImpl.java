@@ -147,7 +147,8 @@ public class PQLParserImpl implements PQLParserImplConstants {
       ILogicalOperator topOperator = opEntry.getValue();
       if (roots.contains(topOperator))
       {
-        query = new LogicalQuery();
+        // create temporal query (without id)
+        query = new LogicalQuery(-1);
         PQLParser.initQueryParameters(namedOpParameters.get(queryName));
         for (String parameterName : namedOpParameters.get(queryName).keySet())
         {
@@ -196,10 +197,8 @@ public class PQLParserImpl implements PQLParserImplConstants {
       {
         root.subscribeSink(topOperator, inputPort++, 0, root.getOutputSchema());
       }
-      if (query == null)
-      {
-        query = new LogicalQuery();
-      }
+      // create real query (with new id)
+      query = new LogicalQuery();
       // Set Owners for query 
       //AbstractTreeWalker walker = new AbstractTreeWalker();
       GenericGraphWalker walker = new GenericGraphWalker();
@@ -588,6 +587,15 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(1, xla); }
   }
 
+  static private boolean jj_3R_6() {
+    if (jj_scan_token(25)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_7()) jj_scanpos = xsp;
+    if (jj_scan_token(26)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_10() {
     if (jj_scan_token(FLOAT)) return true;
     return false;
@@ -681,15 +689,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
 
   static private boolean jj_3R_11() {
     if (jj_scan_token(INTEGER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_6() {
-    if (jj_scan_token(25)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_7()) jj_scanpos = xsp;
-    if (jj_scan_token(26)) return true;
     return false;
   }
 

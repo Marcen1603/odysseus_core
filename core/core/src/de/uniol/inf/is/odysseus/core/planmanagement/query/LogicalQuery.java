@@ -126,6 +126,11 @@ public class LogicalQuery implements ILogicalQuery {
 		this("", null, 0);
 	}
 
+	public LogicalQuery(int id) {
+		this(id,"", null, 0);
+	}
+
+	
 	@Override
 	public String getName() {
 		return name;
