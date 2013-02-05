@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: P2P_New RCP
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.p2p_new
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/peerManager.xml
+Import-Package: de.uniol.inf.is.odysseus.p2p_new,
+ org.slf4j

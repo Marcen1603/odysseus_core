@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.rcp.p2p_new.PeerManager">
+   <implementation class="de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn"/>
+   <reference bind="bindPeerManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IPeerManager" name="IPeerManager" policy="static" unbind="unbindPeerManager"/>
+</scr:component>
