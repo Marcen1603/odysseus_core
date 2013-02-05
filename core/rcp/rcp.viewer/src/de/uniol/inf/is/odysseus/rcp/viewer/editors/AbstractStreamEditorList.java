@@ -122,7 +122,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 		synchronized (pendingElements) {
 			if (!punctuation.isHeartbeat() || showHeartbeats) {
-				pendingElements.add("Punctuation: " + punctuation);
+				pendingElements.add("Punctuation: " + punctuation+" from input port "+port);
 				if (!isInfinite() && pendingElements.size() > maxElements) {
 					pendingElements.remove(0);
 				}
