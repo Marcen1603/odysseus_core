@@ -65,6 +65,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.No
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.QueryAddException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
@@ -260,6 +261,14 @@ public class StandardExecutor extends AbstractExecutor implements
 		// create for each logical plan an intern query
 		for (ILogicalQuery query : queries) {
 			setQueryBuildParameters(query, parameters);
+
+			ParameterQueryName queryName = parameters
+					.get(ParameterQueryName.class);
+			if (queryName != null && queryName.getValue() != null
+					&& queryName.getValue().length() > 0) {
+				query.setName(queryName.getValue());
+			}
+
 			query.setQueryText(queryStr);
 			query.setUser(user);
 			query.setParameter(SLA.class.getName(), sla);
@@ -466,6 +475,11 @@ public class StandardExecutor extends AbstractExecutor implements
 				prio = params.getPriority();
 			}
 			ILogicalQuery query = new LogicalQuery(logicalPlan, prio);
+			ParameterQueryName queryName = params.get(ParameterQueryName.class);
+			if (queryName != null && queryName.getValue() != null
+					&& queryName.getValue().length() > 0) {
+				query.setName(queryName.getValue());
+			}
 			query.setUser(user);
 			SetOwnerVisitor visitor = new SetOwnerVisitor(query);
 			AbstractTreeWalker.prefixWalk(logicalPlan, visitor);
@@ -539,6 +553,8 @@ public class StandardExecutor extends AbstractExecutor implements
 					if (overwrite.getClass() == setting.getClass()) {
 						newSettings.remove(setting);
 						newSettings.add(overwrite);
+					}else{
+						newSettings.add(overwrite);
 					}
 				}
 			}
@@ -604,7 +620,7 @@ public class StandardExecutor extends AbstractExecutor implements
 						}
 
 					}
-					for (IOperatorOwner id:toRemove){
+					for (IOperatorOwner id : toRemove) {
 						p.removeUniqueId(id);
 					}
 				}

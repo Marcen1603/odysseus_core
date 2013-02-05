@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.script.keyword;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +32,14 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanManager;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ParserPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.TransCfgPreParserKeyword;
 
 public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExecutorKeyword {
@@ -78,6 +81,13 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables.get(TransCfgPreParserKeyword.ADD_TRANS_PARAMS);
 		
 		ISession queryCaller = (ISession) variables.get("USER");
+		String queryName = (String) variables.get(QueryNamePreParserKeyword.QNAME);
+		if (queryName != null && queryName.trim().length() > 0){
+			if (addSettings == null){
+				addSettings = new ArrayList<>();
+			}
+			addSettings.add(new ParameterQueryName(queryName));
+		}
 		if (queryCaller == null){
 			queryCaller = caller;
 		}
