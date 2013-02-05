@@ -16,23 +16,12 @@
 
 package de.uniol.inf.is.odysseus.p2p_new;
 
-import java.util.Enumeration;
-
-import net.jxta.discovery.DiscoveryEvent;
-import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
-import net.jxta.document.Advertisement;
-import net.jxta.protocol.DiscoveryResponseMsg;
-import net.jxta.protocol.PeerAdvertisement;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-public class PeerDiscoveryThread extends RepeatingJobThread implements DiscoveryListener {
+public class PeerDiscoveryThread extends RepeatingJobThread {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PeerDiscoveryThread.class);
 	private static final String THREAD_NAME = "Peer discovery thread";
 	
 	private final DiscoveryService discoveryService;
@@ -43,31 +32,7 @@ public class PeerDiscoveryThread extends RepeatingJobThread implements Discovery
 	}
 
 	@Override
-	public void beforeJob() {
-	}
-	
-	@Override
 	public void doJob() {
-		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, this);
-	}
-	
-	@Override
-	public void afterJob() {
-		discoveryService.removeDiscoveryListener(this);
-	}
-	
-	@Override
-	public void discoveryEvent(DiscoveryEvent event) {
-		DiscoveryResponseMsg response = event.getResponse();
-		Enumeration<Advertisement> advs = response.getAdvertisements();
-		while( advs.hasMoreElements() ) {
-			Advertisement adv = advs.nextElement();
-			
-			if( adv instanceof PeerAdvertisement) {
-				PeerAdvertisement peerAdv = (PeerAdvertisement)adv;
-				LOG.info(peerAdv.getName());
-			}
-			
-		}
+		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, null);
 	}
 }

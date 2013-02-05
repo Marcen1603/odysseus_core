@@ -33,7 +33,7 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static final PeerGroupID SUBGROUP_ID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, SUBGROUP_NAME.getBytes());
 	private static final PeerID PEER_ID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID, PEER_NAME.getBytes());
 
-	private PeerDiscoveryThread peerDiscoveryThread;
+	private PeerManager peerManager;
 	private NetworkManager manager;
 
 	public void start(BundleContext bundleContext) throws Exception {
@@ -49,13 +49,11 @@ public class P2PNewPlugIn implements BundleActivator {
 		LOG.debug("JXTA-Network started. Peer {} is in group '{}'", PEER_NAME, subGroup);
 
 		DiscoveryService discoveryService = subGroup.getDiscoveryService();
-		
-		peerDiscoveryThread = new PeerDiscoveryThread(discoveryService, 3 * 1000);
-		peerDiscoveryThread.start();
+		peerManager = new PeerManager(discoveryService);
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {
-		peerDiscoveryThread.stopRunning();
+		peerManager.stop();
 
 		manager.stopNetwork();
 		LOG.debug("JXTA-Network stopped");
