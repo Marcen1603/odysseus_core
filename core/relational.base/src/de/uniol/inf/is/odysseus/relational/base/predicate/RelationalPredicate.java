@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -48,7 +51,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
 public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 		IRelationalPredicate {
 
-	// Logger logger = LoggerFactory.getLogger(RelationalPredicate.class);
+	Logger logger = LoggerFactory.getLogger(RelationalPredicate.class);
 
 	private static final long serialVersionUID = 1222104352250883947L;
 
@@ -227,8 +230,12 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements
 	}
 
 	@Override
-	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
-		replacementMap.put(curAttr, newAttr);
+	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {	
+		if(!curAttr.equals(newAttr)){
+			replacementMap.put(curAttr, newAttr);
+		}else{
+			logger.warn("Replacement "+curAttr+" --> "+newAttr+" not added because they are equal!");
+		}
 	}
 
 	// nur testweise zum Evaluieren
