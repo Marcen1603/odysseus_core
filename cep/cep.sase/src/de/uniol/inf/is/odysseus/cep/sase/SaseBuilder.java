@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	@Override
 	public void start(BundleContext arg0) throws Exception {
-		
+
 	}
 
 	@Override
@@ -71,8 +71,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	@Override
-	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd)
-			throws QueryParseException {
+	public List<ILogicalQuery> parse(Reader reader, ISession user,
+			IDataDictionary dd) throws QueryParseException {
 		this.user = user;
 		this.dd = dd;
 		SaseLexer lex = null;
@@ -81,24 +81,26 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		} catch (IOException e) {
 			throw new QueryParseException(e);
 		}
-		return processParse(lex, true);
+		return processParse(lex, true, false);
 	}
 
 	@Override
-	public List<ILogicalQuery> parse(String text, ISession user, IDataDictionary dd)
-			throws QueryParseException {
-		return parse(text, user, dd, true);
+	public List<ILogicalQuery> parse(String text, ISession user,
+			IDataDictionary dd) throws QueryParseException {
+		return parse(text, user, dd, true, false);
 	}
 
-	public List<ILogicalQuery> parse(String text, ISession user, IDataDictionary dd,
-			boolean attachSources) throws QueryParseException {
+	public List<ILogicalQuery> parse(String text, ISession user,
+			IDataDictionary dd, boolean attachSources, boolean createTmpQuery)
+			throws QueryParseException {
 		this.user = user;
 		this.dd = dd;
 		SaseLexer lex = new SaseLexer(new ANTLRStringStream(text));
-		return processParse(lex, attachSources);
+		return processParse(lex, attachSources, createTmpQuery);
 	}
 
-	private List<ILogicalQuery> processParse(SaseLexer lexer, boolean attachSources)
+	private List<ILogicalQuery> processParse(SaseLexer lexer,
+			boolean attachSources, boolean createTmpQuery)
 			throws QueryParseException {
 		ArrayList<ILogicalQuery> retList = new ArrayList<ILogicalQuery>();
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -110,7 +112,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			throw new QueryParseException(e);
 		}
 		CommonTree tree = (CommonTree) ret.getTree();
-		//printTree(tree, 2);
+		// printTree(tree, 2);
 		CommonTreeNodeStream nodes = new CommonTreeNodeStream(tree);
 		SaseAST walker = new SaseAST(nodes);
 		walker.setUser(user);
@@ -123,12 +125,18 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		try {
 			ILogicalOperator ao = walker.start(attachSources);
 			if (ao != null) {
-				ILogicalQuery query = new LogicalQuery();
+				ILogicalQuery query;
+				if (createTmpQuery) {
+					query = new LogicalQuery(-1);
+				} else {
+					query = new LogicalQuery();
+				}
 				query.setParserId(getLanguage());
 				query.setLogicalPlan(ao, true);
 				retList.add(query);
-			}else{
-				 throw new QueryParseException("Could not create logical Operator");
+			} else {
+				throw new QueryParseException(
+						"Could not create logical Operator");
 			}
 		} catch (RecognitionException e) {
 			throw new QueryParseException(e);

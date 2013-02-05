@@ -64,7 +64,7 @@ public class SaseAOBuilder extends AbstractOperatorBuilder {
 		SaseBuilder parser = new SaseBuilder();
 		ILogicalOperator ret = null;
 		List<ILogicalQuery> op = parser.parse(query.getValue(), getCaller(),
-				getDataDictionary(), false);
+				getDataDictionary(), true, false);
 		// I know there is only one operator
 		ret = op.get(0).getLogicalPlan();
 		if (oneMatchPerInstance.hasValue()){
