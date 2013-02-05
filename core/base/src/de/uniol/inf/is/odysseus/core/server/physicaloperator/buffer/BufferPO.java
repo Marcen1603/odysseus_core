@@ -119,7 +119,7 @@ public class BufferPO<T extends IStreamObject<?>> extends
 			// the top element of a buffer must always be
 			// an real element, send punctuations immediately
 			synchronized (buffer) {
-				while (buffer.peek().isPunctuation()) {
+				while (!buffer.isEmpty() && buffer.peek().isPunctuation()) {
 					sendPunctuation((IPunctuation) buffer.pop());
 				}
 			}
