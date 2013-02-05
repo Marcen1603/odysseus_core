@@ -47,6 +47,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	private int receivedElements;
 	private final int maxElements;
 	private boolean showHeartbeats = false;
+	private StreamEditor editor;
 
 	private List<String> pendingElements = Lists.newLinkedList();
 
@@ -55,9 +56,13 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	}
 
 	@Override
+	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
+		this.editor = editorPart;
+	}
+
+	@Override
 	public void createPartControl(Composite parent) {
-		text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.WRAP);
+		text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
 		text.setEditable(false);
 		text.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
@@ -99,10 +104,6 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	}
 
 	@Override
-	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
-	}
-
-	@Override
 	public void setFocus() {
 		text.setFocus();
 	}
@@ -130,8 +131,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp,
-			int port) {
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
 		synchronized (pendingElements) {
 			pendingElements.add("Security Punctuation: " + sp);
 			if (!isInfinite() && pendingElements.size() > maxElements) {
@@ -143,14 +143,14 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	@Override
 	public void initToolbar(ToolBar toolbar) {
 		final ToolItem showHeartbeatsToolbarItem = new ToolItem(toolbar, SWT.CHECK);
-	    showHeartbeatsToolbarItem.setText("Consider heartbeats");
-	    showHeartbeatsToolbarItem.setSelection(showHeartbeats); // to set default value
-	    showHeartbeatsToolbarItem.addSelectionListener(new SelectionAdapter() {
-	    	@Override
-	    	public void widgetSelected(SelectionEvent e) {
-	    		showHeartbeats = showHeartbeatsToolbarItem.getSelection();
-	    	}
-	    });
+		showHeartbeatsToolbarItem.setText("Consider heartbeats");
+		showHeartbeatsToolbarItem.setSelection(showHeartbeats);
+		showHeartbeatsToolbarItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				showHeartbeats = showHeartbeatsToolbarItem.getSelection();
+			}
+		});
 	}
 
 	private void refreshText() {
@@ -162,7 +162,6 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 			for (String element : pendingElements) {
 				text.append(element + "\n");
 				receivedElements++;
-
 				if (!isInfinite() && receivedElements > maxElements) {
 					String txt = text.getText();
 					int pos = txt.indexOf("\n");
@@ -173,14 +172,14 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 			}
 			text.setSelection(text.getCharCount());
 			pendingElements.clear();
-
+			editor.activateIfNeeded();
 		}
 	}
 
 	private boolean isInfinite() {
 		return maxElements < 0;
 	}
-	
+
 	private static void waiting() {
 		try {
 			Thread.sleep(REFRESH_INTERVAL_MILLIS);

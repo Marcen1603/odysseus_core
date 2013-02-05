@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	private SDFSchema schema;
 	private Composite parent;
 	private Label toolbarLabel;
+	private StreamEditor editor;
 
 	private List<Tuple<?>> tuples = new ArrayList<Tuple<?>>();
 	private List<Integer> shownAttributes = new ArrayList<Integer>();
@@ -67,6 +68,30 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	public StreamTableEditor(int maxTuples) {
 		setMaxTuplesCount(maxTuples);
+	}
+
+	@Override
+	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
+		List<ISubscription<? extends ISource<Object>>> subs = editorInput.getStreamConnection().getSubscriptions();
+		// TODO: Adapt to multiple sources
+		setSchema(subs.get(0).getSchema());
+		editor = editorPart;
+	}
+
+	@Override
+	public void createPartControl(Composite parent) {
+		setParent(parent);
+
+		if (hasSchema() && getSchema().size() > 0) {
+			setTableViewer(createTableViewer(parent));
+			getTableViewer().setContentProvider(createContentProvider());
+			getTableViewer().setInput(tuples);
+
+		} else {
+			// Kein Schema vorhanden
+			Label label = new Label(parent, SWT.NONE);
+			label.setText("Operator provides no schema");
+		}
 	}
 
 	@Override
@@ -89,48 +114,27 @@ public class StreamTableEditor implements IStreamEditorType {
 						getTableViewer().refresh();
 				}
 			});
+			editor.activateIfNeeded();
 		}
-	}
-
-	@Override
-	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
-		List<ISubscription<? extends ISource<Object>>> subs = editorInput.getStreamConnection().getSubscriptions();
-		// TODO: Adapt to multiple sources
-		setSchema(subs.get(0).getSchema());
-	}
-
-	@Override
-	public void createPartControl(Composite parent) {
-		setParent(parent);
-		
-		if (hasSchema() && getSchema().size() > 0) {
-			setTableViewer(createTableViewer(parent));
-			getTableViewer().setContentProvider(createContentProvider());
-			getTableViewer().setInput(tuples);
-
-		} else {
-			// Kein Schema vorhanden
-			Label label = new Label(parent, SWT.NONE);
-			label.setText("Operator provides no schema");
-		}
-	}
-
-	@Override
-	public void setFocus() {
-		if (hasTableViewer())
-			getTableViewer().getControl().setFocus();
-	}
-
-	@Override
-	public void dispose() {
 	}
 
 	@Override
 	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 	}
-	
+
 	@Override
 	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	}
+
+	@Override
+	public void setFocus() {
+		if (hasTableViewer()) {
+			getTableViewer().getControl().setFocus();
+		}
+	}
+
+	@Override
+	public void dispose() {
 	}
 
 	@Override
@@ -143,10 +147,10 @@ public class StreamTableEditor implements IStreamEditorType {
 			public void widgetSelected(SelectionEvent e) {
 				FilterWindow window = new FilterWindow(PlatformUI.getWorkbench().getDisplay(), schema, shownAttributes);
 				window.show();
-				
-				if( !window.isCanceled() && !window.getSelectedAttributeIndices().isEmpty()) {
+
+				if (!window.isCanceled() && !window.getSelectedAttributeIndices().isEmpty()) {
 					createColumns(getTableViewer(), window.getSelectedAttributeIndices());
-					if( getSchema().size() != window.getSelectedAttributeIndices().size()) {
+					if (getSchema().size() != window.getSelectedAttributeIndices().size()) {
 						toolbarLabel.setText(window.getSelectedAttributeIndices().size() + " of " + getSchema().size() + " attributes show.");
 					} else {
 						toolbarLabel.setText("");
@@ -155,11 +159,12 @@ public class StreamTableEditor implements IStreamEditorType {
 				}
 			}
 		});
-		
+
 		toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
-		toolbarLabel.setText("                                                                                                                                                                                     ");
+		toolbarLabel
+				.setText("                                                                                                                                                                                     ");
 	}
-	
+
 	public final SDFSchema getSchema() {
 		return schema;
 	}
@@ -167,7 +172,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	public final int getMaxTuplesCount() {
 		return maxTuplesCount;
 	}
-	
+
 	public final Composite getParent() {
 		return parent;
 	}
@@ -270,10 +275,10 @@ public class StreamTableEditor implements IStreamEditorType {
 
 			TableColumnLayout layout = new TableColumnLayout();
 			getParent().setLayout(layout);
-			
+
 			disposeAllColumns(tableViewer);
 			setSelectedAttributeIndexes(attributeIndexes);
-	
+
 			int weight = 1000 / attributeIndexes.size();
 			for (Integer attributeIndex : attributeIndexes) {
 				TableViewerColumn col = createColumn(tableViewer, getSchema().get(attributeIndex));

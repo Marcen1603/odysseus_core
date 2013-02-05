@@ -33,22 +33,19 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
-import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 
-public class StreamEditor extends EditorPart implements IStreamElementListener<Object> {
+public class StreamEditor extends EditorPart {
 
 	private IStreamEditorInput input;
 	private IStreamEditorType editorType;
 	private ToolBar toolBar;
 	private Composite parent;
 
-	private boolean autoFocus = false;
-	private boolean onFocusing = false;
+	private boolean autoActivate = false;
+	private boolean onActivating = false;
 
 	public StreamEditor() {
 	}
@@ -73,7 +70,6 @@ public class StreamEditor extends EditorPart implements IStreamElementListener<O
 		this.editorType.init(this, this.input);
 
 		this.input.getStreamConnection().addStreamElementListener(this.editorType);
-		this.input.getStreamConnection().addStreamElementListener(this);
 	}
 
 	@Override
@@ -113,7 +109,6 @@ public class StreamEditor extends EditorPart implements IStreamElementListener<O
 	@Override
 	public void dispose() {
 		editorType.dispose();
-		this.input.getStreamConnection().removeStreamElementListener(this);
 		this.input.getStreamConnection().removeStreamElementListener(this.editorType);
 		input.getStreamConnection().disconnect();
 	}
@@ -122,19 +117,21 @@ public class StreamEditor extends EditorPart implements IStreamElementListener<O
 		return input;
 	}
 
-	@Override
-	public void streamElementRecieved(Object element, int port) {
-		setFocusAsync();
-	}
+	public void activateIfNeeded() {
+		if (!autoActivate || onActivating) {
+			return;
+		}
 
-	@Override
-	public void punctuationElementRecieved(IPunctuation point, int port) {
-		setFocusAsync();
-	}
+		onActivating = true;
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				IWorkbenchPage page = getSite().getPage();
+				page.activate(StreamEditor.this);
+				onActivating = false;
+			}
+		});
 
-	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
-		setFocusAsync();
 	}
 
 	protected void fillToolBar(ToolBar bar) {
@@ -156,14 +153,14 @@ public class StreamEditor extends EditorPart implements IStreamElementListener<O
 		autoShowButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (autoFocus) {
+				if (autoActivate) {
 					autoShowButton.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("autoFocusActivate"));
 					autoShowButton.setToolTipText("Show on changes");
-					autoFocus = false;
+					autoActivate = false;
 				} else {
 					autoShowButton.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("autoFocusDeactivate"));
 					autoShowButton.setToolTipText("Do not show on changes");
-					autoFocus = true;
+					autoActivate = true;
 				}
 			}
 		});
@@ -173,23 +170,6 @@ public class StreamEditor extends EditorPart implements IStreamElementListener<O
 
 	protected final Composite getParent() {
 		return parent;
-	}
-
-	private void setFocusAsync() {
-		if (!autoFocus || onFocusing) {
-			return;
-		}
-
-		onFocusing = true;
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchPage page = getSite().getPage();
-				page.activate(StreamEditor.this);
-				onFocusing = false;
-			}
-		});
-
 	}
 
 	private void createToolBar() {
