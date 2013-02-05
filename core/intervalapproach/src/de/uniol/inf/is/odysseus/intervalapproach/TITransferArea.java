@@ -66,8 +66,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			});
 	// to which port the data should be send
 	private int outputPort = 0;
-	
-	private boolean inOrder = true; 
+
+	private boolean inOrder = true;
 
 	public TITransferArea() {
 		minTs = new HashMap<>();
@@ -86,8 +86,9 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public void init(AbstractPipe<R, W> po) {
 		synchronized (outputQueue) {
 			this.po = po;
-			for (PhysicalSubscription<ISource<? extends R>>  sub : po.getSubscribedToSource()){
-				this.minTs.put(sub.getSinkInPort(),null);
+			for (PhysicalSubscription<ISource<? extends R>> sub : po
+					.getSubscribedToSource()) {
+				this.minTs.put(sub.getSinkInPort(), null);
 			}
 			this.outputQueue.clear();
 		}
@@ -95,9 +96,9 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub) {
-		this.minTs.put(sub.getSinkInPort(),null);
+		this.minTs.put(sub.getSinkInPort(), null);
 	}
-	
+
 	@Override
 	public void removeInput(PhysicalSubscription<ISource<? extends R>> sub) {
 		this.minTs.remove(sub.getSinkInPort());
@@ -130,8 +131,13 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			// else treat only objects that are at least from time watermark
 			if (watermark == null
 					|| object.getMetadata().getStart().afterOrEquals(watermark)) {
-				outputQueue.add(object);
-				sendData();
+				if (watermark != null && object.isPunctuation()
+						&& object.getMetadata().getStart().equals(watermark)) {
+					// ignore puncutations that do not change the watermark!
+				} else {
+					outputQueue.add(object);
+					sendData();
+				}
 			}
 		}
 	}
@@ -183,14 +189,14 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		sendData();
 	}
 
-	private void sendData(){
+	private void sendData() {
 		PointInTime minimum = null;
 		synchronized (minTs) {
 			minimum = getMinTs();
 		}
 		sendData(minimum);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected void sendData(PointInTime minimum) {
 		if (minimum != null) {
@@ -235,8 +241,9 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 					}
 				}
 				// Avoid unnecessary punctuations
-				if (!elementsSend && isInOrder()) {
-					po.sendPunctuation(Heartbeat.createNewHeartbeat(minimum), outputPort);
+				if (!elementsSend && isInOrder() && (watermark == null || (watermark != null && !watermark.equals(minimum)))) {
+					po.sendPunctuation(Heartbeat.createNewHeartbeat(minimum),
+							outputPort);
 				}
 				// Set marker to time stamp of the last send object
 				watermark = minimum;
@@ -264,10 +271,10 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public boolean isInOrder() {
 		return inOrder;
 	}
-	
+
 	@Override
 	public void setInOrder(boolean isInOrder) {
 		this.inOrder = isInOrder;
 	}
-	
+
 }
