@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package de.uniol.inf.is.odysseus.p2p_new;
+package de.uniol.inf.is.odysseus.p2p_new.impl;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -29,26 +29,35 @@ import net.jxta.protocol.PeerAdvertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+
+import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
+import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 
 public class PeerManager implements IPeerManager, DiscoveryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
 	private static final int PEER_DISCOVER_INTERVAL_MILLIS = 30 * 1000;
 
-	private final DiscoveryService discoveryService;
-	private final PeerDiscoveryThread peerDiscoveryThread;
+	private DiscoveryService discoveryService;
+	private PeerDiscoveryThread peerDiscoveryThread;
 
-	public PeerManager(DiscoveryService discoveryService) {
-		this.discoveryService = Preconditions.checkNotNull(discoveryService);
+	public void activate() {
+		this.discoveryService = P2PNewPlugIn.getDiscoveryService();
 
 		discoveryService.addDiscoveryListener(this);
 		peerDiscoveryThread = new PeerDiscoveryThread(discoveryService, PEER_DISCOVER_INTERVAL_MILLIS);
 		peerDiscoveryThread.start();
+		
+//		// DEBUG/TESTING
+//		new RepeatingJobThread(2000) {
+//			public void doJob() {
+//				LOG.info("{}", getPeers());
+//			};
+//		}.start();
 	}
-
-	public final void stop() {
+	
+	public void deactivate() {
 		discoveryService.removeDiscoveryListener(this);
 		peerDiscoveryThread.stopRunning();
 	}
@@ -91,12 +100,12 @@ public class PeerManager implements IPeerManager, DiscoveryListener {
 	}
 
 	protected void processPeerAdvertisement(PeerAdvertisement adv) throws IOException {
-		LOG.info("Got PeerAdvertisement from peer {}", adv.getName());
+		LOG.debug("Got PeerAdvertisement from peer {}", adv.getName());
 		discoveryService.publish(adv, PEER_DISCOVER_INTERVAL_MILLIS, PEER_DISCOVER_INTERVAL_MILLIS);
 	}
 
 	protected void processOtherAdvertisement(Advertisement adv) {
-		LOG.info("Got advertisement of class {} : {} ", adv.getClass(), adv);
+		LOG.debug("Got advertisement of class {} : {} ", adv.getClass(), adv);
 	}
 
 	private static ImmutableList<String> extractPeerNames(Enumeration<Advertisement> localAdvs) {

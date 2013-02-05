@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package de.uniol.inf.is.odysseus.p2p_new;
+package de.uniol.inf.is.odysseus.p2p_new.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
