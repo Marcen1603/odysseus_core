@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 public class FlushOperatorBreakCommand extends AbstractHandler implements IHandler {
 
 	static Logger LOG = LoggerFactory.getLogger(FlushOperatorBreakCommand.class);
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
@@ -46,35 +46,35 @@ public class FlushOperatorBreakCommand extends AbstractHandler implements IHandl
 		if (selection instanceof IStructuredSelection) {
 
 			IStructuredSelection structSelection = (IStructuredSelection) selection;
-			
+
 			Object selObject = structSelection.getFirstElement();
 			OperatorBreak ob = null;
-			
-			if( selObject instanceof IOdysseusNodeView) {
+
+			if (selObject instanceof IOdysseusNodeView) {
 				IOdysseusNodeView node = (IOdysseusNodeView) selObject;
-	
+
 				IPhysicalOperator operator = node.getModelNode().getContent();
-	
-				for( OperatorBreak o : OperatorBreakManager.getInstance().getAll()) {
-					if( o.getOperator() == operator ) {  
+
+				for (OperatorBreak o : OperatorBreakManager.getInstance().getAll()) {
+					if (o.getOperator() == operator) {
 						ob = o;
 						break;
 					}
 				}
-				
-			} else if( selObject instanceof OperatorBreak ) {
-				ob = (OperatorBreak)selObject;
-				
+
+			} else if (selObject instanceof OperatorBreak) {
+				ob = (OperatorBreak) selObject;
+
 			}
 
-			if( ob != null ) {
+			if (ob != null) {
 				ob.flush();
-			}
-			else
+				
+			} else
 				LOG.warn("No OperatorBreak found!");
-			
-		}
-		
-		return false;	}
 
+		}
+
+		return false;
+	}
 }

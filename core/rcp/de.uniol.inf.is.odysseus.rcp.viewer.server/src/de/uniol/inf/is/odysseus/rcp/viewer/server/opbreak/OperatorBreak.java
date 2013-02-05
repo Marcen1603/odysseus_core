@@ -33,19 +33,20 @@ public class OperatorBreak implements IBufferedPipeListener {
 	private BufferPOWithListener<?> buffer;
 	private List<IOperatorBreakListener> listeners = new ArrayList<IOperatorBreakListener>();
 	private boolean isBreaked = false;
-	
+
 	private int sourceOutPort;
 	private int sinkInPort;
 	private ISink<?> sink;
-	
-	public OperatorBreak( ISource<?> source ) {
+
+	public OperatorBreak(ISource<?> source) {
 		operator = source;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public boolean startBreak() {
-		if( isBreaked ) return true;
-		
+		if (isBreaked)
+			return true;
+
 		final int subCount = operator.getSubscriptions().size();
 
 		if (subCount == 1) {
@@ -56,12 +57,12 @@ public class OperatorBreak implements IBufferedPipeListener {
 
 			// Subscription erhalten, welchen wir ersetzen wollen
 			PhysicalSubscription subscription = operator.getSubscriptions().iterator().next();
-			sink = (ISink)subscription.getTarget();
+			sink = (ISink) subscription.getTarget();
 			sourceOutPort = subscription.getSourceOutPort();
 			sinkInPort = subscription.getSinkInPort();
-			
+
 			insertBuffer(operator, sourceOutPort, sink, sinkInPort, buffer);
-			
+
 			try {
 				buffer.open();
 			} catch (OpenFailedException e) {
@@ -75,131 +76,49 @@ public class OperatorBreak implements IBufferedPipeListener {
 
 			isBreaked = true;
 			fireBreakStartEvent();
-			
-//			System.out.println(this + " : Start Break");
-			
+
+			// System.out.println(this + " : Start Break");
+
 			return true;
 
 		}
-        // Fehlermeldung, dass der Operator
-        // genau eine Senke haben muss
-        MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
-        box.setMessage("Only sources with exact one sink can be breaked");
-        box.setText("Error");
-        box.open();
-        return false;
+		// Fehlermeldung, dass der Operator
+		// genau eine Senke haben muss
+		MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
+		box.setMessage("Only sources with exact one sink can be breaked.");
+		box.setText("Error");
+		box.open();
+		return false;
 	}
-	
+
 	public void endBreak() {
-		if( !isBreaked ) return;
-		
+		if (!isBreaked) {
+			return;
+		}
+
 		// bisher gespeicherte Daten senden
-		flush();
-		
+		flushImpl();
+
 		removeBuffer(operator, sourceOutPort, sink, sinkInPort, buffer);
-		
+
 		isBreaked = false;
 		buffer = null;
 		sink = null;
 		fireBreakEndEvent();
-		
-//		System.out.println(this + " : End Break");
+
+		// System.out.println(this + " : End Break");
 	}
-	
+
 	public void flush() {
-		while( buffer.size() > 0) {
-			buffer.transferNext();
-		}
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected static void insertBuffer( ISource source, int sourceOutPort, ISink sink, int sinkInPort, BufferPOWithListener buffer ) {
-		// Alte Verbindung entfernen
-		source.disconnectSink(sink, sinkInPort, sourceOutPort, source.getOutputSchema());
-		
-		// Neue Verbindung erstellen
-		source.connectSink(buffer, 0, sourceOutPort, source.getOutputSchema());
-		buffer.connectSink(sink, sinkInPort, 0, buffer.getOutputSchema());
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected static void removeBuffer( ISource source, int sourceOutPort, ISink sink, int sinkInPort, BufferPOWithListener buffer ) {
-		// Alte Verbindungen trennen
-		buffer.disconnectSink(sink, sinkInPort, 0, buffer.getOutputSchema());
-		source.disconnectSink(buffer, 0, sourceOutPort, source.getOutputSchema());
-		
-		// Neue (alte) Verbindung herstellen
-		source.connectSink(sink, sinkInPort, sourceOutPort, source.getOutputSchema());
-	}
-	
-	public void step() {
-		if( !isBreaked ) 
-			return;
-		
-		if( buffer.size() > 0 ) {
-			Thread t = new Thread( new Runnable() {
-	
-				@Override
-				public void run() {
-//					System.out.println("Send step");
-					if( buffer != null && buffer.size() > 0 )
-						buffer.transferNext();
-				}
-				
-			});
-			t.setDaemon(false);
-			t.setName("OperatorBreak Transfer Step");
-			t.start();
-		}
-		
-//		System.out.println(this + " : Step");
-	}
-	
-	public final ISource<?> getOperator() {
-		return operator;
-	}
-	
-	public final int getBufferSize() {
-		return buffer != null ? buffer.size() : 0;
-	}
-	
-	public void addListener( IOperatorBreakListener listener ) {
-		if( listener == null ) return;
-		synchronized( listeners ) {
-			listeners.add(listener);
-		}
-	}
-	
-	public void removeListener( IOperatorBreakListener listener ) {
-		synchronized( listeners ) {
-			listeners.remove(listener);
-		}
-	}
-	
-	protected final void fireBreakStartEvent() {
-		synchronized( listeners ) {
-			for( IOperatorBreakListener listener : listeners ) {
-				listener.breakStarted(this);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				flushImpl();
 			}
-		}
+
+		}).start();
 	}
-	
-	protected final void fireBreakEndEvent() {
-		synchronized( listeners ) {
-			for( IOperatorBreakListener listener : listeners ) {
-				listener.breakStopped(this);
-			}
-		}
-	}
-	
-	protected final void fireSizeEvent() {
-		synchronized( listeners ) {
-			for( IOperatorBreakListener listener : listeners ) {
-				listener.sizeChanged(this);
-			}
-		}
-	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -211,8 +130,104 @@ public class OperatorBreak implements IBufferedPipeListener {
 	public void sizeChanged(BufferPOWithListener<?> buffer) {
 		fireSizeEvent();
 	}
-	
+
 	public boolean isBreaked() {
 		return isBreaked;
 	}
+
+	public void step() {
+		if (!isBreaked)
+			return;
+
+		if (buffer.size() > 0) {
+			Thread t = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					// System.out.println("Send step");
+					if (buffer != null && buffer.size() > 0)
+						buffer.transferNext();
+				}
+
+			});
+			t.setDaemon(false);
+			t.setName("OperatorBreak Transfer Step");
+			t.start();
+		}
+
+		// System.out.println(this + " : Step");
+	}
+
+	public final ISource<?> getOperator() {
+		return operator;
+	}
+
+	public final int getBufferSize() {
+		return buffer != null ? buffer.size() : 0;
+	}
+
+	public void addListener(IOperatorBreakListener listener) {
+		if (listener == null)
+			return;
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+
+	public void removeListener(IOperatorBreakListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
+
+	protected final void fireBreakStartEvent() {
+		synchronized (listeners) {
+			for (IOperatorBreakListener listener : listeners) {
+				listener.breakStarted(this);
+			}
+		}
+	}
+
+	protected final void fireBreakEndEvent() {
+		synchronized (listeners) {
+			for (IOperatorBreakListener listener : listeners) {
+				listener.breakStopped(this);
+			}
+		}
+	}
+
+	protected final void fireSizeEvent() {
+		synchronized (listeners) {
+			for (IOperatorBreakListener listener : listeners) {
+				listener.sizeChanged(this);
+			}
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected static void insertBuffer(ISource source, int sourceOutPort, ISink sink, int sinkInPort, BufferPOWithListener buffer) {
+		// Alte Verbindung entfernen
+		source.disconnectSink(sink, sinkInPort, sourceOutPort, source.getOutputSchema());
+
+		// Neue Verbindung erstellen
+		source.connectSink(buffer, 0, sourceOutPort, source.getOutputSchema());
+		buffer.connectSink(sink, sinkInPort, 0, buffer.getOutputSchema());
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected static void removeBuffer(ISource source, int sourceOutPort, ISink sink, int sinkInPort, BufferPOWithListener buffer) {
+		// Alte Verbindungen trennen
+		buffer.disconnectSink(sink, sinkInPort, 0, buffer.getOutputSchema());
+		source.disconnectSink(buffer, 0, sourceOutPort, source.getOutputSchema());
+
+		// Neue (alte) Verbindung herstellen
+		source.connectSink(sink, sinkInPort, sourceOutPort, source.getOutputSchema());
+	}
+
+	private void flushImpl() {
+		while (buffer.size() > 0) {
+			buffer.transferNext();
+		}
+	}
+
 }
