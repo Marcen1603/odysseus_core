@@ -16,64 +16,47 @@
 
 package de.uniol.inf.is.odysseus.p2p_new;
 
+import net.jxta.discovery.DiscoveryEvent;
+import net.jxta.discovery.DiscoveryListener;
+import net.jxta.discovery.DiscoveryService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import net.jxta.discovery.DiscoveryEvent;
-import net.jxta.discovery.DiscoveryListener;
-import net.jxta.discovery.DiscoveryService;
-
-public class PeerDiscoveryThread extends Thread implements DiscoveryListener {
+public class PeerDiscoveryThread extends RepeatingJobThread implements DiscoveryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerDiscoveryThread.class);
 	private static final String THREAD_NAME = "Peer discovery thread";
 	
 	private final DiscoveryService discoveryService;
-	private final int discoverInterval;
-	
-	private boolean isRunning = true;
 	
 	public PeerDiscoveryThread(DiscoveryService discoveryService, int discoverIntervalMillis) {
+		super(discoverIntervalMillis, THREAD_NAME);
 		this.discoveryService = Preconditions.checkNotNull(discoveryService);
-		Preconditions.checkArgument(discoverIntervalMillis > 0, "Discover interval for other peers must be positive!");
-		
-		this.discoverInterval = discoverIntervalMillis;
-		
-		this.discoveryService.addDiscoveryListener(this);		
-		setName(THREAD_NAME);
-		setDaemon(true);
 	}
 
 	@Override
-	public void run() {
+	public void beforeJob() {
 		LOG.info("Beginning discovering peers");
-		discoveryService.getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 1, null);
-
-		while( isRunning ) {
-			
-			trySleep(discoverInterval);
-			
-			discoveryService.getRemoteAdvertisements(null, DiscoveryService.ADV, "Name", "Odysseus Peer", 1);
-		}
+	}
+	
+	@Override
+	public void doJob() {
+		LOG.info("Trying to get advertisements");
+		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 1, this);
+	}
+	
+	@Override
+	public void afterJob() {
+		discoveryService.removeDiscoveryListener(this);
 		LOG.info("Stopping discovering peers");
 	}
 	
 	@Override
 	public void discoveryEvent(DiscoveryEvent event) {
 		LOG.info("Got discovery event: {}", event);
+		LOG.info("Response is {}", event.getResponse());
 	}
-	
-	public final void stopRunning() {
-		discoveryService.removeDiscoveryListener(this);
-		isRunning = false;
-	}
-	
-	private static void trySleep(int lengthMillis) {
-		try {
-			Thread.sleep(lengthMillis);
-		} catch (InterruptedException ex) {}
-	}
-	
 }
