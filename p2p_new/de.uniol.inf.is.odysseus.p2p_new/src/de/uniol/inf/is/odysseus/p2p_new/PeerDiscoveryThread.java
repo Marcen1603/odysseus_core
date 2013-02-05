@@ -16,9 +16,14 @@
 
 package de.uniol.inf.is.odysseus.p2p_new;
 
+import java.util.Enumeration;
+
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
+import net.jxta.document.Advertisement;
+import net.jxta.protocol.DiscoveryResponseMsg;
+import net.jxta.protocol.PeerAdvertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,24 +44,31 @@ public class PeerDiscoveryThread extends RepeatingJobThread implements Discovery
 
 	@Override
 	public void beforeJob() {
-		LOG.info("Beginning discovering peers");
 	}
 	
 	@Override
 	public void doJob() {
-		LOG.info("Trying to get advertisements");
 		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 1, this);
 	}
 	
 	@Override
 	public void afterJob() {
 		discoveryService.removeDiscoveryListener(this);
-		LOG.info("Stopping discovering peers");
 	}
 	
 	@Override
 	public void discoveryEvent(DiscoveryEvent event) {
-		LOG.info("Got discovery event: {}", event);
-		LOG.info("Response is {}", event.getResponse());
+		DiscoveryResponseMsg response = event.getResponse();
+		Enumeration<Advertisement> advs = response.getAdvertisements();
+		while( advs.hasMoreElements() ) {
+			Advertisement adv = advs.nextElement();
+			
+			if( adv instanceof PeerAdvertisement) {
+				PeerAdvertisement peerAdv = (PeerAdvertisement)adv;
+				LOG.info(peerAdv.getName());
+			}
+			
+		}
+		LOG.info("\n");
 	}
 }
