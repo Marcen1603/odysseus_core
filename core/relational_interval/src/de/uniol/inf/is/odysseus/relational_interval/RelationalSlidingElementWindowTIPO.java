@@ -37,13 +37,6 @@ public class RelationalSlidingElementWindowTIPO extends
 	int maxId = 0;
 	private Map<Integer, List<Tuple<ITimeInterval>>> buffers = null;
 	private DefaultTISweepArea<Tuple<ITimeInterval>> outputQueue = new DefaultTISweepArea<Tuple<ITimeInterval>>();
-//
-//	public RelationalSlidingElementWindowTIPO(
-//			RelationalSlidingElementWindowTIPO po) {
-//		super(po);
-//		
-//		init();
-//	}
 
 	public RelationalSlidingElementWindowTIPO(WindowAO ao) {
 		super(ao);
