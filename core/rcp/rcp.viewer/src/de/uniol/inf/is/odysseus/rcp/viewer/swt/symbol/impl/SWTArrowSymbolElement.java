@@ -51,8 +51,8 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		final float mx = (float)end.getX();
 		final float my = (float)end.getY();
 		
-		final float fx = (float)(node.getPosition().getX() + screenShift.getX());
-		final float fy = (float)(node.getPosition().getY() + screenShift.getY());
+		final float fx = (float)(node.getPosition().getX() + screenShift.getX()) * zoomFactor;
+		final float fy = (float)(node.getPosition().getY() + screenShift.getY()) * zoomFactor;
 		final float gx = fx + node.getWidth() * zoomFactor;
 		final float gy = fy;
 		final float hx = fx;
