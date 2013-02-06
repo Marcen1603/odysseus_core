@@ -51,6 +51,10 @@ public class CallActiveGraphEditor extends AbstractHandler implements IHandler {
 			for( Integer queryId : queryIds ) {
 				roots.addAll(executor.getPhysicalRoots(queryId));
 			}
+			if( roots.isEmpty()) {
+				// no queries / operators
+				return null;
+			}
 
 			IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSinkOneWay(roots);
 
