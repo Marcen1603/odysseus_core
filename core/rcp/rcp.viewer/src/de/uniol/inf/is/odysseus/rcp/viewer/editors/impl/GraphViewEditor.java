@@ -108,7 +108,7 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 		getSite().setSelectionProvider(this);
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		
-		// Contextmenï¿½ registrieren
+		// Contextmenü registrieren
 		MenuManager menuManager = new MenuManager();
 		Menu contextMenu = menuManager.createContextMenu(renderManager.getCanvas());
 		// Set the MenuManager
@@ -184,15 +184,6 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 						IOdysseusNodeView nodeView = (IOdysseusNodeView) obj;
 						selectedNodes.add(nodeView);
 					} 
-//					else if( obj instanceof OperatorBreak ) {
-//						ISource<?> src = ((OperatorBreak)obj).getOperator();
-//						for( INodeView<?> node : getGraphView().getViewedNodes() ) {
-//							if( node.getModelNode() != null && node.getModelNode().getContent() != null ) {
-//								if( node.getModelNode().getContent() == src )
-//									selectedNodes.add((IOdysseusNodeView)node);
-//							}
-//						}
-//					}
 				}
 				renderManager.getSelector().unselectAll();
 				renderManager.getSelector().select(selectedNodes);
@@ -219,5 +210,9 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 			return outlinePage;
 		}
 		return super.getAdapter(adapter);
+	}
+	
+	public void restructureGraph() {
+		renderManager.resetPositions();
 	}
 }

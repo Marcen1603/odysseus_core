@@ -24,28 +24,13 @@
             name="Call Active Graph Editor">
       </command>
       <command
-            id="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand"
-            name="Break Operator">
-      </command>
-      <command
-            id="de.uniol.inf.is.odysseus.rcp.commands.StepOperatorCommand"
-            name="Step Operator">
-      </command>
-      <command
-            id="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand"
-            name="Resume Operator">
-      </command>
-      <command
-            id="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand"
-            name="Remove OperatorBreak">
-      </command>
-      <command
-            id="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand"
-            name="Flush OperatorBreak">
-      </command>
-      <command
             id="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphOutline"
             name="Refresh Graph Outline">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.commands.ResetGraphCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ResetGraph"
+            name="Reset Graph Command">
       </command>
    </extension>
    <extension
@@ -164,6 +149,16 @@
                label="Refresh"
                style="push"
                tooltip="Refresh">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.editors.GraphEditor?after=additions">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ResetGraph"
+               icon="icons/reset.gif"
+               label="Reset"
+               style="push">
          </command>
       </menuContribution>
    </extension>

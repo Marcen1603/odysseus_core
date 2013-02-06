@@ -36,6 +36,8 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.rcp.viewer.position.INodePositioner;
 import de.uniol.inf.is.odysseus.rcp.viewer.render.IRenderManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.render.impl.RenderRange;
@@ -83,15 +85,13 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	private float zoomFactor = 1.0f;
 
 	public SWTRenderManager(Composite comp, INodePositioner<C> nodePositioner) {
-
-		if (nodePositioner == null)
-			throw new IllegalArgumentException("device is null");
-
+		Preconditions.checkNotNull(nodePositioner, "Node positioner must not be null!");
+		Preconditions.checkNotNull(comp, "Composite for SWT renderer must not be null!");
+		
 		this.renderer = new SWTSymbolRenderer<C>();
 		this.nodePositioner = nodePositioner;
 		comp.setLayout(new FillLayout());
 		this.canvas = new Composite(comp, SWT.BORDER | SWT.DOUBLE_BUFFERED);
-		//this.canvas.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		this.canvas.setBackground(Display.findDisplay(Thread.currentThread()).getSystemColor(SWT.COLOR_WHITE));
 		this.canvas.setSize(1000, 1000);
 
@@ -144,13 +144,6 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 		return nodeSelector;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.viewer.swt.render.IRenderManager#resetPositions
-	 * ()
-	 */
 	@Override
 	public void resetPositions() {
 		if (getDisplayedGraph() != null) {
