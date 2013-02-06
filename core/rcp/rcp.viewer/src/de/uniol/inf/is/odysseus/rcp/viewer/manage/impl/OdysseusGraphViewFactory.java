@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.impl.DefaultConnectionView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.impl.OdysseusConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.impl.OdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.impl.OdysseusNodeView;
 
@@ -85,7 +86,7 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 		// Verbindungen
 		for( IConnectionModel<IPhysicalOperator> conn : graph.getConnections()) {
 			
-			DefaultConnectionView<IPhysicalOperator> connView = new DefaultConnectionView<IPhysicalOperator>(conn,
+			DefaultConnectionView<IPhysicalOperator> connView = new OdysseusConnectionView(conn,
 					findFirstNodeDisplay(graphView, conn.getStartNode()), 
 					findFirstNodeDisplay(graphView, conn.getEndNode()));
 			
@@ -190,7 +191,7 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 					continue;
 				}
 				
-				DefaultConnectionView<IPhysicalOperator> connView = new DefaultConnectionView<IPhysicalOperator>(connModel,
+				DefaultConnectionView<IPhysicalOperator> connView = new OdysseusConnectionView(connModel,
 						startNode, endNode);
 				
 				createConnectionSymbol( connView, symbolFactory );

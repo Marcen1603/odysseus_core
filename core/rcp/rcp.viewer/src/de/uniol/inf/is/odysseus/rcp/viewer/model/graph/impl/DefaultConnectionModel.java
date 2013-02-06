@@ -106,22 +106,24 @@ public class DefaultConnectionModel<C> implements IConnectionModel<C> {
 		}
 	}
 	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals( Object obj ) {
-		if( obj == null )
+		if( !(obj instanceof DefaultConnectionModel)) {
 			return false;
-		if( !(obj instanceof DefaultConnectionModel)) 
-			return false;
-		if( obj == this )
+		}
+		if( obj == this ) {
 			return true;
+		}
 		DefaultConnectionModel<C> c = (DefaultConnectionModel<C>)obj;
-		return c.getStartNode() == getStartNode() && c.getEndNode() == getEndNode();
+		return c.getStartNode().equals(getStartNode()) && c.getEndNode().equals(getEndNode());
 	}
 
 	@Override
 	public int hashCode() {
 		return super.hashCode();
 	}
+
 
 }

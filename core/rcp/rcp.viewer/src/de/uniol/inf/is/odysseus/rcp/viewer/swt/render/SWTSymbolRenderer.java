@@ -16,12 +16,15 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.swt.render;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.render.impl.RenderRange;
 import de.uniol.inf.is.odysseus.rcp.viewer.render.impl.SimpleSymbolRenderer;
@@ -102,7 +105,7 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C>  {
 							.add( startNode.getWidth() / 2, startNode.getHeight() / 2 )
 							.mul( zoomFactor );
 
-			final Vector sizeShift = determineSizeShift(startNode, endNode);
+			final Vector sizeShift = determineSizeShift(conn);
 			final Vector end = endNode.getPosition()
 							.add( shift )
 							.add( sizeShift )
@@ -153,29 +156,51 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C>  {
 		element.draw( pos, width, height, shift, zoomFactor );
 	}
 
-	private static Vector determineSizeShift(final INodeView<?> startNode, final INodeView<?> endNode) {
+	private static Vector determineSizeShift(final IConnectionView<?> connection ) { 
+		INodeView<?> endNode = connection.getViewedEndNode();
+		INodeView<?> startNode = connection.getViewedStartNode();
+		int hash = connection.hashCode();
+		
 		if( endNode.getConnectionsAsEnd().size() == 1 ) {
 			return new Vector( endNode.getWidth() / 2, endNode.getHeight() / 2 );
 		}
 		
-		int incomingCount = 10;
-		int nearestIndex = 0;
-		double minDist = Integer.MAX_VALUE;
+		IConnectionView<?>[] connections = endNode.getConnectionsAsEnd().toArray(new IConnectionView[0]);
+		int incomingCount = connections.length;
+
+		int occIndex = 0;
+		for( int i = 0; i < incomingCount; i++ ) {	
+			if(connections[i].getViewedStartNode().equals(startNode) && connections[i] != connection ){
+				int otherHash = connections[i].hashCode();
+				if( otherHash < hash) {
+					occIndex++;
+				}
+			}
+		}
 		
+		Map<Integer, Double> distances = Maps.newHashMap();
 		for( int i = 0; i < incomingCount; i++ ) {
-			
 			Vector possiblePos = new Vector( endNode.getWidth() / (incomingCount + 1) * ( i + 1) + endNode.getPosition().getX(), 
 										endNode.getHeight() / 2 + endNode.getPosition().getY() );
 			double diffX = possiblePos.getX() - ( startNode.getPosition().getX() + startNode.getWidth() / 2);
 			double diffY = possiblePos.getY() - ( startNode.getPosition().getY() + startNode.getHeight() / 2);
 			double dist = diffX * diffX + diffY * diffY;
 			
-			if( dist < minDist){
-				minDist = dist;
-				nearestIndex = i;
-			}
+			distances.put(i, dist);
 		}
 		
-		return new Vector( endNode.getWidth() / (incomingCount + 1) * ( nearestIndex + 1), endNode.getHeight() / 2 );
+		Integer minI = 0;
+		for( int j = 0; j < occIndex + 1; j++ ) {
+			double minDist = Integer.MAX_VALUE;
+			for( Integer i : distances.keySet()) {
+				if( distances.get(i) < minDist) {
+					minDist = distances.get(i);
+					minI = i;
+				}
+			}
+			distances.remove(minI);
+		}
+		
+		return new Vector( endNode.getWidth() / (incomingCount + 1) * ( minI + 1), endNode.getHeight() / 2 );
 	}
 }

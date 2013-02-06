@@ -38,7 +38,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.impl.PhysicalGraphEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.OdysseusModelProviderMultipleSinkOneWay;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.create.OdysseusModelProviderSinkOneWay;
 
 public class CallGraphEditorCommand extends AbstractHandler implements IHandler {
 
@@ -73,12 +72,7 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 		Preconditions.checkNotNull(sinkOps, "Query provides null as roots!");
 		Preconditions.checkArgument(!sinkOps.isEmpty(), "Query to show graph has no roots!");
 
-		IModelProvider<IPhysicalOperator> provider = null;
-		if (sinkOps.size() == 1) {
-			provider = new OdysseusModelProviderSinkOneWay(sinkOps.get(0));
-		} else {
-			provider = new OdysseusModelProviderMultipleSinkOneWay(sinkOps);
-		}
+		IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSinkOneWay(sinkOps);
 
 		PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider, "Query " + queryId);
 

@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.impl.PhysicalGraphEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.create.OdysseusModelProviderMultipleSink;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.create.OdysseusModelProviderMultipleSinkOneWay;
 
 public class CallActiveGraphEditor extends AbstractHandler implements IHandler {
 
@@ -52,13 +52,13 @@ public class CallActiveGraphEditor extends AbstractHandler implements IHandler {
 				roots.addAll(executor.getPhysicalRoots(queryId));
 			}
 
-			IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSink(roots);
+			IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSinkOneWay(roots);
 
 			PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider, "CurrentPlan");
 			page.openEditor(input, OdysseusRCPViewerPlugIn.GRAPH_EDITOR_ID);
 
 		} catch (Exception ex) {
-			ex.getStackTrace();
+			ex.printStackTrace();
 		}
 		
 		return null;

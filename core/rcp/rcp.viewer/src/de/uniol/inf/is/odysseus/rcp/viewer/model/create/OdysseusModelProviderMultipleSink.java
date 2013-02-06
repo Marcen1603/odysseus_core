@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.DefaultConnectionModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusNodeModel;
 
@@ -72,7 +72,7 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		logger.info( "reading operator-tree from ODYSSEUS" );
 		
 		for( IPhysicalOperator s : sinks ) 
-			parse( s, graphModel, null, false);
+			parse( s, null, graphModel, null, false);
 		
 		logger.info( "reading operator-tree finished successfully!" );
 	}
@@ -86,7 +86,7 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 	// Verarbeitet eine Senke und dessen Subscriptions
 	// Handelt es sich um eine ISource, so werden dessen Subscriptions ebenfalls
 	// verarbeitet
-	private <T extends IStreamObject<?>> void parse( IPhysicalOperator operator, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode, boolean back ) {
+	private <T extends IStreamObject<?>> void parse( IPhysicalOperator operator, PhysicalSubscription<?> fromSub, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode, boolean back ) {
 		
 		// Suchen, ob der Objekt schon im Graphen ist.
 		// Ist dieser schon im Graphenmodell vorhanden, so wird der
@@ -107,15 +107,16 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		
 		// Ist ein Quellknoten angegeben, wovon wir gerade kommen, dann bedeutet dies, 
 		// dass eine Verbindung vorhanden ist. srcNode ist null, wenn wir an der obersten Senke sind.
-		if( srcNode != null ) {
+		if( srcNode != null && !traversedObjects.contains(fromSub)) {
 			if( back == false ) {
-				final IConnectionModel<IPhysicalOperator> conn = new DefaultConnectionModel<IPhysicalOperator>(node, srcNode);
+				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(node, srcNode, fromSub);
 				graphModel.addConnection( conn );
 			} else {
 				// Wir gehen Rückwärts...
-				final IConnectionModel<IPhysicalOperator> conn = new DefaultConnectionModel<IPhysicalOperator>(srcNode, node);
+				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(srcNode, node, fromSub);
 				graphModel.addConnection( conn );
 			}
+			traversedObjects.add(fromSub);
 		}
 		
 		// Wenn das Objekt zuvor schon besucht wurde, dann dürfen wir
@@ -132,22 +133,22 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 			Collection< PhysicalSubscription< ISource<? extends T> >> sources = sink.getSubscribedToSource();
 			for( PhysicalSubscription< ISource<? extends T> > sub : sources ) {
 				if( sub.getTarget().isSink() ) {
-					parse( (ISink<?>)sub.getTarget(), graphModel, node, false );
+					parse( (ISink<?>)sub.getTarget(), sub, graphModel, node, false );
 				} else {
-					parse( sub.getTarget(), graphModel, node, false );
+					parse( sub.getTarget(), sub, graphModel, node, false );
 				}
 			}
 		}
 		
 		if( operator.isSource() ) {
 			for (PhysicalSubscription<? extends ISink<?>> sub: ((ISource<?>)operator).getSubscriptions() ){
-				parse( (ISink<?>)sub.getTarget(), graphModel, node, true );
+				parse( (ISink<?>)sub.getTarget(), sub, graphModel, node, true );
 			}
 		}
 	}
 	
 	// Verarbeitet eine Quelle und dessen Subscriptions
-	private <T> void parse( ISource< ? > source, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode, boolean back) {
+	private <T> void parse( ISource< ? > source, PhysicalSubscription<?> fromSub, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode, boolean back) {
 
 		// Suchen, ob der Objekt schon im Graphen ist.
 		// Ist dieser schon im Graphenmodell vorhanden, so wird der
@@ -168,15 +169,16 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		
 		// Ist ein Quellknoten angegeben, wovon wir gerade kommen, dann bedeutet dies, 
 		// dass eine Verbindung vorhanden ist. srcNode ist null, wenn wir an der obersten Senke sind.
-		if( srcNode != null ) {
+		if( srcNode != null && !traversedObjects.contains(fromSub)) {
 			if( back == false ) {
-				final IConnectionModel<IPhysicalOperator> conn = new DefaultConnectionModel<IPhysicalOperator>(node, srcNode);
+				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(node, srcNode, fromSub);
 				graphModel.addConnection( conn );
 			} else {
 				// Wir gehen Rückwärts...
-				final IConnectionModel<IPhysicalOperator> conn = new DefaultConnectionModel<IPhysicalOperator>(srcNode, node);
+				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(srcNode, node, fromSub);
 				graphModel.addConnection( conn );
 			}
+			traversedObjects.add(fromSub);
 		}
 		
 		// Wenn das Objekt zuvor schon besucht wurde, dann dürfen wir
@@ -188,7 +190,7 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		
 		// Subscriptions folgen
 		for (PhysicalSubscription<? extends ISink<?>> sub: source.getSubscriptions() ){
-			parse( (ISink<?>)sub.getTarget(), graphModel, node, true );
+			parse( (ISink<?>)sub.getTarget(), sub, graphModel, node, true );
 		}
 	}
 }

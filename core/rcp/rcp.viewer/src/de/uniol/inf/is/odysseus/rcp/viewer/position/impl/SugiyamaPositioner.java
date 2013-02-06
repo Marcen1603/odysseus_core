@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.impl.DefaultConnectionView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.impl.OdysseusConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.impl.OdysseusNodeView;
 
 public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperator> {
@@ -115,7 +115,7 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 					nodeLevels.put( dummyNode, i );
 					
 					// Verbindung ohne Pfeil
-					IConnectionView<IPhysicalOperator> dummyConnection = new DefaultConnectionView<IPhysicalOperator>(conn.getModelConnection(), startNode, dummyNode );
+					IConnectionView<IPhysicalOperator> dummyConnection = new OdysseusConnectionView(conn.getModelConnection(), startNode, dummyNode );
 					final IConnectionSymbolElement<IPhysicalOperator> ele = symbolFactory.createForConnection( "Normal" ); 
 					ele.setConnectionView( dummyConnection );
 					dummyConnection.getSymbolContainer().add( ele );
@@ -124,13 +124,13 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 				}
 				
 				// Letzte Verbindung anlegen (mit Pfeil)
-				IConnectionView<IPhysicalOperator> dummyConnection = new DefaultConnectionView<IPhysicalOperator>(conn.getModelConnection(), startNode, end );
+				IConnectionView<IPhysicalOperator> dummyConnection = new OdysseusConnectionView(conn.getModelConnection(), startNode, end );
 				final IConnectionSymbolElement<IPhysicalOperator> ele = symbolFactory.createForConnection( "Arrow" ); 
 				ele.setConnectionView( dummyConnection );
 				dummyConnection.getSymbolContainer().add( ele );
 				graph.insertViewedConnection( dummyConnection );
 
-				graph.insertViewedConnection( new DefaultConnectionView<IPhysicalOperator>(conn.getModelConnection(), startNode, end) );
+				graph.insertViewedConnection( new OdysseusConnectionView(conn.getModelConnection(), startNode, end) );
 				graph.removeViewedConnection( conn );
 			}
 		}
