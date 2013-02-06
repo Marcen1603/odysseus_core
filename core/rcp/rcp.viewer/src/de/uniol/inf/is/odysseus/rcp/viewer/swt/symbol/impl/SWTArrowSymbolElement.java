@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.SWTConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
@@ -25,7 +27,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 
 	private static final int ARROW_SIZE = 20;
-	private Color color;
+	
+	private final Color color;
 	
 	public SWTArrowSymbolElement( Color lineColor ) {
 		color = lineColor;
@@ -33,17 +36,11 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 
 	@Override
 	public void draw( Vector start, Vector end, float zoomFactor ) {
-		
-		if( getActualGC() == null ) {
-			return;
-		}
+		Preconditions.checkState(getActualGC() != null, "GC for drawing arrows must not be null!");
+		Preconditions.checkState(getConnectionView() != null, "Connection to draw arrows for must not be null!");
 	
 		getActualGC().setForeground( color );
 		getActualGC().drawLine( (int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY() );
-		
-		// Pfeilspitze berechnen
-		if( getConnectionView() == null )
-			return;
 		
 		final INodeView<C> node = getConnectionView().getViewedEndNode();
 		if( node == null )
