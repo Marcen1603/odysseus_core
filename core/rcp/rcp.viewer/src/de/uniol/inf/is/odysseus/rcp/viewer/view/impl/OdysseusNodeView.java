@@ -38,27 +38,27 @@ public class OdysseusNodeView extends DefaultNodeView<IPhysicalOperator> impleme
 
 	@Override
 	public void connect() {
-		if (getModelNode() != null)
+		if (getModelNode() != null) {
 			getModelNode().addNodeModelChangeListener(this);
+		}
 	}
 
 	@Override
 	public void disconnect() {
-		if (getModelNode() != null)
+		if (getModelNode() != null) {
 			getModelNode().removeNodeModelChangeListener(this);
+		}
 	}
 
 	@Override
 	public boolean isVisible() {
 		boolean vis = super.isVisible();
-		if (vis == false) {
+		if (!vis) {
 			return false;
 		}
 
 		if (getModelNode() != null) {
-			if (getModelNode() != null) {
-				return getModelNode().getContent().hasOwner();
-			}
+			return getModelNode().getContent().hasOwner();
 		}
 
 		return vis;
