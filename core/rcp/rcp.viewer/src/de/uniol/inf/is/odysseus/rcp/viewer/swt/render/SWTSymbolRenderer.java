@@ -112,7 +112,7 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C>  {
 		render( graph, zoomFactor, renderRange, shift );
 	}
 	
-	// Muss überschrieben werden, da SWT mit GC arbeitet. Die Symbole
+	// Muss �berschrieben werden, da SWT mit GC arbeitet. Die Symbole
 	// brauchen dies, da es sich bei jedem Neuzeichnen ändert.
 	@Override
 	public void render( IGraphView< C > graph, float zoomFactor, RenderRange renderRange, Vector shift ) {
