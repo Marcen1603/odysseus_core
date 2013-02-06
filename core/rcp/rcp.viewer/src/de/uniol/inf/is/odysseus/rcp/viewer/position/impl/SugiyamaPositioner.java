@@ -138,13 +138,15 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 		
 		/** PHASE 2 **/
 		// Knoten der Ebenen arrangieren, sodass möglichst wenige Kreuzungen vorkommen
-		if( logger.isTraceEnabled() )
+		if( logger.isTraceEnabled() ) {
 			logger.debug( "Phase 2: Arrange nodes" );
+		}
 
 		// Anzahlen der Knoten pro Ebene ermitteln und Knoten zuordnen
 		layers = new ArrayList< ArrayList<INodeView<IPhysicalOperator>>>();
-		for( int i = 0; i < maxLevel + 1; i++ )
+		for( int i = 0; i < maxLevel + 1; i++ ) {
 			layers.add( new ArrayList<INodeView<IPhysicalOperator>>() );
+		}
 
 		for( INodeView<IPhysicalOperator> node : nodeLevels.keySet()) {
 			int l = nodeLevels.get( node );
@@ -299,9 +301,24 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 		logger.debug( "Final NodeDisplay positions" );
 		for( int layer = 0; layer < layers.size(); layer++) {
 			final int posY = layers.size() * SPACE_HEIGHT - SPACE_HEIGHT * (layer + 1);
-			for( int index = layers.get( layer ).size() - 1; index >= 0; index-- ) {
-				INodeView<IPhysicalOperator> currNode = layers.get( layer ).get( index );
-				currNode.setPosition( new Vector(( posXRight[layer][index] + posXLeft[layer][index] ) / 2, posY ) );
+					
+			if( layer == 0 || layer > 0 && layers.get(layer).size() > layers.get(layer-1).size()) {
+				
+				for( int index = layers.get( layer ).size() - 1; index >= 0; index-- ) {
+					INodeView<IPhysicalOperator> currNode = layers.get( layer ).get( index );
+					currNode.setPosition( new Vector(( posXRight[layer][index] + posXLeft[layer][index] ) / 2, posY ) );
+				}
+			} else {
+				
+				for( int index = layers.get( layer ).size() - 1; index >= 0; index-- ) {
+					INodeView<IPhysicalOperator> currNode = layers.get( layer ).get( index );
+					Collection<IConnectionView<IPhysicalOperator>> connectionsAsEnd = currNode.getConnectionsAsEnd();
+					double sumX = 0;
+					for( IConnectionView<IPhysicalOperator> con : connectionsAsEnd ) {
+						sumX += con.getViewedStartNode().getPosition().getX();
+					}
+					currNode.setPosition( new Vector(sumX / connectionsAsEnd.size(), posY ) );
+				}
 			}
 		}
 	}
