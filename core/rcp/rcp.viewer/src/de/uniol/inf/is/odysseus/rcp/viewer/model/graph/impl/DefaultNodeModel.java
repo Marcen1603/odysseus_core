@@ -103,4 +103,14 @@ public class DefaultNodeModel<C> extends DefaultModelContainer<C> implements INo
 	public String getName() {
 		return name;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if( !(obj instanceof DefaultNodeModel)){
+			return false;
+		}
+		
+		DefaultNodeModel<?> other = (DefaultNodeModel<?>)obj;
+		return other.getContent().equals(getContent());
+	}
 }

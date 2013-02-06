@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
 public interface IConnectionSymbolElement<C> {
 
-	public void draw(Vector startPosition, Vector endPosition, float zoomFactor );
+	public void draw(Vector startPosition, Vector endPosition, Vector screenShift, float zoomFactor );
 	public void update();
 	
 	public void setEnabled( boolean isEnabled );

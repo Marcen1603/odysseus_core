@@ -29,7 +29,7 @@ public class SWTLineConnectionSymbolElement<C> extends SWTConnectionSymbolElemen
 	}
 
 	@Override
-	public void draw(Vector start, Vector end, float zoomFactor ) {
+	public void draw(Vector start, Vector end, Vector screenShift, float zoomFactor ) {
 		
 		if( getActualGC() == null ) {
 			return;

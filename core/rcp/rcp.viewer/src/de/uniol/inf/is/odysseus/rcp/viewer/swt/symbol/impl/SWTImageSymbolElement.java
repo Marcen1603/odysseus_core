@@ -34,7 +34,7 @@ public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 	}
 	
 	@Override
-	public void draw( Vector pos, int width, int height, float zoomFactor  ) {
+	public void draw( Vector pos, int width, int height, Vector screenShift, float zoomFactor  ) {
 		loadImage();
 		if (image != null){
 		

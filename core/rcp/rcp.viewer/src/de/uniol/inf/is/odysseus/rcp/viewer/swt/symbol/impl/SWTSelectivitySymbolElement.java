@@ -30,7 +30,7 @@ public class SWTSelectivitySymbolElement<C> extends SWTSymbolElement<C> {
 	private double value = 0.0;
 	
 	@Override
-	public void draw( Vector position, int width, int height, float zoomFactor ) {
+	public void draw( Vector position, int width, int height, Vector screenShift, float zoomFactor ) {
 		
 		GC gc = getActualGC();
 		if( gc == null ) 

@@ -76,7 +76,7 @@ public class SimpleSymbolRenderer<C> implements IRenderer<C> {
 							.mul( zoomFactor );
 						
 			for( IConnectionSymbolElement<C> ele : connSymbol ) {
-				ele.draw( start, end, zoomFactor );
+				ele.draw( start, end, shift, zoomFactor );
 			}
 		}
 			
@@ -97,7 +97,7 @@ public class SimpleSymbolRenderer<C> implements IRenderer<C> {
 			}
 			
 			if( node.getSymbolContainer().getSize() > 0 ) {
-				renderNode(node, pos, width, height, zoomFactor);
+				renderNode(node, pos, width, height, shift, zoomFactor);
 			} 
 			
 		}
@@ -111,16 +111,16 @@ public class SimpleSymbolRenderer<C> implements IRenderer<C> {
 		}
 	}
 	
-	private void renderNode( INodeView<C> node, Vector pos, int width, int height, float zoomFactor ) {
+	private void renderNode( INodeView<C> node, Vector pos, int width, int height, Vector shift, float zoomFactor ) {
 		for( ISymbolElement<C> symbol : node.getSymbolContainer() ) {
 			if( symbol != null )
-				renderSymbolElement( symbol, pos, width, height, zoomFactor );
+				renderSymbolElement( symbol, pos, width, height, shift, zoomFactor );
 		}
 	}
 	
 	@SuppressWarnings("static-method")
-    private void renderSymbolElement( ISymbolElement<C> element, Vector pos, int width, int height, float zoomFactor ) {
-		element.draw( pos, width, height, zoomFactor );
+    private void renderSymbolElement( ISymbolElement<C> element, Vector pos, int width, int height, Vector shift, float zoomFactor ) {
+		element.draw( pos, width, height, shift, zoomFactor );
 	}
 
 }

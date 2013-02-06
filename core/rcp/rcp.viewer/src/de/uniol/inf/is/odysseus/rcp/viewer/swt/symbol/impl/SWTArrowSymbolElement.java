@@ -35,7 +35,7 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 	}
 
 	@Override
-	public void draw( Vector start, Vector end, float zoomFactor ) {
+	public void draw( Vector start, Vector end, Vector screenShift, float zoomFactor ) {
 		Preconditions.checkState(getActualGC() != null, "GC for drawing arrows must not be null!");
 		Preconditions.checkState(getConnectionView() != null, "Connection to draw arrows for must not be null!");
 	
@@ -51,8 +51,8 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		final float mx = (float)end.getX();
 		final float my = (float)end.getY();
 		
-		final float fx = (float)end.getX() - node.getWidth() * zoomFactor * 0.5f;
-		final float fy = (float)end.getY() - node.getHeight() * zoomFactor * 0.5f;
+		final float fx = (float)(node.getPosition().getX() + screenShift.getX());
+		final float fy = (float)(node.getPosition().getY() + screenShift.getY());
 		final float gx = fx + node.getWidth() * zoomFactor;
 		final float gy = fy;
 		final float hx = fx;
@@ -95,6 +95,10 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 			
 			getActualGC().setBackground( color );
 			getActualGC().fillPolygon( poly );
+			
+//			// DEBUG
+//			getActualGC().setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+//			getActualGC().fillOval(cross.x - 5, cross.y - 5, 10, 10);
 		}
 	}
 	
@@ -119,33 +123,4 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		
 		return new Point((int)(bx1 + t*(bx2 - bx1)), (int)(by1 + t*(by2 - by1)));
 	}
-	
-	
-//	Function CrossingPoint(AX1,AY1,AX2,AY2, BX1,BY1,BX2,BY2:Integer; Var X,Y:Integer):Boolean;
-//	Var
-//	  T,S,N:Extended;
-//	Begin
-//	  Result:=false;
-//	  // Nenner berechnen (Matrize)
-//	  N:=AX1*BY2 + BX2*AY2 + AX2*BY1 + BX1*AY1 - BX2*AY1 - AX1*BY1 - BX1*AY2 - AX2*BY2;
-//	  // Möglicherweise Abruch wegen Divison durch Null
-//	  If N=0 then Exit;
-//	  // T berechnen (Matrize)
-//	  T:=(AX1*AY2 + AX2*BY1 + BX1*AY1 - AX2*AY1 - BX1*AY2 - AX1*BY1) / N;
-//	  // Wenn T nicht im Intervall [0,1] liegt dann haben
-//	  // beide Linien keinen Schnittpunkt
-//	  If (T<0) or (T>1) then Exit;
-//	  // S berechnen (Matrize)
-//	  S:=(AX1*BY2 + BX2*BY1 + BX1*AY1 - BX2*AY1 - BX1*BY2 - AX1*BY1) / N;
-//	  // Wenn S nicht im Intervall [0,1] liegt dann haben
-//	  // beide Linien keinen Schnittpunkt
-//	  If (S<0) or (S>1) then Exit;
-//	  // Berechnung mit T
-//	  X:=Round(BX1+T*(BX2-BX1));
-//	  Y:=Round(BY1+T*(BY2-BY1));
-//	  // Berechnung mit S
-//	  // X:=Round(AX1+S*(AX2-AX1));
-//	  // Y:=Round(AY1+S*(AY2-AY1));
-//	  Result:=true;
-//	End;
 }

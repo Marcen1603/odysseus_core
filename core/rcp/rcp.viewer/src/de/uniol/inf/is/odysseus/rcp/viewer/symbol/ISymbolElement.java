@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
 public interface ISymbolElement<C> {
 	
-	public void draw( Vector position, int width, int height, float zoomFactor );
+	public void draw( Vector position, int width, int height, Vector screenShift, float zoomFactor );
 	public void update();
 	
 	public void setEnabled( boolean isEnabled );

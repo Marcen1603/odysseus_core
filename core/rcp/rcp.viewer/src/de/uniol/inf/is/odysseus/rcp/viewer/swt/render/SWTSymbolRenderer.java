@@ -36,7 +36,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
-//public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> implements IOperatorBreakManagerListener {
 public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C>  {
 	
 	private static final Logger logger = LoggerFactory.getLogger( SWTSymbolRenderer.class );
@@ -47,22 +46,13 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C>  {
 	private SymbolElementContainer<C> breakSymbol = new SymbolElementContainer<C>();
 	private SymbolElementContainer<C> breakEndSymbol = new SymbolElementContainer<C>();
 
-	
-//	private HashMap<C, OperatorBreak> breaks = new HashMap<C, OperatorBreak>();
-	
 	public SWTSymbolRenderer() {
 		selectionSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_RED )) );
 		highlightSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_BLUE )) );
 		breakSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_GREEN )) );
 		breakEndSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_GRAY )) );
 		
-//		OperatorBreakManager.getInstance().addListener(this);
-		
 		logger.info( "SWTSymbolRenderer created" );
-	}
-	
-	public void dispose() {
-//		OperatorBreakManager.getInstance().removeListener(this);
 	}
 	
 	public void setGC( GC gc ) {
@@ -80,40 +70,20 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C>  {
 				final Vector pos = node.getPosition().add( shift ).mul( zoomFactor );
 				final int height = (int)(node.getHeight() * zoomFactor);
 				final int width = (int)(node.getWidth() * zoomFactor);
-				renderSymbol( selectionSymbol,  pos, width, height, zoomFactor );
+				renderSymbol( selectionSymbol,  pos, width, height, shift, zoomFactor );
 			} else if( highlightedNodes.contains(node)) {
 				final Vector pos = node.getPosition().add( shift ).mul( zoomFactor );
 				final int height = (int)(node.getHeight() * zoomFactor);
 				final int width = (int)(node.getWidth() * zoomFactor);
-				renderSymbol( highlightSymbol,  pos, width, height, zoomFactor );
-			} else {
-				
-//				C op = null;
-//				if( node.getModelNode() != null &&  node.getModelNode().getContent() != null ) {
-//					op = node.getModelNode().getContent();
-//				}
-//			
-//				if( op != null ) {
-//					OperatorBreak ob = breaks.get(op);
-//					
-//					if( ob != null ) {
-//						final Vector pos = node.getPosition().add( shift ).mul( zoomFactor );
-//						final int height = (int)(node.getHeight() * zoomFactor);
-//						final int width = (int)(node.getWidth() * zoomFactor);
-//						if( ob.isBreaked())
-//							renderSymbol( breakSymbol,  pos, width, height, zoomFactor );
-//						else
-//							renderSymbol( breakEndSymbol,  pos, width, height, zoomFactor );
-//					}
-//				}
-			}
+				renderSymbol( highlightSymbol,  pos, width, height, shift, zoomFactor );
+			} 
 		}
 		
 		render( graph, zoomFactor, renderRange, shift );
 	}
 	
 	// Muss überschrieben werden, da SWT mit GC arbeitet. Die Symbole
-	// brauchen dies, da es sich bei jedem Neuzeichnen Ã¤ndert.
+	// brauchen dies, da es sich bei jedem Neuzeichnen ändert.
 	@Override
 	public void render( IGraphView< C > graph, float zoomFactor, RenderRange renderRange, Vector shift ) {
 		if( graph == null )
@@ -132,14 +102,15 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C>  {
 							.add( startNode.getWidth() / 2, startNode.getHeight() / 2 )
 							.mul( zoomFactor );
 
+			final Vector sizeShift = determineSizeShift(startNode, endNode);
 			final Vector end = endNode.getPosition()
 							.add( shift )
-							.add( endNode.getWidth() / 2, endNode.getHeight() / 2 )
+							.add( sizeShift )
 							.mul( zoomFactor );
 			
 			for( IConnectionSymbolElement<C> ele : conn.getSymbolContainer() ) {
 				((SWTConnectionSymbolElement<C>)ele).setActualGC( gc );
-				ele.draw( start, end, zoomFactor );
+				ele.draw( start, end, shift, zoomFactor );
 			}
 		}
 			
@@ -159,39 +130,52 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C>  {
 				}
 			}
 			
-			renderNode(node, pos, width, height, zoomFactor);
-			
-			
+			renderNode(node, pos, width, height, shift, zoomFactor);
 		}
 	}
 	
-	private void renderSymbol( SymbolElementContainer<C> symbol, Vector pos, int width, int height, float zoomFactor ) {
+	private void renderSymbol( SymbolElementContainer<C> symbol, Vector pos, int width, int height, Vector shift, float zoomFactor ) {
 		for( ISymbolElement<C> element : symbol ) {
 			if( element != null )
-				renderSymbolElement( element, pos, width, height, zoomFactor );
+				renderSymbolElement( element, pos, width, height, shift, zoomFactor );
 		}
 	}
 
-	private void renderNode( INodeView<C> node, Vector pos, int width, int height, float zoomFactor ) {
+	private void renderNode( INodeView<C> node, Vector pos, int width, int height, Vector shift, float zoomFactor ) {
 		for( ISymbolElement<C> symbol : node.getSymbolContainer() ) {
 			if( symbol != null )
-				renderSymbolElement( symbol, pos, width, height, zoomFactor );
+				renderSymbolElement( symbol, pos, width, height, shift, zoomFactor );
 		}
 	}
 	
-	private void renderSymbolElement( ISymbolElement<C> element, Vector pos, int width, int height, float zoomFactor ) {
+	private void renderSymbolElement( ISymbolElement<C> element, Vector pos, int width, int height, Vector shift, float zoomFactor ) {
 		((SWTSymbolElement<C>)element).setActualGC( gc );
-		element.draw( pos, width, height, zoomFactor );
+		element.draw( pos, width, height, shift, zoomFactor );
 	}
 
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public void operatorBreakAdded(OperatorBreakManager manager, OperatorBreak ob) {
-//		breaks.put((C)ob.getOperator(), ob);
-//	}
-//
-//	@Override
-//	public void operatorBreakRemoved(OperatorBreakManager manager, OperatorBreak ob) {
-//		breaks.remove(ob.getOperator());
-//	}
+	private static Vector determineSizeShift(final INodeView<?> startNode, final INodeView<?> endNode) {
+		if( endNode.getConnectionsAsEnd().size() == 1 ) {
+			return new Vector( endNode.getWidth() / 2, endNode.getHeight() / 2 );
+		}
+		
+		int incomingCount = 10;
+		int nearestIndex = 0;
+		double minDist = Integer.MAX_VALUE;
+		
+		for( int i = 0; i < incomingCount; i++ ) {
+			
+			Vector possiblePos = new Vector( endNode.getWidth() / (incomingCount + 1) * ( i + 1) + endNode.getPosition().getX(), 
+										endNode.getHeight() / 2 + endNode.getPosition().getY() );
+			double diffX = possiblePos.getX() - ( startNode.getPosition().getX() + startNode.getWidth() / 2);
+			double diffY = possiblePos.getY() - ( startNode.getPosition().getY() + startNode.getHeight() / 2);
+			double dist = diffX * diffX + diffY * diffY;
+			
+			if( dist < minDist){
+				minDist = dist;
+				nearestIndex = i;
+			}
+		}
+		
+		return new Vector( endNode.getWidth() / (incomingCount + 1) * ( nearestIndex + 1), endNode.getHeight() / 2 );
+	}
 }

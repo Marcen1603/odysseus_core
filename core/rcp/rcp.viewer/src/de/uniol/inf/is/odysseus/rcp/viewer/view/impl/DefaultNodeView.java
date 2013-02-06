@@ -152,5 +152,20 @@ public class DefaultNodeView<C> implements INodeView<C> {
 	public INodeModel<C> getModelNode() {
 		return nodeModel;
 	}
-
+	
+	@Override
+	public boolean equals(Object obj) {
+		if( !(obj instanceof DefaultNodeView)){
+			return false;
+		}
+		
+		DefaultNodeView<?> other = (DefaultNodeView<?>)obj;
+		if( other.getModelNode() == null ) {
+			if( getModelNode() == null ) {
+				return other == this;
+			}
+			return false;
+		}
+		return other.getModelNode().equals(getModelNode());
+	}
 }

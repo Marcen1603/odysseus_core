@@ -39,7 +39,7 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 	private int lastTextHeight;
 	
 	@Override
-	public void draw(Vector position, int width, int height, float zoomFactor) {
+	public void draw(Vector position, int width, int height, Vector screenShift, float zoomFactor) {
 		GC gc = getActualGC();
 		INodeView<C> view = getNodeView();
 		C content = view.getModelNode().getContent();

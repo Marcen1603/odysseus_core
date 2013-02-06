@@ -41,7 +41,7 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 	private static final Color OWNERLESS_FILL_COLOR = PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_WHITE);
 	
 	@Override
-	public void draw(Vector position, int width, int height, float zoomFactor) {
+	public void draw(Vector position, int width, int height, Vector screenShift, float zoomFactor) {
 		List<Integer> ownerIDs = determineOwnerIDs(getNodeView().getModelNode().getContent());
 
 		if (!ownerIDs.isEmpty()) {
