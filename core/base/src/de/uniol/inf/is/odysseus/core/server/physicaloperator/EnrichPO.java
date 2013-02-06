@@ -20,27 +20,24 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.UseRightInputMetadata;
 
 /**
  * @author Dennis Geesen
  * 
  */
-public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractPipe<T, T> implements IHasPredicate, IHasMetadataMergeFunction<M> {
+public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractPipe<T, T> implements IHasPredicate {
 
 	private IPredicate<T> predicate;
 	// TODO: check, if it can be merged with caching strategies form DB-Enrich
 	private List<T> cache = new ArrayList<>();
 	private List<T> buffer = new ArrayList<>();
-	private CombinedMergeFunction<M> metaMergeFunction = new CombinedMergeFunction<>();
+	private UseRightInputMetadata<M> metaMergeFunction = new UseRightInputMetadata<>();
 	private IDataMergeFunction<T, M> dataMergeFunction;
-	private ITransferArea<T, T> transferFunction;
 
 	private int minSize = 0;
 
@@ -66,17 +63,8 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 		this.minSize = po.minSize;
 		this.predicate = po.predicate.clone();
 		this.dataMergeFunction = po.dataMergeFunction.clone();
-		this.dataMergeFunction.init();
-
-		this.metaMergeFunction = po.metaMergeFunction.clone();
+		this.dataMergeFunction.init();		
 		this.metaMergeFunction.init();
-		this.transferFunction = po.transferFunction.clone();
-		this.transferFunction.init(this);
-	}
-
-	@Override
-	public IMetadataMergeFunction<M> getMetadataMerge() {
-		return this.metaMergeFunction;
 	}
 
 	@Override
@@ -94,7 +82,6 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 		super.process_open();
 		this.metaMergeFunction.init();
 		this.dataMergeFunction.init();
-		this.transferFunction.init(this);
 		this.buffer.clear();
 		this.cache.clear();
 	}
@@ -112,11 +99,7 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 				}
 				this.buffer.clear();
 			}
-		} else {
-			// stream time is also cached time here 
-			// TODO: check intervals?!
-			this.transferFunction.newElement(object, 0);
-			this.transferFunction.newElement(object, port);			
+		} else {		
 			// if we do not have enough items in cache, we put the objects into
 			// a buffer
 			if (this.cache.size() < minSize) {
@@ -133,7 +116,7 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 		for (T cached : this.cache) {
 			if (this.predicate.evaluate(cached, object)) {
 				T enriched = this.dataMergeFunction.merge(cached, object, metaMergeFunction, Order.LeftRight);
-				this.transferFunction.transfer(enriched);
+				transfer(enriched);
 			}
 		}
 	}
@@ -141,8 +124,6 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	@Override
 	protected void process_close() {
 		super.process_close();
-		this.transferFunction.done();
-
 		this.buffer.clear();
 		this.cache.clear();
 	}
@@ -154,8 +135,6 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		this.transferFunction.newHeartbeat(punctuation.getTime(), port);
-		this.transferFunction.sendPunctuation(punctuation);
 
 	}
 
@@ -165,17 +144,6 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 
 	public void setDataMergeFunction(IDataMergeFunction<T, M> dmf) {
 		this.dataMergeFunction = dmf;
-	}
-
-	public void addInlineMergeFunction(IInlineMetadataMergeFunction<M> inlineFunction) {
-		this.metaMergeFunction.add(inlineFunction);
-	}
-
-	/**
-	 * @param tiTransferArea
-	 */
-	public void setTransferFunction(ITransferArea<T, T> tiTransferArea) {
-		this.transferFunction = tiTransferArea;
 	}
 
 }
