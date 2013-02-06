@@ -70,7 +70,7 @@ public class CoalescePO<M extends ITimeInterval> extends
 					// create IStreamObject
 					IStreamObject<M> out = getGroupProcessor()
 							.createOutputElement(lastGroupID, result);
-					M metadata = object.getMetadata();
+					M metadata = (M) object.getMetadata().clone();
 					metadata.setStart(currentPartialAggregates.getMetadata().getStart());
 					out.setMetadata(metadata);
 					transfer(out);
@@ -83,7 +83,7 @@ public class CoalescePO<M extends ITimeInterval> extends
 		} else { // Mode predicate
 			if (currentPartialAggregates == null) {
 				currentPartialAggregates = calcInit(object);
-				currentPartialAggregates.setMetadata(object.getMetadata());
+				currentPartialAggregates.setMetadata((M) object.getMetadata().clone());
 			}else{
 				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(currentPartialAggregates, object);
 				newP.setMetadata(currentPartialAggregates.getMetadata());
