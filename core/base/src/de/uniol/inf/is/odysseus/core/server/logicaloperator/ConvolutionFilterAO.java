@@ -44,6 +44,7 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 	private int size = 10;
 	private String function;
 	private Map<String, Double> options = new HashMap<>();
+	private List<SDFAttribute> groupingAttributes;
 
 	public ConvolutionFilterAO() {
 		super();
@@ -72,6 +73,16 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 	public AbstractLogicalOperator clone() {
 		return new ConvolutionFilterAO(this);
 	}
+	
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	public void setGroupingAttributes(List<SDFAttribute> attributes) {
+		this.groupingAttributes = attributes;
+	}
+	
+	public List<SDFAttribute> getGroupingAttributes() {
+		return groupingAttributes;
+	}
+
 
 	public SDFExpression getExpression() {
 		return expression;

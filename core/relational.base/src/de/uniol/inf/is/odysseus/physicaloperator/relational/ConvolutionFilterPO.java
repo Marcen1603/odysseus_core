@@ -15,14 +15,17 @@
  */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -36,7 +39,8 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 	private double[] weights;
 	private SDFExpression expression;
 	private int size = 0;
-	private LinkedList<Tuple<M>> list = new LinkedList<>();
+	private Map<Integer, LinkedList<Tuple<M>>> list = new HashMap<>();
+	private IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor = null;
 	private int totalSize;
 
 	public ConvolutionFilterPO(SDFExpression expression, List<SDFAttribute> attributes, int size) {
@@ -52,7 +56,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 		this.size = old.size;
 		this.totalSize = old.totalSize;
 	}
-
+	
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
@@ -86,7 +90,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 		for (int i = this.size + 1; i < (this.size * 2) + 1; i++) {
 			double x = i - this.size;
 			this.weights[i] = calculateWeight(x);
-		}		
+		}
 
 	}
 
@@ -101,14 +105,21 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 
 	@Override
 	protected synchronized void process_next(Tuple<M> o, int port) {
-		this.list.addLast(o);		
-		if (this.list.size() >= totalSize) {			
-			Tuple<M> weightedTuple = this.list.get(this.size).clone();
+		Integer groupID = 0;
+		if (groupProcessor != null) {
+			groupID = groupProcessor.getGroupID(o);
+		}
+		if (this.list.get(groupID) == null) {
+			this.list.put(groupID, new LinkedList<Tuple<M>>());
+		}
+		this.list.get(groupID).addLast(o);
+		if (this.list.get(groupID).size() >= totalSize) {
+			Tuple<M> weightedTuple = this.list.get(groupID).get(this.size).clone();
 			for (int pos : this.positions) {
-				weightedTuple.setAttribute(pos, getWeightedValue(pos));
+				weightedTuple.setAttribute(pos, getWeightedValue(pos, groupID));
 			}
-			transfer(weightedTuple);		
-			this.list.removeFirst();
+			transfer(weightedTuple);
+			this.list.get(groupID).removeFirst();
 		}
 
 	}
@@ -117,10 +128,10 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 	 * @param pos
 	 * @return
 	 */
-	private double getWeightedValue(int pos) {
+	private double getWeightedValue(int pos, int groupID) {
 		double weighted = 0.0d;
 		for (int i = 0; i < totalSize; i++) {
-			double old = ((Number) this.list.get(i).getAttribute(pos)).doubleValue();
+			double old = ((Number) this.list.get(groupID).get(i).getAttribute(pos)).doubleValue();
 			weighted = weighted + (old * this.weights[i]);
 		}
 		return weighted;
@@ -129,6 +140,13 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 	@Override
 	public ConvolutionFilterPO<M> clone() {
 		return new ConvolutionFilterPO<M>(this);
+	}
+
+	/**
+	 * @param relationalGroupProcessor
+	 */
+	public void setGroupProcessor(IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor) {
+		this.groupProcessor = groupProcessor;		
 	}
 
 }

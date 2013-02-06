@@ -16,8 +16,10 @@
 package de.uniol.inf.is.odysseus.relational.transform;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ConvolutionFilterAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.ConvolutionFilterPO;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -30,9 +32,15 @@ public class TConvolutionFilterAORule extends AbstractTransformationRule<Convolu
 		return 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(ConvolutionFilterAO operator, TransformationConfiguration transformConfig) {
-		ConvolutionFilterPO<?> filter = new ConvolutionFilterPO<>(operator.getExpression(), operator.getAttributes(), operator.getSize());		
+		ConvolutionFilterPO<?> filter = new ConvolutionFilterPO<>(operator.getExpression(), operator.getAttributes(), operator.getSize());
+		if (operator.getGroupingAttributes().size() > 0) {
+			@SuppressWarnings("rawtypes")
+			IGroupProcessor r = new RelationalGroupProcessor<>(operator.getOutputSchema(), operator.getOutputSchema(), operator.getGroupingAttributes(), null);
+			filter.setGroupProcessor(r);
+		}
 		defaultExecute(operator, filter, transformConfig, true, true);
 	}
 
