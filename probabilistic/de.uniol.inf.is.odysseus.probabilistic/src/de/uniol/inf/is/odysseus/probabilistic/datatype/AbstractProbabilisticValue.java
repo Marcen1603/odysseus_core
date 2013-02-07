@@ -65,4 +65,35 @@ public class AbstractProbabilisticValue<V> implements Serializable, IClone {
 		sb.append(")");
 		return sb.toString();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((values == null) ? 0 : values.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() == obj.getClass()) {
+			AbstractProbabilisticValue<?> other = (AbstractProbabilisticValue<?>) obj;
+			for (Entry<?, Double> entry : other.values.entrySet()) {
+				if ((!values.containsKey(entry.getKey()))
+						|| (values.get(entry.getKey()) != entry.getValue())) {
+					return false;
+				}
+			}
+		} else {
+			if (values.containsKey(obj)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

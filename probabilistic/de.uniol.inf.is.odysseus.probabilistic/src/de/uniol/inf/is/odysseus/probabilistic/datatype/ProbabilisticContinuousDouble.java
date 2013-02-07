@@ -44,4 +44,35 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
 	public void setDistribution(final int distribution) {
 		this.distribution = distribution;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + distribution;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+
+		if (getClass() == obj.getClass()) {
+			ProbabilisticContinuousDouble other = (ProbabilisticContinuousDouble) obj;
+			if (distribution != other.distribution) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			if (obj.getClass() == Double.class) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
