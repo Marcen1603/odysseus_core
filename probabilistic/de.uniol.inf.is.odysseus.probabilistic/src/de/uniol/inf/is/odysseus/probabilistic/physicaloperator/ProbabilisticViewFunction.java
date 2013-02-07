@@ -82,7 +82,7 @@ public class ProbabilisticViewFunction<T extends ITimeInterval> {
 		}
 
 		IMetadataMergeFunction<T> mergeFunction = new CombinedMergeFunction<T>();
-		
+
 		ProbabilisticTuple<T> tuple = (ProbabilisticTuple<T>) left.merge(left,
 				right, mergeFunction, Order.LeftRight);
 		int offset = left.getDistributions().length
@@ -283,7 +283,7 @@ public class ProbabilisticViewFunction<T extends ITimeInterval> {
 		attr.add(new SDFAttribute("", "b", SDFDatatype.DOUBLE));
 		attr.add(new SDFAttribute("", "c", SDFDatatype.DOUBLE));
 
-		SDFSchema schema = new SDFSchema("", attr);
+		// SDFSchema schema = new SDFSchema("", attr);
 		Object[] attributes1 = new Object[] { 1.0, 1.0, 6.0 };
 		Object[] attributes2 = new Object[] { 1.0, 2.0, 5.0 };
 		Object[] attributes3 = new Object[] { 1.0, 3.0, 7.0 };
@@ -309,8 +309,9 @@ public class ProbabilisticViewFunction<T extends ITimeInterval> {
 		tuple4.setMetadata(new TimeInterval());
 		tuple4.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		ProbabilisticViewFunction<ITimeInterval> probabilisticView = new ProbabilisticViewFunction<ITimeInterval>(
-				new Integer[] { 0 }, schema);
+		// ProbabilisticViewFunction<ITimeInterval> probabilisticView = new
+		// ProbabilisticViewFunction<ITimeInterval>(
+		// new Integer[] { 0 }, schema);
 		// probabilisticView.process_next(tuple1, 0);
 		// probabilisticView.process_next(tuple2, 0);
 		// probabilisticView.process_next(tuple3, 0);

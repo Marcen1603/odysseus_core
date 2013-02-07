@@ -30,11 +30,11 @@ public class RuleProvider implements ITransformRuleProvider {
 	public List<IRule<?, ?>> getRules() {
 		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new TProbabilisticAORule());
-		
+
 		rules.add(new TProbabilisticValidatorRule());
 
+		// Probabilistic Aggregation Functions
 		rules.add(new TAggregateProbabilisticRule());
-		rules.add(new TJoinProbabilisticRule());
 
 		// Select AO -> PO Rule
 		rules.add(new TSelectAORule());
@@ -42,6 +42,11 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TProjectAORule());
 		// Map AO -> PO Rule
 		rules.add(new TMapAORule());
+		// Join AO -> PO Rule
+		rules.add(new TJoinAORule());
+		// Set Join PO Sweep Areas Rule
+		rules.add(new TJoinAOSetSARule());
+		
 		return rules;
 	}
 

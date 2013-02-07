@@ -2,15 +2,11 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
 import java.util.Iterator;
 
-import org.apache.commons.math3.linear.RealMatrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Order;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 
@@ -24,16 +20,37 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 public class ProbabilisticContinuousJoinPO<K extends ITimeInterval, T extends ProbabilisticTuple<K>>
 		extends JoinTIPO<K, T> {
 	private final int[] leftViewAttributePos;
+	private final int[] leftJoinAttributePos;
 	private final int[] rightViewAttributePos;
+	private final int[] rightJoinAttributePos;
 	@SuppressWarnings("unused")
 	private static Logger LOG = LoggerFactory
 			.getLogger(ProbabilisticContinuousJoinPO.class);
 
 	public ProbabilisticContinuousJoinPO(int[] leftViewAttributePos,
-			int[] rightViewAttributePos) {
+			int[] leftJoinAttributePos, int[] rightViewAttributePos,
+			int[] rightJoinAttributePos) {
 		super();
 		this.leftViewAttributePos = leftViewAttributePos;
+		this.leftJoinAttributePos = leftJoinAttributePos;
 		this.rightViewAttributePos = rightViewAttributePos;
+		this.rightJoinAttributePos = rightJoinAttributePos;
+	}
+
+	public int[] getLeftViewAttributePos() {
+		return leftViewAttributePos;
+	}
+
+	public int[] getLeftJoinAttributePos() {
+		return leftJoinAttributePos;
+	}
+
+	public int[] getRightViewAttributePos() {
+		return rightViewAttributePos;
+	}
+
+	public int[] getRightJoinAttributePos() {
+		return rightJoinAttributePos;
 	}
 
 	@Override
