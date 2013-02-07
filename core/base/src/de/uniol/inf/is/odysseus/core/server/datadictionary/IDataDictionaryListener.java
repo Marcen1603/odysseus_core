@@ -19,8 +19,8 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
 public interface IDataDictionaryListener {
 
-	public void addedViewDefinition( AbstractDataDictionary sender, String name, ILogicalOperator op );
-	public void removedViewDefinition( AbstractDataDictionary sender, String name, ILogicalOperator op );
+	public void addedViewDefinition( IDataDictionary sender, String name, ILogicalOperator op );
+	public void removedViewDefinition( IDataDictionary sender, String name, ILogicalOperator op );
 	
 	public void dataDictionaryChanged(IDataDictionary sender);
 	

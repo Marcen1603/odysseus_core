@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -99,12 +98,12 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 	}
 
 	@Override
-	public void addedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
 		refresh();
 	}
 
 	@Override
-	public void removedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
 		refresh();
 	}
 
