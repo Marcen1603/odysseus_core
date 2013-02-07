@@ -53,14 +53,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 abstract public class AbstractDataDictionary implements IDataDictionary {
 
-	protected static Logger _logger = null;
-
-	protected synchronized static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(AbstractDataDictionary.class);
-		}
-		return _logger;
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractDataDictionary.class);
 
 	private List<IDataDictionaryListener> listeners = new ArrayList<IDataDictionaryListener>();
 	protected IStore<String, ILogicalOperator> streamDefinitions;
@@ -522,7 +515,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public void addDatatype(String name, SDFDatatype dt) {
-		getLogger().debug("Add new Datatype " + name + " " + dt);
+		LOG.debug("Add new Datatype " + name + " " + dt);
 		if (!this.datatypes.containsKey(name.toLowerCase())) {
 			this.datatypes.put(name.toLowerCase(), dt);
 			fireDataDictionaryChangedEvent();
@@ -726,8 +719,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		for (IDataDictionaryListener listener : listeners) {
 			try {
 				listener.addedViewDefinition(this, name, op);
-			} catch (Exception ex) {
-				getLogger().error("Error during executing listener", ex);
+			} catch (Throwable ex) {
+				LOG.error("Error during executing listener", ex);
 			}
 		}
 	}
@@ -736,8 +729,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		for (IDataDictionaryListener listener : listeners) {
 			try {
 				listener.removedViewDefinition(this, name, op);
-			} catch (Exception ex) {
-				getLogger().error("Error during executing listener", ex);
+			} catch (Throwable ex) {
+				LOG.error("Error during executing listener", ex);
 			}
 		}
 	}
