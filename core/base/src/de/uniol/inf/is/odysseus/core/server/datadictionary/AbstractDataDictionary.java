@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.server.datadictionary;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -55,7 +56,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractDataDictionary.class);
 
-	private List<IDataDictionaryListener> listeners = new ArrayList<IDataDictionaryListener>();
+	private List<IDataDictionaryListener> listeners = Lists.newArrayList();
 	protected IStore<String, ILogicalOperator> streamDefinitions;
 	protected IStore<String, IUser> viewOrStreamFromUser;
 	protected IStore<String, ILogicalOperator> viewDefinitions;
@@ -73,8 +74,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	// Transient fields
 	// --------------------------------------------------------------------------
 	
-	private Map<String, ISource<?>> sources = new HashMap<String, ISource<?>>();
-	private Map<String, ISink<?>> sinks = new HashMap<String, ISink<?>>();
+	private Map<String, ISource<?>> sources = Maps.newHashMap();
+	private Map<String, ISink<?>> sinks = Maps.newHashMap();
 	
 	private Map<String, IPhysicalOperator> operators = new HashMap<>();
 	
@@ -232,7 +233,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 						oldSchema.getAttributes());
 				topOperator.setOutputSchema(newSchema);
 			}
-			fireAddEvent(viewNameNormalized, topOperator);
+			fireViewAddEvent(viewNameNormalized, topOperator);
 		} else {
 			throw new PermissionException("User " + caller.getUser().getName()
 					+ " has no permission to add a view.");
@@ -285,7 +286,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			throw new RuntimeException(e);
 		}
 		if (op != null) {
-			fireRemoveEvent(viewname, op);
+			fireViewRemoveEvent(viewname, op);
 			fireDataDictionaryChangedEvent();
 		}
 		return op;
@@ -334,7 +335,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 					throw new RuntimeException(e);
 				}
 			}
-			fireAddEvent(createUserUri(streamname, caller), plan);
+			fireViewAddEvent(createUserUri(streamname, caller), plan);
 			fireDataDictionaryChangedEvent();
 		} else {
 			throw new PermissionException("User " + caller.getUser().getName()
@@ -468,7 +469,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 					}
 				}
 				if (op != null) {
-					fireRemoveEvent(viewname, op);
+					fireViewRemoveEvent(viewname, op);
 				}
 				return op;
 			}
@@ -671,7 +672,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public List<ILogicalQuery> getQueries(IUser user, ISession caller) {
-		List<ILogicalQuery> queries = new ArrayList<ILogicalQuery>();
+		List<ILogicalQuery> queries = Lists.newArrayList();
 		for (Entry<Integer, IUser> e : savedQueriesForUser.entrySet()) {
 			if (e.getValue().equals(user)) {
 				ILogicalQuery query = getQuery(e.getKey(), caller);
@@ -701,47 +702,54 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public void addListener(IDataDictionaryListener listener) {
-		if (listener == null) {
-			throw new IllegalArgumentException("listener is null");
-		}
+		Preconditions.checkNotNull(listener, "Listener to add to data dictionary must not be null!");
 
-		if (!listeners.contains(listener)) {
-			listeners.add(listener);
+		synchronized(listeners){ 
+			if (!listeners.contains(listener)) {
+				listeners.add(listener);
+			}
 		}
 	}
 
 	@Override
 	public void removeListener(IDataDictionaryListener listener) {
-		listeners.remove(listener);
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
 	}
 
-	private void fireAddEvent(String name, ILogicalOperator op) {
-		for (IDataDictionaryListener listener : listeners) {
-			try {
-				listener.addedViewDefinition(this, name, op);
-			} catch (Throwable ex) {
-				LOG.error("Error during executing listener", ex);
+	protected final void fireViewAddEvent(String name, ILogicalOperator op) {
+		synchronized(listeners){ 
+			for (IDataDictionaryListener listener : listeners) {
+				try {
+					listener.addedViewDefinition(this, name, op);
+				} catch (Throwable ex) {
+					LOG.error("Error during executing listener", ex);
+				}
 			}
 		}
 	}
 
-	private void fireRemoveEvent(String name, ILogicalOperator op) {
-		for (IDataDictionaryListener listener : listeners) {
-			try {
-				listener.removedViewDefinition(this, name, op);
-			} catch (Throwable ex) {
-				LOG.error("Error during executing listener", ex);
+	protected final void fireViewRemoveEvent(String name, ILogicalOperator op) {
+		synchronized (listeners) {
+			for (IDataDictionaryListener listener : listeners) {
+				try {
+					listener.removedViewDefinition(this, name, op);
+				} catch (Throwable ex) {
+					LOG.error("Error during executing listener", ex);
+				}
 			}
-		}
+		}		
 	}
-
 
 	private void fireDataDictionaryChangedEvent() {
-		for (IDataDictionaryListener listener : listeners) {
-			try {
-				listener.dataDictionaryChanged(this);
-			} catch( Throwable throwable ) {
-				LOG.error("Exception in listener of data dictionary", throwable);
+		synchronized (listeners) {
+			for (IDataDictionaryListener listener : listeners) {
+				try {
+					listener.dataDictionaryChanged(this);
+				} catch( Throwable throwable ) {
+					LOG.error("Exception in listener of data dictionary", throwable);
+				}
 			}
 		}
 	}
