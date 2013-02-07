@@ -31,16 +31,20 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 
-public class PeerManager implements IPeerManager, DiscoveryListener {
+public class PeerManager implements IPeerManager, DiscoveryListener, IDataDictionaryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
 	private static final int PEER_DISCOVER_INTERVAL_MILLIS = 30 * 1000;
 
 	private DiscoveryService discoveryService;
 	private PeerDiscoveryThread peerDiscoveryThread;
+	private IDataDictionary dataDictionary;
 
 	public void activate() {
 		this.discoveryService = P2PNewPlugIn.getDiscoveryService();
@@ -48,18 +52,27 @@ public class PeerManager implements IPeerManager, DiscoveryListener {
 		discoveryService.addDiscoveryListener(this);
 		peerDiscoveryThread = new PeerDiscoveryThread(discoveryService, PEER_DISCOVER_INTERVAL_MILLIS);
 		peerDiscoveryThread.start();
-		
-//		// DEBUG/TESTING
-//		new RepeatingJobThread(2000) {
-//			public void doJob() {
-//				LOG.info("{}", getPeers());
-//			};
-//		}.start();
 	}
-	
+
 	public void deactivate() {
-		discoveryService.removeDiscoveryListener(this);
 		peerDiscoveryThread.stopRunning();
+		discoveryService.removeDiscoveryListener(this);
+	}
+
+	public final void bindDataDictionary(IDataDictionary dd) {
+		dataDictionary = dd;
+		dataDictionary.addListener(this);
+
+		LOG.info("Data dictionary bound: {}", dd);
+	}
+
+	public final void unbindDataDictionary(IDataDictionary dd) {
+		if (dd == dataDictionary) {
+			dataDictionary.removeListener(this);
+			dataDictionary = null;
+
+			LOG.info("Data dictionary unbound: {}", dd);
+		}
 	}
 
 	@Override
@@ -117,5 +130,20 @@ public class PeerManager implements IPeerManager, DiscoveryListener {
 		}
 
 		return names.build();
+	}
+
+	@Override
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+		LOG.info("Added view: name={}, op={}", name, op);
+	}
+
+	@Override
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+		LOG.info("Removed view: name={}, op={}", name, op);
+	}
+
+	@Override
+	public void dataDictionaryChanged(IDataDictionary sender) {
+		LOG.info("Data dictionary changed");
 	}
 }
