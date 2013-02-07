@@ -738,7 +738,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	private void fireDataDictionaryChangedEvent() {
 		for (IDataDictionaryListener listener : listeners) {
-			listener.dataDictionaryChanged(this);
+			try {
+				listener.dataDictionaryChanged(this);
+			} catch( Throwable throwable ) {
+				LOG.error("Exception in listener of data dictionary", throwable);
+			}
 		}
 	}
 
