@@ -23,20 +23,24 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunctio
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticMergeFunction implements IInlineMetadataMergeFunction<IProbabilistic> {
+public class ProbabilisticMergeFunction implements
+		IInlineMetadataMergeFunction<ITimeIntervalProbabilistic> {
 
-    @Override
-    public void mergeInto(final IProbabilistic result, final IProbabilistic inLeft, final IProbabilistic inRight) {
-        result.setExistence(inLeft.getExistence() * inRight.getExistence());
-    }
+	@Override
+	public void mergeInto(final ITimeIntervalProbabilistic result,
+			final ITimeIntervalProbabilistic inLeft,
+			final ITimeIntervalProbabilistic inRight) {
+		result.setExistence(inLeft.getExistence() * inRight.getExistence());
+	}
 
-    @Override
-    public ProbabilisticMergeFunction clone() {
-        return new ProbabilisticMergeFunction();
-    }
+	@Override
+	public ProbabilisticMergeFunction clone() {
+		return new ProbabilisticMergeFunction();
+	}
 
-    @Override
-    public Class<? extends IMetaAttribute> getMetadataType() {
-        return IProbabilistic.class;
-    }
+	@Override
+	public Class<? extends IMetaAttribute> getMetadataType() {
+		return ITimeIntervalProbabilistic.class;
+	}
+
 }

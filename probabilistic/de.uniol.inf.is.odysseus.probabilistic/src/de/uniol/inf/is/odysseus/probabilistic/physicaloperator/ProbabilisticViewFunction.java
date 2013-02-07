@@ -3,26 +3,32 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
@@ -34,7 +40,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * 
  * @param <T>
  */
-public class ProbabilisticMergeFunction<T extends ITimeInterval>  {
+public class ProbabilisticViewFunction<T extends ITimeInterval> {
 
 	private final SDFSchema schema;
 	@SuppressWarnings("unused")
@@ -42,46 +48,82 @@ public class ProbabilisticMergeFunction<T extends ITimeInterval>  {
 	private Integer[] joinAttributePos;
 	private Integer[] viewAttributePos;
 	private DefaultTISweepArea<ProbabilisticTuple<T>> sweepArea = new DefaultTISweepArea<ProbabilisticTuple<T>>();
+	private RealMatrix[] sigmas;
+	private RealMatrix[] betas;
 
-	public ProbabilisticMergeFunction(final Integer[] pos, final SDFSchema schema) {
+	public ProbabilisticViewFunction(final Integer[] pos, final SDFSchema schema) {
 		this.joinAttributePos = pos;
 		this.schema = schema;
 		init(this.schema);
 	}
 
-	public ProbabilisticMergeFunction(final ProbabilisticMergeFunction<T> probabilisticViewPO) {
+	public ProbabilisticViewFunction(
+			final ProbabilisticViewFunction<T> probabilisticViewPO) {
 		this.joinAttributePos = probabilisticViewPO.joinAttributePos;
 		this.viewAttributePos = probabilisticViewPO.viewAttributePos;
 		this.schema = probabilisticViewPO.schema.clone();
 		init(this.schema);
 	}
 
-	
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}
 
-
-	protected void process_next(final ProbabilisticTuple<T> object,
-			final int port) {
-		sweepArea.purgeElements(object, Order.LeftRight);
-		sweepArea.insert(object);
-		int attributes = object.getAttributes().length;
+	protected void merge(final ProbabilisticTuple<T> left,
+			final ProbabilisticTuple<T> right) {
+		sweepArea.purgeElements(right, Order.LeftRight);
+		sweepArea.insert(right);
+		int attributes = right.getAttributes().length;
 		if (sweepArea.size() > attributes) {
-
-			NormalDistributionMixture[] distributions = new NormalDistributionMixture[viewAttributePos.length];
 			for (int i = 0; i < viewAttributePos.length; i++) {
-				distributions[i] = leastSquareEstimate(this.sweepArea,
-						joinAttributePos, viewAttributePos);
+				updateLeastSquareEstimate(this.sweepArea, joinAttributePos,
+						viewAttributePos, i);
 			}
-			object.setDistributions(distributions);
-			//transfer(object);
 		}
+
+		IMetadataMergeFunction<T> mergeFunction = new CombinedMergeFunction<T>();
+		
+		ProbabilisticTuple<T> tuple = (ProbabilisticTuple<T>) left.merge(left,
+				right, mergeFunction, Order.LeftRight);
+		int offset = left.getDistributions().length
+				+ right.getDistributions().length;
+		NormalDistributionMixture[] distributions = new NormalDistributionMixture[offset
+				+ viewAttributePos.length];
+
+		tuple.setDistributions(distributions);
+		for (int i = 0; i < left.getDistributions().length; i++) {
+			tuple.setDistribution(i, left.getDistribution(i));
+		}
+		for (int i = 0; i < right.getDistributions().length; i++) {
+			tuple.setDistribution(left.getDistributions().length + i,
+					right.getDistribution(i));
+		}
+		for (int i = 0; i < viewAttributePos.length; i++) {
+			Map<NormalDistribution, Double> viewMixtures = new HashMap<NormalDistribution, Double>();
+
+			for (int j = 0; j < joinAttributePos.length; j++) {
+				NormalDistributionMixture distributionMixture = left
+						.getDistribution(joinAttributePos[j]);
+				Map<NormalDistribution, Double> mixtures = distributionMixture
+						.getMixtures();
+				for (Entry<NormalDistribution, Double> mixture : mixtures
+						.entrySet()) {
+					NormalDistribution distribution = mixture.getKey();
+					NormalDistribution viewDistribution = updateDistributions(
+							distribution, i);
+					viewMixtures.put(viewDistribution, mixture.getValue());
+				}
+			}
+			tuple.setDistribution(offset + i, new NormalDistributionMixture(
+					viewMixtures));
+			tuple.setAttribute(i, offset + i);
+		}
+
 	}
 
 	@Override
-	public ProbabilisticMergeFunction<T> clone() {
-		return new ProbabilisticMergeFunction<T>(this);
+	public ProbabilisticViewFunction<T> clone() {
+		return new ProbabilisticViewFunction<T>(this);
 	}
 
 	private void init(SDFSchema schema) {
@@ -102,6 +144,8 @@ public class ProbabilisticMergeFunction<T extends ITimeInterval>  {
 		}
 		this.continuousPos = continuousList.toArray(new Integer[0]);
 		this.viewAttributePos = viewList.toArray(new Integer[0]);
+		this.sigmas = new RealMatrix[viewAttributePos.length];
+		this.betas = new RealMatrix[viewAttributePos.length];
 	}
 
 	/**
@@ -113,32 +157,33 @@ public class ProbabilisticMergeFunction<T extends ITimeInterval>  {
 	 *            Position array of all join attributes
 	 * @param viewAttributePos
 	 *            Position array of all view attributes
-	 * @return
+	 * @param index
+	 *            Index of the current estimate
 	 */
-	private NormalDistributionMixture leastSquareEstimate(
+	private void updateLeastSquareEstimate(
 			ITemporalSweepArea<ProbabilisticTuple<T>> sweepArea,
-			Integer[] joinAttributePos2, Integer[] viewAttributePos2) {
+			Integer[] joinAttributePos, Integer[] viewAttributePos, int index) {
 
 		Iterator<ProbabilisticTuple<T>> iter = sweepArea.iterator();
 
-		int attributes = joinAttributePos2.length + viewAttributePos2.length;
+		int attributes = joinAttributePos.length + viewAttributePos.length;
 		ProbabilisticTuple<T> element = null;
-		double[][] joinAttributesData = new double[joinAttributePos2.length][sweepArea
+		double[][] joinAttributesData = new double[joinAttributePos.length][sweepArea
 				.size()];
-		double[][] viewAttributesData = new double[viewAttributePos2.length][sweepArea
+		double[][] viewAttributesData = new double[viewAttributePos.length][sweepArea
 				.size()];
 
 		int dimension = 0;
 		while (iter.hasNext()) {
 			element = iter.next();
 			for (int i = 0; i < element.getAttributes().length; i++) {
-				for (int j = 0; j < joinAttributePos2.length; j++) {
+				for (int j = 0; j < joinAttributePos.length; j++) {
 					joinAttributesData[j][dimension] = element
-							.getAttribute(joinAttributePos2[j]);
+							.getAttribute(joinAttributePos[j]);
 				}
-				for (int j = 0; j < viewAttributePos2.length; j++) {
+				for (int j = 0; j < viewAttributePos.length; j++) {
 					viewAttributesData[j][dimension] = element
-							.getAttribute(viewAttributePos2[j]);
+							.getAttribute(viewAttributePos[j]);
 				}
 			}
 			dimension++;
@@ -166,8 +211,8 @@ public class ProbabilisticMergeFunction<T extends ITimeInterval>  {
 		RealMatrix identity = MatrixUtils.createRealIdentityMatrix(dimension);
 		System.out.println("I " + identity);
 
-		RealMatrix beta = joinAttributesInverse.multiply(joinAttributesTranspose)
-				.multiply(viewAttributes);
+		RealMatrix beta = joinAttributesInverse.multiply(
+				joinAttributesTranspose).multiply(viewAttributes);
 		System.out.println(beta);
 
 		RealMatrix sigma = (viewAttributesTranspose.multiply(identity
@@ -178,13 +223,54 @@ public class ProbabilisticMergeFunction<T extends ITimeInterval>  {
 
 		System.out.println(sigma);
 
-		CovarianceMatrix covariance = CovarianceMatrixUtils.fromMatrix(sigma);
-		NormalDistributionMixture smoothedDistributions = new NormalDistributionMixture(
-				0, covariance);
+		this.betas[index] = beta;
+		this.sigmas[index] = sigma;
+	}
 
-		RealMatrix newViewAttributes = joinAttributes.getRowMatrix(0).multiply(beta);
-		System.out.println("Bnew "+newViewAttributes);
-		
+	private NormalDistribution updateDistributions(
+			NormalDistribution distribution, int index) {
+
+		RealMatrix mean = MatrixUtils.createRealMatrix(1,
+				distribution.getMean().length);
+		mean.setColumn(0, distribution.getMean());
+
+		RealMatrix covarianceMatrix = distribution.getCovarianceMatrix()
+				.getMatrix();
+		RealMatrix newMean = MatrixUtils.createRealMatrix(1,
+				betas[index].getColumnDimension() + mean.getColumnDimension());
+		newMean.setSubMatrix(mean.getData(), 0, 0);
+		newMean.setSubMatrix(betas[index].getData(), 0,
+				mean.getColumnDimension());
+
+		RealMatrix newCovarianceMatrix = MatrixUtils.createRealMatrix(
+				covarianceMatrix.getRowDimension()
+						+ sigmas[index].getRowDimension(),
+				covarianceMatrix.getColumnDimension()
+						+ sigmas[index].getColumnDimension());
+
+		newCovarianceMatrix.setSubMatrix(covarianceMatrix.getData(), 0, 0);
+
+		newCovarianceMatrix.setSubMatrix(
+				betas[index].transpose().multiply(newCovarianceMatrix)
+						.getData(), 0, covarianceMatrix.getColumnDimension());
+
+		newCovarianceMatrix.setSubMatrix(
+				newCovarianceMatrix.multiply(betas[index]).getData(),
+				covarianceMatrix.getRowDimension(), 0);
+
+		newCovarianceMatrix.setSubMatrix(
+				sigmas[index].add(
+						betas[index].transpose().multiply(newCovarianceMatrix)
+								.multiply(betas[index])).getData(),
+				covarianceMatrix.getRowDimension(),
+				covarianceMatrix.getColumnDimension());
+
+		CovarianceMatrix covariance = CovarianceMatrixUtils
+				.fromMatrix(newCovarianceMatrix);
+
+		NormalDistribution smoothedDistributions = new NormalDistribution(
+				newMean.getData()[0], covariance);
+
 		return smoothedDistributions;
 	}
 
@@ -223,12 +309,12 @@ public class ProbabilisticMergeFunction<T extends ITimeInterval>  {
 		tuple4.setMetadata(new TimeInterval());
 		tuple4.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		ProbabilisticMergeFunction<ITimeInterval> probabilisticView = new ProbabilisticMergeFunction<ITimeInterval>(
+		ProbabilisticViewFunction<ITimeInterval> probabilisticView = new ProbabilisticViewFunction<ITimeInterval>(
 				new Integer[] { 0 }, schema);
-		probabilisticView.process_next(tuple1, 0);
-		probabilisticView.process_next(tuple2, 0);
-		probabilisticView.process_next(tuple3, 0);
-		probabilisticView.process_next(tuple4, 0);
+		// probabilisticView.process_next(tuple1, 0);
+		// probabilisticView.process_next(tuple2, 0);
+		// probabilisticView.process_next(tuple3, 0);
+		// probabilisticView.process_next(tuple4, 0);
 
 	}
 }
