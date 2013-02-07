@@ -69,7 +69,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	protected ITransferArea<T, T> transferFunction;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
-	private boolean inOrder = true;
+	protected boolean inOrder = true;
 
 	// ------------------------------------------------------------------------------------
 
