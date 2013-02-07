@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.server.datadictionary;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -56,31 +55,41 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractDataDictionary.class);
 
-	private List<IDataDictionaryListener> listeners = Lists.newArrayList();
-	protected IStore<String, ILogicalOperator> streamDefinitions;
-	protected IStore<String, IUser> viewOrStreamFromUser;
-	protected IStore<String, ILogicalOperator> viewDefinitions;
-	protected IStore<String, SDFSchema> entityMap;
-	protected IStore<String, IUser> entityFromUser;
-	protected IStore<String, SDFDatatype> datatypes;
-	protected IStore<Integer, ILogicalQuery> savedQueries;
-	protected IStore<Integer, IUser> savedQueriesForUser;
-	protected IStore<Integer, String> savedQueriesBuildParameterName;
+	private final List<IDataDictionaryListener> listeners = Lists.newArrayList();
+	private final IStore<String, ILogicalOperator> streamDefinitions;
+	private final IStore<String, IUser> viewOrStreamFromUser;
+	private final IStore<String, ILogicalOperator> viewDefinitions;
+	private final IStore<String, SDFSchema> entityMap;
+	private final IStore<String, IUser> entityFromUser;
+	private final IStore<String, SDFDatatype> datatypes;
+	private final IStore<Integer, ILogicalQuery> savedQueries;
+	private final IStore<Integer, IUser> savedQueriesForUser;
+	private final IStore<Integer, String> savedQueriesBuildParameterName;
 
-	protected IStore<String, ILogicalOperator> sinkDefinitions;
-	protected IStore<String, IUser> sinkFromUser;
+	private final IStore<String, ILogicalOperator> sinkDefinitions;
+	private final IStore<String, IUser> sinkFromUser;
 
 	// --------------------------------------------------------------------------
 	// Transient fields
 	// --------------------------------------------------------------------------
 	
-	private Map<String, ISource<?>> sources = Maps.newHashMap();
-	private Map<String, ISink<?>> sinks = Maps.newHashMap();
+	private final Map<String, ISource<?>> sources = Maps.newHashMap();
+	private final Map<String, ISink<?>> sinks = Maps.newHashMap();
 	
-	private Map<String, IPhysicalOperator> operators = new HashMap<>();
+	private final Map<String, IPhysicalOperator> operators = Maps.newHashMap();
 	
 	public AbstractDataDictionary() {
-		createStores();
+		streamDefinitions = Preconditions.checkNotNull(createStreamDefinitionsStore(),"Store for streamDefinitions must not be null.");
+		viewOrStreamFromUser = Preconditions.checkNotNull(createViewOrStreamFromUserStore(),"Store for viewOrStreamFromUser must not be null.");
+		viewDefinitions = Preconditions.checkNotNull(createViewDefinitionsStore(),"Store for viewDefinitions must not be null.");
+		entityMap = Preconditions.checkNotNull(createEntityMapStore(),"Store for entityMap must not be null.");
+		entityFromUser = Preconditions.checkNotNull(createEntityFromUserStore(),"Store for entityFromUser must not be null.");
+		datatypes = Preconditions.checkNotNull(createDatatypesStore(),"Store for datatypes must not be null.");
+		savedQueries = Preconditions.checkNotNull(createSavedQueriesStore(),"Store for savedQueries must not be null.");
+		savedQueriesForUser = Preconditions.checkNotNull(createSavedQueriesForUserStore(),"Store for savedQueriesForUser must not be null.");
+		savedQueriesBuildParameterName = Preconditions.checkNotNull(createSavedQueriesBuildParameterNameStore(),"Store for savedQueriesBuildParameterName must not be null.");
+		sinkDefinitions = Preconditions.checkNotNull(createSinkDefinitionsStore(),"Store for sinkDefinitions must not be null.");
+		sinkFromUser = Preconditions.checkNotNull(createSinkFromUserStore(),"Store for sinkFromUser must not be null.");
 
 		initDatatypes();
 	}
@@ -89,38 +98,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		if (datatypes.entrySet().size() == 0) {
 			SDFDatatype.registerDefaultTypes(this);
 		}
-	}
-
-	private void createStores() {
-		streamDefinitions = Preconditions.checkNotNull(
-				createStreamDefinitionsStore(),
-				"Store for streamDefinitions must not be null.");
-		viewOrStreamFromUser = Preconditions.checkNotNull(
-				createViewOrStreamFromUserStore(),
-				"Store for viewOrStreamFromUser must not be null.");
-		viewDefinitions = Preconditions.checkNotNull(
-				createViewDefinitionsStore(),
-				"Store for viewDefinitions must not be null.");
-		entityMap = Preconditions.checkNotNull(createEntityMapStore(),
-				"Store for entityMap must not be null.");
-		entityFromUser = Preconditions.checkNotNull(
-				createEntityFromUserStore(),
-				"Store for entityFromUser must not be null.");
-		datatypes = Preconditions.checkNotNull(createDatatypesStore(),
-				"Store for datatypes must not be null.");
-		savedQueries = Preconditions.checkNotNull(createSavedQueriesStore(),
-				"Store for savedQueries must not be null.");
-		savedQueriesForUser = Preconditions.checkNotNull(
-				createSavedQueriesForUserStore(),
-				"Store for savedQueriesForUser must not be null.");
-		savedQueriesBuildParameterName = Preconditions.checkNotNull(
-				createSavedQueriesBuildParameterNameStore(),
-				"Store for savedQueriesBuildParameterName must not be null.");
-		sinkDefinitions = Preconditions.checkNotNull(
-				createSinkDefinitionsStore(),
-				"Store for sinkDefinitions must not be null.");
-		sinkFromUser = Preconditions.checkNotNull(createSinkFromUserStore(),
-				"Store for sinkFromUser must not be null.");
 	}
 
 	protected abstract IStore<String, ILogicalOperator> createStreamDefinitionsStore();
