@@ -24,8 +24,8 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalProbabilistic extends TimeInterval implements
-		IProbabilistic {
+public class TimeIntervalProbabilistic extends TimeInterval implements
+		ITimeIntervalProbabilistic {
 
 	/**
 	 * 
@@ -33,23 +33,24 @@ public class IntervalProbabilistic extends TimeInterval implements
 	private static final long serialVersionUID = -9030157268224460919L;
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] {
-			ITimeInterval.class, IProbabilistic.class };
+			ITimeInterval.class, IProbabilistic.class,
+			ITimeIntervalProbabilistic.class };
 	private final IProbabilistic probabilistic;
 
-	public IntervalProbabilistic() {
+	public TimeIntervalProbabilistic() {
 		super();
 		this.probabilistic = new Probabilistic();
 	}
 
-	public IntervalProbabilistic(
-			final IntervalProbabilistic intervalProbabilistic) {
+	public TimeIntervalProbabilistic(
+			final TimeIntervalProbabilistic intervalProbabilistic) {
 		super(intervalProbabilistic);
 		this.probabilistic = intervalProbabilistic.probabilistic.clone();
 	}
 
 	@Override
-	public IntervalProbabilistic clone() {
-		return new IntervalProbabilistic(this);
+	public TimeIntervalProbabilistic clone() {
+		return new TimeIntervalProbabilistic(this);
 	}
 
 	@Override

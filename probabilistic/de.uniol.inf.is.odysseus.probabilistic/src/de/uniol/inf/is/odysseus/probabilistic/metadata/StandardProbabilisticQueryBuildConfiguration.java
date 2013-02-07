@@ -43,9 +43,11 @@ public class StandardProbabilisticQueryBuildConfiguration extends
 		Set<String> dataTypes = new HashSet<String>();
 		dataTypes.add("probabilistic");
 		dataTypes.add("relational");
-		this.settings.add(new ParameterTransformationConfiguration(
-				new TransformationConfiguration(dataTypes,
-						ITimeInterval.class, IProbabilistic.class)));
+		this.settings
+				.add(new ParameterTransformationConfiguration(
+						new TransformationConfiguration(dataTypes,
+								ITimeInterval.class, IProbabilistic.class,
+								ITimeIntervalProbabilistic.class)));
 		this.settings.add(ParameterDoRewrite.TRUE);
 		this.settings.add(ParameterPerformQuerySharing.TRUE);
 		this.settings.add(ParameterAllowRestructuringOfCurrentPlan.TRUE);
