@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TJoinAOSetSARule extends
+public class TContinuousEquiJoinAOSetSARule extends
 		AbstractTransformationRule<ProbabilisticContinuousJoinPO> {
 
 	@Override

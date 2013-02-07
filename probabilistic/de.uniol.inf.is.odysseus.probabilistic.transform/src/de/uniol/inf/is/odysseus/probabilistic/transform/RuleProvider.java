@@ -42,11 +42,13 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TProjectAORule());
 		// Map AO -> PO Rule
 		rules.add(new TMapAORule());
+		// Equi Join
 		// Join AO -> PO Rule
-		rules.add(new TJoinAORule());
+		rules.add(new TContinuousEquiJoinAORule());
 		// Set Join PO Sweep Areas Rule
-		rules.add(new TJoinAOSetSARule());
-		
+		rules.add(new TContinuousEquiJoinAOSetSARule());
+		// Set Join PO Data Merge Rule
+		rules.add(new TContinuousEquiJoinAOSetDMRule());
 		return rules;
 	}
 

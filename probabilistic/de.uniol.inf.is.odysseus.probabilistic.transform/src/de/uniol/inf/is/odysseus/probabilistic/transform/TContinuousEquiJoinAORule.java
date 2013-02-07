@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
+public class TContinuousEquiJoinAORule extends AbstractTransformationRule<JoinAO> {
 	@Override
 	public int getPriority() {
 		return 1;
