@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.uniol.inf.is.odysseus.rcp.editor.text.cql.completion">
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider"/>
+   </service>
+   <implementation class="de.uniol.inf.is.odysseus.rcp.editor.text.cql.CQLEditorCompletionProvider"/>
+</scr:component>

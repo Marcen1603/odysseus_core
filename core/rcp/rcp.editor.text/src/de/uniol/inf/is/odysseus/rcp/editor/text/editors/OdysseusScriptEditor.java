@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,14 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.coloring.OdysseusOccurrencesUpdater;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.outline.OdysseusScriptContentOutlinePage;
+
 public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 
 	public final static String EDITOR_MATCHING_BRACKETS = "matchingBrackets";
 	public final static String EDITOR_MATCHING_BRACKETS_COLOR = "matchingBracketsColor";
-
-	private ColorManager colorManager = new ColorManager();
+	
 	private OdysseusScriptContentOutlinePage outlinePage;
 	private OdysseusOccurrencesUpdater occurrencesUpdater;
 
@@ -42,8 +44,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 	protected void internal_init() {
 		configureInsertMode(SMART_INSERT, false);
 		setDocumentProvider(new OdysseusScriptDocumentProvider());
-		setSourceViewerConfiguration(new OdysseusScriptViewerConfiguration(
-				colorManager, this));
+		setSourceViewerConfiguration(new OdysseusScriptViewerConfiguration(this));
 	}
 
 	@Override
@@ -51,25 +52,20 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 		super.createPartControl(parent);
 
 		this.occurrencesUpdater = new OdysseusOccurrencesUpdater(this);
-		((IPostSelectionProvider) getSelectionProvider())
-				.addPostSelectionChangedListener(this.occurrencesUpdater);
+		((IPostSelectionProvider) getSelectionProvider()).addPostSelectionChangedListener(this.occurrencesUpdater);
 	}
 
 	public void setModel() {
 		if (this.occurrencesUpdater != null) {
 			this.occurrencesUpdater.update(getSourceViewer());
 		}
-		if (getDocumentProvider() != null && getEditorInput() != null
-				&& getDocumentProvider().getDocument(getEditorInput()) != null 
-				&& this.outlinePage != null) {
-			this.outlinePage.setInput(getDocumentProvider().getDocument(
-					getEditorInput()).get());
+		if (getDocumentProvider() != null && getEditorInput() != null && getDocumentProvider().getDocument(getEditorInput()) != null && this.outlinePage != null) {
+			this.outlinePage.setInput(getDocumentProvider().getDocument(getEditorInput()).get());
 		}
 	}
 
 	@Override
-	public void dispose() {
-		colorManager.dispose();
+	public void dispose() {		
 		super.dispose();
 	}
 
@@ -77,9 +73,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (IContentOutlinePage.class.equals(adapter)) {
 			if (outlinePage == null) {
-				outlinePage = new OdysseusScriptContentOutlinePage(
-						getDocumentProvider().getDocument(getEditorInput())
-								.get());
+				outlinePage = new OdysseusScriptContentOutlinePage(getDocumentProvider().getDocument(getEditorInput()).get());
 			}
 			return outlinePage;
 		}
@@ -87,15 +81,12 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 	}
 
 	@Override
-	protected void configureSourceViewerDecorationSupport(
-			SourceViewerDecorationSupport support) {
+	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
 		super.configureSourceViewerDecorationSupport(support);
 		char[] matchChars = { '(', ')', '[', ']', '{', '}' };
-		ICharacterPairMatcher matcher = new DefaultCharacterPairMatcher(
-				matchChars);
+		ICharacterPairMatcher matcher = new DefaultCharacterPairMatcher(matchChars);
 		support.setCharacterPairMatcher(matcher);
-		support.setMatchingCharacterPainterPreferenceKeys(
-				EDITOR_MATCHING_BRACKETS, EDITOR_MATCHING_BRACKETS_COLOR);
+		support.setMatchingCharacterPainterPreferenceKeys(EDITOR_MATCHING_BRACKETS, EDITOR_MATCHING_BRACKETS_COLOR);
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault("matchingBrackets", true);
 		store.setDefault("matchingBracketsColor", "128,128,128");

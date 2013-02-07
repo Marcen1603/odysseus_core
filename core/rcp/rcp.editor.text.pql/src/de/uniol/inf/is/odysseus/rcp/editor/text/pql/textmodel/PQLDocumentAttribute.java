@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.rcp.editor.text.completion;
+package de.uniol.inf.is.odysseus.rcp.editor.text.pql.textmodel;
 
-import java.util.List;
-
-import org.eclipse.jface.text.IDocument;
-
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import org.eclipse.jface.text.Position;
 
 /**
  * @author Dennis Geesen
  *
  */
-public interface IEditorCompletionProvider {
+public class PQLDocumentAttribute extends Position {
 	
-	public List<Character> getTokenSplitters();
-	public List<String> getWords(String currentToken, String lastToken, IExecutor executor, ISession iSession, IDocument document, int offset);
-	public boolean ignoreWhitespaces();
+	private String name;
+	private String value;
+	
+	public PQLDocumentAttribute(String name, String value, int offset, int length) {
+		super(offset, length);
+		this.value = value;
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
 }

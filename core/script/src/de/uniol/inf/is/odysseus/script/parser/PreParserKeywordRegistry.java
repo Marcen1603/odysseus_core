@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.AssertionFailedException;
  * @author Timo Michelsen
  * 
  */
-class PreParserKeywordRegistry {
+public class PreParserKeywordRegistry {
 	
 	public static final String PREPARSER_KEYWORD_EXTENSION_ID = "de.uniol.inf.is.odysseus.script.parser.PreParserKeyword";
 

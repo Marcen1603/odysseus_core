@@ -20,9 +20,12 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public interface IOdysseusScriptParser {
+	
+	public IExecutor getExecutor();
 
 	public List<?> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
 
@@ -47,4 +50,6 @@ public interface IOdysseusScriptParser {
 	public Set<String> getKeywordNames();
 
 	public Set<String> getStaticWords();
+	
+	public PreParserKeywordRegistry getPreParserKeywordRegistry();
 }

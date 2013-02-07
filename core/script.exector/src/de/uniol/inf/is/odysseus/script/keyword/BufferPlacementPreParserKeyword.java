@@ -13,18 +13,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.script.parser.keyword;
+package de.uniol.inf.is.odysseus.script.keyword;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class BufferPlacementPreParserKeyword extends AbstractPreParserKeyword {
+public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	public static final String BUFFERPLACEMENT = "BUFFERPLACEMENT";
 
@@ -40,6 +41,15 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserKeyword {
 		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
 		addSettings.add(new ParameterBufferPlacementStrategy(parameter));
 		return null;
+	}
+	
+	@Override
+	public Collection<String> getAllowedParameters() {	
+		try {
+			return getServerExecutor().getRegisteredBufferPlacementStrategiesIDs();
+		} catch (OdysseusScriptException e) {
+			return new ArrayList<>();			
+		}
 	}
 
 }

@@ -53,6 +53,8 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 		
 		LOG.debug("Bound OperatorBuilderFactory {}.", builder);
 	}
+	
+	
 
 	public void unbindOperatorBuilderFactory(IOperatorBuilderFactory builder) {
 		if( operatorBuilderFactory == builder ) {

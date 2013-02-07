@@ -15,15 +15,16 @@
   */
 package de.uniol.inf.is.odysseus.rcp.editor.text;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorCompletionProvider;
+import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
 public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
@@ -38,7 +39,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	private static OdysseusRCPEditorTextPlugIn plugin;
 	private static IExecutor executor;
 	private static IOdysseusScriptParser scriptParser;
-	private static List<IEditorCompletionProvider> completionproviders = new ArrayList<IEditorCompletionProvider>();
+	private static Map<String, IEditorLanguagePropertiesProvider> completionproviders = new HashMap<String, IEditorLanguagePropertiesProvider>();
 	
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -133,15 +134,19 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	}
 	
 	
-	public static void bindCompletionProvider(IEditorCompletionProvider ecp){
-		completionproviders.add(ecp);
+	public static void bindCompletionProvider(IEditorLanguagePropertiesProvider ecp){		
+		completionproviders.put(ecp.supportsParser(), ecp);
 	}
 	
-	public static void unbindCompletionProvider(IEditorCompletionProvider ecp){
+	public static void unbindCompletionProvider(IEditorLanguagePropertiesProvider ecp){
 		completionproviders.remove(ecp);
 	}
 	
-	public static List<IEditorCompletionProvider> getEditorCompletionProviders(){
-		return completionproviders ;
+	public static Collection<IEditorLanguagePropertiesProvider> getEditorCompletionProviders(){
+		return completionproviders.values();
+	}
+	
+	public static IEditorLanguagePropertiesProvider getEditorCompletionProvider(String parserName){
+		return completionproviders.get(parserName);
 	}
 }

@@ -28,21 +28,21 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
+package de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.Token;
 
-import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.DocumentUtils;
 
 /**
  * 
@@ -55,7 +55,7 @@ public class ParserDependentWordRule implements IRule {
 	protected IToken fDefaultToken;
 	protected int fColumn = UNDEFINED;
 	protected Map<String, IToken> fWords = new HashMap<String, IToken>();
-	private Map<String, String> wordAndParser = new HashMap<String, String>();
+	private Map<String, List<String>> parserAndWords = new HashMap<String, List<String>>();
 	private StringBuffer fBuffer = new StringBuffer();
 
 	private boolean fIgnoreCase = false;
@@ -85,7 +85,11 @@ public class ParserDependentWordRule implements IRule {
 		if (fIgnoreCase)
 			word = word.toLowerCase();
 		fWords.put(word, token);
-		wordAndParser.put(word, parser);
+		if (!parserAndWords.containsKey(parser)) {
+			parserAndWords.put(parser, new ArrayList<String>());
+		}
+		parserAndWords.get(parser).add(word);
+
 	}
 
 	public void setColumnConstraint(int column) {
@@ -98,7 +102,7 @@ public class ParserDependentWordRule implements IRule {
 	 * @see IRule#evaluate(ICharacterScanner)
 	 */
 	@Override
-    public IToken evaluate(ICharacterScanner scanner) {
+	public IToken evaluate(ICharacterScanner scanner) {
 		int c = scanner.read();
 		if (c != ICharacterScanner.EOF && fDetector.isWordStart((char) c)) {
 			if (fColumn == UNDEFINED || (fColumn == scanner.getColumn() - 1)) {
@@ -114,21 +118,25 @@ public class ParserDependentWordRule implements IRule {
 				// If case-insensitive, convert to lower case before accessing
 				// the map
 				if (fIgnoreCase)
-					buffer = buffer.toLowerCase();				
+					buffer = buffer.toLowerCase();
 				IToken token = fWords.get(buffer);
 				if (token != null) {
-					String parser = wordAndParser.get(buffer);
 					try {
-						if (OdysseusRCPEditorTextPlugIn.getExecutor() != null &&
-							OdysseusRCPEditorTextPlugIn.getExecutor().getSupportedQueryParsers().contains(parser)) {
-							if (scanner instanceof OdysseusRuleBasedScanner) {
-								OdysseusRuleBasedScanner oScanner = (OdysseusRuleBasedScanner) scanner;
-								String currentParser = getValidParserAtPosition(oScanner.getDocument(), oScanner.getCurrentOffset());
-								if (!currentParser.equalsIgnoreCase(parser)) {
+
+						if (scanner instanceof OdysseusScriptRuleBasedScanner) {
+							OdysseusScriptRuleBasedScanner oScanner = (OdysseusScriptRuleBasedScanner) scanner;
+							String currentParser = DocumentUtils.findValidParserAtPosition(oScanner.getDocument(), oScanner.getCurrentOffset());
+							if (parserAndWords.containsKey(currentParser)) {
+								List<String> words = parserAndWords.get(currentParser);
+								if (!words.contains(buffer)) {
 									token = null;
 								}
+							} else {
+								token = null;
 							}
+
 						}
+
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -153,38 +161,6 @@ public class ParserDependentWordRule implements IRule {
 			scanner.unread();
 	}
 
-	public String getValidParserAtPosition(IDocument document, int offset) {
-
-		if (offset <= 0) {
-			return "";
-		}
-		try {
-			int position = document.get(0, offset).toUpperCase().lastIndexOf("#PARSER");
-
-			if (position == -1) {
-				return "";
-			}
-			int start = position + 7;
-			while (start < document.getLength()) {
-				if (!Character.isWhitespace(document.getChar(start))) {
-					break;
-				}
-				start++;
-			}
-			int end = start + 1;
-			while (end < document.getLength()) {
-				// if (Character.isWhitespace(document.getChar(end))) {
-				if (document.getChar(end) == '#') {
-					break;
-				}
-				end++;
-			}
-			String parser = document.get(start, end - start).trim();			
-			return parser;
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	
 
 }

@@ -27,24 +27,27 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBui
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorCompletionProvider;
+import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.IOdysseusScriptFormattingStrategy;
 import de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLEditorTextPlugIn;
 
 /**
  * @author Dennis Geesen
  * 
  */
-public class EditorCompletionProvider implements IEditorCompletionProvider {
+public class EditorCompletionProvider implements IEditorLanguagePropertiesProvider {
 
+
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.editor.text.IEditorCompletionProvider#getWords
+	 * de.uniol.inf.is.odysseus.rcp.editor.text.IEditorLanguagePropertiesProvider#getWords
 	 * (java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<String> getWords(String currentToken, String tokenbefore, IExecutor executor, ISession session, IDocument document, int offset) {
+	public List<String> getCompletionSuggestions(String currentToken, String tokenbefore, IExecutor executor, ISession session, IDocument document, int offset) {
 		List<String> result = new ArrayList<String>();
 		currentToken = currentToken.trim().toLowerCase();
 		tokenbefore = tokenbefore.trim().toLowerCase();
@@ -99,6 +102,12 @@ public class EditorCompletionProvider implements IEditorCompletionProvider {
 					break;
 				}
 			}
+		} else if (currentToken.endsWith("=")) {
+			List<String> operators = new ArrayList<String>();		
+			for (IOperatorBuilder opBuilder : PQLEditorTextPlugIn.getOperatorBuilderFactory().getOperatorBuilder()) {
+				operators.add(opBuilder.getName().toUpperCase());
+			}
+			return operators;
 		}
 		return result;
 	}
@@ -171,5 +180,27 @@ public class EditorCompletionProvider implements IEditorCompletionProvider {
 	public boolean ignoreWhitespaces() {
 		return true;
 	}
+
+	@Override
+	public String supportsParser() {
+		return "PQL";
+	}
+
+	@Override
+	public List<String> getTerminals() {
+		List<String> names = new ArrayList<>();
+		for (IOperatorBuilder b : PQLEditorTextPlugIn.getOperatorBuilderFactory().getOperatorBuilder()) {
+			names.add(b.getName());
+		}
+		return names;
+	}
+
+	@Override
+	public IOdysseusScriptFormattingStrategy getFormattingStrategy() {
+		return new PQLFormattingStrategy();		
+	}
+
+	
+	
 
 }

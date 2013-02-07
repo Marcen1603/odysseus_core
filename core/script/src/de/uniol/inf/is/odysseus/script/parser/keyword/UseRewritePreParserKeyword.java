@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.script.parser.keyword;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +47,11 @@ public class UseRewritePreParserKeyword extends AbstractPreParserKeyword {
 			addSettings.add(ParameterDoRewrite.FALSE);
 		}
 		return null;
+	}
+	
+	@Override
+	public Collection<String> getAllowedParameters() {
+		return Arrays.asList("true", "false");				
 	}
 
 }

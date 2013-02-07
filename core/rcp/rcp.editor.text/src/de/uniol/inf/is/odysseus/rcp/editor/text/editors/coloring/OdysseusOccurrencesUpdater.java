@@ -28,7 +28,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
+package de.uniol.inf.is.odysseus.rcp.editor.text.editors.coloring;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -46,6 +46,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 
 /**
  * 

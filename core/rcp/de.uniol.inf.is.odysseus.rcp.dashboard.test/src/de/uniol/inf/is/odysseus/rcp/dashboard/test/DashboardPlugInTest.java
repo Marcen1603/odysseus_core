@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
+import de.uniol.inf.is.odysseus.script.parser.PreParserKeywordRegistry;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
 public class DashboardPlugInTest {
@@ -102,6 +103,16 @@ public class DashboardPlugInTest {
 
 		@Override
 		public Set<String> getStaticWords() {
+			return null;
+		}
+
+		@Override
+		public IExecutor getExecutor() {
+			return null;
+		}
+
+		@Override
+		public PreParserKeywordRegistry getPreParserKeywordRegistry() {			
 			return null;
 		}
 	}

@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
 
 import java.io.BufferedReader;
@@ -33,50 +33,65 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition.OdysseusScriptPartitionScanner;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition.OdysseusScriptPartitioner;
+
 public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 
 	@Override
 	protected IDocument createDocument(Object element) throws CoreException {
 		if (element instanceof IEditorInput) {
-			IDocument document= new Document();
+			IDocument document = new Document();
 			if (setDocumentContent(document, (IEditorInput) element)) {
 				setupDocument(document);
 			}
+			if (document != null) {
+				OdysseusScriptPartitionScanner partitionscanner = new OdysseusScriptPartitionScanner();
+				
+				IDocumentPartitioner partitioner = new OdysseusScriptPartitioner(partitionscanner, partitionscanner.getLegalParitions());
+				partitioner.connect(document);
+				document.setDocumentPartitioner(partitioner);
+			}
 			return document;
 		}
-	
+
 		return null;
 	}
-	
+
 	/**
 	 * Tries to read the file pointed at by <code>input</code> if it is an
-	 * <code>IPathEditorInput</code>. If the file does not exist, <code>true</code>
-	 * is returned.
-	 *  
-	 * @param document the document to fill with the contents of <code>input</code>
-	 * @param input the editor input
-	 * @return <code>true</code> if setting the content was successful or no file exists, <code>false</code> otherwise
-	 * @throws CoreException if reading the file fails
+	 * <code>IPathEditorInput</code>. If the file does not exist,
+	 * <code>true</code> is returned.
+	 * 
+	 * @param document
+	 *            the document to fill with the contents of <code>input</code>
+	 * @param input
+	 *            the editor input
+	 * @return <code>true</code> if setting the content was successful or no
+	 *         file exists, <code>false</code> otherwise
+	 * @throws CoreException
+	 *             if reading the file fails
 	 */
 	private static boolean setDocumentContent(IDocument document, IEditorInput input) throws CoreException {
 		// XXX handle encoding
 		Reader reader;
 		try {
 			if (input instanceof IPathEditorInput)
-				reader= new FileReader(((IPathEditorInput)input).getPath().toFile());
+				reader = new FileReader(((IPathEditorInput) input).getPath().toFile());
 			else
 				return false;
 		} catch (FileNotFoundException e) {
 			// return empty document and save later
 			return true;
 		}
-		
+
 		try {
 			setDocumentContent(document, reader);
 			return true;
@@ -88,23 +103,26 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 	/**
 	 * Reads in document content from a reader and fills <code>document</code>
 	 * 
-	 * @param document the document to fill
-	 * @param reader the source
-	 * @throws IOException if reading fails
+	 * @param document
+	 *            the document to fill
+	 * @param reader
+	 *            the source
+	 * @throws IOException
+	 *             if reading fails
 	 */
 	private static void setDocumentContent(IDocument document, Reader reader) throws IOException {
-		BufferedReader in= new BufferedReader(reader);
+		BufferedReader in = new BufferedReader(reader);
 		try {
-			StringBuffer buffer= new StringBuffer(512);
-			char[] readBuffer= new char[512];
-			int n= in.read(readBuffer);
+			StringBuffer buffer = new StringBuffer(512);
+			char[] readBuffer = new char[512];
+			int n = in.read(readBuffer);
 			while (n > 0) {
 				buffer.append(readBuffer, 0, n);
-				n= in.read(readBuffer);
+				n = in.read(readBuffer);
 			}
-			
+
 			document.set(buffer.toString());
-		
+
 		} finally {
 			in.close();
 		}
@@ -113,14 +131,16 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 	/**
 	 * Set up the document - default implementation does nothing.
 	 * 
-	 * @param document the new document
+	 * @param document
+	 *            the new document
 	 */
 	protected void setupDocument(IDocument document) {
 	}
-	
 
 	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createAnnotationModel(java.lang.Object)
+	 * @see
+	 * org.eclipse.ui.texteditor.AbstractDocumentProvider#createAnnotationModel
+	 * (java.lang.Object)
 	 */
 	@Override
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
@@ -128,21 +148,24 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#doSaveDocument(org.eclipse.core.runtime.IProgressMonitor, java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
+	 * @see
+	 * org.eclipse.ui.texteditor.AbstractDocumentProvider#doSaveDocument(org
+	 * .eclipse.core.runtime.IProgressMonitor, java.lang.Object,
+	 * org.eclipse.jface.text.IDocument, boolean)
 	 */
 	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
 		if (element instanceof IPathEditorInput) {
-			IPathEditorInput pei= (IPathEditorInput) element;
-			IPath path= pei.getPath();
-			File file= path.toFile();
-			
+			IPathEditorInput pei = (IPathEditorInput) element;
+			IPath path = pei.getPath();
+			File file = path.toFile();
+
 			try {
 				file.createNewFile();
 
 				if (file.exists()) {
 					if (file.canWrite()) {
-						Writer writer= new FileWriter(file);
+						Writer writer = new FileWriter(file);
 						writeDocumentContent(document, writer, monitor);
 					} else {
 						// XXX prompt to SaveAs
@@ -161,13 +184,17 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 	/**
 	 * Saves the document contents to a stream.
 	 * 
-	 * @param document the document to save
-	 * @param writer the stream to save it to
-	 * @param monitor a progress monitor to report progress
-	 * @throws IOException if writing fails
+	 * @param document
+	 *            the document to save
+	 * @param writer
+	 *            the stream to save it to
+	 * @param monitor
+	 *            a progress monitor to report progress
+	 * @throws IOException
+	 *             if writing fails
 	 */
 	private static void writeDocumentContent(IDocument document, Writer writer, IProgressMonitor monitor) throws IOException {
-		Writer out= new BufferedWriter(writer);
+		Writer out = new BufferedWriter(writer);
 		try {
 			out.write(document.get());
 		} finally {
@@ -176,36 +203,44 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getOperationRunner(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see
+	 * org.eclipse.ui.texteditor.AbstractDocumentProvider#getOperationRunner
+	 * (org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
 		return null;
 	}
-	
+
 	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#isModifiable(java.lang.Object)
+	 * @see
+	 * org.eclipse.ui.texteditor.IDocumentProviderExtension#isModifiable(java
+	 * .lang.Object)
 	 */
 	@Override
 	public boolean isModifiable(Object element) {
 		if (element instanceof IPathEditorInput) {
-			IPathEditorInput pei= (IPathEditorInput) element;
-			File file= pei.getPath().toFile();
+			IPathEditorInput pei = (IPathEditorInput) element;
+			File file = pei.getPath().toFile();
 			return file.canWrite() || !file.exists(); // Allow to edit new files
 		}
 		return false;
 	}
-	
+
 	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#isReadOnly(java.lang.Object)
+	 * @see
+	 * org.eclipse.ui.texteditor.IDocumentProviderExtension#isReadOnly(java.
+	 * lang.Object)
 	 */
 	@Override
 	public boolean isReadOnly(Object element) {
 		return !isModifiable(element);
 	}
-	
+
 	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#isStateValidated(java.lang.Object)
+	 * @see
+	 * org.eclipse.ui.texteditor.IDocumentProviderExtension#isStateValidated
+	 * (java.lang.Object)
 	 */
 	@Override
 	public boolean isStateValidated(Object element) {

@@ -39,12 +39,26 @@ import java.util.List;
  */
 public class TokenNameResolver {
 
+	public static void main(String[] args) {
+		for (String s : TokenNameResolver.getToken()) {
+			System.out.println(s);
+		}
+	}
+
 	public static List<String> getToken() {
 		List<String> liste = new ArrayList<String>();
 		String[] tokens = NewSQLParserConstants.tokenImage;
 		for (String token : tokens) {
-			if (token.startsWith("\"")) {
-				liste.add(token.substring(1, tokens.length-1));
+			if (!token.startsWith("<")) {
+				if (token.startsWith("\"")) {
+					token = token.substring(1, token.length());
+				}
+				if (token.endsWith("\"")) {
+					token = token.substring(0, token.length() - 1);
+				}
+				if (token.length()>1 && !token.startsWith("\\")) {
+					liste.add(token);
+				}
 			}
 		}
 		return liste;

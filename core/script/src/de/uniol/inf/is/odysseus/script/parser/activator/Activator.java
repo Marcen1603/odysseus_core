@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.script.parser.activator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -25,6 +27,8 @@ public class Activator implements BundleActivator {
 	static BundleContext getContext() {
 		return context;
 	}
+
+	private static IExecutor executor;
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
@@ -34,6 +38,20 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+	}
+	
+	
+	public void bindExecutor(IExecutor e) {
+		executor = e;
+	}
+
+	public void unbindExecutor(IExecutor e) {
+		executor = null;
+	}
+	
+	
+	public static IExecutor getExecutor() {
+		return executor;
 	}
 
 }

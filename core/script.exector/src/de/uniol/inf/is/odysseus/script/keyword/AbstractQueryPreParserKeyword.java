@@ -38,9 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.script.parser.keyword.ParserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.keyword.TransCfgPreParserKeyword;
 
 public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExecutorKeyword {
 

@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.script.parser.keyword;
+package de.uniol.inf.is.odysseus.script.keyword;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 /**
@@ -27,7 +29,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
  * @author Timo Michelsen
  * 
  */
-public class ParserPreParserKeyword extends AbstractPreParserKeyword {
+public class ParserPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	public static final String PARSER = "PARSER";
 	
@@ -45,5 +47,17 @@ public class ParserPreParserKeyword extends AbstractPreParserKeyword {
 			ISession caller) throws OdysseusScriptException {
 		variables.put(PARSER, parameter);
 		return null;
+	}
+	
+	@Override
+	public Collection<String> getAllowedParameters() {
+		try {
+			return getServerExecutor().getSupportedQueryParsers();
+		} catch (PlanManagementException e) {			
+			e.printStackTrace();
+		} catch (OdysseusScriptException e) {		
+			e.printStackTrace();
+		}
+		return new ArrayList<>();
 	}
 }

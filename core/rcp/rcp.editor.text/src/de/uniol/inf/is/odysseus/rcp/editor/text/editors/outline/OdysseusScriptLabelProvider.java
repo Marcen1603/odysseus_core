@@ -13,7 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
+package de.uniol.inf.is.odysseus.rcp.editor.text.editors.outline;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -45,9 +45,7 @@ public class OdysseusScriptLabelProvider implements ILabelProvider {
 	@Override
 	public String getText(Object element) {
 		if( element instanceof PreParserStatement ) 
-			return ((PreParserStatement)element).getKeywordText();
-		if( element instanceof StringError)
-			return ((StringError)element).getString();
+			return ((PreParserStatement)element).getKeywordText();		
 		if( element instanceof ReplacementLeaf ) 
 			return "Definitions";
 		if( element instanceof String )

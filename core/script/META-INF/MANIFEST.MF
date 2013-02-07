@@ -22,4 +22,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  com.google.guava;bundle-version="12.0.0"
 Export-Package: de.uniol.inf.is.odysseus.script.parser,
  de.uniol.inf.is.odysseus.script.parser.keyword
-Service-Component: OSGI-INF/PreParserKeywordProvider.xml, OSGI-INF/OdysseusScriptParser.xml
+Service-Component: OSGI-INF/PreParserKeywordProvider.xml, OSGI-INF/OdysseusScriptParser.xml, OSGI-INF/Executor.xml

@@ -28,13 +28,11 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
+package de.uniol.inf.is.odysseus.rcp.editor.text.editors.completion;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -45,11 +43,12 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.KeywordRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
-import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorCompletionProvider;
+import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.DocumentUtils;
+import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 
 /**
  * 
@@ -73,31 +72,46 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			int qlen = prefix.length();
 			List<String> words = new ArrayList<String>();
 			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
-			if (tokenBefore.trim().equalsIgnoreCase("FROM")) {
-				Set<Entry<String, ILogicalOperator>> sources = OdysseusRCPEditorTextPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());
-				for (Entry<String, ILogicalOperator> e : sources) {
-					words.add(e.getKey());
-				}
-			} else if (tokenBefore.trim().equalsIgnoreCase("#TRANSCFG")) {
-				words.addAll(OdysseusRCPEditorTextPlugIn.getExecutor().getQueryBuildConfigurationNames());
-			} else if (tokenBefore.trim().equalsIgnoreCase("#PARSER")) {
-				words.addAll(OdysseusRCPEditorTextPlugIn.getExecutor().getSupportedQueryParsers());
-
-			} else if (tokenBefore.trim().equalsIgnoreCase("#")) {
-				words.addAll(getScriptKeywords());
-			} else {
-				if (OdysseusRCPEditorTextPlugIn.getEditorCompletionProviders().size() > 0) {
-					// TODO: parser dependent
-					for (IEditorCompletionProvider ecp : OdysseusRCPEditorTextPlugIn.getEditorCompletionProviders()) {
-						String currentToken = lastWord(document, offset, ecp.getTokenSplitters(), ecp.ignoreWhitespaces());
-						String beforeCurrentToken = lastLastWord(document, offset, ecp.getTokenSplitters(), ecp.ignoreWhitespaces());
-						for(String s : ecp.getWords(currentToken, beforeCurrentToken, OdysseusRCPEditorTextPlugIn.getExecutor(), OdysseusRCPPlugIn.getActiveSession(), document, offset)){
-							result.add(new CompletionProposal(s, offset, 0, s.length()));
-						}
-					}
-				} else {
+			String token = tokenBefore.trim().toUpperCase().substring(1);
+			// first we look, if we are behind a script command like #PARSER, so
+			// we try to loads its possible parameters
+			boolean keyWordSearchfailed = false;
+			try {
+				IPreParserKeyword keyword = OdysseusRCPEditorTextPlugIn.getScriptParser().getPreParserKeywordRegistry().createKeywordExecutor(token);
+				words.addAll(keyword.getAllowedParameters());
+			} catch (Exception e) {
+				keyWordSearchfailed = true;
+			}
+			// if we are not behind a #-Keyword, we try other things...
+			if (keyWordSearchfailed) {
+				// maybe, we currently started to write a keyword, then add all
+				// possible words
+				if (tokenBefore.trim().startsWith("#")) {
 					words.addAll(getScriptKeywords());
-					words.addAll(getKeywordsFromRegistry());
+				} else {
+					// if not, we're going to load parser dependent completion
+					// providers
+					if (OdysseusRCPEditorTextPlugIn.getEditorCompletionProviders().size() > 0) {
+						String parser = DocumentUtils.findValidParserAtPosition(document, offset);
+						if (!parser.isEmpty()) {
+							IEditorLanguagePropertiesProvider ecp = OdysseusRCPEditorTextPlugIn.getEditorCompletionProvider(parser);
+							if (ecp != null) {
+								String currentToken = lastWord(document, offset, ecp.getTokenSplitters(), ecp.ignoreWhitespaces());
+								String beforeCurrentToken = lastLastWord(document, offset, ecp.getTokenSplitters(), ecp.ignoreWhitespaces());
+								List<String> parserWords = ecp.getCompletionSuggestions(currentToken, beforeCurrentToken, OdysseusRCPEditorTextPlugIn.getExecutor(),
+										OdysseusRCPPlugIn.getActiveSession(), document, offset);
+								words.addAll(parserWords);
+//								for (String s : parserWords) {									
+//									result.add(new CompletionProposal(s, offset, 0, s.length()));
+//								}
+							}
+						}
+					} else {
+						// if there are nothing, we add all keywords and
+						// constants we know
+						words.addAll(getScriptKeywords());
+						words.addAll(getKeywordsFromRegistry());
+					}
 				}
 			}
 
@@ -126,8 +140,6 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 		}
 	}
 
-	
-
 	private static String lastWord(IDocument doc, int offset) {
 		try {
 			for (int n = offset - 1; n >= 0; n--) {
@@ -139,41 +151,40 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 		}
 		return "";
 	}
-	
+
 	private static String lastWord(IDocument doc, int offset, List<Character> stopChars, boolean ignoreWhitespaces) {
 		try {
 			for (int n = offset - 1; n >= 0; n--) {
 				char c = doc.getChar(n);
-				if(ignoreWhitespaces && Character.isWhitespace(c)){
+				if (ignoreWhitespaces && Character.isWhitespace(c)) {
 					continue;
 				}
-				if ((stopChars.contains(c))){
-					return doc.get(n , offset - n);
-				}								
+				if ((stopChars.contains(c))) {
+					return doc.get(n, offset - n);
+				}
 			}
 		} catch (BadLocationException e) {
 		}
 		return "";
 	}
-	
-	
+
 	private static String lastLastWord(IDocument doc, int offset, List<Character> stopChars, boolean ignoreWhitespaces) {
 		boolean foundFirst = false;
 		int foundAt = offset;
 		try {
 			for (int n = offset - 1; n >= 0; n--) {
 				char c = doc.getChar(n);
-				if(ignoreWhitespaces && Character.isWhitespace(c)){
+				if (ignoreWhitespaces && Character.isWhitespace(c)) {
 					continue;
 				}
-				if ((stopChars.contains(c))){
-					if(!foundFirst){
+				if ((stopChars.contains(c))) {
+					if (!foundFirst) {
 						foundAt = n;
 						foundFirst = true;
-					}else{
-						return doc.get(n, foundAt - n );
+					} else {
+						return doc.get(n, foundAt - n);
 					}
-				}								
+				}
 			}
 		} catch (BadLocationException e) {
 		}

@@ -24,6 +24,11 @@
                label="Run Query"
                style="push">
          </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.editor.text.FormatCommand"
+               label="Format Text"
+               style="push">
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -63,6 +68,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.commands.CommentTextCommand"
             id="de.uniol.inf.is.odysseus.rcp.editor.text.CommentCommand"
             name="Comment Text">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.commands.FormatTextCommand"
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.FormatCommand"
+            name="Format Text">
       </command>
    </extension>
    <extension
@@ -116,6 +126,12 @@
             contextId="org.eclipse.ui.textEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="CTRL+R">
+      </key>
+      <key
+            commandId="de.uniol.inf.is.odysseus.rcp.editor.text.FormatCommand"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+SHIFT+F">
       </key>
    </extension>
    <extension

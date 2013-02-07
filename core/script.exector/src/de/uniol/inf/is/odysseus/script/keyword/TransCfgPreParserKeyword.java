@@ -13,12 +13,13 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.script.parser.keyword;
+package de.uniol.inf.is.odysseus.script.keyword;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 /**
@@ -27,10 +28,9 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
  * @author Timo Michelsen, Marco Grawunder
  * 
  */
-public class TransCfgPreParserKeyword extends AbstractPreParserKeyword {
+public class TransCfgPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
-	public static final String TRANSCFG = "TRANSCFG";
-	public static final String ADD_TRANS_PARAMS = "ADD_TRANS_PARAMS";
+	public static final String TRANSCFG = "TRANSCFG";	
 	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
@@ -44,6 +44,15 @@ public class TransCfgPreParserKeyword extends AbstractPreParserKeyword {
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		variables.put(TRANSCFG, parameter);
 		return null;
+	}
+	
+	@Override
+	public Collection<String> getAllowedParameters() {
+		try {
+			return getServerExecutor().getQueryBuildConfigurationNames();
+		} catch (OdysseusScriptException e) {			
+			return new ArrayList<>();
+		}			
 	}
 
 }

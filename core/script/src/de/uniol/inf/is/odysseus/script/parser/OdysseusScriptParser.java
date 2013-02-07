@@ -32,7 +32,9 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
@@ -464,6 +466,10 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			KEYWORD_REGISTRY.removeKeyword(entry.getKey());
 		}
 	}
+	
+	public PreParserKeywordRegistry getPreParserKeywordRegistry(){
+		return KEYWORD_REGISTRY;
+	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#getLanguage()
@@ -492,6 +498,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	@Override
 	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {		
 		return new ArrayList<>();
+	}
+
+	@Override
+	public IExecutor getExecutor() {
+		return Activator.getExecutor();
 	}
 
 }
