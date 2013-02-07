@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 	private int size = 10;
 	private String function;
 	private Map<String, Double> options = new HashMap<>();
-	private List<SDFAttribute> groupingAttributes;
+	private List<SDFAttribute> groupingAttributes = new ArrayList<>();
 
 	public ConvolutionFilterAO() {
 		super();
@@ -57,7 +58,10 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 		super(ao);
 		this.expression = ao.expression;
 		this.attributes = ao.attributes;
+		this.groupingAttributes = ao.groupingAttributes;
+		this.options = ao.options;
 		this.size = ao.size;
+		this.function = ao.function;
 	}
 
 	public int getSize() {

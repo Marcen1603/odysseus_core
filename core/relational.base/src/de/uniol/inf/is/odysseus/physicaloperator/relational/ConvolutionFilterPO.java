@@ -72,6 +72,10 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 			SDFAttribute a = attributes.get(i);
 			positions[i] = this.getOutputSchema().indexOf(a);
 		}
+		
+		if (groupProcessor != null) {
+			groupProcessor.init();
+		}
 	}
 
 	/**
