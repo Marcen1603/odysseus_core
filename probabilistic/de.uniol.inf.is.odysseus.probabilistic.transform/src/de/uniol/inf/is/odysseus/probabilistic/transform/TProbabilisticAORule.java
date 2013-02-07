@@ -33,7 +33,7 @@ public class TProbabilisticAORule extends AbstractTransformationRule<Probabilist
 
     @Override
     public int getPriority() {
-        return 0;
+        return 1;
     }
 
     @Override

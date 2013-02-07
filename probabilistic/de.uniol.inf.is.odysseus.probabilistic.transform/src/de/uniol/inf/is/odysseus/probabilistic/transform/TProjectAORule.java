@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	@Override
 	public int getPriority() {
-		return 0;
+		return 1;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -21,10 +22,10 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 
 	@Override
 	public int getPriority() {
-		return 0;
+		return 1;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(final SelectAO selectAO,
 			final TransformationConfiguration transformConfig) {
@@ -33,7 +34,7 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 		if (this.isProbabilistic(selectAO)) {
 			selectPO = new ProbabilisticSelectPO(selectAO.getPredicate());
 			if (selectAO.getHeartbeatRate() > 0) {
-				((ProbabilisticSelectPO) selectPO)
+				((ProbabilisticSelectPO<ProbabilisticTuple<?>>) selectPO)
 						.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(
 								selectAO.getHeartbeatRate()));
 			}

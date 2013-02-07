@@ -8,12 +8,17 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ * 
+ */
 public class TProbabilisticValidatorRule extends
 		AbstractTransformationRule<IHasMetadataMergeFunction<?>> {
 
 	@Override
 	public int getPriority() {
-		return 0;
+		return 1;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
