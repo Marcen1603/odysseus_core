@@ -7,13 +7,15 @@ import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
-import de.uniol.inf.is.odysseus.persistentqueries.HashJoinSweepArea;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticContinuousJoinPO;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticContinuousJoinTISweepArea;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinPO;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinTISweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -25,8 +27,9 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TContinuousEquiJoinAOSetSARule extends
-		AbstractTransformationRule<ProbabilisticContinuousJoinPO> {
+public class TContinuousEquiJoinAOSetSARule
+		extends
+		AbstractTransformationRule<ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
 
 	@Override
 	public int getPriority() {
@@ -34,16 +37,9 @@ public class TContinuousEquiJoinAOSetSARule extends
 	}
 
 	@Override
-	public void execute(ProbabilisticContinuousJoinPO joinPO,
+	public void execute(ContinuousProbabilisticEquiJoinPO joinPO,
 			TransformationConfiguration transformConfig) {
-		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
-
-		areas[0] = new ProbabilisticContinuousJoinTISweepArea(
-				joinPO.getLeftJoinAttributePos(),
-				joinPO.getLeftViewAttributePos());
-		areas[1] = new ProbabilisticContinuousJoinTISweepArea(
-				joinPO.getRightJoinAttributePos(),
-				joinPO.getRightViewAttributePos());
+		ContinuousProbabilisticEquiJoinTISweepArea[] areas = new ContinuousProbabilisticEquiJoinTISweepArea[2];
 
 		for (int port = 0; port < 2; port++) {
 			int otherPort = port ^ 1;
@@ -56,24 +52,38 @@ public class TContinuousEquiJoinAOSetSARule extends
 						.getSubscribedToSource(port).getSchema(), joinPO
 						.getSubscribedToSource(otherPort).getSchema())) {
 
-					List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
-					for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
-						neededAttrsList.add(pair);
-					}
+					SDFSchema schema = joinPO.getSubscribedToSource(port)
+							.getSchema();
+					List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
 
-					Pair<int[], int[]> restrictLists = JoinTransformationHelper
-							.createRestrictLists(joinPO, neededAttrsList, port);
-					areas[port] = new HashJoinSweepArea(restrictLists.getE1(),
-							restrictLists.getE2());
+					for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
+						if (TransformUtil
+								.isContinuousProbabilisticAttribute(pair
+										.getE2())) {
+							joinAttributes.add(pair.getE1());
+						}
+					}
+					int[] joinPos = TransformUtil.getAttributePos(schema,
+							joinAttributes);
+
+					List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(
+							schema.getAttributes());
+					viewAttributes.removeAll(joinAttributes);
+					int[] viewPos = TransformUtil.getAttributePos(schema,
+							viewAttributes);
+					areas[port] = new ContinuousProbabilisticEquiJoinTISweepArea(
+							joinPos, viewPos);
+					joinPO.setBetas(areas[port].getBetas(), port);
 				}
 			}
 		}
 
 		joinPO.setAreas(areas);
+
 	}
 
 	@Override
-	public boolean isExecutable(ProbabilisticContinuousJoinPO operator,
+	public boolean isExecutable(ContinuousProbabilisticEquiJoinPO operator,
 			TransformationConfiguration transformConfig) {
 		if ((transformConfig.getDataTypes().contains(TransformUtil.DATATYPE))
 				&& transformConfig.getMetaTypes().contains(
@@ -96,8 +106,8 @@ public class TContinuousEquiJoinAOSetSARule extends
 	}
 
 	@Override
-	public Class<? super ProbabilisticContinuousJoinPO> getConditionClass() {
-		return ProbabilisticContinuousJoinPO.class;
+	public Class<? super ContinuousProbabilisticEquiJoinPO> getConditionClass() {
+		return ContinuousProbabilisticEquiJoinPO.class;
 	}
 
 }

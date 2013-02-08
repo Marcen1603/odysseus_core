@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.intervalapproach.AggregateTIPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.probabilistic.Activator;
+import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions.ProbabilisticConstants;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
