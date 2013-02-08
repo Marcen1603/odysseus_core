@@ -12,9 +12,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
 
 /**
  * Probabilistic view as described in Tran, T. T. L., Peng, L., Diao, Y.,
@@ -24,18 +21,18 @@ import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticContinuousJoinTISweepArea extends
+public class ContinuousProbabilisticEquiJoinTISweepArea extends
 		JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> {
 
 	@SuppressWarnings("unused")
 	private static Logger LOG = LoggerFactory
-			.getLogger(ProbabilisticContinuousJoinTISweepArea.class);
+			.getLogger(ContinuousProbabilisticEquiJoinTISweepArea.class);
 	private final int[] joinAttributePos;
 	private final int[] viewAttributePos;
 	private final RealMatrix[] sigmas;
 	private final RealMatrix[] betas;
 
-	public ProbabilisticContinuousJoinTISweepArea(int[] joinAttributePos,
+	public ContinuousProbabilisticEquiJoinTISweepArea(int[] joinAttributePos,
 			int[] viewAttributePos) {
 		this.joinAttributePos = joinAttributePos;
 		this.viewAttributePos = viewAttributePos;
@@ -56,61 +53,20 @@ public class ProbabilisticContinuousJoinTISweepArea extends
 		updateLeastSquareEstimates();
 	}
 
+	public RealMatrix[] getSigmas() {
+		return this.sigmas;
+	}
+
 	public RealMatrix getSigma(int viewIndex) {
 		return this.sigmas[viewIndex];
 	}
 
-	public RealMatrix getBeta(int viewIndex) {
-		return betas[viewIndex];
+	public RealMatrix[] getBetas() {
+		return betas;
 	}
 
-	public NormalDistribution getJoinDistribution(
-			NormalDistribution distribution, int viewIndex) {
-		RealMatrix mean = MatrixUtils.createRealMatrix(1,
-				distribution.getMean().length);
-		mean.setColumn(0, distribution.getMean());
-
-		RealMatrix covarianceMatrix = distribution.getCovarianceMatrix()
-				.getMatrix();
-		RealMatrix newMean = MatrixUtils.createRealMatrix(
-				1,
-				betas[viewIndex].getColumnDimension()
-						+ mean.getColumnDimension());
-		newMean.setSubMatrix(mean.getData(), 0, 0);
-		newMean.setSubMatrix(betas[viewIndex].getData(), 0,
-				mean.getColumnDimension());
-
-		RealMatrix newCovarianceMatrix = MatrixUtils.createRealMatrix(
-				covarianceMatrix.getRowDimension()
-						+ sigmas[viewIndex].getRowDimension(),
-				covarianceMatrix.getColumnDimension()
-						+ sigmas[viewIndex].getColumnDimension());
-
-		newCovarianceMatrix.setSubMatrix(covarianceMatrix.getData(), 0, 0);
-
-		newCovarianceMatrix.setSubMatrix(
-				betas[viewIndex].transpose().multiply(newCovarianceMatrix)
-						.getData(), 0, covarianceMatrix.getColumnDimension());
-
-		newCovarianceMatrix.setSubMatrix(
-				newCovarianceMatrix.multiply(betas[viewIndex]).getData(),
-				covarianceMatrix.getRowDimension(), 0);
-
-		newCovarianceMatrix.setSubMatrix(
-				sigmas[viewIndex].add(
-						betas[viewIndex].transpose()
-								.multiply(newCovarianceMatrix)
-								.multiply(betas[viewIndex])).getData(),
-				covarianceMatrix.getRowDimension(),
-				covarianceMatrix.getColumnDimension());
-
-		CovarianceMatrix covariance = CovarianceMatrixUtils
-				.fromMatrix(newCovarianceMatrix);
-
-		NormalDistribution joinDistribution = new NormalDistribution(
-				newMean.getData()[0], covariance);
-
-		return joinDistribution;
+	public RealMatrix getBeta(int viewIndex) {
+		return betas[viewIndex];
 	}
 
 	/**
@@ -124,7 +80,9 @@ public class ProbabilisticContinuousJoinTISweepArea extends
 
 	/**
 	 * Perform least square estimation of sigma and beta for the given view
-	 * attribute
+	 * attribute. More formaly perform the following equation:
+	 * \beta = (A^{T} A)^{-1} A^{T} B
+	 * \sigma = B^{T} (I - A(A^{T} A)^{-1} A^{T}) B/(n - k)
 	 * 
 	 * @param joinAttributePos
 	 *            Position array of all join attributes

@@ -19,16 +19,16 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic
  * @param <K>
  * @param <T>
  */
-public class ProbabilisticJoinPO
+public class DiscreteProbabilisticJoinPO
 		extends
 		JoinTIPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> {
 	@SuppressWarnings("unused")
 	private static Logger LOG = LoggerFactory
-			.getLogger(ProbabilisticJoinPO.class);
+			.getLogger(DiscreteProbabilisticJoinPO.class);
 	private final int[] leftViewAttributePos;
 	private final int[] rightViewAttributePos;
 
-	public ProbabilisticJoinPO(int[] leftViewAttributePos,
+	public DiscreteProbabilisticJoinPO(int[] leftViewAttributePos,
 			int[] rightViewAttributePos) {
 		super();
 		this.leftViewAttributePos = leftViewAttributePos;
