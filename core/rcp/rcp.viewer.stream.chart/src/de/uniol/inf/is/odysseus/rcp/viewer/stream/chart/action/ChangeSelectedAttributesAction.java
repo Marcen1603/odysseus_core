@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,7 @@ public class ChangeSelectedAttributesAction<T> extends Action {
 	private IAttributesChangeable<T> changeable;
 	private Shell parentShell;
 
-	public ChangeSelectedAttributesAction(Shell shell,
-			IAttributesChangeable<T> changeable) {
+	public ChangeSelectedAttributesAction(Shell shell, IAttributesChangeable<T> changeable) {
 		super();
 		this.changeable = changeable;
 		this.parentShell = shell;
@@ -44,15 +43,11 @@ public class ChangeSelectedAttributesAction<T> extends Action {
 	@Override
 	public void run() {
 		try {
-			ChangeAttributesDialog<T> dialog = new ChangeAttributesDialog<T>(
-					parentShell, this.changeable);
+			ChangeAttributesDialog<T> dialog = new ChangeAttributesDialog<T>(parentShell, this.changeable);
 			if (dialog.open() == Window.OK) {
-				Map<Integer, List<IViewableAttribute>> attr = AbstractViewableAttribute
-						.getAttributesAsPortMapList(dialog
-								.getSelectedAttributes());
+				Map<Integer, List<IViewableAttribute>> attr = AbstractViewableAttribute.getAttributesAsPortMapList(dialog.getSelectedAttributes());
 				for (Entry<Integer, List<IViewableAttribute>> e : attr.entrySet()) {
-					changeable.setChoosenAttributes(e.getKey(), e.getValue())
-					;
+					changeable.setChoosenAttributes(e.getKey(), e.getValue());
 				}
 				changeable.chartSettingsChanged();
 			}

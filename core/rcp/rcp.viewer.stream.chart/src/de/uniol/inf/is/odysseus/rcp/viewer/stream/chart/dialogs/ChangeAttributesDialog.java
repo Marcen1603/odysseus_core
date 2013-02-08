@@ -88,18 +88,18 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 		GridData spanData = new GridData(GridData.FILL, GridData.FILL, true,
 				true);
 		spanData.horizontalSpan = 2;
-		spanData.heightHint = 200;
+		spanData.heightHint = 300;
 		tableSpan.setLayoutData(spanData);
 
 		table = new Table(tableSpan, SWT.MULTI | SWT.FULL_SELECTION
 				| SWT.V_SCROLL | SWT.BORDER);
 		TableColumn col1 = new TableColumn(table, SWT.LEFT);
 		col1.setText("Attribute");
-		col1.setWidth(316);
+		col1.setWidth(416);
 
 		TableColumn col2 = new TableColumn(table, SWT.CENTER);
 		col2.setText("visible");
-		col2.setWidth(100);
+		col2.setWidth(200);
 
 		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
 				true));

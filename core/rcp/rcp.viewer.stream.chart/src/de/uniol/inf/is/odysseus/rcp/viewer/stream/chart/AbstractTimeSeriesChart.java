@@ -170,7 +170,7 @@ public abstract class AbstractTimeSeriesChart extends
 		} else if (value < min) {
 			min = value;
 		}
-		if (autoadjust) {
+		if (isAutoadjust()) {
 			getChart().getXYPlot().getRangeAxis()
 					.setLowerBound(min * (1.0 - margin));
 			getChart().getXYPlot().getRangeAxis()
@@ -285,6 +285,16 @@ public abstract class AbstractTimeSeriesChart extends
 	@ChartSetting(name = "Upper Bound for Y-Axis", type = Type.GET)
 	public Double getMax() {
 		return this.max;
+	}
+
+	@ChartSetting(name = "Autoadjust Bounds", type = Type.GET)
+	public boolean isAutoadjust() {
+		return autoadjust;
+	}
+
+	@ChartSetting(name = "Autoadjust Bounds", type = Type.SET)
+	public void setAutoadjust(boolean autoadjust) {
+		this.autoadjust = autoadjust;
 	}
 
 }

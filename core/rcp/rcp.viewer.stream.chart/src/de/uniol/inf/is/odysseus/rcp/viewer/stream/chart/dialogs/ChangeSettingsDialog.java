@@ -15,10 +15,10 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.dialogs;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -51,7 +51,7 @@ public class ChangeSettingsDialog extends TitleAreaDialog {
 	private IChartSettingChangeable changeable;
 	private Table table;
 	private Button okButton;
-	private Map<MethodSetting, Object> currentValues = new HashMap<MethodSetting, Object>();
+	private Map<MethodSetting, Object> currentValues = new TreeMap<MethodSetting, Object>();
 
 	public ChangeSettingsDialog(Shell parentShell, IChartSettingChangeable changeable) {
 		super(parentShell);
@@ -88,17 +88,17 @@ public class ChangeSettingsDialog extends TitleAreaDialog {
 		tableSpan.setLayout(new GridLayout());
 		GridData spanData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		spanData.horizontalSpan = 2;
-		spanData.heightHint = 200;
+		spanData.heightHint = 400;
 		tableSpan.setLayoutData(spanData);
 
 		table = new Table(tableSpan, SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.BORDER);
 		TableColumn col1 = new TableColumn(table, SWT.LEFT);
 		col1.setText("Attribute");
-		col1.setWidth(250);
+		col1.setWidth(450);
 
 		TableColumn col2 = new TableColumn(table, SWT.LEFT);
 		col2.setText("Value");
-		col2.setWidth(200);
+		col2.setWidth(300);
 		col2.setAlignment(SWT.CENTER);		
 
 		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));

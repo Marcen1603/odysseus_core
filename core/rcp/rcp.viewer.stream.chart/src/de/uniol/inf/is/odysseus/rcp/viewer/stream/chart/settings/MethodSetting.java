@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings;
 
 import java.lang.reflect.Method;
 
-public class MethodSetting {	
+public class MethodSetting implements Comparable<MethodSetting>{	
 	
 	private Method getter;
 	private Method setter;
@@ -68,6 +68,11 @@ public class MethodSetting {
 
 	public void setListGetter(Method list) {
 		this.list = list;
+	}
+
+	@Override
+	public int compareTo(MethodSetting other) {		
+		return this.name.compareTo(other.name);
 	}		
 	
 	
