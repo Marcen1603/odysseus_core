@@ -97,6 +97,9 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 						final String[] mixtures = value.split("\\|");
 
 						tuple.addInteger(mixtures.length);
+						final int dimension = mixtures[0]
+								.split(";")[1].split(":").length;
+						tuple.addInteger(dimension);
 						for (final String mixture : mixtures) {
 							final String[] probabilisticValues = mixture
 									.split(";");
@@ -107,9 +110,6 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 											probabilisticValues[1].length() - 1)
 									.split(":");
 
-							int dimension = meanParameter.length;
-							// The dimension
-							tuple.addInteger(dimension);
 							tuple.addDouble(weight);
 							for (final String element : meanParameter) {
 								// The mean in dimension i
@@ -123,13 +123,13 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 								// The Covariance Entry i
 								tuple.addDouble(element);
 							}
-							if (probabilisticValues.length >= 3) {
+							if (probabilisticValues.length > 3) {
 								// The scale factor
 								tuple.addDouble(probabilisticValues[3]);
 							} else {
 								tuple.addDouble(1.0);
 							}
-							if (probabilisticValues.length >= 4) {
+							if (probabilisticValues.length > 4) {
 								final String[] supportParameter = probabilisticValues[4]
 										.substring(
 												1,
