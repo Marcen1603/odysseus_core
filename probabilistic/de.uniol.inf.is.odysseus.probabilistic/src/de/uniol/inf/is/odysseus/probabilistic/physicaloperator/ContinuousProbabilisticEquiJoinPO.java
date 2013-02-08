@@ -15,8 +15,6 @@ import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -118,6 +116,7 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings({ "unchecked", "unused", "rawtypes" })
 	public static void main(String[] args) {
 
 		Collection<SDFAttribute> leftAttr = new ArrayList<SDFAttribute>();

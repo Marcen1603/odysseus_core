@@ -13,10 +13,7 @@ import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinPO;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinTISweepArea;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -70,6 +67,7 @@ public class TContinuousEquiJoinAOSetDMRule
 					List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(
 							schema.getAttributes());
 					viewAttributes.removeAll(joinAttributes);
+					@SuppressWarnings("unused")
 					int[] viewPos = TransformUtil.getAttributePos(schema,
 							viewAttributes);
 				}
