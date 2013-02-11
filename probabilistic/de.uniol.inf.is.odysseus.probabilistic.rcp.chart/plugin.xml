@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
+         <menu
+               id="de.uniol.inf.is.odysseus.rcp.viewer.stream.charts.menu"
+               label="Charts">
+            <command
+                  commandId="de.offis.chart.menu.command.ShowProbabilityChart2D"
+                  label="ProbabilityChart2D"
+                  style="push"
+                  tooltip="Shows a ProbabilityChart2D">
+            </command>
+            <command
+                  commandId="de.offis.chart.menu.command.ShowProbabilityChart3D"
+                  label="ProbabilityChart3D"
+                  style="push"
+                  tooltip="Shows a ProbabilityChart3D">
+            </command>
+            </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+       <command
+            defaultHandler="de.offis.chart.menu.command.ShowProbabilityChart2D"
+            id="de.offis.chart.menu.command.ShowProbabilityChart2D"
+            name="ProbabilityChart2D Command">
+      </command>
+       <command
+            defaultHandler="de.offis.chart.menu.command.ShowProbabilityChart3D"
+            id="de.offis.chart.menu.command.ShowProbabilityChart3D"
+            name="ProbabilityChart3D Command">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.offis.chart.charts.ProbabilityChart2D"
+            id="de.offis.chart.charts.probabilitychart2d"
+            name="ProbabilityChart2D"
+            restorable="false">
+      </view>
+            <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.offis.chart.charts.ProbabilityChart3D"
+            id="de.offis.chart.charts.probabilitychart3d"
+            name="ProbabilityChart3D"
+            restorable="false">
+      </view>
+   </extension>
+
+</plugin>
