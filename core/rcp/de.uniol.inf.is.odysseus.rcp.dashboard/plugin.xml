@@ -59,5 +59,30 @@
             name="Add Dashboard Part">
       </command>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <newWizardShortcut
+               id="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardPartWizard">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonWizard
+            type="new"
+            wizardId="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardPartWizard">
+         <enablement></enablement>
+      </commonWizard>
+      <commonWizard
+            type="new"
+            wizardId="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardWizard">
+         <enablement></enablement>
+      </commonWizard>
+   </extension>
 
 </plugin>
