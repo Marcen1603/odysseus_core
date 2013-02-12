@@ -97,17 +97,17 @@ public class ContinuousProbabilisticEquiJoinMergeFunction<M extends IMetaAttribu
 	public void setSigmas(RealMatrix[] sigmas, int port) {
 		this.sigmas[port] = sigmas;
 	}
-
-	private void updateDistribution(ProbabilisticTuple<M> tuple,
-			int[] attributePos) {
-
-	}
-
-	private void getDistibution(int joinAttributePos, int port,
-			int viewAttributePos) {
-		int otherport = port ^ 1;
-
-	}
+//
+//	private void updateDistribution(ProbabilisticTuple<M> tuple,
+//			int[] attributePos) {
+//
+//	}
+//
+//	private void getDistibution(int joinAttributePos, int port,
+//			int viewAttributePos) {
+//		int otherport = port ^ 1;
+//
+//	}
 
 	public NormalDistribution getJoinDistribution(
 			NormalDistribution distribution, int port, int viewIndex) {
