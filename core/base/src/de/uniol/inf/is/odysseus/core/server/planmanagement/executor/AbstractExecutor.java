@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
@@ -77,7 +79,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * 
  */
 public abstract class AbstractExecutor implements IServerExecutor, ISettingChangeListener, IQueryReoptimizeListener,
-		IPlanReoptimizeListener {
+		IPlanReoptimizeListener, IAdmissionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractExecutor.class);
 
@@ -100,6 +102,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * Anfragebearbeitungs-Komponente
 	 */
 	private ICompiler compiler;
+
+	/**
+	 * Admission Control-Komponente (optional)
+	 */
+	private IAdmissionControl admissionControl = null;
 
 	/**
 	 * Konfiguration der Ausf�hrungsumgebung
@@ -277,6 +284,24 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 	}
 
+	public void bindAdmissionControl(IAdmissionControl control) {
+		if (admissionControl != null)
+			admissionControl.removeListener(this);
+
+		admissionControl = control;
+		if (admissionControl != null)
+			admissionControl.addListener(this);
+	}
+
+	public void unbindAdmissionControl(IAdmissionControl control) {
+		if (admissionControl == control) {
+			if (admissionControl != null)
+				admissionControl.removeListener(this);
+
+			admissionControl = null;
+		}
+	}
+
 	/**
 	 * bindCompiler bindet eine Anfragebearbeitungs-Komponente ein
 	 * 
@@ -406,6 +431,14 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		throw new NoCompilerLoadedException();
 	}
 
+	public IAdmissionControl getAdmissionControl() {
+		return admissionControl;
+	}
+	
+	public boolean hasAdmissionControl() {
+		return admissionControl != null;
+	}
+	
 	// ----------------------------------------------------------------------------------------
 	// Execution Plan
 	// ----------------------------------------------------------------------------------------

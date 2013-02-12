@@ -105,26 +105,6 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	private ReloadLog reloadLog;
 
-	private IAdmissionControl admissionControl = null;
-
-	public void bindAdmissionControl(IAdmissionControl control) {
-		if (admissionControl != null)
-			admissionControl.removeListener(this);
-
-		admissionControl = control;
-		if (admissionControl != null)
-			admissionControl.addListener(this);
-	}
-
-	public void unbindAdmissionControl(IAdmissionControl control) {
-		if (admissionControl == control) {
-			if (admissionControl != null)
-				admissionControl.removeListener(this);
-
-			admissionControl = null;
-		}
-	}
-
 	private IAdmissionQuerySelector admissionQuerySelector = null;
 	private final Map<IUser, List<IPhysicalQuery>> stoppedQueriesByAC = Maps
 			.newHashMap();
@@ -679,8 +659,8 @@ public class StandardExecutor extends AbstractExecutor implements
 			return;
 		}
 
-		if (admissionControl != null) {
-			if (!admissionControl.canStartQuery(queryToStart)) {
+		if (hasAdmissionControl()) {
+			if (!getAdmissionControl().canStartQuery(queryToStart)) {
 				throw new RuntimeException(
 						"Query due of admission control not started");
 			}
@@ -1028,12 +1008,12 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public void overloadUserOccured(IAdmissionControl sender, IUser user) {
-		if (admissionQuerySelector != null
+		if (hasAdmissionControl()
 				&& System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS) {
 
 			List<IPhysicalQuery> runningQueries = determineRunningQueries(user);
 			List<IPhysicalQuery> queriesToStop = admissionQuerySelector
-					.determineQueriesToStop(admissionControl, runningQueries);
+					.determineQueriesToStop(getAdmissionControl(), runningQueries);
 
 			if (queriesToStop != null && !queriesToStop.isEmpty()) {
 				for (IPhysicalQuery query : queriesToStop) {
@@ -1063,13 +1043,12 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public void underloadUserOccured(IAdmissionControl sender, IUser user) {
-		if (admissionQuerySelector != null
-				&& !stoppedQueriesByAC.isEmpty()
+		if (hasAdmissionControl() && !stoppedQueriesByAC.isEmpty()
 				&& System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS) {
 			List<IPhysicalQuery> stoppedQueries = determineStoppedQueries(user,
 					stoppedQueriesByAC);
 			List<IPhysicalQuery> queriesToStart = admissionQuerySelector
-					.determineQueriesToStart(admissionControl, stoppedQueries);
+					.determineQueriesToStart(getAdmissionControl(), stoppedQueries);
 
 			if (queriesToStart != null && !queriesToStart.isEmpty()) {
 				for (IPhysicalQuery stoppedQuery : queriesToStart) {
