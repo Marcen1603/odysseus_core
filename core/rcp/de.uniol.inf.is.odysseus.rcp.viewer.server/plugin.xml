@@ -129,21 +129,25 @@
                label="Break Operator">
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand"
+                  icon="icons/break.gif"
                   label="Break"
                   style="push">
             </command>
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.commands.StepOperatorCommand"
+                  icon="icons/step.gif"
                   label="Step"
                   style="push">
             </command>
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand"
+                  icon="icons/flush.gif"
                   label="Flush"
                   style="push">
             </command>
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand"
+                  icon="icons/resume.gif"
                   label="Resume"
                   style="push">
             </command>
@@ -153,6 +157,7 @@
             </separator>
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand"
+                  icon="icons/delete.png"
                   label="Remove"
                   style="push">
             </command>
@@ -163,21 +168,25 @@
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.OperatorBreakView">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand"
+               icon="icons/break.gif"
                label="Break"
                style="push">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.StepOperatorCommand"
+               icon="icons/step.gif"
                label="Step"
                style="push">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand"
+               icon="icons/flush.gif"
                label="Flush"
                style="push">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand"
+               icon="icons/resume.gif"
                label="Resume"
                style="push">
          </command>
@@ -187,6 +196,7 @@
          </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand"
+               icon="icons/delete.png"
                label="Remove"
                style="push">
          </command>
