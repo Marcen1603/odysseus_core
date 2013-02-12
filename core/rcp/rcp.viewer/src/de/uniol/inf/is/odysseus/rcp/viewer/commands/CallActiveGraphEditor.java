@@ -58,7 +58,7 @@ public class CallActiveGraphEditor extends AbstractHandler implements IHandler {
 
 			IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSinkOneWay(roots);
 
-			PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider, "CurrentPlan");
+			PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider);
 			page.openEditor(input, OdysseusRCPViewerPlugIn.GRAPH_EDITOR_ID);
 
 		} catch (Exception ex) {

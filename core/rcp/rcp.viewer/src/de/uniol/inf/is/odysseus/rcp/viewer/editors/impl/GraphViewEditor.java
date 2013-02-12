@@ -60,6 +60,7 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 	private PhysicalGraphEditorInput input;
 	private SWTRenderManager<IPhysicalOperator> renderManager;
 	private GraphViewEditorOutlinePage outlinePage;
+	private QueryIDChecker checker;
 
 	private final Collection<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
 
@@ -75,12 +76,16 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 	}
 
 	@Override
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+	public void init(IEditorSite site, final IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
 
 		this.input = ((PhysicalGraphEditorInput) input);
 		setPartName(this.input.getName());
+		if( this.input.hasQueryID() ) {
+			checker = new QueryIDChecker(this, this.input);
+			checker.start();
+		}
 	}
 
 	@Override
@@ -119,6 +124,11 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 
 	@Override
 	public void dispose() {
+		if( checker != null ) {
+			checker.stopRunning();
+			checker = null;
+		}
+		
 		getSite().setSelectionProvider(null);
 		getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
 		renderManager.dispose();
