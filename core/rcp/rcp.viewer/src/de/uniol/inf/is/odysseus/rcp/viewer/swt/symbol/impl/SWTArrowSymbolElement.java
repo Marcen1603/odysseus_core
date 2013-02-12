@@ -15,12 +15,17 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.SWTConnectionSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
@@ -45,6 +50,14 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		final INodeView<C> node = getConnectionView().getViewedEndNode();
 		if( node == null )
 			return;
+		
+		if( getConnectionView().getViewedStartNode().getConnectionsAsStart().size() > 1 ) {
+			int port = getPortNumber(getConnectionView());
+			if( port != -1 ) {
+				getActualGC().setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				getActualGC().drawString("" + port, (int)(start.getX() + end.getX()) / 2, (int)(start.getY() + end.getY()) / 2);
+			}
+		}
 		
 		final float nx = (float)start.getX();
 		final float ny = (float)start.getY();		
@@ -122,5 +135,23 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 			return null;
 		
 		return new Point((int)(bx1 + t*(bx2 - bx1)), (int)(by1 + t*(by2 - by1)));
+	}
+	
+	private static int getPortNumber( IConnectionView<?> view ) {
+		Object startObject = view.getModelConnection().getStartNode().getContent();
+		Object endObject = view.getModelConnection().getEndNode().getContent();
+		
+		if( !(startObject instanceof ISource)) {
+			return -1;
+		}
+				
+		ISource<?> source = (ISource<?>)startObject;
+		for( PhysicalSubscription<?> subscription : source.getSubscriptions() ) {
+			if( subscription.getTarget() == endObject ) {
+				return subscription.getSourceOutPort();
+			}
+		}
+		
+		return -1;
 	}
 }
