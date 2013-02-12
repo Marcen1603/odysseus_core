@@ -4,7 +4,6 @@ Bundle-Name: RS232
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.rs232
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.rs232.Activator
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.connection,
  de.uniol.inf.is.odysseus.core.physicaloperator,
