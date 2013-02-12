@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -28,7 +27,6 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 
 	private Configuration configuration;
 	private IDashboardPartQueryTextProvider queryTextProvider;
-	private List<IPhysicalOperator> roots;
 	
 	@Override
 	public boolean init(Configuration configuration) {
@@ -43,10 +41,6 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 		return configuration;
 	}
 	
-	public List<IPhysicalOperator> getRoots() {
-		return ImmutableList.copyOf(roots);
-	}
-	
 	@Override
 	public IDashboardPartQueryTextProvider getQueryTextProvider() {
 		return queryTextProvider;
@@ -59,7 +53,6 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 
 	@Override
 	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
-		roots = physicalRoots;
 	}
 	
 	@Override

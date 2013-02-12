@@ -20,19 +20,16 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.testng.annotations.Test;
 
-import com.beust.jcommander.internal.Lists;
 import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
@@ -79,11 +76,6 @@ public class AbstractDashboardPartTest {
 		
 		assertTrue(part.init(config));
 		assertEquals(part.getConfiguration(), config);
-		
-		List<IPhysicalOperator> operators = Lists.newArrayList();
-		part.onStart(operators);
-		assertEquals(part.getRoots(), operators);
-		assertEquals(part.getRoots().size(), operators.size());
 	}
 	
 	@Test
