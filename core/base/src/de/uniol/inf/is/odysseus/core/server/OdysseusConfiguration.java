@@ -44,7 +44,7 @@ public class OdysseusConfiguration {
 	static Properties props = new Properties();
 
 	// TODO: Make Platform specific homedir
-	private static String odysseusDefaultHome = String.format("%s/%sodysseus/",
+	private static String odysseusDefaultHome = String.format("%s"+File.separator+"%sodysseus"+File.separator,
 			System.getProperty("user.home"),
 			getDot(System.getProperty("os.name")));
 	private static String homeDir;
