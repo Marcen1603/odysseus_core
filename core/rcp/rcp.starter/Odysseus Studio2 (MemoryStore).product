@@ -18,7 +18,7 @@ http://odysseus.informatik.uni-oldenburg.de/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug -nl ${target.nl} -data @noDefault</programArgs>
+      <programArgs>-console -debug -nl en -data @noDefault</programArgs>
       <vmArgs>-Xms1000M -Xmx1000M</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
@@ -41,6 +41,7 @@ http://odysseus.informatik.uni-oldenburg.de/
             winLargeLow="/de.uniol.inf.is.odysseus.rcp.starter/icons/48_48_8.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
