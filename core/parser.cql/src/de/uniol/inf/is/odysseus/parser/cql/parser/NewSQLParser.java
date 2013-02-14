@@ -5912,17 +5912,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
     finally { jj_save(46, xla); }
   }
 
-  static private boolean jj_3R_154() {
-    if (jj_3R_179()) return true;
-    if (jj_3R_68()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_32() {
-    if (jj_3R_55()) return true;
-    return false;
-  }
-
   static private boolean jj_3_31() {
     if (jj_3R_54()) return true;
     return false;
@@ -7663,6 +7652,17 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 
   static private boolean jj_3R_92() {
     if (jj_3R_56()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_154() {
+    if (jj_3R_179()) return true;
+    if (jj_3R_68()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_32() {
+    if (jj_3R_55()) return true;
     return false;
   }
 
