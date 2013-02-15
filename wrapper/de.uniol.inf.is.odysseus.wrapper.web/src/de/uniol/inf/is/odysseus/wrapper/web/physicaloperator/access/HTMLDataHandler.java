@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.wrapper.html.physicaloperator.access;
+package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -76,7 +76,7 @@ public class HTMLDataHandler extends AbstractDataHandler<Tuple<?>> {
     }
 
     /**
-     * Create a new XML Data Handler
+     * Create a new HTML Data Handler
      * 
      * @param schema
      */

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.wrapper.html;
+package de.uniol.inf.is.odysseus.wrapper.web;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
