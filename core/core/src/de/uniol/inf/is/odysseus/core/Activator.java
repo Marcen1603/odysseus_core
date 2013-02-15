@@ -21,6 +21,7 @@ import org.osgi.framework.BundleContext;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.ListDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.CSVProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.DocumentProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.MarkerByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
@@ -57,6 +58,7 @@ public class Activator implements BundleActivator {
 		bundleContext = context;
 		
 		ProtocolHandlerRegistry.register(new LineProtocolHandler());
+		ProtocolHandlerRegistry.register(new DocumentProtocolHandler());
 		ProtocolHandlerRegistry.register(new CSVProtocolHandler());
 		ProtocolHandlerRegistry.register(new SimpleCSVProtocolHandler());
 		ProtocolHandlerRegistry.register(new TextProtocolHandler());
