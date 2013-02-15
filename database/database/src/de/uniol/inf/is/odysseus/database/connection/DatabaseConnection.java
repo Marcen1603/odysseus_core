@@ -30,6 +30,7 @@
 
 package de.uniol.inf.is.odysseus.database.connection;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -107,20 +108,42 @@ public class DatabaseConnection implements IDatabaseConnection {
 			int type = r.getInt("DATA_TYPE");
 			String dbmsSpecificName = r.getString("TYPE_NAME");
 
-			String params = r.getString("CREATE_PARAMS").trim();
+			String params = r.getString("CREATE_PARAMS");
 			String fullName = dbmsSpecificName;
-			if (!params.isEmpty()) {
-				if (params.startsWith("(M)")) {
-					fullName = fullName + "(128)";
+			if (params != null) {
+				params = params.trim();				
+				if (!params.isEmpty()) {
+					if (params.startsWith("(M)")) {
+						fullName = fullName + "(128)";
+					}
 				}
 			}
-			// System.out.println(r.getString("TYPE_NAME") + " | " +
-			// r.getString("CREATE_PARAMS")+" --> "+fullName);
+//			 System.out.println(r.getString("TYPE_NAME") + " | " +
+//			 r.getString("CREATE_PARAMS")+" --> "+fullName);
 			if (type == jdbcType) {
 				return fullName;
 			}
 		}
-		return null;
+		// nothing found?!
+		throw new SQLException("You tried to use "+getJdbcTypeName(jdbcType)+" which is not supported by your database!");		
+	}
+
+	public String getJdbcTypeName(int jdbcType) {
+		
+
+		// Get all field in java.sql.Types
+		Field[] fields = java.sql.Types.class.getFields();
+		for (int i = 0; i < fields.length; i++) {
+			try {
+				String name = fields[i].getName();
+				Integer value = (Integer) fields[i].get(null);
+				if (value == jdbcType) {
+					return name;
+				}
+			} catch (IllegalAccessException e) {
+			}
+		}
+		return "unknown type";
 	}
 
 	@Override
@@ -135,6 +158,9 @@ public class DatabaseConnection implements IDatabaseConnection {
 			sep = ", ";
 		}
 		table = table + ")";
+		System.out.println("-------------------");
+		System.out.println(table);
+		System.out.println("-------------------");
 		st.executeUpdate(table);
 	}
 
