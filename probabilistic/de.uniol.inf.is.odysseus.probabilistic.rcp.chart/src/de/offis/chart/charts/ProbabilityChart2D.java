@@ -17,7 +17,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
@@ -52,6 +51,7 @@ public class ProbabilityChart2D extends AbstractJFreeChart<ProbabilisticTuple<IM
 			public void run() {
 				try {
 					
+						@SuppressWarnings("unchecked")
 						ProbabilisticTuple<IMetaAttribute> value = (ProbabilisticTuple<IMetaAttribute>)element;
 						Object o = value.getAttribute(0);
 						updateChart(value.getDistribution(((ProbabilisticContinuousDouble) o).getDistribution()));
