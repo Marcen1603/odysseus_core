@@ -19,18 +19,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
-public class FileHandler extends AbstractTransportHandler {
-
-    String           filename;
-    FileInputStream  in;
-    FileOutputStream out;
-	boolean append;
+public class FileHandler extends AbstractFileHandler {
 
     public FileHandler() {
         super();
@@ -65,24 +58,7 @@ public class FileHandler extends AbstractTransportHandler {
             throw e;
         }
     }
-
-    @Override
-    public void processInClose() throws IOException {
-        fireOnDisconnect();
-        in.close();
-    }
-
-    @Override
-    public void processOutClose() throws IOException {
-        fireOnDisconnect();
-        out.flush();
-        out.close();
-    }
-
-    @Override
-    public void send(byte[] message) throws IOException {
-        out.write(message);
-    }
+ 
 
     @Override
     public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
@@ -93,15 +69,6 @@ public class FileHandler extends AbstractTransportHandler {
         return fh;
     }
 
-    @Override
-    public InputStream getInputStream() {
-        return in;
-    }
-
-    @Override
-    public OutputStream getOutputStream() {
-        return out;
-    }
 
     @Override
     public String getName() {
