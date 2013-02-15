@@ -45,7 +45,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  */
 public class HTTPTransportHandler extends AbstractTransportHandler {
 	/** Logger */
-	private Logger LOG = LoggerFactory.getLogger(HTTPTransportHandler.class);
+	private final Logger LOG = LoggerFactory
+			.getLogger(HTTPTransportHandler.class);
 	/** HTTP Client used for send command */
 	private final HttpClient client = new HttpClient();
 	/** In and output for data transfer */
@@ -59,10 +60,10 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 	public static enum Method {
 		GET, POST, PUT, DELETE, HEAD;
 
-		public static Method fromString(String method) {
+		public static Method fromString(final String method) {
 			try {
 				return Method.valueOf(method.toUpperCase());
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				return GET;
 			}
 		}
@@ -78,24 +79,27 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 	/**
 	 * @param protocolHandler
 	 */
-	public HTTPTransportHandler(IProtocolHandler<?> protocolHandler) {
+	public HTTPTransportHandler(final IProtocolHandler<?> protocolHandler) {
 		super(protocolHandler);
 	}
 
 	@Override
-	public void send(byte[] message) throws IOException {
-		PostMethod request = new PostMethod(message.toString());
-		RequestEntity postRequestEntity = new ByteArrayRequestEntity(message);
+	public void send(final byte[] message) throws IOException {
+		final PostMethod request = new PostMethod(message.toString());
+		final RequestEntity postRequestEntity = new ByteArrayRequestEntity(
+				message);
 		request.setRequestEntity(postRequestEntity);
 		this.client.executeMethod(request);
 	}
 
 	@Override
 	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		HTTPTransportHandler handler = new HTTPTransportHandler(protocolHandler);
+			final IProtocolHandler<?> protocolHandler,
+			final Map<String, String> options) {
+		final HTTPTransportHandler handler = new HTTPTransportHandler(
+				protocolHandler);
 		handler.uri = options.get("uri");
-		String method = options.get("method");
+		final String method = options.get("method");
 		if ((method != null) && (!method.isEmpty())) {
 			handler.method = Method.fromString(method);
 		} else {
@@ -132,13 +136,13 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 	@Override
 	public void processInClose() throws IOException {
 		this.input = null;
-		fireOnDisconnect();
+		this.fireOnDisconnect();
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
 		this.output = null;
-		fireOnDisconnect();
+		this.fireOnDisconnect();
 	}
 
 	private class HTTPInputStream extends InputStream {
@@ -148,25 +152,25 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 		private final String uri;
 		private InputStream stream;
 
-		public HTTPInputStream(Method method, String uri) {
+		public HTTPInputStream(final Method method, final String uri) {
 			this.method = method;
 			this.uri = uri;
 		}
 
 		@Override
 		public int read() throws IOException {
-			if (isStreamEmpty()) {
-				fetch();
+			if (this.isStreamEmpty()) {
+				this.fetch();
 			}
 			return this.stream.read();
 		}
 
 		@Override
 		public int available() throws IOException {
-			if (isStreamEmpty()) {
-				fetch();
+			if (this.isStreamEmpty()) {
+				this.fetch();
 			}
-			return stream.available();
+			return this.stream.available();
 		}
 
 		private boolean isStreamEmpty() throws IOException {
@@ -204,24 +208,25 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 		private final Method method;
 		private final String uri;
 
-		public HTTPOutputStream(Method method, String uri) {
+		public HTTPOutputStream(final Method method, final String uri) {
 			this.method = method;
 			this.uri = uri;
 		}
 
 		@Override
-		public void write(int b) throws IOException {
-			if (1 + buffer.position() >= buffer.capacity()) {
-				ByteBuffer newBuffer = ByteBuffer.allocate((1 + buffer
-						.position()) * 2);
-				int pos = buffer.position();
-				buffer.flip();
-				newBuffer.put(buffer);
-				buffer = newBuffer;
-				buffer.position(pos);
-				LOG.debug("Extending buffer to " + buffer.capacity());
+		public void write(final int b) throws IOException {
+			if ((1 + this.buffer.position()) >= this.buffer.capacity()) {
+				final ByteBuffer newBuffer = ByteBuffer
+						.allocate((1 + this.buffer.position()) * 2);
+				final int pos = this.buffer.position();
+				this.buffer.flip();
+				newBuffer.put(this.buffer);
+				this.buffer = newBuffer;
+				this.buffer.position(pos);
+				HTTPTransportHandler.this.LOG.debug("Extending buffer to "
+						+ this.buffer.capacity());
 			}
-			buffer.put((byte) b);
+			this.buffer.put((byte) b);
 		}
 
 		@Override
@@ -230,14 +235,14 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 			switch (this.method) {
 			case POST:
 				request = new PostMethod(this.uri);
-				RequestEntity postRequestEntity = new ByteArrayRequestEntity(
-						buffer.array());
+				final RequestEntity postRequestEntity = new ByteArrayRequestEntity(
+						this.buffer.array());
 				((PostMethod) request).setRequestEntity(postRequestEntity);
 				break;
 			case PUT:
 				request = new PutMethod(this.uri);
-				RequestEntity putRequestEntity = new ByteArrayRequestEntity(
-						buffer.array());
+				final RequestEntity putRequestEntity = new ByteArrayRequestEntity(
+						this.buffer.array());
 				((PutMethod) request).setRequestEntity(putRequestEntity);
 				break;
 			case DELETE:
@@ -251,7 +256,7 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 				request = new GetMethod(this.uri);
 			}
 			this.client.executeMethod(request);
-			
+
 		}
 	}
 }
