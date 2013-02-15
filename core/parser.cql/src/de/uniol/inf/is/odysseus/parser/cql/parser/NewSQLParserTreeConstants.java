@@ -127,16 +127,17 @@ public interface NewSQLParserTreeConstants
   public int JJTSLAKILLPENALTY = 120;
   public int JJTASSIGNSLASTATEMENT = 121;
   public int JJTDROPSTREAMSTATEMENT = 122;
-  public int JJTDROPVIEWSTATEMENT = 123;
-  public int JJTCREATEROLESTATEMENT = 124;
-  public int JJTIFEXISTS = 125;
-  public int JJTIFNOTEXISTS = 126;
-  public int JJTDROPROLESTATEMENT = 127;
-  public int JJTGRANTROLESTATEMENT = 128;
-  public int JJTREVOKEROLESTATEMENT = 129;
-  public int JJTGRANTSTATEMENT = 130;
-  public int JJTIDENTIFIERLIST = 131;
-  public int JJTREVOKESTATEMENT = 132;
+  public int JJTDROPSINKSTATEMENT = 123;
+  public int JJTDROPVIEWSTATEMENT = 124;
+  public int JJTCREATEROLESTATEMENT = 125;
+  public int JJTIFEXISTS = 126;
+  public int JJTIFNOTEXISTS = 127;
+  public int JJTDROPROLESTATEMENT = 128;
+  public int JJTGRANTROLESTATEMENT = 129;
+  public int JJTREVOKEROLESTATEMENT = 130;
+  public int JJTGRANTSTATEMENT = 131;
+  public int JJTIDENTIFIERLIST = 132;
+  public int JJTREVOKESTATEMENT = 133;
 
 
   public String[] jjtNodeName = {
@@ -263,6 +264,7 @@ public interface NewSQLParserTreeConstants
     "SlaKillPenalty",
     "AssignSLAStatement",
     "DropStreamStatement",
+    "DropSinkStatement",
     "DropViewStatement",
     "CreateRoleStatement",
     "IfExists",
@@ -275,4 +277,4 @@ public interface NewSQLParserTreeConstants
     "RevokeStatement",
   };
 }
-/* JavaCC - OriginalChecksum=1d62d279a5f1ea60e259df7233e0126c (do not edit this line) */
+/* JavaCC - OriginalChecksum=619011ee76030311081d8fcecf1a7af0 (do not edit this line) */

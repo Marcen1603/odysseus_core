@@ -1445,4 +1445,23 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return null;
 	}
 
+	@Override
+	public Object visit(ASTDropSinkStatement node, Object data) throws QueryParseException {
+		String sinkname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		boolean ifExists = false;
+		if (node.jjtGetNumChildren() >= 2) {
+			if (node.jjtGetChild(1) instanceof ASTIfExists) {
+				ifExists = true;
+			}
+		}
+		if (ifExists) {
+			if(dataDictionary.containsSink(sinkname, caller)){
+				dataDictionary.removeSink(sinkname, caller);
+			}			
+		} else {
+			dataDictionary.removeSink(sinkname, caller);
+		}
+		return null;
+	}
+
 }

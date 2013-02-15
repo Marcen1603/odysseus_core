@@ -746,5 +746,10 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTAccessSource node, Object data) throws QueryParseException {
 		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTDropSinkStatement node, Object data) throws QueryParseException {
+		return pvisit(node);
 	}	
 }
