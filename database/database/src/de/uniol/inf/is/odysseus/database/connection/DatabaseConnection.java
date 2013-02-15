@@ -171,7 +171,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 			DatabaseMetaData meta = connection.getMetaData();
 			ResultSet res = meta.getTables(null, null, null, new String[] { "TABLE" });
 			while (res.next()) {
-				if (res.getString("TABLE_NAME").equals(tablename)) {
+				String tb = res.getString("TABLE_NAME");
+				if (tb.trim().equalsIgnoreCase(tablename)) {
 					return true;
 				}
 			}

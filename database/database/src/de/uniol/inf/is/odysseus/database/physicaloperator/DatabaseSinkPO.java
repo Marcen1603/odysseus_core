@@ -62,7 +62,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	
 
 	private int counter = 1;
-	private long summe = 0L;
+//	private long summe = 0L;
 	private IDatabaseConnection connection;
 	private String tablename;
 	private boolean truncate;
@@ -147,17 +147,17 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	public void processPunctuation(IPunctuation punctuation, int port) {
 	}
 
-	private void calcLatency(Tuple<ITimeInterval> tuple) {
-		long start = tuple.getAttribute(0);
-		long diff = System.currentTimeMillis() - start;
-		summe = summe + diff;
-		if ((counter % 1000) == 0) {
-			System.out.println("Bei " + counter + " Elementen:");
-			System.out.println(" - Total: " + summe);
-			System.out.println(" - Avg: " + ((double) summe / (double) counter));
-		}
-
-	}
+//	private void calcLatency(Tuple<ITimeInterval> tuple) {
+//		long start = tuple.getAttribute(0);
+//		long diff = System.currentTimeMillis() - start;
+//		summe = summe + diff;
+//		if ((counter % 1000) == 0) {
+//			System.out.println("Bei " + counter + " Elementen:");
+//			System.out.println(" - Total: " + summe);
+//			System.out.println(" - Avg: " + ((double) summe / (double) counter));
+//		}
+//
+//	}
 
 	@Override
 	protected void process_next(Tuple<ITimeInterval> tuple, int port) {
@@ -182,7 +182,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 				this.jdbcConnection.commit();
 				logger.debug("Inserted " + count + " rows in database");
 			}
-			calcLatency(tuple);
+			//calcLatency(tuple);
 			// logger.debug("Inserted "+count+" rows in database");
 		} catch (SQLException e) {
 			e.printStackTrace();
