@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 
 	private boolean prototype = true;
+	private SDFSchema schema;
 	
 	protected AbstractDataHandler(){
 	}
@@ -38,11 +39,11 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 
 	}
 
-	
 	@Override
 	public IDataHandler<T> createInstance(SDFSchema schema) {
 		IDataHandler<T> i = getInstance(schema);
 		i.setPrototype(false);
+		i.setSchema(schema);
 		return i;
 	}
 	
@@ -79,6 +80,15 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	@Override
 	public void setPrototype(boolean p) {
 		this.prototype = p;
+	}
+	
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
+	
+	public void setSchema(SDFSchema schema) {
+		this.schema = schema;
 	}
 	
 	@Override

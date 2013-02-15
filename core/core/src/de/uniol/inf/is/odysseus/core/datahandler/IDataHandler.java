@@ -37,4 +37,6 @@ public interface IDataHandler<T> {
 	public IDataHandler<T> createInstance(List<String> schema);
 	public boolean isPrototype();
 	public void setPrototype(boolean p);
+	public SDFSchema getSchema();
+	public void setSchema(SDFSchema schema);
 }
