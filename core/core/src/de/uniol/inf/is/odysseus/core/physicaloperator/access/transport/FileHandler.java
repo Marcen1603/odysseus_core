@@ -30,6 +30,7 @@ public class FileHandler extends AbstractTransportHandler {
     String           filename;
     FileInputStream  in;
     FileOutputStream out;
+	boolean append;
 
     public FileHandler() {
         super();
@@ -56,7 +57,7 @@ public class FileHandler extends AbstractTransportHandler {
     public void processOutOpen() throws  IOException {
         final File file = new File(filename);
         try {
-            out = new FileOutputStream(file, true);
+            out = new FileOutputStream(file, append);
             fireOnConnect();
         }
         catch (Exception e) {
@@ -87,6 +88,8 @@ public class FileHandler extends AbstractTransportHandler {
     public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
         FileHandler fh = new FileHandler(protocolHandler);
         fh.filename = options.get("filename");
+		fh.append = (options.containsKey("append"))?Boolean.parseBoolean(options.get("append")):false;
+
         return fh;
     }
 
