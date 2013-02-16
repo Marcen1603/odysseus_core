@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Text Processing
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.text
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.text.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: 
+ org.apache.commons.codec.language,
+ org.apache.commons.lang;version="2.1.0",
+ org.osgi.framework,
+ org.slf4j
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Service-Component: OSGI-INF/TextFunctionProvider.xml
