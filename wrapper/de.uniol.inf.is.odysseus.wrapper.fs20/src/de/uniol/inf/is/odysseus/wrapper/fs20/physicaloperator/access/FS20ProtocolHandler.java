@@ -19,7 +19,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
- * Protocol handler for the FS20 and FHT comunication protocol
+ * Protocol handler for the FS20 and FHT communication protocol. The
+ * implementation is based on http://fhz4linux.info/tiki-index.php
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
