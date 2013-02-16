@@ -8,7 +8,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: 
  org.apache.commons.codec.language,
- org.apache.commons.lang;version="2.1.0",
+ org.apache.commons.lang3,
  org.osgi.framework,
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
