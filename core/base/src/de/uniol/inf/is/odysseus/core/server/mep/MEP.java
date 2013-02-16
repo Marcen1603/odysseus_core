@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.ArcSinusFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ArcTangens2Function;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ArcTangensFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.CeilFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.ConcatFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ContainsFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.CosinusFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.CurDateFunction;
@@ -226,6 +227,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new LikeFunction());
         registerFunction(new ContainsFunction());
         
+        registerFunction(new ConcatFunction());
         registerFunction(new SubStringFunction());
         registerFunction(new LengthFunction());
         registerFunction(new UpperFunction());
