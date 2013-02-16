@@ -4,13 +4,14 @@ Bundle-Name: Twitter
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.twitter
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.twitter.Activator
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.wrapper.base,
+Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
+ de.uniol.inf.is.odysseus.wrapper.base,
  de.uniol.inf.is.odysseus.wrapper.base.model,
  org.osgi.framework;version="1.3.0",
  org.slf4j
-Service-Component: OSGI-INF/TwitterSourceAdapter.xml
+Service-Component: OSGI-INF/TwitterTransportHandler.xml
 Bundle-ClassPath: .,
  lib/twitter4j-core-2.2.3-SNAPSHOT.jar,
  lib/twitter4j-stream-2.2.3-SNAPSHOT.jar
