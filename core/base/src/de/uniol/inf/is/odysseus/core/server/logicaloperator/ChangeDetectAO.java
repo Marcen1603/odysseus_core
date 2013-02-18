@@ -53,6 +53,8 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		this.rate = po.rate;
 		this.deliverFirstElement = po.deliverFirstElement;
 		this.groupingAttributes = new ArrayList<>(po.getGroupingAttributes());
+		this.tolerance = po.tolerance;
+		this.isRelativeTolerance = po.isRelativeTolerance;
 	}
 
 	public ChangeDetectAO() {
