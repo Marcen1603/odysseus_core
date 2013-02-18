@@ -36,17 +36,20 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.util.AccessAOMap;
 
 public class PeerManager implements IPeerManager, DiscoveryListener, IDataDictionaryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
 	private static final int PEER_DISCOVER_INTERVAL_MILLIS = 30 * 1000;
 
+	private final AccessAOMap accessAOMap = new AccessAOMap();
+	
 	private DiscoveryService discoveryService;
 	private PeerDiscoveryThread peerDiscoveryThread;
 	private IDataDictionary dataDictionary;
 
-	public void activate() {
+	public final void activate() {
 		this.discoveryService = P2PNewPlugIn.getDiscoveryService();
 
 		discoveryService.addDiscoveryListener(this);
@@ -54,7 +57,7 @@ public class PeerManager implements IPeerManager, DiscoveryListener, IDataDictio
 		peerDiscoveryThread.start();
 	}
 
-	public void deactivate() {
+	public final void deactivate() {
 		peerDiscoveryThread.stopRunning();
 		discoveryService.removeDiscoveryListener(this);
 	}
@@ -101,7 +104,7 @@ public class PeerManager implements IPeerManager, DiscoveryListener, IDataDictio
 	}
 
 	@Override
-	public ImmutableList<String> getPeers() {
+	public final ImmutableList<String> getPeers() {
 		try {
 			Enumeration<Advertisement> localAdvs = discoveryService.getLocalAdvertisements(DiscoveryService.PEER, null, null);
 			return extractPeerNames(localAdvs);
@@ -112,6 +115,21 @@ public class PeerManager implements IPeerManager, DiscoveryListener, IDataDictio
 
 	}
 
+	@Override
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+		accessAOMap.putIndirect(name, op);
+	}
+
+	@Override
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+		accessAOMap.remove(name);
+	}
+
+	@Override
+	public void dataDictionaryChanged(IDataDictionary sender) {
+		// do nothing
+	}
+	
 	protected void processPeerAdvertisement(PeerAdvertisement adv) throws IOException {
 		LOG.debug("Got PeerAdvertisement from peer {}", adv.getName());
 		discoveryService.publish(adv, PEER_DISCOVER_INTERVAL_MILLIS, PEER_DISCOVER_INTERVAL_MILLIS);
@@ -132,18 +150,5 @@ public class PeerManager implements IPeerManager, DiscoveryListener, IDataDictio
 		return names.build();
 	}
 
-	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		LOG.info("Added view: name={}, op={}", name, op);
-	}
 
-	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		LOG.info("Removed view: name={}, op={}", name, op);
-	}
-
-	@Override
-	public void dataDictionaryChanged(IDataDictionary sender) {
-		LOG.info("Data dictionary changed");
-	}
 }

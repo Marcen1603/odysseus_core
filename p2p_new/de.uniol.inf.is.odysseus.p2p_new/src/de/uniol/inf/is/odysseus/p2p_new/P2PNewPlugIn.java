@@ -71,7 +71,6 @@ public class P2PNewPlugIn implements BundleActivator {
 			LOG.warn("Could not get JXTA-Logger for setting level to {}", JXTA_LOG_LEVEL);
 		}
 		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
-
 	}
 
 	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID) throws IOException {
