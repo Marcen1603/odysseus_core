@@ -42,7 +42,7 @@ public class TSlidingElementWindowTIPORule extends AbstractTransformationRule<Wi
 	public boolean isExecutable(WindowAO operator, TransformationConfiguration transformConfig) {
 		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
 			if (operator.isAllPhysicalInputSet()) {
-				if ((operator.getWindowType() == WindowType.TUPLE && operator.getWindowSlide() == -1)) {
+				if ((operator.getWindowType() == WindowType.TUPLE)) {
 					if (!operator.isPartitioned()) {
 						return true;
 					}

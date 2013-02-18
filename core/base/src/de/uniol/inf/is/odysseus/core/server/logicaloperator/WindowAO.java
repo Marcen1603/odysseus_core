@@ -231,9 +231,9 @@ public class WindowAO extends UnaryLogicalOp {
 			}
 			return true;
 		case TUPLE:
-			if (this.windowSlide != -1) {
+			if (this.windowSlide > 0 && this.windowAdvance > 0) {
 				addError(new IllegalParameterException(
-						"can't use slide in tuple window"));
+						"can't use slide and advance at the same time"));
 				return false;
 			}
 			return true;

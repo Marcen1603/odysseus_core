@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,16 +31,30 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	protected final long windowAdvance;
 	protected final WindowType windowType;
 	protected final boolean partitioned;
+	protected final boolean usesAdvanceParam;
 
-	public AbstractWindowTIPO(WindowAO ao) {				
-		this.windowSize = TimeUnit.MILLISECONDS.convert(ao.getWindowSize(), ao.getTimeUnit());
-		this.windowAdvance = TimeUnit.MILLISECONDS.convert(ao.getWindowAdvance(), ao.getTimeUnit());
+	public AbstractWindowTIPO(WindowAO ao) {
+		this.windowSize = TimeUnit.MILLISECONDS.convert(ao.getWindowSize(),
+				ao.getTimeUnit());
+		if (ao.getWindowAdvance() > 0) {
+			this.windowAdvance = TimeUnit.MILLISECONDS.convert(
+					ao.getWindowAdvance(), ao.getTimeUnit());
+			usesAdvanceParam = true;
+		} else {
+			this.windowAdvance = TimeUnit.MILLISECONDS.convert(
+					ao.getWindowSlide(), ao.getTimeUnit());
+			usesAdvanceParam = false;
+		}
 		// this.windowAO = ao;
 		this.windowType = ao.getWindowType();
 		this.partitioned = ao.isPartitioned();
-		setName(getName() + " s=" + windowSize + " a=" + windowAdvance);
+		//setName(getName() + " s=" + windowSize + " a=" + windowAdvance);
 		addInfo("unit-based size", windowSize);
-		addInfo("unit-based advance", windowAdvance);				
+		if (usesAdvanceParam) {
+			addInfo("unit-based advance", windowAdvance);
+		} else {
+			addInfo("unit-based slide", windowAdvance);
+		}
 		addInfo("used unit", ao.getTimeUnit());
 	}
 
@@ -51,6 +65,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 		// this.windowAO = window.windowAO.clone();
 		this.windowType = window.windowType;
 		this.partitioned = window.partitioned;
+		this.usesAdvanceParam = window.usesAdvanceParam;
 	}
 
 	@Override

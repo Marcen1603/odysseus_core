@@ -19,9 +19,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 
 public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		extends AbstractWindowTIPO<T> {
@@ -70,9 +71,16 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 				elemsToSend = windowSize;
 				elemsToRemoveFromStream = windowAdvance - windowSize;
 			}
+			// In cases of 
+			PointInTime start = buffer.get(0).getMetadata().getStart();
 			for (int i = 0; i < elemsToSend; i++) {
 				T toReturn = bufferIter.next();
 				bufferIter.remove();
+				// If slide param is used give all elements of the window
+				// the same start timestamp
+				if (!usesAdvanceParam){
+					toReturn.getMetadata().setStart(start);
+				}
 				toReturn.getMetadata().setEnd(object.getMetadata().getStart());
 				transfer(toReturn);
 			}
@@ -106,5 +114,5 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	public void process_close() {
 		this._buffer.clear();
 	}
-
+	
 }
