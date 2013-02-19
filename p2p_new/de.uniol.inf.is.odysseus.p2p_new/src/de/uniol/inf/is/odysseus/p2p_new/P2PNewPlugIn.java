@@ -6,6 +6,7 @@ import java.util.Random;
 
 import net.jxta.content.ContentService;
 import net.jxta.discovery.DiscoveryService;
+import net.jxta.document.AdvertisementFactory;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
@@ -20,6 +21,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisement;
 
 public class P2PNewPlugIn implements BundleActivator {
 
@@ -37,7 +40,7 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static DiscoveryService discoveryService;
 	private static ContentService contentService;
 	private static PeerGroup ownPeerGroup;
-	
+
 	private NetworkManager manager;
 
 	public void start(BundleContext bundleContext) throws Exception {
@@ -53,17 +56,19 @@ public class P2PNewPlugIn implements BundleActivator {
 
 		discoveryService = ownPeerGroup.getDiscoveryService();
 		contentService = ownPeerGroup.getContentService();
-		
+
+		registerAdvertisementTypes();
+
 		LOG.debug("JXTA-Network started. Peer {} is in group '{}'", PEER_NAME, ownPeerGroup);
 	}
 
-	public void stop(BundleContext bundleContext) throws Exception {	
+	public void stop(BundleContext bundleContext) throws Exception {
 		discoveryService = null;
 
 		manager.stopNetwork();
 		LOG.debug("JXTA-Network stopped");
 	}
-	
+
 	public static DiscoveryService getDiscoveryService() {
 		return discoveryService;
 	}
@@ -99,4 +104,8 @@ public class P2PNewPlugIn implements BundleActivator {
 		return parentPeerGroup.newGroup(subGroupID, parentPeerGroup.getAllPurposePeerGroupImplAdvertisement(), subGroupName, "");
 	}
 
+	private static void registerAdvertisementTypes() {
+		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisement.Instantiator());
+		LOG.debug("Registered {} to AdvertisementFactory", SourceAdvertisement.getAdvertisementType());
+	}
 }

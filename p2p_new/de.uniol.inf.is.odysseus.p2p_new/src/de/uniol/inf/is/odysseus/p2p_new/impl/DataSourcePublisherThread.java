@@ -1,27 +1,22 @@
 package de.uniol.inf.is.odysseus.p2p_new.impl;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
-import net.jxta.content.Content;
-import net.jxta.content.ContentID;
-import net.jxta.content.ContentShare;
 import net.jxta.discovery.DiscoveryService;
-import net.jxta.endpoint.StringMessageElement;
+import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
 public class DataSourcePublisherThread extends RepeatingJobThread implements IDataDictionaryListener {
@@ -32,7 +27,6 @@ public class DataSourcePublisherThread extends RepeatingJobThread implements IDa
 
 	private final IDataDictionary dataDictionary;
 	private final DiscoveryService discoveryService;
-	private final Map<String, ContentID> sharedContentMap = Maps.newHashMap();
 
 	public DataSourcePublisherThread(IDataDictionary dataDictionary, DiscoveryService discoveryService) {
 		super(PUBLISH_INTERVAL_MILLIS, THREAD_NAME);
@@ -49,8 +43,8 @@ public class DataSourcePublisherThread extends RepeatingJobThread implements IDa
 	@Override
 	public void doJob() {
 		for (Entry<String, ILogicalOperator> stream : dataDictionary.getStreams(SessionManagementService.getActiveSession())) {
-			publishSourceName(determineContentID(stream.getKey()), stream.getKey(), PUBLISH_INTERVAL_MILLIS);
-		}	
+			publishSourceName(stream.getKey(), PUBLISH_INTERVAL_MILLIS);
+		}
 	}
 
 	@Override
@@ -60,19 +54,11 @@ public class DataSourcePublisherThread extends RepeatingJobThread implements IDa
 
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		ContentID contentID = IDFactory.newContentID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), false);
-		sharedContentMap.put(name, contentID);
-
-		publishSourceName(contentID, name, PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
+		publishSourceName(name, PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
 	}
 
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		if (sharedContentMap.containsKey(name)) {
-
-			P2PNewPlugIn.getContentService().unshareContent(sharedContentMap.get(name));
-			sharedContentMap.remove(name);
-		}
 	}
 
 	@Override
@@ -80,30 +66,18 @@ public class DataSourcePublisherThread extends RepeatingJobThread implements IDa
 		// do nothing
 	}
 
-	private ContentID determineContentID(String name) {
-		ContentID contentID = null;
-		if (sharedContentMap.containsKey(name)) {
-			contentID = sharedContentMap.get(name);
-		} else {
-			contentID = IDFactory.newContentID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), false);
-			sharedContentMap.put(name, contentID);
-		}
-		return contentID;
-	}
+	private void publishSourceName(String srcName, long lifetime) {
+		LOG.debug("Publishing source {}", srcName);
 
-	private void publishSourceName(ContentID contentID, String srcName, long lifetime) {
-		LOG.debug("Publish source {}", srcName);
-		
-		Content viewContent = new Content(contentID, null, new StringMessageElement(null, srcName, null));
-		List<ContentShare> shares = P2PNewPlugIn.getContentService().shareContent(viewContent);
+		SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
+		adv.setSourceName(srcName);
+		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+
 		try {
-			for (ContentShare share : shares) {
-				discoveryService.publish(share.getContentShareAdvertisement(), lifetime, lifetime);
-			}
-
+			discoveryService.publish(adv, lifetime, lifetime);
 		} catch (IOException ex) {
-			LOG.error("Could not publish content for data source {}", srcName, ex);
-			P2PNewPlugIn.getContentService().unshareContent(contentID);
+			LOG.error("Could not publish source {}", srcName, ex);
 		}
+
 	}
 }

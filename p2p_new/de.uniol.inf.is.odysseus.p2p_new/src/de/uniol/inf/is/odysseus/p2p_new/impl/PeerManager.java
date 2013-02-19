@@ -16,18 +16,13 @@
 
 package de.uniol.inf.is.odysseus.p2p_new.impl;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Enumeration;
 
-import net.jxta.content.ContentTransfer;
-import net.jxta.content.TransferException;
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
-import net.jxta.protocol.ContentShareAdvertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.protocol.PeerAdvertisement;
 
@@ -38,6 +33,7 @@ import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisement;
 
 public class PeerManager implements IPeerManager, DiscoveryListener {
 
@@ -91,8 +87,8 @@ public class PeerManager implements IPeerManager, DiscoveryListener {
 
 				if (adv instanceof PeerAdvertisement) {
 					processPeerAdvertisement((PeerAdvertisement) adv);
-				} else if (adv instanceof ContentShareAdvertisement) {
-					processContentShareAdvertisement((ContentShareAdvertisement) adv);
+				} else if (adv instanceof SourceAdvertisement) {
+					processSourceAdvertisement((SourceAdvertisement) adv);
 				} else {
 					processOtherAdvertisement(adv);
 				}
@@ -108,29 +104,13 @@ public class PeerManager implements IPeerManager, DiscoveryListener {
 	}
 
 	protected void processOtherAdvertisement(Advertisement adv) {
+		LOG.debug("Got other advertisement of type {}", adv.getAdvType());
 	}
 
-	protected synchronized void processContentShareAdvertisement(ContentShareAdvertisement adv) throws IOException {
-		LOG.debug("Got content share advertisement {}", adv.getContentID());
-
-		try {
-			ContentTransfer transfer = P2PNewPlugIn.getContentService().retrieveContent(adv.getContentID());
-			if (transfer != null) {
-				transfer.startSourceLocation();
-				File f = new File("test.tst");
-				transfer.startTransfer(f);
-				transfer.waitFor();
-				
-				byte[] data = Files.readAllBytes(f.toPath());
-				String srcName = new String(data);
-				LOG.debug("Got source: {}", srcName);
-				
-			} else {
-				LOG.error("Could not retrieve content of ContentID {}", adv.getContentID());
-			}
-		} catch (InterruptedException | TransferException ex) {
-			LOG.error("Could not retrieve content of ContentID {}", adv.getContentID());
-		}
+	protected synchronized void processSourceAdvertisement(SourceAdvertisement adv) throws IOException {
+		LOG.debug("Got source advertisement");
+		LOG.debug("ID is {}", adv.getID());
+		LOG.debug("New source {}", adv.getSourceName());
 	}
 
 	private static ImmutableList<String> extractPeerNames(Enumeration<Advertisement> localAdvs) {
