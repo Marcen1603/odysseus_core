@@ -36,6 +36,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	protected BufferedReader reader;
 	protected BufferedWriter writer;
 	private long delay;
+	private int nanodelay;
 
 	public LineProtocolHandler() {
 		super();
@@ -44,6 +45,16 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public LineProtocolHandler(ITransportDirection direction,
 			IAccessPattern access) {
 		super(direction, access);
+	}
+
+	protected void init(Map<String, String> options) {
+		if (options.get("delay") != null) {
+			setDelay(Long.parseLong(options.get("delay")));
+		}
+		if (options.get("nanodelay") != null) {
+			setNanodelay(Integer.parseInt(options.get("nanodelay")));
+		}
+
 	}
 
 	@Override
@@ -99,7 +110,16 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 				Thread.sleep(delay);
 			} catch (InterruptedException e) {
 				// interrupting the delay might be correct
-				//e.printStackTrace();
+				// e.printStackTrace();
+			}
+		} else {
+			if (nanodelay > 0) {
+				try {
+					Thread.sleep(0L, nanodelay);
+				} catch (InterruptedException e) {
+					// interrupting the delay might be correct
+					// e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -112,7 +132,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 				access);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
-		instance.setDelay(Long.parseLong(options.get("delay")));
+		instance.init(options);
 
 		return instance;
 	}
@@ -130,6 +150,14 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		this.delay = delay;
 	}
 
+    public void setNanodelay(int nanodelay) {
+		this.nanodelay = nanodelay;
+	}
+    
+    public int getNanodelay() {
+		return nanodelay;
+	}
+	
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
 		if (this.getDirection().equals(ITransportDirection.IN)) {

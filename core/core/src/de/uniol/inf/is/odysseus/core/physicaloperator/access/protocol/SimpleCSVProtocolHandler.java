@@ -40,6 +40,18 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
     }
 
     @Override
+    protected void init(Map<String, String> options) {
+    	super.init(options);
+        delimiter = options.get("delimiter");
+        if (options.get("readfirstline") != null) {
+            readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
+        }
+        else {
+            readFirstLine = true;
+        }
+    }
+    
+    @Override
     public T getNext() throws IOException {
         if (!firstLineSkipped && !readFirstLine) {
             reader.readLine();
@@ -75,16 +87,7 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
         SimpleCSVProtocolHandler<T> instance = new SimpleCSVProtocolHandler<T>(direction, access);
         instance.setDataHandler(dataHandler);
         instance.setTransfer(transfer);
-        instance.delimiter = options.get("delimiter");
-        if (options.get("readfirstline") != null) {
-            instance.readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
-        }
-        else {
-            instance.readFirstLine = true;
-        }
-        if (options.get("delay") != null) {
-            instance.setDelay(Long.parseLong(options.get("delay")));
-        }
+        instance.init(options);
         return instance;
     }
 
