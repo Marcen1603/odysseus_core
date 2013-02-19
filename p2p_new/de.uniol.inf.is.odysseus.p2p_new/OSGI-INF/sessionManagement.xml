@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p_new.SessionManagement">
+   <implementation class="de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn"/>
+   <reference bind="bindSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement" name="ISessionManagement" policy="static" unbind="unbindSessionManagement"/>
+</scr:component>

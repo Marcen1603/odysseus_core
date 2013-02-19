@@ -16,13 +16,18 @@
 
 package de.uniol.inf.is.odysseus.p2p_new.impl;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Enumeration;
 
+import net.jxta.content.ContentTransfer;
+import net.jxta.content.TransferException;
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
+import net.jxta.protocol.ContentShareAdvertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.protocol.PeerAdvertisement;
 
@@ -31,23 +36,16 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
-import de.uniol.inf.is.odysseus.p2p_new.util.AccessAOMap;
 
-public class PeerManager implements IPeerManager, DiscoveryListener, IDataDictionaryListener {
+public class PeerManager implements IPeerManager, DiscoveryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
-	private static final int PEER_DISCOVER_INTERVAL_MILLIS = 30 * 1000;
+	private static final int PEER_DISCOVER_INTERVAL_MILLIS = 5 * 1000;
 
-	private final AccessAOMap accessAOMap = new AccessAOMap();
-	
 	private DiscoveryService discoveryService;
 	private PeerDiscoveryThread peerDiscoveryThread;
-	private IDataDictionary dataDictionary;
 
 	public final void activate() {
 		this.discoveryService = P2PNewPlugIn.getDiscoveryService();
@@ -55,52 +53,20 @@ public class PeerManager implements IPeerManager, DiscoveryListener, IDataDictio
 		discoveryService.addDiscoveryListener(this);
 		peerDiscoveryThread = new PeerDiscoveryThread(discoveryService, PEER_DISCOVER_INTERVAL_MILLIS);
 		peerDiscoveryThread.start();
+
+		LOG.debug("PeerManager activated");
 	}
 
 	public final void deactivate() {
 		peerDiscoveryThread.stopRunning();
 		discoveryService.removeDiscoveryListener(this);
-	}
 
-	public final void bindDataDictionary(IDataDictionary dd) {
-		dataDictionary = dd;
-		dataDictionary.addListener(this);
-
-		LOG.info("Data dictionary bound: {}", dd);
-	}
-
-	public final void unbindDataDictionary(IDataDictionary dd) {
-		if (dd == dataDictionary) {
-			dataDictionary.removeListener(this);
-			dataDictionary = null;
-
-			LOG.info("Data dictionary unbound: {}", dd);
-		}
+		LOG.debug("PeerManager deactivated");
 	}
 
 	@Override
 	public final void discoverPeers() {
 		peerDiscoveryThread.doJob();
-	}
-
-	@Override
-	public final void discoveryEvent(DiscoveryEvent event) {
-		try {
-			DiscoveryResponseMsg response = event.getResponse();
-			Enumeration<Advertisement> advs = response.getAdvertisements();
-			while (advs.hasMoreElements()) {
-				Advertisement adv = advs.nextElement();
-
-				if (adv instanceof PeerAdvertisement) {
-					processPeerAdvertisement((PeerAdvertisement) adv);
-				} else {
-					processOtherAdvertisement(adv);
-				}
-
-			}
-		} catch (IOException exception) {
-			LOG.error("Could not process discovery event", exception);
-		}
 	}
 
 	@Override
@@ -116,27 +82,55 @@ public class PeerManager implements IPeerManager, DiscoveryListener, IDataDictio
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		accessAOMap.putIndirect(name, op);
+	public final void discoveryEvent(DiscoveryEvent event) {
+		try {
+			DiscoveryResponseMsg response = event.getResponse();
+			Enumeration<Advertisement> advs = response.getAdvertisements();
+			while (advs.hasMoreElements()) {
+				Advertisement adv = advs.nextElement();
+
+				if (adv instanceof PeerAdvertisement) {
+					processPeerAdvertisement((PeerAdvertisement) adv);
+				} else if (adv instanceof ContentShareAdvertisement) {
+					processContentShareAdvertisement((ContentShareAdvertisement) adv);
+				} else {
+					processOtherAdvertisement(adv);
+				}
+
+			}
+		} catch (IOException exception) {
+			LOG.error("Could not process discovery event", exception);
+		}
 	}
 
-	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		accessAOMap.remove(name);
-	}
-
-	@Override
-	public void dataDictionaryChanged(IDataDictionary sender) {
-		// do nothing
-	}
-	
 	protected void processPeerAdvertisement(PeerAdvertisement adv) throws IOException {
 		LOG.debug("Got PeerAdvertisement from peer {}", adv.getName());
-		discoveryService.publish(adv, PEER_DISCOVER_INTERVAL_MILLIS, PEER_DISCOVER_INTERVAL_MILLIS);
 	}
 
 	protected void processOtherAdvertisement(Advertisement adv) {
-		LOG.debug("Got advertisement of class {} : {} ", adv.getClass(), adv);
+	}
+
+	protected synchronized void processContentShareAdvertisement(ContentShareAdvertisement adv) throws IOException {
+		LOG.debug("Got content share advertisement {}", adv.getContentID());
+
+		try {
+			ContentTransfer transfer = P2PNewPlugIn.getContentService().retrieveContent(adv.getContentID());
+			if (transfer != null) {
+				transfer.startSourceLocation();
+				File f = new File("test.tst");
+				transfer.startTransfer(f);
+				transfer.waitFor();
+				
+				byte[] data = Files.readAllBytes(f.toPath());
+				String srcName = new String(data);
+				LOG.debug("Got source: {}", srcName);
+				
+			} else {
+				LOG.error("Could not retrieve content of ContentID {}", adv.getContentID());
+			}
+		} catch (InterruptedException | TransferException ex) {
+			LOG.error("Could not retrieve content of ContentID {}", adv.getContentID());
+		}
 	}
 
 	private static ImmutableList<String> extractPeerNames(Enumeration<Advertisement> localAdvs) {
@@ -149,6 +143,4 @@ public class PeerManager implements IPeerManager, DiscoveryListener, IDataDictio
 
 		return names.build();
 	}
-
-
 }

@@ -34,5 +34,6 @@ public class PeerDiscoveryThread extends RepeatingJobThread {
 	@Override
 	public void doJob() {
 		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, null);
+		discoveryService.getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99, null);
 	}
 }

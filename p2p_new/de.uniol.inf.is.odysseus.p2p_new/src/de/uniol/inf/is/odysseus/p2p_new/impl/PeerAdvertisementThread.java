@@ -53,8 +53,8 @@ public class PeerAdvertisementThread extends RepeatingJobThread {
 	@Override
 	public void doJob() {
 		try {
-			discoveryService.publish(peerAdv, 3000, 3000);
-			discoveryService.remotePublish(peerAdv, 3000);		
+			discoveryService.publish(peerAdv, getIntervalMillis(), getIntervalMillis());
+			discoveryService.remotePublish(peerAdv, getIntervalMillis());		
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

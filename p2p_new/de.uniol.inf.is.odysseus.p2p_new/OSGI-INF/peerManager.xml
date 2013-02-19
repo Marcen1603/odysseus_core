@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" enabled="true" immediate="false" name="de.uniol.inf.is.odysseus.p2p_new.PeerManager">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" enabled="true" immediate="true" name="de.uniol.inf.is.odysseus.p2p_new.PeerManager">
    <implementation class="de.uniol.inf.is.odysseus.p2p_new.impl.PeerManager"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.p2p_new.IPeerManager"/>
    </service>
-   <reference bind="bindDataDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary" name="IDataDictionary" policy="static" unbind="unbindDataDictionary"/>
 </scr:component>

@@ -23,15 +23,16 @@ public class RepeatingJobThread extends Thread{
 
 	private static final String DEFAULT_THREAD_NAME = "Repeating job";
 
-	private final int executionIntervalMillis;
+	private final long executionIntervalMillis;
 
 	private boolean isRunning = true;
+	private long lastExecutionTimestamp = 0;
 
-	public RepeatingJobThread(int executionIntervalMillis) {
+	public RepeatingJobThread(long executionIntervalMillis) {
 		this(executionIntervalMillis, DEFAULT_THREAD_NAME);
 	}
 
-	public RepeatingJobThread(int executionIntervalMillis, String threadName) {
+	public RepeatingJobThread(long executionIntervalMillis, String threadName) {
 		Preconditions.checkArgument(executionIntervalMillis > 0, "Discover interval for other peers must be positive!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(threadName), "Thread name must not be null or empty!");
 
@@ -46,6 +47,8 @@ public class RepeatingJobThread extends Thread{
 		beforeJob();
 		while (isRunning) {
 			doJob();
+			
+			lastExecutionTimestamp = System.currentTimeMillis();
 			trySleep(executionIntervalMillis);
 		}
 		afterJob();
@@ -63,8 +66,16 @@ public class RepeatingJobThread extends Thread{
 	public final void stopRunning() {
 		isRunning = false;
 	}
+	
+	protected final long getIntervalMillis() {
+		return executionIntervalMillis;
+	}
+	
+	protected final long getLastExecutionTimestamp() {
+		return lastExecutionTimestamp;
+	}
 
-	private static void trySleep(int lengthMillis) {
+	private static void trySleep(long lengthMillis) {
 		try {
 			Thread.sleep(lengthMillis);
 		} catch (InterruptedException ex) {

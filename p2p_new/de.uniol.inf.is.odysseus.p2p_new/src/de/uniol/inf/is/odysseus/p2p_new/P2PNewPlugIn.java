@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
+import net.jxta.content.ContentService;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.id.IDFactory;
@@ -20,6 +21,11 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.impl.DataSourcePublisherThread;
+
 public class P2PNewPlugIn implements BundleActivator {
 
 	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
@@ -34,8 +40,15 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static final PeerID PEER_ID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID, PEER_NAME.getBytes());
 
 	private static DiscoveryService discoveryService;
+	private static ContentService contentService;
+	private static PeerGroup ownPeerGroup;
+	
+	private static IDataDictionary dataDictionary;
+	private static ISessionManagement sessionManagement;
+	private static ISession activeSession;
 
 	private NetworkManager manager;
+	private DataSourcePublisherThread dataSourcePublisherThread;
 
 	public void start(BundleContext bundleContext) throws Exception {
 		configureLogging(bundleContext.getBundle());
@@ -46,21 +59,75 @@ public class P2PNewPlugIn implements BundleActivator {
 		configureNetwork(manager.getConfigurator(), PEER_ID);
 
 		PeerGroup netPeerGroup = manager.startNetwork();
-		PeerGroup subGroup = createSubGroup(netPeerGroup, SUBGROUP_ID, SUBGROUP_NAME);
-		discoveryService = subGroup.getDiscoveryService();
+		ownPeerGroup = createSubGroup(netPeerGroup, SUBGROUP_ID, SUBGROUP_NAME);
+
+		discoveryService = ownPeerGroup.getDiscoveryService();
+		contentService = ownPeerGroup.getContentService();
 		
-		LOG.debug("JXTA-Network started. Peer {} is in group '{}'", PEER_NAME, subGroup);
+		LOG.debug("JXTA-Network started. Peer {} is in group '{}'", PEER_NAME, ownPeerGroup);
 	}
 
-	public void stop(BundleContext bundleContext) throws Exception {
+	public void stop(BundleContext bundleContext) throws Exception {	
 		discoveryService = null;
 
 		manager.stopNetwork();
 		LOG.debug("JXTA-Network stopped");
 	}
+
+	public final void bindDataDictionary(IDataDictionary dd) {
+		dataDictionary = dd;
+		dataSourcePublisherThread = new DataSourcePublisherThread(dataDictionary, discoveryService);
+		dataSourcePublisherThread.start();
+
+		LOG.info("Data dictionary bound: {}", dd);
+	}
+
+	public final void unbindDataDictionary(IDataDictionary dd) {
+		if (dd == dataDictionary) {
+			dataSourcePublisherThread.stopRunning();
+			dataDictionary = null;
+
+			LOG.info("Data dictionary unbound: {}", dd);
+		}
+	}
 	
+	public final void bindSessionManagement( ISessionManagement sm ) {
+		sessionManagement = sm;
+		LOG.info("Session management bound: {}", sm);
+
+		activeSession = sessionManagement.login("System", "manager".getBytes());
+		LOG.info("Got session for user System");
+	}
+	
+	public final void unbindSessionManagement( ISessionManagement sm ) {
+		if( sm == sessionManagement ) {
+			sessionManagement = null;
+			LOG.info("Session management unbound: {}", sm);
+		}
+	}
+	
+	public static IDataDictionary getDataDictionary() {
+		return dataDictionary;
+	}
+	
+	public static ISessionManagement getSessionManagement() {
+		return sessionManagement;
+	}
+	
+	public static ISession getActiveSession() {
+		return activeSession;
+	}
+
 	public static DiscoveryService getDiscoveryService() {
 		return discoveryService;
+	}
+
+	public static ContentService getContentService() {
+		return contentService;
+	}
+
+	public static PeerGroup getOwnPeerGroup() {
+		return ownPeerGroup;
 	}
 
 	private static void configureLogging(Bundle bundle) {
@@ -85,4 +152,5 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static PeerGroup createSubGroup(PeerGroup parentPeerGroup, PeerGroupID subGroupID, String subGroupName) throws PeerGroupException, IOException, Exception {
 		return parentPeerGroup.newGroup(subGroupID, parentPeerGroup.getAllPurposePeerGroupImplAdvertisement(), subGroupName, "");
 	}
+
 }
