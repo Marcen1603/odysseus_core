@@ -1,0 +1,21 @@
+{
+  "websitePort": 8080,
+  "odysseusAddress": "localhost",
+  "outgoingPortDeliveryRequest": 4711,
+  "outgoingPortManualAssignment": 4714,
+  "outgoingPortPickupConfirmation": 4716,
+  "outgoingPortDeliveryRequestCancellation": 4777,
+  "incomingPortDeliveryBid": 4719,
+  "incomingPortDeliveryConfirmation": 4720,
+  "incomingPortManualAssignmentTimeoutAlert": 4721,
+  "incomingPortPickupAlert": 4722,
+  "incomingPortDeliveryAlert": 4723,
+  "createUserOnLogin": true,
+  "mysql": {
+    "address": "localhost",
+    "port": 3307,
+    "username": "root",
+    "password": "cogni",
+    "database": "fastflower"
+  }
+}

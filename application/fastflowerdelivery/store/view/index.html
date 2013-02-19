@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Fast Flower Delivery - Store</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+	<script type="text/javascript" src="js/data.js"></script>
+	<script type="text/javascript" src="js/view.js"></script>
+	<script type="text/javascript" src="js/update.js"></script>
+	<script type="text/javascript" src="js/init.js"></script>
+</head>
+<body>
+
+<div class="main">
+	<div class="head"><div class="headText"></div><div class="odysseus"></div></div>
+	<div class="banner"><div class="bannerText"></div><div class="bannerImage"></div></div>
+	<div class="content">
+	
+		<div class="menu">
+			<div class="item" id="new">Create a New Delivery Request</div>
+		</div>
+		<div class="page">
+			<div class="home">
+				<div class="title">Welcome</div>
+				<div class="text">
+					<strong>Welcome to the Fast Flower Delivery Application.</strong><br/><br/>
+					Please select an option in the menu on the left to begin.<br/><br/>
+					
+					<form class="login">
+						Please login to the system:<br/>
+						<input type="text" name="name" />
+						<input type="submit" value="Login" />
+					</form>				
+				</div>
+			</div>
+			<div class="newRequest">
+				<div class="title">Create New Delivery Request</div>
+				<form class="deliveryRequest">
+					<div class="label">Customer Data</div>
+					<div class="input"><input type="text" name="customer" /></div>
+			
+					<div class="label">Neighborhood</div>
+					<div class="input"><input type="text" name="hood" /></div>
+			
+					<div class="label">Pickup Time Offset</div>
+					<div class="input"><input type="text" name="pickup" /></div>
+			
+					<div class="label">Delivery Time Offset</div>
+					<div class="input"><input type="text" name="delivery" /></div>
+			
+					<div class="input"><input type="submit" value="Submit" /></div>
+				</form>
+			</div>
+			<div class="editRequest">
+				<div class="information">
+					<div class="title">Manage Delivery <span class="requestId"></span></div>
+					<div class="label">Customer Data</div>
+					<div class="data"><span class="requestCustomer"></span></div>
+					<div class="label">Neighborhood</div>
+					<div class="data"><span class="requestNeighborhood"></span></div>
+					<div class="label">Requested Pickup Time</div>
+					<div class="data"><span class="requestPickup"></span></div>
+					<div class="label">Requested Delivery Time</div>
+					<div class="data"><span class="requestDelivery"></span></div>
+				</div>			
+				<div class="management">
+					<div class="drivers">
+						<div class="title">Drivers</div>
+						<div class="driver">Currently in bid phase...</div>
+					</div>
+					<div class="actions">
+						<div class="spacer"></div>
+						<div class="title">Actions</div>
+						<form class="driverPickup">
+							<div class="input"><input type="submit" value="Driver Picked Delivery Up" /></div>
+						</form>
+						<div class="spacer"></div>
+						<form class="cancelDeliveryRequest">
+							<div class="input"><input type="submit" value="Cancel Request" /></div>
+						</form>
+					</div>
+				</div>
+				<div class="clear"></div>	
+			</div>
+		</div>
+		<div class="clear"></div>	
+	</div>
+
+	<div id="showDialog">
+		<div class="title">Info</div>
+		<div class="dialogIcon"></div>
+		<div class="dialogContent"></div>
+		<div class="clear"></div>
+	</div>
+
+	<div class="footer">Webdesign & programming by <a style="color: #EFEFEF; text-decoration: none;" href="mailto:weert.stamm@uni-oldenburg.de" target="_blank">Weert Stamm</a><br/>Flower image courtesy of James Barker / <a style="color: #EFEFEF; text-decoration: none;" href="http://www.freedigitalphotos.net" target="_blank">FreeDigitalPhotos.net</a></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,619 @@
+     ////////////////////////////////////
+    /// Fast Flower Delivery Script  ///
+   ///                              ///
+  ///     Author: Weert Stamm      ///
+ ////////////////////////////////////
+
+/// Database Connection
+#PARSER CQL
+#TRANSCFG Standard
+#RUNQUERY
+CREATE DATABASE CONNECTION storeConnection AS mysql TO fastflower AT localhost : 3307 WITH USER root PASSWORD cogni
+
+/// Sources
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+deliveryRequest := ACCESS({
+       source='deliveryRequest',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['OccurenceTime', 'starttimestamp'],
+            ['RequestId', 'integer'],
+			['Store', 'string'],
+			['AddresseeLocation', 'string'],
+			['RequiredPickupTime', 'long'],
+			['RequiredDeliveryTime', 'long'],
+			['Neighborhood', 'string']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4711'],
+             ['autoconnect', 'false']
+       ]
+})
+
+bidRequest := ACCESS({
+       source='bidRequest',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['OccurenceTime', 'starttimestamp'],
+            ['RequestId', 'integer'],
+			['Store', 'string'],
+			['AddresseeLocation', 'string'],
+			['RequiredPickupTime', 'long'],
+			['RequiredDeliveryTime', 'long'],
+			['Neighborhood', 'string'],
+			['MinimumRanking', 'integer'],
+			['Driver', 'string'],
+			['start', 'StartTimestamp'], ['end', 'EndTimestamp']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4760'],
+             ['autoconnect', 'false']
+       ]
+})
+
+assignment := ACCESS({
+       source='assignment',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['OccurenceTime', 'starttimestamp'],
+            ['RequestId', 'integer'],
+            ['Store', 'string'],
+			['Driver', 'string'],
+			['AddresseeLocation', 'string'],
+			['RequiredPickupTime', 'long'],
+			['RequiredDeliveryTime', 'long']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4714'],
+             ['autoconnect', 'false']
+       ]
+})
+
+pickupConfirmation := ACCESS({
+       source='pickupConfirmation',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['OccurenceTime', 'starttimestamp'],
+            ['RequestId', 'integer'],
+            ['Store', 'string'],
+			['Driver', 'string']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4716'],
+             ['autoconnect', 'false']
+       ]
+})
+
+deliveryBid := ACCESS({
+       source='deliveryBid',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['OccurenceTime', 'starttimestamp'],
+            ['RequestId', 'integer'],
+            ['Driver', 'string'],
+			['Store', 'string'],
+			['RequiredPickupTime', 'long'],
+			['RequiredDeliveryTime', 'long']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4713'],
+             ['autoconnect', 'false']
+       ]
+})
+
+deliveryConfirmation := ACCESS({
+       source='deliveryConfirmation',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['OccurenceTime', 'starttimestamp'],
+            ['RequestId', 'integer'],
+            ['Driver', 'string']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4717'],
+             ['autoconnect', 'false']
+       ]
+})
+
+deliveryAlert := ACCESS({
+       source='deliveryAlert',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['RequestId', 'integer'],
+            ['Driver', 'string'],
+            ['OccurrenceTime', 'StartTimestamp'], ['end', 'EndTimestamp']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4723'],
+             ['autoconnect', 'false']
+       ]
+})
+
+dailyAssignments := ACCESS({
+       source='dailyAssignments',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['Driver', 'string'],
+            ['DeliveryCount', 'integer'],
+            ['OccurrenceTime', 'StartTimestamp'], ['end', 'EndTimestamp']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4750'],
+             ['autoconnect', 'false']
+       ]
+})
+
+dailyStatistics := ACCESS({
+	   source='dailyStatistics',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['Statistic', 'double'],
+            ['OccurrenceTime', 'StartTimestamp'], ['end', 'EndTimestamp']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4751'],
+             ['autoconnect', 'false']
+       ]
+})
+
+relativePerformance := ACCESS({
+	   source='relativePerformance',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['Driver', 'string'],
+            ['RelativePerformance', 'double'],
+            ['OccurrenceTime', 'StartTimestamp'], ['end', 'EndTimestamp']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4752'],
+             ['autoconnect', 'false']
+       ]
+})
+
+rankingIncrease := ACCESS({
+	   source='rankingIncrease',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['Driver', 'string'],
+            ['OccurrenceTime', 'StartTimestamp'], ['end', 'EndTimestamp']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4731'],
+             ['autoconnect', 'false']
+       ]
+})
+
+rankingDecrease := ACCESS({
+	   source='rankingDecrease',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['Driver', 'string'],
+            ['OccurrenceTime', 'StartTimestamp'], ['end', 'EndTimestamp']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4730'],
+             ['autoconnect', 'false']
+       ]
+})
+
+deliveryRequestCancellation := ACCESS({
+	   source='deliveryRequestCancellation',
+       wrapper='GenericPush',
+       transport='nonblockingtcp',
+       protocol='sizebytebuffer',
+       dataHandler='tuple',
+       schema=[
+            ['OccurrenceTime', 'StartTimestamp'],
+            ['RequestId', 'integer']
+       ],
+       options=[
+             ['host', 'localhost'],
+             ['port', '4777'],
+             ['autoconnect', 'false']
+       ]
+})
+
+/// Bid Request System
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Enrich DeliveryRequest by store's minimum ranking
+enrichedDR = dbenrich({connection = 'storeConnection', query='SELECT MinimumRanking FROM store WHERE StoreReference=?', attributes = ['Store'], cacheSize=500, removalStrategy='lfu', expirationTime=20000}, deliveryRequest)
+renamedDR = rename({aliases = ['OccurenceTime', 'RequestId', 'Store', 'AddresseeLocation', 'RequiredPickupTime', 'RequiredDeliveryTime', 'Neighborhood', 'MinimumRanking']}, enrichedDR)
+
+/// Get list of drivers within the neighborhood that fulfill the minimum ranking requirements and join them with the delivery request
+enrichedBR = dbenrich({multiTupleOutput='True', connection = 'storeConnection', query='SELECT DriverReference FROM driver WHERE Location=? AND Ranking>=?', attributes = ['Neighborhood', 'MinimumRanking'], cacheSize=500, removalStrategy='lfu', expirationTime=20000}, renamedDR)
+
+/// Send event to Driver channel
+driverChannel = socketsink({sinkport=4760, sinkType='bytebuffer', sinkName='bidRequestChannel'}, timestamptopayload(enrichedBR))
+
+/// Reroute BidRequest, otherwise driver application will not receive this event
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+driverChannel = socketsink({sinkport=4712, sinkType='bytebuffer', sinkName='driverChannel'}, timestamptopayload(bidRequest))
+
+/// DeliveryBid
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+bid = socketsink({sinkport=4719, sinkType='bytebuffer', sinkName='bidChannel'}, timestamptopayload(deliveryBid))
+
+/// Assignment
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+sink = socketsink({sinkport=4715, sinkType='bytebuffer', sinkName='assignmentChannel'}, timestamptopayload(assignment))
+
+/// PickupConfirmation
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+pickup = socketsink({sinkport=4718, sinkType='bytebuffer', sinkName='assignmentChannel'}, timestamptopayload(pickupConfirmation))
+
+/// DeliveryConfirmation
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+confirmation = socketsink({sinkport=4720, sinkType='bytebuffer', sinkName='confirmationChannel'}, timestamptopayload(deliveryConfirmation))
+
+/// DeliveryRequestCancellation
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+cancellation = socketsink({sinkport=4778, sinkType='bytebuffer', sinkName='cancellationChannel'}, timestamptopayload(deliveryRequestCancellation))
+
+
+
+
+
+  //////////////////////
+ /// Control System ///
+//////////////////////
+
+
+
+/// Manual Assignment not done alert
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Send Manual Assignment not done alert, if a delivery has been given drivers, but did not assign a driver in return within 5 minutes
+assignmentProjected = project({attributes = ['RequestId']}, assignment)
+assignmentBeat = assureheartbeat({realTimeDelay=1000, applicationTimeDelay=1000, sendAlwaysHeartbeat='true', allowOutOfOrder='false'}, assignmentProjected)
+s01 = rename({type = 's01', aliases = ['RequestId']}, assignmentBeat)
+
+bidRequestProjected = project({attributes = ['RequestId', 'Store']}, bidRequest)
+bidRequestBeat = assureheartbeat({realTimeDelay=1000, applicationTimeDelay=1000, sendAlwaysHeartbeat='true', allowOutOfOrder='false'}, bidRequestProjected)
+s02 = rename({type = 's02', aliases = ['RequestId', 'Store']}, bidRequestBeat)
+
+bidProjected = project({attributes = ['RequestId']}, deliveryBid)
+bidBeat = assureheartbeat({realTimeDelay=1000, applicationTimeDelay=1000, sendAlwaysHeartbeat='true', allowOutOfOrder='false'}, bidProjected)
+s03 = rename({type = 's03', aliases = ['RequestId']}, bidBeat)
+
+alert = sase({query = 'PATTERN SEQ(~ s01 s1, s02 s2, s03 s3) WHERE skip_till_next_match(s1,s2,s3){s1.RequestId = s2.RequestId AND s2.RequestId = s3.RequestId} WITHIN 5 minutes RETURN s2.RequestId, s2.Store' }, s01, s02)
+
+sink = socketsink({sinkport=4721, sinkType='bytebuffer', sinkName='pickupAlertChannel'}, timestamptopayload(alert))
+
+
+/// Pickup Alert
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Send Pickup Alert, if driver got assignment, but pickup confirmation is not received within the time amount required
+assignmentProjected = project({attributes = ['RequestId', 'Driver', 'RequiredPickupTime']}, assignment)
+assignmentBeat = assureheartbeat({realTimeDelay=1000, applicationTimeDelay=1000, sendAlwaysHeartbeat='true', allowOutOfOrder='false'}, assignmentProjected)
+s01 = rename({type = 's01', aliases = ['RequestId', 'Driver', 'RequiredPickupTime']}, assignmentBeat)
+
+pickupProjected = project({attributes = ['RequestId']}, pickupConfirmation)
+pickupBeat = assureheartbeat({realTimeDelay=1000, applicationTimeDelay=1000, sendAlwaysHeartbeat='true', allowOutOfOrder='false'}, pickupProjected)
+s02 = rename({type = 's02', aliases = ['RequestId']}, pickupBeat)
+
+alert = sase({query = 'PATTERN SEQ(s01 s1, ~ s02 s2) WHERE skip_till_next_match(s1,s2){s1.RequestId = s2.RequestId} ENDS AT s1.RequiredPickupTime RETURN s1.RequestId, s1.Driver' }, s01, s02)
+
+sink = socketsink({sinkport=4722, sinkType='bytebuffer', sinkName='pickupAlertChannel'}, timestamptopayload(alert))
+
+/// Delivery Alert
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Send Alert if delivery was picked up, but not delivered within the time amount required
+pickupProjected = project({attributes = ['RequestId']}, pickupConfirmation)
+pickupBeat = assureheartbeat({realTimeDelay=1000, applicationTimeDelay=1000, sendAlwaysHeartbeat='true', allowOutOfOrder='false'}, pickupProjected)
+s01 = rename({type = 's01', aliases = ['RequestId']}, pickupBeat)
+
+deliveryProjected = project({attributes = ['RequestId']}, deliveryConfirmation)
+deliveryBeat = assureheartbeat({realTimeDelay=1000, applicationTimeDelay=1000, sendAlwaysHeartbeat='true', allowOutOfOrder='false'}, deliveryProjected)
+s02 = rename({type = 's02', aliases = ['RequestId']}, deliveryBeat)
+
+assignmentProjected = project({attributes = ['RequestId', 'Driver', 'RequiredDeliveryTime']}, assignment)
+assignmentBeat = assureheartbeat({realTimeDelay=1000, applicationTimeDelay=1000, sendAlwaysHeartbeat='true', allowOutOfOrder='false'}, assignmentProjected)
+s03 = rename({type = 's03', aliases = ['RequestId', 'Driver', 'RequiredDeliveryTime']}, assignmentBeat)
+
+alert = sase({query = 'PATTERN SEQ(s01 s1, ~ s02 s2, s03 s3) WHERE skip_till_next_match(s1,s2,s3){s1.RequestId = s2.RequestId AND s1.RequestId = s3.RequestId} ENDS AT s3.RequiredDeliveryTime RETURN s3.RequestId, s3.Driver' }, s01, s02, s03)
+
+sink = socketsink({sinkport=4723, sinkType='bytebuffer', sinkName='deliveryAlertChannel'}, timestamptopayload(alert))
+
+
+
+
+  //////////////////////
+ /// Ranking System ///
+//////////////////////
+
+
+
+
+/// Ranking Decrease
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Collect 20 consecutive Delivery Confirmations a single driver is involved in. Collect all delivery Alerts
+/// that match the requestId. If there are more than 5 delivery alerts corresponding to these deliveries, send a ranking decrease event
+
+windowDeliveries = window({type = 'tuple', size = 20, partition = ['Driver']}, deliveryConfirmation)
+projectedDeliveries = project({attributes = ['RequestId']}, windowDeliveries)
+
+windowAlerts = window({type = 'time', size = 120000, advance = 1000}, deliveryAlert)
+projectedAlerts = project({attributes = ['RequestId', 'Driver']}, windowAlerts)
+renamedAlerts = rename({aliases = ['RId', 'Driver']}, projectedAlerts)
+
+joined = join({predicate = RelationalPredicate('RequestId==RId')}, projectedDeliveries, renamedAlerts)
+counted = aggregate({group_by = ['Driver'], aggregations= [['COUNT', 'Driver', 'Count']]}, joined)
+selected = select({predicate = RelationalPredicate('Count>5')}, counted)
+
+projected = project({attributes = ['Driver']}, selected)
+
+sink = socketsink({sinkport=4730, sinkType='bytebuffer', sinkName='rankingDecreaseChannel'}, timestamptopayload(projected))
+
+/// Ranking Increase
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Collect 20 consecutive Delivery Confirmation events a single driver is involved in. Collect all delivery Alerts
+/// that match the requestId. If there are no delivery alerts corresponding to these deliveries, send a ranking increase event
+
+windowDeliveries = window({type = 'tuple', size = 20, partition = ['Driver']}, deliveryConfirmation)
+projectedDeliveries = project({attributes = ['RequestId']}, windowDeliveries)
+
+windowAlerts = window({type = 'time', size = 120000, advance = 1000}, deliveryAlert)
+projectedAlerts = project({attributes = ['RequestId','Driver']}, windowAlerts)
+renamedAlerts = rename({aliases = ['RId','Driver']}, projectedAlerts)
+
+joined = join({predicate = RelationalPredicate('RequestId==RId')}, projectedDeliveries, renamedAlerts)
+counted = aggregate({group_by = ['Driver'], aggregations= [['COUNT', 'Driver', 'Count']]}, joined)
+selected = select({predicate = RelationalPredicate('Count==0')}, counted)
+
+projected = project({attributes = ['Driver']}, selected)
+
+sink = socketsink({sinkport=4731, sinkType='bytebuffer', sinkName='rankingIncreaseChannel'}, timestamptopayload(projected))
+
+
+
+
+
+
+  ////////////////////////
+ /// Reporting System ///
+////////////////////////
+
+
+
+
+
+/// Improvement Note
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Find Ranking Decrease of a Driver. If the following Event is a Ranking Increase Event, send Improvement Note
+
+synced = union(rankingIncrease, rankingDecrease)
+projected = project({attributes = ['Driver']}, synced)
+sink = socketsink({sinkport=4770, sinkType='bytebuffer', sinkName='dailyAssignmentsChannel'}, timestamptopayload(projected))
+
+/// Daily Assignment Calculator 
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+windowBid = window({type = 'time', size = 60000, slide = 60000}, deliveryBid) /// 1 day window ending at day = 86400000 ms
+first = aggregate({group_by = ['Driver'], aggregations= [['FIRST', 'Driver', 'First']]}, windowBid)
+
+windowConfirmation = window({type = 'time', size = 60000, slide = 60000}, deliveryConfirmation) /// 1 day window
+count = aggregate({group_by = ['Driver'], aggregations= [['COUNT', 'Driver', 'DeliveryCount']]}, windowConfirmation)
+countProjected = project({attributes = ['Driver', 'DeliveryCount']}, count)
+countRenamed = rename({aliases = ['driver','DeliveryCount']}, countprojected)
+
+joined = join({predicate = RelationalPredicate('Driver == driver')}, first, countRenamed)
+projected = project({attributes = ['Driver','DeliveryCount']}, joined)
+
+sink = socketsink({sinkport=4750, sinkType='bytebuffer', sinkName='dailyAssignmentsChannel'}, timestamptopayload(projected))
+
+/// Daily Statistics Creator 
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+windowCount = window({type = 'time', size = 120000, advance = 1000}, dailyAssignments) /// 2min sliding window to go sure all elements are regarded
+average = aggregate({aggregations= [['AVG', 'DeliveryCount', 'Statistic', 'double']]}, windowCount)
+projected = project({attributes = ['Statistic']}, average)
+
+sink = socketsink({sinkport=4751, sinkType='bytebuffer', sinkName='dailyStatisticsChannel'}, timestamptopayload(projected))
+
+/// Performance Evaluation 
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+windowCount = window({type = 'time', size = 12000, advance = 1000}, dailyAssignments) /// 2min sliding window to go sure all elements are regarded
+
+windowStats = window({type = 'time', size = 30000, advance = 1000}, dailyStatistics) /// 5min sliding window to go sure all elements are regarded
+projectedStats = project({attributes = ['Statistic', 'OccurrenceTime']}, windowStats)
+renamedStats = rename({aliases = ['Statistic', 'OccTime'] }, projectedStats)
+
+joined = join({predicate = RelationalPredicate('OccurrenceTime < OccTime')}, windowCount, renamedStats)
+relativePerformance = map({expressions = ['Driver','Statistic - DeliveryCount']}, joined)
+
+sink = socketsink({sinkport=4752, sinkType='bytebuffer', sinkName='relativePerformanceChannel'}, timestamptopayload(relativePerformance))
+
+/// Permanent Weak Driver
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Select all daily Deliveries for a single Driver of the entire month. If sum is less than 5, assign "Permanent Weak Driver" status.
+windowDaily = window({type = 'time', size = 2592000000, slide = 2592000000}, dailyAssignments) /// 1 month ( ~= 30 days = 2592000000 ms ) window to go sure all elements are regarded
+sum = aggregate({group_by = ['Driver'], aggregations= [['SUM', 'DeliveryCount', 'Sum']]}, windowDaily)
+
+selected = select({predicate = RelationalPredicate('Sum<5')}, sum)
+projected = project({attributes = ['Driver']}, selected)
+
+sink = socketsink({sinkport=4760, sinkType='bytebuffer', sinkName='permanentWeakDriverChannel'}, timestamptopayload(projected))
+
+/// Idle Driver
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Select all daily assignments for a single driver of the entire month. If sum equals zero, assign "Idle Driver" status.
+windowDaily = window({type = 'time', size = 2592000000, slide = 2592000000}, dailyAssignments) /// 1 month ( ~= 30 days = 2592000000 ms ) window to go sure all elements are regarded
+sum = aggregate({group_by = ['Driver'], aggregations= [['SUM', 'DeliveryCount', 'Sum']]}, windowDaily)
+
+selected = select({predicate = RelationalPredicate('Sum==0')}, sum)
+projected = project({attributes = ['Driver']}, selected)
+
+sink = socketsink({sinkport=4761, sinkType='bytebuffer', sinkName='idleDriverChannel'}, timestamptopayload(projected))
+ 
+/// Improving Driver
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Select all daily assignments for a single driver of the entire month. If the assignment amount stays level or increases, assign "Improving Driver" status
+windowDaily = window({type = 'time', size = 2592000000, slide = 2592000000}, dailyAssignments) /// 1 month ( ~= 30 days = 2592000000 ms ) window to go sure all elements are regarded
+
+/// Count all
+count = aggregate({group_by = ['Driver'], aggregations = [['COUNT', 'Driver', 'Count']]}, windowDaily)
+
+/// Select minimum value of DeliveryCount
+min = aggregate({group_by = ['Driver'], aggregations = [['MIN', 'DeliveryCount', 'Min']]}, windowDaily)
+
+/// Select matching events and count again
+matches = join({predicate = RelationalPredicate('DeliveryCount>=Min && Driver == Driver')}, windowDaily, min)
+countSelected = aggregate({group_by = ['Driver'], aggregations= [['COUNT', 'Driver', 'Count']]}, matches)
+
+/// Check for same count and project to driver status event
+joined = join({predicate = RelationalPredicate('Count==Count')}, count, countSelected)
+projected = project({attributes = ['Driver']}, joined)
+
+sink = socketsink({sinkport=4762, sinkType='bytebuffer', sinkName='improvingDriverChannel'}, timestamptopayload(projected))
+
+/// Consistent Weak Driver
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Select all relative performance events of the entire month. If all of them are -2 (meaning the driver always had 2 less than the avg of all drivers), assign "Consistent Strong Driver" status
+windowRelative = window({type = 'time', size = 2592000000, slide = 2592000000}, relativePerformance) /// 1 month ( ~= 30 days = 2592000000 ms ) window to go sure all elements are regarded
+
+/// Select matching events and count
+selected = select({predicate = RelationalPredicate('RelativePerformance<-2.0')}, windowRelative)
+countSelected = aggregate({group_by = ['Driver'], aggregations= [['COUNT', 'Driver', 'CountAll']]}, selected)
+
+/// Open another window, otherwise query optimization will fail
+windowRelative2 = window({type = 'time', size = 2592000000, slide = 2592000000}, relativePerformance) /// 1 month ( ~= 30 days = 2592000000 ms ) window to go sure all elements are regarded
+
+/// Count all
+count = aggregate({group_by = ['Driver'], aggregations= [['COUNT', 'Driver', 'Count']]}, windowRelative2)
+
+/// Check for same count and project to driver status event
+joined = join({predicate = RelationalPredicate('Count==CountAll')}, count, countSelected)
+projected = project({attributes = ['Driver']}, joined)
+
+sink = socketsink({sinkport=4763, sinkType='bytebuffer', sinkName='consistentWeakDriverChannel'}, timestamptopayload(projected))
+
+
+/// Consistent Strong Driver
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+
+/// Select all relative performance events of the entire month. If all of them are >2 (meaning the driver always had 2 more than the avg of all drivers), assign "Consistent Strong Driver" status
+windowRelative = window({type = 'time', size = 2592000000, slide = 2592000000}, relativePerformance) /// 1 month ( ~= 30 days = 2592000000 ms ) window to go sure all elements are regarded
+
+/// Select matching events and count
+selected = select({predicate = RelationalPredicate('RelativePerformance>2.0')}, windowRelative)
+countSelected = aggregate({group_by = ['Driver'], aggregations= [['COUNT', 'Driver', 'CountAll']]}, selected)
+
+/// Open another window, otherwise query optimization will fail
+windowRelative2 = window({type = 'time', size = 2592000000, slide = 2592000000}, relativePerformance) /// 1 month ( ~= 30 days = 2592000000 ms ) window to go sure all elements are regarded
+
+/// Count all
+count = aggregate({group_by = ['Driver'], aggregations= [['COUNT', 'Driver', 'Count']]}, windowRelative2)
+
+/// Check for same count and project to driver status event
+joined = join({predicate = RelationalPredicate('Count==CountAll')}, count, countSelected)
+projected = project({attributes = ['Driver']}, joined)
+
+sink = socketsink({sinkport=4764, sinkType='bytebuffer', sinkName='consistentStrongDriverChannel'}, timestamptopayload(projected))

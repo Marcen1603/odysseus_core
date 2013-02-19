@@ -1,0 +1,24 @@
+{
+  "websitePort": 8081,
+  "odysseusAddress": "localhost",
+  "outgoingPortDeliveryBid": 4713,
+  "outgoingPortDeliveryConfirmation": 4717,
+  "incomingPortBidRequest": 4712,
+  "incomingPortAssignment": 4715,
+  "incomingPortPickupConfirmation": 4718,
+  "incomingPortIdleDriverReport": 4761,
+  "incomingPortImprovingDriverReport": 4762,
+  "incomingPortPermanentWeakDriverReport": 4760,
+  "incomingPortConsistentWeakDriverReport": 4763,
+  "incomingPortConsistentStrongDriverReport": 4764,
+  "incomingPortImprovingNote": 4770,
+  "incomingPortDeliveryRequestCancellation": 4778,
+  "createUserOnLogin": true,
+  "mysql": {
+    "address": "localhost",
+    "port": 3307,
+    "username": "root",
+    "password": "cogni",
+    "database": "fastflower"
+  }
+}
