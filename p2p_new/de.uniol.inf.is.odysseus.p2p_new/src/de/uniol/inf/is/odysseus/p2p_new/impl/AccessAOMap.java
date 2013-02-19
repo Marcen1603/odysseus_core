@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.util;
+package de.uniol.inf.is.odysseus.p2p_new.impl;
 
 import java.util.HashMap;
 

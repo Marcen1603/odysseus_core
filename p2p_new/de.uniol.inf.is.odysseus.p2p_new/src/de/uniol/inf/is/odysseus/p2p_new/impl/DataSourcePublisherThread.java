@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
 public class DataSourcePublisherThread extends RepeatingJobThread implements IDataDictionaryListener {
 
@@ -47,7 +48,7 @@ public class DataSourcePublisherThread extends RepeatingJobThread implements IDa
 
 	@Override
 	public void doJob() {
-		for (Entry<String, ILogicalOperator> stream : dataDictionary.getStreams(P2PNewPlugIn.getActiveSession())) {
+		for (Entry<String, ILogicalOperator> stream : dataDictionary.getStreams(SessionManagementService.getActiveSession())) {
 			publishSourceName(determineContentID(stream.getKey()), stream.getKey(), PUBLISH_INTERVAL_MILLIS);
 		}	
 	}

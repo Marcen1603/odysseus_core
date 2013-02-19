@@ -21,11 +21,6 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.impl.DataSourcePublisherThread;
-
 public class P2PNewPlugIn implements BundleActivator {
 
 	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
@@ -43,12 +38,7 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static ContentService contentService;
 	private static PeerGroup ownPeerGroup;
 	
-	private static IDataDictionary dataDictionary;
-	private static ISessionManagement sessionManagement;
-	private static ISession activeSession;
-
 	private NetworkManager manager;
-	private DataSourcePublisherThread dataSourcePublisherThread;
 
 	public void start(BundleContext bundleContext) throws Exception {
 		configureLogging(bundleContext.getBundle());
@@ -73,51 +63,7 @@ public class P2PNewPlugIn implements BundleActivator {
 		manager.stopNetwork();
 		LOG.debug("JXTA-Network stopped");
 	}
-
-	public final void bindDataDictionary(IDataDictionary dd) {
-		dataDictionary = dd;
-		dataSourcePublisherThread = new DataSourcePublisherThread(dataDictionary, discoveryService);
-		dataSourcePublisherThread.start();
-
-		LOG.info("Data dictionary bound: {}", dd);
-	}
-
-	public final void unbindDataDictionary(IDataDictionary dd) {
-		if (dd == dataDictionary) {
-			dataSourcePublisherThread.stopRunning();
-			dataDictionary = null;
-
-			LOG.info("Data dictionary unbound: {}", dd);
-		}
-	}
 	
-	public final void bindSessionManagement( ISessionManagement sm ) {
-		sessionManagement = sm;
-		LOG.info("Session management bound: {}", sm);
-
-		activeSession = sessionManagement.login("System", "manager".getBytes());
-		LOG.info("Got session for user System");
-	}
-	
-	public final void unbindSessionManagement( ISessionManagement sm ) {
-		if( sm == sessionManagement ) {
-			sessionManagement = null;
-			LOG.info("Session management unbound: {}", sm);
-		}
-	}
-	
-	public static IDataDictionary getDataDictionary() {
-		return dataDictionary;
-	}
-	
-	public static ISessionManagement getSessionManagement() {
-		return sessionManagement;
-	}
-	
-	public static ISession getActiveSession() {
-		return activeSession;
-	}
-
 	public static DiscoveryService getDiscoveryService() {
 		return discoveryService;
 	}
