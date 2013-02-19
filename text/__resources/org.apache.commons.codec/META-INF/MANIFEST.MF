@@ -156,3 +156,4 @@ Include-Resource: org/apache/commons/codec/language/bm/ash_approx_any.txt=src/ma
 Bundle-DocURL: http://commons.apache.org/codec/
 Specification-Version: 1.7
 Built-By: ggregory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
