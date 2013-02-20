@@ -40,13 +40,12 @@ public class PeerManager implements IPeerManager, DiscoveryListener {
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
 	private static final int PEER_DISCOVER_INTERVAL_MILLIS = 5 * 1000;
 
-	private DiscoveryService discoveryService;
 	private PeerDiscoveryThread peerDiscoveryThread;
 
 	public final void activate() {
-		this.discoveryService = P2PNewPlugIn.getDiscoveryService();
-
+		DiscoveryService discoveryService = P2PNewPlugIn.getDiscoveryService();
 		discoveryService.addDiscoveryListener(this);
+		
 		peerDiscoveryThread = new PeerDiscoveryThread(discoveryService, PEER_DISCOVER_INTERVAL_MILLIS);
 		peerDiscoveryThread.start();
 
@@ -55,7 +54,7 @@ public class PeerManager implements IPeerManager, DiscoveryListener {
 
 	public final void deactivate() {
 		peerDiscoveryThread.stopRunning();
-		discoveryService.removeDiscoveryListener(this);
+		P2PNewPlugIn.getDiscoveryService().removeDiscoveryListener(this);
 
 		LOG.debug("PeerManager deactivated");
 	}
@@ -68,7 +67,7 @@ public class PeerManager implements IPeerManager, DiscoveryListener {
 	@Override
 	public final ImmutableList<String> getPeers() {
 		try {
-			Enumeration<Advertisement> localAdvs = discoveryService.getLocalAdvertisements(DiscoveryService.PEER, null, null);
+			Enumeration<Advertisement> localAdvs = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
 			return extractPeerNames(localAdvs);
 		} catch (IOException ex) {
 			LOG.error("Could not get list of peers", ex);

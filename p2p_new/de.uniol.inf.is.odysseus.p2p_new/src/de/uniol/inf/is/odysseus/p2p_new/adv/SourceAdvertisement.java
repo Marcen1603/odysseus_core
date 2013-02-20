@@ -8,7 +8,6 @@ import java.net.URISyntaxException;
 import java.util.Enumeration;
 
 import net.jxta.document.Advertisement;
-import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.Attributable;
 import net.jxta.document.Document;
 import net.jxta.document.Element;
@@ -98,39 +97,6 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 		appendElement(adv, SOURCE_NAME_TAG, getSourceName().trim());
 
 		return adv;
-	}
-
-	/**
-	 * Instantiator
-	 */
-	public static class Instantiator implements AdvertisementFactory.Instantiator {
-		/**
-		 * Returns the identifying type of this Advertisement.
-		 * 
-		 * @return String the type of advertisement
-		 */
-		@Override
-		public String getAdvertisementType() {
-			return SourceAdvertisement.getAdvertisementType();
-		}
-
-		/**
-		 * Constructs an instance of <CODE>Advertisement</CODE> matching the
-		 * type specified by the <CODE>advertisementType</CODE> parameter.
-		 * 
-		 * @return The instance of <CODE>Advertisement</CODE> or null if it
-		 *         could not be created.
-		 */
-		@Override
-		public Advertisement newInstance() {
-			return new SourceAdvertisement();
-		}
-
-		@SuppressWarnings("rawtypes")
-		@Override
-		public Advertisement newInstance(Element root) {
-			return new SourceAdvertisement(root);
-		}
 	}
 
 	@Override

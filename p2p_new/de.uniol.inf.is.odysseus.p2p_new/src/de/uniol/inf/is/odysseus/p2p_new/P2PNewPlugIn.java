@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisementInstantiator;
 
 public class P2PNewPlugIn implements BundleActivator {
 
@@ -105,7 +106,7 @@ public class P2PNewPlugIn implements BundleActivator {
 	}
 
 	private static void registerAdvertisementTypes() {
-		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisement.Instantiator());
+		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisementInstantiator());
 		LOG.debug("Registered {} to AdvertisementFactory", SourceAdvertisement.getAdvertisementType());
 	}
 }
