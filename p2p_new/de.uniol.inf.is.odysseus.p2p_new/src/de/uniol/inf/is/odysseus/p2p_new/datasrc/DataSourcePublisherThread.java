@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.impl;
+package de.uniol.inf.is.odysseus.p2p_new.datasrc;
 
 import java.io.IOException;
 import java.util.Map.Entry;
@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListen
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
+import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
 public class DataSourcePublisherThread extends RepeatingJobThread implements IDataDictionaryListener {
 
@@ -59,6 +60,7 @@ public class DataSourcePublisherThread extends RepeatingJobThread implements IDa
 
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+		// do nothing
 	}
 
 	@Override

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p_new.DataSourceManager">
+   <implementation class="de.uniol.inf.is.odysseus.p2p_new.datasrc.DataSourceManager"/>
+   <reference bind="bindAdvertisementManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager" name="IAdvertisementManager" policy="static" unbind="unbindAdvertisementManager"/>
+   <reference bind="bindDataDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary" name="IDataDictionary" policy="static" unbind="unbindDataDictionary"/>
+</scr:component>

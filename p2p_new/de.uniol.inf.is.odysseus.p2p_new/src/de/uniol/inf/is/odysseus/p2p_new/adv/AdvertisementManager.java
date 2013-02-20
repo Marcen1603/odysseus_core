@@ -16,40 +16,24 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementSelector;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 
 public class AdvertisementManager implements IAdvertisementManager, DiscoveryListener {
 
-	private static class Entry {
-
-		public final IAdvertisementListener listener;
-		public final IAdvertisementSelector selector;
-
-		public Entry(IAdvertisementListener listener, IAdvertisementSelector selector) {
-			this.listener = Preconditions.checkNotNull(listener, "Advertisement listener must not be null!");
-			this.selector = Preconditions.checkNotNull(selector, "Advertisement selector must not be null!");
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (!(obj instanceof Entry)) {
-				return false;
-			}
-			Entry other = (Entry) obj;
-
-			return other.listener == listener;
-		}
-	}
-
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementManager.class);
+	private static final long DISCOVERY_INTERVAL_MILLIS = 5 * 1000;
+	
 	private static AdvertisementManager instance;
 
-	private final List<Entry> listenerEntries = Lists.newArrayList();
+	private final List<IAdvertisementListener> listeners = Lists.newArrayList();
+	
+	private DiscoveryThread discoveryThread; 
 
 	// called by OSGi-DS
 	public final void activate() {
 		P2PNewPlugIn.getDiscoveryService().addDiscoveryListener(this);
+		discoveryThread = new DiscoveryThread(DISCOVERY_INTERVAL_MILLIS);
+		discoveryThread.start();
 
 		instance = this;
 		LOG.debug("Advertisement manager activated");
@@ -57,6 +41,7 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 
 	// called by OSGi-DS
 	public final void deactivate() {
+		discoveryThread.stopRunning();
 		P2PNewPlugIn.getDiscoveryService().removeDiscoveryListener(this);
 
 		instance = null;
@@ -65,28 +50,17 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 
 	@Override
 	public void addAdvertisementListener(IAdvertisementListener listener) {
-		addAdvertisementListener(listener, AdvertisementAllSelector.INSTANCE);
-	}
-
-	@Override
-	public void addAdvertisementListener(IAdvertisementListener listener, Class<? extends Advertisement> listenFor) {
-		addAdvertisementListener(listener, new AdvertisementClassSelector(listenFor));
-	}
-
-	@Override
-	public void addAdvertisementListener(IAdvertisementListener listener, IAdvertisementSelector selector) {
 		Preconditions.checkNotNull(listener, "Advertisement listener must not be null!");
-		Preconditions.checkNotNull(selector, "Advertisement selector must not be null!");
 
-		synchronized (listenerEntries) {
-			listenerEntries.add(new Entry(listener, selector));
+		synchronized (listeners) {
+			listeners.add(listener);
 		}
 	}
 
 	@Override
 	public void removeAdvertisementListener(IAdvertisementListener listener) {
-		synchronized (listenerEntries) {
-			listenerEntries.remove(listener);
+		synchronized (listeners) {
+			listeners.remove(listener);
 		}
 	}
 
@@ -100,12 +74,12 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 	}
 
 	protected final void fireAdvertisementEvent(Advertisement advertisement) {
-		synchronized (listenerEntries) {
-			for (Entry entry : listenerEntries) {
+		synchronized (listeners) {
+			for (IAdvertisementListener entry : listeners) {
 				try {
-					if (entry.selector.isSelected(advertisement)) {
+					if (entry.isSelected(advertisement)) {
 						try {
-							entry.listener.advertisementOccured(this, advertisement);
+							entry.advertisementOccured(this, advertisement);
 						} catch (Throwable t) {
 							LOG.error("Exception during processing advertisement", t);
 						}

@@ -14,26 +14,22 @@
  * limitations under the License.
  ******************************************************************************/
 
-package de.uniol.inf.is.odysseus.p2p_new.impl;
+package de.uniol.inf.is.odysseus.p2p_new.adv;
 
 import net.jxta.discovery.DiscoveryService;
+import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
-import com.google.common.base.Preconditions;
+public class DiscoveryThread extends RepeatingJobThread {
 
-public class PeerDiscoveryThread extends RepeatingJobThread {
-
-	private static final String THREAD_NAME = "Peer discovery thread";
+	private static final String THREAD_NAME = "Advertisement discovery";
 	
-	private final DiscoveryService discoveryService;
-	
-	public PeerDiscoveryThread(DiscoveryService discoveryService, int discoverIntervalMillis) {
+	public DiscoveryThread(long discoverIntervalMillis) {
 		super(discoverIntervalMillis, THREAD_NAME);
-		this.discoveryService = Preconditions.checkNotNull(discoveryService);
 	}
 
 	@Override
 	public void doJob() {
-		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, null);
-		discoveryService.getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99, null);
+		P2PNewPlugIn.getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99, null);
 	}
 }
