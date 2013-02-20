@@ -17,5 +17,5 @@ Import-Package: de.uniol.inf.is.odysseus.core,
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  com.google.guava;bundle-version="12.0.0",
  Jxta.2.6;bundle-version="1.0.0"
-Service-Component: OSGI-INF/peerManager.xml, OSGI-INF/sessionManagement.xml, OSGI-INF/dataDictionary.xml
+Service-Component: OSGI-INF/peerManager.xml, OSGI-INF/sessionManagement.xml, OSGI-INF/dataDictionary.xml, OSGI-INF/advertisementManager.xml
 Export-Package: de.uniol.inf.is.odysseus.p2p_new
