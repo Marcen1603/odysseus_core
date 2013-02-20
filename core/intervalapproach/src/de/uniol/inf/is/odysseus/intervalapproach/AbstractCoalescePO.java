@@ -24,6 +24,7 @@ abstract public class AbstractCoalescePO<M extends ITimeInterval> extends
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations, ITransferArea<IStreamObject<?>, IStreamObject<?>> transferArea) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
+		this.transferArea = transferArea;
 	}
 
 	@Override
