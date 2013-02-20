@@ -14,7 +14,7 @@ public class DataSourceManager implements IAdvertisementListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DataSourceManager.class);
 	
-	private DataSourcePublisherThread dataSourcePublisherThread;
+	private DataSourcePublisher dataSourcePublisher;
 	
 	@Override
 	public void advertisementOccured(IAdvertisementManager sender, Advertisement adv) {
@@ -44,15 +44,15 @@ public class DataSourceManager implements IAdvertisementListener {
 	
 	// called by OSGi-DS
 	public void bindDataDictionary( IDataDictionary dd ) {
-		dataSourcePublisherThread = new DataSourcePublisherThread(dd, P2PNewPlugIn.getDiscoveryService());
-		dataSourcePublisherThread.start();
+		dataSourcePublisher = new DataSourcePublisher(dd, P2PNewPlugIn.getDiscoveryService());
+		dataSourcePublisher.start();
 		
 		LOG.debug("Bound DataDictionary {}", dd);
 	}
 	
 	// called by OSGi-DS
 	public void unbindDataDictionary( IDataDictionary dd ) {
-		dataSourcePublisherThread.stopRunning();
+		dataSourcePublisher.stopRunning();
 		
 		LOG.debug("Unbound DataDictionary {}", dd);
 	}

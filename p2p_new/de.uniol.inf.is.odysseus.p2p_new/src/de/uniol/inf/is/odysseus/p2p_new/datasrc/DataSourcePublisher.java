@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.datasrc;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import net.jxta.discovery.DiscoveryService;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -20,16 +22,17 @@ import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
-public class DataSourcePublisherThread extends RepeatingJobThread implements IDataDictionaryListener {
+public class DataSourcePublisher extends RepeatingJobThread implements IDataDictionaryListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DataSourcePublisherThread.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DataSourcePublisher.class);
 	private static final String THREAD_NAME = "Datasource Publisher";
 	private static final long PUBLISH_INTERVAL_MILLIS = 60 * 1000;
 
 	private final IDataDictionary dataDictionary;
 	private final DiscoveryService discoveryService;
+	private final Map<String, SourceAdvertisement> publishedSources = Maps.newHashMap();
 
-	public DataSourcePublisherThread(IDataDictionary dataDictionary, DiscoveryService discoveryService) {
+	public DataSourcePublisher(IDataDictionary dataDictionary, DiscoveryService discoveryService) {
 		super(PUBLISH_INTERVAL_MILLIS, THREAD_NAME);
 
 		this.dataDictionary = Preconditions.checkNotNull(dataDictionary, "DataDictionary must not be null");
@@ -44,7 +47,7 @@ public class DataSourcePublisherThread extends RepeatingJobThread implements IDa
 	@Override
 	public void doJob() {
 		for (Entry<String, ILogicalOperator> stream : dataDictionary.getStreams(SessionManagementService.getActiveSession())) {
-			publishSourceName(stream.getKey(), PUBLISH_INTERVAL_MILLIS);
+			publishSource(stream.getKey(), PUBLISH_INTERVAL_MILLIS);
 		}
 	}
 
@@ -55,12 +58,12 @@ public class DataSourcePublisherThread extends RepeatingJobThread implements IDa
 
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		publishSourceName(name, PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
+		publishSource(name, PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
 	}
 
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		// do nothing
+		unpublishSource(name);
 	}
 
 	@Override
@@ -68,18 +71,39 @@ public class DataSourcePublisherThread extends RepeatingJobThread implements IDa
 		// do nothing
 	}
 
-	private void publishSourceName(String srcName, long lifetime) {
+	private void publishSource(String srcName, long lifetime) {
 		LOG.debug("Publishing source {}", srcName);
 
-		SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
-		adv.setSourceName(srcName);
-		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+		SourceAdvertisement adv = determineSourceAdvertisement(srcName);
 
 		try {
 			discoveryService.publish(adv, lifetime, lifetime);
 		} catch (IOException ex) {
 			LOG.error("Could not publish source {}", srcName, ex);
 		}
+	}
 
+	private void unpublishSource(String name) {
+		LOG.debug("Unpublishing source {}", name);
+		
+		SourceAdvertisement adv = publishedSources.remove(name);
+		try {
+			P2PNewPlugIn.getDiscoveryService().flushAdvertisement(adv);
+		} catch (IOException ex) {
+			LOG.error("Could not flush advertisement {}", adv, ex);
+		}
+	}
+
+	private SourceAdvertisement determineSourceAdvertisement(String srcName) {
+		if (publishedSources.containsKey(srcName)) {
+			return publishedSources.get(srcName);
+		}
+
+		SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
+		adv.setSourceName(srcName);
+		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+
+		publishedSources.put(srcName, adv);
+		return adv;
 	}
 }
