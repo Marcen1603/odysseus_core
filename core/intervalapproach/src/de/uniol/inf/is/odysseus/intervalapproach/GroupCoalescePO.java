@@ -80,7 +80,7 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		if (createOnHeartbeat) {
+		if (createOnHeartbeat && punctuation.isHeartbeat()) {
 			if (currentPartialAggregates != null) {
 				createAndSend();
 			}
