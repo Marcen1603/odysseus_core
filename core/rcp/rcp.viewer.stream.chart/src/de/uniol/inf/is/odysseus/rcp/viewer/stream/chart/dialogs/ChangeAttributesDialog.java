@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,9 +49,11 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 	private List<IViewableAttribute> activatedAttributes = new ArrayList<IViewableAttribute>();
 	private IAttributesChangeable<T> changeable;
 	private Button okButton;
+	private Button selectAllButton;
+	private Button deselectAllButton;
+	private List<Button> tableChecks = new ArrayList<>();
 
-	public ChangeAttributesDialog(Shell parentShell,
-			IAttributesChangeable<T> changeable) {
+	public ChangeAttributesDialog(Shell parentShell, IAttributesChangeable<T> changeable) {
 		super(parentShell);
 		// Collections.copy(this.activatedAttributes,
 		// changeable.getChoosenAttributes());
@@ -73,26 +75,42 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite labelTextComposite = new Composite(parent, SWT.NONE);
-		GridLayout layout2 = new GridLayout();
-		layout2.numColumns = 2;
-		labelTextComposite.setLayout(layout2);
-		labelTextComposite.setLayoutData(new GridData(GridData.FILL,
-				GridData.BEGINNING, true, false));
+		
+		Composite mainComposite = new Composite(parent, SWT.NONE);
+		mainComposite.setLayout(new GridLayout());
+		Composite labelTextComposite = new Composite(mainComposite, SWT.NONE);
+	
+		labelTextComposite.setLayout(new GridLayout(4, true));
+		labelTextComposite.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 
 		Label label1 = new Label(labelTextComposite, SWT.NONE);
-		label1.setText("Please choose");
+		label1.setText("Please choose the attributes");
 
-		Composite tableSpan = new Composite(labelTextComposite, SWT.NONE);
+		selectAllButton = createButton(labelTextComposite, IDialogConstants.SELECT_ALL_ID, "Select all", true);
+		deselectAllButton = createButton(labelTextComposite, IDialogConstants.DESELECT_ALL_ID, "Deselect all", true);
+
+		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				changeAttributeSelection(true);
+			}
+		});
+
+		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				changeAttributeSelection(false);
+			}
+		});
+
+		Composite tableSpan = new Composite(mainComposite, SWT.NONE);
 		tableSpan.setLayout(new GridLayout());
-		GridData spanData = new GridData(GridData.FILL, GridData.FILL, true,
-				true);
+		GridData spanData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		spanData.horizontalSpan = 2;
 		spanData.heightHint = 300;
 		tableSpan.setLayoutData(spanData);
 
-		table = new Table(tableSpan, SWT.MULTI | SWT.FULL_SELECTION
-				| SWT.V_SCROLL | SWT.BORDER);
+		table = new Table(tableSpan, SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.BORDER);
 		TableColumn col1 = new TableColumn(table, SWT.LEFT);
 		col1.setText("Attribute");
 		col1.setWidth(416);
@@ -101,14 +119,12 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 		col2.setText("visible");
 		col2.setWidth(200);
 
-		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
-				true));
+		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-
+		tableChecks.clear();
 		for (Integer port : this.changeable.getPorts()) {
-			for (IViewableAttribute a : this.changeable
-					.getViewableAttributes(port)) {
+			for (IViewableAttribute a : this.changeable.getViewableAttributes(port)) {
 				TableItem item = new TableItem(table, SWT.NONE);
 				Button check = new Button(table, SWT.CHECK);
 				check.setData(a);
@@ -117,8 +133,7 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						Button thisButton = (Button) e.widget;
-						IViewableAttribute selAtt = (IViewableAttribute) thisButton
-								.getData();
+						IViewableAttribute selAtt = (IViewableAttribute) thisButton.getData();
 						if (thisButton.getSelection()) {
 							activatedAttributes.add(selAtt);
 						} else {
@@ -127,6 +142,7 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 						validate();
 					}
 				});
+				tableChecks.add(check);
 				TableEditor tbl_editor = new TableEditor(table);
 				tbl_editor.grabHorizontal = true;
 				tbl_editor.minimumHeight = check.getSize().x;
@@ -140,8 +156,7 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 
 	private void validate() {
 		Map<Integer, Set<IViewableAttribute>> attribs = AbstractViewableAttribute.getAttributesAsPortMapSet(ChangeAttributesDialog.this.activatedAttributes);
-		String test = ChangeAttributesDialog.this.changeable
-				.isValidSelection(attribs);
+		String test = ChangeAttributesDialog.this.changeable.isValidSelection(attribs);
 		if (test == null) {
 			okButton.setEnabled(true);
 			setMessage(DEFAULT_MESSAGE);
@@ -150,7 +165,6 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 			okButton.setEnabled(false);
 		}
 	}
-
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -167,7 +181,21 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 		createButton(parent, IDialogConstants.CANCEL_ID, "Cancel", false);
 	}
 
+	private void changeAttributeSelection(boolean select) {
+		activatedAttributes.clear();
+		for (Button b : tableChecks) {
+			b.setSelection(select);
+			IViewableAttribute selAtt = (IViewableAttribute) b.getData();
+			if (select) {
+				activatedAttributes.add(selAtt);
+			}
+		}
+		validate();
+	}
+
 	public List<IViewableAttribute> getSelectedAttributes() {
 		return this.activatedAttributes;
 	}
+	
+	
 }
