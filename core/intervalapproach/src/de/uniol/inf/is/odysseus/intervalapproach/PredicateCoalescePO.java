@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
@@ -23,8 +24,9 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 
 	public PredicateCoalescePO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
-			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,@SuppressWarnings("rawtypes")IPredicate predicate) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations);
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,@SuppressWarnings("rawtypes")IPredicate predicate,
+			 ITransferArea<IStreamObject<?>, IStreamObject<?>> transferArea) {
+		super(inputSchema, outputSchema, groupingAttributes, aggregations, transferArea);
 		this.predicate = predicate;
 	}
 
@@ -43,7 +45,10 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 	@Override
 	protected void process_next(IStreamObject<? extends M> object, int port) {
 
-		// TODO: THINK ABOUT METADATA!!
+		// The created object is a combiniation of all objects before
+		// --> so the new object needs the start timestamp of the first
+		// participating object and the other metadata of the last
+		// participating object (maybe a metadata merge function should be used)
 		
 		if (currentPartialAggregates == null) {
 			currentPartialAggregates = calcInit(object);
@@ -59,6 +64,7 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 			IStreamObject<M> out = getGroupProcessor().createOutputElement(0,
 					result);
 			M metadata = object.getMetadata();
+			metadata.setStart(currentPartialAggregates.getMetadata().getStart());
 			out.setMetadata(metadata);
 			transfer(out);
 			currentPartialAggregates = null;

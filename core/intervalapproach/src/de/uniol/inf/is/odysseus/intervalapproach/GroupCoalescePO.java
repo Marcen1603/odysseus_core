@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
@@ -25,8 +26,8 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 	public GroupCoalescePO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
-			int maxElementsPerGroup) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations);
+			int maxElementsPerGroup, ITransferArea<IStreamObject<?>, IStreamObject<?>> transferArea) {
+		super(inputSchema, outputSchema, groupingAttributes, aggregations, transferArea);
 		this.maxElementsPerGroup = maxElementsPerGroup;
 	}
 
@@ -46,15 +47,21 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 		// 1st check if the same group as last one
 		Integer currentGroupID = getGroupProcessor().getGroupID(object);
 
-		// TODO: THINK ABOUT METADATA!!
+
+		// The created object is a combiniation of all objects before
+		// --> so the new object needs the start timestamp of the first
+		// participating object and the other metadata of the last
+		// participating object (maybe a metadata merge function should be used)
 		
 		if (currentPartialAggregates != null
 				&& currentGroupID == lastGroupID
 				&& (maxElementsPerGroup == -1 || currentCount < maxElementsPerGroup)) {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(
 					currentPartialAggregates, object);
-			
-			newP.setMetadata((M) object.getMetadata().clone());
+			M newMeta = (M) object.getMetadata().clone();
+			// keep start
+			newMeta.setStart(currentPartialAggregates.getMetadata().getStart());
+			newP.setMetadata(newMeta);
 			currentPartialAggregates = newP;
 			currentCount++;
 		} else {
@@ -75,7 +82,7 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 		IStreamObject<M> out = getGroupProcessor().createOutputElement(
 				lastGroupID, result);
 		out.setMetadata(currentPartialAggregates.getMetadata());
-		transfer(out);
+		transferArea.transfer(out);
 	}
 
 	@Override
@@ -84,8 +91,8 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 			if (currentPartialAggregates != null) {
 				createAndSend();
 			}
-			sendPunctuation(punctuation);
 		}
+		transferArea.sendPunctuation(punctuation);
 	}
 
 	@Override

@@ -1,11 +1,14 @@
 package de.uniol.inf.is.odysseus.interval.transform;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.AbstractCoalescePO;
 import de.uniol.inf.is.odysseus.intervalapproach.GroupCoalescePO;
 import de.uniol.inf.is.odysseus.intervalapproach.PredicateCoalescePO;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -22,14 +25,16 @@ public class TCoalesceAORule extends AbstractTransformationRule<CoalesceAO> {
 	@Override
 	public void execute(CoalesceAO operator, TransformationConfiguration config) {
 		AbstractCoalescePO<ITimeInterval> po = null;
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		ITransferArea<IStreamObject<?>, IStreamObject<?>> tarea = new TITransferArea();
 		if (operator.getPredicate() == null){
 			int maxElementsPerGroup = operator.getMaxElementsPerGroup();
 			po = new GroupCoalescePO<ITimeInterval>(operator.getInputSchema(0), operator.getOutputSchemaIntern(0) , operator.getGroupingAttributes(),
-				operator.getAggregations(), maxElementsPerGroup);
+				operator.getAggregations(), maxElementsPerGroup, tarea);
 			((GroupCoalescePO<ITimeInterval>)po).setCreateOnHeartbeat(operator.isCreateOnHeartbeat());
 		}else{
 			po = new PredicateCoalescePO<ITimeInterval>(operator.getInputSchema(0), operator.getOutputSchemaIntern(0) , operator.getGroupingAttributes(),
-					operator.getAggregations(), operator.getPredicate());			
+					operator.getAggregations(), operator.getPredicate(), tarea);			
 		}
 		// TODO: Think about it
 		//po.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());
