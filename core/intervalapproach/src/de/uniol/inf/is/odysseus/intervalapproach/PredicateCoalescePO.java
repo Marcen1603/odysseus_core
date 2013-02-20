@@ -45,8 +45,6 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 
 		if (currentPartialAggregates == null) {
 			currentPartialAggregates = calcInit(object);
-			currentPartialAggregates.setMetadata((M) object.getMetadata()
-					.clone());
 		} else {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(
 					currentPartialAggregates, object);
@@ -59,7 +57,6 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 			IStreamObject<M> out = getGroupProcessor().createOutputElement(0,
 					result);
 			M metadata = object.getMetadata();
-			metadata.setStart(currentPartialAggregates.getMetadata().getStart());
 			out.setMetadata(metadata);
 			transfer(out);
 			currentPartialAggregates = null;
