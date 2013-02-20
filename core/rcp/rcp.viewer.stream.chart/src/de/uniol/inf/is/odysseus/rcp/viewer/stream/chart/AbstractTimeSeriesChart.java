@@ -44,6 +44,7 @@ public abstract class AbstractTimeSeriesChart extends
 
 	protected TimeSeriesCollection dataset = new TimeSeriesCollection();
 
+	private static final String TIME_PICO = "picoseconds";
 	private static final String TIME_NANO = "nanoseconds";
 	private static final String TIME_MICRO = "microseconds";
 	private static final String TIME_MILLI = "milliseconds";
@@ -100,7 +101,10 @@ public abstract class AbstractTimeSeriesChart extends
 			this.timefactor = 1000;
 		} else if (this.timeinputgranularity.equals(TIME_NANO)) {
 			this.timefactor = 1000000;
+		}else if (this.timeinputgranularity.equals(TIME_PICO)) {
+			this.timefactor = 1000000000;
 		}
+		
 
 		min = Double.NaN;
 		max = Double.NaN;
@@ -212,6 +216,7 @@ public abstract class AbstractTimeSeriesChart extends
 		values.add(TIME_MILLI);
 		values.add(TIME_MICRO);
 		values.add(TIME_NANO);
+		values.add(TIME_PICO);
 		return values;
 	}
 
