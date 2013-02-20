@@ -26,11 +26,9 @@ abstract public class AbstractCoalescePO<M extends ITimeInterval> extends
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		if (currentPartialAggregates == null){
-			sendPunctuation(punctuation);
-		}
+		sendPunctuation(punctuation);
 	}
-	
+
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;

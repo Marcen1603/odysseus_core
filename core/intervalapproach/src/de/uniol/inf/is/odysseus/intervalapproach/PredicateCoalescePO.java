@@ -43,6 +43,8 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 	@Override
 	protected void process_next(IStreamObject<? extends M> object, int port) {
 
+		// TODO: THINK ABOUT METADATA!!
+		
 		if (currentPartialAggregates == null) {
 			currentPartialAggregates = calcInit(object);
 		} else {

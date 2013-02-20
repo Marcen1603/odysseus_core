@@ -46,14 +46,14 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 		// 1st check if the same group as last one
 		Integer currentGroupID = getGroupProcessor().getGroupID(object);
 
+		// TODO: THINK ABOUT METADATA!!
+		
 		if (currentPartialAggregates != null
 				&& currentGroupID == lastGroupID
 				&& (maxElementsPerGroup == -1 || currentCount < maxElementsPerGroup)) {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(
 					currentPartialAggregates, object);
-			// This operator behaves like a pattern machting operator. The metadata
-			// of the produced object is the metadata of the last participating
-			// object
+			
 			newP.setMetadata((M) object.getMetadata().clone());
 			currentPartialAggregates = newP;
 			currentCount++;
