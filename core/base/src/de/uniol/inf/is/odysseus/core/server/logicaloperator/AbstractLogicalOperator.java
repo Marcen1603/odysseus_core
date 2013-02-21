@@ -54,7 +54,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	private static final long serialVersionUID = -4425148851059140851L;
 
-	final private OwnerHandler ownerHandler;
+	final private transient OwnerHandler ownerHandler;
 	
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
 	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();

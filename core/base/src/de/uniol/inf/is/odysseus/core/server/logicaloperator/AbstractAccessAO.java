@@ -171,6 +171,14 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		this.login = login;
 		this.password = password;
 	}
+	
+	public void setLogin(String login) {
+		this.login = login;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
 	public String getLogin() {
 		return login;
@@ -198,6 +206,10 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	
 	public String getWrapper() {
 		return wrapper;
+	}
+	
+	public void setWrapper(String wrapper) {
+		this.wrapper = wrapper;
 	}
 	
 	public String getInput() {
