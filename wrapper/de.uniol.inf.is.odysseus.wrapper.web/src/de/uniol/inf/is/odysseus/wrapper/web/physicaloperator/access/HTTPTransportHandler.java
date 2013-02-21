@@ -54,6 +54,7 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 	private OutputStream output;
 	private String uri;
 	private Method method;
+	private String body;
 	@SuppressWarnings("unused")
 	private IAccessPattern transportPattern;
 
@@ -98,14 +99,24 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 			final Map<String, String> options) {
 		final HTTPTransportHandler handler = new HTTPTransportHandler(
 				protocolHandler);
-		handler.uri = options.get("uri");
-		final String method = options.get("method");
-		if ((method != null) && (!method.isEmpty())) {
-			handler.method = Method.fromString(method);
-		} else {
-			handler.method = Method.GET;
-		}
+		handler.init(options);
 		return handler;
+	}
+
+	protected void init(Map<String, String> options) {
+		if (options.get("uri") != null) {
+			setURI(options.get("uri"));
+		}
+		if (options.get("method") != null) {
+			setMethod(Method.fromString(options.get("method")));
+		} else {
+			setMethod(Method.GET);
+		}
+		if (options.get("body") != null) {
+			setBody(options.get("body"));
+		} else {
+			setBody("");
+		}
 	}
 
 	@Override
@@ -145,6 +156,30 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 		this.fireOnDisconnect();
 	}
 
+	public void setMethod(Method method) {
+		this.method = method;
+	}
+
+	public Method getMethod() {
+		return this.method;
+	}
+
+	public void setURI(String uri) {
+		this.uri = uri;
+	}
+
+	public String getURI() {
+		return this.uri;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
+	public String getBody() {
+		return this.body;
+	}
+
 	private class HTTPInputStream extends InputStream {
 		/** HTTP Client */
 		private final HttpClient client = new HttpClient();
@@ -182,9 +217,15 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 			switch (this.method) {
 			case POST:
 				request = new PostMethod(this.uri);
+				final RequestEntity postRequestEntity = new ByteArrayRequestEntity(
+						body.getBytes());
+				((PostMethod) request).setRequestEntity(postRequestEntity);
 				break;
 			case PUT:
 				request = new PutMethod(this.uri);
+				final RequestEntity putRequestEntity = new ByteArrayRequestEntity(
+						body.getBytes());
+				((PutMethod) request).setRequestEntity(putRequestEntity);
 				break;
 			case DELETE:
 				request = new DeleteMethod(this.uri);
