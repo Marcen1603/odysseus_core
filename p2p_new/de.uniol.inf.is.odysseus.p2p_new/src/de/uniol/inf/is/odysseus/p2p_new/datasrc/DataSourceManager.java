@@ -21,8 +21,9 @@ public class DataSourceManager implements IAdvertisementListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DataSourceManager.class);
 
+	private static IDataDictionary dataDictionary;
+
 	private DataSourcePublisher dataSourcePublisher;
-	private IDataDictionary dataDictionary;
 
 	@Override
 	public void advertisementOccured(IAdvertisementManager sender, Advertisement adv) {
@@ -30,9 +31,9 @@ public class DataSourceManager implements IAdvertisementListener {
 		LOG.debug("Got source advertisement of source {}", srcAdv.getAccessAO());
 
 		AccessAO accessAO = srcAdv.getAccessAO();
-		ILogicalOperator timestampAO = addTimestampAO(accessAO, null);
-		
 		if( !dataDictionary.containsViewOrStream(accessAO.getSourcename(), SessionManagementService.getActiveSession())) {
+
+			ILogicalOperator timestampAO = addTimestampAO(accessAO, null);
 			dataSourcePublisher.addSourceAdvertisement(srcAdv);
 			dataDictionary.addEntitySchema(accessAO.getSourcename(), accessAO.getOutputSchema(), SessionManagementService.getActiveSession());
 			dataDictionary.setStream(accessAO.getSourcename(), timestampAO, SessionManagementService.getActiveSession());
@@ -79,6 +80,10 @@ public class DataSourceManager implements IAdvertisementListener {
 	
 			LOG.debug("Unbound DataDictionary {}", dd);
 		}
+	}
+	
+	public static IDataDictionary getDataDictionary() {
+		return dataDictionary;
 	}
 
 	private static ILogicalOperator addTimestampAO(ILogicalOperator operator, String dateFormat) {

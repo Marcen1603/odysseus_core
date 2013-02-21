@@ -28,7 +28,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.p2p_new.datasrc.DataSourceManager;
 
 public final class SourceAdvertisement extends Advertisement implements Serializable {
 
@@ -55,6 +58,7 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 	private static final String ACCESSCONNECTIONHANDLER_TAG = "accessConnectionHandler";
 	private static final String PROTOCOLHANDLER_TAG = "protocolHandler";
 	private static final String TRANSPORTHANDLER_TAG = "transportHandler";
+	private static final String OUTPUTSCHEMA_TAG = "outputSchema";
 
 	private static final String[] INDEXABLE_FIELD_TAGS = { ID_TAG, SOURCE_NAME_TAG };
 
@@ -148,6 +152,14 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 		appendElement(doc, ACCESSCONNECTIONHANDLER_TAG, accessOperator.getAccessConnectionHandler());
 		appendElement(doc, PROTOCOLHANDLER_TAG, accessOperator.getProtocolHandler());
 		appendElement(doc, TRANSPORTHANDLER_TAG, accessOperator.getTransportHandler());
+		
+		SDFSchema outputSchema = accessOperator.getOutputSchema();
+		if( outputSchema != null && !outputSchema.isEmpty() ) {
+			Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
+			for( SDFAttribute attr : outputSchema) {
+				appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
+			}
+		}
 
 		return doc;
 	}
@@ -245,9 +257,24 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 			accessAO.setProtocolHandler(elem.getTextValue());
 		} else if (elem.getName().equals(TRANSPORTHANDLER_TAG)) {
 			accessAO.setTransportHandler(elem.getTextValue());
+		} else if (elem.getName().equals(OUTPUTSCHEMA_TAG)) {
+			handleOutputSchemaTag(accessAO, elem);
 		} else {
 			LOG.warn("Unknown element name: {}", elem.getName());
 		}
+	}
+
+	private static void handleOutputSchemaTag(AccessAO accessAO, TextElement<?> root) {
+		Enumeration<?> children = root.getChildren();
+		List<SDFAttribute> attributes = Lists.newArrayList();
+		while (children.hasMoreElements()) {
+			TextElement<?> elem = (TextElement<?>) children.nextElement();
+			SDFAttribute attr = new SDFAttribute(accessAO.getSourcename(), elem.getKey(), DataSourceManager.getDataDictionary().getDatatype(elem.getTextValue()));
+			attributes.add(attr);
+		}
+
+		SDFSchema schema = new SDFSchema(root.getTextValue(), attributes);
+		accessAO.setOutputSchema(schema);
 	}
 
 	private static void handleOptionsTag(AccessAO accessAO, TextElement<?> root) {
@@ -279,8 +306,10 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void appendElement(StructuredDocument appendTo, String tag, String value) {
-		appendTo.appendChild(appendTo.createElement(tag, value));
+	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
+		Element createElement = appendTo.createElement(tag, value);
+		appendTo.appendChild(createElement);
+		return createElement;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
