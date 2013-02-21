@@ -91,6 +91,11 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	
 	public void addSourceAdvertisement( SourceAdvertisement adv ) {
 		publishedSources.put(adv.getAccessAO().getSourcename(), adv);
+		try {
+			discoveryService.publish(adv);
+		} catch (IOException ex) {
+			LOG.error("Could not publish source {}", adv.getAccessAO(), ex);
+		}
 	}
 
 	private void publishSource(AccessAO source, long lifetime) {
