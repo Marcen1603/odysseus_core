@@ -66,6 +66,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	private InputStream input;
 	private OutputStream output;
 	private long delay;
+	private int nanodelay;
 	private final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 			.newInstance();
 	private final List<String> xpaths = new ArrayList<String>();
@@ -171,12 +172,21 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	}
 
 	protected void delay() {
-		if (this.delay > 0) {
+		if (delay > 0) {
 			try {
-				Thread.sleep(this.delay);
-			} catch (final InterruptedException e) {
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {
 				// interrupting the delay might be correct
 				// e.printStackTrace();
+			}
+		} else {
+			if (nanodelay > 0) {
+				try {
+					Thread.sleep(0L, nanodelay);
+				} catch (InterruptedException e) {
+					// interrupting the delay might be correct
+					// e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -191,8 +201,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 				direction, access);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
-		instance.setDelay(Long.parseLong(options.get("delay")));
-
+		instance.init(options);
 		final SDFSchema schema = dataHandler.getSchema();
 		final List<String> xpaths = new ArrayList<String>();
 		for (int i = 0; i < schema.size(); i++) {
@@ -205,17 +214,34 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 		return instance;
 	}
 
+	protected void init(Map<String, String> options) {
+		if (options.get("delay") != null) {
+			setDelay(Long.parseLong(options.get("delay")));
+		}
+		if (options.get("nanodelay") != null) {
+			setNanodelay(Integer.parseInt(options.get("nanodelay")));
+		}
+	}
+
 	@Override
 	public String getName() {
 		return "XML";
 	}
 
 	public long getDelay() {
-		return this.delay;
+		return delay;
 	}
 
-	public void setDelay(final long delay) {
+	public void setDelay(long delay) {
 		this.delay = delay;
+	}
+
+	public void setNanodelay(int nanodelay) {
+		this.nanodelay = nanodelay;
+	}
+
+	public int getNanodelay() {
+		return nanodelay;
 	}
 
 	private List<String> getXPaths() {
