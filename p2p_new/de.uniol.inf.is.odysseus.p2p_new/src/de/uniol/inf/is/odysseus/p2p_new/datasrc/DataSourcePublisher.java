@@ -11,12 +11,15 @@ import net.jxta.id.IDFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
@@ -47,7 +50,12 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	@Override
 	public void doJob() {
 		for (Entry<String, ILogicalOperator> stream : dataDictionary.getStreams(SessionManagementService.getActiveSession())) {
-			publishSource(stream.getKey(), PUBLISH_INTERVAL_MILLIS);
+			Optional<AccessAO> optAccessAO = determineAccessAO(stream.getValue());
+			if( optAccessAO.isPresent() ) {
+				publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
+			} else {
+				LOG.error("Could not publish new source since the accessAO is not found from logical operator {}", stream.getValue());
+			}
 		}
 	}
 
@@ -58,35 +66,49 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		publishSource(name, PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
+		Optional<AccessAO> optAccessAO = determineAccessAO(op);
+		if( optAccessAO.isPresent() ) {
+			publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
+		} else {
+			LOG.error("Could not publish new source since the accessAO is not found from logical operator {}", op);
+		}
 	}
 
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		unpublishSource(name);
+		Optional<AccessAO> optAccessAO = determineAccessAO(op);
+		if( optAccessAO.isPresent() ) {
+			unpublishSource(optAccessAO.get());
+		} else {
+			LOG.error("Could not unpublish existing source since the accessAO is not found from logical operator {}", op);
+		}
 	}
 
 	@Override
 	public void dataDictionaryChanged(IDataDictionary sender) {
 		// do nothing
 	}
+	
+	public void addSourceAdvertisement( SourceAdvertisement adv ) {
+		publishedSources.put(adv.getAccessAO().getSourcename(), adv);
+	}
 
-	private void publishSource(String srcName, long lifetime) {
-		LOG.debug("Publishing source {}", srcName);
+	private void publishSource(AccessAO source, long lifetime) {
+		LOG.debug("Publishing source {} with lifetime {}", source, lifetime);
 
-		SourceAdvertisement adv = determineSourceAdvertisement(srcName);
+		SourceAdvertisement adv = determineSourceAdvertisement(source);
 
 		try {
 			discoveryService.publish(adv, lifetime, lifetime);
 		} catch (IOException ex) {
-			LOG.error("Could not publish source {}", srcName, ex);
+			LOG.error("Could not publish source {}", source, ex);
 		}
 	}
 
-	private void unpublishSource(String name) {
-		LOG.debug("Unpublishing source {}", name);
+	private void unpublishSource(AccessAO source) {
+		LOG.debug("Unpublishing source {}", source);
 		
-		SourceAdvertisement adv = publishedSources.remove(name);
+		SourceAdvertisement adv = publishedSources.remove(source.getSourcename());
 		try {
 			P2PNewPlugIn.getDiscoveryService().flushAdvertisement(adv);
 		} catch (IOException ex) {
@@ -94,16 +116,31 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 		}
 	}
 
-	private SourceAdvertisement determineSourceAdvertisement(String srcName) {
-		if (publishedSources.containsKey(srcName)) {
-			return publishedSources.get(srcName);
+	private SourceAdvertisement determineSourceAdvertisement(AccessAO source) {
+		if (publishedSources.containsKey(source.getSourcename())) {
+			return publishedSources.get(source.getSourcename());
 		}
 
 		SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
-		adv.setSourceName(srcName);
+		adv.setAccessAO(new AccessAO(source)); // clean copy
 		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
 
-		publishedSources.put(srcName, adv);
+		publishedSources.put(source.getSourcename(), adv);
 		return adv;
+	}
+
+	private static Optional<AccessAO> determineAccessAO(ILogicalOperator start) {
+		if( start instanceof AccessAO) {
+			return Optional.of((AccessAO)start);
+		}
+		
+		for( LogicalSubscription subscription : start.getSubscribedToSource()) {
+			Optional<AccessAO> optAcccessAO = determineAccessAO(subscription.getTarget());
+			if( optAcccessAO.isPresent() ) {
+				return optAcccessAO;
+			}
+		}
+		
+		return Optional.absent();
 	}
 }

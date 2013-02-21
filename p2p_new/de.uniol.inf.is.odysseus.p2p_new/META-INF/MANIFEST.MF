@@ -8,6 +8,8 @@ Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.logicaloperator,
+ de.uniol.inf.is.odysseus.core.sdf,
+ de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.core.server.datadictionary,
  de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.usermanagement,
