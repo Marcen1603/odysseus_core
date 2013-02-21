@@ -213,6 +213,9 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 		}
 
 		private void fetch() throws HttpException, IOException {
+			if (this.stream != null) {
+				this.stream.close();
+			}
 			HttpMethod request = null;
 			switch (this.method) {
 			case POST:
@@ -272,6 +275,7 @@ public class HTTPTransportHandler extends AbstractTransportHandler {
 
 		@Override
 		public void flush() throws IOException {
+			this.buffer.flip();
 			HttpMethod request = null;
 			switch (this.method) {
 			case POST:
