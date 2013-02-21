@@ -15,3 +15,11 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.offis.chart.charts
+Bundle-ClassPath: batik-awt-util.jar,
+ batik-ext.jar,
+ batik-svggen.jar,
+ batik-swing.jar,
+ batik-util.jar,
+ jcommon-1.0.17.jar,
+ surfaceplotter-2.0.1.jar,
+ .

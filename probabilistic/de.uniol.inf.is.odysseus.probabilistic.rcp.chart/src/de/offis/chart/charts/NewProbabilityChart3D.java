@@ -1,7 +1,6 @@
 package de.offis.chart.charts;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -20,10 +19,9 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
-public class ProbabilityChart3D extends AbstractChart<ProbabilisticTuple<IMetaAttribute>, IMetaAttribute>  {
+public class NewProbabilityChart3D extends AbstractView<ProbabilisticTuple<IMetaAttribute>, IMetaAttribute>  {
 	
 	
 	private JSurfacePanel chart = new JSurfacePanel();
@@ -36,51 +34,6 @@ public class ProbabilityChart3D extends AbstractChart<ProbabilisticTuple<IMetaAt
 
 	@Override
 	public void chartSettingsChanged() {
-
-	}
-
-	@Override
-	public void streamElementRecieved(final Object element, int port) {
-		try {
-			
-			ProbabilisticTuple<IMetaAttribute> value = (ProbabilisticTuple<IMetaAttribute>)element;
-			Object o = value.getAttribute(0);
-			updateChart(value.getDistribution(((ProbabilisticContinuousDouble) o).getDistribution()));
-										
-	} catch (SWTException e) {
-		
-		dispose();
-		return;
-	}
-		
-		
-//		IWorkbenchPartSite x = getSite();
-//		if(x == null){
-//			return;
-//		}
-//		Shell x1 = x.getShell();
-//		Display x2 = x1.getDisplay();
-//		x2.asyncExec(new Runnable() {
-//			@Override
-//			public void run() {
-//				try {
-//					
-//						ProbabilisticTuple<IMetaAttribute> value = (ProbabilisticTuple<IMetaAttribute>)element;
-//						Object o = value.getAttribute(0);
-//						updateChart(value.getDistribution(((ProbabilisticContinuousDouble) o).getDistribution()));
-//													
-//				} catch (SWTException e) {
-//					
-//					dispose();
-//					return;
-//				}
-//			}
-//		});
-	}
-	
-	@Override
-	protected void processElement(final List<ProbabilisticTuple<IMetaAttribute>> tuple, IMetaAttribute metadata, final int port) {		
-		
 
 	}
 	
@@ -97,28 +50,28 @@ public class ProbabilityChart3D extends AbstractChart<ProbabilisticTuple<IMetaAt
 			funcs.put(new NormalDistributionFunction2D(means, m), e.getValue());
 		}
 		
-//		final NormalDistributionFunction3D n3d1 = new NormalDistributionFunction3D(2, 2, 0, 0);
-//		final NormalDistributionFunction3D n3d2 = new NormalDistributionFunction3D(5, 5, 5, 5);
+		final NormalDistributionFunction3D n3d1 = new NormalDistributionFunction3D(2, 2, 0, 0);
+		final NormalDistributionFunction3D n3d2 = new NormalDistributionFunction3D(5, 5, 5, 5);
 		net.ericaro.surfaceplotter.Mapper m = new net.ericaro.surfaceplotter.Mapper() {
 			
 			@Override
 			public float f1(float x, float y) {
-				double sum = 0;
-				for(Entry<NormalDistributionFunction2D, Double> func : funcs.entrySet()){
-					sum += func.getKey().getValue(x) * func.getValue();
-				}
-				return (float) sum;
-//				return (float) (n3d1.getValue(x, y) + n3d2.getValue(x, y));
+//				double sum = 0;
+//				for(Entry<NormalDistributionFunction2D, Double> func : funcs.entrySet()){
+//					sum += func.getKey().getValue(x) * func.getValue();
+//				}
+//				return (float) sum;
+				return (float) (n3d1.getValue(x, y) + n3d2.getValue(x, y));
 			}
 			
 			@Override
 			public float f2(float x, float y) {
 				double sum = 0;
-				for(Entry<NormalDistributionFunction2D, Double> func : funcs.entrySet()){
-					sum += func.getKey().getValue(x) * func.getValue();
-				}
-				return (float) sum;
-//				return (float) (n3d1.getValue(x, y) + n3d2.getValue(x, y));
+//				for(Entry<NormalDistributionFunction2D, Double> func : funcs.entrySet()){
+//					sum += func.getKey().getValue(x) * func.getValue();
+//				}
+//				return (float) sum;
+				return (float) (n3d1.getValue(x, y) + n3d2.getValue(x, y));
 			}
 		};
 		
@@ -129,7 +82,7 @@ public class ProbabilityChart3D extends AbstractChart<ProbabilisticTuple<IMetaAt
 		sm.setXMax((float) 15.0);
 		sm.setXMin((float) -15.0);
 		sm.setYMax((float) 15.0);
-		sm.setYMin((float) -15.0);		
+		sm.setYMin((float) -15.0);
 		
 		sm.plot().execute();
 	}
@@ -156,5 +109,32 @@ public class ProbabilityChart3D extends AbstractChart<ProbabilisticTuple<IMetaAt
 	public void setFocus() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	protected void processElement(final ProbabilisticTuple<IMetaAttribute> element,	int port) {
+//		System.out.println("strream element received");
+//		IWorkbenchPartSite x = getSite();
+//		if(x == null){
+//			return;
+//		}
+//		Shell x1 = x.getShell();
+//		Display x2 = x1.getDisplay();
+//		x2.asyncExec(new Runnable() {
+//			@Override
+//			public void run() {
+				try {
+					
+						ProbabilisticTuple<IMetaAttribute> value = (ProbabilisticTuple<IMetaAttribute>)element;
+						Object o = value.getAttribute(0);
+						updateChart(value.getDistribution(((ProbabilisticContinuousDouble) o).getDistribution()));
+													
+				} catch (SWTException e) {
+					
+					dispose();
+					return;
+				}
+//			}
+//		});
 	}
 }
