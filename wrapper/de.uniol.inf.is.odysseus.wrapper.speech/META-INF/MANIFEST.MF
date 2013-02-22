@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Speech Wrapper
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.speech
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.speech.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Service-Component: OSGI-INF/SpeechTransportHandler.xml,OSGI-INF/NumericSpeechTransportHandler.xml
+Bundle-ClassPath: .,
+ lib/sphinx4.jar,
+ lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar,
+ lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar,
+ lib/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.jar
