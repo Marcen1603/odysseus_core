@@ -42,6 +42,7 @@ public class ProbabilisticDistributionHandler extends
 		final int size = buffer.getInt();
 		final Map<NormalDistribution, Double> mixtures = new HashMap<NormalDistribution, Double>(
 				size);
+		System.out.println(buffer.position());
 		final int dimension = buffer.getInt();
 		for (int m = 0; m < size; m++) {
 			final double weight = buffer.getDouble();

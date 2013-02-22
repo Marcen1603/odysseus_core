@@ -89,82 +89,17 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 		}
 		if (line != null) {
 			tuple.addLong(System.currentTimeMillis());
+			System.out.println(System.currentTimeMillis());
 			final String[] values = line.split(",");
 			for (final String value : values) {
 				if (!value.isEmpty()) {
 					if (value.contains("[")) {
 						// Send continuous distribution
-						final String[] mixtures = value.split("\\|");
-
-						tuple.addInteger(mixtures.length);
-						final int dimension = mixtures[0]
-								.split(";")[1].split(":").length;
-						tuple.addInteger(dimension);
-						for (final String mixture : mixtures) {
-							final String[] probabilisticValues = mixture
-									.split(";");
-							// The weight
-							String weight = probabilisticValues[0];
-							final String[] meanParameter = probabilisticValues[1]
-									.substring(1,
-											probabilisticValues[1].length() - 1)
-									.split(":");
-
-							tuple.addDouble(weight);
-							for (final String element : meanParameter) {
-								// The mean in dimension i
-								tuple.addDouble(element);
-							}
-							final String[] covarianceParameter = probabilisticValues[2]
-									.substring(1,
-											probabilisticValues[2].length() - 1)
-									.split(":");
-							for (final String element : covarianceParameter) {
-								// The Covariance Entry i
-								tuple.addDouble(element);
-							}
-							if (probabilisticValues.length > 3) {
-								// The scale factor
-								tuple.addDouble(probabilisticValues[3]);
-							} else {
-								tuple.addDouble(1.0);
-							}
-							if (probabilisticValues.length > 4) {
-								final String[] supportParameter = probabilisticValues[4]
-										.substring(
-												1,
-												probabilisticValues[4].length() - 1)
-										.split(":");
-								for (int i = 0; i < dimension * 2; i++) {
-									// The support on each dimension
-									tuple.addDouble(supportParameter[i]);
-								}
-							} else {
-								for (int i = 0; i < dimension * 2; i++) {
-									// The support on each dimension
-									if (i % 2 == 0) {
-										tuple.addDouble(Double.NEGATIVE_INFINITY);
-									} else {
-										tuple.addDouble(Double.POSITIVE_INFINITY);
-									}
-								}
-							}
-						}
-
+						generateContinuousAttribute(tuple, value);
 					} else {
 						if (value.contains(";")) {
 							// Send discrete probabilistic value
-							final String[] probabilisticValues = value
-									.split(";");
-							tuple.addInteger(probabilisticValues.length);
-							for (final String probabilisticValue : probabilisticValues) {
-								final String[] probabilisticParameter = probabilisticValue
-										.split(":");
-								// The value
-								tuple.addDouble(probabilisticParameter[0]);
-								// The probability
-								tuple.addDouble(probabilisticParameter[1]);
-							}
+							generateDiscreteAttribute(tuple, value);
 						} else {
 							// Send continuous probabilistic value (Index to
 							// distribution)
@@ -177,5 +112,100 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 			return tuple;
 		}
 		return null;
+	}
+
+	private void generateDiscreteAttribute(DataTuple tuple, String string) {
+		final String[] probabilisticValues = string.split(";");
+		tuple.addInteger(probabilisticValues.length);
+		System.out.println(probabilisticValues.length);
+		for (final String probabilisticValue : probabilisticValues) {
+			final String[] probabilisticParameter = probabilisticValue
+					.split(":");
+			// The value
+			tuple.addDouble(probabilisticParameter[0]);
+			System.out.println(probabilisticParameter[0]);
+			// The probability
+			tuple.addDouble(probabilisticParameter[1]);
+			System.out.println(probabilisticParameter[1]);
+		}
+	}
+
+	private void generateContinuousAttribute(DataTuple tuple, String string) {
+		String[] components = string.split("<");
+		final String[] mixtures = components[0].split("\\|");
+		tuple.addInteger(mixtures.length);
+		System.out.println(mixtures.length);
+		final int dimension = mixtures[0].split(";")[1].split(":").length;
+		tuple.addInteger(dimension);
+		System.out.println(dimension);
+		for (final String mixture : mixtures) {
+			generateContinuousAttributeMixture(tuple, dimension, mixture);
+		}
+		if (components.length > 1) {
+			String[] parameter = components[1].split(";");
+			if (parameter.length > 0) {
+				// The scale factor
+				tuple.addDouble(parameter[0]);
+			} else {
+				tuple.addDouble(1.0);
+			}
+			if (parameter.length > 1) {
+				final String[] supportParameter = parameter[1].substring(1,
+						parameter[1].length() - 1).split(":");
+				for (int i = 0; i < dimension * 2; i++) {
+					// The support on each dimension
+					tuple.addDouble(supportParameter[i]);
+				}
+			} else {
+				for (int i = 0; i < dimension * 2; i++) {
+					// The support on each dimension
+					if (i % 2 == 0) {
+						tuple.addDouble(Double.NEGATIVE_INFINITY);
+					} else {
+						tuple.addDouble(Double.POSITIVE_INFINITY);
+					}
+				}
+			}
+		} else {
+			tuple.addDouble(1.0);
+			for (int i = 0; i < dimension * 2; i++) {
+				// The support on each dimension
+				if (i % 2 == 0) {
+					tuple.addDouble(Double.NEGATIVE_INFINITY);
+				} else {
+					tuple.addDouble(Double.POSITIVE_INFINITY);
+				}
+			}
+		}
+	}
+
+	private void generateContinuousAttributeMixture(DataTuple tuple,
+			int dimension, String string) {
+		final String[] probabilisticValues = string.split(";");
+		// The weight
+		String weight = probabilisticValues[0];
+		final String[] meanParameter = probabilisticValues[1].substring(1,
+				probabilisticValues[1].length() - 1).split(":");
+
+		tuple.addDouble(weight);
+		for (final String element : meanParameter) {
+			// The mean in dimension i
+			tuple.addDouble(element);
+		}
+		final String[] covarianceParameter = probabilisticValues[2].substring(
+				1, probabilisticValues[2].length() - 1).split(":");
+		for (final String element : covarianceParameter) {
+			// The Covariance Entry i
+			tuple.addDouble(element);
+		}
+	}
+
+	public static void main(String[] args) {
+		ProbabilisticDataProvider provider = new ProbabilisticDataProvider();
+		provider.init();
+		provider.next();
+		provider.next();
+
+		provider.next();
 	}
 }
