@@ -68,7 +68,7 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
 		Optional<AccessAO> optAccessAO = determineAccessAO(op);
 		if( optAccessAO.isPresent() ) {
-			publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
+			publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS);
 		} else {
 			LOG.error("Could not publish new source since the accessAO is not found from logical operator {}", op);
 		}
