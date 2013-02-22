@@ -46,9 +46,9 @@ public class RepeatingJobThread extends Thread{
 	public final void run() {
 		beforeJob();
 		while (isRunning) {
+			lastExecutionTimestamp = System.currentTimeMillis();
 			doJob();
 			
-			lastExecutionTimestamp = System.currentTimeMillis();
 			trySleep(executionIntervalMillis);
 		}
 		afterJob();
