@@ -225,40 +225,58 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 	private static void handleElement(AccessAO accessAO, TextElement<?> elem) throws ClassNotFoundException, IOException {
 		if (elem.getName().equals(SOURCE_NAME_TAG)) {
 			accessAO.setSource(elem.getTextValue());
+			
 		} else if (elem.getName().equals(INPUT_SCHEMA_TAG)) {
 			handleInputSchemaElement(accessAO, elem);
+			
 		} else if (elem.getName().equals(PORT_TAG)) {
 			accessAO.setPort(Integer.valueOf(elem.getTextValue()));
+			
 		} else if (elem.getName().equals(HOST_TAG)) {
 			accessAO.setHost(elem.getTextValue());
+			
 		} else if (elem.getName().equals(LOGIN_TAG)) {
 			accessAO.setLogin(elem.getTextValue());
+			
 		} else if (elem.getName().equals(PASSWORD_TAG)) {
 			accessAO.setPassword(elem.getTextValue());
+			
 		} else if (elem.getName().equals(AUTOCONNECT_TAG)) {
 			accessAO.setAutoReconnectEnabled(Boolean.valueOf(elem.getTextValue()));
+			
 		} else if (elem.getName().equals(OPTIONS_TAG)) {
 			handleOptionsTag(accessAO, elem);
+			
 		} else if (elem.getName().equals(WRAPPER_TAG)) {
 			accessAO.setWrapper(elem.getTextValue());
+			
 		} else if (elem.getName().equals(INPUT_TAG)) {
 			accessAO.setInput(elem.getTextValue());
+			
 		} else if (elem.getName().equals(DATAHANDLER_TAG)) {
 			accessAO.setDataHandler(elem.getTextValue());
+			
 		} else if (elem.getName().equals(TRANSFORMER_TAG)) {
 			accessAO.setTransformer(elem.getTextValue());
+			
 		} else if (elem.getName().equals(OBJECTHANDLER_TAG)) {
 			accessAO.setObjectHandler(elem.getTextValue());
+			
 		} else if (elem.getName().equals(INPUTDATAHANDLER_TAG)) {
 			accessAO.setInputDataHandler(elem.getTextValue());
+			
 		} else if (elem.getName().equals(ACCESSCONNECTIONHANDLER_TAG)) {
 			accessAO.setAccessConnectionHandler(elem.getTextValue());
+			
 		} else if (elem.getName().equals(PROTOCOLHANDLER_TAG)) {
 			accessAO.setProtocolHandler(elem.getTextValue());
+			
 		} else if (elem.getName().equals(TRANSPORTHANDLER_TAG)) {
 			accessAO.setTransportHandler(elem.getTextValue());
+			
 		} else if (elem.getName().equals(OUTPUTSCHEMA_TAG)) {
 			handleOutputSchemaTag(accessAO, elem);
+			
 		} else {
 			LOG.warn("Unknown element name: {}", elem.getName());
 		}
@@ -273,8 +291,10 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 			attributes.add(attr);
 		}
 
-		SDFSchema schema = new SDFSchema(root.getTextValue(), attributes);
-		accessAO.setOutputSchema(schema);
+		if( !attributes.isEmpty()) {
+			SDFSchema schema = new SDFSchema(root.getTextValue(), attributes);
+			accessAO.setOutputSchema(schema);
+		}
 	}
 
 	private static void handleOptionsTag(AccessAO accessAO, TextElement<?> root) {
@@ -285,8 +305,10 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 			TextElement<?> elem = (TextElement<?>) children.nextElement();
 			options.put(elem.getKey(), elem.getTextValue());
 		}
-
-		accessAO.setOptions(options);
+		
+		if( !options.isEmpty() ) {
+			accessAO.setOptions(options);
+		}
 	}
 
 	private static void handleInputSchemaElement(AccessAO accessAO, TextElement<?> root) {
@@ -296,7 +318,9 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 			TextElement<?> elem = (TextElement<?>) children.nextElement();
 			inputSchema.add(elem.getTextValue());
 		}
-		accessAO.setInputSchema(inputSchema);
+		if(!inputSchema.isEmpty()) {
+			accessAO.setInputSchema(inputSchema);
+		}
 	}
 
 	private static void checkType(TextElement<?> root) {
