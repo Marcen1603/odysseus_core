@@ -28,6 +28,7 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	protected BufferedReader reader;
 	protected BufferedWriter writer;
 	private long delay;
+	private int nanodelay;
 
 	public DocumentProtocolHandler() {
 		super();
@@ -105,11 +106,11 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
 			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction,
+		DocumentProtocolHandler<T> instance = new DocumentProtocolHandler<T>(direction,
 				access);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
-		instance.setDelay(Long.parseLong(options.get("delay")));
+		instance.init(options);
 
 		return instance;
 	}
@@ -125,6 +126,14 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	public void setDelay(long delay) {
 		this.delay = delay;
+	}
+
+	public void setNanodelay(int nanodelay) {
+		this.nanodelay = nanodelay;
+	}
+
+	public int getNanodelay() {
+		return nanodelay;
 	}
 
 	@Override
@@ -151,5 +160,14 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public void process(ByteBuffer message) {
 		getTransfer().transfer(getDataHandler().readData(message));
+	}
+
+	protected void init(Map<String, String> options) {
+		if (options.get("delay") != null) {
+			setDelay(Long.parseLong(options.get("delay")));
+		}
+		if (options.get("nanodelay") != null) {
+			setNanodelay(Integer.parseInt(options.get("nanodelay")));
+		}
 	}
 }
