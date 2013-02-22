@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinPO;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinTISweepArea;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.RegressionTISweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -39,7 +39,7 @@ public class TContinuousEquiJoinAOSetSARule
 	@Override
 	public void execute(ContinuousProbabilisticEquiJoinPO joinPO,
 			TransformationConfiguration transformConfig) {
-		ContinuousProbabilisticEquiJoinTISweepArea[] areas = new ContinuousProbabilisticEquiJoinTISweepArea[2];
+		RegressionTISweepArea[] areas = new RegressionTISweepArea[2];
 
 		for (int port = 0; port < 2; port++) {
 			int otherPort = port ^ 1;
@@ -71,9 +71,9 @@ public class TContinuousEquiJoinAOSetSARule
 					viewAttributes.removeAll(joinAttributes);
 					int[] viewPos = TransformUtil.getAttributePos(schema,
 							viewAttributes);
-					areas[port] = new ContinuousProbabilisticEquiJoinTISweepArea(
+					areas[port] = new RegressionTISweepArea(
 							joinPos, viewPos);
-					joinPO.setBetas(areas[port].getBetas(), port);
+					joinPO.setBetas(areas[port].getRegressionCoefficients(), port);
 				}
 			}
 		}

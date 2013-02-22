@@ -21,68 +21,68 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ContinuousProbabilisticEquiJoinTISweepArea extends
+public class RegressionTISweepArea extends
 		JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> {
 
 	@SuppressWarnings("unused")
 	private static Logger LOG = LoggerFactory
-			.getLogger(ContinuousProbabilisticEquiJoinTISweepArea.class);
+			.getLogger(RegressionTISweepArea.class);
 	private final int[] joinAttributePos;
 	private final int[] viewAttributePos;
-	private final RealMatrix[] sigmas;
-	private final RealMatrix[] betas;
+	private final RealMatrix[] residuals;
+	private final RealMatrix[] regressionCoefficients;
 
-	public ContinuousProbabilisticEquiJoinTISweepArea(int[] joinAttributePos,
+	public RegressionTISweepArea(int[] joinAttributePos,
 			int[] viewAttributePos) {
 		this.joinAttributePos = joinAttributePos;
 		this.viewAttributePos = viewAttributePos;
-		this.sigmas = new RealMatrix[viewAttributePos.length];
-		this.betas = new RealMatrix[viewAttributePos.length];
+		this.residuals = new RealMatrix[viewAttributePos.length];
+		this.regressionCoefficients = new RealMatrix[viewAttributePos.length];
 	}
 
 	@Override
 	public void insert(ProbabilisticTuple<? extends ITimeInterval> s) {
 		super.insert(s);
-		updateLeastSquareEstimates();
+		updateRegressions();
 	}
 
 	@Override
 	public void insertAll(
 			List<ProbabilisticTuple<? extends ITimeInterval>> toBeInserted) {
 		super.insertAll(toBeInserted);
-		updateLeastSquareEstimates();
+		updateRegressions();
 	}
 
-	public RealMatrix[] getSigmas() {
-		return this.sigmas;
+	public RealMatrix[] getResiduals() {
+		return this.residuals;
 	}
 
-	public RealMatrix getSigma(int viewIndex) {
-		return this.sigmas[viewIndex];
+	public RealMatrix getResidual(int viewIndex) {
+		return this.residuals[viewIndex];
 	}
 
-	public RealMatrix[] getBetas() {
-		return betas;
+	public RealMatrix[] getRegressionCoefficients() {
+		return regressionCoefficients;
 	}
 
-	public RealMatrix getBeta(int viewIndex) {
-		return betas[viewIndex];
+	public RealMatrix getRegressionCoefficient(int viewIndex) {
+		return regressionCoefficients[viewIndex];
 	}
 
 	/**
 	 * Update the least square estimates for all view attributes
 	 */
-	private void updateLeastSquareEstimates() {
+	private void updateRegressions() {
 		for (int i = 0; i < viewAttributePos.length; i++) {
-			updateLeastSquareEstimate(joinAttributePos, viewAttributePos, i);
+			updateRegression(joinAttributePos, viewAttributePos, i);
 		}
 	}
 
 	/**
 	 * Perform least square estimation of sigma and beta for the given view
 	 * attribute. More formaly perform the following equation:
-	 * \beta = (A^{T} A)^{-1} A^{T} B
-	 * \sigma = B^{T} (I - A(A^{T} A)^{-1} A^{T}) B/(n - k)
+	 * regression coefficients = (A^{T} A)^{-1} A^{T} B
+	 * residual = B^{T} (I - A(A^{T} A)^{-1} A^{T}) B/(n - k)
 	 * 
 	 * @param joinAttributePos
 	 *            Position array of all join attributes
@@ -91,7 +91,7 @@ public class ContinuousProbabilisticEquiJoinTISweepArea extends
 	 * @param viewIndex
 	 *            Position of the current estimate
 	 */
-	private void updateLeastSquareEstimate(int[] joinAttributePos,
+	private void updateRegression(int[] joinAttributePos,
 			int[] viewAttributePos, int viewIndex) {
 
 		Iterator<ProbabilisticTuple<? extends ITimeInterval>> iter = this
@@ -154,8 +154,8 @@ public class ContinuousProbabilisticEquiJoinTISweepArea extends
 
 		System.out.println(sigma);
 
-		this.betas[viewIndex] = beta;
-		this.sigmas[viewIndex] = sigma;
+		this.regressionCoefficients[viewIndex] = beta;
+		this.residuals[viewIndex] = sigma;
 	}
 
 	/**

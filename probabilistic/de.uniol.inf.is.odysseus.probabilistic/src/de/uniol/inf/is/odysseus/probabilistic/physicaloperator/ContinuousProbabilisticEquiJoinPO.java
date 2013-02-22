@@ -142,7 +142,7 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 				.add(new ProbabilisticMergeFunction());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
-		ContinuousProbabilisticEquiJoinTISweepArea[] areas = new ContinuousProbabilisticEquiJoinTISweepArea[2];
+		RegressionTISweepArea[] areas = new RegressionTISweepArea[2];
 
 		for (int port = 0; port < 2; port++) {
 			int otherPort = port ^ 1;
@@ -169,9 +169,9 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 				viewAttributes.removeAll(joinAttributes);
 				int[] viewPos = TransformUtil.getAttributePos(schema,
 						viewAttributes);
-				areas[port] = new ContinuousProbabilisticEquiJoinTISweepArea(
+				areas[port] = new RegressionTISweepArea(
 						joinPos, viewPos);
-				joinPO.setBetas(areas[port].getBetas(), port);
+				joinPO.setBetas(areas[port].getRegressionCoefficients(), port);
 			}
 
 		}
