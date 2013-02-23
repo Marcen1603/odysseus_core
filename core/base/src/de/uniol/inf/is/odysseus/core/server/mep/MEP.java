@@ -56,6 +56,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.DoubleToShortFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.EFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.EqualsOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.EqualsOperator2;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.EvalFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ExpFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.FloorFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.GetAbsoluteValue;
@@ -252,7 +253,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new SHA256Function());
         
         registerFunction(new UUIDFunction());
-
+        registerFunction(new EvalFunction());
         registerFunction(new SMinFunction());
         registerFunction(new SMaxFunction());
 
