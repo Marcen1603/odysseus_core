@@ -38,7 +38,7 @@ import edu.cmu.sphinx.util.props.ConfigurationManager;
 public class RecognizerThread extends Thread {
 	/** Logger */
 	private Logger LOG = LoggerFactory.getLogger(SpeechTransportHandler.class);
-	private static Charset charset = Charset.forName("US-ASCII");
+	private static Charset charset = Charset.forName("UTF-8");
 	private static CharsetEncoder encoder = charset.newEncoder();
 	private AbstractTransportHandler listener;
 	private ConfigurationManager configurationManager;
@@ -66,13 +66,18 @@ public class RecognizerThread extends Thread {
 				Result result = recognizer.recognize();
 				if (result != null) {
 					String resultText = result.getBestFinalResultNoFiller();
-					ByteBuffer charBuffer = encoder.encode(CharBuffer
-							.wrap(resultText));
-					ByteBuffer buffer = ByteBuffer.allocate(charBuffer
-							.capacity() + 4);
-					buffer.putInt(charBuffer.capacity() / 2);
-					buffer.put(charBuffer);
-					listener.fireProcess(buffer);
+					if (!resultText.isEmpty()) {
+						if (LOG.isDebugEnabled()) {
+							LOG.debug("Result: " + resultText);
+						}
+						ByteBuffer charBuffer = encoder.encode(CharBuffer
+								.wrap(resultText));
+						ByteBuffer buffer = ByteBuffer.allocate(charBuffer
+								.capacity() + 4);
+						buffer.putInt(charBuffer.capacity());
+						buffer.put(charBuffer);
+						listener.fireProcess(buffer);
+					}
 				}
 			}
 		} catch (Exception e) {

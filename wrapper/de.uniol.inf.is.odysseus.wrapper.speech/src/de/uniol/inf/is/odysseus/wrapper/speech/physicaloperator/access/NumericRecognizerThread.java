@@ -79,9 +79,14 @@ public class NumericRecognizerThread extends Thread {
 				Result result = recognizer.recognize();
 				if (result != null) {
 					String resultText = result.getBestFinalResultNoFiller();
-					System.out.println(getInt(resultText));
-					listener.fireProcess(ByteBuffer.allocate(4).putInt(
-							getInt(resultText)));
+					if (!resultText.isEmpty()) {
+						if (LOG.isDebugEnabled()) {
+							LOG.debug("Result: " + resultText + " -> "
+									+ getInt(resultText));
+						}
+						listener.fireProcess(ByteBuffer.allocate(4).putInt(
+								getInt(resultText)));
+					}
 				}
 			}
 		} catch (Exception e) {
