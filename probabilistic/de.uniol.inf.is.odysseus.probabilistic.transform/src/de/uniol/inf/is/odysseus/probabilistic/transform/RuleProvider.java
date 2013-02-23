@@ -49,6 +49,9 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TContinuousEquiJoinAOSetSARule());
 		// Set Join PO Data Merge Rule
 		rules.add(new TContinuousEquiJoinAOSetDMRule());
+		
+		// LinearRegression AO -> PO Rule
+		rules.add(new TLinearRegressionAORule());
 		return rules;
 	}
 

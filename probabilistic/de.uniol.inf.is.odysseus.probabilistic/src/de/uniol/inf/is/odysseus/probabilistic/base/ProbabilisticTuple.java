@@ -85,8 +85,14 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	public ProbabilisticTuple(final ProbabilisticTuple<T> copy,
 			final Object[] newAttrs, final boolean b) {
-		super(copy);
-		this.distributions = new NormalDistributionMixture[0];
+		super(copy, newAttrs, b);
+		if (copy.distributions != null) {
+			for (int i = 0; i < copy.distributions.length; i++) {
+				this.distributions[i] = copy.distributions[i].clone();
+			}
+		} else {
+			this.distributions = new NormalDistributionMixture[0];
+		}
 	}
 
 	/**
@@ -135,7 +141,8 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	/**
 	 * 
 	 * @param pos
-	 * @return
+	 * @return The distribution at the given position or <code>null</code> if no
+	 *         distribution exists at the given position
 	 */
 	public final NormalDistributionMixture getDistribution(final int pos) {
 		if ((pos < 0) || (pos > this.distributions.length)) {
@@ -164,7 +171,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
 	/**
 	 * 
-	 * @return
+	 * @return All distributions in this tuple
 	 */
 	public NormalDistributionMixture[] getDistributions() {
 		return this.distributions;
@@ -234,7 +241,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 * @param attr
 	 * @param restrictMatrix
 	 * @param createNew
-	 * @return
+	 * @return The restricted tuple
 	 */
 	public ProbabilisticTuple<T> restrict(final int attr,
 			final RealMatrix restrictMatrix, final boolean createNew) {
@@ -476,7 +483,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	public String toString() {
 		StringBuffer retBuff = new StringBuffer();
 		retBuff.append(super.toString());
-		if (getDistributions().length > 0) {
+		if ((getDistributions() != null) && (getDistributions().length > 0)) {
 			retBuff.append("|DIS|");
 			for (int i = 0; i < getDistributions().length; i++) {
 				retBuff.append(getDistribution(i));

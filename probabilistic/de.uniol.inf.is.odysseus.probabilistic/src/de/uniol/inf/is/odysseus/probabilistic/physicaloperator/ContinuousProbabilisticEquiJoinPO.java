@@ -42,31 +42,31 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extends ProbabilisticTuple<K>>
 		extends JoinTIPO<K, T> {
 
-	private final RealMatrix[][] sigmas;
-	private final RealMatrix[][] betas;
+	private final RealMatrix[] sigmas;
+	private final RealMatrix[] betas;
 	@SuppressWarnings("unused")
 	private static Logger LOG = LoggerFactory
 			.getLogger(ContinuousProbabilisticEquiJoinPO.class);
 
 	public ContinuousProbabilisticEquiJoinPO() {
 		super();
-		this.sigmas = new RealMatrix[2][];
-		this.betas = new RealMatrix[2][];
+		this.sigmas = new RealMatrix[2];
+		this.betas = new RealMatrix[2];
 	}
 
-	public RealMatrix[] getBetas(int port) {
+	public RealMatrix getBetas(int port) {
 		return this.betas[port];
 	}
 
-	public void setBetas(RealMatrix[] betas, int port) {
+	public void setBetas(RealMatrix betas, int port) {
 		this.betas[port] = betas;
 	}
 
-	public RealMatrix[] getSigmas(int port) {
+	public RealMatrix getSigmas(int port) {
 		return this.sigmas[port];
 	}
 
-	public void setSigmas(RealMatrix[] sigmas, int port) {
+	public void setSigmas(RealMatrix sigmas, int port) {
 		this.sigmas[port] = sigmas;
 	}
 

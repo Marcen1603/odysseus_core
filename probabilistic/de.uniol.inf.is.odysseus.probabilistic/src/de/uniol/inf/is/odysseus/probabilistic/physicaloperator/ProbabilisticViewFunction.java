@@ -274,48 +274,5 @@ public class ProbabilisticViewFunction<T extends ITimeInterval> {
 		return smoothedDistributions;
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(final String[] args) {
-		Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
-		attr.add(new SDFAttribute("", "a", SDFDatatype.DOUBLE));
-		attr.add(new SDFAttribute("", "b", SDFDatatype.DOUBLE));
-		attr.add(new SDFAttribute("", "c", SDFDatatype.DOUBLE));
 
-		// SDFSchema schema = new SDFSchema("", attr);
-		Object[] attributes1 = new Object[] { 1.0, 1.0, 6.0 };
-		Object[] attributes2 = new Object[] { 1.0, 2.0, 5.0 };
-		Object[] attributes3 = new Object[] { 1.0, 3.0, 7.0 };
-		Object[] attributes4 = new Object[] { 1.0, 4.0, 10.0 };
-
-		ProbabilisticTuple<ITimeInterval> tuple1 = new ProbabilisticTuple<>(
-				attributes1, true);
-		tuple1.setMetadata(new TimeInterval());
-		tuple1.getMetadata().setStart(PointInTime.currentPointInTime());
-
-		ProbabilisticTuple<ITimeInterval> tuple2 = new ProbabilisticTuple<>(
-				attributes2, true);
-		tuple2.setMetadata(new TimeInterval());
-		tuple2.getMetadata().setStart(PointInTime.currentPointInTime());
-
-		ProbabilisticTuple<ITimeInterval> tuple3 = new ProbabilisticTuple<>(
-				attributes3, true);
-		tuple3.setMetadata(new TimeInterval());
-		tuple3.getMetadata().setStart(PointInTime.currentPointInTime());
-
-		ProbabilisticTuple<ITimeInterval> tuple4 = new ProbabilisticTuple<>(
-				attributes4, true);
-		tuple4.setMetadata(new TimeInterval());
-		tuple4.getMetadata().setStart(PointInTime.currentPointInTime());
-
-		// ProbabilisticViewFunction<ITimeInterval> probabilisticView = new
-		// ProbabilisticViewFunction<ITimeInterval>(
-		// new Integer[] { 0 }, schema);
-		// probabilisticView.process_next(tuple1, 0);
-		// probabilisticView.process_next(tuple2, 0);
-		// probabilisticView.process_next(tuple3, 0);
-		// probabilisticView.process_next(tuple4, 0);
-
-	}
 }

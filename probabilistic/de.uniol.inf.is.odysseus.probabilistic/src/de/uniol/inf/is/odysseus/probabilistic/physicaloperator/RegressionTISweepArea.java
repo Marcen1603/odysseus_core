@@ -27,135 +27,144 @@ public class RegressionTISweepArea extends
 	@SuppressWarnings("unused")
 	private static Logger LOG = LoggerFactory
 			.getLogger(RegressionTISweepArea.class);
-	private final int[] joinAttributePos;
-	private final int[] viewAttributePos;
-	private final RealMatrix[] residuals;
-	private final RealMatrix[] regressionCoefficients;
+	private final int[] dependentAttributePos;
+	private final int[] explanatoryAttributePos;
+	private RealMatrix residual;
+	private RealMatrix regressionCoefficients;
 
-	public RegressionTISweepArea(int[] joinAttributePos,
-			int[] viewAttributePos) {
-		this.joinAttributePos = joinAttributePos;
-		this.viewAttributePos = viewAttributePos;
-		this.residuals = new RealMatrix[viewAttributePos.length];
-		this.regressionCoefficients = new RealMatrix[viewAttributePos.length];
+	public RegressionTISweepArea(int[] dependentAttributePos,
+			int[] explanatoryAttributePos) {
+		this.dependentAttributePos = dependentAttributePos;
+		this.explanatoryAttributePos = explanatoryAttributePos;
+	}
+
+	public RegressionTISweepArea(RegressionTISweepArea regressionTISweepArea) {
+		this.dependentAttributePos = regressionTISweepArea.dependentAttributePos
+				.clone();
+		this.explanatoryAttributePos = regressionTISweepArea.explanatoryAttributePos
+				.clone();
+		this.residual = regressionTISweepArea.residual.copy();
+		this.regressionCoefficients = regressionTISweepArea.regressionCoefficients
+				.copy();
 	}
 
 	@Override
 	public void insert(ProbabilisticTuple<? extends ITimeInterval> s) {
 		super.insert(s);
-		updateRegressions();
+		updateRegression(dependentAttributePos, explanatoryAttributePos);
 	}
 
 	@Override
 	public void insertAll(
 			List<ProbabilisticTuple<? extends ITimeInterval>> toBeInserted) {
 		super.insertAll(toBeInserted);
-		updateRegressions();
+		updateRegression(dependentAttributePos, explanatoryAttributePos);
 	}
 
-	public RealMatrix[] getResiduals() {
-		return this.residuals;
+	public RealMatrix getResidual() {
+		return this.residual;
 	}
 
-	public RealMatrix getResidual(int viewIndex) {
-		return this.residuals[viewIndex];
+	private void setResidual(RealMatrix residual) {
+		this.residual = residual;
 	}
 
-	public RealMatrix[] getRegressionCoefficients() {
+	public RealMatrix getRegressionCoefficients() {
 		return regressionCoefficients;
 	}
 
-	public RealMatrix getRegressionCoefficient(int viewIndex) {
-		return regressionCoefficients[viewIndex];
+	private void setRegressionCoefficients(RealMatrix regressionCoefficients) {
+		this.regressionCoefficients = regressionCoefficients;
 	}
 
 	/**
-	 * Update the least square estimates for all view attributes
-	 */
-	private void updateRegressions() {
-		for (int i = 0; i < viewAttributePos.length; i++) {
-			updateRegression(joinAttributePos, viewAttributePos, i);
-		}
-	}
-
-	/**
-	 * Perform least square estimation of sigma and beta for the given view
-	 * attribute. More formaly perform the following equation:
-	 * regression coefficients = (A^{T} A)^{-1} A^{T} B
-	 * residual = B^{T} (I - A(A^{T} A)^{-1} A^{T}) B/(n - k)
+	 * Returns <code>true</code> there is at least one more element in the area
+	 * than the number of attributes. More formaly this function returns
+	 * <code>true</code> iff rows > columns
 	 * 
-	 * @param joinAttributePos
-	 *            Position array of all join attributes
-	 * @param viewAttributePos
-	 *            Position array of all view attributes
-	 * @param viewIndex
-	 *            Position of the current estimate
+	 * @return <code>true</code> if the linear regression is estimatable
 	 */
-	private void updateRegression(int[] joinAttributePos,
-			int[] viewAttributePos, int viewIndex) {
+	public boolean isEstimatable() {
+		return this.size() > (explanatoryAttributePos.length + dependentAttributePos.length);
+	}
 
-		Iterator<ProbabilisticTuple<? extends ITimeInterval>> iter = this
-				.iterator();
+	/**
+	 * Perform least square estimation of residual and regression coefficient
+	 * for the given explanatory attribute. More formaly perform the following
+	 * equation: regression coefficients = (A^{T} A)^{-1} A^{T} B residual =
+	 * B^{T} (I - A(A^{T} A)^{-1} A^{T}) B/(n - k)
+	 * 
+	 * @param dependentAttributePos
+	 *            Position array of all dependent attributes
+	 * @param explanatoryAttributePos
+	 *            Position array of all explanatory attributes
+	 * 
+	 *            FIXME regression for each attribute???? (ck)
+	 */
+	private synchronized void updateRegression(int[] dependentAttributePos,
+			int[] explanatoryAttributePos) {
+		if (isEstimatable()) {
+			Iterator<ProbabilisticTuple<? extends ITimeInterval>> iter = this
+					.iterator();
 
-		int attributes = joinAttributePos.length + viewAttributePos.length;
-		ProbabilisticTuple<? extends ITimeInterval> element = null;
-		double[][] joinAttributesData = new double[joinAttributePos.length][this
-				.size()];
-		double[][] viewAttributesData = new double[viewAttributePos.length][this
-				.size()];
+			int attributes = dependentAttributePos.length
+					+ explanatoryAttributePos.length;
+			ProbabilisticTuple<? extends ITimeInterval> element = null;
+			double[][] dependentAttributesData = new double[dependentAttributePos.length][this
+					.size()];
+			double[][] explanatoryAttributesData = new double[explanatoryAttributePos.length][this
+					.size()];
 
-		int dimension = 0;
-		while (iter.hasNext()) {
-			element = iter.next();
-			for (int i = 0; i < element.getAttributes().length; i++) {
-				for (int j = 0; j < joinAttributePos.length; j++) {
-					joinAttributesData[j][dimension] = element
-							.getAttribute(joinAttributePos[j]);
+			int dimension = 0;
+			while (iter.hasNext()) {
+				element = iter.next();
+				for (int i = 0; i < element.getAttributes().length; i++) {
+					for (int j = 0; j < dependentAttributePos.length; j++) {
+						dependentAttributesData[j][dimension] = element
+								.getAttribute(dependentAttributePos[j]);
+					}
+					for (int j = 0; j < explanatoryAttributePos.length; j++) {
+						explanatoryAttributesData[j][dimension] = element
+								.getAttribute(explanatoryAttributePos[j]);
+					}
 				}
-				for (int j = 0; j < viewAttributePos.length; j++) {
-					viewAttributesData[j][dimension] = element
-							.getAttribute(viewAttributePos[j]);
-				}
+				dimension++;
 			}
-			dimension++;
+			RealMatrix dependentAttributes = MatrixUtils.createRealMatrix(
+					dependentAttributesData).transpose();
+
+			RealMatrix explanatoryAttributes = MatrixUtils.createRealMatrix(
+					explanatoryAttributesData).transpose();
+
+			RealMatrix dependentAttributesTranspose = dependentAttributes
+					.transpose();
+
+			RealMatrix explanatoryAttributesTranspose = explanatoryAttributes
+					.transpose();
+
+			RealMatrix dependentAttributesInverse = new LUDecomposition(
+					dependentAttributesTranspose.multiply(dependentAttributes))
+					.getSolver().getInverse();
+
+			RealMatrix identity = MatrixUtils
+					.createRealIdentityMatrix(dimension);
+
+			setRegressionCoefficients(dependentAttributesInverse.multiply(
+					dependentAttributesTranspose).multiply(
+					explanatoryAttributes));
+
+			setResidual((explanatoryAttributesTranspose.multiply(identity
+					.subtract(dependentAttributes.multiply(
+							dependentAttributesInverse).multiply(
+							dependentAttributesTranspose)))
+					.multiply(explanatoryAttributes))
+					.scalarMultiply(1 / (dimension - attributes)));
 		}
-		System.out.println("Dimension " + dimension);
-		RealMatrix joinAttributes = MatrixUtils.createRealMatrix(
-				joinAttributesData).transpose();
-		System.out.println("A " + joinAttributes);
+	}
 
-		RealMatrix viewAttributes = MatrixUtils.createRealMatrix(
-				viewAttributesData).transpose();
-		System.out.println("B " + viewAttributes);
-
-		RealMatrix joinAttributesTranspose = joinAttributes.transpose();
-		System.out.println("At " + joinAttributesTranspose);
-
-		RealMatrix viewAttributesTranspose = viewAttributes.transpose();
-		System.out.println("Bt " + viewAttributesTranspose);
-
-		RealMatrix joinAttributesInverse = new LUDecomposition(
-				joinAttributesTranspose.multiply(joinAttributes)).getSolver()
-				.getInverse();
-		System.out.println("A^-1 " + joinAttributesInverse);
-
-		RealMatrix identity = MatrixUtils.createRealIdentityMatrix(dimension);
-		System.out.println("I " + identity);
-
-		RealMatrix beta = joinAttributesInverse.multiply(
-				joinAttributesTranspose).multiply(viewAttributes);
-		System.out.println(beta);
-
-		RealMatrix sigma = (viewAttributesTranspose.multiply(identity
-				.subtract(joinAttributes.multiply(joinAttributesInverse)
-						.multiply(joinAttributesTranspose)))
-				.multiply(viewAttributes))
-				.scalarMultiply(1 / (dimension - attributes));
-
-		System.out.println(sigma);
-
-		this.regressionCoefficients[viewIndex] = beta;
-		this.residuals[viewIndex] = sigma;
+	@Override
+	public RegressionTISweepArea clone() {
+		return new RegressionTISweepArea(this);
 	}
 
 	/**
