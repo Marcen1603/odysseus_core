@@ -16,8 +16,6 @@
 package de.uniol.inf.is.odysseus.wrapper.twitter.physicaloperator.access;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -39,11 +37,11 @@ import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.ConfigurationBuilder;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class TwitterTransportHandler extends AbstractTransportHandler implements
-		StatusListener {
+public class TwitterTransportHandler extends AbstractPushTransportHandler
+		implements StatusListener {
 	/** Logger */
 	private final Logger LOG = LoggerFactory
 			.getLogger(TwitterTransportHandler.class);
@@ -83,11 +81,23 @@ public class TwitterTransportHandler extends AbstractTransportHandler implements
 			final Map<String, String> options) {
 		final TwitterTransportHandler handler = new TwitterTransportHandler(
 				protocolHandler);
-		handler.consumerKey = options.get("ConsumerKey");
-		handler.consumerSecret = options.get("ConsumerSecret");
-		handler.accessToken = options.get("AccessToken");
-		handler.accessTokenSecret = options.get("AccessTokenSecret");
+		handler.init(options);
 		return handler;
+	}
+
+	private void init(final Map<String, String> options) {
+		if (options.containsKey("ConsumerKey")) {
+			setConsumerKey(options.get("ConsumerKey"));
+		}
+		if (options.containsKey("ConsumerSecret")) {
+			setConsumerSecret(options.get("ConsumerSecret"));
+		}
+		if (options.containsKey("AccessToken")) {
+			setAccessToken(options.get("AccessToken"));
+		}
+		if (options.containsKey("AccessTokenSecret")) {
+			setAccessTokenSecret(options.get("AccessTokenSecret"));
+		}
 	}
 
 	@Override
@@ -95,14 +105,36 @@ public class TwitterTransportHandler extends AbstractTransportHandler implements
 		return "Twitter";
 	}
 
-	@Override
-	public InputStream getInputStream() {
-		throw new IllegalArgumentException("Currently not implemented");
+	public String getConsumerKey() {
+		return this.consumerKey;
 	}
 
-	@Override
-	public OutputStream getOutputStream() {
-		throw new IllegalArgumentException("Currently not implemented");
+	public void setConsumerKey(String consumerKey) {
+		this.consumerKey = consumerKey;
+	}
+
+	public String getConsumerSecret() {
+		return this.consumerSecret;
+	}
+
+	public void setConsumerSecret(String consumerSecret) {
+		this.consumerSecret = consumerSecret;
+	}
+
+	public String getAccessToken() {
+		return this.accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+	public String getAccessTokenSecret() {
+		return this.accessTokenSecret;
+	}
+
+	public void setAccessTokenSecret(String accessTokenSecret) {
+		this.accessTokenSecret = accessTokenSecret;
 	}
 
 	@Override

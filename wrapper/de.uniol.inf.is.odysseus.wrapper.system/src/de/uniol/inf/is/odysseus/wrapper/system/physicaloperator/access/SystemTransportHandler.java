@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SystemTransportHandler extends AbstractTransportHandler {
+public class SystemTransportHandler extends AbstractPullTransportHandler {
 	/** Logger */
 	private Logger LOG = LoggerFactory.getLogger(SystemTransportHandler.class);
 	private String command;
@@ -58,7 +58,7 @@ public class SystemTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		throw new RuntimeException("Not supported yet");
+		throw new IllegalArgumentException("Currently not implemented");
 	}
 
 	@Override

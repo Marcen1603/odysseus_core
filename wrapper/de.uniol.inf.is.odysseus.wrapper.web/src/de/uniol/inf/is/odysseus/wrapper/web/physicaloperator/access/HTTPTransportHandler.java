@@ -36,14 +36,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class HTTPTransportHandler extends AbstractTransportHandler {
+public class HTTPTransportHandler extends AbstractPullTransportHandler {
 	/** Logger */
 	private final Logger LOG = LoggerFactory
 			.getLogger(HTTPTransportHandler.class);

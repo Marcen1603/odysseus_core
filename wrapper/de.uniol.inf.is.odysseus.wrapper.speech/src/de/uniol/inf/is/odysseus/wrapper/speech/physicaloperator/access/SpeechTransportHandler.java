@@ -16,8 +16,6 @@
 package de.uniol.inf.is.odysseus.wrapper.speech.physicaloperator.access;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -26,7 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
@@ -34,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SpeechTransportHandler extends AbstractTransportHandler {
+public class SpeechTransportHandler extends AbstractPushTransportHandler {
 	/** Logger */
 	private Logger LOG = LoggerFactory.getLogger(SpeechTransportHandler.class);
 	private RecognizerThread recognizer;
@@ -84,16 +83,6 @@ public class SpeechTransportHandler extends AbstractTransportHandler {
 	}
 
 	@Override
-	public InputStream getInputStream() {
-		return null;
-	}
-
-	@Override
-	public OutputStream getOutputStream() {
-		return null;
-	}
-
-	@Override
 	public String getName() {
 		return "Speech";
 	}
@@ -105,7 +94,7 @@ public class SpeechTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processOutOpen() throws IOException {
-
+		throw new IllegalArgumentException("Currently not implemented");
 	}
 
 	@Override
@@ -115,7 +104,12 @@ public class SpeechTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processOutClose() throws IOException {
+		throw new IllegalArgumentException("Currently not implemented");
+	}
 
+	@Override
+	public ITransportExchangePattern getExchangePattern() {
+		return ITransportExchangePattern.InOnly;
 	}
 
 	public static void main(String[] arg) {
