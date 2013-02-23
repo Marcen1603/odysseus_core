@@ -103,11 +103,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			this.cloner = null;
 		}
 		if (newAttributes != null) {
-			if (!requiresDeepClone) {
 				this.attributes = newAttributes;
-			} else {
-				this.attributes = cloner.deepClone(copy.attributes);
-			}
 		} else {
 			if (!requiresDeepClone) {
 				int attributeLength = copy.attributes.length;
