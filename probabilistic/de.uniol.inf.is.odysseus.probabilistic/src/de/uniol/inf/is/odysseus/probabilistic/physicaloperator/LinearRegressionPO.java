@@ -74,8 +74,7 @@ public class LinearRegressionPO<T extends ITimeInterval> extends
 					regressionCoefficients);
 			outputVal.setAttribute(object.getAttributes().length + 1, residual);
 			outputVal.setMetadata((T) object.getMetadata().clone());
-			System.out.println(outputVal);
-			//this.transfer(outputVal);
+			this.transfer(outputVal);
 		}
 	}
 
