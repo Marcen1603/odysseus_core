@@ -51,7 +51,7 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	public void doJob() {
 		for (Entry<String, ILogicalOperator> stream : dataDictionary.getStreams(SessionManagementService.getActiveSession())) {
 			Optional<AccessAO> optAccessAO = determineAccessAO(stream.getValue());
-			if( optAccessAO.isPresent() ) {
+			if (optAccessAO.isPresent()) {
 				publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
 			} else {
 				LOG.error("Could not publish new source since the accessAO is not found from logical operator {}", stream.getValue());
@@ -67,7 +67,7 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
 		Optional<AccessAO> optAccessAO = determineAccessAO(op);
-		if( optAccessAO.isPresent() ) {
+		if (optAccessAO.isPresent()) {
 			publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS);
 		} else {
 			LOG.error("Could not publish new source since the accessAO is not found from logical operator {}", op);
@@ -77,7 +77,7 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
 		Optional<AccessAO> optAccessAO = determineAccessAO(op);
-		if( optAccessAO.isPresent() ) {
+		if (optAccessAO.isPresent()) {
 			unpublishSource(optAccessAO.get());
 		} else {
 			LOG.error("Could not unpublish existing source since the accessAO is not found from logical operator {}", op);
@@ -88,23 +88,21 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	public void dataDictionaryChanged(IDataDictionary sender) {
 		// do nothing
 	}
-	
-	public void addSourceAdvertisement( SourceAdvertisement adv ) {
-		publishedSources.put(adv.getAccessAO().getSourcename(), adv);
-		try {
-			discoveryService.publish(adv);
-		} catch (IOException ex) {
-			LOG.error("Could not publish source {}", adv.getAccessAO(), ex);
-		}
+
+	public void publishSource(SourceAdvertisement adv) {
+		tryPublishSource(adv.getAccessAO(), PUBLISH_INTERVAL_MILLIS, adv);
 	}
 
 	private void publishSource(AccessAO source, long lifetime) {
-		LOG.debug("Publishing source {} with lifetime {}", source, lifetime);
-
 		SourceAdvertisement adv = determineSourceAdvertisement(source);
+		tryPublishSource(source, lifetime, adv);
+	}
 
+	private void tryPublishSource(AccessAO source, long lifetime, SourceAdvertisement adv) {
+		LOG.debug("Publishing source {} with lifetime {} ms", source, lifetime);
 		try {
 			discoveryService.publish(adv, lifetime, lifetime);
+			publishedSources.put(adv.getAccessAO().getSourcename(), adv);
 		} catch (IOException ex) {
 			LOG.error("Could not publish source {}", source, ex);
 		}
@@ -112,7 +110,7 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 
 	private void unpublishSource(AccessAO source) {
 		LOG.debug("Unpublishing source {}", source);
-		
+
 		SourceAdvertisement adv = publishedSources.remove(source.getSourcename());
 		try {
 			P2PNewPlugIn.getDiscoveryService().flushAdvertisement(adv);
@@ -130,22 +128,21 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 		adv.setAccessAO(new AccessAO(source)); // clean copy
 		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
 
-		publishedSources.put(source.getSourcename(), adv);
 		return adv;
 	}
 
 	private static Optional<AccessAO> determineAccessAO(ILogicalOperator start) {
-		if( start instanceof AccessAO) {
-			return Optional.of((AccessAO)start);
+		if (start instanceof AccessAO) {
+			return Optional.of((AccessAO) start);
 		}
-		
-		for( LogicalSubscription subscription : start.getSubscribedToSource()) {
+
+		for (LogicalSubscription subscription : start.getSubscribedToSource()) {
 			Optional<AccessAO> optAcccessAO = determineAccessAO(subscription.getTarget());
-			if( optAcccessAO.isPresent() ) {
+			if (optAcccessAO.isPresent()) {
 				return optAcccessAO;
 			}
 		}
-		
+
 		return Optional.absent();
 	}
 }

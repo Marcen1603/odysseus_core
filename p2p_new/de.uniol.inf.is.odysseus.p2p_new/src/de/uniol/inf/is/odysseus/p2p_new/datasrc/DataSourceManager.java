@@ -34,7 +34,7 @@ public class DataSourceManager implements IAdvertisementListener {
 		if( !dataDictionary.containsViewOrStream(accessAO.getSourcename(), SessionManagementService.getActiveSession())) {
 
 			ILogicalOperator timestampAO = addTimestampAO(accessAO, null);
-			dataSourcePublisher.addSourceAdvertisement(srcAdv);
+			dataSourcePublisher.publishSource(srcAdv);
 			dataDictionary.addEntitySchema(accessAO.getSourcename(), accessAO.getOutputSchema(), SessionManagementService.getActiveSession());
 			dataDictionary.setStream(accessAO.getSourcename(), timestampAO, SessionManagementService.getActiveSession());
 			
