@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
@@ -107,6 +108,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * Admission Control-Komponente (optional)
 	 */
 	private IAdmissionControl admissionControl = null;
+	private IAdmissionQuerySelector admissionQuerySelector = null;
 
 	/**
 	 * Konfiguration der Ausf�hrungsumgebung
@@ -301,6 +303,17 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			admissionControl = null;
 		}
 	}
+	
+	public void bindAdmissionQuerySelector(IAdmissionQuerySelector selector) {
+		admissionQuerySelector = selector;
+	}
+
+	public void unbindAdmissionQuerySelector(IAdmissionQuerySelector selector) {
+		if (admissionQuerySelector == selector) {
+			admissionQuerySelector = null;
+		}
+	}
+
 
 	/**
 	 * bindCompiler bindet eine Anfragebearbeitungs-Komponente ein
@@ -431,12 +444,20 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		throw new NoCompilerLoadedException();
 	}
 
-	public IAdmissionControl getAdmissionControl() {
+	public final IAdmissionControl getAdmissionControl() {
 		return admissionControl;
 	}
 	
-	public boolean hasAdmissionControl() {
+	public final IAdmissionQuerySelector getAdmissionQuerySelector() {
+		return admissionQuerySelector;
+	}
+	
+	public final boolean hasAdmissionControl() {
 		return admissionControl != null;
+	}
+	
+	public final boolean hasAdmissionQuerySelector() {
+		return admissionQuerySelector != null;
 	}
 	
 	// ----------------------------------------------------------------------------------------

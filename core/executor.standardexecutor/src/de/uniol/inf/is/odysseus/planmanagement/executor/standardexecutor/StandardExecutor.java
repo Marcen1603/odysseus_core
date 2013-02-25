@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
-import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -105,22 +104,11 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	private ReloadLog reloadLog;
 
-	private IAdmissionQuerySelector admissionQuerySelector = null;
 	private final Map<IUser, List<IPhysicalQuery>> stoppedQueriesByAC = Maps
 			.newHashMap();
 	private long lastAdmissionReaction;
 
 	private Map<ILogicalQuery, QueryBuildConfiguration> queryBuildParameter = new HashMap<ILogicalQuery, QueryBuildConfiguration>();
-
-	public void bindAdmissionQuerySelector(IAdmissionQuerySelector selector) {
-		admissionQuerySelector = selector;
-	}
-
-	public void unbindAdmissionQuerySelector(IAdmissionQuerySelector selector) {
-		if (admissionQuerySelector == selector) {
-			admissionQuerySelector = null;
-		}
-	}
 
 	// ----------------------------------------------------------------------------------------
 	// OSGI-Framework
@@ -1008,12 +996,11 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public void overloadUserOccured(IAdmissionControl sender, IUser user) {
-		if (hasAdmissionControl()
+		if (hasAdmissionControl() && hasAdmissionQuerySelector()
 				&& System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS) {
 
 			List<IPhysicalQuery> runningQueries = determineRunningQueries(user);
-			List<IPhysicalQuery> queriesToStop = admissionQuerySelector
-					.determineQueriesToStop(getAdmissionControl(), runningQueries);
+			List<IPhysicalQuery> queriesToStop = getAdmissionQuerySelector().determineQueriesToStop(getAdmissionControl(), runningQueries);
 
 			if (queriesToStop != null && !queriesToStop.isEmpty()) {
 				for (IPhysicalQuery query : queriesToStop) {
@@ -1043,12 +1030,11 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public void underloadUserOccured(IAdmissionControl sender, IUser user) {
-		if (hasAdmissionControl() && !stoppedQueriesByAC.isEmpty()
+		if (hasAdmissionControl() && hasAdmissionQuerySelector() && !stoppedQueriesByAC.isEmpty()
 				&& System.currentTimeMillis() - lastAdmissionReaction > ADMISSION_REACTION_INTERVAL_MILLIS) {
 			List<IPhysicalQuery> stoppedQueries = determineStoppedQueries(user,
 					stoppedQueriesByAC);
-			List<IPhysicalQuery> queriesToStart = admissionQuerySelector
-					.determineQueriesToStart(getAdmissionControl(), stoppedQueries);
+			List<IPhysicalQuery> queriesToStart = getAdmissionQuerySelector().determineQueriesToStart(getAdmissionControl(), stoppedQueries);
 
 			if (queriesToStart != null && !queriesToStart.isEmpty()) {
 				for (IPhysicalQuery stoppedQuery : queriesToStart) {
