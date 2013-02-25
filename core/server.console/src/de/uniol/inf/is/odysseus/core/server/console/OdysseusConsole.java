@@ -260,9 +260,9 @@ public class OdysseusConsole implements CommandProvider,
 	public void bindScriptParser(IOdysseusScriptParser parser) {
 		this.scriptParser = parser;
 	}
-	
+
 	public void unbindScriptParser(IOdysseusScriptParser parser) {
-		if( this.scriptParser == parser ) {
+		if (this.scriptParser == parser) {
 			this.scriptParser = null;
 		}
 	}
@@ -863,10 +863,10 @@ public class OdysseusConsole implements CommandProvider,
 			if (args.length == 2) {
 				currentUser = UserManagement.getSessionmanagement().login(
 						args[0], args[1].getBytes());
-				if (currentUser != null){
-				ci.println("User "+args[0]+" successfully logged in.");
-				}else{
-					ci.println("Error logging in user "+args[0]);					
+				if (currentUser != null) {
+					ci.println("User " + args[0] + " successfully logged in.");
+				} else {
+					ci.println("Error logging in user " + args[0]);
 				}
 			} else {
 				ci.println("Must be username and password");
@@ -875,18 +875,17 @@ public class OdysseusConsole implements CommandProvider,
 			ci.println(e.getMessage());
 		}
 	}
-	
+
 	@Help(parameter = "<logout>", description = "Logout current user.")
 	public void _logout(CommandInterpreter ci) {
 		try {
-				UserManagement.getSessionmanagement().logout(currentUser);
-				currentUser = null;				
-					ci.println("Current user logged out ");					
+			UserManagement.getSessionmanagement().logout(currentUser);
+			currentUser = null;
+			ci.println("Current user logged out ");
 		} catch (Exception e) {
 			ci.println(e.getMessage());
 		}
 	}
-	
 
 	@Help(parameter = "<query string without SELECT> [<S>|<F> filename|<E>]", description = "add query [with console-output-sink|File output|eclipse output]\n\tExample:SELECT (a * 2) as value FROM test WHERE a > 2 <S>")
 	public void _SELECT(CommandInterpreter ci) {
@@ -900,18 +899,18 @@ public class OdysseusConsole implements CommandProvider,
 			resetBuildConfig();
 			if (args[args.length - 1].toUpperCase().equals("<S>")) {
 				q.append(args[args.length - 2]).append(" ");
-//				this.executor
-//						.getQueryBuildConfiguration(defaultBuildConfiguration)
-//						.getConfiguration()
-//						.add(new ParameterDefaultRoot(new ConsoleSink()));
+				// this.executor
+				// .getQueryBuildConfiguration(defaultBuildConfiguration)
+				// .getConfiguration()
+				// .add(new ParameterDefaultRoot(new ConsoleSink()));
 				this.executor.addQuery(q.toString(), parser(), currentUser,
 						defaultBuildConfiguration);
 			} else if (args[args.length - 2].toUpperCase().equals("<F>")) {
-//				this.executor
-//						.getQueryBuildConfiguration(defaultBuildConfiguration)
-//						.getConfiguration()
-//						.add(new ParameterDefaultRoot(new FileSinkPO(
-//								args[args.length - 1], "", -1, true, false)));
+				// this.executor
+				// .getQueryBuildConfiguration(defaultBuildConfiguration)
+				// .getConfiguration()
+				// .add(new ParameterDefaultRoot(new FileSinkPO(
+				// args[args.length - 1], "", -1, true, false)));
 				this.executor.addQuery(q.toString(), parser(), currentUser,
 						defaultBuildConfiguration);
 
@@ -987,10 +986,10 @@ public class OdysseusConsole implements CommandProvider,
 				file = new File(this.path != null ? this.path + filename
 						: filename);
 				br = new BufferedReader(new FileReader(file));
-			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
 				ci.println("File not found: " + file.getAbsolutePath());
 				return;
-			}
+			} 
 
 			String queries = "";
 			try {
@@ -1014,6 +1013,11 @@ public class OdysseusConsole implements CommandProvider,
 				this.delegateAddQueryCmd(newArgs);
 			} catch (Exception e) {
 				ci.printStackTrace(e);
+			}
+			try {
+				br.close();
+			} catch (IOException e) {			
+				e.printStackTrace();
 			}
 		}
 	}
@@ -1096,6 +1100,12 @@ public class OdysseusConsole implements CommandProvider,
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
+			
+			try {
+				br.close();
+			} catch (IOException e) {			
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -1125,8 +1135,8 @@ public class OdysseusConsole implements CommandProvider,
 			} else if (args[i].equalsIgnoreCase("-r")) {
 				restructure = Boolean.getBoolean(args[i + 1]);
 				i++;
-//			} else if (args[i].equalsIgnoreCase("S")) {
-//				params.add(new ParameterDefaultRoot(new ConsoleSink()));
+				// } else if (args[i].equalsIgnoreCase("S")) {
+				// params.add(new ParameterDefaultRoot(new ConsoleSink()));
 			} else if (args[i].equalsIgnoreCase("-m")) {
 				// boolean withMeta = Boolean.getBoolean(args[i + 1]);
 				i++;
@@ -1698,14 +1708,14 @@ public class OdysseusConsole implements CommandProvider,
 	private void addQueryWithEclipseConsoleOutput(String query) {
 		try {
 
-//			Class<?> eclipseConsoleSink = Class
-//					.forName("de.uniol.inf.is.odysseus.broker.console.client.EclipseConsoleSink");
-//			Object ecs = eclipseConsoleSink.newInstance();
-//			IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
+			// Class<?> eclipseConsoleSink = Class
+			// .forName("de.uniol.inf.is.odysseus.broker.console.client.EclipseConsoleSink");
+			// Object ecs = eclipseConsoleSink.newInstance();
+			// IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
 
 			resetBuildConfig();
-//			this.executor.getQueryBuildConfiguration(defaultBuildConfiguration)
-//					.getConfiguration().add(new ParameterDefaultRoot(ecSink));
+			// this.executor.getQueryBuildConfiguration(defaultBuildConfiguration)
+			// .getConfiguration().add(new ParameterDefaultRoot(ecSink));
 			this.executor.addQuery(query, parser(), currentUser,
 					defaultBuildConfiguration);
 		} catch (ClassNotFoundException e) {
@@ -1905,12 +1915,13 @@ public class OdysseusConsole implements CommandProvider,
 			while ((character = reader.read()) != -1) {
 				sb.append((char) character);
 			}
+			reader.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
 		return sb.toString();
 	}
 

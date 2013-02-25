@@ -21,6 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
@@ -260,6 +262,10 @@ public class WindowAO extends UnaryLogicalOp {
 						"can't use slide in unbounded window"));
 			}
 			return isValid;
+		case PREDICATE:
+			throw new NotImplementedException();			
+		default:
+			break;
 		}
 		return true;
 	}
