@@ -58,8 +58,7 @@ public class RandomStreamClientHandlerTest {
 		}
 		
 	}
-	
-	@SuppressWarnings("unused")
+		
 	@DataProvider
 	private static Object[][] randomValuesDataProvider() {
 		return new Object[][] {

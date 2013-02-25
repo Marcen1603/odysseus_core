@@ -64,7 +64,7 @@ public class SimpleQueryTextProvider implements IDashboardPartQueryTextProvider 
 			while (lineScanner.hasNextLine()) {
 				lines.add(lineScanner.nextLine());
 			}
-			
+			lineScanner.close();
 			return ImmutableList.copyOf(lines);
 		} catch( Exception ex ) {
 			LOG.error("Could not copy query text from file {}.", file.getName(), ex);

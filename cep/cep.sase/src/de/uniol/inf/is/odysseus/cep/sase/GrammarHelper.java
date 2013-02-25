@@ -38,6 +38,7 @@ public class GrammarHelper {
 				}
 			}
 			System.out.println(out.toString());
+			in.close();
 		}
 	}
 

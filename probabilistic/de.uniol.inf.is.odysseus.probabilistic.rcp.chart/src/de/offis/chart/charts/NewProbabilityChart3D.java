@@ -66,7 +66,7 @@ public class NewProbabilityChart3D extends AbstractView<ProbabilisticTuple<IMeta
 			
 			@Override
 			public float f2(float x, float y) {
-				double sum = 0;
+//				double sum = 0;
 //				for(Entry<NormalDistributionFunction2D, Double> func : funcs.entrySet()){
 //					sum += func.getKey().getValue(x) * func.getValue();
 //				}

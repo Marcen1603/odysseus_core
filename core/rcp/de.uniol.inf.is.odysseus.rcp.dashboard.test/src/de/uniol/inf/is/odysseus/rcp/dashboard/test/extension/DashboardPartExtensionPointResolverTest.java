@@ -39,8 +39,7 @@ public class DashboardPartExtensionPointResolverTest {
   public void testCheckAndGetDashboardPartClassFail() throws Throwable {
 	  assertEquals( TestUtil.invoke("checkAndGetDashboardPartClass", DashboardPartExtensionPointResolver.class, new Object()), TestDashboardPart.class);
   }
-  
-  @SuppressWarnings("unused")
+    
 @DataProvider
   private static Object[][] convertValueDataProvider() {
 	  return new Object[][] {

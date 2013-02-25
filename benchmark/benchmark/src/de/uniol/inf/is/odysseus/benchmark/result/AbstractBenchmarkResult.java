@@ -34,8 +34,7 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	private long endTime;
 	protected int size = 0;
 	@Element
-	private int queryId;
-	@SuppressWarnings("unused")
+	private int queryId;	
 	@Element
 	private long duration;
 	@Element(name = "statistics")
@@ -51,8 +50,7 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	public void setEndTime(long end) {
 		this.endTime = end;
 	}
-
-	@SuppressWarnings("unused")
+	
 	@Persist
 	private void setDuration() {
 		this.duration = this.getDuration();

@@ -99,8 +99,7 @@ public class SettingDescriptorTest {
 	public void testInvalidTypeDefaultValueCombinations(Object defValue, String type) {
 		new SettingDescriptor<Object>("SettingName", "SettingDescription", type, defValue, true, true);
 	}
-	
-	@SuppressWarnings("unused")
+		
 	@DataProvider
 	private static Object[][] settingsDataProvider() {
 		return new Object[][] {
@@ -110,8 +109,7 @@ public class SettingDescriptorTest {
 				{true, false}
 		};
 	}
-	
-	@SuppressWarnings("unused")
+		
 	@DataProvider
 	private static Object[][] typeDefaultValueDataProvider() {
 		return new Object[][] {
@@ -123,8 +121,7 @@ public class SettingDescriptorTest {
 				{true, "Boolean"},
 		};
 	}
-	
-	@SuppressWarnings("unused")
+		
 	@DataProvider
 	private static Object[][] invalidTypeDefaultValueDataProvider() {
 		return new Object[][] {

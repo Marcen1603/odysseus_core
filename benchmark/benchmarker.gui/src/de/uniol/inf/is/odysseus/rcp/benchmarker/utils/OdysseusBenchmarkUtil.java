@@ -168,11 +168,13 @@ public class OdysseusBenchmarkUtil extends Thread {
 					query += tmp + "\n";
 					tmp = br.readLine();
 				}
+				br.close();
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException(e);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
+			
 		} else {
 			if (benchmarkParam.getQuery() != null) {
 				query = benchmarkParam.getQuery();

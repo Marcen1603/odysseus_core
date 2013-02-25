@@ -424,6 +424,8 @@ public final class TupleReaderMessages {
 					break;
 				case BYTES:
 					ret = inputStream.readBytes();
+					break;				
+				default:
 					break;
 				}
 				return ret;

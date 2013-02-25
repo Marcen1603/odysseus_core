@@ -62,6 +62,7 @@ public class OutputModel {
 		while (scanner.hasNextLine()) {
 			text = text + scanner.nextLine() + "\n";
 		}
+		scanner.close();
 		return text;
 	}
 

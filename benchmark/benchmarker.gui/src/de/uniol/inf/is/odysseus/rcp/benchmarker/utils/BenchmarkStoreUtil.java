@@ -244,12 +244,15 @@ public class BenchmarkStoreUtil {
 				fis = new FileInputStream(benchmarkPartFile);
 
 				XMLDecoder decoder = new XMLDecoder(fis);
-				return (T) decoder.readObject();
-			}
+				T o = (T) decoder.readObject();
+				decoder.close();
+				return o;
+				
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			close(fis);
+			close(fis);			
 		}
 		return null;
 	}

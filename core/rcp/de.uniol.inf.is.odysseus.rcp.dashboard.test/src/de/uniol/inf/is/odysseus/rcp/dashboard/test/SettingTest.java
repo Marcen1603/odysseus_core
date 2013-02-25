@@ -65,8 +65,7 @@ public class SettingTest {
 	public void testConvertValueUnknownType() throws Throwable {
 		TestUtil.invoke("convertValue", Setting.class, "100", "SomeUnknownType");
 	}
-	
-	@SuppressWarnings("unused")
+		
 	@DataProvider
 	private static Object[][] convertValueDataProvider() {
 		return new Object[][] {

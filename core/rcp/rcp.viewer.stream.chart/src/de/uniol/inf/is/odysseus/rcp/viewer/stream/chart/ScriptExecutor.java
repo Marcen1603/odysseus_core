@@ -60,6 +60,7 @@ public class ScriptExecutor {
 			while (scanner.hasNextLine()) {
 				text = text + scanner.nextLine() + "\n";
 			}
+			scanner.close();
 			OdysseusRCPEditorTextPlugIn.getScriptParser().parseAndExecute(text, caller, dummy);
 			List<ISource<?>> sources = new ArrayList<ISource<?>>();
 			List<PhysicalSubscription<?>> toRemove = new ArrayList<PhysicalSubscription<?>>();

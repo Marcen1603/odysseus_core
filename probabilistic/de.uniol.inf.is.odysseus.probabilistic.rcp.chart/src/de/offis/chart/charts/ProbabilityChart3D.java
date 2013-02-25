@@ -43,6 +43,7 @@ public class ProbabilityChart3D extends AbstractChart<ProbabilisticTuple<IMetaAt
 	public void streamElementRecieved(final Object element, int port) {
 		try {
 			
+			@SuppressWarnings("unchecked")
 			ProbabilisticTuple<IMetaAttribute> value = (ProbabilisticTuple<IMetaAttribute>)element;
 			Object o = value.getAttribute(0);
 			updateChart(value.getDistribution(((ProbabilisticContinuousDouble) o).getDistribution()));

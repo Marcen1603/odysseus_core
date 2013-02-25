@@ -52,7 +52,7 @@ public class ResourceFileQueryTextProvider implements IDashboardPartQueryTextPro
 			while (lineScanner.hasNextLine()) {
 				lines.add(lineScanner.nextLine());
 			}
-			
+			lineScanner.close();
 			return ImmutableList.copyOf(lines);
 		} catch( Exception ex ) {
 			LOG.error("Could not get query text from file {}.", queryFile.getName(), ex);

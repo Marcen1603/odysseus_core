@@ -164,6 +164,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 					query += tmp+"\n";
 					tmp = br.readLine();
 				}
+				br.close();
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException(e);
 			} catch (IOException e) {

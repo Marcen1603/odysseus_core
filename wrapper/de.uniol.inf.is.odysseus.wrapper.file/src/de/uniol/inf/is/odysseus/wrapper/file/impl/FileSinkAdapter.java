@@ -76,6 +76,7 @@ public class FileSinkAdapter extends AbstractSinkAdapter implements SinkAdapter 
 		String path = sink.getConfiguration().get("path").toString();
 		try {
 			final File file = new File(path);
+			@SuppressWarnings("resource")
 			final FileOutputStream out = new FileOutputStream(file);
 			FileChannel channel = out.getChannel();
 			this.channelMap.put(sink, channel);

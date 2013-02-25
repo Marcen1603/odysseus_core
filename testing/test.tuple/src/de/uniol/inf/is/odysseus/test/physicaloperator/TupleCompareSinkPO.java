@@ -80,6 +80,7 @@ public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
 				while ((line = reader.readLine()) != null) {
 					this.expectedResults.add(this.tupleDataHandler.readData(line.trim().split(";")));
 				}
+				reader.close();
 				LOG.debug("Reading Compare File " + compareFile + " done");
 			} catch (IOException e) {
 				throw new OpenFailedException("Cannot read result file "

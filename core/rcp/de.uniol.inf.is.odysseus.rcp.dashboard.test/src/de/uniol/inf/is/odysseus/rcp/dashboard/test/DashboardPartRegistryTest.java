@@ -235,8 +235,7 @@ public class DashboardPartRegistryTest {
 	private static <T> SettingDescriptor<T> newSettingDescriptor(String settingName, String type, T defaultValue) {
 		return new SettingDescriptor<T>(settingName, "Description", type, defaultValue, false, true);
 	}
-	
-	@SuppressWarnings("unused")
+		
 	@DataProvider
 	private static Object[][] invalidDashboardPartClasses() {
 		return new Object[][] {

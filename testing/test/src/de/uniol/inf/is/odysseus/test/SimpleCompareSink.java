@@ -68,6 +68,7 @@ public class SimpleCompareSink extends AbstractSink<IStreamObject<?>> implements
 				while ((line = reader.readLine()) != null) {
 					compareInput.add(line.trim());
 				}
+				reader.close();
 				logger.debug("Reading Compare File " + compareFile + " done");
 			} catch (IOException e) {
 				throw new OpenFailedException("Cannot read result file "

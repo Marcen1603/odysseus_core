@@ -57,8 +57,10 @@ public class RepairTool {
 	private BufferedReader in;
 	private BufferedWriter out;
 	private long counter = 0;
-	private static NumberFormat nf = NumberFormat.getIntegerInstance(Locale.GERMAN);
-	private static Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+	private static NumberFormat nf = NumberFormat
+			.getIntegerInstance(Locale.GERMAN);
+	private static Calendar cal = Calendar.getInstance(TimeZone
+			.getTimeZone("GMT"));
 
 	public static void main(String[] args) throws Exception {
 		long nanos = 1330086739644209700L;
@@ -67,7 +69,9 @@ public class RepairTool {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(millis);
 		System.out.println(cal.getTime());
-		FileReader reader = new FileReader("E:" + File.separator + "Workspace" + File.separator + "Odysseus" + File.separator + "trunk" + File.separator + "application" + File.separator
+		FileReader reader = new FileReader("E:" + File.separator + "Workspace"
+				+ File.separator + "Odysseus" + File.separator + "trunk"
+				+ File.separator + "application" + File.separator
 				+ "DebsGrandChallenge" + File.separator + "allData.txt");
 		BufferedReader br = new BufferedReader(reader);
 		String line = br.readLine();
@@ -75,35 +79,38 @@ public class RepairTool {
 		long millisLast = 0;
 		String lastLine = "";
 		while (line != null) {
-			try{
-			if (!line.isEmpty()) {
-				line = line.trim();
-				String parts[] = line.split("\\.");
-				long millisCurrent = parseTime(parts[0]);
+			try {
+				if (!line.isEmpty()) {
+					line = line.trim();
+					String parts[] = line.split("\\.");
+					long millisCurrent = parseTime(parts[0]);
 
-				//if ((millisCurrent - millisLast) > 1000) {
-				if ((millisCurrent<millisLast)) {
-					System.out.println("found lines at " + count);
-					System.out.println(lastLine);
-					System.out.println(line);
-					System.out.println("--------------------------------------------------------");
+					// if ((millisCurrent - millisLast) > 1000) {
+					if ((millisCurrent < millisLast)) {
+						System.out.println("found lines at " + count);
+						System.out.println(lastLine);
+						System.out.println(line);
+						System.out
+								.println("--------------------------------------------------------");
+					}
+					millisLast = millisCurrent;
+					if (count % 100000 == 0) {
+						System.out.println("Processed: " + nf.format(count)
+								+ " still: " + nf.format(32390518 - count));
+					}
 				}
-				millisLast = millisCurrent;
-				if (count % 100000 == 0) {
-					System.out.println("Processed: " + nf.format(count) + " still: " + nf.format(32390518 - count));
-				}
-			}
-			count++;
-			lastLine = line;
-			line = br.readLine();
-			}catch (Exception e) {				
-				System.err.println("Error at line "+count);
-				System.err.println("Line: "+line);
-				System.err.println("Last: "+lastLine);
+				count++;
+				lastLine = line;
+				line = br.readLine();				
+			} catch (Exception e) {
+				System.err.println("Error at line " + count);
+				System.err.println("Line: " + line);
+				System.err.println("Last: " + lastLine);
 				e.printStackTrace();
 				break;
 			}
 		}
+		br.close();
 		System.out.println("Done");
 	}
 
@@ -111,14 +118,14 @@ public class RepairTool {
 		String splits[] = timeString.split("T");
 		String date[] = splits[0].split("-");
 		String time[] = splits[1].split(":");
-		
+
 		int year = Integer.parseInt(date[0]);
 		int month = Integer.parseInt(date[1]);
 		int day = Integer.parseInt(date[2]);
 		int hour = Integer.parseInt(time[0]);
 		int minute = Integer.parseInt(time[1]);
 		int second = Integer.parseInt(time[2]);
-		cal.set(year, month, day, hour, minute, second);		
+		cal.set(year, month, day, hour, minute, second);
 		return cal.getTimeInMillis();
 	}
 
@@ -150,7 +157,8 @@ public class RepairTool {
 		try {
 			line = in.readLine();
 			if (line == null) {
-				System.out.println("Process done: " + nf.format(counter) + " lines processed!");
+				System.out.println("Process done: " + nf.format(counter)
+						+ " lines processed!");
 				return null;
 			}
 			// timestamp
@@ -172,7 +180,8 @@ public class RepairTool {
 			counter++;
 			if (counter % 1000000 == 0) {
 
-				System.out.println("Processed: " + nf.format(counter) + " still: " + nf.format(32390518 - counter));
+				System.out.println("Processed: " + nf.format(counter)
+						+ " still: " + nf.format(32390518 - counter));
 			}
 			return list;
 		} catch (IOException e) {
@@ -187,13 +196,16 @@ public class RepairTool {
 		List<String[]> tuples = next();
 		while (tuples != null) {
 			for (String[] tuple : tuples) {
-				if (tuple[21].equalsIgnoreCase("1") || tuple[22].equalsIgnoreCase("1") || tuple[23].equalsIgnoreCase("1")) {
-					System.out.println("Counter: "+counter);
+				if (tuple[21].equalsIgnoreCase("1")
+						|| tuple[22].equalsIgnoreCase("1")
+						|| tuple[23].equalsIgnoreCase("1")) {
+					System.out.println("Counter: " + counter);
 					System.err.println(printTuple(tuple));
 				}
-				
+
 				// System.out.println(printTuple(tuple));
-				//out.write(printTuple(tuple) + System.getProperty("line.separator"));
+				// out.write(printTuple(tuple) +
+				// System.getProperty("line.separator"));
 			}
 			tuples = next();
 		}
@@ -217,7 +229,8 @@ public class RepairTool {
 	public void init() {
 		counter = 0;
 		// open reader
-		URL fileURL = Activator.getContext().getBundle().getEntry("/allData.txt");
+		URL fileURL = Activator.getContext().getBundle()
+				.getEntry("/allData.txt");
 		try {
 			InputStream inputStream = fileURL.openConnection().getInputStream();
 			in = new BufferedReader(new InputStreamReader(inputStream));
@@ -249,8 +262,12 @@ public class RepairTool {
 		}
 		close();
 		long millis = System.currentTimeMillis() - starttime;
-		String needed = String.format("%d min, %d sec", TimeUnit.MILLISECONDS.toMinutes(millis),
-				TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+		String needed = String.format(
+				"%d min, %d sec",
+				TimeUnit.MILLISECONDS.toMinutes(millis),
+				TimeUnit.MILLISECONDS.toSeconds(millis)
+						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS
+								.toMinutes(millis)));
 		System.out.println("Needed: " + needed);
 
 	}

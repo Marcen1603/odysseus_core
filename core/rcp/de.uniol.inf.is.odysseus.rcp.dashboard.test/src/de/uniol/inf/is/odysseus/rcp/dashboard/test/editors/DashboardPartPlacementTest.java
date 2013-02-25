@@ -75,8 +75,7 @@ public class DashboardPartPlacementTest {
 		place.setWidth(499);
 		assertEquals(place.getWidth(), 499);
 	}
-
-	@SuppressWarnings("unused")
+	
 	@DataProvider
 	private static Object[][] constructorInvalidPlacementDataDataProvider() {
 		return new Object[][] { { -1, 1, 1, 1 }, { 1, -1, 1, 1 }, { 1, 1, -1, 1 }, { 1, 1, 1, -1 }, };
