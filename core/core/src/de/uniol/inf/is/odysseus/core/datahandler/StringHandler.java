@@ -61,8 +61,10 @@ public class StringHandler extends AbstractDataHandler<String> {
 			return decoded.toString();
 		} catch (CharacterCodingException e) {
 			e.printStackTrace();
+		}finally{
+			b.limit(limit);
 		}
-		b.limit(limit);
+		
 		// for (int i=0;i<size;i++){
 		// char c = b.getChar();
 		// //System.out.print(c);
@@ -90,7 +92,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 		// buffer.putInt(s.length());
 		try {
 			ByteBuffer charBuffer = encoder.encode(CharBuffer.wrap(s));
-			buffer.putInt(charBuffer.capacity());
+			buffer.putInt(charBuffer.limit());
 			buffer.put(charBuffer);
 		} catch (CharacterCodingException e) {
 			e.printStackTrace();
@@ -107,8 +109,16 @@ public class StringHandler extends AbstractDataHandler<String> {
 	
 	@Override
 	public int memSize(Object attribute) {
-		return ((String) attribute).length() * 2 // Unicode!
-				+ Integer.SIZE / 8; // F�r die L�ngeninformation (evtl.
-									// anders machen?)
+		try {
+			int val = encoder.encode(CharBuffer.wrap((String)attribute)).limit()+Integer.SIZE/8; 
+			return val;
+		} catch (CharacterCodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Integer.SIZE/8;
+//		return ((String) attribute).length() * 2 // Unicode!
+//				+ Integer.SIZE / 8; // F�r die L�ngeninformation (evtl.
+//									// anders machen?)
 	}
 }
