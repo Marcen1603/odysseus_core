@@ -108,20 +108,10 @@ public final class AccessAOCoverter {
 		AccessAO accessOperator = new AccessAO();
 		while (elements.hasMoreElements()) {
 			TextElement<?> elem = (TextElement<?>) elements.nextElement();
-
 			try {
-				if (elem.getName().equals(ID_TAG)) {
-					try {
-						URI id = new URI(elem.getTextValue());
-						adv.setID(IDFactory.fromURI(id));
-					} catch (URISyntaxException | ClassCastException ex) {
-						LOG.error("Could not set id", ex);
-					}
-				} else {
-					handleElement(accessOperator, elem);
-				}
-			} catch (ClassNotFoundException | IOException ex) {
-				LOG.error("Could not handle xml-element {}", elem, ex);
+				handleElement(accessOperator, elem, adv);
+			} catch (ClassNotFoundException | IOException e) {
+				LOG.error("Could not handle element to construct accessAO from sourceAdvertisement: {}", elem, e);
 			}
 		}
 
@@ -131,9 +121,21 @@ public final class AccessAOCoverter {
 	public static String[] getIndexableFieldTags() {
 		return new String[] { ID_TAG, SOURCE_NAME_TAG };
 	}
+
+	private static void handleIDTag(SourceAdvertisement adv, TextElement<?> elem) {
+		try {
+			URI id = new URI(elem.getTextValue());
+			adv.setID(IDFactory.fromURI(id));
+		} catch (URISyntaxException | ClassCastException ex) {
+			LOG.error("Could not set id", ex);
+		}
+	}
 	
-	private static void handleElement(AccessAO accessAO, TextElement<?> elem) throws ClassNotFoundException, IOException {
-		if (elem.getName().equals(SOURCE_NAME_TAG)) {
+	private static void handleElement(AccessAO accessAO, TextElement<?> elem, SourceAdvertisement adv) throws ClassNotFoundException, IOException {
+		if (elem.getName().equals(ID_TAG)) {
+			handleIDTag(adv, elem);
+			
+		} else if (elem.getName().equals(SOURCE_NAME_TAG)) {
 			accessAO.setSource(elem.getTextValue());
 			
 		} else if (elem.getName().equals(INPUT_SCHEMA_TAG)) {
