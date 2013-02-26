@@ -33,7 +33,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 
 public final class MemoryUsageSaver {
@@ -109,8 +108,8 @@ public final class MemoryUsageSaver {
 		}
 	}
 		
-	public static long get(IPhysicalOperator op) {
-		Preconditions.checkNotNull(op, "Physical operator to save memory usage must not be null!");
+	public static long get(Object op) {
+		Preconditions.checkNotNull(op, "Operator to save memory usage must not be null!");
 		
 		String className = op.getClass().getSimpleName();
 		if (!memUsages.containsKey(className)) {
