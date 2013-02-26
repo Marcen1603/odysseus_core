@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.ac;
 
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -57,7 +58,7 @@ public interface IAdmissionControl {
 	 * @return Kostenschätzung als Instanz von {@link ICost}, oder
 	 *         <code>null</code>, falls noch keine Kostenschätzung vorliegt.
 	 */
-	public ICost getCost(IPhysicalQuery query);
+	public ICost<IPhysicalOperator> getCost(IPhysicalQuery query);
 
 	/**
 	 * Erzwingt eine erneute Kostenschätzung des Ausführungsplans, sodass die
@@ -71,7 +72,7 @@ public interface IAdmissionControl {
 	 * 
 	 * @return Gesamtkosten des Ausführungsplans
 	 */
-	public ICost getActualCost();
+	public ICost<IPhysicalOperator> getActualCost();
 
 	/**
 	 * Liefert die maximal erlaubten Kosten zurück. Die Admission Control sorgt
@@ -80,7 +81,7 @@ public interface IAdmissionControl {
 	 * 
 	 * @return Maximalkosten
 	 */
-	public ICost getMaximumCost();
+	public ICost<IPhysicalOperator> getMaximumCost();
 	
 	/**
 	 * Liefert den Schwellwert an Kosten, die - wenn unterschritten - f�r ein erneutes
@@ -88,7 +89,7 @@ public interface IAdmissionControl {
 	 * 
 	 * @return Minimalkosten
 	 */
-	public ICost getMinimumCost();
+	public ICost<IPhysicalOperator> getMinimumCost();
 
 	/**
 	 * Liefert eine Liste der Namen aller vorhandenden Kostenmodelle zurück. Der

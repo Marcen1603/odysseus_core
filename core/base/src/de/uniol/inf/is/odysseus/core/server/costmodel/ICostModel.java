@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.core.server.costmodel;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-
 /**
  * Repräsentiert ein Kostenmodell. Mit dieser lassen sich zu gegebenen
  * Operatormengen Kostenschätzungen durchführen.
@@ -26,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
  * @author Timo Michelsen
  * 
  */
-public interface ICostModel {
+public interface ICostModel<T> {
 
 	/**
 	 * Führt eine Kostenschätzung mit den gegebenen physischen Operatoren durch
@@ -39,27 +37,27 @@ public interface ICostModel {
 	 *            durchgeführt wird, oder nicht. 
 	 * @return Kostenschätzung
 	 */
-	public ICost estimateCost(List<IPhysicalOperator> operators, boolean onUpdate);
+	public ICost<T> estimateCost(List<T> operators, boolean onUpdate);
 
 	/**
 	 * Liefert die Maximalekosten
 	 * 
 	 * @return Maximalkosten
 	 */
-	public ICost getMaximumCost();
+	public ICost<T> getMaximumCost();
 	
 	/**
 	 * Liefert Kosten, die nicht mit der Verarbeitung zu tun haben.
 	 * 
 	 * @return Hintergrundkosten
 	 */
-	public ICost getOverallCost();
+	public ICost<T> getOverallCost();
 
 	/**
 	 * Liefert eine Instanz der Kosten des Kostenmodells mit 0.
 	 * 
 	 * @return Null-Kosten
 	 */
-	public ICost getZeroCost();
+	public ICost<T> getZeroCost();
 
 }

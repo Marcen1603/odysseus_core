@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.core.server.costmodel;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-
 /**
  * Repräsentiert die generellen Kosten im Admission Control. 
  * Die Implementierung ist abhängig vom Kostenmodell.
@@ -26,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
  * @author Timo Michelsen
  *
  */
-public interface ICost extends Comparable<ICost>{
+public interface ICost<T> extends Comparable<ICost<T>>{
 
 	/**
 	 * Liefert alle Operatoren, die durch die Kosten
@@ -34,7 +32,7 @@ public interface ICost extends Comparable<ICost>{
 	 * 
 	 * @return Liste der beteiltigen Operatoren
 	 */
-	public Collection<IPhysicalOperator> getOperators();
+	public Collection<T> getOperators();
 	
 	/**
 	 * Liefert die Kosten zu einem spezifischen Operator. 
@@ -44,7 +42,7 @@ public interface ICost extends Comparable<ICost>{
 	 * @param operator Physischer Operator, dessen Kosten zurückgegeben werden sollen.
 	 * @return Kosten zum gegebenen physischen Operator
 	 */
-	public ICost getCostOfOperator(IPhysicalOperator operator);
+	public ICost<T> getCostOfOperator(T operator);
 	
 	/**
 	 * Fasst diese Kosten mit den gegebenen Kosten zusammen und liefert
@@ -53,7 +51,7 @@ public interface ICost extends Comparable<ICost>{
 	 * @param otherCost Andere Kosten
 	 * @return Zusammengefasste Kosten
 	 */
-	public ICost merge( ICost otherCost );
+	public ICost<T> merge( ICost<T> otherCost );
 	
 	/**
 	 * Subtrahiert diese Kosten mit den gegebenen Kosten und liefert
@@ -62,7 +60,7 @@ public interface ICost extends Comparable<ICost>{
 	 * @param otherCost Andere Kosten
 	 * @return Subtraierte Kosten
 	 */
-	public ICost substract( ICost otherCost );
+	public ICost<T> substract( ICost<T> otherCost );
 	
 	/**
 	 * Gibt einen Bruchteil der Kosten als neue Instanz zur�ck
@@ -71,5 +69,5 @@ public interface ICost extends Comparable<ICost>{
 	 * 
 	 * @return Bruchteil der Kosten als neue Instanz.
 	 */
-	public ICost fraction( double factor );
+	public ICost<T> fraction( double factor );
 }
