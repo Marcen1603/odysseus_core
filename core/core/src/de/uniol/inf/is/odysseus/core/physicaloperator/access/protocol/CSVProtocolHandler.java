@@ -83,7 +83,7 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 				access);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
-		init(options);
+		instance.init(options);
 		return instance;
 	}
 
