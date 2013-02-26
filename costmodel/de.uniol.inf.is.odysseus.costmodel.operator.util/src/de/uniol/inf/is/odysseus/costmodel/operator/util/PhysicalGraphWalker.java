@@ -31,16 +31,16 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
  * @author Timo Michelsen
  *
  */
-public class GraphWalker {
+public class PhysicalGraphWalker {
 
 	private final List<IPhysicalOperator> operators;
 	
 	/**
-	 * Konstruktor. Erstellt eine neue {@link GraphWalker}-Instanz. Ihr wird eine
+	 * Konstruktor. Erstellt eine neue {@link PhysicalGraphWalker}-Instanz. Ihr wird eine
 	 * Liste aller zu besuchender Operatoren mitgegeben.
 	 * @param operators
 	 */
-	public GraphWalker(List<IPhysicalOperator> operators) {
+	public PhysicalGraphWalker(List<IPhysicalOperator> operators) {
 		this.operators = operators;
 	}
 	
@@ -52,7 +52,7 @@ public class GraphWalker {
 	 * @param visitor Visitor, welcher bei jedem physischen Operator aufgerufen wird
 	 */
 	@SuppressWarnings("unchecked")
-	public void walk( IOperatorWalker visitor ) {
+	public void walk( IOperatorWalker<IPhysicalOperator> visitor ) {
 		
 		// find sources
 		List<ISource<?>> sources = new ArrayList<ISource<?>>();

@@ -43,13 +43,13 @@ public class SelectEstimator implements IOperatorEstimator<SelectPO> {
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(SelectPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	public OperatorEstimation<SelectPO> estimateOperator(SelectPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		List<Map<SDFAttribute, IHistogram>> histograms = new ArrayList<Map<SDFAttribute, IHistogram>>();
-		for( OperatorEstimation estimation : prevOperators) {
+		for( OperatorEstimation<?> estimation : prevOperators) {
 			histograms.add(estimation.getHistograms());
 		}
 		
-		OperatorEstimation estimation = new OperatorEstimation(instance);
+		OperatorEstimation<SelectPO> estimation = new OperatorEstimation<SelectPO>(instance);
 				
 		/** 1. Histograms **/
 		IPredicate predicate = instance.getPredicate();
@@ -97,7 +97,7 @@ public class SelectEstimator implements IOperatorEstimator<SelectPO> {
 		if( datarate < 0.0) {
 			datarate = c.getDataRate() * selectivity;
 		}
-		estimation.setDataStream(new DataStream(instance, datarate, c.getIntervalLength()));
+		estimation.setDataStream(new DataStream<SelectPO>(instance, datarate, c.getIntervalLength()));
 		
 //		IDataStream c = prevOperators.get(0).getDataStream();
 //		System.out.print(c.getDataRate() + ",");
@@ -116,7 +116,7 @@ public class SelectEstimator implements IOperatorEstimator<SelectPO> {
 			cpuCost = cpu * c.getDataRate();
 			CPURateSaver.getInstance().set(instance.getClass().getSimpleName(), cpu);
 		}
-		estimation.setDetailCost(new OperatorDetailCost(instance, MemoryUsageSaver.get(instance), cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<SelectPO>(instance, MemoryUsageSaver.get(instance), cpuCost));
 		
 //		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
 //		double cpuCost = ACConstants.SELECT_CPU_COST_PER_TUPLE * c.getDataRate();

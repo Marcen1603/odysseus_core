@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.core.server.ac,
+Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.ac,
  de.uniol.inf.is.odysseus.core.server.costmodel,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query,
  org.osgi.framework

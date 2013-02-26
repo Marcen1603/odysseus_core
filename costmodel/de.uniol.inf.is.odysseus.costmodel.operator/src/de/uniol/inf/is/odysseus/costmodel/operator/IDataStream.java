@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.costmodel.operator;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 /**
  * Repäsentiert die Charakteristika eines Datenstroms.
@@ -25,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
  * @author Timo Michelsen
  *
  */
-public interface IDataStream {
+public interface IDataStream<T> {
 
 	/**
 	 * Liefert den Operator zurück, dessen Ausgabestrom in dieser
@@ -33,7 +32,7 @@ public interface IDataStream {
 	 * 
 	 * @return Physischer Operator
 	 */
-	public IPhysicalOperator getOperator();
+	public T getOperator();
 	
 	/**
 	 * Liefert die Datenrate

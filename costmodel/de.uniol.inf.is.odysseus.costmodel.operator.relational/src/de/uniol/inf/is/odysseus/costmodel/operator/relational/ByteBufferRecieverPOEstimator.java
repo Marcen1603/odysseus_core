@@ -40,9 +40,9 @@ public class ByteBufferRecieverPOEstimator implements IOperatorEstimator<Receive
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(ReceiverPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	public OperatorEstimation<ReceiverPO> estimateOperator(ReceiverPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		
-		OperatorEstimation estimation = new OperatorEstimation(instance);
+		OperatorEstimation<ReceiverPO> estimation = new OperatorEstimation<ReceiverPO>(instance);
 		
 		// retrieve source name
 		String sourceName = instance.getOutputSchema().get(0).getSourceName();
@@ -68,7 +68,7 @@ public class ByteBufferRecieverPOEstimator implements IOperatorEstimator<Receive
 			DataStreamRateSaver.getInstance().set(sourceName, datarate);
 		}
 		
-		estimation.setDataStream(new DataStream(instance, datarate, 1.0));
+		estimation.setDataStream(new DataStream<ReceiverPO>(instance, datarate, 1.0));
 		
 		/** 4. DetailCost **/
 		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
@@ -81,7 +81,7 @@ public class ByteBufferRecieverPOEstimator implements IOperatorEstimator<Receive
 			CPURateSaver.getInstance().set(instance.getClass().getSimpleName(), cpu);
 		}
 		
-		estimation.setDetailCost(new OperatorDetailCost(instance, MemoryUsageSaver.get(instance), cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<ReceiverPO>(instance, MemoryUsageSaver.get(instance), cpuCost));
 		
 		return estimation;
 	}

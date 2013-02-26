@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.costmodel.opcount;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 
 /**
@@ -28,9 +27,9 @@ import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
  * @author Timo Michelsen
  * 
  */
-public class OpCountCost implements ICost {
+public class OpCountCost<T> implements ICost<T> {
 
-	private Collection<IPhysicalOperator> operators;
+	private Collection<T> operators;
 	private final double opCount;
 
 	/**
@@ -41,7 +40,7 @@ public class OpCountCost implements ICost {
 	 *            Liste der Operatoren, die in der Kostenschätzung im
 	 *            Kostenmodell berücksichtigt wurden.
 	 */
-	public OpCountCost(Collection<IPhysicalOperator> operators) {
+	public OpCountCost(Collection<T> operators) {
 		this.opCount = operators.size();
 		this.operators = operators;
 	}
@@ -54,15 +53,15 @@ public class OpCountCost implements ICost {
 	 */
 	OpCountCost(double opCount) {
 		this.opCount = operators.size();
-		operators = new ArrayList<IPhysicalOperator>();
+		operators = new ArrayList<T>();
 	}
 
 	@Override
-	public int compareTo(ICost o) {
+	public int compareTo(ICost<T> o) {
 		if (!(o instanceof OpCountCost))
 			throw new IllegalArgumentException("o is not type " + OpCountCost.class);
 
-		OpCountCost cost = (OpCountCost) o;
+		OpCountCost<T> cost = (OpCountCost<T>) o;
 		if (opCount < cost.opCount)
 			return -1;
 		if (opCount == cost.opCount)
@@ -71,44 +70,44 @@ public class OpCountCost implements ICost {
 	}
 
 	@Override
-	public OpCountCost merge(ICost otherCost) {
+	public OpCountCost<T> merge(ICost<T> otherCost) {
 		if (otherCost == null)
-			return new OpCountCost(operators);
+			return new OpCountCost<T>(operators);
 
 		if (!(otherCost instanceof OpCountCost))
 			throw new IllegalArgumentException("o is not type " + OpCountCost.class);
 
-		OpCountCost cost = (OpCountCost) otherCost;
+		OpCountCost<T> cost = (OpCountCost<T>) otherCost;
 
-		return new OpCountCost(opCount + cost.opCount);
+		return new OpCountCost<T>(opCount + cost.opCount);
 	}
 
 	@Override
-	public OpCountCost substract(ICost otherCost) {
+	public OpCountCost<T> substract(ICost<T> otherCost) {
 		if (otherCost == null)
-			return new OpCountCost(opCount);
+			return new OpCountCost<T>(opCount);
 
 		if (!(otherCost instanceof OpCountCost))
 			throw new IllegalArgumentException("o is not type " + OpCountCost.class);
 
-		OpCountCost cost = (OpCountCost) otherCost;
+		OpCountCost<T> cost = (OpCountCost<T>) otherCost;
 
-		return new OpCountCost(opCount - cost.opCount);
+		return new OpCountCost<T>(opCount - cost.opCount);
 	}
 
 	@Override
-	public Collection<IPhysicalOperator> getOperators() {
+	public Collection<T> getOperators() {
 		return operators;
 	}
 
 	@Override
-	public ICost getCostOfOperator(IPhysicalOperator operator) {
-		return new OpCountCost(1.0 / opCount);
+	public ICost<T> getCostOfOperator(T operator) {
+		return new OpCountCost<T>(1.0 / opCount);
 	}
 
 	@Override
-	public ICost fraction(double factor) {
-		return new OpCountCost(opCount * factor);
+	public ICost<T> fraction(double factor) {
+		return new OpCountCost<T>(opCount * factor);
 	}
 
 }

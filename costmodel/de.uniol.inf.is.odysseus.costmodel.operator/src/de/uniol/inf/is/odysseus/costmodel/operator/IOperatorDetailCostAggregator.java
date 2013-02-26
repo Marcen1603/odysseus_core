@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.costmodel.operator;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-
 /**
  * Schnittstelle der Aggregatoren, die die einzelnen Kosten der Operatoren zu
  * einem Kostenwert aggregieren.
@@ -26,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
  * @author Timo Michelsen
  * 
  */
-public interface IOperatorDetailCostAggregator {
+public interface IOperatorDetailCostAggregator<T> {
 
 	/**
 	 * Aggregiert die Kosten der gegebenen Operatoren zu einem Kostenwert.
@@ -35,5 +33,5 @@ public interface IOperatorDetailCostAggregator {
 	 *            Kosten der einzelnen Operatoren
 	 * @return Aggregierte Kosten aller Operatoren
 	 */
-	public AggregatedCost aggregate(Map<IPhysicalOperator, OperatorEstimation> operatorEstimations);
+	public AggregatedCost aggregate(Map<T, OperatorEstimation<T>> operatorEstimations);
 }

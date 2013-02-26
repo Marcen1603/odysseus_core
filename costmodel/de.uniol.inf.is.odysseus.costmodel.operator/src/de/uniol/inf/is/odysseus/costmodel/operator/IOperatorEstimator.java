@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.costmodel.operator;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 
@@ -31,7 +30,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
  * @param <T>
  *            Typ des zu Schätzenden Operators
  */
-public interface IOperatorEstimator<T extends IPhysicalOperator> {
+public interface IOperatorEstimator<T> {
 
 	/**
 	 * Liefert die Klassendefinition des zu schätzenden Operatortyps.
@@ -57,6 +56,6 @@ public interface IOperatorEstimator<T extends IPhysicalOperator> {
 	 * @return Zusammenstellung aller abgeschätzen Eigenschaften des gegebenen
 	 *         Operators
 	 */
-	public OperatorEstimation estimateOperator(T instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms);
+	public OperatorEstimation<T> estimateOperator(T instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms);
 
 }

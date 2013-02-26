@@ -23,6 +23,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
+
+import de.uniol.inf.is.odysseus.core.ISubscribable;
+import de.uniol.inf.is.odysseus.core.ISubscriber;
+import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
@@ -37,8 +44,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.DataSourceManager;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
-import de.uniol.inf.is.odysseus.costmodel.operator.util.GraphWalker;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.IOperatorWalker;
+import de.uniol.inf.is.odysseus.costmodel.operator.util.LogicalGraphWalker;
+import de.uniol.inf.is.odysseus.costmodel.operator.util.PhysicalGraphWalker;
 import de.uniol.inf.is.odysseus.intervalapproach.AntiJoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
@@ -49,11 +57,12 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
  * @author Timo Michelsen
  * 
  */
-public class OperatorCostModel implements ICostModel {
+public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISubscribable<T, ISubscription<T>>> implements ICostModel<T> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OperatorCostModel.class);
 
-	private IOperatorDetailCostAggregator operatorAggregator = new OperatorDetailCostAggregator();
+	private IOperatorDetailCostAggregator<IPhysicalOperator> operatorAggregator = new OperatorDetailCostAggregator<IPhysicalOperator>();
+	private IOperatorDetailCostAggregator<ILogicalOperator> logicalOperatorAggregator = new OperatorDetailCostAggregator<ILogicalOperator>();
 
 	private final int processorCount;
 	private final int schedulerThreadCount;
@@ -83,117 +92,142 @@ public class OperatorCostModel implements ICostModel {
 	}
 
 	@Override
-	public ICost getMaximumCost() {
+	public ICost<T> getMaximumCost() {
 		double mem = memory * OperatorCostModelCfg.getInstance().getMemHeadroom();
 		double cpu = processorCount * OperatorCostModelCfg.getInstance().getCpuHeadroom();
-		OperatorCost max = new OperatorCost(mem, cpu);
+		OperatorCost<T> max = new OperatorCost<T>(mem, cpu);
 		return max;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public ICost estimateCost(List<IPhysicalOperator> operators, final boolean onUpdate) {
+	public ICost<T> estimateCost(List<T> operators, final boolean onUpdate) {
+		if (operators == null || operators.isEmpty()) {
+			return new OperatorCost<T>(null, 0, 0);
+		}
 
 		final Map<SDFAttribute, IHistogram> baseHistograms = getBaseHistograms(operators);
-		final Map<IPhysicalOperator, OperatorEstimation> estimatedOperators = new HashMap<IPhysicalOperator, OperatorEstimation>();
 
-		GraphWalker walker = new GraphWalker(operators);
-		walker.walk(new IOperatorWalker() {
+		if (operators.get(0) instanceof IPhysicalOperator) {
 
-			@Override
-			public void walk(IPhysicalOperator operator) {
+			final Map<IPhysicalOperator, OperatorEstimation<IPhysicalOperator>> estimatedOperators = Maps.newHashMap();
+			PhysicalGraphWalker walker = new PhysicalGraphWalker((List<IPhysicalOperator>) operators);
+			walker.walk(new IOperatorWalker<IPhysicalOperator>() {
 
-				// get prev operators
-				List<OperatorEstimation> prevOperators = new ArrayList<OperatorEstimation>();
-				if (operator.isSink()) {
-					ISink<?> operatorAsSink = (ISink<?>) operator;
+				@Override
+				public void walk(IPhysicalOperator operator) {
 
-					for (int i = 0; i < operatorAsSink.getSubscribedToSource().size(); i++) {
-						PhysicalSubscription<?> subscription = operatorAsSink.getSubscribedToSource(i);
-						IPhysicalOperator op = (IPhysicalOperator) subscription.getTarget();
+					// get prev operators
+					List<OperatorEstimation<?>> prevOperators = new ArrayList<OperatorEstimation<?>>();
+					if (operator.isSink()) {
+						ISink<?> operatorAsSink = (ISink<?>) operator;
+
+						for (int i = 0; i < operatorAsSink.getSubscribedToSource().size(); i++) {
+							PhysicalSubscription<?> subscription = operatorAsSink.getSubscribedToSource(i);
+							IPhysicalOperator op = (IPhysicalOperator) subscription.getTarget();
+
+							prevOperators.add(estimatedOperators.get(op));
+						}
+					}
+
+					IOperatorEstimator<IPhysicalOperator> estimator = OperatorEstimatorFactory.getInstance().get(operator);
+					OperatorEstimation<IPhysicalOperator> estimation = estimator.estimateOperator(operator, prevOperators, baseHistograms);
+
+					boolean isRunning = determineIsRunning(operator);
+
+					if (!onUpdate) {
+						// don't count already running operators
+						if (isRunning)
+							estimation.setDetailCost(new OperatorDetailCost<IPhysicalOperator>(operator, 0, 0));
+					} else {
+						// don't count stopped operators
+						if (!isRunning) {
+							estimation.setDetailCost(new OperatorDetailCost<IPhysicalOperator>(operator, 0, 0));
+
+						}
+					}
+
+					estimatedOperators.put(operator, estimation);
+				}
+
+			});
+
+			// aggregate costs
+			AggregatedCost aggCost = operatorAggregator.aggregate(estimatedOperators);
+			return (ICost<T>) new OperatorCost<IPhysicalOperator>(estimatedOperators, aggCost.getMemCost(), aggCost.getCpuCost());
+
+		} else {
+
+			final Map<ILogicalOperator, OperatorEstimation<ILogicalOperator>> estimatedOperators = Maps.newHashMap();
+			LogicalGraphWalker walker = new LogicalGraphWalker((List<ILogicalOperator>) operators);
+			walker.walk(new IOperatorWalker<ILogicalOperator>() {
+
+				@Override
+				public void walk(ILogicalOperator operator) {
+
+					// get prev operators
+					List<OperatorEstimation<?>> prevOperators = new ArrayList<OperatorEstimation<?>>();
+					for (int i = 0; i < operator.getSubscribedToSource().size(); i++) {
+						LogicalSubscription subscription = operator.getSubscribedToSource(i);
+						ILogicalOperator op = (ILogicalOperator) subscription.getTarget();
 
 						prevOperators.add(estimatedOperators.get(op));
 					}
+
+					IOperatorEstimator<ILogicalOperator> estimator = OperatorEstimatorFactory.getInstance().get(operator);
+					OperatorEstimation<ILogicalOperator> estimation = estimator.estimateOperator(operator, prevOperators, baseHistograms);
+
+					boolean isRunning = determineIsRunning(operator);
+
+					if (!onUpdate) {
+						// don't count already running operators
+						if (isRunning)
+							estimation.setDetailCost(new OperatorDetailCost<ILogicalOperator>(operator, 0, 0));
+					} else {
+						// don't count stopped operators
+						if (!isRunning) {
+							estimation.setDetailCost(new OperatorDetailCost<ILogicalOperator>(operator, 0, 0));
+
+						}
+					}
+
+					estimatedOperators.put(operator, estimation);
 				}
 
-				IOperatorEstimator<IPhysicalOperator> estimator = OperatorEstimatorFactory.getInstance().get(operator);
-				OperatorEstimation estimation = estimator.estimateOperator(operator, prevOperators, baseHistograms);
+			});
 
-				// check estimation
-				if (!estimation.check()) {
-					LOG.error("Estimation of {} with estimator {} not correct", operator, estimator.getClass());
-					StandardOperatorEstimator<IPhysicalOperator> stdEstimator = (StandardOperatorEstimator<IPhysicalOperator>) OperatorEstimatorFactory.getInstance().get(null);
-					OperatorEstimation stdEstimation = stdEstimator.estimateOperator(operator, prevOperators, baseHistograms);
-					if (estimation.getHistograms() == null) {
-						LOG.error("No histograms in Estimation!");
-						estimation.setHistograms(stdEstimation.getHistograms());
-					}
-					if (estimation.getSelectivity() == null) {
-						LOG.error("No selectivity in estimation!");
-						estimation.setSelectivity(stdEstimation.getSelectivity());
-					}
-					if (estimation.getDataStream() == null) {
-						LOG.error("No datastream in estimation!");
-						estimation.setDataStream(stdEstimation.getDataStream());
-					}
-					if (estimation.getDetailCost() == null) {
-						LOG.error("No detailcost in estimation!");
-						estimation.setDetailCost(stdEstimation.getDetailCost());
-					}
-				}
+			// aggregate costs
+			AggregatedCost aggCost = logicalOperatorAggregator.aggregate(estimatedOperators);
+			return (ICost<T>) new OperatorCost<ILogicalOperator>(estimatedOperators, aggCost.getMemCost(), aggCost.getCpuCost());
 
-				boolean isRunning = false;
-				for (IOperatorOwner owner : operator.getOwner()) {
-					IPhysicalQuery query = (IPhysicalQuery) owner;
-					if (query.isOpened()) {
-						isRunning = true;
-						break;
-					}
-				}
+		}
 
-				if (!onUpdate) {
-					// don't count already running operators
-					if (isRunning)
-						estimation.setDetailCost(new OperatorDetailCost(operator, 0, 0));
-				} else {
-					// don't count stopped operators
-					if (!isRunning) {
-						estimation.setDetailCost(new OperatorDetailCost(operator, 0, 0));
-
-					}
-				}
-
-				estimatedOperators.put(operator, estimation);
-			}
-
-		});
-
-		// aggregate costs
-		AggregatedCost aggCost = operatorAggregator.aggregate(estimatedOperators);
-		return new OperatorCost(estimatedOperators, aggCost.getMemCost(), aggCost.getCpuCost());
 	}
 
 	@Override
-	public ICost getZeroCost() {
-		return new OperatorCost(0, 0);
+	public ICost<T> getZeroCost() {
+		return new OperatorCost<T>(0, 0);
 	}
 
 	@Override
-	public ICost getOverallCost() {
+	public ICost<T> getOverallCost() {
 		double mem = runtime.totalMemory() - runtime.freeMemory();
-		return new OperatorCost(mem, cpuUsage.getCpuMeanUsage());
+		return new OperatorCost<T>(mem, cpuUsage.getCpuMeanUsage());
 	}
 
 	// holt eine Liste der Histogramme der Attribute, die in der Anfrage
 	// verarbeitet werden
-	private Map<SDFAttribute, IHistogram> getBaseHistograms(List<IPhysicalOperator> physicalOperators) {
+	@SuppressWarnings("rawtypes")
+	private Map<SDFAttribute, IHistogram> getBaseHistograms(List<T> physicalOperators) {
 		Map<SDFAttribute, IHistogram> histograms = new HashMap<SDFAttribute, IHistogram>();
 
 		// Find relevant operators.
 		// Relevant operators are Select and Join
 		List<IPhysicalOperator> relevantOperators = new ArrayList<IPhysicalOperator>();
-		for (IPhysicalOperator op : physicalOperators) {
+		for (int i = 0; i < physicalOperators.size(); i++) {
+			Object op = physicalOperators.get(i);
 			if (op instanceof SelectPO || op instanceof JoinTIPO || op instanceof AntiJoinTIPO)
-				relevantOperators.add(op);
+				relevantOperators.add((IPhysicalOperator) op);
 		}
 
 		if (relevantOperators.isEmpty()) {
@@ -209,7 +243,7 @@ public class OperatorCostModel implements ICostModel {
 		List<SDFAttribute> relevantAttributes = new ArrayList<SDFAttribute>();
 		for (IPhysicalOperator op : relevantOperators) {
 			if (op instanceof SelectPO) {
-				SelectPO<?> selectPO = (SelectPO<?>) op;
+				SelectPO<?> selectPO = (SelectPO) op;
 				List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 				fillWithAttributes(selectPO.getPredicate(), attributes);
 
@@ -218,7 +252,7 @@ public class OperatorCostModel implements ICostModel {
 						relevantAttributes.add(a);
 
 			} else if (op instanceof JoinTIPO) {
-				JoinTIPO<?, ?> joinPO = (JoinTIPO<?, ?>) op;
+				JoinTIPO<?, ?> joinPO = (JoinTIPO) op;
 				List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 				fillWithAttributes(joinPO.getPredicate(), attributes);
 
@@ -227,7 +261,7 @@ public class OperatorCostModel implements ICostModel {
 						relevantAttributes.add(a);
 
 			} else {
-				AntiJoinTIPO<?, ?> antiJoin = (AntiJoinTIPO<?, ?>) op;
+				AntiJoinTIPO<?, ?> antiJoin = (AntiJoinTIPO) op;
 				for (SDFAttribute a : antiJoin.getOutputSchema())
 					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a))
 						relevantAttributes.add(a);
@@ -273,21 +307,17 @@ public class OperatorCostModel implements ICostModel {
 		}
 	}
 
+	private static boolean determineIsRunning(Object operator) {
+		if (operator instanceof IPhysicalOperator) {
+			IPhysicalOperator physicalOperator = (IPhysicalOperator) operator;
+			for (IOperatorOwner owner : physicalOperator.getOwner()) {
+				IPhysicalQuery query = (IPhysicalQuery) owner;
+				if (query.isOpened()) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return true;
+	}
 }
-
-// System.out.println();
-// for (IPhysicalOperator op : operators) {
-//
-// OperatorEstimation estimation = estimatedOperators.get(op);
-// double s = estimation.getSelectivity();
-// double r = estimation.getDataStream().getDataRate();
-// double g = estimation.getDataStream().getIntervalLength();
-// double cpu = estimation.getDetailCost().getProcessorCost();
-// double mem = estimation.getDetailCost().getMemoryCost();
-//
-// System.out.println(String.format("%-20s : s = %-8.6f, r = %-10.6f, g = %-10.6f, cpu = %-10.6f, mem = %-10.6f ",
-// op.getClass().getSimpleName(), s, r, g, cpu, mem));
-// }
-//
-// System.out.println("Aggregated: " + aggCost);
-

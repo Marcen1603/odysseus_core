@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.costmodel.querycount;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 
 /**
@@ -26,10 +25,10 @@ import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
  * @author Timo Michelsen
  * 
  */
-public class QueryCountCost implements ICost {
+public class QueryCountCost<T> implements ICost<T> {
 
 	private double value;
-	private Collection<IPhysicalOperator> operators;
+	private Collection<T> operators;
 
 	/**
 	 * Konstruktor. Erstellt eine neue {@link QueryCountCost}-Instanz mit den
@@ -38,7 +37,7 @@ public class QueryCountCost implements ICost {
 	 * @param operators
 	 *            Physische Operatoren
 	 */
-	public QueryCountCost(Collection<IPhysicalOperator> operators) {
+	public QueryCountCost(Collection<T> operators) {
 		value = 1;
 		this.operators = operators;
 	}
@@ -60,8 +59,8 @@ public class QueryCountCost implements ICost {
 	}
 
 	@Override
-	public int compareTo(ICost o) {
-		QueryCountCost cost = (QueryCountCost) o;
+	public int compareTo(ICost<T> o) {
+		QueryCountCost<T> cost = (QueryCountCost<T>) o;
 		if (value < cost.value)
 			return -1;
 		if (value == cost.value)
@@ -70,36 +69,36 @@ public class QueryCountCost implements ICost {
 	}
 
 	@Override
-	public ICost merge(ICost otherCost) {
+	public ICost<T> merge(ICost<T> otherCost) {
 		if (otherCost == null)
-			return new QueryCountCost(value);
+			return new QueryCountCost<T>(value);
 
-		QueryCountCost cost = (QueryCountCost) otherCost;
-		return new QueryCountCost(value + cost.value);
+		QueryCountCost<T> cost = (QueryCountCost<T>) otherCost;
+		return new QueryCountCost<T>(value + cost.value);
 	}
 
 	@Override
-	public ICost substract(ICost otherCost) {
+	public ICost<T> substract(ICost<T> otherCost) {
 		if (otherCost == null)
-			return new QueryCountCost(value);
+			return new QueryCountCost<T>(value);
 
-		QueryCountCost cost = (QueryCountCost) otherCost;
-		return new QueryCountCost(value - cost.value);
+		QueryCountCost<T> cost = (QueryCountCost<T>) otherCost;
+		return new QueryCountCost<T>(value - cost.value);
 	}
 
 	@Override
-	public Collection<IPhysicalOperator> getOperators() {
+	public Collection<T> getOperators() {
 		return operators;
 	}
 
 	@Override
-	public ICost getCostOfOperator(IPhysicalOperator operator) {
-		return new QueryCountCost(value / operators.size());
+	public ICost<T> getCostOfOperator(T operator) {
+		return new QueryCountCost<T>(value / operators.size());
 	}
 
 	@Override
-	public ICost fraction(double factor) {
-		return new QueryCountCost(value * factor);
+	public ICost<T> fraction(double factor) {
+		return new QueryCountCost<T>(value * factor);
 	}
 
 }

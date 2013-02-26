@@ -37,13 +37,13 @@ public class BufferedPipeEstimator implements IOperatorEstimator<BufferPO> {
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(BufferPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	public OperatorEstimation<BufferPO> estimateOperator(BufferPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		
-		OperatorEstimation estimation = new StandardOperatorEstimator<BufferPO>().estimateOperator(instance, prevOperators, baseHistograms);
+		OperatorEstimation<BufferPO> estimation = new StandardOperatorEstimator<BufferPO>().estimateOperator(instance, prevOperators, baseHistograms);
 		
 		int memUsage = EstimatorHelper.sizeInBytes(instance.getOutputSchema()) * instance.size() + 4;
 		
-		OperatorDetailCost cost = new OperatorDetailCost(instance, memUsage, estimation.getDetailCost().getProcessorCost());
+		OperatorDetailCost<BufferPO> cost = new OperatorDetailCost<BufferPO>(instance, memUsage, estimation.getDetailCost().getProcessorCost());
 		estimation.setDetailCost(cost);
 		
 		return estimation;

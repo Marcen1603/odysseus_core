@@ -15,8 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.costmodel.operator;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
@@ -31,7 +32,7 @@ public class OperatorEstimatorFactory {
 
 	private static OperatorEstimatorFactory instance = null;
 
-	private Map<Class<? extends IPhysicalOperator>, Class<? extends IOperatorEstimator<? extends IPhysicalOperator>>> estimators = new HashMap<Class<? extends IPhysicalOperator>, Class<? extends IOperatorEstimator<? extends IPhysicalOperator>>>();
+	private Map<Class<?>, Class<? extends IOperatorEstimator<?>>> estimators = Maps.newHashMap();
 
 	private OperatorEstimatorFactory() {
 
@@ -81,12 +82,12 @@ public class OperatorEstimatorFactory {
 	 * @return Schätzer zum physischen Operator
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends IPhysicalOperator> IOperatorEstimator<T> get(T operator) {
+	public <T> IOperatorEstimator<T> get(T operator) {
 		if (operator == null)
 			return new StandardOperatorEstimator<T>();
 
-		Class<? extends IPhysicalOperator> clazz = operator.getClass();
-		Class<? extends IOperatorEstimator<? extends IPhysicalOperator>> estimatorClass = estimators.get(clazz);
+		Class<?> clazz = operator.getClass();
+		Class<? extends IOperatorEstimator<?>> estimatorClass = estimators.get(clazz);
 
 		if (estimatorClass == null) {
 			// use standard-estimator
@@ -94,7 +95,7 @@ public class OperatorEstimatorFactory {
 		}
 
 		try {
-			IOperatorEstimator<? extends IPhysicalOperator> newInstance = estimatorClass.newInstance();
+			IOperatorEstimator<?> newInstance = estimatorClass.newInstance();
 			return (IOperatorEstimator<T>) newInstance;
 		} catch (InstantiationException e) {
 			e.printStackTrace();

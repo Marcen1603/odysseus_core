@@ -62,19 +62,19 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	private static final double UNDERLOAD_USER_FACTOR = 0.80;
 	private static final double EVENT_BUFFERING_COUNT = 3;
 
-	private Map<String, ICostModel> costModels = Maps.newHashMap();
-	private ICostModel selectedCostModel;
+	private Map<String, ICostModel<?>> costModels = Maps.newHashMap();
+	private ICostModel<IPhysicalOperator> selectedCostModel;
 	private IServerExecutor executor;
 
-	private ICost maxCost;
-	private ICost minCost;
-	private ICost actCost;
+	private ICost<IPhysicalOperator> maxCost;
+	private ICost<IPhysicalOperator> minCost;
+	private ICost<IPhysicalOperator> actCost;
 
-	private Map<IPhysicalQuery, ICost> queryCosts = Maps.newHashMap();
-	private Map<IPhysicalQuery, ICost> runningQueryCosts = Maps.newHashMap();
+	private Map<IPhysicalQuery, ICost<IPhysicalOperator>> queryCosts = Maps.newHashMap();
+	private Map<IPhysicalQuery, ICost<IPhysicalOperator>> runningQueryCosts = Maps.newHashMap();
 	private Map<IPhysicalQuery, Long> timestamps = Maps.newHashMap();
 
-	private Map<IUser, ICost> userCosts = Maps.newHashMap();
+	private Map<IUser, ICost<IPhysicalOperator>> userCosts = Maps.newHashMap();
 
 	private final List<IAdmissionListener> listeners = Lists.newArrayList();
 	private final List<IAdmissionStatusListener> statusListeners = Lists.newArrayList();
@@ -84,7 +84,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	private final Map<IUser, Long> userOverloadEventBuffer = Maps.newHashMap();
 
 	@Override
-	public ICost getCost(IPhysicalQuery query) {
+	public ICost<IPhysicalOperator> getCost(IPhysicalQuery query) {
 		return queryCosts.get(query);
 	}
 
@@ -93,10 +93,10 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		if (runningQueryCosts.containsKey(query))
 			return true;
 
-		ICost queryCost = determineCost(query);
+		ICost<IPhysicalOperator> queryCost = determineCost(query);
 
 		// OVERALL COST
-		ICost totalCost = mergeCosts(actCost, queryCost);
+		ICost<IPhysicalOperator> totalCost = mergeCosts(actCost, queryCost);
 		LOG.debug("Total cost if executed: {}", totalCost);
 
 		if (isGreater(totalCost, maxCost)) {
@@ -109,8 +109,8 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		Optional<Double> optFactor = determineMaximumCostFactor(query);
 		if (optFactor.isPresent()) {
 			double sla = optFactor.get();
-			ICost maxUserCost = maxCost.fraction(sla);
-			ICost userTotalCost = determineUserCost(query.getSession().getUser(), queryCost);
+			ICost<IPhysicalOperator> maxUserCost = maxCost.fraction(sla);
+			ICost<IPhysicalOperator> userTotalCost = determineUserCost(query.getSession().getUser(), queryCost);
 			if (isGreater(userTotalCost, maxUserCost)) {
 				LOG.debug("Executing queries would exceed maximum cost of user {}", query.getSession().getUser().getName());
 				LOG.debug("Maxmimum cost for user: {}", maxUserCost);
@@ -127,14 +127,14 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		long startTimestamp = System.currentTimeMillis();
 		actCost = selectedCostModel.getOverallCost();
 
-		Map<IPhysicalQuery, ICost> newCostEstimations = Maps.newHashMap();
+		Map<IPhysicalQuery, ICost<IPhysicalOperator>> newCostEstimations = Maps.newHashMap();
 		userCosts = Maps.newHashMap();
 		runningQueryCosts = Maps.newHashMap();
-		Map<IUser, ICost> userMaximumCostFactors = Maps.newHashMap();
+		Map<IUser, ICost<IPhysicalOperator>> userMaximumCostFactors = Maps.newHashMap();
 
 		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries().toArray(new IPhysicalQuery[0])) {
 			if (query.isOpened()) {
-				ICost cost = estimateCost(getAllOperators(query), true);
+				ICost<IPhysicalOperator> cost = estimateCost(getAllOperators(query), true);
 				newCostEstimations.put(query, cost);
 
 				IUser user = query.getSession().getUser();
@@ -168,8 +168,8 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 				continue;
 			}
 
-			ICost userCost = userCosts.get(user);
-			ICost maxUserCost = userMaximumCostFactors.get(user);
+			ICost<IPhysicalOperator> userCost = userCosts.get(user);
+			ICost<IPhysicalOperator> maxUserCost = userMaximumCostFactors.get(user);
 			if (isGreater(userCost, maxUserCost)) {
 				LOG.warn("Costs for user {} are too high: {}", user.getName(), userCost);
 				LOG.warn("Maximum allowed for user: {}", maxUserCost);
@@ -182,7 +182,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			} else {
 				resetUserEventBuffer(userOverloadEventBuffer, user);
 
-				ICost userUnderloadCost = maxUserCost.fraction(UNDERLOAD_USER_FACTOR);
+				ICost<IPhysicalOperator> userUnderloadCost = maxUserCost.fraction(UNDERLOAD_USER_FACTOR);
 				if (isGreater(userUnderloadCost, userCost)) {
 					LOG.debug("Cost for user {} is below underload-level: {}", user.getName(), minCost);
 
@@ -197,12 +197,12 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			LOG.warn("Cost is too high. MaxCost = {}", maxCost);
 
 			overloadEventBuffer++;
-			if( overloadEventBuffer >= EVENT_BUFFERING_COUNT ) {
+			if (overloadEventBuffer >= EVENT_BUFFERING_COUNT) {
 				fireOverloadEvent();
 			}
 		} else {
 			overloadEventBuffer = 0;
-			
+
 			if (isGreater(minCost, actCost)) {
 				LOG.debug("Cost is below underload-level: {}", minCost);
 				fireUnderloadEvent();
@@ -215,35 +215,18 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 	}
 
-	private static void incrementUserEventBuffer(Map<IUser, Long> buffer, IUser user) {
-		Long eventBuffer = buffer.get(user);
-		if (eventBuffer == null) {
-			buffer.put(user, 1L);
-		} else {
-			buffer.put(user, eventBuffer + 1);
-		}
-	}
-
-	private static long getUserEventBuffer(Map<IUser, Long> buffer, IUser user) {
-		Long eventBuffer = buffer.get(user);
-		return eventBuffer != null ? eventBuffer : 0L;
-	}
-
-	private static void resetUserEventBuffer(Map<IUser, Long> buffer, IUser user) {
-		buffer.put(user, 0L);
-	}
-
 	@Override
 	public Set<String> getRegisteredCostModels() {
 		return costModels.keySet();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized void selectCostModel(String name) {
 		if (!costModels.containsKey(name))
 			throw new RuntimeException("CostModel " + name + " not found");
 
-		selectedCostModel = costModels.get(name);
+		selectedCostModel = (ICostModel<IPhysicalOperator>) costModels.get(name);
 		maxCost = selectedCostModel.getMaximumCost();
 		actCost = selectedCostModel.getZeroCost();
 		minCost = maxCost.fraction(UNDERLOAD_FACTOR);
@@ -268,7 +251,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	 * 
 	 * @return Aktuell verwendetes Kostenmodell
 	 */
-	ICostModel getSelectedCostModelInstance() {
+	ICostModel<IPhysicalOperator> getSelectedCostModelInstance() {
 		return selectedCostModel;
 	}
 
@@ -285,13 +268,13 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
 			// do cost-estimation now
-			ICost queryCost = estimateCost(getAllOperators(query), false);
+			ICost<IPhysicalOperator> queryCost = estimateCost(getAllOperators(query), false);
 
 			queryCosts.put(query, queryCost);
 			timestamps.put(query, System.currentTimeMillis());
 
 		} else if (PlanModificationEventType.QUERY_START.equals(eventArgs.getEventType())) {
-			ICost queryCost = queryCosts.get(query);
+			ICost<IPhysicalOperator> queryCost = queryCosts.get(query);
 
 			if (!runningQueryCosts.containsKey(query)) {
 				runningQueryCosts.put(query, queryCost);
@@ -300,7 +283,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			}
 
 		} else if (PlanModificationEventType.QUERY_STOP.equals(eventArgs.getEventType())) {
-			ICost queryCost = runningQueryCosts.remove(query);
+			ICost<IPhysicalOperator> queryCost = runningQueryCosts.remove(query);
 			IUser user = query.getSession().getUser();
 			userCosts.put(user, substractCosts(userCosts.get(user), queryCost));
 		}
@@ -314,7 +297,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	 * @param costModel
 	 *            Neues Kostenmodell
 	 */
-	public void bindCostModel(ICostModel costModel) {
+	public void bindCostModel(ICostModel<?> costModel) {
 		costModels.put(costModel.getClass().getSimpleName(), costModel);
 		LOG.debug("Costmodel bound: " + costModel.getClass().getSimpleName());
 
@@ -330,7 +313,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	 * @param costModel
 	 *            Das entfernte Kostenmodell
 	 */
-	public void unbindCostModel(ICostModel costModel) {
+	public void unbindCostModel(ICostModel<?> costModel) {
 		costModels.remove(costModel.getClass().getSimpleName());
 
 		LOG.debug("Costmodel unbound: " + costModel.getClass().getSimpleName());
@@ -395,12 +378,12 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	}
 
 	@Override
-	public ICost getActualCost() {
+	public ICost<IPhysicalOperator> getActualCost() {
 		return actCost;
 	}
 
 	@Override
-	public ICost getMaximumCost() {
+	public ICost<IPhysicalOperator> getMaximumCost() {
 		return maxCost;
 	}
 
@@ -424,12 +407,12 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	}
 
 	@Override
-	public ICost getMinimumCost() {
+	public ICost<IPhysicalOperator> getMinimumCost() {
 		return minCost;
 	}
 
-	private void fireAdmissionStatus(Map<IUser, ICost> maxUserCosts) {
-		Map<IUser, ICost> underloadCosts = Maps.newHashMap();
+	private void fireAdmissionStatus(Map<IUser, ICost<IPhysicalOperator>> maxUserCosts) {
+		Map<IUser, ICost<IPhysicalOperator>> underloadCosts = Maps.newHashMap();
 		for (IUser user : maxUserCosts.keySet()) {
 			underloadCosts.put(user, maxUserCosts.get(user).fraction(UNDERLOAD_USER_FACTOR));
 		}
@@ -450,15 +433,16 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 	}
 
-	private ICost estimateCost(List<IPhysicalOperator> operators, boolean onUpdate) {
+	@SuppressWarnings("unchecked")
+	private ICost<IPhysicalOperator> estimateCost(List<IPhysicalOperator> operators, boolean onUpdate) {
 		if (getSelectedCostModel() == null) {
 			throw new IllegalStateException("No CostModel selected.");
 		}
 
 		long startTimestamp = System.currentTimeMillis();
 
-		ICostModel costModel = costModels.get(getSelectedCostModel());
-		ICost queryCost = costModel.estimateCost(operators, onUpdate);
+		ICostModel<IPhysicalOperator> costModel = (ICostModel<IPhysicalOperator>) costModels.get(getSelectedCostModel());
+		ICost<IPhysicalOperator> queryCost = costModel.estimateCost(operators, onUpdate);
 
 		if (LOG.isDebugEnabled()) {
 			long elapsedTime = System.currentTimeMillis() - startTimestamp;
@@ -524,12 +508,12 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 	}
 
-	private ICost determineCost(IPhysicalQuery query) {
+	private ICost<IPhysicalOperator> determineCost(IPhysicalQuery query) {
 		if (queryCosts.containsKey(query)) {
 			Long lastTime = timestamps.get(query);
 
 			if (System.currentTimeMillis() - lastTime > ESTIMATION_TOO_OLD_MILLIS) {
-				ICost queryCost = estimateCost(getAllOperators(query), false);
+				ICost<IPhysicalOperator> queryCost = estimateCost(getAllOperators(query), false);
 				timestamps.put(query, System.currentTimeMillis());
 				return queryCost;
 			} else {
@@ -537,15 +521,15 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			}
 
 		} else {
-			ICost queryCost = estimateCost(getAllOperators(query), false);
+			ICost<IPhysicalOperator> queryCost = estimateCost(getAllOperators(query), false);
 			queryCosts.put(query, queryCost);
 			timestamps.put(query, System.currentTimeMillis());
 			return queryCost;
 		}
 	}
 
-	private ICost determineUserCost(IUser user, ICost queryCost) {
-		ICost userCost = userCosts.get(user);
+	private ICost<IPhysicalOperator> determineUserCost(IUser user, ICost<IPhysicalOperator> queryCost) {
+		ICost<IPhysicalOperator> userCost = userCosts.get(user);
 		if (userCost == null) {
 			return queryCost;
 		} else {
@@ -570,11 +554,11 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		return Optional.of(factor < 0.0000001 ? 1.0 : factor);
 	}
 
-	private static boolean isGreater(ICost first, ICost last) {
+	private static boolean isGreater(ICost<IPhysicalOperator> first, ICost<IPhysicalOperator> last) {
 		return first.compareTo(last) > 0;
 	}
 
-	private static ICost mergeCosts(ICost a, ICost b) {
+	private static ICost<IPhysicalOperator> mergeCosts(ICost<IPhysicalOperator> a, ICost<IPhysicalOperator> b) {
 		if (a == null && b != null) {
 			return b;
 		} else if (a != null && b == null) {
@@ -586,7 +570,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 	}
 
-	private static ICost substractCosts(ICost a, ICost b) {
+	private static ICost<IPhysicalOperator> substractCosts(ICost<IPhysicalOperator> a, ICost<IPhysicalOperator> b) {
 		if (a == null && b != null) {
 			return b;
 		} else if (a != null && b == null) {
@@ -613,5 +597,23 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		for (IPhysicalQuery query : queriesToUpdate) {
 			timestamps.put(query, timestamp);
 		}
+	}
+
+	private static void incrementUserEventBuffer(Map<IUser, Long> buffer, IUser user) {
+		Long eventBuffer = buffer.get(user);
+		if (eventBuffer == null) {
+			buffer.put(user, 1L);
+		} else {
+			buffer.put(user, eventBuffer + 1);
+		}
+	}
+
+	private static long getUserEventBuffer(Map<IUser, Long> buffer, IUser user) {
+		Long eventBuffer = buffer.get(user);
+		return eventBuffer != null ? eventBuffer : 0L;
+	}
+
+	private static void resetUserEventBuffer(Map<IUser, Long> buffer, IUser user) {
+		buffer.put(user, 0L);
 	}
 }

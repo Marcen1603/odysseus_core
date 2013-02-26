@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
@@ -47,9 +48,9 @@ public class SingleQuerySelector implements IAdmissionQuerySelector {
 
 	private static IPhysicalQuery determineQueryWithHighestCost(IAdmissionControl admissionControl, List<IPhysicalQuery> runningQueries) {
 		IPhysicalQuery highestCostQuery = null;
-		ICost highestCost = null;		
+		ICost<IPhysicalOperator> highestCost = null;		
 		for( IPhysicalQuery query : runningQueries ) {
-			ICost queryCost = admissionControl.getCost(query);
+			ICost<IPhysicalOperator> queryCost = admissionControl.getCost(query);
 			if( highestCostQuery == null || queryCost.compareTo(highestCost) > 0) {
 				highestCostQuery = query;
 				highestCost = queryCost;

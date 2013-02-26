@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.costmodel.operator;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 
@@ -32,14 +31,14 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
  * @author Timo Michelsen
  * 
  */
-public class OperatorEstimation {
+public class OperatorEstimation<T> {
 
-	private IPhysicalOperator operator;
+	private T operator;
 
 	private Map<SDFAttribute, IHistogram> histograms = null;
-	private IDataStream dataStream = null;
+	private IDataStream<T> dataStream = null;
 
-	private IOperatorDetailCost detailCost = null;
+	private IOperatorDetailCost<T> detailCost = null;
 	private Double selectivity = null;
 
 	/**
@@ -49,10 +48,11 @@ public class OperatorEstimation {
 	 * @param estimatedOperator
 	 *            Physischer Operator
 	 */
-	public OperatorEstimation(IPhysicalOperator estimatedOperator) {
-		if (estimatedOperator == null)
+	public OperatorEstimation(T estimatedOperator) {
+		if (estimatedOperator == null) {
 			throw new IllegalArgumentException("estimatedOperator is null");
-
+		}
+		
 		this.operator = estimatedOperator;
 	}
 
@@ -80,7 +80,7 @@ public class OperatorEstimation {
 	 * 
 	 * @return Charakteristiken des Ausgabestroms des Operators
 	 */
-	public IDataStream getDataStream() {
+	public IDataStream<T> getDataStream() {
 		return dataStream;
 	}
 
@@ -90,7 +90,7 @@ public class OperatorEstimation {
 	 * @param dataStream
 	 *            Neue Charakteristiken des Ausgabestroms des Operators
 	 */
-	public void setDataStream(IDataStream dataStream) {
+	public void setDataStream(IDataStream<T> dataStream) {
 		this.dataStream = dataStream;
 	}
 
@@ -99,7 +99,7 @@ public class OperatorEstimation {
 	 * 
 	 * @return Operatorkosten (Speicher, Prozessor)
 	 */
-	public IOperatorDetailCost getDetailCost() {
+	public IOperatorDetailCost<T> getDetailCost() {
 		return detailCost;
 	}
 
@@ -109,7 +109,7 @@ public class OperatorEstimation {
 	 * @param detailCost
 	 *            Neue Operatorkosten
 	 */
-	public void setDetailCost(IOperatorDetailCost detailCost) {
+	public void setDetailCost(IOperatorDetailCost<T> detailCost) {
 		this.detailCost = detailCost;
 	}
 
@@ -137,28 +137,7 @@ public class OperatorEstimation {
 	 * 
 	 * @return Physischer Operator
 	 */
-	public IPhysicalOperator getOperator() {
+	public T getOperator() {
 		return operator;
-	}
-
-	/**
-	 * Gibt <code>true</code> zurück, wenn alle Informationen gefülllt sind,
-	 * sonst <code>false</code>.
-	 * 
-	 * @return <code>true</code>, wenn alle Informationen gefülllt sind, sonst
-	 *         <code>false</code>.
-	 */
-	public boolean check() {
-		if (getSelectivity() == null)
-			return false;
-		if (getOperator() == null)
-			return false;
-		if (getDataStream() == null)
-			return false;
-		if (getHistograms() == null)
-			return false;
-		if (getDataStream() == null)
-			return false;
-		return true;
 	}
 }

@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.MemoryUsageSaver;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingTimeWindowTIPO;
 
+
 @SuppressWarnings("rawtypes")
 public class SlidingTimeWindowTIPOEstimator implements IOperatorEstimator<SlidingTimeWindowTIPO> {
 	@Override
@@ -37,11 +38,11 @@ public class SlidingTimeWindowTIPOEstimator implements IOperatorEstimator<Slidin
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(SlidingTimeWindowTIPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
-		
-		OperatorEstimation estimation = new OperatorEstimation(instance);
-		OperatorEstimation lastOpEstimation = prevOperators.get(0);
-		
+	public OperatorEstimation<SlidingTimeWindowTIPO> estimateOperator(SlidingTimeWindowTIPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+
+		OperatorEstimation<SlidingTimeWindowTIPO> estimation = new OperatorEstimation<SlidingTimeWindowTIPO>(instance);
+		OperatorEstimation<?> lastOpEstimation = prevOperators.get(0);
+
 		/** 1. Histograms **/
 		estimation.setHistograms(lastOpEstimation.getHistograms());
 
@@ -51,22 +52,23 @@ public class SlidingTimeWindowTIPOEstimator implements IOperatorEstimator<Slidin
 		/** 3. Datarate **/
 		long windowSize = instance.getWindowSize() / 1000;
 		long windowAdvance = instance.getWindowAdvance();
-			
+
 		double r = lastOpEstimation.getDataStream().getDataRate();
 		double g = 0;
-		if( windowAdvance == 1 ) // gleitend zeitbasiert
+		if (windowAdvance == 1) // gleitend zeitbasiert
 			g = windowSize;
-		else  // springend zeitbasiert
+		else
+			// springend zeitbasiert
 			g = windowSize / 2.0;
-		
-		DataStream stream = new DataStream(instance, r, g);
+
+		DataStream<SlidingTimeWindowTIPO> stream = new DataStream<SlidingTimeWindowTIPO>(instance, r, g);
 		estimation.setDataStream(stream);
 
 		/** 4. DetailCost **/
 		// TODO: Memorycost
 		// TODO: Memorycost
 		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
-//		System.out.format("%8.6f\n", cpu);
+		// System.out.format("%8.6f\n", cpu);
 		double cpuCost = 0.0;
 		if (cpu < 0.0)
 			cpuCost = CPURateSaver.getInstance().get(instance.getClass().getSimpleName()) * r;
@@ -74,9 +76,9 @@ public class SlidingTimeWindowTIPOEstimator implements IOperatorEstimator<Slidin
 			cpuCost = cpu * r;
 			CPURateSaver.getInstance().set(instance.getClass().getSimpleName(), cpu);
 		}
-		
-		estimation.setDetailCost(new OperatorDetailCost(instance, MemoryUsageSaver.get(instance), cpuCost));
-		
+
+		estimation.setDetailCost(new OperatorDetailCost<SlidingTimeWindowTIPO>(instance, MemoryUsageSaver.get(instance), cpuCost));
+
 		return estimation;
 	}
 }

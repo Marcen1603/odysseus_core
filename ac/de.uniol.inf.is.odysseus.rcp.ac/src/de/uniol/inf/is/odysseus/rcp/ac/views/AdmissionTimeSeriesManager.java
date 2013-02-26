@@ -118,9 +118,9 @@ public class AdmissionTimeSeriesManager implements IAdmissionStatusListener {
 	}
 
 	private static LoadStatistic createLoadStatistic(AdmissionStatus status) {
-		OperatorCost actCost = (OperatorCost) status.getActCost();
-		OperatorCost maxCost = (OperatorCost) status.getMaxCost();
-		OperatorCost minCost = (OperatorCost) status.getMinCost();
+		OperatorCost<?> actCost = (OperatorCost<?>) status.getActCost();
+		OperatorCost<?> maxCost = (OperatorCost<?>) status.getMaxCost();
+		OperatorCost<?> minCost = (OperatorCost<?>) status.getMinCost();
 
 		LoadStatistic statistic = new LoadStatistic(actCost.getCpuCost(), maxCost.getCpuCost(), minCost.getCpuCost(), Runtime.getRuntime().availableProcessors(), actCost.getMemCost(),
 				maxCost.getMemCost(), minCost.getMemCost(), Runtime.getRuntime().totalMemory(), status.getTimestamp());

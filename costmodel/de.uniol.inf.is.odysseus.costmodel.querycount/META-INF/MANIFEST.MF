@@ -8,7 +8,6 @@ Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.costmodel,
- de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query,
  org.osgi.framework;version="1.3.0"

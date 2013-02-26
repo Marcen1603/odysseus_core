@@ -37,10 +37,10 @@ public class SlidingElementWindowTIPOEstimator implements IOperatorEstimator<Sli
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(SlidingElementWindowTIPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	public OperatorEstimation<SlidingElementWindowTIPO> estimateOperator(SlidingElementWindowTIPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		
-		OperatorEstimation estimation = new OperatorEstimation(instance);
-		OperatorEstimation lastOpEstimation = prevOperators.get(0);
+		OperatorEstimation<SlidingElementWindowTIPO> estimation = new OperatorEstimation<SlidingElementWindowTIPO>(instance);
+		OperatorEstimation<?> lastOpEstimation = prevOperators.get(0);
 		
 		/** 1. Histograms **/
 		estimation.setHistograms(lastOpEstimation.getHistograms());
@@ -59,7 +59,7 @@ public class SlidingElementWindowTIPOEstimator implements IOperatorEstimator<Sli
 		else // elementbasiert springend
 			g = windowSize / (2.0 * r);
 		
-		DataStream stream = new DataStream(instance, r, g);
+		DataStream<SlidingElementWindowTIPO> stream = new DataStream<SlidingElementWindowTIPO>(instance, r, g);
 		estimation.setDataStream(stream);
 
 		/** 4. DetailCost **/
@@ -74,7 +74,7 @@ public class SlidingElementWindowTIPOEstimator implements IOperatorEstimator<Sli
 		}
 		double memCost = EstimatorHelper.sizeInBytes(instance.getOutputSchema()) * windowSize;
 		
-		estimation.setDetailCost(new OperatorDetailCost(instance, memCost, cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<SlidingElementWindowTIPO>(instance, memCost, cpuCost));
 		
 		return estimation;
 	}

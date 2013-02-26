@@ -175,13 +175,13 @@ public final class EstimatorHelper {
 
 	}
 	
-	public static <T> int elementCountOfSweepAreas(ISweepArea<T>[] areas ) {
+	public static <T> int elementCountOfSweepAreas(ISweepArea<?>[] areas ) {
 		if( areas == null || areas.length == 0 ) {
 			return 0;
 		}
 		
 		int sum = 0;
-		for( ISweepArea<T> area : areas ) {
+		for( ISweepArea<?> area : areas ) {
 			sum += area.size();
 		}
 		

@@ -40,15 +40,15 @@ public class UnionPOEstimator implements IOperatorEstimator<UnionPO> {
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(UnionPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	public OperatorEstimation<UnionPO> estimateOperator(UnionPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		List<Map<SDFAttribute, IHistogram>> histograms = new ArrayList<Map<SDFAttribute, IHistogram>>();
-		List<IDataStream> inputStreams = new ArrayList<IDataStream>();
-		for (OperatorEstimation estimation : prevOperators) {
+		List<IDataStream<?>> inputStreams = new ArrayList<IDataStream<?>>();
+		for (OperatorEstimation<?> estimation : prevOperators) {
 			histograms.add(estimation.getHistograms());
 			inputStreams.add(estimation.getDataStream());
 		}
 
-		OperatorEstimation estimation = new OperatorEstimation(instance);
+		OperatorEstimation<UnionPO> estimation = new OperatorEstimation<UnionPO>(instance);
 
 		/** 1. Histograms **/
 		// merge all histograms to one
@@ -109,7 +109,7 @@ public class UnionPOEstimator implements IOperatorEstimator<UnionPO> {
 			}
 		}
 		double unionIntervalLength = temp / unionDataRate;
-		estimation.setDataStream(new DataStream(instance, unionDataRate, unionIntervalLength));
+		estimation.setDataStream(new DataStream<UnionPO>(instance, unionDataRate, unionIntervalLength));
 
 //		for (OperatorEstimation e : prevOperators) {
 //			System.out.format("%-8.6f,", e.getDataStream().getDataRate());
@@ -156,7 +156,7 @@ public class UnionPOEstimator implements IOperatorEstimator<UnionPO> {
 			CPURateSaver.getInstance().set(instance.getClass().getSimpleName(), cpu);
 		}
 		
-		estimation.setDetailCost(new OperatorDetailCost(instance, mem, cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<UnionPO>(instance, mem, cpuCost));
 
 		return estimation;
 	}

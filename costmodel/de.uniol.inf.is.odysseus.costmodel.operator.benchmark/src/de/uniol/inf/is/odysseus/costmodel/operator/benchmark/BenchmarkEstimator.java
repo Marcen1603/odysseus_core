@@ -39,11 +39,11 @@ public class BenchmarkEstimator implements IOperatorEstimator<BenchmarkPO> {
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(BenchmarkPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
-		OperatorEstimation estimation = new OperatorEstimation(instance);
+	public OperatorEstimation<BenchmarkPO> estimateOperator(BenchmarkPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+		OperatorEstimation<BenchmarkPO> estimation = new OperatorEstimation<BenchmarkPO>(instance);
 		
 		Map<SDFAttribute, IHistogram> histograms = new HashMap<SDFAttribute, IHistogram>();
-		for( OperatorEstimation prevOp : prevOperators) {
+		for( OperatorEstimation<?> prevOp : prevOperators) {
 			histograms.putAll(prevOp.getHistograms());
 		}
 		estimation.setHistograms(histograms);
@@ -55,7 +55,7 @@ public class BenchmarkEstimator implements IOperatorEstimator<BenchmarkPO> {
 		if( datarate < 0.0 ) {
 			datarate = prevStream.getDataRate();
 		}
-		estimation.setDataStream(new DataStream(instance, datarate, prevStream.getIntervalLength()));	
+		estimation.setDataStream(new DataStream<BenchmarkPO>(instance, datarate, prevStream.getIntervalLength()));	
 		
 		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 		double cpuCost = 0.0;
@@ -65,7 +65,7 @@ public class BenchmarkEstimator implements IOperatorEstimator<BenchmarkPO> {
 			cpuCost = cpu * datarate;
 		}
 		
-		estimation.setDetailCost(new OperatorDetailCost(instance, instance.getMemoryUsage(), cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<BenchmarkPO>(instance, instance.getMemoryUsage(), cpuCost));
 
 		return estimation;
 	}

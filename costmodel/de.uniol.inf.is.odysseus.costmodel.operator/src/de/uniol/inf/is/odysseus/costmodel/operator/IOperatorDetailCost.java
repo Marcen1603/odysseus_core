@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.costmodel.operator;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 /**
  * Repräsentiert die Kosten eines einzelnen Operators, bestehend aus
@@ -24,14 +23,14 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
  * @author Timo Michelsen
  *
  */
-public interface IOperatorDetailCost {
+public interface IOperatorDetailCost<T> {
 
 	/**
 	 * Physischer Operator, dessen Kosten hier beschrieben sind.
 	 * 
 	 * @return Physischer Operator
 	 */
-	public IPhysicalOperator getOperator();
+	public T getOperator();
 	
 	/**
 	 * Liefert die Speicherkosten des Operators zurück.

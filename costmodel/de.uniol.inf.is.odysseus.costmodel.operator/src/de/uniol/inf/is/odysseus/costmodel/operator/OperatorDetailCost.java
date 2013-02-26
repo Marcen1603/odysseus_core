@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.costmodel.operator;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 /**
  * Standardimplementierung der Operatorkosten.
@@ -23,9 +22,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
  * @author Timo Michelsen
  * 
  */
-public class OperatorDetailCost implements IOperatorDetailCost {
+public class OperatorDetailCost<T> implements IOperatorDetailCost<T> {
 
-	private final IPhysicalOperator operator;
+	private final T operator;
 	private final double memCost;
 	private final double cpuCost;
 
@@ -41,14 +40,14 @@ public class OperatorDetailCost implements IOperatorDetailCost {
 	 * @param cpuCost
 	 *            Prozessorkosten des Operators
 	 */
-	public OperatorDetailCost(IPhysicalOperator operator, double memCost, double cpuCost) {
+	public OperatorDetailCost(T operator, double memCost, double cpuCost) {
 		this.operator = operator;
 		this.memCost = memCost;
 		this.cpuCost = cpuCost;
 	}
 
 	@Override
-	public IPhysicalOperator getOperator() {
+	public T getOperator() {
 		return operator;
 	}
 

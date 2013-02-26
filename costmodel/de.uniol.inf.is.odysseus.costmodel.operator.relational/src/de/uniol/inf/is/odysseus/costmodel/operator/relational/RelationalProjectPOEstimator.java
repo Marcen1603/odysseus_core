@@ -40,9 +40,9 @@ public class RelationalProjectPOEstimator implements IOperatorEstimator<Relation
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(RelationalProjectPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
-		OperatorEstimation estimation = new OperatorEstimation(instance);
-		OperatorEstimation lastOpEstimation = prevOperators.get(0);
+	public OperatorEstimation<RelationalProjectPO> estimateOperator(RelationalProjectPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+		OperatorEstimation<RelationalProjectPO> estimation = new OperatorEstimation<RelationalProjectPO>(instance);
+		OperatorEstimation<?> lastOpEstimation = prevOperators.get(0);
 
 		/** 1. Histograms **/
 		// project has only one input
@@ -67,7 +67,7 @@ public class RelationalProjectPOEstimator implements IOperatorEstimator<Relation
 		if( datarate < 0.0 )
 			datarate = lastOpEstimation.getDataStream().getDataRate();
 		
-		estimation.setDataStream(new DataStream(instance, datarate, lastOpEstimation.getDataStream().getIntervalLength()));
+		estimation.setDataStream(new DataStream<RelationalProjectPO>(instance, datarate, lastOpEstimation.getDataStream().getIntervalLength()));
 
 		/** 4. DetailCost **/
 		// TODO: Memorycost
@@ -80,7 +80,7 @@ public class RelationalProjectPOEstimator implements IOperatorEstimator<Relation
 			CPURateSaver.getInstance().set(instance.getClass().getSimpleName(), cpu);
 		}
 		
-		estimation.setDetailCost(new OperatorDetailCost(instance, MemoryUsageSaver.get(instance), cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<RelationalProjectPO>(instance, MemoryUsageSaver.get(instance), cpuCost));
 
 		return estimation;
 	}

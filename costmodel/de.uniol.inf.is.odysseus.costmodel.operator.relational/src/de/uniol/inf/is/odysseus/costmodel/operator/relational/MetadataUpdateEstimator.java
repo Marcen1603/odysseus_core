@@ -41,10 +41,10 @@ public class MetadataUpdateEstimator implements IOperatorEstimator<MetadataUpdat
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(MetadataUpdatePO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	public OperatorEstimation<MetadataUpdatePO> estimateOperator(MetadataUpdatePO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		
 		// Use Standardestimator
-		OperatorEstimation estimation = std.estimateOperator(instance, prevOperators, baseHistograms);
+		OperatorEstimation<MetadataUpdatePO> estimation = std.estimateOperator(instance, prevOperators, baseHistograms);
 		
 		IDataStream c = prevOperators.get(0).getDataStream();
 		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
@@ -55,7 +55,7 @@ public class MetadataUpdateEstimator implements IOperatorEstimator<MetadataUpdat
 			cpuCost = cpu * c.getDataRate();
 			CPURateSaver.getInstance().set(instance.getClass().getSimpleName(), cpu);
 		}
-		estimation.setDetailCost(new OperatorDetailCost(instance, MemoryUsageSaver.get(instance), cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<MetadataUpdatePO>(instance, MemoryUsageSaver.get(instance), cpuCost));
 		
 		return estimation;
 	}

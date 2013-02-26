@@ -38,19 +38,18 @@ public class DifferencePOEstimator implements IOperatorEstimator<AntiJoinTIPO> {
 		return AntiJoinTIPO.class;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public OperatorEstimation estimateOperator(AntiJoinTIPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	public OperatorEstimation<AntiJoinTIPO> estimateOperator(AntiJoinTIPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		
-		OperatorEstimation prevOp1 = prevOperators.get(0);
-		OperatorEstimation prevOp2 = prevOperators.get(1);
+		OperatorEstimation<?> prevOp1 = prevOperators.get(0);
+		OperatorEstimation<?> prevOp2 = prevOperators.get(1);
 		
-		OperatorEstimation estimation = new OperatorEstimation(instance);
+		OperatorEstimation<AntiJoinTIPO> estimation = new OperatorEstimation<AntiJoinTIPO>(instance);
 		
 		
 		/** 1. Selectivity **/
-		IDataStream c0 = prevOp1.getDataStream();
-		IDataStream c1 = prevOp2.getDataStream();
+		IDataStream<?> c0 = prevOp1.getDataStream();
+		IDataStream<?> c1 = prevOp2.getDataStream();
 		double selectivity = EstimatorHelper.getSelectivityMetadata(instance);
 		double falsePropability = 1.0; //WS, dass zwei Tupel unterschiedlich sind
 		if( selectivity < 0.0 ) {
@@ -89,7 +88,7 @@ public class DifferencePOEstimator implements IOperatorEstimator<AntiJoinTIPO> {
 			datarate = prevStream.getDataRate() * falsePropability;
 		}
 		double intervalLength = ( Math.abs( prevStream.getIntervalLength() - prevStream2.getIntervalLength())) / 2.0;
-		estimation.setDataStream(new DataStream(instance, datarate, intervalLength));
+		estimation.setDataStream(new DataStream<AntiJoinTIPO>(instance, datarate, intervalLength));
 
 		/** 4. DetailCost **/
 		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
@@ -111,7 +110,7 @@ public class DifferencePOEstimator implements IOperatorEstimator<AntiJoinTIPO> {
 		} else {
 			memCost = EstimatorHelper.sizeInBytes(instance.getOutputSchema()) * EstimatorHelper.elementCountOfSweepAreas(instance.getAreas());
 		}
-		estimation.setDetailCost(new OperatorDetailCost(instance, memCost, cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<AntiJoinTIPO>(instance, memCost, cpuCost));
 		
 		return estimation;
 	}

@@ -16,10 +16,10 @@
 package de.uniol.inf.is.odysseus.costmodel.operator;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import com.google.common.collect.Maps;
+
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 
 /**
@@ -29,9 +29,9 @@ import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
  * @author Timo Michelsen
  * 
  */
-public class OperatorCost implements ICost {
+public class OperatorCost<T> implements ICost<T> {
 
-	private Map<IPhysicalOperator, OperatorEstimation> estimations = null;
+	private Map<T, OperatorEstimation<T>> estimations = null;
 	private double memCost;
 	private double cpuCost;
 
@@ -47,7 +47,7 @@ public class OperatorCost implements ICost {
 	 * @param cpuCost
 	 *            Aggregierte Prozessorkosten
 	 */
-	public OperatorCost(Map<IPhysicalOperator, OperatorEstimation> estimations, double memCost, double cpuCost) {
+	public OperatorCost(Map<T, OperatorEstimation<T>> estimations, double memCost, double cpuCost) {
 		this.memCost = memCost;
 		this.cpuCost = cpuCost;
 		this.estimations = estimations;
@@ -56,8 +56,8 @@ public class OperatorCost implements ICost {
 	/**
 	 * Interner Konstruktor. Erstellt eine neue {@link OperatorCost}-Instanz mit
 	 * gegebenen Speicher- und Prozessorkosten. Abschätzungen der Operatoren
-	 * sind nicht verfügbar. Dieser Konstruktor wird hauptsächlich zum Kopieren
-	 * von Instanzen genutzt.
+	 * sind nicht verfügbar. Dieser Konstruktor wird hauptsächlich zum
+	 * Kopieren von Instanzen genutzt.
 	 * 
 	 * @param memCost
 	 *            Aggregierte Speicherkosten
@@ -67,7 +67,7 @@ public class OperatorCost implements ICost {
 	OperatorCost(double memCost, double cpuCost) {
 		this.memCost = memCost;
 		this.cpuCost = cpuCost;
-		this.estimations = new HashMap<IPhysicalOperator, OperatorEstimation>();
+		this.estimations = Maps.newHashMap();
 	}
 
 	/**
@@ -75,13 +75,13 @@ public class OperatorCost implements ICost {
 	 * 
 	 * @return Zuordnung zwischen Operator und Abschätzung
 	 */
-	public Map<IPhysicalOperator, OperatorEstimation> getOperatorEstimations() {
+	public Map<T, OperatorEstimation<T>> getOperatorEstimations() {
 		return estimations;
 	}
 
 	@Override
-	public int compareTo(ICost o) {
-		OperatorCost cost = (OperatorCost) o;
+	public int compareTo(ICost<T> o) {
+		OperatorCost<T> cost = (OperatorCost<T>) o;
 
 		if (memCost > cost.memCost || cpuCost > cost.cpuCost)
 			return 1;
@@ -92,23 +92,23 @@ public class OperatorCost implements ICost {
 	}
 
 	@Override
-	public ICost merge(ICost otherCost) {
+	public ICost<T> merge(ICost<T> otherCost) {
 		if (otherCost == null)
-			return new OperatorCost(memCost, cpuCost);
+			return new OperatorCost<T>(memCost, cpuCost);
 
-		OperatorCost cost = (OperatorCost) otherCost;
+		OperatorCost<T> cost = (OperatorCost<T>) otherCost;
 
-		return new OperatorCost(memCost + cost.memCost, cpuCost + cost.cpuCost);
+		return new OperatorCost<T>(memCost + cost.memCost, cpuCost + cost.cpuCost);
 	}
 
 	@Override
-	public ICost substract(ICost otherCost) {
+	public ICost<T> substract(ICost<T> otherCost) {
 		if (otherCost == null)
-			return new OperatorCost(memCost, cpuCost);
+			return new OperatorCost<T>(memCost, cpuCost);
 
-		OperatorCost cost = (OperatorCost) otherCost;
+		OperatorCost<T> cost = (OperatorCost<T>) otherCost;
 
-		return new OperatorCost(memCost - cost.memCost, cpuCost - cost.cpuCost);
+		return new OperatorCost<T>(memCost - cost.memCost, cpuCost - cost.cpuCost);
 	}
 
 	@Override
@@ -117,17 +117,18 @@ public class OperatorCost implements ICost {
 	}
 
 	@Override
-	public Collection<IPhysicalOperator> getOperators() {
+	public Collection<T> getOperators() {
 		return estimations.keySet();
 	}
 
 	@Override
-	public ICost getCostOfOperator(IPhysicalOperator operator) {
-		OperatorEstimation est = estimations.get(operator);
-		if (est == null)
-			return new OperatorCost(0, 0);
+	public ICost<T> getCostOfOperator(T operator) {
+		OperatorEstimation<? extends T> est = estimations.get(operator);
+		if (est == null) {
+			return new OperatorCost<T>(0, 0);
+		}
 
-		return new OperatorCost(est.getDetailCost().getMemoryCost(), est.getDetailCost().getProcessorCost());
+		return new OperatorCost<T>(est.getDetailCost().getMemoryCost(), est.getDetailCost().getProcessorCost());
 	}
 
 	/**
@@ -149,7 +150,7 @@ public class OperatorCost implements ICost {
 	}
 
 	@Override
-	public ICost fraction(double factor) {
-		return new OperatorCost(memCost * factor, cpuCost * factor);
+	public ICost<T> fraction(double factor) {
+		return new OperatorCost<T>(memCost * factor, cpuCost * factor);
 	}
 }

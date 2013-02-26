@@ -43,19 +43,18 @@ public class JoinEstimator implements IOperatorEstimator<JoinTIPO> {
 		return JoinTIPO.class;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public OperatorEstimation estimateOperator(JoinTIPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	public OperatorEstimation<JoinTIPO> estimateOperator(JoinTIPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 
 		List<Map<SDFAttribute, IHistogram>> histograms = new ArrayList<Map<SDFAttribute, IHistogram>>();
-		for (OperatorEstimation estimation : prevOperators)
+		for (OperatorEstimation<?> estimation : prevOperators)
 			histograms.add(estimation.getHistograms());
 
 		IPredicate predicate = instance.getPredicate();
 		if (predicate instanceof TruePredicate || predicate.toString().equalsIgnoreCase("true"))
 			return estimateCrossProductOperator(instance, prevOperators, baseHistograms);
 
-		OperatorEstimation estimation = new OperatorEstimation(instance);
+		OperatorEstimation<JoinTIPO> estimation = new OperatorEstimation<JoinTIPO>(instance);
 		/** 1. Histograms **/
 		PredicateHistogramHelper helper = new PredicateHistogramHelper(predicate, histograms);
 		estimation.setHistograms(helper.getHistograms());
@@ -84,7 +83,7 @@ public class JoinEstimator implements IOperatorEstimator<JoinTIPO> {
 		}
 
 		double intervalLength = (c0.getIntervalLength() * c1.getIntervalLength()) / (c0.getIntervalLength() + c1.getIntervalLength());
-		estimation.setDataStream(new DataStream(instance, dataRate, intervalLength));
+		estimation.setDataStream(new DataStream<JoinTIPO>(instance, dataRate, intervalLength));
 		
 		/** 4. DetailCost **/
 		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
@@ -103,18 +102,17 @@ public class JoinEstimator implements IOperatorEstimator<JoinTIPO> {
 			memCost = EstimatorHelper.sizeInBytes(instance.getOutputSchema()) * EstimatorHelper.elementCountOfSweepAreas(instance.getAreas());
 			memCost+= EstimatorHelper.sizeInBytes(instance.getOutputSchema()) * instance.getTransferFunction().size();
 		}
-		estimation.setDetailCost(new OperatorDetailCost(instance, memCost, cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<JoinTIPO>(instance, memCost, cpuCost));
 
 		return estimation;
 	}
 
 	// Kreuzprodukt
-	@SuppressWarnings("unchecked")
-	private static OperatorEstimation estimateCrossProductOperator(JoinTIPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
-		OperatorEstimation estimation = new OperatorEstimation(instance);
+	private static OperatorEstimation<JoinTIPO> estimateCrossProductOperator(JoinTIPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+		OperatorEstimation<JoinTIPO> estimation = new OperatorEstimation<JoinTIPO>(instance);
 
-		OperatorEstimation op1 = prevOperators.get(0);
-		OperatorEstimation op2 = prevOperators.get(1);
+		OperatorEstimation<?> op1 = prevOperators.get(0);
+		OperatorEstimation<?> op2 = prevOperators.get(1);
 
 		/** 1. Histograms **/
 		double factor1 = op1.getDataStream().getDataRate() * op1.getDataStream().getIntervalLength();
@@ -159,7 +157,7 @@ public class JoinEstimator implements IOperatorEstimator<JoinTIPO> {
 		}
 
 		double intervalLength = (c0.getIntervalLength() * c1.getIntervalLength()) / (c0.getIntervalLength() + c1.getIntervalLength());
-		estimation.setDataStream(new DataStream(instance, dataRate, intervalLength));
+		estimation.setDataStream(new DataStream<JoinTIPO>(instance, dataRate, intervalLength));
 
 		/** 4. DetailCost **/
 		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
@@ -178,7 +176,7 @@ public class JoinEstimator implements IOperatorEstimator<JoinTIPO> {
 			memCost = EstimatorHelper.sizeInBytes(instance.getOutputSchema()) * EstimatorHelper.elementCountOfSweepAreas(instance.getAreas());
 			memCost+= EstimatorHelper.sizeInBytes(instance.getOutputSchema()) * instance.getTransferFunction().size();
 		}
-		estimation.setDetailCost(new OperatorDetailCost(instance, memCost, cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<JoinTIPO>(instance, memCost, cpuCost));
 
 		return estimation;
 	}

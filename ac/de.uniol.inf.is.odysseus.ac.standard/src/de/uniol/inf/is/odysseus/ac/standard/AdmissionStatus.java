@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
@@ -30,23 +31,23 @@ public final class AdmissionStatus {
 	private final int stoppedQueries;
 	private final int addedQueries;
 	
-	private final ICost actCost;
-	private final ICost maxCost;
-	private final ICost underloadCost;
+	private final ICost<IPhysicalOperator> actCost;
+	private final ICost<IPhysicalOperator> maxCost;
+	private final ICost<IPhysicalOperator> underloadCost;
 	
-	private final Map<IUser, ICost> userCosts;
-	private final Map<IUser, ICost> maxUserCosts;
-	private final Map<IUser, ICost> underloadUserCosts;
+	private final Map<IUser, ICost<IPhysicalOperator>> userCosts;
+	private final Map<IUser, ICost<IPhysicalOperator>> maxUserCosts;
+	private final Map<IUser, ICost<IPhysicalOperator>> underloadUserCosts;
 	
-	private final Map<IPhysicalQuery, ICost> queryCosts; 
+	private final Map<IPhysicalQuery, ICost<IPhysicalOperator>> queryCosts; 
 	
 	private final long timestamp;
 	private final long runningTime;
 	
 	private final String costModel;
 
-	AdmissionStatus(int runningQueries, int stoppedQueries, int addedQueries, ICost actCost, ICost maxCost, ICost underloadCost, Map<IUser, ICost> userCosts, Map<IUser, ICost> maxUserCosts,
-			Map<IUser, ICost> underloadUserCost, Map<IPhysicalQuery, ICost> queryCosts, long timestamp, long runningTime, String costModel) {
+	AdmissionStatus(int runningQueries, int stoppedQueries, int addedQueries, ICost<IPhysicalOperator> actCost, ICost<IPhysicalOperator> maxCost, ICost<IPhysicalOperator> underloadCost, Map<IUser, ICost<IPhysicalOperator>> userCosts, Map<IUser, ICost<IPhysicalOperator>> maxUserCosts,
+			Map<IUser, ICost<IPhysicalOperator>> underloadUserCost, Map<IPhysicalQuery, ICost<IPhysicalOperator>> queryCosts, long timestamp, long runningTime, String costModel) {
 		this.runningQueries = runningQueries;
 		this.stoppedQueries = stoppedQueries;
 		this.addedQueries = addedQueries;
@@ -74,37 +75,37 @@ public final class AdmissionStatus {
 		return addedQueries;
 	}
 
-	public ICost getActCost() {
+	public ICost<?> getActCost() {
 		return actCost;
 	}
 
-	public ICost getMaxCost() {
+	public ICost<IPhysicalOperator> getMaxCost() {
 		return maxCost;
 	}
 
-	public ICost getMinCost() {
+	public ICost<IPhysicalOperator> getMinCost() {
 		return underloadCost;
 	}
 
-	public ICost getUserCost( IUser user ) {
+	public ICost<IPhysicalOperator> getUserCost( IUser user ) {
 		Preconditions.checkNotNull(user, "User to get actual costs must not be null!");
 		
 		return userCosts.get(user);
 	}
 
-	public ICost getMaxUserCost(IUser user) {
+	public ICost<IPhysicalOperator> getMaxUserCost(IUser user) {
 		Preconditions.checkNotNull(user, "User to get maximum costs must not be null!");
 		
 		return maxUserCosts.get(user);
 	}
 
-	public ICost getUnderloadUserCost(IUser user) {
+	public ICost<IPhysicalOperator> getUnderloadUserCost(IUser user) {
 		Preconditions.checkNotNull(user, "User to get underload costs must not be null!");
 		
 		return underloadUserCosts.get(user);
 	}
 
-	public ICost getQueryCosts(IPhysicalQuery query) {
+	public ICost<IPhysicalOperator> getQueryCosts(IPhysicalQuery query) {
 		Preconditions.checkNotNull(query, "Query to get actual costs must not be null!");
 		
 		return queryCosts.get(query);

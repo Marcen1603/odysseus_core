@@ -41,17 +41,10 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
  */
 public class DataStreamRateSaver {
 
-	private static Logger _logger = null;
-
-	protected static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(DataStreamRateSaver.class);
-		}
-		return _logger;
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(DataStreamRateSaver.class);
+	private static final String FILENAME = "ac_datarates.conf";
 
 	private static DataStreamRateSaver instance = null;
-	private static final String FILENAME = "ac_datarates.conf";
 
 	private Map<String, Double> datarates = new HashMap<String, Double>();
 
@@ -76,10 +69,11 @@ public class DataStreamRateSaver {
 	 */
 	public void load() {
 		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
-		getLogger().debug("Loading datarates from " + filename);
+		LOG.debug("Loading datarates from " + filename);
 
+		BufferedReader br = null;
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(filename));
+			br = new BufferedReader(new FileReader(filename));
 
 			String line = br.readLine();
 			while (line != null) {
@@ -88,21 +82,22 @@ public class DataStreamRateSaver {
 
 				Double d = new Double(parts[1]);
 				datarates.put(parts[0], d);
-				getLogger().debug("Datarate of " + parts[0] + ":" + d);
+				LOG.debug("Datarate of " + parts[0] + ":" + d);
 
 				line = br.readLine();
-			}
-			br.close();
+			} 
 		} catch (FileNotFoundException ex) {
 			File file = new File(filename);
 			try {
 				file.createNewFile();
-				getLogger().debug("New cfg-File created: " + filename);
+				LOG.debug("New cfg-File created: " + filename);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			tryClose(br);
 		}
 	}
 
@@ -118,7 +113,7 @@ public class DataStreamRateSaver {
 	 */
 	public void set(String streamName, double datarate) {
 		datarates.put(streamName, new Double(datarate));
-		getLogger().debug("Setting datarate of " + streamName + " to " + datarate);
+		LOG.debug("Setting datarate of " + streamName + " to " + datarate);
 	}
 
 	/**
@@ -146,7 +141,7 @@ public class DataStreamRateSaver {
 	 */
 	public void save() {
 		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
-		getLogger().debug("Saving datarates in " + filename);
+		LOG.debug("Saving datarates in {}", filename);
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
 
@@ -155,12 +150,22 @@ public class DataStreamRateSaver {
 				bw.write(str + "=" + rate + "\n");
 				bw.flush();
 
-				getLogger().debug("Writing " + str + "=" + rate);
+				LOG.debug("Writing {} = {}", str, rate);
 			}
 
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private static void tryClose(BufferedReader br) {
+		try {
+			if( br != null ) {
+				br.close();
+			}
+		} catch (IOException ex) {
+			LOG.debug("Could not close reader", ex);
 		}
 	}
 }

@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.costmodel.querycount;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 
@@ -27,26 +26,26 @@ import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
  * @author Timo Michelsen
  *
  */
-public class QueryCountCostModel implements ICostModel {
+public class QueryCountCostModel<T> implements ICostModel<T> {
 
 	@Override
-	public ICost getMaximumCost() {
-		return new QueryCountCost(3);
+	public ICost<T> getMaximumCost() {
+		return new QueryCountCost<T>(3);
 	}
 
 	@Override
-	public ICost estimateCost(List<IPhysicalOperator> operators, boolean useQuerySharing) {
-		return new QueryCountCost(operators);
+	public ICost<T> estimateCost(List<T> operators, boolean useQuerySharing) {
+		return new QueryCountCost<T>(operators);
 	}
 
 	@Override
-	public ICost getZeroCost() {
-		return new QueryCountCost(0.0);
+	public ICost<T> getZeroCost() {
+		return new QueryCountCost<T>(0.0);
 	}
 
 	@Override
-	public ICost getOverallCost() {
-		return new QueryCountCost(0.0);
+	public ICost<T> getOverallCost() {
+		return new QueryCountCost<T>(0.0);
 	}
 
 }

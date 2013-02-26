@@ -40,13 +40,13 @@ public class AggregateEstimator implements IOperatorEstimator<StreamGroupingWith
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(StreamGroupingWithAggregationPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
-		OperatorEstimation estimation = new OperatorEstimation(instance);
+	public OperatorEstimation<StreamGroupingWithAggregationPO> estimateOperator(StreamGroupingWithAggregationPO instance, List<OperatorEstimation<?>> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+		OperatorEstimation<StreamGroupingWithAggregationPO> estimation = new OperatorEstimation<StreamGroupingWithAggregationPO>(instance);
 		
 		/** 1. Histograms **/
 		// TODO
 		Map<SDFAttribute, IHistogram> histograms = new HashMap<SDFAttribute, IHistogram>();
-		for( OperatorEstimation prevOp : prevOperators) {
+		for( OperatorEstimation<?> prevOp : prevOperators) {
 			histograms.putAll(prevOp.getHistograms());
 		}
 		estimation.setHistograms(histograms);
@@ -63,7 +63,7 @@ public class AggregateEstimator implements IOperatorEstimator<StreamGroupingWith
 		if( datarate < 0.0 ) {
 			datarate = prevStream.getDataRate();
 		}
-		estimation.setDataStream(new DataStream(instance, datarate, prevStream.getIntervalLength()));		
+		estimation.setDataStream(new DataStream<StreamGroupingWithAggregationPO>(instance, datarate, prevStream.getIntervalLength()));		
 		
 		/** 4. DetailCost **/
 		// TODO: Mem
@@ -74,7 +74,7 @@ public class AggregateEstimator implements IOperatorEstimator<StreamGroupingWith
 			cpuCost = OperatorCostModelCfg.getInstance().getStandardCpuCost() * datarate;
 		else
 			cpuCost = cpu * datarate;
-		estimation.setDetailCost(new OperatorDetailCost(instance, MemoryUsageSaver.get(instance), cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<StreamGroupingWithAggregationPO>(instance, MemoryUsageSaver.get(instance), cpuCost));
 		
 		return estimation;	
 	}
