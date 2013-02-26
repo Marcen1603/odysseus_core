@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.parser.pql.generator.PQLGenerator;
 
 public class P2PDistributor implements ILogicalQueryDistributor {
 
@@ -15,12 +16,12 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 	
 	@Override
 	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender, List<ILogicalQuery> queriesToDistribute) {
-		LOG.debug("Distributing {} queries", queriesToDistribute.size());
 		for( ILogicalQuery query : queriesToDistribute ) {
-			LOG.debug("{}", query.getQueryText());
+			LOG.debug("\n" + PQLGenerator.generatePQLStatement(query.getLogicalPlan()));
 		}
 		
 		return queriesToDistribute;
 	}
 
+	
 }
