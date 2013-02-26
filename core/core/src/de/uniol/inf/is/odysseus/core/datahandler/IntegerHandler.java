@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,23 +23,22 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-
 public class IntegerHandler extends AbstractDataHandler<Integer> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
-		types.add("Integer");		
+		types.add("Integer");
 	}
 
 	@Override
 	public IDataHandler<Integer> getInstance(SDFSchema schema) {
 		return new IntegerHandler();
 	}
-	
+
 	@Override
 	public Integer readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readInt();
 	}
-	
+
 	@Override
 	public Integer readData(ByteBuffer buffer) {
 		int i = buffer.getInt();
@@ -49,14 +48,18 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 
 	@Override
 	public Integer readData(String string) {
-		return Integer.parseInt(string);
+		if (string != null && string.length() > 0) {
+			return Integer.parseInt(string);
+		} else {
+			return null;
+		}
 	}
 
-    @Override
-    public void writeData(List<String> output, Object data) {
-        output.add(((Number) data).toString());
-    }
-    
+	@Override
+	public void writeData(List<String> output, Object data) {
+		output.add(((Number) data).toString());
+	}
+
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		// System.out.println("write Integer Data "+(Integer)data);
