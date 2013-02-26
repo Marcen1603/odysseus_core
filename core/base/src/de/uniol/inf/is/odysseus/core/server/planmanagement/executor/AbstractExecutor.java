@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.connection.NioConnection;
+import de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -109,6 +110,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 */
 	private IAdmissionControl admissionControl = null;
 	private IAdmissionQuerySelector admissionQuerySelector = null;
+	
+	private ILogicalQueryDistributor logicalQueryDistributor;
 
 	/**
 	 * Konfiguration der Ausf�hrungsumgebung
@@ -312,6 +315,27 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		if (admissionQuerySelector == selector) {
 			admissionQuerySelector = null;
 		}
+	}
+	
+	public final void bindLogicalQueryDistributor( ILogicalQueryDistributor d ) {
+		logicalQueryDistributor = d;
+		
+		LOG.debug("Logical query distributor bound {}", d);
+	}
+	
+	public final void unbindLogicalQueryDistributor( ILogicalQueryDistributor d ) {
+		if( logicalQueryDistributor == d ) {
+			logicalQueryDistributor = null;
+			LOG.debug("Logical query distributor unbound {}", d);
+		}
+	}
+	
+	public final boolean hasLogicalQueryDistributor() {
+		return logicalQueryDistributor != null;
+	}
+	
+	public final ILogicalQueryDistributor getLogicalQueryDistributor() {
+		return logicalQueryDistributor;
 	}
 
 
