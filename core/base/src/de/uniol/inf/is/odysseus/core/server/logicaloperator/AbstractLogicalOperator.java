@@ -74,6 +74,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	private Map<String, String> infos = new TreeMap<String, String>();
 
 	private String name = null;
+	private String destinationName = null;
 	private String uniqueIdentifier = null;
 	
 	private List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
@@ -89,6 +90,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.outputSchema = op.outputSchema;
 		this.uniqueIdentifier = op.uniqueIdentifier;
 		this.infos = new TreeMap<String, String>(op.infos);
+		this.destinationName = op.destinationName;
 	}
 
 	public AbstractLogicalOperator() {
@@ -237,14 +239,17 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return name;
 	}
 
-	// -----------------------------------------------------------------------------------------------
-	// Owner delegates
-	// -----------------------------------------------------------------------------------------------
+	@Override
+	public String getDestinationName() {
+		return destinationName;
+	}
 	
+	@Override
+	@Parameter(name="Destination", type = StringParameter.class, optional = true, doc="Name of the place to execute the operator")
+	public void setDestinationName(String destinationName) {
+		this.destinationName = destinationName;
+	}
 	
-	
-	// -----------------------------------------------------------------------------------------------
-
 	/*
 	 * (non-Javadoc)
 	 * 
