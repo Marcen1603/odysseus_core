@@ -110,16 +110,17 @@ public class RenameAO extends UnaryLogicalOp {
 				setOutputSchema(new SDFSchema(uri, attrs));
 			} else {
 				//
-				if (typeName == null) {
-					throw new IllegalArgumentException("if aliases for attributes is not used, type must be used to rename anyway");
+				if (typeName != null) {
+					// only set type name!
+					List<SDFAttribute> attrs = Lists.newArrayList();
+					for (SDFAttribute oldAttr : inputSchema) {
+						SDFAttribute newOne = new SDFAttribute(typeName, oldAttr.getAttributeName(), oldAttr);
+						attrs.add(newOne);
+					}
+					setOutputSchema(new SDFSchema(typeName, attrs));
+				} else {
+					setOutputSchema(new SDFSchema(inputSchema.getURI(), inputSchema));
 				}
-				// only set type name!
-				List<SDFAttribute> attrs = Lists.newArrayList();
-				for (SDFAttribute oldAttr : inputSchema) {
-					SDFAttribute newOne = new SDFAttribute(typeName, oldAttr.getAttributeName(), oldAttr);
-					attrs.add(newOne);
-				}
-				setOutputSchema(new SDFSchema(typeName, attrs));
 			}
 		} else {
 			SDFSchema inputSchema = getInputSchema();
