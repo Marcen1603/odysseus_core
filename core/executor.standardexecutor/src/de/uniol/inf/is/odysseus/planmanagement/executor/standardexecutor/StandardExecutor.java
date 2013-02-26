@@ -364,7 +364,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	private Collection<Integer> addQuery(String query, String parserID, ISession user, QueryBuildConfiguration buildConfiguration) throws PlanManagementException {
 		try {
 			List<ILogicalQuery> newQueries = createQueries(query, user, buildConfiguration);
-			if (newQueries != null && newQueries.isEmpty()) {
+			if (newQueries != null && !newQueries.isEmpty()) {
 				Collection<IPhysicalQuery> addedQueries = addQueries(newQueries, new OptimizationConfiguration(buildConfiguration));
 				reloadLog.queryAdded(query, buildConfiguration.getName(), parserID, user);
 				LOG.info("Adding Queries. " + query + " for user " + user.getUser().getName() + " done.");
