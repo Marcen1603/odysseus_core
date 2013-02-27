@@ -213,7 +213,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 							// Avoid sending "outdated" heartbeats
 							while (((IPunctuation) elem).isHeartbeat()) {
 								IStreamable nextElem = outputQueue.peek();
-								if (nextElem.isPunctuation()
+								if (nextElem != null && nextElem.isPunctuation()
 										&& ((IPunctuation) elem).isHeartbeat()
 										&& ((IPunctuation) elem).getTime()
 												.afterOrEquals(minimum)) {
