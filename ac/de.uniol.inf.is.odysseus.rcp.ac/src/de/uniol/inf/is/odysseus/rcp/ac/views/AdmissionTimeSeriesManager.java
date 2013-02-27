@@ -86,7 +86,7 @@ public class AdmissionTimeSeriesManager implements IAdmissionStatusListener {
 		// async call from admission control!
 		Optional<IWorkbench> optWorkbench = tryGetWorkbench();
 
-		if (optWorkbench.isPresent()) {
+		if (optWorkbench.isPresent() && !optWorkbench.get().getDisplay().isDisposed()) {
 			final LoadStatistic statistic = createLoadStatistic(status);
 			optWorkbench.get().getDisplay().asyncExec(new Runnable() {
 				@Override
