@@ -30,7 +30,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -334,29 +333,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				viewname = createUserUri(viewname, caller);
 			}
 		}
-		AccessAO realAO = determineAccessAO(streamDefinitions.get(viewname));
-		AccessAO ao = realAO != null ? new AccessAO(realAO) : new AccessAO(viewname, "", null);
+		AccessAO ao = new AccessAO(viewname, "", null);
 		ao.setName(viewname);
 
 		SDFSchema entity = getEntitySchema(viewname, caller);
 		ao.setOutputSchema(entity);
 
 		return ao;
-	}
-
-	private static AccessAO determineAccessAO(ILogicalOperator start) {
-		if (start instanceof AccessAO) {
-			return (AccessAO) start;
-		}
-
-		for (LogicalSubscription subscription : start.getSubscribedToSource()) {
-			AccessAO optAcccessAO = determineAccessAO(subscription.getTarget());
-			if (optAcccessAO != null) {
-				return optAcccessAO;
-			}
-		}
-
-		return null;
 	}
 
 	@Override
