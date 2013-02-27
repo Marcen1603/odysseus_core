@@ -177,7 +177,7 @@ public class Variable implements IExpression<Object> {
 		for(int i = 0; i<this.acceptedTypes.length; i++){			
 			boolean foundCompatible = false;
 			for(int u = 0; u<restrictTypes.length; u++){
-				if(this.acceptedTypes[i].compatibleTo(restrictTypes[u])){
+				if((acceptedTypes[i]!=null)&&(this.acceptedTypes[i].compatibleTo(restrictTypes[u]))){
 					this.acceptedTypes[i] = SDFDatatype.min(this.acceptedTypes[i], restrictTypes[u]);
 					foundCompatible = true;
 				}
