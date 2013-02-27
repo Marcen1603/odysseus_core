@@ -25,7 +25,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -335,8 +334,14 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				viewname = createUserUri(viewname, caller);
 			}
 		}
+		AccessAO realAO = determineAccessAO(streamDefinitions.get(viewname));
+		AccessAO ao = realAO != null ? new AccessAO(realAO) : new AccessAO(viewname, "", null);
+		ao.setName(viewname);
 
-		return determineAccessAO(streamDefinitions.get(viewname));
+		SDFSchema entity = getEntitySchema(viewname, caller);
+		ao.setOutputSchema(entity);
+
+		return ao;
 	}
 
 	private static AccessAO determineAccessAO(ILogicalOperator start) {
