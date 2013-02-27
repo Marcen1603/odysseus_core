@@ -9,6 +9,7 @@ import java.util.Random;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
+import net.jxta.peer.PeerID;
 import net.jxta.protocol.PeerAdvertisement;
 
 import org.slf4j.Logger;
@@ -34,16 +35,30 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 	@Override
 	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender, List<ILogicalQuery> queriesToDistribute) {
 
+		List<PeerID> peers = determinePeers();
+		if( peers.isEmpty() ) {
+			LOG.debug("Could not find any peers to distribute logical query");
+			return queriesToDistribute;
+		}
+		
+		List<ILogicalQuery> localQueries = Lists.newArrayList();
+		
 		for (ILogicalQuery query : queriesToDistribute) {
 			List<ILogicalOperator> operators = Lists.newArrayList();
 			collectOperators(query.getLogicalPlan(), operators);
 
 			List<QueryPart> queryParts = determineQueryParts(operators);
+			LOG.debug("Got {} parts of logical query", queryParts.size());
+			if( queryParts.size() == 1 ) {
+				localQueries.add(query);
+				continue;
+			}
 			
-			
+			// TODO: share parts with peers here
+			localQueries.add(query);
 		}
 
-		return queriesToDistribute;
+		return localQueries;
 	}
 
 	private static List<QueryPart> determineQueryParts(List<ILogicalOperator> operators) {
@@ -68,15 +83,20 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 		return parts;
 	}
 	
-	private static void determinePeers() {
+	private static List<PeerID> determinePeers() {
 		try {
+			List<PeerID> foundPeers = Lists.newArrayList();
+			
 			Enumeration<Advertisement> peerAdvertisements = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
 			while( peerAdvertisements.hasMoreElements() ) {
 				PeerAdvertisement adv = (PeerAdvertisement)peerAdvertisements.nextElement();
-				
+				foundPeers.add(adv.getPeerID());
 			}
+			
+			return foundPeers;
 		} catch (IOException ex) {
 			LOG.error("Could not get peers", ex);
+			return Lists.newArrayList();
 		}
 	}
 

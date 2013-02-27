@@ -41,6 +41,10 @@ public class QueryPart {
 	public final ImmutableCollection<ILogicalOperator> getRelativeSinks() {
 		return ImmutableList.copyOf(relativeSinks);
 	}
+	
+	public final String getDestinationName() {
+		return destinationName;
+	}
 
 	private static Collection<ILogicalOperator> determineRelativeSources(Collection<ILogicalOperator> operators) {
 		ImmutableList.Builder<ILogicalOperator> sources = new ImmutableList.Builder<>();
