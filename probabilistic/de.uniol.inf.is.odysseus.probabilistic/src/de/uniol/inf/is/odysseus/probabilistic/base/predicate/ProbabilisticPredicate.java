@@ -110,6 +110,18 @@ public class ProbabilisticPredicate extends
 		return (Boolean) this.expression.getValue();
 	}
 
+	public double probabilisticEvaluate(ProbabilisticTuple<?> input) {
+		Object[] values = new Object[this.attributePositions.length];
+		for (int i = 0; i < values.length; ++i) {
+			values[i] = input.getAttribute(this.attributePositions[i]);
+		}
+		((SDFProbabilisticExpression) this.expression).bindDistributions(input
+				.getDistributions());
+		this.expression.bindAdditionalContent(input.getAdditionalContent());
+		this.expression.bindVariables(values);
+		return this.expression.getValue();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -150,6 +162,40 @@ public class ProbabilisticPredicate extends
 		this.expression.bindAdditionalContent(additionalContent);
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
+	}
+
+	public double probabilisticEvaluate(ProbabilisticTuple<?> left,
+			ProbabilisticTuple<?> right) {
+		Object[] values = new Object[this.attributePositions.length];
+		for (int i = 0; i < values.length; ++i) {
+			Tuple<?> r = fromRightChannel[i] ? right : left;
+			values[i] = r.getAttribute(this.attributePositions[i]);
+		}
+		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+		additionalContent.putAll(left.getAdditionalContent());
+		additionalContent.putAll(right.getAdditionalContent());
+
+		int length = 0;
+		if (left.getDistributions() != null) {
+			length += left.getDistributions().length;
+		}
+		if (right.getDistributions() != null) {
+			length += right.getDistributions().length;
+		}
+		NormalDistributionMixture[] distributions = new NormalDistributionMixture[length];
+		if (left.getDistributions() != null) {
+			System.arraycopy(left.getDistributions(), 0, distributions, 0,
+					left.getDistributions().length);
+		}
+		if (right.getDistributions() != null) {
+			System.arraycopy(right.getDistributions(), 0, distributions, length
+					- right.getDistributions().length,
+					right.getDistributions().length);
+		}
+		this.expression.bindDistributions(distributions);
+		this.expression.bindAdditionalContent(additionalContent);
+		this.expression.bindVariables(values);
+		return this.expression.getValue();
 	}
 
 	/*

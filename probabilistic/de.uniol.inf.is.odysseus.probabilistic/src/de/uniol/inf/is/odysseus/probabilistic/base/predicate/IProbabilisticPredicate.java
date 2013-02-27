@@ -15,4 +15,10 @@ public interface IProbabilisticPredicate extends
 	public void init(SDFSchema leftSchema, SDFSchema rightSchema);
 
 	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr);
+
+	double probabilisticEvaluate(ProbabilisticTuple<?> left,
+			ProbabilisticTuple<?> right);
+
+	double probabilisticEvaluate(ProbabilisticTuple<?> input);
+
 }
