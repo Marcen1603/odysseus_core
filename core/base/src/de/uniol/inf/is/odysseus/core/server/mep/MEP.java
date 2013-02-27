@@ -100,6 +100,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerThanOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SqrtFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SqrtValue;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SquareValue;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.StringPlusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SubStringFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.TangensFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToByteFunction;
@@ -227,7 +228,7 @@ public class MEP implements IExpressionParser {
         /** String Functions */
         registerFunction(new LikeFunction());
         registerFunction(new ContainsFunction());
-        
+        registerFunction(new StringPlusOperator());
         registerFunction(new ConcatFunction());
         registerFunction(new SubStringFunction());
         registerFunction(new LengthFunction());
