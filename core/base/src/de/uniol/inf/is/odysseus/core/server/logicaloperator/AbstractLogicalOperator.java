@@ -301,7 +301,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	@Parameter(name="Id", type = StringParameter.class, optional = true)
-	final public void setUniqueIdenfier(String id) {
+	final public void setUniqueIdentifier(String id) {
 		this.uniqueIdentifier = id;
 	}
 	

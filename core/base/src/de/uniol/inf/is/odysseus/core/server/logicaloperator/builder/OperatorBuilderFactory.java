@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class OperatorBuilderFactory implements IOperatorBuilderFactory{
+public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	private static Map<String, IOperatorBuilder> operatorBuilders = new HashMap<String, IOperatorBuilder>();
 	private static Map<String, IPredicateBuilder> predicateBuilders = new HashMap<String, IPredicateBuilder>();
 	private static Map<String, Object> udfs = new HashMap<String, Object>();
@@ -52,17 +52,6 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory{
 
 	public static Set<String> getOperatorBuilderNames() {
 		return operatorBuilders.keySet();
-	}
-
-	private static void putOperatorBuilderType(String name, IOperatorBuilder builder) {
-		if (operatorBuilders.containsKey(name)) {
-			throw new RuntimeException("multiple definitions of logicaloperator: " + name);
-		}
-		operatorBuilders.put(name.toUpperCase(), builder);
-	}
-
-	private static void removeOperatorBuilderType(String name) {
-		operatorBuilders.remove(name.toUpperCase());
 	}
 
 	public static void putPredicateBuilder(String identifier, IPredicateBuilder builder) {
@@ -119,8 +108,8 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory{
 	public static void removeOperatorBuilder(IOperatorBuilder builder) {
 		removeOperatorBuilderType(builder.getName());
 	}
-	
-	public static void removeOperatorBuilderByName(String name){
+
+	public static void removeOperatorBuilderByName(String name) {
 		removePredicateBuilder(name);
 	}
 
@@ -128,4 +117,16 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory{
 	public List<IOperatorBuilder> getOperatorBuilder() {
 		return ImmutableList.copyOf(operatorBuilders.values());
 	}
+
+	private static void putOperatorBuilderType(String name, IOperatorBuilder builder) {
+		if (operatorBuilders.containsKey(name)) {
+			throw new RuntimeException("multiple definitions of logicaloperator: " + name);
+		}
+		operatorBuilders.put(name.toUpperCase(), builder);
+	}
+
+	private static void removeOperatorBuilderType(String name) {
+		operatorBuilders.remove(name.toUpperCase());
+	}
+
 }

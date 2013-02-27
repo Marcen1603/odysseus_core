@@ -288,7 +288,7 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 * 
 	 * @param id
 	 */
-	void setUniqueIdenfier(String id);
+	void setUniqueIdentifier(String id);
 
 	/**
 	 * Each operator can have a unique id
