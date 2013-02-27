@@ -84,7 +84,7 @@ public class ProbabilisticShortHandler extends
 
 	@Override
 	final public List<String> getSupportedDataTypes() {
-		return ProbabilisticDoubleHandler.types;
+		return ProbabilisticShortHandler.types;
 	}
 
 	@Override

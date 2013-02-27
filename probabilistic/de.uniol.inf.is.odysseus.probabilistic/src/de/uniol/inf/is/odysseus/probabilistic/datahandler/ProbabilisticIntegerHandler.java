@@ -84,7 +84,7 @@ public class ProbabilisticIntegerHandler extends
 
 	@Override
 	final public List<String> getSupportedDataTypes() {
-		return ProbabilisticDoubleHandler.types;
+		return ProbabilisticIntegerHandler.types;
 	}
 
 	@Override

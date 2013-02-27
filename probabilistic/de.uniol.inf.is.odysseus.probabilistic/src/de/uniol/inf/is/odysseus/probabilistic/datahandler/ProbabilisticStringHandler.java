@@ -110,7 +110,7 @@ public class ProbabilisticStringHandler extends
 
 	@Override
 	final public List<String> getSupportedDataTypes() {
-		return ProbabilisticDoubleHandler.types;
+		return ProbabilisticStringHandler.types;
 	}
 
 	@Override
