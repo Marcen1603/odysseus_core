@@ -86,16 +86,16 @@ public class StatusBarManager implements IWindowListener {
 		cache.clear();
 	}
 
-	public void setMessage(final String itemID, final String message) {		
+	public void setMessage(final String itemID, final String message) {
 		tryToRegisterListener();
 		if (manager == null) {
 			cache.put(itemID, message);
 			return;
 		}
 
-		if( PlatformUI.getWorkbench().getDisplay().isDisposed() ) {
+		if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-	
+
 				@Override
 				public void run() {
 					IContributionItem[] items = manager.getItems();
@@ -105,7 +105,7 @@ public class StatusBarManager implements IWindowListener {
 						}
 					}
 				}
-	
+
 			});
 		}
 	}
@@ -117,13 +117,15 @@ public class StatusBarManager implements IWindowListener {
 			return;
 		}
 
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
+		if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
 
-				manager.setMessage(message);
-			}
-		});
+					manager.setMessage(message);
+				}
+			});
+		}
 	}
 
 	@Override
@@ -141,12 +143,11 @@ public class StatusBarManager implements IWindowListener {
 
 	}
 
-	
 	@Override
-	public void windowOpened(IWorkbenchWindow window) {		
-		WorkbenchPage wp = (WorkbenchPage) window.getActivePage();				
+	public void windowOpened(IWorkbenchWindow window) {
+		WorkbenchPage wp = (WorkbenchPage) window.getActivePage();
 		IActionBars ab = wp.getActionBars();
-		this.manager = ab.getStatusLineManager();		
+		this.manager = ab.getStatusLineManager();
 		initManager();
 
 	}
