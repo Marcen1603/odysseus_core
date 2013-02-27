@@ -228,7 +228,7 @@ public class MEP implements IExpressionParser {
         /** String Functions */
         registerFunction(new LikeFunction());
         registerFunction(new ContainsFunction());
-        registerFunction(new StringPlusOperator());
+      //  registerFunction(new StringPlusOperator());
         registerFunction(new ConcatFunction());
         registerFunction(new SubStringFunction());
         registerFunction(new LengthFunction());
