@@ -55,9 +55,11 @@ public final class TransformUtil {
 	 */
 	public static boolean containsContinuousProbabilisticAttributes(
 			final List<SDFAttribute> attributes) {
-		for (final SDFAttribute attribute : attributes) {
-			if (isContinuousProbabilisticAttribute(attribute)) {
-				return true;
+		if (attributes != null) {
+			for (final SDFAttribute attribute : attributes) {
+				if (isContinuousProbabilisticAttribute(attribute)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -99,9 +101,11 @@ public final class TransformUtil {
 	 */
 	public static boolean containsDiscreteProbabilisticAttributes(
 			final List<SDFAttribute> attributes) {
-		for (final SDFAttribute attribute : attributes) {
-			if (isDiscreteProbabilisticAttribute(attribute)) {
-				return true;
+		if (attributes != null) {
+			for (final SDFAttribute attribute : attributes) {
+				if (isDiscreteProbabilisticAttribute(attribute)) {
+					return true;
+				}
 			}
 		}
 		return false;

@@ -84,8 +84,8 @@ public class TContinuousEquiJoinAORule extends
 	@Override
 	public boolean isExecutable(JoinAO operator,
 			TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet()
-				&& !(operator instanceof LeftJoinAO)) {
+		if (((operator.getPredicate() != null)
+				&& (operator.isAllPhysicalInputSet()) && !(operator instanceof LeftJoinAO))) {
 			if (!TransformUtil
 					.containsContinuousProbabilisticAttributes(operator
 							.getPredicate().getAttributes())) {
