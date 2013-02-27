@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.mep.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,6 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
         IFunction<?> selectedFunction = null;
 
         int arity = node.jjtGetNumChildren();
-        IExpression<?>[] expressions = new IExpression[arity];
 
         // if (schema != null) {
         // for (IFunction<?> function : functions) {
@@ -95,17 +95,41 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
         // }
         // }
         // else {
-        selectedFunction = functions.get(0);
-        if (selectedFunction == null) {
-            throw new IllegalArgumentException("no such function: " + symbol);
-        }
-        for (int i = 0; i < arity; ++i) {
-            // pass the accepted types of this function for the current
-            // argument
-            expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this, selectedFunction.getAcceptedTypes(i));
-        }
+        
+		if (functions.size() == 0) {
+			throw new IllegalArgumentException("no such function: " + symbol);
+		} else if (functions.size() == 1) {
+			selectedFunction = functions.get(0);
+			IExpression<?>[] expressions = new IExpression[arity];
+			for (int i = 0; i < arity; ++i) {
+				// pass the accepted types of this function for the current
+				// argument
+				expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this, selectedFunction.getAcceptedTypes(i));
+			}
+			selectedFunction.setArguments(expressions);
+		} else {
+			for (IFunction<?> function : functions) {
+				List<SDFDatatype> parameters = new ArrayList<SDFDatatype>();
+				for (int i = 0; i < arity; ++i) {
+					parameters.add(((IExpression<?>) node.jjtGetChild(i).jjtAccept(this, function.getAcceptedTypes(i))).getReturnType());
+				}
+				selectedFunction = MEP.getFunction(symbol, parameters);
+				if (selectedFunction != null) {
+					break;
+				}
+			}
+			if (selectedFunction == null) {
+				selectedFunction = functions.get(0);
+			}
 
-        selectedFunction.setArguments(expressions);
+			IExpression<?>[] expressions = new IExpression[arity];
+			for (int i = 0; i < arity; ++i) {
+				expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this, selectedFunction.getAcceptedTypes(i));
+			}
+			selectedFunction.setArguments(expressions);
+		}
+
+
         // }
 
         return selectedFunction;
