@@ -41,6 +41,8 @@ public class AggregateAO extends UnaryLogicalOp {
 	final private Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations;
 	final private List<SDFAttribute> groupingAttributes;
 	final private List<SDFAttribute> outputAttributList;
+	
+	private List<AggregateItem> aggregationItems;
 	private int dumpAtValueCount = -1;
 	
 	public AggregateAO() {
@@ -132,6 +134,11 @@ public class AggregateAO extends UnaryLogicalOp {
 			addAggregation(item.inAttribute, item.aggregateFunction,
 					item.outAttribute);
 		}
+		aggregationItems = aggregations;
+	}
+	
+	public List<AggregateItem> getAggregationItems() {
+		return aggregationItems;
 	}
 
 	@GetParameter(name = "GROUP_BY")

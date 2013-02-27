@@ -71,6 +71,14 @@ public class RenameAO extends UnaryLogicalOp {
 	public void setPairs(boolean aliasesAsPairs) {
 		this.aliasesAsPairs = aliasesAsPairs;
 	}
+	
+	public boolean getPairs() {
+		return this.aliasesAsPairs;
+	}
+	
+	public String getType() {
+		return this.typeName;
+	}
 
 	@GetParameter(name = "setAliases")
 	public List<String> getAliases() {

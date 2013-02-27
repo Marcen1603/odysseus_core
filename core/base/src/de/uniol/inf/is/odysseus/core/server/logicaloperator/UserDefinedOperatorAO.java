@@ -75,6 +75,9 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator{
 		setOutputSchema(new SDFSchema("", outputSchema));
 	}
 
+	public List<SDFAttribute> getOutputSchemaWithList() {
+		return getOutputSchema().getAttributes();
+	}
 
 	@Override
 	public UserDefinedOperatorAO clone() {

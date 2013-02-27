@@ -165,6 +165,10 @@ public class WindowAO extends UnaryLogicalOp {
 		this.timeUnit = TimeUnit.valueOf(unit);
 	}
 	
+	public String getUnit() {
+		return timeUnit.toString();
+	}
+	
 	public TimeUnit getTimeUnit() {
 		return timeUnit;
 	}

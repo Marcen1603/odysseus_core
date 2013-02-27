@@ -64,12 +64,15 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	public void setAttr(List<SDFAttribute> outputSchema) {
 		this.attributes = new SDFSchema("", outputSchema);
 	}
+	
+	public List<SDFAttribute> getAttr() {
+		return this.attributes.getAttributes();
+	}
 
 	public SDFSchema getAttributes() {
 		return attributes;
 	}
-	
-	
+		
 	@Parameter(type = IntegerParameter.class, name = "heartbeatrate", optional = true)
 	public void setHeartbeatRate(int rate){
 		this.rate = rate;

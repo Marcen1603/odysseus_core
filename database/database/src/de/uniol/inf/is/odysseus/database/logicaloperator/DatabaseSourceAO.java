@@ -85,6 +85,10 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 		setOutputSchema(new SDFSchema("", outputSchema));
 	}
 	
+	public List<SDFAttribute> getOutputSchemaWithList() {
+		return this.givenSchema;
+	}
+	
 	@Parameter(type = BooleanParameter.class, name="FETCH_ATTRIBUTES", optional = true)
 	public void setFetchAttributes(boolean fetch){
 		this.fetchAttributes  = fetch;
