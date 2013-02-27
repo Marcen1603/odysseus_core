@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
@@ -140,7 +141,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		ASTPredicate wherePredicate = (ASTPredicate) node.jjtGetChild(0);
 		IPredicate<Tuple<?>> predicate;
 		predicate = CreatePredicateVisitor.toPredicate(wherePredicate,
-				this.attributeResolver);
+				new DirectAttributeResolver(inputOp.getOutputSchema()));
 		predicate = ComplexPredicateHelper.pushDownNegation(predicate, false);
 		List<IPredicate> conjunctivePredicates = ComplexPredicateHelper.splitPredicate(predicate);
 
@@ -162,12 +163,12 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		}
 
 		if (selectPredicate != null) {
-			// Convert Predicate to single predicate
-			String pred = selectPredicate.toString();
-			SDFExpression expression = new SDFExpression("",pred,this.attributeResolver, MEP.getInstance());
-			RelationalPredicate relSelPred = new RelationalPredicate(expression);
 			SelectAO selectAO = new SelectAO();
 			selectAO.subscribeTo(curInputAO, curInputAO.getOutputSchema());
+			// Convert Predicate to single predicate
+			String pred = selectPredicate.toString();
+			SDFExpression expression = new SDFExpression("", pred, new DirectAttributeResolver(selectAO.getInputSchema()), MEP.getInstance());
+			RelationalPredicate relSelPred = new RelationalPredicate(expression);
 			selectAO.setPredicate(relSelPred);
 			return selectAO;
 		}

@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
@@ -118,7 +119,10 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				MapAO map = new MapAO();
 				map.subscribeTo(_top, inputSchema);
 				// all real expressions
-				List<SDFExpression> outputExpressions = new ArrayList<SDFExpression>(expressions);
+				List<SDFExpression> outputExpressions = new ArrayList<SDFExpression>();
+				for (SDFExpression expression : expressions) {
+					outputExpressions.add(new SDFExpression("", expression.getExpressionString(), new DirectAttributeResolver(inputSchema), MEP.getInstance()));
+				}
 				map.setExpressions(outputExpressions);
 				_top = map;
 			}
