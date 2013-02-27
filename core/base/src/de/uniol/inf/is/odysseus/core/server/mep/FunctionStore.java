@@ -29,8 +29,16 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class FunctionStore {
+	private static FunctionStore instance;
     Map<String, List<FunctionSignature>> symbols    = new HashMap<String, List<FunctionSignature>>();
     Map<FunctionSignature, IFunction<?>> signatures = new HashMap<FunctionSignature, IFunction<?>>();
+ 
+	public static FunctionStore getInstance() {
+		if (instance == null) {
+			instance = new FunctionStore();
+		}
+		return instance;
+	}
 
     public void clear() {
         symbols.clear();
@@ -38,7 +46,11 @@ public class FunctionStore {
     }
 
     public boolean containsSymbol(String symbol) {
-        return symbols.containsKey(symbol.toUpperCase());
+		if ((symbol != null) && (!symbol.isEmpty())) {
+			return symbols.containsKey(symbol.toUpperCase());
+		} else {
+			return false;
+		}
     }
 
     public boolean containsSignature(FunctionSignature signature) {
@@ -47,10 +59,12 @@ public class FunctionStore {
 
     public List<IFunction<?>> getFunctions(String symbol) {
         List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
-        List<FunctionSignature> signatures = symbols.get(symbol.toUpperCase());
-        for (FunctionSignature signature : signatures) {
-            functions.add(this.signatures.get(signature));
-        }
+		if ((symbol != null) && (!symbol.isEmpty())) {
+			List<FunctionSignature> signatures = symbols.get(symbol.toUpperCase());
+			for (FunctionSignature signature : signatures) {
+				functions.add(this.signatures.get(signature));
+			}
+		}
         return functions;
     }
 
@@ -59,14 +73,16 @@ public class FunctionStore {
     }
 
     public IFunction<?> getFunction(String symbol, List<SDFDatatype> parameter) {
-        List<FunctionSignature> signatureList = this.symbols.get(symbol.toUpperCase());
         IFunction<?> function = null;
-        for (FunctionSignature signature : signatureList) {
-            if (signature.contains(parameter)) {
-                function = this.signatures.get(signature);
-                break;
-            }
-        }
+		if ((symbol != null) && (!symbol.isEmpty())) {
+			List<FunctionSignature> signatureList = this.symbols.get(symbol.toUpperCase());
+			for (FunctionSignature signature : signatureList) {
+				if (signature.contains(parameter)) {
+					function = this.signatures.get(signature);
+					break;
+				}
+			}
+		}
         return function;
     }
 
@@ -75,11 +91,15 @@ public class FunctionStore {
     }
 
     public IFunction<?> put(FunctionSignature signature, IFunction<?> function) {
-        this.signatures.put(signature, function);
-        List<FunctionSignature> signatures = new ArrayList<FunctionSignature>();
-        signatures.add(signature);
-        this.symbols.put(signature.getSymbol(), signatures);
-        return function;
+		if (this.symbols.containsKey(signature.getSymbol())) {
+			this.symbols.get(signature.getSymbol()).add(signature);
+		} else {
+			List<FunctionSignature> signatures = new ArrayList<FunctionSignature>();
+			signatures.add(signature);
+			this.symbols.put(signature.getSymbol(), signatures);
+		}
+	    this.signatures.put(signature, function);
+		return function;
     }
 
     public IFunction<?> remove(FunctionSignature signature) {
@@ -102,4 +122,7 @@ public class FunctionStore {
         return ImmutableSet.copyOf(this.signatures.keySet());
     }
 
+    private FunctionStore() {
+
+    }
 }
