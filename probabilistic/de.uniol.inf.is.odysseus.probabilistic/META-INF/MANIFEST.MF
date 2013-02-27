@@ -17,6 +17,7 @@ Import-Package: com.rits.cloning,
  org.apache.commons.math3.distribution,
  org.apache.commons.math3.linear,
  org.apache.commons.math3.special,
+ org.apache.commons.math3.util,
  org.osgi.framework,
  org.slf4j
 Service-Component: OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml,OSGI-INF/ProbabilisticDatatypeProvider.xml,OSGI-INF/ProbabilisticContinuousDoubleDataHandler.xml,OSGI-INF/Probabilistic.xml,OSGI-INF/ProbabilisticFunctionProvider.xml,OSGI-INF/IntervalProbabilistic.xml,

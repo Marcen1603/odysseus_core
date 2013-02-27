@@ -30,14 +30,13 @@ public class ProbabilisticContinuousSmallerEqualsOperator extends
 
 	@Override
 	public String getSymbol() {
-		return ">=";
+		return "<=";
 	}
 
 	@Override
 	public Double getValue() {
 		ProbabilisticContinuousDouble a = getInputValue(0);
 		Double b = getNumericalInputValue(1);
-		MatrixUtils.createRealVector(((double[][]) this.getInputValue(1))[0]);
 		RealVector lowerBound = MatrixUtils
 				.createRealVector(new double[] { Double.NEGATIVE_INFINITY });
 		RealVector upperBound = MatrixUtils

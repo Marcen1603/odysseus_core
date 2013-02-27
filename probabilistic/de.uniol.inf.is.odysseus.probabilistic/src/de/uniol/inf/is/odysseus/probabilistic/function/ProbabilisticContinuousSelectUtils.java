@@ -6,7 +6,6 @@ import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.math.genz.Matrix;
 import de.uniol.inf.is.odysseus.probabilistic.math.genz.QSIMVN;
 
