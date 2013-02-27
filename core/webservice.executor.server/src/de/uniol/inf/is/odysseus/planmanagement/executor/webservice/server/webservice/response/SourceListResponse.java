@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * 
- * @author merlin
+ * @author Merlin Wasmann
  *
  */
 public class SourceListResponse extends Response {

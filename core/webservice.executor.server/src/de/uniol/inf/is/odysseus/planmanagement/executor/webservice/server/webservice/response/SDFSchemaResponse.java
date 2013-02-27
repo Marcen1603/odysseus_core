@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webse
 
 
 /**
- * @author merlin
+ * @author Merlin Wasmann
  *
  */
 public class SDFSchemaResponse extends Response {

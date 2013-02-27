@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * @author merlin
+ * @author Merlin Wasmann
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
