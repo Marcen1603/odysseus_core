@@ -66,38 +66,20 @@ public class PQLGenerator {
 			return AccessAOPQLGenerator.generateAccessAOStatement((AccessAO) operator, names.get(operator));
 		} 
 
-		try {
-			Map<String, String> parameterMap = removeNullValues(operator.getParameterInfos());
+		Map<String, String> parameterMap = removeNullValues(operator.getParameterInfos());
 
+		try {
 			StringBuilder sb = new StringBuilder();
 
-			sb.append(names.get(operator));
-			sb.append("=");
-			sb.append(determineOperatorKeyword(operator));
+			appendOperatorName(sb, operator, names.get(operator));
 			sb.append("(");
-			if (!parameterMap.isEmpty()) {
-				sb.append("{");
-				String[] keys = parameterMap.keySet().toArray(new String[0]);
-				for (int i = 0; i < keys.length; i++) {
-					sb.append(keys[i]).append("=").append(parameterMap.get(keys[i]));
-					if (i < keys.length - 1) {
-						sb.append(",");
-					}
-				}
-				sb.append("}");
-			}
+			
+			appendParameters(sb, parameterMap);
 			if (!operator.getSubscribedToSource().isEmpty()) {
 				if(!parameterMap.isEmpty()) {
 					sb.append(",");
 				}
-				LogicalSubscription[] subscriptions = operator.getSubscribedToSource().toArray(new LogicalSubscription[0]);
-				for (int i = 0; i < subscriptions.length; i++) {
-					ILogicalOperator target = subscriptions[i].getTarget();
-					sb.append(names.get(target));
-					if (i < subscriptions.length - 1) {
-						sb.append(",");
-					}
-				}
+				appendSubscriptionNames(sb, operator, names);
 			}
 			sb.append(")");
 
@@ -106,6 +88,37 @@ public class PQLGenerator {
 		} catch (IllegalArgumentException ex) {
 			LOG.error("Could not create pql-statement for logical operator {}", operator, ex);
 			return "";
+		}
+	}
+
+	private static void appendSubscriptionNames(StringBuilder sb, ILogicalOperator operator, Map<ILogicalOperator, String> names) {
+		LogicalSubscription[] subscriptions = operator.getSubscribedToSource().toArray(new LogicalSubscription[0]);
+		for (int i = 0; i < subscriptions.length; i++) {
+			ILogicalOperator target = subscriptions[i].getTarget();
+			sb.append(names.get(target));
+			if (i < subscriptions.length - 1) {
+				sb.append(",");
+			}
+		}
+	}
+
+	private static void appendOperatorName(StringBuilder sb, ILogicalOperator operator, String name) {
+		sb.append(name);
+		sb.append("=");
+		sb.append(determineOperatorKeyword(operator));
+	}
+
+	private static void appendParameters(StringBuilder sb, Map<String, String> parameterMap) {
+		if (!parameterMap.isEmpty()) {
+			sb.append("{");
+			String[] keys = parameterMap.keySet().toArray(new String[0]);
+			for (int i = 0; i < keys.length; i++) {
+				sb.append(keys[i]).append("=").append(parameterMap.get(keys[i]));
+				if (i < keys.length - 1) {
+					sb.append(",");
+				}
+			}
+			sb.append("}");
 		}
 	}
 
