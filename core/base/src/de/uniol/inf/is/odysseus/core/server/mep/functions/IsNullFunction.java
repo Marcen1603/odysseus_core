@@ -47,4 +47,12 @@ public class IsNullFunction extends AbstractFunction<Boolean> {
 		// Accept all types ... TODO: Is this a problem?
         return null;
 	}
+	
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(getSymbol());
+		builder.append("()");
+		return builder.toString();
+	}
 }
