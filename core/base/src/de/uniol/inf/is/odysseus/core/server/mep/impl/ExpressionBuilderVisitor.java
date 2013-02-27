@@ -167,7 +167,11 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 		Variable variable;
 		if (this.schema != null) {
 			SDFAttribute attribute = schema.findAttribute(identifier);
-			variable = new Variable(identifier, attribute.getDatatype());
+			if (attribute != null) {
+				variable = new Variable(identifier, attribute.getDatatype());
+			} else {
+				variable = new Variable(identifier);
+			}
 		} else {
 			variable = new Variable(identifier);
 		}
