@@ -152,7 +152,7 @@ public class MEP implements IExpressionParser {
     }
 
     private static Map<FunctionSignature, IFunction<?>> functions     = new HashMap<FunctionSignature, IFunction<?>>();
-    private static FunctionStore                        functionStore = new FunctionStore();
+    private static FunctionStore                        functionStore = FunctionStore.getInstance();
     static {
         getLogger().debug("Register Base Function");
         /** Boolean Functions */
@@ -274,7 +274,9 @@ public class MEP implements IExpressionParser {
         List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
         int arity = function.getArity();
         for (int i = 0; i < arity; i++) {
-            parameters.add(function.getAcceptedTypes(i));
+			if (function.getAcceptedTypes(i) != null) {
+				parameters.add(function.getAcceptedTypes(i).clone());
+			}
         }
         FunctionSignature signature = new FunctionSignature(symbol, parameters);
         if (functionStore.containsSignature(signature)) {
@@ -304,7 +306,9 @@ public class MEP implements IExpressionParser {
         List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
         int arity = function.getArity();
         for (int i = 0; i < arity; i++) {
-            parameters.add(function.getAcceptedTypes(i));
+			if (function.getAcceptedTypes(i) != null) {
+				parameters.add(function.getAcceptedTypes(i).clone());
+			}
         }
         FunctionSignature signature = new FunctionSignature(symbol, parameters);
         if (functionStore.containsSignature(signature)) {
