@@ -24,6 +24,8 @@ public class CoalesceAO extends AggregateAO {
 	
 	public CoalesceAO(CoalesceAO coalesceAO) {
 		super(coalesceAO);
+		maxElementsPerGroup = coalesceAO.maxElementsPerGroup;
+		createOnHeartbeat = coalesceAO.createOnHeartbeat;
 	}
 
 	@Parameter(name = "ATTR", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
