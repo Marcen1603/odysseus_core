@@ -27,11 +27,7 @@ public class SDFFunctionProvider implements IFunctionProvider{
 	public List<IFunction<?>> getFunctions() {
 		List<IFunction<?>> funcs = new ArrayList<IFunction<?>>();
 		
-		funcs.add(new DolToEur());
-		funcs.add(new Now());
-		funcs.add(new Distance());
-		funcs.add(new Polygon());
-		
+		funcs.add(new DolToEur());		
 		return funcs;
 	}
 
