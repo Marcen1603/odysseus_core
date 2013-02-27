@@ -126,8 +126,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			} else if (splitted.size() == 2) {
 				for (SDFAttribute a : elems) {
 					if (a.getAttributeName().equalsIgnoreCase(splitted.get(1))
-							&& a.getSourceName().equalsIgnoreCase(
-									splitted.get(0))) {
+							&& (a.getSourceName() != null && a.getSourceName().equalsIgnoreCase(
+									splitted.get(0)))) {
 						return a;
 					}
 				}
