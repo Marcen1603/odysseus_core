@@ -35,5 +35,10 @@ public class LongParameter extends AbstractParameter<Long> {
 	protected void internalAssignment() {
 		setValue((Long) this.inputValue);
 	}
+	
+	@Override
+	protected String getPQLStringInternal() {
+		return String.valueOf(getValue());
+	}
 
 }

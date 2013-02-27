@@ -189,17 +189,17 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	}
 
 	@Override
-	public Map<String, String> getInfos() {
+	public Map<String, String> getParameterInfos() {
 		return infos;
 	}
 
 	@Override
-	public void addInfo(String key, Object value) {
+	public void addParameterInfo(String key, Object value) {
 		this.infos.put(key, value.toString());		
 	}
 	
 	@Override
-	public void setInfos(Map<String, String> infos) {
+	public void setParameterInfos(Map<String, String> infos) {
 		this.infos = infos;
 	}
 

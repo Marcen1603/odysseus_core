@@ -24,4 +24,8 @@ public class ByteParameter extends AbstractParameter<Byte> {
 		setValue(((Long) this.inputValue).byteValue());
 	}
 
+	@Override
+	protected String getPQLStringInternal() {
+		return Byte.toString(getValue());
+	}
 }

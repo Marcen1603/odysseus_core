@@ -36,5 +36,10 @@ public class IntegerParameter extends AbstractParameter<Integer> {
 		int value = ((Long) inputValue).intValue();
 		setValue(value);
 	}
+	
+	@Override
+	protected String getPQLStringInternal() {
+		return String.valueOf(getValue());
+	}
 
 }

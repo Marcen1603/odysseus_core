@@ -34,5 +34,10 @@ public class FileParameter extends AbstractParameter<File> {
 		File f = new File(inputValue.toString());
 		return f.exists();
 	}
+	
+	@Override
+	protected String getPQLStringInternal() {
+		return getValue().toString();
+	}
 
 }

@@ -59,7 +59,7 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 			logger.warn("Operator " + logical + " has not output schema");
 		}
 		physical.setName(logical.getName());
-		physical.getInfos().putAll(logical.getInfos());
+		physical.getParameterInfos().putAll(logical.getParameterInfos());
 	}
 
 	protected void handleOperatorID(ILogicalOperator logical, IPhysicalOperator physical) {

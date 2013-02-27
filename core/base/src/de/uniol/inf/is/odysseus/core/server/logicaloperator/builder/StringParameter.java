@@ -36,5 +36,10 @@ public class StringParameter extends AbstractParameter<String> {
 	protected void internalAssignment() {
 		setValue((String) this.inputValue);
 	}
+	
+	@Override
+	protected String getPQLStringInternal() {
+		return "'" + getValue() + "'";
+	}
 
 }

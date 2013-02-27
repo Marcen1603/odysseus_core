@@ -44,4 +44,10 @@ public class CreateOptionParameter extends AbstractParameter<Option> {
 		setValue(option);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	protected String getPQLStringInternal() {
+		List<String> list = (List<String>) inputValue;
+		return "['" + list.get(0) + "','" + list.get(1) + "']";
+	}
 }

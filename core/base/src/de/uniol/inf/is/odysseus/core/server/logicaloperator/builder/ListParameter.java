@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,19 +26,16 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 	private static final long serialVersionUID = -369501131293705600L;
 	private IParameter<T> singleParameter;
 
-	public ListParameter(String name, REQUIREMENT requirement,
-			IParameter<T> singleParameter) {
+	public ListParameter(String name, REQUIREMENT requirement, IParameter<T> singleParameter) {
 		super(name, requirement, USAGE.RECENT);
 		this.singleParameter = singleParameter;
 	}
 
-	public ListParameter(String name, REQUIREMENT requirement,
-			IParameter<T> singleParameter, USAGE usage) {
+	public ListParameter(String name, REQUIREMENT requirement, IParameter<T> singleParameter, USAGE usage) {
 		super(name, requirement, usage);
 		this.singleParameter = singleParameter;
 	}
 
-	
 	public ListParameter(IParameter<T> singleParameter) {
 		this.singleParameter = singleParameter;
 	}
@@ -53,16 +50,13 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 				singleParameter.setAttributeResolver(getAttributeResolver());
 				singleParameter.setDataDictionary(getDataDictionary());
 				if (!singleParameter.validate()) {
-					throw new RuntimeException(singleParameter.getErrors().get(
-							0));
+					throw new RuntimeException(singleParameter.getErrors().get(0));
 				}
 				list.add(singleParameter.getValue());
 			}
 			setValue(list);
 		} catch (ClassCastException e) {
-			throw new IllegalArgumentException("wrong input for parameter "
-					+ getName() + ", List expected, got "
-					+ inputValue.getClass().getSimpleName());
+			throw new IllegalArgumentException("wrong input for parameter " + getName() + ", List expected, got " + inputValue.getClass().getSimpleName());
 		}
 
 	}
@@ -72,10 +66,32 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 		super.setAttributeResolver(resolver);
 		singleParameter.setAttributeResolver(resolver);
 	}
-	
 
 	public IParameter<T> getSingleParameter() {
 		return singleParameter;
+	}
+
+	@Override
+	protected String getPQLStringInternal() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		Object[] inputList = ((List<?>)inputValue).toArray(new Object[0]);
+		for (int i = 0; i < inputList.length; i++) {
+			Object o = inputList[i];
+			
+			singleParameter.setInputValue(o);
+			singleParameter.setAttributeResolver(getAttributeResolver());
+			singleParameter.setDataDictionary(getDataDictionary());
+			if (!singleParameter.validate()) {
+				throw new RuntimeException(singleParameter.getErrors().get(0));
+			}
+			sb.append(singleParameter.getPQLString());
+			if( i < inputList.length - 1 ) {
+				sb.append(",");
+			}
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 }

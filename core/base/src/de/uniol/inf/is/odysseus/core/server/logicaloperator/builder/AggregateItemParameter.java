@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 	public AggregateItemParameter(String name, REQUIREMENT requirement, USAGE usage) {
 		super(name, requirement, usage);
 	}
-	
+
 	public AggregateItemParameter(String name, REQUIREMENT requirement) {
 		super(name, requirement, USAGE.RECENT);
 	}
@@ -49,8 +49,7 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 
 		String funcStr = value.get(0);
 		String attributeStr = value.get(1);
-		SDFAttribute attribute = getAttributeResolver().getAttribute(
-				attributeStr);
+		SDFAttribute attribute = getAttributeResolver().getAttribute(attributeStr);
 		String outputName = value.get(2);
 		SDFAttribute outAttr = null;
 
@@ -74,4 +73,15 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 		setValue(new AggregateItem(funcStr, attribute, outAttr));
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	protected String getPQLStringInternal() {
+		List<String> value = (List<String>) inputValue;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		sb.append("'").append(value.get(0)).append("','").append(value.get(1)).append("','").append(value.get(2)).append("'");
+		sb.append("]");
+		return sb.toString();
+	}
 }

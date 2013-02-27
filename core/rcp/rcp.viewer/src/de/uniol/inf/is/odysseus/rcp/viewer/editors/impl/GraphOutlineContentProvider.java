@@ -100,8 +100,8 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			children.add(new StringNode(node.getModelNode().getContent().toString()));
 
 			// additional information
-			if (!node.getModelNode().getContent().getInfos().isEmpty()) {
-				children.add(node.getModelNode().getContent().getInfos());
+			if (!node.getModelNode().getContent().getParameterInfos().isEmpty()) {
+				children.add(node.getModelNode().getContent().getParameterInfos());
 			}
 
 			return children.toArray();

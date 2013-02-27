@@ -42,4 +42,8 @@ public class DirectParameter<T> extends AbstractParameter<T> {
 		setValue((T) this.inputValue);
 	}
 
+	@Override
+	protected String getPQLStringInternal() {
+		return getValue().toString();
+	}
 }

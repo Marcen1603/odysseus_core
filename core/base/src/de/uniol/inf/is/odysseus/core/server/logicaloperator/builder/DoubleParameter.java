@@ -24,4 +24,8 @@ public class DoubleParameter extends AbstractParameter<Double> {
 		setValue((Double)this.inputValue);
 	}
 
+	@Override
+	protected String getPQLStringInternal() {
+		return String.valueOf(getValue());
+	}
 }

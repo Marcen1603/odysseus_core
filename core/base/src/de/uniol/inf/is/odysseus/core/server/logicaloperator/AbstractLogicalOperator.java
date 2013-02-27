@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.Vector;
+
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -49,13 +50,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 /**
  * @author Marco Grawunder
  */
-public abstract class AbstractLogicalOperator implements Serializable,
-		ILogicalOperator {
+public abstract class AbstractLogicalOperator implements Serializable, ILogicalOperator {
 
 	private static final long serialVersionUID = -4425148851059140851L;
 
 	final private transient OwnerHandler ownerHandler;
-	
+
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
 	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();
 
@@ -67,16 +67,12 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	transient private List<Exception> errors = new ArrayList<Exception>();
 
-	public Map<Integer, IPhysicalOperator> getPhysInputOperators() {
-		return physInputOperators;
-	}
-	
-	private Map<String, String> infos = new TreeMap<String, String>();
+	private Map<String, String> infos = Maps.newTreeMap();
 
 	private String name = null;
 	private String destinationName = null;
 	private String uniqueIdentifier = null;
-	
+
 	private List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
 
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
@@ -89,7 +85,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.ownerHandler = new OwnerHandler(op.ownerHandler);
 		this.outputSchema = op.outputSchema;
 		this.uniqueIdentifier = op.uniqueIdentifier;
-		this.infos = new TreeMap<String, String>(op.infos);
+		this.infos = copyParameterInfos(op.infos);
 		this.destinationName = op.destinationName;
 	}
 
@@ -106,6 +102,10 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 */
 	@Override
 	abstract public AbstractLogicalOperator clone();
+
+	public Map<Integer, IPhysicalOperator> getPhysInputOperators() {
+		return physInputOperators;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -132,34 +132,34 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 */
 	@Override
 	public void setPredicate(IPredicate<?> predicate) {
-		if (predicates.size() > 0){
+		if (predicates.size() > 0) {
 			predicates.set(0, predicate);
-		}else{
+		} else {
 			predicates.add(predicate);
 		}
 	}
 
 	@Override
-	public void setPredicates(List<IPredicate<?>> predi){
+	public void setPredicates(List<IPredicate<?>> predi) {
 		predicates.clear();
 		predicates.addAll(predi);
 	}
-	
+
 	@Override
 	public void addPredicate(IPredicate<?> predicate) {
 		predicates.add(predicate);
 	}
-	
+
 	@Override
 	public List<IPredicate<?>> getPredicates() {
 		return predicates;
 	}
-	
+
 	@Override
 	public boolean providesPredicates() {
 		return !predicates.isEmpty();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -229,13 +229,13 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 */
 	@Override
 	public String getName() {
-		if (name == null){
+		if (name == null) {
 			name = this.getClass().getSimpleName();
-			if (name.endsWith("AO")){
-				name = name.substring(0,name.length()-2);
+			if (name.endsWith("AO")) {
+				name = name.substring(0, name.length() - 2);
 			}
 		}
-		
+
 		return name;
 	}
 
@@ -243,13 +243,13 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public String getDestinationName() {
 		return destinationName;
 	}
-	
+
 	@Override
-	@Parameter(name="Destination", type = StringParameter.class, optional = true, doc="Name of the place to execute the operator")
+	@Parameter(name = "Destination", type = StringParameter.class, optional = true, doc = "Name of the place to execute the operator")
 	public void setDestinationName(String destinationName) {
 		this.destinationName = destinationName;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -258,7 +258,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * #setPOName (java.lang.String)
 	 */
 	@Override
-	@Parameter(name="Name", type = StringParameter.class, optional = true)
+	@Parameter(name = "Name", type = StringParameter.class, optional = true)
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -300,16 +300,16 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	@Parameter(name="Id", type = StringParameter.class, optional = true)
+	@Parameter(name = "Id", type = StringParameter.class, optional = true)
 	final public void setUniqueIdentifier(String id) {
 		this.uniqueIdentifier = id;
 	}
-	
+
 	@Override
 	final public String getUniqueIdentifier() {
 		return uniqueIdentifier;
 	}
-	
+
 	@Override
 	public boolean isAllPhysicalInputSet() {
 		for (Integer i : this.subscribedToSource.keySet()) {
@@ -329,18 +329,14 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
 	@Override
-	public void setPhysSubscriptionTo(
-			Subscription<IPhysicalOperator> subscription) {
+	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator> subscription) {
 		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
-		this.physInputOperators.put(subscription.getSinkInPort(),
-				subscription.getTarget());
+		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getTarget());
 	}
 
 	@Override
-	public void setPhysSubscriptionTo(IPhysicalOperator op, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
-		setPhysSubscriptionTo(new Subscription<IPhysicalOperator>(op,
-				sinkInPort, sourceOutPort, schema));
+	public void setPhysSubscriptionTo(IPhysicalOperator op, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+		setPhysSubscriptionTo(new Subscription<IPhysicalOperator>(op, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
@@ -365,17 +361,14 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return this.physSubscriptionTo.get(port);
 	}
 
-
 	// "delegatable this", used for the delegate sink
 	protected ILogicalOperator getInstance() {
 		return this;
 	}
 
 	@Override
-	public void subscribeToSource(ILogicalOperator source, int sinkInPort,
-			int sourceOutPort, SDFSchema inputSchema) {
-		LogicalSubscription sub = new LogicalSubscription(source, sinkInPort,
-				sourceOutPort, inputSchema);
+	public void subscribeToSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFSchema inputSchema) {
+		LogicalSubscription sub = new LogicalSubscription(source, sinkInPort, sourceOutPort, inputSchema);
 		// Finde den maximalen verwendeten Port
 		if (sinkInPort == -1) {
 			sinkInPort = getNextFreeSinkInPort();
@@ -383,8 +376,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		synchronized (this.subscribedToSource) {
 			if (!this.subscribedToSource.containsKey(sinkInPort)) {
 				this.subscribedToSource.put(sinkInPort, sub);
-				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
-						inputSchema);
+				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort, inputSchema);
 				recalcOutputSchemata = true;
 			}
 		}
@@ -404,8 +396,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	public void unsubscribeFromSource(ILogicalOperator source, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
+	public void unsubscribeFromSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		if (this.subscribedToSource.remove(sinkInPort) != null) {
 			recalcOutputSchemata = true;
 			source.unsubscribeSink(this, sinkInPort, sourceOutPort, schema);
@@ -415,16 +406,12 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Override
 	public void unsubscribeFromAllSources() {
 		synchronized (this.subscribedToSource) {
-			Iterator<Entry<Integer, LogicalSubscription>> it = this.subscribedToSource
-					.entrySet().iterator();
+			Iterator<Entry<Integer, LogicalSubscription>> it = this.subscribedToSource.entrySet().iterator();
 			while (it.hasNext()) {
 				Entry<Integer, LogicalSubscription> next = it.next();
 				it.remove();
 				LogicalSubscription subscription = next.getValue();
-				subscription.getTarget().unsubscribeSink(this,
-						subscription.getSinkInPort(),
-						subscription.getSourceOutPort(),
-						subscription.getSchema());
+				subscription.getTarget().unsubscribeSink(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 			}
 			recalcOutputSchemata = true;
 		}
@@ -432,9 +419,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	public void unsubscribeFromSource(LogicalSubscription subscription) {
-		unsubscribeFromSource(subscription.getTarget(),
-				subscription.getSinkInPort(), subscription.getSourceOutPort(),
-				subscription.getSchema());
+		unsubscribeFromSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 	}
 
 	@Override
@@ -448,8 +433,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	public Collection<LogicalSubscription> getSubscribedToSource(
-			ILogicalOperator a) {
+	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator a) {
 		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
 		for (LogicalSubscription l : subscribedToSource.values()) {
 			if (l.getTarget() == a) {
@@ -460,13 +444,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	public void subscribeSink(ILogicalOperator sink, int sinkInPort,
-			int sourceOutPort, SDFSchema inputSchema) {
+	public void subscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema inputSchema) {
 		if (sinkInPort == -1) {
 			sinkInPort = getNextFreeSinkInPort();
 		}
-		LogicalSubscription sub = new LogicalSubscription(sink, sinkInPort,
-				sourceOutPort, inputSchema);
+		LogicalSubscription sub = new LogicalSubscription(sink, sinkInPort, sourceOutPort, inputSchema);
 		if (!this.subscriptions.contains(sub)) {
 			this.subscriptions.add(sub);
 			sink.subscribeToSource(this, sinkInPort, sourceOutPort, inputSchema);
@@ -475,18 +457,14 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(new LogicalSubscription(sink, sinkInPort,
-				sourceOutPort, schema));
+	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+		unsubscribeSink(new LogicalSubscription(sink, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
 	public void unsubscribeSink(LogicalSubscription subscription) {
 		if (this.subscriptions.remove(subscription)) {
-			subscription.getTarget().unsubscribeFromSource(this,
-					subscription.getSinkInPort(),
-					subscription.getSourceOutPort(), subscription.getSchema());
+			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 			recalcOutputSchemata = true;
 		}
 	}
@@ -512,24 +490,22 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	public void connectSink(ILogicalOperator sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
+	public void connectSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		// Nothing special in logical Operators
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
 
 	@Override
-	public void disconnectSink(ILogicalOperator sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
+	public void disconnectSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		// Nothing special in logical Operators
 		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
-	
+
 	@Override
-	public void updateSchemaInfos(){
+	public void updateSchemaInfos() {
 		updateSchemaInfos(this);
 	}
-	
+
 	static private void updateSchemaInfos(ILogicalOperator sink) {
 		for (int i = 0; i < sink.getNumberOfInputs(); i++) {
 			LogicalSubscription sub = sink.getSubscribedToSource(i);
@@ -627,15 +603,10 @@ public abstract class AbstractLogicalOperator implements Serializable,
 								values.put(name, prop);
 							} else {
 								// it is just a plain value
-								values.put(name, new SerializePropertyItem(
-										value));
+								values.put(name, new SerializePropertyItem(value));
 							}
 						} else {
-							System.err
-									.println("WARN: could not serialize setting "
-											+ name
-											+ " for "
-											+ getClass().getName());
+							System.err.println("WARN: could not serialize setting " + name + " for " + getClass().getName());
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -720,24 +691,30 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	public String getDoc() {
-		return String.format(
-				"No documentation available for the logical operator %s",
-				getClass().getCanonicalName());
+		return String.format("No documentation available for the logical operator %s", getClass().getCanonicalName());
 	}
-	
+
 	@Override
-	public Map<String, String> getInfos() {	
+	public Map<String, String> getParameterInfos() {
 		return infos;
 	}
-	
+
 	@Override
-	public void addInfo(String key, Object value) {
-		this.infos.put(key, value.toString());
+	public void addParameterInfo(String key, Object value) {
+		this.infos.put(key, value != null ? value.toString() : null);
 	}
-	
+
 	@Override
-	public void setInfos(Map<String, String> infos) {
+	public void setParameterInfos(Map<String, String> infos) {
 		this.infos = infos;
 	}
-	
+
+	private static Map<String, String> copyParameterInfos(Map<String, String> infos) {
+		Map<String, String> copy = Maps.newTreeMap();
+		for (String key : infos.keySet()) {
+			copy.put(key, infos.get(key));
+		}
+		return copy;
+	}
+
 }

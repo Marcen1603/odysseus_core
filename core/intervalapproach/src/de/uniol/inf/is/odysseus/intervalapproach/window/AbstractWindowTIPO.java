@@ -49,13 +49,13 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 		this.windowType = ao.getWindowType();
 		this.partitioned = ao.isPartitioned();
 		//setName(getName() + " s=" + windowSize + " a=" + windowAdvance);
-		addInfo("unit-based size", windowSize);
+		addParameterInfo("unit-based size", windowSize);
 		if (usesAdvanceParam) {
-			addInfo("unit-based advance", windowAdvance);
+			addParameterInfo("unit-based advance", windowAdvance);
 		} else {
-			addInfo("unit-based slide", windowAdvance);
+			addParameterInfo("unit-based slide", windowAdvance);
 		}
-		addInfo("used unit", ao.getTimeUnit());
+		addParameterInfo("used unit", ao.getTimeUnit());
 	}
 
 	public AbstractWindowTIPO(AbstractWindowTIPO<T> window) {

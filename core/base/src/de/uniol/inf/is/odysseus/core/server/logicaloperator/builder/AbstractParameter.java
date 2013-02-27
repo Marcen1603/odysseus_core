@@ -235,4 +235,13 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		return true;
 	}
 
+	@Override
+	public final String getPQLString() {
+		if( hasValue() ) {
+			return getPQLStringInternal();
+		}
+		return null;
+	}
+	
+	protected abstract String getPQLStringInternal();
 }

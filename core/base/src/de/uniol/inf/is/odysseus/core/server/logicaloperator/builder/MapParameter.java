@@ -70,4 +70,33 @@ public class MapParameter<K, V> extends AbstractParameter<Map<K, V>> {
 		}
 	}
 
+	@Override
+	protected String getPQLStringInternal() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		Entry<?,?>[] entrySet = ((Map<?, ?>) inputValue).entrySet().toArray(new Entry<?,?>[0]);
+		for (int i = 0; i < entrySet.length; i++) {
+			Entry<?, ?> e = entrySet[i];
+			keyParameter.setInputValue(e.getKey());
+			keyParameter.setAttributeResolver(getAttributeResolver());
+			keyParameter.setDataDictionary(getDataDictionary());
+			if (!keyParameter.validate()) {
+				throw new RuntimeException(keyParameter.getErrors().get(0));
+			}
+			valueParameter.setInputValue(e.getValue());
+			valueParameter.setAttributeResolver(getAttributeResolver());
+			valueParameter.setDataDictionary(getDataDictionary());
+			if (!valueParameter.validate()) {
+				throw new RuntimeException(valueParameter.getErrors().get(0));
+			}
+			sb.append(keyParameter.getPQLString());
+			sb.append("=");
+			sb.append(valueParameter.getPQLString());
+			if( i < entrySet.length - 1 ) {
+				sb.append(",");
+			}
+		}
+		sb.append("]");
+		return sb.toString();
+	}
 }

@@ -192,6 +192,12 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		timestampAO.setName(timestampAO.getStandardName());
 		return timestampAO;
 	}
+	
+	@Override
+	protected void insertParameterInfos(ILogicalOperator op) {
+		// op is timestampao here (instead of accessao)
+		super.insertParameterInfos( op.getSubscribedToSource().iterator().next().getTarget());
+	}
 
 	@Override
 	protected boolean internalValidation() {

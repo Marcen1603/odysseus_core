@@ -49,4 +49,5 @@ public interface IParameter<T> extends Serializable {
 	public void setDataDictionary(IDataDictionary dd);
 	public IDataDictionary getDataDictionary();
 	public void clear();
+	public String getPQLString();
 }

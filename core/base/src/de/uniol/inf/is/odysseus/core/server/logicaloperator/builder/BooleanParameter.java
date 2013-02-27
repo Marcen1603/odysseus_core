@@ -35,7 +35,10 @@ public class BooleanParameter extends AbstractParameter<Boolean> {
 	protected void internalAssignment() {
 		boolean value = Boolean.parseBoolean(inputValue.toString());		
 		setValue(value);
-		
 	}
 
+	@Override
+	protected String getPQLStringInternal() {
+		return "'" + Boolean.toString(getValue()) + "'";
+	}
 }

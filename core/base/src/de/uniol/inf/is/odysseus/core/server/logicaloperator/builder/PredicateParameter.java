@@ -44,5 +44,14 @@ public class PredicateParameter extends AbstractParameter<IPredicate<?>> {
 		setValue(pBuilder.createPredicate(getAttributeResolver(), pItem
 				.getPredicate()));
 	}
+	
+	@Override
+	public String getPQLStringInternal() {
+		StringBuilder sb = new StringBuilder();
+		PredicateItem pItem = (PredicateItem) inputValue;
+		sb.append(pItem.getPredicateType());
+		sb.append("('").append(getValue().toString()).append("')");
+		return sb.toString();
+	}
 
 }

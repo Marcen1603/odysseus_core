@@ -226,13 +226,19 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 					curInputOperatorItem.outputPort,
 					curInputOperator.getOutputSchema(curInputOperatorItem.outputPort));
 		}
+		insertParameterInfos(op);
+		return op;
+	}
+
+	// overwritten in AccessAOBuilder
+	protected void insertParameterInfos(ILogicalOperator op) {
 		// set all parameters as infos
+		// Caution: Used in PQL-Generator to get parameter values
 		for(IParameter<?> p : this.parameters){
 			if(p.hasValue()){
-				op.addInfo(p.getName(), p.getValue());
+				op.addParameterInfo(p.getName(), p.getPQLString());
 			}
 		}
-		return op;
 	}
 
 	abstract protected ILogicalOperator createOperatorInternal();

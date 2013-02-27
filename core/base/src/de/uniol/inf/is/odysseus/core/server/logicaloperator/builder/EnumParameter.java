@@ -30,5 +30,10 @@ public class EnumParameter extends AbstractParameter<Enum> {
 	protected void internalAssignment() {
 		setValue(Enum.valueOf(enumeration, ((String) this.inputValue).toUpperCase()));
 	}
+	
+	@Override
+	protected String getPQLStringInternal() {
+		return "'" + ((String) this.inputValue).toUpperCase() + "'";
+	}
 
 }

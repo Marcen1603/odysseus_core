@@ -62,4 +62,13 @@ public class CreateSDFAttributeParameter extends
 	public void setDataDictionary(IDataDictionary dataDictionary) {
 		this.dd = dataDictionary;
 	}
+	
+	@Override
+	protected String getPQLStringInternal() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		sb.append("'").append(getValue().getAttributeName()).append("','").append(getValue().getDatatype().getURI()).append("'");
+		sb.append("]");
+		return sb.toString();
+	}
 }

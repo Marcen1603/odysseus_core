@@ -48,4 +48,8 @@ public class ResolvedSDFAttributeParameter extends
 		}
 	}
 
+	@Override
+	protected String getPQLStringInternal() {
+		return "'" + getValue().getAttributeName() + "'";
+	}
 }

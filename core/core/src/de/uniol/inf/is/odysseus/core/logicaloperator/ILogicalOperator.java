@@ -82,7 +82,7 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 * 
 	 * @return a map of key-value pairs
 	 */
-	public Map<String, String> getInfos();
+	public Map<String, String> getParameterInfos();
 
 	/**
 	 * sets a map of key-value pairs for additional information
@@ -90,7 +90,7 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 * @param infos
 	 *            a map with key-value pairs
 	 */
-	public void setInfos(Map<String, String> infos);
+	public void setParameterInfos(Map<String, String> infos);
 
 	/**
 	 * adds a key value pair to the information map
@@ -100,7 +100,7 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 * @param value
 	 *            the value of the information
 	 */
-	public void addInfo(String key, Object value);
+	public void addParameterInfo(String key, Object value);
 
 	/**
 	 * How many inputs has this logical operator at call time

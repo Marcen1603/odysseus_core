@@ -1,24 +1,25 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -42,9 +43,7 @@ public class TimestampAO extends UnaryLogicalOp {
 	private SDFAttribute startTimestampSecond;
 	private SDFAttribute startTimestampMillisecond;
 	private int factor;
-	
 
-	
 	private boolean isUsingSystemTime;
 	private boolean isUsingNoTime;
 
@@ -52,21 +51,21 @@ public class TimestampAO extends UnaryLogicalOp {
 
 	public TimestampAO(TimestampAO ao) {
 		super(ao);
-		this.startTimestamp = ao.startTimestamp;
-		this.endTimestamp = ao.endTimestamp;
+		setStartTimestamp(ao.startTimestamp);
+		setEndTimestamp(ao.endTimestamp);
 		this.isUsingSystemTime = ao.isUsingSystemTime;
 		this.isUsingNoTime = ao.isUsingNoTime;
-		this.clearEnd = ao.clearEnd;
-		this.dateFormat = ao.dateFormat;
-		this.timezone = ao.timezone;
-		startTimestampYear= ao.startTimestampYear;
-		startTimestampMonth= ao.startTimestampMonth;
-		startTimestampDay= ao.startTimestampDay;
-		startTimestampHour= ao.startTimestampHour;
-		startTimestampMinute= ao.startTimestampMinute;
-		startTimestampSecond= ao.startTimestampSecond;
-		startTimestampMillisecond= ao.startTimestampMillisecond;
-		factor= ao.factor;
+		setClearEnd(ao.clearEnd);
+		setDateFormat(ao.dateFormat);
+		setTimezone(ao.timezone);
+		setStartTimestampYear(ao.startTimestampYear);
+		setStartTimestampMonth(ao.startTimestampMonth);
+		setStartTimestampDay(ao.startTimestampDay);
+		setStartTimestampHour(ao.startTimestampHour);
+		setStartTimestampMinute(ao.startTimestampMinute);
+		setStartTimestampSecond(ao.startTimestampSecond);
+		setStartTimestampMillisecond(ao.startTimestampMillisecond);
+		setFactor(ao.factor);
 	}
 
 	public TimestampAO() {
@@ -89,6 +88,7 @@ public class TimestampAO extends UnaryLogicalOp {
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "START", isList = false, optional = true)
 	public void setStartTimestamp(SDFAttribute startTimestamp) {
 		this.startTimestamp = startTimestamp;
+		addParameterInfoIfNeeded("START", startTimestamp);
 		if (this.startTimestamp == null) {
 			this.isUsingSystemTime = true;
 		} else {
@@ -103,38 +103,40 @@ public class TimestampAO extends UnaryLogicalOp {
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "END", isList = false, optional = true)
 	public void setEndTimestamp(SDFAttribute endTimestamp) {
 		this.endTimestamp = endTimestamp;
+		addParameterInfoIfNeeded("END", endTimestamp);
 	}
-	
+
 	@Parameter(type = BooleanParameter.class, name = "clearEnd", isList = false, optional = true)
 	public void setClearEnd(boolean clearEnd) {
 		this.clearEnd = clearEnd;
+		addParameterInfo("CLEAREND", "'" + Boolean.valueOf(clearEnd) + "'");
 	}
-	
+
 	public boolean isClearEnd() {
 		return clearEnd;
 	}
-	
+
 	public boolean hasStartTimestamp() {
 		return this.startTimestamp != null;
 	}
-	
+
 	public boolean hasEndTimestamp() {
 		return this.endTimestamp != null;
 	}
-	
+
 	public boolean isUsingSystemTime() {
 		return this.isUsingSystemTime;
 	}
-	
+
 	public void setIsUsingSystemTime(boolean value) {
 		this.isUsingSystemTime = value;
 	}
-	
-	public void setUsingNoTime(boolean b){
+
+	public void setUsingNoTime(boolean b) {
 		this.isUsingNoTime = b;
 	}
-	
-	public boolean isUsingNoTime(){
+
+	public boolean isUsingNoTime() {
 		return this.isUsingNoTime;
 	}
 
@@ -145,6 +147,7 @@ public class TimestampAO extends UnaryLogicalOp {
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "YEAR", isList = false, optional = true)
 	public void setStartTimestampYear(SDFAttribute startTimestampYear) {
 		this.startTimestampYear = startTimestampYear;
+		addParameterInfoIfNeeded("YEAR", startTimestampYear);
 		if (this.startTimestampYear == null) {
 			this.isUsingSystemTime = true;
 		} else {
@@ -155,9 +158,10 @@ public class TimestampAO extends UnaryLogicalOp {
 	public SDFAttribute getStartTimestampMonth() {
 		return startTimestampMonth;
 	}
-	
+
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MONTH", isList = false, optional = true)
 	public void setStartTimestampMonth(SDFAttribute startTimestampMonth) {
+		addParameterInfoIfNeeded("MONTH", startTimestampMonth);
 		this.startTimestampMonth = startTimestampMonth;
 	}
 
@@ -167,6 +171,7 @@ public class TimestampAO extends UnaryLogicalOp {
 
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "DAY", isList = false, optional = true)
 	public void setStartTimestampDay(SDFAttribute startTimestampDay) {
+		addParameterInfoIfNeeded("DAY", startTimestampDay);
 		this.startTimestampDay = startTimestampDay;
 	}
 
@@ -176,6 +181,7 @@ public class TimestampAO extends UnaryLogicalOp {
 
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "HOUR", isList = false, optional = true)
 	public void setStartTimestampHour(SDFAttribute startTimestampHour) {
+		addParameterInfoIfNeeded("HOUR", startTimestampHour);
 		this.startTimestampHour = startTimestampHour;
 	}
 
@@ -185,6 +191,7 @@ public class TimestampAO extends UnaryLogicalOp {
 
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MINUTE", isList = false, optional = true)
 	public void setStartTimestampMinute(SDFAttribute startTimestampMinute) {
+		addParameterInfoIfNeeded("MINUTE", startTimestampMinute);
 		this.startTimestampMinute = startTimestampMinute;
 	}
 
@@ -194,6 +201,7 @@ public class TimestampAO extends UnaryLogicalOp {
 
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "SECOND", isList = false, optional = true)
 	public void setStartTimestampSecond(SDFAttribute startTimestampSecond) {
+		addParameterInfoIfNeeded("SECOND", startTimestampSecond);
 		this.startTimestampSecond = startTimestampSecond;
 	}
 
@@ -203,6 +211,7 @@ public class TimestampAO extends UnaryLogicalOp {
 
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MILLISECOND", isList = false, optional = true)
 	public void setStartTimestampMillisecond(SDFAttribute startTimestampMillisecond) {
+		addParameterInfoIfNeeded("MILLISECOND", startTimestampMillisecond);
 		this.startTimestampMillisecond = startTimestampMillisecond;
 	}
 
@@ -210,42 +219,53 @@ public class TimestampAO extends UnaryLogicalOp {
 		return factor;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "FACTOR", isList = false, optional = true)
+	@Parameter(type = IntegerParameter.class, name = "FACTOR", isList = false, optional = true)
 	public void setFactor(int factor) {
+		addParameterInfo("FACTOR", Integer.valueOf(factor));
 		this.factor = factor;
 	}
 
 	@Override
 	public String toString() {
-		return  super.toString()+"s :"+startTimestamp+" e:"+endTimestamp+" "+isUsingSystemTime+" "+isUsingNoTime+" "+clearEnd;
+		return super.toString() + "s :" + startTimestamp + " e:" + endTimestamp + " " + isUsingSystemTime + " " + isUsingNoTime + " " + clearEnd;
 	}
 
 	public String getDateFormat() {
 		return dateFormat;
 	}
-	
+
 	@Parameter(type = StringParameter.class, name = "dateFormat", isList = false, optional = true)
 	public void setDateFormat(String dateFormat) {
+		addParameterInfo("DATEFORMAT", dateFormat);
 		this.dateFormat = dateFormat;
 	}
-	
+
 	public String getTimezone() {
 		return dateFormat;
 	}
-	
+
 	@Parameter(type = StringParameter.class, name = "timezone", isList = false, optional = true)
 	public void setTimezone(String timezone) {
+		addParameterInfo("TIMEZONE", timezone);
 		this.timezone = timezone;
 	}
 
 	public String getStandardName() {
-		if (isUsingSystemTime){
+		if (isUsingSystemTime) {
 			return "SystemTime";
 		}
-		if (isUsingNoTime){
+		if (isUsingNoTime) {
 			return "NoTime";
 		}
 		return "ApplicationTime";
 	}
-	
+
+	private void addParameterInfoIfNeeded(String key, SDFAttribute attribute) {
+		if (attribute != null) {
+			addParameterInfo(key, "'" + attribute.getAttributeName() + "'");
+		} else {
+			addParameterInfo(key, null);
+		}
+	}
+
 }

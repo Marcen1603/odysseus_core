@@ -53,5 +53,14 @@ public class BatchParameter extends AbstractParameter<BatchItem> {
 		BatchItem batchItem = new BatchItem(size, wait);
 		setValue(batchItem);
 	}
+	
+	@Override
+	protected String getPQLStringInternal() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		sb.append(Integer.valueOf(getValue().size)).append(",").append(Long.valueOf(getValue().wait));
+		sb.append("]");
+		return sb.toString();
+	}
 
 }

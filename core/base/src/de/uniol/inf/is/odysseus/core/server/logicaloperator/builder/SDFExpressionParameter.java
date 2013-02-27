@@ -34,4 +34,8 @@ public class SDFExpressionParameter extends AbstractParameter<SDFExpression> {
 		}
 	}
 
+	@Override
+	protected String getPQLStringInternal() {
+		return "'" + (String)inputValue + "'";
+	}
 }
