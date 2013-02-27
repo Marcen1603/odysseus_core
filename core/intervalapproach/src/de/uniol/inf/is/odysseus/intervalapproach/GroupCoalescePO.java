@@ -19,7 +19,7 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 		AbstractCoalescePO<M> {
 
 	int lastGroupID = -1;
-	int maxElementsPerGroup = 0;
+	int maxElementsPerGroup = -1;
 	int currentCount = 0;
 	boolean createOnHeartbeat = true;
 
@@ -36,14 +36,17 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void process_open() throws OpenFailedException {
 		getGroupProcessor().init();
+		transferArea.init((AbstractPipe)this);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(IStreamObject<? extends M> object, int port) {
+		transferArea.newElement(object, port);
 		// 1st check if the same group as last one
 		Integer currentGroupID = getGroupProcessor().getGroupID(object);
 

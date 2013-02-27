@@ -35,16 +35,19 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void process_open() throws OpenFailedException {
 		this.predicate.init();
 		getGroupProcessor().init();
+		transferArea.init((AbstractPipe)this);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(IStreamObject<? extends M> object, int port) {
-
+		transferArea.newElement(object, port);
+		
 		// The created object is a combiniation of all objects before
 		// --> so the new object needs the start timestamp of the first
 		// participating object and the other metadata of the last
