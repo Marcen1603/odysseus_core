@@ -93,19 +93,21 @@ public class StatusBarManager implements IWindowListener {
 			return;
 		}
 
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				IContributionItem[] items = manager.getItems();
-				for (IContributionItem i : items) {
-					if (i.getId().equals(itemID)) {
-						((StatusLineContributionItem) i).setText(message);
+		if( PlatformUI.getWorkbench().getDisplay().isDisposed() ) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+	
+				@Override
+				public void run() {
+					IContributionItem[] items = manager.getItems();
+					for (IContributionItem i : items) {
+						if (i.getId().equals(itemID)) {
+							((StatusLineContributionItem) i).setText(message);
+						}
 					}
 				}
-			}
-
-		});
+	
+			});
+		}
 	}
 
 	public void setMessage(final String message) {
