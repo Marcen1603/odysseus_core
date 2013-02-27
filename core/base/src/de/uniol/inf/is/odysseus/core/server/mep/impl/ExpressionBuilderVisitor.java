@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
@@ -30,8 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 public class ExpressionBuilderVisitor implements MEPImplVisitor {
 
     private Map<String, Variable> symbolTable = new HashMap<String, Variable>();
-    @SuppressWarnings("unused")
-	private final SDFSchema       schema;
+    private final SDFSchema       schema;
 
     public ExpressionBuilderVisitor(SDFSchema schema) {
         this.schema = schema;
@@ -140,7 +140,13 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
             var.restrictAcceptedTypes((SDFDatatype[]) data);
             return var;
         }
-        Variable variable = new Variable(identifier);
+		Variable variable;
+		if (this.schema != null) {
+			SDFAttribute attribute = schema.findAttribute(identifier);
+			variable = new Variable(identifier, attribute.getDatatype());
+		} else {
+			variable = new Variable(identifier);
+		}
         variable.setAcceptedTypes((SDFDatatype[]) data);
         symbolTable.put(identifier, variable);
         return variable;
