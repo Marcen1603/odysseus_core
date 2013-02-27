@@ -6,7 +6,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
@@ -68,19 +67,20 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	private void init(IExpression<?> expre, String value,
 			IAttributeResolver attributeResolver,
 			IExpressionParser expressionParser) {
-		if (this.getMEPExpression() instanceof IFunction) {
+		if (this.getMEPExpression() instanceof AbstractProbabilisticFunction) {
 			setDistributions(((AbstractProbabilisticFunction<?>) this
 					.getMEPExpression()).getDistributions());
 		}
 	}
 
 	public void bindDistributions(NormalDistributionMixture[] distributions) {
-		if ((getMEPExpression() instanceof Constant) || (getMEPExpression() instanceof Variable)) {
+		if ((getMEPExpression() instanceof Constant)
+				|| (getMEPExpression() instanceof Variable)) {
 			return;
 		}
-if (this.distributions==null) {
-	System.out.println("DISS NULL");
-}
+		if (this.distributions == null) {
+			System.out.println("DISS NULL");
+		}
 		this.distributions.clear();
 		this.distributions.addAll(Arrays.asList(distributions));
 	}

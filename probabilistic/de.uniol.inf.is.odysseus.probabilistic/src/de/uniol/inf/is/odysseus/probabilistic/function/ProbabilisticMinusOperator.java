@@ -1,10 +1,13 @@
 package de.uniol.inf.is.odysseus.probabilistic.function;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.AbstractProbabilisticValue;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -12,43 +15,47 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticGreaterEqualsOperator extends
-		AbstractProbabilisticBinaryOperator<Double> {
-
+public class ProbabilisticMinusOperator extends
+		AbstractProbabilisticBinaryOperator<ProbabilisticDouble> {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3366378852856305518L;
+	private static final long serialVersionUID = -113226490599254958L;
 
 	@Override
 	public int getPrecedence() {
-		return 8;
+		return 6;
 	}
 
 	@Override
 	public String getSymbol() {
-		return ">=";
+		return "-";
 	}
 
 	@Override
-	public Double getValue() {
+	public ProbabilisticDouble getValue() {
 		AbstractProbabilisticValue<?> a = getInputValue(0);
 		AbstractProbabilisticValue<?> b = getInputValue(1);
-		double value = 0.0;
+		Map<Double, Double> values = new HashMap<Double, Double>(a.getValues()
+				.size() * b.getValues().size());
 		for (Entry<?, Double> aEntry : a.getValues().entrySet()) {
 			for (Entry<?, Double> bEntry : b.getValues().entrySet()) {
-				if (((Number) aEntry.getKey()).doubleValue() >= ((Number) bEntry
-						.getKey()).doubleValue()) {
-					value += aEntry.getValue() * bEntry.getValue();
+				double value = ((Number) aEntry.getKey()).doubleValue()
+						- ((Number) bEntry.getKey()).doubleValue();
+				if (values.containsKey(value)) {
+					values.put(value, values.get(value) + aEntry.getValue()
+							* bEntry.getValue());
+				} else {
+					values.put(value, aEntry.getValue() * bEntry.getValue());
 				}
 			}
 		}
-		return value;
+		return new ProbabilisticDouble(values);
 	}
 
 	@Override
 	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
+		return SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE;
 	}
 
 	@Override
@@ -67,12 +74,14 @@ public class ProbabilisticGreaterEqualsOperator extends
 	}
 
 	@Override
-	public boolean isLeftDistributiveWith(IOperator<Double> operator) {
+	public boolean isLeftDistributiveWith(
+			IOperator<ProbabilisticDouble> operator) {
 		return false;
 	}
 
 	@Override
-	public boolean isRightDistributiveWith(IOperator<Double> operator) {
+	public boolean isRightDistributiveWith(
+			IOperator<ProbabilisticDouble> operator) {
 		return false;
 	}
 
@@ -94,7 +103,6 @@ public class ProbabilisticGreaterEqualsOperator extends
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument(s).");
 		}
-		// accTypes[1] = String.class; // alphabetical order
 		return accTypes;
 	}
 
