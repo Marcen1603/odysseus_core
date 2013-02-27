@@ -9,6 +9,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.distribution,
  de.uniol.inf.is.odysseus.core.logicaloperator,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
  de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.planmanagement.query,
  de.uniol.inf.is.odysseus.core.sdf,
@@ -23,6 +25,7 @@ Import-Package: de.uniol.inf.is.odysseus.core,
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  com.google.guava;bundle-version="12.0.0",
  Jxta.2.6;bundle-version="1.0.0"
-Service-Component: OSGI-INF/sessionManagement.xml, OSGI-INF/advertisementManager.xml, OSGI-INF/dataSourceManager.xml, OSGI-INF/p2pDistributor.xml
+Service-Component: OSGI-INF/sessionManagement.xml, OSGI-INF/advertisementManager.xml, OSGI-INF/dataSourceManager.xml, OSGI-INF/p2pDistributor.xml,
+ OSGI-INF/jxtaTransportHandler.xml
 Export-Package: de.uniol.inf.is.odysseus.p2p_new
 Bundle-ActivationPolicy: lazy
