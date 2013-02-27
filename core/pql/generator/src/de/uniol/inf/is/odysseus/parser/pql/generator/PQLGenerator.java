@@ -1,11 +1,5 @@
 package de.uniol.inf.is.odysseus.parser.pql.generator;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,11 +14,9 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
 public class PQLGenerator {
 
@@ -72,10 +64,10 @@ public class PQLGenerator {
 	private static String generateStatement(ILogicalOperator operator, Map<ILogicalOperator, String> names) {
 		if (operator instanceof AccessAO) {
 			return AccessAOPQLGenerator.generateAccessAOStatement((AccessAO) operator, names.get(operator));
-		}
+		} 
 
 		try {
-			Map<String, String> parameterMap = determineParameters(operator);
+			Map<String, String> parameterMap = removeNullValues(operator.getParameterInfos());
 
 			StringBuilder sb = new StringBuilder();
 
@@ -95,7 +87,9 @@ public class PQLGenerator {
 				sb.append("}");
 			}
 			if (!operator.getSubscribedToSource().isEmpty()) {
-				sb.append(",");
+				if(!parameterMap.isEmpty()) {
+					sb.append(",");
+				}
 				LogicalSubscription[] subscriptions = operator.getSubscribedToSource().toArray(new LogicalSubscription[0]);
 				for (int i = 0; i < subscriptions.length; i++) {
 					ILogicalOperator target = subscriptions[i].getTarget();
@@ -109,36 +103,20 @@ public class PQLGenerator {
 
 			return sb.toString();
 
-		} catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+		} catch (IllegalArgumentException ex) {
 			LOG.error("Could not create pql-statement for logical operator {}", operator, ex);
 			return "";
 		}
 	}
 
-	private static Map<String, String> determineParameters(ILogicalOperator operator) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
-		Map<String, String> parameterMap = Maps.newHashMap();
-
-		BeanInfo beanInfo = Introspector.getBeanInfo(operator.getClass(), Object.class);
-		for (PropertyDescriptor descriptor : beanInfo.getPropertyDescriptors()) {
-			Method writeMethod = descriptor.getWriteMethod();
-
-			if (writeMethod != null && writeMethod.isAnnotationPresent(Parameter.class)) {
-				Parameter parameter = writeMethod.getAnnotation(Parameter.class);
-
-				Method readMethod = descriptor.getReadMethod();
-
-				if (readMethod != null) {
-					@SuppressWarnings(value = { "all" })
-					String valueAsString = convertSingleValue(readMethod.invoke(operator, null));
-
-					putIfValid(parameterMap, parameter.name().equals("") ? descriptor.getName() : parameter.name(), valueAsString);
-				} else {
-					LOG.warn("Could not get readMethod for parameter {} of operator-type {}", descriptor.getName(), operator.getClass());
-				}
+	private static Map<String, String> removeNullValues(Map<String, String> parameterInfos) {
+		Map<String, String> result = Maps.newHashMap();
+		for( String key : parameterInfos.keySet()) {
+			if( parameterInfos.get(key) != null ) {
+				result.put(key, parameterInfos.get(key));
 			}
-
 		}
-		return parameterMap;
+		return result;
 	}
 
 	private static Object determineOperatorKeyword(ILogicalOperator operator) {
@@ -148,37 +126,6 @@ public class PQLGenerator {
 			return className.substring(0, className.length() - 2);
 		}
 		return annotation.name();
-	}
-
-	private static String convertSingleValue(Object value) {
-		if (value == null) {
-			return null;
-		}
-
-		if (value instanceof List) {
-			List<?> list = (List<?>) value;
-			return convertList(list);
-		} else if (value instanceof Map) {
-			Map<?, ?> map = (Map<?, ?>) value;
-			return convertMap(map);
-		} else if (value instanceof String) {
-			return "'" + ((String) value) + "'";
-		} else if (value instanceof Boolean) {
-			return "'" + String.valueOf((Boolean) value) + "'";
-		} else if (value instanceof IPredicate) {
-			return "RelationalPredicate('" + value.toString() + "')";
-		} else if (value instanceof SDFExpression) {
-			return "'" + value.toString() + "'";
-		} else {
-			return value != null ? value.toString() : null;
-		}
-	}
-
-	private static void putIfValid(Map<String, String> parameterMap, String parameter, String text) {
-		if (text == null || text.length() == 0) {
-			return;
-		}
-		parameterMap.put(parameter, text);
 	}
 
 	private static boolean areAllSourceSubscriptionsVisited(ILogicalOperator operator, List<ILogicalOperator> visitedOperators) {
@@ -204,7 +151,7 @@ public class PQLGenerator {
 	}
 
 	private static void collectOperators(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
-		if (!list.contains(currentOperator)) {
+		if (!list.contains(currentOperator) && !(currentOperator instanceof TopAO)) {
 			list.add(currentOperator);
 
 			for (LogicalSubscription subscription : currentOperator.getSubscriptions()) {
@@ -253,43 +200,4 @@ public class PQLGenerator {
 
 		return sb.toString();
 	}
-
-	private static String convertList(List<?> list) {
-		if (list == null || list.isEmpty()) {
-			return "[]";
-		}
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		for (int i = 0; i < list.size(); i++) {
-			Object element = list.get(i);
-			sb.append(convertSingleValue(element));
-			if (i < list.size() - 1) {
-				sb.append(",");
-			}
-		}
-		sb.append("]");
-		return sb.toString();
-	}
-
-	private static String convertMap(Map<?, ?> map) {
-		if (map == null || map.isEmpty()) {
-			return "[]";
-		}
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		Object[] keys = map.keySet().toArray();
-		for (int i = 0; i < keys.length; i++) {
-			Object key = keys[i];
-			Object value = map.get(key);
-			sb.append(convertSingleValue(key)).append("=").append(convertSingleValue(value));
-			if (i < keys.length - 1) {
-				sb.append(",");
-			}
-		}
-
-		sb.append("]");
-		return sb.toString();
-	}
-
 }
