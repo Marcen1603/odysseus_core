@@ -20,9 +20,11 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
 public class PQLGenerator {
 
@@ -73,19 +75,7 @@ public class PQLGenerator {
 		}
 
 		try {
-			Map<String, String> parameterMap = Maps.newHashMap();
-			BeanInfo beanInfo = Introspector.getBeanInfo(operator.getClass(), Object.class);
-			for (PropertyDescriptor descriptor : beanInfo.getPropertyDescriptors()) {
-				Method readMethod = descriptor.getReadMethod();
-
-				if (readMethod != null && readMethod.isAnnotationPresent(GetParameter.class)) {
-					GetParameter parameter = readMethod.getAnnotation(GetParameter.class);
-					@SuppressWarnings(value = { "all" })
-					String valueAsString = convertSingleValue(readMethod.invoke(operator, null));
-					putIfNeeded(parameterMap, parameter, valueAsString);
-				}
-
-			}
+			Map<String, String> parameterMap = determineParameters(operator);
 
 			StringBuilder sb = new StringBuilder();
 
@@ -97,7 +87,7 @@ public class PQLGenerator {
 				sb.append("{");
 				String[] keys = parameterMap.keySet().toArray(new String[0]);
 				for (int i = 0; i < keys.length; i++) {
-					sb.append(keys[i].substring(3)).append("=").append(parameterMap.get(keys[i]));
+					sb.append(keys[i]).append("=").append(parameterMap.get(keys[i]));
 					if (i < keys.length - 1) {
 						sb.append(",");
 					}
@@ -108,7 +98,8 @@ public class PQLGenerator {
 				sb.append(",");
 				LogicalSubscription[] subscriptions = operator.getSubscribedToSource().toArray(new LogicalSubscription[0]);
 				for (int i = 0; i < subscriptions.length; i++) {
-					sb.append(names.get(subscriptions[i].getTarget()));
+					ILogicalOperator target = subscriptions[i].getTarget();
+					sb.append(names.get(target));
 					if (i < subscriptions.length - 1) {
 						sb.append(",");
 					}
@@ -122,6 +113,32 @@ public class PQLGenerator {
 			LOG.error("Could not create pql-statement for logical operator {}", operator, ex);
 			return "";
 		}
+	}
+
+	private static Map<String, String> determineParameters(ILogicalOperator operator) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
+		Map<String, String> parameterMap = Maps.newHashMap();
+
+		BeanInfo beanInfo = Introspector.getBeanInfo(operator.getClass(), Object.class);
+		for (PropertyDescriptor descriptor : beanInfo.getPropertyDescriptors()) {
+			Method writeMethod = descriptor.getWriteMethod();
+
+			if (writeMethod != null && writeMethod.isAnnotationPresent(Parameter.class)) {
+				Parameter parameter = writeMethod.getAnnotation(Parameter.class);
+
+				Method readMethod = descriptor.getReadMethod();
+
+				if (readMethod != null) {
+					@SuppressWarnings(value = { "all" })
+					String valueAsString = convertSingleValue(readMethod.invoke(operator, null));
+
+					putIfValid(parameterMap, parameter.name().equals("") ? descriptor.getName() : parameter.name(), valueAsString);
+				} else {
+					LOG.warn("Could not get readMethod for parameter {} of operator-type {}", descriptor.getName(), operator.getClass());
+				}
+			}
+
+		}
+		return parameterMap;
 	}
 
 	private static Object determineOperatorKeyword(ILogicalOperator operator) {
@@ -144,16 +161,24 @@ public class PQLGenerator {
 		} else if (value instanceof Map) {
 			Map<?, ?> map = (Map<?, ?>) value;
 			return convertMap(map);
+		} else if (value instanceof String) {
+			return "'" + ((String) value) + "'";
+		} else if (value instanceof Boolean) {
+			return "'" + String.valueOf((Boolean) value) + "'";
+		} else if (value instanceof IPredicate) {
+			return "RelationalPredicate('" + value.toString() + "')";
+		} else if (value instanceof SDFExpression) {
+			return "'" + value.toString() + "'";
 		} else {
 			return value != null ? value.toString() : null;
 		}
 	}
 
-	private static void putIfNeeded(Map<String, String> parameterMap, GetParameter parameter, String text) {
-		if (text == null) {
-			text = "";
+	private static void putIfValid(Map<String, String> parameterMap, String parameter, String text) {
+		if (text == null || text.length() == 0) {
+			return;
 		}
-		parameterMap.put(parameter.name(), text);
+		parameterMap.put(parameter, text);
 	}
 
 	private static boolean areAllSourceSubscriptionsVisited(ILogicalOperator operator, List<ILogicalOperator> visitedOperators) {
@@ -237,7 +262,7 @@ public class PQLGenerator {
 		sb.append("[");
 		for (int i = 0; i < list.size(); i++) {
 			Object element = list.get(i);
-			sb.append(convertValue(element));
+			sb.append(convertSingleValue(element));
 			if (i < list.size() - 1) {
 				sb.append(",");
 			}
@@ -257,7 +282,7 @@ public class PQLGenerator {
 		for (int i = 0; i < keys.length; i++) {
 			Object key = keys[i];
 			Object value = map.get(key);
-			sb.append(convertValue(key)).append("=").append(convertValue(value));
+			sb.append(convertSingleValue(key)).append("=").append(convertSingleValue(value));
 			if (i < keys.length - 1) {
 				sb.append(",");
 			}
@@ -267,14 +292,4 @@ public class PQLGenerator {
 		return sb.toString();
 	}
 
-	private static Object convertValue(Object element) {
-		if (element == null) {
-			return "";
-		}
-
-		if (element instanceof String) {
-			return "'" + element.toString() + "'";
-		}
-		return element.toString();
-	}
 }
