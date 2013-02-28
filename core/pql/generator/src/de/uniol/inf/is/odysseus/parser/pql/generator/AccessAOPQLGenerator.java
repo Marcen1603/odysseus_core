@@ -3,17 +3,57 @@ package de.uniol.inf.is.odysseus.parser.pql.generator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class AccessAOPQLGenerator {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AccessAOPQLGenerator.class);
+
+	private static IDataDictionary dataDictionary;
+	private static ISession activeUser;
+
+	public void bindDataDictionary(IDataDictionary dd) {
+		dataDictionary = dd;
+
+		LOG.debug("DataDictionary bound {}", dd);
+	}
+
+	public void unbindDataDictionary(IDataDictionary dd) {
+		if (dd == dataDictionary) {
+			dataDictionary = null;
+
+			LOG.debug("DataDictionary unbound {}", dd);
+		}
+	}
+
+	public void bindSessionManagement(ISessionManagement sm) {
+		activeUser = sm.login("System", "manager".getBytes());
+
+		LOG.debug("SessionManagement bound {}", sm);
+	}
+
+	public void unbindSessionManagement(ISessionManagement sm) {
+		activeUser = null;
+		LOG.debug("SessionManagement unbound {}", sm);
+	}
+
 	public static String generateAccessAOStatement(AccessAO operator, String name) {
+		operator = determineRealAccessAO(operator);
+
 		StringBuilder sb = new StringBuilder();
 		TimestampAO timestampAO = determineTimestampAO(operator);
 
@@ -36,6 +76,25 @@ public class AccessAOPQLGenerator {
 		sb.append("})");
 		return sb.toString();
 
+	}
+
+	private static AccessAO determineRealAccessAO(AccessAO operator) {
+		return determineAccessAO(dataDictionary.getStreamForTransformation(operator.getSourcename(), activeUser));
+	}
+
+	private static AccessAO determineAccessAO(ILogicalOperator start) {
+		if (start instanceof AccessAO) {
+			return (AccessAO) start;
+		}
+
+		for (LogicalSubscription subscription : start.getSubscribedToSource()) {
+			AccessAO accessAO = determineAccessAO(subscription.getTarget());
+			if (accessAO != null) {
+				return accessAO;
+			}
+		}
+
+		return null;
 	}
 
 	private static void appendIfNeeded(StringBuilder sb, String key, String text) {
