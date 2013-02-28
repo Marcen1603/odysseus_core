@@ -6,8 +6,11 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.Enumeration;
 import java.util.Map;
 
+import net.jxta.discovery.DiscoveryService;
+import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.endpoint.ByteArrayMessageElement;
 import net.jxta.endpoint.Message;
@@ -86,12 +89,14 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 	@Override
 	public void processInOpen() throws IOException {
 		PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
+		P2PNewPlugIn.getDiscoveryService().publish(pipeAdvertisement); // needed?
+		
 		inputPipe = P2PNewPlugIn.getPipeService().createInputPipe(pipeAdvertisement, this);
 	}
 
 	@Override
 	public void processOutOpen() throws IOException {
-		PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
+		PipeAdvertisement pipeAdvertisement = getPipeAdvertisement(pipeID);
 		P2PNewPlugIn.getPipeService().createOutputPipe(pipeAdvertisement, this);
 	}
 
@@ -134,6 +139,20 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		advertisement.setPipeID(pipeID);
 		advertisement.setType(PipeService.UnicastSecureType);
 		return advertisement;
+	}
+
+	private PipeAdvertisement getPipeAdvertisement(PipeID pipeID2) {
+		P2PNewPlugIn.getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 10);
+		try {
+			Enumeration<Advertisement> advs = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.ADV, null, null);
+			while( advs.hasMoreElements() ) {
+				Advertisement adv = advs.nextElement();
+				System.out.println(adv);
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
 
 	private static PipeID convertToPipeID(String text) {
