@@ -75,14 +75,5 @@ public class FileHandler extends AbstractFileHandler {
         return "File";
     }
     
-    @Override
-    public boolean isDone() {
-    	try {
-			return in.available() == 0;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    	return true;
-    }
 
 }
