@@ -76,7 +76,10 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
     @Override
     public void write(T object) throws IOException {
-        throw new IllegalArgumentException("Currently not implemented");
+    	ByteBuffer buffer = ByteBuffer.allocate(1024);
+    	getDataHandler().writeData(buffer, object);
+    	getTransportHandler().send(buffer.array());
+    	//throw new IllegalArgumentException("Currently not implemented");
     }
 
     @Override
