@@ -141,18 +141,26 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		return advertisement;
 	}
 
-	private PipeAdvertisement getPipeAdvertisement(PipeID pipeID2) {
+	private static PipeAdvertisement getPipeAdvertisement(PipeID pipeID2) {
 		P2PNewPlugIn.getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 10);
 		try {
 			Enumeration<Advertisement> advs = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.ADV, null, null);
 			while( advs.hasMoreElements() ) {
 				Advertisement adv = advs.nextElement();
-				System.out.println(adv);
+				if( adv instanceof PipeAdvertisement ) {
+					PipeAdvertisement padv = (PipeAdvertisement) adv;
+					if( padv.getPipeID().equals(pipeID2)) {
+						return padv;
+					}
+				}
 			}
+			LOG.error("Desired pipe advertisement with id {} not found", pipeID2);
+			return null;
+			
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			LOG.error("Could not find pipe advertisement for pipeid {}", pipeID2, ex);
+			return null;
 		}
-		return null;
 	}
 
 	private static PipeID convertToPipeID(String text) {
