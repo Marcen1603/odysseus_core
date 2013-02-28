@@ -62,6 +62,8 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 	@Override
 	public void send(byte[] message) throws IOException {
 		if( outputPipe != null ) {
+			LOG.info("Sending message");
+			
 			Message msg = new Message();
 			msg.addMessageElement(new ByteArrayMessageElement("DATA", null, message, null));
 			outputPipe.send(msg);
@@ -85,22 +87,28 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 	@Override
 	public void processInOpen() throws IOException {
+		LOG.info("Process In Open");
 		PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 		P2PNewPlugIn.getDiscoveryService().publish(pipeAdvertisement); // needed?
 		
 		inputPipe = P2PNewPlugIn.getPipeService().createInputPipe(pipeAdvertisement, this);
+		LOG.info("InputPipe is {}", inputPipe);
 	}
 
 	@Override
 	public void processOutOpen() throws IOException {
+		LOG.info("Process Out Open");
+		
 		PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 		P2PNewPlugIn.getPipeService().createOutputPipe(pipeAdvertisement, this);
+		
 	}
 
 	@Override
 	public void processInClose() throws IOException {
 		if( inputPipe != null ) {
 			inputPipe.close();
+			LOG.info("InputPipe closed");
 		}
 	}
 
@@ -108,11 +116,14 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 	public void processOutClose() throws IOException {
 		if( outputPipe != null ) {
 			outputPipe.close();
+			LOG.info("OutputPipe closed");
 		}
 	}
 
 	@Override
 	public void pipeMsgEvent(PipeMsgEvent event) {
+		LOG.info("Got pipe event");
+		
 		MessageElement messageElement = event.getMessage().getMessageElement("DATA");
 		byte[] data = messageElement.getBytes(false);
 		fireProcess(ByteBuffer.wrap(data));
@@ -121,6 +132,8 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 	@Override
 	public void outputPipeEvent(OutputPipeEvent event) {
 		outputPipe = event.getOutputPipe();
+		
+		LOG.info("Output pipe is {}", outputPipe);
 	}
 	
 	protected void processOptions(Map<String, String> options) {
@@ -135,6 +148,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		advertisement.setName(PIPE_NAME);
 		advertisement.setPipeID(pipeID);
 		advertisement.setType(PipeService.UnicastSecureType);
+		LOG.info("Pipe Advertisement with id = {}", pipeID);
 		return advertisement;
 	}
 
