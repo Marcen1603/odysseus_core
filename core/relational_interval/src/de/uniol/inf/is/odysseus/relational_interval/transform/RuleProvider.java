@@ -37,6 +37,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TBufferedFilterAORule());
 		rules.add(new TChangeCorrelateInsertDataMergeFunctionRule());
 		rules.add(new TRelationalDistinctAORule());
+		rules.add(new TSetTransferAreaConvolutionFilterPO());
 		return rules;
 	}
 

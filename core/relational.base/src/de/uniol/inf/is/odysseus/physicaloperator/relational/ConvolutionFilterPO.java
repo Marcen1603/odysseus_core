@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
@@ -42,6 +43,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 	private Map<Integer, LinkedList<Tuple<M>>> list = new HashMap<>();
 	private IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor = null;
 	private int totalSize;
+	private ITransferArea<Tuple<M>, Tuple<M>> transferArea;
 
 	public ConvolutionFilterPO(SDFExpression expression, List<SDFAttribute> attributes, int size) {
 		this.expression = expression;
@@ -57,6 +59,14 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 		this.totalSize = old.totalSize;
 	}
 	
+	public void setTransferArea(ITransferArea<Tuple<M>, Tuple<M>> transferArea) {
+		this.transferArea = transferArea;
+	}
+	
+	public ITransferArea<Tuple<M>, Tuple<M>> getTransferArea() {
+		return transferArea;
+	}
+	
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
@@ -65,6 +75,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
+		transferArea.init(this);
 		initWeights();
 
 		positions = new int[attributes.size()];
@@ -109,6 +120,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 
 	@Override
 	protected synchronized void process_next(Tuple<M> o, int port) {
+		transferArea.newElement(o, port);
 		Integer groupID = 0;
 		if (groupProcessor != null) {
 			groupID = groupProcessor.getGroupID(o);
@@ -122,7 +134,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 			for (int pos : this.positions) {
 				weightedTuple.setAttribute(pos, getWeightedValue(pos, groupID));
 			}
-			transfer(weightedTuple);
+			transferArea.transfer(weightedTuple);
 			this.list.get(groupID).removeFirst();
 		}
 

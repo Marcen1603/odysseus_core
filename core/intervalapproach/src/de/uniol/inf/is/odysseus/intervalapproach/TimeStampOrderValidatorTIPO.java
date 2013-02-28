@@ -71,7 +71,7 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 	private boolean validate(PointInTime timestamp, int port) {
 		if (lastTimestamp != null) {
 			if (timestamp.before(lastTimestamp)) {
-				logger.warn("Wrong timestamp order " + timestamp + " after "
+				System.err.println("Wrong timestamp order " + timestamp + " after "
 						+ lastTimestamp + " from previous operator: "
 						+ this.getSubscribedToSource(port).toString());
 				return false;
