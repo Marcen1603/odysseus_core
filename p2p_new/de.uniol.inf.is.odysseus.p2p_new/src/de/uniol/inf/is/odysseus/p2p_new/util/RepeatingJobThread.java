@@ -19,13 +19,12 @@ package de.uniol.inf.is.odysseus.p2p_new.util;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-public class RepeatingJobThread extends Thread{
+public class RepeatingJobThread extends StoppableThread{
 
 	private static final String DEFAULT_THREAD_NAME = "Repeating job";
 
 	private final long executionIntervalMillis;
 
-	private boolean isRunning = true;
 	private long lastExecutionTimestamp = 0;
 
 	public RepeatingJobThread(long executionIntervalMillis) {
@@ -45,7 +44,7 @@ public class RepeatingJobThread extends Thread{
 	@Override
 	public final void run() {
 		beforeJob();
-		while (isRunning) {
+		while (isRunning()) {
 			lastExecutionTimestamp = System.currentTimeMillis();
 			doJob();
 			
@@ -61,10 +60,6 @@ public class RepeatingJobThread extends Thread{
 	}
 
 	public void afterJob() {
-	}
-
-	public final void stopRunning() {
-		isRunning = false;
 	}
 	
 	protected final long getIntervalMillis() {

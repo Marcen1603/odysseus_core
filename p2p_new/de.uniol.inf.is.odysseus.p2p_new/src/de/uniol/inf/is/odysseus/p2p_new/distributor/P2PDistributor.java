@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.parser.pql.generator.PQLGenerator;
 
 public class P2PDistributor implements ILogicalQueryDistributor {
 
@@ -35,6 +36,12 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 	@Override
 	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender, List<ILogicalQuery> queriesToDistribute) {
 
+		for( ILogicalQuery query : queriesToDistribute ) {
+			LOG.debug("Query {}", query);
+			LOG.debug(PQLGenerator.generatePQLStatement(query.getLogicalPlan()));
+			LOG.debug("");
+		}
+		
 		List<PeerID> peers = determinePeers();
 		if( peers.isEmpty() ) {
 			LOG.debug("Could not find any peers to distribute logical query");
@@ -56,6 +63,8 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 			
 			// TODO: share parts with peers here
 			localQueries.add(query);
+			
+			
 		}
 
 		return localQueries;
