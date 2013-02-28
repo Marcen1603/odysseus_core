@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
@@ -24,9 +23,8 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 
 	public PredicateCoalescePO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
-			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,@SuppressWarnings("rawtypes")IPredicate predicate,
-			 ITransferArea<IStreamObject<?>, IStreamObject<?>> transferArea) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations, transferArea);
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,@SuppressWarnings("rawtypes")IPredicate predicate) {
+		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 		this.predicate = predicate;
 	}
 
@@ -35,18 +33,16 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void process_open() throws OpenFailedException {
 		this.predicate.init();
 		getGroupProcessor().init();
-		transferArea.init((AbstractPipe)this);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(IStreamObject<? extends M> object, int port) {
-		transferArea.newElement(object, port);
+		super.process_next(object, port);
 		
 		// The created object is a combiniation of all objects before
 		// --> so the new object needs the start timestamp of the first
@@ -70,6 +66,7 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 			metadata.setStart(currentPartialAggregates.getMetadata().getStart());
 			out.setMetadata(metadata);
 			transfer(out);
+			sendPunctuations();
 			currentPartialAggregates = null;
 		}
 

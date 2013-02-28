@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
@@ -21,13 +20,13 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 	int lastGroupID = -1;
 	int maxElementsPerGroup = -1;
 	int currentCount = 0;
-	boolean createOnHeartbeat = true;
+	boolean createOnHeartbeat = false;
 
 	public GroupCoalescePO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
-			int maxElementsPerGroup, ITransferArea<IStreamObject<?>, IStreamObject<?>> transferArea) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations, transferArea);
+			int maxElementsPerGroup) {
+		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 		this.maxElementsPerGroup = maxElementsPerGroup;
 	}
 
@@ -36,17 +35,15 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void process_open() throws OpenFailedException {
 		getGroupProcessor().init();
-		transferArea.init((AbstractPipe)this);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(IStreamObject<? extends M> object, int port) {
-		transferArea.newElement(object, port);
+		super.process_next(object, port);
 		// 1st check if the same group as last one
 		Integer currentGroupID = getGroupProcessor().getGroupID(object);
 
@@ -85,17 +82,19 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 		IStreamObject<M> out = getGroupProcessor().createOutputElement(
 				lastGroupID, result);
 		out.setMetadata(currentPartialAggregates.getMetadata());
-		transferArea.transfer(out);
+		transfer(out);
+		sendPunctuations();
 	}
-
+	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		if (createOnHeartbeat && punctuation.isHeartbeat()) {
 			if (currentPartialAggregates != null) {
 				createAndSend();
 			}
+		}else{
+			super.processPunctuation(punctuation, port);
 		}
-		transferArea.sendPunctuation(punctuation);
 	}
 
 	@Override
