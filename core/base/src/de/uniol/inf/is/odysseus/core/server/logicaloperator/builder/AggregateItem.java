@@ -20,11 +20,12 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 
 public class AggregateItem {
 	public final SDFAttribute outAttribute;
+	public final AggregateFunction aggregateFunction;
+	public final SDFAttribute inAttribute;
+	
 	public AggregateItem(String function, SDFAttribute attribute, SDFAttribute outAttr) {
 		this.aggregateFunction = new AggregateFunction(function);
 		this.inAttribute = attribute;
 		this.outAttribute = outAttr;
 	}
-	public final AggregateFunction aggregateFunction;
-	public final SDFAttribute inAttribute;
 }
