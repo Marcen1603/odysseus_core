@@ -213,7 +213,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 							// Avoid sending "outdated" heartbeats
 							while (((IPunctuation) elem).isHeartbeat()) {
 								IStreamable nextElem = outputQueue.peek();
-								if (nextElem != null && nextElem.isPunctuation()
+								if (nextElem != null
+										&& nextElem.isPunctuation()
 										&& ((IPunctuation) elem).isHeartbeat()
 										&& ((IPunctuation) elem).getTime()
 												.afterOrEquals(minimum)) {
@@ -240,13 +241,18 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 						}
 					}
 				}
-				// Avoid unnecessary punctuations
-				if (!elementsSend && isInOrder() && (watermark == null || (watermark != null && !watermark.equals(minimum)))) {
-					po.sendPunctuation(Heartbeat.createNewHeartbeat(minimum),
-							outputPort);
+//				// Avoid unnecessary punctuations
+//				if (!elementsSend
+//						&& isInOrder()
+//						&& (watermark == null || (watermark != null && !watermark
+//								.equals(minimum)))) {
+//					po.sendPunctuation(Heartbeat.createNewHeartbeat(minimum),
+//							outputPort);
+//				}
+				if (elementsSend) {
+					// Set marker to time stamp of the last send object
+					watermark = minimum;
 				}
-				// Set marker to time stamp of the last send object
-				watermark = minimum;
 			}
 		}
 	}
