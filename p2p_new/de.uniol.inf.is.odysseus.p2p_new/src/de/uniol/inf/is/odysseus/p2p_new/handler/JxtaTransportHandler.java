@@ -6,11 +6,8 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
-import java.util.Enumeration;
 import java.util.Map;
 
-import net.jxta.discovery.DiscoveryService;
-import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.endpoint.ByteArrayMessageElement;
 import net.jxta.endpoint.Message;
@@ -96,7 +93,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 	@Override
 	public void processOutOpen() throws IOException {
-		PipeAdvertisement pipeAdvertisement = getPipeAdvertisement(pipeID);
+		PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 		P2PNewPlugIn.getPipeService().createOutputPipe(pipeAdvertisement, this);
 	}
 
@@ -141,27 +138,26 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		return advertisement;
 	}
 
-	private static PipeAdvertisement getPipeAdvertisement(PipeID pipeID2) {
-		P2PNewPlugIn.getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 10);
-		try {
-			Enumeration<Advertisement> advs = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.ADV, null, null);
-			while( advs.hasMoreElements() ) {
-				Advertisement adv = advs.nextElement();
-				if( adv instanceof PipeAdvertisement ) {
-					PipeAdvertisement padv = (PipeAdvertisement) adv;
-					if( padv.getPipeID().equals(pipeID2)) {
-						return padv;
-					}
-				}
-			}
-			LOG.error("Desired pipe advertisement with id {} not found", pipeID2);
-			return null;
-			
-		} catch (IOException ex) {
-			LOG.error("Could not find pipe advertisement for pipeid {}", pipeID2, ex);
-			return null;
-		}
-	}
+//	private static PipeAdvertisement getPipeAdvertisement(PipeID pipeID) {
+//		try {
+//			Enumeration<Advertisement> advs = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.ADV, null, null);
+//			while( advs.hasMoreElements() ) {
+//				Advertisement adv = advs.nextElement();
+//				if( adv instanceof PipeAdvertisement ) {
+//					PipeAdvertisement padv = (PipeAdvertisement) adv;
+//					if( padv.getPipeID().equals(pipeID)) {
+//						return padv;
+//					}
+//				}
+//			}
+//			LOG.error("Desired pipe advertisement with id {} not found", pipeID);
+//			return null;
+//			
+//		} catch (IOException ex) {
+//			LOG.error("Could not find pipe advertisement for pipeid {}", pipeID, ex);
+//			return null;
+//		}
+//	}
 
 	private static PipeID convertToPipeID(String text) {
 		try {
