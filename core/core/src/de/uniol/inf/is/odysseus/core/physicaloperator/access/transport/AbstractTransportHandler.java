@@ -25,94 +25,89 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 
 abstract public class AbstractTransportHandler implements ITransportHandler {
 
-    private final List<ITransportHandlerListener> transportHandlerListener = new ArrayList<ITransportHandlerListener>();
-    private int                                openCounter              = 0;
-    private final ITransportExchangePattern    exchangePattern;
+	private final List<ITransportHandlerListener> transportHandlerListener = new ArrayList<ITransportHandlerListener>();
+	private int openCounter = 0;
+	private final ITransportExchangePattern exchangePattern;
 
-    public AbstractTransportHandler() {
-        this.exchangePattern = null;
-    }
+	public AbstractTransportHandler() {
+		this.exchangePattern = null;
+	}
 
-    public AbstractTransportHandler(IProtocolHandler<?> protocolHandler) {
-        this.exchangePattern = protocolHandler.getExchangePattern();
-        protocolHandler.setTransportHandler(this);
-        addListener(protocolHandler);
-    }
+	public AbstractTransportHandler(IProtocolHandler<?> protocolHandler) {
+		this.exchangePattern = protocolHandler.getExchangePattern();
+		protocolHandler.setTransportHandler(this);
+		addListener(protocolHandler);
+	}
 
-    @Override
-    public void addListener(ITransportHandlerListener listener) {
-        this.transportHandlerListener.add(listener);
-    }
+	@Override
+	public void addListener(ITransportHandlerListener listener) {
+		this.transportHandlerListener.add(listener);
+	}
 
-    @Override
-    public void removeListener(ITransportHandlerListener listener) {
-        this.transportHandlerListener.remove(listener);
-    }
+	@Override
+	public void removeListener(ITransportHandlerListener listener) {
+		this.transportHandlerListener.remove(listener);
+	}
 
 	public void fireProcess(ByteBuffer message) {
 		for (ITransportHandlerListener l : transportHandlerListener) {
 			message.flip();
-			((ITransportHandlerListener) l).process(message);
+			l.process(message);
 		}
 	}
 
-    public void fireOnConnect() {
-        for (ITransportHandlerListener l : transportHandlerListener) {
-            ((ITransportHandlerListener) l).onConnect(this);
-        }
-    }
+	public void fireOnConnect() {
+		for (ITransportHandlerListener l : transportHandlerListener) {
+			l.onConnect(this);
+		}
+	}
 
-    public void fireOnDisconnect() {
-        for (ITransportHandlerListener l : transportHandlerListener) {
-            ((ITransportHandlerListener) l).onDisonnect(this);
-        }
-    }
+	public void fireOnDisconnect() {
+		for (ITransportHandlerListener l : transportHandlerListener) {
+			l.onDisonnect(this);
+		}
+	}
 
-    
-    @Override
-    public ITransportExchangePattern getExchangePattern() {
-        return this.exchangePattern;
-    }
+	@Override
+	public ITransportExchangePattern getExchangePattern() {
+		return this.exchangePattern;
+	}
 
-    final synchronized public void open() throws UnknownHostException, IOException {
-        if (openCounter == 0) {
-            if (getExchangePattern().equals(ITransportExchangePattern.InOnly)
-                    || getExchangePattern().equals(ITransportExchangePattern.InOptionalOut)
-                    || getExchangePattern().equals(ITransportExchangePattern.InOut)) {
-                processInOpen();
-            }
-            if (getExchangePattern().equals(ITransportExchangePattern.OutOnly)
-                    || getExchangePattern().equals(ITransportExchangePattern.OutOptionalIn)
-                    || getExchangePattern().equals(ITransportExchangePattern.InOut)) {
-                processOutOpen();
-            }
-        }
-        openCounter++;
-    }
+	final synchronized public void open() throws UnknownHostException, IOException {
+		if (openCounter == 0) {
+			if (getExchangePattern().equals(ITransportExchangePattern.InOnly) || getExchangePattern().equals(ITransportExchangePattern.InOptionalOut)
+					|| getExchangePattern().equals(ITransportExchangePattern.InOut)) {
+				processInOpen();
+			}
+			if (getExchangePattern().equals(ITransportExchangePattern.OutOnly) || getExchangePattern().equals(ITransportExchangePattern.OutOptionalIn)
+					|| getExchangePattern().equals(ITransportExchangePattern.InOut)) {
+				processOutOpen();
+			}
+		}
+		openCounter++;
+	}
 
-    abstract public void processInOpen() throws IOException;
+	abstract public void processInOpen() throws IOException;
 
-    abstract public void processOutOpen() throws IOException;
+	abstract public void processOutOpen() throws IOException;
 
-    @Override
-    final synchronized public void close() throws IOException {
-        openCounter--;
-        if (openCounter == 0) {
-            if (getExchangePattern().equals(ITransportExchangePattern.InOnly)
-                    || getExchangePattern().equals(ITransportExchangePattern.InOptionalOut)
-                    || getExchangePattern().equals(ITransportExchangePattern.InOut)) {
-                processInClose();
-            }
-            if (getExchangePattern().equals(ITransportExchangePattern.OutOnly)
-                    || getExchangePattern().equals(ITransportExchangePattern.OutOptionalIn)
-                    || getExchangePattern().equals(ITransportExchangePattern.InOut)) {
-                processOutClose();
-            }
-        }
-    }
+	@Override
+	final synchronized public void close() throws IOException {
+		openCounter--;
+		if (openCounter == 0) {
+			if (getExchangePattern().equals(ITransportExchangePattern.InOnly) || getExchangePattern().equals(ITransportExchangePattern.InOptionalOut)
+					|| getExchangePattern().equals(ITransportExchangePattern.InOut)) {
+				processInClose();
+			}
+			if (getExchangePattern().equals(ITransportExchangePattern.OutOnly) || getExchangePattern().equals(ITransportExchangePattern.OutOptionalIn)
+					|| getExchangePattern().equals(ITransportExchangePattern.InOut)) {
+				processOutClose();
+			}
+		}
+	}
 
-    abstract public void processInClose() throws IOException;
+	abstract public void processInClose() throws IOException;
 
-    abstract public void processOutClose() throws IOException;
+	abstract public void processOutClose() throws IOException;
 
 }
