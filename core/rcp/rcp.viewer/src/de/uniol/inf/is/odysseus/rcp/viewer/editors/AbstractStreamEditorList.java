@@ -143,7 +143,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	@Override
 	public void initToolbar(ToolBar toolbar) {
 		final ToolItem showHeartbeatsToolbarItem = new ToolItem(toolbar, SWT.CHECK);
-		showHeartbeatsToolbarItem.setText("Show heartbeats");
+		showHeartbeatsToolbarItem.setText("\u2764");
 		showHeartbeatsToolbarItem.setToolTipText("Toogle heartbeat printing");
 		showHeartbeatsToolbarItem.setSelection(showHeartbeats);
 		showHeartbeatsToolbarItem.addSelectionListener(new SelectionAdapter() {
