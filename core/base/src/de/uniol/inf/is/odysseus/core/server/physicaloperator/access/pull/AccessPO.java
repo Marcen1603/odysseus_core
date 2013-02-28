@@ -93,7 +93,12 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 
 		try {
 			if (protocolHandler != null) {
-				return protocolHandler.hasNext();
+				if (protocolHandler.isDone()){
+					isDone = true;
+					propagateDone();
+				}else{
+					return protocolHandler.hasNext();
+				}
 			} else {
 				return input.hasNext();
 			}

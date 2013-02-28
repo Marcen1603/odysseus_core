@@ -110,4 +110,9 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 
 	abstract public void processOutClose() throws IOException;
 
+	@Override
+	public boolean isDone() {
+		return false;
+	}
+	
 }

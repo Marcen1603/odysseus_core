@@ -94,4 +94,9 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     public ITransportExchangePattern getExchangePattern() {
         return ITransportExchangePattern.InOnly;
     }
+    
+    @Override
+    public boolean isDone() {
+    	return transportHandler.isDone();
+    }
 }

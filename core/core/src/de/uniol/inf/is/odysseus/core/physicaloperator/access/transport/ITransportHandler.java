@@ -44,4 +44,6 @@ public interface ITransportHandler {
     public ITransportExchangePattern getExchangePattern();
 
     String getName();
+
+	public boolean isDone();
 }
