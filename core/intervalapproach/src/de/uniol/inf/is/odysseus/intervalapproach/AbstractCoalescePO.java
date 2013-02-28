@@ -53,7 +53,7 @@ abstract public class AbstractCoalescePO<M extends ITimeInterval> extends
 	
 	protected void sendPunctuations() {
 		IPunctuation punc = punctuationsOutputQueue.peek();
-		while (punc.getTime().before(lastStart)){
+		while (punc !=null && punc.getTime().before(lastStart)){
 			sendPunctuation(punctuationsOutputQueue.poll());
 			punc = punctuationsOutputQueue.peek();
 		}
