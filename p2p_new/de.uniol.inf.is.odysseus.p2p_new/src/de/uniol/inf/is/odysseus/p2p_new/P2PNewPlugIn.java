@@ -12,6 +12,7 @@ import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.peergroup.PeerGroupID;
+import net.jxta.pipe.PipeService;
 import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 
@@ -40,6 +41,8 @@ public class P2PNewPlugIn implements BundleActivator {
 
 	private static DiscoveryService discoveryService;
 	private static ContentService contentService;
+	private static PipeService pipeService;
+	
 	private static PeerGroup ownPeerGroup;
 
 	private NetworkManager manager;
@@ -57,6 +60,7 @@ public class P2PNewPlugIn implements BundleActivator {
 
 		discoveryService = ownPeerGroup.getDiscoveryService();
 		contentService = ownPeerGroup.getContentService();
+		pipeService = ownPeerGroup.getPipeService();
 
 		registerAdvertisementTypes();
 
@@ -65,6 +69,8 @@ public class P2PNewPlugIn implements BundleActivator {
 
 	public void stop(BundleContext bundleContext) throws Exception {
 		discoveryService = null;
+		contentService = null;
+		pipeService = null;
 
 		manager.stopNetwork();
 		LOG.debug("JXTA-Network stopped");
@@ -76,6 +82,10 @@ public class P2PNewPlugIn implements BundleActivator {
 
 	public static ContentService getContentService() {
 		return contentService;
+	}
+	
+	public static PipeService getPipeService() {
+		return pipeService;
 	}
 
 	public static PeerGroup getOwnPeerGroup() {
