@@ -53,6 +53,8 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 		for (ITransportHandlerListener l : transportHandlerListener) {
 			// TODO: flip() erases the contents of the message if
 			// it was already flipped or just created...
+			// In other words: This method expects that the byte buffer
+			// is not fully prepared
 			message.flip();
 			l.process(message);
 		}
