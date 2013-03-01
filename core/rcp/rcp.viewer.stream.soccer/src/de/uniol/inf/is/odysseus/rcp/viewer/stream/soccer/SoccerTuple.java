@@ -4,8 +4,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 public class SoccerTuple {
 	Integer sid;
-	PointInTime startTs;
-	PointInTime endTs;
+	Long startTs;
+	Long endTs;
 	Integer x;
 	Integer y;
 	Integer z;
@@ -20,88 +20,88 @@ public class SoccerTuple {
 	public SoccerTuple() {
 		// TODO Auto-generated constructor stub
 	}
-	public int getSid() {
+	public Integer getSid() {
 		return sid;
 	}
-	public void setSid(int sid) {
+	public void setSid(Integer sid) {
 		this.sid = sid;
 	}
-	public PointInTime getStartTs() {
+	public Long getStartTs() {
 		return startTs;
 	}
-	public void setStartTs(PointInTime startTs) {
+	public void setStartTs(Long startTs) {
 		this.startTs = startTs;
 	}
-	public PointInTime getEndTs() {
+	public Long getEndTs() {
 		return endTs;
 	}
-	public void setEndTs(PointInTime endTs) {
+	public void setEndTs(Long endTs) {
 		this.endTs = endTs;
 	}
-	public int getX() {
+	public Integer getX() {
 		return x;
 	}
-	public void setX(int x) {
+	public void setX(Integer x) {
 		this.x = x;
 	}
-	public int getY() {
+	public Integer getY() {
 		return y;
 	}
-	public void setY(int y) {
+	public void setY(Integer y) {
 		this.y = y;
 	}
-	public int getZ() {
+	public Integer getZ() {
 		return z;
 	}
-	public void setZ(int z) {
+	public void setZ(Integer z) {
 		this.z = z;
 	}
-	public int getV() {
+	public Integer getV() {
 		return v;
 	}
-	public void setV(int v) {
+	public void setV(Integer v) {
 		this.v = v;
 	}
-	public int getA() {
+	public Integer getA() {
 		return a;
 	}
-	public void setA(int a) {
+	public void setA(Integer a) {
 		this.a = a;
 	}
-	public int getVx() {
+	public Integer getVx() {
 		return vx;
 	}
-	public void setVx(int vx) {
+	public void setVx(Integer vx) {
 		this.vx = vx;
 	}
-	public int getVy() {
+	public Integer getVy() {
 		return vy;
 	}
-	public void setVy(int vy) {
+	public void setVy(Integer vy) {
 		this.vy = vy;
 	}
-	public int getVz() {
+	public Integer getVz() {
 		return vz;
 	}
-	public void setVz(int vz) {
+	public void setVz(Integer vz) {
 		this.vz = vz;
 	}
-	public int getAx() {
+	public Integer getAx() {
 		return ax;
 	}
-	public void setAx(int ax) {
+	public void setAx(Integer ax) {
 		this.ax = ax;
 	}
-	public int getAz() {
+	public Integer getAz() {
 		return az;
 	}
-	public void setAz(int az) {
+	public void setAz(Integer az) {
 		this.az = az;
 	}
-	public int getAy() {
+	public Integer getAy() {
 		return ay;
 	}
-	public void setAy(int ay) {
+	public void setAy(Integer ay) {
 		this.ay = ay;
 	}
 	@Override

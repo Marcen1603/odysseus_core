@@ -87,8 +87,11 @@ public class StreamSoccerEditor implements IStreamEditorType{
 		if(attributeIndexMap.get("sid")!=null){
 			soccerTuple.setSid((Integer)tuple.getAttribute(attributeIndexMap.get("sid")));
 		}
-		soccerTuple.setStartTs(timeTuple.getMetadata().getStart());
-		soccerTuple.setEndTs(timeTuple.getMetadata().getEnd());
+		if(attributeIndexMap.get("ts")!=null){
+			soccerTuple.setStartTs((Long)tuple.getAttribute(attributeIndexMap.get("ts")));
+		}
+//		soccerTuple.setStartTs(timeTuple.getMetadata().getStart());
+//		soccerTuple.setEndTs(timeTuple.getMetadata().getEnd());
 		if(attributeIndexMap.get("x")!=null){
 			soccerTuple.setX((Integer)tuple.getAttribute(attributeIndexMap.get("x")));
 		}
@@ -123,6 +126,7 @@ public class StreamSoccerEditor implements IStreamEditorType{
 			soccerTuple.setAz((Integer)tuple.getAttribute(attributeIndexMap.get("az")));
 		}
 		
+//		LOG.info(tuple.getAttribute(1).toString());
 //		LOG.info(soccerTuple.toString());
 //		LOG.info("tupX: "+soccerTuple.getX()+" tupY: "+soccerTuple.getY()+" X: "+getCoordX(soccerTuple.getY())+" Y: "+getCoordY(soccerTuple.getX()));
 		
@@ -258,6 +262,10 @@ public class StreamSoccerEditor implements IStreamEditorType{
 					    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					    	gc.fillOval(getCoordX(soccerTuple.getY()), getCoordY(soccerTuple.getX()), 6, 6);
 					    }
+				  }
+				  if(currentTuple.get(4)!=null){
+					  gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+					  gc.drawText("TS: "+currentTuple.get(4).getStartTs().toString()+" MS: "+(Long.parseLong(currentTuple.get(4).getStartTs().toString())-10748401988186756L)/1000000000+" ms", 5, 5);
 				  }
 				  gc.dispose();
 			}
