@@ -91,6 +91,10 @@ public class P2PNewPlugIn implements BundleActivator {
 	public static PeerGroup getOwnPeerGroup() {
 		return ownPeerGroup;
 	}
+	
+	public static PeerID getOwnPeerID() {
+		return PEER_ID;
+	}
 
 	private static void configureLogging(Bundle bundle) {
 		java.util.logging.Logger jxtaLogger = java.util.logging.Logger.getLogger(JXTA_LOGGER_NAME);

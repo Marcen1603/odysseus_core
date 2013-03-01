@@ -34,10 +34,12 @@ import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 
 public class JxtaTransportHandler extends AbstractTransportHandler implements PipeMsgListener, OutputPipeListener {
 
+	public static final String NAME = "JXTA";
+	public static final String PIPEID_TAG = "pipeid";
+	
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaTransportHandler.class);
 
 	private static final String PIPE_NAME = "Odysseus Pipe";
-	private static final String PIPEID_TAG = "pipeid";
 
 	private InputPipe inputPipe;
 	private OutputPipe outputPipe;
@@ -86,7 +88,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 	@Override
 	public String getName() {
-		return "JXTA";
+		return NAME;
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p_new.Distributor">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false" name="de.uniol.inf.is.odysseus.p2p_new.Distributor">
    <implementation class="de.uniol.inf.is.odysseus.p2p_new.distributor.P2PDistributor"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor"/>

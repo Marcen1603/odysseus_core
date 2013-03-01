@@ -18,20 +18,27 @@ public class QueryPart {
 	private final Collection<ILogicalOperator> operators;
 	
 	private final String destinationName;
+	private final String name;
 	
-	public QueryPart(Collection<ILogicalOperator> operators, String destinationName) {
+	public QueryPart(Collection<ILogicalOperator> operators, String destinationName, String partName) {
 		Preconditions.checkNotNull(operators, "List of operators must not be null!");
 		Preconditions.checkArgument(!operators.isEmpty(), "List of operators must not be empty!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(destinationName), "Destination name must not be null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(partName), "Query Part name must not be null or empty!");
 		
 		this.destinationName = destinationName;
 		this.operators = filter(operators);
+		this.name = partName;
 		this.relativeSinks = determineRelativeSinks(this.operators);
 		this.relativeSources = determineRelativeSources(this.operators);
 	}
 
 	public final ImmutableCollection<ILogicalOperator> getOperators() {
 		return ImmutableList.copyOf(operators);
+	}
+	
+	public final boolean containsRelativeSource( ILogicalOperator op ){
+		return relativeSources.contains(op);
 	}
 	
 	public final ImmutableCollection<ILogicalOperator> getRelativeSources() {
@@ -44,6 +51,15 @@ public class QueryPart {
 	
 	public final String getDestinationName() {
 		return destinationName;
+	}
+	
+	public final String getName() {
+		return name;
+	}
+	
+	@Override
+	public String toString() {
+		return getName();
 	}
 
 	private static Collection<ILogicalOperator> determineRelativeSources(Collection<ILogicalOperator> operators) {
