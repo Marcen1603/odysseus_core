@@ -93,7 +93,7 @@ public class OdysseusApplication implements IApplication {
 					
 					// force showing dialog
 					dialog = new ChooseWorkspaceDialogExtended(display.getActiveShell(), data, false, true);
-					dialog.setErrorMessage("Could not set workspace.\nPlease choose a different one.");
+//					dialog.setErrorMessage("Could not set workspace.\nPlease choose a different one.");
 					dialog.prompt(true);
 				}
 			}
