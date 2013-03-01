@@ -89,13 +89,13 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 		}
 		if (line != null) {
 			tuple.addLong(System.currentTimeMillis());
-			System.out.println(System.currentTimeMillis());
+			List<String> distributions = new ArrayList<String>();
 			final String[] values = line.split(",");
 			for (final String value : values) {
 				if (!value.isEmpty()) {
 					if (value.contains("[")) {
 						// Send continuous distribution
-						generateContinuousAttribute(tuple, value);
+						distributions.add(value);
 					} else {
 						if (value.contains(";")) {
 							// Send discrete probabilistic value
@@ -108,7 +108,10 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 					}
 				}
 			}
-			System.out.println(tuple);
+		
+			for (String value : distributions) {
+				generateContinuousAttribute(tuple, value);
+			}
 			return tuple;
 		}
 		return null;
@@ -117,16 +120,13 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 	private void generateDiscreteAttribute(DataTuple tuple, String string) {
 		final String[] probabilisticValues = string.split(";");
 		tuple.addInteger(probabilisticValues.length);
-		System.out.println(probabilisticValues.length);
 		for (final String probabilisticValue : probabilisticValues) {
 			final String[] probabilisticParameter = probabilisticValue
 					.split(":");
 			// The value
 			tuple.addDouble(probabilisticParameter[0]);
-			System.out.println(probabilisticParameter[0]);
 			// The probability
 			tuple.addDouble(probabilisticParameter[1]);
-			System.out.println(probabilisticParameter[1]);
 		}
 	}
 
@@ -134,10 +134,8 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 		String[] components = string.split("<");
 		final String[] mixtures = components[0].split("\\|");
 		tuple.addInteger(mixtures.length);
-		System.out.println(mixtures.length);
 		final int dimension = mixtures[0].split(";")[1].split(":").length;
 		tuple.addInteger(dimension);
-		System.out.println(dimension);
 		for (final String mixture : mixtures) {
 			generateContinuousAttributeMixture(tuple, dimension, mixture);
 		}

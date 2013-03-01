@@ -39,39 +39,41 @@ public class ProbabilisticDistributionHandler extends
 	 */
 	@Override
 	public NormalDistributionMixture readData(ByteBuffer buffer) {
+		NormalDistributionMixture distributionMixture = null;
 		final int size = buffer.getInt();
-		final Map<NormalDistribution, Double> mixtures = new HashMap<NormalDistribution, Double>(
-				size);
-		System.out.println(buffer.position());
-		final int dimension = buffer.getInt();
-		for (int m = 0; m < size; m++) {
-			final double weight = buffer.getDouble();
-			final double[] mean = new double[dimension];
-			for (int i = 0; i < mean.length; i++) {
-				mean[i] = buffer.getDouble();
+		if (size > 0) {
+			final Map<NormalDistribution, Double> mixtures = new HashMap<NormalDistribution, Double>(
+					size);
+			final int dimension = buffer.getInt();
+			for (int m = 0; m < size; m++) {
+				final double weight = buffer.getDouble();
+				final double[] mean = new double[dimension];
+				for (int i = 0; i < mean.length; i++) {
+					mean[i] = buffer.getDouble();
+				}
+				final double[] entries = new double[CovarianceMatrixUtils
+						.getCovarianceTiangleSizeFromDimension(dimension)];
+				for (int i = 0; i < entries.length; i++) {
+					entries[i] = buffer.getDouble();
+				}
+
+				CovarianceMatrix covarianceMatrix = new CovarianceMatrix(
+						entries);
+				NormalDistribution distribution = new NormalDistribution(mean,
+						covarianceMatrix);
+				mixtures.put(distribution, weight);
 			}
-			final double[] entries = new double[CovarianceMatrixUtils
-					.getCovarianceTiangleSizeFromDimension(dimension)];
-			for (int i = 0; i < entries.length; i++) {
-				entries[i] = buffer.getDouble();
+			double scale = buffer.getDouble();
+			Interval[] support = new Interval[dimension];
+			for (int i = 0; i < support.length; i++) {
+				support[i] = new Interval(buffer.getDouble(),
+						buffer.getDouble());
 			}
 
-			CovarianceMatrix covarianceMatrix = new CovarianceMatrix(entries);
-			NormalDistribution distribution = new NormalDistribution(mean,
-					covarianceMatrix);
-			mixtures.put(distribution, weight);
+			distributionMixture = new NormalDistributionMixture(mixtures);
+			distributionMixture.setScale(scale);
+			distributionMixture.setSupport(support);
 		}
-		double scale = buffer.getDouble();
-		Interval[] support = new Interval[dimension];
-		for (int i = 0; i < support.length; i++) {
-			support[i] = new Interval(buffer.getDouble(), buffer.getDouble());
-		}
-
-		NormalDistributionMixture distributionMixture = new NormalDistributionMixture(
-				mixtures);
-		distributionMixture.setScale(scale);
-		distributionMixture.setSupport(support);
-
 		return distributionMixture;
 	}
 

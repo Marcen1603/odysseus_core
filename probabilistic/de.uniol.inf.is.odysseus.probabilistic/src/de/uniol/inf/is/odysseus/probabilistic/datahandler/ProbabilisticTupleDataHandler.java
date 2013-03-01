@@ -85,13 +85,14 @@ public class ProbabilisticTupleDataHandler extends
 			NormalDistributionMixture[] distribution = new NormalDistributionMixture[this.maxDistributions];
 			int distributions = 0;
 			try {
-			for (int i = 0; i < this.maxDistributions; i++) {
-				if (buffer.hasRemaining()) {
-					distribution[i] = probabilisticDistributionHandler
-							.readData(buffer);
-					distributions ++;
+				for (int i = 0; i < this.maxDistributions; i++) {
+					if (buffer.hasRemaining()) {
+						distribution[i] = probabilisticDistributionHandler
+								.readData(buffer);
+						distributions++;
+					}
 				}
-			}}catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			r = new ProbabilisticTuple<IMetaAttribute>(attributes, false);
