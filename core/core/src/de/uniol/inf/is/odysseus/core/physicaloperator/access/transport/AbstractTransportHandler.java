@@ -51,6 +51,8 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 
 	public void fireProcess(ByteBuffer message) {
 		for (ITransportHandlerListener l : transportHandlerListener) {
+			// TODO: flip() erases the contents of the message if
+			// it was already flipped or just created...
 			message.flip();
 			l.process(message);
 		}
