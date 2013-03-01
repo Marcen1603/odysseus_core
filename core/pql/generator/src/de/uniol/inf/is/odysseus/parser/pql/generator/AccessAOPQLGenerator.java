@@ -51,7 +51,7 @@ public class AccessAOPQLGenerator {
 		LOG.debug("SessionManagement unbound {}", sm);
 	}
 
-	public static String generateAccessAOStatement(AccessAO operator, String name) {
+	static String generateAccessAOStatement(AccessAO operator, String name) {
 		operator = determineRealAccessAO(operator);
 
 		StringBuilder sb = new StringBuilder();
@@ -79,7 +79,8 @@ public class AccessAOPQLGenerator {
 	}
 
 	private static AccessAO determineRealAccessAO(AccessAO operator) {
-		return determineAccessAO(dataDictionary.getStreamForTransformation(operator.getSourcename(), activeUser));
+		ILogicalOperator op = dataDictionary.getStreamForTransformation(operator.getSourcename(), activeUser);
+		return op != null ? determineAccessAO(op) : operator;
 	}
 
 	private static AccessAO determineAccessAO(ILogicalOperator start) {

@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
@@ -64,7 +65,9 @@ public class PQLGenerator {
 	private static String generateStatement(ILogicalOperator operator, Map<ILogicalOperator, String> names) {
 		if (operator instanceof AccessAO) {
 			return AccessAOPQLGenerator.generateAccessAOStatement((AccessAO) operator, names.get(operator));
-		} 
+		} else if( operator instanceof SenderAO ) {
+			return SenderAOPQLGenerator.generateSenderAOStatement((SenderAO) operator, names);
+		}
 
 		Map<String, String> parameterMap = removeNullValues(operator.getParameterInfos());
 
