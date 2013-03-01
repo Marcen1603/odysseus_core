@@ -59,7 +59,18 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
     @Override
     public void write(T object) throws IOException {
-        throw new IllegalArgumentException("Currently not implemented");
+		ByteBuffer buffer = ByteBuffer.allocate(1024);
+		getDataHandler().writeData(buffer, object);
+		buffer.flip();
+
+		int messageSizeBytes = buffer.remaining();
+		byte[] rawBytes = new byte[messageSizeBytes + 8];
+		insertInt(rawBytes, 0, start);
+		// buffer.array() returns the complete array (1024 bytes) and
+		// did not apply the "real" size of the object
+		buffer.get(rawBytes, 4, messageSizeBytes);
+		insertInt(rawBytes, messageSizeBytes + 4, end);
+		getTransportHandler().send(rawBytes);
     }
 
     @Override
@@ -149,4 +160,11 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
             return ITransportExchangePattern.OutOnly;
         }
     }
+    
+	private static void insertInt(byte[] destArray, int offset, int value) {
+		destArray[offset] = (byte) (value >>> 24);
+		destArray[offset + 1] = (byte) (value >>> 16);
+		destArray[offset + 2] = (byte) (value >>> 18);
+		destArray[offset + 3] = (byte) (value);
+	}
 }
