@@ -41,7 +41,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 	private InputPipe inputPipe;
 	private OutputPipe outputPipe;
-	
+
 	private PipeID pipeID;
 
 	// for transportFactory
@@ -61,12 +61,16 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		if( outputPipe != null ) {
-			LOG.info("Sending message");
-			
-			Message msg = new Message();
-			msg.addMessageElement(new ByteArrayMessageElement("DATA", null, message, null));
-			outputPipe.send(msg);
+		if (outputPipe != null) {
+			if (!outputPipe.isClosed()) {
+				LOG.info("Sending message");
+
+				Message msg = new Message();
+				msg.addMessageElement(new ByteArrayMessageElement("DATA", null, message, null));
+				outputPipe.send(msg);
+			} else {
+				LOG.error("OutputPipe is already closed");
+			}
 		}
 	}
 
@@ -90,7 +94,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		LOG.info("Process In Open");
 		PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 		P2PNewPlugIn.getDiscoveryService().publish(pipeAdvertisement); // needed?
-		
+
 		inputPipe = P2PNewPlugIn.getPipeService().createInputPipe(pipeAdvertisement, this);
 		LOG.info("InputPipe is {}", inputPipe);
 	}
@@ -98,15 +102,15 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 	@Override
 	public void processOutOpen() throws IOException {
 		LOG.info("Process Out Open");
-		
+
 		PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 		P2PNewPlugIn.getPipeService().createOutputPipe(pipeAdvertisement, this);
-		
+
 	}
 
 	@Override
 	public void processInClose() throws IOException {
-		if( inputPipe != null ) {
+		if (inputPipe != null) {
 			inputPipe.close();
 			LOG.info("InputPipe closed");
 		}
@@ -114,7 +118,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 	@Override
 	public void processOutClose() throws IOException {
-		if( outputPipe != null ) {
+		if (outputPipe != null) {
 			outputPipe.close();
 			LOG.info("OutputPipe closed");
 		}
@@ -123,19 +127,22 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 	@Override
 	public void pipeMsgEvent(PipeMsgEvent event) {
 		LOG.info("Got pipe event");
-		
+
 		MessageElement messageElement = event.getMessage().getMessageElement("DATA");
 		byte[] data = messageElement.getBytes(false);
-		fireProcess(ByteBuffer.wrap(data));
+		
+		ByteBuffer bb = ByteBuffer.allocate(data.length);
+		bb.put(data);
+		super.fireProcess(bb);
 	}
-
+	
 	@Override
 	public void outputPipeEvent(OutputPipeEvent event) {
 		outputPipe = event.getOutputPipe();
-		
+
 		LOG.info("Output pipe is {}", outputPipe);
 	}
-	
+
 	protected void processOptions(Map<String, String> options) {
 		String id = options.get(PIPEID_TAG);
 		if (!Strings.isNullOrEmpty(id)) {
@@ -147,31 +154,33 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		PipeAdvertisement advertisement = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
 		advertisement.setName(PIPE_NAME);
 		advertisement.setPipeID(pipeID);
-		advertisement.setType(PipeService.UnicastSecureType);
+		advertisement.setType(PipeService.UnicastType);
 		LOG.info("Pipe Advertisement with id = {}", pipeID);
 		return advertisement;
 	}
 
-//	private static PipeAdvertisement getPipeAdvertisement(PipeID pipeID) {
-//		try {
-//			Enumeration<Advertisement> advs = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.ADV, null, null);
-//			while( advs.hasMoreElements() ) {
-//				Advertisement adv = advs.nextElement();
-//				if( adv instanceof PipeAdvertisement ) {
-//					PipeAdvertisement padv = (PipeAdvertisement) adv;
-//					if( padv.getPipeID().equals(pipeID)) {
-//						return padv;
-//					}
-//				}
-//			}
-//			LOG.error("Desired pipe advertisement with id {} not found", pipeID);
-//			return null;
-//			
-//		} catch (IOException ex) {
-//			LOG.error("Could not find pipe advertisement for pipeid {}", pipeID, ex);
-//			return null;
-//		}
-//	}
+	// private static PipeAdvertisement getPipeAdvertisement(PipeID pipeID) {
+	// try {
+	// Enumeration<Advertisement> advs =
+	// P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.ADV,
+	// null, null);
+	// while( advs.hasMoreElements() ) {
+	// Advertisement adv = advs.nextElement();
+	// if( adv instanceof PipeAdvertisement ) {
+	// PipeAdvertisement padv = (PipeAdvertisement) adv;
+	// if( padv.getPipeID().equals(pipeID)) {
+	// return padv;
+	// }
+	// }
+	// }
+	// LOG.error("Desired pipe advertisement with id {} not found", pipeID);
+	// return null;
+	//
+	// } catch (IOException ex) {
+	// LOG.error("Could not find pipe advertisement for pipeid {}", pipeID, ex);
+	// return null;
+	// }
+	// }
 
 	private static PipeID convertToPipeID(String text) {
 		try {
