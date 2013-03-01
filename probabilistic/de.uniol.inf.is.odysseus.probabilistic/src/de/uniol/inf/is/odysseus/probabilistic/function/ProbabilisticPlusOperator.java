@@ -37,6 +37,11 @@ public class ProbabilisticPlusOperator extends
 	public ProbabilisticDouble getValue() {
 		AbstractProbabilisticValue<?> a = getInputValue(0);
 		AbstractProbabilisticValue<?> b = getInputValue(1);
+		return getValueInternal(a, b);
+	}
+
+	protected ProbabilisticDouble getValueInternal(
+			AbstractProbabilisticValue<?> a, AbstractProbabilisticValue<?> b) {
 		Map<Double, Double> values = new HashMap<Double, Double>(a.getValues()
 				.size() * b.getValues().size());
 		for (Entry<?, Double> aEntry : a.getValues().entrySet()) {
