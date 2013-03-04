@@ -49,20 +49,6 @@ public class DataSourceManager implements IAdvertisementListener {
 	}
 
 	// called by OSGi-DS
-	public void bindAdvertisementManager(IAdvertisementManager manager) {
-		manager.addAdvertisementListener(this);
-
-		LOG.debug("Bound AdvertisementManager {}", manager);
-	}
-
-	// called by OSGi-DS
-	public void unbindAdvertisementManager(IAdvertisementManager manager) {
-		manager.removeAdvertisementListener(this);
-
-		LOG.debug("Unbound AdvertisementManager {}", manager);
-	}
-
-	// called by OSGi-DS
 	public void bindDataDictionary(IDataDictionary dd) {
 		dataSourcePublisher = new DataSourcePublisher(dd, P2PNewPlugIn.getDiscoveryService());
 		dataSourcePublisher.start();

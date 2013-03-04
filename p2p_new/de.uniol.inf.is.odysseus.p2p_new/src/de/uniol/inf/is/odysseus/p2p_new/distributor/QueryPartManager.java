@@ -82,20 +82,6 @@ public class QueryPartManager implements IAdvertisementListener {
 	}
 
 	// called by OSGi-DS
-	public void bindAdvertisementManager(IAdvertisementManager manager) {
-		manager.addAdvertisementListener(this);
-
-		LOG.debug("Bound AdvertisementManager {}", manager);
-	}
-
-	// called by OSGi-DS
-	public void unbindAdvertisementManager(IAdvertisementManager manager) {
-		manager.removeAdvertisementListener(this);
-
-		LOG.debug("Unbound AdvertisementManager {}", manager);
-	}
-
-	// called by OSGi-DS
 	public void bindExecutor(IExecutor exe) {
 		executor = exe;
 

@@ -48,6 +48,16 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 		LOG.debug("Advertisement manager deactivated");
 	}
 
+	// called by OSGi-DS
+	public final void bindAdvertisementListener( IAdvertisementListener listener ) {
+		addAdvertisementListener(listener);
+	}
+	
+	// called by OSGi-DS
+	public final void unbindAdvertisementListener( IAdvertisementListener listener ) {
+		removeAdvertisementListener(listener);
+	}
+	
 	@Override
 	public void addAdvertisementListener(IAdvertisementListener listener) {
 		Preconditions.checkNotNull(listener, "Advertisement listener must not be null!");
