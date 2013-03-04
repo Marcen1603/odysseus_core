@@ -57,7 +57,7 @@ public class AccessAOPQLGenerator {
 		StringBuilder sb = new StringBuilder();
 		TimestampAO timestampAO = determineTimestampAO(operator);
 
-		sb.append(name).append("=ACCESS({");
+		sb.append(name).append(" = ACCESS({");
 		sb.append("source='").append(operator.getSourcename()).append("'");
 		appendIfNeeded(sb, "wrapper", determineWrapper(operator));
 		appendIfNeeded(sb, "transport", operator.getTransportHandler());

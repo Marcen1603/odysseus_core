@@ -14,7 +14,7 @@ public class SenderAOPQLGenerator {
 	static String generateSenderAOStatement(SenderAO operator, Map<ILogicalOperator, String> names) {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(names.get(operator)).append("=SENDER({");
+		sb.append(names.get(operator)).append(" = SENDER({");
 		sb.append("sink='").append(operator.getSinkname()).append("'");
 		appendIfNeeded(sb, "wrapper", determineWrapper(operator));
 		appendIfNeeded(sb, "transport", operator.getTransportHandler());

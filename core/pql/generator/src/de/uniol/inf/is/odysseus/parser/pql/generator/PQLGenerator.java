@@ -107,7 +107,7 @@ public class PQLGenerator {
 
 	private static void appendOperatorName(StringBuilder sb, ILogicalOperator operator, String name) {
 		sb.append(name);
-		sb.append("=");
+		sb.append(" = ");
 		sb.append(determineOperatorKeyword(operator));
 	}
 
