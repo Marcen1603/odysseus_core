@@ -20,9 +20,11 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
-/*
+/**
+ * @deprecated Use + operator
  * Diese Klasse dient dazu, zwei Matrizen zu addieren.
  */
+@Deprecated
 public class MatrixAdd extends AbstractFunction<Object> {
 
 	/**

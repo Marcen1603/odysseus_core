@@ -55,7 +55,7 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 		functions.add(new ProbabilisticAndOperator());
 		functions.add(new ProbabilisticOrOperator());
 		functions.add(new ProbabilisticNotOperator());
-		
+
 		functions.add(new ProbabilisticSmallerEqualsOperator());
 		functions.add(new ProbabilisticSmallerThanOperator());
 		functions.add(new ProbabilisticGreaterEqualsOperator());
@@ -82,6 +82,7 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 		functions.add(new ProbabilisticContinuousGreaterEqualsOperatorVector());
 		// ProbabilisticFunctionProvider.LOG.info(String.format(
 		// "Register functions: %s", functions));
+
 		return functions;
 	}
 }

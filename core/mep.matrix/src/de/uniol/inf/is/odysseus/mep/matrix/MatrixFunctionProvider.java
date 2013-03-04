@@ -26,6 +26,7 @@ public class MatrixFunctionProvider implements IFunctionProvider{
 	public MatrixFunctionProvider(){
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public List<IFunction<?>> getFunctions() {
 		
@@ -37,6 +38,14 @@ public class MatrixFunctionProvider implements IFunctionProvider{
 		functions.add(new MatrixSub());
 		functions.add(new MatrixTranspose());
 			
+		functions.add(new MatrixMinusOperator());
+		functions.add(new MatrixMultiplicationOperator());
+		functions.add(new MatrixPlusOperator());
+		functions.add(new MatrixDeterminantFunction());
+		functions.add(new MatrixTraceFunction());
+		functions.add(new MatrixTransposeFunction());
+		functions.add(new MatrixInverseFunction());
+		
 		return functions;
 	}
 

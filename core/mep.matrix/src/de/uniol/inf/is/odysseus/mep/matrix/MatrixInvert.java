@@ -20,9 +20,11 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 
-/*
+/**
+ * @deprecated Use "inv" function
  * Diese Klasse dient dazu, die Inverse einer Matrix zu berechnen.
  */
+@Deprecated
 public class MatrixInvert extends AbstractFunction<Object> {
 
 	/**
