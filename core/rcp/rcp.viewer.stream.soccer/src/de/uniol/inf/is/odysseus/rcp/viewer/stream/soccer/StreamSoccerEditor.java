@@ -102,7 +102,7 @@ public class StreamSoccerEditor implements IStreamEditorType{
 			soccerTuple.setZ((Integer)tuple.getAttribute(attributeIndexMap.get("z")));
 		}
 		if(attributeIndexMap.get("v")!=null){
-			soccerTuple.setV((Integer)tuple.getAttribute(attributeIndexMap.get("v")));
+			soccerTuple.setV((Number)tuple.getAttribute(attributeIndexMap.get("v")));
 		}
 		if(attributeIndexMap.get("a")!=null){
 			soccerTuple.setA((Integer)tuple.getAttribute(attributeIndexMap.get("a")));

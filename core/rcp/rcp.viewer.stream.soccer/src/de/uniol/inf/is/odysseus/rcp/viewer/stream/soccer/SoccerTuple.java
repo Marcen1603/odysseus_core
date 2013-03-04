@@ -9,7 +9,7 @@ public class SoccerTuple {
 	Integer x;
 	Integer y;
 	Integer z;
-	Integer v;
+	Number v;
 	Integer a;
 	Integer vx;
 	Integer vy;
@@ -56,10 +56,10 @@ public class SoccerTuple {
 	public void setZ(Integer z) {
 		this.z = z;
 	}
-	public Integer getV() {
+	public Number getV() {
 		return v;
 	}
-	public void setV(Integer v) {
+	public void setV(Number v) {
 		this.v = v;
 	}
 	public Integer getA() {
