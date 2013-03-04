@@ -18,7 +18,8 @@ import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDivisionNumb
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDivisionOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticGreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticGreaterThanOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticIntegrate;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticIntegrateFunction;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticIntegrateMultivariateFunction;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticMinusNumberLHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticMinusNumberRHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticMinusOperator;
@@ -74,7 +75,8 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 		functions.add(new ProbabilisticDivisionNumberRHSOperator());
 		functions.add(new ProbabilisticDivisionNumberLHSOperator());
 
-		functions.add(new ProbabilisticIntegrate());
+		functions.add(new ProbabilisticIntegrateMultivariateFunction());
+		functions.add(new ProbabilisticIntegrateFunction());
 
 		functions.add(new ProbabilisticContinuousSmallerEqualsOperator());
 		functions.add(new ProbabilisticContinuousSmallerEqualsOperatorVector());

@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.genz.Matrix;
 import de.uniol.inf.is.odysseus.probabilistic.math.genz.QSIMVN;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
-public class ProbabilisticIntegrate extends
+public class ProbabilisticIntegrateMultivariateFunction extends
 		AbstractProbabilisticFunction<Double> {
 
 	/**
@@ -30,26 +30,30 @@ public class ProbabilisticIntegrate extends
 	private static final long serialVersionUID = 144107943090837242L;
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE },
-			{ SDFProbabilisticDatatype.MULTIVARIATE_COVARIANCE_MATRIX },
-			{ SDFDatatype.VECTOR_DOUBLE }, { SDFDatatype.VECTOR_DOUBLE } };
+			{ SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT,
+					SDFDatatype.VECTOR_DOUBLE },
+			{ SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT,
+					SDFDatatype.VECTOR_DOUBLE } };
 
 	@Override
 	public String getSymbol() {
-		return "Integrate";
+		return "int";
 	}
 
 	@Override
 	public Double getValue() {
 		ProbabilisticContinuousDouble continuousDouble = (ProbabilisticContinuousDouble) this
 				.getInputValue(0);
-		System.out.println(this.getInputValue(1));
-		System.out.println(((double[][]) this.getInputValue(1)).length);
-		MatrixUtils.createRealVector(((double[][]) this.getInputValue(1))[0]);
 		RealVector lowerBound = MatrixUtils.createRealVector(((double[][]) this
 				.getInputValue(1))[0]);
 		RealVector upperBound = MatrixUtils.createRealVector(((double[][]) this
 				.getInputValue(2))[0]);
-		return cumulativeProbability(continuousDouble, lowerBound, upperBound);
+		return getValueInternal(continuousDouble, lowerBound, upperBound);
+	}
+
+	protected double getValueInternal(ProbabilisticContinuousDouble function,
+			RealVector lowerBound, RealVector upperBound) {
+		return cumulativeProbability(function, lowerBound, upperBound);
 	}
 
 	@Override
@@ -73,7 +77,7 @@ public class ProbabilisticIntegrate extends
 					this.getSymbol()
 							+ " has only "
 							+ this.getArity()
-							+ " argument: A distribution, a covariance matrix and the lower and upper support.");
+							+ " argument: A distribution and the lower and upper support.");
 		}
 		return accTypes[argPos];
 	}
@@ -126,8 +130,8 @@ public class ProbabilisticIntegrate extends
 					.getCovarianceMatrix().getMatrix().getData());
 			Matrix lower = new Matrix(new double[][] { lowerBound.toArray() });
 			Matrix upper = new Matrix(new double[][] { upperBound.toArray() });
-			probability += QSIMVN.cumulativeProbability(5000, covarianceMatrix, lower, upper).p
-					* weight;
+			probability += QSIMVN.cumulativeProbability(5000, covarianceMatrix,
+					lower, upper).p * weight;
 		}
 		return probability;
 	}
@@ -139,7 +143,7 @@ public class ProbabilisticIntegrate extends
 	 */
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
-		ProbabilisticIntegrate function = new ProbabilisticIntegrate();
+		ProbabilisticIntegrateMultivariateFunction function = new ProbabilisticIntegrateMultivariateFunction();
 
 		int variate = 4;
 		int multi = 4;
@@ -153,7 +157,8 @@ public class ProbabilisticIntegrate extends
 			}
 			covarianceMatrixStore.add(new CovarianceMatrix(entries));
 		}
-		ProbabilisticContinuousDouble mixtureDistribution = null;
+		ProbabilisticContinuousDouble mixtureDistribution = new ProbabilisticContinuousDouble(
+				0);
 		final Map<NormalDistribution, Double> mixtures = new HashMap<NormalDistribution, Double>();
 		final double[] mean = new double[multi];
 		for (int i = 0; i < multi; i++) {
@@ -166,21 +171,20 @@ public class ProbabilisticIntegrate extends
 					mean, covarianceMatrixStore.get(0));
 			mixtures.put(distribution, 1.0 / multi);
 		}
-		// for (int i = 0; i < multi; i++) {
-		// mixtureDistribution = new ProbabilisticContinuousDouble(i, new
-		// NormalDistributionMixture(mixtures));
-		// }
+
+		function.getDistributions()
+				.add(new NormalDistributionMixture(mixtures));
+
 		Map<String, Serializable> content = new HashMap<String, Serializable>();
 		// content.put("covariance_matrix_store", covarianceMatrixStore);
-		//function.setAdditionalContent(content);
-		function.setArguments(
-				new Constant<ProbabilisticContinuousDouble>(
-						mixtureDistribution,
-						SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE),
-				new Constant<RealVector>(MatrixUtils
-						.createRealVector(new double[] { 1.0 }),
-						SDFDatatype.VECTOR_DOUBLE), new Constant<RealVector>(
-						MatrixUtils.createRealVector(new double[] { 2.0 }),
+		// function.setAdditionalContent(content);
+		function.setArguments(new Constant<ProbabilisticContinuousDouble>(
+				mixtureDistribution,
+				SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE),
+				new Constant<double[][]>(
+						new double[][] { { 1.0, 1.0, 1.0, 1.0 } },
+						SDFDatatype.VECTOR_DOUBLE), new Constant<double[][]>(
+						new double[][] { { 2.0, 2.0, 2.0, 2.0 } },
 						SDFDatatype.VECTOR_DOUBLE));
 
 		Double value = function.getValue();
