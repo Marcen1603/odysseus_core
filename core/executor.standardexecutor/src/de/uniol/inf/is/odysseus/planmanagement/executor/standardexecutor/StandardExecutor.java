@@ -64,6 +64,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.No
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.QueryAddException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDistribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.ExecutionPlan;
@@ -214,7 +215,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		List<ILogicalQuery> queries = getCompiler().translateQuery(queryStr, parameters.getParserID(), user, getDataDictionary());
 		LOG.trace("Number of queries: " + queries.size());
 
-		if (hasLogicalQueryDistributor()) {
+		if (hasLogicalQueryDistributor() && parameters.get(ParameterDoDistribute.class).getValue()) {
 			queries = getLogicalQueryDistributor().distributeLogicalQueries(this, queries);
 			if (queries == null || queries.isEmpty()) {
 				return Lists.newArrayList();
