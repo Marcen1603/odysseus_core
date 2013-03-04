@@ -81,11 +81,11 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 						try {
 							entry.advertisementOccured(this, advertisement);
 						} catch (Throwable t) {
-							LOG.error("Exception during processing advertisement", t);
+							LOG.error("Exception during processing advertisement {}", advertisement, t);
 						}
 					}
 				} catch (Throwable t) {
-					LOG.error("Exception during evaluating advertisement with selector", t);
+					LOG.error("Exception during evaluating advertisement with selector: {}", advertisement, t);
 				}
 			}
 		}

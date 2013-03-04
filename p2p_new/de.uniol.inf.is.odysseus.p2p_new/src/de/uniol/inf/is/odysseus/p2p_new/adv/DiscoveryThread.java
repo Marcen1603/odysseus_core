@@ -30,6 +30,7 @@ public class DiscoveryThread extends RepeatingJobThread {
 
 	@Override
 	public void doJob() {
+		P2PNewPlugIn.getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, null);
 		P2PNewPlugIn.getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99, null);
 	}
 }

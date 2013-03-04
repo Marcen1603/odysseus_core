@@ -10,6 +10,7 @@ import java.util.Set;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
+import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
@@ -32,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.handler.JxtaTransportHandler;
+import de.uniol.inf.is.odysseus.parser.pql.generator.PQLGenerator;
 
 public class P2PDistributor implements ILogicalQueryDistributor {
 
@@ -53,8 +55,8 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 		}
 
 		List<PeerID> peers = determinePeers();
-		if (peers.isEmpty()) {
-			LOG.debug("Could not find any peers to distribute logical query. Executing all locally.");
+		if (peers.size() <= 1) {
+			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
 			return queriesToDistribute;
 		}
 
@@ -99,8 +101,33 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 
 	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap) {
 		List<QueryPart> localParts = Lists.newArrayList();
-		localParts.addAll(queryPartDistributionMap.keySet());
+		
+		PeerID ownPeerID = P2PNewPlugIn.getOwnPeerID();
+		
+		for( QueryPart part : queryPartDistributionMap.keySet() ) {
+			PeerID assignedPeerID = queryPartDistributionMap.get(part);
+			if( assignedPeerID.equals(ownPeerID)) {
+				localParts.add(part);
+				LOG.debug("QueryPart {} locally stored", part);
+			} else {
+				QueryPartAdvertisement adv = (QueryPartAdvertisement)AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
+				adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+				adv.setPeerID(assignedPeerID);
+				adv.setPqlStatement(PQLGenerator.generatePQLStatement(part.getOperators().iterator().next()));
+				tryPublish(adv);
+				LOG.debug("QueryPart {} published", part);
+			}
+		}
+		
 		return localParts;
+	}
+
+	private static void tryPublish(QueryPartAdvertisement adv) {
+		try {
+			P2PNewPlugIn.getDiscoveryService().publish(adv);
+		} catch (IOException ex) {
+			LOG.error("Could not publish query part", ex);
+		}
 	}
 
 	private static void filterOperators(List<ILogicalOperator> operators) {
