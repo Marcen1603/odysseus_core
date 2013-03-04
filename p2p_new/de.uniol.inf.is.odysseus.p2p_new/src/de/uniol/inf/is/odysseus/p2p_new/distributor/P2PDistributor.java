@@ -52,13 +52,13 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 			return queriesToDistribute;
 		}
 
-		List<PeerID> peers = determinePeers();
-		if (peers.size() <= 1) {
+		List<PeerID> remotePeers = determineRemotePeers();
+		if (remotePeers.isEmpty()) {
 			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
 			return queriesToDistribute;
 		}
 
-		debugPeerStatus(peers);
+		debugPeerStatus(remotePeers);
 
 		List<ILogicalQuery> localQueries = Lists.newArrayList();
 
@@ -76,7 +76,8 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 				continue;
 			}
 
-			Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(peers, queryParts);
+			
+			Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(remotePeers, P2PNewPlugIn.getOwnPeerID(), queryParts);
 
 			insertSenderAndAccess(queryPartDistributionMap);
 
@@ -129,10 +130,10 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static Map<QueryPart, PeerID> assignQueryParts(List<PeerID> peers, List<QueryPart> queryParts) {
+	private static Map<QueryPart, PeerID> assignQueryParts(List<PeerID> remotePeers, PeerID localPeer, List<QueryPart> queryParts) {
 		Map<QueryPart, PeerID> distributed = Maps.newHashMap();
 		Map<String, PeerID> assignedDestinations = Maps.newHashMap();
-		assignedDestinations.put(LOCAL_DESTINATION_NAME, P2PNewPlugIn.getOwnPeerID());
+		assignedDestinations.put(LOCAL_DESTINATION_NAME, localPeer);
 
 		int peerCounter = 0;
 		for (QueryPart queryPart : queryParts) {
@@ -141,9 +142,9 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 			PeerID assignedPeer = assignedDestinations.get(destinationName);
 			if (assignedPeer == null) {
 				// destination has currently no peer assigned
-				assignedPeer = peers.get(peerCounter);
+				assignedPeer = remotePeers.get(peerCounter);
 				// using round robin to assign peers
-				peerCounter = (peerCounter + 1) % peers.size();
+				peerCounter = (peerCounter + 1) % remotePeers.size();
 				assignedDestinations.put(destinationName, assignedPeer);
 			}
 
@@ -266,14 +267,16 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 		return parts;
 	}
 
-	private static List<PeerID> determinePeers() {
+	private static List<PeerID> determineRemotePeers() {
 		try {
 			List<PeerID> foundPeers = Lists.newArrayList();
 
 			Enumeration<Advertisement> peerAdvertisements = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
 			while (peerAdvertisements.hasMoreElements()) {
 				PeerAdvertisement adv = (PeerAdvertisement) peerAdvertisements.nextElement();
-				foundPeers.add(adv.getPeerID());
+				if( !adv.getPeerID().equals(P2PNewPlugIn.getOwnPeerID())) {
+					foundPeers.add(adv.getPeerID());
+				}
 			}
 
 			return foundPeers;
