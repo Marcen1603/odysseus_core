@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
-import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
 public class DataSourceManager implements IAdvertisementListener {

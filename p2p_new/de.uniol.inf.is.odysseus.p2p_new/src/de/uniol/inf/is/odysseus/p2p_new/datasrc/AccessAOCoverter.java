@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.adv;
+package de.uniol.inf.is.odysseus.p2p_new.datasrc;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,7 +25,6 @@ import net.jxta.id.IDFactory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.p2p_new.datasrc.DataSourceManager;
 
 public final class AccessAOCoverter {
 

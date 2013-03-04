@@ -23,8 +23,8 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.p2p_new.datasrc.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.datasrc.SourceAdvertisementInstantiator;
 
 public class P2PNewPlugIn implements BundleActivator {
 

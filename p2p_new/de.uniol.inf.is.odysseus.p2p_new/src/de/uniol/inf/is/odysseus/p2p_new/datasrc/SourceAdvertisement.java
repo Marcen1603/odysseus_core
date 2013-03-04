@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.adv;
+package de.uniol.inf.is.odysseus.p2p_new.datasrc;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
-import de.uniol.inf.is.odysseus.p2p_new.adv.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
