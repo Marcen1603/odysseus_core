@@ -23,8 +23,9 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.PQLGenerator;
 
 public class QueryPart {
 
-	private static final String PARSER_ID = "PQL"
-			;
+	private static final String DESTINATION_PQLPARAMETER_KEY = "DESTINATION";
+	private static final String PARSER_ID = "PQL";
+	
 	private final Map<ILogicalOperator, List<AccessAO>> relativeSources;
 	private final Map<ILogicalOperator, List<SenderAO>> relativeSinks;
 	private final Collection<ILogicalOperator> operators;
@@ -99,6 +100,13 @@ public class QueryPart {
 		return query;
 	}
 
+	public final void removeDestinationName() {
+		for( ILogicalOperator operator : operators ) {
+			operator.setDestinationName(null);
+			operator.addParameterInfo(DESTINATION_PQLPARAMETER_KEY, null);
+		}
+	}
+
 	private ILogicalOperator getOneTopOperator() {
 		for( ILogicalOperator relativeSink : relativeSinks.keySet() ) {
 			List<SenderAO> senderAOs = relativeSinks.get(relativeSink);
@@ -148,4 +156,5 @@ public class QueryPart {
 		}
 		return filteredOperators.build();
 	}
+
 }
