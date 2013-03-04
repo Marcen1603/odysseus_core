@@ -13,12 +13,18 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
+import de.uniol.inf.is.odysseus.parser.pql.generator.PQLGenerator;
 
 public class QueryPart {
 
+	private static final String PARSER_ID = "PQL"
+			;
 	private final Map<ILogicalOperator, List<AccessAO>> relativeSources;
 	private final Map<ILogicalOperator, List<SenderAO>> relativeSinks;
 	private final Collection<ILogicalOperator> operators;
@@ -81,8 +87,19 @@ public class QueryPart {
 	public String toString() {
 		return getName();
 	}
+	
+	public final ILogicalQuery toLogicalQuery() {
+		ILogicalQuery query = new LogicalQuery();
+		query.setLogicalPlan(getOneTopOperator(), true);
+		query.setName(getName());
+		query.setParserId(PARSER_ID);
+		query.setPriority(0);
+		query.setQueryText(PQLGenerator.generatePQLStatement(operators.iterator().next()));
+		query.setUser(SessionManagementService.getActiveSession());
+		return query;
+	}
 
-	public final ILogicalOperator getOneTopOperator() {
+	private ILogicalOperator getOneTopOperator() {
 		for( ILogicalOperator relativeSink : relativeSinks.keySet() ) {
 			List<SenderAO> senderAOs = relativeSinks.get(relativeSink);
 			if( !senderAOs.isEmpty() ) {

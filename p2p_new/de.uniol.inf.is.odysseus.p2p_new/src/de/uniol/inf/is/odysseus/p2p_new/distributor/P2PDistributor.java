@@ -27,21 +27,17 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.handler.JxtaTransportHandler;
-import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
-import de.uniol.inf.is.odysseus.parser.pql.generator.PQLGenerator;
 
 public class P2PDistributor implements ILogicalQueryDistributor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PDistributor.class);
 	private static final Random RAND = new Random();
 	private static final String LOCAL_DESTINATION_NAME = "local";
-	private static final String PARSER_ID = "PQL";
 	
 	private static final String WRAPPER_NAME = "GenericPush";
 	private static final String PROTOCOL_HANDLER_NAME = "SizeByteBuffer";
@@ -84,14 +80,6 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 
 			insertSenderAndAccess(queryPartDistributionMap);
 
-//			localQueries.add(query);
-//			LOG.debug("Folling distribution followed:");
-//			for( QueryPart queryPart : queryParts ) {
-//				LOG.debug("QueryPart '{}'", queryPart);
-//				LOG.debug("{}", PQLGenerator.generatePQLStatement(queryPart.getOperators().iterator().next()));
-//				LOG.debug("");
-//			}
-
 			List<QueryPart> localQueryParts = shareParts( queryPartDistributionMap );
 			localQueries.addAll(transformToQueries(localQueryParts));
 		}
@@ -103,14 +91,7 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 		List<ILogicalQuery> localQueries = Lists.newArrayList();
 		
 		for( QueryPart queryPart : localQueryParts ) {
-			ILogicalQuery query = new LogicalQuery();
-			query.setLogicalPlan(queryPart.getOneTopOperator(), true);
-			query.setName(queryPart.getName());
-			query.setParserId(PARSER_ID);
-			query.setPriority(0);
-			query.setQueryText(PQLGenerator.generatePQLStatement(queryPart.getOperators().iterator().next()));
-			query.setUser(SessionManagementService.getActiveSession());
-			localQueries.add(query);
+			localQueries.add(queryPart.toLogicalQuery());
 		}
 				
 		return localQueries;
