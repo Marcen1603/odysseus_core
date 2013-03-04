@@ -27,6 +27,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
 
 /**
@@ -65,15 +68,36 @@ public class LinearRegressionPO<T extends ITimeInterval> extends
 					.getRegressionCoefficients();
 			RealMatrix residual = area.getResidual();
 
+			NormalDistributionMixture mixture = new NormalDistributionMixture(
+					new double[residual.getColumnDimension()],
+					CovarianceMatrixUtils.fromMatrix(residual));
+			mixture.setAttributes(area.getExplanatoryAttributePos());
+
+			NormalDistributionMixture[] distributios = object
+					.getDistributions();
+			Object[] attributes = object.getAttributes();
+
 			ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(
-					object.getAttributes().length + 2,
+					new Object[attributes.length + 1],
+					new NormalDistributionMixture[distributios.length + 1],
 					object.requiresDeepClone());
+			outputVal.setDistribution(distributios.length, mixture);
+
+			System.arraycopy(distributios, 0, outputVal.getDistributions(), 0,
+					distributios.length);
 			System.arraycopy(object.getAttributes(), 0,
 					outputVal.getAttributes(), 0, object.getAttributes().length);
+
+			for (int i = 0; i < area.getExplanatoryAttributePos().length; i++) {
+				int pos = area.getExplanatoryAttributePos()[i];
+				outputVal.setAttribute(pos, new ProbabilisticContinuousDouble(
+						distributios.length));
+			}
 			outputVal.setAttribute(object.getAttributes().length,
-					regressionCoefficients);
-			outputVal.setAttribute(object.getAttributes().length + 1, residual);
+					regressionCoefficients.getData());
+
 			outputVal.setMetadata((T) object.getMetadata().clone());
+			System.out.println(outputVal);
 			this.transfer(outputVal);
 		}
 	}

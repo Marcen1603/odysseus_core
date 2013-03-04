@@ -77,6 +77,14 @@ public class RegressionTISweepArea extends
 		this.regressionCoefficients = regressionCoefficients;
 	}
 
+	public int[] getExplanatoryAttributePos() {
+		return explanatoryAttributePos;
+	}
+
+	public int[] getDependentAttributePos() {
+		return dependentAttributePos;
+	}
+
 	/**
 	 * Returns <code>true</code> there is at least one more element in the area
 	 * than the number of attributes. More formaly this function returns

@@ -104,8 +104,7 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 	public void initialize() {
 		SDFSchema inputSchema = this.getInputSchema();
 		this.setOutputSchema(SDFSchema.union(inputSchema, new SDFSchema(
-				getInputSchema().getURI(), new SDFAttribute("", "residual",
-						SDFDatatype.MATRIX_DOUBLE), new SDFAttribute("",
-						"regressionCoefficients", SDFDatatype.MATRIX_DOUBLE))));
+				getInputSchema().getURI(), new SDFAttribute("",
+						"__coefficients", SDFDatatype.MATRIX_DOUBLE))));
 	}
 }
