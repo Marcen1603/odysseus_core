@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrat
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Configuration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterAllowRestructuringOfCurrentPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDistribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterShareSimilarOperators;
@@ -70,6 +71,10 @@ public class QueryBuildConfiguration extends
 		if (!contains(ParameterDoRewrite.class)){
 			set(ParameterDoRewrite.TRUE);
 		}
+		if (!contains(ParameterDoDistribute.class)){
+			set(ParameterDoDistribute.FALSE);
+		}
+		
 		if (!contains(ParameterPerformQuerySharing.class)){
 			set(ParameterPerformQuerySharing.FALSE);
 		}
@@ -136,5 +141,4 @@ public class QueryBuildConfiguration extends
 	public IBufferPlacementStrategy getBufferPlacementStrategy(){
 		return getBufferPlacementParameter().getValue();
 	}
-	
 }
