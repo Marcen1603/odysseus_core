@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
 public class JxtaTransportHandler extends AbstractTransportHandler implements PipeMsgListener {
 
@@ -43,6 +44,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 	private InputPipe inputPipe;
 	private OutputPipe outputPipe;
+	private RepeatingJobThread outputPipeResolver;
 
 	private PipeID pipeID;
 
@@ -108,20 +110,19 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 
 		outputPipe = null;
-		new Thread() {
-			@Override
-			public void run() {
-				setName("OutputPipe Resolver");
-				
+		outputPipeResolver = new RepeatingJobThread(500) {
+			
+			public void doJob() {
 				try {
-					while (outputPipe == null) {
-						trySleep(500);
+					if (outputPipe == null) {
 						P2PNewPlugIn.getPipeService().createOutputPipe(pipeAdvertisement, new OutputPipeListener() {
 
 							@Override
 							public void outputPipeEvent(OutputPipeEvent event) {
 								outputPipe = event.getOutputPipe();
 								LOG.info("Output pipe is {}", outputPipe);
+								
+								stopRunning();
 							}
 
 						});
@@ -129,9 +130,10 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 				} catch (IOException ex) {
 					LOG.error("Could not get output pipe", ex);
 				}
-			}
-
-		}.start();
+			};
+		};
+		
+		outputPipeResolver.start();
 
 	}
 
@@ -148,6 +150,10 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		if (outputPipe != null) {
 			outputPipe.close();
 			LOG.info("OutputPipe closed");
+		}
+		
+		if( outputPipeResolver != null && outputPipeResolver.isAlive()) {
+			outputPipeResolver.stopRunning();
 		}
 	}
 
@@ -188,12 +194,4 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 			return null;
 		}
 	}
-	
-	private static void trySleep( long time ) {
-		try {
-			Thread.sleep(time);
-		} catch (InterruptedException ex) {
-		}
-	}
-
 }
