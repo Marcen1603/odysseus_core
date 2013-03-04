@@ -32,11 +32,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractT
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 
-public class JxtaTransportHandler extends AbstractTransportHandler implements PipeMsgListener, OutputPipeListener {
+public class JxtaTransportHandler extends AbstractTransportHandler implements PipeMsgListener {
 
 	public static final String NAME = "JXTA";
 	public static final String PIPEID_TAG = "pipeid";
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaTransportHandler.class);
 
 	private static final String PIPE_NAME = "Odysseus Pipe";
@@ -105,8 +105,33 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 	public void processOutOpen() throws IOException {
 		LOG.info("Process Out Open");
 
-		PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
-		P2PNewPlugIn.getPipeService().createOutputPipe(pipeAdvertisement, this);
+		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
+
+		outputPipe = null;
+		new Thread() {
+			@Override
+			public void run() {
+				setName("OutputPipe Resolver");
+				
+				try {
+					while (outputPipe == null) {
+						trySleep(500);
+						P2PNewPlugIn.getPipeService().createOutputPipe(pipeAdvertisement, new OutputPipeListener() {
+
+							@Override
+							public void outputPipeEvent(OutputPipeEvent event) {
+								outputPipe = event.getOutputPipe();
+								LOG.info("Output pipe is {}", outputPipe);
+							}
+
+						});
+					}
+				} catch (IOException ex) {
+					LOG.error("Could not get output pipe", ex);
+				}
+			}
+
+		}.start();
 
 	}
 
@@ -132,17 +157,10 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 		MessageElement messageElement = event.getMessage().getMessageElement("DATA");
 		byte[] data = messageElement.getBytes(false);
-		
+
 		ByteBuffer bb = ByteBuffer.allocate(data.length);
 		bb.put(data);
 		super.fireProcess(bb);
-	}
-	
-	@Override
-	public void outputPipeEvent(OutputPipeEvent event) {
-		outputPipe = event.getOutputPipe();
-
-		LOG.info("Output pipe is {}", outputPipe);
 	}
 
 	protected void processOptions(Map<String, String> options) {
@@ -161,29 +179,6 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		return advertisement;
 	}
 
-	// private static PipeAdvertisement getPipeAdvertisement(PipeID pipeID) {
-	// try {
-	// Enumeration<Advertisement> advs =
-	// P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.ADV,
-	// null, null);
-	// while( advs.hasMoreElements() ) {
-	// Advertisement adv = advs.nextElement();
-	// if( adv instanceof PipeAdvertisement ) {
-	// PipeAdvertisement padv = (PipeAdvertisement) adv;
-	// if( padv.getPipeID().equals(pipeID)) {
-	// return padv;
-	// }
-	// }
-	// }
-	// LOG.error("Desired pipe advertisement with id {} not found", pipeID);
-	// return null;
-	//
-	// } catch (IOException ex) {
-	// LOG.error("Could not find pipe advertisement for pipeid {}", pipeID, ex);
-	// return null;
-	// }
-	// }
-
 	private static PipeID convertToPipeID(String text) {
 		try {
 			URI id = new URI(text);
@@ -193,4 +188,12 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 			return null;
 		}
 	}
+	
+	private static void trySleep( long time ) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException ex) {
+		}
+	}
+
 }
