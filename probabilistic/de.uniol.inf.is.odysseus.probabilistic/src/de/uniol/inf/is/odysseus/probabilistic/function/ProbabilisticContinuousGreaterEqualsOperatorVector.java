@@ -39,7 +39,8 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends
 	@Override
 	public Double getValue() {
 		ProbabilisticContinuousDouble a = getInputValue(0);
-		RealVector lowerBound = getInputValue(1);
+		RealVector lowerBound = MatrixUtils.createRealVector(((double[][]) this
+				.getInputValue(1))[0]);
 		double[] upperBoundData = new double[lowerBound.getDimension()];
 		Arrays.fill(upperBoundData, Double.NEGATIVE_INFINITY);
 		RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
