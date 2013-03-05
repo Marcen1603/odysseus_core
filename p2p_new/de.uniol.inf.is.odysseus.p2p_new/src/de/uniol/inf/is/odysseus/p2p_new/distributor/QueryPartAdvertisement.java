@@ -34,12 +34,14 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 	private static final String ID_TAG = "id";
 	private static final String PQL_TAG = "pql";
 	private static final String PEER_ID_TAG = "peerid";
+	private static final String SHARED_QUERY_ID_TAG = "sharedQueryID";
 
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG };
 
 	private ID id;
 	private String pqlStatement;
 	private PeerID peerID;
+	private ID sharedQueryID;
 
 	public QueryPartAdvertisement(Element<?> root) {
 		TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
@@ -96,6 +98,14 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 	public PeerID getPeerID() {
 		return peerID;
 	}
+	
+	public void setSharedQueryID(ID sharedQueryID) {
+		this.sharedQueryID = sharedQueryID;
+	}
+	
+	public ID getSharedQueryID() {
+		return sharedQueryID;
+	}
 
 	@Override
 	public Document getDocument(MimeMediaType asMimeType) {
@@ -107,6 +117,7 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 		appendElement(doc, ID_TAG, id.toString());
 		appendElement(doc, PQL_TAG, pqlStatement);
 		appendElement(doc, PEER_ID_TAG, peerID.toString());
+		appendElement(doc, SHARED_QUERY_ID_TAG, sharedQueryID.toString());
 		
 		return doc;
 	}
@@ -120,8 +131,7 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((peerID == null) ? 0 : peerID.hashCode());
-		result = prime * result + ((pqlStatement != null) ? pqlStatement.hashCode() : 0);
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -135,16 +145,7 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 		}
 
 		QueryPartAdvertisement other = (QueryPartAdvertisement) obj;
-		if (pqlStatement == null) {
-			if (other.pqlStatement != null) {
-				return false;
-			}
-		} else if (peerID == null) {
-			if (other.peerID != null) {
-				return false;
-			}
-		}
-		return peerID.equals(other.peerID) && pqlStatement.equals(other.pqlStatement);
+		return id.equals(other.id);
 	}
 
 	private void determineFields(TextElement<?> root) {
@@ -158,20 +159,23 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 
 	private void handleElement(TextElement<?> elem) {
 		if (elem.getName().equals(ID_TAG)) {
-			handleIDTag(this, elem);
+			setID(convertToID(elem.getTextValue()));
 		} else if (elem.getName().equals(PQL_TAG)) {
 			setPqlStatement(elem.getTextValue());
 		} else if (elem.getName().equals(PEER_ID_TAG)) {
 			setPeerID(convertToPeerID(elem.getTextValue()));
+		} else if (elem.getName().equals(SHARED_QUERY_ID_TAG)) {
+			setSharedQueryID(convertToID(elem.getTextValue()));
 		}
 	}
 
-	private static void handleIDTag(QueryPartAdvertisement adv, TextElement<?> elem) {
+	private static ID convertToID(String elem) {
 		try {
-			URI id = new URI(elem.getTextValue());
-			adv.setID(IDFactory.fromURI(id));
+			URI id = new URI(elem);
+			return IDFactory.fromURI(id);
 		} catch (URISyntaxException | ClassCastException ex) {
 			LOG.error("Could not set id", ex);
+			return null;
 		}
 	}
 

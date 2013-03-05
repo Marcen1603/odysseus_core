@@ -10,6 +10,8 @@ import java.util.Set;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
+import net.jxta.document.AdvertisementFactory;
+import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
@@ -18,6 +20,7 @@ import net.jxta.protocol.PeerAdvertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -46,8 +49,8 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 	private static final String ACCESS_NAME = "JxtaAccess_";
 	private static final String SENDER_NAME = "JxtaSender_";
 
-	private IPQLGenerator generator;
-	
+	private static IPQLGenerator generator;
+
 	@Override
 	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender, List<ILogicalQuery> queriesToDistribute) {
 
@@ -79,28 +82,32 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 				continue;
 			}
 
-			
+			ID sharedQueryID = generateSharedQueryID();
 			Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(remotePeers, P2PNewPlugIn.getOwnPeerID(), queryParts);
 
 			insertSenderAndAccess(queryPartDistributionMap);
 
-			List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap);
+			List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID);
 			localQueries.addAll(transformToQueries(localQueryParts, generator));
 		}
 
 		return localQueries;
 	}
-	
-	public final void bindPQLGenerator( IPQLGenerator gen ) {
+
+	private static ID generateSharedQueryID() {
+		return IDFactory.newContentID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), true);
+	}
+
+	public final void bindPQLGenerator(IPQLGenerator gen) {
 		generator = gen;
-		
+
 		LOG.debug("PQLGenerator bound {}", gen);
 	}
-	
-	public final void unbindPQLGenerator( IPQLGenerator gen ) {
-		if( generator == gen ) {
+
+	public final void unbindPQLGenerator(IPQLGenerator gen) {
+		if (generator == gen) {
 			generator = null;
-			
+
 			LOG.debug("PQLGenerator unbound {}", gen);
 		}
 	}
@@ -115,7 +122,7 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 		return localQueries;
 	}
 
-	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap) {
+	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID) {
 		List<QueryPart> localParts = Lists.newArrayList();
 
 		PeerID ownPeerID = P2PNewPlugIn.getOwnPeerID();
@@ -126,11 +133,25 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 				localParts.add(part);
 				LOG.debug("QueryPart {} locally stored", part);
 			} else {
-				QueryPartManager.getInstance().publish(part, assignedPeerID);
+				publish(part, assignedPeerID, sharedQueryID);
 			}
 		}
 
 		return localParts;
+	}
+
+	public static void publish(QueryPart part, PeerID destinationPeer, ID sharedQueryID) {
+		Preconditions.checkNotNull(part, "QueryPart to share must not be null!");
+		part.removeDestinationName();
+
+		QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
+		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+		adv.setPeerID(destinationPeer);
+		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
+		adv.setSharedQueryID(sharedQueryID);
+
+		tryPublishImpl(adv);
+		LOG.debug("QueryPart {} published", part);
 	}
 
 	private static void filterOperators(List<ILogicalOperator> operators) {
@@ -167,7 +188,6 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 
 			queryPart.removeDestinationName();
 			distributed.put(queryPart, assignedPeer);
-			
 
 			LOG.debug("Assign query part {} to peer {}", queryPart, assignedPeer);
 		}
@@ -291,7 +311,7 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 			Enumeration<Advertisement> peerAdvertisements = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
 			while (peerAdvertisements.hasMoreElements()) {
 				PeerAdvertisement adv = (PeerAdvertisement) peerAdvertisements.nextElement();
-				if( !adv.getPeerID().equals(P2PNewPlugIn.getOwnPeerID())) {
+				if (!adv.getPeerID().equals(P2PNewPlugIn.getOwnPeerID())) {
 					foundPeers.add(adv.getPeerID());
 				}
 			}
@@ -370,6 +390,14 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 			for (PeerID peer : peers) {
 				LOG.debug("Peer: {}", peer);
 			}
+		}
+	}
+
+	private static void tryPublishImpl(QueryPartAdvertisement adv) {
+		try {
+			P2PNewPlugIn.getDiscoveryService().publish(adv, 5000, 5000);
+		} catch (IOException ex) {
+			LOG.error("Could not publish query part", ex);
 		}
 	}
 }
