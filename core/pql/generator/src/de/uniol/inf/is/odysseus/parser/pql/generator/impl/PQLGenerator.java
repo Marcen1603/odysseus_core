@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.parser.pql.generator;
+package de.uniol.inf.is.odysseus.parser.pql.generator.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,13 +11,15 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.parser.pql.generator.impl.PQLStatementGeneratorManager;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLStatementGenerator;
 
-public class PQLGenerator {
+public class PQLGenerator implements IPQLGenerator {
 
 	private static final String NAME_SEPARATOR = "_";
 
-	public static String generatePQLStatement(ILogicalOperator startOperator) {
+	@Override
+	public String generatePQLStatement(ILogicalOperator startOperator) {
 		Preconditions.checkNotNull(startOperator, "Operator for generating pql-statement must not be null!");
 
 		List<ILogicalOperator> operators = Lists.newArrayList();

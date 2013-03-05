@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
-import de.uniol.inf.is.odysseus.parser.pql.generator.PQLGenerator;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class QueryPartManager implements IAdvertisementListener {
 
@@ -31,6 +31,7 @@ public class QueryPartManager implements IAdvertisementListener {
 	private final List<ID> consumedAdvertisementIDs = Lists.newArrayList();
 
 	private IExecutor executor;
+	private IPQLGenerator generator;
 
 	public QueryPartManager() {
 		instance = this;
@@ -76,7 +77,7 @@ public class QueryPartManager implements IAdvertisementListener {
 		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
 		adv.setPeerID(destinationPeer);
 		part.removeDestinationName();
-		adv.setPqlStatement(PQLGenerator.generatePQLStatement(part.getOperators().iterator().next()));
+		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
 		tryPublish(adv);
 		LOG.debug("QueryPart {} published", part);
 	}
@@ -94,6 +95,22 @@ public class QueryPartManager implements IAdvertisementListener {
 			LOG.debug("Unbound Executor {}", exe);
 
 			executor = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public void bindPQLGenerator(IPQLGenerator gen) {
+		generator = gen;
+
+		LOG.debug("Bound PQLGenerator {}", gen);
+	}
+
+	// called by OSGi-DS
+	public void unbindPQLGenerator(IPQLGenerator gen) {
+		if (executor == gen) {
+			LOG.debug("Unbound PQLGenerator {}", gen);
+
+			generator = null;
 		}
 	}
 	

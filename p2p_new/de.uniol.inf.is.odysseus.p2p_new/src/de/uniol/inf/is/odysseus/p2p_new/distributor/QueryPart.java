@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
-import de.uniol.inf.is.odysseus.parser.pql.generator.PQLGenerator;
 
 public class QueryPart {
 
@@ -95,7 +94,6 @@ public class QueryPart {
 		query.setName(getName());
 		query.setParserId(PARSER_ID);
 		query.setPriority(0);
-		query.setQueryText(PQLGenerator.generatePQLStatement(operators.iterator().next()));
 		query.setUser(SessionManagementService.getActiveSession());
 		return query;
 	}
