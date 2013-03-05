@@ -28,6 +28,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
@@ -233,7 +234,10 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 				query.setName(queryName.getValue());
 			}
 
-			query.setQueryText(queryStr);
+			if( Strings.isNullOrEmpty(query.getQueryText())) {
+				query.setQueryText(queryStr);
+			}
+			
 			query.setUser(user);
 			query.setParameter(SLA.class.getName(), sla);
 			// // this executor processes reoptimize requests
