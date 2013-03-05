@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.Map;
 
+import com.google.common.base.Strings;
+
 /**
  * Generic sender operator to transfer processing results to arbitrary targets
  * using existing transport, protocol, and data handler.
@@ -126,7 +128,11 @@ public class SenderAO extends AbstractLogicalOperator {
      */
     @Override
     public String getName() {
-        return getSinkname();
+    	String name = super.getName();
+    	if( Strings.isNullOrEmpty(name)) {
+    		return getSinkname();
+    	} 
+    	return name;
     }
 
     /**
