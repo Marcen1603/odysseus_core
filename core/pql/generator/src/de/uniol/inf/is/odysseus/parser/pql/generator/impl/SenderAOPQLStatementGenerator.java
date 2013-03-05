@@ -1,20 +1,24 @@
-package de.uniol.inf.is.odysseus.parser.pql.generator;
+package de.uniol.inf.is.odysseus.parser.pql.generator.impl;
 
 import java.util.Map;
 
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.parser.pql.generator.AbstractPQLStatementGenerator;
 
-public class SenderAOPQLGenerator {
+public class SenderAOPQLStatementGenerator extends AbstractPQLStatementGenerator<SenderAO> {
 
-	static String generateSenderAOStatement(SenderAO operator, Map<ILogicalOperator, String> names) {
+	@Override
+	public Class<SenderAO> getOperatorClass() {
+		return SenderAO.class;
+	}
+	
+	@Override
+	protected String generateParameters(SenderAO operator) {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(names.get(operator)).append(" = SENDER({");
 		sb.append("sink='").append(operator.getSinkname()).append("'");
 		appendIfNeeded(sb, "wrapper", determineWrapper(operator));
 		appendIfNeeded(sb, "transport", operator.getTransportHandler());
@@ -22,27 +26,8 @@ public class SenderAOPQLGenerator {
 		appendIfNeeded(sb, "datahandler", operator.getDataHandler());
 
 		sb.append(", options=").append(convertOptionsMap(operator.getOptionsMap()));
-		sb.append("}");
-
-		if (!operator.getSubscribedToSource().isEmpty()) {
-			sb.append(",");
-			appendSubscriptionNames(sb, operator, names);
-		}
-		sb.append(")");
 
 		return sb.toString();
-
-	}
-
-	private static void appendSubscriptionNames(StringBuilder sb, ILogicalOperator operator, Map<ILogicalOperator, String> names) {
-		LogicalSubscription[] subscriptions = operator.getSubscribedToSource().toArray(new LogicalSubscription[0]);
-		for (int i = 0; i < subscriptions.length; i++) {
-			ILogicalOperator target = subscriptions[i].getTarget();
-			sb.append(names.get(target));
-			if (i < subscriptions.length - 1) {
-				sb.append(",");
-			}
-		}
 	}
 
 	private static void appendIfNeeded(StringBuilder sb, String key, String text) {
@@ -98,4 +83,5 @@ public class SenderAOPQLGenerator {
 		}
 		return element.toString();
 	}
+
 }

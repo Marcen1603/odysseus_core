@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.parser.pql.generator;
+package de.uniol.inf.is.odysseus.parser.pql.generator.impl;
 
 import java.util.List;
 import java.util.Map;
@@ -18,13 +18,43 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.parser.pql.generator.AbstractPQLStatementGenerator;
 
-public class AccessAOPQLGenerator {
+public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator<AccessAO> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AccessAOPQLGenerator.class);
-
+	private static final Logger LOG = LoggerFactory.getLogger(AccessAOPQLStatementGenerator.class);
 	private static IDataDictionary dataDictionary;
 	private static ISession activeUser;
+
+	@Override
+	public Class<AccessAO> getOperatorClass() {
+		return AccessAO.class;
+	}
+	
+	@Override
+	protected String generateParameters(AccessAO operator) {
+		operator = determineRealAccessAO(operator);
+		StringBuilder sb = new StringBuilder();
+		TimestampAO timestampAO = determineTimestampAO(operator);
+
+		sb.append("source='").append(operator.getSourcename()).append("'");
+		appendIfNeeded(sb, "wrapper", determineWrapper(operator));
+		appendIfNeeded(sb, "transport", operator.getTransportHandler());
+		appendIfNeeded(sb, "protocol", operator.getProtocolHandler());
+		appendIfNeeded(sb, "datahandler", operator.getDataHandler());
+		appendIfNeeded(sb, "objecthandler", operator.getObjectHandler());
+		if (timestampAO != null) {
+			appendIfNeeded(sb, "dateformat", timestampAO.getDateFormat());
+		}
+		sb.append(", options=").append(convertOptionsMap(operator.getOptionsMap()));
+		sb.append(", schema=").append(convertSchema(operator.getOutputSchema()));
+		List<String> inputSchema = operator.getInputSchema();
+		if (inputSchema != null && !inputSchema.isEmpty()) {
+			sb.append(", inputschema=").append(convertInputSchema(inputSchema));
+		}
+
+		return sb.toString();
+	}
 
 	public void bindDataDictionary(IDataDictionary dd) {
 		dataDictionary = dd;
@@ -51,51 +81,12 @@ public class AccessAOPQLGenerator {
 		LOG.debug("SessionManagement unbound {}", sm);
 	}
 
-	static String generateAccessAOStatement(AccessAO operator, String name) {
-		operator = determineRealAccessAO(operator);
-
-		StringBuilder sb = new StringBuilder();
-		TimestampAO timestampAO = determineTimestampAO(operator);
-
-		sb.append(name).append(" = ACCESS({");
-		sb.append("source='").append(operator.getSourcename()).append("'");
-		appendIfNeeded(sb, "wrapper", determineWrapper(operator));
-		appendIfNeeded(sb, "transport", operator.getTransportHandler());
-		appendIfNeeded(sb, "protocol", operator.getProtocolHandler());
-		appendIfNeeded(sb, "datahandler", operator.getDataHandler());
-		appendIfNeeded(sb, "objecthandler", operator.getObjectHandler());
-		if (timestampAO != null) {
-			appendIfNeeded(sb, "dateformat", timestampAO.getDateFormat());
+	private static TimestampAO determineTimestampAO(AccessAO operator) {
+		try {
+			return (TimestampAO) operator.getSubscriptions().iterator().next().getTarget();
+		} catch (Throwable t) {
+			return null;
 		}
-		sb.append(", options=").append(convertOptionsMap(operator.getOptionsMap()));
-		sb.append(", schema=").append(convertSchema(operator.getOutputSchema()));
-		List<String> inputSchema = operator.getInputSchema();
-		if (inputSchema != null && !inputSchema.isEmpty()) {
-			sb.append(", inputschema=").append(convertInputSchema(inputSchema));
-		}
-		sb.append("})");
-		return sb.toString();
-
-	}
-
-	private static AccessAO determineRealAccessAO(AccessAO operator) {
-		ILogicalOperator op = dataDictionary.getStreamForTransformation(operator.getSourcename(), activeUser);
-		return op != null ? determineAccessAO(op) : operator;
-	}
-
-	private static AccessAO determineAccessAO(ILogicalOperator start) {
-		if (start instanceof AccessAO) {
-			return (AccessAO) start;
-		}
-
-		for (LogicalSubscription subscription : start.getSubscribedToSource()) {
-			AccessAO accessAO = determineAccessAO(subscription.getTarget());
-			if (accessAO != null) {
-				return accessAO;
-			}
-		}
-
-		return null;
 	}
 
 	private static void appendIfNeeded(StringBuilder sb, String key, String text) {
@@ -103,30 +94,6 @@ public class AccessAOPQLGenerator {
 			sb.append(",");
 			sb.append(key).append("='").append(text).append("'");
 		}
-	}
-
-	private static Object convertOptionsMap(Map<String, String> optionsMap) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-
-		String[] keys = optionsMap.keySet().toArray(new String[0]);
-		for (int i = 0; i < keys.length; i++) {
-
-			sb.append("[");
-
-			Object key = keys[i];
-			String value = optionsMap.get(key);
-			sb.append(convertValue(key)).append(",").append(convertValue(value));
-
-			sb.append("]");
-
-			if (i < keys.length - 1) {
-				sb.append(",");
-			}
-		}
-
-		sb.append("]");
-		return sb.toString();
 	}
 
 	private static String determineWrapper(AccessAO operator) {
@@ -154,14 +121,6 @@ public class AccessAOPQLGenerator {
 		return sb.toString();
 	}
 
-	private static TimestampAO determineTimestampAO(AccessAO operator) {
-		try {
-			return (TimestampAO) operator.getSubscriptions().iterator().next().getTarget();
-		} catch (Throwable t) {
-			return null;
-		}
-	}
-
 	private static String convertSchema(SDFSchema outputSchema) {
 		if (outputSchema.isEmpty()) {
 			return "[]";
@@ -185,6 +144,30 @@ public class AccessAOPQLGenerator {
 		return sb.toString();
 	}
 
+	private static Object convertOptionsMap(Map<String, String> optionsMap) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+
+		String[] keys = optionsMap.keySet().toArray(new String[0]);
+		for (int i = 0; i < keys.length; i++) {
+
+			sb.append("[");
+
+			Object key = keys[i];
+			String value = optionsMap.get(key);
+			sb.append(convertValue(key)).append(",").append(convertValue(value));
+
+			sb.append("]");
+
+			if (i < keys.length - 1) {
+				sb.append(",");
+			}
+		}
+
+		sb.append("]");
+		return sb.toString();
+	}
+
 	private static Object convertValue(Object element) {
 		if (element == null) {
 			return "";
@@ -194,5 +177,25 @@ public class AccessAOPQLGenerator {
 			return "'" + element.toString() + "'";
 		}
 		return element.toString();
+	}
+
+	private static AccessAO determineRealAccessAO(AccessAO operator) {
+		ILogicalOperator op = dataDictionary.getStreamForTransformation(operator.getSourcename(), activeUser);
+		return op != null ? determineAccessAO(op) : operator;
+	}
+
+	private static AccessAO determineAccessAO(ILogicalOperator start) {
+		if (start instanceof AccessAO) {
+			return (AccessAO) start;
+		}
+
+		for (LogicalSubscription subscription : start.getSubscribedToSource()) {
+			AccessAO accessAO = determineAccessAO(subscription.getTarget());
+			if (accessAO != null) {
+				return accessAO;
+			}
+		}
+
+		return null;
 	}
 }
