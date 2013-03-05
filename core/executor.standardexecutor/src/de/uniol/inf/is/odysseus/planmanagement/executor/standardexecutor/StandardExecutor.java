@@ -536,12 +536,12 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 				if (queryToRemove.getLogicalQuery() != null) {
 					queryBuildParameter.remove(queryToRemove.getLogicalQuery());
 				}
-				dataDictionary.removeClosedSources();
-				dataDictionary.removeClosedSinks();
+				getDataDictionary().removeClosedSources();
+				getDataDictionary().removeClosedSinks();
 				LOG.debug("Query " + queryToRemove.getID() + " removed.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REMOVE, queryToRemove));
 				if (queryToRemove.getLogicalQuery() != null) {
-					dataDictionary.removeQuery(queryToRemove.getLogicalQuery(), caller);
+					getDataDictionary().removeQuery(queryToRemove.getLogicalQuery(), caller);
 					this.reloadLog.removeQuery(queryToRemove.getLogicalQuery().getQueryText());
 				}
 			} catch (Exception e) {

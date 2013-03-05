@@ -127,7 +127,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	/**
 	 * Data Dictionary
 	 */
-	protected IDataDictionary dataDictionary;
+	private IDataDictionary dataDictionary;
 
 	/**
 	 * Standard Configurationen
