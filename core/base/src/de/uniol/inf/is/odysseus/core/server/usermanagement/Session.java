@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
@@ -30,13 +31,15 @@ public class Session implements ISession {
     private final static long SESSION_TIMEOUT = OdysseusConfiguration.getLong("sessionTimeout", 10 * 60000);
     private final String id = UUID.randomUUID().toString();
     private final IUser user;
+    private final ITenant tenant;
     private final long start;
     private long end;
     private String token = "";
     
 
-    public Session(final IUser user) {
+    public Session(final IUser user, final ITenant tenant) {
         this.user = user;
+        this.tenant = tenant;
         start = System.currentTimeMillis();
         end = start + SESSION_TIMEOUT;
     }
@@ -59,6 +62,11 @@ public class Session implements ISession {
     @Override
     public IUser getUser() {
         return this.user;
+    }
+    
+    @Override
+    public ITenant getTenant() {
+    	return this.tenant;
     }
 
     /*

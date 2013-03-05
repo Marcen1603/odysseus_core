@@ -17,26 +17,34 @@ package de.uniol.inf.is.odysseus.core.server.usermanagement;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.policy.LogoutPolicy;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
-abstract public class AbstractSessionManagement<USER extends IUser> implements ISessionManagement {
+abstract public class AbstractSessionManagement<USER extends IUser, TENANT extends ITenant> implements
+		ISessionManagement {
 
-	protected IGenericDAO<USER, String> userDAO;
 
 	private final SessionStore sessionStore = SessionStore.getInstance();
 
+	abstract protected IGenericDAO<TENANT, String> getTenantDAO();
+	abstract protected IGenericDAO<USER, String> getUserDAO(ITenant tenant);
+	
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.SessionmanagementService
-	 * #login(java.lang.String, byte[])
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * SessionmanagementService #login(java.lang.String, byte[])
 	 */
 	@Override
-	public ISession login(final String username, final byte[] password) {
-		final IUser user = userDAO.findByName(username);
-		if (user != null && user.isActive() && user.validatePassword(password)) {
-			return updateSessionStore(user);
+	public ISession login(final String username, final byte[] password,
+			String tenantname) {
+		final ITenant tenant = getTenantDAO().findByName(tenantname);
+		if (getUserDAO(tenant) != null) {		
+			final IUser user = getUserDAO(tenant).findByName(username);
+			if (user != null && user.isActive()
+					&& user.validatePassword(password)) {
+				return updateSessionStore(user, tenant);
+			}
 		}
 		return null;
 	}
@@ -51,11 +59,11 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements I
 		return null;
 	}
 
-	protected ISession updateSessionStore(final IUser user) {
+	protected ISession updateSessionStore(final IUser user, final ITenant tenant) {
 		if (this.sessionStore.containsKey(user.getId())) {
 			this.sessionStore.remove(user.getId());
 		}
-		final Session session = new Session(user);
+		final Session session = new Session(user, tenant);
 		this.sessionStore.put(session.getId(), session);
 		return session;
 	}
@@ -63,9 +71,10 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements I
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.SessionmanagementService
-	 * #logout(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * SessionmanagementService
+	 * #logout(de.uniol.inf.is.odysseus.core.server.usermanagement
+	 * .domain.Session)
 	 */
 	@Override
 	public void logout(final ISession caller) {
@@ -78,9 +87,10 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements I
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.service.SessionmanagementService
-	 * #isValid(de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session,
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.service.
+	 * SessionmanagementService
+	 * #isValid(de.uniol.inf.is.odysseus.core.server.usermanagement
+	 * .domain.Session,
 	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session)
 	 */
 	@Override

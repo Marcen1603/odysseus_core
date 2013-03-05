@@ -90,7 +90,7 @@ public class TestConsumer implements Runnable, ICompareSinkListener {
 		checkNotNull(parser, "Parser must be bound");
 		checkNotNull(UserManagement.getSessionmanagement(), "session management not set");
 				
-		ISession session = UserManagement.getSessionmanagement().login("System", "manager".getBytes());
+		ISession session = UserManagement.getSessionmanagement().login("System", "manager".getBytes(), "default");
 		
 		// try to start the executor
 		if (!executor.isRunning()){

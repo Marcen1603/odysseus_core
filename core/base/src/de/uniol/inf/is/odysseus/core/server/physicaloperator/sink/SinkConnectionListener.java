@@ -86,7 +86,8 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 					
 					String username = in.readLine();
 					String password = in.readLine();
-					ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes());
+					String tenant = in.readLine();
+					ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes(), tenant);
 					if (user != null){
 						// TODO: Test if User has right to access sink
 						connectionAllowed = true;

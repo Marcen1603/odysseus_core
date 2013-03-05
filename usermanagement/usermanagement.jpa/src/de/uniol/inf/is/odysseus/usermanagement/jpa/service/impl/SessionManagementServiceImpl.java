@@ -22,24 +22,42 @@ import javax.persistence.Persistence;
 import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractSessionManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.TenantImpl;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.UserImpl;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.persistence.impl.UserDAO;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class SessionManagementServiceImpl extends AbstractSessionManagement<UserImpl> implements ISessionManagement {
+@SuppressWarnings("all")
+public class SessionManagementServiceImpl extends AbstractSessionManagement<UserImpl, TenantImpl> implements ISessionManagement {
 
 	private EntityManagerFactory entityManagerFactory;
 
 	protected void activate(ComponentContext context) {
-		this.entityManagerFactory = Persistence.createEntityManagerFactory("odysseusPU");
-		final EntityManager em = this.entityManagerFactory.createEntityManager();
+		throw new RuntimeException("Currently not implemented!");
 		
-		userDAO = new UserDAO();
-		
-		((UserDAO)userDAO).setEntityManager(em);
+//		this.entityManagerFactory = Persistence.createEntityManagerFactory("odysseusPU");
+//		final EntityManager em = this.entityManagerFactory.createEntityManager();
+//		
+//		userDAO = new UserDAO();
+//		
+//		((UserDAO)userDAO).setEntityManager(em);
+	}
+
+	@Override
+	protected IGenericDAO<TenantImpl, String> getTenantDAO() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IGenericDAO<UserImpl, String> getUserDAO(ITenant tenant) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

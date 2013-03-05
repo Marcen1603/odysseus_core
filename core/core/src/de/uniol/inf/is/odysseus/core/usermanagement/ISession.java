@@ -31,6 +31,13 @@ public interface ISession {
 	 */
 
 	IUser getUser();
+	
+	/**
+	 * @return the Tenant
+	 * 
+	 */
+	ITenant getTenant();
+	
 
 	/**
 	 * 

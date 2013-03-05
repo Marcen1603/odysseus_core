@@ -40,7 +40,7 @@ public class LoginUserPreParserKeyword extends AbstractPreParserKeyword{
 		
 		ISession user = null;
 		if (password != null && password.length() > 0){
-			user = ExecutorHandler.getServerExecutor().login(userName, password.getBytes());
+			user = ExecutorHandler.getServerExecutor().login(userName, password.getBytes(), caller.getTenant().getName());
 		}
 //		else{
 //			user = UserManagement.getSessionmanagement().login(userName, caller);			

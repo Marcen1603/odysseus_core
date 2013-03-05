@@ -54,7 +54,7 @@ public interface IUserManagement {
      * @param role
      * @return
      */
-    boolean hasRole(String name, String role);
+    boolean hasRole(String name, String role, ISession caller);
 
     /**
      * @param roleId

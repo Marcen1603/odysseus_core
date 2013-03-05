@@ -73,7 +73,8 @@ public class Login {
 			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 
 			ISession user = null;
-			user = executor.login(username, password.getBytes());
+			String tenant = "default";
+			user = executor.login(username, password.getBytes(), tenant);
 
 			if (user != null) {
 				// anmelden ok

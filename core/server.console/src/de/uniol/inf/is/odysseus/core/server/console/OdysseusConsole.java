@@ -856,13 +856,13 @@ public class OdysseusConsole implements CommandProvider,
 		}
 	}
 
-	@Help(parameter = "<login username password>", description = "Login user with name and password.")
+	@Help(parameter = "<login username password>", description = "Login user with name, password and tenantname.")
 	public void _login(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		try {
-			if (args.length == 2) {
+			if (args.length == 3) {
 				currentUser = UserManagement.getSessionmanagement().login(
-						args[0], args[1].getBytes());
+						args[0], args[1].getBytes(), args[2]);
 				if (currentUser != null) {
 					ci.println("User " + args[0] + " successfully logged in.");
 				} else {
@@ -1847,7 +1847,7 @@ public class OdysseusConsole implements CommandProvider,
 
 			// parse and run queries
 			ISession user = UserManagement.getSessionmanagement().login(
-					"System", "manager".getBytes());
+					"System", "manager".getBytes(),"default");
 			try {
 				if (i == 0) {
 					ci.println("parsing and running query :");

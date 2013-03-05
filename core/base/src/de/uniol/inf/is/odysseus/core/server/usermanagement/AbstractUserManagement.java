@@ -33,10 +33,11 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPrivilege;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
-abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IRole, PRIVILEGE extends IPrivilege>
+abstract public class AbstractUserManagement<TENANT extends ITenant, USER extends IUser, ROLE extends IRole, PRIVILEGE extends IPrivilege>
 		implements IUserManagement {
 
 	Logger logger = LoggerFactory.getLogger(AbstractUserManagement.class);
@@ -62,18 +63,22 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				|| this.hasPermission(session,
 						UserManagementPermission.ALTER_USER,
 						UserManagementPermission.objectUri)) {
-			final USER tmpUser = this.getUserDAO().find(user.getId());
+			final USER tmpUser = this.getUserDAO(caller.getTenant()).find(user.getId());
 			tmpUser.setPassword(password);
-			this.getUserDAO().update(tmpUser);
+			this.getUserDAO(caller.getTenant()).update(tmpUser);
 		}
 	}
 
-	protected abstract IGenericDAO<USER, String> getUserDAO();
+	protected abstract IGenericDAO<TENANT, String> getTenantDAO();
+	
+	protected abstract IGenericDAO<USER, String> getUserDAO(ITenant tenant);
 
-	protected abstract IGenericDAO<ROLE, String> getRoleDAO();
+	protected abstract IGenericDAO<ROLE, String> getRoleDAO(ITenant tenant);
 
-	protected abstract IGenericDAO<PRIVILEGE, String> getPrivilegeDAO();
+	protected abstract IGenericDAO<PRIVILEGE, String> getPrivilegeDAO(ITenant tenant);
 
+	protected abstract TENANT createEmptyTenant();
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -87,7 +92,7 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				UserManagementPermission.objectUri)) {
 			final ROLE role = createEmptyRole();
 			role.setName(name);
-			this.getRoleDAO().create(role);
+			this.getRoleDAO(caller.getTenant()).create(role);
 			return role;
 		}
 		return null;
@@ -106,12 +111,12 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	public IUser createUser(final String name, final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.CREATE_USER,
 				UserManagementPermission.objectUri)) {
-			if (getUserDAO().findByName(name) == null) {
+			if (getUserDAO(caller.getTenant()).findByName(name) == null) {
 				final USER user = createEmptyUser();
 				user.setName(name);
 				// Every User has the public role
 				user.addRole(findRole("Public", caller));
-				this.getUserDAO().create(user);
+				this.getUserDAO(caller.getTenant()).create(user);
 				fireUserChangedEvent();
 				return user;
 			}
@@ -132,14 +137,14 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	 */
 	@Override
 	public IRole findRole(final String name, final ISession caller) {
-		final ROLE role = this.getRoleDAO().findByName(name);
+		final ROLE role = this.getRoleDAO(caller.getTenant()).findByName(name);
 		return role;
 	}
 
 	@Override
-	public boolean hasRole(String name, String rolename) {
-		final USER user = this.getUserDAO().findByName(name);
-		final ROLE role = this.getRoleDAO().findByName(rolename);
+	public boolean hasRole(String name, String rolename, final ISession caller) {
+		final USER user = this.getUserDAO(caller.getTenant()).findByName(name);
+		final ROLE role = this.getRoleDAO(caller.getTenant()).findByName(rolename);
 		return user.hasRole(role);
 	}
 
@@ -152,7 +157,7 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	 */
 	@Override
 	public IRole getRole(final String roleId, final ISession caller) {
-		final ROLE role = this.getRoleDAO().find(roleId);
+		final ROLE role = this.getRoleDAO(caller.getTenant()).find(roleId);
 		return role;
 	}
 
@@ -170,7 +175,7 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				UserManagementPermission.objectUri)
 				|| this.hasPermission(caller, UserManagementPermission.GET_ALL,
 						UserManagementPermission.objectUri)) {
-			final List<ROLE> roles = this.getRoleDAO().findAll();
+			final List<ROLE> roles = this.getRoleDAO(caller.getTenant()).findAll();
 			return roles;
 		}
 		return null;
@@ -189,9 +194,9 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	public void activateUser(final IUser user, final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.ALTER_USER,
 				UserManagementPermission.objectUri)) {
-			final USER tmpUser = this.getUserDAO().find(user.getId());
+			final USER tmpUser = this.getUserDAO(caller.getTenant()).find(user.getId());
 			tmpUser.setActive(true);
-			this.getUserDAO().update(tmpUser);
+			this.getUserDAO(caller.getTenant()).update(tmpUser);
 			fireUserChangedEvent();
 		}
 	}
@@ -210,9 +215,9 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 		if (this.hasPermission(caller,
 				UserManagementPermission.DEACTIVATE_USER,
 				UserManagementPermission.objectUri)) {
-			final USER tmpUser = this.getUserDAO().find(user.getId());
+			final USER tmpUser = this.getUserDAO(caller.getTenant()).find(user.getId());
 			tmpUser.setActive(false);
-			this.getUserDAO().update(tmpUser);
+			this.getUserDAO(caller.getTenant()).update(tmpUser);
 			fireUserChangedEvent();
 		}
 
@@ -231,8 +236,8 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	public void deleteUser(final IUser user, final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.DELETE_USER,
 				UserManagementPermission.objectUri)) {
-			final USER tmpUser = this.getUserDAO().find(user.getId());
-			this.getUserDAO().delete(tmpUser);
+			final USER tmpUser = this.getUserDAO(caller.getTenant()).find(user.getId());
+			this.getUserDAO(caller.getTenant()).delete(tmpUser);
 			fireUserChangedEvent();
 		}
 	}
@@ -246,7 +251,7 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	 */
 	@Override
 	public IUser findUser(final String name, final ISession caller) {
-		final USER user = this.getUserDAO().findByName(name);
+		final USER user = this.getUserDAO(caller.getTenant()).findByName(name);
 		return user;
 	}
 
@@ -259,7 +264,7 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	 */
 	@Override
 	public IUser getUser(final String userId, final ISession caller) {
-		final IUser user = this.getUserDAO().find(userId);
+		final IUser user = this.getUserDAO(caller.getTenant()).find(userId);
 		return user;
 	}
 
@@ -277,7 +282,7 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				UserManagementPermission.objectUri)
 				|| this.hasPermission(caller, UserManagementPermission.GET_ALL,
 						UserManagementPermission.objectUri)) {
-			final List<USER> users = this.getUserDAO().findAll();
+			final List<USER> users = this.getUserDAO(caller.getTenant()).findAll();
 			return users;
 		}
 		return null;
@@ -298,10 +303,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 			final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.GRANT_ROLE,
 				UserManagementPermission.objectUri)) {
-			final USER tmpUser = this.getUserDAO().find(user.getId());
-			final ROLE tmpRole = this.getRoleDAO().find(role.getId());
+			final USER tmpUser = this.getUserDAO(caller.getTenant()).find(user.getId());
+			final ROLE tmpRole = this.getRoleDAO(caller.getTenant()).find(role.getId());
 			tmpUser.addRole(tmpRole);
-			this.getUserDAO().update(tmpUser);
+			this.getUserDAO(caller.getTenant()).update(tmpUser);
 			fireUserChangedEvent();
 		}
 	}
@@ -321,10 +326,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 			final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.REVOKE_ROLE,
 				UserManagementPermission.objectUri)) {
-			final USER tmpUser = this.getUserDAO().find(user.getId());
-			final ROLE tmpRole = this.getRoleDAO().find(role.getId());
+			final USER tmpUser = this.getUserDAO(caller.getTenant()).find(user.getId());
+			final ROLE tmpRole = this.getRoleDAO(caller.getTenant()).find(role.getId());
 			tmpUser.removeRole(tmpRole);
-			this.getUserDAO().update(tmpUser);
+			this.getUserDAO(caller.getTenant()).update(tmpUser);
 			fireUserChangedEvent();
 		}
 	}
@@ -366,14 +371,14 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 			boolean create = true;
 			for (final IPrivilege privilege : user.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
-					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO().find(
+					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO(caller.getTenant()).find(
 							privilege.getId());
 					if (tmpPrivilege != null) {
 						create = false;
 						for (final IPermission permission : permissions) {
 							tmpPrivilege.addPermission(permission);
 						}
-						this.getPrivilegeDAO().update(tmpPrivilege);
+						this.getPrivilegeDAO(caller.getTenant()).update(tmpPrivilege);
 					}
 				}
 			}
@@ -383,8 +388,8 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				for (final IPermission permission : permissions) {
 					tmpPrivilege.addPermission(permission);
 				}
-				this.getPrivilegeDAO().create(tmpPrivilege);
-				final USER tmpUser = this.getUserDAO().find(user.getId());
+				this.getPrivilegeDAO(caller.getTenant()).create(tmpPrivilege);
+				final USER tmpUser = this.getUserDAO(caller.getTenant()).find(user.getId());
 				tmpUser.addPrivilege(tmpPrivilege);
 
 			}
@@ -431,14 +436,14 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 			boolean create = true;
 			for (final IPrivilege privilege : role.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
-					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO().find(
+					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO(caller.getTenant()).find(
 							privilege.getId());
 					if (tmpPrivilege != null) {
 						create = false;
 						for (final IPermission permission : permissions) {
 							tmpPrivilege.addPermission(permission);
 						}
-						this.getPrivilegeDAO().update(tmpPrivilege);
+						this.getPrivilegeDAO(caller.getTenant()).update(tmpPrivilege);
 					}
 				}
 			}
@@ -448,8 +453,8 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				for (final IPermission permission : permissions) {
 					tmpPrivilege.addPermission(permission);
 				}
-				this.getPrivilegeDAO().create(tmpPrivilege);
-				final ROLE tmpRole = this.getRoleDAO().find(role.getId());
+				this.getPrivilegeDAO(caller.getTenant()).create(tmpPrivilege);
+				final ROLE tmpRole = this.getRoleDAO(caller.getTenant()).find(role.getId());
 				tmpRole.addPrivilege(tmpPrivilege);
 
 			}
@@ -494,13 +499,13 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				UserManagementPermission.objectUri)) {
 			for (final IPrivilege privilege : user.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
-					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO().find(
+					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO(caller.getTenant()).find(
 							privilege.getId());
 					if (tmpPrivilege != null) {
 						for (final IPermission permission : permissions) {
 							tmpPrivilege.removePermission(permission);
 						}
-						this.getPrivilegeDAO().update(tmpPrivilege);
+						this.getPrivilegeDAO(caller.getTenant()).update(tmpPrivilege);
 					}
 				}
 			}
@@ -545,13 +550,13 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				UserManagementPermission.objectUri)) {
 			for (final IPrivilege privilege : role.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
-					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO().find(
+					final PRIVILEGE tmpPrivilege = this.getPrivilegeDAO(caller.getTenant()).find(
 							privilege.getId());
 					if (tmpPrivilege != null) {
 						for (final IPermission permission : permissions) {
 							tmpPrivilege.removePermission(permission);
 						}
-						this.getPrivilegeDAO().update(tmpPrivilege);
+						this.getPrivilegeDAO(caller.getTenant()).update(tmpPrivilege);
 					}
 				}
 			}
@@ -607,9 +612,9 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	public void deleteRole(final IRole role, final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.DELETE_ROLE,
 				UserManagementPermission.objectUri)) {
-			final ROLE tmpRole = this.getRoleDAO().find(role.getId());
+			final ROLE tmpRole = this.getRoleDAO(caller.getTenant()).find(role.getId());
 			if (tmpRole != null) {
-				this.getRoleDAO().delete(tmpRole);
+				this.getRoleDAO(caller.getTenant()).delete(tmpRole);
 			}
 		}
 	}
@@ -626,11 +631,16 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	}
 
 	public void initDefaultUsers() {
-		if (getUserDAO().findByName("System") == null) {
+		TENANT t = getTenantDAO().findByName("default");
+		if (t == null){
+			t = createDefaultTenant();
+		}
+		
+		if (getUserDAO(t).findByName("System") == null) {
 			try {
 				logger.debug("Creating new user database");
-				createSuperUser();
-				createDSUserRole();
+				createSuperUser(t);
+				createDSUserRole(t);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -638,17 +648,24 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 		fireUserChangedEvent();
 	}
 
-	protected void createDSUserRole() {
+	private TENANT createDefaultTenant() {
+		TENANT t = createEmptyTenant();
+		t.setName("default");
+		t = getTenantDAO().create(t);
+		return t;
+	}
+
+	protected void createDSUserRole(ITenant t) {
 		ROLE dsUserRole = createEmptyRole();
 		dsUserRole.setName("DSUser");
-		dsUserRole = getRoleDAO().create(dsUserRole);
+		dsUserRole = getRoleDAO(t).create(dsUserRole);
 		
 		PRIVILEGE userMgmtPrivilege = createEmptyPrivilege();
 		userMgmtPrivilege.setObjectURI(UserManagementPermission.objectUri);
 		userMgmtPrivilege.addPermission(UserManagementPermission.LOGOUT);
-		userMgmtPrivilege = getPrivilegeDAO().create(userMgmtPrivilege);
+		userMgmtPrivilege = getPrivilegeDAO(t).create(userMgmtPrivilege);
 		dsUserRole.addPrivilege(userMgmtPrivilege);
-		getRoleDAO().update(dsUserRole);
+		getRoleDAO(t).update(dsUserRole);
 		
 		PRIVILEGE dictPrivilege = createEmptyPrivilege();
 		dictPrivilege.setObjectURI(DataDictionaryPermission.objectURI);
@@ -657,9 +674,9 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 		dictPrivilege.addPermission(DataDictionaryPermission.ADD_SOURCETYPE);
 		dictPrivilege.addPermission(DataDictionaryPermission.ADD_STREAM);
 		dictPrivilege.addPermission(DataDictionaryPermission.ADD_VIEW);
-		dictPrivilege = getPrivilegeDAO().create(dictPrivilege);
+		dictPrivilege = getPrivilegeDAO(t).create(dictPrivilege);
 		dsUserRole.addPrivilege(dictPrivilege);
-		getRoleDAO().update(dsUserRole);
+		getRoleDAO(t).update(dsUserRole);
 		
 		PRIVILEGE execPrivilege = createEmptyPrivilege();
 		execPrivilege.setObjectURI(ExecutorPermission.objectURI);
@@ -668,21 +685,21 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 		execPrivilege.addPermission(ExecutorPermission.STOP_QUERY);
 		execPrivilege.addPermission(ExecutorPermission.REMOVE_QUERY);
 		
-		execPrivilege = getPrivilegeDAO().create(execPrivilege);
+		execPrivilege = getPrivilegeDAO(t).create(execPrivilege);
 		dsUserRole.addPrivilege(execPrivilege);
-		getRoleDAO().update(dsUserRole);
+		getRoleDAO(t).update(dsUserRole);
 	}
 
-	protected void createSuperUser() {
+	protected void createSuperUser(ITenant t) {
 		USER user = createEmptyUser();
 		user.setName("System");
 		user.setPassword("manager".getBytes());
-		user = getUserDAO().create(user);
+		user = getUserDAO(t).create(user);
 
 		// --- ADMIN ROLE ----
 		ROLE adminRole = createEmptyRole();
 		adminRole.setName("sys_admin");
-		adminRole = getRoleDAO().create(adminRole);
+		adminRole = getRoleDAO(t).create(adminRole);
 
 		PRIVILEGE adminPrivilege = createEmptyPrivilege();
 		adminPrivilege.setObjectURI(UserManagementPermission.objectUri);
@@ -690,14 +707,14 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				.getEnumConstants()) {
 			adminPrivilege.addPermission(permission);
 		}
-		adminPrivilege = getPrivilegeDAO().create(adminPrivilege);
+		adminPrivilege = getPrivilegeDAO(t).create(adminPrivilege);
 		adminRole.addPrivilege(adminPrivilege);
-		getRoleDAO().update(adminRole);
+		getRoleDAO(t).update(adminRole);
 
 		// --- Data dictionary Role ----
 		ROLE dictionaryRole = createEmptyRole();
 		dictionaryRole.setName("datadictionary");
-		dictionaryRole = getRoleDAO().create(dictionaryRole);
+		dictionaryRole = getRoleDAO(t).create(dictionaryRole);
 
 		PRIVILEGE dictPrivilege = createEmptyPrivilege();
 		dictPrivilege.setObjectURI(DataDictionaryPermission.objectURI);
@@ -705,14 +722,14 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				.getEnumConstants()) {
 			dictPrivilege.addPermission(permission);
 		}
-		dictPrivilege = getPrivilegeDAO().create(dictPrivilege);
+		dictPrivilege = getPrivilegeDAO(t).create(dictPrivilege);
 		dictionaryRole.addPrivilege(dictPrivilege);
-		getRoleDAO().update(dictionaryRole);
+		getRoleDAO(t).update(dictionaryRole);
 
 		// --- Configuration Role ----
 		ROLE configurationRole = createEmptyRole();
 		configurationRole.setName("configuration");
-		configurationRole = getRoleDAO().create(configurationRole);
+		configurationRole = getRoleDAO(t).create(configurationRole);
 
 		PRIVILEGE confPrivilege = createEmptyPrivilege();
 		confPrivilege.setObjectURI(ConfigurationPermission.objectURI);
@@ -720,14 +737,14 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				.getEnumConstants()) {
 			confPrivilege.addPermission(permission);
 		}
-		confPrivilege = getPrivilegeDAO().create(confPrivilege);
+		confPrivilege = getPrivilegeDAO(t).create(confPrivilege);
 		configurationRole.addPrivilege(confPrivilege);
-		getRoleDAO().update(configurationRole);
+		getRoleDAO(t).update(configurationRole);
 
 		// --- Query Execution Role ----
 		ROLE queryexecutor = createEmptyRole();
 		queryexecutor.setName("queryexecutor");
-		queryexecutor = getRoleDAO().create(queryexecutor);
+		queryexecutor = getRoleDAO(t).create(queryexecutor);
 
 		PRIVILEGE execPrivilege = createEmptyPrivilege();
 		execPrivilege.setObjectURI(ExecutorPermission.objectURI);
@@ -735,9 +752,9 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				.getEnumConstants()) {
 			execPrivilege.addPermission(permission);
 		}
-		execPrivilege = getPrivilegeDAO().create(execPrivilege);
+		execPrivilege = getPrivilegeDAO(t).create(execPrivilege);
 		queryexecutor.addPrivilege(execPrivilege);
-		getRoleDAO().update(queryexecutor);
+		getRoleDAO(t).update(queryexecutor);
 
 		user.addRole(adminRole);
 		user.addRole(dictionaryRole);
@@ -747,10 +764,10 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 
 		ROLE pub = createEmptyRole();
 		pub.setName("Public");
-		getRoleDAO().create(pub);
+		getRoleDAO(t).create(pub);
 		user.addRole(pub);
 
-		getUserDAO().update(user);
+		getUserDAO(t).update(user);
 	}
 
 }

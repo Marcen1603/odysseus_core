@@ -20,6 +20,7 @@ import java.security.SecureRandom;
 import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
@@ -34,12 +35,15 @@ public class WsClientSession implements ISession {
 	private final static long SESSION_TIMEOUT = 10 * 60000;
 	private final String id = UUID.randomUUID().toString();
 	private final IUser user;
+	@SuppressWarnings("unused")
+	private final String tenant;
 	private final long start;
 	private long end;
 	private String token = "";
 	
-	public WsClientSession(final IUser user) {
+	public WsClientSession(final IUser user, final String tenant) {
 		this.user = user;
+		this.tenant = tenant;
 		start = System.currentTimeMillis();
 		end = start + SESSION_TIMEOUT;
 	}
@@ -52,6 +56,12 @@ public class WsClientSession implements ISession {
 	@Override
 	public IUser getUser() {
 		return this.user;
+	}
+	
+	@Override
+	public ITenant getTenant() {
+		// TODO: find a solution
+		throw new IllegalArgumentException("Tenants are currently not available on Client!");
 	}
 
 	@Override

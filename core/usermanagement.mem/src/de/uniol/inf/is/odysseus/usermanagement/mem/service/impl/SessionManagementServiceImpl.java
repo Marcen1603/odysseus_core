@@ -15,17 +15,25 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.usermanagement.mem.service.impl;
 
-import org.osgi.service.component.ComponentContext;
-
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractSessionManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.TenantDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.UserDAO;
+import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Tenant;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.User;
 
-public class SessionManagementServiceImpl extends AbstractSessionManagement<User>{ 
-	
-	protected void activate(ComponentContext context) {		
-		userDAO = UserDAO.getInstance();
+public class SessionManagementServiceImpl extends AbstractSessionManagement<User, Tenant>{
+
+	@Override
+	protected IGenericDAO<Tenant, String> getTenantDAO() {
+		return TenantDAO.getInstance();
 	}
+
+	@Override
+	protected IGenericDAO<User, String> getUserDAO(ITenant tenant) {
+		return UserDAO.getInstance(tenant);
+	} 
 
 	
 }

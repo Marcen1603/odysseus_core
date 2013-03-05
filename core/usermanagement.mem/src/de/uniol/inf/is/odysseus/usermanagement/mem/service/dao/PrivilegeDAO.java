@@ -16,24 +16,28 @@
 package de.uniol.inf.is.odysseus.usermanagement.mem.service.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractStoreDAO;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Privilege;
 
 public class PrivilegeDAO extends AbstractStoreDAO<Privilege> {
 
-	static PrivilegeDAO dao;
+	static Map<ITenant, PrivilegeDAO> daos = new HashMap<>();
 	
-	static synchronized public PrivilegeDAO getInstance(){
+	static synchronized public PrivilegeDAO getInstance(ITenant tenant){
+		PrivilegeDAO dao = daos.get(tenant);
 		if (dao == null){
-			dao = new PrivilegeDAO();
+			dao = new PrivilegeDAO(tenant);
+			daos.put(tenant, dao);
 		}
 		return dao;
 	}
-
 	
-	PrivilegeDAO() {
+	PrivilegeDAO(ITenant tenant) {
 		super(new MemoryStore<String, Privilege>(), new ArrayList<Privilege>());
 	}
 }

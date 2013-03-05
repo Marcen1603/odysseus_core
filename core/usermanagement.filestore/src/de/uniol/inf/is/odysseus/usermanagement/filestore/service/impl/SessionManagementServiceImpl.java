@@ -17,21 +17,36 @@ package de.uniol.inf.is.odysseus.usermanagement.filestore.service.impl;
 
 import java.io.IOException;
 
-import org.osgi.service.component.ComponentContext;
-
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractSessionManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.TenantDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.UserDAO;
+import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Tenant;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
 
-public class SessionManagementServiceImpl extends AbstractSessionManagement<User>{ 
-	
-	protected void activate(ComponentContext context) {		
+public class SessionManagementServiceImpl extends AbstractSessionManagement<User, Tenant>{
+
+	@Override
+	protected IGenericDAO<Tenant, String> getTenantDAO() {
 		try {
-			userDAO = UserDAO.getInstance();
+			return TenantDAO.getInstance();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
+	@Override
+	protected IGenericDAO<User, String> getUserDAO(ITenant tenant) {
+		try {
+			return UserDAO.getInstance(tenant);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	} 
+	
+	
 	
 }

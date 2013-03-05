@@ -174,10 +174,10 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public ISession login(String username, byte[] password) {
+	public ISession login(String username, byte[] password, String tenant) {
 		this.securitytoken = getWebserviceServer().login(username, new String(password)).getResponseValue();
 		IUser user = new WsClientUser(username, password, true);
-		WsClientSession session = new WsClientSession(user);
+		WsClientSession session = new WsClientSession(user, tenant);
 		session.setToken(this.securitytoken);
 		this.user = session;
 		return session;

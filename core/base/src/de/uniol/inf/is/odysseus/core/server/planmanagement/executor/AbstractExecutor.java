@@ -845,8 +845,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	// Session specific delegates
 
 	@Override
-	public ISession login(String username, byte[] password) {
-		return sessMgmt.login(username, password);
+	public ISession login(String username, byte[] password, String tenant) {
+		return sessMgmt.login(username, password, tenant);
 	}
 
 	@Override

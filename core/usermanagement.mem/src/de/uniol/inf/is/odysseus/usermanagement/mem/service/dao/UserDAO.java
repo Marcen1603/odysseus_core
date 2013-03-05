@@ -16,23 +16,28 @@
 package de.uniol.inf.is.odysseus.usermanagement.mem.service.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractStoreDAO;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.User;
 
 public class UserDAO extends AbstractStoreDAO<User>{
 	
-	static UserDAO userDAO;
+	static Map<ITenant, UserDAO> userDAOs = new HashMap<>();
 	
-	static synchronized public UserDAO getInstance(){
+	static synchronized public UserDAO getInstance(ITenant tenant){
+		UserDAO userDAO = userDAOs.get(tenant);
 		if (userDAO == null){
-			userDAO = new UserDAO();
+			userDAO = new UserDAO(tenant);
+			userDAOs.put(tenant, userDAO);
 		}
 		return userDAO;
 	}
 		
-	UserDAO() {
+	UserDAO(ITenant tenant) {
 		super(new MemoryStore<String, User>(), new ArrayList<User>());
 	}
 

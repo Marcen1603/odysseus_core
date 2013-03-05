@@ -71,7 +71,7 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 	}
 
 	public void bindSessionManagement(ISessionManagement sm) {
-		activeUser = sm.login("System", "manager".getBytes());
+		activeUser = sm.login("System", "manager".getBytes(),"default");
 
 		LOG.debug("SessionManagement bound {}", sm);
 	}

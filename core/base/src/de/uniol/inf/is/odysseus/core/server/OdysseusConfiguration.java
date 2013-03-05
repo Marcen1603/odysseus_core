@@ -95,6 +95,8 @@ public class OdysseusConfiguration {
 		props.setProperty("odysseusHome", odysseusHome);
 
 		// Store-Filename
+		props.setProperty("tenantStoreFilename", odysseusHome
+				+ "store/tenants.store");
 		props.setProperty("userStoreFilename", odysseusHome
 				+ "store/users.store");
 		props.setProperty("privilegStoreFilename", odysseusHome

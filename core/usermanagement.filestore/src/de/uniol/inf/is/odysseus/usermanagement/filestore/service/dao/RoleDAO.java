@@ -17,25 +17,30 @@ package de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractStoreDAO;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Role;
 
 public class RoleDAO extends AbstractStoreDAO<Role>{
 	
-	static RoleDAO dao;
+	static Map<ITenant,RoleDAO> daos = new HashMap<>();
 	
-	static synchronized public RoleDAO getInstance() throws IOException{
+	static synchronized public RoleDAO getInstance(ITenant tenant) throws IOException{
+		RoleDAO dao = daos.get(tenant);
 		if (dao == null){
-			dao = new RoleDAO();
+			dao = new RoleDAO(tenant);
+			daos.put(tenant, dao);
 		}
 		return dao;
 	}
 	
-	RoleDAO() throws IOException {
-		super(new FileStore<String, Role>(OdysseusConfiguration.get("roleStoreFilename")), new ArrayList<Role>());
+	RoleDAO(ITenant tenant) throws IOException {
+		super(new FileStore<String, Role>(tenant.getName()+"_"+OdysseusConfiguration.get("roleStoreFilename")), new ArrayList<Role>());
 	}
 
 }

@@ -16,23 +16,28 @@
 package de.uniol.inf.is.odysseus.usermanagement.mem.service.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractStoreDAO;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Role;
 
 public class RoleDAO extends AbstractStoreDAO<Role>{
 	
-	static RoleDAO dao;
+	static Map<ITenant,RoleDAO> daos = new HashMap<>();
 	
-	static synchronized public RoleDAO getInstance(){
+	static synchronized public RoleDAO getInstance(ITenant tenant){
+		RoleDAO dao = daos.get(tenant);
 		if (dao == null){
-			dao = new RoleDAO();
+			dao = new RoleDAO(tenant);
+			daos.put(tenant, dao);
 		}
 		return dao;
 	}
 	
-	RoleDAO() {
+	RoleDAO(ITenant tenant) {
 		super(new MemoryStore<String, Role>(), new ArrayList<Role>());
 	}
 

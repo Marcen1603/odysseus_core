@@ -221,7 +221,7 @@ public class DashboardPlugInTest {
 		}
 
 		@Override
-		public ISession login(String username, byte[] password) {
+		public ISession login(String username, byte[] password, String tenant) {
 			return null;
 		}
 

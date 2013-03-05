@@ -24,8 +24,10 @@ import org.osgi.service.component.ComponentContext;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.PrivilegeImpl;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.RoleImpl;
+import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.TenantImpl;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.UserImpl;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.persistence.impl.PrivilegeDAO;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.persistence.impl.RoleDAO;
@@ -34,7 +36,8 @@ import de.uniol.inf.is.odysseus.usermanagement.jpa.persistence.impl.UserDAO;
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class UserManagementServiceImpl extends AbstractUserManagement<UserImpl,RoleImpl,PrivilegeImpl> implements IUserManagement {
+@SuppressWarnings("all")
+public class UserManagementServiceImpl extends AbstractUserManagement<TenantImpl,UserImpl,RoleImpl,PrivilegeImpl> implements IUserManagement {
 	
     private EntityManagerFactory entityManagerFactory;
     private EntityManager em;
@@ -69,7 +72,8 @@ public class UserManagementServiceImpl extends AbstractUserManagement<UserImpl,R
 	}
 
     @Override
-    protected IGenericDAO<UserImpl, String> getUserDAO() {
+    protected IGenericDAO<UserImpl, String> getUserDAO(ITenant tenant) {
+    	// FIXME: Treat tenant
         if( userDAO == null ) {
             userDAO = new UserDAO();
             userDAO.setEntityManager(em);
@@ -78,8 +82,9 @@ public class UserManagementServiceImpl extends AbstractUserManagement<UserImpl,R
     }
 
     @Override
-    protected IGenericDAO<RoleImpl, String> getRoleDAO() {
-        if( roleDAO == null ) {
+    protected IGenericDAO<RoleImpl, String> getRoleDAO(ITenant tenant) {
+    	// FIXME: Treat tenant
+    	if( roleDAO == null ) {
             roleDAO = new RoleDAO();
             roleDAO.setEntityManager(em);
         }
@@ -87,12 +92,25 @@ public class UserManagementServiceImpl extends AbstractUserManagement<UserImpl,R
     }
 
     @Override
-    protected IGenericDAO<PrivilegeImpl, String> getPrivilegeDAO() {
-        if( privDAO == null ) {
+    protected IGenericDAO<PrivilegeImpl, String> getPrivilegeDAO(ITenant tenant) {
+    	// FIXME: Treat tenant
+    	if( privDAO == null ) {
             privDAO = new PrivilegeDAO();
             privDAO.setEntityManager(em);
         }
         return privDAO;
     }
+
+	@Override
+	protected IGenericDAO<TenantImpl, String> getTenantDAO() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected TenantImpl createEmptyTenant() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

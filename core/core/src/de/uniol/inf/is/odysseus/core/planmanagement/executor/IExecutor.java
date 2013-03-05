@@ -202,7 +202,7 @@ public interface IExecutor extends IClientPlanManager{
 
 	// Facade
 	// Session Management methods
-	ISession login(String username, byte[] password);
+	ISession login(String username, byte[] password, String tenantname);
 
 	void logout(ISession caller);
 	

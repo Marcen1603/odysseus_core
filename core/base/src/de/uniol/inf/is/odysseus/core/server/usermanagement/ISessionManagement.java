@@ -26,7 +26,7 @@ public interface ISessionManagement {
 	 * @param password
 	 * @return
 	 */
-	ISession login(String username, byte[] password);
+	ISession login(String username, byte[] password, String tenantname);
 
 	/**
 	 * @param caller

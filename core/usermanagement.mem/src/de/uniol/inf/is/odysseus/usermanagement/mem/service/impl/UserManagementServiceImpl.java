@@ -20,65 +20,66 @@ import org.osgi.service.component.ComponentContext;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.PrivilegeDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.RoleDAO;
+import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.TenantDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.UserDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Privilege;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Role;
+import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Tenant;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.User;
 
-public class UserManagementServiceImpl extends AbstractUserManagement<User, Role, Privilege> implements IUserManagement {
+public class UserManagementServiceImpl extends
+		AbstractUserManagement<Tenant, User, Role, Privilege> implements
+		IUserManagement {
 
-    private IGenericDAO<User, String> userDAO;
-    private IGenericDAO<Role, String> roleDAO;
-    private IGenericDAO<Privilege, String> privilegeDAO;
+	@Override
+	protected Tenant createEmptyTenant() {
+		return new Tenant();
+	}
+	
+	@Override
+	protected Role createEmptyRole() {
+		return new Role();
+	}
 
-    @Override
-    protected Role createEmptyRole() {
-        return new Role();
-    }
+	@Override
+	protected User createEmptyUser() {
+		return new User();
+	}
 
-    @Override
-    protected User createEmptyUser() {
-        return new User();
-    }
+	@Override
+	protected Privilege createEmptyPrivilege() {
+		return new Privilege();
+	}
 
-    @Override
-    protected Privilege createEmptyPrivilege() {
-        return new Privilege();
-    }
+	protected void activate(ComponentContext context) {
+		initDefaultUsers();
+	}
 
-    protected void activate(ComponentContext context) {
-        initDefaultUsers();
-    }
+	protected void deactivate(ComponentContext context) {
 
-    protected void deactivate(ComponentContext context) {
+	}
 
-    }
+	@Override
+	protected IGenericDAO<User, String> getUserDAO(ITenant tenant) {
+		return UserDAO.getInstance(tenant);
+	}
 
-    @Override
-    protected IGenericDAO<User, String> getUserDAO() {
-        if (userDAO == null) {
-            userDAO = UserDAO.getInstance();
-            initDefaultUsers();
-        }
-        return userDAO;
-    }
+	@Override
+	protected IGenericDAO<Role, String> getRoleDAO(ITenant tenant) {
+		return RoleDAO.getInstance(tenant);
+	}
 
-    @Override
-    protected IGenericDAO<Role, String> getRoleDAO() {
-        if (roleDAO == null) {
-            roleDAO = RoleDAO.getInstance();
-        }
-        return roleDAO;
-    }
-
-    @Override
-    protected IGenericDAO<Privilege, String> getPrivilegeDAO() {
-        if (privilegeDAO == null) {
-            privilegeDAO = PrivilegeDAO.getInstance();
-        }
-        return privilegeDAO;
-    }
+	@Override
+	protected IGenericDAO<Privilege, String> getPrivilegeDAO(ITenant tenant) {
+		return PrivilegeDAO.getInstance(tenant);
+	}
+	
+	@Override
+	protected IGenericDAO<Tenant, String> getTenantDAO() {
+		return TenantDAO.getInstance();
+	}
 
 }

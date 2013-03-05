@@ -87,7 +87,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		checkNotNull(UserManagement.getSessionmanagement(), "session management not set");
 		checkArgument(args.length == 3, "NexmarkTest needs exactly three arguments: [User], [Password], [FolderWithQueries]");
 		
-		ISession session = UserManagement.getSessionmanagement().login(args[0], args[1].getBytes());
+		ISession session = UserManagement.getSessionmanagement().login(args[0], args[1].getBytes(),"default");
 
 		out = createWriter(args[2]);
 

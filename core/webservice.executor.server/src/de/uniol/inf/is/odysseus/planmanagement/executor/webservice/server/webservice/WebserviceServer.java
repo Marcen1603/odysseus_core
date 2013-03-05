@@ -137,9 +137,9 @@ public class WebserviceServer {
 
 	@WebResult(name = "securitytoken")
 	public StringResponse login(@WebParam(name = "username") String username,
-			@WebParam(name = "password") String password) {
+			@WebParam(name = "password") String password, @WebParam(name = "tenantname") String tenantname) {
 		ISession user = UserManagement.getSessionmanagement().login(username,
-				password.getBytes());
+				password.getBytes(), tenantname);
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
