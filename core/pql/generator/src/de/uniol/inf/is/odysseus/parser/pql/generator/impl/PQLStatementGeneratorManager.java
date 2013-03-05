@@ -35,7 +35,7 @@ public class PQLStatementGeneratorManager {
 		generators.put(generator.getOperatorClass(), (IPQLStatementGenerator<ILogicalOperator>) generator);
 	}
 	
-	public void unbindPQLStatementGenartor( IPQLStatementGenerator<?> generator ) {
+	public void unbindPQLStatementGenerator( IPQLStatementGenerator<?> generator ) {
 		generators.remove(generator.getOperatorClass());
 	}
 	
