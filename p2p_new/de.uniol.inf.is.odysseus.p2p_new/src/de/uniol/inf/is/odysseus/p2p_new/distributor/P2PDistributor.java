@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.handler.JxtaTransportHandler;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class P2PDistributor implements ILogicalQueryDistributor {
 
@@ -45,6 +46,8 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 	private static final String ACCESS_NAME = "JxtaAccess_";
 	private static final String SENDER_NAME = "JxtaSender_";
 
+	private IPQLGenerator generator;
+	
 	@Override
 	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender, List<ILogicalQuery> queriesToDistribute) {
 
@@ -82,7 +85,31 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 			insertSenderAndAccess(queryPartDistributionMap);
 
 			List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap);
-			localQueries.addAll(transformToQueries(localQueryParts));
+			localQueries.addAll(transformToQueries(localQueryParts, generator));
+		}
+
+		return localQueries;
+	}
+	
+	public final void bindPQLGenerator( IPQLGenerator gen ) {
+		generator = gen;
+		
+		LOG.debug("PQLGenerator bound {}", gen);
+	}
+	
+	public final void unbindPQLGenerator( IPQLGenerator gen ) {
+		if( generator == gen ) {
+			generator = null;
+			
+			LOG.debug("PQLGenerator unbound {}", gen);
+		}
+	}
+
+	private static Collection<? extends ILogicalQuery> transformToQueries(List<QueryPart> localQueryParts, IPQLGenerator generator) {
+		List<ILogicalQuery> localQueries = Lists.newArrayList();
+
+		for (QueryPart queryPart : localQueryParts) {
+			localQueries.add(queryPart.toLogicalQuery(generator));
 		}
 
 		return localQueries;
@@ -104,16 +131,6 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 		}
 
 		return localParts;
-	}
-
-	private static Collection<? extends ILogicalQuery> transformToQueries(List<QueryPart> localQueryParts) {
-		List<ILogicalQuery> localQueries = Lists.newArrayList();
-
-		for (QueryPart queryPart : localQueryParts) {
-			localQueries.add(queryPart.toLogicalQuery());
-		}
-
-		return localQueries;
 	}
 
 	private static void filterOperators(List<ILogicalOperator> operators) {

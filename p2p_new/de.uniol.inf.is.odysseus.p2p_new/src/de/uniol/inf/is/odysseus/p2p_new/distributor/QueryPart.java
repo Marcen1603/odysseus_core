@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class QueryPart {
 
@@ -88,13 +89,14 @@ public class QueryPart {
 		return getName();
 	}
 	
-	public final ILogicalQuery toLogicalQuery() {
+	public final ILogicalQuery toLogicalQuery(IPQLGenerator generator) {
 		ILogicalQuery query = new LogicalQuery();
 		query.setLogicalPlan(getOneTopOperator(), true);
 		query.setName(getName());
 		query.setParserId(PARSER_ID);
 		query.setPriority(0);
 		query.setUser(SessionManagementService.getActiveSession());
+		query.setQueryText(generator.generatePQLStatement(query.getLogicalPlan()));
 		return query;
 	}
 
