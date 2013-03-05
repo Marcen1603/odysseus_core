@@ -1,0 +1,354 @@
+/*******************************************************************************
+ * Copyright 2012 The Odysseus Team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.osgeo.proj4j.CRSFactory;
+import org.osgeo.proj4j.CoordinateReferenceSystem;
+import org.osgeo.proj4j.ProjCoordinate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
+
+public class ScreenManager {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ScreenManager.class);
+	private static final Color WHITE = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+
+	private StreamMapEditorPart editor;
+	private ScreenTransformation transformation;
+	private Canvas canvas;
+	private String infoText;
+
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private MapMouseListener mouseListener;
+
+	public ScreenManager(ScreenTransformation transformation, StreamMapEditorPart editor) {
+		this.transformation = transformation;
+		this.transformation.setScreenManager(this);
+		this.editor = editor;
+		setSRID(3785);
+		ProjCoordinate p = new ProjCoordinate();
+		this.crs.getProjection().project(new ProjCoordinate(0, 0), p);
+		setCenterUV((int) (p.x / scale), (int) (p.y / scale));
+	}
+
+	private Coordinate centerEPSG = new Coordinate(0, 0);
+	private Coordinate centerUV = new Coordinate(0, 0);
+	// mapSizeScreenCoord;
+	private int widthHalf, heightHalf = 175;
+	private int height;
+	private double scale = 100000;
+	private int srid = -1;
+	private CoordinateReferenceSystem crs;
+
+	// EPSG:3785 or EPSG:900913
+
+	public void setSRID(int srid) {
+		if (this.srid != srid) {
+			this.srid = srid;
+			CRSFactory csFactory = new CRSFactory();
+			this.crs = csFactory.createFromName("EPSG:" + this.srid);
+			this.crs.getProjection().initialize();
+		}
+	}
+
+	public int getSRID() {
+		return srid;
+	}
+
+	// void setCenter(int x, int y) {
+	// centerEPSG = new Coordinate(x, y);
+	// }
+
+	public Coordinate getCenter() {
+		return (Coordinate) this.centerEPSG.clone();
+	}
+
+	void setCenterUV(double x, double y) {
+		Coordinate oldCenterUV = centerUV;
+		centerUV = new Coordinate(x, y);
+		if (height != 0) {
+			centerEPSG.x = -centerUV.x * scale;
+			centerEPSG.y = (centerUV.y) * scale;
+		}
+//		ProjCoordinate p = new ProjCoordinate(centerEPSG.x, centerEPSG.y);
+//		ProjCoordinate d = new ProjCoordinate();
+//		this.crs.getProjection().inverseProject(p, d);
+//		System.out.println(centerUV + " " + centerEPSG + " " + d + " " + scale);
+		this.pcs.firePropertyChange("centerUV", oldCenterUV, centerUV);
+	}
+
+	public Coordinate getCenterUV() {
+		return new Coordinate(this.centerUV.x, this.centerUV.y);
+	}
+
+	public double getScale() {
+		// TODO Auto-generated method stub
+		return this.scale;
+	}
+
+	protected Canvas createCanvas(Composite parent) {
+		Canvas canvas = new Canvas(parent, SWT.DOUBLE_BUFFERED);
+		canvas.setBackground(WHITE);
+		canvas.addPaintListener(new GeometryPaintListener(editor));
+
+		canvas.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+
+				// if (e.character == 'z')
+				// transformation.zoomin(1);
+				//
+				// if (e.character == 'x')
+				// transformation.zoomout(1);
+
+				redraw();
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ARROW_UP)
+					panNorth(10);
+				if (e.keyCode == SWT.ARROW_DOWN)
+					panSouth(10);
+				if (e.keyCode == SWT.ARROW_LEFT)
+					panWest(10);
+				if (e.keyCode == SWT.ARROW_RIGHT)
+					panEast(10);
+				redraw();
+			}
+
+		});
+
+		mouseListener = new MapMouseListener(this, editor);
+		canvas.addMouseListener(mouseListener);
+		canvas.addMouseMoveListener(mouseListener);
+		canvas.addMouseWheelListener(mouseListener);
+		canvas.addMouseTrackListener(mouseListener);
+		canvas.addControlListener(new ControlListener() {
+
+			@Override
+			public void controlResized(ControlEvent e) {
+				setOffset(getCanvas().getSize().x, getCanvas().getSize().y);
+				redraw();
+			}
+
+			@Override
+			public void controlMoved(ControlEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		return canvas;
+	}
+
+	protected void setOffset(int width, int height) {
+		this.height = height;
+		this.widthHalf = (int) (0.5d * width);
+		this.heightHalf = (int) (0.5d * height);
+		this.pcs.firePropertyChange("mapSize", null, null);
+	}
+
+	public int[] getOffset() {
+		return new int[] { widthHalf, heightHalf };
+	}
+
+	// public Point getCursorPosition() {
+	//
+	// return new Point(transformation.getMapPosition().x +
+	// mouseListener.mouseCoords.x,
+	// transformation.getMapPosition().y + mouseListener.mouseCoords.y);
+	// }
+
+	public final Canvas getCanvas() {
+		return canvas;
+	}
+
+	public final boolean hasCanvasViewer() {
+		return getCanvas() != null;
+	}
+
+	public void setCanvasViewer(Canvas viewer) {
+		if (viewer != null) {
+			this.canvas = viewer;
+		} else {
+			LOG.error("Canvas Viewer is null.");
+		}
+	}
+
+	public final Display getDisplay() {
+		return canvas.getDisplay();
+	}
+
+	public ScreenTransformation getTransformation() {
+		return transformation;
+	}
+
+	public Rectangle getMouseSelection() {
+		return mouseListener.getSelection();
+	}
+
+	public String getInfoText() {
+		return infoText;
+	}
+
+	public Envelope getViewportWorldCoord() {
+		return getViewportWorldCoord(this.widthHalf, this.heightHalf);
+	}
+
+	public Envelope getViewportWorldCoord(int widthHalf, int heightHalf) {
+		Envelope env = new Envelope(this.centerEPSG);
+		env.expandBy(widthHalf * scale, heightHalf * scale);
+		return env;
+	}
+
+	private double zoomincrement = 1.5;
+	private boolean renderComplete;
+
+	public void zoomOut(Point pivot) {
+
+		double oldScale = this.scale;
+		this.scale *= zoomincrement;
+		Coordinate c = this.getCenterUV();
+		Coordinate p = new Coordinate(pivot.x - widthHalf, pivot.y - heightHalf);
+		double dx = Math.max(p.x, c.x) - Math.min(p.x, c.x);
+		double dy = Math.max(p.y, c.y) - Math.min(p.y, c.y);
+		Coordinate nc = new Coordinate();
+		if (p.x < c.x)
+			nc.x = (c.x - (dx * (zoomincrement - 1)) / zoomincrement);
+		else
+			nc.x = (c.x + (dx * (zoomincrement - 1)) / zoomincrement);
+		if (p.y < c.y)
+			nc.y = (c.y - (dy * (zoomincrement - 1)) / zoomincrement);
+		else
+			nc.y = (c.y + (dy * (zoomincrement - 1)) / zoomincrement);
+		this.setCenterUV(nc.x, nc.y);
+		pcs.firePropertyChange("scale", oldScale, scale);
+		redraw();
+	}
+
+	public void zoomIn(Point pivot) {
+		double oldScale = this.scale;
+		this.scale /= zoomincrement;
+		Coordinate c = this.getCenterUV();
+		Coordinate c1 = (Coordinate) c.clone();
+		c1.x *= zoomincrement;
+		c1.y *= zoomincrement;
+		Coordinate p = new Coordinate((pivot.x - widthHalf), (pivot.y - heightHalf));
+		double dx = Math.max(p.x, c.x) - Math.min(p.x, c.x);
+		double dy = Math.max(p.y, c.y) - Math.min(p.y, c.y);
+		Coordinate nc = new Coordinate();
+		if (p.x < c.x)
+			nc.x = c.x + dx * (zoomincrement - 1);
+		else
+			nc.x = c.x - dx * (zoomincrement - 1);
+		if (p.y < c.y) {
+			nc.y = c.y + dy * (zoomincrement - 1);
+		} else {
+			nc.y = c.y - dy * (zoomincrement - 1);
+		}
+		this.setCenterUV(nc.x, nc.y);
+		pcs.firePropertyChange("scale", oldScale, scale);
+		redraw();
+	}
+
+
+	public void panNorth(int steps) {
+		setCenterUV(getCenterUV().x, getCenterUV().y - steps);
+	}
+
+	public void panSouth(int steps) {
+		setCenterUV(getCenterUV().x, getCenterUV().y + steps);
+	}
+
+	public void panWest(int steps) {
+		setCenterUV(getCenterUV().x - steps, getCenterUV().y);
+	}
+
+	public void panEast(int steps) {
+		setCenterUV(getCenterUV().x + steps, getCenterUV().y);
+	}
+
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
+
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(propertyName, listener);
+	}
+
+	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(propertyName, listener);
+	}
+
+	int milliseconds = 10;
+	Renderer renderer = null;
+	public void redraw() {
+		if (renderer == null) {
+			renderer = new Renderer();
+			getDisplay().timerExec(milliseconds, renderer);
+		}
+		renderer.setRedrawIntent(true);
+	}
+
+	public void setRenderComplete(boolean b) {
+		renderComplete = b;
+
+	}
+
+	private class Renderer implements Runnable {
+
+		private boolean redrawIntent = false;
+
+		@Override
+		public void run() {
+			if (renderComplete == true & redrawIntent == true) {
+				setRenderComplete(false);
+				canvas.redraw();
+				setRedrawIntent(false);
+			}
+			if (!canvas.isDisposed())
+				canvas.getDisplay().timerExec(milliseconds, renderer);
+		}
+
+		public void setRedrawIntent(boolean b) {
+			redrawIntent = b;
+		}
+
+	}
+}
