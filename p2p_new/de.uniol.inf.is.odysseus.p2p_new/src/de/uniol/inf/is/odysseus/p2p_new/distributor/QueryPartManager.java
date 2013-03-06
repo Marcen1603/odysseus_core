@@ -55,6 +55,8 @@ public class QueryPartManager implements IAdvertisementListener {
 				for( Integer id : ids ) {
 					executor.startQuery(id, SessionManagementService.getActiveSession());
 				}
+				QueryPartController.getInstance().registerAsSlave( ids, adv.getSharedQueryID());
+				
 			} catch( Throwable t ) {
 				LOG.error("Could not execute query part", t);
 			} finally {

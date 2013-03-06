@@ -84,11 +84,13 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 
 			ID sharedQueryID = generateSharedQueryID();
 			Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(remotePeers, P2PNewPlugIn.getOwnPeerID(), queryParts);
-
 			insertSenderAndAccess(queryPartDistributionMap);
 
 			List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID);
-			localQueries.addAll(transformToQueries(localQueryParts, generator));
+			Collection<ILogicalQuery> logicalQueries = transformToQueries(localQueryParts, generator);
+			QueryPartController.getInstance().registerAsMaster(logicalQueries, sharedQueryID);
+			
+			localQueries.addAll(logicalQueries);
 		}
 
 		return localQueries;
@@ -112,7 +114,7 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static Collection<? extends ILogicalQuery> transformToQueries(List<QueryPart> localQueryParts, IPQLGenerator generator) {
+	private static Collection<ILogicalQuery> transformToQueries(List<QueryPart> localQueryParts, IPQLGenerator generator) {
 		List<ILogicalQuery> localQueries = Lists.newArrayList();
 
 		for (QueryPart queryPart : localQueryParts) {

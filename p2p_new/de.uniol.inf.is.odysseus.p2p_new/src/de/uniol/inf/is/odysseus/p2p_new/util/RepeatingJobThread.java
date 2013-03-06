@@ -32,7 +32,7 @@ public class RepeatingJobThread extends StoppableThread{
 	}
 
 	public RepeatingJobThread(long executionIntervalMillis, String threadName) {
-		Preconditions.checkArgument(executionIntervalMillis > 0, "Discover interval for other peers must be positive!");
+		Preconditions.checkArgument(executionIntervalMillis >= 0, "Execution interval must be zero or positive!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(threadName), "Thread name must not be null or empty!");
 
 		this.executionIntervalMillis = executionIntervalMillis;
@@ -48,7 +48,9 @@ public class RepeatingJobThread extends StoppableThread{
 			lastExecutionTimestamp = System.currentTimeMillis();
 			doJob();
 			
-			trySleep(executionIntervalMillis);
+			if( executionIntervalMillis > 0 ) {
+				trySleep(executionIntervalMillis);
+			}
 		}
 		afterJob();
 	}
