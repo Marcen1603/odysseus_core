@@ -97,7 +97,8 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 	}
 
 	private static ID generateSharedQueryID() {
-		return IDFactory.newContentID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), true);
+		String timestamp = String.valueOf(System.currentTimeMillis());
+		return IDFactory.newContentID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), false, timestamp.getBytes());
 	}
 
 	public final void bindPQLGenerator(IPQLGenerator gen) {

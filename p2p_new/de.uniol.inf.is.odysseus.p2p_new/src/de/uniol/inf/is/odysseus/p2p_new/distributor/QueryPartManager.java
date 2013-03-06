@@ -52,6 +52,8 @@ public class QueryPartManager implements IAdvertisementListener {
 			
 			try {
 				Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), "Standard");
+				
+				// shared parts are always started
 				for( Integer id : ids ) {
 					executor.startQuery(id, SessionManagementService.getActiveSession());
 				}

@@ -90,7 +90,6 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 
 							stopRunning();
 						}
-
 					});
 				} catch (IOException ex) {
 					LOG.error("Could not get output pipe", ex);
@@ -130,10 +129,10 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 	@Override
 	// called by executor
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		if( inEvent ) {
+		if (inEvent) {
 			return; // avoid stack overflow
 		}
-		
+
 		try {
 			inEvent = true;
 
@@ -145,7 +144,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 				return; // query was not shared
 			}
 
-			Collection<Integer> ids = determineIDs(sharedQueryIDMap, sharedQueryID);
+			Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, sharedQueryID);
 			OutputPipe outputPipe = outputPipeMap.get(sharedQueryID);
 			if (outputPipe != null) {
 				if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
@@ -197,7 +196,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		String sharedQueryIDString = new String(sharedQueryIDElement.getBytes(false));
 		ID sharedQueryID = convertToID(sharedQueryIDString);
 
-		Collection<Integer> ids = determineIDs(sharedQueryIDMap, sharedQueryID);
+		Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, sharedQueryID);
 
 		if (sharedQueryID != null) {
 			LOG.debug("Got message for shared query id {}", sharedQueryID);
@@ -261,7 +260,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		}
 	}
 
-	private static Collection<Integer> determineIDs(Map<Integer, ID> sharedQueryIDMap, ID sharedQueryID) {
+	private static Collection<Integer> determineLocalIDs(Map<Integer, ID> sharedQueryIDMap, ID sharedQueryID) {
 		List<Integer> ids = Lists.newArrayList();
 		for (Integer id : sharedQueryIDMap.keySet().toArray(new Integer[0])) {
 			ID sharedQueryID2 = sharedQueryIDMap.get(id);
