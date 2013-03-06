@@ -7,7 +7,6 @@ Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.distribution,
  de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
@@ -24,7 +23,6 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event,
- de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query,
  de.uniol.inf.is.odysseus.core.server.usermanagement,
  de.uniol.inf.is.odysseus.core.usermanagement,
