@@ -239,7 +239,7 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 	private static int connectionNumber = 0;
 
 	private static void generatePeerConnection(ILogicalOperator startOperator, QueryPart startPart, ILogicalOperator endOperator, QueryPart endPart) {
-		PipeID pipeID = (PipeID) IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
+		PipeID pipeID = (PipeID) IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), String.valueOf(System.currentTimeMillis()).getBytes());
 
 		AccessAO access = new AccessAO();
 		access.setSource(pipeID.toString());
