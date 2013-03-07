@@ -131,11 +131,11 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 		SDFAttribute[] attributes = outputSchema.getAttributes().toArray(new SDFAttribute[0]);
 		for (int i = 0; i < attributes.length; i++) {
 			SDFAttribute attribute = attributes[i];
-			sb.append("[");
-			sb.append(convertValue(attribute.getAttributeName()));
-			sb.append(",");
-			sb.append(convertValue(attribute.getDatatype().getURI()));
-			sb.append("]");
+			sb.append("['");
+			sb.append(attribute.getAttributeName());
+			sb.append("', '");
+			sb.append(attribute.getDatatype().getURI());
+			sb.append("']");
 			if (i < attributes.length - 1) {
 				sb.append(",");
 			}
@@ -168,7 +168,7 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 		return sb.toString();
 	}
 
-	private static Object convertValue(Object element) {
+	private static String convertValue(Object element) {
 		if (element == null) {
 			return "";
 		}
