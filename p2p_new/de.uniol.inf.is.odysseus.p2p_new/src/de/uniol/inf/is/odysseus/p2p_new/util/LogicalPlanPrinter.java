@@ -11,8 +11,11 @@ public class LogicalPlanPrinter {
 	private final ILogicalOperator startOperator;
 
 	public LogicalPlanPrinter(ILogicalQuery query) {
-		Preconditions.checkNotNull(query, "Logical query to print must not be null!");
-		startOperator = query.getLogicalPlan();
+		this( Preconditions.checkNotNull(query, "Logical query to print must not be null!").getLogicalPlan() );
+	}
+	
+	public LogicalPlanPrinter(ILogicalOperator startOperator) {
+		this.startOperator = Preconditions.checkNotNull(startOperator, "Start opertor for query print must not be null!");	
 	}
 
 	public final void printPlan() {

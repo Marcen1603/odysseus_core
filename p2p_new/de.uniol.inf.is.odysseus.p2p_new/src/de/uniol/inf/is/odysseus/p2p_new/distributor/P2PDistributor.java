@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.handler.JxtaTransportHandler;
+import de.uniol.inf.is.odysseus.p2p_new.util.LogicalPlanPrinter;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class P2PDistributor implements ILogicalQueryDistributor {
@@ -81,10 +82,12 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 				LOG.debug("This one part is executed locally");
 				continue;
 			}
-
+			
 			ID sharedQueryID = generateSharedQueryID();
 			Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(remotePeers, P2PNewPlugIn.getOwnPeerID(), queryParts);
 			insertSenderAndAccess(queryPartDistributionMap);
+
+			debugQueryParts(queryParts);
 
 			List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID);
 			Collection<ILogicalQuery> logicalQueries = transformToQueries(localQueryParts, generator);
@@ -239,7 +242,7 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 	private static int connectionNumber = 0;
 
 	private static void generatePeerConnection(ILogicalOperator startOperator, QueryPart startPart, ILogicalOperator endOperator, QueryPart endPart) {
-		PipeID pipeID = (PipeID) IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), String.valueOf(System.currentTimeMillis()).getBytes());
+		PipeID pipeID = (PipeID) IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
 
 		AccessAO access = new AccessAO();
 		access.setSource(pipeID.toString());
@@ -392,6 +395,17 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 			LOG.debug("Found {} peers to distribute the queries", peers.size());
 			for (PeerID peer : peers) {
 				LOG.debug("Peer: {}", peer);
+			}
+		}
+	}
+	
+
+	private static void debugQueryParts(List<QueryPart> queryParts) {
+		if( LOG.isDebugEnabled() ) {
+			for( QueryPart queryPart : queryParts ) {
+				LOG.debug("");
+				LogicalPlanPrinter printer = new LogicalPlanPrinter(queryPart.getOperators().iterator().next());
+				LOG.debug("\n" + printer.toString());
 			}
 		}
 	}

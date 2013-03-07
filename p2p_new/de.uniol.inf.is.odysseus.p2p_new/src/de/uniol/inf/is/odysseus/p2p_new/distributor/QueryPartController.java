@@ -15,8 +15,6 @@ import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.pipe.InputPipe;
 import net.jxta.pipe.OutputPipe;
-import net.jxta.pipe.OutputPipeEvent;
-import net.jxta.pipe.OutputPipeListener;
 import net.jxta.pipe.PipeID;
 import net.jxta.pipe.PipeMsgEvent;
 import net.jxta.pipe.PipeMsgListener;
@@ -40,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.p2p_new.util.OutputPipeResolver;
 
 public class QueryPartController implements IPlanModificationListener, PipeMsgListener {
 
@@ -58,11 +56,27 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 	private final Map<ID, InputPipe> inputPipeMap = Maps.newHashMap();
 	private final Map<Integer, ID> sharedQueryIDMap = Maps.newHashMap();
 
+	private final List<OutputPipeResolver> runningResolvers = Lists.newArrayList();
+
 	private IServerExecutor executor;
 	private boolean inEvent;
 
 	public static QueryPartController getInstance() {
 		return instance;
+	}
+
+	// called by OSGi-DS
+	public void activate() {
+		instance = this;
+	}
+
+	// called by OSGi-DS
+	public void deactivate() {
+		instance = null;
+
+		stopResolvers(runningResolvers);
+		closeOutputPipes(outputPipeMap.values());
+		closeInputPipes(inputPipeMap.values());
 	}
 
 	public void registerAsMaster(Collection<ILogicalQuery> queries, final ID sharedQueryID) {
@@ -75,28 +89,27 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 
 		final PipeAdvertisement adv = createPipeAdvertisement(sharedQueryID);
 
-		Thread outputPipeResolver = new RepeatingJobThread(500) {
+		OutputPipeResolver resolver = new OutputPipeResolver(adv) {
+			@Override
+			public void outputPipeResolved(OutputPipe outputPipe) {
+				outputPipeMap.put(sharedQueryID, outputPipe);
 
-			public void doJob() {
-				try {
-					P2PNewPlugIn.getPipeService().createOutputPipe(adv, new OutputPipeListener() {
+				LOG.debug("Output pipe is {}", outputPipe);
+				LOG.debug("for shared query id {}", sharedQueryID);
+				LOG.debug("Pipeid of Advertisementid is {}", adv.getPipeID());
 
-						@Override
-						public void outputPipeEvent(OutputPipeEvent event) {
-							outputPipeMap.put(sharedQueryID, event.getOutputPipe());
-							LOG.debug("Output pipe is {}", event.getOutputPipe());
-							LOG.debug("for shared query id {}", sharedQueryID);
-							LOG.debug("Pipeid of Advertisementid is {}", adv.getPipeID());
+				runningResolvers.remove(this);
+			}
 
-							stopRunning();
-						}
-					});
-				} catch (IOException ex) {
-					LOG.error("Could not get output pipe", ex);
-				}
-			};
+			@Override
+			public void outputPipeFailed() {
+				LOG.debug("Could not get output pipe for shared query id {}", sharedQueryID);
+
+				runningResolvers.remove(this);
+			}
 		};
-		outputPipeResolver.start();
+		runningResolvers.add(resolver);
+		resolver.start();
 
 		LOG.debug("Registered sharedqueryID as master : {}", sharedQueryID);
 	}
@@ -233,16 +246,6 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 	}
 
 	// called by OSGi-DS
-	public void activate() {
-		instance = this;
-	}
-
-	// called by OSGi-DS
-	public void deactivate() {
-		instance = null;
-	}
-
-	// called by OSGi-DS
 	public void bindExecutor(IExecutor exe) {
 		executor = (IServerExecutor) exe;
 		executor.addPlanModificationListener(this);
@@ -339,6 +342,31 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		} catch (URISyntaxException ex) {
 			LOG.error("Could not convert string {} to id", sharedQueryIDString, ex);
 			return null;
+		}
+	}
+
+	private static void stopResolvers(List<OutputPipeResolver> runningResolvers) {
+		for (OutputPipeResolver runningResolver : runningResolvers) {
+			if (runningResolver.isAlive()) {
+				runningResolver.stopRunning();
+			}
+		}
+		runningResolvers.clear();
+	}
+
+	private static void closeOutputPipes(Collection<OutputPipe> outputPipes) {
+		for (OutputPipe outputPipe : outputPipes) {
+			if (outputPipe != null && !outputPipe.isClosed()) {
+				outputPipe.close();
+			}
+		}
+	}
+
+	private static void closeInputPipes(Collection<InputPipe> inputPipes) {
+		for (InputPipe inputPipe : inputPipes) {
+			if (inputPipe != null) {
+				inputPipe.close();
+			}
 		}
 	}
 }
