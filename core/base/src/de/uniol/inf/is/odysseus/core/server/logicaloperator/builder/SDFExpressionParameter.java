@@ -55,6 +55,18 @@ public class SDFExpressionParameter extends
 
 	@Override
 	protected String getPQLStringInternal() {
-		return "'" + inputValue + "'";
+		if (inputValue instanceof List) {
+			@SuppressWarnings("unchecked")
+			List<String> in = ((List<String>) inputValue);
+			if (in.size() == 2) {
+				return "['" + in.get(0) + "', '" + in.get(1) + "']";
+			} else {
+				throw new RuntimeException(
+						" Could not determine name/expression pair!");
+			}
+		} else {
+			return "'" + inputValue + "'";
+		}
+
 	}
 }
