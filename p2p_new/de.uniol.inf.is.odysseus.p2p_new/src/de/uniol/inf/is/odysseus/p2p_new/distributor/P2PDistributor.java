@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.handler.JxtaTransportHandler;
-import de.uniol.inf.is.odysseus.p2p_new.util.LogicalPlanPrinter;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class P2PDistributor implements ILogicalQueryDistributor {
@@ -65,7 +64,7 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 			return queriesToDistribute;
 		}
 
-		debugPeerStatus(remotePeers);
+		logPeerStatus(remotePeers);
 
 		List<ILogicalQuery> localQueries = Lists.newArrayList();
 
@@ -86,8 +85,6 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 			ID sharedQueryID = generateSharedQueryID();
 			Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(remotePeers, P2PNewPlugIn.getOwnPeerID(), queryParts);
 			insertSenderAndAccess(queryPartDistributionMap);
-
-			debugQueryParts(queryParts);
 
 			List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID);
 			Collection<ILogicalQuery> logicalQueries = transformToQueries(localQueryParts, generator);
@@ -390,22 +387,11 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static void debugPeerStatus(List<PeerID> peers) {
+	private static void logPeerStatus(List<PeerID> peers) {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Found {} peers to distribute the queries", peers.size());
 			for (PeerID peer : peers) {
 				LOG.debug("Peer: {}", peer);
-			}
-		}
-	}
-	
-
-	private static void debugQueryParts(List<QueryPart> queryParts) {
-		if( LOG.isDebugEnabled() ) {
-			for( QueryPart queryPart : queryParts ) {
-				LOG.debug("");
-				LogicalPlanPrinter printer = new LogicalPlanPrinter(queryPart.getOperators().iterator().next());
-				LOG.debug("\n" + printer.toString());
 			}
 		}
 	}
