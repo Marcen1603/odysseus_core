@@ -514,7 +514,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	protected synchronized void firePlanModificationEvent(
 			AbstractPlanModificationEvent<?> eventArgs) {
 		for (IPlanModificationListener listener : this.planModificationListener) {
-			listener.planModificationEvent(eventArgs);
+			try {
+				listener.planModificationEvent(eventArgs);
+			} catch( Throwable t ) {
+				LOG.error("Exception during fireing plan modification event", t);
+			}
 		}
 	}
 
@@ -528,7 +532,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	protected synchronized void firePlanExecutionEvent(
 			AbstractPlanExecutionEvent<?> eventArgs) {
 		for (IPlanExecutionListener listener : this.planExecutionListener) {
-			listener.planExecutionEvent(eventArgs);
+			try {
+				listener.planExecutionEvent(eventArgs);
+			} catch( Throwable t ) {
+				LOG.error("Exception during fireing plan execution event", t);
+			}
 		}
 	}
 
@@ -541,7 +549,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public synchronized void fireErrorEvent(ErrorEvent eventArgs) {
 		for (IErrorEventListener listener : this.errorEventListener) {
-			listener.errorEventOccured(eventArgs);
+			try {
+				listener.errorEventOccured(eventArgs);
+			} catch( Throwable t ) {
+				LOG.error("Exception during firering error event", t);
+			}
 		}
 	}
 
