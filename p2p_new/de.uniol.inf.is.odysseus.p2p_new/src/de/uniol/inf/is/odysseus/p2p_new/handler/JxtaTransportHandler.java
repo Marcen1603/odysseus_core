@@ -14,8 +14,6 @@ import net.jxta.endpoint.Message;
 import net.jxta.endpoint.MessageElement;
 import net.jxta.pipe.InputPipe;
 import net.jxta.pipe.OutputPipe;
-import net.jxta.pipe.OutputPipeEvent;
-import net.jxta.pipe.OutputPipeListener;
 import net.jxta.pipe.PipeID;
 import net.jxta.pipe.PipeMsgEvent;
 import net.jxta.pipe.PipeMsgListener;
@@ -31,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.p2p_new.util.OutputPipeResolver;
 
 public class JxtaTransportHandler extends AbstractTransportHandler implements PipeMsgListener {
 
@@ -44,7 +42,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 	private InputPipe inputPipe;
 	private OutputPipe outputPipe;
-	private RepeatingJobThread outputPipeResolver;
+	private OutputPipeResolver outputPipeResolver;
 
 	private PipeID pipeID;
 
@@ -110,27 +108,18 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 
 		outputPipe = null;
-		outputPipeResolver = new RepeatingJobThread(500) {
+		outputPipeResolver = new OutputPipeResolver(pipeAdvertisement) {
 			
-			public void doJob() {
-				try {
-					if (outputPipe == null) {
-						P2PNewPlugIn.getPipeService().createOutputPipe(pipeAdvertisement, new OutputPipeListener() {
-
-							@Override
-							public void outputPipeEvent(OutputPipeEvent event) {
-								outputPipe = event.getOutputPipe();
-								LOG.info("Output pipe is {}", outputPipe);
-								
-								stopRunning();
-							}
-
-						});
-					}
-				} catch (IOException ex) {
-					LOG.error("Could not get output pipe", ex);
-				}
-			};
+			@Override
+			public void outputPipeResolved(OutputPipe outputPipe) {
+				JxtaTransportHandler.this.outputPipe = outputPipe;
+				LOG.info("Output pipe is {}", outputPipe);
+			}
+			
+			@Override
+			public void outputPipeFailed() {
+				LOG.error("Could not get output pipe");
+			}
 		};
 		
 		outputPipeResolver.start();
