@@ -81,19 +81,21 @@ public class QueryView extends ViewPart {
     }
 
     public void refreshTable() {
-        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-            @Override
-            public void run() {
-            	if( dataProvider != null ) {
-	            	refreshData(dataProvider, queries);
+    	if( !PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+	        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 	
-	                if (!tableViewer.getControl().isDisposed())
-	                    tableViewer.refresh();
-            	}
-            }
-
-        });
+	            @Override
+	            public void run() {
+	            	if( dataProvider != null ) {
+		            	refreshData(dataProvider, queries);
+		
+		                if (!tableViewer.getControl().isDisposed())
+		                    tableViewer.refresh();
+	            	}
+	            }
+	
+	        });
+    	}
     }
     
 	private static IQueryViewDataProvider determineDataProvider(QueryView view) {
