@@ -116,9 +116,11 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 								public void doJob() {
 									try {
 										int bytesRead = socketInputStream.read(buffer);
-										ByteBuffer bb = ByteBuffer.allocate(bytesRead);
-										bb.put(buffer, 0, bytesRead);
-										JxtaTransportHandler.this.fireProcess(bb);
+										if( bytesRead > 0 ) {
+											ByteBuffer bb = ByteBuffer.allocate(bytesRead);
+											bb.put(buffer, 0, bytesRead);
+											JxtaTransportHandler.this.fireProcess(bb);
+										}
 									} catch (IOException ex) {
 										LOG.error("Could not read bytes from input stream", ex);
 										stopRunning();
