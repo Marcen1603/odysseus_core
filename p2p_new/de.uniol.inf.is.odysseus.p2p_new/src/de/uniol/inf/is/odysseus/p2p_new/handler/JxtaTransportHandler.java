@@ -40,10 +40,6 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 	private static final String PIPE_NAME = "Odysseus Pipe";
 
-	// private InputPipe inputPipe;
-	// private OutputPipe outputPipe;
-	// private OutputPipeResolver outputPipeResolver;
-
 	private JxtaServerSocket serverSocket;
 	private Socket socket;
 	private OutputStream socketOutputStream;
@@ -52,6 +48,9 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 	private InputStream socketInputStream;
 
 	private PipeID pipeID;
+
+	private RepeatingJobThread readingDataThread;
+	private RepeatingJobThread clientResolverThread;
 
 	// for transportFactory
 	public JxtaTransportHandler() {
@@ -99,47 +98,61 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 		P2PNewPlugIn.getDiscoveryService().publish(pipeAdvertisement); // needed?
 
-		Thread resolverThread = new Thread() {
+		clientResolverThread = new RepeatingJobThread() {
 			@Override
-			public void run() {
+			public void doJob() {
 				try {
-					while( true ) {
-						try {
-							clientSocket = new JxtaSocket(P2PNewPlugIn.getOwnPeerGroup(), pipeAdvertisement, 5000);
-							clientSocket.setSoTimeout(0);
-							LOG.debug("Client socket created: {}", clientSocket);
-		
-							socketInputStream = clientSocket.getInputStream();
-							final byte[] buffer = new byte[1024];
-							RepeatingJobThread readingDataThread = new RepeatingJobThread() {
-								@Override
-								public void doJob() {
-									try {
-										int bytesRead = socketInputStream.read(buffer);
-										if( bytesRead > 0 ) {
-											ByteBuffer bb = ByteBuffer.allocate(bytesRead);
-											bb.put(buffer, 0, bytesRead);
-											JxtaTransportHandler.this.fireProcess(bb);
-										}
-									} catch (IOException ex) {
-										LOG.error("Could not read bytes from input stream", ex);
-										stopRunning();
-									}
-								}
-							};
-							readingDataThread.start();
-						} catch (SocketTimeoutException ex) {
-							// ignore... try again
-						}
-					}
-				} catch( IOException ex ) {
+					clientSocket = new JxtaSocket(P2PNewPlugIn.getOwnPeerGroup(), pipeAdvertisement, 5000);
+					clientSocket.setSoTimeout(0);
+					LOG.debug("Client socket created: {}", clientSocket);
+
+					socketInputStream = clientSocket.getInputStream();
+					stopRunning();
+				} catch (SocketTimeoutException ex) {
+					// ignore... try again
+
+				} catch (Exception ex) {
 					LOG.error("Could not get client socket", ex);
+					stopRunning();
 				}
 			}
 		};
-		resolverThread.setDaemon(true);
-		resolverThread.setName("ClientSocket resolver");
-		resolverThread.start();
+		clientResolverThread.setDaemon(true);
+		clientResolverThread.setName("ClientSocket resolver " + pipeAdvertisement.getPipeID().toString());
+		clientResolverThread.start();
+
+		readingDataThread = new RepeatingJobThread() {
+
+			private byte[] buffer = new byte[1024];
+
+			@Override
+			public void doJob() {
+				if (socketInputStream != null) {
+					try {
+						int bytesRead = socketInputStream.read(buffer);
+						if (bytesRead == -1) {
+							clientSocket.close();
+							stopRunning();
+						} else if (bytesRead > 0) {
+							ByteBuffer bb = ByteBuffer.allocate(bytesRead);
+							bb.put(buffer, 0, bytesRead);
+							JxtaTransportHandler.this.fireProcess(bb);
+						}
+					} catch (IOException ex) {
+						LOG.error("Could not read bytes from input stream", ex);
+						stopRunning();
+					}
+				} else {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException ex) {
+					}
+				}
+			}
+		};
+		readingDataThread.setDaemon(true);
+		readingDataThread.setName("Reading data " + pipeAdvertisement.getPipeID().toString());
+		readingDataThread.start();
 
 	}
 
@@ -164,14 +177,28 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 			};
 		};
 		socketResolver.setDaemon(true);
-		socketResolver.setName("JxtaSocketResolver");
+		socketResolver.setName("ServerSocket Resolver " + pipeAdvertisement.getPipeID().toString());
 		socketResolver.start();
 	}
 
 	@Override
 	public void processInClose() throws IOException {
+		if (readingDataThread != null && readingDataThread.isAlive()) {
+			readingDataThread.stopRunning();
+			readingDataThread = null;
+		}
+
+		if (clientResolverThread != null && clientResolverThread.isAlive()) {
+			clientResolverThread.stopRunning();
+			clientResolverThread = null;
+		}
+
 		if (clientSocket != null) {
 			clientSocket.close();
+		}
+
+		if (socketInputStream != null) {
+			socketInputStream.close();
 		}
 	}
 
