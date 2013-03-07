@@ -3,22 +3,22 @@ package de.uniol.inf.is.odysseus.p2p_new.handler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.endpoint.ByteArrayMessageElement;
-import net.jxta.endpoint.Message;
 import net.jxta.endpoint.MessageElement;
-import net.jxta.pipe.InputPipe;
-import net.jxta.pipe.OutputPipe;
 import net.jxta.pipe.PipeID;
 import net.jxta.pipe.PipeMsgEvent;
 import net.jxta.pipe.PipeMsgListener;
 import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
+import net.jxta.socket.JxtaServerSocket;
+import net.jxta.socket.JxtaSocket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
-import de.uniol.inf.is.odysseus.p2p_new.util.OutputPipeResolver;
+import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
 public class JxtaTransportHandler extends AbstractTransportHandler implements PipeMsgListener {
 
@@ -40,9 +40,16 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 	private static final String PIPE_NAME = "Odysseus Pipe";
 
-	private InputPipe inputPipe;
-	private OutputPipe outputPipe;
-	private OutputPipeResolver outputPipeResolver;
+	// private InputPipe inputPipe;
+	// private OutputPipe outputPipe;
+	// private OutputPipeResolver outputPipeResolver;
+
+	private JxtaServerSocket serverSocket;
+	private Socket socket;
+	private OutputStream socketOutputStream;
+
+	private JxtaSocket clientSocket;
+	private InputStream socketInputStream;
 
 	private PipeID pipeID;
 
@@ -63,16 +70,11 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		if (outputPipe != null) {
-			if (!outputPipe.isClosed()) {
-				LOG.info("Sending message");
+		if (socketOutputStream != null) {
+			LOG.info("Sending message");
 
-				Message msg = new Message();
-				msg.addMessageElement(new ByteArrayMessageElement("DATA", null, message, null));
-				outputPipe.send(msg);
-			} else {
-				LOG.error("OutputPipe is already closed");
-			}
+			socketOutputStream.write(message);
+			socketOutputStream.flush();
 		}
 	}
 
@@ -94,11 +96,49 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 	@Override
 	public void processInOpen() throws IOException {
 		LOG.info("Process In Open");
-		PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
+		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 		P2PNewPlugIn.getDiscoveryService().publish(pipeAdvertisement); // needed?
 
-		inputPipe = P2PNewPlugIn.getPipeService().createInputPipe(pipeAdvertisement, this);
-		LOG.info("InputPipe is {}", inputPipe);
+		Thread resolverThread = new Thread() {
+			@Override
+			public void run() {
+				try {
+					while( true ) {
+						try {
+							clientSocket = new JxtaSocket(P2PNewPlugIn.getOwnPeerGroup(), pipeAdvertisement, 5000);
+							clientSocket.setSoTimeout(0);
+							LOG.debug("Client socket created: {}", clientSocket);
+		
+							socketInputStream = clientSocket.getInputStream();
+							final byte[] buffer = new byte[1024];
+							RepeatingJobThread readingDataThread = new RepeatingJobThread(0) {
+								@Override
+								public void doJob() {
+									try {
+										int bytesRead = socketInputStream.read(buffer);
+										ByteBuffer bb = ByteBuffer.allocate(bytesRead);
+										bb.put(buffer, 0, bytesRead);
+										JxtaTransportHandler.this.fireProcess(bb);
+									} catch (IOException ex) {
+										LOG.error("Could not read bytes from input stream", ex);
+										stopRunning();
+									}
+								}
+							};
+							readingDataThread.start();
+						} catch (SocketTimeoutException ex) {
+							// ignore... try again
+						}
+					}
+				} catch( IOException ex ) {
+					LOG.error("Could not get client socket", ex);
+				}
+			}
+		};
+		resolverThread.setDaemon(true);
+		resolverThread.setName("ClientSocket resolver");
+		resolverThread.start();
+
 	}
 
 	@Override
@@ -107,42 +147,40 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 
-		outputPipe = null;
-		outputPipeResolver = new OutputPipeResolver(pipeAdvertisement) {
-			
-			@Override
-			public void outputPipeResolved(OutputPipe outputPipe) {
-				JxtaTransportHandler.this.outputPipe = outputPipe;
-				LOG.info("Output pipe is {}", outputPipe);
-			}
-			
-			@Override
-			public void outputPipeFailed() {
-				LOG.error("Could not get output pipe");
-			}
-		};
-		
-		outputPipeResolver.start();
+		serverSocket = new JxtaServerSocket(P2PNewPlugIn.getOwnPeerGroup(), pipeAdvertisement);
+		serverSocket.setSoTimeout(0);
+		Thread socketResolver = new Thread() {
+			public void run() {
+				try {
+					socket = serverSocket.accept();
 
+					socketOutputStream = socket.getOutputStream();
+
+				} catch (IOException ex) {
+					LOG.error("Could not create socket", ex);
+				}
+			};
+		};
+		socketResolver.setDaemon(true);
+		socketResolver.setName("JxtaSocketResolver");
+		socketResolver.start();
 	}
 
 	@Override
 	public void processInClose() throws IOException {
-		if (inputPipe != null) {
-			inputPipe.close();
-			LOG.info("InputPipe closed");
+		if (clientSocket != null) {
+			clientSocket.close();
 		}
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
-		if (outputPipe != null) {
-			outputPipe.close();
-			LOG.info("OutputPipe closed");
+		if (socket != null) {
+			socket.close();
 		}
-		
-		if( outputPipeResolver != null && outputPipeResolver.isAlive()) {
-			outputPipeResolver.stopRunning();
+
+		if (serverSocket != null) {
+			serverSocket.close();
 		}
 	}
 
