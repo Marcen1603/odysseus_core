@@ -27,6 +27,10 @@ public class RepeatingJobThread extends StoppableThread{
 
 	private long lastExecutionTimestamp = 0;
 
+	public RepeatingJobThread() {
+		this(0);
+	}
+	
 	public RepeatingJobThread(long executionIntervalMillis) {
 		this(executionIntervalMillis, DEFAULT_THREAD_NAME);
 	}

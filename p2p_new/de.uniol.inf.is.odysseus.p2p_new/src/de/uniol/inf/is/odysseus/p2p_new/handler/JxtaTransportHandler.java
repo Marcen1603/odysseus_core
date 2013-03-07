@@ -111,7 +111,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		
 							socketInputStream = clientSocket.getInputStream();
 							final byte[] buffer = new byte[1024];
-							RepeatingJobThread readingDataThread = new RepeatingJobThread(0) {
+							RepeatingJobThread readingDataThread = new RepeatingJobThread() {
 								@Override
 								public void doJob() {
 									try {
