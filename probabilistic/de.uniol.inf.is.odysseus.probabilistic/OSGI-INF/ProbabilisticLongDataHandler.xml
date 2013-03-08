@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     Copyright 2013 The Odysseus Team
 
@@ -13,7 +14,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.probabilistic.ProbabilisticLongDataHandler">
    <implementation class="de.uniol.inf.is.odysseus.probabilistic.datahandler.ProbabilisticLongHandler"/>
    <service>
