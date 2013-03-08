@@ -7,6 +7,7 @@ import java.util.Random;
 import net.jxta.content.ContentService;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
+import net.jxta.endpoint.EndpointService;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
@@ -44,6 +45,7 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static DiscoveryService discoveryService;
 	private static ContentService contentService;
 	private static PipeService pipeService;
+	private static EndpointService endpointService;
 	
 	private static PeerGroup ownPeerGroup;
 
@@ -63,6 +65,7 @@ public class P2PNewPlugIn implements BundleActivator {
 		discoveryService = ownPeerGroup.getDiscoveryService();
 		contentService = ownPeerGroup.getContentService();
 		pipeService = ownPeerGroup.getPipeService();
+		endpointService = ownPeerGroup.getEndpointService();
 
 		registerAdvertisementTypes();
 
@@ -88,6 +91,10 @@ public class P2PNewPlugIn implements BundleActivator {
 	
 	public static PipeService getPipeService() {
 		return pipeService;
+	}
+	
+	public static EndpointService getEndpointService() {
+		return endpointService;
 	}
 
 	public static PeerGroup getOwnPeerGroup() {
