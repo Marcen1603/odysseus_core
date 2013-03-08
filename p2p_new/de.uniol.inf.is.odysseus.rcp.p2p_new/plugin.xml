@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.p2p_new.views.PeerView"
+            icon="icons/peer.png"
+            id="de.uniol.inf.is.odysseus.rcp.p2p_new.PeerView"
+            name="Peer View"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
