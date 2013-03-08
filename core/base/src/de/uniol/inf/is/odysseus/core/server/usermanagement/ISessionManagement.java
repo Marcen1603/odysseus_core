@@ -41,4 +41,6 @@ public interface ISessionManagement {
 	boolean isValid(ISession session, ISession caller);
 	
 	ISession login(String token);
+	
+	ISession loginSuperUser(Object secret, String tenantname);
 }

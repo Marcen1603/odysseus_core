@@ -38,11 +38,16 @@ abstract public class AbstractSessionManagement<USER extends IUser, TENANT exten
 	@Override
 	public ISession login(final String username, final byte[] password,
 			String tenantname) {
+		return login(username, password, tenantname, true);
+	}
+	
+	private ISession login(final String username, final byte[] password,
+			String tenantname, boolean checkLogin) {
 		final ITenant tenant = getTenantDAO().findByName(tenantname);
 		if (getUserDAO(tenant) != null) {		
 			final IUser user = getUserDAO(tenant).findByName(username);
 			if (user != null && user.isActive()
-					&& user.validatePassword(password)) {
+					&& ((checkLogin && user.validatePassword(password))||!checkLogin)) {
 				return updateSessionStore(user, tenant);
 			}
 		}
@@ -57,6 +62,12 @@ abstract public class AbstractSessionManagement<USER extends IUser, TENANT exten
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public ISession loginSuperUser(Object secret, String tenantname) {
+		// TODO: check secret
+		return login("System", null, tenantname, false);
 	}
 
 	protected ISession updateSessionStore(final IUser user, final ITenant tenant) {

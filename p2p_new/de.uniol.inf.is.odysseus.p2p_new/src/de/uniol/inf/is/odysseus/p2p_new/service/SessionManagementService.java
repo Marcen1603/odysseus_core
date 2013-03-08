@@ -14,7 +14,7 @@ public class SessionManagementService {
 	
 	public final void bindSessionManagement(ISessionManagement sm) {
 		sessionManagement = sm;
-		activeSession = sessionManagement.login("System", "manager".getBytes(),"default");
+		activeSession = sessionManagement.loginSuperUser(null, "");
 		
 		LOG.debug("Bound Session Management {}", sm);
 	}

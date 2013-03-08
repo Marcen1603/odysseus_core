@@ -1846,8 +1846,7 @@ public class OdysseusConsole implements CommandProvider,
 			System.gc();
 
 			// parse and run queries
-			ISession user = UserManagement.getSessionmanagement().login(
-					"System", "manager".getBytes(),"default");
+			ISession user = UserManagement.getSessionmanagement().loginSuperUser(null, "");
 			try {
 				if (i == 0) {
 					ci.println("parsing and running query :");
