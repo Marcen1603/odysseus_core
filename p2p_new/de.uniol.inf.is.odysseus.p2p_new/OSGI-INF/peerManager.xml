@@ -2,4 +2,7 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" enabled="true" name="de.uniol.inf.is.odysseus.p2p_new.PeerManager">
    <implementation class="de.uniol.inf.is.odysseus.p2p_new.peers.PeerManager"/>
    <reference bind="bindPeerListener" cardinality="0..n" interface="de.uniol.inf.is.odysseus.p2p_new.IPeerListener" name="IPeerListener" policy="dynamic" unbind="unbindPeerListener"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.p2p_new.IPeerManager"/>
+   </service>
 </scr:component>
