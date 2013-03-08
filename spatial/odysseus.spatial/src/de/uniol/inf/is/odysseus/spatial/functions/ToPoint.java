@@ -1,0 +1,44 @@
+package de.uniol.inf.is.odysseus.spatial.functions;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
+
+public class ToPoint extends AbstractFunction<Geometry> {
+
+	private static final long serialVersionUID = 7202373953195273323L;
+
+	@Override
+	public int getArity() {
+		return 3;
+	}
+	
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
+		 SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER };
+
+	@Override
+	public SDFDatatype[] getAcceptedTypes(int argPos) {
+		return accTypes;
+	}
+
+	@Override
+	public String getSymbol() {
+		return "ToPoint";
+	}
+
+	@Override
+	public Geometry getValue() {
+		GeometryFactory gf = new GeometryFactory();
+	    return gf.createPoint(new Coordinate(getNumericalInputValue(0), getNumericalInputValue(1), getNumericalInputValue(2)));
+	 }
+
+	@Override
+	public SDFDatatype getReturnType() {
+		return SDFSpatialDatatype.SPATIAL_POINT;
+	}
+
+}

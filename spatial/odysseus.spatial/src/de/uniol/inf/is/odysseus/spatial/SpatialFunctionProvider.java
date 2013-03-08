@@ -51,6 +51,7 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialWithin;
 import de.uniol.inf.is.odysseus.spatial.functions.GetCentroid;
 import de.uniol.inf.is.odysseus.spatial.functions.ToCartesianCoordinate;
 import de.uniol.inf.is.odysseus.spatial.functions.AsCartesianCoordinates;
+import de.uniol.inf.is.odysseus.spatial.functions.ToPoint;
 import de.uniol.inf.is.odysseus.spatial.functions.ToPolarCoordinate;
 import de.uniol.inf.is.odysseus.spatial.functions.AsPolarCoordinates;
 
@@ -100,6 +101,8 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new AsCartesianCoordinates());
 		functions.add(new ToPolarCoordinate());
 		functions.add(new ToCartesianCoordinate());
+		
+		functions.add(new ToPoint());
 		
 		functions.add(new SpatialDistance());
 		return functions;
