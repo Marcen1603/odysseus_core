@@ -21,8 +21,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.swt.SWTException;
 import org.eclipse.ui.part.ViewPart;
 
+import de.offis.chart.charts.datatype.ProbViewSchema;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -64,7 +66,7 @@ public abstract class AbstractView<T, M extends IMetaAttribute> extends ViewPart
 		for (ISubscription<? extends ISource<?>> s : this.connection
 				.getSubscriptions()) {
 			this.viewSchema.put(s.getSinkInPort(),
-					new ViewSchema<T>(s.getSchema(), s.getTarget()
+					new ProbViewSchema<T>(s.getSchema(), s.getTarget()
 							.getMetaAttributeSchema(), s.getSinkInPort()));
 		}
 		if (validate()) {
@@ -94,10 +96,21 @@ public abstract class AbstractView<T, M extends IMetaAttribute> extends ViewPart
 			return;
 		}
 		
-		if ((element instanceof ProbabilisticTuple<?>)) {
-			processElement((ProbabilisticTuple<IMetaAttribute>) element, port);
+//		if ((element instanceof ProbabilisticTuple<?>)) {
+//			processElement((ProbabilisticTuple<IMetaAttribute>) element, port);
+//		}
+		@SuppressWarnings("unchecked")
+		final Tuple<M> tuple = (Tuple<M>) element;
+		try {
+			List<T> values = this.viewSchema.get(port).convertToChoosenFormat(
+					this.viewSchema.get(port).convertToViewableFormat(tuple));
+			processElement(values, tuple.getMetadata(), port);
+		} catch (SWTException swtex) {
+			System.out.println("WARN: SWT Exception " + swtex.getMessage());
 		}
 	}
+	
+	protected abstract void processElement(List<T> tuple, M metadata, int port);
 	
 	@Override
 	public void dispose() {
@@ -154,6 +167,4 @@ public abstract class AbstractView<T, M extends IMetaAttribute> extends ViewPart
 		}
 		return "The number of choosen attributes should be at least one!";
 	}
-
-	protected abstract void processElement(ProbabilisticTuple<IMetaAttribute> tuple, int port);
 }

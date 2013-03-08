@@ -18,15 +18,15 @@ public class ShowProbabilityChart3D extends AbstractCommand {
 //			openView(new ProbabilityChart3D(), op);
 //		}
 		
-		NewProbabilityChart3D view = new NewProbabilityChart3D();
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		try {
-			activePage.showView(view.getViewID(), "blablabla", IWorkbenchPage.VIEW_ACTIVATE);
+			NewProbabilityChart3D view = (NewProbabilityChart3D)activePage.showView("de.offis.chart.charts.newprobabilitychart3d", "blablabla", IWorkbenchPage.VIEW_ACTIVATE);
+			view.initWithOperator(op);
 			// TODO nullpointer wenn ProbabilityChart3D bereits auf ist und nochmal angeklickt wird.
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}			
-		view.initWithOperator(op);
+		
 		
 		return null;
 	}

@@ -15,15 +15,17 @@ import org.jfree.data.function.NormalDistributionFunction2D;
 import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import de.offis.chart.charts.datatype.ProbViewSchema;
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
-public class ProbabilityChart2D extends AbstractJFreeChart<ProbabilisticTuple<IMetaAttribute>, IMetaAttribute>  {
+public class ProbabilityChart2D extends AbstractJFreeChart<NormalDistributionMixture, IMetaAttribute>  {
 	private XYSeriesCollection dataset = new XYSeriesCollection();
 	
 	
@@ -45,18 +47,54 @@ public class ProbabilityChart2D extends AbstractJFreeChart<ProbabilisticTuple<IM
 	}
 
 	@Override
-	public void streamElementRecieved(final Object element, int port) {
+	protected void initConnection(IStreamConnection<Object> streamConnection) {
+		for (ISubscription<? extends ISource<?>> s : streamConnection
+				.getSubscriptions()) {
+			this.viewSchema.put(s.getSinkInPort(),
+					new ProbViewSchema<NormalDistributionMixture>(s.getSchema(), s.getTarget()
+							.getMetaAttributeSchema(), s.getSinkInPort()));
+		}
+		if (validate()) {
+			streamConnection.addStreamElementListener(this);
+			streamConnection.connect();
+			chartSettingsChanged();
+			init();
+		}
+	}
+	
+	
+//	@Override
+//	public void streamElementRecieved(final Object element, int port) {
+//		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+//			@Override
+//			public void run() {
+//				try {
+//					
+//						@SuppressWarnings("unchecked")
+//						ProbabilisticTuple<IMetaAttribute> value = (ProbabilisticTuple<IMetaAttribute>)element;
+//						Object o = value.getAttribute(0);
+//						updateChart(value.getDistribution(((ProbabilisticContinuousDouble) o).getDistribution()), "Serie1");
+//													
+//				} catch (SWTException e) {								
+//					dispose();
+//					return;
+//				}
+//			}
+//		});
+//	}
+	
+	@Override
+	protected void processElement(final List<NormalDistributionMixture> tuple, IMetaAttribute metadata, final int port) {		
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					
-						@SuppressWarnings("unchecked")
-						ProbabilisticTuple<IMetaAttribute> value = (ProbabilisticTuple<IMetaAttribute>)element;
-						Object o = value.getAttribute(0);
-						updateChart(value.getDistribution(((ProbabilisticContinuousDouble) o).getDistribution()));
-													
-				} catch (SWTException e) {								
+
+					for (int i = 0; i < getChoosenAttributes(port).size(); i++) {
+						String name = getChoosenAttributes(port).get(i).getName();
+						updateChart(tuple.get(i), name);
+					}
+				} catch (SWTException e) {
 					dispose();
 					return;
 				}
@@ -64,14 +102,8 @@ public class ProbabilityChart2D extends AbstractJFreeChart<ProbabilisticTuple<IM
 		});
 	}
 	
-	@Override
-	protected void processElement(final List<ProbabilisticTuple<IMetaAttribute>> tuple, IMetaAttribute metadata, final int port) {		
-		
-
-	}
-	
-	private void updateChart(NormalDistributionMixture mix){
-		if(mix.getDimension() != 1)
+	private void updateChart(NormalDistributionMixture mix, String seriesKey){
+		if(mix.getDimension() < 1)
 			return; // keine 2D Normaldistribution
 		
 		
@@ -83,7 +115,12 @@ public class ProbabilityChart2D extends AbstractJFreeChart<ProbabilisticTuple<IM
 			funcs.put(new NormalDistributionFunction2D(means, m), e.getValue());
 		}
 		
-		dataset.removeAllSeries();
+		try {
+			dataset.removeSeries(dataset.getSeries(seriesKey));			
+		} catch (org.jfree.data.UnknownKeyException e) {
+			// ignore
+		}
+		
 		Function2D f = new Function2D() {
 			
 			@Override
@@ -95,7 +132,8 @@ public class ProbabilityChart2D extends AbstractJFreeChart<ProbabilisticTuple<IM
 				return sum;
 			}
 		};
-		dataset.addSeries(DatasetUtilities.sampleFunction2DToSeries(f, -10, 10, 100, "Normal"));
+		dataset.addSeries(DatasetUtilities.sampleFunction2DToSeries(f, -10, 10, 100, seriesKey));
+		
 		
 		
 //		final HashMap<NormalDistributionFunctionND, Double> funcs = new HashMap<>();

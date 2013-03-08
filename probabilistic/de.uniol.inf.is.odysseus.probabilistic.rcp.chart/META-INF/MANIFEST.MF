@@ -23,3 +23,4 @@ Bundle-ClassPath: batik-awt-util.jar,
  jcommon-1.0.17.jar,
  surfaceplotter-2.0.1.jar,
  .
+Bundle-Activator: de.offis.chart.charts.Activator

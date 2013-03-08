@@ -16,7 +16,7 @@ public class NormalDistributionFunctionND {
 		this.matrix = matrix;
 		this.means = means;	
 	}
-	
+
 	public double getValue(double[] x){
 		int k = x.length;
 		RealMatrix z = matrix.getMatrix();
@@ -30,10 +30,10 @@ public class NormalDistributionFunctionND {
 		
 		double first = 1/(Math.pow(2*Math.PI, k/2)*Math.pow(z_det, 1/2));
 		RealMatrix factor1 = x_sub_m.transpose();
-		RealMatrix factor2 = z_inverse.multiply(x_sub_m);
+		RealMatrix factor2 = factor1.multiply(z_inverse);
 		RealMatrix factor3 = x_sub_m;
-		RealMatrix f4 = factor1.multiply(factor2);
-		double f5 = f4.multiply(factor3).getEntry(0, 0);
+		RealMatrix f4 = factor2.multiply(factor3);
+		double f5 = f4.getEntry(0, 0);
 		double second = -0.5 * f5;
 		return first*Math.exp(second);
 	}

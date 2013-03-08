@@ -50,8 +50,8 @@
             <view
             allowMultiple="true"
             category="Odysseus"
-            class="de.offis.chart.charts.ProbabilityChart3D"
-            id="de.offis.chart.charts.probabilitychart3d"
+            class="de.offis.chart.charts.NewProbabilityChart3D"
+            id="de.offis.chart.charts.newprobabilitychart3d"
             name="ProbabilityChart3D"
             restorable="false">
       </view>
