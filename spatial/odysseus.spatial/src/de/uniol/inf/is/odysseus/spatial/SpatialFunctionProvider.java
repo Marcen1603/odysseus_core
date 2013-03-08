@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialCoveredBy;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialCovers;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialCrosses;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialDisjoint;
+import de.uniol.inf.is.odysseus.spatial.functions.SpatialDistance;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialEquals;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialIntersection;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialIsLine;
@@ -99,6 +100,8 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new AsCartesianCoordinates());
 		functions.add(new ToPolarCoordinate());
 		functions.add(new ToCartesianCoordinate());
+		
+		functions.add(new SpatialDistance());
 		return functions;
 	}
 
