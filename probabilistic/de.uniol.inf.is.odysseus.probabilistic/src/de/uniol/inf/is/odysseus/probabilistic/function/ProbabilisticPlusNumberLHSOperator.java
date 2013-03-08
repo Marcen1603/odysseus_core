@@ -51,7 +51,10 @@ public class ProbabilisticPlusNumberLHSOperator extends
 					SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
 					SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE,
 					SDFProbabilisticDatatype.PROBABILISTIC_LONG } };
-
+	@Override
+	public boolean isCommutative() {
+		return false;
+	}
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos) {
 		if (argPos < 0) {

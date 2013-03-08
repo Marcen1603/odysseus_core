@@ -53,6 +53,11 @@ public class ProbabilisticDivisionNumberLHSOperator extends
 					SDFProbabilisticDatatype.PROBABILISTIC_LONG } };
 
 	@Override
+	public boolean isCommutative() {
+		return false;
+	}
+
+	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException(

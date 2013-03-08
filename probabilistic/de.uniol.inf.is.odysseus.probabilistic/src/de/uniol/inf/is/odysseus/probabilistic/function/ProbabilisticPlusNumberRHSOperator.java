@@ -53,6 +53,11 @@ public class ProbabilisticPlusNumberRHSOperator extends
 					SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
 
 	@Override
+	public boolean isCommutative() {
+		return false;
+	}
+
+	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException(

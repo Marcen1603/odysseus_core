@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 public class ProbabilisticMultiplicationNumberRHSOperator extends
 		ProbabilisticMultiplicationOperator {
 
-
 	/**
 	 * 
 	 */
@@ -52,6 +51,11 @@ public class ProbabilisticMultiplicationNumberRHSOperator extends
 					SDFProbabilisticDatatype.PROBABILISTIC_LONG },
 			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER,
 					SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
+
+	@Override
+	public boolean isCommutative() {
+		return false;
+	}
 
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos) {
