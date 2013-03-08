@@ -30,13 +30,13 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class ViewSchema<T> {
 
-	final private SDFSchema outputSchema;
-	final private SDFMetaAttributeList metadataSchema;
-	final private int port;
+	protected final SDFSchema outputSchema;
+	protected final SDFMetaAttributeList metadataSchema;
+	protected final int port;
 	
-	private List<IViewableAttribute> viewableAttributes = new ArrayList<IViewableAttribute>();
+	protected List<IViewableAttribute> viewableAttributes = new ArrayList<IViewableAttribute>();
 
-	private List<IViewableAttribute> choosenAttributes = new ArrayList<IViewableAttribute>();
+	protected List<IViewableAttribute> choosenAttributes = new ArrayList<IViewableAttribute>();
 
 	public ViewSchema(SDFSchema outputSchema, SDFMetaAttributeList metaSchema, int port) {
 		this.outputSchema = outputSchema;
@@ -46,7 +46,7 @@ public class ViewSchema<T> {
 		init();
 	}
 
-	private void init() {
+	protected void init() {
 		int index = 0;
 		for (SDFAttribute a : this.outputSchema) {
 			IViewableAttribute attribute = new ViewableSDFAttribute(a, outputSchema.getURI(), index, port);
@@ -78,7 +78,7 @@ public class ViewSchema<T> {
 
 	}
 
-	private boolean chooseAsInitialAttribute(SDFDatatype sdfDatatype) {
+	protected boolean chooseAsInitialAttribute(SDFDatatype sdfDatatype) {
 		if(sdfDatatype.equals(SDFDatatype.TIMESTAMP)){
 			return false;
 		}
@@ -91,7 +91,7 @@ public class ViewSchema<T> {
 		return true;
 	}
 
-	private static boolean isAllowedDataType(SDFDatatype sdfDatatype) {
+	protected static boolean isAllowedDataType(SDFDatatype sdfDatatype) {
 		return ViewableDatatypeRegistry.getInstance().isAllowedDataType(sdfDatatype);
 	}
 

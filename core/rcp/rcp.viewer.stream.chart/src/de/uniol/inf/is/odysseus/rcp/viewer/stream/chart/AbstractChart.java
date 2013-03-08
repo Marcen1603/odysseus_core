@@ -44,7 +44,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	Logger logger = LoggerFactory.getLogger(AbstractChart.class);
 
 	
-	private Map<Integer, ViewSchema<T>> viewSchema = new HashMap<Integer, ViewSchema<T>>();
+	protected Map<Integer, ViewSchema<T>> viewSchema = new HashMap<Integer, ViewSchema<T>>();
 	private IStreamConnection<Object> connection;
 
 	

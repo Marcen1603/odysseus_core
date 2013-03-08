@@ -24,7 +24,7 @@ public class ViewableSDFAttribute extends AbstractViewableAttribute{
 
 	final private SDFAttribute attribute;
 	final private String typeName;
-	final private int index;
+	protected final int index;
 	
 	
 	public ViewableSDFAttribute(SDFAttribute attribute, String typeName, int index, int port){
