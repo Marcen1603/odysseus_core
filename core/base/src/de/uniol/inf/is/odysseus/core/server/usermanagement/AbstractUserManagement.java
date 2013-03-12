@@ -650,7 +650,7 @@ abstract public class AbstractUserManagement<TENANT extends ITenant, USER extend
 
 	private TENANT createDefaultTenant() {
 		TENANT t = createEmptyTenant();
-		t.setName("default");
+		t.setName("");
 		t = getTenantDAO().create(t);
 		return t;
 	}
