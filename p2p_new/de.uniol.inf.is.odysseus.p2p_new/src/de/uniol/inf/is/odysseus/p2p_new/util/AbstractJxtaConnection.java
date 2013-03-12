@@ -1,0 +1,154 @@
+package de.uniol.inf.is.odysseus.p2p_new.util;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+
+import net.jxta.protocol.PipeAdvertisement;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+
+public abstract class AbstractJxtaConnection {
+
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractJxtaConnection.class);
+
+	private final PipeAdvertisement pipeAdvertisement;
+	private final List<IJxtaConnectionListener> listeners = Lists.newArrayList();
+
+	private InputStream socketInputStream;
+	private OutputStream socketOutputStream;
+	private RepeatingJobThread readingDataThread;
+
+	private boolean isConnected;
+
+	public AbstractJxtaConnection(PipeAdvertisement pipeAdvertisement) {
+		this.pipeAdvertisement = Preconditions.checkNotNull(pipeAdvertisement, "pipeAdvertisement must not be null!");
+	}
+	
+	public final PipeAdvertisement getPipeAdvertisement() {
+		return pipeAdvertisement;
+	}
+
+	public final void addListener(IJxtaConnectionListener listener) {
+		Preconditions.checkNotNull(listener, "Listener to add must not be null!");
+
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+
+	public final void removeListener(IJxtaConnectionListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
+
+	public final boolean isConnected() {
+		return isConnected;
+	}
+
+	public void connect() throws IOException {
+		fireConnectEvent();
+		
+		socketInputStream = getInputStream();
+		socketOutputStream = getOutputStream();
+
+		isConnected = true;
+		readingDataThread = new RepeatingJobThread() {
+
+			private byte[] buffer = new byte[1024];
+
+			@Override
+			public void doJob() {
+				try {
+					int bytesRead = socketInputStream.read(buffer);
+					if (bytesRead == -1) {
+						disconnect();
+						stopRunning();
+					} else if (bytesRead > 0) {
+						byte[] msg = new byte[bytesRead];
+						System.arraycopy(buffer, 0, msg, 0, bytesRead);
+						fireMessageReceiveEvent(msg);
+					}
+				} catch (IOException ex) {
+					LOG.error("Could not read bytes from input stream", ex);
+
+					disconnect();
+					stopRunning();
+				}
+			}
+
+		};
+		readingDataThread.setDaemon(true);
+		readingDataThread.setName("Reading data " + pipeAdvertisement.getPipeID().toString());
+		readingDataThread.start();
+	}
+
+	public void send(byte[] message) throws IOException {
+		Preconditions.checkNotNull(message, "Byte data must not be null!");
+		Preconditions.checkArgument(message.length > 0, "Byte data must not be empty!");
+
+		if (socketOutputStream != null) {
+			LOG.info("Sending message");
+
+			socketOutputStream.write(message);
+			socketOutputStream.flush();
+		}
+	}
+
+	public void disconnect() {
+		if (readingDataThread != null) {
+			readingDataThread.stopRunning();
+		}
+
+		isConnected = false;
+		fireDisconnectEvent();
+	}
+	
+	protected abstract InputStream getInputStream() throws IOException;
+	protected abstract OutputStream getOutputStream() throws IOException;
+
+	protected final void fireConnectEvent() {
+		synchronized (listeners) {
+			for (IJxtaConnectionListener listener : listeners) {
+				try {
+					listener.onConnect(this);
+				} catch (Throwable t) {
+					LOG.error("Exception in JxtaConnection listener", t);
+				}
+			}
+		}
+	}
+
+	protected final void fireMessageReceiveEvent(byte[] data) {
+		Preconditions.checkNotNull(data, "Byte data must not be null!");
+		Preconditions.checkArgument(data.length > 0, "Byte data must not be empty!");
+
+		synchronized (listeners) {
+			for (IJxtaConnectionListener listener : listeners) {
+				try {
+					listener.onReceiveData(this, data);
+				} catch (Throwable t) {
+					LOG.error("Exception in JxtaConnection listener", t);
+				}
+			}
+		}
+	}
+
+	protected final void fireDisconnectEvent() {
+		synchronized (listeners) {
+			for (IJxtaConnectionListener listener : listeners) {
+				try {
+					listener.onDisconnect(this);
+				} catch (Throwable t) {
+					LOG.error("Exception in JxtaConnection listener", t);
+				}
+			}
+		}
+	}
+}
