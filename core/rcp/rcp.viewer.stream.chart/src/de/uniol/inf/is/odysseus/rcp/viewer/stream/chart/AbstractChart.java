@@ -45,7 +45,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 
 	
 	protected Map<Integer, ViewSchema<T>> viewSchema = new HashMap<Integer, ViewSchema<T>>();
-	private IStreamConnection<Object> connection;
+	protected IStreamConnection<Object> connection;
 
 	
 	public AbstractChart() {
