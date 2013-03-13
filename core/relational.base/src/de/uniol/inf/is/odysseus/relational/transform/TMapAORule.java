@@ -34,7 +34,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public void execute(MapAO mapAO, TransformationConfiguration transformConfig) {
-		RelationalMapPO<?> mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]), false);
+		RelationalMapPO<?> mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]), false, false);
 		defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 

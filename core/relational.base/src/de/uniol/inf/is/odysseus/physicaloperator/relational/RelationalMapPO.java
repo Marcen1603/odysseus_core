@@ -44,11 +44,13 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	final private LinkedList<Tuple<T>> lastObjects = new LinkedList<>();
 	private int maxHistoryElements = 0;
 	final private boolean statebased;
+	final private boolean allowNull;
 
 	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions,
-			boolean statebased) {
+			boolean statebased, boolean allowNullInOutput) {
 		this.inputSchema = inputSchema;
 		this.statebased = statebased;
+		this.allowNull = allowNullInOutput;
 		init(inputSchema, expressions);
 	}
 
@@ -102,6 +104,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	public RelationalMapPO(RelationalMapPO<T> relationalMapPO) {
 		this.inputSchema = relationalMapPO.inputSchema.clone();
 		this.statebased = relationalMapPO.statebased;
+		this.allowNull = relationalMapPO.allowNull;
 		init(relationalMapPO.inputSchema, relationalMapPO.expressions);
 	}
 
@@ -113,6 +116,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	@SuppressWarnings("unchecked")
 	@Override
 	final protected void process_next(Tuple<T> object, int port) {
+		boolean nullValueOccured = false;
 		Tuple<T> outputVal = new Tuple<T>(this.expressions.length, false);
 		outputVal.setMetadata((T) object.getMetadata().clone());
 		int lastObjectSize = this.lastObjects.size();
@@ -145,6 +149,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 				} catch (Exception e) {
 					if (!(e instanceof NullPointerException)) {
 						logger.error("Cannot calc result " + e);
+						nullValueOccured = true;
 						// Not needed. Value is null, if not set!
 						// outputVal.setAttribute(i, null);
 					}
@@ -154,7 +159,10 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 				}
 			}
 		}
-		transfer(outputVal);
+		if (!nullValueOccured || (nullValueOccured && allowNull)) {
+			transfer(outputVal);
+		}
+
 	}
 
 	@Override
