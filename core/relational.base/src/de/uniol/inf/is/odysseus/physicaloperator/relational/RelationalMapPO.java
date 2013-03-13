@@ -145,11 +145,15 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 					this.expressions[i].bindAdditionalContent(object
 							.getAdditionalContent());
 					this.expressions[i].bindVariables(values);
-					outputVal.setAttribute(i, this.expressions[i].getValue());
+					Object expr = this.expressions[i].getValue();
+					outputVal.setAttribute(i, expr);
+					if (expr == null){
+						nullValueOccured = true;
+					}
 				} catch (Exception e) {
+					nullValueOccured = true;
 					if (!(e instanceof NullPointerException)) {
 						logger.error("Cannot calc result " + e);
-						nullValueOccured = true;
 						// Not needed. Value is null, if not set!
 						// outputVal.setAttribute(i, null);
 					}
