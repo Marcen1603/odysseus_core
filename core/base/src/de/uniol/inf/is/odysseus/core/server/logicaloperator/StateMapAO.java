@@ -35,6 +35,7 @@ public class StateMapAO extends MapAO {
 
 	public StateMapAO(StateMapAO ao) {
 		super(ao);
+		allowNull = ao.allowNull;
 	}
 
 	
