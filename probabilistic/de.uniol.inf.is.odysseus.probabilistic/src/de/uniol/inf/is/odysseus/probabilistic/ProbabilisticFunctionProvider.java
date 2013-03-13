@@ -32,6 +32,11 @@ import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousSm
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDivisionNumberLHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDivisionNumberRHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDivisionOperator;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDoubleToByteFunction;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDoubleToFloatFunction;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDoubleToIntegerFunction;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDoubleToLongFunction;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDoubleToShortFunction;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticGreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticGreaterThanOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticIntegrateFunction;
@@ -51,6 +56,7 @@ import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticPowerOperato
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSQRTFunction;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerThanOperator;
+import de.uniol.inf.is.odysseus.probabilistic.function.ToProbabilisticDoubleFunction;
 
 /**
  * 
@@ -94,6 +100,14 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 		functions.add(new ProbabilisticDivisionNumberLHSOperator());
 		functions.add(new ProbabilisticPowerOperator());
 		functions.add(new ProbabilisticSQRTFunction());
+
+		functions.add(new ProbabilisticDoubleToByteFunction());
+		functions.add(new ProbabilisticDoubleToShortFunction());
+		functions.add(new ProbabilisticDoubleToIntegerFunction());
+		functions.add(new ProbabilisticDoubleToLongFunction());
+		functions.add(new ProbabilisticDoubleToFloatFunction());
+
+		functions.add(new ToProbabilisticDoubleFunction());
 
 		functions.add(new ProbabilisticIntegrateMultivariateFunction());
 		functions.add(new ProbabilisticIntegrateFunction());
