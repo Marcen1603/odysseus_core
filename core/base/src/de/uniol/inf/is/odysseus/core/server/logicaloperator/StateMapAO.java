@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 
 /**
  * @author Marco Grawunder
@@ -27,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressio
 public class StateMapAO extends MapAO {
 
 	private static final long serialVersionUID = 1695948732660010522L;
-	private boolean allowNull;
+	private boolean allowNull = false;
 
 
 	public StateMapAO() {
