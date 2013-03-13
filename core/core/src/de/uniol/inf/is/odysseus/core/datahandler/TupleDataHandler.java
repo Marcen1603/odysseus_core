@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,25 +40,32 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	}
 
 	IDataHandler<?>[] dataHandlers = null;
+	final private boolean nullMode;
 
 	// Default Constructor for declarative Service needed
 	public TupleDataHandler() {
+		nullMode = false;
+	}
+
+	protected TupleDataHandler(boolean nullMode) {
+		this.nullMode = nullMode;
+	}
+
+	protected TupleDataHandler(SDFSchema schema, boolean nullMode) {
+		this.nullMode = nullMode;
+		this.createDataHandler(schema);
 	}
 
 	@Override
 	public IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
-		return new TupleDataHandler(schema);
+		return new TupleDataHandler(schema, false);
 	}
 
 	@Override
 	public IDataHandler<Tuple<?>> getInstance(List<String> schema) {
-		TupleDataHandler handler = new TupleDataHandler();
+		TupleDataHandler handler = new TupleDataHandler(false);
 		handler.init(schema);
 		return handler;
-	}
-
-	private TupleDataHandler(SDFSchema schema) {
-		this.createDataHandler(schema);
 	}
 
 	public void init(SDFSchema schema) {
@@ -96,11 +103,12 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		}
 		return new Tuple<IMetaAttribute>(attributes, false);
 	}
-	
+
 	@Override
 	public Tuple<?> readData(List<String> input) {
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(input.size(), false);
-		for (int i=0;i<input.size();i++){
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(input.size(),
+				false);
+		for (int i = 0; i < input.size(); i++) {
 			tuple.setAttribute(i, this.dataHandlers[i].readData(input.get(i)));
 		}
 		return tuple;
@@ -122,7 +130,13 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			// logger.debug("create "+byteBuffer);
 			Object[] attributes = new Object[dataHandlers.length];
 			for (int i = 0; i < dataHandlers.length; i++) {
-				attributes[i] = dataHandlers[i].readData(buffer);
+				byte type = -1;
+				if (nullMode) {
+					type = buffer.get();
+				}
+				if (!nullMode || type != 0) {
+					attributes[i] = dataHandlers[i].readData(buffer);
+				}
 			}
 			r = new Tuple<IMetaAttribute>(attributes, false);
 			// buffer.clear(); // DO NOT CLEAR THIS BUFFER, OTHER READERS MIGHT
@@ -136,41 +150,43 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		throw new RuntimeException("Sorry. Currently not implemented");
 	}
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#writeData
-     * (java.util.List, java.lang.Object)
-     */
-    @Override
-    public void writeData(List<String> output, Object data) {
-        Tuple<?> r = (Tuple<?>) data;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#writeData
+	 * (java.util.List, java.lang.Object)
+	 */
+	@Override
+	public void writeData(List<String> output, Object data) {
+		Tuple<?> r = (Tuple<?>) data;
 
-        synchronized (output) {
-            for (int i = 0; i < dataHandlers.length; i++) {
-                dataHandlers[i].writeData(output, r.getAttribute(i));
-            }
-        }
-    }
+		synchronized (output) {
+			for (int i = 0; i < dataHandlers.length; i++) {
+				dataHandlers[i].writeData(output, r.getAttribute(i));
+			}
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#writeData
-     * (java.lang.StringBuilder, java.lang.Object)
-     */
-    @Override
-    public void writeData(StringBuilder string, Object data) {
-        super.writeData(string, data);
-        Tuple<?> r = (Tuple<?>) data;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#writeData
+	 * (java.lang.StringBuilder, java.lang.Object)
+	 */
+	@Override
+	public void writeData(StringBuilder string, Object data) {
+		super.writeData(string, data);
+		Tuple<?> r = (Tuple<?>) data;
 
-        synchronized (string) {
-            for (int i = 0; i < dataHandlers.length; i++) {
-                dataHandlers[i].writeData(string, r.getAttribute(i));
-            }
-        }
-    }
-    
+		synchronized (string) {
+			for (int i = 0; i < dataHandlers.length; i++) {
+				dataHandlers[i].writeData(string, r.getAttribute(i));
+			}
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -190,7 +206,17 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 		synchronized (buffer) {
 			for (int i = 0; i < dataHandlers.length; i++) {
-				dataHandlers[i].writeData(buffer, r.getAttribute(i));
+				Object v = r.getAttribute(i);
+				if (nullMode) {
+					if (v == null) {
+						buffer.put((byte) 0);
+					} else {
+						buffer.put((byte) 1);
+					}
+				}
+				if (!nullMode || (nullMode && v != null)) {
+					dataHandlers[i].writeData(buffer, r.getAttribute(i));
+				}
 			}
 		}
 	}
@@ -227,8 +253,8 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 						+ uri);
 			}
 
-			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", attribute));
-
+			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri,
+					new SDFSchema("", attribute));
 
 		}
 	}
@@ -238,8 +264,8 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		int i = 0;
 		for (String attribute : schema) {
 
-			IDataHandler<?> handler = DataHandlerRegistry
-					.getDataHandler(attribute, (SDFSchema)null);
+			IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(
+					attribute, (SDFSchema) null);
 
 			if (handler == null) {
 				throw new IllegalArgumentException("Unregistered datatype "
@@ -256,6 +282,10 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		int size = 0;
 		for (int i = 0; i < dataHandlers.length; i++) {
 			size += dataHandlers[i].memSize(r.getAttribute(i));
+		}
+		// Marker for null or not null values
+		if (nullMode){
+			size += dataHandlers.length;
 		}
 		return size;
 	}
