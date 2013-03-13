@@ -11,10 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.endpoint.MessageElement;
 import net.jxta.pipe.PipeID;
-import net.jxta.pipe.PipeMsgEvent;
-import net.jxta.pipe.PipeMsgListener;
 import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
@@ -31,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
-public class JxtaTransportHandler extends AbstractTransportHandler implements PipeMsgListener {
+public class JxtaTransportHandler extends AbstractTransportHandler {
 
 	public static final String NAME = "JXTA";
 	public static final String PIPEID_TAG = "pipeid";
@@ -71,7 +68,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 	public void send(byte[] message) throws IOException {
 		if (socketOutputStream != null) {
 			LOG.info("Sending message");
-
+			
 			socketOutputStream.write(message);
 			socketOutputStream.flush();
 		}
@@ -192,38 +189,17 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 			clientResolverThread.stopRunning();
 			clientResolverThread = null;
 		}
-
-		if (clientSocket != null) {
-			clientSocket.close();
-		}
-
-		if (socketInputStream != null) {
-			socketInputStream.close();
-		}
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
-		if (socket != null) {
-			socket.close();
-		}
+		tryCloseAsync(socket);
 
 		if (serverSocket != null) {
 			serverSocket.close();
 		}
 	}
 
-	@Override
-	public void pipeMsgEvent(PipeMsgEvent event) {
-		LOG.info("Got pipe event");
-
-		MessageElement messageElement = event.getMessage().getMessageElement("DATA");
-		byte[] data = messageElement.getBytes(false);
-
-		ByteBuffer bb = ByteBuffer.allocate(data.length);
-		bb.put(data);
-		super.fireProcess(bb);
-	}
 
 	protected void processOptions(Map<String, String> options) {
 		String id = options.get(PIPEID_TAG);
@@ -248,6 +224,21 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements Pi
 		} catch (URISyntaxException | ClassCastException ex) {
 			LOG.error("Could not transform to pipeid: {}", text, ex);
 			return null;
+		}
+	}
+	
+	private static void tryCloseAsync(final Socket socket) throws IOException {
+		if( socket != null ) {
+			new Thread(new Runnable() {
+	
+				@Override
+				public void run() {
+					try {
+						socket.close();
+					} catch (IOException ex) {}
+				}
+				
+			}).start();
 		}
 	}
 }
