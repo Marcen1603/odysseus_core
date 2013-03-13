@@ -51,6 +51,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.DebsIntensityCalc_Nume
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DivisionOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DoubleToByteFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DoubleToFloatFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.DoubleToIntegerFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DoubleToLongFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DoubleToShortFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.EFunction;
@@ -106,6 +107,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.TangensFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToByteFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToDegrees;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToFloatFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.ToIntegerFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToLongFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToNumberFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ToRadians;
@@ -186,6 +188,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new AbsoluteFunction());
         registerFunction(new CeilFunction());
         registerFunction(new DoubleToLongFunction());
+        registerFunction(new DoubleToIntegerFunction());
         registerFunction(new DoubleToFloatFunction());
         registerFunction(new DoubleToShortFunction());
         registerFunction(new DoubleToByteFunction());
@@ -206,6 +209,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new ToShortFunction());
         registerFunction(new ToFloatFunction());
         registerFunction(new ToLongFunction());
+        registerFunction(new ToIntegerFunction());
         registerFunction(new ToStringFunction());
         registerFunction(new RandomFunction());
         registerFunction(new RoundFunction());
