@@ -43,8 +43,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	protected Object[] attributes;
 
-	protected int memSize = -1;
-
 	private boolean containsNull = false;
 	private boolean valueChanged = true;
 
@@ -485,7 +483,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			retBuff.append(curAttribute == null ? "<NULL>" : curAttribute
 					.toString());
 		}
-		retBuff.append(" | sz=" + (memSize == -1 ? "(-)" : memSize));
 		retBuff.append(" | META | " + getMetadata());
 		if (getAdditionalContent().size() > 0 ) {
 			retBuff.append("|ADD|" + getAdditionalContent());
