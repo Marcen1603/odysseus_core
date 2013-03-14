@@ -153,7 +153,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 				} catch (Exception e) {
 					nullValueOccured = true;
 					if (!(e instanceof NullPointerException)) {
-						logger.error("Cannot calc result " + e);
+						logger.error("Cannot calc result ", e);
 						// Not needed. Value is null, if not set!
 						// outputVal.setAttribute(i, null);
 					}
