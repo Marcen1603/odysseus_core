@@ -45,7 +45,7 @@ public class P2PDistributor implements ILogicalQueryDistributor {
 
 	private static final String WRAPPER_NAME = "GenericPush";
 	private static final String PROTOCOL_HANDLER_NAME = "SizeByteBuffer";
-	private static final String DATA_HANDLER_NAME = "Tuple";
+	private static final String DATA_HANDLER_NAME = "NTuple";
 	private static final String ACCESS_NAME = "JxtaAccess_";
 	private static final String SENDER_NAME = "JxtaSender_";
 
