@@ -34,12 +34,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.distributor.user.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.distributor.user.QueryPartAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distributor.user.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.handler.JxtaTransportHandler;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
-public class P2PDistributor implements ILogicalQueryDistributor {
+public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(P2PDistributor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(UserDefinedDistributor.class);
 	private static final Random RAND = new Random();
 	private static final String LOCAL_DESTINATION_NAME = "local";
 

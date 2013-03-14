@@ -26,8 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.datasrc.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.datasrc.SourceAdvertisementInstantiator;
-import de.uniol.inf.is.odysseus.p2p_new.distributor.QueryPartAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.distributor.QueryPartAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.p2p_new.distributor.user.QueryPartAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distributor.user.QueryPartAdvertisementInstantiator;
 
 public class P2PNewPlugIn implements BundleActivator {
 

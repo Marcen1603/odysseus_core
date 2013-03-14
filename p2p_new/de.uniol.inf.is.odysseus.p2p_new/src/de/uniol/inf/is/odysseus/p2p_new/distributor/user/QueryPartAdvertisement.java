@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distributor;
+package de.uniol.inf.is.odysseus.p2p_new.distributor.user;
 
 import java.io.IOException;
 import java.io.InputStream;
