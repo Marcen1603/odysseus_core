@@ -40,7 +40,7 @@ public class NullAwareTupleDataHandler extends TupleDataHandler {
 	public NullAwareTupleDataHandler(SDFSchema schema) {
 		super(schema,true);
 	}
-
+	
 	@Override
 	public IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
 		return new NullAwareTupleDataHandler(schema);

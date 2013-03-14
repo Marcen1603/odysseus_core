@@ -26,17 +26,23 @@ import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class StringHandler extends AbstractDataHandler<String> {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(StringHandler.class);
+	
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add("String");
 		types.add("StartTimestampString");
 	}
-	private static Charset charset = Charset.forName("UTF-8");
-	private static CharsetDecoder decoder = charset.newDecoder();
-	private static CharsetEncoder encoder = charset.newEncoder();
+	private Charset charset = Charset.forName("UTF-8");
+	private CharsetDecoder decoder = charset.newDecoder();
+	private CharsetEncoder encoder = charset.newEncoder();
 
 	@Override
 	public IDataHandler<String> getInstance(SDFSchema schema) {
@@ -50,9 +56,8 @@ public class StringHandler extends AbstractDataHandler<String> {
 
 	@Override
 	public String readData(ByteBuffer b) {
-		// StringBuffer buf = new StringBuffer();
 		int size = b.getInt();
-		if (size < 0) {
+		if (size > 0) {
 			// System.out.println("size "+size);
 			int limit = b.limit();
 			b.limit(b.position() + size);
@@ -60,22 +65,14 @@ public class StringHandler extends AbstractDataHandler<String> {
 				CharBuffer decoded = decoder.decode(b);
 				return decoded.toString();
 			} catch (CharacterCodingException e) {
-				e.printStackTrace();
+				LOG.error("Could not decode data with string handler", e);
 			} finally {
 				b.limit(limit);
 			}
+			return "";
 		} else {
-			b.limit();
 			return null;
 		}
-		// for (int i=0;i<size;i++){
-		// char c = b.getChar();
-		// //System.out.print(c);
-		// buf.append(c);
-		// }
-		// System.out.println();
-		// return buf.toString();
-		return "";
 	}
 
 	@Override
@@ -102,11 +99,8 @@ public class StringHandler extends AbstractDataHandler<String> {
 				buffer.putInt(-1);
 			}
 		} catch (CharacterCodingException e) {
-			e.printStackTrace();
+			LOG.error("Could not encode '{}'", s, e);
 		}
-		// for (int i=0;i<s.length();i++){
-		// buffer.putChar(s.charAt(i));
-		// }
 	}
 
 	@Override
@@ -121,12 +115,8 @@ public class StringHandler extends AbstractDataHandler<String> {
 					.limit() + Integer.SIZE / 8;
 			return val;
 		} catch (CharacterCodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Could not encode '{}' for calculation mem-size", (String)attribute, e);
 		}
 		return Integer.SIZE / 8;
-		// return ((String) attribute).length() * 2 // Unicode!
-		// + Integer.SIZE / 8; // F�r die L�ngeninformation (evtl.
-		// // anders machen?)
 	}
 }
