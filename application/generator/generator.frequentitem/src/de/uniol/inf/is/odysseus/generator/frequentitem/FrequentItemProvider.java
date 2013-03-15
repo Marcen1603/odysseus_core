@@ -96,7 +96,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 			line = line.trim();
 			String parts[] = line.split(" ");
 			for (String part : parts) {
-				// int itemId = Integer.parseInt(part.trim());
+				//int itemId = Integer.parseInt(part.trim());
 				String itemId = part.trim();
 				DataTuple tuple = new DataTuple();
 				tuple.addAttribute(new Long(time));
@@ -104,6 +104,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 				tuple.addAttribute(new String(itemId));
 				tuples.add(tuple);
 				// counter++;
+				System.out.println(itemId);
 			}
 
 			time = time + 100;
