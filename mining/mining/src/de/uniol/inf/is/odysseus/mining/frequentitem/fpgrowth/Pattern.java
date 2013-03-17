@@ -39,13 +39,17 @@ public class Pattern<M extends ITimeInterval> extends AbstractStreamObject<M> {
 	public Pattern() {
 
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	public Pattern(Pattern<M> old) {
 		for(int i=0;i<old.pattern.size();i++){
 			this.pattern.add(old.pattern.get(i));
 			this.supports.add(old.supports.get(i));
 		}
 		this.support = old.support;
+		if(old.getMetadata() != null) {
+			this.setMetadata((M)old.getMetadata().clone());
+		}
 	}
 	
 
