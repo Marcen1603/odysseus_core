@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -149,6 +150,13 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	private static boolean isPublishable(AccessAO accessAO) {
 		if( accessAO.getTransportHandler().equalsIgnoreCase("file")) {
 			return false;
+		}
+		
+		String publicFlag = accessAO.getOptionsMap().get("public");
+		if( !Strings.isNullOrEmpty(publicFlag)) {
+			if( "false".equalsIgnoreCase(publicFlag)) {
+				return false;
+			}
 		}
 		
 		return true;
