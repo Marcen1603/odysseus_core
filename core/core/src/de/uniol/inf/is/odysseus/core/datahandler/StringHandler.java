@@ -57,7 +57,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 	@Override
 	public String readData(ByteBuffer b) {
 		int size = b.getInt();
-		if (size > 0) {
+		if (size >= 0) {
 			// System.out.println("size "+size);
 			int limit = b.limit();
 			b.limit(b.position() + size);
