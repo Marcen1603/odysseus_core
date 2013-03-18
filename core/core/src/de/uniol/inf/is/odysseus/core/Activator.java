@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.core;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.ListDataHandler;
@@ -40,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 public class Activator implements BundleActivator {
 
 	private static BundleContext bundleContext;
-	
+	private static Logger LOGGER = LoggerFactory.getLogger("Core");
 	
 	public static BundleContext getBundleContext(){
 		return bundleContext;
@@ -55,6 +57,16 @@ public class Activator implements BundleActivator {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void start(BundleContext context) throws Exception {	
+		
+		// Get current size of heap
+		LOGGER.info("Current size of heap: \t"+humanReadableByteCount(Runtime.getRuntime().totalMemory(), true));
+		
+		// Get maximum size of heap in bytes. The heap cannot grow beyond this size.// Any attempt will result in an OutOfMemoryException.
+		LOGGER.info("Maximum size of heap: \t"+humanReadableByteCount(Runtime.getRuntime().maxMemory(), true));
+		
+		//Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
+		LOGGER.info("Free memory of the heap: \t"+humanReadableByteCount(Runtime.getRuntime().freeMemory(), true));
+		
 		bundleContext = context;
 		
 		ProtocolHandlerRegistry.register(new LineProtocolHandler());
@@ -75,7 +87,16 @@ public class Activator implements BundleActivator {
 		TransportHandlerRegistry.register(new NonBlockingUdpServerHandler());
 		TransportHandlerRegistry.register(new NonBlockingUdpClientHandler());
 
-		DataHandlerRegistry.registerDataHandler(new ListDataHandler());
+		DataHandlerRegistry.registerDataHandler(new ListDataHandler());	
+	}
+	
+	
+	private static String humanReadableByteCount(long bytes, boolean si) {
+	    int unit = si ? 1000 : 1024;
+	    if (bytes < unit) return bytes + " B";
+	    int exp = (int) (Math.log(bytes) / Math.log(unit));
+	    String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 
 	/*
