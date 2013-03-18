@@ -134,9 +134,8 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 
 		if (element instanceof SDFAttribute) {
 			SDFAttribute a = (SDFAttribute) element;
-			StringBuffer name = new StringBuffer(a.getURI());
-			name.append(":").append(a.getDatatype().getURI());
-			return name.toString();
+			String name = a.getSourceName()+"."+a.getAttributeName()+" ("+a.getDatatype().getURI()+")";
+			return name;
 		}
 		if (element instanceof IMonitoringData<?>) {
 			final IMonitoringData<?> monData = (IMonitoringData<?>) element;
