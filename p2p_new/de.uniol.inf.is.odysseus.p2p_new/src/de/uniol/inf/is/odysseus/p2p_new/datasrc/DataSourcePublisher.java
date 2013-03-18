@@ -90,21 +90,21 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	}
 
 	public void publishSource(SourceAdvertisement adv) {
-		tryPublishSource(adv.getAccessAO(), PUBLISH_INTERVAL_MILLIS, adv);
+		tryPublishSource(adv, PUBLISH_INTERVAL_MILLIS);
 	}
 
 	private void publishSource(AccessAO source, long lifetime) {
 		SourceAdvertisement adv = determineSourceAdvertisement(source);
-		tryPublishSource(source, lifetime, adv);
+		tryPublishSource(adv, lifetime);
 	}
 
-	private void tryPublishSource(AccessAO source, long lifetime, SourceAdvertisement adv) {
-		LOG.debug("Publishing source {} with lifetime {} ms", source, lifetime);
+	private void tryPublishSource(SourceAdvertisement adv, long lifetime) {
+		LOG.debug("Publishing source {} with lifetime {} ms", adv.getAccessAO().getSourcename(), lifetime);
 		try {
 			discoveryService.publish(adv, lifetime, lifetime);
 			publishedSources.put(adv.getAccessAO().getSourcename(), adv);
 		} catch (IOException ex) {
-			LOG.error("Could not publish source {}", source, ex);
+			LOG.error("Could not publish source {}", adv.getAccessAO().getSourcename(), ex);
 		}
 	}
 
