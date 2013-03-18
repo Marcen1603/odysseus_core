@@ -51,13 +51,14 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 		for (Entry<String, ILogicalOperator> stream : dataDictionary.getStreams(SessionManagementService.getActiveSession())) {
 			Optional<AccessAO> optAccessAO = determineAccessAO(stream.getValue());
 			if (optAccessAO.isPresent()) {
-				publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
+				if( isPublishable( optAccessAO.get())) {
+					publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
+				}
 			} else {
 				LOG.error("Could not publish new source since the accessAO is not found from logical operator {}", stream.getValue());
 			}
-		}
-	}
-
+		}	}
+	
 	@Override
 	public void afterJob() {
 		dataDictionary.removeListener(this);
@@ -144,4 +145,13 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 
 		return Optional.absent();
 	}
+
+	private static boolean isPublishable(AccessAO accessAO) {
+		if( accessAO.getTransportHandler().equalsIgnoreCase("file")) {
+			return false;
+		}
+		
+		return true;
+	}
+
 }
