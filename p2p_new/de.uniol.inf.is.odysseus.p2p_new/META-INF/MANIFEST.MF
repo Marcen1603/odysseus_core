@@ -32,7 +32,8 @@ Import-Package: de.uniol.inf.is.odysseus.core,
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  com.google.guava;bundle-version="12.0.0",
  Jxta.2.6;bundle-version="1.0.0"
-Service-Component: OSGI-INF/sessionManagement.xml, OSGI-INF/advertisementManager.xml, OSGI-INF/dataSourceManager.xml, OSGI-INF/userDefinedDistributor.xml,OSGI-INF/jxtaTransportHandler.xml,OSGI-INF/queryPartManager.xml,OSGI-INF/queryPartController.xml,OSGI-INF/peerManager.xml,
+Service-Component: OSGI-INF/sessionManagement.xml, OSGI-INF/advertisementManager.xml, OSGI-INF/dataSourceManager.xml, OSGI-INF/jxtaTransportHandler.xml,OSGI-INF/queryPartManager.xml,OSGI-INF/queryPartController.xml,OSGI-INF/peerManager.xml,
  OSGI-INF/modelBasedDistributor.xml
-Export-Package: de.uniol.inf.is.odysseus.p2p_new
+Export-Package: de.uniol.inf.is.odysseus.p2p_new,
+ de.uniol.inf.is.odysseus.p2p_new.util
 Bundle-ActivationPolicy: lazy

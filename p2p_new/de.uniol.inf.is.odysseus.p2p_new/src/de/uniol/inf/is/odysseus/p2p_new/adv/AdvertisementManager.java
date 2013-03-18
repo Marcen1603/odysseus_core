@@ -51,11 +51,15 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 	// called by OSGi-DS
 	public final void bindAdvertisementListener( IAdvertisementListener listener ) {
 		addAdvertisementListener(listener);
+		
+		LOG.debug("Bound advertisement listener {}", listener);
 	}
 	
 	// called by OSGi-DS
 	public final void unbindAdvertisementListener( IAdvertisementListener listener ) {
 		removeAdvertisementListener(listener);
+
+		LOG.debug("Unbound advertisement listener {}", listener);
 	}
 	
 	@Override
@@ -106,6 +110,8 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 		Enumeration<Advertisement> advs = response.getAdvertisements();
 		while (advs.hasMoreElements()) {
 			Advertisement adv = advs.nextElement();
+			
+			LOG.debug("Got advertisement of type {}", adv.getClass().getSimpleName());
 			fireAdvertisementEvent(adv);
 		}
 	}
