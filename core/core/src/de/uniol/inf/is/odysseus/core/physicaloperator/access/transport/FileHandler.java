@@ -54,15 +54,15 @@ public class FileHandler extends AbstractFileHandler {
 			fis = new FileInputStream(filename);
 			FileChannel channel = fis.getChannel();
 			long size = channel.size();
-			double x = size / (double)Integer.MAX_VALUE;
+			double x = size / (double) Integer.MAX_VALUE;
 			int n = (int) Math.ceil(x);
 			ByteBuffer buffers[] = new ByteBuffer[n];
-			for (int i = 0; i < n; i++) {			
+			for (int i = 0; i < n; i++) {
 				buffers[i] = ByteBuffer.allocateDirect(Integer.MAX_VALUE);
 				channel.read(buffers[i]);
 				buffers[i].rewind();
 			}
-			
+
 			in = createInputStream(buffers);
 			fireOnConnect();
 		}
@@ -100,10 +100,11 @@ public class FileHandler extends AbstractFileHandler {
 			public int available() throws IOException {
 				return buffers[current].remaining();
 			}
+
 			@Override
-			public void close() throws IOException {			
+			public void close() throws IOException {
 				super.close();
-				for(ByteBuffer buffer : buffers){
+				for (ByteBuffer buffer : buffers) {
 					buffer.clear();
 				}
 			}
@@ -126,7 +127,9 @@ public class FileHandler extends AbstractFileHandler {
 	@Override
 	public void processInClose() throws IOException {
 		super.processInClose();
-		fis.close();
+		if (fis != null) {
+			fis.close();
+		}
 	}
 
 	@Override
