@@ -35,13 +35,11 @@ public class Activator implements BundleActivator {
 	@Override
     public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		System.out.println("Starting A-Generator server...");
-		StreamServer windServer = new StreamServer(54321, new ISKlausurGeneratorA());
+		System.out.println("Starting an example generator server on port 54321...");
+		StreamServer windServer = new StreamServer(54321, new ExampleGenerator());
 		windServer.start();
 		
-		System.out.println("Starting B-Generator server...");
-		StreamServer weatherServer = new StreamServer(54322, new ISKlausurGeneratorB());
-		weatherServer.start();
+		
 	}
 
 	/*

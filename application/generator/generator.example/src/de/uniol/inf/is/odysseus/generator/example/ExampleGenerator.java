@@ -41,11 +41,13 @@ import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
  * @author Dennis Geesen
  * Created at: 05.09.2011
  */
-public class ISKlausurGeneratorA  extends StreamClientHandler{
+public class ExampleGenerator  extends StreamClientHandler{
 
-	private long[] time = {16, 33, 38, 51, 70};
-	private int[] attribute = {8,9,5,8,4};
-	private int pointer = 0;
+	private long time = 0;
+	private int intVal = 0;
+	private String stringVal = "an example string";
+	private boolean booleanVal = true;
+	
 	
 	@Override
 	public void init() {		
@@ -57,23 +59,28 @@ public class ISKlausurGeneratorA  extends StreamClientHandler{
 		
 	}
 
+	// CREATE STREAM example (ts STARTTIMESTAMP, i INTEGER, s STRING, b BOOLEAN, bt BYTE, d DOUBLE, sh SHORT) CHANNEL localhost : 54321
+	
 	@Override
 	public List<DataTuple> next() {
 		DataTuple tuple = new DataTuple();
 		// time
-		tuple.addLong(time[pointer]);
+		tuple.addLong(time++);
 		// a
-		tuple.addInteger(attribute[pointer]);
-		
-		try {if(pointer<=(time.length-1)){
+		tuple.addInteger(intVal);
+		tuple.addString(stringVal);
+		tuple.addBoolean(booleanVal);
+		tuple.addByte(new Byte("1"));
+		tuple.addDouble(123.456);
+		tuple.addShort(new Short("1"));
+		try {
 			Thread.sleep(1000);
-		}else{
-			Thread.sleep(10000);
-		}
-		} catch (InterruptedException e) {
+		} catch (InterruptedException e) {		
 			e.printStackTrace();
 		}
-		pointer++;
+		
+		
+		
 		List<DataTuple> list = new ArrayList<DataTuple>();
 		list.add(tuple);
 		return list;
@@ -81,7 +88,7 @@ public class ISKlausurGeneratorA  extends StreamClientHandler{
 	
 	@Override
 	public StreamClientHandler clone() {
-		return new ISKlausurGeneratorA();
+		return new ExampleGenerator();
 	}
 
 }
