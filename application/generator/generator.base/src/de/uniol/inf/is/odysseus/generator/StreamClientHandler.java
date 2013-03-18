@@ -33,7 +33,11 @@ package de.uniol.inf.is.odysseus.generator;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +64,9 @@ public abstract class StreamClientHandler extends Thread {
 	 * Punctuation verarbeitet.
 	 */
 	private Boolean isSA = false;
+
+	private Charset charset = Charset.forName("UTF-8");	
+	private CharsetEncoder encoder = charset.newEncoder();
 
 	private boolean printthroughput = false;
 	private int throughputEach;
@@ -109,23 +116,23 @@ public abstract class StreamClientHandler extends Thread {
 		try {
 			next = next();
 		} catch (InterruptedException ie) {
-			System.out.println("Thread interrupted. Stopping client for"+getInternalName());
+			System.out.println("Thread interrupted. Stopping client for" + getInternalName());
 			next = null;
 		}
 		while (next != null) {
 			try {
 				if (this.connection.isClosed()) {
-					System.out.println("Connection closed for "+getInternalName());
+					System.out.println("Connection closed for " + getInternalName());
 					break;
 				}
-				for (DataTuple nextTuple : next) {							
+				for (DataTuple nextTuple : next) {
 					transferTuple(nextTuple);
 					if (printthroughput) {
-						counter++;						
+						counter++;
 						int size = nextTuple.memSize;
 						this.totalSize += size;
 						this.lastSize += size;
-						if ((counter % throughputEach) == 0) {							
+						if ((counter % throughputEach) == 0) {
 							printStats();
 							lastTime = System.currentTimeMillis();
 							lastSize = 0;
@@ -135,14 +142,14 @@ public abstract class StreamClientHandler extends Thread {
 				next = next();
 
 			} catch (InterruptedException ie) {
-				System.out.println("Thread interrupted. Stopping client for "+getInternalName());
+				System.out.println("Thread interrupted. Stopping client for " + getInternalName());
 				if (printthroughput) {
 					System.out.println("Total stats:");
 					printStats();
 				}
 				next = null;
 			} catch (IOException e) {
-				System.out.println("Connection closed for "+getInternalName());
+				System.out.println("Connection closed for " + getInternalName());
 				if (printthroughput) {
 					System.out.println("Total stats for :");
 					printStats();
@@ -162,25 +169,24 @@ public abstract class StreamClientHandler extends Thread {
 		close();
 	}
 
-	private String getInternalName(){
-		return this.streamName+" #"+this.instanceNumber;
+	private String getInternalName() {
+		return this.streamName + " #" + this.instanceNumber;
 	}
-	
+
 	/**
 	 * @param nextTuple
 	 */
 	protected void printStats() {
-		System.out.println("--- "+getInternalName()+"---");
-		double needed = System.currentTimeMillis()-lastTime;		
+		System.out.println("--- " + getInternalName() + "---");
+		double needed = System.currentTimeMillis() - lastTime;
 		double total = System.currentTimeMillis() - startTime;
-		System.out.println("Duration for last " + nf.format(throughputEach) + " elements: \t" + nf.format(needed) + "\t ms for " + nf.format(lastSize) + "\t bytes. Throughput: \t"+Math.round((lastSize/needed)*100.)/100.+" bytes/ms");
-		System.out.println("Total for "+nf.format(counter)+" elements: \t\t" + nf.format(total) + "\t ms for " + nf.format(totalSize) + "\t bytes. Throughput: \t"+Math.round((totalSize/total)*100.)/100.+" \tbytes/ms");
+		System.out.println("Duration for last " + nf.format(throughputEach) + " elements: \t" + nf.format(needed) + "\t ms for " + nf.format(lastSize) + "\t bytes. Throughput: \t" + Math.round((lastSize / needed) * 100.) / 100. + " bytes/ms");
+		System.out.println("Total for " + nf.format(counter) + " elements: \t\t" + nf.format(total) + "\t ms for " + nf.format(totalSize) + "\t bytes. Throughput: \t" + Math.round((totalSize / total) * 100.) / 100. + " \tbytes/ms");
 	}
-		
-	
-	public double getLastThroughput(){
+
+	public double getLastThroughput() {
 		double total = System.currentTimeMillis() - startTime;
-		return Math.round((totalSize/total)*100.)/100.;
+		return Math.round((totalSize / total) * 100.) / 100.;
 	}
 
 	public void transferTuple(DataTuple tuple) throws IOException {
@@ -207,9 +213,9 @@ public abstract class StreamClientHandler extends Thread {
 		if (tuple instanceof SADataTuple) {
 			if (isSA) {
 				if (((SADataTuple) tuple).isSP()) {
-					if(((SADataTuple) tuple).getSPType().equals("predicate")) {
+					if (((SADataTuple) tuple).getSPType().equals("predicate")) {
 						bytebuffer.putInt(2);
-					} else { 
+					} else {
 						bytebuffer.putInt(1);
 					}
 				} else {
@@ -237,10 +243,19 @@ public abstract class StreamClientHandler extends Thread {
 			} else if (data instanceof Long) {
 				bytebuffer.putLong((Long) data);
 			} else if (data instanceof String) {
+				// String s = (String) data;
+				// bytebuffer.putInt(s.length());
+				// for (int i = 0; i < s.length(); i++) {
+				// bytebuffer.putChar(s.charAt(i));
+				// }
 				String s = (String) data;
-				bytebuffer.putInt(s.length());
-				for (int i = 0; i < s.length(); i++) {
-					bytebuffer.putChar(s.charAt(i));
+				ByteBuffer charBuffer;
+				try {
+					charBuffer = encoder.encode(CharBuffer.wrap(s));
+					bytebuffer.putInt(charBuffer.limit());
+					bytebuffer.put(charBuffer);
+				} catch (CharacterCodingException e) {
+					e.printStackTrace();
 				}
 			} else {
 				throw new RuntimeException("illegal datatype " + data);
@@ -347,7 +362,7 @@ public abstract class StreamClientHandler extends Thread {
 	public void setStreamName(String streamName) {
 		this.streamName = streamName;
 	}
-	
+
 	public void printStatus() {
 		System.out.println("------ Current Status ------");
 		printStats();
