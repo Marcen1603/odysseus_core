@@ -5,7 +5,7 @@ import net.jxta.document.AdvertisementFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-public class UserBasedDistributorPlugIn implements BundleActivator {
+public class UserDefinedDistributorPlugIn implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
