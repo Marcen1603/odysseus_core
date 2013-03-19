@@ -53,8 +53,6 @@ public class TimestampAO extends UnaryLogicalOp {
 		super(ao);
 		setStartTimestamp(ao.startTimestamp);
 		setEndTimestamp(ao.endTimestamp);
-		this.isUsingSystemTime = ao.isUsingSystemTime;
-		this.isUsingNoTime = ao.isUsingNoTime;
 		setClearEnd(ao.clearEnd);
 		setDateFormat(ao.dateFormat);
 		setTimezone(ao.timezone);
@@ -66,6 +64,8 @@ public class TimestampAO extends UnaryLogicalOp {
 		setStartTimestampSecond(ao.startTimestampSecond);
 		setStartTimestampMillisecond(ao.startTimestampMillisecond);
 		setFactor(ao.factor);
+		this.isUsingSystemTime = ao.isUsingSystemTime;
+		this.isUsingNoTime = ao.isUsingNoTime;
 	}
 
 	public TimestampAO() {
