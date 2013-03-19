@@ -50,16 +50,10 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	@Override
 	public void doJob() {
 		for (Entry<String, ILogicalOperator> stream : dataDictionary.getStreams(SessionManagementService.getActiveSession())) {
-			Optional<AccessAO> optAccessAO = determineAccessAO(stream.getValue());
-			if (optAccessAO.isPresent()) {
-				if( isPublishable( optAccessAO.get())) {
-					publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
-				}
-			} else {
-				LOG.error("Could not publish new source since the accessAO is not found from logical operator {}", stream.getValue());
-			}
-		}	}
-	
+			doJobImpl(stream.getValue());
+		}
+	}
+
 	@Override
 	public void afterJob() {
 		dataDictionary.removeListener(this);
@@ -67,12 +61,7 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		Optional<AccessAO> optAccessAO = determineAccessAO(op);
-		if (optAccessAO.isPresent()) {
-			publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS);
-		} else {
-			LOG.error("Could not publish new source since the accessAO is not found from logical operator {}", op);
-		}
+		doJobImpl(op);
 	}
 
 	@Override
@@ -92,6 +81,17 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 
 	public void publishSource(SourceAdvertisement adv) {
 		tryPublishSource(adv, PUBLISH_INTERVAL_MILLIS);
+	}
+
+	private void doJobImpl(ILogicalOperator operator) {
+		Optional<AccessAO> optAccessAO = determineAccessAO(operator);
+		if (optAccessAO.isPresent()) {
+			if (isPublishable(optAccessAO.get())) {
+				publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
+			}
+		} else {
+			LOG.error("Could not publish new source since the accessAO is not found from logical operator {}", operator);
+		}
 	}
 
 	private void publishSource(AccessAO source, long lifetime) {
@@ -148,17 +148,17 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	}
 
 	private static boolean isPublishable(AccessAO accessAO) {
-		if( accessAO.getTransportHandler().equalsIgnoreCase("file")) {
+		if (accessAO.getTransportHandler().equalsIgnoreCase("file")) {
 			return false;
 		}
-		
+
 		String publicFlag = accessAO.getOptionsMap().get("public");
-		if( !Strings.isNullOrEmpty(publicFlag)) {
-			if( "false".equalsIgnoreCase(publicFlag)) {
+		if (!Strings.isNullOrEmpty(publicFlag)) {
+			if ("false".equalsIgnoreCase(publicFlag)) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
