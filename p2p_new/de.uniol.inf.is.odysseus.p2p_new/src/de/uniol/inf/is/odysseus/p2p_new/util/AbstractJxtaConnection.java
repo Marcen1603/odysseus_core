@@ -85,7 +85,7 @@ public abstract class AbstractJxtaConnection {
 
 		};
 		readingDataThread.setDaemon(true);
-		readingDataThread.setName("Reading data " + pipeAdvertisement.getPipeID().toString());
+		readingDataThread.setName("[" + getClass().getSimpleName() + "] Reading data " + pipeAdvertisement.getPipeID().toString());
 		readingDataThread.start();
 	}
 
@@ -93,7 +93,7 @@ public abstract class AbstractJxtaConnection {
 		Preconditions.checkNotNull(message, "Byte data must not be null!");
 		Preconditions.checkArgument(message.length > 0, "Byte data must not be empty!");
 
-		if (socketOutputStream != null) {
+		if (socketOutputStream != null && isConnected == true) {
 			LOG.info("Sending message");
 
 			socketOutputStream.write(message);

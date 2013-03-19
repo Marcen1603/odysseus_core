@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.p2p_new.handler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -14,8 +12,6 @@ import net.jxta.document.AdvertisementFactory;
 import net.jxta.pipe.PipeID;
 import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
-import net.jxta.socket.JxtaServerSocket;
-import net.jxta.socket.JxtaSocket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +22,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.p2p_new.util.AbstractJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.ClientJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
+import de.uniol.inf.is.odysseus.p2p_new.util.ServerJxtaConnection;
 
-public class JxtaTransportHandler extends AbstractTransportHandler {
+public class JxtaTransportHandler extends AbstractTransportHandler implements IJxtaConnectionListener {
 
 	public static final String NAME = "JXTA";
 	public static final String PIPEID_TAG = "pipeid";
@@ -37,17 +36,8 @@ public class JxtaTransportHandler extends AbstractTransportHandler {
 
 	private static final String PIPE_NAME = "Odysseus Pipe";
 
-	private JxtaServerSocket serverSocket;
-	private Socket socket;
-	private OutputStream socketOutputStream;
-
-	private JxtaSocket clientSocket;
-	private InputStream socketInputStream;
-
 	private PipeID pipeID;
-
-	private RepeatingJobThread readingDataThread;
-	private RepeatingJobThread clientResolverThread;
+	private AbstractJxtaConnection connection;
 
 	// for transportFactory
 	public JxtaTransportHandler() {
@@ -66,11 +56,8 @@ public class JxtaTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		if (socketOutputStream != null) {
-			LOG.info("Sending message");
-			
-			socketOutputStream.write(message);
-			socketOutputStream.flush();
+		if (connection != null && connection.isConnected()) {
+			connection.send(message);
 		}
 	}
 
@@ -95,62 +82,8 @@ public class JxtaTransportHandler extends AbstractTransportHandler {
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 		P2PNewPlugIn.getDiscoveryService().publish(pipeAdvertisement); // needed?
 
-		clientResolverThread = new RepeatingJobThread() {
-			@Override
-			public void doJob() {
-				try {
-					clientSocket = new JxtaSocket(P2PNewPlugIn.getOwnPeerGroup(), pipeAdvertisement, 5000);
-					clientSocket.setSoTimeout(0);
-					LOG.debug("Client socket created: {}", clientSocket);
-
-					socketInputStream = clientSocket.getInputStream();
-					stopRunning();
-				} catch (SocketTimeoutException ex) {
-					// ignore... try again
-
-				} catch (Exception ex) {
-					LOG.error("Could not get client socket", ex);
-					stopRunning();
-				}
-			}
-		};
-		clientResolverThread.setDaemon(true);
-		clientResolverThread.setName("ClientSocket resolver " + pipeAdvertisement.getPipeID().toString());
-		clientResolverThread.start();
-
-		readingDataThread = new RepeatingJobThread() {
-
-			private byte[] buffer = new byte[1024];
-
-			@Override
-			public void doJob() {
-				if (socketInputStream != null) {
-					try {
-						int bytesRead = socketInputStream.read(buffer);
-						if (bytesRead == -1) {
-							clientSocket.close();
-							stopRunning();
-						} else if (bytesRead > 0) {
-							ByteBuffer bb = ByteBuffer.allocate(bytesRead);
-							bb.put(buffer, 0, bytesRead);
-							JxtaTransportHandler.this.fireProcess(bb);
-						}
-					} catch (IOException ex) {
-						LOG.error("Could not read bytes from input stream", ex);
-						stopRunning();
-					}
-				} else {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException ex) {
-					}
-				}
-			}
-		};
-		readingDataThread.setDaemon(true);
-		readingDataThread.setName("Reading data " + pipeAdvertisement.getPipeID().toString());
-		readingDataThread.start();
-
+		connection = new ClientJxtaConnection(pipeAdvertisement);
+		tryConnectAsync();
 	}
 
 	@Override
@@ -158,54 +91,78 @@ public class JxtaTransportHandler extends AbstractTransportHandler {
 		LOG.info("Process Out Open");
 
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
+		connection = new ServerJxtaConnection(pipeAdvertisement);
 
-		serverSocket = new JxtaServerSocket(P2PNewPlugIn.getOwnPeerGroup(), pipeAdvertisement);
-		serverSocket.setSoTimeout(0);
-		Thread socketResolver = new Thread() {
-			public void run() {
-				try {
-					socket = serverSocket.accept();
-
-					socketOutputStream = socket.getOutputStream();
-
-				} catch (IOException ex) {
-					LOG.error("Could not create socket", ex);
-				}
-			};
-		};
-		socketResolver.setDaemon(true);
-		socketResolver.setName("ServerSocket Resolver " + pipeAdvertisement.getPipeID().toString());
-		socketResolver.start();
+		tryConnectAsync();
 	}
 
 	@Override
 	public void processInClose() throws IOException {
-		if (readingDataThread != null && readingDataThread.isAlive()) {
-			readingDataThread.stopRunning();
-			readingDataThread = null;
-		}
-
-		if (clientResolverThread != null && clientResolverThread.isAlive()) {
-			clientResolverThread.stopRunning();
-			clientResolverThread = null;
-		}
+		tryDisconnectAsync();
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
-		tryCloseAsync(socket);
-
-		if (serverSocket != null) {
-			serverSocket.close();
-		}
+		tryDisconnectAsync();
 	}
 
+	@Override
+	public void onConnect(AbstractJxtaConnection sender) {
+		LOG.debug("Connected to {}", sender.getPipeAdvertisement().getPipeID());
+	}
 
+	@Override
+	public void onReceiveData(AbstractJxtaConnection sender, byte[] data) {
+		LOG.debug("Got message");
+		
+		ByteBuffer bb = ByteBuffer.allocate(data.length);
+		bb.put(data);
+		JxtaTransportHandler.this.fireProcess(bb);
+	}
+
+	@Override
+	public void onDisconnect(AbstractJxtaConnection sender) {
+		LOG.debug("Disconnected from {}", sender.getPipeAdvertisement().getPipeID());
+	}
+	
 	protected void processOptions(Map<String, String> options) {
 		String id = options.get(PIPEID_TAG);
 		if (!Strings.isNullOrEmpty(id)) {
 			pipeID = convertToPipeID(id);
 		}
+	}
+
+	private void tryConnectAsync() {
+		
+		connection.addListener(this);
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					connection.connect();
+				} catch (IOException ex) {
+					LOG.error("Could not connect", ex);
+					connection = null;
+				}
+			}
+		});
+		t.setName("Connect thread for " + connection.getPipeAdvertisement().getPipeID());
+		t.setDaemon(true);
+		t.start();
+	}
+
+	private void tryDisconnectAsync() {
+		connection.removeListener(this);
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				connection.disconnect();
+				connection = null;
+			}
+		});
+		t.setName("Discconnect thread for " + connection.getPipeAdvertisement().getPipeID());
+		t.setDaemon(true);
+		t.start();
 	}
 
 	private static PipeAdvertisement createPipeAdvertisement(PipeID pipeID) {
@@ -224,21 +181,6 @@ public class JxtaTransportHandler extends AbstractTransportHandler {
 		} catch (URISyntaxException | ClassCastException ex) {
 			LOG.error("Could not transform to pipeid: {}", text, ex);
 			return null;
-		}
-	}
-	
-	private static void tryCloseAsync(final Socket socket) throws IOException {
-		if( socket != null ) {
-			new Thread(new Runnable() {
-	
-				@Override
-				public void run() {
-					try {
-						socket.close();
-					} catch (IOException ex) {}
-				}
-				
-			}).start();
 		}
 	}
 }

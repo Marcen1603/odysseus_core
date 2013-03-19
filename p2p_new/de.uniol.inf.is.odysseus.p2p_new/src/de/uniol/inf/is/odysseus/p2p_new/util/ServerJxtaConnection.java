@@ -7,16 +7,10 @@ import java.net.Socket;
 
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 
 public class ServerJxtaConnection extends AbstractJxtaConnection {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ServerJxtaConnection.class);
-	
 	private JxtaServerSocket serverSocket;
 	private Socket socket;
 
@@ -29,29 +23,20 @@ public class ServerJxtaConnection extends AbstractJxtaConnection {
 
 		serverSocket = new JxtaServerSocket(P2PNewPlugIn.getOwnPeerGroup(), getPipeAdvertisement());
 		serverSocket.setSoTimeout(0);
-		Thread socketResolver = new Thread() {
-			public void run() {
-				try {
-					socket = serverSocket.accept();
-				} catch (IOException ex) {
-					LOG.error("Could not create socket", ex);
-				}
-			};
-		};
-		socketResolver.setDaemon(true);
-		socketResolver.setName("ServerSocket Resolver " +getPipeAdvertisement().getPipeID().toString());
-		socketResolver.start();
+
+		socket = serverSocket.accept();
+		socket.setSoTimeout(0);
 
 		super.connect();
 	}
 
 	@Override
 	public void disconnect() {
+		super.disconnect();
+		
 		if (serverSocket != null) {
 			tryClose(serverSocket);
 		}
-
-		super.disconnect();
 	}
 
 	@Override

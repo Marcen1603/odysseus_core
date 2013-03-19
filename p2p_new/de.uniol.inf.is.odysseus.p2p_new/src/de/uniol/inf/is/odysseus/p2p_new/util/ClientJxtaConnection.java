@@ -35,11 +35,11 @@ public class ClientJxtaConnection extends AbstractJxtaConnection {
 
 	@Override
 	public void disconnect() {
+		super.disconnect();
+		
 		if (clientSocket != null) {
 			tryClose(clientSocket);
 		}
-
-		super.disconnect();
 	}
 
 	@Override
