@@ -7,3 +7,8 @@ Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.distribute.model.ModelBasedDi
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.osgi.framework;version="1.3.0"
+Service-Component: OSGI-INF/modelBasedDistributor.xml
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ com.google.guava;bundle-version="12.0.0",
+ de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0"
