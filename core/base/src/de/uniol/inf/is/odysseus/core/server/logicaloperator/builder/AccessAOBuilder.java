@@ -15,7 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,7 +127,12 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		AccessAO ao = new AccessAO(sourceName, wrapperName, optionsMap);
 
 		if (outputschema.hasValue()) {
-			SDFSchema schema = new SDFSchema(sourceName, outputschema.getValue());
+			List<SDFAttribute> s2 = new ArrayList<>();
+			// Add source name to attributes
+			for (SDFAttribute a: outputschema.getValue()){
+				s2.add(new SDFAttribute(sourceName, a.getAttributeName(), a));
+			}
+			SDFSchema schema = new SDFSchema(sourceName, s2);
 			getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
 			ao.setOutputSchema(schema);
 		}
