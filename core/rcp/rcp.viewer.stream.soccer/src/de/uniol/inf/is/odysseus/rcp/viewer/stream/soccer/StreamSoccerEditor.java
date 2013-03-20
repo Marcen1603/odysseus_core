@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -80,8 +78,8 @@ public class StreamSoccerEditor implements IStreamEditorType{
 			return;
 		}
 		Tuple<?> tuple = (Tuple<?>) element;
-		@SuppressWarnings("unchecked")
-		IStreamObject<? extends ITimeInterval> timeTuple = (IStreamObject<? extends ITimeInterval>) element;
+//		@SuppressWarnings("unchecked")
+//		IStreamObject<? extends ITimeInterval> timeTuple = (IStreamObject<? extends ITimeInterval>) element;
 		
 		SoccerTuple soccerTuple = new SoccerTuple();		
 		if(attributeIndexMap.get("sid")!=null){

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.soccer;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 public class SoccerTuple {
 	Integer sid;
