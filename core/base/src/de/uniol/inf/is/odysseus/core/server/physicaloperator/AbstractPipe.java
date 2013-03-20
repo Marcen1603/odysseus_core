@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -176,7 +177,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	@Override
 	final public void open() throws OpenFailedException {
 		reconnectSinks();
-		this.delegateSink.open();
+		this.delegateSink.open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
 	}
 
 	@Override
