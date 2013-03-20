@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 
 public class ModelBasedDistributor implements ILogicalQueryDistributor {
 
-	private static final String DISTRIBUTION_TYPE = "model";
+	private static final String DISTRIBUTION_TYPE = "auto";
 
 	// called by OSGi-DS
 	public final void activate() {
