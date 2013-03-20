@@ -263,12 +263,10 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 					LOG.error("Queries are fully distributed. Nothing to do locally.");
 				}
 			} else {
-				LOG.error("Could not distribute query. Logical distributor '{}' was not found.", distributorName);
-				LOG.error("Registered distributor names are {}.", getLogicalQueryDistributorNames());
+				throw new QueryParseException("Could not distribute query. Logical distributor '" + distributorName + "' was not found.");
 			}
 		} else {
-			LOG.error("Could not distribute query. No distributor specified.");
-			LOG.error("Registered distributors names to use are {}.", getLogicalQueryDistributorNames());
+			throw new QueryParseException("Could not distribute query. No distributor specified.");
 		}
 		
 		return resultQueries;
