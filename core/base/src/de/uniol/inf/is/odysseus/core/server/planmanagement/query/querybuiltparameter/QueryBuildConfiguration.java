@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrat
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Configuration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterAllowRestructuringOfCurrentPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDistribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
@@ -73,6 +74,9 @@ public class QueryBuildConfiguration extends
 		}
 		if (!contains(ParameterDoDistribute.class)){
 			set(ParameterDoDistribute.FALSE);
+		}
+		if( !contains(ParameterDistributionType.class)) {
+			set(new ParameterDistributionType(ParameterDistributionType.UNDEFINED));
 		}
 		
 		if (!contains(ParameterPerformQuerySharing.class)){

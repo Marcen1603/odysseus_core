@@ -44,6 +44,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	private static final Logger LOG = LoggerFactory.getLogger(UserDefinedDistributor.class);
 	private static final Random RAND = new Random();
 	private static final String LOCAL_DESTINATION_NAME = "local";
+	private static final String DISTRIBUTION_TYPE = "user";
 
 	private static final String WRAPPER_NAME = "GenericPush";
 	private static final String PROTOCOL_HANDLER_NAME = "SizeByteBuffer";
@@ -114,6 +115,11 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 
 		return localQueries;
+	}
+
+	@Override
+	public String getName() {
+		return DISTRIBUTION_TYPE;
 	}
 
 	private static ID generateSharedQueryID() {

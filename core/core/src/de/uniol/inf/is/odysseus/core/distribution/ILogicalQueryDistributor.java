@@ -8,4 +8,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 public interface ILogicalQueryDistributor {
 
 	public List<ILogicalQuery> distributeLogicalQueries( IExecutor sender, List<ILogicalQuery> queriesToDistribute);
+
+	public String getName();
 }

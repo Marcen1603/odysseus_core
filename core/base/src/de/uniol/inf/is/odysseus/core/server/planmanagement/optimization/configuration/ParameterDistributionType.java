@@ -18,13 +18,11 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 
+public class ParameterDistributionType extends Setting<String> implements IOptimizationSetting<String>, IQueryBuildSetting<String> {
 
-public class ParameterDoDistribute extends Setting<Boolean> implements IOptimizationSetting<Boolean>, IQueryBuildSetting<Boolean> {
-
-	public static final ParameterDoDistribute TRUE = new ParameterDoDistribute(true);
-	public static final ParameterDoDistribute FALSE = new ParameterDoDistribute(false);
-
-	private ParameterDoDistribute(Boolean value) {
+	public static final String UNDEFINED = "undefined";
+	
+	public ParameterDistributionType(String value) {
 		super(value);
 	}
 }

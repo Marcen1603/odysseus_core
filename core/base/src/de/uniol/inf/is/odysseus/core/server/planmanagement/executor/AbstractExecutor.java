@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor;
@@ -80,8 +85,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author wolf
  * 
  */
-public abstract class AbstractExecutor implements IServerExecutor, ISettingChangeListener, IQueryReoptimizeListener,
-		IPlanReoptimizeListener, IAdmissionListener {
+public abstract class AbstractExecutor implements IServerExecutor, ISettingChangeListener, IQueryReoptimizeListener, IPlanReoptimizeListener, IAdmissionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractExecutor.class);
 
@@ -110,8 +114,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 */
 	private IAdmissionControl admissionControl = null;
 	private IAdmissionQuerySelector admissionQuerySelector = null;
-	
-	private ILogicalQueryDistributor logicalQueryDistributor;
+
+	private Map<String, ILogicalQueryDistributor> logicalQueryDistributors = Maps.newHashMap();
 
 	/**
 	 * Konfiguration der Ausf�hrungsumgebung
@@ -139,20 +143,17 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	/**
 	 * Alle Listener f�r Anfragebearbeitungs-Nachrichten
 	 */
-	private List<IPlanModificationListener> planModificationListener = Collections
-			.synchronizedList(new ArrayList<IPlanModificationListener>());
+	private List<IPlanModificationListener> planModificationListener = Collections.synchronizedList(new ArrayList<IPlanModificationListener>());
 
 	/**
 	 * Alle Listener f�r Ausf�hrungs-Nachrichten
 	 */
-	private List<IPlanExecutionListener> planExecutionListener = Collections
-			.synchronizedList(new ArrayList<IPlanExecutionListener>());
+	private List<IPlanExecutionListener> planExecutionListener = Collections.synchronizedList(new ArrayList<IPlanExecutionListener>());
 
 	/**
 	 * Alle Listener f�r Fehler-Nachrichten
 	 */
-	private List<IErrorEventListener> errorEventListener = Collections
-			.synchronizedList(new ArrayList<IErrorEventListener>());
+	private List<IErrorEventListener> errorEventListener = Collections.synchronizedList(new ArrayList<IErrorEventListener>());
 
 	/**
 	 * Compiler Listener
@@ -186,8 +187,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		try {
 			initialize();
 		} catch (ExecutorInitializeException e) {
-			LOG.error(
-					"Error activate executor. Error: " + e.getMessage());
+			LOG.error("Error activate executor. Error: " + e.getMessage());
 		}
 	}
 
@@ -200,15 +200,13 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * @param configuration
 	 *            Konfiguration der Ausf�hrungsumgebung.
 	 */
-	protected abstract void initializeIntern(
-			ExecutionConfiguration configuration);
+	protected abstract void initializeIntern(ExecutionConfiguration configuration);
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#getConfiguration
-	 * ()
+	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
+	 * getConfiguration ()
 	 */
 	@Override
 	public ExecutionConfiguration getConfiguration() {
@@ -221,8 +219,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		initializeIntern(configuration);
 
 		if (this.executionPlan == null) {
-			throw new ExecutorInitializeException(
-					"Execution plan storage not initialized.");
+			throw new ExecutorInitializeException("Execution plan storage not initialized.");
 		}
 
 		this.configuration.addValueChangeListener(this);
@@ -306,7 +303,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			admissionControl = null;
 		}
 	}
-	
+
 	public void bindAdmissionQuerySelector(IAdmissionQuerySelector selector) {
 		admissionQuerySelector = selector;
 	}
@@ -316,28 +313,30 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			admissionQuerySelector = null;
 		}
 	}
-	
-	public final void bindLogicalQueryDistributor( ILogicalQueryDistributor d ) {
-		logicalQueryDistributor = d;
-		
-		LOG.debug("Logical query distributor bound {}", d);
+
+	public final void bindLogicalQueryDistributor(ILogicalQueryDistributor d) {
+
+		logicalQueryDistributors.put(d.getName(), d);
+
+		LOG.debug("Logical query distributor bound '{}'", d.getName());
 	}
-	
-	public final void unbindLogicalQueryDistributor( ILogicalQueryDistributor d ) {
-		if( logicalQueryDistributor == d ) {
-			logicalQueryDistributor = null;
-			LOG.debug("Logical query distributor unbound {}", d);
+
+	public final void unbindLogicalQueryDistributor(ILogicalQueryDistributor d) {
+		String distributorName = d.getName();
+		if (logicalQueryDistributors.containsKey(distributorName)) {
+			logicalQueryDistributors.remove(distributorName);
+			
+			LOG.debug("Logical query distributor unbound '{}'", distributorName);
 		}
 	}
 	
-	public final boolean hasLogicalQueryDistributor() {
-		return logicalQueryDistributor != null;
-	}
-	
-	public final ILogicalQueryDistributor getLogicalQueryDistributor() {
-		return logicalQueryDistributor;
+	public final ImmutableCollection<String> getLogicalQueryDistributorNames() {
+		return ImmutableSet.copyOf(logicalQueryDistributors.keySet());
 	}
 
+	public final Optional<ILogicalQueryDistributor> getLogicalQueryDistributor(String name) {
+		return Optional.fromNullable(logicalQueryDistributors.get(name));
+	}
 
 	/**
 	 * bindCompiler bindet eine Anfragebearbeitungs-Komponente ein
@@ -471,28 +470,28 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public final IAdmissionControl getAdmissionControl() {
 		return admissionControl;
 	}
-	
+
 	public final IAdmissionQuerySelector getAdmissionQuerySelector() {
 		return admissionQuerySelector;
 	}
-	
+
 	public final boolean hasAdmissionControl() {
 		return admissionControl != null;
 	}
-	
+
 	public final boolean hasAdmissionQuerySelector() {
 		return admissionQuerySelector != null;
 	}
-	
+
 	// ----------------------------------------------------------------------------------------
 	// Execution Plan
 	// ----------------------------------------------------------------------------------------
 
 	/**
-	 * aktualisiert  das Scheduling.
+	 * aktualisiert das Scheduling.
 	 * 
-	 * @throws NoSchedulerLoadedException 
-	 * @throws SchedulerException 
+	 * @throws NoSchedulerLoadedException
+	 * @throws SchedulerException
 	 */
 	@Override
 	public void executionPlanChanged() throws SchedulerException, NoSchedulerLoadedException {
@@ -511,12 +510,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * @param eventArgs
 	 *            zu sendendes Event
 	 */
-	protected synchronized void firePlanModificationEvent(
-			AbstractPlanModificationEvent<?> eventArgs) {
+	protected synchronized void firePlanModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		for (IPlanModificationListener listener : this.planModificationListener) {
 			try {
 				listener.planModificationEvent(eventArgs);
-			} catch( Throwable t ) {
+			} catch (Throwable t) {
 				LOG.error("Exception during fireing plan modification event", t);
 			}
 		}
@@ -529,12 +527,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * @param eventArgs
 	 *            zu sendendes Event
 	 */
-	protected synchronized void firePlanExecutionEvent(
-			AbstractPlanExecutionEvent<?> eventArgs) {
+	protected synchronized void firePlanExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
 		for (IPlanExecutionListener listener : this.planExecutionListener) {
 			try {
 				listener.planExecutionEvent(eventArgs);
-			} catch( Throwable t ) {
+			} catch (Throwable t) {
 				LOG.error("Exception during fireing plan execution event", t);
 			}
 		}
@@ -551,7 +548,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		for (IErrorEventListener listener : this.errorEventListener) {
 			try {
 				listener.errorEventOccured(eventArgs);
-			} catch( Throwable t ) {
+			} catch (Throwable t) {
 				LOG.error("Exception during firering error event", t);
 			}
 		}
@@ -577,8 +574,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 		LOG.info("Scheduler started.");
 
-		firePlanExecutionEvent(new PlanExecutionEvent(this,
-				PlanExecutionEventType.EXECUTION_STARTED));
+		firePlanExecutionEvent(new PlanExecutionEvent(this, PlanExecutionEventType.EXECUTION_STARTED));
 	}
 
 	/*
@@ -605,8 +601,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 		LOG.info("Scheduler stopped.");
 
-		firePlanExecutionEvent(new PlanExecutionEvent(this,
-				PlanExecutionEventType.EXECUTION_STOPPED));
+		firePlanExecutionEvent(new PlanExecutionEvent(this, PlanExecutionEventType.EXECUTION_STOPPED));
 		// Stop Event Handler
 		EventHandler.stopDispatching();
 	}
@@ -615,8 +610,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanScheduling#isRunning
-	 * ()
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanScheduling
+	 * #isRunning ()
 	 */
 	@Override
 	public boolean isRunning() throws SchedulerException {
@@ -643,34 +638,33 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		IPhysicalQuery pq = executionPlan.getQueryById(queryID);
 		return pq.getRoots();
 	}
-	
+
 	@Override
 	@Deprecated
 	public ILogicalQuery getLogicalQuery(int id) {
 		return getLogicalQueryById(id);
 	}
-	
+
 	@Override
 	public ILogicalQuery getLogicalQueryById(int id) {
-		IPhysicalQuery pq = executionPlan.getQueryById(id); 
+		IPhysicalQuery pq = executionPlan.getQueryById(id);
 		ILogicalQuery lq = null;
-		if (pq != null){
-			lq = pq.getLogicalQuery();
-		}
-		return lq;
-	}
-	
-	@Override
-	public ILogicalQuery getLogicalQueryByName(String name) {
-		IPhysicalQuery pq = executionPlan.getQueryByName(name);
-		ILogicalQuery lq = null;
-		if (pq != null){
+		if (pq != null) {
 			lq = pq.getLogicalQuery();
 		}
 		return lq;
 	}
 
-	
+	@Override
+	public ILogicalQuery getLogicalQueryByName(String name) {
+		IPhysicalQuery pq = executionPlan.getQueryByName(name);
+		ILogicalQuery lq = null;
+		if (pq != null) {
+			lq = pq.getLogicalQuery();
+		}
+		return lq;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -700,8 +694,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * .IPlanModificationListener)
 	 */
 	@Override
-	public void removePlanModificationListener(
-			IPlanModificationListener listener) {
+	public void removePlanModificationListener(IPlanModificationListener listener) {
 		synchronized (this.planModificationListener) {
 			this.planModificationListener.remove(listener);
 		}
@@ -711,9 +704,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution
-	 * .IPlanExecutionHandler#addPlanExecutionListener(de.uniol.inf.is.odysseus.core.server.
-	 * planmanagement
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling
+	 * .planexecution
+	 * .IPlanExecutionHandler#addPlanExecutionListener(de.uniol.inf
+	 * .is.odysseus.core.server. planmanagement
 	 * .executor.eventhandling.planexecution.IPlanExecutionListener)
 	 */
 	@Override
@@ -729,12 +723,12 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution
-	 * .
-	 * IPlanExecutionHandler#removePlanExecutionListener(de.uniol.inf.is.odysseus.core.server
-	 * .
-	 * planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener
-	 * )
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling
+	 * .planexecution .
+	 * IPlanExecutionHandler#removePlanExecutionListener(de.uniol
+	 * .inf.is.odysseus.core.server .
+	 * planmanagement.executor.eventhandling.planexecution
+	 * .IPlanExecutionListener )
 	 */
 	@Override
 	public void removePlanExecutionListener(IPlanExecutionListener listener) {
@@ -742,7 +736,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			this.planExecutionListener.remove(listener);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -750,8 +744,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * getSupportedQueryParser()
 	 */
 	@Override
-	public Set<String> getSupportedQueryParsers()
-			throws NoCompilerLoadedException {
+	public Set<String> getSupportedQueryParsers() throws NoCompilerLoadedException {
 		ICompiler c;
 		c = getCompiler();
 		return c.getSupportedQueryParser();
@@ -760,9 +753,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler #
-	 * addErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement.event.
-	 * error.IErrorEventListener)
+	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler
+	 * #
+	 * addErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement
+	 * .event. error.IErrorEventListener)
 	 */
 	@Override
 	public void addErrorEventListener(IErrorEventListener errorEventListener) {
@@ -776,9 +770,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler #
-	 * removeErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement.event
-	 * .error.IErrorEventListener)
+	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler
+	 * #
+	 * removeErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement
+	 * .event .error.IErrorEventListener)
 	 */
 	@Override
 	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
@@ -791,25 +786,22 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener
-	 * #sendErrorEvent(de.uniol.inf.is.odysseus.core.server.event.error. ErrorEvent)
+	 * #sendErrorEvent(de.uniol.inf.is.odysseus.core.server.event.error.
+	 * ErrorEvent)
 	 */
 	@Override
 	public synchronized void errorEventOccured(ErrorEvent eventArgs) {
-		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
-				"Executor exception (with inner error). ", eventArgs.getValue()));
+		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR, "Executor exception (with inner error). ", eventArgs.getValue()));
 	}
 
-	public void bindSystemMonitorFactory(
-			ISystemMonitorFactory systemMonitorFactory) {
+	public void bindSystemMonitorFactory(ISystemMonitorFactory systemMonitorFactory) {
 		this.systemMonitorFactory = systemMonitorFactory;
 		// initialize default system monitor
-		this.defaultSystemMonitor = this.systemMonitorFactory
-				.newSystemMonitor();
+		this.defaultSystemMonitor = this.systemMonitorFactory.newSystemMonitor();
 		this.defaultSystemMonitor.initialize(30000L);
 	}
 
-	public void unbindSystemMonitorFactory(
-			ISystemMonitorFactory systemMonitorFactory) {
+	public void unbindSystemMonitorFactory(ISystemMonitorFactory systemMonitorFactory) {
 		this.systemMonitorFactory = null;
 		if (this.defaultSystemMonitor != null) {
 			this.defaultSystemMonitor.stop();
@@ -834,22 +826,19 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public void reloadStoredQueries(ISession caller) {
 		if (dataDictionary != null) {
-			List<ILogicalQuery> q = dataDictionary.getQueries(caller.getUser(),
-					caller);
+			List<ILogicalQuery> q = dataDictionary.getQueries(caller.getUser(), caller);
 			for (ILogicalQuery query : q) {
-			    try {
-    				if (query.getQueryText() != null) {
-    					addQuery(query.getQueryText(), query.getParserId(), caller,
-    							dataDictionary.getQueryBuildConfigName(query.getID()));
-    				} else if (query.getLogicalPlan() != null) {
-    					addQuery(query.getLogicalPlan(), caller,
-    							dataDictionary.getQueryBuildConfigName(query.getID()));
-    				} else {
-    					LOG.warn("Query " + query + " cannot be loaded");
-    				}
-			    } catch( Throwable t ) {
-			        LOG.error("Could not execute stored query", t);
-			    }
+				try {
+					if (query.getQueryText() != null) {
+						addQuery(query.getQueryText(), query.getParserId(), caller, dataDictionary.getQueryBuildConfigName(query.getID()));
+					} else if (query.getLogicalPlan() != null) {
+						addQuery(query.getLogicalPlan(), caller, dataDictionary.getQueryBuildConfigName(query.getID()));
+					} else {
+						LOG.warn("Query " + query + " cannot be loaded");
+					}
+				} catch (Throwable t) {
+					LOG.error("Could not execute stored query", t);
+				}
 			}
 		}
 	}
@@ -868,18 +857,13 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	// Compiler Facade
 	@Override
-	public List<ILogicalQuery> translateQuery(String queries, String parser,
-			ISession currentUser) {
-		return getCompiler().translateQuery(queries, parser, currentUser,
-				getDataDictionary());
+	public List<ILogicalQuery> translateQuery(String queries, String parser, ISession currentUser) {
+		return getCompiler().translateQuery(queries, parser, currentUser, getDataDictionary());
 	}
 
 	@Override
-	public IPhysicalQuery transform(ILogicalQuery query,
-			TransformationConfiguration transformationConfiguration,
-			ISession caller) throws TransformationException {
-		return getCompiler().transform(query, transformationConfiguration,
-				caller, dataDictionary);
+	public IPhysicalQuery transform(ILogicalQuery query, TransformationConfiguration transformationConfiguration, ISession caller) throws TransformationException {
+		return getCompiler().transform(query, transformationConfiguration, caller, dataDictionary);
 	}
 
 	// DataDictionary Facade
@@ -892,10 +876,9 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public void removeViewOrStream(String name, ISession caller) {
 		getDataDictionary().removeViewOrStream(name, caller);
 	}
-	
+
 	@Override
-	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(
-			ISession caller) {
+	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(ISession caller) {
 		return getDataDictionary().getStreamsAndViews(caller);
 	}
 

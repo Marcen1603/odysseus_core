@@ -18,5 +18,7 @@ Import-Package: com.google.common.collect,
  de.uniol.inf.is.odysseus.script.parser.keyword,
  org.slf4j
 Service-Component: OSGI-INF/Executor.xml, OSGI-INF/PreParserKeywordProvider.xml
-Require-Bundle: de.uniol.inf.is.odysseus.core.server, de.uniol.inf.is.odysseus.core
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ com.google.guava
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

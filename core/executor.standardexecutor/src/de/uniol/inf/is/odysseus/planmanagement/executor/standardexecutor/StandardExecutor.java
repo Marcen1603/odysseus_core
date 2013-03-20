@@ -28,12 +28,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -65,6 +67,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.No
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.QueryAddException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDistribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
@@ -216,11 +219,8 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		List<ILogicalQuery> queries = getCompiler().translateQuery(queryStr, parameters.getParserID(), user, getDataDictionary());
 		LOG.trace("Number of queries: " + queries.size());
 
-		if (hasLogicalQueryDistributor() && parameters.get(ParameterDoDistribute.class).getValue()) {
-			queries = getLogicalQueryDistributor().distributeLogicalQueries(this, queries);
-			if (queries == null || queries.isEmpty()) {
-				return Lists.newArrayList();
-			}
+		if( parameters.get(ParameterDoDistribute.class).getValue() ) {
+			queries = distributeQueries(parameters, queries);
 		}
 
 		String slaName = SLADictionary.getInstance().getUserSLA(user.getUser());
@@ -234,10 +234,10 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 				query.setName(queryName.getValue());
 			}
 
-			if( Strings.isNullOrEmpty(query.getQueryText())) {
+			if (Strings.isNullOrEmpty(query.getQueryText())) {
 				query.setQueryText(queryStr);
 			}
-			
+
 			query.setUser(user);
 			query.setParameter(SLA.class.getName(), sla);
 			// // this executor processes reoptimize requests
@@ -247,6 +247,31 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		}
 
 		return queries;
+	}
+
+	private List<ILogicalQuery> distributeQueries(QueryBuildConfiguration parameters, List<ILogicalQuery> queries) {
+		String distributorName = parameters.get(ParameterDistributionType.class).getValue();
+		List<ILogicalQuery> resultQueries = Lists.newArrayList();
+		
+		if( !ParameterDistributionType.UNDEFINED.equals(distributorName)) {
+			Optional<ILogicalQueryDistributor> optDistributor = getLogicalQueryDistributor(distributorName);
+			if ( optDistributor.isPresent()) {
+				List<ILogicalQuery> distributionResult = optDistributor.get().distributeLogicalQueries(this, queries);
+				if( distributionResult != null && !distributionResult.isEmpty()) {
+					resultQueries = distributionResult;
+				} else {
+					LOG.error("Queries are fully distributed. Nothing to do locally.");
+				}
+			} else {
+				LOG.error("Could not distribute query. Logical distributor '{}' was not found.", distributorName);
+				LOG.error("Registered distributor names are {}.", getLogicalQueryDistributorNames());
+			}
+		} else {
+			LOG.error("Could not distribute query. No distributor specified.");
+			LOG.error("Registered distributors names to use are {}.", getLogicalQueryDistributorNames());
+		}
+		
+		return resultQueries;
 	}
 
 	private void setQueryBuildParameters(ILogicalQuery query, QueryBuildConfiguration parameters) {
