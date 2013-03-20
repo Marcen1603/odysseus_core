@@ -49,29 +49,26 @@ public class MEPFunctionInfo {
 	public static MEPFunctionInfo fromMEPFunction( IFunction<?> function ) {
 		Preconditions.checkNotNull(function, "Function must not be null!");
 		
-		ImmutableList.Builder<String> builder = ImmutableList.builder();
-		for( int i = 0; i < function.getArity(); i++ ) {
-			builder.add( concat(function.getAcceptedTypes(i)));
-		}
-
-		MEPFunctionInfo functionInfo;
 		try {
-			functionInfo = new MEPFunctionInfo(
+			ImmutableList.Builder<String> builder = ImmutableList.builder();
+			for( int i = 0; i < function.getArity(); i++ ) {
+				builder.add( concat(function.getAcceptedTypes(i)));
+			}
+
+			return new MEPFunctionInfo(
 				function.getSymbol(),
 				function.getArity(),
 				builder.build(),
 				function.getReturnType().getQualName());
 		} catch( Throwable t ) {
 			LOG.error("Exception during creating MEPFunctionInfo from MEPFunction {}", function, t);
-			functionInfo = new MEPFunctionInfo(
+			return new MEPFunctionInfo(
 					function.getSymbol(),
 					0,
 					ImmutableList.<String>of("???"),
 					"???"
 					);
 		}
-		
-		return functionInfo;
 	}
 
 	public String getSymbol() {
