@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.script.keyword;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -36,6 +36,9 @@ public class DistributionTypePreParserKeyword extends AbstractPreParserKeyword {
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller) throws OdysseusScriptException {
 		
+		if( !ExecutorHandler.getServerExecutor().getLogicalQueryDistributorNames().contains(parameter)) {
+			throw new OdysseusScriptException("Specified logical query distributor '" + parameter + "' not found.");
+		}
 	}
 
 	@Override
@@ -52,7 +55,7 @@ public class DistributionTypePreParserKeyword extends AbstractPreParserKeyword {
 	
 	@Override
 	public Collection<String> getAllowedParameters() {
-		return Arrays.asList("true", "false");				
+		return ExecutorHandler.getServerExecutor().getLogicalQueryDistributorNames();			
 	}
 
 }
