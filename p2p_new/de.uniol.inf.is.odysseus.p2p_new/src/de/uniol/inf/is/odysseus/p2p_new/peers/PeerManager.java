@@ -38,9 +38,9 @@ public class PeerManager implements IPeerManager {
 			@Override
 			public void doJob() {
 				try {
-					Enumeration<Advertisement> advertisements = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
+					final Enumeration<Advertisement> advertisements = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
 					processPeerAdvertisements(advertisements);
-				} catch (IOException ex) {
+				} catch (final IOException ex) {
 					LOG.error("Could not get peer advertisements", ex);
 				}
 			}
@@ -48,18 +48,6 @@ public class PeerManager implements IPeerManager {
 		peerDiscoveryThread.start();
 
 		LOG.debug("Peer manager activated");
-	}
-
-	// called by OSGi-DS
-	public final void deactivate() {
-		peerDiscoveryThread.stopRunning();
-
-		LOG.debug("Peer manager deactivated");
-	}
-
-	@Override
-	public void checkNewPeers() {
-		peerDiscoveryThread.doJob();
 	}
 
 	@Override
@@ -70,18 +58,30 @@ public class PeerManager implements IPeerManager {
 		}
 	}
 
-	@Override
-	public void removeListener(IPeerListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
-	}
-
 	// called by OSGi-DS
 	public void bindPeerListener(IPeerListener listener) {
 		addListener(listener);
 
 		LOG.debug("Bound peer listener {}", listener);
+	}
+
+	@Override
+	public void checkNewPeers() {
+		peerDiscoveryThread.doJob();
+	}
+
+	// called by OSGi-DS
+	public final void deactivate() {
+		peerDiscoveryThread.stopRunning();
+
+		LOG.debug("Peer manager deactivated");
+	}
+
+	@Override
+	public void removeListener(IPeerListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
 	}
 
 	// called by OSGi-DS
@@ -93,10 +93,10 @@ public class PeerManager implements IPeerManager {
 
 	protected final void fireNewPeerEvent(String peerID) {
 		synchronized (listeners) {
-			for (IPeerListener listener : listeners) {
+			for (final IPeerListener listener : listeners) {
 				try {
 					listener.onPeerFound(this, peerID);
-				} catch (Throwable t) {
+				} catch (final Throwable t) {
 					LOG.error("Exception during fireing new peer event", t);
 				}
 			}
@@ -105,29 +105,41 @@ public class PeerManager implements IPeerManager {
 
 	protected final void firePeerLostEvent(String peerID) {
 		synchronized (listeners) {
-			for (IPeerListener listener : listeners) {
+			for (final IPeerListener listener : listeners) {
 				try {
 					listener.onPeerLost(this, peerID);
-				} catch (Throwable t) {
+				} catch (final Throwable t) {
 					LOG.error("Exception during fireing peer lost event", t);
 				}
 			}
 		}
 	}
 
+	private void firePeerLostEvents(List<String> oldIDs) {
+		for (final String lostPeer : oldIDs) {
+			firePeerLostEvent(lostPeer);
+
+			try {
+				P2PNewPlugIn.getDiscoveryService().flushAdvertisements(lostPeer, DiscoveryService.PEER);
+			} catch (final IOException ex) {
+				LOG.error("Could not flush advertisement with id {}", lostPeer, ex);
+			}
+		}
+	}
+
 	private void processPeerAdvertisements(Enumeration<Advertisement> advertisements) {
-		List<String> newIds = Lists.newArrayList();
+		final List<String> newIds = Lists.newArrayList();
 		List<String> oldIDs = null;
 		synchronized (knownPeerIDs) {
 			oldIDs = Lists.newArrayList(knownPeerIDs);
 		}
 
 		while (advertisements.hasMoreElements()) {
-			PeerAdvertisement peerAdvertisement = (PeerAdvertisement) advertisements.nextElement();
-			PeerID peerID = peerAdvertisement.getPeerID();
+			final PeerAdvertisement peerAdvertisement = (PeerAdvertisement) advertisements.nextElement();
+			final PeerID peerID = peerAdvertisement.getPeerID();
 
 			if (!peerID.equals(P2PNewPlugIn.getOwnPeerID()) && P2PNewPlugIn.getEndpointService().isReachable(peerID, false)) {
-				String advIDString = peerAdvertisement.getID().toString();
+				final String advIDString = peerAdvertisement.getID().toString();
 				newIds.add(advIDString);
 				if (oldIDs.contains(advIDString)) {
 					oldIDs.remove(advIDString);
@@ -143,17 +155,5 @@ public class PeerManager implements IPeerManager {
 			knownPeerIDs = newIds;
 		}
 
-	}
-
-	private void firePeerLostEvents(List<String> oldIDs) {
-		for (String lostPeer : oldIDs) {
-			firePeerLostEvent(lostPeer);
-
-			try {
-				P2PNewPlugIn.getDiscoveryService().flushAdvertisements(lostPeer, DiscoveryService.PEER);
-			} catch (IOException ex) {
-				LOG.error("Could not flush advertisement with id {}", lostPeer, ex);
-			}
-		}
 	}
 }

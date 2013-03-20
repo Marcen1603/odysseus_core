@@ -4,7 +4,7 @@ import net.jxta.id.ID;
 
 public class BidManager {
 
-	public void startBidding( ID sharedQueryID ) {
-		
+	public void startBidding(ID sharedQueryID) {
+
 	}
 }

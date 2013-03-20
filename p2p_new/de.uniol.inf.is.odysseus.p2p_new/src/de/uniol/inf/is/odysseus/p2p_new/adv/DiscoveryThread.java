@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 public class DiscoveryThread extends RepeatingJobThread {
 
 	private static final String THREAD_NAME = "Advertisement discovery";
-	
+
 	public DiscoveryThread(long discoverIntervalMillis) {
 		super(discoverIntervalMillis, THREAD_NAME);
 	}

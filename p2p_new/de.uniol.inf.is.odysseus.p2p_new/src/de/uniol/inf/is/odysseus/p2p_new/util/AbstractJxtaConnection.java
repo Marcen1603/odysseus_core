@@ -29,10 +29,6 @@ public abstract class AbstractJxtaConnection {
 	public AbstractJxtaConnection(PipeAdvertisement pipeAdvertisement) {
 		this.pipeAdvertisement = Preconditions.checkNotNull(pipeAdvertisement, "pipeAdvertisement must not be null!");
 	}
-	
-	public final PipeAdvertisement getPipeAdvertisement() {
-		return pipeAdvertisement;
-	}
 
 	public final void addListener(IJxtaConnectionListener listener) {
 		Preconditions.checkNotNull(listener, "Listener to add must not be null!");
@@ -42,40 +38,30 @@ public abstract class AbstractJxtaConnection {
 		}
 	}
 
-	public final void removeListener(IJxtaConnectionListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
-	}
-
-	public final boolean isConnected() {
-		return isConnected;
-	}
-
 	public void connect() throws IOException {
 		fireConnectEvent();
-		
+
 		socketInputStream = getInputStream();
 		socketOutputStream = getOutputStream();
 
 		isConnected = true;
 		readingDataThread = new RepeatingJobThread() {
 
-			private byte[] buffer = new byte[1024];
+			private final byte[] buffer = new byte[1024];
 
 			@Override
 			public void doJob() {
 				try {
-					int bytesRead = socketInputStream.read(buffer);
+					final int bytesRead = socketInputStream.read(buffer);
 					if (bytesRead == -1) {
 						disconnect();
 						stopRunning();
 					} else if (bytesRead > 0) {
-						byte[] msg = new byte[bytesRead];
+						final byte[] msg = new byte[bytesRead];
 						System.arraycopy(buffer, 0, msg, 0, bytesRead);
 						fireMessageReceiveEvent(msg);
 					}
-				} catch (IOException ex) {
+				} catch (final IOException ex) {
 					LOG.error("Could not read bytes from input stream", ex);
 
 					disconnect();
@@ -87,6 +73,29 @@ public abstract class AbstractJxtaConnection {
 		readingDataThread.setDaemon(true);
 		readingDataThread.setName("[" + getClass().getSimpleName() + "] Reading data " + pipeAdvertisement.getPipeID().toString());
 		readingDataThread.start();
+	}
+
+	public void disconnect() {
+		if (readingDataThread != null) {
+			readingDataThread.stopRunning();
+		}
+
+		isConnected = false;
+		fireDisconnectEvent();
+	}
+
+	public final PipeAdvertisement getPipeAdvertisement() {
+		return pipeAdvertisement;
+	}
+
+	public final boolean isConnected() {
+		return isConnected;
+	}
+
+	public final void removeListener(IJxtaConnectionListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
 	}
 
 	public void send(byte[] message) throws IOException {
@@ -101,24 +110,24 @@ public abstract class AbstractJxtaConnection {
 		}
 	}
 
-	public void disconnect() {
-		if (readingDataThread != null) {
-			readingDataThread.stopRunning();
-		}
-
-		isConnected = false;
-		fireDisconnectEvent();
-	}
-	
-	protected abstract InputStream getInputStream() throws IOException;
-	protected abstract OutputStream getOutputStream() throws IOException;
-
 	protected final void fireConnectEvent() {
 		synchronized (listeners) {
-			for (IJxtaConnectionListener listener : listeners) {
+			for (final IJxtaConnectionListener listener : listeners) {
 				try {
 					listener.onConnect(this);
-				} catch (Throwable t) {
+				} catch (final Throwable t) {
+					LOG.error("Exception in JxtaConnection listener", t);
+				}
+			}
+		}
+	}
+
+	protected final void fireDisconnectEvent() {
+		synchronized (listeners) {
+			for (final IJxtaConnectionListener listener : listeners) {
+				try {
+					listener.onDisconnect(this);
+				} catch (final Throwable t) {
 					LOG.error("Exception in JxtaConnection listener", t);
 				}
 			}
@@ -130,25 +139,17 @@ public abstract class AbstractJxtaConnection {
 		Preconditions.checkArgument(data.length > 0, "Byte data must not be empty!");
 
 		synchronized (listeners) {
-			for (IJxtaConnectionListener listener : listeners) {
+			for (final IJxtaConnectionListener listener : listeners) {
 				try {
 					listener.onReceiveData(this, data);
-				} catch (Throwable t) {
+				} catch (final Throwable t) {
 					LOG.error("Exception in JxtaConnection listener", t);
 				}
 			}
 		}
 	}
 
-	protected final void fireDisconnectEvent() {
-		synchronized (listeners) {
-			for (IJxtaConnectionListener listener : listeners) {
-				try {
-					listener.onDisconnect(this);
-				} catch (Throwable t) {
-					LOG.error("Exception in JxtaConnection listener", t);
-				}
-			}
-		}
-	}
+	protected abstract InputStream getInputStream() throws IOException;
+
+	protected abstract OutputStream getOutputStream() throws IOException;
 }

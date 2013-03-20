@@ -7,12 +7,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import net.jxta.document.Attributable;
 import net.jxta.document.Document;
 import net.jxta.document.Element;
@@ -22,6 +16,13 @@ import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -51,17 +52,38 @@ public final class AccessAOCoverter {
 	private static final String TRANSPORTHANDLER_TAG = "transportHandler";
 	private static final String OUTPUTSCHEMA_TAG = "outputSchema";
 
+	public static String[] getIndexableFieldTags() {
+		return new String[] { ID_TAG, SOURCE_NAME_TAG };
+	}
+
+	public static AccessAO toAccessAO(TextElement<?> root, SourceAdvertisement adv) {
+		checkType(root);
+
+		final Enumeration<?> elements = root.getChildren();
+		final AccessAO accessOperator = new AccessAO();
+		while (elements.hasMoreElements()) {
+			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
+			try {
+				handleElement(accessOperator, elem, adv);
+			} catch (ClassNotFoundException | IOException e) {
+				LOG.error("Could not handle element to construct accessAO from sourceAdvertisement: {}", elem, e);
+			}
+		}
+
+		return accessOperator;
+	}
+
 	public static Document toDocument(MimeMediaType asMimeType, ID id, AccessAO accessOperator) {
-		StructuredDocument<?> doc = StructuredDocumentFactory.newStructuredDocument(asMimeType, SourceAdvertisement.getAdvertisementType());
+		final StructuredDocument<?> doc = StructuredDocumentFactory.newStructuredDocument(asMimeType, SourceAdvertisement.getAdvertisementType());
 		if (doc instanceof Attributable) {
 			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
 		}
 
 		appendElement(doc, ID_TAG, id.toString());
 		appendElement(doc, SOURCE_NAME_TAG, accessOperator.getSourcename());
-		Element<?> inputSchemaElement = appendElement(doc, INPUT_SCHEMA_TAG);
+		final Element<?> inputSchemaElement = appendElement(doc, INPUT_SCHEMA_TAG);
 		if (accessOperator.getInputSchema() != null && !accessOperator.getInputSchema().isEmpty()) {
-			for (String entry : accessOperator.getInputSchema()) {
+			for (final String entry : accessOperator.getInputSchema()) {
 				appendElement(inputSchemaElement, INPUT_SCHEMA_ITEM_TAG, entry);
 			}
 		}
@@ -71,10 +93,10 @@ public final class AccessAOCoverter {
 		appendElement(doc, PASSWORD_TAG, accessOperator.getPassword());
 		appendElement(doc, AUTOCONNECT_TAG, String.valueOf(accessOperator.isAutoReconnectEnabled()));
 
-		Element<?> optionsElement = appendElement(doc, OPTIONS_TAG);
-		Map<String, String> options = accessOperator.getOptionsMap();
+		final Element<?> optionsElement = appendElement(doc, OPTIONS_TAG);
+		final Map<String, String> options = accessOperator.getOptionsMap();
 		if (options != null && !options.isEmpty()) {
-			for (String key : options.keySet()) {
+			for (final String key : options.keySet()) {
 				appendElement(optionsElement, key, options.get(key));
 			}
 		}
@@ -89,10 +111,10 @@ public final class AccessAOCoverter {
 		appendElement(doc, PROTOCOLHANDLER_TAG, accessOperator.getProtocolHandler());
 		appendElement(doc, TRANSPORTHANDLER_TAG, accessOperator.getTransportHandler());
 
-		SDFSchema outputSchema = accessOperator.getOutputSchema();
+		final SDFSchema outputSchema = accessOperator.getOutputSchema();
 		if (outputSchema != null && !outputSchema.isEmpty()) {
-			Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
-			for (SDFAttribute attr : outputSchema) {
+			final Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
+			for (final SDFAttribute attr : outputSchema) {
 				appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
 			}
 		}
@@ -100,164 +122,143 @@ public final class AccessAOCoverter {
 		return doc;
 	}
 
-	public static AccessAO toAccessAO(TextElement<?> root, SourceAdvertisement adv) {
-		checkType(root);
-
-		Enumeration<?> elements = root.getChildren();
-		AccessAO accessOperator = new AccessAO();
-		while (elements.hasMoreElements()) {
-			TextElement<?> elem = (TextElement<?>) elements.nextElement();
-			try {
-				handleElement(accessOperator, elem, adv);
-			} catch (ClassNotFoundException | IOException e) {
-				LOG.error("Could not handle element to construct accessAO from sourceAdvertisement: {}", elem, e);
-			}
-		}
-
-		return accessOperator;
-	}
-	
-	public static String[] getIndexableFieldTags() {
-		return new String[] { ID_TAG, SOURCE_NAME_TAG };
-	}
-
-	private static void handleIDTag(SourceAdvertisement adv, TextElement<?> elem) {
-		try {
-			URI id = new URI(elem.getTextValue());
-			adv.setID(IDFactory.fromURI(id));
-		} catch (URISyntaxException | ClassCastException ex) {
-			LOG.error("Could not set id", ex);
-		}
-	}
-	
-	private static void handleElement(AccessAO accessAO, TextElement<?> elem, SourceAdvertisement adv) throws ClassNotFoundException, IOException {
-		if (elem.getName().equals(ID_TAG)) {
-			handleIDTag(adv, elem);
-			
-		} else if (elem.getName().equals(SOURCE_NAME_TAG)) {
-			accessAO.setSource(elem.getTextValue());
-			
-		} else if (elem.getName().equals(INPUT_SCHEMA_TAG)) {
-			handleInputSchemaElement(accessAO, elem);
-			
-		} else if (elem.getName().equals(PORT_TAG)) {
-			accessAO.setPort(Integer.valueOf(elem.getTextValue()));
-			
-		} else if (elem.getName().equals(HOST_TAG)) {
-			accessAO.setHost(elem.getTextValue());
-			
-		} else if (elem.getName().equals(LOGIN_TAG)) {
-			accessAO.setLogin(elem.getTextValue());
-			
-		} else if (elem.getName().equals(PASSWORD_TAG)) {
-			accessAO.setPassword(elem.getTextValue());
-			
-		} else if (elem.getName().equals(AUTOCONNECT_TAG)) {
-			accessAO.setAutoReconnectEnabled(Boolean.valueOf(elem.getTextValue()));
-			
-		} else if (elem.getName().equals(OPTIONS_TAG)) {
-			handleOptionsTag(accessAO, elem);
-			
-		} else if (elem.getName().equals(WRAPPER_TAG)) {
-			accessAO.setWrapper(elem.getTextValue());
-			
-		} else if (elem.getName().equals(INPUT_TAG)) {
-			accessAO.setInput(elem.getTextValue());
-			
-		} else if (elem.getName().equals(DATAHANDLER_TAG)) {
-			accessAO.setDataHandler(elem.getTextValue());
-			
-		} else if (elem.getName().equals(TRANSFORMER_TAG)) {
-			accessAO.setTransformer(elem.getTextValue());
-			
-		} else if (elem.getName().equals(OBJECTHANDLER_TAG)) {
-			accessAO.setObjectHandler(elem.getTextValue());
-			
-		} else if (elem.getName().equals(INPUTDATAHANDLER_TAG)) {
-			accessAO.setInputDataHandler(elem.getTextValue());
-			
-		} else if (elem.getName().equals(ACCESSCONNECTIONHANDLER_TAG)) {
-			accessAO.setAccessConnectionHandler(elem.getTextValue());
-			
-		} else if (elem.getName().equals(PROTOCOLHANDLER_TAG)) {
-			accessAO.setProtocolHandler(elem.getTextValue());
-			
-		} else if (elem.getName().equals(TRANSPORTHANDLER_TAG)) {
-			accessAO.setTransportHandler(elem.getTextValue());
-			
-		} else if (elem.getName().equals(OUTPUTSCHEMA_TAG)) {
-			handleOutputSchemaTag(accessAO, elem);
-			
-		} else {
-			LOG.warn("Unknown element name: {}", elem.getName());
-		}
-	}
-
-	private static void handleOutputSchemaTag(AccessAO accessAO, TextElement<?> root) {
-		Enumeration<?> children = root.getChildren();
-		List<SDFAttribute> attributes = Lists.newArrayList();
-		while (children.hasMoreElements()) {
-			TextElement<?> elem = (TextElement<?>) children.nextElement();
-			SDFAttribute attr = new SDFAttribute(accessAO.getSourcename(), elem.getKey(), DataSourceManager.getDataDictionary().getDatatype(elem.getTextValue()));
-			attributes.add(attr);
-		}
-
-		if( !attributes.isEmpty()) {
-			SDFSchema schema = new SDFSchema(root.getTextValue(), attributes);
-			accessAO.setOutputSchema(schema);
-		}
-	}
-
-	private static void handleOptionsTag(AccessAO accessAO, TextElement<?> root) {
-		Enumeration<?> children = root.getChildren();
-		Map<String, String> options = Maps.newHashMap();
-
-		while (children.hasMoreElements()) {
-			TextElement<?> elem = (TextElement<?>) children.nextElement();
-			options.put(elem.getKey(), elem.getTextValue());
-		}
-		
-		if( !options.isEmpty() ) {
-			accessAO.setOptions(options);
-		}
-	}
-
-	private static void handleInputSchemaElement(AccessAO accessAO, TextElement<?> root) {
-		Enumeration<?> children = root.getChildren();
-		List<String> inputSchema = Lists.newArrayList();
-		while (children.hasMoreElements()) {
-			TextElement<?> elem = (TextElement<?>) children.nextElement();
-			inputSchema.add(elem.getTextValue());
-		}
-		if(!inputSchema.isEmpty()) {
-			accessAO.setInputSchema(inputSchema);
-		}
-	}
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
-		Element createElement = appendTo.createElement(tag, value);
-		appendTo.appendChild(createElement);
-		return createElement;
+	private static Element appendElement(Element appendTo, String tag, String value) {
+		final Element ele = appendTo.getRoot().createElement(tag, value);
+		appendTo.appendChild(ele);
+		return ele;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Element<?> appendElement(StructuredDocument appendTo, String tag) {
-		Element<?> ele = appendTo.createElement(tag);
+		final Element<?> ele = appendTo.createElement(tag);
 		appendTo.appendChild(ele);
 		return ele;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Element appendElement(Element appendTo, String tag, String value) {
-		Element ele = appendTo.getRoot().createElement(tag, value);
-		appendTo.appendChild(ele);
-		return ele;
+	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
+		final Element createElement = appendTo.createElement(tag, value);
+		appendTo.appendChild(createElement);
+		return createElement;
 	}
 
 	private static void checkType(TextElement<?> root) {
 		if (!root.getName().equals(SourceAdvertisement.getAdvertisementType())) {
 			throw new IllegalArgumentException("Could not construct " + SourceAdvertisement.getAdvertisementType() + " from doc containing a " + root.getName());
+		}
+	}
+
+	private static void handleElement(AccessAO accessAO, TextElement<?> elem, SourceAdvertisement adv) throws ClassNotFoundException, IOException {
+		if (elem.getName().equals(ID_TAG)) {
+			handleIDTag(adv, elem);
+
+		} else if (elem.getName().equals(SOURCE_NAME_TAG)) {
+			accessAO.setSource(elem.getTextValue());
+
+		} else if (elem.getName().equals(INPUT_SCHEMA_TAG)) {
+			handleInputSchemaElement(accessAO, elem);
+
+		} else if (elem.getName().equals(PORT_TAG)) {
+			accessAO.setPort(Integer.valueOf(elem.getTextValue()));
+
+		} else if (elem.getName().equals(HOST_TAG)) {
+			accessAO.setHost(elem.getTextValue());
+
+		} else if (elem.getName().equals(LOGIN_TAG)) {
+			accessAO.setLogin(elem.getTextValue());
+
+		} else if (elem.getName().equals(PASSWORD_TAG)) {
+			accessAO.setPassword(elem.getTextValue());
+
+		} else if (elem.getName().equals(AUTOCONNECT_TAG)) {
+			accessAO.setAutoReconnectEnabled(Boolean.valueOf(elem.getTextValue()));
+
+		} else if (elem.getName().equals(OPTIONS_TAG)) {
+			handleOptionsTag(accessAO, elem);
+
+		} else if (elem.getName().equals(WRAPPER_TAG)) {
+			accessAO.setWrapper(elem.getTextValue());
+
+		} else if (elem.getName().equals(INPUT_TAG)) {
+			accessAO.setInput(elem.getTextValue());
+
+		} else if (elem.getName().equals(DATAHANDLER_TAG)) {
+			accessAO.setDataHandler(elem.getTextValue());
+
+		} else if (elem.getName().equals(TRANSFORMER_TAG)) {
+			accessAO.setTransformer(elem.getTextValue());
+
+		} else if (elem.getName().equals(OBJECTHANDLER_TAG)) {
+			accessAO.setObjectHandler(elem.getTextValue());
+
+		} else if (elem.getName().equals(INPUTDATAHANDLER_TAG)) {
+			accessAO.setInputDataHandler(elem.getTextValue());
+
+		} else if (elem.getName().equals(ACCESSCONNECTIONHANDLER_TAG)) {
+			accessAO.setAccessConnectionHandler(elem.getTextValue());
+
+		} else if (elem.getName().equals(PROTOCOLHANDLER_TAG)) {
+			accessAO.setProtocolHandler(elem.getTextValue());
+
+		} else if (elem.getName().equals(TRANSPORTHANDLER_TAG)) {
+			accessAO.setTransportHandler(elem.getTextValue());
+
+		} else if (elem.getName().equals(OUTPUTSCHEMA_TAG)) {
+			handleOutputSchemaTag(accessAO, elem);
+
+		} else {
+			LOG.warn("Unknown element name: {}", elem.getName());
+		}
+	}
+
+	private static void handleIDTag(SourceAdvertisement adv, TextElement<?> elem) {
+		try {
+			final URI id = new URI(elem.getTextValue());
+			adv.setID(IDFactory.fromURI(id));
+		} catch (URISyntaxException | ClassCastException ex) {
+			LOG.error("Could not set id", ex);
+		}
+	}
+
+	private static void handleInputSchemaElement(AccessAO accessAO, TextElement<?> root) {
+		final Enumeration<?> children = root.getChildren();
+		final List<String> inputSchema = Lists.newArrayList();
+		while (children.hasMoreElements()) {
+			final TextElement<?> elem = (TextElement<?>) children.nextElement();
+			inputSchema.add(elem.getTextValue());
+		}
+		if (!inputSchema.isEmpty()) {
+			accessAO.setInputSchema(inputSchema);
+		}
+	}
+
+	private static void handleOptionsTag(AccessAO accessAO, TextElement<?> root) {
+		final Enumeration<?> children = root.getChildren();
+		final Map<String, String> options = Maps.newHashMap();
+
+		while (children.hasMoreElements()) {
+			final TextElement<?> elem = (TextElement<?>) children.nextElement();
+			options.put(elem.getKey(), elem.getTextValue());
+		}
+
+		if (!options.isEmpty()) {
+			accessAO.setOptions(options);
+		}
+	}
+
+	private static void handleOutputSchemaTag(AccessAO accessAO, TextElement<?> root) {
+		final Enumeration<?> children = root.getChildren();
+		final List<SDFAttribute> attributes = Lists.newArrayList();
+		while (children.hasMoreElements()) {
+			final TextElement<?> elem = (TextElement<?>) children.nextElement();
+			final SDFAttribute attr = new SDFAttribute(accessAO.getSourcename(), elem.getKey(), DataSourceManager.getDataDictionary().getDatatype(elem.getTextValue()));
+			attributes.add(attr);
+		}
+
+		if (!attributes.isEmpty()) {
+			final SDFSchema schema = new SDFSchema(root.getTextValue(), attributes);
+			accessAO.setOutputSchema(schema);
 		}
 	}
 }

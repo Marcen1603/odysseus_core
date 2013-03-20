@@ -34,9 +34,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPart;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPartAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPartController;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class UserDefinedDistributor implements ILogicalQueryDistributor {
@@ -56,20 +53,13 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 	private static IPQLGenerator generator;
 
+	private static int connectionNumber = 0;
+
 	// called by OSGi-DS
 	public final void bindPQLGenerator(IPQLGenerator gen) {
 		generator = gen;
 
 		LOG.debug("PQLGenerator bound {}", gen);
-	}
-
-	// called by OSGi-DS
-	public final void unbindPQLGenerator(IPQLGenerator gen) {
-		if (generator == gen) {
-			generator = null;
-
-			LOG.debug("PQLGenerator unbound {}", gen);
-		}
 	}
 
 	@Override
@@ -79,7 +69,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 			return queriesToDistribute;
 		}
 
-		List<PeerID> remotePeers = determineRemotePeers();
+		final List<PeerID> remotePeers = determineRemotePeers();
 		if (remotePeers.isEmpty()) {
 			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
 			return queriesToDistribute;
@@ -87,15 +77,15 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 		logPeerStatus(remotePeers);
 
-		List<ILogicalQuery> localQueries = Lists.newArrayList();
+		final List<ILogicalQuery> localQueries = Lists.newArrayList();
 
-		for (ILogicalQuery query : queriesToDistribute) {
+		for (final ILogicalQuery query : queriesToDistribute) {
 
-			List<ILogicalOperator> operators = Lists.newArrayList();
+			final List<ILogicalOperator> operators = Lists.newArrayList();
 			collectOperators(query.getLogicalPlan(), operators);
 			filterOperators(operators);
 
-			List<QueryPart> queryParts = determineQueryParts(operators, query.toString());
+			final List<QueryPart> queryParts = determineQueryParts(operators, query.toString());
 			LOG.debug("Got {} parts of logical query {}", queryParts.size(), query);
 			if (queryParts.size() == 1 && queryParts.get(0).getDestinationName().equals(LOCAL_DESTINATION_NAME)) {
 				localQueries.add(query);
@@ -103,12 +93,12 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 				continue;
 			}
 
-			ID sharedQueryID = generateSharedQueryID();
-			Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(remotePeers, P2PNewPlugIn.getOwnPeerID(), queryParts);
+			final ID sharedQueryID = generateSharedQueryID();
+			final Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(remotePeers, P2PNewPlugIn.getOwnPeerID(), queryParts);
 			insertSenderAndAccess(queryPartDistributionMap);
 
-			List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID);
-			Collection<ILogicalQuery> logicalQueries = transformToQueries(localQueryParts, generator);
+			final List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID);
+			final Collection<ILogicalQuery> logicalQueries = transformToQueries(localQueryParts, generator);
 			QueryPartController.getInstance().registerAsMaster(logicalQueries, sharedQueryID);
 
 			localQueries.addAll(logicalQueries);
@@ -122,44 +112,20 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		return DISTRIBUTION_TYPE;
 	}
 
-	private static ID generateSharedQueryID() {
-		String timestamp = String.valueOf(System.currentTimeMillis());
-		return IDFactory.newContentID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), false, timestamp.getBytes());
-	}
+	// called by OSGi-DS
+	public final void unbindPQLGenerator(IPQLGenerator gen) {
+		if (generator == gen) {
+			generator = null;
 
-	private static Collection<ILogicalQuery> transformToQueries(List<QueryPart> localQueryParts, IPQLGenerator generator) {
-		List<ILogicalQuery> localQueries = Lists.newArrayList();
-
-		for (QueryPart queryPart : localQueryParts) {
-			localQueries.add(queryPart.toLogicalQuery(generator));
+			LOG.debug("PQLGenerator unbound {}", gen);
 		}
-
-		return localQueries;
-	}
-
-	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID) {
-		List<QueryPart> localParts = Lists.newArrayList();
-
-		PeerID ownPeerID = P2PNewPlugIn.getOwnPeerID();
-
-		for (QueryPart part : queryPartDistributionMap.keySet()) {
-			PeerID assignedPeerID = queryPartDistributionMap.get(part);
-			if (assignedPeerID.equals(ownPeerID)) {
-				localParts.add(part);
-				LOG.debug("QueryPart {} locally stored", part);
-			} else {
-				publish(part, assignedPeerID, sharedQueryID);
-			}
-		}
-
-		return localParts;
 	}
 
 	public static void publish(QueryPart part, PeerID destinationPeer, ID sharedQueryID) {
 		Preconditions.checkNotNull(part, "QueryPart to share must not be null!");
 		part.removeDestinationName();
 
-		QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
+		final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
 		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
 		adv.setPeerID(destinationPeer);
 		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
@@ -169,28 +135,14 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		LOG.debug("QueryPart {} published", part);
 	}
 
-	private static void filterOperators(List<ILogicalOperator> operators) {
-		List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
-		for (ILogicalOperator operator : operators) {
-			if (operator instanceof TopAO) {
-				operator.unsubscribeFromAllSources();
-				operatorsToRemove.add(operator);
-			}
-		}
-
-		for (ILogicalOperator operatorToRemove : operatorsToRemove) {
-			operators.remove(operatorToRemove);
-		}
-	}
-
 	private static Map<QueryPart, PeerID> assignQueryParts(List<PeerID> remotePeers, PeerID localPeer, List<QueryPart> queryParts) {
-		Map<QueryPart, PeerID> distributed = Maps.newHashMap();
-		Map<String, PeerID> assignedDestinations = Maps.newHashMap();
+		final Map<QueryPart, PeerID> distributed = Maps.newHashMap();
+		final Map<String, PeerID> assignedDestinations = Maps.newHashMap();
 		assignedDestinations.put(LOCAL_DESTINATION_NAME, localPeer);
 
 		int peerCounter = 0;
-		for (QueryPart queryPart : queryParts) {
-			String destinationName = queryPart.getDestinationName();
+		for (final QueryPart queryPart : queryParts) {
+			final String destinationName = queryPart.getDestinationName();
 
 			PeerID assignedPeer = assignedDestinations.get(destinationName);
 			if (assignedPeer == null) {
@@ -210,131 +162,23 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		return distributed;
 	}
 
-	private static void insertSenderAndAccess(Map<QueryPart, PeerID> queryPartDistributionMap) {
-		for (QueryPart queryPart : queryPartDistributionMap.keySet()) {
+	private static ILogicalOperator chooseOneOperator(List<ILogicalOperator> operatorsToVisit) {
+		final int i = RAND.nextInt(operatorsToVisit.size());
+		return operatorsToVisit.get(i);
+	}
 
-			for (ILogicalOperator relativeSink : queryPart.getRelativeSinks()) {
-				Map<QueryPart, ILogicalOperator> nextOperators = determineNextQueryParts(relativeSink, queryPartDistributionMap);
-				if (!nextOperators.isEmpty()) {
-					for (QueryPart destQueryPart : nextOperators.keySet()) {
-						generatePeerConnection(relativeSink, queryPart, nextOperators.get(destQueryPart), destQueryPart);
-					}
-				}
+	private static void collectOperators(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
+		if (!list.contains(currentOperator)) {
+
+			list.add(currentOperator);
+
+			for (final LogicalSubscription subscription : currentOperator.getSubscriptions()) {
+				collectOperators(subscription.getTarget(), list);
 			}
 
-		}
-	}
-
-	private static Map<QueryPart, ILogicalOperator> determineNextQueryParts(ILogicalOperator relativeSink, Map<QueryPart, PeerID> queryPartDistributionMap) {
-		Map<QueryPart, ILogicalOperator> next = Maps.newHashMap();
-		if (relativeSink.getSubscriptions().size() > 0) {
-
-			for (LogicalSubscription subscription : relativeSink.getSubscriptions()) {
-				ILogicalOperator target = subscription.getTarget();
-				QueryPart targetQueryPart = findLogicalOperator(target, queryPartDistributionMap.keySet());
-				next.put(targetQueryPart, target);
+			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
+				collectOperators(subscription.getTarget(), list);
 			}
-		}
-		return next;
-	}
-
-	private static QueryPart findLogicalOperator(ILogicalOperator target, Set<QueryPart> parts) {
-		for (QueryPart part : parts) {
-			if (part.containsRelativeSource(target)) {
-				return part;
-			}
-		}
-		// should not happen here
-		return null;
-	}
-
-	private static int connectionNumber = 0;
-
-	private static void generatePeerConnection(ILogicalOperator startOperator, QueryPart startPart, ILogicalOperator endOperator, QueryPart endPart) {
-		PipeID pipeID = (PipeID) IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
-
-		AccessAO access = new AccessAO();
-		access.setSource(pipeID.toString());
-		access.setWrapper(WRAPPER_NAME);
-		access.setTransportHandler(TRANSPORT_HANDLER_NAME);
-		access.setProtocolHandler(PROTOCOL_HANDLER_NAME);
-		access.setDataHandler(DATA_HANDLER_NAME);
-		access.setOptions(createOptionsMap(pipeID));
-		access.setOutputSchema(startOperator.getOutputSchema());
-		access.setName(ACCESS_NAME + connectionNumber);
-
-		SenderAO sender = new SenderAO();
-		sender.setSink(pipeID.toString());
-		sender.setWrapper(WRAPPER_NAME);
-		sender.setTransportHandler(TRANSPORT_HANDLER_NAME);
-		sender.setProtocolHandler(PROTOCOL_HANDLER_NAME);
-		sender.setDataHandler(DATA_HANDLER_NAME);
-		sender.setOptions(createOptionsMap(pipeID));
-		sender.setName(SENDER_NAME + connectionNumber);
-
-		LogicalSubscription removingSubscription = determineSubscription(startOperator, endOperator);
-
-		startOperator.unsubscribeSink(removingSubscription);
-		startOperator.subscribeSink(sender, 0, removingSubscription.getSourceOutPort(), startOperator.getOutputSchema());
-		endOperator.subscribeToSource(access, removingSubscription.getSinkInPort(), 0, access.getOutputSchema());
-
-		startPart.addSenderAO(sender, startOperator);
-		endPart.addAccessAO(access, endOperator);
-	}
-
-	private static LogicalSubscription determineSubscription(ILogicalOperator startOperator, ILogicalOperator endOperator) {
-		for (LogicalSubscription subscription : startOperator.getSubscriptions()) {
-			if (subscription.getTarget().equals(endOperator)) {
-				return subscription;
-			}
-		}
-		return null;
-	}
-
-	private static Map<String, String> createOptionsMap(PipeID pipeID) {
-		Map<String, String> options = Maps.newHashMap();
-		options.put(PIPEID_TAG, pipeID.toString());
-		return options;
-	}
-
-	private static List<QueryPart> determineQueryParts(List<ILogicalOperator> operators, String baseName) {
-		List<QueryPart> parts = Lists.newArrayList();
-
-		Map<ILogicalOperator, String> destinations = determineDestinationNames(operators);
-		List<ILogicalOperator> operatorsToVisit = Lists.newArrayList(operators);
-
-		while (!operatorsToVisit.isEmpty()) {
-			ILogicalOperator chosenOperator = chooseOneOperator(operatorsToVisit);
-			String chosenDestination = destinations.get(chosenOperator);
-
-			List<ILogicalOperator> partOperators = Lists.newArrayList();
-			collectOperatorsWithEqualDestination(chosenOperator, chosenDestination, partOperators, destinations);
-
-			operatorsToVisit.removeAll(partOperators);
-
-			QueryPart part = new QueryPart(partOperators, chosenDestination, baseName + "_" + parts.size());
-			parts.add(part);
-		}
-
-		return parts;
-	}
-
-	private static List<PeerID> determineRemotePeers() {
-		try {
-			List<PeerID> foundPeers = Lists.newArrayList();
-
-			Enumeration<Advertisement> peerAdvertisements = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
-			while (peerAdvertisements.hasMoreElements()) {
-				PeerAdvertisement adv = (PeerAdvertisement) peerAdvertisements.nextElement();
-				if (!adv.getPeerID().equals(P2PNewPlugIn.getOwnPeerID())) {
-					foundPeers.add(adv.getPeerID());
-				}
-			}
-
-			return foundPeers;
-		} catch (IOException ex) {
-			LOG.error("Could not get peers", ex);
-			return Lists.newArrayList();
 		}
 	}
 
@@ -347,24 +191,154 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 			collectedOperators.add(operator);
 
-			for (LogicalSubscription subscription : operator.getSubscriptions()) {
+			for (final LogicalSubscription subscription : operator.getSubscriptions()) {
 				collectOperatorsWithEqualDestination(subscription.getTarget(), chosenDestination, collectedOperators, destinations);
 			}
 
-			for (LogicalSubscription subscription : operator.getSubscribedToSource()) {
+			for (final LogicalSubscription subscription : operator.getSubscribedToSource()) {
 				collectOperatorsWithEqualDestination(subscription.getTarget(), chosenDestination, collectedOperators, destinations);
 			}
 		}
 	}
 
-	private static Map<ILogicalOperator, String> determineDestinationNames(List<ILogicalOperator> operators) {
-		Map<ILogicalOperator, String> destinationNames = Maps.newHashMap();
+	private static Map<String, String> createOptionsMap(PipeID pipeID) {
+		final Map<String, String> options = Maps.newHashMap();
+		options.put(PIPEID_TAG, pipeID.toString());
+		return options;
+	}
 
-		for (ILogicalOperator operator : operators) {
+	private static Map<ILogicalOperator, String> determineDestinationNames(List<ILogicalOperator> operators) {
+		final Map<ILogicalOperator, String> destinationNames = Maps.newHashMap();
+
+		for (final ILogicalOperator operator : operators) {
 			destinationNames.put(operator, getDestinationName(operator));
 		}
 
 		return destinationNames;
+	}
+
+	private static Map<QueryPart, ILogicalOperator> determineNextQueryParts(ILogicalOperator relativeSink, Map<QueryPart, PeerID> queryPartDistributionMap) {
+		final Map<QueryPart, ILogicalOperator> next = Maps.newHashMap();
+		if (relativeSink.getSubscriptions().size() > 0) {
+
+			for (final LogicalSubscription subscription : relativeSink.getSubscriptions()) {
+				final ILogicalOperator target = subscription.getTarget();
+				final QueryPart targetQueryPart = findLogicalOperator(target, queryPartDistributionMap.keySet());
+				next.put(targetQueryPart, target);
+			}
+		}
+		return next;
+	}
+
+	private static List<QueryPart> determineQueryParts(List<ILogicalOperator> operators, String baseName) {
+		final List<QueryPart> parts = Lists.newArrayList();
+
+		final Map<ILogicalOperator, String> destinations = determineDestinationNames(operators);
+		final List<ILogicalOperator> operatorsToVisit = Lists.newArrayList(operators);
+
+		while (!operatorsToVisit.isEmpty()) {
+			final ILogicalOperator chosenOperator = chooseOneOperator(operatorsToVisit);
+			final String chosenDestination = destinations.get(chosenOperator);
+
+			final List<ILogicalOperator> partOperators = Lists.newArrayList();
+			collectOperatorsWithEqualDestination(chosenOperator, chosenDestination, partOperators, destinations);
+
+			operatorsToVisit.removeAll(partOperators);
+
+			final QueryPart part = new QueryPart(partOperators, chosenDestination, baseName + "_" + parts.size());
+			parts.add(part);
+		}
+
+		return parts;
+	}
+
+	private static List<PeerID> determineRemotePeers() {
+		try {
+			final List<PeerID> foundPeers = Lists.newArrayList();
+
+			final Enumeration<Advertisement> peerAdvertisements = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
+			while (peerAdvertisements.hasMoreElements()) {
+				final PeerAdvertisement adv = (PeerAdvertisement) peerAdvertisements.nextElement();
+				if (!adv.getPeerID().equals(P2PNewPlugIn.getOwnPeerID())) {
+					foundPeers.add(adv.getPeerID());
+				}
+			}
+
+			return foundPeers;
+		} catch (final IOException ex) {
+			LOG.error("Could not get peers", ex);
+			return Lists.newArrayList();
+		}
+	}
+
+	private static LogicalSubscription determineSubscription(ILogicalOperator startOperator, ILogicalOperator endOperator) {
+		for (final LogicalSubscription subscription : startOperator.getSubscriptions()) {
+			if (subscription.getTarget().equals(endOperator)) {
+				return subscription;
+			}
+		}
+		return null;
+	}
+
+	private static void filterOperators(List<ILogicalOperator> operators) {
+		final List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
+		for (final ILogicalOperator operator : operators) {
+			if (operator instanceof TopAO) {
+				operator.unsubscribeFromAllSources();
+				operatorsToRemove.add(operator);
+			}
+		}
+
+		for (final ILogicalOperator operatorToRemove : operatorsToRemove) {
+			operators.remove(operatorToRemove);
+		}
+	}
+
+	private static QueryPart findLogicalOperator(ILogicalOperator target, Set<QueryPart> parts) {
+		for (final QueryPart part : parts) {
+			if (part.containsRelativeSource(target)) {
+				return part;
+			}
+		}
+		// should not happen here
+		return null;
+	}
+
+	private static void generatePeerConnection(ILogicalOperator startOperator, QueryPart startPart, ILogicalOperator endOperator, QueryPart endPart) {
+		final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
+
+		final AccessAO access = new AccessAO();
+		access.setSource(pipeID.toString());
+		access.setWrapper(WRAPPER_NAME);
+		access.setTransportHandler(TRANSPORT_HANDLER_NAME);
+		access.setProtocolHandler(PROTOCOL_HANDLER_NAME);
+		access.setDataHandler(DATA_HANDLER_NAME);
+		access.setOptions(createOptionsMap(pipeID));
+		access.setOutputSchema(startOperator.getOutputSchema());
+		access.setName(ACCESS_NAME + connectionNumber);
+
+		final SenderAO sender = new SenderAO();
+		sender.setSink(pipeID.toString());
+		sender.setWrapper(WRAPPER_NAME);
+		sender.setTransportHandler(TRANSPORT_HANDLER_NAME);
+		sender.setProtocolHandler(PROTOCOL_HANDLER_NAME);
+		sender.setDataHandler(DATA_HANDLER_NAME);
+		sender.setOptions(createOptionsMap(pipeID));
+		sender.setName(SENDER_NAME + connectionNumber);
+
+		final LogicalSubscription removingSubscription = determineSubscription(startOperator, endOperator);
+
+		startOperator.unsubscribeSink(removingSubscription);
+		startOperator.subscribeSink(sender, 0, removingSubscription.getSourceOutPort(), startOperator.getOutputSchema());
+		endOperator.subscribeToSource(access, removingSubscription.getSinkInPort(), 0, access.getOutputSchema());
+
+		startPart.addSenderAO(sender, startOperator);
+		endPart.addAccessAO(access, endOperator);
+	}
+
+	private static ID generateSharedQueryID() {
+		final String timestamp = String.valueOf(System.currentTimeMillis());
+		return IDFactory.newContentID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), false, timestamp.getBytes());
 	}
 
 	private static String getDestinationName(ILogicalOperator operator) {
@@ -379,39 +353,62 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static ILogicalOperator chooseOneOperator(List<ILogicalOperator> operatorsToVisit) {
-		int i = RAND.nextInt(operatorsToVisit.size());
-		return operatorsToVisit.get(i);
-	}
+	private static void insertSenderAndAccess(Map<QueryPart, PeerID> queryPartDistributionMap) {
+		for (final QueryPart queryPart : queryPartDistributionMap.keySet()) {
 
-	private static void collectOperators(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
-		if (!list.contains(currentOperator)) {
-
-			list.add(currentOperator);
-
-			for (LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				collectOperators(subscription.getTarget(), list);
+			for (final ILogicalOperator relativeSink : queryPart.getRelativeSinks()) {
+				final Map<QueryPart, ILogicalOperator> nextOperators = determineNextQueryParts(relativeSink, queryPartDistributionMap);
+				if (!nextOperators.isEmpty()) {
+					for (final QueryPart destQueryPart : nextOperators.keySet()) {
+						generatePeerConnection(relativeSink, queryPart, nextOperators.get(destQueryPart), destQueryPart);
+					}
+				}
 			}
 
-			for (LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				collectOperators(subscription.getTarget(), list);
-			}
 		}
 	}
 
 	private static void logPeerStatus(List<PeerID> peers) {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Found {} peers to distribute the queries", peers.size());
-			for (PeerID peer : peers) {
+			for (final PeerID peer : peers) {
 				LOG.debug("Peer: {}", peer);
 			}
 		}
 	}
 
+	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID) {
+		final List<QueryPart> localParts = Lists.newArrayList();
+
+		final PeerID ownPeerID = P2PNewPlugIn.getOwnPeerID();
+
+		for (final QueryPart part : queryPartDistributionMap.keySet()) {
+			final PeerID assignedPeerID = queryPartDistributionMap.get(part);
+			if (assignedPeerID.equals(ownPeerID)) {
+				localParts.add(part);
+				LOG.debug("QueryPart {} locally stored", part);
+			} else {
+				publish(part, assignedPeerID, sharedQueryID);
+			}
+		}
+
+		return localParts;
+	}
+
+	private static Collection<ILogicalQuery> transformToQueries(List<QueryPart> localQueryParts, IPQLGenerator generator) {
+		final List<ILogicalQuery> localQueries = Lists.newArrayList();
+
+		for (final QueryPart queryPart : localQueryParts) {
+			localQueries.add(queryPart.toLogicalQuery(generator));
+		}
+
+		return localQueries;
+	}
+
 	private static void tryPublishImpl(QueryPartAdvertisement adv) {
 		try {
 			P2PNewPlugIn.getDiscoveryService().publish(adv, 10000, 10000);
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			LOG.error("Could not publish query part", ex);
 		}
 	}

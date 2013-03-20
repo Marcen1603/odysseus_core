@@ -52,23 +52,30 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 	private static QueryPartController instance;
 
 	private final Map<ID, OutputPipe> outputPipeMap = Maps.newHashMap();
+
 	private final Map<ID, InputPipe> inputPipeMap = Maps.newHashMap();
+
 	private final Map<Integer, ID> sharedQueryIDMap = Maps.newHashMap();
 
 	private final List<OutputPipeResolver> runningResolvers = Lists.newArrayList();
 
 	private IServerExecutor executor;
-	private boolean inEvent;
 
-	public static QueryPartController getInstance() {
-		return instance;
-	}
+	private boolean inEvent;
 
 	// called by OSGi-DS
 	public void activate() {
 		instance = this;
-		
+
 		LOG.debug("Query part controller activated");
+	}
+
+	// called by OSGi-DS
+	public void bindExecutor(IExecutor exe) {
+		executor = (IServerExecutor) exe;
+		executor.addPlanModificationListener(this);
+
+		LOG.debug("Bound ServerExecutor {}", exe);
 	}
 
 	// called by OSGi-DS
@@ -82,81 +89,49 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		LOG.debug("Query part controller deactivated");
 	}
 
-	// called by OSGi-DS
-	public void bindExecutor(IExecutor exe) {
-		executor = (IServerExecutor) exe;
-		executor.addPlanModificationListener(this);
+	@Override
+	public void pipeMsgEvent(PipeMsgEvent event) {
+		final Message msg = event.getMessage();
+		final MessageElement typeElement = msg.getMessageElement(TYPE_TAG);
+		final MessageElement sharedQueryIDElement = msg.getMessageElement(SHARED_QUERY_ID_TAG);
 
-		LOG.debug("Bound ServerExecutor {}", exe);
-	}
+		final String type = new String(typeElement.getBytes(false));
+		final String sharedQueryIDString = new String(sharedQueryIDElement.getBytes(false));
+		final ID sharedQueryID = convertToID(sharedQueryIDString);
 
-	// called by OSGi-DS
-	public void unbindExecutor(IExecutor exe) {
-		if (executor == exe) {
-			LOG.debug("Unbound ServerExecutor {}", exe);
+		final Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, sharedQueryID);
 
-			executor.removePlanModificationListener(this);
-			executor = null;
-		}
-	}
+		if (sharedQueryID != null) {
+			LOG.debug("Got message for shared query id {}", sharedQueryID);
 
-	public void registerAsMaster(Collection<ILogicalQuery> queries, final ID sharedQueryID) {
-		Preconditions.checkNotNull(queries, "List of logical queries must not be null!");
-		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must not be null!");
+			switch (type) {
+			case REMOVE_MSG_TYPE:
+				LOG.debug("Remove queries {}", ids);
 
-		for (ILogicalQuery query : queries) {
-			sharedQueryIDMap.put(query.getID(), sharedQueryID);
-		}
+				tryRemoveQueries(executor, ids, null);
+				for (final Integer id : ids) {
+					sharedQueryIDMap.remove(id);
+				}
+				final InputPipe inputPipe = inputPipeMap.remove(sharedQueryID);
+				inputPipe.close();
+				break;
 
-		final PipeAdvertisement adv = createPipeAdvertisement(sharedQueryID);
+			case START_MSG_TYPE:
+				LOG.debug("Start queries {}", ids);
 
-		OutputPipeResolver resolver = new OutputPipeResolver(adv) {
-			@Override
-			public void outputPipeResolved(OutputPipe outputPipe) {
-				outputPipeMap.put(sharedQueryID, outputPipe);
+				tryStartQueries(executor, ids, null);
+				break;
 
-				LOG.debug("Output pipe is {}", outputPipe);
-				LOG.debug("for shared query id {}", sharedQueryID);
-				LOG.debug("Pipeid of Advertisementid is {}", adv.getPipeID());
+			case STOP_MSG_TYPE:
+				LOG.debug("Stop queries {}", ids);
 
-				runningResolvers.remove(this);
+				tryStopQueries(executor, ids, null);
+				break;
+
+			default:
+				LOG.error("Unknown message type {}", type);
+				break;
 			}
-
-			@Override
-			public void outputPipeFailed() {
-				LOG.debug("Could not get output pipe for shared query id {}", sharedQueryID);
-
-				runningResolvers.remove(this);
-			}
-		};
-		runningResolvers.add(resolver);
-		resolver.start();
-
-		LOG.debug("Registered sharedqueryID as master : {}", sharedQueryID);
-	}
-
-	public void registerAsSlave(Collection<Integer> ids, ID sharedQueryID) {
-		Preconditions.checkNotNull(ids, "List of logical query ids must not be null!");
-		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must not be null!");
-
-		for (Integer id : ids) {
-			sharedQueryIDMap.put(id, sharedQueryID);
-		}
-
-		PipeAdvertisement adv = createPipeAdvertisement(sharedQueryID);
-
-		try {
-			if (!inputPipeMap.containsKey(sharedQueryID)) {
-				InputPipe inputPipe = P2PNewPlugIn.getPipeService().createInputPipe(adv, this);
-				inputPipeMap.put(sharedQueryID, inputPipe);
-				LOG.debug("Created new input pipe for shared query id {}", sharedQueryID);
-				LOG.debug("Pipeid of Advertisementid is {}", adv.getPipeID());
-			}
-
-			LOG.debug("Registerd shared query id as slave : {}", sharedQueryID);
-			LOG.debug("Local ids shared: {}", ids);
-		} catch (IOException ex) {
-			LOG.error("Could not create input pipe for {}", sharedQueryID, ex);
 		}
 	}
 
@@ -170,16 +145,16 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		try {
 			inEvent = true;
 
-			IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
+			final IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
 
-			int queryID = query.getID();
-			ID sharedQueryID = sharedQueryIDMap.get(queryID);
+			final int queryID = query.getID();
+			final ID sharedQueryID = sharedQueryIDMap.get(queryID);
 			if (sharedQueryID == null) {
 				return; // query was not shared
 			}
 
-			Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, sharedQueryID);
-			OutputPipe outputPipe = outputPipeMap.get(sharedQueryID);
+			final Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, sharedQueryID);
+			final OutputPipe outputPipe = outputPipeMap.get(sharedQueryID);
 			if (outputPipe != null) {
 				if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
 					LOG.debug("Got REMOVE-event for queryid={}", queryID);
@@ -191,7 +166,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 					outputPipeMap.remove(sharedQueryID);
 
 					tryRemoveQueries(executor, ids, queryID);
-					for (Integer id : ids) {
+					for (final Integer id : ids) {
 						if (id != queryID) {
 							sharedQueryIDMap.remove(id);
 						}
@@ -220,121 +195,92 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		}
 	}
 
-	@Override
-	public void pipeMsgEvent(PipeMsgEvent event) {
-		Message msg = event.getMessage();
-		MessageElement typeElement = msg.getMessageElement(TYPE_TAG);
-		MessageElement sharedQueryIDElement = msg.getMessageElement(SHARED_QUERY_ID_TAG);
+	public void registerAsMaster(Collection<ILogicalQuery> queries, final ID sharedQueryID) {
+		Preconditions.checkNotNull(queries, "List of logical queries must not be null!");
+		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must not be null!");
 
-		String type = new String(typeElement.getBytes(false));
-		String sharedQueryIDString = new String(sharedQueryIDElement.getBytes(false));
-		ID sharedQueryID = convertToID(sharedQueryIDString);
+		for (final ILogicalQuery query : queries) {
+			sharedQueryIDMap.put(query.getID(), sharedQueryID);
+		}
 
-		Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, sharedQueryID);
+		final PipeAdvertisement adv = createPipeAdvertisement(sharedQueryID);
 
-		if (sharedQueryID != null) {
-			LOG.debug("Got message for shared query id {}", sharedQueryID);
+		final OutputPipeResolver resolver = new OutputPipeResolver(adv) {
+			@Override
+			public void outputPipeFailed() {
+				LOG.debug("Could not get output pipe for shared query id {}", sharedQueryID);
 
-			switch (type) {
-			case REMOVE_MSG_TYPE:
-				LOG.debug("Remove queries {}", ids);
+				runningResolvers.remove(this);
+			}
 
-				tryRemoveQueries(executor, ids, null);
-				for (Integer id : ids) {
-					sharedQueryIDMap.remove(id);
-				}
-				InputPipe inputPipe = inputPipeMap.remove(sharedQueryID);
+			@Override
+			public void outputPipeResolved(OutputPipe outputPipe) {
+				outputPipeMap.put(sharedQueryID, outputPipe);
+
+				LOG.debug("Output pipe is {}", outputPipe);
+				LOG.debug("for shared query id {}", sharedQueryID);
+				LOG.debug("Pipeid of Advertisementid is {}", adv.getPipeID());
+
+				runningResolvers.remove(this);
+			}
+		};
+		runningResolvers.add(resolver);
+		resolver.start();
+
+		LOG.debug("Registered sharedqueryID as master : {}", sharedQueryID);
+	}
+
+	public void registerAsSlave(Collection<Integer> ids, ID sharedQueryID) {
+		Preconditions.checkNotNull(ids, "List of logical query ids must not be null!");
+		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must not be null!");
+
+		for (final Integer id : ids) {
+			sharedQueryIDMap.put(id, sharedQueryID);
+		}
+
+		final PipeAdvertisement adv = createPipeAdvertisement(sharedQueryID);
+
+		try {
+			if (!inputPipeMap.containsKey(sharedQueryID)) {
+				final InputPipe inputPipe = P2PNewPlugIn.getPipeService().createInputPipe(adv, this);
+				inputPipeMap.put(sharedQueryID, inputPipe);
+				LOG.debug("Created new input pipe for shared query id {}", sharedQueryID);
+				LOG.debug("Pipeid of Advertisementid is {}", adv.getPipeID());
+			}
+
+			LOG.debug("Registerd shared query id as slave : {}", sharedQueryID);
+			LOG.debug("Local ids shared: {}", ids);
+		} catch (final IOException ex) {
+			LOG.error("Could not create input pipe for {}", sharedQueryID, ex);
+		}
+	}
+
+	// called by OSGi-DS
+	public void unbindExecutor(IExecutor exe) {
+		if (executor == exe) {
+			LOG.debug("Unbound ServerExecutor {}", exe);
+
+			executor.removePlanModificationListener(this);
+			executor = null;
+		}
+	}
+
+	public static QueryPartController getInstance() {
+		return instance;
+	}
+
+	private static void closeInputPipes(Collection<InputPipe> inputPipes) {
+		for (final InputPipe inputPipe : inputPipes) {
+			if (inputPipe != null) {
 				inputPipe.close();
-				break;
-
-			case START_MSG_TYPE:
-				LOG.debug("Start queries {}", ids);
-
-				tryStartQueries(executor, ids, null);
-				break;
-
-			case STOP_MSG_TYPE:
-				LOG.debug("Stop queries {}", ids);
-
-				tryStopQueries(executor, ids, null);
-				break;
-
-			default:
-				LOG.error("Unknown message type {}", type);
-				break;
 			}
 		}
 	}
 
-	private static Collection<Integer> determineLocalIDs(Map<Integer, ID> sharedQueryIDMap, ID sharedQueryID) {
-		List<Integer> ids = Lists.newArrayList();
-		for (Integer id : sharedQueryIDMap.keySet().toArray(new Integer[0])) {
-			ID sharedQueryID2 = sharedQueryIDMap.get(id);
-			if (sharedQueryID2.equals(sharedQueryID)) {
-				ids.add(id);
-			}
-		}
-		return ids;
-	}
-
-	private static PipeAdvertisement createPipeAdvertisement(ID sharedQueryID) {
-		PipeID pipeID = (PipeID) IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), sharedQueryID.toString().getBytes());
-
-		PipeAdvertisement adv = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
-		adv.setPipeID(pipeID);
-		adv.setType(PipeService.PropagateType);
-		return adv;
-	}
-
-	private static void sendMessage(OutputPipe outputPipe, ID sharedQueryID, String messageType) {
-		Message msg = new Message();
-		msg.addMessageElement(new StringMessageElement(TYPE_TAG, messageType, null));
-		msg.addMessageElement(new StringMessageElement(SHARED_QUERY_ID_TAG, sharedQueryID.toString(), null));
-
-		if (!outputPipe.isClosed()) {
-			try {
-				outputPipe.send(msg);
-				LOG.debug("Send message of type {}", messageType);
-			} catch (IOException ex) {
-				LOG.error("Could not send message", ex);
-			}
-		} else {
-			LOG.error("Could not send message since outputpipe is closed");
-		}
-	}
-
-	private static void tryRemoveQueries(IExecutor executor, Collection<Integer> ids, Integer exceptionID) {
-		for (Integer id : ids) {
-			if (exceptionID == null || id != exceptionID) {
-				try {
-					executor.removeQuery(id, SessionManagementService.getActiveSession());
-				} catch (PlanManagementException ex) {
-					LOG.error("Could not stop query with id={}", id, ex);
-				}
-			}
-		}
-	}
-
-	private static void tryStartQueries(IExecutor executor, Collection<Integer> ids, Integer exceptionID) {
-		for (Integer id : ids) {
-			if (exceptionID == null || id != exceptionID) {
-				try {
-					executor.startQuery(id, SessionManagementService.getActiveSession());
-				} catch (PlanManagementException ex) {
-					LOG.error("Could not start query with id={}", id, ex);
-				}
-			}
-		}
-	}
-
-	private static void tryStopQueries(IExecutor executor, Collection<Integer> ids, Integer exceptionID) {
-		for (Integer id : ids) {
-			if (exceptionID == null || id != exceptionID) {
-				try {
-					executor.stopQuery(id, SessionManagementService.getActiveSession());
-				} catch (PlanManagementException ex) {
-					LOG.error("Could not stop query with id={}", id, ex);
-				}
+	private static void closeOutputPipes(Collection<OutputPipe> outputPipes) {
+		for (final OutputPipe outputPipe : outputPipes) {
+			if (outputPipe != null && !outputPipe.isClosed()) {
+				outputPipe.close();
 			}
 		}
 	}
@@ -342,14 +288,51 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 	private static ID convertToID(String sharedQueryIDString) {
 		try {
 			return IDFactory.fromURI(new URI(sharedQueryIDString));
-		} catch (URISyntaxException ex) {
+		} catch (final URISyntaxException ex) {
 			LOG.error("Could not convert string {} to id", sharedQueryIDString, ex);
 			return null;
 		}
 	}
 
+	private static PipeAdvertisement createPipeAdvertisement(ID sharedQueryID) {
+		final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), sharedQueryID.toString().getBytes());
+
+		final PipeAdvertisement adv = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
+		adv.setPipeID(pipeID);
+		adv.setType(PipeService.PropagateType);
+		return adv;
+	}
+
+	private static Collection<Integer> determineLocalIDs(Map<Integer, ID> sharedQueryIDMap, ID sharedQueryID) {
+		final List<Integer> ids = Lists.newArrayList();
+		for (final Integer id : sharedQueryIDMap.keySet().toArray(new Integer[0])) {
+			final ID sharedQueryID2 = sharedQueryIDMap.get(id);
+			if (sharedQueryID2.equals(sharedQueryID)) {
+				ids.add(id);
+			}
+		}
+		return ids;
+	}
+
+	private static void sendMessage(OutputPipe outputPipe, ID sharedQueryID, String messageType) {
+		final Message msg = new Message();
+		msg.addMessageElement(new StringMessageElement(TYPE_TAG, messageType, null));
+		msg.addMessageElement(new StringMessageElement(SHARED_QUERY_ID_TAG, sharedQueryID.toString(), null));
+
+		if (!outputPipe.isClosed()) {
+			try {
+				outputPipe.send(msg);
+				LOG.debug("Send message of type {}", messageType);
+			} catch (final IOException ex) {
+				LOG.error("Could not send message", ex);
+			}
+		} else {
+			LOG.error("Could not send message since outputpipe is closed");
+		}
+	}
+
 	private static void stopResolvers(List<OutputPipeResolver> runningResolvers) {
-		for (OutputPipeResolver runningResolver : runningResolvers) {
+		for (final OutputPipeResolver runningResolver : runningResolvers) {
 			if (runningResolver.isAlive()) {
 				runningResolver.stopRunning();
 			}
@@ -357,18 +340,38 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		runningResolvers.clear();
 	}
 
-	private static void closeOutputPipes(Collection<OutputPipe> outputPipes) {
-		for (OutputPipe outputPipe : outputPipes) {
-			if (outputPipe != null && !outputPipe.isClosed()) {
-				outputPipe.close();
+	private static void tryRemoveQueries(IExecutor executor, Collection<Integer> ids, Integer exceptionID) {
+		for (final Integer id : ids) {
+			if (exceptionID == null || id != exceptionID) {
+				try {
+					executor.removeQuery(id, SessionManagementService.getActiveSession());
+				} catch (final PlanManagementException ex) {
+					LOG.error("Could not stop query with id={}", id, ex);
+				}
 			}
 		}
 	}
 
-	private static void closeInputPipes(Collection<InputPipe> inputPipes) {
-		for (InputPipe inputPipe : inputPipes) {
-			if (inputPipe != null) {
-				inputPipe.close();
+	private static void tryStartQueries(IExecutor executor, Collection<Integer> ids, Integer exceptionID) {
+		for (final Integer id : ids) {
+			if (exceptionID == null || id != exceptionID) {
+				try {
+					executor.startQuery(id, SessionManagementService.getActiveSession());
+				} catch (final PlanManagementException ex) {
+					LOG.error("Could not start query with id={}", id, ex);
+				}
+			}
+		}
+	}
+
+	private static void tryStopQueries(IExecutor executor, Collection<Integer> ids, Integer exceptionID) {
+		for (final Integer id : ids) {
+			if (exceptionID == null || id != exceptionID) {
+				try {
+					executor.stopQuery(id, SessionManagementService.getActiveSession());
+				} catch (final PlanManagementException ex) {
+					LOG.error("Could not stop query with id={}", id, ex);
+				}
 			}
 		}
 	}

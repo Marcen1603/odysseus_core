@@ -19,7 +19,7 @@ package de.uniol.inf.is.odysseus.p2p_new.util;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-public class RepeatingJobThread extends StoppableThread{
+public class RepeatingJobThread extends StoppableThread {
 
 	private static final String DEFAULT_THREAD_NAME = "Repeating job";
 
@@ -30,7 +30,7 @@ public class RepeatingJobThread extends StoppableThread{
 	public RepeatingJobThread() {
 		this(0);
 	}
-	
+
 	public RepeatingJobThread(long executionIntervalMillis) {
 		this(executionIntervalMillis, DEFAULT_THREAD_NAME);
 	}
@@ -45,18 +45,7 @@ public class RepeatingJobThread extends StoppableThread{
 		setDaemon(true);
 	}
 
-	@Override
-	public final void run() {
-		beforeJob();
-		while (isRunning()) {
-			lastExecutionTimestamp = System.currentTimeMillis();
-			doJob();
-			
-			if( executionIntervalMillis > 0 ) {
-				trySleep(executionIntervalMillis);
-			}
-		}
-		afterJob();
+	public void afterJob() {
 	}
 
 	public void beforeJob() {
@@ -65,13 +54,24 @@ public class RepeatingJobThread extends StoppableThread{
 	public void doJob() {
 	}
 
-	public void afterJob() {
+	@Override
+	public final void run() {
+		beforeJob();
+		while (isRunning()) {
+			lastExecutionTimestamp = System.currentTimeMillis();
+			doJob();
+
+			if (executionIntervalMillis > 0) {
+				trySleep(executionIntervalMillis);
+			}
+		}
+		afterJob();
 	}
-	
+
 	protected final long getIntervalMillis() {
 		return executionIntervalMillis;
 	}
-	
+
 	protected final long getLastExecutionTimestamp() {
 		return lastExecutionTimestamp;
 	}
@@ -79,7 +79,7 @@ public class RepeatingJobThread extends StoppableThread{
 	private static void trySleep(long lengthMillis) {
 		try {
 			Thread.sleep(lengthMillis);
-		} catch (InterruptedException ex) {
+		} catch (final InterruptedException ex) {
 		}
 	}
 

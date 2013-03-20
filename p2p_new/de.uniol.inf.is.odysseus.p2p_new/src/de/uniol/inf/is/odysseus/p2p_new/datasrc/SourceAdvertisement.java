@@ -9,7 +9,6 @@ import net.jxta.document.Document;
 import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocumentFactory;
-import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 
@@ -21,18 +20,19 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 
 	private static final String ADVERTISEMENT_TYPE = "jxta:SourceAdvertisement";
 	private static final long serialVersionUID = 1L;
-	
+
 	private ID id;
+
 	private AccessAO accessOperator;
 
 	public SourceAdvertisement(Element<?> root) {
-		TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
-		
+		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
+
 		accessOperator = AccessAOCoverter.toAccessAO(doc, this);
 	}
 
 	public SourceAdvertisement(InputStream stream) throws IOException {
-		this((StructuredTextDocument<?>) StructuredDocumentFactory.newStructuredDocument(MimeMediaType.XMLUTF8, Preconditions.checkNotNull(stream, "Stream must not be null!")));
+		this(StructuredDocumentFactory.newStructuredDocument(MimeMediaType.XMLUTF8, Preconditions.checkNotNull(stream, "Stream must not be null!")));
 	}
 
 	public SourceAdvertisement(SourceAdvertisement sourceAdvertisement) {
@@ -46,48 +46,9 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 		// for JXTA-side instances
 	}
 
-	public static String getAdvertisementType() {
-		return ADVERTISEMENT_TYPE;
-	}
-
-	public AccessAO getAccessAO() {
-		return accessOperator;
-	}
-
-	public void setAccessAO(AccessAO accessOperator) {
-		this.accessOperator = accessOperator;
-	}
-
-	public void setID(ID id) {
-		this.id = id;
-	}
-
-	@Override
-	public String[] getIndexFields() {
-		return AccessAOCoverter.getIndexableFieldTags();
-	}
-
-	@Override
-	public ID getID() {
-		return id;
-	}
-
-	@Override
-	public Document getDocument(MimeMediaType asMimeType) {
-		return AccessAOCoverter.toDocument(asMimeType, getID(), accessOperator);
-	}
-
 	@Override
 	public SourceAdvertisement clone() {
 		return new SourceAdvertisement(this);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((accessOperator.getSourcename() == null) ? 0 : accessOperator.getSourcename().hashCode());
-		return result;
 	}
 
 	@Override
@@ -99,7 +60,7 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 			return false;
 		}
 
-		SourceAdvertisement other = (SourceAdvertisement) obj;
+		final SourceAdvertisement other = (SourceAdvertisement) obj;
 		if (accessOperator.getSourcename() == null) {
 			if (other.accessOperator.getSourcename() != null) {
 				return false;
@@ -108,5 +69,44 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 			return false;
 		}
 		return true;
+	}
+
+	public AccessAO getAccessAO() {
+		return accessOperator;
+	}
+
+	@Override
+	public Document getDocument(MimeMediaType asMimeType) {
+		return AccessAOCoverter.toDocument(asMimeType, getID(), accessOperator);
+	}
+
+	@Override
+	public ID getID() {
+		return id;
+	}
+
+	@Override
+	public String[] getIndexFields() {
+		return AccessAOCoverter.getIndexableFieldTags();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((accessOperator.getSourcename() == null) ? 0 : accessOperator.getSourcename().hashCode());
+		return result;
+	}
+
+	public void setAccessAO(AccessAO accessOperator) {
+		this.accessOperator = accessOperator;
+	}
+
+	public void setID(ID id) {
+		this.id = id;
+	}
+
+	public static String getAdvertisementType() {
+		return ADVERTISEMENT_TYPE;
 	}
 }

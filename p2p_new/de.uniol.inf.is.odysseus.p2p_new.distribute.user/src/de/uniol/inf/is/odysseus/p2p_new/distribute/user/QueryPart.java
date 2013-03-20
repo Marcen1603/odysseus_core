@@ -24,20 +24,23 @@ public class QueryPart {
 
 	private static final String DESTINATION_PQLPARAMETER_KEY = "DESTINATION";
 	private static final String PARSER_ID = "PQL";
-	
+
 	private final Map<ILogicalOperator, List<AccessAO>> relativeSources;
+
 	private final Map<ILogicalOperator, List<SenderAO>> relativeSinks;
+
 	private final Collection<ILogicalOperator> operators;
-	
+
 	private final String destinationName;
+
 	private final String name;
-	
+
 	public QueryPart(Collection<ILogicalOperator> operators, String destinationName, String partName) {
 		Preconditions.checkNotNull(operators, "List of operators must not be null!");
 		Preconditions.checkArgument(!filter(operators).isEmpty(), "List of operators must not be empty!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(destinationName), "Destination name must not be null or empty!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(partName), "Query Part name must not be null or empty!");
-		
+
 		this.destinationName = destinationName;
 		this.operators = filter(operators);
 		this.name = partName;
@@ -45,51 +48,53 @@ public class QueryPart {
 		this.relativeSources = determineRelativeSources(this.operators);
 	}
 
-	public final ImmutableCollection<ILogicalOperator> getOperators() {
-		return ImmutableList.copyOf(operators);
+	public final void addAccessAO(AccessAO accessAO, ILogicalOperator forOperator) {
+		Preconditions.checkNotNull(forOperator, "Operator to set sender for must not be null!");
+		Preconditions.checkArgument(relativeSources.containsKey(forOperator));
+
+		relativeSources.get(forOperator).add(accessAO);
 	}
-	
-	public final boolean containsRelativeSource( ILogicalOperator op ){
+
+	public final void addSenderAO(SenderAO senderAO, ILogicalOperator forOperator) {
+		Preconditions.checkNotNull(forOperator, "Operator to set sender for must not be null!");
+		Preconditions.checkArgument(relativeSinks.containsKey(forOperator));
+
+		relativeSinks.get(forOperator).add(senderAO);
+	}
+
+	public final boolean containsRelativeSource(ILogicalOperator op) {
 		return relativeSources.containsKey(op);
 	}
-	
-	public final ImmutableCollection<ILogicalOperator> getRelativeSources() {
-		return ImmutableList.copyOf(relativeSources.keySet());
-	}
-	
-	public final ImmutableCollection<ILogicalOperator> getRelativeSinks() {
-		return ImmutableList.copyOf(relativeSinks.keySet());
-	}
-	
+
 	public final String getDestinationName() {
 		return destinationName;
 	}
-	
+
 	public final String getName() {
 		return name;
 	}
-	
-	public final void addSenderAO( SenderAO senderAO, ILogicalOperator forOperator ) {
-		Preconditions.checkNotNull(forOperator, "Operator to set sender for must not be null!");
-		Preconditions.checkArgument(relativeSinks.containsKey(forOperator));
-		
-		relativeSinks.get(forOperator).add(senderAO);
+
+	public final ImmutableCollection<ILogicalOperator> getOperators() {
+		return ImmutableList.copyOf(operators);
 	}
-	
-	public final void addAccessAO( AccessAO accessAO, ILogicalOperator forOperator ) {
-		Preconditions.checkNotNull(forOperator, "Operator to set sender for must not be null!");
-		Preconditions.checkArgument(relativeSources.containsKey(forOperator));
-		
-		relativeSources.get(forOperator).add(accessAO);
+
+	public final ImmutableCollection<ILogicalOperator> getRelativeSinks() {
+		return ImmutableList.copyOf(relativeSinks.keySet());
 	}
-	
-	@Override
-	public String toString() {
-		return getName();
+
+	public final ImmutableCollection<ILogicalOperator> getRelativeSources() {
+		return ImmutableList.copyOf(relativeSources.keySet());
 	}
-	
+
+	public final void removeDestinationName() {
+		for (final ILogicalOperator operator : operators) {
+			operator.setDestinationName(null);
+			operator.addParameterInfo(DESTINATION_PQLPARAMETER_KEY, null);
+		}
+	}
+
 	public final ILogicalQuery toLogicalQuery(IPQLGenerator generator) {
-		ILogicalQuery query = new LogicalQuery();
+		final ILogicalQuery query = new LogicalQuery();
 		query.setLogicalPlan(getOneTopOperator(), true);
 		query.setName(getName());
 		query.setParserId(PARSER_ID);
@@ -99,57 +104,55 @@ public class QueryPart {
 		return query;
 	}
 
-	public final void removeDestinationName() {
-		for( ILogicalOperator operator : operators ) {
-			operator.setDestinationName(null);
-			operator.addParameterInfo(DESTINATION_PQLPARAMETER_KEY, null);
-		}
+	@Override
+	public String toString() {
+		return getName();
 	}
 
 	private ILogicalOperator getOneTopOperator() {
-		for( ILogicalOperator relativeSink : relativeSinks.keySet() ) {
-			List<SenderAO> senderAOs = relativeSinks.get(relativeSink);
-			if( !senderAOs.isEmpty() ) {
+		for (final ILogicalOperator relativeSink : relativeSinks.keySet()) {
+			final List<SenderAO> senderAOs = relativeSinks.get(relativeSink);
+			if (!senderAOs.isEmpty()) {
 				return senderAOs.get(0);
 			}
 		}
 
 		return relativeSinks.keySet().iterator().next();
 	}
-	
-	private static Map<ILogicalOperator, List<AccessAO>> determineRelativeSources(Collection<ILogicalOperator> operators) {
-		Map<ILogicalOperator, List<AccessAO>> sourcesMap = Maps.newHashMap();
-		for( ILogicalOperator operator : operators ) {
-			if( operator.getSubscribedToSource().size() == 0 || allTargetsNotInList(operators, operator.getSubscribedToSource())) {
-				sourcesMap.put(operator, new ArrayList<AccessAO>());
-			} 
-		}
-		return sourcesMap;
-	}
-
-	private static Map<ILogicalOperator, List<SenderAO>> determineRelativeSinks(Collection<ILogicalOperator> operators) {
-		Map<ILogicalOperator, List<SenderAO>> sinksMap = Maps.newHashMap();
-		for( ILogicalOperator operator : operators ) {
-			if( operator.getSubscriptions().size() == 0 || allTargetsNotInList(operators, operator.getSubscriptions())) {
-				sinksMap.put(operator, new ArrayList<SenderAO>());
-			} 
-		}
-		return sinksMap;
-	}
 
 	private static boolean allTargetsNotInList(Collection<ILogicalOperator> operators, Collection<LogicalSubscription> subscriptions) {
-		for( LogicalSubscription subscription : subscriptions ) {
-			if( operators.contains(subscription.getTarget())) {
+		for (final LogicalSubscription subscription : subscriptions) {
+			if (operators.contains(subscription.getTarget())) {
 				return false;
 			}
 		}
 		return true;
 	}
 
+	private static Map<ILogicalOperator, List<SenderAO>> determineRelativeSinks(Collection<ILogicalOperator> operators) {
+		final Map<ILogicalOperator, List<SenderAO>> sinksMap = Maps.newHashMap();
+		for (final ILogicalOperator operator : operators) {
+			if (operator.getSubscriptions().size() == 0 || allTargetsNotInList(operators, operator.getSubscriptions())) {
+				sinksMap.put(operator, new ArrayList<SenderAO>());
+			}
+		}
+		return sinksMap;
+	}
+
+	private static Map<ILogicalOperator, List<AccessAO>> determineRelativeSources(Collection<ILogicalOperator> operators) {
+		final Map<ILogicalOperator, List<AccessAO>> sourcesMap = Maps.newHashMap();
+		for (final ILogicalOperator operator : operators) {
+			if (operator.getSubscribedToSource().size() == 0 || allTargetsNotInList(operators, operator.getSubscribedToSource())) {
+				sourcesMap.put(operator, new ArrayList<AccessAO>());
+			}
+		}
+		return sourcesMap;
+	}
+
 	private static Collection<ILogicalOperator> filter(Collection<ILogicalOperator> operators) {
-		ImmutableList.Builder<ILogicalOperator> filteredOperators = new ImmutableList.Builder<>();
-		for( ILogicalOperator operator : operators ) {
-			if( !(operator instanceof TopAO )) {
+		final ImmutableList.Builder<ILogicalOperator> filteredOperators = new ImmutableList.Builder<>();
+		for (final ILogicalOperator operator : operators) {
+			if (!(operator instanceof TopAO)) {
 				filteredOperators.add(operator);
 			}
 		}

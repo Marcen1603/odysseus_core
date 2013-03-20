@@ -16,11 +16,11 @@ public final class SourceAdvertisementInstantiator implements AdvertisementFacto
 	}
 
 	/**
-	 * Constructs an instance of <CODE>Advertisement</CODE> matching the
-	 * type specified by the <CODE>advertisementType</CODE> parameter.
+	 * Constructs an instance of <CODE>Advertisement</CODE> matching the type
+	 * specified by the <CODE>advertisementType</CODE> parameter.
 	 * 
-	 * @return The instance of <CODE>Advertisement</CODE> or null if it
-	 *         could not be created.
+	 * @return The instance of <CODE>Advertisement</CODE> or null if it could
+	 *         not be created.
 	 */
 	@Override
 	public Advertisement newInstance() {

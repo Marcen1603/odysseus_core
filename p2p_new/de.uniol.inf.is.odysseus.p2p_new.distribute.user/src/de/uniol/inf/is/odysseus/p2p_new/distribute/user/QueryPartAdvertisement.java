@@ -14,7 +14,6 @@ import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
 import net.jxta.document.StructuredDocumentFactory;
-import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
@@ -39,18 +38,21 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG };
 
 	private ID id;
+
 	private String pqlStatement;
+
 	private PeerID peerID;
+
 	private ID sharedQueryID;
 
 	public QueryPartAdvertisement(Element<?> root) {
-		TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
+		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
 
 		determineFields(doc);
 	}
 
 	public QueryPartAdvertisement(InputStream stream) throws IOException {
-		this((StructuredTextDocument<?>) StructuredDocumentFactory.newStructuredDocument(MimeMediaType.XMLUTF8, Preconditions.checkNotNull(stream, "Stream must not be null!")));
+		this(StructuredDocumentFactory.newStructuredDocument(MimeMediaType.XMLUTF8, Preconditions.checkNotNull(stream, "Stream must not be null!")));
 	}
 
 	public QueryPartAdvertisement(QueryPartAdvertisement adv) {
@@ -65,74 +67,9 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 		// for JXTA-side instances
 	}
 
-	public static String getAdvertisementType() {
-		return ADVERTISEMENT_TYPE;
-	}
-
-	@Override
-	public String[] getIndexFields() {
-		return INDEX_FIELDS;
-	}
-
-	public void setID(ID id) {
-		this.id = id;
-	}
-
-	@Override
-	public ID getID() {
-		return id;
-	}
-
-	public void setPqlStatement(String pqlStatement) {
-		this.pqlStatement = pqlStatement;
-	}
-
-	public String getPqlStatement() {
-		return pqlStatement;
-	}
-
-	public void setPeerID(PeerID peerID) {
-		this.peerID = peerID;
-	}
-
-	public PeerID getPeerID() {
-		return peerID;
-	}
-	
-	public void setSharedQueryID(ID sharedQueryID) {
-		this.sharedQueryID = sharedQueryID;
-	}
-	
-	public ID getSharedQueryID() {
-		return sharedQueryID;
-	}
-
-	@Override
-	public Document getDocument(MimeMediaType asMimeType) {
-		StructuredDocument<?> doc = StructuredDocumentFactory.newStructuredDocument(asMimeType, getAdvertisementType());
-		if (doc instanceof Attributable) {
-			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
-		}
-
-		appendElement(doc, ID_TAG, id.toString());
-		appendElement(doc, PQL_TAG, pqlStatement);
-		appendElement(doc, PEER_ID_TAG, peerID.toString());
-		appendElement(doc, SHARED_QUERY_ID_TAG, sharedQueryID.toString());
-		
-		return doc;
-	}
-
 	@Override
 	public QueryPartAdvertisement clone() {
 		return new QueryPartAdvertisement(this);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
 	}
 
 	@Override
@@ -144,15 +81,76 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 			return false;
 		}
 
-		QueryPartAdvertisement other = (QueryPartAdvertisement) obj;
+		final QueryPartAdvertisement other = (QueryPartAdvertisement) obj;
 		return id.equals(other.id);
 	}
 
+	@Override
+	public Document getDocument(MimeMediaType asMimeType) {
+		final StructuredDocument<?> doc = StructuredDocumentFactory.newStructuredDocument(asMimeType, getAdvertisementType());
+		if (doc instanceof Attributable) {
+			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
+		}
+
+		appendElement(doc, ID_TAG, id.toString());
+		appendElement(doc, PQL_TAG, pqlStatement);
+		appendElement(doc, PEER_ID_TAG, peerID.toString());
+		appendElement(doc, SHARED_QUERY_ID_TAG, sharedQueryID.toString());
+
+		return doc;
+	}
+
+	@Override
+	public ID getID() {
+		return id;
+	}
+
+	@Override
+	public String[] getIndexFields() {
+		return INDEX_FIELDS;
+	}
+
+	public PeerID getPeerID() {
+		return peerID;
+	}
+
+	public String getPqlStatement() {
+		return pqlStatement;
+	}
+
+	public ID getSharedQueryID() {
+		return sharedQueryID;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	public void setID(ID id) {
+		this.id = id;
+	}
+
+	public void setPeerID(PeerID peerID) {
+		this.peerID = peerID;
+	}
+
+	public void setPqlStatement(String pqlStatement) {
+		this.pqlStatement = pqlStatement;
+	}
+
+	public void setSharedQueryID(ID sharedQueryID) {
+		this.sharedQueryID = sharedQueryID;
+	}
+
 	private void determineFields(TextElement<?> root) {
-		Enumeration<?> elements = root.getChildren();
+		final Enumeration<?> elements = root.getChildren();
 
 		while (elements.hasMoreElements()) {
-			TextElement<?> elem = (TextElement<?>) elements.nextElement();
+			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
 			handleElement(elem);
 		}
 	}
@@ -169,9 +167,20 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 		}
 	}
 
+	public static String getAdvertisementType() {
+		return ADVERTISEMENT_TYPE;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
+		final Element createElement = appendTo.createElement(tag, value);
+		appendTo.appendChild(createElement);
+		return createElement;
+	}
+
 	private static ID convertToID(String elem) {
 		try {
-			URI id = new URI(elem);
+			final URI id = new URI(elem);
 			return IDFactory.fromURI(id);
 		} catch (URISyntaxException | ClassCastException ex) {
 			LOG.error("Could not set id", ex);
@@ -181,18 +190,11 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 
 	private static PeerID convertToPeerID(String text) {
 		try {
-			URI id = new URI(text);
+			final URI id = new URI(text);
 			return PeerID.create(id);
 		} catch (URISyntaxException | ClassCastException ex) {
 			LOG.error("Could not transform to pipeid: {}", text, ex);
 			return null;
 		}
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
-		Element createElement = appendTo.createElement(tag, value);
-		appendTo.appendChild(createElement);
-		return createElement;
 	}
 }

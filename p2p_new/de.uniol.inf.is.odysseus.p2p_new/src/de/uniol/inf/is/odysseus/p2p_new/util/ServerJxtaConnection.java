@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 public class ServerJxtaConnection extends AbstractJxtaConnection {
 
 	private JxtaServerSocket serverSocket;
+
 	private Socket socket;
 
 	public ServerJxtaConnection(PipeAdvertisement pipeAdvertisement) {
@@ -33,7 +34,7 @@ public class ServerJxtaConnection extends AbstractJxtaConnection {
 	@Override
 	public void disconnect() {
 		super.disconnect();
-		
+
 		if (serverSocket != null) {
 			tryClose(serverSocket);
 		}
@@ -52,7 +53,7 @@ public class ServerJxtaConnection extends AbstractJxtaConnection {
 	private static void tryClose(JxtaServerSocket socket) {
 		try {
 			socket.close();
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 		}
 	}
 

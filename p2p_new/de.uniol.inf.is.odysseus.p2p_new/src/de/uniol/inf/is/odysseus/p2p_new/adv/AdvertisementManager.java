@@ -22,12 +22,12 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementManager.class);
 	private static final long DISCOVERY_INTERVAL_MILLIS = 5 * 1000;
-	
+
 	private static AdvertisementManager instance;
 
 	private final List<IAdvertisementListener> listeners = Lists.newArrayList();
-	
-	private DiscoveryThread discoveryThread; 
+
+	private DiscoveryThread discoveryThread;
 
 	// called by OSGi-DS
 	public final void activate() {
@@ -39,29 +39,6 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 		LOG.debug("Advertisement manager activated");
 	}
 
-	// called by OSGi-DS
-	public final void deactivate() {
-		discoveryThread.stopRunning();
-		P2PNewPlugIn.getDiscoveryService().removeDiscoveryListener(this);
-
-		instance = null;
-		LOG.debug("Advertisement manager deactivated");
-	}
-
-	// called by OSGi-DS
-	public final void bindAdvertisementListener( IAdvertisementListener listener ) {
-		addAdvertisementListener(listener);
-		
-		LOG.debug("Bound advertisement listener {}", listener);
-	}
-	
-	// called by OSGi-DS
-	public final void unbindAdvertisementListener( IAdvertisementListener listener ) {
-		removeAdvertisementListener(listener);
-
-		LOG.debug("Unbound advertisement listener {}", listener);
-	}
-	
 	@Override
 	public void addAdvertisementListener(IAdvertisementListener listener) {
 		Preconditions.checkNotNull(listener, "Advertisement listener must not be null!");
@@ -71,11 +48,20 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 		}
 	}
 
-	@Override
-	public void removeAdvertisementListener(IAdvertisementListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
+	// called by OSGi-DS
+	public final void bindAdvertisementListener(IAdvertisementListener listener) {
+		addAdvertisementListener(listener);
+
+		LOG.debug("Bound advertisement listener {}", listener);
+	}
+
+	// called by OSGi-DS
+	public final void deactivate() {
+		discoveryThread.stopRunning();
+		P2PNewPlugIn.getDiscoveryService().removeDiscoveryListener(this);
+
+		instance = null;
+		LOG.debug("Advertisement manager deactivated");
 	}
 
 	@Override
@@ -83,22 +69,32 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 		process(event);
 	}
 
-	public static AdvertisementManager getInstance() {
-		return instance;
+	@Override
+	public void removeAdvertisementListener(IAdvertisementListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
+
+	// called by OSGi-DS
+	public final void unbindAdvertisementListener(IAdvertisementListener listener) {
+		removeAdvertisementListener(listener);
+
+		LOG.debug("Unbound advertisement listener {}", listener);
 	}
 
 	protected final void fireAdvertisementEvent(Advertisement advertisement) {
 		synchronized (listeners) {
-			for (IAdvertisementListener entry : listeners) {
+			for (final IAdvertisementListener entry : listeners) {
 				try {
 					if (entry.isSelected(advertisement)) {
 						try {
 							entry.advertisementOccured(this, advertisement);
-						} catch (Throwable t) {
+						} catch (final Throwable t) {
 							LOG.error("Exception during processing advertisement {}", advertisement, t);
 						}
 					}
-				} catch (Throwable t) {
+				} catch (final Throwable t) {
 					LOG.error("Exception during evaluating advertisement with selector: {}", advertisement, t);
 				}
 			}
@@ -106,13 +102,17 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 	}
 
 	private void process(DiscoveryEvent event) {
-		DiscoveryResponseMsg response = event.getResponse();
-		Enumeration<Advertisement> advs = response.getAdvertisements();
+		final DiscoveryResponseMsg response = event.getResponse();
+		final Enumeration<Advertisement> advs = response.getAdvertisements();
 		while (advs.hasMoreElements()) {
-			Advertisement adv = advs.nextElement();
-			
+			final Advertisement adv = advs.nextElement();
+
 			LOG.debug("Got advertisement of type {}", adv.getClass().getSimpleName());
 			fireAdvertisementEvent(adv);
 		}
+	}
+
+	public static AdvertisementManager getInstance() {
+		return instance;
 	}
 }

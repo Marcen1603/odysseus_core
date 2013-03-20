@@ -26,26 +26,21 @@ public class DataSourceManager implements IAdvertisementListener {
 
 	@Override
 	public void advertisementOccured(IAdvertisementManager sender, Advertisement adv) {
-		SourceAdvertisement srcAdv = (SourceAdvertisement) adv;
+		final SourceAdvertisement srcAdv = (SourceAdvertisement) adv;
 		LOG.debug("Got source advertisement of source {}", srcAdv.getAccessAO());
 
-		AccessAO accessAO = srcAdv.getAccessAO();
-		if( !dataDictionary.containsViewOrStream(accessAO.getSourcename(), SessionManagementService.getActiveSession())) {
+		final AccessAO accessAO = srcAdv.getAccessAO();
+		if (!dataDictionary.containsViewOrStream(accessAO.getSourcename(), SessionManagementService.getActiveSession())) {
 
-			ILogicalOperator timestampAO = addTimestampAO(accessAO, null);
+			final ILogicalOperator timestampAO = addTimestampAO(accessAO, null);
 			dataSourcePublisher.publishSource(srcAdv);
 			dataDictionary.addEntitySchema(accessAO.getSourcename(), accessAO.getOutputSchema(), SessionManagementService.getActiveSession());
 			dataDictionary.setStream(accessAO.getSourcename(), timestampAO, SessionManagementService.getActiveSession());
-			
+
 			LOG.debug("Registered {} in local data dictionary", accessAO);
 		} else {
 			LOG.debug("Source {} already registered in data dictionary", accessAO);
 		}
-	}
-
-	@Override
-	public boolean isSelected(Advertisement advertisement) {
-		return (advertisement instanceof SourceAdvertisement);
 	}
 
 	// called by OSGi-DS
@@ -57,26 +52,31 @@ public class DataSourceManager implements IAdvertisementListener {
 		LOG.debug("Bound DataDictionary {}", dd);
 	}
 
+	@Override
+	public boolean isSelected(Advertisement advertisement) {
+		return (advertisement instanceof SourceAdvertisement);
+	}
+
 	// called by OSGi-DS
 	public void unbindDataDictionary(IDataDictionary dd) {
-		if( dd == dataDictionary ) {
+		if (dd == dataDictionary) {
 			dataSourcePublisher.stopRunning();
 			dataDictionary = null;
-	
+
 			LOG.debug("Unbound DataDictionary {}", dd);
 		}
 	}
-	
+
 	public static IDataDictionary getDataDictionary() {
 		return dataDictionary;
 	}
 
 	private static ILogicalOperator addTimestampAO(ILogicalOperator operator, String dateFormat) {
-		TimestampAO timestampAO = new TimestampAO();
+		final TimestampAO timestampAO = new TimestampAO();
 		timestampAO.setDateFormat(dateFormat);
 		if (operator.getOutputSchema() != null) {
 
-			for (SDFAttribute attr : operator.getOutputSchema()) {
+			for (final SDFAttribute attr : operator.getOutputSchema()) {
 				if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI()) || SDFDatatype.START_TIMESTAMP_STRING.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
 					timestampAO.setStartTimestamp(attr);
 				}

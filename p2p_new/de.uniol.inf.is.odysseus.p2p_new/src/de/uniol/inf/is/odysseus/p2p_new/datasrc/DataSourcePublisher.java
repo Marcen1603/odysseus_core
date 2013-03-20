@@ -32,7 +32,9 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	private static final long PUBLISH_INTERVAL_MILLIS = 60 * 1000;
 
 	private final IDataDictionary dataDictionary;
+
 	private final DiscoveryService discoveryService;
+
 	private final Map<String, SourceAdvertisement> publishedSources = Maps.newHashMap();
 
 	public DataSourcePublisher(IDataDictionary dataDictionary, DiscoveryService discoveryService) {
@@ -43,15 +45,8 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	}
 
 	@Override
-	public void beforeJob() {
-		dataDictionary.addListener(this);
-	}
-
-	@Override
-	public void doJob() {
-		for (Entry<String, ILogicalOperator> stream : dataDictionary.getStreams(SessionManagementService.getActiveSession())) {
-			doJobImpl(stream.getValue());
-		}
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+		doJobImpl(op);
 	}
 
 	@Override
@@ -60,18 +55,8 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		doJobImpl(op);
-	}
-
-	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		Optional<AccessAO> optAccessAO = determineAccessAO(op);
-		if (optAccessAO.isPresent()) {
-			unpublishSource(optAccessAO.get());
-		} else {
-			LOG.error("Could not unpublish existing source since the accessAO is not found from logical operator {}", op);
-		}
+	public void beforeJob() {
+		dataDictionary.addListener(this);
 	}
 
 	@Override
@@ -79,12 +64,41 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 		// do nothing
 	}
 
+	@Override
+	public void doJob() {
+		for (final Entry<String, ILogicalOperator> stream : dataDictionary.getStreams(SessionManagementService.getActiveSession())) {
+			doJobImpl(stream.getValue());
+		}
+	}
+
 	public void publishSource(SourceAdvertisement adv) {
 		tryPublishSource(adv, PUBLISH_INTERVAL_MILLIS);
 	}
 
+	@Override
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+		final Optional<AccessAO> optAccessAO = determineAccessAO(op);
+		if (optAccessAO.isPresent()) {
+			unpublishSource(optAccessAO.get());
+		} else {
+			LOG.error("Could not unpublish existing source since the accessAO is not found from logical operator {}", op);
+		}
+	}
+
+	private SourceAdvertisement determineSourceAdvertisement(AccessAO source) {
+		if (publishedSources.containsKey(source.getSourcename())) {
+			return publishedSources.get(source.getSourcename());
+		}
+
+		final SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
+		adv.setAccessAO(new AccessAO(source)); // clean copy
+		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+
+		return adv;
+	}
+
 	private void doJobImpl(ILogicalOperator operator) {
-		Optional<AccessAO> optAccessAO = determineAccessAO(operator);
+		final Optional<AccessAO> optAccessAO = determineAccessAO(operator);
 		if (optAccessAO.isPresent()) {
 			if (isPublishable(optAccessAO.get())) {
 				publishSource(optAccessAO.get(), PUBLISH_INTERVAL_MILLIS - (System.currentTimeMillis() - getLastExecutionTimestamp()));
@@ -95,7 +109,7 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	}
 
 	private void publishSource(AccessAO source, long lifetime) {
-		SourceAdvertisement adv = determineSourceAdvertisement(source);
+		final SourceAdvertisement adv = determineSourceAdvertisement(source);
 		tryPublishSource(adv, lifetime);
 	}
 
@@ -104,7 +118,7 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 		try {
 			discoveryService.publish(adv, lifetime, lifetime);
 			publishedSources.put(adv.getAccessAO().getSourcename(), adv);
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			LOG.error("Could not publish source {}", adv.getAccessAO().getSourcename(), ex);
 		}
 	}
@@ -112,24 +126,12 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 	private void unpublishSource(AccessAO source) {
 		LOG.debug("Unpublishing source {}", source);
 
-		SourceAdvertisement adv = publishedSources.remove(source.getSourcename());
+		final SourceAdvertisement adv = publishedSources.remove(source.getSourcename());
 		try {
 			P2PNewPlugIn.getDiscoveryService().flushAdvertisement(adv);
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			LOG.error("Could not flush advertisement {}", adv, ex);
 		}
-	}
-
-	private SourceAdvertisement determineSourceAdvertisement(AccessAO source) {
-		if (publishedSources.containsKey(source.getSourcename())) {
-			return publishedSources.get(source.getSourcename());
-		}
-
-		SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
-		adv.setAccessAO(new AccessAO(source)); // clean copy
-		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
-
-		return adv;
 	}
 
 	private static Optional<AccessAO> determineAccessAO(ILogicalOperator start) {
@@ -137,8 +139,8 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 			return Optional.of((AccessAO) start);
 		}
 
-		for (LogicalSubscription subscription : start.getSubscribedToSource()) {
-			Optional<AccessAO> optAcccessAO = determineAccessAO(subscription.getTarget());
+		for (final LogicalSubscription subscription : start.getSubscribedToSource()) {
+			final Optional<AccessAO> optAcccessAO = determineAccessAO(subscription.getTarget());
 			if (optAcccessAO.isPresent()) {
 				return optAcccessAO;
 			}
@@ -152,7 +154,7 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 			return false;
 		}
 
-		String publicFlag = accessAO.getOptionsMap().get("public");
+		final String publicFlag = accessAO.getOptionsMap().get("public");
 		if (!Strings.isNullOrEmpty(publicFlag)) {
 			if ("false".equalsIgnoreCase(publicFlag)) {
 				return false;

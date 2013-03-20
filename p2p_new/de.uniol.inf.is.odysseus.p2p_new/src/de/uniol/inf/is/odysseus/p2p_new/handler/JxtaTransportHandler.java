@@ -37,6 +37,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 	private static final String PIPE_NAME = "Odysseus Pipe";
 
 	private PipeID pipeID;
+
 	private AbstractJxtaConnection connection;
 
 	// for transportFactory
@@ -55,15 +56,13 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 	}
 
 	@Override
-	public void send(byte[] message) throws IOException {
-		if (connection != null && connection.isConnected()) {
-			connection.send(message);
-		}
+	public InputStream getInputStream() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public InputStream getInputStream() {
-		throw new UnsupportedOperationException();
+	public String getName() {
+		return NAME;
 	}
 
 	@Override
@@ -72,8 +71,27 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 	}
 
 	@Override
-	public String getName() {
-		return NAME;
+	public void onConnect(AbstractJxtaConnection sender) {
+		LOG.debug("Connected to {}", sender.getPipeAdvertisement().getPipeID());
+	}
+
+	@Override
+	public void onDisconnect(AbstractJxtaConnection sender) {
+		LOG.debug("Disconnected from {}", sender.getPipeAdvertisement().getPipeID());
+	}
+
+	@Override
+	public void onReceiveData(AbstractJxtaConnection sender, byte[] data) {
+		LOG.debug("Got message");
+
+		final ByteBuffer bb = ByteBuffer.allocate(data.length);
+		bb.put(data);
+		JxtaTransportHandler.this.fireProcess(bb);
+	}
+
+	@Override
+	public void processInClose() throws IOException {
+		tryDisconnectAsync();
 	}
 
 	@Override
@@ -87,6 +105,11 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 	}
 
 	@Override
+	public void processOutClose() throws IOException {
+		tryDisconnectAsync();
+	}
+
+	@Override
 	public void processOutOpen() throws IOException {
 		LOG.info("Process Out Open");
 
@@ -97,50 +120,28 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 	}
 
 	@Override
-	public void processInClose() throws IOException {
-		tryDisconnectAsync();
+	public void send(byte[] message) throws IOException {
+		if (connection != null && connection.isConnected()) {
+			connection.send(message);
+		}
 	}
 
-	@Override
-	public void processOutClose() throws IOException {
-		tryDisconnectAsync();
-	}
-
-	@Override
-	public void onConnect(AbstractJxtaConnection sender) {
-		LOG.debug("Connected to {}", sender.getPipeAdvertisement().getPipeID());
-	}
-
-	@Override
-	public void onReceiveData(AbstractJxtaConnection sender, byte[] data) {
-		LOG.debug("Got message");
-		
-		ByteBuffer bb = ByteBuffer.allocate(data.length);
-		bb.put(data);
-		JxtaTransportHandler.this.fireProcess(bb);
-	}
-
-	@Override
-	public void onDisconnect(AbstractJxtaConnection sender) {
-		LOG.debug("Disconnected from {}", sender.getPipeAdvertisement().getPipeID());
-	}
-	
 	protected void processOptions(Map<String, String> options) {
-		String id = options.get(PIPEID_TAG);
+		final String id = options.get(PIPEID_TAG);
 		if (!Strings.isNullOrEmpty(id)) {
 			pipeID = convertToPipeID(id);
 		}
 	}
 
 	private void tryConnectAsync() {
-		
+
 		connection.addListener(this);
-		Thread t = new Thread(new Runnable() {
+		final Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					connection.connect();
-				} catch (IOException ex) {
+				} catch (final IOException ex) {
 					LOG.error("Could not connect", ex);
 					connection = null;
 				}
@@ -153,7 +154,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 
 	private void tryDisconnectAsync() {
 		connection.removeListener(this);
-		Thread t = new Thread(new Runnable() {
+		final Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				connection.disconnect();
@@ -165,22 +166,22 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 		t.start();
 	}
 
-	private static PipeAdvertisement createPipeAdvertisement(PipeID pipeID) {
-		PipeAdvertisement advertisement = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
-		advertisement.setName(PIPE_NAME);
-		advertisement.setPipeID(pipeID);
-		advertisement.setType(PipeService.UnicastType);
-		LOG.info("Pipe Advertisement with id = {}", pipeID);
-		return advertisement;
-	}
-
 	private static PipeID convertToPipeID(String text) {
 		try {
-			URI id = new URI(text);
+			final URI id = new URI(text);
 			return PipeID.create(id);
 		} catch (URISyntaxException | ClassCastException ex) {
 			LOG.error("Could not transform to pipeid: {}", text, ex);
 			return null;
 		}
+	}
+
+	private static PipeAdvertisement createPipeAdvertisement(PipeID pipeID) {
+		final PipeAdvertisement advertisement = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
+		advertisement.setName(PIPE_NAME);
+		advertisement.setPipeID(pipeID);
+		advertisement.setType(PipeService.UnicastType);
+		LOG.info("Pipe Advertisement with id = {}", pipeID);
+		return advertisement;
 	}
 }

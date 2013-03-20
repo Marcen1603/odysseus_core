@@ -20,7 +20,7 @@ public class QueryPartManager implements IAdvertisementListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryPartManager.class);
 	private static QueryPartManager instance;
-	
+
 	private final List<ID> consumedAdvertisementIDs = Lists.newArrayList();
 
 	private IExecutor executor;
@@ -28,40 +28,27 @@ public class QueryPartManager implements IAdvertisementListener {
 	public QueryPartManager() {
 		instance = this;
 	}
-	
-	public static QueryPartManager getInstance() {
-		return instance;
-	}
-	
-	@Override
-	public boolean isSelected(Advertisement advertisement) {
-		if (advertisement instanceof QueryPartAdvertisement) {
-			QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
-			return adv.getPeerID().equals(P2PNewPlugIn.getOwnPeerID());
-		}
-		return false;
-	}
 
 	@Override
 	public void advertisementOccured(IAdvertisementManager sender, Advertisement advertisement) {
-		QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
+		final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
 		if (!consumedAdvertisementIDs.contains(adv.getID())) {
 			LOG.debug("Got query part");
 			LOG.debug("PQL-Statement is {}", adv.getPqlStatement());
-			
+
 			try {
-				Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), "Standard");
-				
+				final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), "Standard");
+
 				// shared parts are always started
-				for( Integer id : ids ) {
+				for (final Integer id : ids) {
 					executor.startQuery(id, SessionManagementService.getActiveSession());
 				}
-				QueryPartController.getInstance().registerAsSlave( ids, adv.getSharedQueryID());
-				
-			} catch( Throwable t ) {
+				QueryPartController.getInstance().registerAsSlave(ids, adv.getSharedQueryID());
+
+			} catch (final Throwable t) {
 				LOG.error("Could not execute query part", t);
 			} finally {
-				consumedAdvertisementIDs.add(adv.getID());				
+				consumedAdvertisementIDs.add(adv.getID());
 			}
 		}
 	}
@@ -73,6 +60,15 @@ public class QueryPartManager implements IAdvertisementListener {
 		LOG.debug("Bound Executor {}", exe);
 	}
 
+	@Override
+	public boolean isSelected(Advertisement advertisement) {
+		if (advertisement instanceof QueryPartAdvertisement) {
+			final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
+			return adv.getPeerID().equals(P2PNewPlugIn.getOwnPeerID());
+		}
+		return false;
+	}
+
 	// called by OSGi-DS
 	public void unbindExecutor(IExecutor exe) {
 		if (executor == exe) {
@@ -80,5 +76,9 @@ public class QueryPartManager implements IAdvertisementListener {
 
 			executor = null;
 		}
+	}
+
+	public static QueryPartManager getInstance() {
+		return instance;
 	}
 }

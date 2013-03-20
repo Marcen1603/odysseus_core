@@ -5,25 +5,22 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 
+import net.jxta.protocol.PipeAdvertisement;
+import net.jxta.socket.JxtaSocket;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 
-import net.jxta.protocol.PipeAdvertisement;
-import net.jxta.socket.JxtaSocket;
-
 public class ClientJxtaConnection extends AbstractJxtaConnection {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(ClientJxtaConnection.class);
+
 	private JxtaSocket clientSocket;
 
 	public ClientJxtaConnection(PipeAdvertisement pipeAdvertisement) {
 		super(pipeAdvertisement);
-	}
-
-	public final JxtaSocket getJxtaSocket() {
-		return clientSocket;
 	}
 
 	@Override
@@ -36,10 +33,14 @@ public class ClientJxtaConnection extends AbstractJxtaConnection {
 	@Override
 	public void disconnect() {
 		super.disconnect();
-		
+
 		if (clientSocket != null) {
 			tryClose(clientSocket);
 		}
+	}
+
+	public final JxtaSocket getJxtaSocket() {
+		return clientSocket;
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class ClientJxtaConnection extends AbstractJxtaConnection {
 				clientSocket = new JxtaSocket(P2PNewPlugIn.getOwnPeerGroup(), pipeAdvertisement, 5000);
 				clientSocket.setSoTimeout(0);
 				LOG.debug("Client socket created: {}", clientSocket);
-			} catch (SocketTimeoutException ex) {
+			} catch (final SocketTimeoutException ex) {
 				// ignore... try again
 				// timeout of zero does not work here...
 			}
@@ -70,7 +71,7 @@ public class ClientJxtaConnection extends AbstractJxtaConnection {
 	private static void tryClose(JxtaSocket socket) {
 		try {
 			socket.close();
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 		}
 	}
 }

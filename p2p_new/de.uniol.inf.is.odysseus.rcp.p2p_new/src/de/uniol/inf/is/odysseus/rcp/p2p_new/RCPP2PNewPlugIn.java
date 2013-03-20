@@ -13,26 +13,28 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 
 	private static IPeerManager peerManager;
 
-	public void start(BundleContext context) throws Exception {
-	}
-
-	public void stop(BundleContext context) throws Exception {
-	}
-
 	public final void bindPeerManager(IPeerManager pm) {
 		peerManager = pm;
 
 		LOG.debug("Bound PeerManager {}", pm);
 	}
 
+	@Override
+	public void start(BundleContext context) throws Exception {
+	}
+
+	@Override
+	public void stop(BundleContext context) throws Exception {
+	}
+
 	public final void unbindPeerManager(IPeerManager pm) {
-		if( peerManager == pm ) {
+		if (peerManager == pm) {
 			peerManager = null;
-			
+
 			LOG.debug("Unbound PeerManager {}", pm);
 		}
 	}
-	
+
 	public static IPeerManager getPeerManager() {
 		return peerManager;
 	}

@@ -10,28 +10,28 @@ public class SessionManagementService {
 	private static final Logger LOG = LoggerFactory.getLogger(SessionManagementService.class);
 	private static ISessionManagement sessionManagement;
 	private static ISession activeSession;
-	
+
 	public final void bindSessionManagement(ISessionManagement sm) {
 		sessionManagement = sm;
 		activeSession = sessionManagement.loginSuperUser(null, "");
-		
+
 		LOG.debug("Bound Session Management {}", sm);
 	}
-	
+
 	public final void unbindSessionManagement(ISessionManagement sm) {
-		if( sm == sessionManagement ) {
+		if (sm == sessionManagement) {
 			sessionManagement = null;
 			activeSession = null;
-			
+
 			LOG.debug("Unbound Session Management");
 		}
 	}
-	
-	public static ISessionManagement getSessionManagement() {
-		return sessionManagement;
-	}
-	
+
 	public static ISession getActiveSession() {
 		return activeSession;
+	}
+
+	public static ISessionManagement getSessionManagement() {
+		return sessionManagement;
 	}
 }

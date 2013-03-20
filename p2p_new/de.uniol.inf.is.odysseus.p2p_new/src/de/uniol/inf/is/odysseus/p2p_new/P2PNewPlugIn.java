@@ -44,20 +44,21 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static ContentService contentService;
 	private static PipeService pipeService;
 	private static EndpointService endpointService;
-	
+
 	private static PeerGroup ownPeerGroup;
 
 	private NetworkManager manager;
 
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		configureLogging(bundleContext.getBundle());
 
-		File conf = new File("." + System.getProperty("file.separator") + PEER_NAME);
+		final File conf = new File("." + System.getProperty("file.separator") + PEER_NAME);
 		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, PEER_NAME, conf.toURI());
 
 		configureNetwork(manager.getConfigurator(), PEER_ID);
 
-		PeerGroup netPeerGroup = manager.startNetwork();
+		final PeerGroup netPeerGroup = manager.startNetwork();
 		ownPeerGroup = createSubGroup(netPeerGroup, SUBGROUP_ID, SUBGROUP_NAME);
 
 		discoveryService = ownPeerGroup.getDiscoveryService();
@@ -70,6 +71,7 @@ public class P2PNewPlugIn implements BundleActivator {
 		LOG.debug("JXTA-Network started. Peer {} is in group '{}'", PEER_NAME, ownPeerGroup);
 	}
 
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		discoveryService = null;
 		contentService = null;
@@ -79,18 +81,14 @@ public class P2PNewPlugIn implements BundleActivator {
 		LOG.debug("JXTA-Network stopped");
 	}
 
+	public static ContentService getContentService() {
+		return contentService;
+	}
+
 	public static DiscoveryService getDiscoveryService() {
 		return discoveryService;
 	}
 
-	public static ContentService getContentService() {
-		return contentService;
-	}
-	
-	public static PipeService getPipeService() {
-		return pipeService;
-	}
-	
 	public static EndpointService getEndpointService() {
 		return endpointService;
 	}
@@ -98,13 +96,17 @@ public class P2PNewPlugIn implements BundleActivator {
 	public static PeerGroup getOwnPeerGroup() {
 		return ownPeerGroup;
 	}
-	
+
 	public static PeerID getOwnPeerID() {
 		return PEER_ID;
 	}
 
+	public static PipeService getPipeService() {
+		return pipeService;
+	}
+
 	private static void configureLogging(Bundle bundle) {
-		java.util.logging.Logger jxtaLogger = java.util.logging.Logger.getLogger(JXTA_LOGGER_NAME);
+		final java.util.logging.Logger jxtaLogger = java.util.logging.Logger.getLogger(JXTA_LOGGER_NAME);
 		if (jxtaLogger != null) {
 			jxtaLogger.setLevel(JXTA_LOG_LEVEL);
 		} else {
