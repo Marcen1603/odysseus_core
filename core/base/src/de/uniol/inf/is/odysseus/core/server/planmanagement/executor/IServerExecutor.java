@@ -21,6 +21,10 @@ import java.util.Map;
 
 import javax.security.auth.login.Configuration;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableCollection;
+
+import de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -160,6 +164,9 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
 	ICompiler getCompiler();
+	
+	Optional<ILogicalQueryDistributor> getLogicalQueryDistributor( String name );
+	ImmutableCollection<String> getLogicalQueryDistributorNames();
 	
 	// Facade for Compiler
 	public List<ILogicalQuery> translateQuery(String query, String parserID,

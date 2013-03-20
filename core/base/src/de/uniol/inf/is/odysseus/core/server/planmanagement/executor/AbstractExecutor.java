@@ -330,10 +330,12 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 	}
 	
+	@Override
 	public final ImmutableCollection<String> getLogicalQueryDistributorNames() {
 		return ImmutableSet.copyOf(logicalQueryDistributors.keySet());
 	}
 
+	@Override
 	public final Optional<ILogicalQueryDistributor> getLogicalQueryDistributor(String name) {
 		return Optional.fromNullable(logicalQueryDistributors.get(name));
 	}
