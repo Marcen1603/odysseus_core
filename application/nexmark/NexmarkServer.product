@@ -91,6 +91,8 @@ This Software contains parts of the nexmark generator
 
    <configurations>
       <plugin id="de.uniol.inf.is.odysseus.core" autoStart="true" startLevel="0" />
+      <plugin id="de.uniol.inf.is.odysseus.core.server" autoStart="true" startLevel="0" />
+      <plugin id="de.uniol.inf.is.odysseus.nexmark" autoStart="true" startLevel="1" />
    </configurations>
 
 </product>

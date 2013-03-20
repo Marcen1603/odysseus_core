@@ -84,6 +84,9 @@ public class Activator implements BundleActivator {
 			args[5] = "-el";
 			args[6] = elementLimit;
 		}
+		
+		// TODO: hack for loading datahandlers manually
+		de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry.initDefaultHandler();
 
 		URL catURL = context.getBundle().getEntry(categoriesFile);		
 		logger.debug("NexMark started "+args[0]+" "+args[1]+" "+args[2]+" "+args[3]+" "+args[4]);
