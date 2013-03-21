@@ -41,8 +41,15 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 	@Override
 	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) {
 		JoinTIPO joinPO = new JoinTIPO();
+		boolean isCross = false;
 		IPredicate pred = joinAO.getPredicate();
-		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred.clone());
+		if(pred == null){
+			joinPO.setJoinPredicate(new TruePredicate<>());
+			isCross = true;
+		}else{
+			joinPO.setJoinPredicate(pred.clone());
+		}
+		
 		
 		// if in both input paths there is no window, we
 		// use a persistent sweep area
@@ -67,6 +74,9 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 		
 		defaultExecute(joinAO, joinPO, transformConfig, true, true);
+		if(isCross){
+			joinPO.setName("Crossproduct");
+		}
 
 	}
 

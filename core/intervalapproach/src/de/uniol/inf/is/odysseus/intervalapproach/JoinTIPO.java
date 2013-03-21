@@ -353,10 +353,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	public String getName() {
-		return super.getName();
-		// return super.getName() + "Left SA: " + this.getAreas()[0].toString()
-		// + " Right SA: " + this.getAreas()[1].toString();
+	public String toString() {
+		return super.toString()+" predicate: "+this.joinPredicate;
 	}
 
 }
