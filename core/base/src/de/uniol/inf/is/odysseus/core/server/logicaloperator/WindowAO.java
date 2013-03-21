@@ -21,8 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
@@ -267,7 +265,10 @@ public class WindowAO extends UnaryLogicalOp {
 			}
 			return isValid;
 		case PREDICATE:
-			throw new NotImplementedException();			
+			isValid = true;
+			// Todo check validity 
+			// esp. check predicates!
+			return isValid;
 		default:
 			break;
 		}
