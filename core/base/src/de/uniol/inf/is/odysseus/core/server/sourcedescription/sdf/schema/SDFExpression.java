@@ -210,7 +210,7 @@ public class SDFExpression implements Serializable, IClone {
 					aliasToAggregationAttributeMapping);
 			try {
 				this.expression = expressionParser.parse(result, this.schema);
-				expressionString = expressionString.toString();
+				expressionString = expression.toString();
 			} catch (Throwable e) {
 				System.err.println("Expr: " + this.expressionString);
 				throw new SDFExpressionParseException(e);
