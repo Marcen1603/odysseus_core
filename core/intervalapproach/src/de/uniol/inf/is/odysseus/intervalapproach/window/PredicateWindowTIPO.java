@@ -88,7 +88,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 			// end is not set --> use negated start predicate
 			// maximum window size reached
 			if ((end != null && end.evaluate(object))
-					|| !startEval
+					|| (end == null && !startEval)
 					|| (maxWindowTime > 0 && PointInTime.plus(
 							queue.get(0).getMetadata().getStart(),
 							maxWindowTime).afterOrEquals(
