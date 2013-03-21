@@ -31,10 +31,12 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	private static Map<String, IPredicateBuilder> predicateBuilders = new HashMap<String, IPredicateBuilder>();
 	private static Map<String, Object> udfs = new HashMap<String, Object>();
 
-	public static IOperatorBuilder createOperatorBuilder(String name, ISession caller, IDataDictionary dataDictionary) {
+	public static IOperatorBuilder createOperatorBuilder(String name,
+			ISession caller, IDataDictionary dataDictionary) {
 		name = name.toUpperCase();
 		if (!operatorBuilders.containsKey(name)) {
-			throw new IllegalArgumentException("no such operator builder: " + name);
+			throw new IllegalArgumentException("no such operator builder: "
+					+ name);
 		}
 		try {
 			IOperatorBuilder builder = operatorBuilders.get(name).cleanCopy();
@@ -54,9 +56,11 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 		return operatorBuilders.keySet();
 	}
 
-	public static void putPredicateBuilder(String identifier, IPredicateBuilder builder) {
+	public static void putPredicateBuilder(String identifier,
+			IPredicateBuilder builder) {
 		if (predicateBuilders.containsKey(identifier)) {
-			throw new IllegalArgumentException("multiple definitions of predicate builder: " + identifier);
+			throw new IllegalArgumentException(
+					"multiple definitions of predicate builder: " + identifier);
 		}
 
 		predicateBuilders.put(identifier, builder);
@@ -84,12 +88,15 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 		return predicateBuilders.keySet();
 	}
 
-	public static void putUdf(String name, @SuppressWarnings("rawtypes") Class<? extends IUserDefinedFunction> classObject) {
+	public static void putUdf(
+			String name,
+			@SuppressWarnings("rawtypes") Class<? extends IUserDefinedFunction> classObject) {
 		udfs.put(name, classObject);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static IUserDefinedFunction getUDf(String name) throws InstantiationException, IllegalAccessException {
+	public static IUserDefinedFunction getUDf(String name)
+			throws InstantiationException, IllegalAccessException {
 		Class udfClass = (Class) udfs.get(name);
 		if (udfClass != null) {
 			return (IUserDefinedFunction) udfClass.newInstance();
@@ -118,9 +125,11 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 		return ImmutableList.copyOf(operatorBuilders.values());
 	}
 
-	private static void putOperatorBuilderType(String name, IOperatorBuilder builder) {
+	private static void putOperatorBuilderType(String name,
+			IOperatorBuilder builder) {
 		if (operatorBuilders.containsKey(name)) {
-			throw new RuntimeException("multiple definitions of logicaloperator: " + name);
+			throw new RuntimeException(
+					"multiple definitions of logicaloperator: " + name);
 		}
 		operatorBuilders.put(name.toUpperCase(), builder);
 	}

@@ -141,6 +141,7 @@ public class MEP implements IExpressionParser {
 
     @Override
     public IExpression<?> parse(String expressionStr, SDFSchema schema) throws ParseException {
+    	
         MEPImpl impl = new MEPImpl(new StringReader(expressionStr));
         SimpleNode expressionNode;
         try {
