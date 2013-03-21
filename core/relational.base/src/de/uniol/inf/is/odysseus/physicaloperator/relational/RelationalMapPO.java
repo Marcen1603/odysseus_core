@@ -32,11 +32,9 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class RelationalMapPO<T extends IMetaAttribute> extends
-		AbstractPipe<Tuple<T>, Tuple<T>> {
+public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
 
-	static private Logger logger = LoggerFactory
-			.getLogger(RelationalMapPO.class);
+	static private Logger logger = LoggerFactory.getLogger(RelationalMapPO.class);
 
 	private VarHelper[][] variables; // Expression.Index
 	private SDFExpression[] expressions;
@@ -46,8 +44,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	final private boolean statebased;
 	final private boolean allowNull;
 
-	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions,
-			boolean statebased, boolean allowNullInOutput) {
+	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean statebased, boolean allowNullInOutput) {
 		this.inputSchema = inputSchema;
 		this.statebased = statebased;
 		this.allowNull = allowNullInOutput;
@@ -68,34 +65,25 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 			this.variables[i++] = newArray;
 			int j = 0;
 			for (SDFAttribute curAttribute : neededAttributes) {
-				if (curAttribute.getSourceName() != null
-						&& curAttribute.getSourceName().startsWith("__last_")) {
+				if (curAttribute.getSourceName() != null && curAttribute.getSourceName().startsWith("__last_")) {
 					if (!statebased) {
-						throw new RuntimeException(
-								"Map cannot be used with __last_! Used StateMap instead!");
+						throw new RuntimeException("Map cannot be used with __last_! Used StateMap instead!");
 					}
-					int pos = Integer.parseInt(curAttribute.getSourceName()
-							.substring("__last_".length(),
-									curAttribute.getSourceName().indexOf('.')));
+					int pos = Integer.parseInt(curAttribute.getSourceName().substring("__last_".length(), curAttribute.getSourceName().indexOf('.')));
 					if (pos > maxHistoryElements) {
 						maxHistoryElements = pos + 1;
 					}
-					String realAttrStr = curAttribute.getURI().substring(
-							curAttribute.getURI().indexOf('.') + 1);
-					String newSource = realAttrStr.substring(0,
-							realAttrStr.indexOf('.'));
-					String newName = realAttrStr.substring(realAttrStr
-							.indexOf('.') + 1);
+					String realAttrStr = curAttribute.getURI().substring(curAttribute.getURI().indexOf('.') + 1);
+					String newSource = realAttrStr.substring(0, realAttrStr.indexOf('.'));
+					String newName = realAttrStr.substring(realAttrStr.indexOf('.') + 1);
 					if ("null".equals(newSource)) {
 						newSource = null;
 					}
-					SDFAttribute newAttribute = new SDFAttribute(newSource,
-							newName, curAttribute);
+					SDFAttribute newAttribute = new SDFAttribute(newSource, newName, curAttribute);
 					int index = schema.indexOf(newAttribute);
 					newArray[j++] = new VarHelper(index, pos);
 				} else {
-					newArray[j++] = new VarHelper(schema.indexOf(curAttribute),
-							0);
+					newArray[j++] = new VarHelper(schema.indexOf(curAttribute), 0);
 				}
 			}
 		}
@@ -132,8 +120,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					Tuple<T> obj = null;
 					if (lastObjectSize > this.variables[i][j].objectPosToUse) {
-						obj = lastObjects
-								.get(this.variables[i][j].objectPosToUse);
+						obj = lastObjects.get(this.variables[i][j].objectPosToUse);
 					}
 					if (obj != null) {
 						values[j] = obj.getAttribute(this.variables[i][j].pos);
@@ -142,12 +129,11 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 
 				try {
 					this.expressions[i].bindMetaAttribute(object.getMetadata());
-					this.expressions[i].bindAdditionalContent(object
-							.getAdditionalContent());
+					this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
 					this.expressions[i].bindVariables(values);
 					Object expr = this.expressions[i].getValue();
 					outputVal.setAttribute(i, expr);
-					if (expr == null){
+					if (expr == null) {
 						nullValueOccured = true;
 					}
 				} catch (Exception e) {
@@ -181,8 +167,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 			return false;
 		}
 		RelationalMapPO rmpo = (RelationalMapPO) ipo;
-		if (this.hasSameSources(rmpo)
-				&& this.inputSchema.compareTo(rmpo.inputSchema) == 0) {
+		if (this.hasSameSources(rmpo) && this.inputSchema.compareTo(rmpo.inputSchema) == 0) {
 			if (this.expressions.length == rmpo.expressions.length) {
 				for (int i = 0; i < this.expressions.length; i++) {
 					if (!this.expressions[i].equals(rmpo.expressions[i])) {

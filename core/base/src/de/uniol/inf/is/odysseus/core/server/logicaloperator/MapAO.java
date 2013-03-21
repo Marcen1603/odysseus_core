@@ -57,8 +57,7 @@ public class MapAO extends UnaryLogicalOp {
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (NamedExpressionItem expr : namedExpressions) {
 				SDFAttribute attr = null;
-				IExpression<?> mepExpression = expr.expression
-						.getMEPExpression();
+				IExpression<?> mepExpression = expr.expression.getMEPExpression();
 				String exprString;
 				boolean isOnlyAttribute = false;
 				// Determine attribute name
@@ -77,13 +76,10 @@ public class MapAO extends UnaryLogicalOp {
 					}
 
 					// If expression is an attribute use this data type
-					List<SDFAttribute> inAttribs = expr.expression
-							.getAllAttributes();
+					List<SDFAttribute> inAttribs = expr.expression.getAllAttributes();
 					for (SDFAttribute attribute : inAttribs) {
 						if (attribute.equalsCQL(elem)) {
-							attr = new SDFAttribute(
-									elem.getURIWithoutQualName(),
-									elem.getQualName(), attribute.getDatatype());
+							attr = new SDFAttribute(elem.getURIWithoutQualName(), elem.getQualName(), attribute.getDatatype());
 							isOnlyAttribute = true;
 						}
 					}
@@ -91,17 +87,17 @@ public class MapAO extends UnaryLogicalOp {
 				} else {
 					exprString = expr.name;
 				}
-				
-				// Expression is an attribute and name is set --> keep Attribute type 
-				if (isOnlyAttribute && !"".equals(expr.name)){
+
+				// Expression is an attribute and name is set --> keep Attribute
+				// type
+				if (isOnlyAttribute && !"".equals(expr.name)) {
 					attr = new SDFAttribute(attr.getSourceName(), expr.name, attr);
-					
+
 				}
-				
+
 				// else use the expression data type
 				if (attr == null) {
-					attr = new SDFAttribute(null, exprString,
-							mepExpression.getReturnType());
+					attr = new SDFAttribute(null, exprString, mepExpression.getReturnType());
 				}
 				attrs.add(attr);
 
