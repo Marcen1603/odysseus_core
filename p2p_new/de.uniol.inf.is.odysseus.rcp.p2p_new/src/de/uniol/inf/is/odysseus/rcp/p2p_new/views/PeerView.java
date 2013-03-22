@@ -32,7 +32,7 @@ public class PeerView extends ViewPart implements IPeerListener {
 
 		final IPeerManager peerManager = RCPP2PNewPlugIn.getPeerManager();
 		peerManager.addListener(this);
-		for (final String peerID : RCPP2PNewPlugIn.getPeerManager().getPeerIDs()) {
+		for (final String peerID : RCPP2PNewPlugIn.getPeerManager().getRemotePeerIDs()) {
 			onPeerFound(peerManager, peerID);
 		}
 	}

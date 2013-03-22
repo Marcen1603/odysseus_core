@@ -1,24 +1,23 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.user;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.jxta.discovery.DiscoveryService;
-import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
-import net.jxta.protocol.PeerAdvertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -32,12 +31,14 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserDefinedDistributor.class);
+	
 	private static final String LOCAL_DESTINATION_NAME = "local";
 	private static final String DISTRIBUTION_TYPE = "user";
 
@@ -50,8 +51,16 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	private static final String PIPEID_TAG = "pipeid";
 
 	private static IPQLGenerator generator;
+	private static IPeerManager peerManager;
 
 	private static int connectionNumber = 0;
+
+	// called by OSGi-DS
+	public final void bindPeerManager(IPeerManager pm) {
+		peerManager = pm;
+
+		LOG.debug("PeerManager bound {}", pm);
+	}
 
 	// called by OSGi-DS
 	public final void bindPQLGenerator(IPQLGenerator gen) {
@@ -67,13 +76,13 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 			return queriesToDistribute;
 		}
 
-		final List<PeerID> remotePeers = determineRemotePeers();
-		if (remotePeers.isEmpty()) {
+		final Collection<String> remotePeerIDs = peerManager.getRemotePeerIDs();
+		if (remotePeerIDs.isEmpty()) {
 			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
 			return queriesToDistribute;
 		}
 
-		logPeerStatus(remotePeers);
+		logPeerStatus(remotePeerIDs);
 
 		final List<ILogicalQuery> localQueries = Lists.newArrayList();
 
@@ -92,7 +101,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 			}
 
 			final ID sharedQueryID = generateSharedQueryID();
-			final Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(remotePeers, P2PNewPlugIn.getOwnPeerID(), queryParts);
+			final Map<QueryPart, String> queryPartDistributionMap = assignQueryParts(remotePeerIDs, peerManager.getOwnPeerName(), queryParts);
 			insertSenderAndAccess(queryPartDistributionMap);
 
 			final List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID);
@@ -111,6 +120,15 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	}
 
 	// called by OSGi-DS
+	public final void unbindPeerManager(IPeerManager pm) {
+		if (peerManager == pm) {
+			peerManager = null;
+
+			LOG.debug("PeerManager unbound {}", pm);
+		}
+	}
+
+	// called by OSGi-DS
 	public final void unbindPQLGenerator(IPQLGenerator gen) {
 		if (generator == gen) {
 			generator = null;
@@ -119,13 +137,13 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	public static void publish(QueryPart part, PeerID destinationPeer, ID sharedQueryID) {
+	public static void publish(QueryPart part, String destinationPeer, ID sharedQueryID) {
 		Preconditions.checkNotNull(part, "QueryPart to share must not be null!");
 		part.removeDestinationName();
 
 		final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
 		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
-		adv.setPeerID(destinationPeer);
+		adv.setPeerID(toPeerID(destinationPeer));
 		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
 		adv.setSharedQueryID(sharedQueryID);
 
@@ -133,21 +151,29 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		LOG.debug("QueryPart {} published", part);
 	}
 
-	private static Map<QueryPart, PeerID> assignQueryParts(List<PeerID> remotePeers, PeerID localPeer, List<QueryPart> queryParts) {
-		final Map<QueryPart, PeerID> distributed = Maps.newHashMap();
-		final Map<String, PeerID> assignedDestinations = Maps.newHashMap();
-		assignedDestinations.put(LOCAL_DESTINATION_NAME, localPeer);
+	private static Map<QueryPart, String> assignQueryParts(Collection<String> remotePeerIDs, String localPeerID, List<QueryPart> queryParts) {
+		final Map<QueryPart, String> distributed = Maps.newHashMap();
+		final Map<String, String> assignedDestinations = Maps.newHashMap();
+		
+		assignedDestinations.put(LOCAL_DESTINATION_NAME, localPeerID);
+		for( final String remotePeerID : remotePeerIDs ) {
+			final Optional<String> optRemotePeerName = peerManager.getPeerName(remotePeerID);
+			if( optRemotePeerName.isPresent() ) {
+				assignedDestinations.put(optRemotePeerName.get(), remotePeerID);
+			}
+		}
 
+		final List<String> remotePeerIDList = Lists.newArrayList(remotePeerIDs);
 		int peerCounter = 0;
 		for (final QueryPart queryPart : queryParts) {
 			final String destinationName = queryPart.getDestinationName();
 
-			PeerID assignedPeer = assignedDestinations.get(destinationName);
+			String assignedPeer = assignedDestinations.get(destinationName);
 			if (assignedPeer == null) {
 				// destination has currently no peer assigned
-				assignedPeer = remotePeers.get(peerCounter);
+				assignedPeer = remotePeerIDList.get(peerCounter);
 				// using round robin to assign peers
-				peerCounter = (peerCounter + 1) % remotePeers.size();
+				peerCounter = (peerCounter + 1) % remotePeerIDList.size();
 				assignedDestinations.put(destinationName, assignedPeer);
 			}
 
@@ -210,7 +236,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		return destinationNames;
 	}
 
-	private static Map<QueryPart, ILogicalOperator> determineNextQueryParts(ILogicalOperator relativeSink, Map<QueryPart, PeerID> queryPartDistributionMap) {
+	private static Map<QueryPart, ILogicalOperator> determineNextQueryParts(ILogicalOperator relativeSink, Map<QueryPart, String> queryPartDistributionMap) {
 		final Map<QueryPart, ILogicalOperator> next = Maps.newHashMap();
 		if (relativeSink.getSubscriptions().size() > 0) {
 
@@ -243,25 +269,6 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 
 		return parts;
-	}
-
-	private static List<PeerID> determineRemotePeers() {
-		try {
-			final List<PeerID> foundPeers = Lists.newArrayList();
-
-			final Enumeration<Advertisement> peerAdvertisements = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
-			while (peerAdvertisements.hasMoreElements()) {
-				final PeerAdvertisement adv = (PeerAdvertisement) peerAdvertisements.nextElement();
-				if (!adv.getPeerID().equals(P2PNewPlugIn.getOwnPeerID())) {
-					foundPeers.add(adv.getPeerID());
-				}
-			}
-
-			return foundPeers;
-		} catch (final IOException ex) {
-			LOG.error("Could not get peers", ex);
-			return Lists.newArrayList();
-		}
 	}
 
 	private static LogicalSubscription determineSubscription(ILogicalOperator startOperator, ILogicalOperator endOperator) {
@@ -346,7 +353,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static void insertSenderAndAccess(Map<QueryPart, PeerID> queryPartDistributionMap) {
+	private static void insertSenderAndAccess(Map<QueryPart, String> queryPartDistributionMap) {
 		for (final QueryPart queryPart : queryPartDistributionMap.keySet()) {
 
 			for (final ILogicalOperator relativeSink : queryPart.getRelativeSinks()) {
@@ -361,22 +368,22 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static void logPeerStatus(List<PeerID> peers) {
+	private static void logPeerStatus(Collection<String> peerIDs) {
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Found {} peers to distribute the queries", peers.size());
-			for (final PeerID peer : peers) {
-				LOG.debug("Peer: {}", peer);
+			LOG.debug("Found {} peers to distribute the queries", peerIDs.size());
+			for (final String peerID : peerIDs) {
+				LOG.debug("\tPeer: {}", peerID);
 			}
 		}
 	}
 
-	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID) {
+	private static List<QueryPart> shareParts(Map<QueryPart, String> queryPartDistributionMap, ID sharedQueryID) {
 		final List<QueryPart> localParts = Lists.newArrayList();
 
-		final PeerID ownPeerID = P2PNewPlugIn.getOwnPeerID();
+		final String ownPeerID = peerManager.getOwnPeerName();
 
 		for (final QueryPart part : queryPartDistributionMap.keySet()) {
-			final PeerID assignedPeerID = queryPartDistributionMap.get(part);
+			final String assignedPeerID = queryPartDistributionMap.get(part);
 			if (assignedPeerID.equals(ownPeerID)) {
 				localParts.add(part);
 				LOG.debug("QueryPart {} locally stored", part);
@@ -403,6 +410,17 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 			P2PNewPlugIn.getDiscoveryService().publish(adv, 10000, 10000);
 		} catch (final IOException ex) {
 			LOG.error("Could not publish query part", ex);
+		}
+	}
+	
+
+	private static PeerID toPeerID(String text) {
+		try {
+			final URI id = new URI(text);
+			return PeerID.create(id);
+		} catch (URISyntaxException | ClassCastException ex) {
+			LOG.error("Could not transform to pipeid: {}", text, ex);
+			return null;
 		}
 	}
 }

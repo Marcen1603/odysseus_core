@@ -59,7 +59,7 @@ public class P2PNewPlugIn implements BundleActivator {
 		configureLogging(bundleContext.getBundle());
 
 		ownPeerName = determinePeerName();
-		ownPeerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID, ownPeerName.getBytes());
+		ownPeerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
 		final File conf = new File("." + System.getProperty("file.separator") + ownPeerName);
 		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, ownPeerName, conf.toURI());
 
@@ -106,6 +106,10 @@ public class P2PNewPlugIn implements BundleActivator {
 
 	public static PeerID getOwnPeerID() {
 		return ownPeerID;
+	}
+	
+	public static String getOwnPeerName() {
+		return ownPeerName;
 	}
 
 	public static PipeService getPipeService() {

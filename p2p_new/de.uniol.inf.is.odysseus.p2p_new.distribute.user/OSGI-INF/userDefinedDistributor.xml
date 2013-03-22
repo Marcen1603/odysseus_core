@@ -5,4 +5,5 @@
       <provide interface="de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor"/>
    </service>
    <reference bind="bindPQLGenerator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator" name="IPQLGenerator" policy="static" unbind="unbindPQLGenerator"/>
+   <reference bind="bindPeerManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IPeerManager" name="IPeerManager" policy="static" unbind="unbindPeerManager"/>
 </scr:component>

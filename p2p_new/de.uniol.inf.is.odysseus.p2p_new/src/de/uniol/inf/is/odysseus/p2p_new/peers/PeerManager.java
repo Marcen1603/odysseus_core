@@ -83,13 +83,26 @@ public class PeerManager implements IPeerManager {
 	}
 
 	@Override
-	public ImmutableCollection<String> getPeerIDs() {
-		return ImmutableSet.copyOf(knownPeerIDs.keySet());
+	public String getOwnPeerID() {
+		return P2PNewPlugIn.getOwnPeerID().toString();
+	}
+
+	@Override
+	public String getOwnPeerName() {
+		return P2PNewPlugIn.getOwnPeerName();
 	}
 
 	@Override
 	public Optional<String> getPeerName(String peerID) {
+		if (getOwnPeerID().equals(peerID)) {
+			return Optional.of(P2PNewPlugIn.getOwnPeerName());
+		}
 		return Optional.fromNullable(knownPeerIDs.get(peerID));
+	}
+
+	@Override
+	public ImmutableCollection<String> getRemotePeerIDs() {
+		return ImmutableSet.copyOf(knownPeerIDs.keySet());
 	}
 
 	@Override
@@ -154,12 +167,12 @@ public class PeerManager implements IPeerManager {
 			final PeerID peerID = peerAdvertisement.getPeerID();
 
 			if (!peerID.equals(P2PNewPlugIn.getOwnPeerID()) && P2PNewPlugIn.getEndpointService().isReachable(peerID, false)) {
-				final String advIDString = peerAdvertisement.getID().toString();
-				newIds.put(advIDString, peerAdvertisement.getName());
-				if (oldIDs.containsKey(advIDString)) {
-					oldIDs.remove(advIDString);
+				final String peerIDString = peerID.toString();
+				newIds.put(peerIDString, peerAdvertisement.getName());
+				if (oldIDs.containsKey(peerIDString)) {
+					oldIDs.remove(peerIDString);
 				} else {
-					fireNewPeerEvent(advIDString);
+					fireNewPeerEvent(peerIDString);
 				}
 			}
 		}

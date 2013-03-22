@@ -11,8 +11,10 @@ public interface IPeerManager {
 
 	public void removeListener(IPeerListener listener);
 	
-	public ImmutableCollection<String> getPeerIDs();
+	public ImmutableCollection<String> getRemotePeerIDs();
+	public String getOwnPeerID();
 	
 	public Optional<String> getPeerName( String peerID );
+	public String getOwnPeerName();
 
 }

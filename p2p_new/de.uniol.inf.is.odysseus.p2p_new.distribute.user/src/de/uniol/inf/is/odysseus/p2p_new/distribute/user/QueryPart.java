@@ -120,19 +120,19 @@ public class QueryPart {
 		return relativeSinks.keySet().iterator().next();
 	}
 
-	private static boolean allTargetsNotInList(Collection<ILogicalOperator> operators, Collection<LogicalSubscription> subscriptions) {
+	private static boolean oneTargetNotInList(Collection<ILogicalOperator> operators, Collection<LogicalSubscription> subscriptions) {
 		for (final LogicalSubscription subscription : subscriptions) {
-			if (operators.contains(subscription.getTarget())) {
-				return false;
+			if (!operators.contains(subscription.getTarget())) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	private static Map<ILogicalOperator, List<SenderAO>> determineRelativeSinks(Collection<ILogicalOperator> operators) {
 		final Map<ILogicalOperator, List<SenderAO>> sinksMap = Maps.newHashMap();
 		for (final ILogicalOperator operator : operators) {
-			if (operator.getSubscriptions().size() == 0 || allTargetsNotInList(operators, operator.getSubscriptions())) {
+			if (operator.getSubscriptions().size() == 0 || oneTargetNotInList(operators, operator.getSubscriptions())) {
 				sinksMap.put(operator, new ArrayList<SenderAO>());
 			}
 		}
@@ -142,7 +142,7 @@ public class QueryPart {
 	private static Map<ILogicalOperator, List<AccessAO>> determineRelativeSources(Collection<ILogicalOperator> operators) {
 		final Map<ILogicalOperator, List<AccessAO>> sourcesMap = Maps.newHashMap();
 		for (final ILogicalOperator operator : operators) {
-			if (operator.getSubscribedToSource().size() == 0 || allTargetsNotInList(operators, operator.getSubscribedToSource())) {
+			if (operator.getSubscribedToSource().size() == 0 || oneTargetNotInList(operators, operator.getSubscribedToSource())) {
 				sourcesMap.put(operator, new ArrayList<AccessAO>());
 			}
 		}
