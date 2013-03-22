@@ -27,6 +27,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 public class MEPFunctionInfo {
 
+	private static final String UNKNOWN_RETURN_TYPE_NAME = "<unknown>";
+
 	private static final Logger LOG = LoggerFactory.getLogger(MEPFunctionInfo.class);
 
 	private final String symbol;
@@ -59,7 +61,7 @@ public class MEPFunctionInfo {
 				function.getSymbol(),
 				function.getArity(),
 				builder.build(),
-				function.getReturnType().getQualName());
+				tryGetReturnType(function));
 		} catch( Throwable t ) {
 			LOG.error("Exception during creating MEPFunctionInfo from MEPFunction {}", function, t);
 			return new MEPFunctionInfo(
@@ -68,6 +70,15 @@ public class MEPFunctionInfo {
 					ImmutableList.<String>of("???"),
 					"???"
 					);
+		}
+	}
+
+	private static String tryGetReturnType(IFunction<?> function) {
+		try {
+			return function.getReturnType().getQualName();
+		} catch( Throwable t ) {
+			LOG.error("Could not determine return type of function {}", function.getSymbol());
+			return UNKNOWN_RETURN_TYPE_NAME;
 		}
 	}
 
