@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerListener;
@@ -17,18 +18,23 @@ import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 
 public class PeerView extends ViewPart implements IPeerListener {
 
+	private static final String UNKNOWN_PEER_NAME = "<unknown>";
+
 	private Text text;
 
 	private final List<String> foundPeerIDs = Lists.newArrayList();
 
 	@Override
 	public void createPartControl(Composite parent) {
-		RCPP2PNewPlugIn.getPeerManager().addListener(this);
-
 		text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		text.setEditable(false);
 		text.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
+		final IPeerManager peerManager = RCPP2PNewPlugIn.getPeerManager();
+		peerManager.addListener(this);
+		for (final String peerID : RCPP2PNewPlugIn.getPeerManager().getPeerIDs()) {
+			onPeerFound(peerManager, peerID);
+		}
 	}
 
 	@Override
@@ -75,7 +81,13 @@ public class PeerView extends ViewPart implements IPeerListener {
 						text.setText("");
 						synchronized (foundPeerIDs) {
 							for (final String peerID : foundPeerIDs) {
-								text.append(peerID + "\n");
+								final Optional<String> optPeerName = RCPP2PNewPlugIn.getPeerManager().getPeerName(peerID);
+								if (optPeerName.isPresent()) {
+									text.append(optPeerName.get());
+								} else {
+									text.append(UNKNOWN_PEER_NAME);
+								}
+								text.append(" [" + peerID + "]\n");
 							}
 						}
 

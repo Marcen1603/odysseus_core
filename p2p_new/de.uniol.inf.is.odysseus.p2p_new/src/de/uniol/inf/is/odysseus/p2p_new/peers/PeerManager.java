@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.p2p_new.peers;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
@@ -12,8 +13,12 @@ import net.jxta.protocol.PeerAdvertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerListener;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
@@ -30,7 +35,7 @@ public class PeerManager implements IPeerManager {
 	private final List<IPeerListener> listeners = Lists.newArrayList();
 
 	private RepeatingJobThread peerDiscoveryThread;
-	private List<String> knownPeerIDs = Lists.newArrayList();
+	private Map<String, String> knownPeerIDs = Maps.newHashMap();
 
 	// called by OSGi-DS
 	public final void activate() {
@@ -78,6 +83,16 @@ public class PeerManager implements IPeerManager {
 	}
 
 	@Override
+	public ImmutableCollection<String> getPeerIDs() {
+		return ImmutableSet.copyOf(knownPeerIDs.keySet());
+	}
+
+	@Override
+	public Optional<String> getPeerName(String peerID) {
+		return Optional.fromNullable(knownPeerIDs.get(peerID));
+	}
+
+	@Override
 	public void removeListener(IPeerListener listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
@@ -115,23 +130,23 @@ public class PeerManager implements IPeerManager {
 		}
 	}
 
-	private void firePeerLostEvents(List<String> oldIDs) {
-		for (final String lostPeer : oldIDs) {
-			firePeerLostEvent(lostPeer);
+	private void firePeerLostEvents(Map<String, String> lostPeerIDs) {
+		for (final String lostPeerID : lostPeerIDs.keySet()) {
+			firePeerLostEvent(lostPeerID);
 
 			try {
-				P2PNewPlugIn.getDiscoveryService().flushAdvertisements(lostPeer, DiscoveryService.PEER);
+				P2PNewPlugIn.getDiscoveryService().flushAdvertisements(lostPeerID, DiscoveryService.PEER);
 			} catch (final IOException ex) {
-				LOG.error("Could not flush advertisement with id {}", lostPeer, ex);
+				LOG.error("Could not flush advertisement with id {}", lostPeerID, ex);
 			}
 		}
 	}
 
 	private void processPeerAdvertisements(Enumeration<Advertisement> advertisements) {
-		final List<String> newIds = Lists.newArrayList();
-		List<String> oldIDs = null;
+		final Map<String, String> newIds = Maps.newHashMap();
+		Map<String, String> oldIDs = null;
 		synchronized (knownPeerIDs) {
-			oldIDs = Lists.newArrayList(knownPeerIDs);
+			oldIDs = Maps.newHashMap(knownPeerIDs);
 		}
 
 		while (advertisements.hasMoreElements()) {
@@ -140,8 +155,8 @@ public class PeerManager implements IPeerManager {
 
 			if (!peerID.equals(P2PNewPlugIn.getOwnPeerID()) && P2PNewPlugIn.getEndpointService().isReachable(peerID, false)) {
 				final String advIDString = peerAdvertisement.getID().toString();
-				newIds.add(advIDString);
-				if (oldIDs.contains(advIDString)) {
+				newIds.put(advIDString, peerAdvertisement.getName());
+				if (oldIDs.containsKey(advIDString)) {
 					oldIDs.remove(advIDString);
 				} else {
 					fireNewPeerEvent(advIDString);

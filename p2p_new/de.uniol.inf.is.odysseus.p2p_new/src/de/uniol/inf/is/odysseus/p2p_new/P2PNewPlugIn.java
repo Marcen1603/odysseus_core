@@ -24,21 +24,24 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.datasrc.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.datasrc.SourceAdvertisementInstantiator;
 
 public class P2PNewPlugIn implements BundleActivator {
 
+	private static final String PEER_NAME_SYS_PROPERTY = "peer.name";
 	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
 	private static final String JXTA_LOGGER_NAME = "net.jxta";
 	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.OFF;
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNewPlugIn.class);
 
 	private static final int PORT = new Random().nextInt(20000) + 10000;
-	private static final String PEER_NAME = "Odysseus Peer " + PORT;
 	private static final String SUBGROUP_NAME = "Odysseus Peer Group";
 	private static final PeerGroupID SUBGROUP_ID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, SUBGROUP_NAME.getBytes());
-	private static final PeerID PEER_ID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID, PEER_NAME.getBytes());
+	private static final String DEFAULT_PEER_NAME = "OdysseusPeer";
 
 	private static DiscoveryService discoveryService;
 	private static ContentService contentService;
@@ -46,6 +49,8 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static EndpointService endpointService;
 
 	private static PeerGroup ownPeerGroup;
+	private static PeerID ownPeerID;
+	private static String ownPeerName;
 
 	private NetworkManager manager;
 
@@ -53,10 +58,12 @@ public class P2PNewPlugIn implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		configureLogging(bundleContext.getBundle());
 
-		final File conf = new File("." + System.getProperty("file.separator") + PEER_NAME);
-		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, PEER_NAME, conf.toURI());
+		ownPeerName = determinePeerName();
+		ownPeerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID, ownPeerName.getBytes());
+		final File conf = new File("." + System.getProperty("file.separator") + ownPeerName);
+		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, ownPeerName, conf.toURI());
 
-		configureNetwork(manager.getConfigurator(), PEER_ID);
+		configureNetwork(manager.getConfigurator(), ownPeerID, ownPeerName);
 
 		final PeerGroup netPeerGroup = manager.startNetwork();
 		ownPeerGroup = createSubGroup(netPeerGroup, SUBGROUP_ID, SUBGROUP_NAME);
@@ -68,7 +75,7 @@ public class P2PNewPlugIn implements BundleActivator {
 
 		registerAdvertisementTypes();
 
-		LOG.debug("JXTA-Network started. Peer {} is in group '{}'", PEER_NAME, ownPeerGroup);
+		LOG.debug("JXTA-Network started. Peer {} is in group '{}'", ownPeerName, ownPeerGroup);
 	}
 
 	@Override
@@ -98,7 +105,7 @@ public class P2PNewPlugIn implements BundleActivator {
 	}
 
 	public static PeerID getOwnPeerID() {
-		return PEER_ID;
+		return ownPeerID;
 	}
 
 	public static PipeService getPipeService() {
@@ -115,17 +122,32 @@ public class P2PNewPlugIn implements BundleActivator {
 		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
 	}
 
-	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID) throws IOException {
+	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID, String peerName) throws IOException {
 		configurator.setTcpPort(PORT);
 		configurator.setTcpEnabled(true);
 		configurator.setTcpIncoming(true);
 		configurator.setTcpOutgoing(true);
 		configurator.setUseMulticast(true);
 		configurator.setPeerID(peerID);
+		configurator.setName(peerName);
 	}
 
 	private static PeerGroup createSubGroup(PeerGroup parentPeerGroup, PeerGroupID subGroupID, String subGroupName) throws PeerGroupException, IOException, Exception {
 		return parentPeerGroup.newGroup(subGroupID, parentPeerGroup.getAllPurposePeerGroupImplAdvertisement(), subGroupName, "");
+	}
+
+	private static String determinePeerName() {
+		String peerName = System.getProperty(PEER_NAME_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(peerName)) {
+			return peerName;
+		}
+
+		peerName = OdysseusConfiguration.get(PEER_NAME_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(peerName)) {
+			return peerName;
+		}
+
+		return DEFAULT_PEER_NAME + "_" + PORT;
 	}
 
 	private static void registerAdvertisementTypes() {

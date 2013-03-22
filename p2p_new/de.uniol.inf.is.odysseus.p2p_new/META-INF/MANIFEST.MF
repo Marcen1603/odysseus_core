@@ -6,32 +6,14 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.distribution,
- de.uniol.inf.is.odysseus.core.logicaloperator,
- de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
- de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
- de.uniol.inf.is.odysseus.core.planmanagement,
- de.uniol.inf.is.odysseus.core.planmanagement.executor,
- de.uniol.inf.is.odysseus.core.planmanagement.executor.exception,
- de.uniol.inf.is.odysseus.core.planmanagement.query,
- de.uniol.inf.is.odysseus.core.sdf,
- de.uniol.inf.is.odysseus.core.sdf.schema,
- de.uniol.inf.is.odysseus.core.server.datadictionary,
- de.uniol.inf.is.odysseus.core.server.event,
- de.uniol.inf.is.odysseus.core.server.logicaloperator,
- de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
- de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification,
- de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event,
- de.uniol.inf.is.odysseus.core.server.planmanagement.query,
- de.uniol.inf.is.odysseus.core.server.usermanagement,
- de.uniol.inf.is.odysseus.core.usermanagement,
- de.uniol.inf.is.odysseus.parser.pql.generator,
+Import-Package: de.uniol.inf.is.odysseus.parser.pql.generator,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  com.google.guava;bundle-version="12.0.0",
- Jxta.2.6;bundle-version="1.0.0"
+ Jxta.2.6;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/sessionManagement.xml, OSGI-INF/advertisementManager.xml, OSGI-INF/dataSourceManager.xml, OSGI-INF/jxtaTransportHandler.xml,OSGI-INF/queryPartManager.xml,OSGI-INF/queryPartController.xml,OSGI-INF/peerManager.xml
 Export-Package: de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.p2p_new.util
