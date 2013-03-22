@@ -15,12 +15,18 @@
   */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
@@ -49,8 +55,18 @@ public class CreateViewVisitor extends AbstractDefaultVisitor {
 		parser.setDataDictionary(dd);
 		ILogicalOperator operator = ((List<ILogicalQuery>) parser.visit((ASTPriorizedStatement) node.jjtGetChild(1), null)).get(0).getLogicalPlan();
 		
+		// we add an additional rename, so that the view has this names...
+		RenameAO rename = new RenameAO();
+		rename.subscribeTo(operator, operator.getOutputSchema());
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		for(SDFAttribute old : operator.getOutputSchema()){
+			attributes.add(new SDFAttribute(viewName, old.getAttributeName(), old));
+		}
+		rename.setOutputSchema(new SDFSchema(viewName, attributes));
+		operator = rename;
+		
 		if (dd.containsViewOrStream(viewName, caller)) {
-			throw new RuntimeException("ambigious name of view: " + viewName);
+			throw new RuntimeException("There is already a view named: " + viewName);
 		}
 		try {
 			dd.setView(viewName, operator, caller);
