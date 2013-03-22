@@ -5,6 +5,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBasicPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFromClause;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHavingClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectClause;
@@ -39,6 +40,14 @@ public class SubstituteAliasesVisitor extends AbstractDefaultVisitor {
 		// this is needed to omit parts in from part (e.g. source identifiers)
 		return null;
 	}
+	
+	@Override
+	public Object visit(ASTHavingClause node, Object data) throws QueryParseException {
+		// we omit having parts, because we don't want to substitute aggregations!		
+		return null;
+	}
+	
+	
 	
 	@Override
 	public Object visit(ASTIdentifier node, Object data) throws QueryParseException {

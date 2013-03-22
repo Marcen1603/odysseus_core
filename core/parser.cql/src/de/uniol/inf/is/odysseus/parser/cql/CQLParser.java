@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
@@ -59,6 +60,7 @@ import de.uniol.inf.is.odysseus.core.server.sla.factories.ScopeFactory;
 import de.uniol.inf.is.odysseus.core.server.sla.factories.UnitFactory;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UsernameNotExistException;
@@ -73,6 +75,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckGroupBy;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckHaving;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateAccessAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateAggregationVisitor;
+import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateHavingVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateJoinAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateProjectionVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
@@ -225,7 +228,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			CheckAttributes checkAttributes = new CheckAttributes(attributeResolver);
 			checkAttributes.visit(statement, null);
 
-			// Check if group by is present if there is an aggregation 
+			// Check if attributes are part of group by if there is an aggregation 
 			CheckGroupBy checkGroupBy = new CheckGroupBy();
 			checkGroupBy.init(attributeResolver);
 			checkGroupBy.visit(statement, null);
@@ -248,7 +251,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			sav.visit(statement, null);
 			
 			// now we can create the join and the select, if there is a where-part		
-
 			CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor(caller, dataDictionary);
 			joinVisitor.init(attributeResolver);
 			ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(statement, null);
@@ -263,6 +265,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			CreateProjectionVisitor projectionVisitor = new CreateProjectionVisitor(top, attributeResolver);
 			projectionVisitor.visit(statement, null);
 			top = projectionVisitor.getTop();
+			
+			// finally, we check if there is a having-clause, so we need 
+			// we use a direct resolver here, because we just want the direct renamed attributes here 
+			IAttributeResolver havingAR = new DirectAttributeResolver(top.getOutputSchema());
+			CreateHavingVisitor havingVisitor = new CreateHavingVisitor(top, havingAR);
+			havingVisitor.visit(statement, null);
+			top = havingVisitor.getTop();
 
 			// this is only for priority stuff...
 			try {

@@ -18,9 +18,12 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
+import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTGroupByClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
@@ -82,7 +85,9 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 			String curIdentifier = ((ASTIdentifier) node.jjtGetChild(i)).getName();
 			SDFAttribute attribute = this.attributeResolver.getAttribute(curIdentifier);			
 			if(!checkGroupingAttributes.remove(attribute)){
-				throw new QueryParseException("The attribute "+attribute+" of GROUP BY is not part of the select clause");
+				
+				///throw new QueryParseException("The attribute "+attribute+" of GROUP BY is not part of the select clause");
+				LoggerFactory.getLogger(CQLParser.class).warn("The attribute "+attribute+" of GROUP BY is not part of the select clause");
 			}
 		}
 		return data;

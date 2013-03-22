@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.util.HashSet;
@@ -20,6 +20,7 @@ import java.util.HashSet;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBasicPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFromClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFunctionExpression;
@@ -40,7 +41,7 @@ public class CheckHaving extends AbstractDefaultVisitor {
 		public Object visit(ASTSimpleToken node, Object data) throws QueryParseException {
 			return node.childrenAccept(this, data);
 		}
-		
+
 		@Override
 		public Object visit(ASTFunctionExpression node, Object data) throws QueryParseException {
 			return node.childrenAccept(this, data);
@@ -80,8 +81,13 @@ public class CheckHaving extends AbstractDefaultVisitor {
 	public Object visit(ASTSelectClause node, Object data) throws QueryParseException {
 		// collect all aggregations defined in the SELECT clause
 		this.aggregations = new HashSet<String>();
-		CollectAggregations collect  = new CollectAggregations();
+		CollectAggregations collect = new CollectAggregations();
 		return collect.visit(node, data);
+	}
+	
+	@Override
+	public Object visit(ASTBasicPredicate node, Object data) throws QueryParseException {
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
@@ -103,12 +109,15 @@ public class CheckHaving extends AbstractDefaultVisitor {
 		Node child = node.jjtGetChild(0);
 		// Aggregation has to be present in the select clause, too
 		if (child instanceof ASTAggregateExpression) {
-			if (!this.aggregations.contains(getName(
-					(ASTAggregateExpression) child, this.attributeResolver))) {
-				throw new QueryParseException(
-						"invalid identifier in HAVING clause: " + child);
+			if (!this.aggregations.contains(getName((ASTAggregateExpression) child, this.attributeResolver))) {
+				throw new QueryParseException("invalid identifier in HAVING clause: " + child);
+			}else{
+				String agg = node.toString();						
+				throw new IllegalArgumentException(agg+" cannot be assgined ambiguously! Please use alias identifier instead!");
 			}
 		}
 		return data;
 	}
+	
+	
 }

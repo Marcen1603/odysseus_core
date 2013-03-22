@@ -2037,7 +2037,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  String tOp;}{/*@bgen(jjtree) Expression */
   try {
-/*@egen*/  LOOKAHEAD(SimpleToken() MathOperator())  SimpleToken() tOp = MathOperator()  {    jjtn000.setOperator(tOp);  }  Expression()| SimpleToken()/*@bgen(jjtree)*/
+/*@egen*/  LOOKAHEAD(SimpleToken() MathOperator())  SimpleToken() tOp = MathOperator()  {    jjtn000.setOperator(tOp);  }  Expression()  | SimpleToken()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2057,13 +2057,13 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}void SimpleToken() :{/*@bgen(jjtree) SimpleToken */
+/*@egen*/}void SimpleToken() :{/*@bgen(jjtree) SimpleToken */
   ASTSimpleToken jjtn000 = new ASTSimpleToken(JJTSIMPLETOKEN);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) SimpleToken */
   try {
-/*@egen*/  Number()| String()| LOOKAHEAD(AggregateExpression())  AggregateExpression()| LOOKAHEAD(FunctionExpression())  FunctionExpression()| "(" Expression() ")"|  (    "-"    {      jjtn000.setMinus(true);    }  )?  Identifier()/*@bgen(jjtree)*/
+/*@egen*/  Number()| String()| LOOKAHEAD(AggregateExpression())  AggregateExpression()| LOOKAHEAD(FunctionExpression())  FunctionExpression()| "(" Expression() ")"|   (    "-"    {      jjtn000.setMinus(true);    }  )?  Identifier()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

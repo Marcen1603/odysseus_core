@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
@@ -32,12 +31,10 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTGroupByClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHavingClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 
@@ -158,12 +155,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTHavingClause node, Object data) throws QueryParseException {
-		select = new SelectAO();
-		select.subscribeToSource(ao, 0, 0, ao.getOutputSchema());
-		IPredicate<Tuple<?>> predicate;
-		predicate = CreatePredicateVisitor.toPredicate((ASTPredicate) node.jjtGetChild(0), this.attributeResolver);
-		select.setPredicate(predicate);
-		return select;
+		return data;
 	}
 
 	public ILogicalOperator getResult() {
