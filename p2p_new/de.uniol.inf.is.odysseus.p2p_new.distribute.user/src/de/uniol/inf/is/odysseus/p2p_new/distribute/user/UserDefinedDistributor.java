@@ -39,7 +39,6 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserDefinedDistributor.class);
-	private static final Random RAND = new Random();
 	private static final String LOCAL_DESTINATION_NAME = "local";
 	private static final String DISTRIBUTION_TYPE = "user";
 
