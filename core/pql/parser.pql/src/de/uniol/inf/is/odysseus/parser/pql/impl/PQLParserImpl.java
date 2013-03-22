@@ -587,15 +587,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_6() {
-    if (jj_scan_token(25)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_7()) jj_scanpos = xsp;
-    if (jj_scan_token(26)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_10() {
     if (jj_scan_token(FLOAT)) return true;
     return false;
@@ -689,6 +680,15 @@ public class PQLParserImpl implements PQLParserImplConstants {
 
   static private boolean jj_3R_11() {
     if (jj_scan_token(INTEGER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_6() {
+    if (jj_scan_token(25)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_7()) jj_scanpos = xsp;
+    if (jj_scan_token(26)) return true;
     return false;
   }
 
