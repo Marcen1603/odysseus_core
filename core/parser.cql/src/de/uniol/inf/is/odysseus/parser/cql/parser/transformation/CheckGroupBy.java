@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTGroupByClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectClause;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
@@ -34,10 +35,14 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 	private boolean hasAggregates;
 
 	private Set<SDFAttribute> checkGroupingAttributes;
-
 	private AttributeResolver attributeResolver;
 
 	private boolean hasGrouping;
+	
+	@Override
+	public Object visit(ASTSelectStatement node, Object data) throws QueryParseException {		
+		return node.childrenAccept(this, data);
+	}
 
 	@Override
 	public Object visit(ASTSelectClause node, Object data) throws QueryParseException {
@@ -75,9 +80,10 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 		this.hasGrouping = true;
 		for (int i = 0; i < node.jjtGetNumChildren(); ++i) {
 			String curIdentifier = ((ASTIdentifier) node.jjtGetChild(i)).getName();
-			SDFAttribute attribute = this.attributeResolver.getAttribute(curIdentifier);
-
-			checkGroupingAttributes.remove(attribute);
+			SDFAttribute attribute = this.attributeResolver.getAttribute(curIdentifier);			
+			if(!checkGroupingAttributes.remove(attribute)){
+				throw new QueryParseException("The attribute "+attribute+" of GROUP BY is not part of the select clause");
+			}
 		}
 		return data;
 	}
@@ -92,7 +98,7 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 		return data;
 	}
 
-	public boolean checkOkay() {
+	public boolean checkOkay() {		
 		return checkGroupingAttributes.isEmpty() || (!hasAggregates && !hasGrouping);
 	}
 
