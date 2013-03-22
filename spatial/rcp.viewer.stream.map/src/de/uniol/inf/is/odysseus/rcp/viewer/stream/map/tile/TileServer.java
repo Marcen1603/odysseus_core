@@ -14,6 +14,7 @@ import org.osgeo.proj4j.ProjCoordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 
@@ -143,7 +144,7 @@ public final class TileServer {
 			world = new Envelope(dst1.x, dst2.x, dst1.y, dst2.y);
 		}			
 		ArrayList<AsyncImage> images = new ArrayList<AsyncImage>();
-		zoom = minZoom;
+		zoom = maxZoom;
 		for (int z1 = 0; z1 <= maxZoom; z1++){
 			double tileSizeWorld = Math.abs(tile2X(0, z1) - tile2X(1, z1));
 			double maxTilePerScreenWidth = screenSize.x / tileWidth;
@@ -153,12 +154,25 @@ public final class TileServer {
 				z1 = maxZoom+1;
 			}
 		}
-		
+		int zoom2 = (int) Math.pow(2.0, zoom);
+		int tileXCount = getXTileCount(zoom);
+		int tileYCount = getXTileCount(zoom);
+		int iMin = getTileI(world.getMinX(), zoom2);
+		if (iMin < 0) iMin = 0;
+		int jMin = tileYCount - getTileJ(world.getMaxY(), zoom2)-1;
+		if (jMin < 0) jMin = 0;
+		int iMax = getTileIMax(world.getMaxX(), zoom2)+1;
+		if (iMax > tileXCount) iMax = tileXCount;
+		int jMax = tileYCount - getTileJMax(world.getMinY(), zoom2)+1;
+		if (jMax > tileYCount) jMax = tileYCount;
+
 		//z = 2;
-		for (int i = 0; i < getXTileCount(zoom); i++){
-			for (int j = 0; j < getYTileCount(zoom); j++){
+//		ArrayList<int[]> l1= new ArrayList<int[]>();
+		for (int i = iMin; i < iMax; i++){
+			for (int j = jMin; j < jMax; j++){
 				Envelope env = new Envelope(tile2X(i, zoom), tile2X(i+1, zoom), tile2Y(j, zoom), tile2Y(j+1, zoom));
 				if (world.intersects(env)){
+//					l1.add(new int[]{i,j});
 					AsyncImage image = cache.get(this, i, j, zoom);
 					if (image == null){
 						image = new AsyncImage(manager, this, i, j, zoom, env);
@@ -168,20 +182,70 @@ public final class TileServer {
 				}
 			}
 		}
+
+//		ArrayList<int[]> l2= new ArrayList<int[]>();
+//		//z = 2;
+//		for (int i = 0; i < getXTileCount(zoom); i++){
+//			for (int j = 0; j < getYTileCount(zoom); j++){
+//				Envelope env = new Envelope(tile2X(i, zoom), tile2X(i+1, zoom), tile2Y(j, zoom), tile2Y(j+1, zoom));
+//				if (world.intersects(env)){
+//					l2.add(new int[]{i,j});
+////					AsyncImage image = cache.get(this, i, j, zoom);
+////					if (image == null){
+////						image = new AsyncImage(manager, this, i, j, zoom, env);
+////						cache.put(this, i, j, zoom, image);
+////					}
+////					images.add(image);
+//				}
+//			}
+//		}
+//		System.out.println("Size equal " + (l1.size() == l2.size()));
+//		for (int i = 0; i < l1.size(); i++) {
+//			 System.out.print( l1.get(i)[0] + " " + l1.get(i)[1] + " -- " + l2.get(i)[0] + " " + l2.get(i)[1] + " :");
+//			 System.out.println(l1.get(i)[0] == l2.get(i)[0] && l1.get(i)[1] == l2.get(i)[1]);
+//		}
 		return images;
 	}
 
 //    public static double tile2lon(int x, int z) {
 //        return x / Math.pow(2.0, z) * 360.0 - 180;
 //    }
-    
-    public double tile2X(int i, int z) {
-    	return this.coverage.getMinX() + i / Math.pow(2.0, z) * this.coverage.getWidth();
-    }
-    
-    public double tile2Y(int j, int z) {
-    	return this.coverage.getMaxY() - j / Math.pow(2.0, z) * this.coverage.getHeight();
-    }
+
+
+//public static double tile2lon(int x, int z) {
+//    return x / Math.pow(2.0, z) * 360.0 - 180;
+//}
+
+public double tile2X(int i, int z) {
+	return this.coverage.getMinX() + i / Math.pow(2.0, z) * this.coverage.getWidth();
+}
+
+public double tile2Y(int j, int z) {
+	return this.coverage.getMaxY() - j / Math.pow(2.0, z) * this.coverage.getHeight();
+}
+
+//private double tile2X(int i, int z2) {
+//	return this.coverage.getMinX() + i / z2 * this.coverage.getWidth();
+//}
+//
+//private double tile2Y(int j, int z2) {
+//	return this.coverage.getMaxY() - j / z2 * this.coverage.getHeight();
+//}
+
+public int getTileI(double x, int z2) {
+
+	return (int) Math.floor((x - this.coverage.getMinX()) / this.coverage.getWidth() * z2);
+
+}
+public int getTileJ(double y, int z2) {
+	return (int) Math.floor((y + this.coverage.getMaxY()) / this.coverage.getHeight() * z2);
+}
+public int getTileIMax(double x, int z2) {
+	return (int) Math.ceil((x - this.coverage.getMinX()) / this.coverage.getWidth() * z2);
+}
+public int getTileJMax(double y, int z2) {
+	return (int) Math.ceil((y + this.coverage.getMaxY()) / this.coverage.getHeight() * z2);
+}
     
     public int getTileWitdh(){
     	return this.tileWidth;
@@ -208,6 +272,11 @@ public final class TileServer {
     
 	public int getSRID() {
 		return this.srid;
+	}
+
+	public Envelope getEnvelope() {
+		// TODO Auto-generated method stub
+		return this.coverage;
 	}
 
 	

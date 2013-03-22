@@ -23,6 +23,7 @@ import org.osgeo.proj4j.CRSFactory;
 import org.osgeo.proj4j.CoordinateReferenceSystem;
 import org.osgeo.proj4j.CoordinateTransform;
 import org.osgeo.proj4j.CoordinateTransformFactory;
+import org.osgeo.proj4j.Proj4jException;
 import org.osgeo.proj4j.ProjCoordinate;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -47,6 +48,29 @@ public class ScreenTransformation {
 
 	public CoordinateTransform getCoordinateTransform(int sourceSrid, int destSrid) {
 		CoordinateTransform trans = transformerRegistry.get(sourceSrid + " " + destSrid);
+		if (sourceSrid == 0 || destSrid == 0)
+			return new CoordinateTransform() {
+				
+				@Override
+				public ProjCoordinate transform(ProjCoordinate src, ProjCoordinate tgt) throws Proj4jException {
+					tgt.x = src.x;
+					tgt.y = src.y;
+					tgt.z = src.z;
+					return tgt;
+				}
+				
+				@Override
+				public CoordinateReferenceSystem getTargetCRS() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+				
+				@Override
+				public CoordinateReferenceSystem getSourceCRS() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+			};
 		if (trans == null) {
 			/*
 			 * Create {@link CoordinateReferenceSystem} &
@@ -88,6 +112,9 @@ public class ScreenTransformation {
 		double scale = screenManager.getScale();
 		int[] offset = screenManager.getOffset();
 		Coordinate centerUV = screenManager.getCenterUV();
+		double d = (trgt.y / scale);
+		int xx = (int) Math.floor(centerUV.x + (trgt.x / scale));
+		int yy = (int) Math.floor(centerUV.y - (trgt.y / scale));
 		transformedCoordinate[0] = offset[0] + (int) Math.floor(centerUV.x + (trgt.x / scale));
 		transformedCoordinate[1] = offset[1] + (int) Math.floor(centerUV.y - (trgt.y / scale));
 		// int ymax = (int) (360 * scale);

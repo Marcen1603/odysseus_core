@@ -83,6 +83,7 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 	
 	private LinkedList<DataSet> dataSets = new LinkedList<DataSet>();
 	private com.vividsolutions.jts.index.quadtree.Quadtree tree = new Quadtree();
+	private Envelope env = new Envelope();
 	private ScreenTransformation transformation = null;
 	private ScreenManager screenManager = null;
 	private SDFAttribute sdfAttribute = null;
@@ -154,13 +155,14 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 	}
 	
 	public void draw(GC gc) {
+		if (screenManager != null){
 		Envelope world = screenManager.getViewportWorldCoord();
-		List result =  this.tree.query(world);
-		for (Object obj : result) {
-			DataSet dataSet = (DataSet) obj;
-			drawGeometry(dataSet.getGeometry(), gc, dataSet.getTuple());
+			List result =  this.tree.query(world);
+			for (Object obj : result) {
+				DataSet dataSet = (DataSet) obj;
+				drawGeometry(dataSet.getGeometry(), gc, dataSet.getTuple());
+			}
 		}
-
 //		synchronized (geometries) {
 //
 //			for (Geometry geometry : geometries) {
@@ -279,6 +281,8 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 		synchronized (dataSets) {
 			this.dataSets.offer(dataSet);
 			this.tree.insert(dataSet.getEnvelope(), dataSet);
+			this.env.expandToInclude(dataSet.getEnvelope());
+			
 		}
 		if (this.configuration.getMaxTupleCount() < this.dataSets.size()){
 				LOG.debug("(REMOVE)Current Geometries:" + dataSets.size());
@@ -292,9 +296,11 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 	private void updateTree(int destSrid) {
 		synchronized(this.dataSets){
 			this.tree = new Quadtree();
+			this.env = new Envelope();
 			for (DataSet dataSet : this.dataSets) {
 				dataSet.init(idx, destSrid, transformation);
 				tree.insert(dataSet.getEnvelope(), dataSet);
+				this.env.expandToInclude(dataSet.getEnvelope());
 			}
 		}
 	}
@@ -323,6 +329,12 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 		if (this.style != null)
 			this.configuration.setStyle(new PersistentStyle(getStyle()));
 		return this.configuration;
+	}
+
+	@Override
+	public Envelope getEnvelope() {
+		// TODO Auto-generated method stub
+		return this.env;
 	}
 	
 

@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
+import com.vividsolutions.jts.geom.Envelope;
+
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
@@ -61,7 +63,7 @@ public abstract class AbstractLayer<C extends LayerConfiguration> implements ILa
 	public boolean isActive(){
 		return active;
 	}
-	
+
 	@Override
 	public boolean isGroup() {
 		// TODO Auto-generated method stub

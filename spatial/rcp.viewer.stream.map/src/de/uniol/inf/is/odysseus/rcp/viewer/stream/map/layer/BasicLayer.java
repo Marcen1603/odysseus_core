@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -131,5 +132,11 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
 
 	@Override
 	public void setConfiguration(LayerConfiguration configuration) {
+	}
+
+	@Override
+	public Envelope getEnvelope() {
+		// TODO Auto-generated method stub
+		return new Envelope(-180, 180, -85, 85) ;
 	}
 }

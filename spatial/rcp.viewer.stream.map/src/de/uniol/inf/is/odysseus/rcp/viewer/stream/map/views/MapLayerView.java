@@ -272,6 +272,15 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 	
 				}
 			});
+			mgr.add(new Action("Zoom to Layer") {
+				public void run() {
+					ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
+					if (i.getFirstElement() instanceof ILayer) {
+						getMapEditor().getScreenManager().zoomToExtend((ILayer)i.getFirstElement());
+					}
+	
+				}
+			});
 	
 			mgr.add(new Separator());
 		}

@@ -18,9 +18,15 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 
@@ -54,7 +60,21 @@ final class GeometryPaintListener implements PaintListener {
 //				throw new RuntimeException("Layer Nullpointer");
 //			}
 		}
+		e.gc.setForeground(ColorManager.getInstance().getColor(new RGB(0,0,0)));
+		Canvas canvas = this.streamMapEditor.getScreenManager().getCanvas();
+		double scale = this.streamMapEditor.getScreenManager().getScale();
+		Point dpi = canvas.getDisplay().getDPI();
+		Point screenSize = this.streamMapEditor.getScreenManager().getCanvas().getSize();
+		Coordinate sizeInCm = new Coordinate(screenSize.x / dpi.x * 25.4, screenSize.x / dpi.x * 25.4);
+		int dpcm = (int) Math.floor(dpi.x / 2.54);
+		int ypos = (screenSize.y - 10);
+		int xpos = (screenSize.x);
 		e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+		e.gc.drawLine(xpos - 100, ypos , xpos - 10, ypos);
+		e.gc.drawLine(xpos - 100, ypos , xpos - 100, ypos - 10);
+		e.gc.drawLine(xpos - 100 + dpcm -1, ypos , xpos - 100 + dpcm -1, ypos - 10);
+		e.gc.drawString("Scale: " + (scale * dpcm), xpos - 200, ypos - 80);
+		e.gc.drawString("Scale: " + (scale), xpos - 200, ypos - 40);
 		if (this.streamMapEditor.getScreenManager().getMouseSelection() != null){
 			e.gc.setAlpha(90);
 			e.gc.fillRectangle(this.streamMapEditor.getScreenManager().getMouseSelection());

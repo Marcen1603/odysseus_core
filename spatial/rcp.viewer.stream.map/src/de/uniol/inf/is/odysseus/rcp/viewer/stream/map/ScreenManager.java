@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
+
 public class ScreenManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ScreenManager.class);
@@ -55,9 +57,9 @@ public class ScreenManager {
 		this.transformation = transformation;
 		this.transformation.setScreenManager(this);
 		this.editor = editor;
-		setSRID(3785);
-		ProjCoordinate p = new ProjCoordinate();
-		this.crs.getProjection().project(new ProjCoordinate(0, 0), p);
+		setSRID(editor.getMapEditorModel().getSRID());
+		ProjCoordinate p = new ProjCoordinate(0,0);
+		if (this.crs != null) this.crs.getProjection().project(new ProjCoordinate(0, 0), p);
 		setCenterUV((int) (p.x / scale), (int) (p.y / scale));
 	}
 
@@ -75,9 +77,11 @@ public class ScreenManager {
 	public void setSRID(int srid) {
 		if (this.srid != srid) {
 			this.srid = srid;
-			CRSFactory csFactory = new CRSFactory();
-			this.crs = csFactory.createFromName("EPSG:" + this.srid);
-			this.crs.getProjection().initialize();
+			if (srid != 0){
+				CRSFactory csFactory = new CRSFactory();
+				this.crs = csFactory.createFromName("EPSG:" + this.srid);
+				this.crs.getProjection().initialize();
+			}
 		}
 	}
 
@@ -235,6 +239,23 @@ public class ScreenManager {
 	private double zoomincrement = 1.5;
 	private boolean renderComplete;
 
+	public void zoomToExtend(ILayer layer){
+		Envelope env = layer.getEnvelope();
+		Point screenSize = canvas.getSize();
+		double scaleX = (env.getMaxX() - env.getMinX()) / ( screenSize.x);
+		double scaleY = (env.getMaxY() - env.getMinY()) / ( screenSize.y);
+		double oldScale = scale;
+		scale = 1;
+		double scaleInt = 1;
+		for (scaleInt = (Math.max(scaleX, scaleY)); scaleInt > 10; scaleInt /= 10){
+			scale *=10;
+		}
+		scale *= Math.ceil(scaleInt);
+		setCenterUV((int) Math.floor((env.centre().x / scale)), (int) Math.floor((env.centre().y / scale)));
+		pcs.firePropertyChange("scale", oldScale, scale);
+		redraw();
+	}
+	
 	public void zoomOut(Point pivot) {
 
 		double oldScale = this.scale;

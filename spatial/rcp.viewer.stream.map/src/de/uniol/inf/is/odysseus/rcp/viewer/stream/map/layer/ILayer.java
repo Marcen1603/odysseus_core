@@ -19,6 +19,8 @@ import java.io.Serializable;
 
 import org.eclipse.swt.graphics.GC;
 
+import com.vividsolutions.jts.geom.Envelope;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -52,6 +54,8 @@ public interface ILayer extends Serializable {
 	public void draw(GC gc);	
 	
 	public int getTupleCount();
+
+	public Envelope getEnvelope();
 	
 	public LayerConfiguration getConfiguration();
 	public void setConfiguration(LayerConfiguration configuration);

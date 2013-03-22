@@ -62,9 +62,7 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 
 	@Override
 	public List<IFunction<?>> getFunctions() {
-		if (SpatialDatatypeProvider.datadictionary == null)
-			return new ArrayList<IFunction<?>>();
-		List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
 		functions.add(new SpatialContains());
 		functions.add(new SpatialCoveredBy());
 		functions.add(new SpatialCovers());

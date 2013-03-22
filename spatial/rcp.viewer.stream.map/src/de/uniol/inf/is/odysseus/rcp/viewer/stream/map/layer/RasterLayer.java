@@ -28,9 +28,12 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
+import org.osgeo.proj4j.CoordinateTransform;
+import org.osgeo.proj4j.ProjCoordinate;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -63,7 +66,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 
 	private Point offset = new Point(0, 0);
 	private Point size;
-	private double buffersize = 0.5;
+	private double buffersize = 0.1;
 	private Envelope buffer = null;
 
 	
@@ -134,6 +137,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 	public void updateTile(AsyncImage image) {
 		// paintTile(image);
 		synchronized (tileBuffer) {
+			if (!tileBuffer.contains(image))
 			tileBuffer.add(new BufferTile(image));
 			++getStats().tileCount;
 		}
@@ -142,7 +146,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 
 	private void paintTile(BufferTile tile, GC gc, int[] offset) {
 		Image image = tile.image.getImage(Display.getDefault());
-		if ( image != null) {
+		if ( image != null && !image.isDisposed()) {
 			tile.update();
 			Rectangle bounds = image.getBounds();
 			gc.drawImage(image, 0, 0, bounds.width, bounds.height, tile.minxy[0],
@@ -257,6 +261,33 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 			this.width = Math.max(minxy[0], maxxy[0]) - Math.min(minxy[0], maxxy[0]);
 			this.height = Math.max(minxy[1], maxxy[1]) - Math.min(minxy[1], maxxy[1]);
 		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof AsyncImage)
+				this.image.equals((AsyncImage)obj);
+			return super.equals(obj);
+		}
 	}
 
+	@Override
+	public Envelope getEnvelope() {
+		Envelope env = this.tileServer.getEnvelope();
+		int destSrid = this.manager.getSRID();
+		if (this.getSRID() != destSrid){
+			CoordinateTransform ct = transformation.getCoordinateTransform(this.getSRID(), destSrid);
+			ProjCoordinate destMin = new ProjCoordinate();
+			ProjCoordinate destMax = new ProjCoordinate();
+			ct.transform(new ProjCoordinate(env.getMinX(), env.getMinY()), destMin);
+			ct.transform(new ProjCoordinate(env.getMaxX(), env.getMaxY()), destMax);
+			return new Envelope(destMin.x, destMax.x, destMin.y, destMax.y);
+		}	
+		return this.tileServer.getEnvelope();
+	}
+
+	@Override
+	public int getSRID() {
+		// TODO Auto-generated method stub
+		return this.tileServer.getSRID();
+	}
 }

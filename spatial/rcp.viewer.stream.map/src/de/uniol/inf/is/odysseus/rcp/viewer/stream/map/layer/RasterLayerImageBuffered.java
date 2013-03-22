@@ -338,4 +338,10 @@ public class RasterLayerImageBuffered extends AbstractLayer<RasterLayerConfigura
 		this.buffer[0].dispose();
 		super.finalize();
 	}
+
+	@Override
+	public Envelope getEnvelope() {
+		// TODO Auto-generated method stub
+		return this.tileServer.getEnvelope();
+	}
 }

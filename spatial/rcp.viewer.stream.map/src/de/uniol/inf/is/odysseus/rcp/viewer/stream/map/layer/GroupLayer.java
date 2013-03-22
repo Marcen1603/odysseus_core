@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.GC;
 
+import com.vividsolutions.jts.geom.Envelope;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -131,5 +133,13 @@ public class GroupLayer extends LinkedList<ILayer> implements ILayer {
 	public String toString() {
 		// TODO Auto-generated method stub
 		return getComplexName();
+	}
+	@Override
+	public Envelope getEnvelope() {
+		Envelope env = new Envelope();
+		for (ILayer iLayer : this) {
+			env.expandToInclude(iLayer.getEnvelope());
+		}
+		return env;
 	}
 }

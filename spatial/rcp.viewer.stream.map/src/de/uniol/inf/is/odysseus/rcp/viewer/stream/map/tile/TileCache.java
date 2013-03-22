@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class TileCache {
 
-	public static final int CACHE_SIZE = 256;
+	public static final int CACHE_SIZE = 128;
 	
 	private Map<Tile, AsyncImage> map = Collections.synchronizedMap(new LinkedHashMap<Tile, AsyncImage>(
 			CACHE_SIZE, 0.75f, true) {
@@ -14,9 +14,11 @@ public class TileCache {
 		private static final long serialVersionUID = 3355437879185799011L;
 
 		protected boolean removeEldestEntry(Map.Entry<Tile, AsyncImage> eldest) {
+			long time = System.currentTimeMillis();
 			boolean remove = size() > CACHE_SIZE;
-			if (remove)
+			if (remove){
 				eldest.getValue().dispose();
+			}
 			return remove;
 		}
 	});

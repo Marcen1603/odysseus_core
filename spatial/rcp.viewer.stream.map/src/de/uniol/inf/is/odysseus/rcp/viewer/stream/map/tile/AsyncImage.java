@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 public final class AsyncImage implements Runnable {
 
 	private static final Logger log = Logger.getLogger(AsyncImage.class.getName());
-	public static final int IMAGEFETCHER_THREADS = 4;
+	public static final int IMAGEFETCHER_THREADS = 8;
 	private static BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>();
 	private static ThreadFactory threadFactory = new ThreadFactory() {
 		public Thread newThread(Runnable r) {
@@ -47,6 +47,8 @@ public final class AsyncImage implements Runnable {
 	private final int x, y, z;
 	private final Envelope env;
 
+	private long time = 0; 
+	
 	private ScreenManager manager;
 	// private Display display;
 	private AsyncImage parent;
@@ -78,8 +80,9 @@ public final class AsyncImage implements Runnable {
 				InputStream in = connection.getInputStream();
 				imageData.set(new ImageData(in));
 			}
-			if (imageData.get() != null)
+			if (imageData.get() != null){
 				tileServer.getLayer().updateTile(this);
+			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "failed to load imagedata from url: " + url, e);
 		}
@@ -98,8 +101,8 @@ public final class AsyncImage implements Runnable {
 				// imageData.get().setAlpha(x,y,100);
 				// }
 				// }
-				// this.tileServer.getCache().remove(tileServer, this.x, this.y,
-				// this.z)
+				 this.tileServer.getCache().remove(tileServer, this.x, this.y,
+				 this.z);
 				image = new Image(display, imageData.get());
 			} else if (this.parent != null) {
 				if (this.parentImage == null && this.parent.image != null) {

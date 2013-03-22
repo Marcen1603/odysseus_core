@@ -83,9 +83,9 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		FileEditorInput in = ((FileEditorInput) input);
 		IFile file = in.getFile();
 		transformation = new ScreenTransformation();
-		screenManager = new ScreenManager(transformation, this);
 		mapModel = MapEditorModel.open(file,this);
-		screenManager.setSRID(mapModel.getSRID());
+		screenManager = new ScreenManager(transformation, this);
+//		screenManager.setSRID(mapModel.getSRID());
 	}
 
 	@Override
