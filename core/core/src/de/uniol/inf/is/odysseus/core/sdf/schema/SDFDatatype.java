@@ -244,15 +244,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	}
 
 	public boolean isNumeric() {
-		return 	   this.getURI().equals(LONG.getURI()) 
-				|| this.getURI().equals(INTEGER.getURI()) 
-				|| this.getURI().equals(DOUBLE.getURI()) 
-				|| this.getURI().equals(FLOAT.getURI())
-				|| this.getURI().equals(SHORT.getURI())
-				|| this.getURI().equals(TIMESTAMP.getURI())
-				|| this.getURI().equals(POINT_IN_TIME.getURI())
-				|| this.getURI().equals(START_TIMESTAMP.getURI()) 
-				|| this.getURI().equals(END_TIMESTAMP.getURI());
+		return this.getURI().equals(LONG.getURI()) || this.getURI().equals(INTEGER.getURI()) || this.getURI().equals(DOUBLE.getURI()) || this.getURI().equals(FLOAT.getURI()) || this.getURI().equals(SHORT.getURI()) || this.getURI().equals(TIMESTAMP.getURI()) || this.getURI().equals(POINT_IN_TIME.getURI()) || this.getURI().equals(START_TIMESTAMP.getURI()) || this.getURI().equals(END_TIMESTAMP.getURI());
 	}
 
 	public boolean isDouble() {
@@ -271,14 +263,14 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		return this.getURI().equals(FLOAT.getURI());
 	}
 
-    public boolean isShort() {
-        return this.getURI().equals(SHORT.getURI());
-    }
-    
-    public boolean isByte() {
-        return this.getURI().equals(BYTE.getURI());
-    }
-	   
+	public boolean isShort() {
+		return this.getURI().equals(SHORT.getURI());
+	}
+
+	public boolean isByte() {
+		return this.getURI().equals(BYTE.getURI());
+	}
+
 	public boolean isString() {
 		return this.getURI().equals(STRING.getURI());
 	}
@@ -369,12 +361,15 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	 * @return True, if this type can be casted into <code>other</code>
 	 */
 	public boolean compatibleTo(SDFDatatype other) {
+		if (other == null) {
+			return false;
+		}
 		if (this.equals(other)) {
 			return true;
 		} else if (this.isInteger() && other.isNumeric()) {
 			return true;
-	     } else if (this.isShort() && other.isNumeric()) {
-	        return true;
+		} else if (this.isShort() && other.isNumeric()) {
+			return true;
 		} else if (this.isLong() && (other.isLong() || other.isFloat() || other.isDouble())) {
 			return true;
 		} else if (this.isFloat() && (other.isFloat() || other.isDouble())) {
