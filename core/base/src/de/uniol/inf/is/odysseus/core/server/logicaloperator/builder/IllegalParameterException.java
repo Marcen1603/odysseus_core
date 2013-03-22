@@ -20,6 +20,10 @@ public class IllegalParameterException extends RuntimeException {
 	public IllegalParameterException(String string) {
 		super(string);
 	}
+	
+	public IllegalParameterException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
 
 	private static final long serialVersionUID = 2805448988931559432L;
 

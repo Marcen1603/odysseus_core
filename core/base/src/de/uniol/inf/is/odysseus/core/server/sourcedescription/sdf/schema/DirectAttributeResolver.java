@@ -21,7 +21,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
-import de.uniol.inf.is.odysseus.core.sdf.schema.AmgigiousAttributeException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.AmbiguousAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -56,7 +56,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 
 	@Override
 	public SDFAttribute getAttribute(String name)
-			throws AmgigiousAttributeException, NoSuchAttributeException {
+			throws AmbiguousAttributeException, NoSuchAttributeException {
 		String[] parts = name.split("\\.", 2); // the attribute can have the
 												// form a.b:c:d
 
@@ -112,7 +112,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 	}
 
 	private SDFAttribute findORAttribute(SDFSchema list, String source,
-			String[] path, int index) throws AmgigiousAttributeException {
+			String[] path, int index) throws AmbiguousAttributeException {
 		String toFind = path[index];
 		SDFAttribute curRoot = null;
 		for (SDFAttribute attr : list) {
@@ -122,7 +122,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 				if (curRoot == null) {
 					curRoot = attr;
 				} else {
-					throw new AmgigiousAttributeException(
+					throw new AmbiguousAttributeException(
 							attr.getAttributeName());
 				}
 			}
