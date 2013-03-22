@@ -165,10 +165,11 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			SelectAO selectAO = new SelectAO();
 			selectAO.subscribeTo(curInputAO, curInputAO.getOutputSchema());
 			// Convert Predicate to single predicate
-			String pred = selectPredicate.toString();
-			SDFExpression expression = new SDFExpression("", pred, new DirectAttributeResolver(selectAO.getInputSchema()), MEP.getInstance());
-			RelationalPredicate relSelPred = new RelationalPredicate(expression);
-			selectAO.setPredicate(relSelPred);
+//			String pred = selectPredicate.toString();
+//			SDFExpression expression = new SDFExpression("", pred, new DirectAttributeResolver(selectAO.getInputSchema()), MEP.getInstance());
+//			RelationalPredicate relSelPred = new RelationalPredicate(expression);			
+//			selectAO.setPredicate(relSelPred);
+			selectAO.setPredicate(selectPredicate);
 			return selectAO;
 		}
 
