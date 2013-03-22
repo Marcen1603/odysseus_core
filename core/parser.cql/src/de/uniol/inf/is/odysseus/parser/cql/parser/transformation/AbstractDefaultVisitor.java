@@ -410,7 +410,7 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTQuantificationPredicate node, Object data) throws QueryParseException {
 
-		return null;
+		return node.childrenAccept(this, data);
 	}
 
 	@Override

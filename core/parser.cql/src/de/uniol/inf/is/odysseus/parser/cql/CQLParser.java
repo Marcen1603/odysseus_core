@@ -78,6 +78,8 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateProjectio
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateTypeVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateViewVisitor;
+import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.PickUpAttributeNames;
+import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.SubstituteAliasesVisitor;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
@@ -214,12 +216,16 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTSelectStatement statement, Object data) throws QueryParseException {
 		try {
+			// Create Access operators
 			CreateAccessAOVisitor access = new CreateAccessAOVisitor(caller, dataDictionary);
 			access.visit(statement, null);
 			AttributeResolver attributeResolver = access.getAttributeResolver();
 
-			new CheckAttributes(attributeResolver).visit(statement, null);
+			// Check consistency of attributes (e.g. ambiguity)
+			CheckAttributes checkAttributes = new CheckAttributes(attributeResolver);
+			checkAttributes.visit(statement, null);
 
+			// Check if group by is present if there is an aggregation 
 			CheckGroupBy checkGroupBy = new CheckGroupBy();
 			checkGroupBy.init(attributeResolver);
 			checkGroupBy.visit(statement, null);
@@ -227,26 +233,38 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				throw new QueryParseException("missing attributes in GROUP BY clause");
 			}
 
+			// Check if having is consistent 
 			CheckHaving checkHaving = new CheckHaving();
 			checkHaving.init(attributeResolver);
 			checkHaving.visit(statement, null);
+			
+			// we need to substitute aliases in predicates, because we do not know any aliases yet!
+			// for this, we first pick up all aliases and their definitions...
+			PickUpAttributeNames pickUp = new PickUpAttributeNames();
+			pickUp.visit(statement, null);
+			Map<String, String> aliasSubstitutes = pickUp.getAliasNames();
+			// ... then, we substitute them
+			SubstituteAliasesVisitor sav = new SubstituteAliasesVisitor(aliasSubstitutes);
+			sav.visit(statement, null);
+			
+			// now we can create the join and the select, if there is a where-part		
 
 			CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor(caller, dataDictionary);
 			joinVisitor.init(attributeResolver);
 			ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(statement, null);
 
+			// build any aggregations
 			CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor();
 			aggregationVisitor.init(top, attributeResolver);
 			aggregationVisitor.visit(statement, null);
 			top = aggregationVisitor.getResult();
 
-			// top = new CreateProjectionVisitor().createProjection(statement,
-			// top, attributeResolver);
-
+			// and build projection or map and - if necessary - a rename operator
 			CreateProjectionVisitor projectionVisitor = new CreateProjectionVisitor(top, attributeResolver);
 			projectionVisitor.visit(statement, null);
 			top = projectionVisitor.getTop();
 
+			// this is only for priority stuff...
 			try {
 				Class<?> prioVisitor = Class.forName("de.uniol.inf.is.odysseus.priority.CreatePriorityAOVisitor");
 				Object pv = prioVisitor.newInstance();
@@ -269,6 +287,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			} catch (ClassNotFoundException e) {
 				// Ignore --> Prio not loaded
 			}
+		 
+			// thats it for building the query plan
 			return top;
 		} catch (QueryParseException ex) {
 			throw ex;

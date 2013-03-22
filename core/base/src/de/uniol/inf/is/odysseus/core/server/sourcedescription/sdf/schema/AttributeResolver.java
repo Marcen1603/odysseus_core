@@ -48,15 +48,18 @@ public class AttributeResolver implements IAttributeResolver {
 	private static final long serialVersionUID = -6960117786021105217L;
 
 	private Map<String, ILogicalOperator> sources;
+	private Map<String, ILogicalOperator> originalSourceNames;
 	private Set<SDFAttribute> attributes;
 
 	public AttributeResolver() {
 		this.sources = new HashMap<String, ILogicalOperator>();
+		this.originalSourceNames = new HashMap<String, ILogicalOperator>();
 		this.attributes = new HashSet<SDFAttribute>();
 	}
 
 	public AttributeResolver(AttributeResolver attributeResolver) {
 		this.sources = new HashMap<String, ILogicalOperator>(attributeResolver.sources);
+		this.originalSourceNames = new HashMap<String, ILogicalOperator>(attributeResolver.originalSourceNames);
 		this.attributes = new HashSet<SDFAttribute>(attributeResolver.attributes);
 	}
 
@@ -196,6 +199,17 @@ public class AttributeResolver implements IAttributeResolver {
 	@Override
 	public AttributeResolver clone() {
 		return new AttributeResolver(this);
+	}
+
+	public ILogicalOperator getOriginalSource(String name){
+		return this.originalSourceNames.get(name);
+	}
+	
+	public void addSourceOriginal(String name, ILogicalOperator op) {
+		if (this.originalSourceNames.containsKey(name)) {
+			throw new IllegalArgumentException("ambigiuous identifier: " + name);
+		}
+		this.originalSourceNames.put(name, op);
 	}
 
 }

@@ -80,6 +80,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private void relationalStreamingSource(ASTSimpleSource node, String sourceName) {
 		ILogicalOperator access;
+		String originalName = sourceName;
 		try {
 			access = dd.getViewOrStream(sourceName, caller);
 			if (access instanceof AccessAO) {
@@ -101,7 +102,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			WindowAO window = createWindow(node.getWindow(), inputOp);
 			inputOp = window;
 		}
-		this.attributeResolver.addSource(sourceName, inputOp);
+		this.attributeResolver.addSourceOriginal(originalName, inputOp);		
+		this.attributeResolver.addSource(sourceName, inputOp);		
 	}
 
 	private static WindowAO createWindow(ASTWindow windowNode, ILogicalOperator inputOp) {

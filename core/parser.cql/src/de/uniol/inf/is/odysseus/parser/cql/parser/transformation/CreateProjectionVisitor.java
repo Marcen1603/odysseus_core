@@ -121,8 +121,11 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				// all real expressions
 				List<NamedExpressionItem> outputExpressions = new ArrayList<NamedExpressionItem>();
 				for (SDFExpression expression : expressions) {
-					outputExpressions.add( new NamedExpressionItem("", expression));
-					//outputExpressions.add(new NamedExpressionItem("", new SDFExpression("", expression.getExpressionString(), new DirectAttributeResolver(_outputSchema), MEP.getInstance())));
+					outputExpressions.add(new NamedExpressionItem("", expression));
+					// outputExpressions.add(new NamedExpressionItem("", new
+					// SDFExpression("", expression.getExpressionString(), new
+					// DirectAttributeResolver(_outputSchema),
+					// MEP.getInstance())));
 				}
 				map.setExpressions(outputExpressions);
 				_top = map;
@@ -235,7 +238,15 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		if (name.endsWith(".*")) {
 			String[] splits = name.split("\\.");
 			String sourceName = splits[0];
-			List<SDFAttribute> liste = this.attributeResolver.getSource(sourceName).getOutputSchema().getAttributes();
+			ILogicalOperator source = this.attributeResolver.getSource(sourceName);
+			if (source == null) {
+				// try, if it is the name of the original source
+				source = this.attributeResolver.getOriginalSource(sourceName);
+				if (source == null) {
+					throw new IllegalArgumentException("No such source: " + sourceName);
+				}
+			}
+			List<SDFAttribute> liste = source.getOutputSchema().getAttributes();
 			for (SDFAttribute attribute : liste) {
 				outputAttributes.add(attribute);
 				aliasAttributes.add(attribute);

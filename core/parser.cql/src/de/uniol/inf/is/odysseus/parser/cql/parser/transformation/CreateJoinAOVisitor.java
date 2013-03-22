@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.util.Iterator;
@@ -69,7 +69,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 /**
  * @author Jonas Jacobi
  */
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	private AttributeResolver attributeResolver;
@@ -100,17 +100,19 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 		return createJoin(name, data);
 	}
-	
+
 	@Override
 	public Object visit(ASTGroupByClause node, Object data) throws QueryParseException {
 		return data;
 	}
-	
+
 	@Override
 	public Object visit(ASTHavingClause node, Object data) throws QueryParseException {
-		//don't visit having clause and ensure that the correct return value is returned.
-		//TODO inside the having clause some astelements can return null on visit instead of data
-		//as this is consistent in the abstractdefaultvisitor
+		// don't visit having clause and ensure that the correct return value is
+		// returned.
+		// TODO inside the having clause some astelements can return null on
+		// visit instead of data
+		// as this is consistent in the abstractdefaultvisitor
 		return data;
 	}
 
@@ -120,8 +122,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	private Object createJoin(String alias, Object data) throws QueryParseException {
-		final ILogicalOperator source = this.attributeResolver
-				.getSource(alias);
+		final ILogicalOperator source = this.attributeResolver.getSource(alias);
 
 		if (data == null) {
 			return source;
@@ -140,14 +141,12 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		AbstractLogicalOperator inputOp = (AbstractLogicalOperator) data;
 		ASTPredicate wherePredicate = (ASTPredicate) node.jjtGetChild(0);
 		IPredicate<Tuple<?>> predicate;
-		predicate = CreatePredicateVisitor.toPredicate(wherePredicate,
-				new DirectAttributeResolver(inputOp.getOutputSchema()));
+		predicate = CreatePredicateVisitor.toPredicate(wherePredicate, new DirectAttributeResolver(inputOp.getOutputSchema()));
 		predicate = ComplexPredicateHelper.pushDownNegation(predicate, false);
 		List<IPredicate> conjunctivePredicates = ComplexPredicateHelper.splitPredicate(predicate);
 
 		AbstractLogicalOperator curInputAO = inputOp;
-		Iterator<?> it = conjunctivePredicates
-				.iterator();
+		Iterator<?> it = conjunctivePredicates.iterator();
 		IPredicate<?> selectPredicate = null;
 		while (it.hasNext()) {
 			IPredicate<Tuple<?>> next = (IPredicate<Tuple<?>>) it.next();
@@ -175,15 +174,13 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 		return curInputAO;
 	}
-	
+
 	public boolean containsQuantification(IPredicate pred) {
 		if (pred instanceof QuantificationPredicate) {
 			return true;
 		}
 		if (pred instanceof ComplexPredicate) {
-			return containsQuantification(((ComplexPredicate) pred).getLeft())
-					|| containsQuantification(((ComplexPredicate) pred)
-							.getRight());
+			return containsQuantification(((ComplexPredicate) pred).getLeft()) || containsQuantification(((ComplexPredicate) pred).getRight());
 		}
 		if (ComplexPredicateHelper.isNotPredicate(pred)) {
 			return containsQuantification(ComplexPredicateHelper.getChild(pred));
@@ -191,20 +188,15 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		return false;
 	}
 
-	private AbstractLogicalOperator createQuantificationPlan(
-			AbstractLogicalOperator curInputAO,
-			IPredicate<Tuple<?>> pred) throws QueryParseException {
+	private AbstractLogicalOperator createQuantificationPlan(AbstractLogicalOperator curInputAO, IPredicate<Tuple<?>> pred) throws QueryParseException {
 		if (pred instanceof ComplexPredicate) {
-			AbstractLogicalOperator left = createQuantificationPlan(curInputAO,
-					((ComplexPredicate) pred).getLeft());
-			AbstractLogicalOperator right = createQuantificationPlan(
-					curInputAO, ((ComplexPredicate) pred).getRight());
+			AbstractLogicalOperator left = createQuantificationPlan(curInputAO, ((ComplexPredicate) pred).getLeft());
+			AbstractLogicalOperator right = createQuantificationPlan(curInputAO, ((ComplexPredicate) pred).getRight());
 
 			if (ComplexPredicateHelper.isAndPredicate(pred)) {
 				if (left instanceof SelectAO) {
 					if (right instanceof SelectAO) {
-						((SelectAO) left).setPredicate(ComplexPredicateHelper.createAndPredicate(left
-								.getPredicate(), right.getPredicate()));
+						((SelectAO) left).setPredicate(ComplexPredicateHelper.createAndPredicate(left.getPredicate(), right.getPredicate()));
 						return left;
 					} else {
 						replaceBottomOps(right, left, curInputAO);
@@ -218,8 +210,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			if (ComplexPredicateHelper.isOrPredicate(pred)) {
 				if (left instanceof SelectAO) {
 					if (right instanceof SelectAO) {
-						((SelectAO) left).setPredicate(ComplexPredicateHelper.createOrPredicate(left
-								.getPredicate(), right.getPredicate()));
+						((SelectAO) left).setPredicate(ComplexPredicateHelper.createOrPredicate(left.getPredicate(), right.getPredicate()));
 						return left;
 					}
 				}
@@ -237,11 +228,9 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			negatived = true;
 		}
 		if (tmpPred instanceof QuantificationPredicate) {
-			AbstractQuantificationPredicate astPredicate = ((QuantificationPredicate) tmpPred)
-					.getAstPredicate();
+			AbstractQuantificationPredicate astPredicate = ((QuantificationPredicate) tmpPred).getAstPredicate();
 			astPredicate.setNegatived(negatived);
-			return (AbstractLogicalOperator) astPredicate.jjtAccept(this,
-					curInputAO);
+			return (AbstractLogicalOperator) astPredicate.jjtAccept(this, curInputAO);
 		} else {
 			SelectAO selectAO = new SelectAO();
 			selectAO.setPredicate(pred);
@@ -250,22 +239,18 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		}
 	}
 
-	private void replaceBottomOps(ILogicalOperator plan,
-			ILogicalOperator replacement, ILogicalOperator oldInput) {
+	private void replaceBottomOps(ILogicalOperator plan, ILogicalOperator replacement, ILogicalOperator oldInput) {
 		List<ILogicalOperator> bottomOps = new LinkedList<ILogicalOperator>();
 		getBottomOperators(plan, oldInput, bottomOps);
 		for (ILogicalOperator curOp : bottomOps) {
 			for (LogicalSubscription l : curOp.getSubscribedToSource(oldInput)) {
-				l.getTarget().unsubscribeSink(curOp, l.getSinkInPort(),
-						l.getSourceOutPort(), l.getSchema());
-				replacement
-						.subscribeSink(curOp, l.getSinkInPort(), l.getSourceOutPort(), replacement.getOutputSchema());
+				l.getTarget().unsubscribeSink(curOp, l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
+				replacement.subscribeSink(curOp, l.getSinkInPort(), l.getSourceOutPort(), replacement.getOutputSchema());
 			}
 		}
 	}
 
-	private void getBottomOperators(ILogicalOperator op,
-			ILogicalOperator bottom, List<ILogicalOperator> ops) {
+	private void getBottomOperators(ILogicalOperator op, ILogicalOperator bottom, List<ILogicalOperator> ops) {
 		for (LogicalSubscription s : op.getSubscribedToSource()) {
 			ILogicalOperator curInput = s.getTarget();
 			if (curInput == bottom) {
@@ -279,9 +264,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTAllPredicate node, Object data) throws QueryParseException {
-		return createExistenceAO(node, (AbstractLogicalOperator) data, node
-				.isNegatived() ? ExistenceAO.Type.EXISTS
-				: ExistenceAO.Type.NOT_EXISTS);
+		return createExistenceAO(node, (AbstractLogicalOperator) data, node.isNegatived() ? ExistenceAO.Type.EXISTS : ExistenceAO.Type.NOT_EXISTS);
 	}
 
 	private static String toExpression(ILogicalOperator subquery) {
@@ -296,8 +279,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			if (i > 0) {
 				buffer.append(',');
 			}
-			SDFAttribute attribute = (SDFAttribute) outputSchema
-					.getAttribute(i);
+			SDFAttribute attribute = (SDFAttribute) outputSchema.getAttribute(i);
 			buffer.append(attribute.getURI());
 			tmpResolver.addAttribute(attribute);
 		}
@@ -314,35 +296,25 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTAnyPredicate node, Object data) throws QueryParseException {
-		return createExistenceAO(node, (AbstractLogicalOperator) data, node
-				.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
-				: ExistenceAO.Type.EXISTS);
+		return createExistenceAO(node, (AbstractLogicalOperator) data, node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS : ExistenceAO.Type.EXISTS);
 	}
 
-	private ExistenceAO createExistenceAO(IExistencePredicate node,
-			AbstractLogicalOperator inputAO, Type type) throws QueryParseException {
+	private ExistenceAO createExistenceAO(IExistencePredicate node, AbstractLogicalOperator inputAO, Type type) throws QueryParseException {
 		ExistenceAO existsAO = new ExistenceAO();
 
-		existsAO.subscribeToSource(inputAO, BinaryLogicalOp.LEFT, 0, inputAO
-				.getOutputSchema());
+		existsAO.subscribeToSource(inputAO, BinaryLogicalOp.LEFT, 0, inputAO.getOutputSchema());
 		AbstractLogicalOperator subquery = subquery(node.getQuery());
-		if (node.getTuple().jjtGetNumChildren() != subquery.getOutputSchema()
-				.size()) {
-			throw new IllegalArgumentException(
-					"wrong number of outputs in predicate subquery");
+		if (node.getTuple().jjtGetNumChildren() != subquery.getOutputSchema().size()) {
+			throw new IllegalArgumentException("wrong number of outputs in predicate subquery");
 		}
-		existsAO.subscribeToSource(subquery, BinaryLogicalOp.RIGHT, 0, subquery
-				.getOutputSchema());
+		existsAO.subscribeToSource(subquery, BinaryLogicalOp.RIGHT, 0, subquery.getOutputSchema());
 		existsAO.setType(type);
-		String expression = node.getTuple().toString()
-				+ node.getCompareOperator().toString() + toExpression(subquery);
-		AttributeResolver tmpResolver = new AttributeResolver(
-				this.attributeResolver);
+		String expression = node.getTuple().toString() + node.getCompareOperator().toString() + toExpression(subquery);
+		AttributeResolver tmpResolver = new AttributeResolver(this.attributeResolver);
 		for (SDFAttribute attr : subquery.getOutputSchema()) {
 			tmpResolver.addAttribute((SDFAttribute) attr);
 		}
-		RelationalPredicate predicate = new RelationalPredicate(
-				new SDFExpression("", expression, tmpResolver, MEP.getInstance()));
+		RelationalPredicate predicate = new RelationalPredicate(new SDFExpression("", expression, tmpResolver, MEP.getInstance()));
 		existsAO.setPredicate(predicate);
 		return existsAO;
 	}
@@ -351,29 +323,24 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTExists node, Object data) throws QueryParseException {
 		AbstractLogicalOperator inputAO = (AbstractLogicalOperator) data;
 		ExistenceAO existsAO = new ExistenceAO();
-		existsAO.subscribeToSource(inputAO, BinaryLogicalOp.LEFT, 0, inputAO
-				.getOutputSchema());
-		existsAO.subscribeToSource(subquery(node.getQuery()), BinaryLogicalOp.RIGHT,
-				0, subquery(node.getQuery()).getOutputSchema());
-		existsAO.setType(node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
-				: ExistenceAO.Type.EXISTS);
+		existsAO.subscribeToSource(inputAO, BinaryLogicalOp.LEFT, 0, inputAO.getOutputSchema());
+		existsAO.subscribeToSource(subquery(node.getQuery()), BinaryLogicalOp.RIGHT, 0, subquery(node.getQuery()).getOutputSchema());
+		existsAO.setType(node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS : ExistenceAO.Type.EXISTS);
 		return existsAO;
 	}
 
 	@Override
 	public Object visit(ASTInPredicate node, Object data) throws QueryParseException {
-		return createExistenceAO(node, (AbstractLogicalOperator) data, node
-				.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
-				: ExistenceAO.Type.EXISTS);
+		return createExistenceAO(node, (AbstractLogicalOperator) data, node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS : ExistenceAO.Type.EXISTS);
 	}
-	
-	@Override	
+
+	@Override
 	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
 		// same thing like simple-source
 		Node child = node.jjtGetChild(0);
-		ASTIdentifier ident = (ASTIdentifier) child.jjtGetChild(child.jjtGetNumChildren()-1);
-		String name = ident.getName();			
-		return createJoin(name, data);			
+		ASTIdentifier ident = (ASTIdentifier) child.jjtGetChild(child.jjtGetNumChildren() - 1);
+		String name = ident.getName();
+		return createJoin(name, data);
 	}
 
 }
