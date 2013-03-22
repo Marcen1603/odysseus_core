@@ -24,7 +24,7 @@ import java.io.Serializable;
 public interface IAttributeResolver extends Serializable {
 
     public SDFSchema getSchema();
-	public SDFAttribute getAttribute(String name) throws AmgigiousAttributeException, NoSuchAttributeException;
+	public SDFAttribute getAttribute(String name) throws AmbiguousAttributeException, NoSuchAttributeException;
 	public IAttributeResolver clone() ;
 	
 }

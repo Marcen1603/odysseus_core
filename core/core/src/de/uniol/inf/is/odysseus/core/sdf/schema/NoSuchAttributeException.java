@@ -35,6 +35,7 @@ public class NoSuchAttributeException extends RuntimeException {
 	 * @param message
 	 */
 	public NoSuchAttributeException(String attribute) {
+		super("Missing attribute '" + attribute + "'");
 		this.attribute = attribute;
 	}
 
