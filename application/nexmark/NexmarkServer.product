@@ -86,6 +86,7 @@ This Software contains parts of the nexmark generator
    <features>
       <feature id="de.uniol.inf.is.odysseus.nexmark.feature" version="1.0.0.qualifier"/>
       <feature id="org.eclipse.platform" version="3.7.2.v20120207-1839-9gF7UHPDFxGjd-PqDr2jX_4yKaumkoHTz04_q-q"/>
+      <feature id="org.eclipse.rcp" version="3.7.2.v20120120-1424-9DB5FmnFq5JCf1UA38R-kz0S0272"/>
    </features>
 
    <configurations>
@@ -93,6 +94,9 @@ This Software contains parts of the nexmark generator
       <plugin id="de.uniol.inf.is.odysseus.core.server" autoStart="true" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.nexmark" autoStart="true" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.slf4j" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="1" />
    </configurations>
 
 </product>

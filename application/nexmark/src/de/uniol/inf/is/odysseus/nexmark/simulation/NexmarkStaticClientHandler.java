@@ -43,14 +43,14 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.traversal.NodeIterator;
 import org.xml.sax.SAXException;
 
-import de.uniol.inf.is.odysseus.nexmark.Activator;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
-import de.uniol.inf.is.odysseus.nexmark.xml.DOMHelp;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.nexmark.NexmarkApplication;
+import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
+import de.uniol.inf.is.odysseus.nexmark.xml.DOMHelp;
 
 class TagMap {
 	String xpathExpression;
@@ -164,7 +164,7 @@ public class NexmarkStaticClientHandler extends Thread {
 	}
 
 	private void initCategoryStream() {
-		document = Activator.getCategoryFile();
+		document = NexmarkApplication.getCategoryFile();
 		tagMap = categoryTagMap;
 	}
 
