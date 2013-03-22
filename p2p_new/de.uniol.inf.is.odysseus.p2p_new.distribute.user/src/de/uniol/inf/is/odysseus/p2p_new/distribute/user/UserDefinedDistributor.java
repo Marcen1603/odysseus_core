@@ -162,11 +162,6 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		return distributed;
 	}
 
-	private static ILogicalOperator chooseOneOperator(List<ILogicalOperator> operatorsToVisit) {
-		final int i = RAND.nextInt(operatorsToVisit.size());
-		return operatorsToVisit.get(i);
-	}
-
 	private static void collectOperators(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
 		if (!list.contains(currentOperator)) {
 
@@ -237,7 +232,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		final List<ILogicalOperator> operatorsToVisit = Lists.newArrayList(operators);
 
 		while (!operatorsToVisit.isEmpty()) {
-			final ILogicalOperator chosenOperator = chooseOneOperator(operatorsToVisit);
+			final ILogicalOperator chosenOperator = operatorsToVisit.get(0);
 			final String chosenDestination = destinations.get(chosenOperator);
 
 			final List<ILogicalOperator> partOperators = Lists.newArrayList();
