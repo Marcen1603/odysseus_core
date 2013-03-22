@@ -206,10 +206,9 @@ public class AttributeResolver implements IAttributeResolver {
 	}
 	
 	public void addSourceOriginal(String name, ILogicalOperator op) {
-		if (this.originalSourceNames.containsKey(name)) {
-			throw new IllegalArgumentException("ambigiuous identifier: " + name);
+		if (!this.originalSourceNames.containsKey(name)) { 		
+			this.originalSourceNames.put(name, op);
 		}
-		this.originalSourceNames.put(name, op);
 	}
 
 }
