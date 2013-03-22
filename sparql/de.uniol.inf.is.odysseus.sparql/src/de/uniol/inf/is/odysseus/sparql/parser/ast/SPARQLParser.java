@@ -4753,24 +4753,25 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                    boolean jjtc000 = true;
                    jjtree.openNodeScope(jjtn000);INode n;
       try {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case IRIref:
-        case PNAME_LN:
+        if (jj_2_3(2)) {
           n = IRI_REF();
                   jjtree.closeNodeScope(jjtn000, true);
                   jjtc000 = false;
                   {if (true) return n ;}
-          break;
-        case PNAME_NS:
-          n = PrefixedName();
+        } else {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case PNAME_NS:
+          case PNAME_LN:
+            n = PrefixedName();
                        jjtree.closeNodeScope(jjtn000, true);
                        jjtc000 = false;
                        {if (true) return n ;}
-          break;
-        default:
-          jj_la1[91] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
+            break;
+          default:
+            jj_la1[91] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
         }
       } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -4921,18 +4922,30 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     finally { jj_save(1, xla); }
   }
 
-  private boolean jj_3R_26() {
+  private boolean jj_2_3(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_3(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(2, xla); }
+  }
+
+  private boolean jj_3R_29() {
     if (jj_scan_token(HOUR)) return true;
     return false;
   }
 
-  private boolean jj_3R_25() {
+  private boolean jj_3R_28() {
     if (jj_scan_token(MINUTE)) return true;
     return false;
   }
 
-  private boolean jj_3R_24() {
+  private boolean jj_3R_27() {
     if (jj_scan_token(S)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_23() {
+    if (jj_scan_token(PNAME_LN)) return true;
     return false;
   }
 
@@ -4941,35 +4954,50 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3R_20() {
-    if (jj_scan_token(ADVANCE)) return true;
-    if (jj_3R_19()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_23() {
+  private boolean jj_3R_26() {
     if (jj_scan_token(MS)) return true;
     return false;
   }
 
-  private boolean jj_3R_22() {
+  private boolean jj_3R_21() {
+    if (jj_scan_token(ADVANCE)) return true;
+    if (jj_3R_20()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_25() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_23()) {
-    jj_scanpos = xsp;
-    if (jj_3R_24()) {
-    jj_scanpos = xsp;
-    if (jj_3R_25()) {
-    jj_scanpos = xsp;
     if (jj_3R_26()) {
     jj_scanpos = xsp;
     if (jj_3R_27()) {
     jj_scanpos = xsp;
-    if (jj_3R_28()) return true;
+    if (jj_3R_28()) {
+    jj_scanpos = xsp;
+    if (jj_3R_29()) {
+    jj_scanpos = xsp;
+    if (jj_3R_30()) {
+    jj_scanpos = xsp;
+    if (jj_3R_31()) return true;
     }
     }
     }
     }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_22() {
+    if (jj_scan_token(IRIref)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_19() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_22()) {
+    jj_scanpos = xsp;
+    if (jj_3R_23()) return true;
     }
     return false;
   }
@@ -4982,32 +5010,37 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
   private boolean jj_3R_18() {
     if (jj_scan_token(WINDOW)) return true;
     if (jj_scan_token(RANGE)) return true;
-    if (jj_3R_19()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_20()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_19() {
-    if (jj_scan_token(INTEGER)) return true;
+    if (jj_3R_20()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_21()) jj_scanpos = xsp;
     return false;
   }
 
-  private boolean jj_3R_28() {
+  private boolean jj_3_3() {
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_20() {
+    if (jj_scan_token(INTEGER)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_24()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_31() {
     if (jj_scan_token(WEEK)) return true;
     return false;
   }
 
-  private boolean jj_3R_21() {
-    if (jj_3R_22()) return true;
+  private boolean jj_3R_24() {
+    if (jj_3R_25()) return true;
     return false;
   }
 
-  private boolean jj_3R_27() {
+  private boolean jj_3R_30() {
     if (jj_scan_token(DAY)) return true;
     return false;
   }
@@ -5037,7 +5070,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
       jj_la1_init_4();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xe100000,0xe1c0000,0x0,0x0,0x0,0x0,0x0,0x40000,0x80000,0x200000,0x1800000,0x1800000,0x3000,0x3000,0x3000,0x0,0x0,0x0,0x3700,0x3700,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3000,0x40000000,0x30000000,0x20000000,0x10000000,0x30000000,0x3000,0x0,0x3000,0x3000,0x3f00,0x0,0x0,0x0,0x3f00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3f00,0x3f00,0x0,0x0,0x23700,0x23700,0x0,0x23700,0x0,0x3f00,0x3f00,0x3f00,0x3700,0x3000,0xf00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3700,0x3700,0x0,0x0,0x700,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x700,0x600,0x800,0x500,};
+      jj_la1_0 = new int[] {0xe100000,0xe1c0000,0x0,0x0,0x0,0x0,0x0,0x40000,0x80000,0x200000,0x1800000,0x1800000,0x3000,0x3000,0x3000,0x0,0x0,0x0,0x3700,0x3700,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3000,0x40000000,0x30000000,0x20000000,0x10000000,0x30000000,0x3000,0x0,0x3000,0x3000,0x3f00,0x0,0x0,0x0,0x3f00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3f00,0x3f00,0x0,0x0,0x23700,0x23700,0x0,0x23700,0x0,0x3f00,0x3f00,0x3f00,0x3700,0x3000,0xf00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3700,0x3700,0x0,0x0,0x700,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x600,0x600,0x800,0x500,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x0,0x7000,0x7000,0x8200,0x130000,0x800,0x80000,0x0,0x0,0x0,0x0,0x0,0xf8,0xf8,0xf8,0x200,0x1,0x200,0x0,0x0,0x200,0x0,0x200,0x200,0x100,0x200000,0xf8,0x200000,0x1000000,0x1000000,0x200000,0xc0000000,0xc0000000,0x0,0x0,0x0,0x0,0x0,0x0,0x6,0x6,0x0,0x6,0x0,0x0,0x0,0x0,0x0,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
@@ -5051,7 +5084,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
    private static void jj_la1_init_4() {
       jj_la1_4 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x20,0x0,0x0,0x0,0x0,0x20,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x4,0x0,0x0,0x18,0x18,0x60,0x60,0x18,0x0,0x0,0x0,0x0,0x100,0x80,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
-  final private JJCalls[] jj_2_rtns = new JJCalls[2];
+  final private JJCalls[] jj_2_rtns = new JJCalls[3];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
@@ -5336,7 +5369,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
 
   private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 3; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -5345,6 +5378,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           switch (i) {
             case 0: jj_3_1(); break;
             case 1: jj_3_2(); break;
+            case 2: jj_3_3(); break;
           }
         }
         p = p.next;

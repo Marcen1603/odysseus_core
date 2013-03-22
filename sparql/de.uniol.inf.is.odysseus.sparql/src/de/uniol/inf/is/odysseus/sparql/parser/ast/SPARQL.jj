@@ -3584,7 +3584,7 @@ INode IRIref() : {/*@bgen(jjtree) IRIref */
 /*@egen*/ INode n; }
 {/*@bgen(jjtree) IRIref */
   try {
-/*@egen*/
+/*@egen*/ LOOKAHEAD(2)
   n = IRI_REF()/*@bgen(jjtree)*/
                 {
                   jjtree.closeNodeScope(jjtn000, true);
