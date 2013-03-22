@@ -31,6 +31,10 @@ Unless required by applicable law or agreed to in writing, software
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
+   <requires>
+      <import feature="org.eclipse.platform" version="3.7.2.v20120207-1839-9gF7UHPDFxGjd-PqDr2jX_4yKaumkoHTz04_q-q"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.nexmark"
          download-size="0"
@@ -58,5 +62,30 @@ Unless required by applicable law or agreed to in writing, software
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="org.objenesis"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.google.guava"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.slf4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.simpleframework.xml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
