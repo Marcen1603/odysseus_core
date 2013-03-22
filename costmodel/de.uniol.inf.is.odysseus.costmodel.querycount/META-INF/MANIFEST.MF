@@ -4,7 +4,7 @@ Bundle-Name: Querycount Costmodel
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel.querycount
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.querycount.QueryCountCostModelPlugIn
-Bundle-Vendor: Timo Michelsen
+Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.costmodel,

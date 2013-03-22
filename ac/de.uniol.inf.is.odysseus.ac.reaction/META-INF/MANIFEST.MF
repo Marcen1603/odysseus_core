@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Admission Reaction
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.ac.reaction
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Timo Michelsen
+Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator,

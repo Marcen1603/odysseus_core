@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Sigar
 Bundle-SymbolicName: sigar
 Bundle-Version: 1.0.0
-Bundle-Vendor: Timo Michelsen
+Bundle-Vendor: University of Oldenburg
 Export-Package: org.hyperic.jni,
  org.hyperic.sigar,
  org.hyperic.sigar.cmd,

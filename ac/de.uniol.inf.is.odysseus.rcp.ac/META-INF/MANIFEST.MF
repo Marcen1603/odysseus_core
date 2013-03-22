@@ -4,7 +4,7 @@ Bundle-Name: Admission Control RCP-Views
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.ac;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.ac.ACRCPPlugIn
-Bundle-Vendor: Timo Michelsen
+Bundle-Vendor: University of Oldenburg
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.google.guava;bundle-version="12.0.0",

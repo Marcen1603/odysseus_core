@@ -4,7 +4,7 @@ Bundle-Name: Logical
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.queryview.logical
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.queryview.logical.LogicalQueryViewDataProviderPlugIn
-Bundle-Vendor: Timo Michelsen
+Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.planmanagement.query,

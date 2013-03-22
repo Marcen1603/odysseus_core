@@ -4,7 +4,7 @@ Bundle-Name: Physical Query View
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.queryview.physical
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.queryview.physical.PhysicalQueryViewDataProviderPlugIn
-Bundle-Vendor: Timo Michelsen
+Bundle-Vendor: University of Oldenburg
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui;bundle-version="3.7.0",
  com.google.guava;bundle-version="12.0.0",

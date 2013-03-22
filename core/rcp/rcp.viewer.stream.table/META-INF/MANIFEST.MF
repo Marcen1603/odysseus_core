@@ -4,7 +4,7 @@ Bundle-Name: Table Stream
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.stream.table;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.table.activator.ViewerStreamTablePlugIn
-Bundle-Vendor: Timo Michelsen
+Bundle-Vendor: University of Oldenburg
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
