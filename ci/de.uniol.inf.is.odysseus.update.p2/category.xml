@@ -63,15 +63,6 @@
    <feature url="features/de.uniol.inf.is.odysseus.mining.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.mining.feature" version="1.0.0.qualifier">
       <category name="de.uniol.inf.is.odysseus.update.category.features"/>
    </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.p2p.ap.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.p2p.ap.feature" version="1.0.0.qualifier">
-      <category name="de.uniol.inf.is.odysseus.update.category.features"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.p2p.op.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.p2p.op.feature" version="1.0.0.qualifier">
-      <category name="de.uniol.inf.is.odysseus.update.category.features"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.p2p.tp.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.p2p.tp.feature" version="1.0.0.qualifier">
-      <category name="de.uniol.inf.is.odysseus.update.category.features"/>
-   </feature>
    <feature url="features/de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature" version="1.0.0.qualifier">
       <category name="de.uniol.inf.is.odysseus.update.category.features"/>
    </feature>
@@ -153,7 +144,10 @@
    <feature url="features/de.uniol.inf.is.odysseus.product.memorystore.client.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.memorystore.client.feature" version="1.0.0.qualifier">
       <category name="de.uniol.inf.is.odysseus.update.category.products"/>
    </feature>
-   <category-def name="de.uniol.inf.is.odysseus.update.category.products" label="Product Definitions"/>
+   <feature url="features/de.uniol.inf.is.odysseus.text.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.text.feature" version="1.0.0.qualifier">
+      <category name="de.uniol.inf.is.odysseus.update.category.features"/>
+   </feature>
+   <category-def name="de.uniol.inf.is.odysseus.update.category.products" label="Product Definitions (Do not use)"/>
    <category-def name="de.uniol.inf.is.odysseus.update.category.applications" label="Applications"/>
    <category-def name="de.uniol.inf.is.odysseus.update.category.features" label="Odysseus"/>
 </site>
