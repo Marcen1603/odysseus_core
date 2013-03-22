@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.sparql.parser.helper;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.AmgigiousAttributeException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.AmbiguousAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -54,7 +54,7 @@ public class SPARQLDirectAttributeResolver extends DirectAttributeResolver{
      */
     @Override
 	public SDFAttribute getAttribute(String name)
-            throws AmgigiousAttributeException, NoSuchAttributeException {
+            throws AmbiguousAttributeException, NoSuchAttributeException {
     	String[] parts = name.split("\\.", 2);
     	SDFAttribute found = null;
         for (SDFAttribute attr : schema) {
