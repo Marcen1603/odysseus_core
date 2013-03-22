@@ -22,6 +22,8 @@ import de.uniol.inf.is.odysseus.script.keyword.AddQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.BufferPlacementPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DistributionTypePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropAllQueriesPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.DropAllSinksPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.DropAllSourcesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.ExecuteQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LoginUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LogoutUserPreParserKeyword;
@@ -48,6 +50,8 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(StartAllClosedQueriesPreParserKeyword.STARTQUERIES, StartAllClosedQueriesPreParserKeyword.class);
 		keywords.put(SchedulerPreParserKeyword.SCHEDULER, SchedulerPreParserKeyword.class);
 		keywords.put(DropAllQueriesPreParserKeyword.DROPALLQUERIES, DropAllQueriesPreParserKeyword.class);
+		keywords.put(DropAllSinksPreParserKeyword.DROPALLSINKS, DropAllSinksPreParserKeyword.class);
+		keywords.put(DropAllSourcesPreParserKeyword.DROPALLSOURCES, DropAllSourcesPreParserKeyword.class);
 		keywords.put(StartSchedulerPreParserKeyword.KEYWORD, StartSchedulerPreParserKeyword.class);
 		keywords.put(StopSchedulerPreParserKeyword.KEYWORD, StopSchedulerPreParserKeyword.class);
 		keywords.put(BufferPlacementPreParserKeyword.BUFFERPLACEMENT, BufferPlacementPreParserKeyword.class);
