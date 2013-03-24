@@ -20,7 +20,7 @@ public class TAssureHeartbeatAORule extends
 	@Override
 	public void execute(AssureHeartbeatAO operator,
 			TransformationConfiguration config) {
-		AssureHeartbeatPO<IStreamObject<? extends ITimeInterval>> physical = new AssureHeartbeatPO<>();
+		AssureHeartbeatPO<IStreamObject<? extends ITimeInterval>> physical = new AssureHeartbeatPO<>(operator.isStartAtCurrentTime());
 		physical.setApplicationTimeDelay(operator.getApplicationTimeDelay());
 		physical.setRealTimeDelay(operator.getRealTimeDelay(), operator.getTimeUnit());
 		physical.setSendAlwaysHeartbeat(operator.isSendAlwaysHeartbeat());

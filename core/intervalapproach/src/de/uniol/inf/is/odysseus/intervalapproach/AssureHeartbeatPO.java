@@ -35,6 +35,16 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	private PointInTime _watermark = PointInTime.getZeroTime();
 
+	public AssureHeartbeatPO() {
+		super();
+	}
+	public AssureHeartbeatPO(boolean startAtCurrentTime) {
+		super();
+		if(startAtCurrentTime) {
+			this._watermark = PointInTime.currentPointInTime();
+		}
+	}
+	
 	private class Runner extends Thread {
 
 		private boolean terminated = false;

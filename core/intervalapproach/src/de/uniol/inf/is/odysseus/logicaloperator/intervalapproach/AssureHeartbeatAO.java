@@ -32,6 +32,7 @@ public class AssureHeartbeatAO extends UnaryLogicalOp {
 	private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
 	private boolean sendAlwaysHeartbeat = false;
 	private boolean allowOutOfOrder = false;
+	private boolean startAtCurrentTime = false;
 	
 	public AssureHeartbeatAO(){
 	}
@@ -42,6 +43,7 @@ public class AssureHeartbeatAO extends UnaryLogicalOp {
 		this.applicationTimeDelay = other.applicationTimeDelay;
 		this.timeUnit = other.timeUnit;
 		this.sendAlwaysHeartbeat = other.sendAlwaysHeartbeat;
+		this.startAtCurrentTime = other.startAtCurrentTime;
 	}
 
 	public long getRealTimeDelay() {
@@ -85,6 +87,16 @@ public class AssureHeartbeatAO extends UnaryLogicalOp {
 	public void setAllowOutOfOrder(boolean allowOutOfOrder) {
 		this.allowOutOfOrder = allowOutOfOrder;
 	}
+	
+	@Parameter(type = BooleanParameter.class, name = "startAtCurrentTime", optional=true)
+	public void setStartAtCurrentTime(boolean startAtCurrentTime) {
+		this.startAtCurrentTime = startAtCurrentTime;
+	}
+	
+	public boolean isStartAtCurrentTime() {
+		return startAtCurrentTime;
+	}
+
 	
 	public boolean isAllowOutOfOrder() {
 		return allowOutOfOrder;
