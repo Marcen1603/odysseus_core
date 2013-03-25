@@ -163,6 +163,9 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public void addQueries(List<IPhysicalQuery> allQueries) {
 		for (IPhysicalQuery q:allQueries){
+			if( this.queries.containsKey(q.getID())) {
+				_logger.error("Query id {} already set!", q.getID());
+			}
 			this.queries.put(q.getID(), q);
 		}
 	}
