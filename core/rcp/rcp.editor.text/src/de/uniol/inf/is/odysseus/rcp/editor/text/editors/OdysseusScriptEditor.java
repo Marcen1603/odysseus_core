@@ -15,11 +15,17 @@
  */
 package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -27,11 +33,11 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.coloring.OdysseusOccurrencesUpdater;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.outline.OdysseusScriptContentOutlinePage;
 
-public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
+public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements IResourceChangeListener {
 
 	public final static String EDITOR_MATCHING_BRACKETS = "matchingBrackets";
 	public final static String EDITOR_MATCHING_BRACKETS_COLOR = "matchingBracketsColor";
-	
+
 	private OdysseusScriptContentOutlinePage outlinePage;
 	private OdysseusOccurrencesUpdater occurrencesUpdater;
 
@@ -50,6 +56,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 
 		this.occurrencesUpdater = new OdysseusOccurrencesUpdater(this);
 		((IPostSelectionProvider) getSelectionProvider()).addPostSelectionChangedListener(this.occurrencesUpdater);
@@ -65,10 +72,11 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 	}
 
 	@Override
-	public void dispose() {		
+	public void dispose() {
 		super.dispose();
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
-
+	
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (IContentOutlinePage.class.equals(adapter)) {
@@ -90,5 +98,18 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault("matchingBrackets", true);
 		store.setDefault("matchingBracketsColor", "128,128,128");
+	}
+
+	@Override
+	public void resourceChanged(IResourceChangeEvent event) {
+		if (!(getEditorInput() instanceof FileEditorInput)) {
+			return;
+		}
+		IFile file = ((FileEditorInput) getEditorInput()).getFile();
+		IResourceDelta delta = event.getDelta().findMember(file.getFullPath());
+		if (delta != null) {				
+			//this.close(false);            
+		}
+
 	}
 }
