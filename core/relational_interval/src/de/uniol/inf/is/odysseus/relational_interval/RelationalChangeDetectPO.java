@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.relational_interval;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ChangeDetectPO;
 
 public class RelationalChangeDetectPO extends ChangeDetectPO<Tuple<?>> {
@@ -40,5 +41,29 @@ public class RelationalChangeDetectPO extends ChangeDetectPO<Tuple<?>> {
 	protected boolean areDifferent(Tuple<?> object, Tuple<?> lastElement){
 		return !Tuple.equalsAt(object, lastElement, comparePositions);
 	}		
+	
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (! (ipo instanceof RelationalChangeDetectPO)){
+			return false;
+		}
+		
+		RelationalChangeDetectPO other = (RelationalChangeDetectPO) ipo;
+			
+		boolean result = super.isSemanticallyEqual(other) ;
+		
+		if (this.comparePositions.length != other.comparePositions.length){
+			return false;
+		}
+
+		for (int i=0;i<this.comparePositions.length;i++){
+			if (comparePositions[i] != other.comparePositions[i]){
+				return false;
+			}
+		}
+		
+		return result;
+		
+	}
 	
 }

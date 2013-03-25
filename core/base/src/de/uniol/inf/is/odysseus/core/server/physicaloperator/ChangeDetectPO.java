@@ -139,7 +139,10 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		if (this.hasSameSources(ipo)
 				&& this.deliverFirstElement == rppo.deliverFirstElement
 				&& this.heartbeatGenerationStrategy
-						.equals(rppo.heartbeatGenerationStrategy)) {
+						.equals(rppo.heartbeatGenerationStrategy) &&
+						((this.groupProcessor != null && this.groupProcessor.equals(rppo.groupProcessor)) || 
+						(this.groupProcessor == null && rppo.groupProcessor == null))
+						) {
 			return true;
 		}
 

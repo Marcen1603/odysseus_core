@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.relational_interval;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 public class AbstractRelationalNumericChangeDetectPO extends RelationalChangeDetectPO {
 
@@ -43,6 +44,22 @@ public class AbstractRelationalNumericChangeDetectPO extends RelationalChangeDet
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof AbstractRelationalNumericChangeDetectPO)){
+			return false;
+		}
+		
+		AbstractRelationalNumericChangeDetectPO other = (AbstractRelationalNumericChangeDetectPO) ipo;
+		
+		boolean ret = super.isSemanticallyEqual(ipo);
+		if (tolerance != other.tolerance){
+			return false;
+		}
+		
+		return ret;
 	}
 	
 	
