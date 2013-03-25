@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Standard Plan Migration Cost Model
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardplanmigrationcostmodel
+Bundle-Version: 1.0.0
+Import-Package: de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.costmodel,
+ de.uniol.inf.is.odysseus.costmodel.planmigration
+Service-Component: OSGI-INF/component.xml
+Require-Bundle: de.uniol.inf.is.odysseus.core.server
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
@@ -260,7 +259,7 @@ public class PredicateHelper {
 		boolean result = true;
 		// FIXME: kontrollfluss mit exceptions sicherzustellen ist evil!
 		try {
-			SDFExpression testExpression = new SDFExpression(null,
+			new SDFExpression(null,
 					expression.getExpressionString(), attrResolver,
 					MEP.getInstance());
 		} catch (IllegalArgumentException e) {

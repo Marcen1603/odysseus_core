@@ -1,0 +1,148 @@
+/** Copyright [2011] [The Odysseus Team]
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+
+/**
+ * 
+ * Context of a plan migration.
+ * 
+ * @author Tobias Witt
+ *
+ */
+class StrategyContext {
+
+	private IOptimizer optimizer;
+	private IPhysicalQuery runningQuery;
+	private IPhysicalOperator newPlanRoot;
+	private IPhysicalOperator oldPlanRoot;
+//	private IWindow wMax;
+	private List<BufferPO<?>> buffersPOs;
+	private List<IPhysicalOperator> oldPlanOperatorsBeforeSources;
+	
+	private IPhysicalOperator router;
+	//private IPhysicalOperator select;
+	private IPhysicalOperator lastOperatorOldPlan;
+	private IPhysicalOperator lastOperatorNewPlan;
+
+	public StrategyContext(IOptimizer optimizer, IPhysicalQuery runningQuery,
+			IPhysicalOperator newPlanRoot) {
+		this.optimizer = optimizer;
+		this.runningQuery = runningQuery;
+		this.newPlanRoot = newPlanRoot;
+		this.buffersPOs = new ArrayList<BufferPO<?>>();
+	}
+
+	public IOptimizer getOptimizer() {
+		return optimizer;
+	}
+
+	public void setOptimizer(IOptimizer optimizer) {
+		this.optimizer = optimizer;
+	}
+
+	public IPhysicalQuery getRunningQuery() {
+		return runningQuery;
+	}
+
+	public void setRunningQuery(IPhysicalQuery runningQuery) {
+		this.runningQuery = runningQuery;
+	}
+
+	public IPhysicalOperator getNewPlanRoot() {
+		return newPlanRoot;
+	}
+
+	public void setNewPlanRoot(IPhysicalOperator newPlanRoot) {
+		this.newPlanRoot = newPlanRoot;
+	}
+	
+	public void addBufferPO(BufferPO<?> buffer) {
+		this.buffersPOs.add(buffer);
+	}
+
+	public List<BufferPO<?>> getBufferPOs() {
+		return buffersPOs;
+	}
+
+	public void setBufferPOs(List<BufferPO<?>> blockingBuffers) {
+		this.buffersPOs = blockingBuffers;
+	}
+
+	public void setOldPlanOperatorsBeforeSources(
+			List<IPhysicalOperator> oldPlanOperatorsBeforeSources) {
+		this.oldPlanOperatorsBeforeSources = oldPlanOperatorsBeforeSources;
+	}
+
+	public List<IPhysicalOperator> getOldPlanOperatorsBeforeSources() {
+		return oldPlanOperatorsBeforeSources;
+	}
+
+	public IPhysicalOperator getRouter() {
+		return router;
+	}
+
+	public void setRouter(IPhysicalOperator router) {
+		this.router = router;
+	}
+
+//	public IPhysicalOperator getSelect() {
+//		return select;
+//	}
+//
+//	public void setSelect(IPhysicalOperator select) {
+//		this.select = select;
+//	}
+
+	public IPhysicalOperator getLastOperatorOldPlan() {
+		return lastOperatorOldPlan;
+	}
+
+	public void setLastOperatorOldPlan(IPhysicalOperator lastOperatorOldPlan) {
+		this.lastOperatorOldPlan = lastOperatorOldPlan;
+	}
+
+	public IPhysicalOperator getLastOperatorNewPlan() {
+		return lastOperatorNewPlan;
+	}
+
+	public void setLastOperatorNewPlan(IPhysicalOperator lastOperatorNewPlan) {
+		this.lastOperatorNewPlan = lastOperatorNewPlan;
+	}
+
+//	public void setwMax(IWindow wMax) {
+//		this.wMax = wMax;
+//	}
+//
+//	public IWindow getwMax() {
+//		return wMax;
+//	}
+
+	public void setOldPlanRoot(IPhysicalOperator oldPlanRoot) {
+		this.oldPlanRoot = oldPlanRoot;
+	}
+
+	public IPhysicalOperator getOldPlanRoot() {
+		return oldPlanRoot;
+	}
+
+}
