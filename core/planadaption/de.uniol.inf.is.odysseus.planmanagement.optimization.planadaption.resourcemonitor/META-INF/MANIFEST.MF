@@ -16,4 +16,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.costmodel.operator.relational;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.costmodel.operator.util;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.costmodel.planmigration;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardplanmigrationcostmodel;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.costmodel.standardplanmigrationcostmodel;bundle-version="1.0.0"

@@ -45,16 +45,14 @@ limitations under the License.
       <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.relational.logical" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.opcount" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.costmodel.planmigration" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.benchmark" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.datasrc" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.relational" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.util" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.planmigration" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.querycount" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardplanmigrationcostmodel"/>
+      <import plugin="de.uniol.inf.is.odysseus.costmodel.standardplanmigrationcostmodel" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.relational.logical" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

@@ -5,5 +5,5 @@
       <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionResourceMonitor"/>
    </service>
    <reference bind="bindAdmissionControl" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl" name="IAdmissionControl" policy="dynamic" unbind="unbindAdmissionControl"/>
-   <reference bind="bindCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.migration.costmodel.IPlanMigrationCostModel" name="IPlanMigrationCostModel" policy="dynamic" unbind="unbindCostModel"/>
+   <reference bind="bindCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.costmodel.IPlanMigrationCostModel" name="IPlanMigrationCostModel" policy="dynamic" unbind="unbindCostModel"/>
 </scr:component>

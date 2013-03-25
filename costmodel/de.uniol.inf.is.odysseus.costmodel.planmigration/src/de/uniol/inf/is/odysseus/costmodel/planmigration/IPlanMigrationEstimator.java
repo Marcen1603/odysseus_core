@@ -3,7 +3,6 @@
  */
 package de.uniol.inf.is.odysseus.costmodel.planmigration;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.costmodel.PlanMigration;
 
 /**
@@ -30,5 +29,5 @@ public interface IPlanMigrationEstimator {
 	public PlanMigrationEstimation estimatePlanMigration(PlanMigration migration);
 	
 	
-	public Class<? extends IPlanMigrationStrategy> getPlanMigrationStrategyClass();
+//	public Class<? extends IPlanMigrationStrategy> getPlanMigrationStrategyClass();
 }

@@ -43,7 +43,7 @@ public class StandardPlanMigrationCostModel implements IPlanMigrationCostModel {
 				.estimatePlanMigration(migration);
 		return new PlanMigrationCost(migration, estimation, estimation
 				.getDetailCost().getMemoryCost(), estimation.getDetailCost()
-				.getProcessorCost(), 1000);
+				.getProcessorCost(), estimation.getDetailCost().getDuration());
 	}
 
 	@Override
