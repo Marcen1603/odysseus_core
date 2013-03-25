@@ -30,14 +30,15 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigr
 public class MigrationRouterPO<R extends IStreamObject<?>> extends
 		AbstractPipe<R, R> implements IMigrationEventSource {
 
-	public static final Logger LOG = LoggerFactory.getLogger(MigrationRouterPO.class);
-	
+	public static final Logger LOG = LoggerFactory
+			.getLogger(MigrationRouterPO.class);
+
 	// left is old and right is new
 	private Map<ISource<?>, Pair<IPunctuation, IPunctuation>> sourcesToPunctuations;
 	private int inPortOld;
 	private int inPortNew;
 	private boolean useOld;
-	
+
 	private Set<IMigrationListener> listener;
 
 	public MigrationRouterPO(List<ISource<?>> sources, int inPortOld,
@@ -57,7 +58,7 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 		this.useOld = true;
 		this.listener = new HashSet<IMigrationListener>();
 	}
-	
+
 	public MigrationRouterPO(Set<ISource<?>> sources, int inPortOld,
 			int inPortNew) {
 		if (sources == null || sources.isEmpty() || inPortOld == inPortNew) {
@@ -83,16 +84,8 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 	@Override
 	protected void process_next(R object, int port) {
 		if (useOld) {
-			if (object instanceof MigrationMarkerPunctuation) {
-				// gotcha
-				process_migrationMarkerPunctuation(
-						(MigrationMarkerPunctuation) object, port);
+			if (port == inPortOld) {
 				transfer(object);
-
-			} else {
-				if (port == inPortOld) {
-					transfer(object);
-				}
 			}
 		} else {
 			if (port == inPortNew) {
@@ -113,13 +106,24 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 		if (pair.getE2() != null && pair.getE1() != null) {
 			// this source is satisfied.
 			this.sourcesToPunctuations.remove(p.getSource());
-			LOG.debug("Source: " + p.getSource()  + " is satisfied");
+			LOG.debug("Source: " + p.getSource() + " is satisfied");
 		}
 		// are all sources satisfied?
 		if (this.sourcesToPunctuations.isEmpty()) {
 			useOld = false;
 			LOG.debug("All sources are satisfied");
 			fireMigrationFinishedEvent(this);
+		}
+	}
+
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		if (punctuation instanceof MigrationMarkerPunctuation) {
+			// gotcha
+			process_migrationMarkerPunctuation(
+					(MigrationMarkerPunctuation) punctuation, port);
+		} else {
+			sendPunctuation(punctuation);
 		}
 	}
 
@@ -145,7 +149,7 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 
 	@Override
 	public void addMigrationListener(IMigrationListener listener) {
-		if(listener == null) {
+		if (listener == null) {
 			throw new IllegalArgumentException("IMigrationListener is null.");
 		}
 		this.listener.add(listener);
@@ -153,7 +157,7 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 
 	@Override
 	public void removeMigrationListener(IMigrationListener listener) {
-		if(listener == null) {
+		if (listener == null) {
 			throw new IllegalArgumentException("IMigrationListener is null.");
 		}
 		this.listener.remove(listener);
@@ -161,14 +165,14 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 
 	@Override
 	public void fireMigrationFinishedEvent(IMigrationEventSource sender) {
-		for(IMigrationListener listener : this.listener) {
+		for (IMigrationListener listener : this.listener) {
 			listener.migrationFinished(sender);
 		}
 	}
 
 	@Override
 	public void fireMigrationFailedEvent(IMigrationEventSource sender) {
-		for(IMigrationListener listener : this.listener) {
+		for (IMigrationListener listener : this.listener) {
 			listener.migrationFailed(sender);
 		}
 	}
