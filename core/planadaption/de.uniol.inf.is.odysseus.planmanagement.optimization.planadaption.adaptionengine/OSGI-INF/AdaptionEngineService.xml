@@ -5,7 +5,6 @@
       <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionEngine"/>
    </service>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
-   <reference bind="bindOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer" name="IOptimizer" policy="dynamic" unbind="unbindOptimizer"/>
    <reference bind="bindAdaptionFitness" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionFitness" name="IPlanAdaptionFitness" policy="dynamic" unbind="unbindAdaptionFitness"/>
    <reference bind="bindAdaptionResourceMonitor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionResourceMonitor" name="IPlanAdaptionResourceMonitor" policy="dynamic" unbind="unbindAdaptionResourceMonitor"/>
    <reference bind="bindPlanMigrationStrategy" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IPlanMigrationStrategy" name="IPlanMigrationStrategy" policy="dynamic" unbind="unbindPlanMigrationStrategy"/>

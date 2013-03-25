@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionFitness;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionMigrationFuzzyRuleEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionPolicyListener;
@@ -83,20 +82,27 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 		logicalQueries.add(query);
 
 		// translation of the fitter logical plan
-		List<IPhysicalQuery> physicalQueries = this.optimizer.optimize(
-				this.executor, this.executor.getExecutionPlan(),
-				logicalQueries, this.optimizer.getConfiguration(),
-				this.executor.getDataDictionary());
-		List<IPhysicalOperator> newPlanRoots = physicalQueries.get(0)
-				.getRoots();
+		IPhysicalQuery newPhysicalQuery = this.executor.getCompiler()
+				.transform(
+						query,
+						this.executor.getBuildConfigForQuery(query)
+								.getTransformationConfiguration(), user,
+						this.executor.getDataDictionary());
+		List<IPhysicalOperator> newPlanRoots = newPhysicalQuery.getRoots();
+		// List<IPhysicalQuery> physicalQueries = this.optimizer.optimize(
+		// this.executor, this.executor.getExecutionPlan(),
+		// logicalQueries, this.optimizer.getConfiguration(),
+		// this.executor.getDataDictionary());
+		// List<IPhysicalOperator> newPlanRoots = physicalQueries.get(0)
+		// .getRoots();
 
 		RemoveOwnersGraphVisitor<IOwnedOperator> removeVisitor = new RemoveOwnersGraphVisitor<>(
-				physicalQueries.get(0));
+				newPhysicalQuery);
 		GenericGraphWalker walker = new GenericGraphWalker();
 		for (IPhysicalOperator root : newPlanRoots) {
 			walker.prefixWalkPhysical(root, removeVisitor);
 		}
-		
+
 		// create planmigration
 		// TODO: was passiert mit mehreren Roots?
 		PlanMigration migration = new PlanMigration(oldPlan,
@@ -107,7 +113,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 
 		if (this.fuzzyRuleEngine.evaluate(fittest.getE2(), migrationCost)) {
 			// migrate
-			this.migrationStrategy.migrateQuery(this.optimizer, physicalQuery,
+			this.migrationStrategy.migrateQuery(this.executor.getOptimizer(), physicalQuery,
 					newPlanRoots);
 		}
 	}
@@ -123,18 +129,6 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 			this.executor.removePlanModificationListener(this);
 			this.executor = null;
 			LOG.debug("Executor unbound");
-		}
-	}
-
-	public void bindOptimizer(IOptimizer optimizer) {
-		this.optimizer = optimizer;
-		LOG.debug("Optimizer bound");
-	}
-
-	public void unbindOptimizer(IOptimizer optimizer) {
-		if (optimizer.equals(this.optimizer)) {
-			this.optimizer = null;
-			LOG.debug("Optimizer unbound");
 		}
 	}
 

@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.adapti
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionFitness;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionMigrationFuzzyRuleEngine;
@@ -21,7 +20,6 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 	protected IPlanAdaptionMigrationFuzzyRuleEngine fuzzyRuleEngine;
 	protected IPlanAdaptionPolicyRuleEngine policyRuleEngine;
 	protected IServerExecutor executor;
-	protected IOptimizer optimizer;
 	
 	@Override
 	public abstract void adaptPlan(IPhysicalQuery query, ISession user);
@@ -54,11 +52,6 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 	@Override
 	public IServerExecutor getExecutor() {
 		return this.executor;
-	}
-
-	@Override
-	public IOptimizer getOptimizer() {
-		return this.optimizer;
 	}
 
 	@Override

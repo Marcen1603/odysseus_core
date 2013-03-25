@@ -5,7 +5,6 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planada
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -28,7 +27,6 @@ public interface IPlanAdaptionEngine extends IPlanModificationListener, IMigrati
 	public IPlanAdaptionMigrationFuzzyRuleEngine getFuzzyRuleEngine();
 	public IPlanAdaptionPolicyRuleEngine getPolicyRuleEngine();
 	public IServerExecutor getExecutor();
-	public IOptimizer getOptimizer();
 	
 	public long getBlockedTime();
 	public long getTimer();
