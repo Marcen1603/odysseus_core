@@ -3,8 +3,7 @@
       id="de.uniol.inf.is.odysseus.wrapper.feature"
       label="Wrapper Feature"
       version="1.0.0.qualifier"
-      provider-name="University of Oldenburg"
-      plugin="de.uniol.inf.is.odysseus.rcp.starter">
+      provider-name="University of Oldenburg">
 
    <description>
       This feature holds a set of wrapper, which may be an access protocol or data handlers.
