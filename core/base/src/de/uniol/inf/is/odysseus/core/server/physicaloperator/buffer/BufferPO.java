@@ -157,6 +157,7 @@ public class BufferPO<T extends IStreamObject<?>> extends
 		synchronized (buffer) {
 			this.buffer.add(object);
 			if(this.waitForFirst) {
+				this.waitForFirst = false;
 				insertMigrationMarkerPunctuation();
 			}
 		}
@@ -239,19 +240,19 @@ public class BufferPO<T extends IStreamObject<?>> extends
 		if(this.source == null) {
 			throw new RuntimeException("No source for BufferPO " + toString() + " was set.");
 		}
-		getLogger().debug("Insert MigrationMarkerPunctuation in Buffer for " + this.source);
 		if(this.buffer.isEmpty()) {
 			// wait for the first element to be put into the buffer.
 			this.waitForFirst = true;
+			getLogger().debug("Buffer was empty. Waiting for first element");
 			return;
 		}
+		getLogger().debug("Insert MigrationMarkerPunctuation in Buffer for " + this.source);
 		// get the timestamp of the last element in the buffer.
 		IStreamable last = this.buffer.getLast();
 		PointInTime pit = ((IStreamObject<? extends ITimeInterval>) last).getMetadata().getStart();
 		// create new punctuation and insert it at the last position in the buffer.
 		IPunctuation punctuation = new MigrationMarkerPunctuation(pit, this.source);
 		this.buffer.addLast(punctuation);
-		this.waitForFirst = false;
 	}
 
 	public void setSource(ISource<?> source) {
