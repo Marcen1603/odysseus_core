@@ -26,42 +26,38 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalPlusOperator extends AbstractBinaryOperator<Interval> {
-
+public class IntervalPowerOperator extends AbstractBinaryOperator<Interval> {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 5061875515922895924L;
+	private static final long serialVersionUID = -8262009270818213996L;
 
 	@Override
 	public int getPrecedence() {
-		return 6;
+		return 1;
 	}
 
 	@Override
 	public String getSymbol() {
-		return "+";
+		return "^";
 	}
 
 	@Override
 	public Interval getValue() {
 		Interval a = getInputValue(0);
-		Interval b = getInputValue(1);
+		double b = getNumericalInputValue(1);
 		return getValueInternal(a, b);
 	}
 
-	protected Interval getValueInternal(Interval a, Interval b) {
-		return new Interval(a.inf() + b.inf(), a.sup() + b.sup());
+	protected Interval getValueInternal(Interval a, double b) {
+		final double inf = Math.min(Math.pow(a.inf(), b), Math.pow(a.sup(), b));
+		final double sup = Math.max(Math.pow(a.inf(), b), Math.pow(a.sup(), b));
+		return new Interval(inf, sup);
 	}
 
 	@Override
 	public SDFDatatype getReturnType() {
 		return SDFIntervalDatatype.INTERVAL_DOUBLE;
-	}
-
-	@Override
-	public de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
-		return ASSOCIATIVITY.LEFT_TO_RIGHT;
 	}
 
 	@Override
@@ -84,13 +80,20 @@ public class IntervalPlusOperator extends AbstractBinaryOperator<Interval> {
 		return false;
 	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFIntervalDatatype.INTERVAL_BYTE,
-			SDFIntervalDatatype.INTERVAL_SHORT,
-			SDFIntervalDatatype.INTERVAL_INTEGER,
-			SDFIntervalDatatype.INTERVAL_FLOAT,
-			SDFIntervalDatatype.INTERVAL_DOUBLE,
-			SDFIntervalDatatype.INTERVAL_LONG };
+	@Override
+	public de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+		return null;
+	}
+
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+			{ SDFIntervalDatatype.INTERVAL_BYTE,
+					SDFIntervalDatatype.INTERVAL_SHORT,
+					SDFIntervalDatatype.INTERVAL_INTEGER,
+					SDFIntervalDatatype.INTERVAL_FLOAT,
+					SDFIntervalDatatype.INTERVAL_DOUBLE,
+					SDFIntervalDatatype.INTERVAL_LONG },
+			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER,
+					SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
 
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos) {
@@ -102,7 +105,7 @@ public class IntervalPlusOperator extends AbstractBinaryOperator<Interval> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument(s).");
 		}
-		return accTypes;
+		return accTypes[argPos];
 	}
 
 }
