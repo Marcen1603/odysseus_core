@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationEventSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationListener;
@@ -64,7 +64,7 @@ public class NoPlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	@Override
-	public void migrateQuery(IOptimizer sender,
+	public void migrateQuery(IServerExecutor sender,
 			IPhysicalQuery runningQuery, List<IPhysicalOperator> newPlanRoots) {
 	}
 

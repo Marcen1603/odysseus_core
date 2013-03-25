@@ -35,7 +35,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MigrationRouterPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationEventSource;
@@ -44,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigr
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.MigrationHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.PhysicalPlanToStringVisitor;
@@ -89,7 +91,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	@Override
-	public void migrateQuery(IOptimizer sender, IPhysicalQuery runningQuery,
+	public void migrateQuery(IServerExecutor sender, IPhysicalQuery runningQuery,
 			List<IPhysicalOperator> newPlanRoots)
 			throws QueryOptimizationException {
 		if (runningQuery.containsCycles()) {
@@ -139,7 +141,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			lastOperatorNewPlan = newPlanRoots.get(0);
 		}
 
-		StrategyContext context = new StrategyContext(sender, runningQuery,
+		StrategyContext context = new StrategyContext(sender.getOptimizer(), runningQuery,
 				newPlanRoots.get(0));
 		context.setOldPlanOperatorsBeforeSources(oldPlanOperatorsBeforeSources);
 		context.setLastOperatorNewPlan(lastOperatorNewPlan);
@@ -160,7 +162,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				buffer.open();
 			} catch (OpenFailedException e) {
 				// Buffer not connected, so no errors can occur
-				e.printStackTrace();
+				LOG.error("Failed to open Buffer", e);
 			}
 			buffer.block();
 			buffer.setOutputSchema(metadataUpdatePO.getOutputSchema());
@@ -188,9 +190,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				}
 			}
 
-			// PhysicalRestructHelper.<BufferPO> insertOperator(
-			// (ISource) metadataUpdatePO, 0, sinks, sinkInPorts, buffer);
-
 			buffer.subscribeToSource(metadataUpdatePO, 0, 0,
 					metadataUpdatePO.getOutputSchema());
 			PhysicalSubscription<?> bufferSub = null;
@@ -204,18 +203,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			for (PhysicalSubscription<?> sub : ((ISource<?>) metadataUpdatePO)
 					.getSubscriptions()) {
 				IPhysicalOperator op = (IPhysicalOperator) sub.getTarget();
-				// if (oldPlanOperatorsBeforeSources.contains(op)
-				// || newPlanOperatorsBeforeSources.contains(op)) {
-				if (newPlanOperatorsBeforeSources.contains(op) || oldPlanOperatorsBeforeSources.contains(op)) {
+				if (newPlanOperatorsBeforeSources.contains(op)
+						|| oldPlanOperatorsBeforeSources.contains(op)) {
 					// activate connection between source and buffer
 					// deactivate connection between source and subscriptions
-
-					LOG.debug("Operator: " + op.getClass().getSimpleName()
-							+ " (" + op.hashCode()
-							+ ") will be replaced by buffer");
-
-					((AbstractPipe) metadataUpdatePO).replaceActiveSubscription(sub,
-							bufferSub);
+					((AbstractPipe) metadataUpdatePO)
+							.replaceActiveSubscription(sub, bufferSub);
 					unSubscribe.add(sub);
 				} else {
 					LOG.debug("Operator: " + op.getClass().getSimpleName()
@@ -268,16 +261,18 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			// TODO lastOperator*Plan muss geändert werden und die senke muss
 			// nach dem router kommen.
 		}
-		// FIXME: der alte plan wird an den gegebenen router angeschlossen, aber
-		// der neue wird an einen vollkommen anderen router angeschlossen
+
 		PhysicalRestructHelper.appendBinaryOperator(router,
 				(ISource) lastOperatorOldPlan, (ISource) lastOperatorNewPlan);
-		LOG.debug("Router " + router.getClass().getSimpleName()
-				+ " appended to child1: "
-				+ lastOperatorOldPlan.getClass().getSimpleName() + " ("
-				+ lastOperatorOldPlan.hashCode() + ") and child2: "
-				+ lastOperatorNewPlan.getClass().getSimpleName() + " ("
-				+ lastOperatorNewPlan.hashCode() + ")");
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Router " + router.getClass().getSimpleName()
+					+ " appended to child1: "
+					+ lastOperatorOldPlan.getClass().getSimpleName() + " ("
+					+ lastOperatorOldPlan.hashCode() + ") and child2: "
+					+ lastOperatorNewPlan.getClass().getSimpleName() + " ("
+					+ lastOperatorNewPlan.hashCode() + ")");
+		}
 
 		// wir brauchen allerdings einen Owner!
 		SetOwnerGraphVisitor<IOwnedOperator> addVisitor = new SetOwnerGraphVisitor<>(
@@ -327,6 +322,16 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// }
 		// }
 
+		try {
+			sender.executionPlanChanged();
+		} catch (SchedulerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSchedulerLoadedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// resume by unblocking buffers
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
 			buffer.insertMigrationMarkerPunctuation();

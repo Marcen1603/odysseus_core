@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmig
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
@@ -62,7 +62,7 @@ public interface IPlanMigrationStrategy extends IMigrationEventSource, IMigratio
 	 * 				new physical plan to migrate to
 	 * @throws QueryOptimizationException
 	 */
-	public void migrateQuery(IOptimizer sender, IPhysicalQuery runningQuery, 
+	public void migrateQuery(IServerExecutor sender, IPhysicalQuery runningQuery, 
 			List<IPhysicalOperator> newPlanRoot) throws QueryOptimizationException;
 	
 	public String getName();

@@ -113,7 +113,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 
 		if (this.fuzzyRuleEngine.evaluate(fittest.getE2(), migrationCost)) {
 			// migrate
-			this.migrationStrategy.migrateQuery(this.executor.getOptimizer(), physicalQuery,
+			this.migrationStrategy.migrateQuery(this.executor, physicalQuery,
 					newPlanRoots);
 		}
 	}
