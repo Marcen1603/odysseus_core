@@ -66,4 +66,6 @@ public interface ILayer extends Serializable {
 	
 	@Override
 	public String toString();
+
+	public void setActive(boolean checked);
 }

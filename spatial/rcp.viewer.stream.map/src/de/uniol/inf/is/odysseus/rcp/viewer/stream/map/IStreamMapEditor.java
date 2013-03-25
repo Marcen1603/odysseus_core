@@ -5,6 +5,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.buffer.TimeSliderComposite;
 
 public interface IStreamMapEditor extends IAdaptable {
 
@@ -18,5 +19,7 @@ public interface IStreamMapEditor extends IAdaptable {
 	public boolean isRectangleZoom();
 	
 	public MapEditorModel getMapEditorModel();
+
+	public TimeSliderComposite getTimeSliderComposite();
 
 }

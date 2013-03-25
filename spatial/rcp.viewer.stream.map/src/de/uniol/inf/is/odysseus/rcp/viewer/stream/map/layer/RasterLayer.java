@@ -126,10 +126,10 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 			image = old.poll();
 			paintTile(image, gc, offset);
 		}
-		int[] uv = transformation.transformCoord(manager.getCenter(), manager.getSRID());
-		gc.drawLine(uv[0], uv[1], uv[0] + 20, uv[1]);
-		gc.drawLine(uv[0], uv[1] - 1000, uv[0], uv[1] + 1000);
-		gc.drawOval(uv[0] - 10, uv[1] - 10, 20, 20);
+//		int[] uv = transformation.transformCoord(manager.getCenter(), manager.getSRID());
+//		gc.drawLine(uv[0], uv[1], uv[0] + 20, uv[1]);
+//		gc.drawLine(uv[0], uv[1] - 1000, uv[0], uv[1] + 1000);
+//		gc.drawOval(uv[0] - 10, uv[1] - 10, 20, 20);
 	}
 
 	LinkedList<BufferTile> tileBuffer = new LinkedList<BufferTile>();
@@ -151,8 +151,8 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 			Rectangle bounds = image.getBounds();
 			gc.drawImage(image, 0, 0, bounds.width, bounds.height, tile.minxy[0],
 					tile.maxxy[1], tile.width, tile.height);
-			gc.setForeground(ColorManager.getInstance().getColor(new RGB(200,200,200)));
-			gc.drawRectangle(tile.minxy[0], tile.maxxy[1], tile.width, tile.height);
+//			gc.setForeground(ColorManager.getInstance().getColor(new RGB(200,200,200)));
+//			gc.drawRectangle(tile.minxy[0], tile.maxxy[1], tile.width, tile.height);
 		}
 	}
 

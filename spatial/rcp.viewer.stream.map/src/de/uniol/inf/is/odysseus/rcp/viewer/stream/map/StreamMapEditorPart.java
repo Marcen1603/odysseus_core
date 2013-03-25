@@ -15,8 +15,10 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -43,6 +45,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOutlinePage;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.buffer.TimeSliderComposite;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.AbstractStreamMapEditorViewPart;
 
 public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor {
@@ -55,7 +58,8 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 	protected ScreenManager screenManager;
 	private MapEditorModel mapModel;
 	private boolean dirt = false;
-
+	private TimeSliderComposite timeSliderComposite;
+	
 	private Action selectAllAction, addItemAction, deleteItemAction;
 	
 	@Override
@@ -100,8 +104,11 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 
 	@Override
 	public void createPartControl(Composite parent) {
+		parent.setLayout(new GridLayout(1, false));
+
 		screenManager.setCanvasViewer(screenManager.createCanvas(parent));
-		
+		setTimeSlider(createTimeSliderComposite(parent));
+
 //		//Always add a Basic Layer. 
 //		if(mapModel.getLayers().isEmpty()){
 			BasicLayer basic = new BasicLayer();
@@ -343,6 +350,35 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		   dirt = true;
 		   firePropertyChange(PROP_DIRTY);
 		   update();
+	}
+
+	public void setLayerChanged() {
+		dirt = true;
+		firePropertyChange(PROP_DIRTY);
+		update();
+	}
+
+	public TimeSliderComposite createTimeSliderComposite(Composite parent) {
+		timeSliderComposite = new TimeSliderComposite(parent, SWT.BORDER);
+		return timeSliderComposite;
+	}
+	
+	public final TimeSliderComposite getTimeSliderComposite() {
+		return timeSliderComposite;
+	}
+	
+	public void setTimeSlider(TimeSliderComposite timeSlider) {
+		if (timeSlider != null) {
+			this.timeSliderComposite = timeSlider;
+		} else {
+			LOG.error("TimeSlider is null.");
+		}
+	}
+
+	public void setActive(ILayer iLayer, boolean checked) {
+		iLayer.setActive(checked);
+		this.screenManager.redraw();
+		
 	}
 
 }

@@ -144,6 +144,8 @@ public final class TileServer {
 			world = new Envelope(dst1.x, dst2.x, dst1.y, dst2.y);
 		}			
 		ArrayList<AsyncImage> images = new ArrayList<AsyncImage>();
+		if (screenSize.x == 0)
+			return images;
 		zoom = maxZoom;
 		for (int z1 = 0; z1 <= maxZoom; z1++){
 			double tileSizeWorld = Math.abs(tile2X(0, z1) - tile2X(1, z1));

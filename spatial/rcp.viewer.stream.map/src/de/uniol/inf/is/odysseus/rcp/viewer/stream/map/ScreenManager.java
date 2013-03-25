@@ -26,6 +26,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -122,6 +123,7 @@ public class ScreenManager {
 
 	protected Canvas createCanvas(Composite parent) {
 		Canvas canvas = new Canvas(parent, SWT.DOUBLE_BUFFERED);
+		canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		canvas.setBackground(WHITE);
 		canvas.addPaintListener(new GeometryPaintListener(editor));
 

@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 public class GroupLayer extends LinkedList<ILayer> implements ILayer {
 
 	private LayerConfiguration configuration;
+	private boolean active = true;
 	
 	public GroupLayer(GroupLayerConfiguration configuration) {
 		this.configuration = configuration;
@@ -115,7 +116,15 @@ public class GroupLayer extends LinkedList<ILayer> implements ILayer {
 	@Override
 	public boolean isActive() {
 		// TODO Auto-generated method stub
-		return true;
+		return active;
+	}
+	
+	@Override
+	public void setActive(boolean b){
+		this.active  = b;
+		for (ILayer layer : this) {
+			if (layer != null) layer.setActive(b);
+		}
 	}
 	
 	public boolean containsDeep(GroupLayer o) {

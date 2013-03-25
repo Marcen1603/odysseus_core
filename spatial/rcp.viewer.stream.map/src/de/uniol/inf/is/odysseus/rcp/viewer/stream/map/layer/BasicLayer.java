@@ -8,6 +8,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
+import org.osgeo.proj4j.CoordinateTransform;
+import org.osgeo.proj4j.ProjCoordinate;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -136,7 +138,11 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
 
 	@Override
 	public Envelope getEnvelope() {
-		// TODO Auto-generated method stub
-		return new Envelope(-180, 180, -85, 85) ;
+		CoordinateTransform ct = transformation.getCoordinateTransform(this.srid, screenmanager.getSRID());
+		ProjCoordinate coord0 = new ProjCoordinate();
+		ProjCoordinate coord1 = new ProjCoordinate();
+		ct.transform(new ProjCoordinate(-180,-85), coord0);
+		ct.transform(new ProjCoordinate(180, 85), coord1);
+		return new Envelope(coord0.x, coord1.x, coord0.y, coord1.y);
 	}
 }

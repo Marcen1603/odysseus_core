@@ -75,7 +75,8 @@ public class MapEditorModel extends ModelObject {
 	private ScreenManager screenManager = null;
 
 	private int layercount;
-
+	private static IFile iFile;
+	
 	private int srid;
 
 	// private StreamMapEditorPart editor = null;
@@ -92,6 +93,7 @@ public class MapEditorModel extends ModelObject {
 	}
 
 	public static MapEditorModel open(IFile file, StreamMapEditorPart editor) {
+		iFile = file;
 		MapEditorModel newModel = new MapEditorModel();
 		String output = "";
 		InputStream is = null;
@@ -605,5 +607,21 @@ public class MapEditorModel extends ModelObject {
 		// TODO Auto-generated method stub
 		return this.srid;
 	}
+	
+	public void setSrid(int srid) {
+		this.srid = srid;
+	}
 
+	public LinkedList<IFile> getQryFileList() {
+		return qryFileList;
+	}
+
+	public void setQryFileList(LinkedList<IFile> qryFileList) {
+		this.qryFileList = qryFileList;
+	}
+	
+	public IFile getFile() {
+		return iFile;
+	}
+	
 }

@@ -15,6 +15,10 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PopupDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -41,10 +45,14 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.NewLayerDialog;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyTitleDialog;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.properties.MapPropertiesDialog;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.properties.StylePropertiesDialog;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.GroupLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.GroupLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOutlineLabelProvider;
@@ -74,9 +82,36 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 	protected void updatePartControl(Composite parent) {
 		// LOG.debug("Update Layer");
 
-		treeViewer = new TreeViewer(container);
+		treeViewer = new CheckboxTreeViewer(container);
 		treeViewer.setContentProvider(new MapLayerViewTreeContentProvider());
 		treeViewer.setLabelProvider(new MapLayerViewLabelProvider());
+		((CheckboxTreeViewer)treeViewer).addCheckStateListener(new ICheckStateListener() {
+		      public void checkStateChanged(CheckStateChangedEvent event) {
+	        	  if (event.getElement() instanceof ILayer){
+//	        		  ((ILayer) event.getElement()).setActive(event.getChecked());
+	        	      ((CheckboxTreeViewer)treeViewer).setSubtreeChecked(event.getElement(), event.getChecked());
+	        	      getMapEditor().setActive(((ILayer) event.getElement()), event.getChecked());
+	        	  }
+		        }
+		      });
+		
+		((CheckboxTreeViewer)treeViewer).setCheckStateProvider(new ICheckStateProvider() {
+			
+			@Override
+			public boolean isGrayed(Object element) {
+				if (element instanceof Style)
+					return true;
+				return false;
+			}
+			
+			@Override
+			public boolean isChecked(Object element) {
+				if (element instanceof ILayer)
+					return ((ILayer)element).isActive();
+				return false;
+			}
+		});
+		
 		if (hasMapEditorModel()) {
 			treeViewer.setInput(getMapEditorModel());
 		}
@@ -244,34 +279,6 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 	
 				}
 			});
-			mgr.add(new Action("Rename") {
-				public void run() {
-					ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
-					if (i.getFirstElement() instanceof ILayer) {
-						ILayer element = (ILayer) i.getFirstElement();
-						IInputValidator validator = new IInputValidator() {
-
-							@Override
-							public String isValid(String newText) {
-								if (newText.equals(""))
-									return "Please type a name.";								
-								if (getMapEditorModel().containsGroup(newText)) {
-									return "A layer or group with the name" + newText + " does already exist.";
-								}
-								return null;
-							}
-						};
-						InputDialog groupname = new InputDialog(Display.getCurrent().getActiveShell(), "Set Name", "Please enter a name:", element.getName(), validator);
-						groupname.open();
-						if (groupname.getReturnCode() == MessageDialog.OK) {
-							String name = groupname.getValue();
-							getMapEditor().renameLayer(element, name);
-						}
-						treeViewer.refresh(element, true);
-					}
-	
-				}
-			});
 			mgr.add(new Action("Zoom to Layer") {
 				public void run() {
 					ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
@@ -281,52 +288,177 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 	
 				}
 			});
-	
+			mgr.add(new Action("Rename") {
+				public void run() {
+					ITreeSelection i = (ITreeSelection) treeViewer
+							.getSelection();
+					if (i.getFirstElement() instanceof ILayer) {
+						ILayer element = (ILayer) i.getFirstElement();
+						IInputValidator validator = new IInputValidator() {
+
+							@Override
+							public String isValid(String newText) {
+								if (newText.equals(""))
+									return "Please type a name.";
+								if (getMapEditorModel().containsGroup(newText)) {
+									return "A layer or group with the name"
+											+ newText + " does already exist.";
+								}
+								return null;
+							}
+						};
+						InputDialog groupname = new InputDialog(Display
+								.getCurrent().getActiveShell(), "Set Name",
+								"Please enter a name:", element.getName(),
+								validator);
+						groupname.open();
+						if (groupname.getReturnCode() == MessageDialog.OK) {
+							String name = groupname.getValue();
+							getMapEditor().renameLayer(element, name);
+						}
+						treeViewer.refresh(element, true);
+					}
+
+				}
+			});
+			mgr.add(new Action("Remove Layer") {
+				public void run() {
+					ITreeSelection i = (ITreeSelection) treeViewer
+							.getSelection();
+					if (hasMapEditor()) {
+						if (i.getFirstElement() instanceof ILayer) {
+							ILayer element = (ILayer) i.getFirstElement();
+							Shell shell = editor.getScreenManager()
+									.getDisplay().getActiveShell();
+
+							boolean feedback = MessageDialog.openQuestion(
+									shell,
+									"Remove Layer",
+									"Would you really remove "
+											+ element.getName());
+							if (feedback) {
+								editor.removeLayer(element);
+							}
+						} else {
+
+						}
+					}
+
+				}
+			});
+
 			mgr.add(new Separator());
-		}
-		else if (i.getFirstElement() instanceof Style) {
+
+			if (i.getFirstElement() instanceof VectorLayer) {
+				VectorLayer vLayer = (VectorLayer) i.getFirstElement();
+				if (vLayer.getStyle().hasSubstyles()) {
+					mgr.add(new Action("Style properties") {
+						public void run() {
+							ITreeSelection i = (ITreeSelection) treeViewer
+									.getSelection();
+							if (hasMapEditor()) {
+								if (i.getFirstElement() instanceof ILayer) {
+									ILayer element = (ILayer) i
+											.getFirstElement();
+									Shell shell = editor.getScreenManager()
+											.getDisplay().getActiveShell();
+
+									StylePropertiesDialog dialog = new StylePropertiesDialog(
+											shell, model.getLayers(), element,
+											model.getConnectionCollection());
+									dialog.create();
+									dialog.open();
+									if (dialog.getReturnCode() == MessageDialog.OK) {
+										editor.setLayerChanged();
+										MessageDialog.openInformation(shell,
+												"Information",
+												"Layer Properties Changed.");
+									} else {
+									}
+								}
+							}
+						}
+					});
+				}
+			}
+
+			if (i.getFirstElement() instanceof ILayer) {
+				mgr.add(new Action("Map properties") {
+					public void run() {
+						ITreeSelection i = (ITreeSelection) treeViewer
+								.getSelection();
+						if (hasMapEditor()) {
+							MapEditorModel map = getMapEditor()
+									.getMapEditorModel();
+							Shell shell = editor.getScreenManager()
+									.getDisplay().getActiveShell();
+
+							MapPropertiesDialog dialog = new MapPropertiesDialog(
+									shell, model.getLayers(), map, model
+											.getConnectionCollection(), editor);
+							dialog.create();
+							dialog.open();
+							if (dialog.getReturnCode() == MessageDialog.OK) {
+								editor.setLayerChanged();
+								MessageDialog.openInformation(shell,
+										"Information",
+										"Map Properties Changed.");
+							} else {
+							}
+						}
+					}
+				});
+			}
+
+		} else if (i.getFirstElement() instanceof Style) {
 			mgr.add(new Action("Linecolor") {
 				public void run() {
-					ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
+					ITreeSelection i = (ITreeSelection) treeViewer
+							.getSelection();
 					if (i.getFirstElement() instanceof CollectionStyle)
 						return;
 					if (i.getFirstElement() instanceof Style) {
 						Style element = (Style) i.getFirstElement();
-						ColorDialog colorDialog = new ColorDialog(Display.getCurrent().getActiveShell());
-						RGB color = element.getLineColor().getDefault().getRGB();
+						ColorDialog colorDialog = new ColorDialog(Display
+								.getCurrent().getActiveShell());
+						RGB color = element.getLineColor().getDefault()
+								.getRGB();
 						colorDialog.setRGB(color);
 						colorDialog.setText("ColorDialog");
 						RGB selectedColor = colorDialog.open();
 						if (!selectedColor.equals(color))
-							element.setDefaultLineColor(ColorManager.getInstance().getColor(selectedColor));
+							element.setDefaultLineColor(ColorManager
+									.getInstance().getColor(selectedColor));
 						treeViewer.refresh(true);
 					}
-	
 				}
 			});
-			if (!(i.getFirstElement() instanceof LineStyle)) 
-			mgr.add(new Action("Fillcolor") {
-				public void run() {
-					ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
-					if (i.getFirstElement() instanceof Style) {
-						Style element = (Style) i.getFirstElement();
-						ColorDialog colorDialog = new ColorDialog(Display.getCurrent().getActiveShell());
-						Color c = element.getFillColor().getDefault();
-						RGB color = null;
-						if (c != null){
-							color = c.getRGB();
-							colorDialog.setRGB(color);
+			if (!(i.getFirstElement() instanceof LineStyle))
+				mgr.add(new Action("Fillcolor") {
+					public void run() {
+						ITreeSelection i = (ITreeSelection) treeViewer
+								.getSelection();
+						if (i.getFirstElement() instanceof Style) {
+							Style element = (Style) i.getFirstElement();
+							ColorDialog colorDialog = new ColorDialog(Display
+									.getCurrent().getActiveShell());
+							Color c = element.getFillColor().getDefault();
+							RGB color = null;
+							if (c != null) {
+								color = c.getRGB();
+								colorDialog.setRGB(color);
+							}
+							colorDialog.setText("ColorDialog");
+							RGB selectedColor = colorDialog.open();
+							if (!selectedColor.equals(color)) {
+								element.setDefaultFillColor(ColorManager
+										.getInstance().getColor(selectedColor));
+								treeViewer.refresh(true);
+							}
 						}
-						colorDialog.setText("ColorDialog");
-						RGB selectedColor = colorDialog.open();
-						if (!selectedColor.equals(color)){
-							element.setDefaultFillColor(ColorManager.getInstance().getColor(selectedColor));
-							treeViewer.refresh(true);
-						}
+
 					}
-	
-				}
-			});
+				});
 		}
 	}
 

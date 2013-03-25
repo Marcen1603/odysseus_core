@@ -63,7 +63,12 @@ public abstract class AbstractLayer<C extends LayerConfiguration> implements ILa
 	public boolean isActive(){
 		return active;
 	}
-
+	
+	@Override
+	public void setActive(boolean b){
+		this.active = b;
+	}
+	
 	@Override
 	public boolean isGroup() {
 		// TODO Auto-generated method stub
