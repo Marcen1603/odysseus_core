@@ -77,6 +77,9 @@ public class LogicalQuery implements ILogicalQuery {
 	 */
 	@XmlTransient
 	private ILogicalOperator logicalPlan;
+	
+	@XmlTransient
+	private List<ILogicalOperator> alternativeLogicalPlans;
 
 	private boolean containsCycles = false;
 
@@ -87,6 +90,8 @@ public class LogicalQuery implements ILogicalQuery {
 
 	transient final private Map<String, Object> parameters = new HashMap<String, Object>();
 
+	// TODO: check in which constructors alternativeLogicalPlans have to be set!
+	
 	/**
 	 * 
 	 * @param parserID
@@ -99,6 +104,7 @@ public class LogicalQuery implements ILogicalQuery {
 		this.parserID = parserID;
 		this.logicalPlan = logicalPlan;
 		this.priority = priority;
+		this.alternativeLogicalPlans = new ArrayList<ILogicalOperator>();
 	}
 
 	/**
@@ -116,6 +122,7 @@ public class LogicalQuery implements ILogicalQuery {
 		this.parserID = parserID;
 		this.logicalPlan = logicalPlan;
 		this.priority = priority;
+		this.alternativeLogicalPlans = new ArrayList<ILogicalOperator>();
 	}
 
 	public LogicalQuery(ILogicalOperator logicalPlan, int priority) {
@@ -212,6 +219,16 @@ public class LogicalQuery implements ILogicalQuery {
 	@Override
 	public ILogicalOperator getLogicalPlan() {
 		return this.logicalPlan;
+	}
+	
+	@Override
+	public void setAlternativeLogicalPlans(List<ILogicalOperator> altPlans) {
+		this.alternativeLogicalPlans = altPlans;
+	}
+	
+	@Override
+	public List<ILogicalOperator> getAlternativeLogicalPlans() {
+		return this.alternativeLogicalPlans;
 	}
 
 	/*

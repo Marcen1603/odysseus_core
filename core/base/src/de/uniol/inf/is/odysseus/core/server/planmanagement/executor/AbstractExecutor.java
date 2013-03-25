@@ -67,6 +67,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.No
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.ExecutionPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -117,6 +118,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	private Map<String, ILogicalQueryDistributor> logicalQueryDistributors = Maps.newHashMap();
 
+	private IPlanAdaptionEngine planAdaptionEngine = null;
+	
 	/**
 	 * Konfiguration der Ausf�hrungsumgebung
 	 */
@@ -340,6 +343,18 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return Optional.fromNullable(logicalQueryDistributors.get(name));
 	}
 
+
+
+	public void bindPlanAdaption(IPlanAdaptionEngine adaption) {
+		this.planAdaptionEngine = adaption;
+	}
+	
+	public void unbindPlanAdaption(IPlanAdaptionEngine adaption) {
+		if(adaption.equals(this.planAdaptionEngine)) {
+			this.planAdaptionEngine = null;
+		}
+	}
+	
 	/**
 	 * bindCompiler bindet eine Anfragebearbeitungs-Komponente ein
 	 * 

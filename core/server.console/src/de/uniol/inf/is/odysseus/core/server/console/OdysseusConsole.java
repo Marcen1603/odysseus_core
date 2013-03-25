@@ -1793,6 +1793,11 @@ public class OdysseusConsole implements CommandProvider,
 	public void transformationBound() {
 		System.out.println("Transformation bound");
 	}
+	
+	@Override
+	public void planGeneratorBound() {
+		System.out.println("PlanGeneration bound");
+	}
 
 	/*
 	 * Test code for simulation of SLA Scheduler should be removed after

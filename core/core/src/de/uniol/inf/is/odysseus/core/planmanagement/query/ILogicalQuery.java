@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.planmanagement.query;
 
 import java.io.Serializable;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
@@ -101,6 +102,23 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializab
 	 */
 	public ILogicalOperator getLogicalPlan();
 
+	/**
+	 * Set a list of alternative logical plans for this query.
+	 * 
+	 * @param altPlans
+	 * 				List of alternative logical plans for this query.
+	 * 
+	 * TODO: setOwner checken!
+	 */
+	public void setAlternativeLogicalPlans(List<ILogicalOperator> altPlans);
+	
+	/**
+	 * Returns the list of alternative logical plans for this query.
+	 * 
+	 * @return The list of alternative logical plans for this query.
+	 */
+	public List<ILogicalOperator> getAlternativeLogicalPlans();
+	
 	/**
 	 * @return true if this plan contains cycles, typically the graph is cycle
 	 *         free

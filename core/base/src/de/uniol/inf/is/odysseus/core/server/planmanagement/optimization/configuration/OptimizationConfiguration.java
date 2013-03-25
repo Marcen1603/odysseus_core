@@ -68,6 +68,21 @@ public class OptimizationConfiguration extends Configuration<IOptimizationSettin
 		}
 		return this.get(RewriteConfiguration.class);
 	}
+	
+	public ParameterDoPlanAdaption getParameterDoPlanAdaption() {
+		return this.get(ParameterDoPlanAdaption.class);
+	}
+	
+	public ParameterDoPlanGeneration getParameterDoPlanGeneration() {
+		return this.get(ParameterDoPlanGeneration.class);
+	}
+	
+	public PlanGenerationConfiguration getPlanGenerationConfiguration() {
+		if(!this.contains(PlanGenerationConfiguration.class)) {
+			set(new PlanGenerationConfiguration());
+		}
+		return this.get(PlanGenerationConfiguration.class);
+	}
 
 	/**
 	 * Gets the current parameter for {@link ParameterQueryOptimizer}.

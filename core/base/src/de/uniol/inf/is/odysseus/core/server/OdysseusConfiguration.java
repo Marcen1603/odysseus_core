@@ -172,6 +172,10 @@ public class OdysseusConfiguration {
 
 		// Event Dispatcher
 		props.setProperty("EventHandlerDispatcherPoolSize", "10");
+		
+		// Plan Adaption
+		props.setProperty("adaption_timer", "5000");
+		props.setProperty("adaption_blockingTime", "10000");
 	}
 
 	private static void savePropertyFile(String odysseusHome) {

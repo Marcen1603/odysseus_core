@@ -20,5 +20,6 @@ public interface ICompilerListener {
 	public void parserBound(String parserID);
 	public void rewriteBound();
 	public void transformationBound();
+	public void planGeneratorBound();
 	
 }

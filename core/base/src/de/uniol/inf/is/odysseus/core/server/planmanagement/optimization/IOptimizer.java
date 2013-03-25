@@ -170,4 +170,11 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	
 	IQuerySharingOptimizer getQuerySharingOptimizer();
 
+	/**
+	 * Handles the results of a finished plan migration.
+	 * Notify every component which could be interested.
+	 * 
+	 * @param query The query in which the plan has been migrated.
+	 */
+	public void handleFinishedMigration(IPhysicalQuery query);
 }

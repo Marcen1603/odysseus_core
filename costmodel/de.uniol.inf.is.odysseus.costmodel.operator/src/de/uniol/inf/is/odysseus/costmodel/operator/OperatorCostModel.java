@@ -173,7 +173,6 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 
 						prevOperators.add(estimatedOperators.get(op));
 					}
-
 					IOperatorEstimator<ILogicalOperator> estimator = OperatorEstimatorFactory.getInstance().get(operator);
 					OperatorEstimation<ILogicalOperator> estimation = estimator.estimateOperator(operator, prevOperators, baseHistograms);
 

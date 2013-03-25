@@ -74,7 +74,7 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 
 			StringBuffer owner = new StringBuffer("Part of Query: ");
 			for (IOperatorOwner o : node.getModelNode().getContent().getOwner()) {
-				owner.append("#").append(o.getID()).append(" ");
+				owner.append("#").append(o.getID()).append(" ").append("(#").append(o.hashCode()).append(")");
 			}
 			children.add(new StringWrapper(owner.toString()));
 			if (node.getModelNode().getContent().getUniqueIds().size() > 0) {

@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -29,14 +30,16 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrat
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoPlanGeneration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PlanGenerationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 
 /**
  * QueryRestructOptimizer is the standard query optimizer for odysseus. This
@@ -87,6 +90,8 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		IPhysicalQuery physicalQuery = null;
 
 		ParameterDoRewrite restruct = parameters.getParameterDoRewrite();
+		
+		ParameterDoPlanGeneration planGeneration = parameters.getParameterDoPlanGeneration();
 
 		// if a logical rewrite should be processed.
 		ILogicalOperator originalPlan = query.getLogicalPlan();
@@ -98,6 +103,22 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		walker.prefixWalk(originalPlan, copyVisitor);
 		ILogicalOperator copiedPlan = copyVisitor.getResult();
 
+		boolean createAlternativePlans = copiedPlan != null && planGeneration != null && query.getAlternativeLogicalPlans().isEmpty()
+				&& planGeneration == ParameterDoPlanGeneration.TRUE;
+		if(createAlternativePlans) {
+			System.out.println("[StandardQueryOptimizer] Creating alternative logical plans");
+			PlanGenerationConfiguration generationConfig = parameters.getPlanGenerationConfiguration();
+			List<ILogicalOperator> alternativePlans = compiler.generatePlans(copiedPlan, generationConfig, query);
+			query.setAlternativeLogicalPlans(alternativePlans);
+			// this should be the best
+			if(!alternativePlans.isEmpty()) {
+				System.out.println("[StandardQueryOptimizer] generatePlans has returned " + alternativePlans.size() + " plans");
+				copiedPlan = alternativePlans.get(0);
+			} else {
+				System.out.println("[StandardQueryOptimizer] generatePlans has returned an empty list.");
+			}
+		}
+		
 		boolean queryShouldBeRewritten = copiedPlan != null && restruct != null
 				&& restruct == ParameterDoRewrite.TRUE;
 		if (queryShouldBeRewritten) {
@@ -106,6 +127,16 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 			ILogicalOperator newPlan = compiler.rewritePlan(copiedPlan,rewriteConfig);
 			// set new logical plan.
 			query.setLogicalPlan(newPlan, false);
+			// do the same for all alternative plans if any
+			// TODO: nochmal von marco gegenchecken lassen.
+			if(createAlternativePlans) {
+				List<ILogicalOperator> alternativePlans = query.getAlternativeLogicalPlans();
+				alternativePlans.set(0, query.getLogicalPlan());
+				for(int i = 1; i < alternativePlans.size(); i++) {
+					ILogicalOperator alternativePlan = alternativePlans.get(i);
+					alternativePlans.set(i, compiler.rewritePlan(alternativePlan, rewriteConfig));
+				}
+			}
 		}
 
 		try {

@@ -23,8 +23,12 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.MigrationMarkerPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePipe;
@@ -51,6 +55,9 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 	protected LinkedList<IStreamable> buffer = new LinkedList<>();
 	private String buffername;
+	
+	private boolean waitForFirst = false;
+	private ISource<?> source = null;
 
 	public BufferPO() {
 		super();
@@ -149,6 +156,9 @@ public class BufferPO<T extends IStreamObject<?>> extends
 	protected void process_next(T object, int port) {
 		synchronized (buffer) {
 			this.buffer.add(object);
+			if(this.waitForFirst) {
+				insertMigrationMarkerPunctuation();
+			}
 		}
 	}
 
@@ -220,5 +230,31 @@ public class BufferPO<T extends IStreamObject<?>> extends
 		}
 		return meta;
 	}
+	
+	/**
+	 * Inserts a MigrationMarkerPunctuation at the last position of the buffer.
+	 */
+	@SuppressWarnings("unchecked")
+	public void insertMigrationMarkerPunctuation() {
+		if(this.source == null) {
+			throw new RuntimeException("No source for BufferPO " + toString() + " was set.");
+		}
+		getLogger().debug("Insert MigrationMarkerPunctuation in Buffer for " + this.source);
+		if(this.buffer.isEmpty()) {
+			// wait for the first element to be put into the buffer.
+			this.waitForFirst = true;
+			return;
+		}
+		// get the timestamp of the last element in the buffer.
+		IStreamable last = this.buffer.getLast();
+		PointInTime pit = ((IStreamObject<? extends ITimeInterval>) last).getMetadata().getStart();
+		// create new punctuation and insert it at the last position in the buffer.
+		IPunctuation punctuation = new MigrationMarkerPunctuation(pit, this.source);
+		this.buffer.addLast(punctuation);
+		this.waitForFirst = false;
+	}
 
+	public void setSource(ISource<?> source) {
+		this.source = source;
+	}
 }

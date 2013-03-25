@@ -321,6 +321,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 			this.activeSinkSubscriptions.remove(sub);
 		}
 	}
+	
+	public void replaceActiveSubscription(PhysicalSubscription<ISink<? super T>> oldSub, PhysicalSubscription<ISink<? super T>> newSub) {
+		// necessary to not lose tuples here
+		synchronized (this.activeSinkSubscriptions) {
+			removeActiveSubscription(oldSub);
+			addActiveSubscription(newSub);
+		}
+	}
 
 	protected abstract void process_open() throws OpenFailedException;
 
@@ -351,14 +359,17 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	@Override
 	public void transfer(T object, int sourceOutPort) {
 		fire(this.pushInitEvent);
-		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
-			if (sink.getSourceOutPort() == sourceOutPort) {
-				try {
-					sink.getTarget().process(cloneIfNessessary(object, sourceOutPort), sink.getSinkInPort());
-				} catch (Exception e) {
-					// Send object that could not be processed to the error port
-					e.printStackTrace();
-					transfer(object, ERRORPORT);
+		// necessary to not lose tuples in a plan migration
+		synchronized (this.activeSinkSubscriptions) {
+			for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
+				if (sink.getSourceOutPort() == sourceOutPort) {
+					try {
+						sink.getTarget().process(cloneIfNessessary(object, sourceOutPort), sink.getSinkInPort());
+					} catch (Exception e) {
+						// Send object that could not be processed to the error port
+						e.printStackTrace();
+						transfer(object, ERRORPORT);
+					}
 				}
 			}
 		}

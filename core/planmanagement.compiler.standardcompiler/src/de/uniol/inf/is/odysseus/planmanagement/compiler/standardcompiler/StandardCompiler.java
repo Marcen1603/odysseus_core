@@ -24,8 +24,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.plangeneration.IPlanGenerator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
@@ -35,11 +37,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PlanGenerationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -66,6 +69,11 @@ public class StandardCompiler implements ICompiler {
 	 * {@link IRewrite} service
 	 */
 	protected IRewrite rewrite;
+	
+	/*
+	 * {@link IPlanGenerator} service
+	 */
+	protected IPlanGenerator planGenerator;
 	
 	/**
 	 * Listener
@@ -165,6 +173,29 @@ public class StandardCompiler implements ICompiler {
 	public void unbindRewrite(IRewrite rewrite) {
 		if (this.rewrite == rewrite) {
 			this.rewrite = null;
+		}
+	}
+	
+	/**
+	 * Method to bind a {@link IPlanGenerator}. Used by OSGi.
+	 * 
+	 * @param planGenerator {@link IPlanGenerator} service
+	 */
+	public void bindPlanGenerator(IPlanGenerator planGenerator) {
+		this.planGenerator = planGenerator;
+		for(ICompilerListener l: listener) {
+			l.planGeneratorBound();
+		}
+	}
+	
+	/**
+	 * Method to unbind {@link IPlanGenerator}. Used by OSGi.
+	 * 
+	 * @param planGenerator {@link IPlanGenerator} service to unbind
+	 */
+	public void unbindPlanGenerator(IPlanGenerator planGenerator) {
+		if(this.planGenerator == planGenerator) {
+			this.planGenerator = null;
 		}
 	}
 
@@ -330,6 +361,9 @@ public class StandardCompiler implements ICompiler {
 		return translated;
 	}
 
-
+	@Override
+	public List<ILogicalOperator> generatePlans(ILogicalOperator plan, PlanGenerationConfiguration conf, IOperatorOwner owner) {
+		return planGenerator.generatePlans(plan, conf, owner);
+	}
 
 }

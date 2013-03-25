@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.AbstractOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoPlanAdaption;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
@@ -59,10 +60,17 @@ public class StandardOptimizer extends AbstractOptimizer {
 		List<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
 		
 		if (!queries.isEmpty()) {
+			ParameterDoPlanAdaption adaption = parameter.getParameterDoPlanAdaption();
 			for (ILogicalQuery query : queries) {				
 				IPhysicalQuery optimized = this.queryOptimizer.optimizeQuery(executor, query, parameter, dd);		
 				doPostOptimizationActions(optimized, parameter);
 				optimizedQueries.add(optimized);
+				// set the adaption parameter for each query
+				if(optimized != null && adaption != null && adaption == ParameterDoPlanAdaption.TRUE) {
+					optimized.setParameter("noAdaption", false);
+				} else if(optimized != null) {
+					optimized.setParameter("noAdaption", true);
+				}
 			}
 
 			IQuerySharingOptimizer qso = getQuerySharingOptimizer();
@@ -86,6 +94,10 @@ public class StandardOptimizer extends AbstractOptimizer {
 		this.planOptimizer.optimizePlan(parameter, executionPlan, dd);
 	}
 
-
+	@Override
+	public void handleFinishedMigration(IPhysicalQuery query) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

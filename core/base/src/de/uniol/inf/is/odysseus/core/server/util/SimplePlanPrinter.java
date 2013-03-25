@@ -20,6 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 
 public class SimplePlanPrinter<T> {
 
@@ -68,9 +69,12 @@ public class SimplePlanPrinter<T> {
 	}
 
 	private static String getObjectName(Object object){
-		String name ="";
-		name = object.getClass().getSimpleName()+" ("+object.hashCode()+")";
-		return name;
+		StringBuffer name = new StringBuffer();
+		name.append(object.getClass().getSimpleName()+" ("+object.hashCode()+")");
+		if (object  instanceof IOwnedOperator){
+			name.append(" Owner: "+((IOwnedOperator)object).getOwnerIDs());
+		}
+		return name.toString();
 	}
 	
 	private static String getIndent(int depth) {

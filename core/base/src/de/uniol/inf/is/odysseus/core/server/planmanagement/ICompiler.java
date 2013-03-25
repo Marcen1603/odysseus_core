@@ -20,6 +20,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.plangeneration.IPlanGenerator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Wolf Bauer, Tobias Witt
  * 
  */
-public interface ICompiler extends IInfoProvider, IRewrite {
+public interface ICompiler extends IInfoProvider, IRewrite, IPlanGenerator {
 	/**
 	 * Translates a query represented as a string into a logical plan. Multiple
 	 * queries could be represented by a ";"-separated string.
