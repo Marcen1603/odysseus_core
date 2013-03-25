@@ -297,6 +297,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 			// addPhysicalChildren(GraphHelper.getChildren(root));
 			addPhysicalChildren(getChildren(root));
 		}
+		determineIteratableSourcesAndLeafs(roots);
+		
 	}
 
 	@SuppressWarnings("unchecked")
