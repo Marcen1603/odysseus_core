@@ -16,75 +16,22 @@
 package de.uniol.inf.is.odysseus.interval.function;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractBinaryOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.interval.datatype.IntervalDouble;
 import de.uniol.inf.is.odysseus.interval.sdf.schema.SDFIntervalDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalPlusOperator extends AbstractBinaryOperator<Interval> {
-
+public class IntervalDifferenceFunction extends
+		AbstractFunction<IntervalDouble> {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 5061875515922895924L;
-
-	@Override
-	public int getPrecedence() {
-		return 6;
-	}
-
-	@Override
-	public String getSymbol() {
-		return "+";
-	}
-
-	@Override
-	public Interval getValue() {
-		Interval a = getInputValue(0);
-		Interval b = getInputValue(1);
-		return getValueInternal(a, b);
-	}
-
-	protected Interval getValueInternal(Interval a, Interval b) {
-		return new Interval(a.inf() + b.inf(), a.sup() + b.sup());
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFIntervalDatatype.INTERVAL_DOUBLE;
-	}
-
-	@Override
-	public de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
-		return ASSOCIATIVITY.LEFT_TO_RIGHT;
-	}
-
-	@Override
-	public boolean isCommutative() {
-		return false;
-	}
-
-	@Override
-	public boolean isAssociative() {
-		return false;
-	}
-
-	@Override
-	public boolean isLeftDistributiveWith(IOperator<Interval> operator) {
-		return false;
-	}
-
-	@Override
-	public boolean isRightDistributiveWith(IOperator<Interval> operator) {
-		return false;
-	}
-
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
+	private static final long serialVersionUID = -4670597155345841395L;
+	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
 			SDFIntervalDatatype.INTERVAL_BYTE,
 			SDFIntervalDatatype.INTERVAL_SHORT,
 			SDFIntervalDatatype.INTERVAL_INTEGER,
@@ -93,16 +40,54 @@ public class IntervalPlusOperator extends AbstractBinaryOperator<Interval> {
 			SDFIntervalDatatype.INTERVAL_LONG };
 
 	@Override
+	public int getArity() {
+		return 2;
+	}
+
+	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException(
 					"negative argument index not allowed");
 		}
-		if (argPos > this.getArity() - 1) {
+		if (argPos > 0) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument(s).");
 		}
 		return accTypes;
 	}
 
+	@Override
+	public String getSymbol() {
+		return "difference";
+	}
+
+	@Override
+	public IntervalDouble getValue() {
+		IntervalDouble a = this.getInputValue(0);
+		IntervalDouble b = this.getInputValue(1);
+		if (!this.intersects(a, b)) {
+			return new IntervalDouble(Double.MAX_VALUE, Double.MIN_VALUE);
+		}
+		if ((b.inf() >= a.inf()) && (b.sup() <= a.sup())) {
+			return null;
+		}
+		if ((b.inf() <= a.inf()) && (b.sup() <= a.sup())) {
+			return new IntervalDouble(b.sup(), a.sup());
+		}
+		if (b.inf() >= a.inf()) {
+			return new IntervalDouble(a.inf(), b.inf());
+		}
+		return new IntervalDouble(Double.MAX_VALUE, Double.MIN_VALUE);
+	}
+
+	@Override
+	public SDFDatatype getReturnType() {
+		return SDFIntervalDatatype.INTERVAL_DOUBLE;
+	}
+
+	private boolean intersects(final IntervalDouble a, final IntervalDouble b) {
+		return ((!a.isEmpty()) && (!b.isEmpty()) && (b.inf() <= a.sup()) && (a
+				.inf() <= b.sup()));
+	}
 }

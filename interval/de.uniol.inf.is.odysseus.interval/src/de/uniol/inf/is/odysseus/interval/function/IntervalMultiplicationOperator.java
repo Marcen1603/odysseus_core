@@ -21,8 +21,8 @@ import de.uniol.inf.is.odysseus.core.server.mep.AbstractBinaryOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MinusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.PlusOperator;
+import de.uniol.inf.is.odysseus.interval.datatype.IntervalDouble;
 import de.uniol.inf.is.odysseus.interval.sdf.schema.SDFIntervalDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
  * 
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  * 
  */
 public class IntervalMultiplicationOperator extends
-		AbstractBinaryOperator<Interval> {
+		AbstractBinaryOperator<IntervalDouble> {
 
 	/**
 	 * 
@@ -48,20 +48,20 @@ public class IntervalMultiplicationOperator extends
 	}
 
 	@Override
-	public Interval getValue() {
-		Interval a = getInputValue(0);
-		Interval b = getInputValue(1);
+	public IntervalDouble getValue() {
+		IntervalDouble a = getInputValue(0);
+		IntervalDouble b = getInputValue(1);
 		return getValueInternal(a, b);
 	}
 
-	protected Interval getValueInternal(Interval a, Interval b) {
+	protected IntervalDouble getValueInternal(IntervalDouble a, IntervalDouble b) {
 		final double inf = Math.min(
 				Math.min(a.inf() * b.inf(), a.inf() * b.sup()),
 				Math.min(a.sup() * b.inf(), a.sup() * b.sup()));
 		final double sup = Math.max(
 				Math.max(a.inf() * b.inf(), a.inf() * b.sup()),
 				Math.max(a.sup() * b.inf(), a.sup() * b.sup()));
-		return new Interval(inf, sup);
+		return new IntervalDouble(inf, sup);
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class IntervalMultiplicationOperator extends
 	}
 
 	@Override
-	public boolean isLeftDistributiveWith(IOperator<Interval> operator) {
+	public boolean isLeftDistributiveWith(IOperator<IntervalDouble> operator) {
 		return operator.getClass() == IntervalPlusOperator.class
 				|| operator.getClass() == IntervalMinusOperator.class
 				|| operator.getClass() == PlusOperator.class
@@ -93,7 +93,7 @@ public class IntervalMultiplicationOperator extends
 	}
 
 	@Override
-	public boolean isRightDistributiveWith(IOperator<Interval> operator) {
+	public boolean isRightDistributiveWith(IOperator<IntervalDouble> operator) {
 		return operator.getClass() == IntervalPlusOperator.class
 				|| operator.getClass() == IntervalMinusOperator.class
 				|| operator.getClass() == PlusOperator.class
