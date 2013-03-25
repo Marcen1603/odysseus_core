@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -160,4 +161,11 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		T retValue = getDataHandler().readData(ret);
 		return retValue;
 	}
+	
+	public void write(T object) throws IOException {
+		if (object instanceof ICSVToString){
+			writer.write(((ICSVToString)object).csvToString());
+		}
+		
+	};
 }
