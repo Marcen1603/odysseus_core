@@ -28,9 +28,14 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimestampToPayloadAO;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
@@ -137,7 +142,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	public static void publish(QueryPart part, String destinationPeer, ID sharedQueryID) {
+	private static void publish(QueryPart part, String destinationPeer, ID sharedQueryID) {
 		Preconditions.checkNotNull(part, "QueryPart to share must not be null!");
 		part.removeDestinationName();
 
@@ -236,14 +241,16 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		return destinationNames;
 	}
 
-	private static Map<QueryPart, ILogicalOperator> determineNextQueryParts(ILogicalOperator relativeSink, Map<QueryPart, String> queryPartDistributionMap) {
+	private static Map<QueryPart, ILogicalOperator> determineNextQueryParts(QueryPart currentQueryPart, ILogicalOperator relativeSink, Map<QueryPart, String> queryPartDistributionMap) {
 		final Map<QueryPart, ILogicalOperator> next = Maps.newHashMap();
 		if (relativeSink.getSubscriptions().size() > 0) {
 
 			for (final LogicalSubscription subscription : relativeSink.getSubscriptions()) {
 				final ILogicalOperator target = subscription.getTarget();
-				final QueryPart targetQueryPart = findLogicalOperator(target, queryPartDistributionMap.keySet());
-				next.put(targetQueryPart, target);
+				if( !currentQueryPart.getOperators().contains(target)) {
+					final QueryPart targetQueryPart = findLogicalOperator(target, queryPartDistributionMap.keySet());
+					next.put(targetQueryPart, target);
+				}
 			}
 		}
 		return next;
@@ -300,8 +307,8 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 				return part;
 			}
 		}
-		// should not happen here
-		return null;
+		
+		throw new IllegalArgumentException("Could not find query part for logical operator " + target);
 	}
 
 	private static void generatePeerConnection(ILogicalOperator startOperator, QueryPart startPart, ILogicalOperator endOperator, QueryPart endPart) {
@@ -314,8 +321,11 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		access.setProtocolHandler(PROTOCOL_HANDLER_NAME);
 		access.setDataHandler(DATA_HANDLER_NAME);
 		access.setOptions(createOptionsMap(pipeID));
-		access.setOutputSchema(startOperator.getOutputSchema());
+		access.setOutputSchema(appendOutputSchemaWithTimestamps(startOperator.getOutputSchema(), access.getSourcename()));
 		access.setName(ACCESS_NAME + connectionNumber);
+		final ProjectAO projectAO = new ProjectAO();
+		projectAO.setOutputSchemaWithList(truncOutputSchemaFromTimestamps(access.getOutputSchema()));
+		projectAO.addParameterInfo("ATTRIBUTES", toString(projectAO.getOutputSchema()));
 
 		final SenderAO sender = new SenderAO();
 		sender.setSink(pipeID.toString());
@@ -325,15 +335,48 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		sender.setDataHandler(DATA_HANDLER_NAME);
 		sender.setOptions(createOptionsMap(pipeID));
 		sender.setName(SENDER_NAME + connectionNumber);
+		final TimestampToPayloadAO payloadAO = new TimestampToPayloadAO();
 
 		final LogicalSubscription removingSubscription = determineSubscription(startOperator, endOperator);
-
 		startOperator.unsubscribeSink(removingSubscription);
-		startOperator.subscribeSink(sender, 0, removingSubscription.getSourceOutPort(), startOperator.getOutputSchema());
-		endOperator.subscribeToSource(access, removingSubscription.getSinkInPort(), 0, access.getOutputSchema());
+				
+		startOperator.subscribeSink(payloadAO, 0, removingSubscription.getSourceOutPort(), startOperator.getOutputSchema());
+		payloadAO.subscribeSink(sender, 0, 0, payloadAO.getOutputSchema());
+		
+		projectAO.subscribeToSource(access, 0, 0, access.getOutputSchema());
+		endOperator.subscribeToSource(projectAO, removingSubscription.getSinkInPort(), 0, projectAO.getOutputSchema());
 
 		startPart.addSenderAO(sender, startOperator);
 		endPart.addAccessAO(access, endOperator);
+	}
+
+	private static String toString(SDFSchema outputSchema) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		List<SDFAttribute> attributes = outputSchema.getAttributes();
+		for( int i = 0; i < attributes.size(); i++ ) {
+			sb.append("'").append(attributes.get(i).getAttributeName()).append("'");
+			if( i < attributes.size() - 1 ) {
+				sb.append(", ");
+			}
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
+	private static List<SDFAttribute> truncOutputSchemaFromTimestamps(SDFSchema outputSchema) {
+		// annahme, die beiden neuen attribute sind ganz hinten..
+		final List<SDFAttribute> newSchema = Lists.newArrayList(outputSchema.getAttributes());
+		newSchema.remove(newSchema.size() - 1);
+		newSchema.remove(newSchema.size() - 1);
+		return newSchema;
+	}
+
+	private static SDFSchema appendOutputSchemaWithTimestamps(SDFSchema base, String sourceName) {
+		final List<SDFAttribute> attributes = Lists.newArrayList(base.getAttributes());
+		attributes.add(new SDFAttribute(sourceName, "start", SDFDatatype.START_TIMESTAMP));
+		attributes.add(new SDFAttribute(sourceName, "end", SDFDatatype.END_TIMESTAMP));
+		return new SDFSchema("", attributes);
 	}
 
 	private static ID generateSharedQueryID() {
@@ -357,7 +400,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		for (final QueryPart queryPart : queryPartDistributionMap.keySet()) {
 
 			for (final ILogicalOperator relativeSink : queryPart.getRelativeSinks()) {
-				final Map<QueryPart, ILogicalOperator> nextOperators = determineNextQueryParts(relativeSink, queryPartDistributionMap);
+				final Map<QueryPart, ILogicalOperator> nextOperators = determineNextQueryParts(queryPart, relativeSink, queryPartDistributionMap);
 				if (!nextOperators.isEmpty()) {
 					for (final QueryPart destQueryPart : nextOperators.keySet()) {
 						generatePeerConnection(relativeSink, queryPart, nextOperators.get(destQueryPart), destQueryPart);
