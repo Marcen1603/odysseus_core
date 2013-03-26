@@ -140,11 +140,11 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			inElem.getMetadata().setStart(start);
 
 		} else {
-			if (startAttrPos > 0) {
+			if (startAttrPos >= 0) {
 				PointInTime start = extractTimestamp(inElem, startAttrPos);
 				inElem.getMetadata().setStart(start);
 			}
-			if (endAttrPos > 0) {
+			if (endAttrPos >= 0) {
 				PointInTime end = extractTimestamp(inElem, endAttrPos);
 				inElem.getMetadata().setEnd(end);
 			}
