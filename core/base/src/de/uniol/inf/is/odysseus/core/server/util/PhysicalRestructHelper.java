@@ -51,7 +51,7 @@ public class PhysicalRestructHelper {
 	
 	public static PhysicalSubscription<?> removeSubscription(IPhysicalOperator parent, IPhysicalOperator child) {
 		for (PhysicalSubscription<?> sub : ((ISink<?>)parent).getSubscribedToSource()) {
-			if (sub.getTarget() == child) {
+			if (sub.getTarget().equals(child)) {
 				((ISink<?>)parent).unsubscribeFromSource((PhysicalSubscription)sub);
 				return sub;
 			}
