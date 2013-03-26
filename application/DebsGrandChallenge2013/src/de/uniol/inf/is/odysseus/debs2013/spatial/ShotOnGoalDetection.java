@@ -32,12 +32,11 @@ public abstract class ShotOnGoalDetection extends AbstractFunction<Boolean>{
 	@Override
 	public Boolean getValue() {
 		GeometryFactory gf = new GeometryFactory();
-		Point startPoint = (Point) getInputValue(0);
-		Point endPoint = (Point) getInputValue(1);
-		endPoint.getCoordinate().x += (endPoint.getCoordinate().x - startPoint.getCoordinate().x) * 10000;
-		endPoint.getCoordinate().y += (endPoint.getCoordinate().y - startPoint.getCoordinate().y) * 10000;
-		LineString shot = gf.createLineString(new Coordinate[] { startPoint.getCoordinate(), endPoint.getCoordinate() });
-		System.out.println(shot.toString());
+		Coordinate startCoordinate = ((Point) getInputValue(0)).getCoordinate();
+		Coordinate endCoordinate = ((Point) getInputValue(1)).getCoordinate();		
+		Coordinate newEndCoordinate = new Coordinate( endCoordinate.x + (endCoordinate.x - startCoordinate.x) * 10000, 
+														endCoordinate.y + (endCoordinate.y - startCoordinate.y) * 10000);
+		LineString shot = gf.createLineString(new Coordinate[] { startCoordinate, newEndCoordinate });
 		return shot.intersects(goal);
 		
 	 }
