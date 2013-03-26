@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,17 +54,17 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			int endAttrPos, boolean clearEnd, String dateFormat, String timezone) {
 		this.startAttrPos = startAttrPos;
 		this.endAttrPos = endAttrPos;
-		
-		if (dateFormat != null){
+
+		if (dateFormat != null) {
 			df = new SimpleDateFormat(dateFormat);
-		}else{
+		} else {
 			df = null;
 		}
-        if (timezone != null) {
-        	this.timezone = TimeZone.getTimeZone(timezone);
-        } else {
-        	this.timezone = TimeZone.getTimeZone("UTC");
-        }
+		if (timezone != null) {
+			this.timezone = TimeZone.getTimeZone(timezone);
+		} else {
+			this.timezone = TimeZone.getTimeZone("UTC");
+		}
 		startTimestampYearPos = -1;
 		startTimestampMonthPos = -1;
 		startTimestampDayPos = -1;
@@ -81,7 +81,8 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			int startTimestampYear, int startTimestampMonth,
 			int startTimestampDay, int startTimestampHour,
 			int startTimestampMinute, int startTimestampSecond,
-			int startTimestampMillisecond, int factor, boolean clearEnd, String timezone) {
+			int startTimestampMillisecond, int factor, boolean clearEnd,
+			String timezone) {
 		this.startAttrPos = -1;
 		this.endAttrPos = -1;
 
@@ -97,11 +98,11 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		this.clearEnd = clearEnd;
 
 		df = null;
-        if (timezone != null) {
-        	this.timezone = TimeZone.getTimeZone(timezone);
-        } else {
-        	this.timezone = TimeZone.getTimeZone("UTC");
-        }
+		if (timezone != null) {
+			this.timezone = TimeZone.getTimeZone(timezone);
+		} else {
+			this.timezone = TimeZone.getTimeZone("UTC");
+		}
 	}
 
 	@Override
@@ -123,9 +124,9 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 					.getAttribute(startTimestampMinutePos) : 0);
 			int second = (Integer) (startTimestampSecondPos > 0 ? inElem
 					.getAttribute(startTimestampSecondPos) : 0);
-			cal.set(year, month-1, day, hour, minute, second);
+			cal.set(year, month - 1, day, hour, minute, second);
 			long ts = cal.getTimeInMillis();
-			
+
 			if (startTimestampMillisecondPos > 0) {
 				ts = ts
 						+ ((Long) inElem
@@ -139,9 +140,10 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			inElem.getMetadata().setStart(start);
 
 		} else {
-			PointInTime start = extractTimestamp(inElem, startAttrPos);
-
-			inElem.getMetadata().setStart(start);
+			if (startAttrPos > 0) {
+				PointInTime start = extractTimestamp(inElem, startAttrPos);
+				inElem.getMetadata().setStart(start);
+			}
 			if (endAttrPos > 0) {
 				PointInTime end = extractTimestamp(inElem, endAttrPos);
 				inElem.getMetadata().setEnd(end);
@@ -150,19 +152,20 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 
 	}
 
-	private PointInTime extractTimestamp(
-			Tuple<? extends ITimeInterval> inElem, int attrPos) {
+	private PointInTime extractTimestamp(Tuple<? extends ITimeInterval> inElem,
+			int attrPos) {
 		final Number timeN;
-		if (df != null){
-			String timeString = (String)inElem.getAttribute(attrPos);
+		if (df != null) {
+			String timeString = (String) inElem.getAttribute(attrPos);
 			try {
 				timeN = df.parse(timeString).getTime();
 			} catch (ParseException e) {
 				e.printStackTrace();
-				throw new RuntimeException("Date cannot be parsed! "+timeString);
+				throw new RuntimeException("Date cannot be parsed! "
+						+ timeString);
 			}
-		}else{
-			timeN=(Number) inElem.getAttribute(attrPos);
+		} else {
+			timeN = (Number) inElem.getAttribute(attrPos);
 		}
 		PointInTime time = null;
 		if (timeN.longValue() == -1) {
@@ -172,17 +175,15 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		}
 		return time;
 	}
-	
-	
 
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (clearEnd ? 1231 : 1237);
 		result = prime * result + ((df == null) ? 0 : df.hashCode());
-		result = prime * result + ((timezone == null) ? 0 : timezone.hashCode());
+		result = prime * result
+				+ ((timezone == null) ? 0 : timezone.hashCode());
 		result = prime * result + endAttrPos;
 		result = prime * result + factor;
 		result = prime * result + startAttrPos;
@@ -245,8 +246,9 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		String form = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 		SimpleDateFormat df = new SimpleDateFormat(form);
 		ParsePosition ps = new ParsePosition(0);
-		System.out.println(df.parse(test,ps)+" parse position "+ps+" "+test.substring(ps.getIndex()));
-		
+		System.out.println(df.parse(test, ps) + " parse position " + ps + " "
+				+ test.substring(ps.getIndex()));
+
 	}
-	
+
 }
