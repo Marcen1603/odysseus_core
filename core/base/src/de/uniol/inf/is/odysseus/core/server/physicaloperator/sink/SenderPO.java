@@ -60,12 +60,11 @@ public class SenderPO<T extends IStreamObject<?>> extends AbstractSink<T> {
         if (this.isOpen()) {
             try {
                 protocolHandler.close();
-            }
-            catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                super.process_close();
+            } catch (Exception e) {
+                LOG.error("Could not close protocol handler {}", protocolHandler, e);
                 throw new OpenFailedException(e);
             }
-            super.process_close();
         }
     }
 
