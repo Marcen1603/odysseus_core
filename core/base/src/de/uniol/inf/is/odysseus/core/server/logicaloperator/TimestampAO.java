@@ -128,6 +128,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return this.isUsingSystemTime;
 	}
 
+	@Parameter(type = BooleanParameter.class, name = "SystemTime", isList = false, optional = true)
 	public void setIsUsingSystemTime(boolean value) {
 		this.isUsingSystemTime = value;
 	}
