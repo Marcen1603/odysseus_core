@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.debs2013.feature"
+      id="de.uniol.inf.is.odysseus.debs2013.feature"
       label="DEBS Grand Challenge 2013 Soccergame Feature"
       version="1.0.0.qualifier">
 
@@ -34,7 +34,7 @@ Unless required by applicable law or agreed to in writing, software
    </requires>
 
    <plugin
-         id="de.uniol.inf.is.debs2013"
+         id="de.uniol.inf.is.odysseus.debs2013"
          download-size="0"
          install-size="0"
          version="0.0.0"
