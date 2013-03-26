@@ -96,9 +96,11 @@ public class SDFProbabilisticExpression extends SDFExpression {
 		}
 		if (this.distributions == null) {
 			System.out.println("DISS NULL");
-		}
-		this.distributions.clear();
-		this.distributions.addAll(Arrays.asList(distributions));
+			
+		} else {
+			this.distributions.clear();
+			this.distributions.addAll(Arrays.asList(distributions));
+		}		
 	}
 
 	public NormalDistributionMixture getDistributions(int distributionIndex) {
