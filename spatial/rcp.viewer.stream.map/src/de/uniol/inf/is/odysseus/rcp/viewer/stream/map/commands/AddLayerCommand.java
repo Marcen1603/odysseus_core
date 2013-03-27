@@ -8,7 +8,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.NewLayerDialog;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyTitleDialog;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
 

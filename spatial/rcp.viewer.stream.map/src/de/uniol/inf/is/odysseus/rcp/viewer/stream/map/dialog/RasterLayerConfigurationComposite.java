@@ -1,41 +1,26 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.OdysseusMapPlugIn;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
-
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.core.databinding.beans.PojoProperties;
-import org.eclipse.core.databinding.conversion.Converter;
-import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.UpdateListStrategy;
-import org.eclipse.core.internal.databinding.conversion.StringToBooleanConverter;
 
 public class RasterLayerConfigurationComposite extends Composite {
+	@SuppressWarnings("unused")
 	private DataBindingContext m_bindingContext;
 	RasterLayerConfiguration configuration = null;
 	MapEditorModel model = null;

@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
@@ -37,6 +36,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
  */
 final class GeometryPaintListener implements PaintListener {
 
+	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory
 			.getLogger(GeometryPaintListener.class);
 	
@@ -65,6 +65,7 @@ final class GeometryPaintListener implements PaintListener {
 		double scale = this.streamMapEditor.getScreenManager().getScale();
 		Point dpi = canvas.getDisplay().getDPI();
 		Point screenSize = this.streamMapEditor.getScreenManager().getCanvas().getSize();
+		@SuppressWarnings("unused")
 		Coordinate sizeInCm = new Coordinate(screenSize.x / dpi.x * 25.4, screenSize.x / dpi.x * 25.4);
 		int dpcm = (int) Math.floor(dpi.x / 2.54);
 		int ypos = (screenSize.y - 10);

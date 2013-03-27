@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
 import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.swt.graphics.GC;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -11,14 +9,13 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.GroupLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.NullConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
 public class GroupLayer extends LinkedList<ILayer> implements ILayer {
 
+	private static final long serialVersionUID = -8651572425902988389L;
 	private LayerConfiguration configuration;
 	private boolean active = true;
 	

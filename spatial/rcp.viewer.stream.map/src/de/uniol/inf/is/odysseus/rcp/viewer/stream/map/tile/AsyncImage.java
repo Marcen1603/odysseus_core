@@ -47,8 +47,10 @@ public final class AsyncImage implements Runnable {
 	private final int x, y, z;
 	private final Envelope env;
 
+	@SuppressWarnings("unused")
 	private long time = 0; 
 	
+	@SuppressWarnings("unused")
 	private ScreenManager manager;
 	// private Display display;
 	private AsyncImage parent;

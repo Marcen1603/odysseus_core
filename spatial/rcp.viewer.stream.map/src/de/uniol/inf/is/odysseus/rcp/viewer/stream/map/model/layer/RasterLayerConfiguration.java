@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.OdysseusMapPlugIn;
-
 public class RasterLayerConfiguration extends LayerConfiguration {
 
 	/**

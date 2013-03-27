@@ -114,6 +114,7 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 						IStructuredContentProvider contentprovider = new IStructuredContentProvider() {
 							Collection<IPhysicalQuery> operator;
 
+							@SuppressWarnings("unchecked")
 							@Override
 							public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 								this.operator = (Collection<IPhysicalQuery>) newInput;

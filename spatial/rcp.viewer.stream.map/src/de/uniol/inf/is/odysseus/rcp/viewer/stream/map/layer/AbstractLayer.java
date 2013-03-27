@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
-import com.vividsolutions.jts.geom.Envelope;
-
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 

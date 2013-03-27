@@ -87,7 +87,6 @@ public class StreamMapEditorOutlineTreeContentProvider implements ITreeContentPr
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IStreamConnection<?>) {

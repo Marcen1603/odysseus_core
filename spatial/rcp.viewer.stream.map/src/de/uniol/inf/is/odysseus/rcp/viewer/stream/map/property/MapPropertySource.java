@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
 
 public class MapPropertySource implements IPropertySource {
 
+	@SuppressWarnings("unused")
 	private final StreamMapEditorPart editor;
 	
 

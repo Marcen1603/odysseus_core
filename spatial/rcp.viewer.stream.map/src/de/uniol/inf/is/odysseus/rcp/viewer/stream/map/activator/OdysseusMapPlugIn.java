@@ -16,8 +16,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator;
 
 
-import java.util.Properties;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -26,7 +24,6 @@ import org.osgi.framework.BundleContext;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerTypeRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerConfiguration;
 
 

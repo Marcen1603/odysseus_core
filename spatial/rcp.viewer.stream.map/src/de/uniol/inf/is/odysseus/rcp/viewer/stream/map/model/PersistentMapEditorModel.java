@@ -17,6 +17,7 @@ public class PersistentMapEditorModel implements Serializable {
 	private LinkedList<PersistentQuery> queries = null;
 	private LinkedList<LayerConfiguration> layers = null;
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addLayers(LinkedList<ILayer> layers) {
 		for (ILayer layer : layers) {
 			if (!(layer instanceof BasicLayer)){

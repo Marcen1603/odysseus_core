@@ -12,6 +12,7 @@ public class NullConfiguration extends LayerConfiguration{
 		// TODO Auto-generated constructor stub
 	}
 
+	@SuppressWarnings("unused")
 	private NullConfiguration(String layerName) {
 		super(layerName);
 		// TODO Auto-generated constructor stub

@@ -86,7 +86,6 @@ public class MapLayerViewTreeContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IStreamConnection<?>) {

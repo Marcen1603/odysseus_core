@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.expression;
 
-import org.eclipse.swt.graphics.Color;
-
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.style.PersistentCondition;
 
 public class IntegerCondition extends Condition<Integer>{

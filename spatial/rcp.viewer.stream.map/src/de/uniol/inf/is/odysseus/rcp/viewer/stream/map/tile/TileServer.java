@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tile;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import org.osgeo.proj4j.ProjCoordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 

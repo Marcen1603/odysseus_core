@@ -152,6 +152,7 @@ public class StyleComposite extends Composite {
 			public void update(ViewerCell cell) {
 				if (cell.getElement() instanceof Style) {
 					Style style = (Style) cell.getElement();
+					@SuppressWarnings("unused")
 					int i = cell.getColumnIndex();
 					if (cell.getColumnIndex() == numColumn)
 						cell.setBackground(style.getFillColor().getDefault());
@@ -209,6 +210,7 @@ public class StyleComposite extends Composite {
 			public void update(ViewerCell cell) {
 				if (cell.getElement() instanceof Style) {
 					Style style = (Style) cell.getElement();
+					@SuppressWarnings("unused")
 					int i = cell.getColumnIndex();
 					if (cell.getColumnIndex() == numColumn)
 						cell.setBackground(style.getLineColor().getDefault());
@@ -271,6 +273,7 @@ public class StyleComposite extends Composite {
 			}
 		});
 		treeViewerColumn.setEditingSupport(new EditingSupport(treeViewer) {
+			@SuppressWarnings("unused")
 			String[] shapes = null;
 			{
 				// SHAPE[] shape = SHAPE.values();
@@ -426,6 +429,7 @@ public class StyleComposite extends Composite {
 		final int lineWidthColumn = addShapeSizeColumn(treeViewer, numColumn++);
 
 		treeViewer.setContentProvider(new ITreeContentProvider() {
+			@SuppressWarnings("unused")
 			LayerConfiguration input;
 			StyleElement root;
 

@@ -1,11 +1,8 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.style;
 
-import java.awt.Color;
 import java.io.Serializable;
 import java.util.LinkedList;
 import org.eclipse.swt.graphics.RGB;
-
-import com.vividsolutions.jts.geom.util.LinearComponentExtracter;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;

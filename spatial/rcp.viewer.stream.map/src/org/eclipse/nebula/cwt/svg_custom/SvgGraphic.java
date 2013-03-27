@@ -10,9 +10,6 @@
  *****************************************************************************/
 package org.eclipse.nebula.cwt.svg_custom;
 
-import java.util.HashMap;
-
-import org.eclipse.nebula.cwt.svg_custom.SvgDocument.VARIABLE;
 import org.eclipse.nebula.cwt.svg_custom.SvgPaint.PaintType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;

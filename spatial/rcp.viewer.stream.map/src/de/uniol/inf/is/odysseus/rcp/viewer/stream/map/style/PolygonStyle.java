@@ -15,20 +15,10 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style;
 
-import javax.swing.text.ChangedCharSetException;
-
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.PaletteData;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.widgets.Display;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.expression.ColorCondition;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.expression.IntegerCondition;
 

@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.commands;
 
 import java.util.Collection;
-import java.util.List;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -32,8 +30,10 @@ public class AddSourceCommand extends AbstractHandler implements IHandler {
 		
 		StreamMapEditorPart editor = (StreamMapEditorPart) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getActiveEditor();
 		
+		@SuppressWarnings("unused")
 		Shell shell = editor.getScreenManager().getDisplay().getActiveShell(); 
 		
+		@SuppressWarnings("unused")
 		ISession user = OdysseusRCPPlugIn.getActiveSession();
 		IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		IServerExecutor serverExecutor = null;
@@ -50,6 +50,7 @@ public class AddSourceCommand extends AbstractHandler implements IHandler {
 			IStructuredContentProvider contentprovider = new IStructuredContentProvider() {
 				Collection<IPhysicalQuery> operator;
 
+				@SuppressWarnings("unchecked")
 				@Override
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 					this.operator = (Collection<IPhysicalQuery>) newInput;

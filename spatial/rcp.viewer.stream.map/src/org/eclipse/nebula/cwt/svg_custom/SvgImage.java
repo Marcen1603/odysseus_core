@@ -1,9 +1,5 @@
 package org.eclipse.nebula.cwt.svg_custom;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
 import java.io.IOException;
 import java.net.URL;
 

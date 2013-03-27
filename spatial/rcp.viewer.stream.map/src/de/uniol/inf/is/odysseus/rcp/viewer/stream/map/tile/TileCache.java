@@ -14,6 +14,7 @@ public class TileCache {
 		private static final long serialVersionUID = 3355437879185799011L;
 
 		protected boolean removeEldestEntry(Map.Entry<Tile, AsyncImage> eldest) {
+			@SuppressWarnings("unused")
 			long time = System.currentTimeMillis();
 			boolean remove = size() > CACHE_SIZE;
 			if (remove){

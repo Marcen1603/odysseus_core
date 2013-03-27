@@ -4,8 +4,6 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.properties;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
-
 /**
  * 
  * Category class for a treeviewer

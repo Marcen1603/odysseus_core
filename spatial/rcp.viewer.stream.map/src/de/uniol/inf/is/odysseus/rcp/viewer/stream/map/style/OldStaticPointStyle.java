@@ -17,11 +17,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.style.PersistentCondition;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.expression.ColorCondition;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.expression.IntegerCondition;
 

@@ -18,15 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.PlatformUI;
-import org.osgeo.proj4j.CRSFactory;
-import org.osgeo.proj4j.CoordinateReferenceSystem;
-import org.osgeo.proj4j.CoordinateTransform;
-import org.osgeo.proj4j.CoordinateTransformFactory;
-import org.osgeo.proj4j.ProjCoordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +34,6 @@ import com.vividsolutions.jts.index.quadtree.Quadtree;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
@@ -157,7 +148,8 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 	public void draw(GC gc) {
 		if (screenManager != null){
 		Envelope world = screenManager.getViewportWorldCoord();
-			List result =  this.tree.query(world);
+			@SuppressWarnings("unchecked")
+			List<Object> result =  this.tree.query(world);
 			for (Object obj : result) {
 				DataSet dataSet = (DataSet) obj;
 				drawGeometry(dataSet.getGeometry(), gc, dataSet.getTuple());

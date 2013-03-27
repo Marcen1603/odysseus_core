@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views;
 
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model;
 
-import java.beans.PropertyChangeSupport;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -26,14 +25,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 
-import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -47,12 +41,10 @@ import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.GroupLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerTypeRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.GroupLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
@@ -92,6 +84,7 @@ public class MapEditorModel extends ModelObject {
 		screenManager.redraw();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static MapEditorModel open(IFile file, StreamMapEditorPart editor) {
 		iFile = file;
 		MapEditorModel newModel = new MapEditorModel();
@@ -188,6 +181,8 @@ public class MapEditorModel extends ModelObject {
 //							}
 //						}
 //						DefaultStreamConnection connection = new DefaultStreamConnection(subs);
+						
+						@SuppressWarnings({ "rawtypes"})
 						DefaultStreamConnection connection = new DefaultStreamConnection(ops);
 						newModel.addConnection(connection, phyQuery, editor);
 					}
@@ -204,6 +199,7 @@ public class MapEditorModel extends ModelObject {
 		return newModel;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Gson getGson(){
 		GsonBuilder gsonbuilder = new GsonBuilder().setPrettyPrinting();
 		RuntimeTypeAdapterFactory layerConfigurationFactory = RuntimeTypeAdapterFactory.of(LayerConfiguration.class);
@@ -442,6 +438,7 @@ public class MapEditorModel extends ModelObject {
 
 			// Dann ausf�hren
 			variables = new HashMap<String, Object>();
+			@SuppressWarnings("unused")
 			int counter = 1;
 			for (PreParserStatement stmt : statements) {
 				// monitor.subTask("Executing (" + counter + " / " +
@@ -593,6 +590,7 @@ public class MapEditorModel extends ModelObject {
 	}
 
 	public Collection<GroupLayer> getGroups(ILayer element) {
+		@SuppressWarnings("unused")
 		LinkedList<GroupLayer> list = new LinkedList<GroupLayer>();
 //		for()
 		return this.groups.values();

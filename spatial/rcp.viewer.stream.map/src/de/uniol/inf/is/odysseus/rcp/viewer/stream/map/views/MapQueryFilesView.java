@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 public class MapQueryFilesView extends AbstractStreamMapEditorViewPart {
 
+	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(MapQueryFilesView.class);
 
 	private TreeViewer treeViewer;

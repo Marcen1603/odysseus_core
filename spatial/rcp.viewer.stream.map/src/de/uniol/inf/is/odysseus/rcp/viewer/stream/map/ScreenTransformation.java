@@ -16,9 +16,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.eclipse.swt.graphics.Point;
 import org.osgeo.proj4j.CRSFactory;
 import org.osgeo.proj4j.CoordinateReferenceSystem;
 import org.osgeo.proj4j.CoordinateTransform;
@@ -90,7 +87,9 @@ public class ScreenTransformation {
 
 		int[] transformedCoordinate = new int[2];
 
+		@SuppressWarnings("unused")
 		int x = 0;
+		@SuppressWarnings("unused")
 		int y = 0;
 		long start = 0;
 		long end = 0;
@@ -101,6 +100,7 @@ public class ScreenTransformation {
 			getCoordinateTransform(srid).transform(src, trgt);
 			end = System.currentTimeMillis();
 		}
+		@SuppressWarnings("unused")
 		long dur = end - start;
 		// if(srid != 0){
 		// x = ProjectionUtil.lon2position(coordinate.x,
@@ -112,8 +112,11 @@ public class ScreenTransformation {
 		double scale = screenManager.getScale();
 		int[] offset = screenManager.getOffset();
 		Coordinate centerUV = screenManager.getCenterUV();
+		@SuppressWarnings("unused")
 		double d = (trgt.y / scale);
+		@SuppressWarnings("unused")
 		int xx = (int) Math.floor(centerUV.x + (trgt.x / scale));
+		@SuppressWarnings("unused")
 		int yy = (int) Math.floor(centerUV.y - (trgt.y / scale));
 		transformedCoordinate[0] = offset[0] + (int) Math.floor(centerUV.x + (trgt.x / scale));
 		transformedCoordinate[1] = offset[1] + (int) Math.floor(centerUV.y - (trgt.y / scale));

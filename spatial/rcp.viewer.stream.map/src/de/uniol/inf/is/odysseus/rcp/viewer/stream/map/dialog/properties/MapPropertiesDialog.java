@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.properties;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,16 +30,12 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfigura
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
 
 /**
  * 
@@ -59,6 +54,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 	HashMap<Integer, Style> hashStyles;
 
 	private MapEditorModel map;
+	@SuppressWarnings("unused")
 	private StreamMapEditorPart editor;
 
 	private LayerConfiguration layerConfiguration = null;

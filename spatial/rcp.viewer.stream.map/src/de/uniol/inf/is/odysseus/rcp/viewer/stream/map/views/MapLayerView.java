@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.swing.GroupLayout;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -14,7 +12,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -24,11 +21,9 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
@@ -38,15 +33,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.dialogs.ListDialog;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.NewLayerDialog;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.PropertyTitleDialog;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.properties.MapPropertiesDialog;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.properties.StylePropertiesDialog;
@@ -55,8 +45,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.GroupLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.GroupLayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOutlineLabelProvider;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOutlineTreeContentProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
@@ -385,6 +373,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 			if (i.getFirstElement() instanceof ILayer) {
 				mgr.add(new Action("Map properties") {
 					public void run() {
+						@SuppressWarnings("unused")
 						ITreeSelection i = (ITreeSelection) treeViewer
 								.getSelection();
 						if (hasMapEditor()) {

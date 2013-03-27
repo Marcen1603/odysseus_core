@@ -8,8 +8,6 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.ui.PlatformUI;
-
 import com.vividsolutions.jts.geom.Coordinate;
 
 

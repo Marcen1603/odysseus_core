@@ -6,8 +6,6 @@ import java.net.URL;
 
 
 import org.eclipse.nebula.cwt.svg_custom.SvgDocument;
-import org.eclipse.nebula.cwt.svg_custom.SvgElement;
-
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.style.PersistentCondition;
 
 public class ShapeCondition extends Condition<SvgDocument>{

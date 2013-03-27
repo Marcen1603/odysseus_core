@@ -16,11 +16,9 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style;
 
 import org.eclipse.nebula.cwt.svg_custom.SvgDocument;
-import org.eclipse.nebula.cwt.svg_custom.SvgElement;
 import org.eclipse.nebula.cwt.svg_custom.SvgDocument.VARIABLE;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -78,6 +76,7 @@ public class SVGPointStyle extends Style {
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor, Tuple<?> tuple) {
 		Integer size = this.getSize(tuple);
 		Rectangle bounds = new Rectangle(list[0]-size/2, list[1]-size/2, size, size);
+		@SuppressWarnings("unused")
 		Color tmpb = gc.getBackground();
 		Color tmp = gc.getForeground();
 		gc.setForeground(fcolor);

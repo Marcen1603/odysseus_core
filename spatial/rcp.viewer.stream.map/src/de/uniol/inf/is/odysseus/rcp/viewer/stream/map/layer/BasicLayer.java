@@ -5,7 +5,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.osgeo.proj4j.CoordinateTransform;
@@ -25,6 +24,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.NullConfigurat
 public class BasicLayer extends AbstractLayer<NullConfiguration>{
 
     private static final long serialVersionUID = -5707296757822008243L;
+	@SuppressWarnings("unused")
 	private static final int TILE_SIZE = 256;
 	private ScreenManager screenmanager;
 	private ScreenTransformation transformation;

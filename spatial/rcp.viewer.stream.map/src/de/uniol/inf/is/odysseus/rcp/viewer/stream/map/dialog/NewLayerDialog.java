@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
-import org.eclipse.swt.widgets.Label;
 
 public class NewLayerDialog extends TitleAreaDialog {
 

@@ -50,6 +50,7 @@ public class RasterLayerImageBuffered extends AbstractLayer<RasterLayerConfigura
 
 	private static final long serialVersionUID = 7482299307627103992L;
 
+	@SuppressWarnings("unused")
 	private static final Logger LOG = Logger.getLogger(RasterLayerImageBuffered.class.getName());
 
 	private TileServer tileServer;
@@ -304,6 +305,7 @@ public class RasterLayerImageBuffered extends AbstractLayer<RasterLayerConfigura
 //			if (Math.abs(dx) + Math.abs(dy) > 3 ) buffersize = 0.5;
 //			else buffersize = 0.2;
 			System.out.println("Buffersize :" +buffersize + " offset " + dx + " " + dy);
+			@SuppressWarnings("unused")
 			int[] off = manager.getOffset();
 			if (offset.x > size.x || offset.x < -size.x) {
 				offset = new Point(0, 0);

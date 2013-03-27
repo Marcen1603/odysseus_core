@@ -7,7 +7,6 @@ import org.eclipse.core.resources.IFile;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.GroupLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
 /**
  * 

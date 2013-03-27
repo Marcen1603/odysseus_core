@@ -11,7 +11,6 @@
 package org.eclipse.nebula.cwt.svg_custom;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.nebula.cwt.svg_custom.SvgDocument.VARIABLE;
