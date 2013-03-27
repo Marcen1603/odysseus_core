@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MigrationRouterPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
@@ -43,6 +44,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigr
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.MigrationHelper;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.exception.MigrationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
@@ -73,6 +75,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 	private Set<IMigrationListener> listener;
 
+	private IPhysicalQuery physicalQuery;
+
 	public SimplePlanMigrationStrategy() {
 		this.routerStrategy = new HashMap<MigrationRouterPO<?>, StrategyContext>();
 		this.listener = new HashSet<IMigrationListener>();
@@ -91,9 +95,9 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	@Override
-	public void migrateQuery(IServerExecutor sender, IPhysicalQuery runningQuery,
-			List<IPhysicalOperator> newPlanRoots)
-			throws QueryOptimizationException {
+	public void migrateQuery(IServerExecutor sender,
+			IPhysicalQuery runningQuery, List<IPhysicalOperator> newPlanRoots)
+			throws QueryOptimizationException, MigrationException {
 		if (runningQuery.containsCycles()) {
 			throw new RuntimeException("Planmigration assumes acyclic trees");
 		}
@@ -101,6 +105,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// @Marco: Bitte so umbauen, dass beachtet wird,
 		// dass ein Anfrageplan mehrere Roots haben kann.
 		LOG.debug("Start planmigration.");
+
+		this.physicalQuery = runningQuery;
 
 		// install both plans for parallel execution
 		IPhysicalOperator oldPlanRoot = runningQuery.getRoots().get(0);
@@ -141,7 +147,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			lastOperatorNewPlan = newPlanRoots.get(0);
 		}
 
-		StrategyContext context = new StrategyContext(sender.getOptimizer(), runningQuery,
+		StrategyContext context = new StrategyContext(sender, runningQuery,
 				newPlanRoots.get(0));
 		context.setOldPlanOperatorsBeforeSources(oldPlanOperatorsBeforeSources);
 		context.setLastOperatorNewPlan(lastOperatorNewPlan);
@@ -243,11 +249,15 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		router.setOutputSchema(lastOperatorOldPlan.getOutputSchema());
 
+		((MigrationRouterPO<?>) router).addMigrationListener(this);
+
 		// context.setSelect(select);
 		context.setRouter(router);
 		context.setOldPlanRoot(oldPlanRoot);
 
 		this.routerStrategy.put((MigrationRouterPO<?>) router, context);
+		LOG.debug("Router: " + router.getClass().getSimpleName() + " (#"
+				+ router.hashCode() + ") has been put to map");
 
 		LOG.debug("Merging Plans ");
 
@@ -294,14 +304,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		try {
 			router.open();
 		} catch (OpenFailedException e1) {
-			e1.printStackTrace();
+			LOG.error("Open router failed", e1);
 		}
 		// }
 		LOG.debug("Calling open on new Plan ... done");
 
-		// LOG.debug("Result:\n"
-		// + AbstractTreeWalker.prefixWalk2(newPlanRoots.get(0),
-		// new PhysicalPlanToStringVisitor()));
 		LOG.debug("Result:\n"
 				+ AbstractTreeWalker.prefixWalk2(router,
 						new PhysicalPlanToStringVisitor()));
@@ -309,29 +316,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// execute plans for at least 'w_max' (longest window duration)
 		LOG.debug("Initializing parallel execution plan.");
 
-		LOG.debug("Running Query: " + runningQuery.getRoots());
-
-		// das sollte eigentlich nicht nötig sein.
-		// for (IPhysicalOperator op : newPlanRoots) {
-		// if (op.isSink()) {
-		// try {
-		// ((ISink) op).open();
-		// } catch (OpenFailedException e) {
-		// e.printStackTrace();
-		// }
-		// }
-		// }
-
 		try {
 			sender.executionPlanChanged();
-		} catch (SchedulerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSchedulerLoadedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SchedulerException | NoSchedulerLoadedException e) {
+			throw new MigrationException(e);
 		}
-		
+
 		// resume by unblocking buffers
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
 			buffer.insertMigrationMarkerPunctuation();
@@ -340,6 +330,113 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		LOG.debug("Parallel execution started.");
 		// we are waiting for the event that is fired.
+	}
+
+	/**
+	 * Proof of concept for another finished migration handling.
+	 * 
+	 * @param context
+	 */
+	void finishedParallelExecutionPoC(StrategyContext context)
+			throws MigrationException {
+		LOG.debug("Handling finished migration");
+
+		LOG.debug("Blocking buffers");
+		for (BufferPO buffer : context.getBufferPOs()) {
+			buffer.block();
+		}
+		LOG.debug("All buffers blocked");
+
+		LOG.debug("Drain tuples out of plans");
+		for (IPhysicalOperator root : context.getRunningQuery().getRoots()) {
+			MigrationHelper.drainTuples(root);
+		}
+
+		LOG.debug("Disconnect old plan from buffer");
+		List<IPhysicalOperator> bufferParents = context
+				.getOldPlanOperatorsBeforeSources();
+		List<PhysicalSubscription<?>> unSub = new ArrayList<PhysicalSubscription<?>>();
+		for (BufferPO<?> buffer : context.getBufferPOs()) {
+			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
+				IPhysicalOperator operator = (IPhysicalOperator) sub
+						.getTarget();
+				if (bufferParents.contains(operator)) {
+					unSub.add(sub);
+				}
+			}
+			for (PhysicalSubscription<?> sub : unSub) {
+				ISink sink = (ISink) sub.getTarget();
+				buffer.disconnectSink(sink, sub.getSinkInPort(),
+						sub.getSourceOutPort(), buffer.getOutputSchema());
+			}
+		}
+
+		LOG.debug("Remove router");
+		MigrationRouterPO router = (MigrationRouterPO) context.getRouter();
+		unSub.clear();
+		unSub.addAll(router.getSubscribedToSource());
+		for (PhysicalSubscription<?> sub : unSub) {
+			router.unsubscribeFromSource(sub);
+		}
+		router.removeOwner(context.getRunningQuery());
+
+		LOG.debug("Initialize new plan root as physical root");
+		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
+		roots.add(context.getNewPlanRoot());
+		context.getRunningQuery().initializePhysicalRoots(roots);
+
+		LOG.debug("Block sources");
+		List<AbstractSource<?>> blockedSources = new ArrayList<AbstractSource<?>>();
+		try {
+			for (BufferPO<?> buffer : context.getBufferPOs()) {
+				for (PhysicalSubscription<?> sub : buffer
+						.getSubscribedToSource()) {
+					AbstractSource<?> source = (AbstractSource<?>) sub
+							.getTarget();
+					source.block();
+					blockedSources.add(source);
+				}
+
+				LOG.debug("Empty buffer");
+				while (buffer.hasNext()) {
+					buffer.transferNext();
+				}
+
+				LOG.debug("Remove buffer");
+				List<ISink> parents = new ArrayList<ISink>();
+				List<Integer> parentInports = new ArrayList<Integer>();
+				List<ISource> children = new ArrayList<ISource>();
+				List<Integer> childOutports = new ArrayList<Integer>();
+				for (PhysicalSubscription<?> sub : buffer
+						.getSubscribedToSource()) {
+					children.add((ISource) sub.getTarget());
+					childOutports.add(sub.getSourceOutPort());
+				}
+				for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
+					parents.add((ISink) sub.getTarget());
+					parentInports.add(sub.getSinkInPort());
+				}
+				PhysicalRestructHelper.removeOperator(children.get(0), 0,
+						parents, parentInports, buffer);
+				buffer.removeOwner(context.getRunningQuery());
+			}
+		} catch (Exception ex) {
+			throw new MigrationException(ex);
+		} finally {
+			// unblocking of sources must be ensured
+			LOG.debug("Unblocking sources");
+			for (AbstractSource<?> source : blockedSources) {
+				source.unblock();
+			}
+		}
+
+		try {
+			context.getExecutor().executionPlanChanged();
+		} catch (SchedulerException | NoSchedulerLoadedException e) {
+			throw new MigrationException(e);
+		}
+		LOG.debug("Migration is finished");
+		fireMigrationFinishedEvent(this);
 	}
 
 	void finishedParallelExecution(StrategyContext context) {
@@ -367,8 +464,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		LOG.debug("Deinitializing parallel execution plan.");
 		// TODO: beachten was mit sink-only operatoren passiert, die vll noch an
 		// dem router hängen!
-		PhysicalRestructHelper.replaceChild(context.getNewPlanRoot(),
-				context.getRouter(), context.getLastOperatorNewPlan());
+		// TODO (Merlin): warum replaceChild? Als neue Wurzel des Plans die
+		// Wurzel des neuen Plans erklären und die subscriptions von alt nach
+		// router und neu nach router löschen.
+		PhysicalRestructHelper.replaceChild(context.getRouter(),
+				context.getNewPlanRoot(), context.getLastOperatorNewPlan());
 		PhysicalRestructHelper.removeSubscription(context.getRouter(),
 				context.getLastOperatorOldPlan());
 		PhysicalRestructHelper.removeSubscription(context.getRouter(),
@@ -377,29 +477,30 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		// remove connection from buffers to old plan
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
-			// for (PhysicalSubscription<?> sub : buffer.getSubscriptions()
-			// .toArray(
-			// new PhysicalSubscription<?>[buffer
-			// .getSubscriptions().size()])) {
-			// ISink<?> sink = (ISink<?>) sub.getTarget();
-			// // have to test '==', because equals is overwritten
-			// int ind = context.getOldPlanOperatorsBeforeSources().indexOf(
-			// sink);
-			// if (ind != -1
-			// && context.getOldPlanOperatorsBeforeSources().get(ind) == sink) {
-			// PhysicalRestructHelper.removeSubscription(sink, buffer);
-			// }
-			// }
-			List<ISink> sinks = new ArrayList<ISink>();
-			List<Integer> sinkInPorts = new ArrayList<Integer>();
-			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
-				sinks.add((ISink) sub.getTarget());
-				sinkInPorts.add(sub.getSinkInPort());
+			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()
+					.toArray(
+							new PhysicalSubscription<?>[buffer
+									.getSubscriptions().size()])) {
+				ISink<?> sink = (ISink<?>) sub.getTarget();
+				// have to test '==', because equals is overwritten
+				int ind = context.getOldPlanOperatorsBeforeSources().indexOf(
+						sink);
+				if (ind != -1
+						&& context.getOldPlanOperatorsBeforeSources().get(ind) == sink) {
+					PhysicalRestructHelper.removeSubscription(sink, buffer);
+				}
 			}
-			ISource source = buffer.getSubscribedToSource(0).getTarget();
-			PhysicalRestructHelper.removeOperator(source, 0, sinks,
-					sinkInPorts, buffer);
 		}
+		// List<ISink> sinks = new ArrayList<ISink>();
+		// List<Integer> sinkInPorts = new ArrayList<Integer>();
+		// for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
+		// sinks.add((ISink) sub.getTarget());
+		// sinkInPorts.add(sub.getSinkInPort());
+		// }
+		// ISource source = buffer.getSubscribedToSource(0).getTarget();
+		// PhysicalRestructHelper.removeOperator(source, 0, sinks,
+		// sinkInPorts, buffer);
+		// }
 
 		// clean up, removing ownership of every operator
 		// remove any metadata on old plan operators
@@ -407,12 +508,15 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				new CleanOperatorsVisitor(context.getRunningQuery()));
 
 		// push data from buffers into plan
+		// FIXME (Merlin): der buffer wird im laufenden Betrieb wohl nicht leer.
 		LOG.debug("Pushing data from BufferPOs.");
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
 			for (int i = 0; i < buffer.size(); i++) {
 				buffer.transferNext();
 			}
 		}
+
+		// TODO (Merlin): Was passiert mit dem RouterPO?
 
 		// TODO: Warum dies? Die Anfrage ist doch schon drin, oder?
 
@@ -453,14 +557,21 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 	@Override
 	public void migrationFinished(IMigrationEventSource sender) {
+		LOG.debug("Migration finished for: "
+				+ sender.getClass().getSimpleName() + " (#" + sender.hashCode()
+				+ ")");
 		MigrationRouterPO<?> router = (MigrationRouterPO<?>) sender;
-		finishedParallelExecution(this.routerStrategy.get(router));
+		// finishedParallelExecution(this.routerStrategy.get(router));
+		try {
+			finishedParallelExecutionPoC(this.routerStrategy.get(router));
+		} catch (MigrationException ex) {
+			fireMigrationFailedEvent(sender, ex);
+		}
 	}
 
 	@Override
-	public void migrationFailed(IMigrationEventSource sender) {
-		// TODO Auto-generated method stub
-
+	public void migrationFailed(IMigrationEventSource sender, Throwable ex) {
+		fireMigrationFailedEvent(sender, ex);
 	}
 
 	@Override
@@ -483,8 +594,15 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	@Override
-	public void fireMigrationFailedEvent(IMigrationEventSource sender) {
-		// TODO Auto-generated method stub
+	public void fireMigrationFailedEvent(IMigrationEventSource sender,
+			Throwable ex) {
+		for (IMigrationListener listener : this.listener) {
+			listener.migrationFailed(sender, ex);
+		}
+	}
 
+	@Override
+	public IPhysicalQuery getPhysicalQuery() {
+		return this.physicalQuery;
 	}
 }

@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.MigrationMarkerPunctuation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationEventSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
  * Uses the oldPlan and the newPlan during a plan migration as inputs. Routes
@@ -171,9 +172,15 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 	}
 
 	@Override
-	public void fireMigrationFailedEvent(IMigrationEventSource sender) {
+	public IPhysicalQuery getPhysicalQuery() {
+		return (IPhysicalQuery) getOwner().get(0);
+	}
+
+	@Override
+	public void fireMigrationFailedEvent(IMigrationEventSource sender,
+			Throwable ex) {
 		for (IMigrationListener listener : this.listener) {
-			listener.migrationFailed(sender);
+			listener.migrationFailed(sender, ex);
 		}
 	}
 }

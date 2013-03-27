@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.exception.MigrationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
@@ -63,7 +64,7 @@ public interface IPlanMigrationStrategy extends IMigrationEventSource, IMigratio
 	 * @throws QueryOptimizationException
 	 */
 	public void migrateQuery(IServerExecutor sender, IPhysicalQuery runningQuery, 
-			List<IPhysicalOperator> newPlanRoot) throws QueryOptimizationException;
+			List<IPhysicalOperator> newPlanRoot) throws QueryOptimizationException, MigrationException;
 	
 	public String getName();
 }

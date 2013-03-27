@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionFitness;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionMigrationFuzzyRuleEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionPolicyListener;
@@ -29,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadap
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationEventSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.costmodel.PlanMigration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.exception.MigrationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.RemoveOwnersGraphVisitor;
@@ -48,6 +50,8 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 
 	private Map<String, ICostModel<?>> migrationCostModels = new HashMap<String, ICostModel<?>>();
 	private ICostModel<PlanMigration> selectedCostModel = null;
+	
+	private Map<IPhysicalQuery, List<IPhysicalOperator>> queryToOriginalPlan = new HashMap<IPhysicalQuery, List<IPhysicalOperator>>();
 
 	private long blockedTime = OdysseusConfiguration.getLong(
 			"adaption_blockingTime", 20000);
@@ -61,6 +65,9 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 	public void adaptPlan(IPhysicalQuery physicalQuery, ISession user) {
 		LOG.debug("Adapt plan with timer: " + this.timerValue
 				+ " and blocked: " + this.blockedTime);
+		List<IPhysicalOperator> originalRoots = new ArrayList<IPhysicalOperator>();
+		originalRoots.addAll(physicalQuery.getRoots());
+		this.queryToOriginalPlan.put(physicalQuery, originalRoots);
 		ILogicalQuery query = physicalQuery.getLogicalQuery();
 		Pair<ILogicalOperator, ICost<ILogicalOperator>> fittest = this.fitness
 				.pickFittestPlan(query);
@@ -68,7 +75,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 			// nothing to be done here.
 			LOG.debug("Already using fittest plan");
 			// return;
-			// FIXME: nur zu testzwecken. wir wollen migrationen sehen!
+			// FIXME (Merlin): nur zu testzwecken. wir wollen migrationen sehen!
 			fittest.setE1(query.getAlternativeLogicalPlans().get(0));
 		}
 		// gehen wir davon aus, dass es erstmal nur eine wurzel gibt.
@@ -113,8 +120,12 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 
 		if (this.fuzzyRuleEngine.evaluate(fittest.getE2(), migrationCost)) {
 			// migrate
+			try {
 			this.migrationStrategy.migrateQuery(this.executor, physicalQuery,
 					newPlanRoots);
+			} catch (MigrationException ex) {
+				throw new QueryOptimizationException(ex);
+			}
 		}
 	}
 
@@ -296,9 +307,13 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 	}
 
 	@Override
-	public void migrationFailed(IMigrationEventSource sender) {
-		// TODO Auto-generated method stub
-
+	public void migrationFailed(IMigrationEventSource sender, Throwable ex) {
+		// revert all possible changes
+		IPhysicalQuery query = sender.getPhysicalQuery();
+		List<IPhysicalOperator> originalRoots = this.queryToOriginalPlan.get(query);
+		query.initializePhysicalRoots(originalRoots);
+		LOG.error("Migration failed!", ex);
+		this.policyRuleEngine.start();
 	}
 
 }

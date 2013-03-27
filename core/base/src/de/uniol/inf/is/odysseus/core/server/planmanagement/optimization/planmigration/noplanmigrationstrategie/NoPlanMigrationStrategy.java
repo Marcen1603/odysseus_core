@@ -88,20 +88,26 @@ public class NoPlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	@Override
-	public void fireMigrationFailedEvent(IMigrationEventSource sender) {
-		for(IMigrationListener listener : this.listener) {
-			listener.migrationFailed(sender);
-		}
-	}
-
-	@Override
 	public void migrationFinished(IMigrationEventSource sender) {
 		// TODO: nop
 	}
 
 	@Override
-	public void migrationFailed(IMigrationEventSource sender) {
-		// TODO: nop
+	public IPhysicalQuery getPhysicalQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void fireMigrationFailedEvent(IMigrationEventSource sender,
+			Throwable ex) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void migrationFailed(IMigrationEventSource sender, Throwable ex) {
+		// TODO Auto-generated method stub
 		
 	}
 }

@@ -19,6 +19,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
@@ -26,12 +27,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  * 
  * Context of a plan migration.
  * 
- * @author Tobias Witt
+ * @author Tobias Witt, Merlin Wasmann
  *
  */
 class StrategyContext {
 
 	private IOptimizer optimizer;
+	private IServerExecutor executor;
 	private IPhysicalQuery runningQuery;
 	private IPhysicalOperator newPlanRoot;
 	private IPhysicalOperator oldPlanRoot;
@@ -44,14 +46,19 @@ class StrategyContext {
 	private IPhysicalOperator lastOperatorOldPlan;
 	private IPhysicalOperator lastOperatorNewPlan;
 
-	public StrategyContext(IOptimizer optimizer, IPhysicalQuery runningQuery,
+	public StrategyContext(IServerExecutor executor, IPhysicalQuery runningQuery,
 			IPhysicalOperator newPlanRoot) {
-		this.optimizer = optimizer;
+		this.executor = executor;
+		this.optimizer = executor.getOptimizer();
 		this.runningQuery = runningQuery;
 		this.newPlanRoot = newPlanRoot;
 		this.buffersPOs = new ArrayList<BufferPO<?>>();
 	}
 
+	public IServerExecutor getExecutor() {
+		return this.executor;
+	}
+	
 	public IOptimizer getOptimizer() {
 		return optimizer;
 	}

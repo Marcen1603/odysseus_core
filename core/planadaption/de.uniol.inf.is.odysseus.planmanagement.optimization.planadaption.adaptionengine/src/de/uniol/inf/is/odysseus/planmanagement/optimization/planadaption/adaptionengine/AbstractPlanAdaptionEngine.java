@@ -70,7 +70,7 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 	public abstract void migrationFinished(IMigrationEventSource sender);
 
 	@Override
-	public abstract void migrationFailed(IMigrationEventSource sender);
+	public abstract void migrationFailed(IMigrationEventSource sender, Throwable ex);
 	
 	
 }

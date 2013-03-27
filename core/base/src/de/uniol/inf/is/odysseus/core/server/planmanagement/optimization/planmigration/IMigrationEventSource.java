@@ -3,12 +3,16 @@
  */
 package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+
 
 /**
  * @author Merlin Wasmann
  *
  */
 public interface IMigrationEventSource {
+	
+	public IPhysicalQuery getPhysicalQuery();
 
 	public void addMigrationListener(IMigrationListener listener);
 	
@@ -16,5 +20,5 @@ public interface IMigrationEventSource {
 	
 	public void fireMigrationFinishedEvent(IMigrationEventSource sender);
 	
-	public void fireMigrationFailedEvent(IMigrationEventSource sender);
+	public void fireMigrationFailedEvent(IMigrationEventSource sender, Throwable ex);
 }
