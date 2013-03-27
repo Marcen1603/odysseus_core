@@ -70,11 +70,6 @@ http://odysseus.informatik.uni-oldenburg.de/
    <plugins>
    </plugins>
 
-   <features>
-      <feature id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.product.filestore.feature" version="1.0.0.qualifier"/>
-   </features>
-
    <configurations>
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
