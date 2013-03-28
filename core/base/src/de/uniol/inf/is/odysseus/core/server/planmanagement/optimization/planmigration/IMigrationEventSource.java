@@ -13,6 +13,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 public interface IMigrationEventSource {
 	
 	public IPhysicalQuery getPhysicalQuery();
+	
+	public boolean hasPhysicalQuery();
 
 	public void addMigrationListener(IMigrationListener listener);
 	

@@ -97,6 +97,11 @@ public class NoPlanMigrationStrategy implements IPlanMigrationStrategy {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public boolean hasPhysicalQuery() {
+		return false;
+	}
 
 	@Override
 	public void fireMigrationFailedEvent(IMigrationEventSource sender,

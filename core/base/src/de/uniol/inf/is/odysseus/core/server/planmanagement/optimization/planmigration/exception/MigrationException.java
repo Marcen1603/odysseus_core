@@ -26,4 +26,8 @@ public class MigrationException extends Exception {
 	public MigrationException(Exception e) {
 		super(e);
 	}
+
+	public MigrationException(String string) {
+		super(string);
+	}
 }
