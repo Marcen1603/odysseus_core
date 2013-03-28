@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.util;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
 /**
  * Builds an string representation of a physical plan.
@@ -62,6 +63,9 @@ public class PhysicalPlanToStringVisitor implements INodeVisitor<IPhysicalOperat
 		this.builder.append(op.toString());
 		if(showSchema) {
 			this.builder.append("["+op.getOutputSchema()+"]");
+		}
+		if(op.isSource()) {
+			this.builder.append((((AbstractSource<?>) op).isLocked()) ? " locked" : " unlocked");
 		}
 		this.builder.append('\n');
 	}
