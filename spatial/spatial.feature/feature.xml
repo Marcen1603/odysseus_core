@@ -33,15 +33,10 @@ Unless required by applicable law or agreed to in writing, software
    <requires>
       <import plugin="org.osgeo.proj4j" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="com.vividsolutions.jts" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
-      <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
-      <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
-      <import plugin="de.uniol.inf.is.odysseus.transform"/>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="de.uniol.inf.is.odysseus.spatial" version="1.0.0" match="greaterOrEqual"/>
       <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
       <import feature="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server"/>
+      <import plugin="de.uniol.inf.is.odysseus.core"/>
    </requires>
 
    <plugin
