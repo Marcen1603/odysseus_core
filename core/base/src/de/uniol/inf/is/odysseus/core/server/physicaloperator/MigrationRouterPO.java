@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.MigrationMarkerPunctuation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationEventSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.exception.MigrationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -96,9 +97,15 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 	}
 
 	private void process_migrationMarkerPunctuation(
-			MigrationMarkerPunctuation p, int port) {
+			MigrationMarkerPunctuation p, int port) throws MigrationException {
 		Pair<IPunctuation, IPunctuation> pair = this.sourcesToPunctuations
 				.get(p.getSource());
+		if (pair == null) {
+			throw new MigrationException("Source "
+					+ p.getSource().getClass().getSimpleName() + " ("
+					+ p.getSource().hashCode()
+					+ ") is not known to the RouterPO (" + hashCode() + ")");
+		}
 		if (port == inPortOld) {
 			pair.setE1(p);
 		} else if (port == inPortNew) {
@@ -121,8 +128,13 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		if (punctuation instanceof MigrationMarkerPunctuation) {
 			// gotcha
-			process_migrationMarkerPunctuation(
-					(MigrationMarkerPunctuation) punctuation, port);
+			try {
+				process_migrationMarkerPunctuation(
+						(MigrationMarkerPunctuation) punctuation, port);
+			} catch (MigrationException ex) {
+				LOG.error("Processing migration marker punctuation failed", ex);
+				fireMigrationFailedEvent(this, ex);
+			}
 		} else {
 			sendPunctuation(punctuation);
 		}
@@ -174,6 +186,11 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 	@Override
 	public IPhysicalQuery getPhysicalQuery() {
 		return (IPhysicalQuery) getOwner().get(0);
+	}
+	
+	@Override
+	public boolean hasPhysicalQuery() {
+		return getOwner().get(0) != null;
 	}
 
 	@Override
