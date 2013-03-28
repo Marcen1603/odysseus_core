@@ -14,37 +14,34 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.interval.function;
+package de.uniol.inf.is.odysseus.datatype.interval.function;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractBinaryOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.MinusOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.PlusOperator;
-import de.uniol.inf.is.odysseus.interval.datatype.IntervalDouble;
-import de.uniol.inf.is.odysseus.interval.sdf.schema.SDFIntervalDatatype;
+import de.uniol.inf.is.odysseus.datatype.interval.datatype.IntervalDouble;
+import de.uniol.inf.is.odysseus.datatype.interval.sdf.schema.SDFIntervalDatatype;
 
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalMultiplicationOperator extends
-		AbstractBinaryOperator<IntervalDouble> {
+public class IntervalMinusOperator extends AbstractBinaryOperator<IntervalDouble> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7746637195241980728L;
+	private static final long serialVersionUID = 7665159518653289431L;
 
 	@Override
 	public int getPrecedence() {
-		return 5;
+		return 6;
 	}
 
 	@Override
 	public String getSymbol() {
-		return "*";
+		return "-";
 	}
 
 	@Override
@@ -55,13 +52,7 @@ public class IntervalMultiplicationOperator extends
 	}
 
 	protected IntervalDouble getValueInternal(IntervalDouble a, IntervalDouble b) {
-		final double inf = Math.min(
-				Math.min(a.inf() * b.inf(), a.inf() * b.sup()),
-				Math.min(a.sup() * b.inf(), a.sup() * b.sup()));
-		final double sup = Math.max(
-				Math.max(a.inf() * b.inf(), a.inf() * b.sup()),
-				Math.max(a.sup() * b.inf(), a.sup() * b.sup()));
-		return new IntervalDouble(inf, sup);
+		return new IntervalDouble(a.inf() - b.sup(), a.sup() - b.inf());
 	}
 
 	@Override
@@ -76,28 +67,22 @@ public class IntervalMultiplicationOperator extends
 
 	@Override
 	public boolean isCommutative() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean isAssociative() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean isLeftDistributiveWith(IOperator<IntervalDouble> operator) {
-		return operator.getClass() == IntervalPlusOperator.class
-				|| operator.getClass() == IntervalMinusOperator.class
-				|| operator.getClass() == PlusOperator.class
-				|| operator.getClass() == MinusOperator.class;
+		return false;
 	}
 
 	@Override
 	public boolean isRightDistributiveWith(IOperator<IntervalDouble> operator) {
-		return operator.getClass() == IntervalPlusOperator.class
-				|| operator.getClass() == IntervalMinusOperator.class
-				|| operator.getClass() == PlusOperator.class
-				|| operator.getClass() == MinusOperator.class;
+		return false;
 	}
 
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
@@ -120,5 +105,4 @@ public class IntervalMultiplicationOperator extends
 		}
 		return accTypes;
 	}
-
 }

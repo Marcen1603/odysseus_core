@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.interval;
+package de.uniol.inf.is.odysseus.datatype.interval;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +24,14 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider;
-import de.uniol.inf.is.odysseus.interval.function.IntervalDifferenceFunction;
-import de.uniol.inf.is.odysseus.interval.function.IntervalDivisionOperator;
-import de.uniol.inf.is.odysseus.interval.function.IntervalIntersectionFunction;
-import de.uniol.inf.is.odysseus.interval.function.IntervalMinusOperator;
-import de.uniol.inf.is.odysseus.interval.function.IntervalMultiplicationOperator;
-import de.uniol.inf.is.odysseus.interval.function.IntervalPlusOperator;
-import de.uniol.inf.is.odysseus.interval.function.IntervalPowerOperator;
-import de.uniol.inf.is.odysseus.interval.function.IntervalUnionFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalDifferenceFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalDivisionOperator;
+import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalIntersectionFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalMinusOperator;
+import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalMultiplicationOperator;
+import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalPlusOperator;
+import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalPowerOperator;
+import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalUnionFunction;
 
 /**
  * 

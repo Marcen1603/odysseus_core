@@ -13,34 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.interval.function;
+
+package de.uniol.inf.is.odysseus.datatype.interval.function;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractBinaryOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
-import de.uniol.inf.is.odysseus.interval.datatype.IntervalDouble;
-import de.uniol.inf.is.odysseus.interval.sdf.schema.SDFIntervalDatatype;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.MinusOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.PlusOperator;
+import de.uniol.inf.is.odysseus.datatype.interval.datatype.IntervalDouble;
+import de.uniol.inf.is.odysseus.datatype.interval.sdf.schema.SDFIntervalDatatype;
+
 
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalPlusOperator extends AbstractBinaryOperator<IntervalDouble> {
+public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDouble> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 5061875515922895924L;
+	private static final long serialVersionUID = -3502588472297137429L;
 
 	@Override
 	public int getPrecedence() {
-		return 6;
+		return 5;
 	}
 
 	@Override
 	public String getSymbol() {
-		return "+";
+		return "/";
 	}
 
 	@Override
@@ -51,7 +55,17 @@ public class IntervalPlusOperator extends AbstractBinaryOperator<IntervalDouble>
 	}
 
 	protected IntervalDouble getValueInternal(IntervalDouble a, IntervalDouble b) {
-		return new IntervalDouble(a.inf() + b.inf(), a.sup() + b.sup());
+		if (!b.contains(0.0)) {
+			final double inf = Math.min(
+					Math.min(a.inf() / b.inf(), a.inf() / b.sup()),
+					Math.min(a.sup() / b.inf(), a.sup() / b.sup()));
+			final double sup = Math.max(
+					Math.max(a.inf() / b.inf(), a.inf() / b.sup()),
+					Math.max(a.sup() / b.inf(), a.sup() / b.sup()));
+			return new IntervalDouble(inf, sup);
+		} else {
+			return new IntervalDouble(Double.NaN, Double.NaN);
+		}
 	}
 
 	@Override
@@ -66,22 +80,28 @@ public class IntervalPlusOperator extends AbstractBinaryOperator<IntervalDouble>
 
 	@Override
 	public boolean isCommutative() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isAssociative() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isLeftDistributiveWith(IOperator<IntervalDouble> operator) {
-		return false;
+		return operator.getClass() == IntervalPlusOperator.class
+				|| operator.getClass() == IntervalMinusOperator.class
+				|| operator.getClass() == PlusOperator.class
+				|| operator.getClass() == MinusOperator.class;
 	}
 
 	@Override
 	public boolean isRightDistributiveWith(IOperator<IntervalDouble> operator) {
-		return false;
+		return operator.getClass() == IntervalPlusOperator.class
+				|| operator.getClass() == IntervalMinusOperator.class
+				|| operator.getClass() == PlusOperator.class
+				|| operator.getClass() == MinusOperator.class;
 	}
 
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
@@ -104,5 +124,4 @@ public class IntervalPlusOperator extends AbstractBinaryOperator<IntervalDouble>
 		}
 		return accTypes;
 	}
-
 }

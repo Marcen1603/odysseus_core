@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.interval;
+package de.uniol.inf.is.odysseus.datatype.interval;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.interval.sdf.schema.SDFIntervalDatatype;
+import de.uniol.inf.is.odysseus.datatype.interval.sdf.schema.SDFIntervalDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>

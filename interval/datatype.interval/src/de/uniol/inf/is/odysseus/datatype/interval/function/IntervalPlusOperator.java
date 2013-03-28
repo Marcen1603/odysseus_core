@@ -13,26 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package de.uniol.inf.is.odysseus.interval.function;
+package de.uniol.inf.is.odysseus.datatype.interval.function;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractBinaryOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
-import de.uniol.inf.is.odysseus.interval.datatype.IntervalDouble;
-import de.uniol.inf.is.odysseus.interval.sdf.schema.SDFIntervalDatatype;
+import de.uniol.inf.is.odysseus.datatype.interval.datatype.IntervalDouble;
+import de.uniol.inf.is.odysseus.datatype.interval.sdf.schema.SDFIntervalDatatype;
 
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalMinusOperator extends AbstractBinaryOperator<IntervalDouble> {
+public class IntervalPlusOperator extends AbstractBinaryOperator<IntervalDouble> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7665159518653289431L;
+	private static final long serialVersionUID = 5061875515922895924L;
 
 	@Override
 	public int getPrecedence() {
@@ -41,7 +40,7 @@ public class IntervalMinusOperator extends AbstractBinaryOperator<IntervalDouble
 
 	@Override
 	public String getSymbol() {
-		return "-";
+		return "+";
 	}
 
 	@Override
@@ -52,7 +51,7 @@ public class IntervalMinusOperator extends AbstractBinaryOperator<IntervalDouble
 	}
 
 	protected IntervalDouble getValueInternal(IntervalDouble a, IntervalDouble b) {
-		return new IntervalDouble(a.inf() - b.sup(), a.sup() - b.inf());
+		return new IntervalDouble(a.inf() + b.inf(), a.sup() + b.sup());
 	}
 
 	@Override
@@ -105,4 +104,5 @@ public class IntervalMinusOperator extends AbstractBinaryOperator<IntervalDouble
 		}
 		return accTypes;
 	}
+
 }

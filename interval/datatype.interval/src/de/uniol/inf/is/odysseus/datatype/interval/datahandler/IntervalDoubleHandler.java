@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.interval.datahandler;
+package de.uniol.inf.is.odysseus.datatype.interval.datahandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,7 +24,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.interval.datatype.IntervalDouble;
+import de.uniol.inf.is.odysseus.datatype.interval.datatype.IntervalDouble;
 
 /**
  * 

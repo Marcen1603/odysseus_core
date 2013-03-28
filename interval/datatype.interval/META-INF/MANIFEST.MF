@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Interval
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.interval
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.interval.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.datatype.interval.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.sdf.schema,

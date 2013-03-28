@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.interval.function;
+package de.uniol.inf.is.odysseus.datatype.interval.function;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractBinaryOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MinusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.PlusOperator;
-import de.uniol.inf.is.odysseus.interval.datatype.IntervalDouble;
-import de.uniol.inf.is.odysseus.interval.sdf.schema.SDFIntervalDatatype;
-
+import de.uniol.inf.is.odysseus.datatype.interval.datatype.IntervalDouble;
+import de.uniol.inf.is.odysseus.datatype.interval.sdf.schema.SDFIntervalDatatype;
 
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDouble> {
+public class IntervalMultiplicationOperator extends
+		AbstractBinaryOperator<IntervalDouble> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3502588472297137429L;
+	private static final long serialVersionUID = 7746637195241980728L;
 
 	@Override
 	public int getPrecedence() {
@@ -44,7 +44,7 @@ public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDou
 
 	@Override
 	public String getSymbol() {
-		return "/";
+		return "*";
 	}
 
 	@Override
@@ -55,17 +55,13 @@ public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDou
 	}
 
 	protected IntervalDouble getValueInternal(IntervalDouble a, IntervalDouble b) {
-		if (!b.contains(0.0)) {
-			final double inf = Math.min(
-					Math.min(a.inf() / b.inf(), a.inf() / b.sup()),
-					Math.min(a.sup() / b.inf(), a.sup() / b.sup()));
-			final double sup = Math.max(
-					Math.max(a.inf() / b.inf(), a.inf() / b.sup()),
-					Math.max(a.sup() / b.inf(), a.sup() / b.sup()));
-			return new IntervalDouble(inf, sup);
-		} else {
-			return new IntervalDouble(Double.NaN, Double.NaN);
-		}
+		final double inf = Math.min(
+				Math.min(a.inf() * b.inf(), a.inf() * b.sup()),
+				Math.min(a.sup() * b.inf(), a.sup() * b.sup()));
+		final double sup = Math.max(
+				Math.max(a.inf() * b.inf(), a.inf() * b.sup()),
+				Math.max(a.sup() * b.inf(), a.sup() * b.sup()));
+		return new IntervalDouble(inf, sup);
 	}
 
 	@Override
@@ -124,4 +120,5 @@ public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDou
 		}
 		return accTypes;
 	}
+
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.interval.sdf.schema;
+package de.uniol.inf.is.odysseus.datatype.interval.sdf.schema;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;

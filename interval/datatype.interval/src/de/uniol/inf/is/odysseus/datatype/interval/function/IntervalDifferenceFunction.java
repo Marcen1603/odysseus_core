@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.interval.function;
+package de.uniol.inf.is.odysseus.datatype.interval.function;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.interval.datatype.IntervalDouble;
-import de.uniol.inf.is.odysseus.interval.sdf.schema.SDFIntervalDatatype;
+import de.uniol.inf.is.odysseus.datatype.interval.datatype.IntervalDouble;
+import de.uniol.inf.is.odysseus.datatype.interval.sdf.schema.SDFIntervalDatatype;
 
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalIntersectionFunction extends
+public class IntervalDifferenceFunction extends
 		AbstractFunction<IntervalDouble> {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 5436861306816764016L;
+	private static final long serialVersionUID = -4670597155345841395L;
 	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
 			SDFIntervalDatatype.INTERVAL_BYTE,
 			SDFIntervalDatatype.INTERVAL_SHORT,
@@ -59,19 +59,26 @@ public class IntervalIntersectionFunction extends
 
 	@Override
 	public String getSymbol() {
-		return "intersection";
+		return "difference";
 	}
 
 	@Override
 	public IntervalDouble getValue() {
 		IntervalDouble a = this.getInputValue(0);
 		IntervalDouble b = this.getInputValue(1);
-		if ((a.isEmpty()) || (b.isEmpty()) || (!(b.inf() <= a.sup()))
-				|| (!(a.inf() <= b.sup()))) {
+		if (!this.intersects(a, b)) {
 			return new IntervalDouble(Double.MAX_VALUE, Double.MIN_VALUE);
 		}
-		return new IntervalDouble(Math.max(a.inf(), b.inf()), Math.min(a.sup(),
-				b.sup()));
+		if ((b.inf() >= a.inf()) && (b.sup() <= a.sup())) {
+			return null;
+		}
+		if ((b.inf() <= a.inf()) && (b.sup() <= a.sup())) {
+			return new IntervalDouble(b.sup(), a.sup());
+		}
+		if (b.inf() >= a.inf()) {
+			return new IntervalDouble(a.inf(), b.inf());
+		}
+		return new IntervalDouble(Double.MAX_VALUE, Double.MIN_VALUE);
 	}
 
 	@Override
@@ -79,4 +86,8 @@ public class IntervalIntersectionFunction extends
 		return SDFIntervalDatatype.INTERVAL_DOUBLE;
 	}
 
+	private boolean intersects(final IntervalDouble a, final IntervalDouble b) {
+		return ((!a.isEmpty()) && (!b.isEmpty()) && (b.inf() <= a.sup()) && (a
+				.inf() <= b.sup()));
+	}
 }
