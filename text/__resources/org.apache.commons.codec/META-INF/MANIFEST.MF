@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Commons Codec
-Bundle-SymbolicName: org.apache.commons.codec
+Bundle-SymbolicName: org.apache.commons.codec_1_7
 Bundle-Version: 1.7.0
 Bundle-ClassPath: commons-codec-1.7.jar
 Bundle-Vendor: The Apache Software Foundation
