@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 
 	final public int ERRORPORT = Integer.MAX_VALUE;
 
+	final private ReentrantLock lock = new ReentrantLock();
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 	// Only active subscription are served on transfer
 	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
@@ -324,10 +326,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	
 	public void replaceActiveSubscription(PhysicalSubscription<ISink<? super T>> oldSub, PhysicalSubscription<ISink<? super T>> newSub) {
 		// necessary to not lose tuples here
-		synchronized (this.activeSinkSubscriptions) {
-			removeActiveSubscription(oldSub);
-			addActiveSubscription(newSub);
-		}
+		lock.lock();
+		removeActiveSubscription(oldSub);
+		addActiveSubscription(newSub);
+		lock.unlock();
 	}
 
 	protected abstract void process_open() throws OpenFailedException;
@@ -360,19 +362,19 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	public void transfer(T object, int sourceOutPort) {
 		fire(this.pushInitEvent);
 		// necessary to not lose tuples in a plan migration
-		synchronized (this.activeSinkSubscriptions) {
-			for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
-				if (sink.getSourceOutPort() == sourceOutPort) {
-					try {
-						sink.getTarget().process(cloneIfNessessary(object, sourceOutPort), sink.getSinkInPort());
-					} catch (Exception e) {
-						// Send object that could not be processed to the error port
-						e.printStackTrace();
-						transfer(object, ERRORPORT);
-					}
+		lock.lock();
+		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
+			if (sink.getSourceOutPort() == sourceOutPort) {
+				try {
+					sink.getTarget().process(cloneIfNessessary(object, sourceOutPort), sink.getSinkInPort());
+				} catch (Exception e) {
+					// Send object that could not be processed to the error port
+					e.printStackTrace();
+					transfer(object, ERRORPORT);
 				}
 			}
 		}
+		lock.unlock();
 		fire(this.pushDoneEvent);
 	}
 
@@ -498,6 +500,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 		getLogger().debug("Operator " + this.toString() + " blocked");
 		fire(blockedEvent);
 		// }
+		lock.lock();
 	}
 
 	@Override
@@ -507,8 +510,17 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 		getLogger().debug("Operator " + this.toString() + " unblocked");
 		fire(unblockedEvent);
 		// }
+		lock.unlock();
 	}
 
+	// ------------------------------------------------------------------------
+	// LOCK
+	// ------------------------------------------------------------------------
+	
+	public boolean isLocked() {
+		return this.lock.isLocked();
+	}
+	
 	// ------------------------------------------------------------------------
 	// Subscription management
 	// ------------------------------------------------------------------------
