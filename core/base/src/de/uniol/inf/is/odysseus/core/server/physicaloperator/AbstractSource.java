@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +46,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.IMyLock;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.NonLockingLock;
 
 /**
  * @author Jonas Jacobi, Tobias Witt, Marco Grawunder
@@ -55,7 +56,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 
 	final public int ERRORPORT = Integer.MAX_VALUE;
 
-	final private ReentrantLock lock = new ReentrantLock();
+	private IMyLock locker = new NonLockingLock();
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 	// Only active subscription are served on transfer
 	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
@@ -326,10 +327,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	
 	public void replaceActiveSubscription(PhysicalSubscription<ISink<? super T>> oldSub, PhysicalSubscription<ISink<? super T>> newSub) {
 		// necessary to not lose tuples here
-		lock.lock();
+		locker.lock();
 		removeActiveSubscription(oldSub);
 		addActiveSubscription(newSub);
-		lock.unlock();
+		locker.unlock();
 	}
 
 	protected abstract void process_open() throws OpenFailedException;
@@ -362,7 +363,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	public void transfer(T object, int sourceOutPort) {
 		fire(this.pushInitEvent);
 		// necessary to not lose tuples in a plan migration
-		lock.lock();
+		locker.lock();
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
 				try {
@@ -374,7 +375,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 				}
 			}
 		}
-		lock.unlock();
+		locker.unlock();
 		fire(this.pushDoneEvent);
 	}
 
@@ -500,7 +501,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 		getLogger().debug("Operator " + this.toString() + " blocked");
 		fire(blockedEvent);
 		// }
-		lock.lock();
+		locker.lock();
 	}
 
 	@Override
@@ -510,7 +511,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 		getLogger().debug("Operator " + this.toString() + " unblocked");
 		fire(unblockedEvent);
 		// }
-		lock.unlock();
+		locker.unlock();
 	}
 
 	// ------------------------------------------------------------------------
@@ -518,7 +519,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	// ------------------------------------------------------------------------
 	
 	public boolean isLocked() {
-		return this.lock.isLocked();
+		return this.locker.isLocked();
+	}
+	
+	public void setLocker(IMyLock locker){
+		this.locker = locker;
 	}
 	
 	// ------------------------------------------------------------------------
