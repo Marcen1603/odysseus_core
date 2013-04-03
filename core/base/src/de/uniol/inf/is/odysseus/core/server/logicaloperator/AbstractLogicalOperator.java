@@ -83,7 +83,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		}
 		setName(op.getName());
 		this.ownerHandler = new OwnerHandler(op.ownerHandler);
-		this.outputSchema = op.outputSchema;
+		this.outputSchema = new HashMap<>(op.outputSchema);
+		//this.outputSchema = op.outputSchema;
 		this.uniqueIdentifier = op.uniqueIdentifier;
 		this.infos = copyParameterInfos(op.infos);
 		this.destinationName = op.destinationName;
