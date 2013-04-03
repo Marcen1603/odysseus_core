@@ -36,6 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MigrationRouterPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.IMyLock;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.LockingLock;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPlanMigratable;
@@ -118,9 +120,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				.getOperatorsBeforeSources(oldPlanRoot, metaDataUpdates);
 		List<IPhysicalOperator> newPlanOperatorsBeforeSources = MigrationHelper
 				.getOperatorsBeforeSources(newPlanRoots.get(0), metaDataUpdates);
-
-		// TODO: das klappt nur bedingt. Nämlich wenn es ausgewiesene Senken
-		// (z.b. SocketSink) gibt. Sonst ist das eigentlich Unsinn.
 
 		// get last operators before output sink
 		IPhysicalOperator lastOperatorOldPlan;
@@ -269,9 +268,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		IPhysicalOperator root = null;
 		if (!lastOperatorOldPlan.isSource()) {
 			// it is a real sink (like FileSink)
-			root = insertRouterWithRealSink(lastOperatorOldPlan, lastOperatorNewPlan, router);
+			root = insertRouterWithRealSink(lastOperatorOldPlan,
+					lastOperatorNewPlan, router);
 		} else {
-			root = insertRouterWithoutRealSink(lastOperatorOldPlan, lastOperatorNewPlan, router);
+			root = insertRouterWithoutRealSink(lastOperatorOldPlan,
+					lastOperatorNewPlan, router);
 		}
 
 		// wir brauchen allerdings einen Owner!
@@ -285,8 +286,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		roots.add(root);
 		runningQuery.initializePhysicalRoots(roots);
 
-		LOG.debug("Root has been initialized with owner "
-				+ root.getOwnerIDs());
+		LOG.debug("Root has been initialized with owner " + root.getOwnerIDs());
 
 		// open auf dem neuen Plan aufrufen
 		LOG.debug("Calling open on new Plan ");
@@ -334,7 +334,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		for (PhysicalSubscription<?> sub : realSink.getSubscribedToSource()) {
 			AbstractSource<?> beforeSink = (AbstractSource<?>) sub.getTarget();
 			oldOpsBeforeSink.add(beforeSink);
-			oldSubscriptions.add(sub);
+			for (PhysicalSubscription<?> sinkSub : beforeSink
+					.getSubscriptions()) {
+				if (sinkSub.getTarget().equals(realSink)) {
+					oldSubscriptions.add(sinkSub);
+				}
+			}
 		}
 
 		// collect the operators before the sink in the new plan.
@@ -344,7 +349,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				.getSubscribedToSource()) {
 			AbstractSource<?> beforeSink = (AbstractSource<?>) sub.getTarget();
 			newOpsBeforeSink.add(beforeSink);
-			newSubscriptions.add(sub);
+			for (PhysicalSubscription<?> sinkSub : beforeSink
+					.getSubscriptions()) {
+				if (sinkSub.getTarget().equals(lastOperatorNewPlan)) {
+					newSubscriptions.add(sinkSub);
+				}
+			}
 		}
 
 		if (oldOpsBeforeSink.size() > 1 || newOpsBeforeSink.size() > 1) {
@@ -357,35 +367,43 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// block router before we change the active sink connections.
 		router.block();
 
-		for (PhysicalSubscription sub : router.getSubscribedToSource()) {
-			if (sub.getTarget().equals(oldOpsBeforeSink.get(0))) {
+		for (PhysicalSubscription sub : oldOpsBeforeSink.get(0)
+				.getSubscriptions()) {
+			if (sub.getTarget().equals(router)) {
 				oldOpsBeforeSink.get(0).replaceActiveSubscription(
 						oldSubscriptions.get(0), sub);
-				continue;
 			}
-			if (sub.getTarget().equals(newOpsBeforeSink.get(0))) {
+		}
+		for (PhysicalSubscription sub : newOpsBeforeSink.get(0)
+				.getSubscriptions()) {
+			if (sub.getTarget().equals(router)) {
 				newOpsBeforeSink.get(0).replaceActiveSubscription(
 						newSubscriptions.get(0), sub);
-				continue;
 			}
 		}
 
 		realSink.unsubscribeFromAllSources();
 		realSink.subscribeToSource((ISource) router, 0, 0,
 				router.getOutputSchema());
-				
-		router.unblock();
 		
+		// remove the sink from the new plan because it is not needed
+		((ISink) lastOperatorNewPlan).unsubscribeFromAllSources();
+		lastOperatorNewPlan.removeOwner(this.physicalQuery);
+		
+		router.unblock();
+
 		try {
 			router.open();
 		} catch (OpenFailedException e) {
 			LOG.error("Open failed for router", e);
 		}
-		
+
 		return realSink;
 	}
 
-	private ISink insertRouterWithoutRealSink(IPhysicalOperator lastOperatorOldPlan, IPhysicalOperator lastOperatorNewPlan, IPipe router) {
+	private ISink insertRouterWithoutRealSink(
+			IPhysicalOperator lastOperatorOldPlan,
+			IPhysicalOperator lastOperatorNewPlan, IPipe router) {
 		PhysicalRestructHelper.appendBinaryOperator(router,
 				(ISource) lastOperatorOldPlan, (ISource) lastOperatorNewPlan);
 		if (LOG.isDebugEnabled()) {
@@ -398,7 +416,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		}
 		return router;
 	}
-	
+
 	/**
 	 * Proof of concept for another finished migration handling.
 	 * 
@@ -438,22 +456,10 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			}
 		}
 
-		LOG.debug("Remove router");
-		MigrationRouterPO router = (MigrationRouterPO) context.getRouter();
-		unSub.clear();
-		unSub.addAll(router.getSubscribedToSource());
-		for (PhysicalSubscription<?> sub : unSub) {
-			// router.unsubscribeFromSource(sub);
-			AbstractSource<?> target = (AbstractSource<?>) sub.getTarget();
-			target.disconnectSink(router, sub.getSinkInPort(),
-					sub.getSourceOutPort(), router.getOutputSchema());
-		}
-		router.removeOwner(context.getRunningQuery());
+		List<IPhysicalOperator> newRoots = removeRouter(context.getRunningQuery().getRoots(), (MigrationRouterPO) context.getRouter());
 
 		LOG.debug("Initialize new plan root as physical root");
-		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
-		roots.add(context.getNewPlanRoot());
-		context.getRunningQuery().initializePhysicalRoots(roots);
+		context.getRunningQuery().initializePhysicalRoots(newRoots);
 
 		LOG.debug("Block sources");
 		List<AbstractSource<?>> blockedSources = new ArrayList<AbstractSource<?>>();
@@ -470,6 +476,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 					}
 					LOG.debug("Blocking: " + source.getClass().getSimpleName()
 							+ " (" + source.hashCode() + ")");
+					IMyLock lock = new LockingLock();
+					source.setLocker(lock);
 					source.block();
 					blockedSources.add(source);
 				}
@@ -515,11 +523,54 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			throw new MigrationException(e);
 		}
 
+		LOG.debug("Result:\n"
+				+ AbstractTreeWalker.prefixWalk2(newRoots.get(0),
+						new PhysicalPlanToStringVisitor()));
+		
+		LOG.debug("Migration is finished");
+		fireMigrationFinishedEvent(this);
+	}
+	
+	private List<IPhysicalOperator> removeRouter(List<IPhysicalOperator> roots, MigrationRouterPO router) {
+		LOG.debug("Remove router");
+		List<PhysicalSubscription> unSub = new ArrayList<PhysicalSubscription>();
+		unSub.addAll(router.getSubscribedToSource());
+		AbstractSource<?> newPlan = null;
+		for (PhysicalSubscription<?> sub : unSub) {
+			// router.unsubscribeFromSource(sub);
+			AbstractSource<?> target = (AbstractSource<?>) sub.getTarget();
+			if(sub.getSinkInPort() == 1) {
+				// this is the new plan
+				newPlan = target;
+			}
+			target.disconnectSink(router, sub.getSinkInPort(),
+					sub.getSourceOutPort(), router.getOutputSchema());
+		}
+		
+		router.removeOwner(this.physicalQuery);	
+
 		// cleanup
 		this.routerStrategy.remove(router);
 
-		LOG.debug("Migration is finished");
-		fireMigrationFinishedEvent(this);
+		List<IPhysicalOperator> newRoots = new ArrayList<IPhysicalOperator>();
+		// reconnecting the new plan to the sink if necessary
+		if(router.getSubscriptions().isEmpty()) {
+			LOG.debug("No real sink to reconnect.");
+			newRoots.add(newPlan);
+		} else {
+			List<ISink> sinks = new ArrayList<ISink>();
+			// TODO (Merlin): prüfen was genau hier schiefgehen kann.
+			for(PhysicalSubscription sub : ((AbstractSource<?>) router).getSubscriptions()) {
+				sinks.add((ISink) sub.getTarget());
+			}
+			for(IPhysicalOperator operator : sinks) {
+				ISink sink = (ISink) operator;
+				router.disconnectSink(sink, 0, 0, router.getOutputSchema());
+				newPlan.connectSink(sink, 0, 0, newPlan.getOutputSchema());
+				newRoots.add(operator);
+			}
+		}
+		return newRoots;
 	}
 
 	void finishedParallelExecution(StrategyContext context) {
