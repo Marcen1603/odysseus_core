@@ -4,7 +4,8 @@ Bundle-Name: Pattern-Matching
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.pattern
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.pattern.Activator
-Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
+Import-Package: de.uniol.inf.is.odysseus.cep.epa.exceptions,
+ de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.flow,
