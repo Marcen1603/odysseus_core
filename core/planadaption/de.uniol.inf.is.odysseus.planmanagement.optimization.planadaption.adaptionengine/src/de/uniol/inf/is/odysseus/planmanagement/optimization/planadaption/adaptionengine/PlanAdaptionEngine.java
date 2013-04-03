@@ -50,7 +50,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 
 	private Map<String, ICostModel<?>> migrationCostModels = new HashMap<String, ICostModel<?>>();
 	private ICostModel<PlanMigration> selectedCostModel = null;
-	
+
 	private Map<IPhysicalQuery, List<IPhysicalOperator>> queryToOriginalPlan = new HashMap<IPhysicalQuery, List<IPhysicalOperator>>();
 
 	private long blockedTime = OdysseusConfiguration.getLong(
@@ -59,6 +59,8 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 			10000);
 
 	private int runningQueries = 0;
+
+	private int adaptedQueries = 0;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
@@ -121,8 +123,8 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 		if (this.fuzzyRuleEngine.evaluate(fittest.getE2(), migrationCost)) {
 			// migrate
 			try {
-			this.migrationStrategy.migrateQuery(this.executor, physicalQuery,
-					newPlanRoots);
+				this.migrationStrategy.migrateQuery(this.executor,
+						physicalQuery, newPlanRoots);
 			} catch (MigrationException ex) {
 				throw new QueryOptimizationException(ex);
 			}
@@ -260,11 +262,14 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 			if (query.isOpened() && !noAdapt) {
 				LOG.debug("Adapting PhysicalQuery: " + query);
 				// only adapt running queries.
+				this.adaptedQueries++;
 				adaptPlan(query, query.getSession());
 			} else {
 				LOG.debug("PhysicalQuery: " + query + " has not been adapted");
-				this.policyRuleEngine.start();
 			}
+		}
+		if (this.adaptedQueries == 0) {
+			this.policyRuleEngine.start();
 		}
 	}
 
@@ -303,17 +308,33 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 	@Override
 	public void migrationFinished(IMigrationEventSource sender) {
 		// migration is finished so the adaption process can be started again.
-		this.policyRuleEngine.start();
+		if (this.adaptedQueries > 0) {
+			this.adaptedQueries--;
+		}
+
+		if (this.adaptedQueries == 0) {
+			this.policyRuleEngine.start();
+		} else {
+			LOG.debug("There are still queries left that are currently adapting");
+		}
 	}
 
 	@Override
 	public void migrationFailed(IMigrationEventSource sender, Throwable ex) {
 		// revert all possible changes
 		IPhysicalQuery query = sender.getPhysicalQuery();
-		List<IPhysicalOperator> originalRoots = this.queryToOriginalPlan.get(query);
+		List<IPhysicalOperator> originalRoots = this.queryToOriginalPlan
+				.get(query);
 		query.initializePhysicalRoots(originalRoots);
 		LOG.error("Migration failed!", ex);
-		this.policyRuleEngine.start();
+		if (this.adaptedQueries > 0) {
+			this.adaptedQueries--;
+		}
+		if (this.adaptedQueries == 0) {
+			this.policyRuleEngine.start();
+		} else {
+			LOG.debug("There are still queries left that are currently adapting");
+		}
 	}
 
 }
