@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.server.util.ClearPhysicalSubscriptionsLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.RemoveIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.RemoveOwnersGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -244,6 +245,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private ILogicalOperator removeView(String viewname, ISession caller) {
 		ILogicalOperator op;
 		try {
@@ -263,6 +265,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			throw new RuntimeException(e);
 		}
 		if (op != null) {
+			// Remove registered ids
+			RemoveIdLogicalGraphVisitor<ILogicalOperator> visitor = new RemoveIdLogicalGraphVisitor<ILogicalOperator>(this, caller);
+			@SuppressWarnings("rawtypes")
+			GenericGraphWalker walker = new GenericGraphWalker();
+			walker.prefixWalk(op, visitor);			
+			fireViewRemoveEvent(viewname, op);
 			fireViewRemoveEvent(viewname, op);
 			fireDataDictionaryChangedEvent();
 		}
@@ -415,6 +423,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		return getStream(viewname, caller);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ILogicalOperator removeViewOrStream(String viewname, ISession caller) {
 		if (this.viewDefinitions.containsKey(viewname)) {
@@ -445,6 +454,14 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 					}
 				}
 				if (op != null) {
+					// Remove plan from wrapper plan factory
+					removeAccessPlan(viewname);
+					removeAccessPlan(createUserUri(viewname, caller));
+					// Remove registered ids
+					RemoveIdLogicalGraphVisitor<ILogicalOperator> visitor = new RemoveIdLogicalGraphVisitor<ILogicalOperator>(this, caller);
+					@SuppressWarnings("rawtypes")
+					GenericGraphWalker walker = new GenericGraphWalker();
+					walker.prefixWalk(op, visitor);			
 					fireViewRemoveEvent(viewname, op);
 				}
 				return op;
@@ -862,6 +879,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	public synchronized void putAccessPlan(String uri, ISource<?> s) {
 		sources.put(uri, s);
 	}
+	
+	@Override
+	public synchronized void removeAccessPlan(String uri){
+		sources.remove(uri);
+	}
 
 	@Override
 	public synchronized Map<String, ISource<?>> getSources() {
@@ -932,5 +954,5 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		// other queries --> Need a concept!!
 		return operators.get(id);
 	}
-
+	
 }

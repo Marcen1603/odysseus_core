@@ -160,6 +160,7 @@ public interface IDataDictionary extends IAddDataType {
 	ISource<?> getAccessPlan(String uri);
 
 	void putAccessPlan(String uri, ISource<?> s);
+	void removeAccessPlan(String uri);
 
 	Map<String, ISource<?>> getSources();
 
@@ -180,5 +181,6 @@ public interface IDataDictionary extends IAddDataType {
 	void addListener(IDataDictionaryListener listener);
 
 	void removeListener(IDataDictionaryListener listener);
+
 
 }
