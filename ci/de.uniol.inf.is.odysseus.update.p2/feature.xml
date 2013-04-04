@@ -163,4 +163,8 @@ limitations under the License.
          id="de.uniol.inf.is.odysseus.rcp.dashboard.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.text.feature"
+         version="0.0.0"/>
+
 </feature>
