@@ -1,58 +1,35 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.editor.text.editors.outline;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import de.uniol.inf.is.odysseus.core.collection.NamedList;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
-import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-
 public class OdysseusScriptContentProvider implements ITreeContentProvider {
-
-	private StringTreeRoot input;
-	private ReplacementLeaf replaceLeaf;
-	
-	@Override
-	public void dispose() {}
-
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if( newInput != null ) {
-			input = (StringTreeRoot)newInput;
-			try {
-				replaceLeaf = new ReplacementLeaf(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacements(input.getString()));
-			} catch (OdysseusScriptException e) {
-				// we don't want to have stacktraces here, because it is normal that
-				// the parsing is not successful during editing
-				//e.printStackTrace();
-				replaceLeaf = null;
-			}
-		} else {
-			input = null;
-			replaceLeaf = null;
-		}
-	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
@@ -61,44 +38,57 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if( parentElement instanceof StringTreeRoot ) {
-			String text = ((StringTreeRoot)parentElement).getString();
+		if (parentElement instanceof ScriptNode) {
+			String text = ((ScriptNode) parentElement).getString();
 			try {
 				ISession user = OdysseusRCPPlugIn.getActiveSession();
-				ArrayList<Object> list = new ArrayList<Object>();
-				List<PreParserStatement> statements = OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user);
-				if( replaceLeaf != null ) {
-					list.add( replaceLeaf );
-					list.addAll(statements);
-					return list.toArray();
-				}               
-			} catch (OdysseusScriptException e) {				
+				List<Object> childs = new ArrayList<>();
+				// replacements
+				NamedList<Entry<String, String>> replacements = new NamedList<>("Definitions");
+				replacements.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacements(text).entrySet());
+				childs.add(replacements);			
+				// statements				
+				childs.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user));
+
+				return childs.toArray();
+			} catch (Exception e) {
+				// if we cannot parse it yet, script has no children
 				return new Object[] {};
 			}
 		}
-		if( parentElement instanceof ReplacementLeaf ) {
-			return ((ReplacementLeaf)parentElement).getReplacements().toArray();
+		if (parentElement instanceof NamedList) {
+			return ((NamedList<?>) parentElement).toArray();
 		}
-		return null;
+		// if we have any set, we want the children
+		if (parentElement instanceof Set) {
+			return ((Set<?>) parentElement).toArray();
+		}
+		// else we have no children
+		return new Object[] {};
 	}
 
 	@Override
 	public Object getParent(Object element) {
-		if( element instanceof PreParserStatement ) 
-			return input;
-		if( element instanceof ReplacementLeaf )
-			return input;
-		if( element instanceof String ) 
-			return replaceLeaf;
-		
 		return null;
 	}
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if( element instanceof StringTreeRoot ) return true;
-		if( element instanceof ReplacementLeaf && replaceLeaf.getReplacements().size() > 0) return true;
+		if (element instanceof ScriptNode)
+			return true;
+		if (element instanceof NamedList)
+			return true;
 		return false;
+	}
+
+	@Override
+	public void dispose() {
+		// we don't need this
+	}
+
+	@Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		// we don't need this
 	}
 
 }

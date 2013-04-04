@@ -38,10 +38,10 @@ public class OdysseusScriptContentOutlinePage extends ContentOutlinePage {
 		treeViewer.setContentProvider(new OdysseusScriptContentProvider());
 		treeViewer.setLabelProvider(new OdysseusScriptLabelProvider());
 		treeViewer.addSelectionChangedListener(this);
-		treeViewer.setInput(new StringTreeRoot(queryText));
+		setInput(queryText);		
 	}
 	
-	public void setInput(String queryText){
-		treeViewer.setInput(new StringTreeRoot(queryText));
+	public void setInput(String queryText){		
+		treeViewer.setInput(new ScriptNode(queryText));
 	}
 }

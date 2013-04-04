@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
+import de.uniol.inf.is.odysseus.core.collection.NamedList;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
 public class OdysseusScriptLabelProvider implements ILabelProvider {
@@ -46,8 +47,8 @@ public class OdysseusScriptLabelProvider implements ILabelProvider {
 	public String getText(Object element) {
 		if( element instanceof PreParserStatement ) 
 			return ((PreParserStatement)element).getKeywordText();		
-		if( element instanceof ReplacementLeaf ) 
-			return "Definitions";
+		if( element instanceof NamedList ) 
+			return ((NamedList<?>)element).getName();
 		if( element instanceof String )
 			return element.toString();
 		

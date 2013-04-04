@@ -15,21 +15,15 @@
   */
 package de.uniol.inf.is.odysseus.rcp.editor.text.editors.outline;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+public class ScriptNode {
 
-public class ReplacementLeaf {
-
-	private List<String> replace = new LinkedList<String>(); 
+	private String content;
 	
-	public ReplacementLeaf( Map<String, String> replacements ) {
-		for( String key : replacements.keySet()) {
-			replace.add( key + " = " + replacements.get(key));
-		}
+	public ScriptNode( String content ) {
+		this.content = content;
 	}
 	
-	public List<String> getReplacements() {
-		return replace;
+	public String getString() {
+		return content;
 	}
 }

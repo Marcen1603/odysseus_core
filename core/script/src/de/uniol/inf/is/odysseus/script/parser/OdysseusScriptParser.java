@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -40,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
 
 public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser {
 
@@ -141,15 +141,15 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		if (defaultSink != null) {
 			variables.put("_defaultSink", defaultSink);
 		}
-		
+
 		List results = Lists.newArrayList();
 		for (PreParserStatement stmt : statements) {
 			Optional<?> optionalResult = stmt.execute(variables, caller, this);
-			if( optionalResult.isPresent() ) {
+			if (optionalResult.isPresent()) {
 				results.add(optionalResult.get());
 			}
 		}
-		
+
 		return results;
 	}
 
@@ -191,10 +191,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			StringBuffer sb = null;
 
 			String currentKey = null;
+			
 			for (currentLine = 0; currentLine < text.length; currentLine++) {
 				String line = text[currentLine].trim();
 
-				// Kommentare entfernen
+				// remove comments
 				line = removeComments(line);
 				if ((line == null) || (line.equals("null")))
 					continue;
@@ -204,40 +205,47 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				}
 
 				line = line.trim();
-				// Ersetzungen einsetzen
+				// use replacements
 				line = useReplacements(line, replacements).trim();
+				// if there is a define-key for replacements, we can continue
 				if (line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY) != -1)
 					continue;
 
+				// same with loop-definition lines: jump to next line, because
+				// we normally handled that before
 				if (line.indexOf(PARAMETER_KEY + LOOP_END_KEY) != -1)
 					continue;
 
 				if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1)
 					continue;
 
-				// Undefine
+				// If we find an UNDEFINE, we remove the replacement
 				if (line.indexOf(PARAMETER_KEY + IfController.UNDEF_KEY) != -1) {
 					String[] parts = line.trim().split(" |\t", 3);
 					replacements.remove(parts[1]);
 				}
 
+				// else we handle the parameters (those starting with #)
 				if (line.length() > 0) {
 
-					// Neue Parameterzuweisung?
-					if( line.startsWith(PARAMETER_KEY)) {
+					// is this a line that starts a new parameter?
+					if (line.startsWith(PARAMETER_KEY)) {
 						boolean foundParam = false;
 						for (String param : KEYWORD_REGISTRY.getKeywordNames()) {
 							String toFind = PARAMETER_KEY + param;
 							final int pos = line.indexOf(toFind);
 							if (pos != -1) {
-	
-								// alten parameter ausführen
+
+								// yes, we have a parameter, if there was one
+								// before: build this parameter and use all that
+								// we have seen until now
 								if (sb != null && currentKey != null) {
 									IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
 									statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
 								}
-	
-								// neue parameterzuweisung
+
+								// set values to find our new parameter (that
+								// starts at this line)
 								sb = new StringBuffer();
 								sb.append(line.substring(pos + param.length() + 1).trim());
 								currentKey = param;
@@ -245,12 +253,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 								break;
 							}
 						}
-						
-						if( !foundParam ) {
+
+						if (!foundParam) {
 							throw new OdysseusScriptException("Undefined key '" + line.substring(1) + "'");
 						}
-						
-						
+
 					} else {
 						if (sb == null) {
 							throw new OdysseusScriptException("No key set in line " + (currentLine + 1));
@@ -262,7 +269,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				}
 			}
 
-			// Last query
+			// we reached the last line, so we need to wrap up the last found
+			// statement/parameter
 			if (sb != null && currentKey != null) {
 				IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
 				statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
@@ -313,8 +321,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					for (int counter = startCount; counter < endCount; counter++) {
 						for (int i = from + 1; i < to; i++) {
 							String toChange = textToParse[i];
-
+							// replace ${i}
 							toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + REPLACEMENT_END_KEY), Integer.toString(counter));
+							// replace ${i-1}
+							toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "-1" + REPLACEMENT_END_KEY), Integer.toString(counter - 1));
+							// replace ${i+1}
+							toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "+1" + REPLACEMENT_END_KEY), Integer.toString(counter + 1));
 							text.add(toChange);
 						}
 					}
@@ -336,7 +348,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		}
 
 		// System.out.println("------------------");
-		// for(String s: text){
+		// for (String s : text) {
 		// System.out.println(s);
 		// }
 		// System.out.println("------------------");
@@ -389,7 +401,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	private void addDefaultReplacements(Map<String, String> repl) {
-		repl.put("NOW", System.currentTimeMillis()+"");		
+		repl.put("NOW", System.currentTimeMillis() + "");
 	}
 
 	protected String useReplacements(String line, Map<String, String> replacements) throws OdysseusScriptException {
@@ -466,37 +478,51 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			KEYWORD_REGISTRY.removeKeyword(entry.getKey());
 		}
 	}
-	
-	public PreParserKeywordRegistry getPreParserKeywordRegistry(){
+
+	public PreParserKeywordRegistry getPreParserKeywordRegistry() {
 		return KEYWORD_REGISTRY;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#getLanguage()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#getLanguage
+	 * ()
 	 */
 	@Override
 	public String getLanguage() {
 		return "OdysseusScript";
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse(java.lang.String, de.uniol.inf.is.odysseus.core.usermanagement.ISession, de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse
+	 * (java.lang.String, de.uniol.inf.is.odysseus.core.usermanagement.ISession,
+	 * de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
 	 */
 	@Override
 	public List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
 		try {
 			this.parseAndExecute(query, user, null);
 		} catch (OdysseusScriptException e) {
-			throw new QueryParseException(e);			
+			throw new QueryParseException(e);
 		}
 		return new ArrayList<>();
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse(java.io.Reader, de.uniol.inf.is.odysseus.core.usermanagement.ISession, de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse
+	 * (java.io.Reader, de.uniol.inf.is.odysseus.core.usermanagement.ISession,
+	 * de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
 	 */
 	@Override
-	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {		
+	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
 		return new ArrayList<>();
 	}
 
