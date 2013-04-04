@@ -30,15 +30,18 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	List<T> _buffer = null;
 	boolean forceElement = true;
 	private long elemsToRemoveFromStream;
+	private final long advance;
 
 	public SlidingElementWindowTIPO(WindowAO ao) {
 		super(ao);
 		_buffer = new LinkedList<T>();
+		advance = windowAdvance>0?windowAdvance:1;
 	}
 
 	public SlidingElementWindowTIPO(SlidingElementWindowTIPO<T> po) {
 		super(po);
 		this._buffer = po._buffer;
+		advance = windowAdvance>0?windowAdvance:1;
 	}
 
 	@Override
@@ -63,7 +66,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		if (buffer.size() == this.windowSize + 1) {
 			// jetzt advance-Elemente rauswerfen
 			Iterator<T> bufferIter = buffer.iterator();
-			long elemsToSend = windowAdvance;
+			long elemsToSend = advance;
 			// Problem: Fenster ist kleiner als Schrittlaenge -->
 			// dann nur alle Elemente aus dem Fenster werfen
 			// und Tupel solange verwerfen bis advance wieder erreicht
