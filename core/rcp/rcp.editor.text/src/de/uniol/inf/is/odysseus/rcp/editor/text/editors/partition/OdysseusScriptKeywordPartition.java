@@ -81,6 +81,7 @@ public class OdysseusScriptKeywordPartition extends AbstractOdysseusScriptPariti
 
 		for (String s : OdysseusRCPEditorTextPlugIn.getScriptParser().getStaticWords()) {
 			wr.addWord(OdysseusScriptParser.PARAMETER_KEY + s, staticKeywords);
+			wr.addWord(s, staticKeywords);
 		}
 		return rules;
 	}

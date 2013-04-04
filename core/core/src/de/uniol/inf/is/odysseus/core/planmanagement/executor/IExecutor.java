@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -215,5 +216,10 @@ public interface IExecutor extends IClientPlanManager{
 	void reloadStoredQueries(ISession caller);
 	
 	public SDFSchema getOutputSchema(int queryId);
+	
+	
+	public void addStoredProcedure(String name, String text, ISession caller);
+	public void removeStoredProcedure(String name, ISession caller);
+	public StoredProcedure getStoredProcedure(String name, ISession caller);
 
 }

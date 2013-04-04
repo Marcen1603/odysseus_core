@@ -9,6 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.core.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.procedure,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.core.securitypunctuation,
  de.uniol.inf.is.odysseus.testng

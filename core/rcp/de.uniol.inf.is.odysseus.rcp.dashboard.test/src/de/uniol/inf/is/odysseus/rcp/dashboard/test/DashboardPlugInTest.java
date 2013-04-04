@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
@@ -255,6 +256,24 @@ public class DashboardPlugInTest {
 		@Override
 		public SDFSchema getOutputSchema(int queryId) {
 			return null;
+		}
+
+		@Override
+		public void addStoredProcedure(String name, String text, ISession caller) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public StoredProcedure getStoredProcedure(String name, ISession caller) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void removeStoredProcedure(String name, ISession caller) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.datadictionary.mem;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
@@ -83,5 +84,15 @@ public class DataDictionary extends AbstractDataDictionary {
 	
 	private static <T extends Comparable<?>,U> MemoryStore<T,U> newMemoryStore(){
 		return new MemoryStore<T, U>();
+	}
+
+	@Override
+	protected IStore<String, StoredProcedure> createStoredProceduresStore() {
+		return newMemoryStore();
+	}
+
+	@Override
+	protected IStore<String, IUser> createStoredProceduresFromUserStore() {
+		return newMemoryStore();
 	}
 }

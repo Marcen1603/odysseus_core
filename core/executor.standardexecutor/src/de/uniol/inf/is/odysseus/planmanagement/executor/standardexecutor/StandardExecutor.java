@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
@@ -97,7 +98,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadl
  * - send events of intern changes - providing execution informations -
  * providing and executing admission control reactions if possible
  * 
- * @author Wolf Bauer, Jonas Jacobi, Tobias Witt, Marco Grawunder, Timo
+ * @author Wolf Bauer, Jonas Jacobi, Tobias Witt, Marco Grawunder, Dennis Geesen, Timo
  *         Michelsen (AC)
  */
 public class StandardExecutor extends AbstractExecutor implements IAdmissionListener {
@@ -1024,5 +1025,21 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			queries.addAll(stoppedQueries.get(usr));
 		}
 		return queries;
+	}
+
+	@Override
+	public void addStoredProcedure(String name, String text, ISession caller) {
+		StoredProcedure sp = new StoredProcedure(name, text);
+		getDataDictionary().addStoredProcedure(sp, caller);		
+	}
+
+	@Override
+	public StoredProcedure getStoredProcedure(String name, ISession caller) {
+		return getDataDictionary().getStoredProcedure(name, caller);
+	}
+
+	@Override
+	public void removeStoredProcedure(String name, ISession caller) {
+		getDataDictionary().removeStoredProcedure(name, caller);		
 	}
 }

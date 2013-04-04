@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,7 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -54,6 +56,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	public static final String LOOP_START_KEY = "LOOP";
 	public static final String LOOP_END_KEY = "ENDLOOP";
 	public static final String LOOP_UPTO = "UPTO";
+
+	public static final String STORED_PROCEDURE_PROCEDURE = "PROCEDURE";
+	public static final String STORED_PROCEDURE_DECLARE = "DECLARE";
+	public static final String STORED_PROCEDURE_BEGIN = "BEGIN";
+	public static final String STORED_PROCEDURE_END = "END";
+	public static final String EXECUTE = "EXECUTE";
 
 	public static final String SINGLE_LINE_COMMENT_KEY = "///";
 
@@ -86,6 +94,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		strings.add(LOOP_END_KEY);
 		strings.add(LOOP_START_KEY);
 		strings.add(LOOP_UPTO);
+		strings.add(STORED_PROCEDURE_BEGIN);
+		strings.add(STORED_PROCEDURE_DECLARE);
+		strings.add(STORED_PROCEDURE_END);
+		strings.add(STORED_PROCEDURE_PROCEDURE);
+		strings.add(EXECUTE);
 		strings.add(IfController.IFDEF_KEY);
 		strings.add(IfController.ELSE_KEY);
 		strings.add(IfController.ENDIF_KEY);
@@ -105,10 +118,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseAndExecute
-	 * (java.lang.String,
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.User)
+	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseAndExecute (java.lang.String, de.uniol.inf.is.odysseus.core.server.usermanagement.User)
 	 */
 
 	@Override
@@ -119,9 +129,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#execute(
-	 * java.util.List, de.uniol.inf.is.odysseus.core.server.usermanagement.User)
+	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#execute( java.util.List, de.uniol.inf.is.odysseus.core.server.usermanagement.User)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
@@ -156,10 +164,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript
-	 * (java.lang.String,
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.User)
+	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript (java.lang.String, de.uniol.inf.is.odysseus.core.server.usermanagement.User)
 	 */
 	@Override
 	public List<PreParserStatement> parseScript(String completeText, ISession caller) throws OdysseusScriptException {
@@ -175,23 +180,27 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript
-	 * (java.lang.String[],
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.User)
+	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript (java.lang.String[], de.uniol.inf.is.odysseus.core.server.usermanagement.User)
 	 */
 	@Override
 	public List<PreParserStatement> parseScript(String[] textToParse, ISession caller) throws OdysseusScriptException {
 
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
 		try {
+			// first, we rewrite loops to serial query text
 			String[] text = rewriteLoop(textToParse);
+			// after that, we are looking for procedures and replace them 
+			
+			text = runProcedures(text, caller);
+			
+			
 			Map<String, String> replacements = getReplacements(text);
 			IfController ifController = new IfController(text);
 			StringBuffer sb = null;
 
 			String currentKey = null;
-			
+			boolean isInProcedure = false;
+			StringBuilder procedureLines = new StringBuilder();
 			for (currentLine = 0; currentLine < text.length; currentLine++) {
 				String line = text[currentLine].trim();
 
@@ -200,13 +209,15 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				if ((line == null) || (line.equals("null")))
 					continue;
 
+				// check if we are an executable line
 				if (!ifController.canExecuteNextLine()) {
 					continue;
 				}
 
 				line = line.trim();
 				// use replacements
-				line = useReplacements(line, replacements).trim();
+				line = useReplacements(line, replacements).trim();				
+
 				// if there is a define-key for replacements, we can continue
 				if (line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY) != -1)
 					continue;
@@ -225,37 +236,63 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					replacements.remove(parts[1]);
 				}
 
+				// If we find an STORED_PROCEDURE_PROCEDURE, we omit all other
+				// #KEYWORDS except of END
+				if (line.indexOf(PARAMETER_KEY + STORED_PROCEDURE_PROCEDURE) != -1) {
+					isInProcedure = true;
+					procedureLines = new StringBuilder();
+					procedureLines.append(line);
+					continue;
+				}
+
+				// so, if we are in a procedure, check if we reached the END
+				if (isInProcedure) {
+					procedureLines.append(System.lineSeparator());
+					procedureLines.append(line);
+					if (line.indexOf(STORED_PROCEDURE_END) != -1) {
+						// and put all into the keyword
+						IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(STORED_PROCEDURE_PROCEDURE);
+						statements.add(new PreParserStatement(STORED_PROCEDURE_PROCEDURE, keyword, procedureLines.toString()));
+						isInProcedure = false;
+					}
+					// and we omit procedure-lines
+					continue;
+				}
+
 				// else we handle the parameters (those starting with #)
 				if (line.length() > 0) {
 
 					// is this a line that starts a new parameter?
 					if (line.startsWith(PARAMETER_KEY)) {
-						boolean foundParam = false;
-						for (String param : KEYWORD_REGISTRY.getKeywordNames()) {
-							String toFind = PARAMETER_KEY + param;
-							final int pos = line.indexOf(toFind);
-							if (pos != -1) {
 
-								// yes, we have a parameter, if there was one
-								// before: build this parameter and use all that
-								// we have seen until now
-								if (sb != null && currentKey != null) {
-									IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
-									statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
+						// are we still in procedure declaration --> do not search for end!
+						if (!isInProcedure) {
+							boolean foundParam = false;
+							for (String param : KEYWORD_REGISTRY.getKeywordNames()) {
+								String toFind = PARAMETER_KEY + param;
+								final int pos = line.indexOf(toFind);
+								if (pos != -1) {
+
+									// yes, we have a parameter, if there was
+									// one before: build this parameter and use all
+									// that we have seen until now
+									if (sb != null && currentKey != null) {
+										IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
+										statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
+									}
+
+									// set values to find our new parameter (that starts at this line)
+									sb = new StringBuffer();
+									sb.append(line.substring(pos + param.length() + 1).trim());
+									currentKey = param;
+									foundParam = true;
+									break;
 								}
-
-								// set values to find our new parameter (that
-								// starts at this line)
-								sb = new StringBuffer();
-								sb.append(line.substring(pos + param.length() + 1).trim());
-								currentKey = param;
-								foundParam = true;
-								break;
 							}
-						}
 
-						if (!foundParam) {
-							throw new OdysseusScriptException("Undefined key '" + line.substring(1) + "'");
+							if (!foundParam) {
+								throw new OdysseusScriptException("Undefined key '" + line.substring(1) + "'");
+							}
 						}
 
 					} else {
@@ -280,6 +317,26 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		} catch (OdysseusScriptException ex) {
 			throw new OdysseusScriptException("[Line " + (currentLine + 1) + "]" + ex.getMessage(), ex);
 		}
+	}
+
+	private String[] runProcedures(String[] text, ISession caller) {
+		List<String> lines = new ArrayList<>();
+		for(String line : text){
+			if(line.indexOf(PARAMETER_KEY+EXECUTE)!=-1){
+				lines.addAll(runProcedure(line, caller));
+			}else{
+				lines.add(line);
+			}
+		}
+		return lines.toArray(new String[0]);
+	}
+
+	private List<String> runProcedure(String line, ISession caller) {
+		String key = PARAMETER_KEY+EXECUTE;
+		int toCut = line.indexOf(key)+key.length();
+		String name = line.substring(toCut).trim();
+		StoredProcedure proc = getExecutor().getStoredProcedure(name, caller);
+		return Arrays.asList(proc.getText().split(System.lineSeparator()));		
 	}
 
 	private static String[] rewriteLoop(String[] textToParse) throws OdysseusScriptException {
@@ -358,9 +415,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements
-	 * (java.lang.String)
+	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements (java.lang.String)
 	 */
 	@Override
 	public Map<String, String> getReplacements(String text) throws OdysseusScriptException {
@@ -370,9 +425,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements
-	 * (java.lang.String[])
+	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements (java.lang.String[])
 	 */
 	@Override
 	public Map<String, String> getReplacements(String[] text) throws OdysseusScriptException {
@@ -486,9 +539,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#getLanguage
-	 * ()
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#getLanguage ()
 	 */
 	@Override
 	public String getLanguage() {
@@ -498,14 +549,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse
-	 * (java.lang.String, de.uniol.inf.is.odysseus.core.usermanagement.ISession,
-	 * de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse (java.lang.String, de.uniol.inf.is.odysseus.core.usermanagement.ISession, de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
 	 */
 	@Override
 	public List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
-		try {
+		try {			
 			this.parseAndExecute(query, user, null);
 		} catch (OdysseusScriptException e) {
 			throw new QueryParseException(e);
@@ -516,13 +564,10 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse
-	 * (java.io.Reader, de.uniol.inf.is.odysseus.core.usermanagement.ISession,
-	 * de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse (java.io.Reader, de.uniol.inf.is.odysseus.core.usermanagement.ISession, de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
 	 */
 	@Override
-	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {		
 		return new ArrayList<>();
 	}
 

@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
@@ -97,5 +98,15 @@ public class DataDictionary extends AbstractDataDictionary {
 			LOG.error("Could not create fileStore-Instance for key " + key, e);
 			return null;
 		}
+	}
+
+	@Override
+	protected IStore<String, StoredProcedure> createStoredProceduresStore() {
+		return tryCreateFileStore("storedProceduresFilename");
+	}
+
+	@Override
+	protected IStore<String, IUser> createStoredProceduresFromUserStore() {
+		return tryCreateFileStore("storedProceduresFromUserFilename");
 	}
 }

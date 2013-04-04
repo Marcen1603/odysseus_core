@@ -67,6 +67,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IQueryListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -500,6 +501,24 @@ public class WsClient implements IExecutor, IClientExecutor {
 	public void reloadStoredQueries(ISession caller) {
 		// TODO not implemented by server yet
 
+	}
+
+	@Override
+	public void addStoredProcedure(String name, String text, ISession caller) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public StoredProcedure getStoredProcedure(String name, ISession caller) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeStoredProcedure(String name, ISession caller) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

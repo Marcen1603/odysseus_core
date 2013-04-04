@@ -20,6 +20,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.script.keyword.AddQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.BufferPlacementPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.CreateStoredProcedureKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DistributionTypePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropAllQueriesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropAllSinksPreParserKeyword;
@@ -57,7 +58,8 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(BufferPlacementPreParserKeyword.BUFFERPLACEMENT, BufferPlacementPreParserKeyword.class);
 		keywords.put(ParserPreParserKeyword.PARSER, ParserPreParserKeyword.class);
 		keywords.put(TransCfgPreParserKeyword.TRANSCFG, TransCfgPreParserKeyword.class);			
-		keywords.put(DistributionTypePreParserKeyword.KEYWORD, DistributionTypePreParserKeyword.class);			
+		keywords.put(DistributionTypePreParserKeyword.KEYWORD, DistributionTypePreParserKeyword.class);
+		keywords.put(CreateStoredProcedureKeyword.STORED_PROCEDURE, CreateStoredProcedureKeyword.class);		
 		return keywords;
 	}
 

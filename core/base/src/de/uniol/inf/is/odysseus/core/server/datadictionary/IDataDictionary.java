@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -181,6 +182,17 @@ public interface IDataDictionary extends IAddDataType {
 	void addListener(IDataDictionaryListener listener);
 
 	void removeListener(IDataDictionaryListener listener);
+	
+	// -------------------------------------------------------------------------
+	// Stored Procedure Management
+	// -------------------------------------------------------------------------
+	void addStoredProcedure(StoredProcedure procedure, ISession user);
+	
+	void removeStoredProcedure(String name, ISession user);
+	
+	boolean containsStoredProcedure(String name, ISession user); 
+	
+	StoredProcedure getStoredProcedure(String name, ISession user);
 
 
 }
