@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -330,6 +331,17 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 		locker.lock();
 		removeActiveSubscription(oldSub);
 		addActiveSubscription(newSub);
+		locker.unlock();
+	}
+	
+	public void replaceActiveSubscriptions(Set<PhysicalSubscription<ISink<? super T>>> oldSubs, Set<PhysicalSubscription<ISink<? super T>>> newSubs) {
+		locker.lock();
+		for(PhysicalSubscription<ISink<? super T>> oldSub : oldSubs) {
+			removeActiveSubscription(oldSub);
+		}
+		for(PhysicalSubscription<ISink<? super T>> newSub : newSubs) {
+			addActiveSubscription(newSub);
+		}
 		locker.unlock();
 	}
 
