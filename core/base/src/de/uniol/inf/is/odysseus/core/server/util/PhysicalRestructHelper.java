@@ -15,12 +15,15 @@
   */
 package de.uniol.inf.is.odysseus.core.server.util;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 
 
@@ -67,6 +70,7 @@ public class PhysicalRestructHelper {
 	 * @param sinkInPorts list of sinkinports according to each sink.
 	 * @param buffer
 	 */
+	@Deprecated
 	public static <T extends IPipe> void insertOperator(ISource source, int sourceOutPort, List<ISink> sinks, List<Integer> sinkInPorts, T buffer) {
 		if(sinks.size() != sinkInPorts.size()) {
 			throw new IllegalArgumentException("Amount of sinks and sinkinports must be equal");
@@ -90,6 +94,7 @@ public class PhysicalRestructHelper {
 	 * @param sinkInPort
 	 * @param buffer
 	 */
+	@Deprecated
 	public static <T extends IPipe> void insertOperator(ISource source, int sourceOutPort, ISink sink, int sinkInPort, T buffer) {
 		// Alte Verbindung entfernen
 		source.disconnectSink(sink, sinkInPort, sourceOutPort, source.getOutputSchema());
@@ -107,20 +112,39 @@ public class PhysicalRestructHelper {
 	 * @param sinkInPorts
 	 * @param buffer
 	 */
-	public static <T extends IPipe> void removeOperator(ISource source, int sourceOutPort, List<ISink> sinks, List<Integer> sinkInPorts, T buffer) {
-		if(sinks.size() != sinkInPorts.size()) {
-			throw new IllegalArgumentException("Amount of sinks and sinkinports must be equal");
+	public static <T extends IPipe> void removeOperator(ISource source,
+			int sourceOutPort, List<ISink> sinks, List<Integer> sinkInPorts,
+			T buffer) {
+		if (sinks.size() != sinkInPorts.size()) {
+			throw new IllegalArgumentException(
+					"Amount of sinks and sinkinports must be equal");
 		}
+
 		// disconnect old connections
-		for(int i = 0; i < sinks.size(); i++) {
-			buffer.disconnectSink(sinks.get(i), sinkInPorts.get(i), 0, buffer.getOutputSchema());
+		for (int i = 0; i < sinks.size(); i++) {
+			buffer.disconnectSink(sinks.get(i), sinkInPorts.get(i), 0,
+					buffer.getOutputSchema());
 		}
-		source.disconnectSink(buffer, 0, sourceOutPort, source.getOutputSchema());
 		
-		// reconnect old sinks
-		for(int i = 0; i < sinks.size(); i++) {
-			source.connectSink(sinks.get(i), sinkInPorts.get(i), sourceOutPort, source.getOutputSchema());
+		for (int i = 0; i < sinks.size(); i++) {
+			source.subscribeSink(sinks.get(i), sinkInPorts.get(i),
+					sourceOutPort, source.getOutputSchema());
 		}
+		
+		Set<PhysicalSubscription<?>> toSinks = new HashSet<PhysicalSubscription<?>>();
+		Set<PhysicalSubscription<?>> toBuffer = new HashSet<PhysicalSubscription<?>>();
+		for(PhysicalSubscription<?> sub : ((ISource<?>)source).getSubscriptions()) {
+			if(sub.getTarget().equals(buffer)) {
+				toBuffer.add(sub);
+				continue;
+			}
+			if(sinks.contains(sub.getTarget())) {
+				toSinks.add(sub);
+			}
+		}
+		((AbstractSource) source).replaceActiveSubscriptions(toBuffer, toSinks);
+		
+		source.unsubscribeSink(buffer, 0, sourceOutPort, source.getOutputSchema());
 	}
 	
 	/**
