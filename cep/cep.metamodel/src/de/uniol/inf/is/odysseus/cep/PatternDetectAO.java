@@ -247,7 +247,7 @@ public class PatternDetectAO<T> extends AbstractLogicalOperator{
 		this.oneMatchPerInstance = oneMatchPerInstance;
 	}
 		
-	public void setHeartbeatRate(int rate){
+	public void setHeartbeatRate(int rate) {
 		this.rate = rate;
 	}
 

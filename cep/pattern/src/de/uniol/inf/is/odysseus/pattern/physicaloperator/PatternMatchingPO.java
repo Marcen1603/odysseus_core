@@ -1,11 +1,15 @@
 package de.uniol.inf.is.odysseus.pattern.physicaloperator;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import model.AllPatternDataStructure;
+
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -18,34 +22,42 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 
 /**
  * @author Michael Falk
- * @param <T>
+ * @param <R>
  */
-public class PatternMatchingPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements IHasPredicate, IProcessInternal<T> {
+public class PatternMatchingPO<R extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<R, Tuple<? extends ITimeInterval>> implements IHasPredicate, IProcessInternal<R> {
 	
-	private IPredicate<? super T> predicate;
+	private IPredicate<? super R> predicate;
 	private String type;
 	private List<String> eventTypes;
 	private Map<Integer, String> inputTypeNames;
 
-	protected IInputStreamSyncArea<T> inputStreamSyncArea;
-	protected ITransferArea<T, T> outputTransferArea;
+	protected IInputStreamSyncArea<R> inputStreamSyncArea;
+	protected ITransferArea<R, R> outputTransferArea;
 	
-	public PatternMatchingPO(String type, List<String> eventTypes, IPredicate<? super T> predicate,
-			Map<Integer, String> inputTypeNames, IInputStreamSyncArea<T> inputStreamSyncArea) {
+	// ALL-Pattern
+	//private DefaultTISweepArea<IStreamObject<? extends ITimeInterval>>
+	private AllPatternDataStructure allPattern;
+	
+	
+	public PatternMatchingPO(String type, List<String> eventTypes, IPredicate<? super R> predicate,
+			Map<Integer, String> inputTypeNames, IInputStreamSyncArea<R> inputStreamSyncArea) {
         super();
         this.type = type;
-        this.eventTypes = new ArrayList<String>();
-        for (String e : eventTypes) {
-            this.eventTypes.add(e);
-        }
+        this.eventTypes = eventTypes;
         this.predicate = predicate;
         this.inputTypeNames = inputTypeNames;
         this.inputStreamSyncArea = inputStreamSyncArea;
+        this.allPattern = new AllPatternDataStructure(this.eventTypes);
     }
 	
 	// Copy-Konstruktor
-    public PatternMatchingPO(PatternMatchingPO<T> patternPO) {
-        this(patternPO.type, patternPO.eventTypes, patternPO.predicate, patternPO.inputTypeNames, patternPO.inputStreamSyncArea);
+    public PatternMatchingPO(PatternMatchingPO<R> patternPO) {
+        this.type = patternPO.type;
+        this.eventTypes = patternPO.eventTypes;
+        this.predicate = patternPO.predicate;
+        this.inputTypeNames = patternPO.inputTypeNames;
+        this.inputStreamSyncArea = patternPO.inputStreamSyncArea;
+        this.allPattern = patternPO.allPattern;
     }
 	
 	@Override
@@ -54,7 +66,7 @@ public class PatternMatchingPO<T extends IStreamObject<?>> extends AbstractPipe<
 	}
 	
 	@Override
-	public IPredicate<? super T> getPredicate() {
+	public IPredicate<? super R> getPredicate() {
 		return predicate;
 	}
     
@@ -64,49 +76,82 @@ public class PatternMatchingPO<T extends IStreamObject<?>> extends AbstractPipe<
 	}
 
 	@Override
-	public AbstractPipe<T, T> clone() {
-		return new PatternMatchingPO<T>(this);
+	public AbstractPipe<R,Tuple<? extends ITimeInterval>> clone() {
+		return new PatternMatchingPO<R>(this);
 	}
 	
 	@Override
     public void process_open() throws OpenFailedException {
         super.process_open();
+        inputStreamSyncArea.init(this);
         predicate.init();
     }
      
 	
 	@Override
-	protected void process_next(T event, int port) {
+	protected void process_next(R event, int port) {
 		inputStreamSyncArea.newElement(event, port);
 	}
 
 	@Override
-	public void process_internal(T event, int port) {
-		// Any-Pattern
-		if (type == "ANY") {
-			String eventType = inputTypeNames.get(port);
-			if (eventType == null) {
-				throw new InvalidEventException("Der Datentyp des Events ist null!");
-			}
-			if (eventTypes.contains(eventType) && predicate.evaluate(event)) {
-				// ANY-Pattern erkannt
-				this.transfer(event);
-				// TODO: Komplexes Event erzeugen
-				
-			}
+	public void process_internal(R event, int port) {
+		String eventType = inputTypeNames.get(port);
+		if (eventType == null) {
+			throw new InvalidEventException("Der Datentyp des Events ist null!");
 		}
+		switch(type) {
+			// Logische Pattern
+			case "ANY":
+				if (eventTypes.contains(eventType) && predicate.evaluate(event)) {
+					// ANY-Pattern erkannt
+					this.transfer(this.createComplexEvent(type));
+					// TODO: Komplexes Event erzeugen
+				}
+			case "ALL":
+				// TODO: Prädikat evaluieren
+				boolean detected = allPattern.startMatching(eventType);
+				if (detected)
+					this.transfer(this.createComplexEvent(type));
+			case "ABSENCE":
+			// Threshold Pattern
+			case "COUNT":
+			case "VALUE MAX":
+			case "VALUE MIN:":
+			case "FUNCTOR":
+			// Subset Selection Pattern
+			case "RELATIVE N HIGHEST":
+			case "RELATIVE N LOWEST":
+			// Modale Pattern
+			case "ALWAYS":
+			case "SOMETIMES":
+			// Temporal Order Pattern
+			case "SEQUENCE":
+			case "FIRST N PATTERN":
+			case "LAST N PATTERN":
+		}	
+
 	}
 
 	@Override
 	public void process_punctuation_intern(IPunctuation punctuation, int port) {
-		// TODO Auto-generated method stub
-		
+		sendPunctuation(punctuation);	
 	}
 
 	@Override
 	public void process_newHeartbeat(Heartbeat pointInTime) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/**
+	 * Erzeugt ein komplexes Event.
+	 */
+	private Tuple<? extends ITimeInterval> createComplexEvent(String type) {
+		Object[] attributes = new Object[2];
+		attributes[0] = type;
+		attributes[1] = true;
+		Tuple<? extends ITimeInterval> returnEvent = new Tuple<ITimeInterval>(attributes, false);
+		return returnEvent;
 	}
 
 }
