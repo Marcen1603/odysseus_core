@@ -277,7 +277,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		// wir brauchen allerdings einen Owner!
 		SetOwnerGraphVisitor<IOwnedOperator> addVisitor = new SetOwnerGraphVisitor<>(
-				runningQuery);
+				runningQuery, true);
 		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalkPhysical(root, addVisitor);
 
@@ -365,6 +365,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				oldOpsBeforeSink.get(0), newOpsBeforeSink.get(0));
 
 		// block router before we change the active sink connections.
+		IMyLock locker = new LockingLock();
+		((AbstractSource) router).setLocker(locker);
 		router.block();
 
 		for (PhysicalSubscription sub : oldOpsBeforeSink.get(0)
@@ -385,11 +387,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		realSink.unsubscribeFromAllSources();
 		realSink.subscribeToSource((ISource) router, 0, 0,
 				router.getOutputSchema());
-		
+
 		// remove the sink from the new plan because it is not needed
 		((ISink) lastOperatorNewPlan).unsubscribeFromAllSources();
 		lastOperatorNewPlan.removeOwner(this.physicalQuery);
-		
+
+		router.addOwner(this.physicalQuery);
+
 		router.unblock();
 
 		try {
@@ -414,6 +418,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 					+ lastOperatorNewPlan.getClass().getSimpleName() + " ("
 					+ lastOperatorNewPlan.hashCode() + ")");
 		}
+		router.addOwner(this.physicalQuery);
 		return router;
 	}
 
@@ -456,7 +461,9 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			}
 		}
 
-		List<IPhysicalOperator> newRoots = removeRouter(context.getRunningQuery().getRoots(), (MigrationRouterPO) context.getRouter());
+		List<IPhysicalOperator> newRoots = removeRouter(context
+				.getRunningQuery().getRoots(),
+				(MigrationRouterPO) context.getRouter());
 
 		LOG.debug("Initialize new plan root as physical root");
 		context.getRunningQuery().initializePhysicalRoots(newRoots);
@@ -503,6 +510,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 					parents.add((ISink) sub.getTarget());
 					parentInports.add(sub.getSinkInPort());
 				}
+				
 				PhysicalRestructHelper.removeOperator(children.get(0), 0,
 						parents, parentInports, buffer);
 				buffer.removeOwner(context.getRunningQuery());
@@ -526,12 +534,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		LOG.debug("Result:\n"
 				+ AbstractTreeWalker.prefixWalk2(newRoots.get(0),
 						new PhysicalPlanToStringVisitor()));
-		
+
 		LOG.debug("Migration is finished");
 		fireMigrationFinishedEvent(this);
 	}
-	
-	private List<IPhysicalOperator> removeRouter(List<IPhysicalOperator> roots, MigrationRouterPO router) {
+
+	private List<IPhysicalOperator> removeRouter(List<IPhysicalOperator> roots,
+			MigrationRouterPO router) {
 		LOG.debug("Remove router");
 		List<PhysicalSubscription> unSub = new ArrayList<PhysicalSubscription>();
 		unSub.addAll(router.getSubscribedToSource());
@@ -539,31 +548,33 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		for (PhysicalSubscription<?> sub : unSub) {
 			// router.unsubscribeFromSource(sub);
 			AbstractSource<?> target = (AbstractSource<?>) sub.getTarget();
-			if(sub.getSinkInPort() == 1) {
+			if (sub.getSinkInPort() == 1) {
 				// this is the new plan
 				newPlan = target;
 			}
 			target.disconnectSink(router, sub.getSinkInPort(),
 					sub.getSourceOutPort(), router.getOutputSchema());
 		}
-		
-		router.removeOwner(this.physicalQuery);	
+
+		router.removeOwner(this.physicalQuery);
 
 		// cleanup
 		this.routerStrategy.remove(router);
+		router.removeMigrationListener(this);
 
 		List<IPhysicalOperator> newRoots = new ArrayList<IPhysicalOperator>();
 		// reconnecting the new plan to the sink if necessary
-		if(router.getSubscriptions().isEmpty()) {
+		if (router.getSubscriptions().isEmpty()) {
 			LOG.debug("No real sink to reconnect.");
 			newRoots.add(newPlan);
 		} else {
 			List<ISink> sinks = new ArrayList<ISink>();
 			// TODO (Merlin): prüfen was genau hier schiefgehen kann.
-			for(PhysicalSubscription sub : ((AbstractSource<?>) router).getSubscriptions()) {
+			for (PhysicalSubscription sub : ((AbstractSource<?>) router)
+					.getSubscriptions()) {
 				sinks.add((ISink) sub.getTarget());
 			}
-			for(IPhysicalOperator operator : sinks) {
+			for (IPhysicalOperator operator : sinks) {
 				ISink sink = (ISink) operator;
 				router.disconnectSink(sink, 0, 0, router.getOutputSchema());
 				newPlan.connectSink(sink, 0, 0, newPlan.getOutputSchema());
@@ -573,121 +584,94 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		return newRoots;
 	}
 
-	void finishedParallelExecution(StrategyContext context) {
-
-		LOG.debug("ParallelExecutionWaiter terminated.");
-		// activate blocking buffers
-		LOG.debug("Blocking " + context.getBufferPOs().size()
-				+ " input buffers.");
-
-		for (BufferPO<?> buffer : context.getBufferPOs()) {
-			LOG.debug("Blocking buffer " + buffer.getClass().getSimpleName()
-					+ " (" + buffer.hashCode() + ")");
-			buffer.block();
-			LOG.debug("Blocking buffer " + buffer.getClass().getSimpleName()
-					+ " (" + buffer.hashCode() + ") done.");
-		}
-
-		// drain all tuples out of plans
-		LOG.debug("Draining tuples out of plans.");
-		MigrationHelper
-				.drainTuples(context.getRunningQuery().getRoots().get(0));
-
-		// remove old plan, keep buffers
-		// top operators
-		LOG.debug("Deinitializing parallel execution plan.");
-		// TODO: beachten was mit sink-only operatoren passiert, die vll noch an
-		// dem router hängen!
-		// TODO (Merlin): warum replaceChild? Als neue Wurzel des Plans die
-		// Wurzel des neuen Plans erklären und die subscriptions von alt nach
-		// router und neu nach router löschen.
-		PhysicalRestructHelper.replaceChild(context.getRouter(),
-				context.getNewPlanRoot(), context.getLastOperatorNewPlan());
-		PhysicalRestructHelper.removeSubscription(context.getRouter(),
-				context.getLastOperatorOldPlan());
-		PhysicalRestructHelper.removeSubscription(context.getRouter(),
-				context.getLastOperatorNewPlan());
-		// Workaround Ende
-
-		// remove connection from buffers to old plan
-		for (BufferPO<?> buffer : context.getBufferPOs()) {
-			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()
-					.toArray(
-							new PhysicalSubscription<?>[buffer
-									.getSubscriptions().size()])) {
-				ISink<?> sink = (ISink<?>) sub.getTarget();
-				// have to test '==', because equals is overwritten
-				int ind = context.getOldPlanOperatorsBeforeSources().indexOf(
-						sink);
-				if (ind != -1
-						&& context.getOldPlanOperatorsBeforeSources().get(ind) == sink) {
-					PhysicalRestructHelper.removeSubscription(sink, buffer);
-				}
-			}
-		}
-		// List<ISink> sinks = new ArrayList<ISink>();
-		// List<Integer> sinkInPorts = new ArrayList<Integer>();
-		// for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
-		// sinks.add((ISink) sub.getTarget());
-		// sinkInPorts.add(sub.getSinkInPort());
-		// }
-		// ISource source = buffer.getSubscribedToSource(0).getTarget();
-		// PhysicalRestructHelper.removeOperator(source, 0, sinks,
-		// sinkInPorts, buffer);
-		// }
-
-		// clean up, removing ownership of every operator
-		// remove any metadata on old plan operators
-		AbstractTreeWalker.prefixWalk2(context.getLastOperatorOldPlan(),
-				new CleanOperatorsVisitor(context.getRunningQuery()));
-
-		// push data from buffers into plan
-		// FIXME (Merlin): der buffer wird im laufenden Betrieb wohl nicht leer.
-		LOG.debug("Pushing data from BufferPOs.");
-		for (BufferPO<?> buffer : context.getBufferPOs()) {
-			for (int i = 0; i < buffer.size(); i++) {
-				buffer.transferNext();
-			}
-		}
-
-		// TODO (Merlin): Was passiert mit dem RouterPO?
-
-		// TODO: Warum dies? Die Anfrage ist doch schon drin, oder?
-
-		context.getRunningQuery().initializePhysicalRoots(
-				context.getRunningQuery().getRoots());
-
-		// remove buffers, thereby resuming query processing
-		LOG.debug("Removing buffers.");
-		for (BufferPO<?> buffer : context.getBufferPOs()) {
-			LOG.debug("Remove buffer " + buffer.getClass().getSimpleName()
-					+ " (" + buffer.hashCode() + ")");
-			ISource<?> source = buffer.getSubscribedToSource(0).getTarget();
-			List<ISink<?>> sinks = new ArrayList<ISink<?>>();
-			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
-				sinks.add((ISink<?>) sub.getTarget());
-			}
-			PhysicalRestructHelper.atomicReplaceSink(source, buffer, sinks);
-			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()
-					.toArray(
-							new PhysicalSubscription<?>[buffer
-									.getSubscriptions().size()])) {
-				ISink<?> sink = (ISink<?>) sub.getTarget();
-				PhysicalRestructHelper.removeSubscription(sink, buffer);
-			}
-			buffer.removeOwner(context.getRunningQuery());
-			LOG.debug("Remove buffer " + buffer.getClass().getSimpleName()
-					+ " (" + buffer.hashCode() + ") done.");
-		}
-
-		// new plan is ready and running
-		LOG.debug("Planmigration finished. Result:"
-				+ AbstractTreeWalker.prefixWalk2(context.getRunningQuery()
-						.getRoots().get(0), new PhysicalPlanToStringVisitor()));
-		context.getOptimizer().handleFinishedMigration(
-				context.getRunningQuery());
-		fireMigrationFinishedEvent(this);
-	}
+	/**
+	 * void finishedParallelExecution(StrategyContext context) {
+	 * 
+	 * LOG.debug("ParallelExecutionWaiter terminated."); // activate blocking
+	 * buffers LOG.debug("Blocking " + context.getBufferPOs().size() +
+	 * " input buffers.");
+	 * 
+	 * for (BufferPO<?> buffer : context.getBufferPOs()) {
+	 * LOG.debug("Blocking buffer " + buffer.getClass().getSimpleName() + " (" +
+	 * buffer.hashCode() + ")"); buffer.block(); LOG.debug("Blocking buffer " +
+	 * buffer.getClass().getSimpleName() + " (" + buffer.hashCode() +
+	 * ") done."); }
+	 * 
+	 * // drain all tuples out of plans
+	 * LOG.debug("Draining tuples out of plans."); MigrationHelper
+	 * .drainTuples(context.getRunningQuery().getRoots().get(0));
+	 * 
+	 * // remove old plan, keep buffers // top operators
+	 * LOG.debug("Deinitializing parallel execution plan."); // TODO: beachten
+	 * was mit sink-only operatoren passiert, die vll noch an // dem router
+	 * hängen! // TODO (Merlin): warum replaceChild? Als neue Wurzel des Plans
+	 * die // Wurzel des neuen Plans erklären und die subscriptions von alt nach
+	 * // router und neu nach router löschen.
+	 * PhysicalRestructHelper.replaceChild(context.getRouter(),
+	 * context.getNewPlanRoot(), context.getLastOperatorNewPlan());
+	 * PhysicalRestructHelper.removeSubscription(context.getRouter(),
+	 * context.getLastOperatorOldPlan());
+	 * PhysicalRestructHelper.removeSubscription(context.getRouter(),
+	 * context.getLastOperatorNewPlan()); // Workaround Ende
+	 * 
+	 * // remove connection from buffers to old plan for (BufferPO<?> buffer :
+	 * context.getBufferPOs()) { for (PhysicalSubscription<?> sub :
+	 * buffer.getSubscriptions() .toArray( new PhysicalSubscription<?>[buffer
+	 * .getSubscriptions().size()])) { ISink<?> sink = (ISink<?>)
+	 * sub.getTarget(); // have to test '==', because equals is overwritten int
+	 * ind = context.getOldPlanOperatorsBeforeSources().indexOf( sink); if (ind
+	 * != -1 && context.getOldPlanOperatorsBeforeSources().get(ind) == sink) {
+	 * PhysicalRestructHelper.removeSubscription(sink, buffer); } } } //
+	 * List<ISink> sinks = new ArrayList<ISink>(); // List<Integer> sinkInPorts
+	 * = new ArrayList<Integer>(); // for (PhysicalSubscription<?> sub :
+	 * buffer.getSubscriptions()) { // sinks.add((ISink) sub.getTarget()); //
+	 * sinkInPorts.add(sub.getSinkInPort()); // } // ISource source =
+	 * buffer.getSubscribedToSource(0).getTarget(); //
+	 * PhysicalRestructHelper.removeOperator(source, 0, sinks, // sinkInPorts,
+	 * buffer); // }
+	 * 
+	 * // clean up, removing ownership of every operator // remove any metadata
+	 * on old plan operators
+	 * AbstractTreeWalker.prefixWalk2(context.getLastOperatorOldPlan(), new
+	 * CleanOperatorsVisitor(context.getRunningQuery()));
+	 * 
+	 * // push data from buffers into plan // FIXME (Merlin): der buffer wird im
+	 * laufenden Betrieb wohl nicht leer.
+	 * LOG.debug("Pushing data from BufferPOs."); for (BufferPO<?> buffer :
+	 * context.getBufferPOs()) { for (int i = 0; i < buffer.size(); i++) {
+	 * buffer.transferNext(); } }
+	 * 
+	 * // TODO (Merlin): Was passiert mit dem RouterPO?
+	 * 
+	 * // TODO: Warum dies? Die Anfrage ist doch schon drin, oder?
+	 * 
+	 * context.getRunningQuery().initializePhysicalRoots(
+	 * context.getRunningQuery().getRoots());
+	 * 
+	 * // remove buffers, thereby resuming query processing
+	 * LOG.debug("Removing buffers."); for (BufferPO<?> buffer :
+	 * context.getBufferPOs()) { LOG.debug("Remove buffer " +
+	 * buffer.getClass().getSimpleName() + " (" + buffer.hashCode() + ")");
+	 * ISource<?> source = buffer.getSubscribedToSource(0).getTarget();
+	 * List<ISink<?>> sinks = new ArrayList<ISink<?>>(); for
+	 * (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
+	 * sinks.add((ISink<?>) sub.getTarget()); }
+	 * PhysicalRestructHelper.atomicReplaceSink(source, buffer, sinks); for
+	 * (PhysicalSubscription<?> sub : buffer.getSubscriptions() .toArray( new
+	 * PhysicalSubscription<?>[buffer .getSubscriptions().size()])) { ISink<?>
+	 * sink = (ISink<?>) sub.getTarget();
+	 * PhysicalRestructHelper.removeSubscription(sink, buffer); }
+	 * buffer.removeOwner(context.getRunningQuery()); LOG.debug("Remove buffer "
+	 * + buffer.getClass().getSimpleName() + " (" + buffer.hashCode() +
+	 * ") done."); }
+	 * 
+	 * // new plan is ready and running
+	 * LOG.debug("Planmigration finished. Result:" +
+	 * AbstractTreeWalker.prefixWalk2(context.getRunningQuery()
+	 * .getRoots().get(0), new PhysicalPlanToStringVisitor()));
+	 * context.getOptimizer().handleFinishedMigration(
+	 * context.getRunningQuery()); fireMigrationFinishedEvent(this); }
+	 **/
 
 	@Override
 	public void migrationFinished(IMigrationEventSource sender) {
