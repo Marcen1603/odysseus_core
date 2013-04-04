@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.collection.NamedList;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class OdysseusScriptContentProvider implements ITreeContentProvider {
 
