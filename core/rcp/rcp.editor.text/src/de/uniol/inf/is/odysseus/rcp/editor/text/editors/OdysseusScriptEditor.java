@@ -20,11 +20,14 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
@@ -33,7 +36,8 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.coloring.OdysseusOccurrencesUpdater;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.outline.OdysseusScriptContentOutlinePage;
 
-public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements IResourceChangeListener {
+public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
+		IResourceChangeListener, ISaveablePart2 {
 
 	public final static String EDITOR_MATCHING_BRACKETS = "matchingBrackets";
 	public final static String EDITOR_MATCHING_BRACKETS_COLOR = "matchingBracketsColor";
@@ -56,18 +60,23 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this,
+				IResourceChangeEvent.POST_CHANGE);
 
 		this.occurrencesUpdater = new OdysseusOccurrencesUpdater(this);
-		((IPostSelectionProvider) getSelectionProvider()).addPostSelectionChangedListener(this.occurrencesUpdater);
+		((IPostSelectionProvider) getSelectionProvider())
+				.addPostSelectionChangedListener(this.occurrencesUpdater);
 	}
 
 	public void setModel() {
 		if (this.occurrencesUpdater != null) {
 			this.occurrencesUpdater.update(getSourceViewer());
 		}
-		if (getDocumentProvider() != null && getEditorInput() != null && getDocumentProvider().getDocument(getEditorInput()) != null && this.outlinePage != null) {
-			this.outlinePage.setInput(getDocumentProvider().getDocument(getEditorInput()).get());
+		if (getDocumentProvider() != null && getEditorInput() != null
+				&& getDocumentProvider().getDocument(getEditorInput()) != null
+				&& this.outlinePage != null) {
+			this.outlinePage.setInput(getDocumentProvider().getDocument(
+					getEditorInput()).get());
 		}
 	}
 
@@ -76,12 +85,14 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 		super.dispose();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
-	
+
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (IContentOutlinePage.class.equals(adapter)) {
 			if (outlinePage == null) {
-				outlinePage = new OdysseusScriptContentOutlinePage(getDocumentProvider().getDocument(getEditorInput()).get());
+				outlinePage = new OdysseusScriptContentOutlinePage(
+						getDocumentProvider().getDocument(getEditorInput())
+								.get());
 			}
 			return outlinePage;
 		}
@@ -89,12 +100,15 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 	}
 
 	@Override
-	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
+	protected void configureSourceViewerDecorationSupport(
+			SourceViewerDecorationSupport support) {
 		super.configureSourceViewerDecorationSupport(support);
 		char[] matchChars = { '(', ')', '[', ']', '{', '}' };
-		ICharacterPairMatcher matcher = new DefaultCharacterPairMatcher(matchChars);
+		ICharacterPairMatcher matcher = new DefaultCharacterPairMatcher(
+				matchChars);
 		support.setCharacterPairMatcher(matcher);
-		support.setMatchingCharacterPainterPreferenceKeys(EDITOR_MATCHING_BRACKETS, EDITOR_MATCHING_BRACKETS_COLOR);
+		support.setMatchingCharacterPainterPreferenceKeys(
+				EDITOR_MATCHING_BRACKETS, EDITOR_MATCHING_BRACKETS_COLOR);
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault("matchingBrackets", true);
 		store.setDefault("matchingBracketsColor", "128,128,128");
@@ -107,9 +121,22 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 		}
 		IFile file = ((FileEditorInput) getEditorInput()).getFile();
 		IResourceDelta delta = event.getDelta().findMember(file.getFullPath());
-		if (delta != null) {				
-			//this.close(false);            
+		if (delta != null) {
+			// this.close(false);
 		}
 
+	}
+
+	@Override
+	public int promptToSaveOnClose() {
+		String[] buttons = new String[]{IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
+		MessageDialog dialog = new MessageDialog(getEditorSite().getShell(), "Save changes", null,  "Save the changes?", MessageDialog.QUESTION,buttons,0);
+		final int dialogResult = dialog.open();
+		if(dialogResult == 0){
+			return ISaveablePart2.YES;
+		}else if(dialogResult == 1){
+			return ISaveablePart2.NO;
+		}
+		return ISaveablePart2.CANCEL;
 	}
 }
