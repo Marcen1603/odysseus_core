@@ -194,5 +194,7 @@ public interface IDataDictionary extends IAddDataType {
 	
 	StoredProcedure getStoredProcedure(String name, ISession user);
 
+	List<StoredProcedure> getStoredProcedures(ISession caller);
+
 
 }

@@ -54,7 +54,7 @@ public class DistributionTypePreParserKeyword extends AbstractPreParserKeyword {
 	}
 	
 	@Override
-	public Collection<String> getAllowedParameters() {
+	public Collection<String> getAllowedParameters(ISession caller) {
 		return ExecutorHandler.getServerExecutor().getLogicalQueryDistributorNames();			
 	}
 

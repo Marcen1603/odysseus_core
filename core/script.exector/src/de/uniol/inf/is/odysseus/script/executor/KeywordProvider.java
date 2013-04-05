@@ -59,7 +59,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(ParserPreParserKeyword.PARSER, ParserPreParserKeyword.class);
 		keywords.put(TransCfgPreParserKeyword.TRANSCFG, TransCfgPreParserKeyword.class);			
 		keywords.put(DistributionTypePreParserKeyword.KEYWORD, DistributionTypePreParserKeyword.class);
-		keywords.put(CreateStoredProcedureKeyword.STORED_PROCEDURE, CreateStoredProcedureKeyword.class);		
+		keywords.put(CreateStoredProcedureKeyword.STORED_PROCEDURE, CreateStoredProcedureKeyword.class);
 		return keywords;
 	}
 

@@ -50,7 +50,7 @@ public class ParserPreParserKeyword extends AbstractPreParserExecutorKeyword {
 	}
 	
 	@Override
-	public Collection<String> getAllowedParameters() {
+	public Collection<String> getAllowedParameters(ISession caller) {
 		try {
 			return getServerExecutor().getSupportedQueryParsers();
 		} catch (PlanManagementException e) {			

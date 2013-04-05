@@ -45,6 +45,7 @@ public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventL
 	public static final String SOURCES_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SourcesView";
 	public static final String SINK_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SinkView";
 	public static final String MEP_FUNCTIONS_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.MEPFunctionsView";
+	public static final String STORED_PROCEDURES_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.StoredProceduresView";
 	
 	private static IServerExecutor serverExecutor;
 	
@@ -60,6 +61,7 @@ public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventL
 		imageManager.register("loggedinuser", "icons/user--plus.png");
 		imageManager.register("user", "icons/user.png");
 		imageManager.register("role", "icons/tick-small-circle.png");
+		imageManager.register("function", "icons/function.png");
 	}
 
 	@Override

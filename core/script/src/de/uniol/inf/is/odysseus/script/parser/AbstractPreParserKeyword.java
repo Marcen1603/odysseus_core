@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
 
@@ -64,7 +65,7 @@ public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
 
 	
 	@Override
-	public Collection<String> getAllowedParameters() {
+	public Collection<String> getAllowedParameters(ISession caller) {
 		return new ArrayList<>();
 	}
 

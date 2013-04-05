@@ -1028,8 +1028,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	}
 
 	@Override
-	public void addStoredProcedure(String name, String text, ISession caller) {
-		StoredProcedure sp = new StoredProcedure(name, text);
+	public void addStoredProcedure(String name, StoredProcedure sp, ISession caller) {		
 		getDataDictionary().addStoredProcedure(sp, caller);		
 	}
 
@@ -1041,5 +1040,10 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	@Override
 	public void removeStoredProcedure(String name, ISession caller) {
 		getDataDictionary().removeStoredProcedure(name, caller);		
+	}
+
+	@Override
+	public List<StoredProcedure> getStoredProcedures(ISession caller) {		
+		return getDataDictionary().getStoredProcedures(caller);
 	}
 }

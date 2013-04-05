@@ -259,21 +259,23 @@ public class DashboardPlugInTest {
 		}
 
 		@Override
-		public void addStoredProcedure(String name, String text, ISession caller) {
-			// TODO Auto-generated method stub
+		public void addStoredProcedure(String name, StoredProcedure text, ISession caller) {
 			
 		}
 
 		@Override
 		public StoredProcedure getStoredProcedure(String name, ISession caller) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public void removeStoredProcedure(String name, ISession caller) {
-			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public List<StoredProcedure> getStoredProcedures(ISession caller) {
+			return null;
 		}
 		
 	}

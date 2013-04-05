@@ -217,9 +217,10 @@ public interface IExecutor extends IClientPlanManager{
 	
 	public SDFSchema getOutputSchema(int queryId);
 	
-	
-	public void addStoredProcedure(String name, String text, ISession caller);
+	// stored procedure stuff
+	public void addStoredProcedure(String name, StoredProcedure proc, ISession caller);
 	public void removeStoredProcedure(String name, ISession caller);
 	public StoredProcedure getStoredProcedure(String name, ISession caller);
+	public List<StoredProcedure> getStoredProcedures(ISession caller);
 
 }

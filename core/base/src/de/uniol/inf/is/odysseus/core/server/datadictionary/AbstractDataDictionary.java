@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.datadictionary;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -960,6 +961,18 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		} else {
 			throw new DataDictionaryException("Stored procedure " + name + " does not exist");
 		}
+	}
+	
+	@Override
+	public List<StoredProcedure> getStoredProcedures(ISession caller) {
+		List<StoredProcedure> list = new ArrayList<>();
+		for(Entry<String, IUser> e : this.storedProceduresFromUser.entrySet()){
+			if(e.getValue().equals(caller.getUser())){
+				StoredProcedure sp = this.storedProcedures.get(e.getKey());
+				list.add(sp);
+			}
+		}
+		return list;
 	}
 
 }

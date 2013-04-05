@@ -36,6 +36,14 @@
             name="MEP Functions View"
             restorable="true">
       </view>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.server.views.storedprocedures.StoredProceduresView"
+            icon="icons/function.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.StoredProceduresView"
+            name="Stored Procedures"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

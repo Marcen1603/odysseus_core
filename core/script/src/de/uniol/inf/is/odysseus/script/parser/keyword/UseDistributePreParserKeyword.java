@@ -50,7 +50,7 @@ public class UseDistributePreParserKeyword extends AbstractPreParserKeyword {
 	}
 	
 	@Override
-	public Collection<String> getAllowedParameters() {
+	public Collection<String> getAllowedParameters(ISession caller) {
 		return Arrays.asList("true", "false");				
 	}
 

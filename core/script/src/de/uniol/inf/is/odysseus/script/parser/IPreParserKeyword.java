@@ -35,6 +35,6 @@ public interface IPreParserKeyword {
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException;
 	void setParser(IOdysseusScriptParser parser);
 	IOdysseusScriptParser getParser();	
-	public Collection<String> getAllowedParameters();
+	public Collection<String> getAllowedParameters(ISession caller);
 	
 }

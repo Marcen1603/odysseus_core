@@ -504,21 +504,21 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public void addStoredProcedure(String name, String text, ISession caller) {
-		// TODO Auto-generated method stub
-		
+	public void addStoredProcedure(String name, StoredProcedure sp, ISession caller) {		
 	}
 
 	@Override
 	public StoredProcedure getStoredProcedure(String name, ISession caller) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void removeStoredProcedure(String name, ISession caller) {
-		// TODO Auto-generated method stub
-		
+	public void removeStoredProcedure(String name, ISession caller) {		
+	}
+
+	@Override
+	public List<StoredProcedure> getStoredProcedures(ISession caller) {
+		return null;
 	}
 
 }

@@ -43,6 +43,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.KeywordRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
@@ -66,6 +67,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			if (OdysseusRCPEditorTextPlugIn.getExecutor() == null) {
 				return null;
 			}
+			ISession caller = OdysseusRCPPlugIn.getActiveSession();
 			IDocument document = viewer.getDocument();
 			String prefix = lastWord(document, offset);
 			String tokenBefore = tokenBefore(document, offset);
@@ -78,7 +80,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			boolean keyWordSearchfailed = false;
 			try {
 				IPreParserKeyword keyword = OdysseusRCPEditorTextPlugIn.getScriptParser().getPreParserKeywordRegistry().createKeywordExecutor(token);
-				words.addAll(keyword.getAllowedParameters());
+				words.addAll(keyword.getAllowedParameters(caller));
 			} catch (Exception e) {
 				keyWordSearchfailed = true;
 			}
