@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -109,6 +110,10 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	final public void processPunctuation(IPunctuation punctuation, int port) {
 	}
 
 	public boolean isPartitioned() {
