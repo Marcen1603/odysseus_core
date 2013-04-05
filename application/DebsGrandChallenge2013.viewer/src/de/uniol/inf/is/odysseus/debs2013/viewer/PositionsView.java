@@ -293,6 +293,8 @@ public class PositionsView implements IStreamEditorType{
 							);
 					  gc.drawText("TS: "+currentTuple.get(sensorIdToRecognizeTimeProgress).getAttribute(attributeIndexMap.get("ts")).toString()+"    MS: "+millis+" ms"+"    "+time, 5, 5);
 				  }
+				  fontPlayerId.dispose();
+				  fontTime.dispose();
 				  gc.dispose();
 			}
 		});
