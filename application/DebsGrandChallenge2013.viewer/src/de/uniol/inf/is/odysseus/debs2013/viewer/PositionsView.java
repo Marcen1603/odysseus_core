@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.swt.SWT;
@@ -53,9 +54,9 @@ public class PositionsView implements IStreamEditorType{
 	
 	private Composite soccerViewer;
 	
-	private HashMap<String, Integer> attributeIndexMap;
+	private ConcurrentHashMap<String, Integer> attributeIndexMap;
 	
-	private HashMap<Integer, Tuple<?>> currentTuple;
+	private ConcurrentHashMap<Integer, Tuple<?>> currentTuple;
 	
 	
 	private Canvas soccerFieldDraw;
@@ -117,12 +118,12 @@ public class PositionsView implements IStreamEditorType{
 		setSchema(subs.get(0).getSchema());
 //		editor = editorPart;
 		
-		attributeIndexMap = new HashMap<>();
+		attributeIndexMap = new ConcurrentHashMap<>();
 		for (int i = 0; i < schema.getAttributes().size(); i++) {
 			attributeIndexMap.put(schema.getAttribute(i).getAttributeName(), i);
 		}
 		
-		currentTuple = new HashMap<>();
+		currentTuple = new ConcurrentHashMap<>();
 		
 		for (int i = 0; i < schema.getAttributes().size(); i++) {
 			LOG.info(schema.getAttribute(i).getAttributeName() + "  "+schema.getAttribute(i).getDatatype().getQualName());
@@ -284,7 +285,7 @@ public class PositionsView implements IStreamEditorType{
 				  if(currentTuple.get(sensorIdToRecognizeTimeProgress)!=null && attributeIndexMap.get("ts")!=null){
 					  gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 					  gc.setFont(fontTime);
-					  long millis = (Long.parseLong(currentTuple.get(4).getAttribute(attributeIndexMap.get("ts")).toString())-10748401988186756L)/1000000000;
+					  long millis = (Long.parseLong(currentTuple.get(sensorIdToRecognizeTimeProgress).getAttribute(attributeIndexMap.get("ts")).toString())-10748401988186756L)/1000000000;
 					  String time = String.format("%d min %d sec %d ms", 
 							    TimeUnit.MILLISECONDS.toMinutes(millis),
 							    TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
