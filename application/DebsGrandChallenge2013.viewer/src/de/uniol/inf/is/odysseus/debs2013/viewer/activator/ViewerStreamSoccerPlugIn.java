@@ -13,7 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.viewer.stream.soccer.activator;
+package de.uniol.inf.is.odysseus.debs2013.viewer.activator;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.rcp.ImageManager;
  */
 public class ViewerStreamSoccerPlugIn extends AbstractUIPlugin {
 
-	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.stream.soccer"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.debs2013.viewer"; //$NON-NLS-1$
 
 	private static ImageManager imageManager;
 	

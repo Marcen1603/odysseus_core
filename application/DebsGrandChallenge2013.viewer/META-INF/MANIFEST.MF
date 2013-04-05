@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Soccer Stream (DEBS 2013)
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.stream.soccer;singleton:=true
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.debs2013.viewer;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.soccer.activator.ViewerStreamSoccerPlugIn
+Bundle-Activator: de.uniol.inf.is.odysseus.debs2013.viewer.activator.ViewerStreamSoccerPlugIn
 Bundle-Vendor: Andreas Harre
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -21,5 +21,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.relational.base,
  org.slf4j
-Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.soccer,
- de.uniol.inf.is.odysseus.rcp.viewer.stream.soccer.activator
+Export-Package: de.uniol.inf.is.odysseus.debs2013.viewer,
+ de.uniol.inf.is.odysseus.debs2013.viewer.activator

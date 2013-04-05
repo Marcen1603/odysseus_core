@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.rcp.viewer.stream.soccer;
+package de.uniol.inf.is.odysseus.debs2013.viewer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
@@ -40,22 +42,20 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
+import de.uniol.inf.is.odysseus.debs2013.viewer.activator.ViewerStreamSoccerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.soccer.activator.ViewerStreamSoccerPlugIn;
 
-public class StreamSoccerEditor implements IStreamEditorType{
-	private static final Logger LOG = LoggerFactory.getLogger(StreamSoccerEditor.class);
+public class PositionsView implements IStreamEditorType{
+	private static final Logger LOG = LoggerFactory.getLogger(PositionsView.class);
 	private SDFSchema schema;
-//	private StreamEditor editor;
-//	private Composite parent;
 	
 	private Composite soccerViewer;
 	
 	private HashMap<String, Integer> attributeIndexMap;
 	
-	private HashMap<Integer, SoccerTuple> currentTuple;
+	private HashMap<Integer, Tuple<?>> currentTuple;
 	
 	
 	private Canvas soccerFieldDraw;
@@ -66,10 +66,18 @@ public class StreamSoccerEditor implements IStreamEditorType{
 	final int width = 862;
 	final int height = 532;
 	
+	final int playerSize = 6;
+	final int refereeSize = 6;
+	final int ballSize = 10;
+	final int fontSize = 7;
+	
+	final int sensorIdToRecognizeTimeProgress = 13;
+	
 	private ArrayList<Integer> sidBalls;
 	private ArrayList<Integer> sidTeamA;
 	private ArrayList<Integer> sidTeamB;
 	private ArrayList<Integer> sidReferee;
+	private HashMap<Integer, Integer> sensorIdToPlayerId;
 	
 	@Override
 	public void streamElementRecieved(Object element, int port) {
@@ -78,57 +86,12 @@ public class StreamSoccerEditor implements IStreamEditorType{
 			return;
 		}
 		Tuple<?> tuple = (Tuple<?>) element;
-//		@SuppressWarnings("unchecked")
-//		IStreamObject<? extends ITimeInterval> timeTuple = (IStreamObject<? extends ITimeInterval>) element;
 		
-		SoccerTuple soccerTuple = new SoccerTuple();		
 		if(attributeIndexMap.get("sid")!=null){
-			soccerTuple.setSid((Integer)tuple.getAttribute(attributeIndexMap.get("sid")));
+			currentTuple.put((Integer)tuple.getAttribute(attributeIndexMap.get("sid")), tuple);
 		}
-		if(attributeIndexMap.get("ts")!=null){
-			soccerTuple.setStartTs((Long)tuple.getAttribute(attributeIndexMap.get("ts")));
-		}
-//		soccerTuple.setStartTs(timeTuple.getMetadata().getStart());
-//		soccerTuple.setEndTs(timeTuple.getMetadata().getEnd());
-		if(attributeIndexMap.get("x")!=null){
-			soccerTuple.setX((Integer)tuple.getAttribute(attributeIndexMap.get("x")));
-		}
-		if(attributeIndexMap.get("y")!=null){
-			soccerTuple.setY((Integer)tuple.getAttribute(attributeIndexMap.get("y")));
-		}
-		if(attributeIndexMap.get("z")!=null){
-			soccerTuple.setZ((Integer)tuple.getAttribute(attributeIndexMap.get("z")));
-		}
-		if(attributeIndexMap.get("v")!=null){
-			soccerTuple.setV((Number)tuple.getAttribute(attributeIndexMap.get("v")));
-		}
-		if(attributeIndexMap.get("a")!=null){
-			soccerTuple.setA((Integer)tuple.getAttribute(attributeIndexMap.get("a")));
-		}
-		if(attributeIndexMap.get("vx")!=null){
-			soccerTuple.setVx((Integer)tuple.getAttribute(attributeIndexMap.get("vx")));
-		}
-		if(attributeIndexMap.get("vy")!=null){
-			soccerTuple.setVy((Integer)tuple.getAttribute(attributeIndexMap.get("vy")));
-		}
-		if(attributeIndexMap.get("vz")!=null){
-			soccerTuple.setVz((Integer)tuple.getAttribute(attributeIndexMap.get("vz")));
-		}
-		if(attributeIndexMap.get("ax")!=null){
-			soccerTuple.setAx((Integer)tuple.getAttribute(attributeIndexMap.get("ax")));
-		}
-		if(attributeIndexMap.get("ay")!=null){
-			soccerTuple.setAy((Integer)tuple.getAttribute(attributeIndexMap.get("ay")));
-		}
-		if(attributeIndexMap.get("az")!=null){
-			soccerTuple.setAz((Integer)tuple.getAttribute(attributeIndexMap.get("az")));
-		}
-		
 //		LOG.info(tuple.getAttribute(1).toString());
-//		LOG.info(soccerTuple.toString());
-//		LOG.info("tupX: "+soccerTuple.getX()+" tupY: "+soccerTuple.getY()+" X: "+getCoordX(soccerTuple.getY())+" Y: "+getCoordY(soccerTuple.getX()));
 		
-		currentTuple.put(soccerTuple.getSid(), soccerTuple);
 	}
 
 	@Override
@@ -165,11 +128,11 @@ public class StreamSoccerEditor implements IStreamEditorType{
 			LOG.info(schema.getAttribute(i).getAttributeName() + "  "+schema.getAttribute(i).getDatatype().getQualName());
 		}
 		
-		initSids();
+		initMetadata();
 		
 	}
 
-	private void initSids() {
+	private void initMetadata() {
 		sidBalls = new ArrayList<>();
 		sidBalls.add(4);
 		sidBalls.add(8);
@@ -219,6 +182,46 @@ public class StreamSoccerEditor implements IStreamEditorType{
 		sidReferee = new ArrayList<>();
 		sidReferee.add(105);
 		sidReferee.add(106);
+		
+		sensorIdToPlayerId = new HashMap<Integer, Integer>();
+		sensorIdToPlayerId.put(13, 1);
+//		sensorIdToPlayerId.put(14, 1);
+		sensorIdToPlayerId.put(47, 2);
+//		sensorIdToPlayerId.put(16, 2);
+		sensorIdToPlayerId.put(49, 3);
+//		sensorIdToPlayerId.put(88, 3);
+		sensorIdToPlayerId.put(19, 4);
+//		sensorIdToPlayerId.put(52, 4);
+		sensorIdToPlayerId.put(53, 5);
+//		sensorIdToPlayerId.put(54, 5);
+		sensorIdToPlayerId.put(23, 6);
+//		sensorIdToPlayerId.put(24, 6);
+		sensorIdToPlayerId.put(57, 7);
+//		sensorIdToPlayerId.put(58, 7);
+		sensorIdToPlayerId.put(59, 8);
+//		sensorIdToPlayerId.put(28, 8);
+		
+		sensorIdToPlayerId.put(61, 11);
+//		sensorIdToPlayerId.put(62, 11);
+		sensorIdToPlayerId.put(63, 12);
+//		sensorIdToPlayerId.put(64, 12);
+		sensorIdToPlayerId.put(65, 13);
+//		sensorIdToPlayerId.put(66, 13);
+		sensorIdToPlayerId.put(67, 14);
+//		sensorIdToPlayerId.put(68, 14);
+		sensorIdToPlayerId.put(69, 15);
+//		sensorIdToPlayerId.put(38, 15);
+		sensorIdToPlayerId.put(71, 16);
+//		sensorIdToPlayerId.put(40, 16);
+		sensorIdToPlayerId.put(73, 17);
+//		sensorIdToPlayerId.put(74, 17);
+		sensorIdToPlayerId.put(75, 18);
+//		sensorIdToPlayerId.put(44, 18);
+		
+		sensorIdToPlayerId.put(4, 4);
+		sensorIdToPlayerId.put(8, 8);
+		sensorIdToPlayerId.put(10, 10);
+		sensorIdToPlayerId.put(12, 12);
 	}
 
 	@Override
@@ -237,33 +240,57 @@ public class StreamSoccerEditor implements IStreamEditorType{
 		soccerViewer = new Composite(parent, SWT.BORDER);
 		
 		soccerFieldDraw = new Canvas(soccerViewer, SWT.BORDER);
-		soccerFieldDraw.setSize(862,532);
+		soccerFieldDraw.setSize(width, height);
 		soccerFieldDraw.setBackgroundImage(getResizedImage(ViewerStreamSoccerPlugIn.getImageManager().get("soccer_field"),width,height));
-//		
+
 		soccerFieldDraw.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				  GC gc = new GC(soccerFieldDraw);
+				  Font fontPlayerId = new Font(e.display,"Arial", fontSize, SWT.BOLD | SWT.ITALIC);
+				  Font fontTime = new Font(e.display,"Arial", fontSize+2, SWT.BOLD | SWT.ITALIC);
+				  gc.setFont(fontPlayerId);
 				  
-				  for(Entry<Integer, SoccerTuple > entry : currentTuple.entrySet()) {
+				  for(Entry<Integer, Tuple<?> > entry : currentTuple.entrySet()) {
 					    Integer sid = entry.getKey();
-					    SoccerTuple soccerTuple = entry.getValue();
-					    if(sidBalls.contains(sid)){
-					    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-					    	gc.fillOval(getCoordX(soccerTuple.getY()), getCoordY(soccerTuple.getX()), 10, 10);
-					    }else if(sidTeamA.contains(sid)){
-					    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-					    	gc.fillOval(getCoordX(soccerTuple.getY()), getCoordY(soccerTuple.getX()), 6, 6);
-					    }else if(sidTeamB.contains(sid)){
-					    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
-					    	gc.fillOval(getCoordX(soccerTuple.getY()), getCoordY(soccerTuple.getX()), 6, 6);
-					    }else if(sidReferee.contains(sid)){
-					    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-					    	gc.fillOval(getCoordX(soccerTuple.getY()), getCoordY(soccerTuple.getX()), 6, 6);
+					    Tuple<?> soccerTuple = entry.getValue();
+					    if(		attributeIndexMap.get("x")!=null & attributeIndexMap.get("y")!=null){
+					    	Integer x = (Integer)soccerTuple.getAttribute(attributeIndexMap.get("y"));
+					    	Integer y = (Integer)soccerTuple.getAttribute(attributeIndexMap.get("x"));
+					    	
+					    	if(sidBalls.contains(sid)){
+						    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+						    	gc.fillOval(getCoordX(x), getCoordY(y), ballSize, ballSize);
+						    	if(sensorIdToPlayerId.containsKey(sid)){
+						    		gc.drawText(sensorIdToPlayerId.get(sid).toString(), getCoordX(x)+10, getCoordY(y), true);
+						    	}
+						    }else if(sidTeamA.contains(sid)){
+						    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						    	gc.fillOval(getCoordX(x), getCoordY(y), playerSize, playerSize);
+						    	if(sensorIdToPlayerId.containsKey(sid)){
+						    		gc.drawText(sensorIdToPlayerId.get(sid).toString(), getCoordX(x)+6, getCoordY(y), true);
+						    	}
+						    }else if(sidTeamB.contains(sid)){
+						    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+						    	gc.fillOval(getCoordX(x), getCoordY(y), playerSize, playerSize);
+						    	if(sensorIdToPlayerId.containsKey(sid)){
+						    		gc.drawText(sensorIdToPlayerId.get(sid).toString(), getCoordX(x)+6, getCoordY(y), true);
+						    	}
+						    }else if(sidReferee.contains(sid)){
+						    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+						    	gc.fillOval(getCoordX(x), getCoordY(y), playerSize, playerSize);
+						    }
 					    }
 				  }
-				  if(currentTuple.get(4)!=null){
+				  if(currentTuple.get(sensorIdToRecognizeTimeProgress)!=null && attributeIndexMap.get("ts")!=null){
 					  gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-					  gc.drawText("TS: "+currentTuple.get(4).getStartTs().toString()+" MS: "+(Long.parseLong(currentTuple.get(4).getStartTs().toString())-10748401988186756L)/1000000000+" ms", 5, 5);
+					  gc.setFont(fontTime);
+					  long millis = (Long.parseLong(currentTuple.get(4).getAttribute(attributeIndexMap.get("ts")).toString())-10748401988186756L)/1000000000;
+					  String time = String.format("%d min %d sec %d ms", 
+							    TimeUnit.MILLISECONDS.toMinutes(millis),
+							    TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
+							    millis - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis))
+							);
+					  gc.drawText("TS: "+currentTuple.get(sensorIdToRecognizeTimeProgress).getAttribute(attributeIndexMap.get("ts")).toString()+"    MS: "+millis+" ms"+"    "+time, 5, 5);
 				  }
 				  gc.dispose();
 			}
