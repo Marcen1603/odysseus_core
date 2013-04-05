@@ -523,8 +523,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				String key = line.substring(posStart + REPLACEMENT_START_KEY.length(), posEnd);
 				keys.add(key);
 			}
-
-			posStart = posEnd;
+			
+			posStart = line.substring(posEnd).indexOf(REPLACEMENT_START_KEY);
 		}
 		return keys;
 	}
