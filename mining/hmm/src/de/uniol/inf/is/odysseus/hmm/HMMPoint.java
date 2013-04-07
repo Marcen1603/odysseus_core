@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.hmm.physicaloperator;
+package de.uniol.inf.is.odysseus.hmm;
 
 public class HMMPoint {
 	private double point_x; 

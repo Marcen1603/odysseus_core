@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
+import de.uniol.inf.is.odysseus.hmm.HMMPoint;
 
 public class VectorquantizationOrientationPO<M extends ITimeInterval> extends
 		AbstractPipe<Tuple<M>, Tuple<M>> {
@@ -39,11 +40,14 @@ public class VectorquantizationOrientationPO<M extends ITimeInterval> extends
 	protected void process_next(Tuple<M> object, int port) {
 		// Process new input element on input port, a new created element can be
 		// send to the next operator with the transfer-method
-		System.out.println("HMM: process_next");
+		System.out.println("Vectorquantization: process_next");
 //		double handLeftX = object.getAttribute(18);
 //		double handLeftY = object.getAttribute(19);
 		double handLeftX = object.getAttribute(0);
 		double handLeftY = object.getAttribute(1);
+		System.out.println("getMetadata():" + object.getMetadata());
+		System.out.println("getStart(): " + object.getMetadata().getStart());
+		System.out.println("getEnd(): " + object.getMetadata().getEnd());
 		if (lastValidPoint == null) {
 			lastValidPoint = new HMMPoint(handLeftX, handLeftY);
 			return;
@@ -61,8 +65,8 @@ public class VectorquantizationOrientationPO<M extends ITimeInterval> extends
 		}
 
 		// System.out.println(object);
-		System.out.println(object.getAttribute(18));
-		System.out.println(object.getAttribute(19));
+		System.out.println(object.getAttribute(0));
+		System.out.println(object.getAttribute(1));
 		// for (int i=0;i<predicates.size();i++){
 		// if (predicates.get(i).evaluate(object)) {
 		// transfer(object,i);
