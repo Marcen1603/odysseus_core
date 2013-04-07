@@ -12,7 +12,7 @@
    <extension
          point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
       <editor
-            class="de.uniol.inf.is.odysseus.debs2013.viewer.PositionsView"
+            class="de.uniol.inf.is.odysseus.debs2013.viewer.HeatmapView"
             id="de.uniol.inf.is.odysseus.debs2013.viewer.HeatmapView"
             label="Soccer - Heatmap">
       </editor>

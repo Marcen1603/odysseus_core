@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.debs2013.viewer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,12 +25,9 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,29 +38,17 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
-import de.uniol.inf.is.odysseus.debs2013.viewer.activator.ViewerStreamSoccerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 
-public class PositionsView implements IStreamEditorType{
+public class PositionsView extends AbstractSoccerView implements IStreamEditorType{
 	private static final Logger LOG = LoggerFactory.getLogger(PositionsView.class);
 	private SDFSchema schema;
 	
-	private Composite soccerViewer;
-	
-	private ConcurrentHashMap<String, Integer> attributeIndexMap;
-	
 	private ConcurrentHashMap<Integer, Tuple<?>> currentTuple;
 	
-	
-	private Canvas soccerFieldDraw;
-	Label soccerFieldOutline;
-	
 	Runnable runnable;
-	
-	final int width = 862;
-	final int height = 532;
 	
 	final int playerSize = 6;
 	final int refereeSize = 6;
@@ -73,12 +56,6 @@ public class PositionsView implements IStreamEditorType{
 	final int fontSize = 7;
 	
 	final int sensorIdToRecognizeTimeProgress = 13;
-	
-	private ArrayList<Integer> sidBalls;
-	private ArrayList<Integer> sidTeamA;
-	private ArrayList<Integer> sidTeamB;
-	private ArrayList<Integer> sidReferee;
-	private HashMap<Integer, Integer> sensorIdToPlayerId;
 	
 	@Override
 	public void streamElementRecieved(Object element, int port) {
@@ -96,34 +73,26 @@ public class PositionsView implements IStreamEditorType{
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPunctuation point, int port) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void punctuationElementRecieved(IPunctuation point, int port) {}
 
 	@Override
 	public void securityPunctuationElementRecieved(ISecurityPunctuation sp,
-			int port) {
-		// TODO Auto-generated method stub
-		
-	}
+			int port) {}
 
 	@Override
 	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
-		LOG.info("----------- SoccerView opened -----------");
+		LOG.info("----------- PositionsView opened -----------");
 		
 		
 		List<ISubscription<? extends ISource<Object>>> subs = editorInput.getStreamConnection().getSubscriptions();
-		// TODO: Adapt to multiple sources
 		setSchema(subs.get(0).getSchema());
-//		editor = editorPart;
 		
 		attributeIndexMap = new ConcurrentHashMap<>();
 		for (int i = 0; i < schema.getAttributes().size(); i++) {
 			attributeIndexMap.put(schema.getAttribute(i).getAttributeName(), i);
 		}
 		
-		currentTuple = new ConcurrentHashMap<>();
+		
 		
 		for (int i = 0; i < schema.getAttributes().size(); i++) {
 			LOG.info(schema.getAttribute(i).getAttributeName() + "  "+schema.getAttribute(i).getDatatype().getQualName());
@@ -131,118 +100,18 @@ public class PositionsView implements IStreamEditorType{
 		
 		initMetadata();
 		
+		currentTuple = new ConcurrentHashMap<>();
+		
 	}
 
-	private void initMetadata() {
-		sidBalls = new ArrayList<>();
-		sidBalls.add(4);
-		sidBalls.add(8);
-		sidBalls.add(10);
-		sidBalls.add(12);
-		
-		sidTeamA = new ArrayList<>();
-		sidTeamA.add(13);
-		sidTeamA.add(14);
-		sidTeamA.add(97);
-		sidTeamA.add(98);
-		sidTeamA.add(47);
-		sidTeamA.add(16);
-		sidTeamA.add(49);
-		sidTeamA.add(88);
-		sidTeamA.add(19);
-		sidTeamA.add(52);
-		sidTeamA.add(53);
-		sidTeamA.add(54);
-		sidTeamA.add(23);
-		sidTeamA.add(24);
-		sidTeamA.add(57);
-		sidTeamA.add(58);
-		sidTeamA.add(59);
-		sidTeamA.add(28);
-		
-		sidTeamB = new ArrayList<>();
-		sidTeamB.add(61);
-		sidTeamB.add(62);
-		sidTeamB.add(99);
-		sidTeamB.add(100);
-		sidTeamB.add(63);
-		sidTeamB.add(64);
-		sidTeamB.add(65);
-		sidTeamB.add(66);
-		sidTeamB.add(67);
-		sidTeamB.add(68);
-		sidTeamB.add(69);
-		sidTeamB.add(38);
-		sidTeamB.add(71);
-		sidTeamB.add(40);
-		sidTeamB.add(73);
-		sidTeamB.add(74);
-		sidTeamB.add(75);
-		sidTeamB.add(44);
-		
-		sidReferee = new ArrayList<>();
-		sidReferee.add(105);
-		sidReferee.add(106);
-		
-		sensorIdToPlayerId = new HashMap<Integer, Integer>();
-		sensorIdToPlayerId.put(13, 1);
-//		sensorIdToPlayerId.put(14, 1);
-		sensorIdToPlayerId.put(47, 2);
-//		sensorIdToPlayerId.put(16, 2);
-		sensorIdToPlayerId.put(49, 3);
-//		sensorIdToPlayerId.put(88, 3);
-		sensorIdToPlayerId.put(19, 4);
-//		sensorIdToPlayerId.put(52, 4);
-		sensorIdToPlayerId.put(53, 5);
-//		sensorIdToPlayerId.put(54, 5);
-		sensorIdToPlayerId.put(23, 6);
-//		sensorIdToPlayerId.put(24, 6);
-		sensorIdToPlayerId.put(57, 7);
-//		sensorIdToPlayerId.put(58, 7);
-		sensorIdToPlayerId.put(59, 8);
-//		sensorIdToPlayerId.put(28, 8);
-		
-		sensorIdToPlayerId.put(61, 11);
-//		sensorIdToPlayerId.put(62, 11);
-		sensorIdToPlayerId.put(63, 12);
-//		sensorIdToPlayerId.put(64, 12);
-		sensorIdToPlayerId.put(65, 13);
-//		sensorIdToPlayerId.put(66, 13);
-		sensorIdToPlayerId.put(67, 14);
-//		sensorIdToPlayerId.put(68, 14);
-		sensorIdToPlayerId.put(69, 15);
-//		sensorIdToPlayerId.put(38, 15);
-		sensorIdToPlayerId.put(71, 16);
-//		sensorIdToPlayerId.put(40, 16);
-		sensorIdToPlayerId.put(73, 17);
-//		sensorIdToPlayerId.put(74, 17);
-		sensorIdToPlayerId.put(75, 18);
-//		sensorIdToPlayerId.put(44, 18);
-		
-		sensorIdToPlayerId.put(4, 4);
-		sensorIdToPlayerId.put(8, 8);
-		sensorIdToPlayerId.put(10, 10);
-		sensorIdToPlayerId.put(12, 12);
-	}
+
 
 	@Override
-	public void initToolbar(ToolBar toolbar) {
-		
-	}
+	public void initToolbar(ToolBar toolbar) {}
 
 	@Override
 	public void createPartControl(Composite parent) {
-//		this.parent = parent;
-		
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
-		parent.setLayout(gridLayout);
-		
-		soccerViewer = new Composite(parent, SWT.BORDER);
-		
-		soccerFieldDraw = new Canvas(soccerViewer, SWT.BORDER);
-		soccerFieldDraw.setSize(width, height);
-		soccerFieldDraw.setBackgroundImage(getResizedImage(ViewerStreamSoccerPlugIn.getImageManager().get("soccer_field"),width,height));
+		super.initView(parent);
 
 		soccerFieldDraw.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
@@ -313,30 +182,11 @@ public class PositionsView implements IStreamEditorType{
 	@Override
 	public void dispose() {
 		soccerFieldDraw.dispose();
-		
-		LOG.info("----------- SoccerView closed-----------");
+		LOG.info("----------- PositionsView closed-----------");
 	}
 
 	private void setSchema(SDFSchema schema) {
 		this.schema = schema; // kann auch null sein!
-	}
-	
-	private Image getResizedImage(Image image, int width, int height) {
-		Image scaled = new Image(Display.getDefault(), width, height);
-		GC gc = new GC(scaled);
-		gc.setAntialias(SWT.ON);
-		gc.setInterpolation(SWT.HIGH);
-		gc.drawImage(image, 0, 0,image.getBounds().width, image.getBounds().height, 0, 0, width, height);
-		gc.dispose();
-//		image.dispose();
-		return scaled;
-	}
-	
-	private int getCoordX(int absX){
-		return (int)(((absX+33960)/67920f)*790)+36;
-	}
-	private int getCoordY(int absY){
-		return (int)((absY/52489f)*506)+15;
 	}
 
 	
