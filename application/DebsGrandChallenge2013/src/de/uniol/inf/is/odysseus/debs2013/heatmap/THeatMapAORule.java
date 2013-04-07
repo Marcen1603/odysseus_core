@@ -32,7 +32,7 @@ public class THeatMapAORule extends AbstractTransformationRule<HeatMapAO> {
 	@Override
 	public void execute(HeatMapAO heatMapAO, TransformationConfiguration transformConfig) {		
 		@SuppressWarnings({ "rawtypes" })
-		HeatMapPO<?> heatMapPO = new HeatMapPO(heatMapAO.getX(), heatMapAO.getY(), 
+		HeatMapPO<?, ?> heatMapPO = new HeatMapPO(heatMapAO.getX(), heatMapAO.getY(), 
 												heatMapAO.getXLength(), heatMapAO.getYLength(),
 												heatMapAO.getXAttribute(), heatMapAO.getYAttribute(), 
 												heatMapAO.getValueAttribute(), heatMapAO.getInputSchema());

@@ -15,8 +15,11 @@
  */
 package de.uniol.inf.is.odysseus.debs2013.heatmap;
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -25,9 +28,12 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGeneratio
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 
 /**
-* @author Andreas Harre, Philipp Rudolph, Jan Sören Schwarz
+ * Operator for the DEBS Grand Challenge 2013. 
+ * 
+* @author Jan Sören Schwarz
 */
-public class HeatMapPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
+//public class HeatMapPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
+public class HeatMapPO<K extends ITimeInterval, T extends IStreamObject<K>> extends AbstractPipe<T, T> {
 
 	private long lastSend;
 	private int x;
@@ -38,6 +44,7 @@ public class HeatMapPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	private String yAttribute;
 	private String valueAttribute;
 	private SDFSchema inputSchema;
+	private ArrayList<Coord> events;
 	private double[][] map;
 	private int a = 0;
 	private int rowAtt = -1;
@@ -57,6 +64,7 @@ public class HeatMapPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 		this.yAttribute = yAttribute;
 		this.valueAttribute = valueAttribute;
 		this.inputSchema = inputSchema;
+		this.events = new ArrayList<Coord>();
 		this.map = new double[this.x][this.y];	
 		for(int i=0; i < x; i++) {
 			for(int j=0; j < y; j++) {
@@ -66,7 +74,7 @@ public class HeatMapPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 		initSchema();
 	}
 	
-	public HeatMapPO(HeatMapPO<T> po){
+	public HeatMapPO(HeatMapPO<K, T> po){
 		this.x = po.x;
 		this.y = po.y;
 		this.xLength = po.xLength;
@@ -75,6 +83,7 @@ public class HeatMapPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 		this.xAttribute = po.xAttribute;
 		this.yAttribute = po.yAttribute;
 		this.valueAttribute = po.valueAttribute;
+		this.events = po.events;
 		this.map = po.map;
 		this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy.clone();
 		initSchema();
@@ -89,40 +98,77 @@ public class HeatMapPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	@Override
 	protected void process_next(T object, int port) {
 		Tuple tuple = (Tuple) object;
+		long endTS = object.getMetadata().getEnd().getMainPoint();
+		long startTS = object.getMetadata().getStart().getMainPoint();
 		int xCoord = -1;
 		int yCoord = -1;
+		
+		// aussortieren was älter ist als ts
+		int remove = 0;
+		for(Coord event: events) {
+			if(event.getEndTS() < startTS) {
+//				System.out.println("PRE: " + map[event.getX()][event.getY()]);
+				map[event.getX()][event.getY()] = map[event.getX()][event.getY()] - event.getValue();
+//				System.out.println("POST: " + map[event.getX()][event.getY()]);
+				remove++;
+			} else {
+//				System.out.println("BREAK OUT!!! " + startTS);
+				break;
+			}
+		}
+		for(int i = 0; i < remove; i++) {
+//			System.out.println("KILL IT!!! " + startTS);
+			events.remove(0);
+		}
+		
+		// get data out of tuple
 		if(rowAtt >= 0 && colAtt >= 0 && valAtt >= 0 && tsAtt >= 0) {
 			Integer xValue = (Integer) tuple.getAttribute(rowAtt);
 			xCoord = (int) Math.floor(xValue / (52477 / x));
 			Integer yValue = (Integer) tuple.getAttribute(colAtt);
 			yCoord = (int) Math.floor(yValue / (67925 / y));
 			Double value = (Double) tuple.getAttribute(valAtt);
+			//if the maxValue is reached:
+			if(xCoord == x) {
+				xCoord--;
+			}
+			if(yCoord == y) {
+				yCoord--;
+			}
 			if (xCoord < x && xCoord >= 0 && yCoord < y && yCoord >= 0) {
 				map[xCoord][yCoord] = map[xCoord][yCoord] + value;
-				if((((Long) tuple.getAttribute(tsAtt)) - lastSend) > 1000000000000L) {
-					lastSend = (Long) tuple.getAttribute(tsAtt);
-					Double test = 0.0;
-					for(int i = 0; i < this.x; i++) {
-						for(int j = 0; j < this.y; j++) {
-							Object[] attributes = new Object[7];
-							attributes[0] = tuple.getAttribute(tsAtt);
-							attributes[1] = tuple.getAttribute(1);
-							attributes[2] = (xLength / x) * i;
-							attributes[3] = (yLength / y) * (j + 1);
-							attributes[4] = (xLength / x) * (i + 1);
-							attributes[5] = (yLength / y) * j;
-							attributes[6] = map[i][j];
-							test = test + map[i][j];
-							Tuple outputTuple = new Tuple<>(attributes, true);
-							outputTuple.setMetadata(tuple.getMetadata());
-							transfer((T) outputTuple);
-						}
-					}
-//					System.out.println("Gesamt-Map-Zeit: " + test);
-//					System.out.println("Zeit: " + ((Long) tuple.getAttribute(tsAtt) - 10748401988186756L));
-				}
+				events.add(new Coord(xCoord, yCoord, value, endTS));
 			} else {
 //				System.out.println("FEHLER!!!!!!");
+//				System.out.println("xCoord: " + xCoord);
+//				System.out.println("x: " + x);
+//				System.out.println("this.x: " + this.x);
+//				System.out.println("yCoord: " + yCoord);
+//				System.out.println("y: " + y);
+//				System.out.println("this.y: " + this.y);
+			}
+		}
+		
+		//senden, falls Sekunde vorbei ist:
+		if((((Long) tuple.getAttribute(tsAtt)) - lastSend) > 1000000000000L) {
+			lastSend = (Long) tuple.getAttribute(tsAtt);
+//			Double test = 0.0;			
+			for(int i = 0; i < this.x; i++) {
+				for(int j = 0; j < this.y; j++) {
+					Object[] attributes = new Object[7];
+					attributes[0] = tuple.getAttribute(tsAtt);
+					attributes[1] = tuple.getAttribute(1);
+					attributes[2] = (xLength / x) * i;
+					attributes[3] = (yLength / y) * (j + 1);
+					attributes[4] = (xLength / x) * (i + 1);
+					attributes[5] = (yLength / y) * j;
+					attributes[6] = map[i][j];
+//					test = test + map[i][j];
+//					System.out.println("total Time: " + test);
+					Tuple outputTuple = new Tuple<>(attributes, true);
+					outputTuple.setMetadata(tuple.getMetadata());
+					transfer((T) outputTuple);
+				}
 			}
 		}
 	}
@@ -133,8 +179,8 @@ public class HeatMapPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	}
 	
 	@Override
-	public HeatMapPO<T> clone() {
-		return new HeatMapPO<T>(this);
+	public HeatMapPO<K, T> clone() {
+		return new HeatMapPO<K, T>(this);
 	}
 	
 
@@ -162,39 +208,47 @@ public class HeatMapPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 			a++;
 		}
 	}
+}
+
+class Coord {
+	private int x;
+	private int y;
+	private double value;
+	private long endTS;
 	
-//	@Override
-//	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-//		if(!(ipo instanceof HeatMapPO<?>)) {
-//			return false;
-//		}
-//		@SuppressWarnings("unchecked")
-//		HeatMapPO<T> spo = (HeatMapPO<T>) ipo;
-//		// Different sources
-//		if(!this.hasSameSources(spo)) return false;
-//		// Predicates match
-//		if(this.predicate.equals(spo.getPredicate())
-//				|| (this.predicate.isContainedIn(spo.getPredicate()) && spo.getPredicate().isContainedIn(this.predicate))) {
-//			return true;
-//		}
-//
-//		return false;
-//	}
+	public Coord(int x, int y, double value, long endTS) {
+		this.x = x;
+		this.y = y;
+		this.value = value;
+		this.endTS = endTS;
+	}
 	
-//	@Override
-//	@SuppressWarnings({"rawtypes"})
-//	public boolean isContainedIn(IPipe<T,T> ip) {
-//		if(!(ip instanceof SelectPO) || !this.hasSameSources(ip)) {
-//			return false;
-//		}
-//		// Sonderfall, dass das Prädikat des anderen SelectPOs ein OrPredicate ist und das Prädikat von diesem SelectPO nicht.
-//		if((ComplexPredicateHelper.isOrPredicate(((SelectPO)ip).getPredicate()) && !ComplexPredicateHelper.isOrPredicate(this.predicate))) {
-//			return ComplexPredicateHelper.contains(((SelectPO)ip).getPredicate(), this.predicate);
-//		}
-//		if(this.predicate.isContainedIn(((SelectPO<T>)ip).predicate)) {
-//			return true;
-//		}
-//		return false;
-//	}
+	public int getX() {
+		return x;
+	}
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+	public void setY(int y) {
+		this.y = y;
+	}
+	
+	public double getValue() {
+		return value;
+	}
+	public void setValue(double value) {
+		this.value = value;
+	}
+
+	public long getEndTS() {
+		return endTS;
+	}
+	public void setEndTS(long endTS) {
+		this.endTS = endTS;
+	}
 }
 
