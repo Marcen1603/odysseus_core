@@ -10,9 +10,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
+import de.uniol.inf.is.odysseus.hmm.Gesture;
 import de.uniol.inf.is.odysseus.hmm.HMMPoint;
 import de.uniol.inf.is.odysseus.hmm.HmmWindow;
-import de.uniol.inf.is.odysseus.hmm.ObservationAlphas;
+import de.uniol.inf.is.odysseus.hmm.HmmObservationAlphaRow;
+import de.uniol.inf.is.odysseus.hmm.HmmWindowGroup;
 
 public class HmmPO<M extends ITimeInterval> extends
 		AbstractPipe<Tuple<M>, Tuple<M>> {
@@ -20,6 +22,8 @@ public class HmmPO<M extends ITimeInterval> extends
 	private List<IPredicate<? super Tuple<M>>> predicates;
 	private HMMPoint lastValidPoint;
 	private HmmWindow hmmWindow;
+	private ArrayList<Gesture> gesturelist = new ArrayList<Gesture>();
+	private ArrayList<HmmWindowGroup> windowGroups= new ArrayList<HmmWindowGroup>();
 
 	// Konstruktoren
 	public HmmPO() {
@@ -45,19 +49,42 @@ public class HmmPO<M extends ITimeInterval> extends
 		// send to the next operator with the transfer-method
 		System.out.println("HMM: process_next");
 
+		
+		//1) Neue Gruppe anlegen, die AlphaReihen aufnimmt
+		HmmWindowGroup newWindowGroup = new HmmWindowGroup();
+		newWindowGroup.setTimestamp(Integer.parseInt(object.getMetadata().getStart().toString()));
+		
+		//Beobachtung kommt an
+		//2) Durch Beobachtung für jede Geste eine neue Reihe anlegen
+		for (int i = 0; i < gesturelist.size(); i++) {
+			HmmObservationAlphaRow newAlphaRow = new HmmObservationAlphaRow(hmmWindow.getNumStates());
+			//tuple<m> object übergeben an newAlphaRow und mit Forward Algo, Init-Alphawerte berechnen
+			
+			newWindowGroup.addRow(newAlphaRow);
+		}
+		
+		//3) Gruppe ins Window eintragen
+		hmmWindow.addGroup(newWindowGroup);
+		
+		//4) Window-Einträge (Gruppen) checken. Gruppen mit alten Timestamps rauslöschen.
+		hmmWindow.sweapOldItems();
+		
+		
+		
+		
 		double handLeftX = object.getAttribute(0);
 		
 		System.out.println("getMetadata():" + object.getMetadata());
 		System.out.println("getStart(): " + object.getMetadata().getStart());
 		System.out.println("getEnd(): " + object.getMetadata().getEnd());
 		
-		ObservationAlphas newSet = new ObservationAlphas(hmmWindow.numStates);
-		int timestamp = Integer.parseInt(object.getMetadata().getStart().toString());
-		newSet.timestamp = timestamp;
-		hmmWindow.addAlphas(newSet);
-		
-		int timeWindow = 10000;
-		hmmWindow.checkTimestamps(timeWindow, timestamp);
+//		HmmObservationAlphaRow newSet = new HmmObservationAlphaRow(hmmWindow.numStates);
+//		int timestamp = Integer.parseInt(object.getMetadata().getStart().toString());
+//		newSet.timestamp = timestamp;
+//		hmmWindow.addAlphas(newSet);
+//		
+//		int timeWindow = 10000;
+//		hmmWindow.checkTimestamps(timeWindow, timestamp);
 		
 
 	}
@@ -65,7 +92,14 @@ public class HmmPO<M extends ITimeInterval> extends
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		System.out.println("MUUUUUUUUUUUUUUUUUUUUUUUUUH macht die Katze");
+		//groesse des Windows festlegen
+		//TODO Parameter per Operator übergeben
 		hmmWindow = new HmmWindow(2);
+		
+		//Gestenobjekte erzeugen - zu jeder Geste existiert eine CSV-Datei mit Anz Zustände, Übergangstabelle A und B
+		//TODO alle Dateien einlesen und Gestenobjekt initialisieren
+		gesturelist.add(new Gesture("test1", null, null));
+		gesturelist.add(new Gesture("test2", null, null));
 	}
 
 	@Override

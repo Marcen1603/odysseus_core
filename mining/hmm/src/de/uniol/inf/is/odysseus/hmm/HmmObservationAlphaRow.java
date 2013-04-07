@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.hmm;
 
-public class ObservationAlphas {
+public class HmmObservationAlphaRow {
 
 	public int timestamp;
 	double[] alphas;
 	
-	public ObservationAlphas(int numStates) {
+	public HmmObservationAlphaRow(int numStates) {
 		alphas = new double[numStates];
 	}
 	

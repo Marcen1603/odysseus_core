@@ -6,26 +6,43 @@ public class HMM {
 	double pi[];
 	double a[][];
 	double b[][];
-	
+
 	public HMM(int numStates, int numObservations) {
 		this.numStates = numStates;
-	    this.numObservations = numObservations;
+		this.numObservations = numObservations;
 
-	    pi = new double[numStates];
-	    a = new double[numStates][numStates];
-	    b = new double[numStates][numObservations];
+		pi = new double[numStates];
+		a = new double[numStates][numStates];
+		b = new double[numStates][numObservations];
 	}
-	
-	
-	
-	//Methoden
-	//Forward-Algorithmus
-	
-	//Backward-Algorithmus
-	
-	//Productionprobability
-	
-	//Viterbi
-	
-	//Baum-Welch
+
+	// Methoden
+	// Forward-Algorithmus
+	public void forward() {
+
+	}
+
+	public void forwardStream() {
+
+	}
+
+	// Backward-Algorithmus
+	public void backward() {
+
+	}
+
+	// Productionprobability
+	public void productionProbability(){
+		
+	}
+
+	// Viterbi
+	public void viterbi(){
+		
+	}
+
+	// Baum-Welch
+	public void baumwelch(){
+		
+	}
 }
