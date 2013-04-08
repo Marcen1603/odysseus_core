@@ -102,18 +102,11 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 		cellValues = new ConcurrentHashMap<Integer, Double>();
 		colorMap = new ConcurrentHashMap<Integer, Color>();
 		
-//		RED -> YELLOW -> GREEN
-		colorMap.put(0, new Color(Display.getDefault(), 165,0,38));
-		colorMap.put(1, new Color(Display.getDefault(), 215,48,39));
-		colorMap.put(2, new Color(Display.getDefault(), 244,109,67));
-		colorMap.put(3, new Color(Display.getDefault(), 253,174,97));
-		colorMap.put(4, new Color(Display.getDefault(), 254,224,139));
-		colorMap.put(5, new Color(Display.getDefault(), 255,255,191));
-		colorMap.put(6, new Color(Display.getDefault(), 217,239,139));
-		colorMap.put(7, new Color(Display.getDefault(), 166,217,106));
-		colorMap.put(8, new Color(Display.getDefault(), 102,189,99));
-		colorMap.put(9, new Color(Display.getDefault(), 26,152,80));
-		colorMap.put(10, new Color(Display.getDefault(), 0,104,55));
+//		GREEN -> RED
+		colorMap.put(1, new Color(Display.getDefault(), 255,255,178));
+		colorMap.put(2, new Color(Display.getDefault(), 254,204,92));
+		colorMap.put(3, new Color(Display.getDefault(), 253,141,60));
+		colorMap.put(4, new Color(Display.getDefault(), 240,59,32));
 	}
 	@Override
 	public void initToolbar(ToolBar toolbar) {}
@@ -135,12 +128,15 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 				  for(Entry<Integer, int[] > entry : cellCoordinates.entrySet()) {
 					    int hash = entry.getKey();
 					    int[] cell = entry.getValue();
-					    gc.setAlpha(220);
-					    gc.setBackground(getColorForPercent(cellValues.get(hash)));
-				    	gc.fillRectangle(getCoordX(cell[3]), getCoordY(cell[0]), getCoordX(cell[1])-getCoordX(cell[3]), getCoordY(cell[2])-getCoordY(cell[0]));
-				    	gc.setAlpha(255);
-				    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-				    	gc.drawRectangle(getCoordX(cell[3]), getCoordY(cell[0]), getCoordX(cell[1])-getCoordX(cell[3]), getCoordY(cell[2])-getCoordY(cell[0]));
+					    Double percent = cellValues.get(hash);
+					    if(percent>0.0){
+					    	gc.setAlpha(220);
+						    gc.setBackground(getColorForPercent(cellValues.get(hash)));
+					    	gc.fillRectangle(getCoordX(cell[3]), getCoordY(cell[0]), getCoordX(cell[1])-getCoordX(cell[3]), getCoordY(cell[2])-getCoordY(cell[0]));
+					    	gc.setAlpha(255);
+					    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					    	gc.drawRectangle(getCoordX(cell[3]), getCoordY(cell[0]), getCoordX(cell[1])-getCoordX(cell[3]), getCoordY(cell[2])-getCoordY(cell[0]));
+					    }
 				  }
 				  
 				  if(currentTuple!=null){
@@ -211,28 +207,14 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 		return temp.hashCode();
 	}
 	private Color getColorForPercent(Double percent){
-		if(percent==0){
-			return colorMap.get(0);
-		}else if(percent<2){
+		if(percent<0.5){
 			return colorMap.get(1);
-		}else if(percent<4){
+		}else if(percent<1.0){
 			return colorMap.get(2);
-		}else if(percent<6){
+		}else if(percent<1.5){
 			return colorMap.get(3);
-		}else if(percent<8){
-			return colorMap.get(4);
-		}else if(percent<10){
-			return colorMap.get(5);
-		}else if(percent<14){
-			return colorMap.get(6);
-		}else if(percent<18){
-			return colorMap.get(7);
-		}else if(percent<22){
-			return colorMap.get(8);
-		}else if(percent<26){
-			return colorMap.get(9);
 		}else{
-			return colorMap.get(10);
+			return colorMap.get(4);
 		}
 	}
 }
