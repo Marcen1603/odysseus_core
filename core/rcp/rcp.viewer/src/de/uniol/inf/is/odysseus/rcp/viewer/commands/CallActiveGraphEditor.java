@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -35,36 +37,38 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.create.OdysseusModelProviderMul
 
 public class CallActiveGraphEditor extends AbstractHandler implements IHandler {
 
+	private static final Logger LOG = LoggerFactory.getLogger(CallActiveGraphEditor.class);
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-		IWorkbenchPage page = window.getActivePage();
+		final IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
+		final IWorkbenchPage page = window.getActivePage();
 
-		IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
-		if (executor == null)
+		final IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
+		if (executor == null) {
 			return null;
+		}
 
-		Collection<Integer> queryIds = executor.getLogicalQueryIds();
+		final Collection<Integer> queryIds = executor.getLogicalQueryIds();
 		try {
-			ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
-			for( Integer queryId : queryIds ) {
+			final ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
+			for (final Integer queryId : queryIds) {
 				roots.addAll(executor.getPhysicalRoots(queryId));
 			}
-			if( roots.isEmpty()) {
-				// no queries / operators
+			if (roots.isEmpty()) {
 				return null;
 			}
 
-			IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSinkOneWay(roots);
+			final IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSinkOneWay(roots);
 
-			PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider);
+			final PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider);
 			page.openEditor(input, OdysseusRCPViewerPlugIn.GRAPH_EDITOR_ID);
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (final Exception ex) {
+			LOG.error("Exception during opening editor for current execution graph", ex);
 		}
-		
+
 		return null;
 	}
 
