@@ -45,9 +45,6 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.CosinusFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.CurDateFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DayFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DebsDateFormatParse;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.DebsIntensityCalc;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.DebsIntensityCalc2;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.DebsIntensityCalc_Numeric;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DivisionOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DoubleToByteFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DoubleToFloatFunction;
@@ -262,11 +259,6 @@ public class MEP implements IExpressionParser {
         registerFunction(new EvalFunction());
         registerFunction(new SMinFunction());
         registerFunction(new SMaxFunction());
-
-        // TODO: Move to other bundle!!
-        registerFunction(new DebsIntensityCalc());
-        registerFunction(new DebsIntensityCalc_Numeric());
-        registerFunction(new DebsIntensityCalc2());
     }
 
     /**

@@ -1,9 +1,7 @@
-package de.uniol.inf.is.odysseus.core.server.mep.functions;
+package de.uniol.inf.is.odysseus.debs2013.mep.functions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-
-// TODO: Move to own bundle
 
 public class DebsIntensityCalc2 extends AbstractFunction<String> {
 

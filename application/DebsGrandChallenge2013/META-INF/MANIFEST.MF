@@ -4,7 +4,7 @@ Bundle-Name: Debs2013
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.debs2013
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.debs2013.Activator
-Service-Component: OSGI-INF/* 
+Service-Component: OSGI-INF/*
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core,
