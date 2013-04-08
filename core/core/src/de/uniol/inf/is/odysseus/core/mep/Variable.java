@@ -18,6 +18,9 @@ package de.uniol.inf.is.odysseus.core.mep;
 import java.util.Collections;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
@@ -30,6 +33,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  */
 public class Variable implements IExpression<Object> {
 
+	Logger LOG = LoggerFactory.getLogger(Variable.class);
+	
 	private static final long serialVersionUID = 6977413577984429091L;
 	/**
 	 * The bounded value, could be null
@@ -195,7 +200,7 @@ public class Variable implements IExpression<Object> {
 			if(this.acceptedTypes[i]!= null){
 				acceptedTypesNew[newIndex++] = this.acceptedTypes[i];
 			}else{
-				System.err.println(identifier+" accepted type was null!!");
+				LOG.warn(identifier+" accepted type was null!!");
 			}
 		}
 		
