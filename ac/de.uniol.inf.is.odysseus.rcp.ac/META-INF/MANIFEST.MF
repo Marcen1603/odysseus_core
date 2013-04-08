@@ -14,6 +14,8 @@ Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.ac.standard,
  de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.costmodel,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query,
  de.uniol.inf.is.odysseus.costmodel.operator,
  de.uniol.inf.is.odysseus.rcp
-Service-Component: OSGI-INF/acstatuslistener.xml
+Service-Component: OSGI-INF/acstatuslistener.xml,
+ OSGI-INF/admissionStatisticView.xml

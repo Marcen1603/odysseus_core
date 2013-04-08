@@ -78,6 +78,10 @@ public class OperatorCost<T> implements ICost<T> {
 	public Map<T, OperatorEstimation<T>> getOperatorEstimations() {
 		return estimations;
 	}
+	
+	public OperatorEstimation<T> getOperatorEstimation(T operator) {
+		return estimations.get(operator);
+	}
 
 	@Override
 	public int compareTo(ICost<T> o) {

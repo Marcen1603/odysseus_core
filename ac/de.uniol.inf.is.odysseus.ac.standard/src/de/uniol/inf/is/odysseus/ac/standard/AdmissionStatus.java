@@ -19,6 +19,7 @@ package de.uniol.inf.is.odysseus.ac.standard;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
@@ -109,6 +110,10 @@ public final class AdmissionStatus {
 		Preconditions.checkNotNull(query, "Query to get actual costs must not be null!");
 		
 		return queryCosts.get(query);
+	}
+	
+	public ImmutableSet<IPhysicalQuery> getQueries() {
+		return ImmutableSet.copyOf(queryCosts.keySet());
 	}
 
 	public long getTimestamp() {
