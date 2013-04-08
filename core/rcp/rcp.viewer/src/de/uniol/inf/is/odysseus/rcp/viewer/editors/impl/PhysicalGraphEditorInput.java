@@ -102,4 +102,18 @@ public class PhysicalGraphEditorInput implements IEditorInput {
 	private static String determineName(int queryID) {
 		return queryID < 0 ? "Current Plan" : "Query " + queryID;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if( !(obj instanceof PhysicalGraphEditorInput ) ) {
+			return false;
+		}
+		
+		if( obj == this ) {
+			return true;
+		}
+		
+		PhysicalGraphEditorInput other = (PhysicalGraphEditorInput)obj;
+		return other.queryID == this.queryID;
+	}
 }
