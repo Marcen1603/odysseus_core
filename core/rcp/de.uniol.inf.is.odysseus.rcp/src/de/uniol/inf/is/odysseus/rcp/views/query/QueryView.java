@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,82 +30,83 @@ import com.google.common.base.Preconditions;
 
 public class QueryView extends ViewPart {
 
-    private QueryTableViewer tableViewer;
-    private Collection<IQueryViewData> queries = new ArrayList<IQueryViewData>();
-    private IQueryViewDataProvider dataProvider;
+	private QueryTableViewer tableViewer;
+	private final Collection<IQueryViewData> queries = new ArrayList<IQueryViewData>();
+	private IQueryViewDataProvider dataProvider;
 
 	@Override
-    public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent) {
 
-        Composite tableComposite = new Composite(parent, SWT.NONE);
-        TableColumnLayout tableColumnLayout = new TableColumnLayout();
-        tableComposite.setLayout(tableColumnLayout);
+		final Composite tableComposite = new Composite(parent, SWT.NONE);
+		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
+		tableComposite.setLayout(tableColumnLayout);
 
-        tableViewer = new QueryTableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
-        dataProvider = determineDataProvider(this);
-        refreshData(dataProvider, queries);
-        tableViewer.setInput(queries);
-        getSite().setSelectionProvider(tableViewer);
+		tableViewer = new QueryTableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
+		dataProvider = determineDataProvider(this);
+		refreshData(dataProvider, queries);
+		tableViewer.setInput(queries);
+		getSite().setSelectionProvider(tableViewer);
 
-        createContextMenu();
-    }
-	
+		createContextMenu();
+	}
+
+	@Override
+	public void dispose() {
+		try {
+			dataProvider.dispose();
+			dataProvider = null;
+		} catch (final Exception ex) {
+			// ignore
+		}
+
+		super.dispose();
+	}
+
 	public QueryTableViewer getTableViewer() {
 		return tableViewer;
 	}
 
+	public void refreshTable() {
+		if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					if (dataProvider != null) {
+						refreshData(dataProvider, queries);
+
+						if (!tableViewer.getControl().isDisposed()) {
+							tableViewer.refresh();
+						}
+					}
+				}
+
+			});
+		}
+	}
+
+	@Override
+	public void setFocus() {
+		tableViewer.getTable().setFocus();
+	}
+
 	private void createContextMenu() {
 		// Contextmenu
-        MenuManager menuManager = new MenuManager();
-        Menu contextMenu = menuManager.createContextMenu(tableViewer.getTable());
-        // Set the MenuManager
-        tableViewer.getTable().setMenu(contextMenu);
-        getSite().registerContextMenu(menuManager, tableViewer);
+		final MenuManager menuManager = new MenuManager();
+		final Menu contextMenu = menuManager.createContextMenu(tableViewer.getTable());
+		// Set the MenuManager
+		tableViewer.getTable().setMenu(contextMenu);
+		getSite().registerContextMenu(menuManager, tableViewer);
 	}
-    
-    @Override
-    public void dispose() {
-    	try {
-    		dataProvider.dispose();
-    		dataProvider = null;
-    	} catch( Exception ex ) {
-    		// ignore
-    	}
-    	
-        super.dispose();
-    }
-    
-    @Override
-    public void setFocus() {
-    	tableViewer.getTable().setFocus();
-    }
 
-    public void refreshTable() {
-    	if( !PlatformUI.getWorkbench().getDisplay().isDisposed()) {
-	        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-	
-	            @Override
-	            public void run() {
-	            	if( dataProvider != null ) {
-		            	refreshData(dataProvider, queries);
-		
-		                if (!tableViewer.getControl().isDisposed())
-		                    tableViewer.refresh();
-	            	}
-	            }
-	
-	        });
-    	}
-    }
-    
 	private static IQueryViewDataProvider determineDataProvider(QueryView view) {
 		Preconditions.checkArgument(QueryViewDataProviderManager.hasQueryViewDataProvider(), "QueryView must have at least one data provider!");
-		IQueryViewDataProvider dataProvider = QueryViewDataProviderManager.getQueryViewDataProvider();
-        dataProvider.init(view);
-        return dataProvider;
+		final IQueryViewDataProvider dataProvider = QueryViewDataProviderManager.getQueryViewDataProvider();
+		dataProvider.init(view);
+		return dataProvider;
 	}
-	
-	private static void refreshData( IQueryViewDataProvider dataProvider, Collection<IQueryViewData> toRefresh) {
+
+	private static void refreshData(IQueryViewDataProvider dataProvider, Collection<IQueryViewData> toRefresh) {
 		toRefresh.clear();
 		toRefresh.addAll(dataProvider.getData());
 	}
