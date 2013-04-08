@@ -58,9 +58,9 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 			currentTuple = (Tuple<?>) element;
 			
 			int[] tempArray = {		(int)currentTuple.getAttribute(attributeIndexMap.get("cell_x1")),
-									((Double)currentTuple.getAttribute(attributeIndexMap.get("cell_y1"))).intValue(),
+									(int)currentTuple.getAttribute(attributeIndexMap.get("cell_y1")),
 									(int)currentTuple.getAttribute(attributeIndexMap.get("cell_x2")),
-									((Double)currentTuple.getAttribute(attributeIndexMap.get("cell_y2"))).intValue()};
+									(int)currentTuple.getAttribute(attributeIndexMap.get("cell_y2"))};
 			
 //			cellValues.put(tempArray, (Double)currentTuple.getAttribute(attributeIndexMap.get("percent_time_in_time_cell")));
 			

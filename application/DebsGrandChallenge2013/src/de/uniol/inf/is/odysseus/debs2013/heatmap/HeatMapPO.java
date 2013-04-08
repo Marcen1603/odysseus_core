@@ -104,23 +104,20 @@ public class HeatMapPO<K extends ITimeInterval, T extends IStreamObject<K>> exte
 		int yCoord = -1;
 		
 		// aussortieren was älter ist als ts
-		int remove = 0;
-		for(Coord event: events) {
-			if(event.getEndTS() < startTS) {
-//				System.out.println("PRE: " + map[event.getX()][event.getY()]);
-				map[event.getX()][event.getY()] = map[event.getX()][event.getY()] - event.getValue();
-//				System.out.println("POST: " + map[event.getX()][event.getY()]);
-				remove++;
-			} else {
-//				System.out.println("BREAK OUT!!! " + startTS);
-				break;
+		if(endTS >= 0) {
+			int remove = 0;
+			for(Coord event: events) {
+				if(event.getEndTS() < startTS) {
+					map[event.getX()][event.getY()] = map[event.getX()][event.getY()] - event.getValue();
+					remove++;
+				} else {
+					break;
+				}
+			}
+			for(int i = 0; i < remove; i++) {
+				events.remove(0);
 			}
 		}
-		for(int i = 0; i < remove; i++) {
-//			System.out.println("KILL IT!!! " + startTS);
-			events.remove(0);
-		}
-		
 		// get data out of tuple
 		if(rowAtt >= 0 && colAtt >= 0 && valAtt >= 0 && tsAtt >= 0) {
 			Integer xValue = (Integer) tuple.getAttribute(rowAtt);
@@ -138,33 +135,22 @@ public class HeatMapPO<K extends ITimeInterval, T extends IStreamObject<K>> exte
 			if (xCoord < x && xCoord >= 0 && yCoord < y && yCoord >= 0) {
 				map[xCoord][yCoord] = map[xCoord][yCoord] + value;
 				events.add(new Coord(xCoord, yCoord, value, endTS));
-			} else {
-//				System.out.println("FEHLER!!!!!!");
-//				System.out.println("xCoord: " + xCoord);
-//				System.out.println("x: " + x);
-//				System.out.println("this.x: " + this.x);
-//				System.out.println("yCoord: " + yCoord);
-//				System.out.println("y: " + y);
-//				System.out.println("this.y: " + this.y);
-			}
+			} 
 		}
 		
 		//senden, falls Sekunde vorbei ist:
-		if((((Long) tuple.getAttribute(tsAtt)) - lastSend) > 1000000000000L) {
+		if((((Long) tuple.getAttribute(tsAtt)) - lastSend) >= 1000000000000L) {
 			lastSend = (Long) tuple.getAttribute(tsAtt);
-//			Double test = 0.0;			
 			for(int i = 0; i < this.x; i++) {
 				for(int j = 0; j < this.y; j++) {
 					Object[] attributes = new Object[7];
 					attributes[0] = tuple.getAttribute(tsAtt);
 					attributes[1] = tuple.getAttribute(1);
-					attributes[2] = (xLength / x) * i;
-					attributes[3] = (yLength / y) * (j + 1);
-					attributes[4] = (xLength / x) * (i + 1);
-					attributes[5] = (yLength / y) * j;
+					attributes[2] = ((xLength / x) * i);
+					attributes[3] = ((yLength / y) * (j + 1));
+					attributes[4] = ((xLength / x) * (i + 1));
+					attributes[5] = ((yLength / y) * j);
 					attributes[6] = map[i][j];
-//					test = test + map[i][j];
-//					System.out.println("total Time: " + test);
 					Tuple outputTuple = new Tuple<>(attributes, true);
 					outputTuple.setMetadata(tuple.getMetadata());
 					transfer((T) outputTuple);
