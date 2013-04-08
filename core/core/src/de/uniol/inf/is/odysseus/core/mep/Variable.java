@@ -195,7 +195,7 @@ public class Variable implements IExpression<Object> {
 			if(this.acceptedTypes[i]!= null){
 				acceptedTypesNew[newIndex++] = this.acceptedTypes[i];
 			}else{
-				System.out.println("was null!!");
+				System.err.println(identifier+" accepted type was null!!");
 			}
 		}
 		
