@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: TestNG 6.8
+Bundle-Name: 8
 Bundle-SymbolicName: TestNG6.8
 Bundle-Version: 1.0.0
-Bundle-ClassPath: .
+Bundle-ClassPath: testng-6.8.jar
 Export-Package: bsh,
  bsh.classpath,
  bsh.collection,
