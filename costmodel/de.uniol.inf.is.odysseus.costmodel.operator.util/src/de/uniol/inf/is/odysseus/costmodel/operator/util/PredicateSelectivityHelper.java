@@ -336,12 +336,12 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 	public HistogramValuePair getHistogramAndValue(IExpression<?> arg0, IExpression<?> arg1) {
 		String attribute = null;
 		Double value = null;
+		
 		try {
 			attribute = ((Variable) arg0).getIdentifier();
 			value = (Double) ((Constant<?>) arg1).getValue();
-		} catch (Exception ex) {
-			getLogger().warn("Operator is more complex than expected here...");
-			ex.printStackTrace();
+		} catch (Throwable ex) {
+			getLogger().warn("Operator is more complex than expected here...", ex);
 			return null;
 		}
 
