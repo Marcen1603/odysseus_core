@@ -1,32 +1,28 @@
 package de.uniol.inf.is.odysseus.hmm.physicaloperator;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.hmm.Gesture;
 import de.uniol.inf.is.odysseus.hmm.HMM;
-import de.uniol.inf.is.odysseus.hmm.HMMPoint;
-import de.uniol.inf.is.odysseus.hmm.HmmWindow;
 import de.uniol.inf.is.odysseus.hmm.HmmObservationAlphaRow;
+import de.uniol.inf.is.odysseus.hmm.HmmWindow;
 import de.uniol.inf.is.odysseus.hmm.HmmWindowGroup;
 
 public class HmmPO<M extends ITimeInterval> extends
 		AbstractPipe<Tuple<M>, Tuple<M>> {
 
-	private List<IPredicate<? super Tuple<M>>> predicates;
-	private HMMPoint lastValidPoint;
+//	private List<IPredicate<? super Tuple<M>>> predicates;
+//	private HMMPoint lastValidPoint;
 	private HmmWindow hmmWindow;
 	private ArrayList<Gesture> gesturelist = new ArrayList<Gesture>();
-	private ArrayList<HmmWindowGroup> windowGroups= new ArrayList<HmmWindowGroup>();
+//	private ArrayList<HmmWindowGroup> windowGroups= new ArrayList<HmmWindowGroup>();
 	private int timewindow = 10000;
-	private int numStates;
+//	private int numStates;
+	@SuppressWarnings("rawtypes")
 	private HMM hmm;
 
 	// Konstruktoren
@@ -85,7 +81,7 @@ public class HmmPO<M extends ITimeInterval> extends
 		
 		
 		
-		double handLeftX = object.getAttribute(0);
+//		double handLeftX = object.getAttribute(0);
 		
 		System.out.println("getMetadata():" + object.getMetadata());
 		System.out.println("getStart(): " + object.getMetadata().getStart());
@@ -102,6 +98,7 @@ public class HmmPO<M extends ITimeInterval> extends
 
 	}
 	
+	@SuppressWarnings("rawtypes")
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		System.out.println("MUUUUUUUUUUUUUUUUUUUUUUUUUH macht die Katze");

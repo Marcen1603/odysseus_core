@@ -10,6 +10,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 @LogicalOperator(name = "HMM", minInputPorts = 1, maxInputPorts = 1)
 public class HmmAO extends UnaryLogicalOp implements ILogicalOperator{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6352258419499082879L;
 	private String mode;
 	
 	

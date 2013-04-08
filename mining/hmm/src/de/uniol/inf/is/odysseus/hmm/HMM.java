@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.hmm;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 public class HMM<M extends ITimeInterval> {
 

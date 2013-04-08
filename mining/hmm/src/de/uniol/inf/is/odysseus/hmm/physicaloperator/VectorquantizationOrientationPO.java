@@ -1,20 +1,14 @@
 package de.uniol.inf.is.odysseus.hmm.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.hmm.HMMPoint;
 
 public class VectorquantizationOrientationPO<M extends ITimeInterval> extends
 		AbstractPipe<Tuple<M>, Tuple<M>> {
 
-	private List<IPredicate<? super Tuple<M>>> predicates;
+//	private List<IPredicate<? super Tuple<M>>> predicates;
 	private HMMPoint lastValidPoint;
 
 	// Konstruktoren
@@ -59,7 +53,8 @@ public class VectorquantizationOrientationPO<M extends ITimeInterval> extends
 			Tuple<M> transferObject = new Tuple<>(1, false);
 			transferObject.append(cluster);
 			transferObject.addAttributeValue(0, cluster);
-			M clonedMD = (M) object.getMetadata().clone();
+			@SuppressWarnings("unchecked")
+			M clonedMD = ((M) object.getMetadata().clone());
 			transferObject.setMetadata(clonedMD);
 			transfer(transferObject,port);
 		}
