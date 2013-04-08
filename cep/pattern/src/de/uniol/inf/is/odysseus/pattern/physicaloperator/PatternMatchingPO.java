@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.pattern.physicaloperator;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import model.AllPatternDataStructure;
-
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
