@@ -6,13 +6,15 @@ import java.util.Iterator;
 
 public class HmmWindow {
 	
-	public int numStates;
+//	private int numStates;
+	private int timewindow;
 	
 	ArrayList<HmmWindowGroup> groups;
 	
-	public HmmWindow(int numStates) {
-		groups = new ArrayList<HmmWindowGroup>();
-		this.numStates = numStates;
+	public HmmWindow(int timewindow) {
+		this.groups = new ArrayList<HmmWindowGroup>();
+//		this.numStates = numStates;
+		this.timewindow = timewindow;
 	}
 
 	
@@ -32,16 +34,16 @@ public class HmmWindow {
 		groups.add(pGroup);
 	}
 	
-	public void sweapOldItems(){
-		
+	public void sweapOldItems(long currentTimestamp){
+		Iterator<HmmWindowGroup> it = groups.iterator();
+		while(it.hasNext()) {
+			HmmWindowGroup hwg = it.next();
+			if((currentTimestamp - hwg.getTimestamp()) > timewindow) {
+				it.remove();
+			} else {
+				break;
+			}
+		}
 	}
 	
-	
-	public int getNumStates() {
-		return numStates;
-	}
-
-	public void setNumStates(int numStates) {
-		this.numStates = numStates;
-	}
 }

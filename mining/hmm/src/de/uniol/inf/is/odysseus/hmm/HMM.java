@@ -1,29 +1,48 @@
 package de.uniol.inf.is.odysseus.hmm;
 
-public class HMM {
-	int numStates;
-	int numObservations;
-	double pi[];
-	double a[][];
-	double b[][];
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-	public HMM(int numStates, int numObservations) {
-		this.numStates = numStates;
-		this.numObservations = numObservations;
-
-		pi = new double[numStates];
-		a = new double[numStates][numStates];
-		b = new double[numStates][numObservations];
-	}
+public class HMM<M extends ITimeInterval> {
 
 	// Methoden
 	// Forward-Algorithmus
+	/**
+	 * Initialization of alpha-values for the Forward-Algorithm
+	 * @param gesture
+	 * @param alphaRow
+	 * @param observation
+	 */
+	public void forwardInit(Gesture gesture, HmmObservationAlphaRow alphaRow, int observation) {
+		for (int i = 0; i < alphaRow.getAlphas().length; i++) {
+			alphaRow.getAlphas()[i] = gesture.getPi()[i] * gesture.getB()[i][observation];
+		}
+	}
+	
 	public void forward() {
 
 	}
 
-	public void forwardStream() {
-
+	public double forwardStream(Gesture gesture, HmmObservationAlphaRow alphaRow, int observation) {
+		double[] newAlphas = new double[alphaRow.getAlphas().length];
+		for (int j = 0; j < alphaRow.getAlphas().length; j++) {
+			//Calculate new alpha-value for state j
+			double sum = 0;
+			for (int i = 0; i < alphaRow.getAlphas().length; i++) {
+				sum += alphaRow.getAlphas()[i] * gesture.getA()[i][j];
+			}
+			newAlphas[j] = sum * gesture.getB()[j][observation];
+		}
+		//overwrite alphas with new ones
+		alphaRow.setAlphas(newAlphas);
+		
+		//return Forward-Probability
+		double prob = 0;
+		for (int i = 0; i < newAlphas.length; i++) {
+			prob += newAlphas[i];
+		}
+		return prob;
 	}
 
 	// Backward-Algorithmus

@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.hmm.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.hmm.logicaloperator.HmmAO;
 import de.uniol.inf.is.odysseus.hmm.logicaloperator.VectorquantizationAO;
@@ -21,7 +24,17 @@ public class THmmAORule extends
 
 	@Override
 	public void execute(HmmAO operator, TransformationConfiguration config) {
-		defaultExecute(operator, new HmmPO(), config, true, true);
+//		defaultExecute(operator, new HmmPO(), config, true, true);
+		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po;
+		if (operator.getMode().equalsIgnoreCase("RECOGNITION")) {
+			po = new HmmPO();
+			po.setOutputSchema(operator.getOutputSchema());
+			replace(operator, po, config);
+			retract(operator);
+			insert(po);
+		}else{
+			//maybe there will be other algorithms...
+		}
 
 	}
 

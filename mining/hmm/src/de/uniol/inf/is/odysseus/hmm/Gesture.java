@@ -2,13 +2,16 @@ package de.uniol.inf.is.odysseus.hmm;
 
 public class Gesture {
 	//Attributes
-	String name;
-	double[][] a;
-	double[][] b;
+	private String name;
+	private int numStates;
+	private double[] pi;
+	private double[][] a;
+	private double[][] b;
 	
 	//Constructor
-	public Gesture(String pName, double[][] pA, double[][] pB){
+	public Gesture(String pName, double[] pi, double[][] pA, double[][] pB){
 		this.name = pName;
+		this.setPi(pi);
 		this.a = pA;
 		this.b = pB;		
 	}
@@ -16,6 +19,14 @@ public class Gesture {
 
 	
 	//Methods
+	public double[] getPi() {
+		return pi;
+	}
+
+	public void setPi(double[] pi) {
+		this.pi = pi;
+	}
+	
 	public double[][] getA() {
 		return a;
 	}
@@ -35,4 +46,9 @@ public class Gesture {
 	public String getName() {
 		return name;
 	}
+	
+	public int getNumStates() {
+		return numStates;
+	}
+	
 }

@@ -3,14 +3,18 @@ package de.uniol.inf.is.odysseus.hmm;
 public class HmmObservationAlphaRow {
 
 	public int timestamp;
-	double[] alphas;
+	private double[] alphas;
 	
 	public HmmObservationAlphaRow(int numStates) {
-		alphas = new double[numStates];
+		setAlphas(new double[numStates]);
 	}
-	
-	public void initializeAlphas() {
-		
+
+	public double[] getAlphas() {
+		return alphas;
+	}
+
+	public void setAlphas(double[] alphas) {
+		this.alphas = alphas;
 	}
 	
 }

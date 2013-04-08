@@ -4,14 +4,13 @@ import java.util.ArrayList;
 
 public class HmmWindowGroup {
 	//Attributes
-	int timestamp;
-	ArrayList<HmmObservationAlphaRow> alphaRows;
+	private long timestamp;
+	private ArrayList<HmmObservationAlphaRow> alphaRows;
 		
 	//Constructors
 	public HmmWindowGroup(){
 		alphaRows = new ArrayList<HmmObservationAlphaRow>();
 	}
-	
 	
 	//Methods
 	public void addRow(HmmObservationAlphaRow pAlphaRow){
@@ -19,9 +18,12 @@ public class HmmWindowGroup {
 	}
 
 
-	public void setTimestamp(int timestamp) {
+	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
 	
-	
+	public long getTimestamp() {
+		return timestamp;
+	}
+
 }
