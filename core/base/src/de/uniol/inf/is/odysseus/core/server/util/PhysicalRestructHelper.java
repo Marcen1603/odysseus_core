@@ -122,8 +122,7 @@ public class PhysicalRestructHelper {
 
 		// disconnect old connections
 		for (int i = 0; i < sinks.size(); i++) {
-			buffer.disconnectSink(sinks.get(i), sinkInPorts.get(i), 0,
-					buffer.getOutputSchema());
+			buffer.unsubscribeSink(sinks.get(i), sinkInPorts.get(i), 0, buffer.getOutputSchema());
 		}
 		
 		for (int i = 0; i < sinks.size(); i++) {
