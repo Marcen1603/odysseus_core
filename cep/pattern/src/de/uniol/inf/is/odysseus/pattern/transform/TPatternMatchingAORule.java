@@ -22,14 +22,31 @@ public class TPatternMatchingAORule extends AbstractTransformationRule<PatternMa
 	  
 	 @Override
 	 public void execute(PatternMatchingAO operator, TransformationConfiguration config) {
+		 if (!validateInputParameter(operator))
+			 throw new IllegalArgumentException("Ungültige Kombination von Parametern!");
 		 PatternMatchingPO pOperator = new PatternMatchingPO(operator.getType(), operator.getEventTypes(),
-				 operator.getPredicate(), operator.getInputTypeNames(), new TIInputStreamSyncArea(operator.getSubscribedToSource().size()));
+				 operator.getExpression(), operator.getInputTypeNames(), operator.getInputSchemas(), new TIInputStreamSyncArea(operator.getSubscribedToSource().size()));
 		 defaultExecute(operator, pOperator, config, true, true);
+	 }
+	 
+	 private boolean validateInputParameter(PatternMatchingAO operator) {
+		// Elemente der relevanten Eventliste müssen auch als Quellen vorhanden sein
+		boolean help = false;
+		for (String eventType : operator.getEventTypes()) {
+			for (String inputType : operator.getInputTypeNames().values()) {
+				if (eventType.equals(inputType)) {
+					help = true;
+					break;
+				}				
+			}
+			if (!help) break;
+		}
+		return help;
 	 }
 	 
 	 @Override
 	 public boolean isExecutable(PatternMatchingAO operator, TransformationConfiguration transformConfig) {
-		 return operator.isAllPhysicalInputSet();
+		 return operator.isAllPhysicalInputSet();		 
 	 }
 	 
 	 @Override

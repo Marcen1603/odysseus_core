@@ -1,71 +1,119 @@
 package de.uniol.inf.is.odysseus.pattern.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import model.AllPatternDataStructure;
+import model.AttributeMap;
+import model.EventBuffer;
+import model.EventObject;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
 /**
+ * Operator, um Pattern-Matching durchzuführen.
  * @author Michael Falk
- * @param <R>
+ * @param <T>
  */
-public class PatternMatchingPO<R extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<R, Tuple<? extends ITimeInterval>> implements IHasPredicate, IProcessInternal<R> {
+public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>>
+	implements IHasPredicate, IProcessInternal<Tuple<T>> {
 	
-	private IPredicate<? super R> predicate;
+	private SDFExpression expression;
+	/**
+	 * Der Pattern-Typ.
+	 */
 	private String type;
+	/**
+	 * Die relevante Event-Typen-Liste.
+	 */
 	private List<String> eventTypes;
 	private Map<Integer, String> inputTypeNames;
-
-	protected IInputStreamSyncArea<R> inputStreamSyncArea;
-	protected ITransferArea<R, R> outputTransferArea;
+	private Map<Integer, SDFSchema> inputSchemas;
+	
+	protected IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea;
+	protected ITransferArea<Tuple<T>, Tuple<T>> outputTransferArea;
 	
 	// ALL-Pattern
 	//private DefaultTISweepArea<IStreamObject<? extends ITimeInterval>>
 	private AllPatternDataStructure allPattern;
+	private List<EventBuffer<T>> objectLists;
+	private AttributeMap[] attrMapping;
 	
 	
-	public PatternMatchingPO(String type, List<String> eventTypes, IPredicate<? super R> predicate,
-			Map<Integer, String> inputTypeNames, IInputStreamSyncArea<R> inputStreamSyncArea) {
+	public PatternMatchingPO(String type, List<String> eventTypes, SDFExpression expr,
+			Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas, IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
         super();
         this.type = type;
         this.eventTypes = eventTypes;
-        this.predicate = predicate;
+        this.expression = expr;
         this.inputTypeNames = inputTypeNames;
+        this.inputSchemas = inputSchemas;
         this.inputStreamSyncArea = inputStreamSyncArea;
         this.allPattern = new AllPatternDataStructure(this.eventTypes);
+        this.objectLists = new ArrayList<EventBuffer<T>>();
+        this.init();
     }
 	
 	// Copy-Konstruktor
-    public PatternMatchingPO(PatternMatchingPO<R> patternPO) {
+    public PatternMatchingPO(PatternMatchingPO<T> patternPO) {
         this.type = patternPO.type;
         this.eventTypes = patternPO.eventTypes;
-        this.predicate = patternPO.predicate;
+        this.expression = patternPO.expression;
         this.inputTypeNames = patternPO.inputTypeNames;
+        this.inputSchemas = patternPO.inputSchemas;
         this.inputStreamSyncArea = patternPO.inputStreamSyncArea;
         this.allPattern = patternPO.allPattern;
+        this.objectLists = patternPO.objectLists;
+        this.init();
     }
 	
+    private void init() {
+    	if (expression != null) {
+    		List<SDFAttribute> neededAttr = expression.getAllAttributes();
+    		attrMapping = new AttributeMap[neededAttr.size()];
+    		int i = 0;
+    		int schemaID = 0;
+    		for (SDFAttribute attr : neededAttr) {
+    			// passendes Schema raussuchen
+    			while (schemaID < inputSchemas.size()) {
+    				SDFSchema schema = inputSchemas.get(schemaID);
+    				int attrPos = schema.indexOf(attr);
+    				if (attrPos != -1) {
+    					// Mapping speichern
+    					attrMapping[i].setSchema(schema);
+    					attrMapping[i].setAttrPos(attrPos);
+    					break;
+    				}
+    				schemaID++;
+    			}
+    			i++;
+    		}
+    	}
+    	
+    }
+    
 	@Override
 	public String toString(){
-		return super.toString() + " type: " + type + " eventTypes: " + eventTypes.toString() + " predicate: " + predicate.toString(); 
+		return super.toString() + " type: " + type + " eventTypes: " + eventTypes.toString(); 
 	}
 	
-	@Override
-	public IPredicate<? super R> getPredicate() {
-		return predicate;
+	public SDFExpression getExpression() {
+		return expression;
 	}
     
 	@Override
@@ -74,40 +122,69 @@ public class PatternMatchingPO<R extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	@Override
-	public AbstractPipe<R,Tuple<? extends ITimeInterval>> clone() {
-		return new PatternMatchingPO<R>(this);
+	public AbstractPipe<Tuple<? extends ITimeInterval>,Tuple<? extends ITimeInterval>> clone() {
+		return new PatternMatchingPO<T>(this);
 	}
 	
 	@Override
     public void process_open() throws OpenFailedException {
         super.process_open();
         inputStreamSyncArea.init(this);
-        predicate.init();
+//        expression.init();
     }
      
 	
 	@Override
-	protected void process_next(R event, int port) {
+	protected void process_next(Tuple<? extends ITimeInterval> event, int port) {
 		inputStreamSyncArea.newElement(event, port);
 	}
 
 	@Override
-	public void process_internal(R event, int port) {
+	public void process_internal(Tuple<T> event, int port) {
 		String eventType = inputTypeNames.get(port);
+		SDFSchema schema = inputSchemas.get(port);
 		if (eventType == null) {
 			throw new InvalidEventException("Der Datentyp des Events ist null!");
 		}
+		// Prädikat ausführbar?
+		List<SDFAttribute> attributes = inputSchemas.get(port).getAttributes();
+		boolean detected = false;
 		switch(type) {
 			// Logische Pattern
 			case "ANY":
-				if (eventTypes.contains(eventType) && predicate.evaluate(event)) {
+				// Prädikat notwendig?
+				detected = eventTypes.contains(eventType);
+				if (detected) {
 					// ANY-Pattern erkannt
 					this.transfer(this.createComplexEvent(type));
 					// TODO: Komplexes Event erzeugen
 				}
+				break;
 			case "ALL":
-				// TODO: Prädikat evaluieren
-				boolean detected = allPattern.startMatching(eventType);
+				if (eventTypes.contains(eventType)) {
+					EventObject<T> eventObj = new EventObject<T>(event, eventType, schema, port);
+					// Event in vorhandene Listen einfügen,
+					// wenn noch nicht vorhanden
+					for (EventBuffer<T> objects : objectLists) {
+						if (!objects.contains(eventType)) {
+							objects.add(eventObj);
+							// Pattern erfüllt?
+							if (objects.matchAllPattern(eventTypes, expression, attrMapping, event)) {
+								// evt. alle bis dahin gesammelten Daten löschen
+								detected = true;
+								break;
+							}
+						}
+					}
+					if (!detected) {
+						// neue Liste erzeugen
+						EventBuffer<T> objects = new EventBuffer<T>();
+						objects.add(eventObj);
+						objectLists.add(objects);
+						if (objects.matchAllPattern(eventTypes, expression, attrMapping, event))
+							detected = true;
+					}
+				}
 				if (detected)
 					this.transfer(this.createComplexEvent(type));
 			case "ABSENCE":
@@ -152,4 +229,10 @@ public class PatternMatchingPO<R extends IStreamObject<? extends ITimeInterval>>
 		return returnEvent;
 	}
 
+	@Override
+	public IPredicate getPredicate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

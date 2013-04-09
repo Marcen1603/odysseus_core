@@ -3,11 +3,16 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+
 /**
  * Datenstruktur für das All-Pattern.
  * @author Michael Falk
  */
-public class AllPatternDataStructure {
+public class AllPatternDataStructure<T extends IStreamObject<? extends ITimeInterval>> {
 	
 	private List<String> eventTypes;
 	
