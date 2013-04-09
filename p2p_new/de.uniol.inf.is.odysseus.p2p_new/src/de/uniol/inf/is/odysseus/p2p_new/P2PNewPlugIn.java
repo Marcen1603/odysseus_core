@@ -126,7 +126,7 @@ public class P2PNewPlugIn implements BundleActivator {
 		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
 	}
 
-	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID, String peerName) throws IOException {
+	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID, String peerName) {
 		configurator.setTcpPort(PORT);
 		configurator.setTcpEnabled(true);
 		configurator.setTcpIncoming(true);

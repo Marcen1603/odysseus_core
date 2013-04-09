@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserDefinedDistributor.class);
-	
+
 	private static final String LOCAL_DESTINATION_NAME = "local";
 	private static final String DISTRIBUTION_TYPE = "user";
 
@@ -142,28 +142,21 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static void publish(QueryPart part, String destinationPeer, ID sharedQueryID) {
-		Preconditions.checkNotNull(part, "QueryPart to share must not be null!");
-		part.removeDestinationName();
-
-		final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
-		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
-		adv.setPeerID(toPeerID(destinationPeer));
-		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
-		adv.setSharedQueryID(sharedQueryID);
-
-		tryPublishImpl(adv);
-		LOG.debug("QueryPart {} published", part);
+	private static SDFSchema appendOutputSchemaWithTimestamps(SDFSchema base, String sourceName) {
+		final List<SDFAttribute> attributes = Lists.newArrayList(base.getAttributes());
+		attributes.add(new SDFAttribute(sourceName, "start", SDFDatatype.START_TIMESTAMP));
+		attributes.add(new SDFAttribute(sourceName, "end", SDFDatatype.END_TIMESTAMP));
+		return new SDFSchema("", attributes);
 	}
 
 	private static Map<QueryPart, String> assignQueryParts(Collection<String> remotePeerIDs, String localPeerID, List<QueryPart> queryParts) {
 		final Map<QueryPart, String> distributed = Maps.newHashMap();
 		final Map<String, String> assignedDestinations = Maps.newHashMap();
-		
+
 		assignedDestinations.put(LOCAL_DESTINATION_NAME, localPeerID);
-		for( final String remotePeerID : remotePeerIDs ) {
+		for (final String remotePeerID : remotePeerIDs) {
 			final Optional<String> optRemotePeerName = peerManager.getPeerName(remotePeerID);
-			if( optRemotePeerName.isPresent() ) {
+			if (optRemotePeerName.isPresent()) {
 				assignedDestinations.put(optRemotePeerName.get(), remotePeerID);
 			}
 		}
@@ -247,7 +240,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 			for (final LogicalSubscription subscription : relativeSink.getSubscriptions()) {
 				final ILogicalOperator target = subscription.getTarget();
-				if( !currentQueryPart.getOperators().contains(target)) {
+				if (!currentQueryPart.getOperators().contains(target)) {
 					final QueryPart targetQueryPart = findLogicalOperator(target, queryPartDistributionMap.keySet());
 					next.put(targetQueryPart, target);
 				}
@@ -307,7 +300,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 				return part;
 			}
 		}
-		
+
 		throw new IllegalArgumentException("Could not find query part for logical operator " + target);
 	}
 
@@ -339,44 +332,15 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 		final LogicalSubscription removingSubscription = determineSubscription(startOperator, endOperator);
 		startOperator.unsubscribeSink(removingSubscription);
-				
+
 		startOperator.subscribeSink(payloadAO, 0, removingSubscription.getSourceOutPort(), startOperator.getOutputSchema());
 		payloadAO.subscribeSink(sender, 0, 0, payloadAO.getOutputSchema());
-		
+
 		projectAO.subscribeToSource(access, 0, 0, access.getOutputSchema());
 		endOperator.subscribeToSource(projectAO, removingSubscription.getSinkInPort(), 0, projectAO.getOutputSchema());
 
 		startPart.addSenderAO(sender, startOperator);
 		endPart.addAccessAO(access, endOperator);
-	}
-
-	private static String toString(SDFSchema outputSchema) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		List<SDFAttribute> attributes = outputSchema.getAttributes();
-		for( int i = 0; i < attributes.size(); i++ ) {
-			sb.append("'").append(attributes.get(i).getAttributeName()).append("'");
-			if( i < attributes.size() - 1 ) {
-				sb.append(", ");
-			}
-		}
-		sb.append("]");
-		return sb.toString();
-	}
-
-	private static List<SDFAttribute> truncOutputSchemaFromTimestamps(SDFSchema outputSchema) {
-		// annahme, die beiden neuen attribute sind ganz hinten..
-		final List<SDFAttribute> newSchema = Lists.newArrayList(outputSchema.getAttributes());
-		newSchema.remove(newSchema.size() - 1);
-		newSchema.remove(newSchema.size() - 1);
-		return newSchema;
-	}
-
-	private static SDFSchema appendOutputSchemaWithTimestamps(SDFSchema base, String sourceName) {
-		final List<SDFAttribute> attributes = Lists.newArrayList(base.getAttributes());
-		attributes.add(new SDFAttribute(sourceName, "start", SDFDatatype.START_TIMESTAMP));
-		attributes.add(new SDFAttribute(sourceName, "end", SDFDatatype.END_TIMESTAMP));
-		return new SDFSchema("", attributes);
 	}
 
 	private static ID generateSharedQueryID() {
@@ -387,13 +351,12 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	private static String getDestinationName(ILogicalOperator operator) {
 		if (!Strings.isNullOrEmpty(operator.getDestinationName())) {
 			return operator.getDestinationName();
-		} else {
-			if (operator.getSubscribedToSource().size() > 0) {
-				return getDestinationName(operator.getSubscribedToSource().iterator().next().getTarget());
-			} else {
-				return LOCAL_DESTINATION_NAME;
-			}
 		}
+		if (operator.getSubscribedToSource().size() > 0) {
+			return getDestinationName(operator.getSubscribedToSource().iterator().next().getTarget());
+		}
+		
+		return LOCAL_DESTINATION_NAME;
 	}
 
 	private static void insertSenderAndAccess(Map<QueryPart, String> queryPartDistributionMap) {
@@ -420,6 +383,20 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
+	private static void publish(QueryPart part, String destinationPeer, ID sharedQueryID) {
+		Preconditions.checkNotNull(part, "QueryPart to share must not be null!");
+		part.removeDestinationName();
+
+		final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
+		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+		adv.setPeerID(toPeerID(destinationPeer));
+		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
+		adv.setSharedQueryID(sharedQueryID);
+
+		tryPublishImpl(adv);
+		LOG.debug("QueryPart {} published", part);
+	}
+
 	private static List<QueryPart> shareParts(Map<QueryPart, String> queryPartDistributionMap, ID sharedQueryID) {
 		final List<QueryPart> localParts = Lists.newArrayList();
 
@@ -438,6 +415,30 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		return localParts;
 	}
 
+	private static PeerID toPeerID(String text) {
+		try {
+			final URI id = new URI(text);
+			return PeerID.create(id);
+		} catch (URISyntaxException | ClassCastException ex) {
+			LOG.error("Could not transform to pipeid: {}", text, ex);
+			return null;
+		}
+	}
+
+	private static String toString(SDFSchema outputSchema) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		final List<SDFAttribute> attributes = outputSchema.getAttributes();
+		for (int i = 0; i < attributes.size(); i++) {
+			sb.append("'").append(attributes.get(i).getAttributeName()).append("'");
+			if (i < attributes.size() - 1) {
+				sb.append(", ");
+			}
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
 	private static Collection<ILogicalQuery> transformToQueries(List<QueryPart> localQueryParts, IPQLGenerator generator) {
 		final List<ILogicalQuery> localQueries = Lists.newArrayList();
 
@@ -448,22 +449,19 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		return localQueries;
 	}
 
+	private static List<SDFAttribute> truncOutputSchemaFromTimestamps(SDFSchema outputSchema) {
+		// annahme, die beiden neuen attribute sind ganz hinten..
+		final List<SDFAttribute> newSchema = Lists.newArrayList(outputSchema.getAttributes());
+		newSchema.remove(newSchema.size() - 1);
+		newSchema.remove(newSchema.size() - 1);
+		return newSchema;
+	}
+
 	private static void tryPublishImpl(QueryPartAdvertisement adv) {
 		try {
 			P2PNewPlugIn.getDiscoveryService().publish(adv, 10000, 10000);
 		} catch (final IOException ex) {
 			LOG.error("Could not publish query part", ex);
-		}
-	}
-	
-
-	private static PeerID toPeerID(String text) {
-		try {
-			final URI id = new URI(text);
-			return PeerID.create(id);
-		} catch (URISyntaxException | ClassCastException ex) {
-			LOG.error("Could not transform to pipeid: {}", text, ex);
-			return null;
 		}
 	}
 }

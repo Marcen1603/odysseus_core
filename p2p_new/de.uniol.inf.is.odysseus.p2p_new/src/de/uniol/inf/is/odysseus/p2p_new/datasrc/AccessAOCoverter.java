@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.datasrc;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
@@ -63,11 +62,7 @@ public final class AccessAOCoverter {
 		final AccessAO accessOperator = new AccessAO();
 		while (elements.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
-			try {
-				handleElement(accessOperator, elem, adv);
-			} catch (ClassNotFoundException | IOException e) {
-				LOG.error("Could not handle element to construct accessAO from sourceAdvertisement: {}", elem, e);
-			}
+			handleElement(accessOperator, elem, adv);
 		}
 
 		return accessOperator;
@@ -149,7 +144,7 @@ public final class AccessAOCoverter {
 		}
 	}
 
-	private static void handleElement(AccessAO accessAO, TextElement<?> elem, SourceAdvertisement adv) throws ClassNotFoundException, IOException {
+	private static void handleElement(AccessAO accessAO, TextElement<?> elem, SourceAdvertisement adv) {
 		if (elem.getName().equals(ID_TAG)) {
 			handleIDTag(adv, elem);
 
