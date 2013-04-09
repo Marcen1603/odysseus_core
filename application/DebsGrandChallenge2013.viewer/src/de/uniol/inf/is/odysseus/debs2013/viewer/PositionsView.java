@@ -117,7 +117,7 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 			public void paintControl(PaintEvent e) {
 				  GC gc = new GC(soccerFieldDraw);
 				  Font fontPlayerId = new Font(e.display,"Arial", fontSize, SWT.BOLD | SWT.ITALIC);
-				  Font fontTime = new Font(e.display,"Arial", fontSize+2, SWT.BOLD | SWT.ITALIC);
+				  Font fontTime = new Font(e.display,"Arial", 8, SWT.BOLD | SWT.ITALIC);
 				  gc.setFont(fontPlayerId);
 				  
 				  for(Entry<Integer, Tuple<?> > entry : currentTuple.entrySet()) {
@@ -129,25 +129,25 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 					    	
 					    	if(sidBalls.contains(sid)){
 						    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-						    	gc.fillOval(getCoordX(x), getCoordY(y), ballSize, ballSize);
+						    	gc.fillOval(getCoordX(x)-(ballSize/2), getCoordY(y)-(ballSize/2), ballSize, ballSize);
 						    	if(sensorIdToPlayerId.containsKey(sid)){
-						    		gc.drawText(sensorIdToPlayerId.get(sid).toString(), getCoordX(x)+10, getCoordY(y), true);
+						    		gc.drawText(sensorIdToPlayerId.get(sid).toString(), getCoordX(x)-(ballSize/2)+ballSize, getCoordY(y)-(ballSize/2), true);
 						    	}
 						    }else if(sidTeamA.contains(sid)){
 						    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-						    	gc.fillOval(getCoordX(x), getCoordY(y), playerSize, playerSize);
+						    	gc.fillOval(getCoordX(x)-(playerSize/2), getCoordY(y)-(playerSize/2), playerSize, playerSize);
 						    	if(sensorIdToPlayerId.containsKey(sid)){
-						    		gc.drawText(sensorIdToPlayerId.get(sid).toString(), getCoordX(x)+6, getCoordY(y), true);
+						    		gc.drawText(sensorIdToPlayerId.get(sid).toString(), getCoordX(x)-(playerSize/2)+playerSize, getCoordY(y)-(playerSize/2), true);
 						    	}
 						    }else if(sidTeamB.contains(sid)){
 						    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
-						    	gc.fillOval(getCoordX(x), getCoordY(y), playerSize, playerSize);
+						    	gc.fillOval(getCoordX(x)-(playerSize/2), getCoordY(y)-(playerSize/2), playerSize, playerSize);
 						    	if(sensorIdToPlayerId.containsKey(sid)){
-						    		gc.drawText(sensorIdToPlayerId.get(sid).toString(), getCoordX(x)+6, getCoordY(y), true);
+						    		gc.drawText(sensorIdToPlayerId.get(sid).toString(), getCoordX(x)-(playerSize/2)+playerSize, getCoordY(y)-(playerSize/2), true);
 						    	}
 						    }else if(sidReferee.contains(sid)){
 						    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-						    	gc.fillOval(getCoordX(x), getCoordY(y), playerSize, playerSize);
+						    	gc.fillOval(getCoordX(x)-(playerSize/2), getCoordY(y)-(playerSize/2), playerSize, playerSize);
 						    }
 					    }
 				  }
