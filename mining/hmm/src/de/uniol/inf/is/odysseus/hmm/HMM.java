@@ -18,8 +18,29 @@ public class HMM<M extends ITimeInterval> {
 		}
 	}
 	
-	public void forward() {
-
+	public double[][] forward(Gesture gesture, int[] observations) {
+		//Matrix numStats x numObservations
+		double[][] fwd = new double[gesture.getNumStates()][observations.length];
+		
+		//initialization (time0)
+		for(int i=0; i<gesture.getNumStates(); i++){
+			fwd[i][0] = gesture.getPi()[i] * gesture.getB()[i][observations[0]];
+		}
+		
+		//induction
+		for (int t=0; t<=observations.length-2; t++) {
+			for(int j=0; j<gesture.getNumStates(); j++){
+				fwd[j][t+1] = 0;
+				
+				for(int i=0; i<gesture.getNumStates(); i++){
+					fwd[j][t+1] += (fwd[i][t] * gesture.getA()[i][j]);
+				}
+				
+				fwd[j][t+1] *= gesture.getB()[j][observations[t+1]];
+				
+			}
+		}
+		return fwd;
 	}
 
 	public double forwardStream(Gesture gesture, HmmObservationAlphaRow alphaRow, int observation) {
