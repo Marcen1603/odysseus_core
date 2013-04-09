@@ -58,15 +58,15 @@ public class ConfigurationTest {
 
 	@Test
 	public void testGetAndSet() {
-		assertEquals(configuration.get("IntSetting"), (Integer)100);
+		assertEquals(configuration.get("IntSetting"), 100);
 		
 		configuration.set("IntSetting", 200);
 		
-		assertEquals(configuration.get("IntSetting"), (Integer)200);
+		assertEquals(configuration.get("IntSetting"), 200);
 		
 		configuration.reset("IntSetting");
 		
-		assertEquals(configuration.get("IntSetting"), (Integer)100);
+		assertEquals(configuration.get("IntSetting"), 100);
 	}
 	
 	@Test

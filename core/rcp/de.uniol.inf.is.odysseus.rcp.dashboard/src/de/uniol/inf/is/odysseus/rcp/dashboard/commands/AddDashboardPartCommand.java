@@ -64,9 +64,8 @@ public class AddDashboardPartCommand extends AbstractHandler {
 		Optional<IEditorPart> editor = getActiveEditor();
 		if (!editor.isPresent() || !isValidDashboardEditor(editor.get())) {
 			return false;
-		} else {
-			dashboardEditor = (DashboardEditor) editor.get();
-		}
+		} 
+		dashboardEditor = (DashboardEditor) editor.get();
 
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		List<Object> selectedObjects = getSelectedObjects(selection);

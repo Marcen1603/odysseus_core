@@ -90,8 +90,8 @@ public class LineChartDashboardPart extends AbstractChartDashboardPart {
 
 	@Override
 	protected void addStreamElementToChart(Tuple<?> element, int port) {
-		final Object[] xAxisValues = determineValues((Tuple<?>) element, xAttributes);
-		final Object[] yAxisValues = determineValues((Tuple<?>) element, yAttributes);
+		final Object[] xAxisValues = determineValues(element, xAttributes);
+		final Object[] yAxisValues = determineValues(element, yAttributes);
 
 		for (int i = 0; i < xAxisValues.length; i++) {
 			if (xAxisValues[i] != null && yAxisValues[i] != null) {

@@ -142,9 +142,8 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	private static IDashboardPartQueryTextProvider createQueryTextProvider(boolean queryFileCopy, IFile queryFile) {
 		if( queryFileCopy ) {
 			return new SimpleQueryTextProvider(queryFile);
-		} else {
-			return new ResourceFileQueryTextProvider(queryFile);
-		}
+		} 
+		return new ResourceFileQueryTextProvider(queryFile);
 	}
 }
 

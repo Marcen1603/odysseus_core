@@ -103,9 +103,8 @@ public class DashboardPartRegistry {
 		if( reg != null ) {
 			Class<? extends IDashboardPart> clazz = reg.dashboardPartClass;
 			return Optional.<Class<? extends IDashboardPart>>of(clazz);
-		} else {
-			return Optional.absent();
-		}
+		} 
+		return Optional.absent();
 	}
 	
 	public static Optional<DashboardPartDescriptor> getDashboardPartDescriptor( String dashboardPartName ) {
@@ -114,9 +113,8 @@ public class DashboardPartRegistry {
 		Registration reg = registeredParts.get(dashboardPartName);
 		if( reg != null ) {
 			return Optional.of(reg.descriptor);
-		} else {
-			return Optional.absent();
-		}
+		} 
+		return Optional.absent();
 	}
 	
 	public static IDashboardPart createDashboardPart( String dashboardPartName ) throws InstantiationException {

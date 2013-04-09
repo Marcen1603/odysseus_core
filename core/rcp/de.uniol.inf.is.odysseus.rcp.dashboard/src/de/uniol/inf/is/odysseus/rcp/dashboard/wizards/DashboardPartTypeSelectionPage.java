@@ -251,10 +251,10 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		if (optDescriptor.isPresent()) {
 			DashboardPartDescriptor descriptor = optDescriptor.get();
 			return descriptor.getDescription();
-		} else {
-			LOG.error("Could not find DashboardPartDescriptor for {}.", dashboardPartName);
-			return "";
 		}
+		
+		LOG.error("Could not find DashboardPartDescriptor for {}.", dashboardPartName);
+		return "";
 	}
 
 	private static List<SettingValuePair> getSettings(String dashboardPartName) {
