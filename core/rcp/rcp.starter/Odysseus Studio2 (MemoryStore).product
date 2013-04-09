@@ -42,7 +42,6 @@ http://odysseus.informatik.uni-oldenburg.de/
       </win>
    </launcher>
 
-
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
       <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</macos>
@@ -75,6 +74,7 @@ limitations under the License.
    <features>
       <feature id="de.uniol.inf.is.odysseus.product.memorystore.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
