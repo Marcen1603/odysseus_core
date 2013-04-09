@@ -63,6 +63,20 @@ public class AdmissionStatisticView extends ViewPart implements IAdmissionStatus
 		};
 		sorter.setSorter(sorter, ColumnViewerSorter.NONE);
 		
+		// HashID
+		column = createTableColumn(tableViewer, "Hash", new IOperatorStatisticReader() {
+			@Override
+			public String get(OperatorStatistic statistic) {
+				return String.valueOf(statistic.getHashID());
+			}
+		});
+		new ColumnViewerSorter(tableViewer, column) {
+			@Override
+			protected int doCompare(Viewer viewer, OperatorStatistic e1, OperatorStatistic e2) {
+				return Integer.compare(e1.getHashID(), e2.getHashID());
+			}
+		};
+		
 		// Type
 		column = createTableColumn(tableViewer, "Type", new IOperatorStatisticReader() {
 			@Override
@@ -104,7 +118,7 @@ public class AdmissionStatisticView extends ViewPart implements IAdmissionStatus
 			}
 		};
 		
-		column = createTableColumn(tableViewer, "Rate", new IOperatorStatisticReader() {
+		column = createTableColumn(tableViewer, "Datarate", new IOperatorStatisticReader() {
 			@Override
 			public String get(OperatorStatistic statistic) {
 				return String.format("%-8.2f", statistic.getDataRate());

@@ -14,6 +14,7 @@ public class ACRCPPlugIn extends AbstractUIPlugin {
 
 	private static ImageManager imageManager;
 	
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
@@ -21,6 +22,7 @@ public class ACRCPPlugIn extends AbstractUIPlugin {
 		loadImages(imageManager);
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		
