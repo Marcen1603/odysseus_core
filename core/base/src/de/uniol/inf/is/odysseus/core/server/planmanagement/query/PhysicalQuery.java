@@ -203,6 +203,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		List<IPhysicalOperator> queryOps = new ArrayList<IPhysicalOperator>(
 				getPhysicalChilds());
 		queryOps.addAll(getRoots());
+		iterableSources.clear();
 		Set<IOperatorOwner> owners = new HashSet<IOperatorOwner>();
 		
 		for (IPhysicalOperator operator : queryOps) {
