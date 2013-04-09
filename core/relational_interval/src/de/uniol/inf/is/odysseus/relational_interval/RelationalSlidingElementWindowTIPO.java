@@ -61,7 +61,7 @@ public class RelationalSlidingElementWindowTIPO extends
 	}
 
 	@Override
-	protected synchronized void process_next(
+	protected void process_next(
 			Tuple<ITimeInterval> object, int port) {
 		if (isPartitioned()) {
 			int bufferId = getGroupID(object);
