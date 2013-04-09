@@ -71,7 +71,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	private Map<IOperatorOwner, String> uniqueIds = new TreeMap<>();
 
 	final private OwnerHandler ownerHandler;
-
+	
 	private boolean inOrder = true;
 
 	// --------------------------------------------------------------------
@@ -387,6 +387,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 				}
 			}
 		}
+		
 		locker.unlock();
 		fire(this.pushDoneEvent);
 	}
@@ -600,6 +601,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	public void unsubscribeSink(PhysicalSubscription<ISink<? super T>> subscription) {
 		getLogger().debug("Unsubscribe from Sink " + subscription.getTarget());
 		boolean subContained = this.sinkSubscriptions.remove(subscription);
+		this.activeSinkSubscriptions.remove(subscription);
 		if (subContained) {
 			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 		}
@@ -768,4 +770,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 		return new SDFMetaAttributeList();
 	}
 
+	// ------------------------------------------------------
+	// Memory Management
+	// ------------------------------------------------------
+	public long getElementsStored(){
+		return -1;
+	}
+	
 }
