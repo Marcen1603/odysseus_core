@@ -456,17 +456,14 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			}
 			for (PhysicalSubscription<?> sub : unSub) {
 				ISink sink = (ISink) sub.getTarget();
-				buffer.disconnectSink(sink, sub.getSinkInPort(),
-						sub.getSourceOutPort(), buffer.getOutputSchema());
+				buffer.unsubscribeSink(sink, sub.getSinkInPort(), sub.getSourceOutPort(), buffer.getOutputSchema());
 			}
 		}
 
+		LOG.debug("Removing router");
 		List<IPhysicalOperator> newRoots = removeRouter(context
 				.getRunningQuery().getRoots(),
 				(MigrationRouterPO) context.getRouter());
-
-		LOG.debug("Initialize new plan root as physical root");
-		context.getRunningQuery().initializePhysicalRoots(newRoots);
 
 		LOG.debug("Block sources");
 		List<AbstractSource<?>> blockedSources = new ArrayList<AbstractSource<?>>();
@@ -515,6 +512,14 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 						parents, parentInports, buffer);
 				buffer.removeOwner(context.getRunningQuery());
 			}
+			
+			LOG.debug("Unsubscribe old plan from source");
+			for(IPhysicalOperator oldOperatorBeforeSource : context.getOldPlanOperatorsBeforeSources()) {
+				((ISink) oldOperatorBeforeSource).unsubscribeFromAllSources();
+			}
+			
+			LOG.debug("Initialize new plan root as physical root");
+			context.getRunningQuery().initializePhysicalRoots(newRoots);
 		} catch (Exception ex) {
 			throw new MigrationException(ex);
 		} finally {
