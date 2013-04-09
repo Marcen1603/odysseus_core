@@ -49,7 +49,7 @@ public class PropertiesModel {
 				if (!((GroupLayer) child).isEmpty()) {
 					for (int i = 0; i < ((GroupLayer) child).size(); i++) {
 						newCat.getList().add(
-								(ILayer) ((GroupLayer) child).get(i));
+								((GroupLayer) child).get(i));
 					}
 				}
 			} else {

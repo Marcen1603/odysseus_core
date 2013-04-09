@@ -168,4 +168,9 @@ public class DefaultNodeView<C> implements INodeView<C> {
 		}
 		return other.getModelNode().equals(getModelNode());
 	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

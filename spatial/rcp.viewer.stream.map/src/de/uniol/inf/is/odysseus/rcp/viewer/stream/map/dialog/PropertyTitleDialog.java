@@ -94,6 +94,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		radioTypeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
 		Listener listener = new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				Control[] children = radioTypeSelection.getChildren();
 				if (((Button) e.widget).getText().endsWith("Raster")) {
@@ -146,6 +147,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 			layerPlace.setText(layerOrder.getFirst().getName());
 
 		layerPlace.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 			};
@@ -172,6 +174,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		serverTypeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
 		Listener serverTypeListner = new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				Control[] children = serverTypeSelection.getChildren();
 
@@ -199,6 +202,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		serverTypeButtonWMS.setText("WMS");
 		serverTypeButtonWMS.addListener(SWT.Selection, serverTypeListner);
 		serverTypeButtonWMS.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 //					WMServiceTest wmsTest = new WMServiceTest();
 //					String info = wmsTest.getInfo();
@@ -223,6 +227,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		server = new CCombo(rasterLayer, SWT.BORDER);
 		server.setLayoutData(DialogUtils.getTextDataLayout());
 		server.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				OdysseusMapPlugIn.getProperties().getTileServer(server.getSelectionIndex(), layerConfiguration);
 				layerConfiguration.setUrl(server.getText());
@@ -253,6 +258,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		serverType.setText("RESTFUL Tile Server");
 
 		serverType.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 //					WMServiceTest wmsTest = new WMServiceTest();
 //					String info = wmsTest.getInfo();
@@ -298,6 +304,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		attributeSelect.setLayoutData(DialogUtils.getTextDataLayout());
 
 		streamSelect.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				attributeSelect.removeAll();
 				layerConfiguration.setQuery(streamSelect.getText());
@@ -315,6 +322,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				layerConfiguration.setAttribute(attributeSelect.getText());
 				
 				attributeSelect.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						layerConfiguration.setAttribute(attributeSelect.getText());
 						LOG.debug("Set Attribute: " + layerConfiguration.getAttribute());
@@ -373,6 +381,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		Button cancelButton = createButton(parent, CANCEL, "Cancel", false);
 		// Add a SelectionListener
 		cancelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setReturnCode(CANCEL);
 				close();
@@ -388,6 +397,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		button.setFont(JFaceResources.getDialogFont());
 		button.setData(new Integer(id));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				if (isValidInput()) {
 					okPressed();

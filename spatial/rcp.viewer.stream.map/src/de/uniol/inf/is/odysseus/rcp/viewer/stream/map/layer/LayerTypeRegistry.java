@@ -27,8 +27,7 @@ public class LayerTypeRegistry
 		try {
 			if (layertypes.containsKey(datatype.getURI()))
 				return layertypes.get(datatype.getURI()).getClass().newInstance();
-			else 
-				return null;
+			return null;
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

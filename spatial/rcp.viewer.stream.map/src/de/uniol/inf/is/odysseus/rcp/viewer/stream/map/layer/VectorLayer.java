@@ -103,7 +103,7 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 		}
 		if(schema != null && attribute != null){
 			this.sdfAttribute = attribute;
-			if (schema != null) this.style.init(schema);
+			this.style.init(schema);
 			this.idx = schema.indexOf(attribute);
 		}
     }
@@ -141,10 +141,12 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 		this.style = style;
 	}
 
+	@Override
 	public Style getStyle() {
 		return style;
 	}
 	
+	@Override
 	public void draw(GC gc) {
 		if (screenManager != null){
 		Envelope world = screenManager.getViewportWorldCoord();

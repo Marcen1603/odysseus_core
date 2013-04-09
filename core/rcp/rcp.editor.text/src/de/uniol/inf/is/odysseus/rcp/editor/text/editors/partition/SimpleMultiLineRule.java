@@ -149,9 +149,9 @@ public class SimpleMultiLineRule implements IPredicateRule {
 	private boolean isNewline(int c) {
 		if (System.lineSeparator().indexOf(c) >= 0) {
 			return true;
-		} else {
-			return false;
-		}
+		} 
+		
+		return false;
 	}
 
 	/**

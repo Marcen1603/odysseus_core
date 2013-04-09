@@ -78,4 +78,8 @@ public class DefaultConnectionView<C> implements IConnectionView<C> {
 		return symbol;
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

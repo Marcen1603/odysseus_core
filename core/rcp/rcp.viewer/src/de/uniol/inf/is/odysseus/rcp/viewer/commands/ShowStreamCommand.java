@@ -137,9 +137,9 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 		
 		if( wnd.isCanceled() ) {
 			return Optional.absent();
-		} else {
-			return Optional.of(wnd.getSelectedOperator());
-		}
+		} 
+		
+		return Optional.of(wnd.getSelectedOperator());
 	}
 	
 }

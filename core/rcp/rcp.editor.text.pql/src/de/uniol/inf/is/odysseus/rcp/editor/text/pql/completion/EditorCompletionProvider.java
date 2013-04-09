@@ -177,6 +177,7 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 		return result;
 	}
 
+	@Override
 	public boolean ignoreWhitespaces() {
 		return true;
 	}

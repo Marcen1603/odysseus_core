@@ -190,6 +190,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		button.setFont(JFaceResources.getDialogFont());
 		button.setData(new Integer(id));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				if (isValidInput()) {
 					try {

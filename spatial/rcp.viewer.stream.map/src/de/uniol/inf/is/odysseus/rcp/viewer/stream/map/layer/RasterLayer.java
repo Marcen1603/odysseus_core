@@ -72,6 +72,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 		this.style = new ImageStyle();
 	}
 
+	@Override
 	public Style getStyle() {
 		return this.style;
 	}
@@ -190,6 +191,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 		return configuration;
 	}
 
+	@SuppressWarnings("cast")
 	@Override
 	public void setConfiguration(LayerConfiguration configuration) {
 		if (configuration instanceof VectorLayerConfiguration) {
@@ -262,8 +264,13 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof AsyncImage)
-				this.image.equals((AsyncImage)obj);
+				this.image.equals(obj);
 			return super.equals(obj);
+		}
+
+		@Override
+		public int hashCode() {
+			return super.hashCode();
 		}
 	}
 

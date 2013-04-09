@@ -134,7 +134,7 @@ public class MapEditorModel extends ModelObject {
 			for (PersistentQuery pquery : persistentModel.getQueries()) {
 				if (pquery instanceof QueryFile){
 					QueryFile query = (QueryFile) pquery;
-					IFile nativeFile = newModel.getProject().getFile(((QueryFile)query).filename);
+					IFile nativeFile = newModel.getProject().getFile(query.filename);
 					newModel.addFile(nativeFile);
 				run(nativeFile);
 				}
@@ -312,7 +312,7 @@ public class MapEditorModel extends ModelObject {
 	}
 
 	private ILayer addLayer(RasterLayerConfiguration layerConfiguration) {
-		ILayer layer = new RasterLayer((RasterLayerConfiguration) layerConfiguration);
+		ILayer layer = new RasterLayer(layerConfiguration);
 
 		if (screenManager != null) {
 			layer.init(screenManager, null, null);

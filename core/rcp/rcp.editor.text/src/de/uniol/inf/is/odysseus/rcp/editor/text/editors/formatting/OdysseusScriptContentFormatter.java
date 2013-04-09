@@ -114,6 +114,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 	 * @param contentType
 	 *            the content type under which to register
 	 */
+	@Override
 	public void setFormattingStrategy(IFormattingStrategy strategy, String contentType) {
 		//****** start - changed for Odysseus *****		
 		if (strategy instanceof IOdysseusScriptFormattingStrategy) {
@@ -143,6 +144,8 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 	 *             provided information is only used if this formatter can not
 	 *             compute the partition managing position categories.
 	 */
+	@Override
+	@Deprecated
 	public void setPartitionManagingPositionCategories(String[] categories) {
 		fExternalPartitonManagingCategories = TextUtilities.copy(categories);
 	}
@@ -154,6 +157,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 	 *            the document partitioning
 	 * @since 3.0
 	 */
+	@Override
 	public void setDocumentPartitioning(String partitioning) {
 		fPartitioning = partitioning;
 	}
@@ -165,6 +169,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 	 *            indicates whether the formatting process should be partition
 	 *            ware
 	 */
+	@Override
 	public void enablePartitionAwareFormatting(boolean enable) {
 		fIsPartitionAware = enable;
 	}
@@ -172,6 +177,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 	/*
 	 * @see IContentFormatter#getFormattingStrategy(String)
 	 */
+	@Override
 	public IFormattingStrategy getFormattingStrategy(String contentType) {
 
 		Assert.isNotNull(contentType);
@@ -179,12 +185,13 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 		if (fStrategies == null)
 			return null;
 
-		return (IFormattingStrategy) fStrategies.get(contentType);
+		return fStrategies.get(contentType);
 	}
 
 	/*
 	 * @see IContentFormatter#format(IDocument, IRegion)
 	 */
+	@Override
 	public void format(IDocument document, IRegion region) {
 
 		//****** start - changed for Odysseus *****		
@@ -523,7 +530,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 
 		int[] positions = new int[fOverlappingPositionReferences.size()];
 		for (int i = 0; i < positions.length; i++) {
-			PositionReference r = (PositionReference) fOverlappingPositionReferences.get(i);
+			PositionReference r = fOverlappingPositionReferences.get(i);
 			positions[i] = r.getCharacterPosition() - offset;
 		}
 
@@ -540,7 +547,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 	private void removeAffectedPositions(IDocument document) {
 		int size = fOverlappingPositionReferences.size();
 		for (int i = 0; i < size; i++) {
-			PositionReference r = (PositionReference) fOverlappingPositionReferences.get(i);
+			PositionReference r = fOverlappingPositionReferences.get(i);
 			try {
 				document.removePosition(r.getCategory(), r.getPosition());
 			} catch (BadPositionCategoryException x) {
@@ -561,6 +568,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 	 * @param offset
 	 *            the offset of the document region that has been formatted
 	 */
+	@Override
 	protected void updateAffectedPositions(IDocument document, int[] positions, int offset) {
 
 		if (document != fDocument)
@@ -571,7 +579,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 
 		for (int i = 0; i < positions.length; i++) {
 
-			PositionReference r = (PositionReference) fOverlappingPositionReferences.get(i);
+			PositionReference r = fOverlappingPositionReferences.get(i);
 
 			if (r.refersToOffset())
 				r.setOffset(offset + positions[i]);
@@ -611,6 +619,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 	 * @return <code>true</code> if the position can be added,
 	 *         <code>false</code> if it should be ignored
 	 */
+	@Override
 	protected boolean positionAboutToBeAdded(IDocument document, String category, Position position) {
 		return true;
 	}
@@ -763,6 +772,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 		/*
 		 * @see Comparable#compareTo(Object)
 		 */
+		@Override
 		public int compareTo(Object obj) {
 
 			if (obj instanceof PositionReference) {
@@ -794,6 +804,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 		/*
 		 * @see DefaultPositionUpdater#notDeleted()
 		 */
+		@Override
 		protected boolean notDeleted() {
 			return true;
 		}
@@ -810,6 +821,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 		/*
 		 * @see IPositionUpdater#update(DocumentEvent)
 		 */
+		@Override
 		public void update(DocumentEvent event) {
 			removeAffectedPositions(event.getDocument());
 		}
@@ -843,6 +855,7 @@ public class OdysseusScriptContentFormatter extends ContentFormatter {
 		/*
 		 * @see IPositionUpdater#update(DocumentEvent)
 		 */
+		@Override
 		public void update(DocumentEvent event) {
 			updateAffectedPositions(event.getDocument(), fPositions, fOffset);
 		}

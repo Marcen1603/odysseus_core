@@ -95,4 +95,12 @@ public class Vector {
 		Vector v = (Vector)obj;
 		return v.x == x && v.y == y;
 	}
+	
+	@Override
+	public int hashCode() {
+		int i = 31;
+		i *= x + 31;
+		i *= y + 31;
+		return i;
+	}
 }

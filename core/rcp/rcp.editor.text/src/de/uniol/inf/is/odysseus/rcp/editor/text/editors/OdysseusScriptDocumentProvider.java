@@ -52,13 +52,11 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 			if (setDocumentContent(document, (IEditorInput) element)) {
 				setupDocument(document);
 			}
-			if (document != null) {
-				OdysseusScriptPartitionScanner partitionscanner = new OdysseusScriptPartitionScanner();
+			OdysseusScriptPartitionScanner partitionscanner = new OdysseusScriptPartitionScanner();
 				
-				IDocumentPartitioner partitioner = new OdysseusScriptPartitioner(partitionscanner, partitionscanner.getLegalParitions());
-				partitioner.connect(document);
-				document.setDocumentPartitioner(partitioner);
-			}
+			IDocumentPartitioner partitioner = new OdysseusScriptPartitioner(partitionscanner, partitionscanner.getLegalParitions());
+			partitioner.connect(document);
+			document.setDocumentPartitioner(partitioner);
 			return document;
 		}
 

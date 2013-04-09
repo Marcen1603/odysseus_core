@@ -51,6 +51,7 @@ public class LayerOrderTrayDialog extends TrayDialog {
 		Button cancelButton = createButton(parent, CANCEL, "Cancel", false);
 		// Add a SelectionListener
 		cancelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setReturnCode(CANCEL);
 				close();
@@ -67,6 +68,7 @@ public class LayerOrderTrayDialog extends TrayDialog {
 		button.setFont(JFaceResources.getDialogFont());
 		button.setData(new Integer(id));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				if (isValidInput()) {
 					okPressed();

@@ -105,6 +105,7 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
 		waitForeground = new Color(display, 200, 200, 200);	
 		
 		canvas.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				BasicLayer.this.widgetDisposed(e);
 			}

@@ -110,8 +110,8 @@ public abstract class AbstractCommand extends AbstractHandler {
 		
 		if( wnd.isCanceled() ) {
 			return Optional.absent();
-		} else {
-			return Optional.of(wnd.getSelectedOperator());
-		}
+		} 
+		
+		return Optional.of(wnd.getSelectedOperator());
 	}
 }

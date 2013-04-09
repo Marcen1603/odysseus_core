@@ -36,6 +36,7 @@ public class OdysseusScriptPartitioner extends FastPartitioner {
 	}
 
 	
+	@Override
 	public void connect(IDocument document, boolean delayInitialise)
 	{
 	    super.connect(document, delayInitialise);

@@ -97,12 +97,12 @@ public class StreamMapEditorOutlineTreeContentProvider implements ITreeContentPr
 			return null;
 		} else if (element instanceof ILayer) {
 			String groupname = ((ILayer) element).getConfiguration().getGroup();
-			if (groupname != null)
+			if (groupname != null) {
 				return this.input.getGroup(groupname).toArray();
-			else
-				return this.input.getLayers().toArray();
+			}
+			return this.input.getLayers().toArray();
 		} else if (element instanceof Style) {
-			List<ILayer> layer = (List<ILayer>) this.input.getLayers();
+			List<ILayer> layer = this.input.getLayers();
 			for (ILayer iLayer : layer) {
 				Style style = iLayer.getStyle();
 				if (style != null) {

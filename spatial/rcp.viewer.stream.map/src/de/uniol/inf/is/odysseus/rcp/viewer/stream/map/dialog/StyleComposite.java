@@ -191,8 +191,8 @@ public class StyleComposite extends Composite {
 					if (((StyleElement) element).self.getType().equals("Collection"))
 						return false;
 					return true;
-				} else
-					return false;
+				} 
+				return false;
 			}
 		});
 		return numColumn;
@@ -249,9 +249,9 @@ public class StyleComposite extends Composite {
 					if (((StyleElement) element).self.getType().equals("Collection"))
 						return false;
 					return true;
-				} else
-					return false;
-
+				}
+				
+				return false;
 			}
 		});
 		return numColumn;
@@ -364,9 +364,9 @@ public class StyleComposite extends Composite {
 					if (((StyleElement) element).self.getType().equals("Collection"))
 						return false;
 					return true;
-				} else
-					return false;
-
+				} 
+				
+				return false;
 			}
 		});
 		return numColumn;
@@ -412,8 +412,9 @@ public class StyleComposite extends Composite {
 					if (((StyleElement) element).self.getType().equals("Collection"))
 						return false;
 					return true;
-				} else
-					return false;
+				}
+				
+				return false;
 			}
 		});
 		return numColumn;

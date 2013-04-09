@@ -28,7 +28,8 @@ public abstract class AbstractLayer<C extends LayerConfiguration> implements ILa
 		return name; 
 	}
 	
-    public int getSRID() {
+    @Override
+	public int getSRID() {
 	    return srid;
     }
 
@@ -36,6 +37,7 @@ public abstract class AbstractLayer<C extends LayerConfiguration> implements ILa
 		this.srid = srid;
 	}
 	
+	@Override
 	public Style getStyle() {
 		return null;
 	}
@@ -55,6 +57,7 @@ public abstract class AbstractLayer<C extends LayerConfiguration> implements ILa
 		return configuration;
 	}
 
+	@Override
 	public abstract void setConfiguration(LayerConfiguration configuration);
 	
 	@Override

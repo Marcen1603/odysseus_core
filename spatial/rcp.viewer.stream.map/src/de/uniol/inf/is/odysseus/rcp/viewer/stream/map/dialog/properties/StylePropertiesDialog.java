@@ -163,6 +163,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		treeViewer.setSelection(treeViewer.getSelection(), true);
 
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				lblSaved.setText("");
 				if (event.getSelection().isEmpty()) {
@@ -362,6 +363,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		btnChangeLine.setText("Change");
 		btnChangeLine.setEnabled(currentStyle != null);
 		btnChangeLine.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ColorDialog colorDialog = new ColorDialog(Display.getCurrent()
 						.getActiveShell());
@@ -390,6 +392,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		btnChangeFill.setBounds(115, 78, 55, 25);
 		btnChangeFill.setEnabled(currentStyle != null);
 		btnChangeFill.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ColorDialog colorDialog = new ColorDialog(Display.getCurrent()
 						.getActiveShell());
@@ -413,6 +416,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		btnSquare.setText("Square");
 		btnSquare.setEnabled(currentStyle != null);
 		btnSquare.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				txtFilepath.setEnabled(false);
 				btnFile.setEnabled(false);
@@ -424,6 +428,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		btnCircle.setText("Circle");
 		btnCircle.setEnabled(currentStyle != null);
 		btnCircle.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				txtFilepath.setEnabled(false);
 				btnFile.setEnabled(false);
@@ -435,6 +440,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		btnTriangle.setText("Triangle");
 		btnTriangle.setEnabled(currentStyle != null);
 		btnTriangle.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				txtFilepath.setEnabled(false);
 				btnFile.setEnabled(false);
@@ -446,6 +452,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		btnStar.setText("Star");
 		btnStar.setEnabled(currentStyle != null);
 		btnStar.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				txtFilepath.setEnabled(false);
 				btnFile.setEnabled(false);
@@ -457,6 +464,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		btnExternalsvgFile.setText("External .svg file");
 		btnExternalsvgFile.setEnabled(currentStyle != null);
 		btnExternalsvgFile.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				txtFilepath.setEnabled(true);
 				btnFile.setEnabled(true);
@@ -468,6 +476,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		btnFile.setText("File");
 		btnFile.setEnabled(currentStyle != null);
 		btnFile.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog fileDialog = new FileDialog(getShell());
 				fileDialog.setText("Select File");
@@ -502,6 +511,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		btnDefaultValue.setText("Default value");
 		btnDefaultValue.setEnabled(currentStyle != null);
 		btnDefaultValue.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				txtExpressionInput.setEnabled(false);
 				txtDefaultvalue.setEnabled(true);
@@ -517,6 +527,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		btnExpression.setText("Expression");
 		btnExpression.setEnabled(currentStyle != null);
 		btnExpression.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				txtExpressionInput.setEnabled(true);
 				txtDefaultvalue.setEnabled(false);
@@ -562,6 +573,7 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		btnSave.setBounds(443, 282, 75, 25);
 		btnSave.setText("Save");
 		btnSave.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (isValidInput()) {
 					if (currentStyle instanceof PointStyle) {
@@ -690,12 +702,12 @@ public class StylePropertiesDialog extends TitleAreaDialog {
 		button.setFont(JFaceResources.getDialogFont());
 		button.setData(new Integer(id));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				Iterator<Entry<Integer, Style>> it = hashStyles.entrySet()
 						.iterator();
 				while (it.hasNext()) {
-					Map.Entry<Integer, Style> pairs = (Map.Entry<Integer, Style>) it
-							.next();
+					Map.Entry<Integer, Style> pairs = it.next();
 					collStyle.addStyle(pairs.getValue());
 					it.remove();
 

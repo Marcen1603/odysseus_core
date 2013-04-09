@@ -50,9 +50,9 @@ public class BooleanDatatypeProvider extends AbstractViewableDatatype<Double> {
 		Boolean num = (Boolean)value;
 		if(num.booleanValue()){
 			return 1.0;
-		}else{
-			return 0.0;
-		}		
+		}
+		
+		return 0.0;
 	}
 
 }

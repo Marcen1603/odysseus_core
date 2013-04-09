@@ -24,6 +24,7 @@ final class QueryIDChecker extends Thread {
 		setName("Checker for query " + input.getQueryID());
 	}
 
+	@Override
 	public void run() {
 		isRunning = true;
 		while (isRunning) {

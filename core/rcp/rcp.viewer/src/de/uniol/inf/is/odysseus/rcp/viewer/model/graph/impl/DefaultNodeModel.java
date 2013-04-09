@@ -113,4 +113,9 @@ public class DefaultNodeModel<C> extends DefaultModelContainer<C> implements INo
 		DefaultNodeModel<?> other = (DefaultNodeModel<?>)obj;
 		return other.getContent().equals(getContent());
 	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

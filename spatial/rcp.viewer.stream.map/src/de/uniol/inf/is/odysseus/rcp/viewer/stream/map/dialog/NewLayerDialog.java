@@ -76,7 +76,7 @@ public class NewLayerDialog extends TitleAreaDialog {
 	}
 
 	private void createNewVectorLayerConfiguration(TabFolder tabFolder, TabItem tbtmInput){
-		VectorLayerConfigurationComposite vectorLayerConfigurationComposite_1 = new VectorLayerConfigurationComposite(tabFolder, SWT.NONE, (MapEditorModel) model, (VectorLayerConfiguration) configuration);
+		VectorLayerConfigurationComposite vectorLayerConfigurationComposite_1 = new VectorLayerConfigurationComposite(tabFolder, SWT.NONE, model, (VectorLayerConfiguration) configuration);
 		tbtmInput.setControl(vectorLayerConfigurationComposite_1);
 
 		TabItem tbtmStyle = new TabItem(tabFolder, SWT.NONE);
@@ -87,7 +87,7 @@ public class NewLayerDialog extends TitleAreaDialog {
 	}
 	
 	private void createNewRasterLayerConfiguration(TabFolder tabFolder, TabItem tbtmInput){
-		RasterLayerConfigurationComposite vectorLayerConfigurationComposite_1 = new RasterLayerConfigurationComposite(tabFolder, SWT.NONE, (MapEditorModel) model, (RasterLayerConfiguration) configuration);
+		RasterLayerConfigurationComposite vectorLayerConfigurationComposite_1 = new RasterLayerConfigurationComposite(tabFolder, SWT.NONE, model, (RasterLayerConfiguration) configuration);
 		tbtmInput.setControl(vectorLayerConfigurationComposite_1);
 		TabItem tbtmStyle = new TabItem(tabFolder, SWT.NONE);
 		tbtmStyle.setText("Style");

@@ -116,4 +116,9 @@ public class PhysicalGraphEditorInput implements IEditorInput {
 		PhysicalGraphEditorInput other = (PhysicalGraphEditorInput)obj;
 		return other.queryID == this.queryID;
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.queryID * 31 + 17;
+	}
 }
