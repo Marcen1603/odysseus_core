@@ -169,6 +169,7 @@ public class OdysseusConfiguration {
 		props.setProperty("ac_cpuHeadroom", "0.4");
 		props.setProperty("ac_standardMemCost", "4");
 		props.setProperty("ac_standardCpuCost", "0.00002");
+		props.setProperty("ac_operator_useHistograms", "true");
 
 		// Event Dispatcher
 		props.setProperty("EventHandlerDispatcherPoolSize", "10");
