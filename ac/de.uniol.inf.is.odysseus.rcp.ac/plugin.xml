@@ -21,15 +21,6 @@
             name="MEM Status"
             restorable="true">
       </view>
-      <view
-            allowMultiple="false"
-            category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.ac.views.AdmissionStatisticView"
-            icon="icons/monitor.png"
-            id="de.uniol.inf.is.odysseus.rcp.ac.AdmissionStatisticView"
-            name="Admission Operator Statistics"
-            restorable="true">
-      </view>
    </extension>
 
 </plugin>
