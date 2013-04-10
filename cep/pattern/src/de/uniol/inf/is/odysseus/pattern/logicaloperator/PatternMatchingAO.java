@@ -13,9 +13,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -28,6 +31,9 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	
 	// Pattern-Type
 	private String type;
+	private int time;
+	private TimeUnit timeUnit;
+	private int size;
 	// relevante Event-Typen-Liste
 	private List<String> eventTypes;
 	// Port -> Name des Input-Types
@@ -36,7 +42,6 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	// Bedingung
 	private SDFExpression expression;
 	// Expressions fürs Ausgabeschema
-	private List<NamedExpressionItem> namedReturnExpressions;
 	private List<SDFExpression> returnExpressions;
 	// wiederholen nach erfolg
 	// ausgabeverhalten
@@ -58,10 +63,11 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
         this.inputSchemas = patternAO.getInputSchemas();
         this.simpleOutput = patternAO.simpleOutput;
         this.expression = patternAO.expression;
+        this.returnExpressions = patternAO.returnExpressions;
     }
 	
-    @Parameter(name="expr", type=SDFExpressionParameter.class, optional=true)
-    public void setExpression(NamedExpressionItem expr) {
+    @Parameter(type=SDFExpressionParameter.class, optional=true)
+    public void setAssertion(NamedExpressionItem expr) {
         this.expression = expr.expression;
     }
     
@@ -78,7 +84,34 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     	return type;
     }
     
-    @Parameter(type=StringParameter.class, isList=true)
+    @Parameter(type=IntegerParameter.class, optional = true)
+    public void setTime(Integer time) {
+    	this.time = time;
+    }
+    
+    public int getTime() {
+    	return time;
+    }
+    
+    @Parameter(type=IntegerParameter.class, optional = true)
+    public void setSize(Integer size) {
+    	this.size = size;
+    }
+    
+    public int getSize() {
+    	return size;
+    }
+    
+    @Parameter(type = EnumParameter.class, optional = true)
+    public void setTimeUnit(TimeUnit unit) {
+    	this.timeUnit = unit;
+    }
+    
+    public TimeUnit getTimeUnit() {
+    	return timeUnit;
+    }
+    
+    @Parameter(type = StringParameter.class, isList = true)
     public void setEventTypes(List<String> eventTypes) {
     	this.eventTypes = eventTypes;
     }
@@ -89,7 +122,6 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     
     @Parameter(name = "return", type = SDFExpressionParameter.class, isList = true, optional = true)
     public void setReturnExpressions(List<NamedExpressionItem> namedReturnExpressions) {
-    	this.namedReturnExpressions = namedReturnExpressions;
 		returnExpressions = new ArrayList<>();
 		for (NamedExpressionItem e : namedReturnExpressions) {
 			returnExpressions.add(e.expression);
@@ -141,6 +173,29 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		SDFAttribute detected = new SDFAttribute("PATTERN", "detected", SDFDatatype.BOOLEAN);
 		SDFSchema schema = new SDFSchema("PATTERN", type, detected);
 		return schema;
+	}
+	
+	@Override
+	public boolean isValid() {
+		// Elemente der relevanten Eventliste müssen auch als Quellen vorhanden sein
+		/*boolean help = false;
+		for (String eventType : eventTypes) {
+			help = false;
+			for (String inputType : inputTypeNames.values()) {
+				if (eventType.equals(inputType)) {
+					help = true;
+					break;
+				}				
+			}
+			if (!help) {
+				addError(new IllegalArgumentException("eventTypes have to be defined also as a source."));
+				break;
+			}
+		}
+		return help;*/
+		// TODO
+		// weitere Validierungen
+		return true;
 	}
 
 }

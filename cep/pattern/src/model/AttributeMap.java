@@ -1,22 +1,21 @@
 package model;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class AttributeMap {
-	private SDFSchema schema;
+	private int port;
 	private int attrPos;
 	
-	public AttributeMap(SDFSchema schema, int attrPos) {
-		this.setSchema(schema);
+	public AttributeMap(int port, int attrPos) {
+		this.setPort(port);
 		this.setAttrPos(attrPos);				
 	}
 
-	public SDFSchema getSchema() {
-		return schema;
+	public int getPort() {
+		return port;
 	}
 
-	public void setSchema(SDFSchema schema) {
-		this.schema = schema;
+	public void setPort(int port) {
+		this.port = port;
 	}
 
 	public int getAttrPos() {

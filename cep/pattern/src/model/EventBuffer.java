@@ -1,13 +1,13 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
 /**
  * Speichert Events zwischen.
@@ -15,9 +15,10 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
  *
  * @param <T>
  */
+
 public class EventBuffer<T extends IMetaAttribute> {
 	
-	private LinkedList<EventObject<T>> objects;
+	private List<EventObject<T>> objects;
 	
 	public EventBuffer() {
 		this.objects = new LinkedList<EventObject<T>>();
@@ -25,6 +26,10 @@ public class EventBuffer<T extends IMetaAttribute> {
 	
 	public void add(EventObject<T> object) {
 		objects.add(object);
+	}
+	
+	public Set<EventObject<T>> toSet() {
+		return new HashSet<EventObject<T>>(objects);
 	}
 	
 	public List<String> getEventTypes() {
@@ -78,7 +83,7 @@ public class EventBuffer<T extends IMetaAttribute> {
 	 * @param attrMapping 
 	 * @return true, wenn alle eventTypes vorhanden sind und die expression erfüllt ist.
 	 */
-	public boolean matchAllPattern(List<String> eventTypes, SDFExpression expression, AttributeMap[] attrMapping, Tuple<T> event) {
+	/*public boolean matchAllPattern(List<String> eventTypes, SDFExpression expression, AttributeMap[] attrMapping, Tuple<T> event) {
 		boolean matchEventTypes = containsAllOnlyOnce(eventTypes);
 		if (matchEventTypes) {
 			// Values an Expression binden
@@ -98,6 +103,6 @@ public class EventBuffer<T extends IMetaAttribute> {
 			if (predicate) return true;
 		}
 		return false;
-	}
+	}*/
 	
 }
