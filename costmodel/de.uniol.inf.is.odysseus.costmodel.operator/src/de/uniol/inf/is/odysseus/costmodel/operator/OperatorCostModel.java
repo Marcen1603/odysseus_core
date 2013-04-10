@@ -71,6 +71,8 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 	private final CPUUsage cpuUsage = new CPUUsage();
 	private final Runtime runtime = Runtime.getRuntime();
 
+	private boolean useHistograms = true;
+
 	/**
 	 * Standardkonstruktor.
 	 */
@@ -98,7 +100,7 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 			return new OperatorCost<T>(null, 0, 0);
 		}
 
-		final Map<SDFAttribute, IHistogram> baseHistograms = getBaseHistograms(operators);
+		final Map<SDFAttribute, IHistogram> baseHistograms = isUseHistograms() ? getBaseHistograms(operators) : Maps.<SDFAttribute, IHistogram> newHashMap();
 
 		if (operators.get(0) instanceof IPhysicalOperator) {
 			return (ICost<T>) estimatePhysical((List<IPhysicalOperator>) operators, onUpdate, baseHistograms);
@@ -126,104 +128,12 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 		return new OperatorCost<T>(0, 0);
 	}
 
-	// sucht aus einem pr√§dikat alle Attribute raus
-	private void fillWithAttributes(IPredicate<?> predicate, List<SDFAttribute> attributes) {
-		if (predicate instanceof IRelationalPredicate) {
-			final IRelationalPredicate pred = (IRelationalPredicate) predicate;
-			final List<SDFAttribute> attributeList = pred.getAttributes();
-
-			for (final SDFAttribute attribute : attributeList) {
-				if (!attributes.contains(attribute)) {
-					attributes.add(attribute);
-				}
-			}
-		} else if (predicate instanceof ComplexPredicate) {
-			final ComplexPredicate<?> comp = (ComplexPredicate<?>) predicate;
-			fillWithAttributes(comp.getLeft(), attributes);
-			fillWithAttributes(comp.getRight(), attributes);
-		} else {
-			LOG.warn("Unknown type of predicate : {}", predicate.getClass());
-		}
+	public boolean isUseHistograms() {
+		return useHistograms;
 	}
 
-	// holt eine Liste der Histogramme der Attribute, die in der Anfrage
-	// verarbeitet werden
-	@SuppressWarnings("rawtypes")
-	private Map<SDFAttribute, IHistogram> getBaseHistograms(List<T> physicalOperators) {
-		final Map<SDFAttribute, IHistogram> histograms = new HashMap<SDFAttribute, IHistogram>();
-
-		// Find relevant operators.
-		// Relevant operators are Select and Join
-		final List<IPhysicalOperator> relevantOperators = new ArrayList<IPhysicalOperator>();
-		for (int i = 0; i < physicalOperators.size(); i++) {
-			final Object op = physicalOperators.get(i);
-			if (op instanceof SelectPO || op instanceof JoinTIPO || op instanceof AntiJoinTIPO) {
-				relevantOperators.add((IPhysicalOperator) op);
-			}
-		}
-
-		if (relevantOperators.isEmpty()) {
-			LOG.info("No relevant operators for selectivity-estimation found. ");
-			return histograms;
-		}
-
-		LOG.debug("Relevant operators are {}", relevantOperators);
-
-		// find relevant attributes
-		// relevant attributes are attributes which are used
-		// in select- and join-operators
-		final List<SDFAttribute> relevantAttributes = new ArrayList<SDFAttribute>();
-		for (final IPhysicalOperator op : relevantOperators) {
-			if (op instanceof SelectPO) {
-				final SelectPO<?> selectPO = (SelectPO) op;
-				final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-				fillWithAttributes(selectPO.getPredicate(), attributes);
-
-				for (final SDFAttribute a : attributes) {
-					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a)) {
-						relevantAttributes.add(a);
-					}
-				}
-
-			} else if (op instanceof JoinTIPO) {
-				final JoinTIPO<?, ?> joinPO = (JoinTIPO) op;
-				final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-				fillWithAttributes(joinPO.getPredicate(), attributes);
-
-				for (final SDFAttribute a : attributes) {
-					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a)) {
-						relevantAttributes.add(a);
-					}
-				}
-
-			} else {
-				final AntiJoinTIPO<?, ?> antiJoin = (AntiJoinTIPO) op;
-				for (final SDFAttribute a : antiJoin.getOutputSchema()) {
-					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a)) {
-						relevantAttributes.add(a);
-					}
-				}
-			}
-		}
-		if (relevantAttributes.isEmpty()) {
-			LOG.info("No relevant attributes found. Selectivity-estimation finished");
-			return histograms;
-		}
-		LOG.debug("Relevant attributes are {}", relevantAttributes);
-
-		// getting histograms
-		for (final SDFAttribute attribute : relevantAttributes) {
-
-			final IHistogram hist = DataSourceManager.getInstance().getHistogram(attribute);
-			if (hist != null) {
-				histograms.put(attribute, hist);
-				LOG.debug("Got histogram for attribute {} ", attribute);
-			} else {
-				LOG.warn("No histogram for attribute {}", attribute);
-			}
-		}
-
-		return histograms;
+	public void setUseHistograms(boolean useHistograms) {
+		this.useHistograms = useHistograms;
 	}
 
 	private static boolean determineIsRunning(Object operator) {
@@ -331,5 +241,105 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 		// aggregate costs
 		final AggregatedCost aggCost = AGGREGATOR.aggregate(estimatedOperators);
 		return new OperatorCost<IPhysicalOperator>(estimatedOperators, aggCost.getMemCost(), aggCost.getCpuCost());
+	}
+
+	// sucht aus einem pr‰dikat alle Attribute raus
+	private static void fillWithAttributes(IPredicate<?> predicate, List<SDFAttribute> attributes) {
+		if (predicate instanceof IRelationalPredicate) {
+			final IRelationalPredicate pred = (IRelationalPredicate) predicate;
+			final List<SDFAttribute> attributeList = pred.getAttributes();
+
+			for (final SDFAttribute attribute : attributeList) {
+				if (!attributes.contains(attribute)) {
+					attributes.add(attribute);
+				}
+			}
+		} else if (predicate instanceof ComplexPredicate) {
+			final ComplexPredicate<?> comp = (ComplexPredicate<?>) predicate;
+			fillWithAttributes(comp.getLeft(), attributes);
+			fillWithAttributes(comp.getRight(), attributes);
+		} else {
+			LOG.warn("Unknown type of predicate : {}", predicate.getClass());
+		}
+	}
+
+	// holt eine Liste der Histogramme der Attribute, die in der Anfrage
+	// verarbeitet werden
+	@SuppressWarnings("rawtypes")
+	private static <T> Map<SDFAttribute, IHistogram> getBaseHistograms(List<T> physicalOperators) {
+		final Map<SDFAttribute, IHistogram> histograms = new HashMap<SDFAttribute, IHistogram>();
+
+		// Find relevant operators.
+		// Relevant operators are Select and Join
+		final List<IPhysicalOperator> relevantOperators = new ArrayList<IPhysicalOperator>();
+		for (int i = 0; i < physicalOperators.size(); i++) {
+			final Object op = physicalOperators.get(i);
+			if (op instanceof SelectPO || op instanceof JoinTIPO || op instanceof AntiJoinTIPO) {
+				relevantOperators.add((IPhysicalOperator) op);
+			}
+		}
+
+		if (relevantOperators.isEmpty()) {
+			LOG.info("No relevant operators for selectivity-estimation found. ");
+			return histograms;
+		}
+
+		LOG.debug("Relevant operators are {}", relevantOperators);
+
+		// find relevant attributes
+		// relevant attributes are attributes which are used
+		// in select- and join-operators
+		final List<SDFAttribute> relevantAttributes = new ArrayList<SDFAttribute>();
+		for (final IPhysicalOperator op : relevantOperators) {
+			if (op instanceof SelectPO) {
+				final SelectPO<?> selectPO = (SelectPO) op;
+				final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+				fillWithAttributes(selectPO.getPredicate(), attributes);
+
+				for (final SDFAttribute a : attributes) {
+					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a)) {
+						relevantAttributes.add(a);
+					}
+				}
+
+			} else if (op instanceof JoinTIPO) {
+				final JoinTIPO<?, ?> joinPO = (JoinTIPO) op;
+				final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+				fillWithAttributes(joinPO.getPredicate(), attributes);
+
+				for (final SDFAttribute a : attributes) {
+					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a)) {
+						relevantAttributes.add(a);
+					}
+				}
+
+			} else {
+				final AntiJoinTIPO<?, ?> antiJoin = (AntiJoinTIPO) op;
+				for (final SDFAttribute a : antiJoin.getOutputSchema()) {
+					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a)) {
+						relevantAttributes.add(a);
+					}
+				}
+			}
+		}
+		if (relevantAttributes.isEmpty()) {
+			LOG.info("No relevant attributes found. Selectivity-estimation finished");
+			return histograms;
+		}
+		LOG.debug("Relevant attributes are {}", relevantAttributes);
+
+		// getting histograms
+		for (final SDFAttribute attribute : relevantAttributes) {
+
+			final IHistogram hist = DataSourceManager.getInstance().getHistogram(attribute);
+			if (hist != null) {
+				histograms.put(attribute, hist);
+				LOG.debug("Got histogram for attribute {} ", attribute);
+			} else {
+				LOG.warn("No histogram for attribute {}", attribute);
+			}
+		}
+
+		return histograms;
 	}
 }
