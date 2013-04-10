@@ -80,6 +80,7 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 		final Runtime runtime = Runtime.getRuntime();
 		processorCount = runtime.availableProcessors();
 		schedulerThreadCount = OdysseusConfiguration.getInt("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
+		useHistograms = OdysseusConfiguration.getBoolean("ac_operator_useHistograms", true);
 
 		LOG.debug("Number of Processors available: {} ", processorCount);
 		LOG.debug("Number of Scheduler Threads: {}", schedulerThreadCount);

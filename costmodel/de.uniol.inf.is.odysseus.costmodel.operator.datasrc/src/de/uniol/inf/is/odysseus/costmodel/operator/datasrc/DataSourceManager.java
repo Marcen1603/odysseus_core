@@ -49,8 +49,6 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.DataSourceObserv
  */
 public class DataSourceManager {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DataSourceManager.class);
-
 	// contains additional info
 	// of the used sources in odysseus
 	// (internal use only!)
@@ -63,46 +61,43 @@ public class DataSourceManager {
 		}
 	}
 
+	private static final Logger LOG = LoggerFactory.getLogger(DataSourceManager.class);
+
 	private static DataSourceManager instance = null;
 	private static final String FILENAME = "ac_attributes.conf";
 
-	private Map<ISource<?>, SourceInfo> sources = new HashMap<ISource<?>, SourceInfo>();
-	private Map<SDFAttribute, AttributeObserver> attributes = new HashMap<SDFAttribute, AttributeObserver>();
-	private List<SDFAttribute> waitingAttributes = new ArrayList<SDFAttribute>();
-	private Map<String, Collection<Double>> cachedAttributes = new HashMap<String, Collection<Double>>();
+	private final Map<ISource<?>, SourceInfo> sources = new HashMap<ISource<?>, SourceInfo>();
+	private final Map<SDFAttribute, AttributeObserver> attributes = new HashMap<SDFAttribute, AttributeObserver>();
+	private final List<SDFAttribute> waitingAttributes = new ArrayList<SDFAttribute>();
+	private final Map<String, Collection<Double>> cachedAttributes = new HashMap<String, Collection<Double>>();
+
+	private boolean useHistograms = true;
 
 	private DataSourceManager() {
-
+		useHistograms = OdysseusConfiguration.getBoolean("ac_operator_useHistograms", true);
 	}
 
 	/**
-	 * Liefert die einzige Instanz dieser Klasse.
-	 * 
-	 * @return Einzige Instanz der Klasse
-	 */
-	public static DataSourceManager getInstance() {
-		if (instance == null)
-			instance = new DataSourceManager();
-		return instance;
-	}
-
-	/**
-	 * Fügt eine neue Datenquelle hinzu, die beobachtet werden soll
+	 * F�gt eine neue Datenquelle hinzu, die beobachtet werden soll
 	 * 
 	 * @param src
 	 *            Neue zu beobachtende Datenquelle
 	 */
 	public void addSource(ISource<? extends IStreamObject<?>> src) {
+		if (!useHistograms) {
+			return;
+		}
+
 		if (!sources.containsKey(src)) {
-			SourceInfo info = new SourceInfo(src);
+			final SourceInfo info = new SourceInfo(src);
 			sources.put(src, info);
 
 			LOG.debug("New source added: " + src);
 
 			if (!waitingAttributes.isEmpty()) {
-				SDFSchema attributes = src.getOutputSchema();
-				List<SDFAttribute> toRemove = new ArrayList<SDFAttribute>();
-				for (SDFAttribute waitingAttribute : waitingAttributes) {
+				final SDFSchema attributes = src.getOutputSchema();
+				final List<SDFAttribute> toRemove = new ArrayList<SDFAttribute>();
+				for (final SDFAttribute waitingAttribute : waitingAttributes) {
 					if (attributes.contains(waitingAttribute)) {
 						// create observer for this attribute, since
 						// it was asked in the past
@@ -112,55 +107,27 @@ public class DataSourceManager {
 				}
 
 				// clear list of waiting attributes
-				for (SDFAttribute a : toRemove) {
+				for (final SDFAttribute a : toRemove) {
 					waitingAttributes.remove(a);
 				}
 			}
 
 			// cached attribute with temporary attributeobservers
 			// to connect to this new source?
-			for (SDFAttribute attribute : src.getOutputSchema()) {
+			for (final SDFAttribute attribute : src.getOutputSchema()) {
 				if (attributes.containsKey(attribute)) {
-					AttributeObserver observer = (AttributeObserver) attributes.get(attribute);
-					if (!observer.hasSink())
+					final AttributeObserver observer = attributes.get(attribute);
+					if (!observer.hasSink()) {
 						observer.setSink(info.observer);
+					}
 				}
 			}
 
 		} else {
-			SourceInfo info = sources.get(src);
+			final SourceInfo info = sources.get(src);
 			info.queriesUsed++;
 
 			LOG.debug("Source " + src + " already added. Uses: " + info.queriesUsed);
-		}
-	}
-
-	/**
-	 * Entfernt eine Datenquelle von der Beobachtung
-	 * 
-	 * @param src
-	 *            Zu entfernende Datenquelle
-	 */
-	public void removeSource(ISource<?> src) {
-		if (sources.containsKey(src)) {
-			SourceInfo srcInfo = sources.get(src);
-			srcInfo.queriesUsed--;
-
-			if (srcInfo.queriesUsed == 0) {
-				// disconnect from source
-				// --> do not observe this source anymore!
-				srcInfo.observer.disconnect();
-
-				// source no longer used
-				sources.remove(src);
-				LOG.debug("Source " + src + " removed");
-			}
-
-			LOG.debug("Source " + src + " uses : " + srcInfo.queriesUsed);
-
-		} else {
-			// sollte nicht vorkommen
-			LOG.warn("Query with source " + src + "(which was not known here) removed");
 		}
 	}
 
@@ -173,21 +140,24 @@ public class DataSourceManager {
 	 *         kein Histogramm erstellt werden konnte
 	 */
 	public IHistogram getHistogram(SDFAttribute attribute) {
+		if (!isUseHistograms()) {
+			return null;
+		}
 
 		if (attributes.containsKey(attribute)) {
-			AttributeObserver observer = attributes.get(attribute);
+			final AttributeObserver observer = attributes.get(attribute);
 			return observer.getHistogram();
 		} else if (cachedAttributes.containsKey(attribute.toString())) {
 
 			LOG.debug("Cached values of " + attribute + " found");
 
-			Collection<Double> values = cachedAttributes.get(attribute.toString());
+			final Collection<Double> values = cachedAttributes.get(attribute.toString());
 
-			AttributeObserver observer = new AttributeObserver(attribute);
+			final AttributeObserver observer = new AttributeObserver(attribute);
 			attributes.put(attribute, observer);
 			LOG.debug("Created temporary attributeObserver for " + attribute);
 
-			for (Double d : values) {
+			for (final Double d : values) {
 				observer.cachedElementRecieved(d);
 			}
 
@@ -211,12 +181,190 @@ public class DataSourceManager {
 		return sources.keySet();
 	}
 
+	public boolean isUseHistograms() {
+		return useHistograms;
+	}
+
+	/**
+	 * Läd alle Histogramme aus der Konfigurationsdatei.
+	 */
+	public void load() {
+		if (!isUseHistograms()) {
+			return;
+		}
+
+		final String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
+		LOG.debug("Reading file " + filename);
+
+		BufferedReader bw = null;
+		try {
+			bw = new BufferedReader(new FileReader(filename));
+
+			while (true) {
+				final String attribute = bw.readLine();
+				if (attribute == null) {
+					return;
+				}
+				LOG.debug("Reading values of " + attribute);
+
+				final String count = bw.readLine();
+				LOG.debug(" Count: " + count);
+				if (count == null) {
+					return;
+				}
+				final int size = Integer.valueOf(count);
+
+				final List<Double> values = new ArrayList<Double>(size);
+				for (int i = 0; i < size; i++) {
+					final String valueString = bw.readLine();
+					if (valueString != null) {
+						final Double d = Double.valueOf(valueString);
+						values.add(d);
+					} else {
+						return;
+					}
+				}
+
+				cachedAttributes.put(attribute, values);
+			}
+
+		} catch (final FileNotFoundException ex) {
+			final File f = new File(filename);
+			try {
+				f.createNewFile();
+			} catch (final IOException e) {
+				LOG.error("Could not create new file {}", filename, e);
+			}
+			LOG.debug("File " + filename + " created");
+		} catch (final IOException e) {
+			LOG.error("Could not load file {}", filename, e);
+		} finally {
+			if (bw != null) {
+				try {
+					bw.close();
+					LOG.debug("Finished");
+				} catch (final IOException e) {
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Entfernt eine Datenquelle von der Beobachtung
+	 * 
+	 * @param src
+	 *            Zu entfernende Datenquelle
+	 */
+	public void removeSource(ISource<?> src) {
+		if (!isUseHistograms()) {
+			return;
+		}
+
+		if (sources.containsKey(src)) {
+			final SourceInfo srcInfo = sources.get(src);
+			srcInfo.queriesUsed--;
+
+			if (srcInfo.queriesUsed == 0) {
+				// disconnect from source
+				// --> do not observe this source anymore!
+				srcInfo.observer.disconnect();
+
+				// source no longer used
+				sources.remove(src);
+				LOG.debug("Source " + src + " removed");
+			}
+
+			LOG.debug("Source " + src + " uses : " + srcInfo.queriesUsed);
+
+		} else {
+			// sollte nicht vorkommen
+			LOG.warn("Query with source " + src + "(which was not known here) removed");
+		}
+	}
+
+	/**
+	 * Speichert die aktuellen Histogramme aller Histogramme in einer
+	 * Konfigurationsdatei.
+	 */
+	public void save() {
+		if (!isUseHistograms()) {
+			return;
+		}
+
+		final String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
+		LOG.debug("Writing file " + filename);
+		BufferedWriter bw = null;
+		try {
+			bw = new BufferedWriter(new FileWriter(filename));
+
+			for (final SDFAttribute attribute : attributes.keySet()) {
+				LOG.debug("Writing values of " + attribute);
+
+				final AttributeObserver observer = attributes.get(attribute);
+				final Collection<Double> values = observer.getValues();
+
+				LOG.debug(" Count: " + values.size());
+
+				bw.write(attribute.toString() + "\n");
+				bw.write(String.valueOf(values.size()) + "\n");
+				for (final Double v : values) {
+					bw.write(String.valueOf(v) + "\n");
+				}
+				bw.flush();
+
+			}
+
+			for (final String attrName : cachedAttributes.keySet()) {
+
+				boolean found = false;
+				for (final SDFAttribute attr : attributes.keySet()) {
+					if (attr.toString().equals(attrName)) {
+						found = true;
+						break;
+					}
+				}
+				if (found) {
+					continue;
+				}
+
+				LOG.debug("Writing cached values of " + attrName);
+
+				final Collection<Double> values = cachedAttributes.get(attrName);
+
+				LOG.debug(" Count: " + values.size());
+
+				bw.write(attrName + "\n");
+				bw.write(String.valueOf(values.size()) + "\n");
+				for (final Double v : values) {
+					bw.write(String.valueOf(v) + "\n");
+				}
+				bw.flush();
+			}
+		} catch (final IOException e) {
+			LOG.error("Could not save in {}", filename, e);
+		} finally {
+			if (bw != null) {
+				try {
+					bw.flush();
+					bw.close();
+					LOG.debug("Finished");
+				} catch (final IOException e) {
+				}
+			}
+		}
+	}
+
+	public void setUseHistograms(boolean useHistograms) {
+		this.useHistograms = useHistograms;
+	}
+
 	private void createAttributeObserver(SDFAttribute attribute) {
 
 		// only numerical attributes!
 		if (attribute.getDatatype().isNumeric()) {
 
-			DataSourceObserverSink sink = findSink(attribute);
+			final DataSourceObserverSink sink = findSink(attribute);
 			if (sink != null) {
 				AttributeObserver observer = attributes.get(attribute);
 				if (observer == null) {
@@ -241,138 +389,26 @@ public class DataSourceManager {
 	}
 
 	private DataSourceObserverSink findSink(SDFAttribute attribute) {
-		for (SourceInfo sourceInfo : sources.values()) {
-			SDFSchema attributeList = sourceInfo.observer.getOutputSchema();
-			if (attributeList.contains(attribute))
+		for (final SourceInfo sourceInfo : sources.values()) {
+			final SDFSchema attributeList = sourceInfo.observer.getOutputSchema();
+			if (attributeList.contains(attribute)) {
 				return sourceInfo.observer;
+			}
 		}
 
 		return null;
 	}
 
 	/**
-	 * Speichert die aktuellen Histogramme aller Histogramme in einer
-	 * Konfigurationsdatei.
+	 * Liefert die einzige Instanz dieser Klasse.
+	 * 
+	 * @return Einzige Instanz der Klasse
 	 */
-	public void save() {
-		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
-		LOG.debug("Writing file " + filename);
-		BufferedWriter bw = null;
-		try {
-			bw = new BufferedWriter(new FileWriter(filename));
-
-			for (SDFAttribute attribute : attributes.keySet()) {
-				LOG.debug("Writing values of " + attribute);
-
-				AttributeObserver observer = attributes.get(attribute);
-				Collection<Double> values = observer.getValues();
-
-				LOG.debug(" Count: " + values.size());
-
-				bw.write(attribute.toString() + "\n");
-				bw.write(String.valueOf(values.size()) + "\n");
-				for (Double v : values) {
-					bw.write(String.valueOf(v) + "\n");
-				}
-				bw.flush();
-
-			}
-
-			for (String attrName : cachedAttributes.keySet()) {
-
-				boolean found = false;
-				for (SDFAttribute attr : attributes.keySet()) {
-					if (attr.toString().equals(attrName)) {
-						found = true;
-						break;
-					}
-				}
-				if (found)
-					continue;
-
-				LOG.debug("Writing cached values of " + attrName);
-
-				Collection<Double> values = cachedAttributes.get(attrName);
-
-				LOG.debug(" Count: " + values.size());
-
-				bw.write(attrName + "\n");
-				bw.write(String.valueOf(values.size()) + "\n");
-				for (Double v : values) {
-					bw.write(String.valueOf(v) + "\n");
-				}
-				bw.flush();
-			}
-		} catch (IOException e) {
-			LOG.error("Could not save in {}", filename, e);
-		} finally {
-			if (bw != null)
-				try {
-					bw.flush();
-					bw.close();
-					LOG.debug("Finished");
-				} catch (IOException e) {
-				}
+	public static DataSourceManager getInstance() {
+		if (instance == null) {
+			instance = new DataSourceManager();
 		}
-	}
-
-	/**
-	 * Läd alle Histogramme aus der Konfigurationsdatei.
-	 */
-	public void load() {
-		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
-		LOG.debug("Reading file " + filename);
-
-		BufferedReader bw = null;
-		try {
-			bw = new BufferedReader(new FileReader(filename));
-
-			while (true) {
-				String attribute = bw.readLine();
-				if (attribute == null) {
-					return;
-				}
-				LOG.debug("Reading values of " + attribute);
-
-				String count = bw.readLine();
-				LOG.debug(" Count: " + count);
-				if (count == null) {
-					return;
-				}
-				int size = Integer.valueOf(count);
-
-				List<Double> values = new ArrayList<Double>(size);
-				for (int i = 0; i < size; i++) {
-					String valueString = bw.readLine();
-					if (valueString != null) {
-						Double d = Double.valueOf(valueString);
-						values.add(d);
-					} else {
-						return;
-					}
-				}
-
-				cachedAttributes.put(attribute, values);
-			}
-
-		} catch (FileNotFoundException ex) {
-			File f = new File(filename);
-			try {
-				f.createNewFile();
-			} catch (IOException e) {
-				LOG.error("Could not create new file {}", filename, e);
-			}
-			LOG.debug("File " + filename + " created");
-		} catch (IOException e) {
-			LOG.error("Could not load file {}", filename, e);
-		} finally {
-			if (bw != null)
-				try {
-					bw.close();
-					LOG.debug("Finished");
-				} catch (IOException e) {}
-		}
-
+		return instance;
 	}
 
 }

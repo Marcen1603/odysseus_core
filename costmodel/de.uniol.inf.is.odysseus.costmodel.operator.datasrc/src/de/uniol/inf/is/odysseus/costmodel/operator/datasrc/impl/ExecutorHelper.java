@@ -36,13 +36,6 @@ public class ExecutorHelper implements IPlanModificationListener {
 
 	private static Logger _logger = null;
 
-	protected static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(ExecutorHelper.class);
-		}
-		return _logger;
-	}
-
 	private IExecutor executor = null;
 
 	public void bindExecutor(IExecutor executor) {
@@ -53,10 +46,30 @@ public class ExecutorHelper implements IPlanModificationListener {
 		getLogger().debug("Executor bound");
 	}
 
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		final IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
+		if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
+			getLogger().debug("New query added.");
+
+			for (final ISource<? extends IStreamObject<?>> src : getSources(query)) {
+				DataSourceManager.getInstance().addSource(src);
+			}
+
+		} else if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
+			getLogger().debug("Query removed");
+
+			for (final ISource<?> src : getSources(query)) {
+				DataSourceManager.getInstance().removeSource(src);
+			}
+
+		}
+	}
+
 	public void unbindExecutor(IExecutor executor) {
 		if (this.executor == executor) {
 			if (executor instanceof IServerExecutor) {
-				((IServerExecutor)this.executor).removePlanModificationListener(this);
+				((IServerExecutor) this.executor).removePlanModificationListener(this);
 			}
 			this.executor = null;
 
@@ -64,34 +77,23 @@ public class ExecutorHelper implements IPlanModificationListener {
 		}
 	}
 
-	@Override
-	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
-		if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs
-				.getEventType())) {
-			getLogger().debug("New query added.");
-
-			for (ISource<? extends IStreamObject<?>> src : getSources(query))
-				DataSourceManager.getInstance().addSource(src);
-
-		} else if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
-				.getEventType())) {
-			getLogger().debug("Query removed");
-
-			for (ISource<?> src : getSources(query))
-				DataSourceManager.getInstance().removeSource(src);
-
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(ExecutorHelper.class);
 		}
+		return _logger;
 	}
 
 	@SuppressWarnings("unchecked")
 	private static List<ISource<? extends IStreamObject<?>>> getSources(IPhysicalQuery query) {
-		List<IPhysicalOperator> physicalOperators = query.getPhysicalChilds();
-		List<ISource<? extends IStreamObject<?>>> sources = new ArrayList<ISource<? extends IStreamObject<?>>>();
+		final List<IPhysicalOperator> physicalOperators = query.getPhysicalChilds();
+		final List<ISource<? extends IStreamObject<?>>> sources = new ArrayList<ISource<? extends IStreamObject<?>>>();
 
-		for (IPhysicalOperator op : physicalOperators)
-			if (op.isSource() && !(op.isSink()))
+		for (final IPhysicalOperator op : physicalOperators) {
+			if (op.isSource() && !(op.isSink())) {
 				sources.add((ISource<? extends IStreamObject<?>>) op);
+			}
+		}
 		return sources;
 	}
 }

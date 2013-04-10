@@ -73,7 +73,7 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 	public void connect() {
 		Optional<ISource> connectingSource = getMetadataUpdatePOAsSource(source);
 		if( connectingSource.isPresent() ) {
-			connectingSource.get().connectSink((ISink) this, 0, 0, connectingSource.get().getOutputSchema());
+			connectingSource.get().connectSink(this, 0, 0, connectingSource.get().getOutputSchema());
 			getLogger().debug("Source {} connected", source);					
 		} else {
 			getLogger().error("Could not connect to {}", source);
@@ -136,7 +136,7 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 			Collection<?> subs = source.getSubscriptions();
 			for( Object sub : subs ) {
 				PhysicalSubscription<? extends ISink<?>> physSub = (PhysicalSubscription<? extends ISink<?>>)sub;
-				IPhysicalOperator target = (IPhysicalOperator)physSub.getTarget();
+				IPhysicalOperator target = physSub.getTarget();
 				if( target.getClass().equals(opClass)) {
 					return Optional.of(target);
 				}
