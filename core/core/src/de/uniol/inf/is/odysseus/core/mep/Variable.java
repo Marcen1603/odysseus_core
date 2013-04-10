@@ -18,8 +18,6 @@ package de.uniol.inf.is.odysseus.core.mep;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
