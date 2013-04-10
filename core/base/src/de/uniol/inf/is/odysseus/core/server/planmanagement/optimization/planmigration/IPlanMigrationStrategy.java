@@ -24,13 +24,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigr
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
-//import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-//import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
-//import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
-//import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-//import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-//import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
-
 /**
  * Describes an object which migrates an old and a new execution plan. Used for
  * OSGi-services.
