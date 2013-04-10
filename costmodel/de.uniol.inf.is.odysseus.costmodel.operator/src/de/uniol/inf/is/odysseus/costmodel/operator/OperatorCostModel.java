@@ -168,24 +168,28 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 					prevOperators.add(estimatedOperators.get(op));
 				}
 				final IOperatorEstimator<ILogicalOperator> estimator = OperatorEstimatorFactory.getInstance().get(operator);
-				final OperatorEstimation<ILogicalOperator> estimation = estimator.estimateOperator(operator, prevOperators, baseHistograms);
+				try {
+					final OperatorEstimation<ILogicalOperator> estimation = estimator.estimateOperator(operator, prevOperators, baseHistograms);
 
-				final boolean isRunning = determineIsRunning(operator);
+					final boolean isRunning = determineIsRunning(operator);
 
-				if (!onUpdate) {
-					// don't count already running operators
-					if (isRunning) {
-						estimation.setDetailCost(new OperatorDetailCost<ILogicalOperator>(operator, 0, 0));
+					if (!onUpdate) {
+						// don't count already running operators
+						if (isRunning) {
+							estimation.setDetailCost(new OperatorDetailCost<ILogicalOperator>(operator, 0, 0));
+						}
+					} else {
+						// don't count stopped operators
+						if (!isRunning) {
+							estimation.setDetailCost(new OperatorDetailCost<ILogicalOperator>(operator, 0, 0));
+
+						}
 					}
-				} else {
-					// don't count stopped operators
-					if (!isRunning) {
-						estimation.setDetailCost(new OperatorDetailCost<ILogicalOperator>(operator, 0, 0));
 
-					}
+					estimatedOperators.put(operator, estimation);
+				} catch (final Throwable t) {
+					LOG.error("Could not estimate costs for logical operator {}", operator, t);
 				}
-
-				estimatedOperators.put(operator, estimation);
 			}
 
 		});
@@ -217,24 +221,28 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 				}
 
 				final IOperatorEstimator<IPhysicalOperator> estimator = OperatorEstimatorFactory.getInstance().get(operator);
-				final OperatorEstimation<IPhysicalOperator> estimation = estimator.estimateOperator(operator, prevOperators, baseHistograms);
+				try {
+					final OperatorEstimation<IPhysicalOperator> estimation = estimator.estimateOperator(operator, prevOperators, baseHistograms);
 
-				final boolean isRunning = determineIsRunning(operator);
+					final boolean isRunning = determineIsRunning(operator);
 
-				if (!onUpdate) {
-					// don't count already running operators
-					if (isRunning) {
-						estimation.setDetailCost(new OperatorDetailCost<IPhysicalOperator>(operator, 0, 0));
+					if (!onUpdate) {
+						// don't count already running operators
+						if (isRunning) {
+							estimation.setDetailCost(new OperatorDetailCost<IPhysicalOperator>(operator, 0, 0));
+						}
+					} else {
+						// don't count stopped operators
+						if (!isRunning) {
+							estimation.setDetailCost(new OperatorDetailCost<IPhysicalOperator>(operator, 0, 0));
+
+						}
 					}
-				} else {
-					// don't count stopped operators
-					if (!isRunning) {
-						estimation.setDetailCost(new OperatorDetailCost<IPhysicalOperator>(operator, 0, 0));
 
-					}
+					estimatedOperators.put(operator, estimation);
+				} catch (final Throwable t) {
+					LOG.error("Could not estimate costs for physical operator {}", operator, t);
 				}
-
-				estimatedOperators.put(operator, estimation);
 			}
 
 		});
