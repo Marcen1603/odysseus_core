@@ -62,7 +62,7 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 	private static final Logger LOG = LoggerFactory.getLogger(OperatorCostModel.class);
 
 	private static final IOperatorDetailCostAggregator<IPhysicalOperator> AGGREGATOR = new OperatorDetailCostAggregator<IPhysicalOperator>();
-	private static final IOperatorDetailCostAggregator<ILogicalOperator> logicalOperatorAggregator = new OperatorDetailCostAggregator<ILogicalOperator>();
+	private static final IOperatorDetailCostAggregator<ILogicalOperator> LOGICAL_AGGREGATOR = new OperatorDetailCostAggregator<ILogicalOperator>();
 
 	private final int processorCount;
 	private final int schedulerThreadCount;
@@ -195,7 +195,7 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 		});
 
 		// aggregate costs
-		final AggregatedCost aggCost = logicalOperatorAggregator.aggregate(estimatedOperators);
+		final AggregatedCost aggCost = LOGICAL_AGGREGATOR.aggregate(estimatedOperators);
 		return new OperatorCost<ILogicalOperator>(estimatedOperators, aggCost.getMemCost(), aggCost.getCpuCost());
 	}
 
