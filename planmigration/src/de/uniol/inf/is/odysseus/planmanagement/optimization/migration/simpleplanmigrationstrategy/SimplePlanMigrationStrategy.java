@@ -54,6 +54,7 @@ import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.PhysicalPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.PhysicalRestructHelper;
+import de.uniol.inf.is.odysseus.core.server.util.RemoveOwnersGraphVisitor;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 
 /**
@@ -225,15 +226,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			// subscribe all subscriptions to buffer
 			for (PhysicalSubscription<?> sub : unSubscribe) {
 				IPhysicalOperator op = (IPhysicalOperator) sub.getTarget();
-				// ((AbstractPipe) op).unsubscribeFromSource(sub);
 				((AbstractPipe) op).unsubscribeFromSource(metadataUpdatePO, 0,
 						0, metadataUpdatePO.getOutputSchema());
 
 				LOG.debug("Operator: " + op.getClass().getSimpleName() + " ("
 						+ op.hashCode() + ") was unsubscribed from source");
 
-				// buffer.subscribeSink((ISink<?>) op, 0, 0,
-				// buffer.getOutputSchema());
 				((AbstractPipe) op).subscribeToSource(buffer, 0, 0,
 						buffer.getOutputSchema());
 
@@ -250,7 +248,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		((MigrationRouterPO<?>) router).addMigrationListener(this);
 
-		// context.setSelect(select);
 		context.setRouter(router);
 		context.setOldPlanRoot(oldPlanRoot);
 
@@ -260,11 +257,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		LOG.debug("Merging Plans ");
 
-		// PhysicalRestructHelper.removeSubscription(oldPlanRoot,
-		// lastOperatorOldPlan);
-		// PhysicalRestructHelper.replaceChild(newPlanRoots.get(0),
-		// lastOperatorNewPlan, router);
-		// PhysicalRestructHelper.appendOperator(select, lastOperatorNewPlan);
 		IPhysicalOperator root = null;
 		if (!lastOperatorOldPlan.isSource()) {
 			// it is a real sink (like FileSink)
@@ -275,13 +267,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 					lastOperatorNewPlan, router);
 		}
 
-		// wir brauchen allerdings einen Owner!
 		SetOwnerGraphVisitor<IOwnedOperator> addVisitor = new SetOwnerGraphVisitor<>(
 				runningQuery, true);
 		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalkPhysical(root, addVisitor);
 
-		// runningQuery.initializePhysicalRoots(newPlanRoots);
 		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 		roots.add(root);
 		runningQuery.initializePhysicalRoots(roots);
@@ -290,20 +280,17 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		// open auf dem neuen Plan aufrufen
 		LOG.debug("Calling open on new Plan ");
-		// synchronized (router) {
 		try {
 			((ISink) root).open();
 		} catch (OpenFailedException e1) {
 			LOG.error("Open root failed", e1);
 		}
-		// }
 		LOG.debug("Calling open on new Plan ... done");
 
 		LOG.debug("Result:\n"
 				+ AbstractTreeWalker.prefixWalk2(root,
 						new PhysicalPlanToStringVisitor()));
 
-		// execute plans for at least 'w_max' (longest window duration)
 		LOG.debug("Initializing parallel execution plan.");
 
 		try {
@@ -322,6 +309,15 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// we are waiting for the event that is fired.
 	}
 
+	/**
+	 * Inserts the router between the plans and the real sink which is
+	 * lastOperatorOldPlan and returns the lastOperatorOldPlan as new root.
+	 * 
+	 * @param lastOperatorOldPlan
+	 * @param lastOperatorNewPlan
+	 * @param router
+	 * @return
+	 */
 	private ISink insertRouterWithRealSink(
 			IPhysicalOperator lastOperatorOldPlan,
 			IPhysicalOperator lastOperatorNewPlan, IPipe<?, ?> router) {
@@ -405,6 +401,14 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		return realSink;
 	}
 
+	/**
+	 * Inserts a router as the new root of the plan and returns it.
+	 * 
+	 * @param lastOperatorOldPlan
+	 * @param lastOperatorNewPlan
+	 * @param router
+	 * @return
+	 */
 	private ISink insertRouterWithoutRealSink(
 			IPhysicalOperator lastOperatorOldPlan,
 			IPhysicalOperator lastOperatorNewPlan, IPipe router) {
@@ -456,7 +460,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			}
 			for (PhysicalSubscription<?> sub : unSub) {
 				ISink sink = (ISink) sub.getTarget();
-				buffer.unsubscribeSink(sink, sub.getSinkInPort(), sub.getSourceOutPort(), buffer.getOutputSchema());
+				buffer.unsubscribeSink(sink, sub.getSinkInPort(),
+						sub.getSourceOutPort(), buffer.getOutputSchema());
 			}
 		}
 
@@ -507,17 +512,28 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 					parents.add((ISink) sub.getTarget());
 					parentInports.add(sub.getSinkInPort());
 				}
-				
+
 				PhysicalRestructHelper.removeOperator(children.get(0), 0,
 						parents, parentInports, buffer);
 				buffer.removeOwner(context.getRunningQuery());
 			}
-			
+
 			LOG.debug("Unsubscribe old plan from source");
-			for(IPhysicalOperator oldOperatorBeforeSource : context.getOldPlanOperatorsBeforeSources()) {
+			for (IPhysicalOperator oldOperatorBeforeSource : context
+					.getOldPlanOperatorsBeforeSources()) {
 				((ISink) oldOperatorBeforeSource).unsubscribeFromAllSources();
 			}
-			
+
+			LOG.debug("Removing owner from old plan");
+			IPhysicalOperator oldRoot = getPlanRoot(context
+					.getOldPlanOperatorsBeforeSources().get(0));
+			if (oldRoot != null) {
+				RemoveOwnersGraphVisitor<IOwnedOperator> removeVisitor = new RemoveOwnersGraphVisitor<IOwnedOperator>(
+						this.physicalQuery);
+				GenericGraphWalker walker = new GenericGraphWalker();
+				walker.prefixWalkPhysical(oldRoot, removeVisitor);
+			}
+
 			LOG.debug("Initialize new plan root as physical root");
 			context.getRunningQuery().initializePhysicalRoots(newRoots);
 		} catch (Exception ex) {
@@ -544,6 +560,14 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		fireMigrationFinishedEvent(this);
 	}
 
+	/**
+	 * Removes the router and returns the list of new roots.
+	 * 
+	 * @param roots
+	 *            old roots
+	 * @param router
+	 * @return
+	 */
 	private List<IPhysicalOperator> removeRouter(List<IPhysicalOperator> roots,
 			MigrationRouterPO router) {
 		LOG.debug("Remove router");
@@ -557,7 +581,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				// this is the new plan
 				newPlan = target;
 			}
-			target.disconnectSink(router, sub.getSinkInPort(),
+			target.unsubscribeSink(router, sub.getSinkInPort(),
 					sub.getSourceOutPort(), router.getOutputSchema());
 		}
 
@@ -574,109 +598,47 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			newRoots.add(newPlan);
 		} else {
 			List<ISink> sinks = new ArrayList<ISink>();
-			// TODO (Merlin): prüfen was genau hier schiefgehen kann.
 			for (PhysicalSubscription sub : ((AbstractSource<?>) router)
 					.getSubscriptions()) {
 				sinks.add((ISink) sub.getTarget());
 			}
 			for (IPhysicalOperator operator : sinks) {
 				ISink sink = (ISink) operator;
-				router.disconnectSink(sink, 0, 0, router.getOutputSchema());
-				newPlan.connectSink(sink, 0, 0, newPlan.getOutputSchema());
+				router.unsubscribeSink(sink, 0, 0, router.getOutputSchema());
+				newPlan.subscribeSink(sink, 0, 0, newPlan.getOutputSchema());
 				newRoots.add(operator);
+				sink.open();
 			}
 		}
 		return newRoots;
 	}
 
 	/**
-	 * void finishedParallelExecution(StrategyContext context) {
+	 * returns the plan root
 	 * 
-	 * LOG.debug("ParallelExecutionWaiter terminated."); // activate blocking
-	 * buffers LOG.debug("Blocking " + context.getBufferPOs().size() +
-	 * " input buffers.");
-	 * 
-	 * for (BufferPO<?> buffer : context.getBufferPOs()) {
-	 * LOG.debug("Blocking buffer " + buffer.getClass().getSimpleName() + " (" +
-	 * buffer.hashCode() + ")"); buffer.block(); LOG.debug("Blocking buffer " +
-	 * buffer.getClass().getSimpleName() + " (" + buffer.hashCode() +
-	 * ") done."); }
-	 * 
-	 * // drain all tuples out of plans
-	 * LOG.debug("Draining tuples out of plans."); MigrationHelper
-	 * .drainTuples(context.getRunningQuery().getRoots().get(0));
-	 * 
-	 * // remove old plan, keep buffers // top operators
-	 * LOG.debug("Deinitializing parallel execution plan."); // TODO: beachten
-	 * was mit sink-only operatoren passiert, die vll noch an // dem router
-	 * hängen! // TODO (Merlin): warum replaceChild? Als neue Wurzel des Plans
-	 * die // Wurzel des neuen Plans erklären und die subscriptions von alt nach
-	 * // router und neu nach router löschen.
-	 * PhysicalRestructHelper.replaceChild(context.getRouter(),
-	 * context.getNewPlanRoot(), context.getLastOperatorNewPlan());
-	 * PhysicalRestructHelper.removeSubscription(context.getRouter(),
-	 * context.getLastOperatorOldPlan());
-	 * PhysicalRestructHelper.removeSubscription(context.getRouter(),
-	 * context.getLastOperatorNewPlan()); // Workaround Ende
-	 * 
-	 * // remove connection from buffers to old plan for (BufferPO<?> buffer :
-	 * context.getBufferPOs()) { for (PhysicalSubscription<?> sub :
-	 * buffer.getSubscriptions() .toArray( new PhysicalSubscription<?>[buffer
-	 * .getSubscriptions().size()])) { ISink<?> sink = (ISink<?>)
-	 * sub.getTarget(); // have to test '==', because equals is overwritten int
-	 * ind = context.getOldPlanOperatorsBeforeSources().indexOf( sink); if (ind
-	 * != -1 && context.getOldPlanOperatorsBeforeSources().get(ind) == sink) {
-	 * PhysicalRestructHelper.removeSubscription(sink, buffer); } } } //
-	 * List<ISink> sinks = new ArrayList<ISink>(); // List<Integer> sinkInPorts
-	 * = new ArrayList<Integer>(); // for (PhysicalSubscription<?> sub :
-	 * buffer.getSubscriptions()) { // sinks.add((ISink) sub.getTarget()); //
-	 * sinkInPorts.add(sub.getSinkInPort()); // } // ISource source =
-	 * buffer.getSubscribedToSource(0).getTarget(); //
-	 * PhysicalRestructHelper.removeOperator(source, 0, sinks, // sinkInPorts,
-	 * buffer); // }
-	 * 
-	 * // clean up, removing ownership of every operator // remove any metadata
-	 * on old plan operators
-	 * AbstractTreeWalker.prefixWalk2(context.getLastOperatorOldPlan(), new
-	 * CleanOperatorsVisitor(context.getRunningQuery()));
-	 * 
-	 * // push data from buffers into plan // FIXME (Merlin): der buffer wird im
-	 * laufenden Betrieb wohl nicht leer.
-	 * LOG.debug("Pushing data from BufferPOs."); for (BufferPO<?> buffer :
-	 * context.getBufferPOs()) { for (int i = 0; i < buffer.size(); i++) {
-	 * buffer.transferNext(); } }
-	 * 
-	 * // TODO (Merlin): Was passiert mit dem RouterPO?
-	 * 
-	 * // TODO: Warum dies? Die Anfrage ist doch schon drin, oder?
-	 * 
-	 * context.getRunningQuery().initializePhysicalRoots(
-	 * context.getRunningQuery().getRoots());
-	 * 
-	 * // remove buffers, thereby resuming query processing
-	 * LOG.debug("Removing buffers."); for (BufferPO<?> buffer :
-	 * context.getBufferPOs()) { LOG.debug("Remove buffer " +
-	 * buffer.getClass().getSimpleName() + " (" + buffer.hashCode() + ")");
-	 * ISource<?> source = buffer.getSubscribedToSource(0).getTarget();
-	 * List<ISink<?>> sinks = new ArrayList<ISink<?>>(); for
-	 * (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
-	 * sinks.add((ISink<?>) sub.getTarget()); }
-	 * PhysicalRestructHelper.atomicReplaceSink(source, buffer, sinks); for
-	 * (PhysicalSubscription<?> sub : buffer.getSubscriptions() .toArray( new
-	 * PhysicalSubscription<?>[buffer .getSubscriptions().size()])) { ISink<?>
-	 * sink = (ISink<?>) sub.getTarget();
-	 * PhysicalRestructHelper.removeSubscription(sink, buffer); }
-	 * buffer.removeOwner(context.getRunningQuery()); LOG.debug("Remove buffer "
-	 * + buffer.getClass().getSimpleName() + " (" + buffer.hashCode() +
-	 * ") done."); }
-	 * 
-	 * // new plan is ready and running
-	 * LOG.debug("Planmigration finished. Result:" +
-	 * AbstractTreeWalker.prefixWalk2(context.getRunningQuery()
-	 * .getRoots().get(0), new PhysicalPlanToStringVisitor()));
-	 * context.getOptimizer().handleFinishedMigration(
-	 * context.getRunningQuery()); fireMigrationFinishedEvent(this); }
-	 **/
+	 * @param operator
+	 * @return
+	 */
+	private IPhysicalOperator getPlanRoot(IPhysicalOperator operator) {
+		IPhysicalOperator root = operator;
+		IPhysicalOperator parent = getParent(operator);
+		while (parent != null) {
+			root = parent;
+			parent = getParent(root);
+		}
+		return root;
+	}
+
+	private IPhysicalOperator getParent(IPhysicalOperator child) {
+		for (PhysicalSubscription<?> sub : ((AbstractSource<?>) child)
+				.getSubscriptions()) {
+			IPhysicalOperator subscribed = (IPhysicalOperator) sub.getTarget();
+			if (subscribed.getOwner().contains(this.physicalQuery)) {
+				return subscribed;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public void migrationFinished(IMigrationEventSource sender) {
