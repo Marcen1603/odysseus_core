@@ -60,9 +60,9 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
         this.expression = patternAO.expression;
     }
 	
-    @Parameter(type=SDFExpressionParameter.class, optional=true)
-    public void setExpression(SDFExpression expr) {
-        this.expression = expr;
+    @Parameter(name="expr", type=SDFExpressionParameter.class, optional=true)
+    public void setExpression(NamedExpressionItem expr) {
+        this.expression = expr.expression;
     }
     
     public SDFExpression getExpression() {
