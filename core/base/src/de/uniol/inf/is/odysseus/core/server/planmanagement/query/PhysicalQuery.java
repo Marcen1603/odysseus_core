@@ -293,6 +293,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		// set root of this querie
 		setRoots(roots);
 
+		this.physicalChilds.clear();
 		// Store each child in a list. And set this Query as owner of each child
 		for (IPhysicalOperator root : roots) {
 			// addPhysicalChildren(GraphHelper.getChildren(root));
