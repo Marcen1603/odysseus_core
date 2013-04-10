@@ -130,7 +130,7 @@ public class AdmissionTimeSeriesManager {
 						minMem.add(timestampSecond, statistic.getMinMemLoad());
 						totalMem.add(timestampSecond, statistic.getTotalMemLoad());
 					} catch( Throwable t ) {
-						LOG.error("Could not update statistics", t);
+						//LOG.error("Could not update statistics", t);
 					}
 				}
 			});
