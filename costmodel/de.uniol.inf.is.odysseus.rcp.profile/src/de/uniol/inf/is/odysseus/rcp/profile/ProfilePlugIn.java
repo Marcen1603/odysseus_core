@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModel;
+import de.uniol.inf.is.odysseus.rcp.profile.views.AdmissionTimeSeriesManager;
 
 public class ProfilePlugIn implements BundleActivator {
 
@@ -20,10 +21,12 @@ public class ProfilePlugIn implements BundleActivator {
 	
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
+		AdmissionTimeSeriesManager.start();
 	}
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
+		AdmissionTimeSeriesManager.stop();
 	}
 
 	@SuppressWarnings("unchecked")
