@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.profile.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,12 @@ import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,7 +36,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.rcp.profile.ProfilePlugIn;
 import de.uniol.inf.is.odysseus.rcp.profile.util.RepeatingJobThread;
 
-public class OperatorProfileView extends ViewPart {
+public class OperatorProfileView extends ViewPart implements ISelectionProvider {
 
 	private interface IOperatorStatisticReader {
 		public String get(OperatorStatistic statistic);
@@ -40,7 +47,16 @@ public class OperatorProfileView extends ViewPart {
 	private static OperatorProfileView instance = null;
 	private TableViewer tableViewer;
 
+	private final Collection<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
+
 	private RepeatingJobThread updater;
+
+	@Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		if (!listeners.contains(listener)) {
+			listeners.add(listener);
+		}
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -172,7 +188,15 @@ public class OperatorProfileView extends ViewPart {
 		};
 
 		tableViewer.setInput(operatorStatistics);
+		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				setSelection(createSelection());
+			}
 
+		});
+
+		getSite().setSelectionProvider(this);
 		instance = this;
 
 		updater = new RepeatingJobThread(3000, "Operator profile view Updater") {
@@ -195,10 +219,36 @@ public class OperatorProfileView extends ViewPart {
 		super.dispose();
 	}
 
-	public void refresh() {
-		if( !tableViewer.getTable().isDisposed()) {
+	@Override
+	public ISelection getSelection() {
+		return createSelection();
+	}
+
+	public void refresh(Map<IPhysicalOperator, OperatorStatistic> updatedStatistics) {
+		if (!tableViewer.getTable().isDisposed()) {
+			
+			IPhysicalOperator selectedOperator = null;
+			IStructuredSelection structSelect = (IStructuredSelection)tableViewer.getSelection();
+			if( !structSelect.isEmpty() ) {
+				selectedOperator = ((OperatorStatistic)structSelect.getFirstElement()).getOperator();
+			}
+			
+			synchronized( operatorStatistics ) {
+				operatorStatistics.clear();
+				operatorStatistics.addAll(updatedStatistics.values());
+			}
+						
 			tableViewer.refresh();
+			
+			if( selectedOperator != null ) {
+				tableViewer.setSelection(new StructuredSelection(updatedStatistics.get(selectedOperator)));
+			}
 		}
+	}
+
+	@Override
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+		listeners.remove(listener);
 	}
 
 	@Override
@@ -206,30 +256,22 @@ public class OperatorProfileView extends ViewPart {
 		tableViewer.getTable().setFocus();
 	}
 
-	private void updateProfile() {
-		final Collection<IPhysicalQuery> queries = ProfilePlugIn.getServerExecutor().getExecutionPlan().getQueries();
-		final Map<IPhysicalOperator, OperatorStatistic> currentStatistics = determineStatistics(queries);
-
-		synchronized (operatorStatistics) {
-			operatorStatistics.clear();
-			operatorStatistics.addAll(currentStatistics.values());
+	@Override
+	public void setSelection(ISelection selection) {
+		for (final ISelectionChangedListener l : listeners) {
+			if (l != null) {
+				l.selectionChanged(new SelectionChangedEvent(this, selection));
+			}
 		}
+	}
 
-		Display display = PlatformUI.getWorkbench().getDisplay();
-		if( !display.isDisposed()) {
-			display.asyncExec(new Runnable() {
-	
-				@Override
-				public void run() {
-					synchronized (operatorStatistics) {
-						getInstance().refresh(); // use operatorStatistics-list
-													// indirectly
-					}
-				}
-	
-			});
+	private IStructuredSelection createSelection() {
+		final IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
+		if (!selection.isEmpty()) {
+			final OperatorStatistic stat = (OperatorStatistic) selection.getFirstElement();
+			return new StructuredSelection(stat.getOperator());
 		}
-
+		return StructuredSelection.EMPTY;
 	}
 
 	public static OperatorProfileView getInstance() {
@@ -275,4 +317,23 @@ public class OperatorProfileView extends ViewPart {
 		}
 		return currentStatistics;
 	}
+
+	private static void updateProfile() {
+		final Collection<IPhysicalQuery> queries = ProfilePlugIn.getServerExecutor().getExecutionPlan().getQueries();
+		final Map<IPhysicalOperator, OperatorStatistic> currentStatistics = determineStatistics(queries);
+
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		if (!display.isDisposed()) {
+			display.asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					getInstance().refresh(currentStatistics);
+				}
+
+			});
+		}
+
+	}
+
 }

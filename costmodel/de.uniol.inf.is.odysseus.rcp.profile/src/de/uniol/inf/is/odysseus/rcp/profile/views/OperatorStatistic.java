@@ -19,6 +19,7 @@ public final class OperatorStatistic {
 	private final int hashID;
 	
 	private final long elementsStoredCount;
+	private final IPhysicalOperator operator;
 	
 	public OperatorStatistic(IPhysicalOperator operator, OperatorCost<IPhysicalOperator> cost, OperatorEstimation<IPhysicalOperator> est) {
 		Preconditions.checkNotNull(operator, "Operator for statistics must not be null!");
@@ -38,6 +39,8 @@ public final class OperatorStatistic {
 		} else {
 			this.elementsStoredCount = -1;
 		}
+		
+		this.operator = operator;
 	}
 	
 	public String getName() {
@@ -70,5 +73,9 @@ public final class OperatorStatistic {
 	
 	public boolean hasElementsStoredCount() {
 		return elementsStoredCount >= 0;
+	}
+
+	public IPhysicalOperator getOperator() {
+		return operator;
 	}
 }
