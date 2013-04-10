@@ -32,6 +32,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusGraphView;
@@ -39,6 +41,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public class GraphViewEditorOutlinePage extends ContentOutlinePage implements ISelectionListener {
 
+	private static final Logger LOG = LoggerFactory.getLogger(GraphViewEditorOutlinePage.class);
+	
 	private PhysicalGraphEditorInput input;
 
 	public GraphViewEditorOutlinePage(PhysicalGraphEditorInput input) {
@@ -94,7 +98,7 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 				try {
 					getTreeViewer().refresh();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					LOG.error("Could not refresh tree viewer in outline", ex);
 				}
 			}
 

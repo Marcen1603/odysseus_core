@@ -193,7 +193,14 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 					if (obj instanceof IOdysseusNodeView) {
 						IOdysseusNodeView nodeView = (IOdysseusNodeView) obj;
 						selectedNodes.add(nodeView);
-					} 
+					} else if( obj instanceof IPhysicalOperator ) {
+						IPhysicalOperator op = (IPhysicalOperator) obj;
+						for( INodeView<IPhysicalOperator> nodeView : getGraphView().getViewedNodes()) {
+							if(nodeView.getModelNode() != null && nodeView.getModelNode().getContent() != null && nodeView.getModelNode().getContent().equals(op)) {
+								selectedNodes.add((IOdysseusNodeView) nodeView);
+							}
+						}
+					}
 				}
 				renderManager.getSelector().unselectAll();
 				renderManager.getSelector().select(selectedNodes);
