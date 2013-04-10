@@ -124,7 +124,7 @@ public class OperatorProfileView extends ViewPart {
 		column = createTableColumn(tableViewer, "Elements", new IOperatorStatisticReader() {
 			@Override
 			public String get(OperatorStatistic statistic) {
-				return statistic.hasElementsStoredCount() ? String.valueOf(statistic.getElementsStoredCount()) : "NOS";
+				return statistic.hasElementsStoredCount() ? String.valueOf(statistic.getElementsStoredCount()) : "";
 			}
 		});
 		new ColumnViewerSorter(tableViewer, column) {
