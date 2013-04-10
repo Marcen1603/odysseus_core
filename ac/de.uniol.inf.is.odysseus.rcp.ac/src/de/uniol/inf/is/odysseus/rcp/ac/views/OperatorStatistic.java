@@ -17,6 +17,8 @@ public class OperatorStatistic {
 	
 	private final int hashID;
 	
+	private final IPhysicalOperator op;
+	
 	public OperatorStatistic(IPhysicalOperator operator, OperatorCost<IPhysicalOperator> cost, OperatorEstimation<IPhysicalOperator> est) {
 		Preconditions.checkNotNull(operator, "Operator for statistics must not be null!");
 		
@@ -29,6 +31,8 @@ public class OperatorStatistic {
 		this.dataRate = est.getDataStream().getDataRate();
 		
 		this.hashID = operator.hashCode();
+		
+		this.op = operator;
 	}
 	
 	public String getName() {
@@ -53,5 +57,9 @@ public class OperatorStatistic {
 	
 	public int getHashID() {
 		return hashID;
+	}
+	
+	public IPhysicalOperator getOp() {
+		return op;
 	}
 }

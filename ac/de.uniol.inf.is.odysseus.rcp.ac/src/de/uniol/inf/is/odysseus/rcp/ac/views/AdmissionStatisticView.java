@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.ac.standard.AdmissionStatus;
 import de.uniol.inf.is.odysseus.ac.standard.IAdmissionStatusListener;
 import de.uniol.inf.is.odysseus.ac.standard.StandardAC;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
@@ -104,6 +105,26 @@ public class AdmissionStatisticView extends ViewPart implements IAdmissionStatus
 				return Double.compare(e1.getCpuCost(), e2.getCpuCost());
 			}
 		};
+		
+		// MEM
+		column = createTableColumn(tableViewer, "Elements ", new IOperatorStatisticReader() {
+			@Override
+			public String get(OperatorStatistic statistic) {
+				IPhysicalOperator op = statistic.getOp();
+				if (op instanceof AbstractSource){
+					return ""+((AbstractSource) op).getElementsStored(); 
+				}else{
+					return "NOS";
+				}
+			}
+		});
+//		new ColumnViewerSorter(tableViewer, column) {
+//			@Override
+//			protected int doCompare(Viewer viewer, OperatorStatistic e1, OperatorStatistic e2) {
+//				return Double.compare(e1.getCpuCost(), e2.getCpuCost());
+//			}
+//		};
+		
 		
 		column = createTableColumn(tableViewer, "Sel.", new IOperatorStatisticReader() {
 			@Override

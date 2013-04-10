@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.core.mep;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,6 +203,8 @@ public class Variable implements IExpression<Object> {
 				acceptedTypesNew[newIndex++] = this.acceptedTypes[i];
 			}else{
 				LOG.warn(identifier+" accepted type was null!!");
+//				RuntimeException e = new RuntimeException();
+//				e.printStackTrace();
 			}
 		}
 		

@@ -356,5 +356,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	public String toString() {
 		return super.toString()+" predicate: "+this.joinPredicate;
 	}
+	
+	@Override
+	public long getElementsStored() {
+		long size = areas[0].size();
+		for (int i=1;i<areas.length;i++){
+			size+=areas[i].size();
+		}
+		return size;
+	}
 
 }
