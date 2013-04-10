@@ -222,7 +222,17 @@ public class OdysseusConfiguration {
 		}
 		return false;
 	}
-
+	
+	public static boolean getBoolean(String key, boolean defaultValue) {
+		try {
+			String val = props.getProperty(key);
+			if (val != null){
+				return Boolean.parseBoolean(val);
+			}
+		} catch( Throwable t ) {
+		}
+		return defaultValue;
+	}
 	
 	public static void set(String key, String value, boolean permanent,
 			ISession caller) {
