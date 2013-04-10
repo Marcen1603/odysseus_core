@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 
 /**
@@ -37,8 +40,10 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
  */
 public class CPURateSaver {
 
-	private static CPURateSaver instance = null;
+	private static final Logger LOG = LoggerFactory.getLogger(CPURateSaver.class);
+	
 	private static final String FILENAME = "ac_cpurates.conf";
+	private static CPURateSaver instance = null;
 
 	private Map<String, Double> cpuRates = new HashMap<String, Double>();
 
@@ -64,8 +69,9 @@ public class CPURateSaver {
 		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
 		// System.out.println("Loading CPURates from " + filename);
 
+		BufferedReader br = null;
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(filename));
+			br = new BufferedReader(new FileReader(filename));
 
 			String line = br.readLine();
 			while (line != null) {
@@ -79,17 +85,18 @@ public class CPURateSaver {
 				line = br.readLine();
 			}
 			
-			br.close();
 		} catch (FileNotFoundException ex) {
 			File file = new File(filename);
 			try {
 				file.createNewFile();
 				// System.out.println("New cfg-File created: " + filename);
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOG.error("Could not create file for cpu rates", e);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.error("Could not load cpu rates", e);
+		} finally {
+			tryClose(br);
 		}
 	}
 
@@ -138,8 +145,9 @@ public class CPURateSaver {
 	 */
 	public void save() {
 		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
+		BufferedWriter bw = null;
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
+			bw = new BufferedWriter(new FileWriter(filename));
 
 			for (String str : cpuRates.keySet()) {
 				Double rate = cpuRates.get(str);
@@ -147,9 +155,30 @@ public class CPURateSaver {
 				bw.flush();
 			}
 
-			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			tryClose(bw);
+		}
+	}
+
+	private static void tryClose(BufferedWriter bw) {
+		try {
+			if( bw != null ) {
+				bw.close();
+			}
+		} catch (IOException ex) {
+			LOG.debug("Could not close writer", ex);
+		}
+	}
+
+	private static void tryClose(BufferedReader br) {
+		try {
+			if( br != null ) {
+				br.close();
+			}
+		} catch (IOException ex) {
+			LOG.debug("Could not close reader", ex);
 		}
 	}
 }

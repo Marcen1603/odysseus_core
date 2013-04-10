@@ -95,7 +95,7 @@ public class DataStreamRateSaver {
 				e.printStackTrace();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.error("Could not load data stream rates", e);
 		} finally {
 			tryClose(br);
 		}
@@ -142,8 +142,9 @@ public class DataStreamRateSaver {
 	public void save() {
 		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
 		LOG.debug("Saving datarates in {}", filename);
+		BufferedWriter bw = null;
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
+			bw = new BufferedWriter(new FileWriter(filename));
 
 			for (String str : datarates.keySet()) {
 				Double rate = datarates.get(str);
@@ -156,6 +157,18 @@ public class DataStreamRateSaver {
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			tryClose(bw);
+		}
+	}
+
+	private static void tryClose(BufferedWriter bw) {
+		try {
+			if( bw != null ) {
+				bw.close();
+			}
+		} catch (IOException ex) {
+			LOG.debug("Could not close writer", ex);
 		}
 	}
 

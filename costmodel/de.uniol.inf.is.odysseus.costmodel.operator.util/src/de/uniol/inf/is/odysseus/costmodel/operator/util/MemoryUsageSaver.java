@@ -73,7 +73,6 @@ public final class MemoryUsageSaver {
 			}
 			LOG.debug("File {} with memoryUsages loaded", filename);
 			
-			br.close();
 		} catch (FileNotFoundException ex) {
 			File file = new File(filename);
 			try {
@@ -83,7 +82,13 @@ public final class MemoryUsageSaver {
 			}
 		} catch (IOException e) {
 			LOG.error("Could not load file {}", filename, e );
-		} 
+		}  finally {
+			try {
+				br.close();
+			} catch (IOException ex) {
+				LOG.error("Could not close reader", ex);
+			}
+		}
 	}
 	
 	static void save() {
