@@ -67,6 +67,9 @@ public class Activator implements BundleActivator {
 		//Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
 		LOGGER.info("Free memory of the heap: \t"+humanReadableByteCount(Runtime.getRuntime().freeMemory(), true));
 		
+		
+		LOGGER.info("Running VM with: \t"+System.getProperty("os.arch"));
+		
 		bundleContext = context;
 		
 		ProtocolHandlerRegistry.register(new LineProtocolHandler());
