@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.relational_interval;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -33,9 +34,9 @@ public class RelationalSlidingElementWindowTIPO extends
 		SlidingElementWindowTIPO<Tuple<ITimeInterval>> {
 
 	private int[] gRestrict;
-	Map<Tuple<ITimeInterval>, Integer> keyMap = null;
+	final Map<Tuple<ITimeInterval>, Integer> keyMap = new HashMap<Tuple<ITimeInterval>, Integer>();;
 	int maxId = 0;
-	private Map<Integer, List<Tuple<ITimeInterval>>> buffers = null;
+	final private Map<Integer, List<Tuple<ITimeInterval>>> buffers = new HashMap<Integer, List<Tuple<ITimeInterval>>>();;
 	private DefaultTISweepArea<Tuple<ITimeInterval>> outputQueue = new DefaultTISweepArea<Tuple<ITimeInterval>>();
 
 	public RelationalSlidingElementWindowTIPO(WindowAO ao) {
@@ -45,8 +46,8 @@ public class RelationalSlidingElementWindowTIPO extends
 
 	@Override
 	public void process_open() {
-		keyMap = new HashMap<Tuple<ITimeInterval>, Integer>();
-		buffers = new HashMap<Integer, List<Tuple<ITimeInterval>>>();
+		keyMap.clear();
+		buffers.clear();
 	}
 
 	private void init(WindowAO ao) {
@@ -116,6 +117,16 @@ public class RelationalSlidingElementWindowTIPO extends
 			}
 		}
 		return minTS;
+	}
+	
+	@Override
+	public long getElementsStored() {
+		long size = 0;
+		Collection<List<Tuple<ITimeInterval>>> bufs = buffers.values();
+		for (List<Tuple<ITimeInterval>> b:bufs){
+			size +=b.size();
+		}
+		return size;
 	}
 
 }

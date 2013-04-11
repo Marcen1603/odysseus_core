@@ -16,6 +16,8 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +29,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastArrayList;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.IFastList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicate;
 
@@ -36,17 +40,34 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicat
  * elements, until the remove predicate first returns false. The remove
  * predicate is fixed to the TotallyBeforePredicate
  */
-public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>> extends AbstractSweepArea<T> implements Comparable<DefaultTISweepArea<T>>,
-		ITimeIntervalSweepArea<T> {
-	// private static final Logger logger =
-	// LoggerFactory.getLogger(ITemporalSweepArea.class);
+public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
+		extends AbstractSweepArea<T> implements
+		Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
+
+	Comparator<T> purgeComparator = new Comparator<T>() {
+
+		@Override
+		public int compare(T o1, T o2) {
+			if (TimeInterval.totallyBefore(o1.getMetadata(), o2.getMetadata())) {
+				return -1;
+			}
+			return 1;
+
+		}
+	};
 
 	public DefaultTISweepArea() {
-		super(new MetadataComparator<ITimeInterval>());
+		super(new FastArrayList<T>(), new MetadataComparator<ITimeInterval>());
 		super.setRemovePredicate(TotallyBeforePredicate.getInstance());
 	}
 
-	public DefaultTISweepArea(DefaultTISweepArea<T> defaultTISweepArea) {
+	public DefaultTISweepArea(IFastList<T> list) {
+		super(list, new MetadataComparator<ITimeInterval>());
+		super.setRemovePredicate(TotallyBeforePredicate.getInstance());
+	}
+
+	public DefaultTISweepArea(DefaultTISweepArea<T> defaultTISweepArea)
+			throws InstantiationException, IllegalAccessException {
 		super(defaultTISweepArea);
 	}
 
@@ -77,19 +98,20 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		return retval.iterator();
 	}
 
-	public Iterator<T> queryElementsStartingBeforeReverse(PointInTime validity) {
-		ArrayList<T> retval = new ArrayList<T>();
-		synchronized (getElements()) {
-			Iterator<T> iter = getElements().descendingIterator();
-			while (iter.hasNext()) {
-				T elem = iter.next();
-				if (elem.getMetadata().getStart().before(validity)) {
-					retval.add(elem);
-				}
-			}
-		}
-		return retval.iterator();
-	}
+	// public Iterator<T> queryElementsStartingBeforeReverse(PointInTime
+	// validity) {
+	// ArrayList<T> retval = new ArrayList<T>();
+	// synchronized (getElements()) {
+	// Iterator<T> iter = getElements().descendingIterator();
+	// while (iter.hasNext()) {
+	// T elem = iter.next();
+	// if (elem.getMetadata().getStart().before(validity)) {
+	// retval.add(elem);
+	// }
+	// }
+	// }
+	// return retval.iterator();
+	// }
 
 	public Iterator<T> queryElementsStartingBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
@@ -114,21 +136,61 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 */
 	@Override
 	public void purgeElements(T element, Order order) {
+
 		synchronized (getElements()) {
-			Iterator<T> it = this.getElements().iterator();
-			// int i = 0;
 
-			while (it.hasNext()) {
-				T cur = it.next();
-				if (getRemovePredicate().evaluate(cur, element)) {
-					// ++i;
-					it.remove();
+			if (getElements().size() > 10) {
+//				System.err.println("Remove before " + element);
+//				System.err.println("before remove " + getElements().size());
+				// binary search returns
+				// the index of the search key, if it is contained in the list;
+				// otherwise, (-(insertion point) - 1). The insertion point is
+				// defined as the point at which the key would be inserted into
+				// the list: the index of the first element greater than the
+				// key, or list.size() if all elements in the list are less than
+				// the specified key. Note that this guarantees that the return
+				// value will be >= 0 if and only if the key is found.
+				// Remark: purgeComparator will never return equals!
+				int delTo = Collections.binarySearch(getElements(), element,
+						purgeComparator);
+				// Only remove if before
+				if (delTo < 0) {
+					// find correct position
+					delTo = (delTo + 1) * -1;
+					if (delTo > 0) { // else there is nothing to do
+						if (delTo < getElements().size()) {
+//							System.err.println("remove until pos "
+//									+ (delTo - 1) + " "
+//									+ getElements().get(delTo - 1));
+
+							getElements().removeRange(0, delTo - 1);
+						} else {
+//							System.err
+//									.println("remove all --> Last element was "
+//											+ getElements().get(
+//													getElements().size() - 1));
+							getElements().clear();
+						}
+					}
 				}
+//				System.err.println("after remove " + getElements().size());
+			} else {
+				Iterator<T> it = this.getElements().iterator();
+				// int i = 0;
 
-				if (cur.getMetadata().getStart().afterOrEquals(element.getMetadata().getStart())) {
-					return;
+				while (it.hasNext()) {
+					T cur = it.next();
+					if (getRemovePredicate().evaluate(cur, element)) {
+						// ++i;
+						it.remove();
+					}
+
+					if (cur.getMetadata().getStart()
+							.afterOrEquals(element.getMetadata().getStart())) {
+						return;
+					}
+
 				}
-
 			}
 		}
 	}
@@ -211,7 +273,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 		return retval.iterator();
 	}
-	
+
 	public Iterator<T> extractElementsStartingAfter(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
@@ -230,7 +292,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 		return retval.iterator();
 	}
-	
+
 	public Iterator<T> extractElementsStartingAfterOrEquals(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
@@ -259,7 +321,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	public PointInTime getMinTs() {
 		synchronized (getElements()) {
 			if (!this.getElements().isEmpty()) {
-				return this.getElements().peek().getMetadata().getStart();
+				return this.getElements().get(getElements().size())
+						.getMetadata().getStart();
 			}
 		}
 		return null;
@@ -274,7 +337,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	public PointInTime getMaxTs() {
 		if (!this.getElements().isEmpty()) {
-			return this.getElements().getLast().getMetadata().getStart();
+			return this.getElements().get(getElements().size()).getMetadata()
+					.getStart();
 		}
 		return null;
 	}
@@ -298,25 +362,34 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 *         all points of time
 	 */
 	public String getSweepAreaAsString(PointInTime baseTime) {
-		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size() + " Elems \n");
+		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size()
+				+ " Elems \n");
 		for (T element : getElements()) {
 			buf.append(element).append(" ");
-			buf.append("{META ").append(element.getMetadata().toString(baseTime)).append("}\n");
+			buf.append("{META ")
+					.append(element.getMetadata().toString(baseTime))
+					.append("}\n");
 		}
 		return buf.toString();
 	}
 
 	public String getSweepAreaAsString() {
-		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size() + " Elems \n");
+		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size()
+				+ " Elems \n");
 		for (T element : getElements()) {
-			buf.append(element).append(" ").append("}\n");			
+			buf.append(element).append(" ").append("}\n");
 		}
 		return buf.toString();
 	}
 
 	@Override
 	public DefaultTISweepArea<T> clone() {
-		return new DefaultTISweepArea<T>(this);
+		try {
+			return new DefaultTISweepArea<T>(this);
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Clone error");
+		}
 	}
 
 	/**
@@ -345,7 +418,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 * @param timestamp
 	 * @return
 	 */
-	public Iterator<T> peekElementsContaing(PointInTime timestamp, boolean includingEndtime) {
+	public Iterator<T> peekElementsContaing(PointInTime timestamp,
+			boolean includingEndtime) {
 		List<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
 			Iterator<T> li = getElements().iterator();
@@ -354,7 +428,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 				if (TimeInterval.inside(s_hat.getMetadata(), timestamp)) {
 					retval.add(s_hat);
 				}
-				if (includingEndtime && s_hat.getMetadata().getEnd().equals(timestamp)) {
+				if (includingEndtime
+						&& s_hat.getMetadata().getEnd().equals(timestamp)) {
 					retval.add(s_hat);
 				}
 			}
@@ -363,6 +438,6 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	public T peekLast() {
-		return getElements().peekLast();
+		return getElements().get(getElements().size());
 	}
 }

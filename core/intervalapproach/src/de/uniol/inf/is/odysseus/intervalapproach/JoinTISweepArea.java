@@ -22,14 +22,24 @@ import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastArrayList;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.IFastList;
 
 public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
 		extends DefaultTISweepArea<T> {
 
+	public JoinTISweepArea() {
+		super(new FastArrayList<T>());
+	}
+	
+	public JoinTISweepArea(IFastList<T> list){
+		super(list);
+	}
+	
 	@Override
 	public void insert(T s) {
 		synchronized (this.getElements()) {
-			this.getElements().addLast(s);
+			this.getElements().add(s);
 		}
 	}
 	

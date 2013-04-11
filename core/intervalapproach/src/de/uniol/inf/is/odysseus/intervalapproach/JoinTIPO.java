@@ -225,7 +225,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	protected synchronized void process_open() throws OpenFailedException {
+	protected void process_open() throws OpenFailedException {
 		for (int i = 0; i < 2; ++i) {
 			this.areas[i].clear();
 			this.areas[i].init();
@@ -289,7 +289,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	public synchronized void processPunctuation(IPunctuation punctuation,
+	public void processPunctuation(IPunctuation punctuation,
 			int port) {
 		if (punctuation.isHeartbeat()) {
 			this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());

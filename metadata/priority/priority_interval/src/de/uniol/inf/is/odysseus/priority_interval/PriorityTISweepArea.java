@@ -40,9 +40,9 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IStreamObjec
 	public void insert(T s) {
 		synchronized (this.getElements()) {
 			if (((IPriority) s.getMetadata()).getPriority() == 0) {
-				this.getElements().addLast(s);
+				this.getElements().add(getElements().size(), s);
 			} else {
-				this.getElements().addFirst(s);
+				this.getElements().add(0, s);
 			}
 		}
 	}

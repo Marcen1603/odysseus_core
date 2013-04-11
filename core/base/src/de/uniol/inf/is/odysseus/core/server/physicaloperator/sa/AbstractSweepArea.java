@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.sa;
 
 import java.util.Collections;
@@ -30,19 +30,20 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 /**
  * @author Jonas Jacobi
  */
-public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements ITemporalSweepArea<T> {
+public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
+		ITemporalSweepArea<T> {
 	// elements get stored in a linked list instead of a priority queue
 	// because we need ordered traversal via iterator
 	// while insertion is in O(N), it is not that bad in reality, because
 	// the inserts are typically chronologically ordered
-	private final LinkedList<T> elements = new LinkedList<T>();
+	private final IFastList<T> elements;
 
 	private Comparator<? super T> comparator;
 
 	IPredicate<? super T> queryPredicate;
 
 	private IPredicate<? super T> removePredicate;
-	
+
 	/**
 	 * Creates query results on the fly by iterating over the elements and
 	 * applying the query predicate. Make sure, you don't modify the sweeparea
@@ -101,11 +102,11 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements I
 				this.currentElement = null;
 				return tmpElement;
 			}
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
 
-            return next();
+			return next();
 		}
 
 		@Override
@@ -116,29 +117,36 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements I
 	}
 
 	public AbstractSweepArea() {
+		elements = new FastArrayList<>();
 	}
 
-	public AbstractSweepArea(Comparator<? super T> comparator) {
+	public AbstractSweepArea(IFastList<T> elements, Comparator<? super T> comparator) {
+		this.elements = elements;
 		this.comparator = comparator;
-//		this.saSupervisor = new SweepAreaSupervisor(this, 20000);
-//		this.saSupervisor.start();
+		// this.saSupervisor = new SweepAreaSupervisor(this, 20000);
+		// this.saSupervisor.start();
 	}
 
-	public AbstractSweepArea(AbstractSweepArea<T> area) {
+	@SuppressWarnings("unchecked")
+	public AbstractSweepArea(AbstractSweepArea<T> area) throws InstantiationException, IllegalAccessException {
+		this.elements = area.elements.getClass().newInstance();
+		this.elements.addAll(area.elements);
 		this.getElements().addAll(area.getElements());
 		this.comparator = area.comparator;
 		this.queryPredicate = area.queryPredicate.clone();
 		this.removePredicate = area.removePredicate.clone();
 	}
-	
+
 	@Override
 	public void insert(T s) {
 		if (this.comparator == null) {
 			this.getElements().add(s);
 			return;
 		}
-		ListIterator<T> li = this.getElements().listIterator(this.getElements().size());
-		// starts from end and inserts the element s if li.previous is at least equal (<=0) to s
+		ListIterator<T> li = this.getElements().listIterator(
+				this.getElements().size());
+		// starts from end and inserts the element s if li.previous is at least
+		// equal (<=0) to s
 		// 0 instead of -1 ensures that the area is insertion safe
 		while (li.hasPrevious()) {
 			if (this.comparator.compare(li.previous(), s) <= 0) {
@@ -147,7 +155,7 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements I
 				return;
 			}
 		}
-		this.getElements().addFirst(s);
+		this.getElements().add(0, s);
 	}
 
 	@Override
@@ -271,12 +279,12 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements I
 
 	@Override
 	public T peek() {
-		return this.getElements().peek();
+		return this.getElements().get(getElements().size());
 	}
-	
+
 	@Override
 	public T poll() {
-		return this.getElements().poll();
+		return this.getElements().remove(getElements().size());
 	}
 
 	/**
@@ -296,7 +304,8 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements I
 		}
 		Collections.sort(toBeInserted, this.comparator);
 		T first = toBeInserted.get(0);
-		ListIterator<T> li = this.getElements().listIterator(this.getElements().size());
+		ListIterator<T> li = this.getElements().listIterator(
+				this.getElements().size());
 		while (li.hasPrevious()) {
 			if (this.comparator.compare(li.previous(), first) == -1) {
 				this.getElements().addAll(li.nextIndex(), toBeInserted);
@@ -323,17 +332,18 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements I
 				+ " Elems \n");
 		for (T element : getElements()) {
 			buf.append(element).append(" ");
-			buf.append("{META ").append(element.getMetadata().toString()).append("}\n");
+			buf.append("{META ").append(element.getMetadata().toString())
+					.append("}\n");
 		}
 		return buf.toString();
 	}
-	
+
 	@Override
-	public void init(){
+	public void init() {
 		this.queryPredicate.init();
 		this.removePredicate.init();
 	}
-	
+
 	@Override
 	abstract public AbstractSweepArea<T> clone();
 
@@ -347,9 +357,7 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements I
 		return super.equals(obj);
 	}
 
-	protected LinkedList<T> getElements() {
+	protected IFastList<T> getElements() {
 		return elements;
 	}
-	
-	
 }
