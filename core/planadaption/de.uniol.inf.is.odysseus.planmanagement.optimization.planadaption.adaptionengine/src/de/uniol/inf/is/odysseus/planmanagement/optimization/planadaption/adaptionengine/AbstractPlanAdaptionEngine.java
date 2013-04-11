@@ -16,6 +16,12 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.adaptionengine;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionEngine;
@@ -29,6 +35,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine {
+	
+	private final static Logger LOG = LoggerFactory.getLogger(AbstractPlanAdaptionEngine.class);
 
 	protected IPlanMigrationStrategy migrationStrategy;
 	protected IPlanAdaptionResourceMonitor resourceMonitor;
@@ -36,6 +44,8 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 	protected IPlanAdaptionMigrationFuzzyRuleEngine fuzzyRuleEngine;
 	protected IPlanAdaptionPolicyRuleEngine policyRuleEngine;
 	protected IServerExecutor executor;
+
+	protected Set<IPhysicalQuery> stoppedQueries = new HashSet<IPhysicalQuery>();
 	
 	@Override
 	public abstract void adaptPlan(IPhysicalQuery query, ISession user);
@@ -87,6 +97,36 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 
 	@Override
 	public abstract void migrationFailed(IMigrationEventSource sender, Throwable ex);
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption
+	 * .
+	 * IPlanAdaptionEngine#setQueryAsStopped(de.uniol.inf.is.odysseus.core.server
+	 * .planmanagement.query.IPhysicalQuery)
+	 */
+	@Override
+	public void setQueryAsStopped(IPhysicalQuery query) {
+		LOG.debug("Query: " +  query + " is set as stopped");
+		this.stoppedQueries.add(query);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption
+	 * .
+	 * IPlanAdaptionEngine#setQueryAsStarted(de.uniol.inf.is.odysseus.core.server
+	 * .planmanagement.query.IPhysicalQuery)
+	 */
+	@Override
+	public void setQueryAsStarted(IPhysicalQuery query) {
+		LOG.debug("Query: " +  query + " is set as started");
+		this.stoppedQueries.remove(query);
+	}
 	
 	
 }

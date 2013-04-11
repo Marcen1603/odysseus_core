@@ -616,6 +616,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 				throw new RuntimeException("Query due of admission control not started");
 			}
 		}
+		
 		LOG.info("Starting query (ID: " + queryID + ").");
 
 		try {
@@ -630,6 +631,10 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			throw new RuntimeException("Query not started. An Error during optimizing occurd (ID: " + queryID + "). " + e.getMessage(), e);
 		} finally {
 			this.executionPlanLock.unlock();
+		}
+		
+		if (hasPlanAdaptionEngine()) {
+			getPlanAdaptionEngine().setQueryAsStarted(queryToStart);
 		}
 	}
 
@@ -685,6 +690,12 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID);
 		validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
+		
+		if(hasPlanAdaptionEngine()) {
+			// stop adapting this query so the plan cannot change while trying to close it.
+			getPlanAdaptionEngine().setQueryAsStopped(queryToStop);
+		}
+		
 		try {
 			this.executionPlanLock.lock();
 			getOptimizer().beforeQueryStop(queryToStop, this.executionPlan);

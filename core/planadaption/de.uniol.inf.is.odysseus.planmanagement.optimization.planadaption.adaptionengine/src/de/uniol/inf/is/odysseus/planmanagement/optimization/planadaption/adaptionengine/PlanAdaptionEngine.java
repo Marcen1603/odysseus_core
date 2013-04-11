@@ -81,6 +81,11 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void adaptPlan(IPhysicalQuery physicalQuery, ISession user) {
+		if(this.stoppedQueries.contains(physicalQuery)) {
+			LOG.debug("Query: " + physicalQuery + " is not adapted because it is stopped.");
+			this.adaptedQueries--;
+			return;
+		}
 		LOG.debug("Adapt plan with timer: " + this.timerValue
 				+ " and blocked: " + this.blockedTime);
 		List<IPhysicalOperator> originalRoots = new ArrayList<IPhysicalOperator>();

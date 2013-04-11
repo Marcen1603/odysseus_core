@@ -44,4 +44,20 @@ public interface IPlanAdaptionEngine extends IPlanModificationListener, IMigrati
 	public long getBlockedTime();
 	public long getTimer();
 	public boolean isRunning();
+	
+	/**
+	 * Should be called when the query is stopped to avoid changing plans in the
+	 * query while it is being stopped.
+	 * 
+	 * @param query
+	 */
+	public void setQueryAsStopped(IPhysicalQuery query);
+
+	/**
+	 * Should be called when a previously stopped query is started again, so it
+	 * can be adapted.
+	 * 
+	 * @param query
+	 */
+	public void setQueryAsStarted(IPhysicalQuery query);
 }
