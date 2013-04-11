@@ -36,6 +36,11 @@ public class MigrationMarkerPunctuation extends AbstractPunctuation {
 		return new MigrationMarkerPunctuation(getTime(), getSource());
 	}
 	
+	@Override
+	public AbstractPunctuation clone(PointInTime newTime) {
+		return new MigrationMarkerPunctuation(point, getSource());
+	}
+	
 	public ISource<?> getSource() {
 		return this.source;
 	}

@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
@@ -58,16 +59,18 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 	/**
 	 * list with buffered elements
 	 */
-	private LinkedList<R> inputBuffer = new LinkedList<R>();
+	private LinkedList<IStreamable> inputBuffer = new LinkedList<IStreamable>();
 
 	/** Creates a new instance of SlidingDeltaWindowPO */
 	public SlidingPeriodicBlockingWindowTIPO(WindowAO logical) {
 		super(logical);
-		this.windowSlide = TimeUnit.MILLISECONDS.convert(logical.getWindowSlide(), logical.getTimeUnit());
+		this.windowSlide = TimeUnit.MILLISECONDS.convert(
+				logical.getWindowSlide(), logical.getTimeUnit());
 		setName(getName() + " slide=" + windowSlide);
 	}
 
-	public SlidingPeriodicBlockingWindowTIPO(SlidingPeriodicBlockingWindowTIPO<R> original) {
+	public SlidingPeriodicBlockingWindowTIPO(
+			SlidingPeriodicBlockingWindowTIPO<R> original) {
 		super(original);
 		this.windowSlide = original.windowSlide;
 	}
@@ -96,13 +99,15 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 			this.inputBuffer.add(object);
 		}
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// FIXME: Implement me
+		synchronized (inputBuffer) {
+			this.inputBuffer.add(punctuation);
+		}
 	}
 
-
+	@SuppressWarnings("unchecked")
 	private void process(PointInTime point) {
 		synchronized (inputBuffer) {
 			long delta = this.windowSlide;
@@ -120,11 +125,18 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 				PointInTime p_start = new PointInTime(Math.max(comp_t_start, 0));
 				PointInTime p_end = new PointInTime(lastSlide * delta);
 
-				// 1. Remove all Elements that are not within the window size!
-				while (!inputBuffer.isEmpty()
-						&& inputBuffer.getFirst().getMetadata().getStart()
-								.before(p_start)) {
-					inputBuffer.removeFirst();
+				// 1. Remove all non punctuation elements that are not within
+				// the window size!
+				// Keep punctuations!
+				while (!inputBuffer.isEmpty()) {
+					IStreamable elem = inputBuffer.getFirst();
+					if (!elem.isPunctuation()) {
+						if (((R) elem).getMetadata().getStart().before(p_start)) {
+							inputBuffer.removeFirst();
+						} else {
+							break;
+						}
+					}
 				}
 
 				// 2. all elements before p_end need to be processed
@@ -134,10 +146,17 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 					// cannot be added before this processing is done!
 					// && inputBuffer.getFirst().getMetadata().getStart()
 					// .before(p_end)) {
-					R elem = inputBuffer.removeFirst();
-					elem.getMetadata().setStart(p_start);
-					elem.getMetadata().setEnd(p_end);
-					transfer(elem);
+					IStreamable elem = inputBuffer.removeFirst();
+
+					if (elem.isPunctuation()) {
+						IPunctuation p = (IPunctuation) elem;
+						sendPunctuation(p.clone(p_start));
+					} else {
+						R r = (R) elem;
+						r.getMetadata().setStart(p_start);
+						r.getMetadata().setEnd(p_end);
+						transfer(r);
+					}
 				}
 				// Send punctuation. New start is known!
 				if (lastSlide > 0 && isInOrder()) {
@@ -148,5 +167,6 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 
 			}
 		}
+
 	}
 }

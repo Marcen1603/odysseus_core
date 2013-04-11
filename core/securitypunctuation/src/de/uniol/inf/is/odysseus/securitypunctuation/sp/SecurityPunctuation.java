@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
@@ -426,5 +427,10 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	@Override
 	public AbstractPunctuation clone() {
 		throw new IllegalArgumentException("Clone not supported!");
+	}
+	
+	@Override
+	public AbstractPunctuation clone(PointInTime newTime) {
+		throw new RuntimeException("Currently not implemented");
 	}
 }

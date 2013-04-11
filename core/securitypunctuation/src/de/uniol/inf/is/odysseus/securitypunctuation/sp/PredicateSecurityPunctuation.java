@@ -20,6 +20,8 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -58,6 +60,11 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	@Override
 	public PredicateSecurityPunctuation clone() {
 		return new PredicateSecurityPunctuation(this);
+	}
+
+	@Override
+	public AbstractPunctuation clone(PointInTime newTime) {
+		throw new RuntimeException("Currently not implemented");
 	}
 	
 	@Override

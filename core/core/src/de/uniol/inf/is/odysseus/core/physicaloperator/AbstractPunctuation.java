@@ -57,4 +57,6 @@ abstract public class AbstractPunctuation implements
 	
 	abstract public AbstractPunctuation clone();
 
+	abstract public AbstractPunctuation clone(PointInTime newTime);
+
 }

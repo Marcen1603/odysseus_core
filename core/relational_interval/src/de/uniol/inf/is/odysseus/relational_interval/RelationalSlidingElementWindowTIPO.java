@@ -22,21 +22,28 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingElementWindowTIPO;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class RelationalSlidingElementWindowTIPO extends
 		SlidingElementWindowTIPO<Tuple<ITimeInterval>> {
+	
+	static Logger LOG = LoggerFactory.getLogger(RelationalSlidingElementWindowTIPO.class);
 
 	private int[] gRestrict;
 	final Map<Tuple<ITimeInterval>, Integer> keyMap = new HashMap<Tuple<ITimeInterval>, Integer>();;
 	int maxId = 0;
-	final private Map<Integer, List<Tuple<ITimeInterval>>> buffers = new HashMap<Integer, List<Tuple<ITimeInterval>>>();;
+	final private Map<Integer, List<IStreamable>> buffers = new HashMap<>();
 	private DefaultTISweepArea<Tuple<ITimeInterval>> outputQueue = new DefaultTISweepArea<Tuple<ITimeInterval>>();
 
 	public RelationalSlidingElementWindowTIPO(WindowAO ao) {
@@ -66,9 +73,9 @@ public class RelationalSlidingElementWindowTIPO extends
 			Tuple<ITimeInterval> object, int port) {
 		if (isPartitioned()) {
 			int bufferId = getGroupID(object);
-			List<Tuple<ITimeInterval>> buffer = buffers.get(bufferId);
+			List<IStreamable> buffer = buffers.get(bufferId);
 			if (buffer == null) {
-				buffer = new LinkedList<Tuple<ITimeInterval>>();
+				buffer = new LinkedList<IStreamable>();
 				buffers.put(bufferId, buffer);
 			}
 			buffer.add(object);
@@ -76,6 +83,11 @@ public class RelationalSlidingElementWindowTIPO extends
 		} else {
 			super.process_next(object, port);
 		}
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		LOG.warn("Punctuation "+punctuation+" removed!");
 	}
 
 	public int getGroupID(Tuple<ITimeInterval> elem) {
@@ -105,13 +117,14 @@ public class RelationalSlidingElementWindowTIPO extends
 			super.transfer(out.next());
 		}
 	}
-
+	
 	private PointInTime getMinTS() {
 		PointInTime minTS = PointInTime.getInfinityTime();
-		for (List<Tuple<ITimeInterval>> b : buffers.values()) {
+		for (List<IStreamable> b : buffers.values()) {
 			// an der obersten Stelle eines jeden Puffers steht das pro
 			// partition aelteste Element
-			PointInTime p = b.get(0).getMetadata().getStart();
+			@SuppressWarnings("unchecked")
+			PointInTime p = ((Tuple<ITimeInterval>)b.get(0)).getMetadata().getStart();
 			if (p.before(minTS)) {
 				minTS = p;
 			}
@@ -122,8 +135,8 @@ public class RelationalSlidingElementWindowTIPO extends
 	@Override
 	public long getElementsStored() {
 		long size = 0;
-		Collection<List<Tuple<ITimeInterval>>> bufs = buffers.values();
-		for (List<Tuple<ITimeInterval>> b:bufs){
+		Collection<List<IStreamable>> bufs = buffers.values();
+		for (List<IStreamable> b:bufs){
 			size +=b.size();
 		}
 		return size;

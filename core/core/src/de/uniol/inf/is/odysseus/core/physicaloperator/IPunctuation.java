@@ -11,6 +11,7 @@ public interface IPunctuation extends ITimeComparable, IStreamable {
 	 * @return
 	 */
 	PointInTime getTime();
+	
 	/**
 	 * States that this puncutation is a heartbeat (i.e. states time progress). This is used to avoid
 	 * instanceof calls at runtime. If the element returns true, sequent punctuations may compress (i.e.
@@ -20,5 +21,7 @@ public interface IPunctuation extends ITimeComparable, IStreamable {
 	boolean isHeartbeat();
 	
 	IPunctuation clone();
+
+	IPunctuation clone(PointInTime p_start);
 	
 }

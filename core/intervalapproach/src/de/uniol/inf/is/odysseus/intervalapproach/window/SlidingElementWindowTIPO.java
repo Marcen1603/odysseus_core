@@ -19,7 +19,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.omg.CORBA.portable.Streamable;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -28,14 +31,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		extends AbstractWindowTIPO<T> {
 
-	List<T> _buffer = null;
+	List<IStreamable> _buffer = null;
 	boolean forceElement = true;
 	private long elemsToRemoveFromStream;
 	private final long advance;
 
 	public SlidingElementWindowTIPO(WindowAO ao) {
 		super(ao);
-		_buffer = new LinkedList<T>();
+		_buffer = new LinkedList<IStreamable>();
 		advance = windowAdvance>0?windowAdvance:1;
 	}
 
@@ -60,13 +63,14 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 			processBuffer(_buffer, object);
 		}
 	}
-
-	protected synchronized void processBuffer(List<T> buffer, T object) {
+	
+	@SuppressWarnings("unchecked")
+	protected synchronized void processBuffer(List<IStreamable> buffer, T object) {
 		// Fall testen, dass der Strom zu Ende ist ...
 		// Fenster hat die maximale Groesse erreicht
 		if (buffer.size() == this.windowSize + 1) {
 			// jetzt advance-Elemente rauswerfen
-			Iterator<T> bufferIter = buffer.iterator();
+			Iterator<IStreamable> bufferIter = buffer.iterator();
 			long elemsToSend = advance;
 			// Problem: Fenster ist kleiner als Schrittlaenge -->
 			// dann nur alle Elemente aus dem Fenster werfen
@@ -76,17 +80,27 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 				elemsToRemoveFromStream = windowAdvance - windowSize;
 			}
 			// In cases of 
-			PointInTime start = buffer.get(0).getMetadata().getStart();
+			IStreamable elem = buffer.get(0);
+			PointInTime start =  elem.isPunctuation()?((IPunctuation)elem).getTime(): ((T)elem).getMetadata().getStart();
 			for (int i = 0; i < elemsToSend; i++) {
-				T toReturn = bufferIter.next();
+				IStreamable toReturn = bufferIter.next();
 				bufferIter.remove();
 				// If slide param is used give all elements of the window
 				// the same start timestamp
 				if (!usesAdvanceParam){
-					toReturn.getMetadata().setStart(start);
+					if (toReturn.isPunctuation()){
+						toReturn = ((IPunctuation)toReturn).clone(start);
+					}else{
+						((T)toReturn).getMetadata().setStart(start);
+					}
 				}
-				toReturn.getMetadata().setEnd(object.getMetadata().getStart());
-				transfer(toReturn);
+				if (toReturn.isPunctuation()){
+					sendPunctuation((IPunctuation)toReturn);
+				}else{
+					((T)toReturn).getMetadata().setEnd(object.getMetadata().getStart());
+					transfer((T)toReturn);
+				}
+				
 			}
 			if (elemsToRemoveFromStream > 0) {
 				elemsToRemoveFromStream--;
@@ -126,7 +140,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// FIXME: Implement me
+		this._buffer.add(punctuation);
 	}
 	
 }

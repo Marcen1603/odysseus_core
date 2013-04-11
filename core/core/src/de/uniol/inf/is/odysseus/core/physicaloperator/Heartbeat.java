@@ -22,6 +22,10 @@ final public class Heartbeat extends AbstractPunctuation {
 		return this;
 	}
 	
+	public AbstractPunctuation clone(PointInTime point){
+		return new Heartbeat(point);
+	}
+	
 	@Override
 	public String toString() {
 		return "Heartbeat "+getTime();
