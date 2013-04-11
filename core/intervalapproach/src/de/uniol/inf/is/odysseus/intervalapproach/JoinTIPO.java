@@ -294,6 +294,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		if (punctuation.isHeartbeat()) {
 			this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
 		}
+		this.transferFunction.sendPunctuation(punctuation);
 		this.transferFunction.newElement(punctuation, port);
 	}
 
