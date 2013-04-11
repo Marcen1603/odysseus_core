@@ -600,7 +600,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	public void unsubscribeSink(PhysicalSubscription<ISink<? super T>> subscription) {
 		getLogger().debug("Unsubscribe from Sink " + subscription.getTarget());
 		boolean subContained = this.sinkSubscriptions.remove(subscription);
-		this.activeSinkSubscriptions.remove(subscription);
+		removeActiveSubscription(subscription);
 		if (subContained) {
 			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 		}
