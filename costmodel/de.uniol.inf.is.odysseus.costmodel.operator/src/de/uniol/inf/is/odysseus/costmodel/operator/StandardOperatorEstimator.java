@@ -118,9 +118,17 @@ public class StandardOperatorEstimator<T> implements IOperatorEstimator<T> {
 			}
 		} else {
 			estimation.setSelectivity(1.0);
-			estimation.setDataStream(new DataStream<T>(obj, 1.0, 1.0));
-			estimation.setDetailCost(new OperatorDetailCost<T>(obj, DEFAULT_MEMORY_USAGE_BYTES, OperatorCostModelCfg.getInstance().getStandardCpuCost()));
-			estimation.setHistograms(prevOperators.get(0).getHistograms());
+
+			if (prevOperators.isEmpty()) {
+				// source
+				estimation.setDataStream(new DataStream<T>(obj, 1.0, 1.0));
+				estimation.setDetailCost(new OperatorDetailCost<T>(obj, DEFAULT_MEMORY_USAGE_BYTES, OperatorCostModelCfg.getInstance().getStandardCpuCost()));
+			} else {
+				// sink
+				estimation.setHistograms(prevOperators.get(0).getHistograms());
+				estimation.setDataStream(new DataStream<T>(obj, prevOperators.get(0).getDataStream().getDataRate(), prevOperators.get(0).getDataStream().getIntervalLength()));
+				estimation.setDetailCost(new OperatorDetailCost<T>(obj, DEFAULT_MEMORY_USAGE_BYTES, OperatorCostModelCfg.getInstance().getStandardCpuCost() * estimation.getDataStream().getDataRate()));
+			}
 		}
 		return estimation;
 	}
