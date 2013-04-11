@@ -545,6 +545,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				source.unblock();
 			}
 		}
+		
+		LOG.debug("Calling open on all plan roots");
+		for(IPhysicalOperator root : context.getRunningQuery().getRoots()) {
+			((ISink) root).open();
+		}
 
 		try {
 			context.getExecutor().executionPlanChanged();
