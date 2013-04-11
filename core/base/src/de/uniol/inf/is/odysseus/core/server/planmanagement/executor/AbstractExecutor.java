@@ -499,6 +499,14 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public final boolean hasAdmissionQuerySelector() {
 		return admissionQuerySelector != null;
 	}
+	
+	public final IPlanAdaptionEngine getPlanAdaptionEngine() {
+		return planAdaptionEngine;
+	}
+	
+	public final boolean hasPlanAdaptionEngine() {
+		return planAdaptionEngine != null;
+	}
 
 	// ----------------------------------------------------------------------------------------
 	// Execution Plan
