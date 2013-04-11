@@ -113,8 +113,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	}
 	
 	@Override
-	final public void processPunctuation(IPunctuation punctuation, int port) {
-	}
+	abstract public void processPunctuation(IPunctuation punctuation, int port);
 
 	public boolean isPartitioned() {
 		return partitioned;

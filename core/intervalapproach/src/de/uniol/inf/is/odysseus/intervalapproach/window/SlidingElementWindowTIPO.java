@@ -22,6 +22,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 
 public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
@@ -121,6 +122,11 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	@Override
 	public long getElementsStored() {
 		return this._buffer.size();
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// FIXME: Implement me
 	}
 	
 }

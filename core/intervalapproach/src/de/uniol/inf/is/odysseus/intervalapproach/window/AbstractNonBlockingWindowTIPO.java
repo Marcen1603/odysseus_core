@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 
 public abstract class AbstractNonBlockingWindowTIPO<T extends IStreamObject<? extends ITimeInterval>>
 		extends AbstractWindowTIPO<T> {
@@ -44,6 +45,11 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IStreamObject<? ex
 			time.setEnd(end);
 			this.transfer(object);
 		}
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 
 	protected abstract PointInTime calcWindowEnd(ITimeInterval interval);

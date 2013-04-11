@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 
 /**
@@ -88,4 +89,10 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 			transfer(object);
 		}
 	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// FIXME: Implement me
+	}
+
 }
