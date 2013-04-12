@@ -43,15 +43,11 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 		GC gc = getActualGC();
 		INodeView<C> view = getNodeView();
 		C content = view.getModelNode().getContent();
-		String name = view.getModelNode().getContent().getClass().getSimpleName();
-		if( content instanceof IPhysicalOperator ) {
-			name = getRealName((IPhysicalOperator)content);
-		}
 
 		boolean ok = false;
 		int textWidth = 0;
 		int textHeight = 0;
-		int fontSize = 10;
+		int fontSize = 20;
 		
 		// calculate ideal font-size
 		// save width to cache font...
@@ -65,7 +61,7 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 			font = new Font(Display.getDefault(), "Arial", fontSize, SWT.BOLD);
 			gc.setFont(font);
 			textWidth = 0;
-			for( char c : name.toCharArray() ) {
+			for( char c : "SomeReallyLongName".toCharArray() ) {
 				textWidth += gc.getAdvanceWidth(c);
 			}
 			textHeight = gc.getFontMetrics().getHeight();
@@ -85,6 +81,11 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 		}
 		
 		if( font != null ) {
+			String name = view.getModelNode().getContent().getClass().getSimpleName();
+			if( content instanceof IPhysicalOperator ) {
+				name = getRealName((IPhysicalOperator)content);
+			}
+			
 			final int x = ((int)position.getX()) + (width / 2) - (lastTextWidth / 2); 
 			final int y = ((int)position.getY()) + (height / 2) - ( lastTextHeight / 2);
 			final int ownerID = determineFirstOwnerID(getNodeView().getModelNode().getContent());
