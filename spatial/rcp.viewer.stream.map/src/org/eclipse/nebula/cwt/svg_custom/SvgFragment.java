@@ -79,6 +79,7 @@ public class SvgFragment extends SvgContainer {
 		boundsTransform.data = new float[] { 1, 0, 0, 1, 0, 0 };
 	}
 	
+	@Override
 	public SvgElement getElement(String id) {
 		return elementMap.get(id);
 	}
@@ -109,9 +110,8 @@ public class SvgFragment extends SvgContainer {
 	public float[] getViewport() {
 		if(x == null || y == null) {
 			return new float[] { 0, 0, width, height };
-		} else {
-			return new float[] { x, y, width, height };
-		}
+		} 
+		return new float[] { x, y, width, height };
 	}
 
 	/**

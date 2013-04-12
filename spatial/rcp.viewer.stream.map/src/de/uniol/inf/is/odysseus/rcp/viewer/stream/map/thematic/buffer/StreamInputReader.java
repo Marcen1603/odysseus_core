@@ -73,6 +73,7 @@ public class StreamInputReader {
 		}
 
 		streamMapEditor.getScreenManager().getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				timeSliderControl.updateSliderRange(new PointInTime(
 						startPointInTime.getMainPoint() - 1), endPointInTime);
@@ -88,6 +89,7 @@ public class StreamInputReader {
 		tempSweep.insert(element);
 
 		streamMapEditor.getScreenManager().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				timeSliderControl.updateCanvas();
 			}
@@ -120,6 +122,7 @@ public class StreamInputReader {
 		fillLayersWithTuples(startPoint, endPoint);
 
 		streamMapEditor.getScreenManager().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				streamMapEditor.getScreenManager().getCanvas().redraw();
 			}

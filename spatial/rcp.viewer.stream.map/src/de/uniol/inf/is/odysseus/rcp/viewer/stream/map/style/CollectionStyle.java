@@ -90,6 +90,7 @@ public class CollectionStyle extends Style{
 
 	}
 
+	@Override
 	public void draw(GC gc, int[][] list, Tuple<?> tuple) {
 		draw(gc, list, getLineColor(tuple), getFillColor(tuple), tuple);
 		super.draw(gc, list, tuple);
@@ -131,6 +132,7 @@ public class CollectionStyle extends Style{
 		return super.contains(style);
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public Style[] getSubstyles() {
 		if (!hasSubstyles())

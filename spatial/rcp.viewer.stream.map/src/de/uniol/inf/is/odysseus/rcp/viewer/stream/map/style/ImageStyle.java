@@ -55,6 +55,7 @@ public class ImageStyle extends Style {
 		draw(maskGC, list, null);
 	}
 
+	@Override
 	public void draw(GC gc, int[] list, Tuple<?> tuple) {
 		draw(gc, list, getLineColor(tuple), getFillColor(tuple), tuple);
 	}

@@ -66,6 +66,7 @@ public class OldStaticPointStyle extends Style {
 		super.draw(gc, list, tuple);
 	}
 
+	@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor, Tuple<?> tuple) {
 		Integer size = this.getSize(tuple);
 		int halfsize = size / 2;

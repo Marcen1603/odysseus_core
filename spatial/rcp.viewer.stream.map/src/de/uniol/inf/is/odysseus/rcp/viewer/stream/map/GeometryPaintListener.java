@@ -49,6 +49,7 @@ final class GeometryPaintListener implements PaintListener {
 		this.streamMapEditor = streamMapEditor;
 	} 
 
+	@Override
 	public void paintControl(PaintEvent e) {
 		e.gc.setAntialias(SWT.ON);
 		for (ILayer layer : this.streamMapEditor.getMapEditorModel().getLayers()) {

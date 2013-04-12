@@ -74,7 +74,8 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		treeViewer.setContentProvider(new MapLayerViewTreeContentProvider());
 		treeViewer.setLabelProvider(new MapLayerViewLabelProvider());
 		((CheckboxTreeViewer)treeViewer).addCheckStateListener(new ICheckStateListener() {
-		      public void checkStateChanged(CheckStateChangedEvent event) {
+		      @Override
+			public void checkStateChanged(CheckStateChangedEvent event) {
 	        	  if (event.getElement() instanceof ILayer){
 //	        		  ((ILayer) event.getElement()).setActive(event.getChecked());
 	        	      ((CheckboxTreeViewer)treeViewer).setSubtreeChecked(event.getElement(), event.getChecked());
@@ -126,12 +127,14 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 	@Override
 	protected void createActions() {
 		editItemAction = new Action("Edit") {
+			@Override
 			public void run() {
 				LOG.debug("Edit: " + treeViewer.getSelection());
 			}
 		};
 
 		addItemAction = new Action("Add") {
+			@Override
 			public void run() {
 
 				if (hasMapEditor()) {
@@ -153,6 +156,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		};
 
 		deleteItemAction = new Action("Remove") {
+			@Override
 			public void run() {
 				TreeSelection selection = ((TreeSelection) treeViewer.getSelection());
 				if (hasMapEditor()) {
@@ -172,12 +176,14 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		};
 
 		selectAllAction = new Action("Select All") {
+			@Override
 			public void run() {
 				LOG.debug("Delete..");
 			}
 		};
 
 		upAction = new Action("Up") {
+			@Override
 			public void run() {
 				if (hasMapEditor()) {
 					ILayer layer = (ILayer) ((TreeSelection) treeViewer.getSelection()).getFirstElement();
@@ -187,6 +193,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		};
 
 		downAction = new Action("Down") {
+			@Override
 			public void run() {
 				if (hasMapEditor()) {
 					if (hasMapEditor()) {
@@ -205,6 +212,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		menuMgr.setRemoveAllWhenShown(true);
 
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
 				fillContextMenu(mgr);
 			}
@@ -257,6 +265,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
 		if (i.getFirstElement() instanceof ILayer) {
 			mgr.add(new Action("Add To Group") {
+				@Override
 				public void run() {
 					ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
 					if (i.getFirstElement() instanceof ILayer) {
@@ -268,6 +277,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 				}
 			});
 			mgr.add(new Action("Zoom to Layer") {
+				@Override
 				public void run() {
 					ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
 					if (i.getFirstElement() instanceof ILayer) {
@@ -277,6 +287,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 				}
 			});
 			mgr.add(new Action("Rename") {
+				@Override
 				public void run() {
 					ITreeSelection i = (ITreeSelection) treeViewer
 							.getSelection();
@@ -310,6 +321,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 				}
 			});
 			mgr.add(new Action("Remove Layer") {
+				@Override
 				public void run() {
 					ITreeSelection i = (ITreeSelection) treeViewer
 							.getSelection();
@@ -341,6 +353,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 				VectorLayer vLayer = (VectorLayer) i.getFirstElement();
 				if (vLayer.getStyle().hasSubstyles()) {
 					mgr.add(new Action("Style properties") {
+						@Override
 						public void run() {
 							ITreeSelection i = (ITreeSelection) treeViewer
 									.getSelection();
@@ -372,6 +385,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 
 			if (i.getFirstElement() instanceof ILayer) {
 				mgr.add(new Action("Map properties") {
+					@Override
 					public void run() {
 						@SuppressWarnings("unused")
 						ITreeSelection i = (ITreeSelection) treeViewer
@@ -401,6 +415,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 
 		} else if (i.getFirstElement() instanceof Style) {
 			mgr.add(new Action("Linecolor") {
+				@Override
 				public void run() {
 					ITreeSelection i = (ITreeSelection) treeViewer
 							.getSelection();
@@ -424,6 +439,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 			});
 			if (!(i.getFirstElement() instanceof LineStyle))
 				mgr.add(new Action("Fillcolor") {
+					@Override
 					public void run() {
 						ITreeSelection i = (ITreeSelection) treeViewer
 								.getSelection();

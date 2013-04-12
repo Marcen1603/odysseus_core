@@ -79,6 +79,7 @@ public class SvgShape extends SvgGraphic {
 		derivedTransform.dispose();
 	}
 
+	@Override
 	public void apply(GC gc) {
 		if(pathData.types != null) {
 			path = new Path(gc.getDevice(), pathData);

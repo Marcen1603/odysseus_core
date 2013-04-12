@@ -24,6 +24,7 @@ class SvgStroke extends SvgPaint {
 		super(parent);
 	}
 	
+	@Override
 	public void apply() {
 		if(paintServer != null) {
 			paintServer.apply(true);

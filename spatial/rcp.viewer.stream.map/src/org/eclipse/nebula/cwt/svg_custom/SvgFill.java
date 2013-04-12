@@ -21,6 +21,7 @@ class SvgFill extends SvgPaint {
 		super(parent);
 	}
 	
+	@Override
 	void apply() {
 		if(paintServer != null) {
 			paintServer.apply(false);

@@ -32,6 +32,7 @@ public class SvgContainer extends SvgGraphic {
 		elements.add(element);
 	}
 	
+	@Override
 	public void apply(GC gc) {
 		for(SvgElement element : elements) {
 			if(element instanceof SvgGraphic) {

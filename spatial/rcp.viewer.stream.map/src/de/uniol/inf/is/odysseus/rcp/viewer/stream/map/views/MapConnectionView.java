@@ -67,6 +67,7 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 	@Override
 	protected void createActions() {
 		removeConnectionAction = new Action("Disconnect") {
+			@Override
 			public void run() {
 				TreeSelection selection = ((TreeSelection) treeViewer.getSelection());
 				if (hasMapEditor()) {
@@ -85,6 +86,7 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 		};
 
 		addConnectionAction = new Action("Connect") {
+			@Override
 			public void run() {
 
 				if (hasMapEditor()) {

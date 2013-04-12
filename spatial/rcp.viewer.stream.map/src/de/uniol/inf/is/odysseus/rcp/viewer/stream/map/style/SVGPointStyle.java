@@ -73,6 +73,7 @@ public class SVGPointStyle extends Style {
 		super.draw(gc, list, tuple);
 	}
 
+	@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor, Tuple<?> tuple) {
 		Integer size = this.getSize(tuple);
 		Rectangle bounds = new Rectangle(list[0]-size/2, list[1]-size/2, size, size);

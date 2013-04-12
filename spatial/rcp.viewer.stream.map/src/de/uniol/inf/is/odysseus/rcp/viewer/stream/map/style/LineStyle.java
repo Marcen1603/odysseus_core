@@ -46,6 +46,7 @@ public class LineStyle extends Style {
 	}
 
 	//@Override
+	@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor, Tuple<?> t) {
 		gc.setLineWidth(this.getLineWidth(t));
 		Color tmp = gc.getForeground();

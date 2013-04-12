@@ -54,6 +54,7 @@ public class SvgImage extends SvgGraphic {
 		derivedTransform.dispose();
 	}
 
+	@Override
 	public void apply(GC gc) {
 		if (image == null)
 			try {

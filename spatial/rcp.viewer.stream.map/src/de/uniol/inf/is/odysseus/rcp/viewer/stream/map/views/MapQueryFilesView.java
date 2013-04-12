@@ -63,6 +63,7 @@ public class MapQueryFilesView extends AbstractStreamMapEditorViewPart {
 	protected void createToolbar() {
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		mgr.add(new Action("Add") {
+			@Override
 			public void run() {
 
 				if (hasMapEditorModel()) {
@@ -95,6 +96,7 @@ public class MapQueryFilesView extends AbstractStreamMapEditorViewPart {
 			}
 		});
 		mgr.add(new Action("Remove") {
+			@Override
 			public void run() {
 				if (hasMapEditor()) {
 					IFile file = (IFile) ((TreeSelection) treeViewer.getSelection()).getFirstElement();

@@ -31,6 +31,7 @@ public class SvgUse extends SvgGraphic {
 		super(container, id);
 	}
 
+	@Override
 	public void apply(GC gc) {
 		SvgGraphic graphic = getGraphic();
 		if(graphic != null) {
@@ -42,6 +43,7 @@ public class SvgUse extends SvgGraphic {
 		}
 	}
 
+	@Override
 	SvgFill getFill() {
 		SvgGraphic graphic = getGraphic();
 		if(graphic != null) {
@@ -58,6 +60,7 @@ public class SvgUse extends SvgGraphic {
 		return null;
 	}
 
+	@Override
 	SvgStroke getStroke() {
 		SvgGraphic graphic = getGraphic();
 		if(graphic != null) {

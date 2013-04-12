@@ -139,6 +139,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 	protected void createActions() {
 		
 		addItemAction = new Action("Add new Layer") {
+			@Override
 			public void run() {
 				MapEditorModel model = (MapEditorModel)getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
 				LOG.debug("Delete.." +  model.getLayers().getLast().toString());
@@ -159,6 +160,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 //		});
 		
 		deleteItemAction = new Action("Selection") {
+			@Override
 			public void run() {
 				MapEditorModel model = (MapEditorModel)getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
 				LOG.debug("Delete.." +  model.getLayers().getLast().toString());
@@ -167,6 +169,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 
 
 		selectAllAction = new Action("Add new Layer") {
+			@Override
 			public void run() {
 				MapEditorModel model = (MapEditorModel)getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
 				LOG.debug("Delete.." +  model.getLayers().getLast().toString());
@@ -256,6 +259,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		return 1000;
 	}
 
+	@Override
 	public void update() {
 		if (screenManager.hasCanvasViewer()) {
 			screenManager.redraw();
@@ -348,6 +352,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		return timeSliderComposite;
 	}
 	
+	@Override
 	public final TimeSliderComposite getTimeSliderComposite() {
 		return timeSliderComposite;
 	}

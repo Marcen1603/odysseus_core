@@ -13,6 +13,7 @@ public class FileContentProvider implements ITreeContentProvider {
 	return file.listFiles();
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 	return (Object[]) inputElement;
 	}

@@ -186,9 +186,8 @@ public abstract class Style {
 	public boolean hasSubStyle() {
 		if (substyle != null) {
 			return true;
-		} else {
-			return false;
-		}
+		} 
+		return false;
 	}
 
 	public void setActiveStyle(STYLE s) {

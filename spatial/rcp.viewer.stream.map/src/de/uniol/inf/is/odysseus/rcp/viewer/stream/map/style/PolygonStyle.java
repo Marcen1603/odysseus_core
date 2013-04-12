@@ -60,6 +60,7 @@ public class PolygonStyle extends Style{
 		draw(gc, list, getLineColor(tuple), getFillColor(tuple), tuple);
 	}
 	
+	@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor, Tuple<?> tuple) {
 		Color tmp = gc.getForeground();
 		gc.setForeground(fcolor);

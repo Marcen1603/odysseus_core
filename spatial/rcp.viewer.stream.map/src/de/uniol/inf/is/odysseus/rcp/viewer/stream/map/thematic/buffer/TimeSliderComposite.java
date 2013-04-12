@@ -84,6 +84,7 @@ public class TimeSliderComposite extends Composite {
 		beginSlider.setValues(0, 0, 1, 1, 1, 1);
 		beginSlider.setEnabled(isActive);
 		beginSlider.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (isActive) {
 					if (isEqual) {
@@ -106,6 +107,7 @@ public class TimeSliderComposite extends Composite {
 		btnActivate.setText("activate");
 		btnActivate.setSelection(false);
 		btnActivate.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				beginSlider.setEnabled(btnActivate.getSelection());
 				endSlider.setEnabled(btnActivate.getSelection());
@@ -148,6 +150,7 @@ public class TimeSliderComposite extends Composite {
 		endSlider.setValues(0, 0, 1, 1, 1, 1);
 		endSlider.setEnabled(isActive);
 		endSlider.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (isActive) {
 					if (isEqual == true) {
@@ -170,6 +173,7 @@ public class TimeSliderComposite extends Composite {
 		equalButton.setText("Equal");
 		equalButton.setEnabled(isActive);
 		equalButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (isActive) {
 					if (equalButton.getSelection()) {

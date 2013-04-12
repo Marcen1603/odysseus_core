@@ -344,9 +344,8 @@ class SvgLoader {
 		if(s1 != -1 && s1 < ca.length-1) {
 			if(ca[s1+1] != '/') {
 				return s1;
-			} else {
-				return findNextTag(ca, s1+1, end);
-			}
+			} 
+			return findNextTag(ca, s1+1, end);
 		}
 		return -1;
 	}
@@ -520,9 +519,8 @@ class SvgLoader {
 
 		if(first != null) {
 			return first;
-		} else {
-			return new SvgTransform();
-		}
+		} 
+		return new SvgTransform();
 	}
 
 	private static String getValue(String name, Map<String, String> idStyles, Map<String, String> classStyles,
@@ -779,17 +777,15 @@ class SvgLoader {
 	private static float parseFloat(String s, float defaultValue) {
 		if(s == null) {
 			return defaultValue;
-		} else {
-			return Float.parseFloat(s);
-		}
+		} 
+		return Float.parseFloat(s);
 	}
 
 	private static Float parseFloat(String s, Float defaultValue) {
 		if(s == null) {
 			return defaultValue;
-		} else {
-			return new Float(s);
 		}
+		return new Float(s);
 	}
 
 	private static int parseGradientStop(SvgGradient gradient, char[] ca, int start, int end) {
@@ -839,6 +835,7 @@ class SvgLoader {
 		} else if(s.endsWith("cm")) { //$NON-NLS-1$
 			final Point dpi = new Point(0, 0);
 			Display.getDefault().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					dpi.x = Display.getDefault().getDPI().x;
 				}
@@ -851,6 +848,7 @@ class SvgLoader {
 		} else if(s.endsWith("in")) { //$NON-NLS-1$
 			final Point dpi = new Point(0, 0);
 			Display.getDefault().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					dpi.x = Display.getDefault().getDPI().x;
 				}
@@ -859,6 +857,7 @@ class SvgLoader {
 		} else if(s.endsWith("mm")) { //$NON-NLS-1$
 			final Point dpi = new Point(0, 0);
 			Display.getDefault().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					dpi.x = Display.getDefault().getDPI().x;
 				}
@@ -1100,7 +1099,7 @@ class SvgLoader {
 					sb.append(ca[i]);
 				}
 			} else if(Character.isLetter(c)) {
-				if(sb != null && sb.length() > 0) {
+				if(sb.length() > 0) {
 					strs.add(sb.toString());
 				}
 				strs.add(Character.toString(c));
@@ -1108,7 +1107,7 @@ class SvgLoader {
 			} else if('.' == c || Character.isDigit(c)) {
 				sb.append(c);
 			} else {
-				if(sb != null && sb.length() > 0) {
+				if(sb.length() > 0) {
 					strs.add(sb.toString());
 				}
 				sb = new StringBuilder();
@@ -1117,7 +1116,7 @@ class SvgLoader {
 				}
 			}
 		}
-		if(sb != null && sb.length() > 0) {
+		if(sb.length() > 0) {
 			strs.add(sb.toString());
 		}
 		return strs.toArray(new String[strs.size()]);
@@ -1345,9 +1344,8 @@ class SvgLoader {
 		if(s != null) {
 			if(s.endsWith("px")) { //$NON-NLS-1$
 				return new Float(s.substring(0, s.length() - 2));
-			} else {
-				return new Float(s);
-			}
+			} 
+			return new Float(s);
 		}
 		
 		return null;

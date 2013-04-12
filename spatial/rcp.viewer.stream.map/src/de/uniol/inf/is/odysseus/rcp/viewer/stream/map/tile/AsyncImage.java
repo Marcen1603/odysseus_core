@@ -30,6 +30,7 @@ public final class AsyncImage implements Runnable {
 	public static final int IMAGEFETCHER_THREADS = 8;
 	private static BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>();
 	private static ThreadFactory threadFactory = new ThreadFactory() {
+		@Override
 		public Thread newThread(Runnable r) {
 			Thread t = new Thread(r);
 			t.setName("Async Image Loader " + t.getId() + " " + System.identityHashCode(t));
@@ -67,6 +68,7 @@ public final class AsyncImage implements Runnable {
 		executor.execute(task);
 	}
 
+	@Override
 	public void run() {
 		String url = tileServer.getTileString(x, y, z);
 		if (z != tileServer.getCurrentZoom()) {

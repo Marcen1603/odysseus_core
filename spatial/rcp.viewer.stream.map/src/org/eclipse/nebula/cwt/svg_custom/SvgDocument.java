@@ -94,6 +94,7 @@ public class SvgDocument extends SvgContainer {
 		return elements.isEmpty() ? null : ((SvgFragment) elements.get(0)).getDescription();
 	}
 	
+	@Override
 	public SvgFragment getFragment() {
 		return elements.isEmpty() ? null : (SvgFragment) elements.get(0);
 	}
@@ -130,6 +131,7 @@ public class SvgDocument extends SvgContainer {
 		return fragmentMap.containsKey(id);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return elements.isEmpty();
 	}
