@@ -103,17 +103,26 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				if (arg0.keyCode == SWT.ARROW_DOWN) {
-					setGraphOffset(getGraphOffset().sub(0, SCROLL_SPEED));
-				}
-				if (arg0.keyCode == SWT.ARROW_UP) {
-					setGraphOffset(getGraphOffset().add(0, SCROLL_SPEED));
-				}
-				if (arg0.keyCode == SWT.ARROW_LEFT) {
-					setGraphOffset(getGraphOffset().add(SCROLL_SPEED, 0));
-				}
-				if (arg0.keyCode == SWT.ARROW_RIGHT) {
-					setGraphOffset(getGraphOffset().sub(SCROLL_SPEED, 0));
+				if( nodeSelector.getSelectionCount() == 0 ) {
+					if (arg0.keyCode == SWT.ARROW_DOWN) {
+						setGraphOffset(getGraphOffset().sub(0, SCROLL_SPEED));
+					}
+					if (arg0.keyCode == SWT.ARROW_UP) {
+						setGraphOffset(getGraphOffset().add(0, SCROLL_SPEED));
+					}
+					if (arg0.keyCode == SWT.ARROW_LEFT) {
+						setGraphOffset(getGraphOffset().add(SCROLL_SPEED, 0));
+					}
+					if (arg0.keyCode == SWT.ARROW_RIGHT) {
+						setGraphOffset(getGraphOffset().sub(SCROLL_SPEED, 0));
+					}
+				} else {
+					if (arg0.keyCode == SWT.ARROW_DOWN) {
+						nodeSelector.selectPreviousNodes();
+					}
+					if (arg0.keyCode == SWT.ARROW_UP) {
+						nodeSelector.selectNextNodes();
+					}					
 				}
 			}
 

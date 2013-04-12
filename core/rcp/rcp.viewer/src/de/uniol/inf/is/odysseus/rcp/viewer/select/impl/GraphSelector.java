@@ -17,9 +17,12 @@ package de.uniol.inf.is.odysseus.rcp.viewer.select.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
@@ -60,10 +63,55 @@ public class GraphSelector<C> extends DefaultSelector<INodeView<C>> {
 		
 		return false;
 	}
+
+	public void selectNextNodes() {
+		List<INodeView<C>> prevNodes = Lists.newArrayList();
+		if( getSelectionCount() > 0 ) {
+			for( INodeView<C> node : getSelected()) {
+				for( IConnectionView<C> connection : node.getConnectionsAsStart()) {
+					prevNodes.add(findNextNode(connection.getViewedEndNode()));
+				}
+			}
+			if( prevNodes.isEmpty()) {
+				return;
+			}
+		}
+		unselectAll();
+		select(prevNodes);
+	}
+
+	private INodeView<C> findNextNode(INodeView<C> viewedEndNode) {
+		if( viewedEndNode.getModelNode() == null ) {
+			return findNextNode(viewedEndNode.getConnectionsAsStart().iterator().next().getViewedEndNode());
+		}
+		return viewedEndNode;
+	}
+	
+	private INodeView<C> findPrevNode(INodeView<C> viewedStartNode) {
+		if( viewedStartNode.getModelNode() == null ) {
+			return findPrevNode(viewedStartNode.getConnectionsAsEnd().iterator().next().getViewedStartNode());
+		}
+		return viewedStartNode;
+	}
+
+	public void selectPreviousNodes() {
+		List<INodeView<C>> prevNodes = Lists.newArrayList();
+		if( getSelectionCount() > 0 ) {
+			for( INodeView<C> node : getSelected()) {
+				for( IConnectionView<C> connection : node.getConnectionsAsEnd()) {
+					prevNodes.add(findPrevNode(connection.getViewedStartNode()));
+				}
+			}
+			if( prevNodes.isEmpty()) {
+				return;
+			}
+		}
+		unselectAll();
+		select(prevNodes);
+	}
 	
 	@Override
 	public final void select( Collection<? extends INodeView<C>> nodeDisplays ) {
-	
 		Collection<INodeView<C>> nodesSelected = new ArrayList<INodeView<C>>();
 		for( INodeView<C> disp : nodeDisplays ) {
 			
