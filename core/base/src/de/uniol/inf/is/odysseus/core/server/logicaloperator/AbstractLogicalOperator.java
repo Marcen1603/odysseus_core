@@ -458,6 +458,12 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
+	public void subscribeSink(ILogicalOperator sink, int sinkInPort,
+			int sourceOutPort, SDFSchema schema, boolean asActive) {
+		throw new IllegalArgumentException("This method cannot be called on Logical Operators");
+	}
+	
+	@Override
 	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		unsubscribeSink(new LogicalSubscription(sink, sinkInPort, sourceOutPort, schema));
 	}
@@ -495,6 +501,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		// Nothing special in logical Operators
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
+	
 
 	@Override
 	public void disconnectSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {

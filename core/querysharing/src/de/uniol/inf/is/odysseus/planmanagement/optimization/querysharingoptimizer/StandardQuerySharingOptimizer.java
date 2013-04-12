@@ -25,10 +25,12 @@ import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
@@ -224,8 +226,11 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			int sinkInPort = sub.getSinkInPort();
 			int sourceOutPort = sub.getSourceOutPort();
 
+			boolean isActive = ((AbstractSource) toReplace)
+					.isActive((PhysicalSubscription) sub);
 			// Subscription löschen
 			((IPipe) toReplace).unsubscribeSink(sub);
+
 			// System.out.println(s.getName() + " unsubscribed from " +
 			// op1.getName());
 
@@ -233,7 +238,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			// beim Sink anmelden
 			// s.subscribeToSource(op2, sinkInPort, sourceOutPort, schema);
 			((ISource) replacement).subscribeSink(s, sinkInPort, sourceOutPort,
-					schema);
+					schema, isActive);
 
 		}
 

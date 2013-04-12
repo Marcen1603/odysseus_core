@@ -553,7 +553,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	}
 
 	@Override
-	final public void subscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+	final public void subscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema, boolean asActive) {
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(sink, sinkInPort, sourceOutPort, schema);
 		if (!this.sinkSubscriptions.contains(sub)) {
 			// getLogger().debug(
@@ -561,9 +561,18 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 			// + " from " + sourceOutPort);
 			this.sinkSubscriptions.add(sub);
 			sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
+			if (asActive){
+				addActiveSubscription(sub);
+			}
 		}
 	}
 
+	@Override
+	final public void subscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false);
+	}
+
+	
 	@Override
 	public void connectSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
@@ -596,6 +605,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 		activeSinkSubscriptions.clear();
 	}
 
+	public boolean isActive(PhysicalSubscription<ISink<? super T>> subscription){
+		return this.activeSinkSubscriptions.contains(subscription);
+	}
+	
 	@Override
 	public void unsubscribeSink(PhysicalSubscription<ISink<? super T>> subscription) {
 		getLogger().debug("Unsubscribe from Sink " + subscription.getTarget());

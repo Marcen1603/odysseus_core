@@ -34,7 +34,8 @@ public interface ISubscribable<T, S extends ISubscription<T>> {
 	 *
 	 */
 	public void subscribeSink(T sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
-	
+	public void subscribeSink(T sink, int sinkInPort, int sourceOutPort, SDFSchema schema, boolean asActive);
+
 	/**
 	 * Removes a subscription installed by {@link ISubscribable#subscribe(Object, int, int)}
 	 */

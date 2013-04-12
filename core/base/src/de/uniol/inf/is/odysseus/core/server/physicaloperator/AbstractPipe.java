@@ -182,7 +182,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	@Override
 	final public void open(IOperatorOwner owner) throws OpenFailedException {
-
 		reconnectSinks();
 		this.delegateSink.open(owner);
 	}
