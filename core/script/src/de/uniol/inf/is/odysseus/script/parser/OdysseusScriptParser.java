@@ -304,9 +304,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					} else {
 						if (sb == null) {
 							throw new OdysseusScriptException("No key set in line " + (currentLine + 1));
-						} else {
-							sb.append("\n").append(line.trim());
-						}
+						} 
+						sb.append("\n").append(line.trim());
 					}
 
 				}
@@ -582,6 +581,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		}
 	}
 
+	@Override
 	public PreParserKeywordRegistry getPreParserKeywordRegistry() {
 		return KEYWORD_REGISTRY;
 	}
