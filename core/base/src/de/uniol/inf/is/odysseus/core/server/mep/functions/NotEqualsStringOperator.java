@@ -19,9 +19,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractBinaryOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 
-public class NotEqualsOperator extends AbstractBinaryOperator<Boolean> {
+public class NotEqualsStringOperator extends AbstractBinaryOperator<Boolean> {
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING
     };
 	private static final long serialVersionUID = -1508977830046773571L;
 
@@ -37,7 +37,7 @@ public class NotEqualsOperator extends AbstractBinaryOperator<Boolean> {
 
 	@Override
 	public Boolean getValue() {
-		return !getNumericalInputValue(0).equals(getNumericalInputValue(1));
+		return !getInputValue(0).equals(getInputValue(1));
 	}
 
 	@Override
