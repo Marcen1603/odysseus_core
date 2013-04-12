@@ -55,7 +55,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		areas[0] = new JoinTISweepArea();
 		areas[1] = new JoinTISweepArea();
 		
-		
+		try{
 		// check the paths
 		for(int port = 0; port<2; port++){
 			int otherPort = port^1;
@@ -81,6 +81,9 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 					areas[port] = new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2());
 				}
 			}
+		}
+		}catch(Exception e){
+			// can fail --> set default areas
 		}
 		
 		
