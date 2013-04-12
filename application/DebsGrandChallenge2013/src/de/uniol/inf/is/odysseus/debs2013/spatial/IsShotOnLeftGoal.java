@@ -32,7 +32,7 @@ public class IsShotOnLeftGoal extends ShotOnGoalDetection{
 		Coordinate[] coordinates = new Coordinate[2];
 		coordinates[0] = new Coordinate(29880, -33968);
 		coordinates[1] = new Coordinate(22560, -33968);
-		setGoal(gf.createLineString(coordinates));
+//		setGoal(gf.createLineString(coordinates));
 	}
 
 	@Override

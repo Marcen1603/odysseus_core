@@ -1,27 +1,20 @@
 package de.uniol.inf.is.odysseus.debs2013.spatial;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
-public abstract class ShotOnGoalDetection extends AbstractFunction<Boolean>{
+public class ShotOnGoalDetection extends AbstractFunction<Integer>{
 
 	private static final long serialVersionUID = 8159082937727522598L;
-
-	private LineString goal;
 		
 	@Override
 	public int getArity() {
-		return 4;
+		return 6;
 	}
 	
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-    	SDFSpatialDatatype.SPATIAL_POINT,
+    	SDFDatatype.DOUBLE, 
     	SDFDatatype.LONG
 	};
 
@@ -30,32 +23,52 @@ public abstract class ShotOnGoalDetection extends AbstractFunction<Boolean>{
 		return accTypes;
 	}
 
+	//1 = rechtes Tor, 0 = kein Torschuss, -1 = linkes Tor
 	@Override
-	public Boolean getValue() {
-		GeometryFactory gf = new GeometryFactory();
-		Coordinate startCoordinate = ((Point) getInputValue(0)).getCoordinate();
-		Coordinate endCoordinate = ((Point) getInputValue(1)).getCoordinate();	
-		Long tsShot = (Long) getInputValue(2);
-		Long ts = (Long) getInputValue(3);
+	public Integer getValue() {
+		Double startX = ((Double) getInputValue(0));
+		Double startY = ((Double) getInputValue(1));
+		Double endX = ((Double) getInputValue(2));
+		Double endY = ((Double) getInputValue(3));
+		Long tsShot = (Long) getInputValue(4);
+		Long ts = (Long) getInputValue(5);
 		if((ts - tsShot) != 0) {
-			Double speedX = (endCoordinate.x - startCoordinate.x) / (ts - tsShot);
-			Double speedY = (endCoordinate.y - startCoordinate.y) / (ts - tsShot);
-			// Progrnose der Flubbahn in 1,5 Sekunden = 1500000000000 Picosekunden
-			Coordinate newEndCoordinate = new Coordinate( endCoordinate.x + (speedX * 1500000000000.0 * 2), 
-															endCoordinate.y + (speedY * 1500000000000.0 * 2));
-			LineString shot = gf.createLineString(new Coordinate[] { startCoordinate, newEndCoordinate });
-			return shot.intersects(goal);
-		} else {
-			return false;
-		}
+			double speedX = ((endX - startX) / (ts - tsShot)) * 1500000000000.0;
+			double speedY = ((endY - startY) / (ts - tsShot)) * 1500000000000.0;
+			if(speedX != 0) {
+				double m = speedY / speedX;
+				double b = startY - (m * startX);
+				
+				//rechtes Tor
+				if(endX > startX) {
+					double y = m * 33941 + b;
+					if(y < 29898.5 && y > 22578.5) {
+						endX = (endX + (speedX * 2));
+						if(endX > 33941) {
+							return 1;
+						}
+					} 
+				} else { // linkes Tor
+					double y = m * -33968 + b;
+					if(y < 29880 && y > 22560) {
+						endX = (endX + (speedX * 2));
+						if(endX < -33968) {
+							return -1;
+						}
+					} 
+				}
+			}
+		} 
+		return 0;
 	 }
 
 	@Override
 	public SDFDatatype getReturnType() {
-		return SDFDatatype.BOOLEAN;
+		return SDFDatatype.INTEGER;
 	}
-	
-	public void setGoal(LineString goal) {
-		this.goal = goal;
+
+	@Override
+	public String getSymbol() {
+		return "IsShotOnGoal";
 	}
 }
