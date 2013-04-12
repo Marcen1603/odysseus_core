@@ -23,8 +23,6 @@ import org.eclipse.ui.PlatformUI;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
@@ -36,8 +34,6 @@ public class AdmissionTimeSeriesManager {
 
 	private static final double MIN_COST_FACTOR = 0.80; // copied from StandardAC
 
-	private static final Logger LOG = LoggerFactory.getLogger(AdmissionTimeSeriesManager.class);
-	
 	private static final int MAX_DATA_AGE_COUNT = 200;
 
 	private static final TimeSeries actCpu;
