@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
@@ -42,6 +43,9 @@ public abstract class AbstractScheduling implements IScheduling,
 
 	static private Logger logger = LoggerFactory
 			.getLogger(AbstractScheduling.class);
+
+	static boolean sleepAllowed = OdysseusConfiguration
+			.getBoolean("Scheduler.sleepAllowed");
 
 	private List<ISchedulingEventListener> schedulingEventListener = new ArrayList<ISchedulingEventListener>();
 	private IPhysicalQuery plan = null;
@@ -83,17 +87,19 @@ public abstract class AbstractScheduling implements IScheduling,
 	protected void prepareSources() {
 		logger.debug("Prepare Sources " + plan.getIterableSources());
 
-		for (int bitIndex = 0; bitIndex < plan.getIterableSources().size(); bitIndex++) {
-			plan.getIterableSource(bitIndex).subscribe(this,
-					POEventType.ProcessDone);
-			plan.getIterableSource(bitIndex).subscribe(this,
-					POEventType.Unblocked);
-			plan.getIterableSource(bitIndex).subscribe(this,
-					POEventType.Blocked);
-			plan.getIterableSource(bitIndex).subscribe(this,
-					POEventType.CloseDone);
-			schedulable.set(bitIndex, true);
-			notBlocked.set(bitIndex, true);
+		if (sleepAllowed) {
+			for (int bitIndex = 0; bitIndex < plan.getIterableSources().size(); bitIndex++) {
+				plan.getIterableSource(bitIndex).subscribe(this,
+						POEventType.ProcessDone);
+				plan.getIterableSource(bitIndex).subscribe(this,
+						POEventType.Unblocked);
+				plan.getIterableSource(bitIndex).subscribe(this,
+						POEventType.Blocked);
+				plan.getIterableSource(bitIndex).subscribe(this,
+						POEventType.CloseDone);
+				schedulable.set(bitIndex, true);
+				notBlocked.set(bitIndex, true);
+			}
 		}
 		blocked = false;
 		schedulingPaused = false;
@@ -132,7 +138,7 @@ public abstract class AbstractScheduling implements IScheduling,
 			} finally {
 				nextSource.unlock();
 			}
-			
+
 			nextSource = nextSource();
 		}
 		return isDone();
@@ -176,20 +182,22 @@ public abstract class AbstractScheduling implements IScheduling,
 	}
 
 	protected void updateSchedulable(IIterableSource<?> nextSource) {
-		int id = plan.getSourceId(nextSource);
-		if (id >= 0) {
-			schedulable.set(id, false);
-		} else {
-			logger.warn(nextSource + " not Part of plan "
-					+ plan.getIterableSources());
-		}
-		if (schedulable.cardinality() == 0) {
-			if (schedulingPaused == false) {
-				schedulingPaused = true;
-				// logger.debug("Scheduling paused, nothing to schedule");
-				synchronized (schedulingEventListener) {
-					for (ISchedulingEventListener l : schedulingEventListener) {
-						l.nothingToSchedule(this);
+		if (sleepAllowed) {
+			int id = plan.getSourceId(nextSource);
+			if (id >= 0) {
+				schedulable.set(id, false);
+			} else {
+				logger.warn(nextSource + " not Part of plan "
+						+ plan.getIterableSources());
+			}
+			if (schedulable.cardinality() == 0) {
+				if (schedulingPaused == false) {
+					schedulingPaused = true;
+					// logger.debug("Scheduling paused, nothing to schedule");
+					synchronized (schedulingEventListener) {
+						for (ISchedulingEventListener l : schedulingEventListener) {
+							l.nothingToSchedule(this);
+						}
 					}
 				}
 			}
@@ -197,14 +205,16 @@ public abstract class AbstractScheduling implements IScheduling,
 	}
 
 	protected void updateBlocked(int index) {
-		notBlocked.set(index, false);
-		if (notBlocked.cardinality() == 0) {
-			if (blocked == false) {
-				blocked = true;
-				logger.debug("Processing blocked because all operators are blocked");
-				synchronized (schedulingEventListener) {
-					for (ISchedulingEventListener l : schedulingEventListener) {
-						l.nothingToSchedule(this);
+		if (sleepAllowed) {
+			notBlocked.set(index, false);
+			if (notBlocked.cardinality() == 0) {
+				if (blocked == false) {
+					blocked = true;
+					logger.debug("Processing blocked because all operators are blocked");
+					synchronized (schedulingEventListener) {
+						for (ISchedulingEventListener l : schedulingEventListener) {
+							l.nothingToSchedule(this);
+						}
 					}
 				}
 			}

@@ -147,6 +147,7 @@ public class OdysseusConfiguration {
 		props.setProperty("scheduler_simpleThreadScheduler_executorThreadsCount",(-1)+"");
 		props.setProperty("scheduler_DebugFileName", "SchedulerLog");
 		props.setProperty("scheduler_trainSize", 1 + "");
+		props.setProperty("Scheduler.sleepAllowed", "false");
 
 		// SLA
 		props.setProperty("sla_history_size", 10000 + ""); // Milliseconds
