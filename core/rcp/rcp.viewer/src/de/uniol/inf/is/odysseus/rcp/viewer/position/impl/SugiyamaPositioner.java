@@ -42,13 +42,14 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.impl.OdysseusNodeView;
 
 public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperator> {
 
-	private static final int INVISIBLE_NODE_SIZE_PIXELS = 10;
-
 	private static final Logger logger = LoggerFactory.getLogger(SugiyamaPositioner.class);
 
+	private static final int INVISIBLE_NODE_WIDTH_PIXELS = 160;
+	private static final int INVISIBLE_NODE_HEIGHT_PIXELS = 27;
 	private static final int SPACE_PIXELS = 20; 
 	private static final int SPACE_HEIGHT_PIXELS = 75; 
 	private static final SymbolElementInfo DUMMY_SYMBOL_INFO = new SymbolElementInfo("invisible", null, 5, 5);
+
 	
 	private final ISymbolElementFactory<IPhysicalOperator> symbolFactory;
 
@@ -79,60 +80,9 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 		// Knoten der Ebenen arrangieren, sodass möglichst wenige Kreuzungen
 		// vorkommen. Zahl der Knoten pro Ebene ermitteln und Knoten zuordnen
 		List<List<INodeView<IPhysicalOperator>>> layers = determineLayers(nodeLevels, maxLevel);
-
-		// layer-by-layer sweep
-		final int maxCycles = 2;
-		int currentCycle = 0;
-		boolean changed = true;
-
-		while (changed && currentCycle < maxCycles) {
-			changed = false;
-
-			// ************** von oben nach unten
-			for (int i = 0; i < layers.size() - 1; i++) {
-				final int fixedLayer = i; // Lesbarkeit...
-				final int varLayer = i + 1;
-
-				// Median-Werte der Knoten der aktuellen Ebene bestimmen
-				final ArrayList<Integer> medians = new ArrayList<Integer>();
-				for (int e = 0; e < layers.get(varLayer).size(); e++) {
-
-					// Median der Nachfolgerknoten bestimmen
-					final int med = getMedian(layers.get(varLayer).get(e), layers.get(fixedLayer), true);
-
-					medians.add(med);
-				}
-
-				changed = sortByMedians(layers.get(varLayer), medians) || changed;
-			}
-
-			// ****************** und von unten nach oben
-			for (int i = layers.size() - 1; i > 0; i--) {
-				final int fixedLayer = i; // Lesbarkeit...
-				final int varLayer = i - 1;
-
-				// Median-Werte der Knoten der aktuellen Ebene bestimmen
-				final ArrayList<Integer> medians = new ArrayList<Integer>();
-				for (int e = 0; e < layers.get(varLayer).size(); e++) {
-
-					// Median der Nachfolgerknoten bestimmen
-					final int med = getMedian(layers.get(varLayer).get(e), layers.get(fixedLayer), false);
-
-					medians.add(med);
-				}
-
-				changed = sortByMedians(layers.get(varLayer), medians) || changed;
-
-			}
-			currentCycle++;
-			if (changed == false) {
-				logger.trace("Nothing changed. layer-to-layer sweep finished!");
-			}
-		}
+		layerByLayerSweep(layers);
 
 		/** PHASE 3 **/
-		logger.debug("Phase 3: Calculate x- and y-Coordinates");
-
 		// Arrays initialisieren
 		// Diese werden die X-Koordinaten beherbergen
 		final int[][] posXRight = new int[layers.size()][];
@@ -238,6 +188,54 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 		}
 	}
 
+	private static void layerByLayerSweep(List<List<INodeView<IPhysicalOperator>>> layers) {
+		final int maxCycles = 2;
+		int currentCycle = 0;
+		boolean changed = true;
+
+		while (changed && currentCycle < maxCycles) {
+			changed = false;
+
+			// ************** von oben nach unten
+			for (int i = 0; i < layers.size() - 1; i++) {
+				final int fixedLayer = i; // Lesbarkeit...
+				final int varLayer = i + 1;
+
+				// Median-Werte der Knoten der aktuellen Ebene bestimmen
+				final ArrayList<Integer> medians = new ArrayList<Integer>();
+				for (int e = 0; e < layers.get(varLayer).size(); e++) {
+
+					// Median der Nachfolgerknoten bestimmen
+					final int med = getMedian(layers.get(varLayer).get(e), layers.get(fixedLayer), true);
+
+					medians.add(med);
+				}
+
+				changed = sortByMedians(layers.get(varLayer), medians) || changed;
+			}
+
+			// ****************** und von unten nach oben
+			for (int i = layers.size() - 1; i > 0; i--) {
+				final int fixedLayer = i; // Lesbarkeit...
+				final int varLayer = i - 1;
+
+				// Median-Werte der Knoten der aktuellen Ebene bestimmen
+				final ArrayList<Integer> medians = new ArrayList<Integer>();
+				for (int e = 0; e < layers.get(varLayer).size(); e++) {
+
+					// Median der Nachfolgerknoten bestimmen
+					final int med = getMedian(layers.get(varLayer).get(e), layers.get(fixedLayer), false);
+
+					medians.add(med);
+				}
+
+				changed = sortByMedians(layers.get(varLayer), medians) || changed;
+
+			}
+			currentCycle++;
+		}
+	}
+
 	private static List<List<INodeView<IPhysicalOperator>>> determineLayers(final Map<INodeView<IPhysicalOperator>, Integer> nodeLevels, final int maxLevel) {
 		List<List<INodeView<IPhysicalOperator>>> layers = Lists.newArrayList();
 		for (int i = 0; i < maxLevel + 1; i++) {
@@ -267,8 +265,8 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 
 					// unsichtbaren Knoten erzeugen
 					final INodeView<IPhysicalOperator> dummyNode = new OdysseusNodeView();
-					dummyNode.setWidth(INVISIBLE_NODE_SIZE_PIXELS);
-					dummyNode.setHeight(INVISIBLE_NODE_SIZE_PIXELS);
+					dummyNode.setWidth(INVISIBLE_NODE_WIDTH_PIXELS);
+					dummyNode.setHeight(INVISIBLE_NODE_HEIGHT_PIXELS);
 					dummyNode.getSymbolContainer().add(symbolFactory.createForNode(DUMMY_SYMBOL_INFO));
 					graph.insertViewedNode(dummyNode);
 					nodeLevels.put(dummyNode, currentLevel);
