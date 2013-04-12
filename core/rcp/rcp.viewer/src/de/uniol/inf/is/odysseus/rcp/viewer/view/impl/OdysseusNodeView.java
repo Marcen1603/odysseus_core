@@ -23,6 +23,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public class OdysseusNodeView extends DefaultNodeView<IPhysicalOperator> implements IOdysseusNodeView, INodeModelChangeListener<IPhysicalOperator> {
 
+	public OdysseusNodeView() {
+		this(null);
+	}
+	
 	public OdysseusNodeView(IOdysseusNodeModel data) {
 		super(data);
 	}
