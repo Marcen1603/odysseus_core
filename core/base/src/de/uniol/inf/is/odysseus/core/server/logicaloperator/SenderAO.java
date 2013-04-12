@@ -128,9 +128,9 @@ public class SenderAO extends AbstractLogicalOperator {
      */
     @Override
     public String getName() {
-    	String name = super.getName();
+    	String name = getSinkname();
     	if( Strings.isNullOrEmpty(name)) {
-    		return getSinkname();
+    		return super.getName();
     	} 
     	return name;
     }
