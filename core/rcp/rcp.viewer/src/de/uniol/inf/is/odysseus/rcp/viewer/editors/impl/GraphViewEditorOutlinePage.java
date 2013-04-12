@@ -23,6 +23,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -35,7 +36,11 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
@@ -111,10 +116,26 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 			return;
 
 		if (selection instanceof IStructuredSelection) {
-			if (((IStructuredSelection) selection).getFirstElement() instanceof IOdysseusNodeView || ((IStructuredSelection) selection).getFirstElement() instanceof IOdysseusGraphView) {
-
+			Object selectedObject = ((IStructuredSelection) selection).getFirstElement();
+			if (selectedObject instanceof IOdysseusNodeView || selectedObject instanceof IOdysseusGraphView) {
 				getTreeViewer().setSelection(selection);
+			} else if( selectedObject instanceof IPhysicalOperator ) {
+				Optional<IOdysseusNodeView> optNodeView = findNodeView((IPhysicalOperator)selectedObject, input.getGraphView());
+				if( optNodeView.isPresent() ) {
+					getTreeViewer().setSelection(new StructuredSelection(optNodeView.get()));
+				}
 			}
 		}
+	}
+
+	private static Optional<IOdysseusNodeView> findNodeView(IPhysicalOperator selectedObject, IOdysseusGraphView graph) {
+		for( INodeView<IPhysicalOperator> nodeView : graph.getViewedNodes() ) {
+			if( nodeView.getModelNode() != null && nodeView.getModelNode().getContent() != null ) {
+				if( nodeView.getModelNode().getContent().equals(selectedObject)) {
+					return Optional.of((IOdysseusNodeView)nodeView);
+				}
+			}
+		}
+		return Optional.absent();
 	}
 }
