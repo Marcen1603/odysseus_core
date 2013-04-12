@@ -64,13 +64,13 @@ public class SenderAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 	private static String determineWrapper(SenderAO operator) {
 		if (!Strings.isNullOrEmpty(operator.getWrapper())) {
 			return operator.getWrapper();
-		} else {
-			if (operator.getTransportHandler().equals("NonBlockingTcp")) {
-				return Constants.GENERIC_PUSH;
-			} else {
-				return Constants.GENERIC_PULL;
-			}
-		}
+		} 
+
+		if (operator.getTransportHandler().equals("NonBlockingTcp")) {
+			return Constants.GENERIC_PUSH;
+		} 
+		
+		return Constants.GENERIC_PULL;
 	}
 
 	private static Object convertValue(Object element) {
