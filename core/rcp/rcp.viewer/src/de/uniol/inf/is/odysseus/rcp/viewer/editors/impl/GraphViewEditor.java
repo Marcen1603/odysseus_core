@@ -232,4 +232,8 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 	public void restructureGraph() {
 		renderManager.resetPositions();
 	}
+	
+	public void center(IOdysseusNodeView view ) {
+		renderManager.center(view);
+	}
 }

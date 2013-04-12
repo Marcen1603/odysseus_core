@@ -32,6 +32,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.ResetGraph"
             name="Reset Graph Command">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.commands.CenterNodeCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.CenterNode"
+            name="Center Node">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -149,6 +154,12 @@
                label="Refresh"
                style="push"
                tooltip="Refresh">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.CenterNode"
+               icon="icons/center.jpg"
+               label="Center"
+               style="push">
          </command>
       </menuContribution>
       <menuContribution

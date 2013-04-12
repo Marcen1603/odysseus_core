@@ -34,7 +34,6 @@ public final class SelectionProvider {
 			return new ArrayList<T>();
 		}
 		
-		
 		if( selection instanceof IStructuredSelection ) {
 			List<T> items = new ArrayList<T>();
 			IStructuredSelection structSelection = (IStructuredSelection)selection;
@@ -47,6 +46,6 @@ public final class SelectionProvider {
 			return items;
 			
 		}
-		return null;
+		return new ArrayList<T>();
 	}
 }
