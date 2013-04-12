@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.MigrationMarkerPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.server.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePipe;
 
 /**
@@ -61,17 +60,17 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 	public BufferPO() {
 		super();
-		final BufferPO<T> t = this;
-		this.addMonitoringData("selectivity",
-				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
+//		final BufferPO<T> t = this;
+//		this.addMonitoringData("selectivity",
+//				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
 	}
 
 	public BufferPO(BufferPO<T> bufferedPipe) {
 		super(bufferedPipe);
 		buffer.addAll(bufferedPipe.buffer);
-		final BufferPO<T> t = this;
-		this.addMonitoringData("selectivity",
-				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
+//		final BufferPO<T> t = this;
+//		this.addMonitoringData("selectivity",
+//				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
 
 	}
 
