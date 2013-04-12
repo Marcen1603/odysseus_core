@@ -53,6 +53,7 @@ public interface ISubscribable<T, S extends ISubscription<T>> {
 	/**
 	 * Same as subscribeSink but needs no open. Especially for terminal sinks, that connect at runtime
 	 * to specific operators
+	 * Warn: Do not use this method when connecting operators from other queries! Use subscribeSink instead
 	 * @param sink
 	 * @param sinkInPort
 	 * @param sourceOutPort
