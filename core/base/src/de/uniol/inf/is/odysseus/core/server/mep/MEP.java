@@ -79,6 +79,8 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.MultiplicationOperator
 import de.uniol.inf.is.odysseus.core.server.mep.functions.NanoTimeFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.NotEqualsOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.NotEqualsOperator2;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.NotEqualsStringOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.NotEqualsStringOperator2;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.NotOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.NowFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.OrOperator;
@@ -164,6 +166,9 @@ public class MEP implements IExpressionParser {
         registerFunction(new EqualsOperator2());
         registerFunction(new NotEqualsOperator());
         registerFunction(new NotEqualsOperator2());
+        registerFunction(new NotEqualsStringOperator());
+        registerFunction(new NotEqualsStringOperator2());
+
         /** Math Functions */
         registerFunction(new GreaterThanOperator());
         registerFunction(new SmallerThanOperator());
