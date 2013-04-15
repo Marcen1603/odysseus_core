@@ -146,7 +146,9 @@ public class DescriptiveStatistics implements IDescriptiveStatistics{
 
 	private double calculatePercentile(int i) {
 		prepareStats();
-		int pos = offset + count * i / 100;
+		// Avoid overflow
+		Long posL = offset + count * i / 100L;
+		int pos = posL.intValue();
 		if (count % 2 == 0) {
 			return (this.values[pos] + this.values[pos - 1]) / 2d;
 		}
