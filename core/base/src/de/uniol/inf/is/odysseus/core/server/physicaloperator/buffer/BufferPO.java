@@ -245,12 +245,12 @@ public class BufferPO<T extends IStreamObject<?>> extends
 			getLogger().debug("Buffer was empty. Waiting for first element");
 			return;
 		}
-		getLogger().debug("Insert MigrationMarkerPunctuation in Buffer for " + this.source);
 		// get the timestamp of the last element in the buffer.
 		IStreamable last = this.buffer.getLast();
-		PointInTime pit = ((IStreamObject<? extends ITimeInterval>) last).getMetadata().getStart();
+		PointInTime pit = ((IStreamObject<? extends ITimeInterval>) last).getMetadata().getStart().plus(1);
 		// create new punctuation and insert it at the last position in the buffer.
 		IPunctuation punctuation = new MigrationMarkerPunctuation(pit, this.source);
+		getLogger().debug("Insert MigrationMarkerPunctuation in Buffer for " + this.source.getName() + " (" + this.source.hashCode() + ") with timestamp " + punctuation.getTime());
 		this.buffer.addLast(punctuation);
 	}
 
