@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.p2p_new.handler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
@@ -10,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractByteBufferHandler;
@@ -20,8 +24,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class JxtaProtocolHandler<T> extends AbstractByteBufferHandler<T> {
+public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByteBufferHandler<T> {
+	
 	private static final Logger LOG = LoggerFactory.getLogger(SizeByteBufferHandler.class);
+	
+	private static final String HANDLER_NAME = "JxtaSizeByteBuffer";
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
@@ -65,6 +72,7 @@ public class JxtaProtocolHandler<T> extends AbstractByteBufferHandler<T> {
 	public void write(T object) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(1024);
 		getDataHandler().writeData(buffer, object);
+		buffer.put(toBytes(object.getMetadata()));
 		buffer.flip();
 
 		int messageSizeBytes = buffer.remaining();
@@ -74,6 +82,25 @@ public class JxtaProtocolHandler<T> extends AbstractByteBufferHandler<T> {
 		// did not apply the "real" size of the object
 		buffer.get(rawBytes, 4, messageSizeBytes);
 		getTransportHandler().send(rawBytes);
+	}
+
+	private static byte[] toBytes(Object obj) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutput out = null;
+		try {
+			out = new ObjectOutputStream(bos);
+			out.writeObject(obj);
+			return bos.toByteArray();
+		} catch (IOException e) {
+			LOG.error("Could not convert object {} to byte array", obj, e);
+			return new byte[0];
+		} finally {
+			try {
+				out.close();
+				bos.close();
+			} catch (IOException e) {
+			}
+		}
 	}
 
 	@Override
@@ -130,14 +157,14 @@ public class JxtaProtocolHandler<T> extends AbstractByteBufferHandler<T> {
 		JxtaProtocolHandler<T> instance = new JxtaProtocolHandler<T>(direction, access);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
-		instance.objectHandler = new ByteBufferHandler<T>(dataHandler);
+		instance.objectHandler = new JxtaByteBufferHandler<T>(dataHandler);
 		instance.setByteOrder(options.get("byteorder"));
 		return instance;
 	}
 
 	@Override
 	public String getName() {
-		return "JxtaSizeByteBuffer";
+		return HANDLER_NAME;
 	}
 
 	@Override
@@ -152,7 +179,7 @@ public class JxtaProtocolHandler<T> extends AbstractByteBufferHandler<T> {
 	private static void insertInt(byte[] destArray, int offset, int value) {
 		destArray[offset] = (byte) (value >>> 24);
 		destArray[offset + 1] = (byte) (value >>> 16);
-		destArray[offset + 2] = (byte) (value >>> 18);
+		destArray[offset + 2] = (byte) (value >>> 8);
 		destArray[offset + 3] = (byte) (value);
 	}
 }
