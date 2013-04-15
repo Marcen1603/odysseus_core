@@ -104,6 +104,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		if (runningQuery.containsCycles()) {
 			throw new RuntimeException("Planmigration assumes acyclic trees");
 		}
+		
+		long migrationStart = System.currentTimeMillis();
 
 		// @Marco: Bitte so umbauen, dass beachtet wird,
 		// dass ein Anfrageplan mehrere Roots haben kann.
@@ -152,6 +154,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		context.setOldPlanOperatorsBeforeSources(oldPlanOperatorsBeforeSources);
 		context.setLastOperatorNewPlan(lastOperatorNewPlan);
 		context.setLastOperatorOldPlan(lastOperatorOldPlan);
+		context.setMigrationStart(migrationStart);
 		// context.setwMax(wMax);
 
 		LOG.debug("Preparing plan for parallel execution.");
@@ -534,6 +537,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				walker.prefixWalkPhysical(oldRoot, removeVisitor);
 			}
 
+			
+			LOG.debug("Calling open on all plan roots");
+			for(IPhysicalOperator root : newRoots) {
+				((ISink) root).open();
+			}
+
 			LOG.debug("Initialize new plan root as physical root");
 			context.getRunningQuery().initializePhysicalRoots(newRoots);
 		} catch (Exception ex) {
@@ -544,11 +553,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			for (AbstractSource<?> source : blockedSources) {
 				source.unblock();
 			}
-		}
-		
-		LOG.debug("Calling open on all plan roots");
-		for(IPhysicalOperator root : context.getRunningQuery().getRoots()) {
-			((ISink) root).open();
 		}
 
 		try {
@@ -562,6 +566,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 						new PhysicalPlanToStringVisitor()));
 
 		LOG.debug("Migration is finished");
+		LOG.debug("Migration duration was " + (System.currentTimeMillis() - context.getMigrationStart()));
 		fireMigrationFinishedEvent(this);
 	}
 
