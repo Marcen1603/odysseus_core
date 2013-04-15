@@ -164,7 +164,7 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	private static void insertInt(byte[] destArray, int offset, int value) {
 		destArray[offset] = (byte) (value >>> 24);
 		destArray[offset + 1] = (byte) (value >>> 16);
-		destArray[offset + 2] = (byte) (value >>> 18);
+		destArray[offset + 2] = (byte) (value >>> 8);
 		destArray[offset + 3] = (byte) (value);
 	}
 
