@@ -27,73 +27,86 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 
-    private String        delimiter;
-    private boolean       readFirstLine    = true;
-    private boolean       firstLineSkipped = false;
+	private String delimiter;
+	private boolean readFirstLine = true;
+	private boolean firstLineSkipped = false;
+	private long dumpEachLine = -1;
+	private long counter = 0;
 
-    public SimpleCSVProtocolHandler() {
-        super();
-    }
+	public SimpleCSVProtocolHandler() {
+		super();
+	}
 
-    public SimpleCSVProtocolHandler(ITransportDirection direction, IAccessPattern access) {
-        super(direction, access);
-    }
+	public SimpleCSVProtocolHandler(ITransportDirection direction,
+			IAccessPattern access) {
+		super(direction, access);
+	}
 
-    @Override
-    protected void init(Map<String, String> options) {
-    	super.init(options);
-        delimiter = options.get("delimiter");
-        if (options.get("readfirstline") != null) {
-            readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
-        }
-        else {
-            readFirstLine = true;
-        }
-    }
-    
-    @Override
-    public T getNext() throws IOException {
-        if (!firstLineSkipped && !readFirstLine) {
-            reader.readLine();
-            firstLineSkipped = true;
-        }
-        delay();
-        if (reader.ready()) {
-            T data = getDataHandler().readData(reader.readLine().split(delimiter));
-            return data;
-        }
-        else {
-            return null;
-        }
-    }
+	@Override
+	protected void init(Map<String, String> options) {
+		super.init(options);
+		delimiter = options.get("delimiter");
+		if (options.get("readfirstline") != null) {
+			readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
+		} else {
+			readFirstLine = true;
+		}
+		if (options.get("dumpeachline") != null) {
+			dumpEachLine = Integer.parseInt(options.get("dumpeachline"));
+		}
+	}
 
-    @Override
-    public void write(T object) throws IOException {
-       List<String> output = new ArrayList<String>();
-        getDataHandler().writeData(output, object);
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < output.size(); i++) {
-            if (i!=0) {
-                sb.append(delimiter);
-            }
-            sb.append(output.get(i));
-        }
-        writer.write(sb.toString() + System.lineSeparator());
-    }
+	@Override
+	public T getNext() throws IOException {
+		if (!firstLineSkipped && !readFirstLine) {
+			reader.readLine();
+			firstLineSkipped = true;
+		}
+		delay();
+		if (reader.ready()) {
+			T data = getDataHandler().readData(
+					reader.readLine().split(delimiter));
+			if (dumpEachLine > 0) {
+				if (counter % dumpEachLine == 0) {
+					System.out.println(counter + " " + data);
+				}
+				counter++;
+			}
+			return data;
+		} else {
+			return null;
+		}
+	}
 
-    @Override
-    public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
-            Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-        SimpleCSVProtocolHandler<T> instance = new SimpleCSVProtocolHandler<T>(direction, access);
-        instance.setDataHandler(dataHandler);
-        instance.setTransfer(transfer);
-        instance.init(options);
-        return instance;
-    }
+	@Override
+	public void write(T object) throws IOException {
+		List<String> output = new ArrayList<String>();
+		getDataHandler().writeData(output, object);
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < output.size(); i++) {
+			if (i != 0) {
+				sb.append(delimiter);
+			}
+			sb.append(output.get(i));
+		}
+		writer.write(sb.toString() + System.lineSeparator());
+	}
 
-    @Override
-    public String getName() {
-        return "SimpleCSV";
-    }
+	@Override
+	public IProtocolHandler<T> createInstance(ITransportDirection direction,
+			IAccessPattern access, Map<String, String> options,
+			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+		SimpleCSVProtocolHandler<T> instance = new SimpleCSVProtocolHandler<T>(
+				direction, access);
+		instance.setDataHandler(dataHandler);
+		instance.setTransfer(transfer);
+		instance.init(options);
+		return instance;
+	}
+
+	@Override
+	public String getName() {
+		return "SimpleCSV";
+	}
 
 }
