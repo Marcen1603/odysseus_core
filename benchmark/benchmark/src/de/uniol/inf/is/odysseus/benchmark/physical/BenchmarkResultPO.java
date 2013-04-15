@@ -104,7 +104,9 @@ public class BenchmarkResultPO<M extends ILatency> extends
 	protected void process_open() throws OpenFailedException {
 		result.clear();
 		for (PhysicalSubscription<?> s : getSubscribedToSource()) {
-			result.put(s.getSinkInPort(), resultFactory.createBenchmarkResult());
+			IBenchmarkResult<M> r = resultFactory.createBenchmarkResult();
+			r.setStartTime(System.nanoTime());
+			result.put(s.getSinkInPort(), r);
 		}
 	}
 

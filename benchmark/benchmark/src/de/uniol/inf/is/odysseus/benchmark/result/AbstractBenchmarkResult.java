@@ -87,7 +87,7 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	
 	@Override
 	public String csvToString() {
-		return queryId+";"+startTime+";"+endTime+";"+size+";"+desc.csvToString();
+		return queryId+";"+startTime+";"+endTime+";"+getDuration()+";"+size+";"+desc.csvToString();
 	}
 	
 	@Override
@@ -97,7 +97,7 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	
 	@Override
 	public String getCSVHeader() {
-		return "queryId;startTime;endTime;size;"+desc.getCSVHeader();
+		return "queryId;startTime;endTime;duration;size;"+desc.getCSVHeader();
 	}
 
 	/**
