@@ -150,6 +150,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 
 	@Override
 	protected void process_close() {
+		lock.lock();
 		if (isOpen()) {
 			try {
 				lock.lock();
@@ -161,6 +162,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 				e.printStackTrace();
 			}
 		}
+		lock.unlock();
 	}
 
 	@Override
