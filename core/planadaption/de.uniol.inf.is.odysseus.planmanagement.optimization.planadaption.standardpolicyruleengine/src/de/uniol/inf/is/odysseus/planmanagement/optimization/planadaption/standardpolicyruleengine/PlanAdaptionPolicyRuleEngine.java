@@ -36,8 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadap
  * 
  */
 public class PlanAdaptionPolicyRuleEngine implements
-		IPlanAdaptionPolicyRuleEngine, 
-		ActionListener {
+		IPlanAdaptionPolicyRuleEngine, ActionListener {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(PlanAdaptionPolicyRuleEngine.class);
@@ -116,6 +115,10 @@ public class PlanAdaptionPolicyRuleEngine implements
 
 	@Override
 	public void start() {
+		if (this.timer.isRunning()) {
+			LOG.debug("Is already running");
+			return;
+		}
 		LOG.debug("Starting");
 		this.timer.setInitialDelay((int) this.blockedTime);
 		this.timer.start();
