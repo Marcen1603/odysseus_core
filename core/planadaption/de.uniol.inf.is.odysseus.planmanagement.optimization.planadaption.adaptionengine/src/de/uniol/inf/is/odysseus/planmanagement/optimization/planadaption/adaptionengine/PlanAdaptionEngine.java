@@ -70,20 +70,18 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 	private Map<IPhysicalQuery, List<IPhysicalOperator>> queryToOriginalPlan = new HashMap<IPhysicalQuery, List<IPhysicalOperator>>();
 
 	private long blockedTime = OdysseusConfiguration.getLong(
-			"adaption_blockingTime", 20000);
+			"adaption_blockingTime", 40000);
 	private long timerValue = OdysseusConfiguration.getLong("adaption_timer",
 			10000);
 
 	private int runningQueries = 0;
-
-	private int adaptedQueries = 0;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void adaptPlan(IPhysicalQuery physicalQuery, ISession user) {
 		if(this.stoppedQueries.contains(physicalQuery)) {
 			LOG.debug("Query: " + physicalQuery + " is not adapted because it is stopped.");
-			this.adaptedQueries--;
+			this.currentlyAdaptedQueries.remove(physicalQuery);
 			return;
 		}
 		LOG.debug("Adapt plan with timer: " + this.timerValue
@@ -283,13 +281,13 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 			if (query.isOpened() && !noAdapt) {
 				LOG.debug("Adapting PhysicalQuery: " + query);
 				// only adapt running queries.
-				this.adaptedQueries++;
+				this.currentlyAdaptedQueries.add(query);
 				adaptPlan(query, query.getSession());
 			} else {
 				LOG.debug("PhysicalQuery: " + query + " has not been adapted");
 			}
 		}
-		if (this.adaptedQueries == 0) {
+		if (this.currentlyAdaptedQueries.isEmpty()) {
 			this.policyRuleEngine.start();
 		}
 	}
@@ -329,11 +327,9 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 	@Override
 	public void migrationFinished(IMigrationEventSource sender) {
 		// migration is finished so the adaption process can be started again.
-		if (this.adaptedQueries > 0) {
-			this.adaptedQueries--;
-		}
+		this.currentlyAdaptedQueries.remove(sender.getPhysicalQuery());
 
-		if (this.adaptedQueries == 0) {
+		if (this.currentlyAdaptedQueries.isEmpty()) {
 			this.policyRuleEngine.start();
 		} else {
 			LOG.debug("There are still queries left that are currently adapting");
@@ -348,10 +344,9 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 				.get(query);
 		query.initializePhysicalRoots(originalRoots);
 		LOG.error("Migration failed!", ex);
-		if (this.adaptedQueries > 0) {
-			this.adaptedQueries--;
-		}
-		if (this.adaptedQueries == 0) {
+		this.currentlyAdaptedQueries.remove(sender.getPhysicalQuery());
+
+		if (this.currentlyAdaptedQueries.isEmpty()) {
 			this.policyRuleEngine.start();
 		} else {
 			LOG.debug("There are still queries left that are currently adapting");

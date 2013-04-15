@@ -47,6 +47,8 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 
 	protected Set<IPhysicalQuery> stoppedQueries = new HashSet<IPhysicalQuery>();
 	
+	protected Set<IPhysicalQuery> currentlyAdaptedQueries = new HashSet<IPhysicalQuery>();
+	
 	@Override
 	public abstract void adaptPlan(IPhysicalQuery query, ISession user);
 
@@ -111,6 +113,9 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 	public void setQueryAsStopped(IPhysicalQuery query) {
 		LOG.debug("Query: " +  query + " is set as stopped");
 		this.stoppedQueries.add(query);
+		if(this.currentlyAdaptedQueries.remove(query) && this.currentlyAdaptedQueries.isEmpty()) {
+			getPolicyRuleEngine().start();
+		}
 	}
 
 	/*
