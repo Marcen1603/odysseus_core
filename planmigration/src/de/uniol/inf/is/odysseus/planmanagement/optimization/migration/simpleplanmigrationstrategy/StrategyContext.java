@@ -45,6 +45,8 @@ class StrategyContext {
 	//private IPhysicalOperator select;
 	private IPhysicalOperator lastOperatorOldPlan;
 	private IPhysicalOperator lastOperatorNewPlan;
+	
+	private long migrationStart;
 
 	public StrategyContext(IServerExecutor executor, IPhysicalQuery runningQuery,
 			IPhysicalOperator newPlanRoot) {
@@ -151,5 +153,12 @@ class StrategyContext {
 	public IPhysicalOperator getOldPlanRoot() {
 		return oldPlanRoot;
 	}
+	
+	public void setMigrationStart(long start) {
+		this.migrationStart = start;
+	}
 
+	public long getMigrationStart() {
+		return this.migrationStart;
+	}
 }
