@@ -34,10 +34,6 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 
 	private Font font;
 	
-	private int lastWidth;
-	private int lastTextWidth;
-	private int lastTextHeight;
-	
 	@Override
 	public void draw(Vector position, int width, int height, Vector screenShift, float zoomFactor) {
 		GC gc = getActualGC();
@@ -48,6 +44,9 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 		int textWidth = 0;
 		int textHeight = 0;
 		int fontSize = 20;
+		
+		int lastWidth = 0;
+		int lastTextHeight = 0;
 		
 		// calculate ideal font-size
 		// save width to cache font...
@@ -60,10 +59,7 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 			
 			font = new Font(Display.getDefault(), "Arial", fontSize, SWT.BOLD);
 			gc.setFont(font);
-			textWidth = 0;
-			for( char c : "SomeReallyLongName".toCharArray() ) {
-				textWidth += gc.getAdvanceWidth(c);
-			}
+			textWidth = determineTextLength(gc, "someReallyLongText");
 			textHeight = gc.getFontMetrics().getHeight();
 			
 			if( textWidth > width * 0.9 ) {
@@ -75,7 +71,6 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 			} else {
 				ok = true;
 				lastWidth = width;
-				lastTextWidth = textWidth;
 				lastTextHeight = textHeight;
 			}
 		}
@@ -86,7 +81,9 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 				name = getRealName((IPhysicalOperator)content);
 			}
 			
-			final int x = ((int)position.getX()) + (width / 2) - (lastTextWidth / 2); 
+			final int realTextWidth = determineTextLength(gc, name);
+			
+			final int x = ((int)position.getX()) + (width / 2) - (realTextWidth / 2); 
 			final int y = ((int)position.getY()) + (height / 2) - ( lastTextHeight / 2);
 			final int ownerID = determineFirstOwnerID(getNodeView().getModelNode().getContent());
 
@@ -94,6 +91,14 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 			gc.setForeground(OwnerColorManager.getOwnerTextColor(ownerID));
 			gc.drawText(name, x, y, true);
 		}
+	}
+
+	private static int determineTextLength(GC gc, String text) {
+		int textWidth = 0;
+		for( char c : text.toCharArray() ) {
+			textWidth += gc.getAdvanceWidth(c);
+		}
+		return textWidth;
 	}
 
 	private static int determineFirstOwnerID(Object content) {
