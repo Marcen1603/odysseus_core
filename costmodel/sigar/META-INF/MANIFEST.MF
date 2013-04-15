@@ -17,7 +17,7 @@ Export-Package: org.hyperic.jni,
  org.hyperic.sigar.win32,
  org.hyperic.sigar.win32.test
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-NativeCode: sigar-amd64-linux.so ;
+Bundle-NativeCode: libsigar-amd64-linux.so ;
   osname=linux;  processor=x86_64,
   sigar-x86-linux.so ; 
   osname=linux;  processor=x86,
@@ -28,3 +28,4 @@ Bundle-NativeCode: sigar-amd64-linux.so ;
   sigar-universal-maxosx.dylib ;
   osname=macosx; processor=x86,
   *
+
