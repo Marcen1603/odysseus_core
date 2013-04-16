@@ -20,6 +20,7 @@ import java.net.UnknownHostException;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -39,6 +40,8 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener {
 
     public void write(T object) throws IOException;
 
+    public void writePunctuation(IPunctuation punctuation) throws IOException;
+    
     public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
             Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer);
 
@@ -55,5 +58,6 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener {
     String getName();
 
 	public boolean isDone();
+
 
 }

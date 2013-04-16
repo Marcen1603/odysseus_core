@@ -30,15 +30,19 @@ public class SenderPO<T extends IStreamObject<?>> extends AbstractSink<T> {
             protocolHandler.write(object);
         }
         catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.error("Could not write {} into {}", new Object[]{object, protocolHandler, e});
         }
 
     }
 
     @Override
     public void processPunctuation(IPunctuation punctuation, int port) {
-        // TODO Auto-generated method stub
-
+        try {
+            protocolHandler.writePunctuation(punctuation);
+        }
+        catch (IOException e) {
+            LOG.error("Could not write {} into {}", new Object[]{punctuation, protocolHandler, e});
+        }
     }
 
     @Override

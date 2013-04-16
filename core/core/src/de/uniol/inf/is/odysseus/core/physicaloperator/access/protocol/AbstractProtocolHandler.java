@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -98,5 +99,10 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     @Override
     public boolean isDone() {
     	return transportHandler.isDone();
+    }
+    
+    @Override
+    public void writePunctuation(IPunctuation punctuation) throws IOException {
+    	// do noting
     }
 }
