@@ -19,7 +19,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.omg.CORBA.portable.Streamable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
@@ -31,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		extends AbstractWindowTIPO<T> {
 
+	Logger LOG = LoggerFactory.getLogger(SlidingElementWindowTIPO.class);
+	
 	List<IStreamable> _buffer = null;
 	boolean forceElement = true;
 	private long elemsToRemoveFromStream;
@@ -97,8 +100,12 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 				if (toReturn.isPunctuation()){
 					sendPunctuation((IPunctuation)toReturn);
 				}else{
+					if (((T)toReturn).getMetadata().getStart().before(object.getMetadata().getStart())){
 					((T)toReturn).getMetadata().setEnd(object.getMetadata().getStart());
 					transfer((T)toReturn);
+					}else{
+						LOG.warn("Element "+toReturn+" removed because missing granularity");
+					}
 				}
 				
 			}
