@@ -33,8 +33,6 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
 		
 		functions.add(new ToLineString());
-		//functions.add(new IsShotOnLeftGoal());
-		//functions.add(new IsShotOnRightGoal());
 		functions.add(new ShotOnGoalDetection());
 		functions.add(new DEBSDistance());
 		return functions;

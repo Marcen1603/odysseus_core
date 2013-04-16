@@ -27,6 +27,7 @@ public class RuleProvider implements ITransformRuleProvider {
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
 		//loading default rules		
+		rules.add(new TFastHeatMapAORule());
 		rules.add(new THeatMapAORule());
 		return rules;
 	}
