@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -27,6 +30,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 
+	Logger LOG = LoggerFactory.getLogger(SimpleCSVProtocolHandler.class);
+	
 	private String delimiter;
 	private boolean readFirstLine = true;
 	private boolean firstLineSkipped = false;
@@ -77,11 +82,11 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 			if (debug) {
 				if (dumpEachLine > 0) {
 					if (counter % dumpEachLine == 0) {
-						System.out.println(counter + " " + data);
+						LOG.debug(counter + " " + data);
 					}
 				}
 				if (lastLine == counter || counter == 0) {
-					System.out.println(counter + " "
+					LOG.debug(counter + " "
 							+ System.currentTimeMillis());
 				}
 				counter++;
