@@ -137,13 +137,6 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-//	private static SDFSchema appendOutputSchemaWithTimestamps(SDFSchema base, String sourceName) {
-//		final List<SDFAttribute> attributes = Lists.newArrayList(base.getAttributes());
-//		attributes.add(new SDFAttribute(sourceName, "start", SDFDatatype.START_TIMESTAMP));
-//		attributes.add(new SDFAttribute(sourceName, "end", SDFDatatype.END_TIMESTAMP));
-//		return new SDFSchema("", attributes);
-//	}
-
 	private static Map<QueryPart, String> assignQueryParts(Collection<String> remotePeerIDs, String localPeerID, List<QueryPart> queryParts) {
 		final Map<QueryPart, String> distributed = Maps.newHashMap();
 		final Map<String, String> assignedDestinations = Maps.newHashMap();
@@ -311,9 +304,6 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		access.setOptions(createOptionsMap(pipeID));
 		access.setOutputSchema(startOperator.getOutputSchema());
 		access.setName(ACCESS_NAME + connectionNumber);
-//		final ProjectAO projectAO = new ProjectAO();
-//		projectAO.setOutputSchemaWithList(truncOutputSchemaFromTimestamps(access.getOutputSchema()));
-//		projectAO.addParameterInfo("ATTRIBUTES", toString(projectAO.getOutputSchema()));
 
 		final SenderAO sender = new SenderAO();
 		sender.setSink(pipeID.toString());
@@ -323,15 +313,11 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		sender.setDataHandler(DATA_HANDLER_NAME);
 		sender.setOptions(createOptionsMap(pipeID));
 		sender.setName(SENDER_NAME + connectionNumber);
-//		final TimestampToPayloadAO payloadAO = new TimestampToPayloadAO();
 
 		final LogicalSubscription removingSubscription = determineSubscription(startOperator, endOperator);
 		startOperator.unsubscribeSink(removingSubscription);
 
 		startOperator.subscribeSink(sender, 0, removingSubscription.getSourceOutPort(), startOperator.getOutputSchema());
-//		payloadAO.subscribeSink(sender, 0, 0, payloadAO.getOutputSchema());
-
-//		projectAO.subscribeToSource(access, 0, 0, access.getOutputSchema());
 		endOperator.subscribeToSource(access, removingSubscription.getSinkInPort(), 0, access.getOutputSchema());
 
 		startPart.addSenderAO(sender, startOperator);
