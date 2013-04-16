@@ -131,7 +131,7 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 		if (pair.getE2() != null && pair.getE1() != null) {
 			// this source is satisfied.
 			this.sourcesToPunctuations.remove(p.getSource());
-			LOG.debug("Source: " + p.getSource() + " is satisfied");
+			LOG.debug("Source: " + p.getSource().getName() + " is satisfied");
 		}
 		// are all sources satisfied?
 		if (this.sourcesToPunctuations.isEmpty()) {
