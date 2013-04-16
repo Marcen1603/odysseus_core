@@ -168,7 +168,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			timeN = (Number) inElem.getAttribute(attrPos);
 		}
 		PointInTime time = null;
-		if (timeN != null &&  timeN.longValue() == -1) {
+		if (timeN == null ||  timeN.longValue() == -1) {
 			time = PointInTime.getInfinityTime();
 		} else {
 			time = new PointInTime(timeN);
