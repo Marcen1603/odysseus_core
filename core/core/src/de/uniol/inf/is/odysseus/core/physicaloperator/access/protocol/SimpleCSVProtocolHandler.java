@@ -31,7 +31,9 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 	private boolean readFirstLine = true;
 	private boolean firstLineSkipped = false;
 	private long dumpEachLine = -1;
+	private long lastLine = -1;
 	private long counter = 0;
+	private boolean debug = false;
 
 	public SimpleCSVProtocolHandler() {
 		super();
@@ -54,6 +56,12 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		if (options.get("dumpeachline") != null) {
 			dumpEachLine = Integer.parseInt(options.get("dumpeachline"));
 		}
+		if (options.get("lastline") != null) {
+			lastLine = Integer.parseInt(options.get("lasteachline"));
+		}
+		if (options.get("debug") != null){
+			debug = Boolean.parseBoolean(options.get("debug"));
+		}
 	}
 
 	@Override
@@ -66,12 +74,19 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		if (reader.ready()) {
 			T data = getDataHandler().readData(
 					reader.readLine().split(delimiter));
-			if (dumpEachLine > 0) {
-				if (counter % dumpEachLine == 0) {
-					System.out.println(counter + " " + data);
+			if (debug) {
+				if (dumpEachLine > 0) {
+					if (counter % dumpEachLine == 0) {
+						System.out.println(counter + " " + data);
+					}
+				}
+				if (lastLine == counter || counter == 0) {
+					System.out.println(counter + " "
+							+ System.currentTimeMillis());
 				}
 				counter++;
 			}
+
 			return data;
 		} else {
 			return null;
