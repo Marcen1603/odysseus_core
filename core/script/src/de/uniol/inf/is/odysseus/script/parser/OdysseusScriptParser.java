@@ -67,6 +67,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 
 	private int currentLine;
 
+	private Map<String, String> defaultReplacements = new HashMap<>();
+
 	@Override
 	public String getParameterKey() {
 		return PARAMETER_KEY;
@@ -187,6 +189,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
 		try {
+			resetDefaultReplacements();
 			// first, we rewrite loops to serial query text
 			String[] text = rewriteLoop(textToParse);
 						
@@ -322,6 +325,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		} catch (OdysseusScriptException ex) {
 			throw new OdysseusScriptException("[Line " + (currentLine + 1) + "]" + ex.getMessage(), ex);
 		}
+	}
+
+	private void resetDefaultReplacements() {
+		this.defaultReplacements.put("NOW", System.currentTimeMillis()+"");
+		
 	}
 
 	private String[] runProcedures(String[] text, ISession caller) throws OdysseusScriptException {
@@ -494,7 +502,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	private void addDefaultReplacements(Map<String, String> repl) {
-		repl.put("NOW", System.currentTimeMillis() + "");
+		for(Entry<String, String> def : this.defaultReplacements.entrySet()){
+			repl.put(def.getKey(), def.getValue());
+		}		
 	}
 
 	protected String useReplacements(String line, Map<String, String> replacements) throws OdysseusScriptException {
