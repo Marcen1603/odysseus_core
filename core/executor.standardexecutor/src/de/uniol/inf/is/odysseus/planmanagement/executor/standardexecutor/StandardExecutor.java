@@ -613,7 +613,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 		if (hasAdmissionControl()) {
 			if (!getAdmissionControl().canStartQuery(queryToStart)) {
-				throw new RuntimeException("Query due of admission control not started");
+				throw new RuntimeException("Query not started because it would exceed maximum total cost");
 			}
 		}
 		
