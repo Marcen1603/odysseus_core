@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import model.PatternOutput;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -12,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
@@ -31,9 +31,11 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	
 	// Pattern-Type
 	private String type;
-	private int time;
+	private Integer time;
 	private TimeUnit timeUnit;
-	private int size;
+	private Integer size;
+	private PatternOutput outputMode;
+	
 	// relevante Event-Typen-Liste
 	private List<String> eventTypes;
 	// Port -> Name des Input-Types
@@ -64,6 +66,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
         this.simpleOutput = patternAO.simpleOutput;
         this.expression = patternAO.expression;
         this.returnExpressions = patternAO.returnExpressions;
+        this.outputMode = patternAO.outputMode;
     }
 	
     @Parameter(type=SDFExpressionParameter.class, optional=true)
@@ -89,7 +92,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     	this.time = time;
     }
     
-    public int getTime() {
+    public Integer getTime() {
     	return time;
     }
     
@@ -98,7 +101,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     	this.size = size;
     }
     
-    public int getSize() {
+    public Integer getSize() {
     	return size;
     }
     
@@ -109,6 +112,15 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     
     public TimeUnit getTimeUnit() {
     	return timeUnit;
+    }
+    
+    @Parameter(type = EnumParameter.class, optional = true)
+    public void setOutputMode(PatternOutput outputMode) {
+    	this.outputMode = outputMode;
+    }
+    
+    public PatternOutput getOutputMode() {
+    	return outputMode;
     }
     
     @Parameter(type = StringParameter.class, isList = true)
@@ -129,9 +141,8 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		setOutputSchema(null);
     }
     
-    @Parameter(type=BooleanParameter.class, optional=true)
-    public void setSimpleOutput(boolean output) {
-        this.simpleOutput = output; 
+    public List<SDFExpression> getReturnExpressions() {
+    	return returnExpressions;
     }
     
     public Map<Integer, String> getInputTypeNames() {

@@ -12,6 +12,7 @@ import java.util.Set;
 import model.AttributeMap;
 import model.EventBuffer;
 import model.EventObject;
+import model.PatternOutput;
 
 import com.google.common.collect.Sets;
 
@@ -40,13 +41,16 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 	implements IProcessInternal<Tuple<T>> {
 	
 	private SDFExpression expression;
+	private List<SDFExpression> returnExpressions;
 	/**
 	 * Der Pattern-Typ.
 	 */
 	private String type;
-	private int time;
-	private int size;
+	private Integer time;
+	private Integer size;
 	private TimeUnit timeUnit;
+	private PatternOutput outputMode;
+	
 	/**
 	 * Die relevante Event-Typen-Liste.
 	 */
@@ -65,15 +69,19 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 	private Map<Integer, EventBuffer<T>> objectLists;
 	private AttributeMap[] attrMapping;
 	
-	public PatternMatchingPO(String type, int time, int size, TimeUnit timeUnit, List<String> eventTypes, SDFExpression expr,
-			Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas, IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
+	public PatternMatchingPO(String type, int time, int size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
+			SDFExpression expr, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
+			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
         super();
         this.type = type;
         this.time = time;
         this.size = size;
         this.timeUnit = timeUnit;
+        this.outputMode = outputMode;
+        if (this.outputMode == null) this.outputMode = PatternOutput.SIMPLE;
         this.eventTypes = eventTypes;
         this.expression = expr;
+        this.returnExpressions = returnExpressions;
         this.inputTypeNames = inputTypeNames;
         this.inputSchemas = inputSchemas;
         this.inputStreamSyncArea = inputStreamSyncArea;
@@ -94,8 +102,10 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
         this.time = patternPO.time;
         this.size = patternPO.size;
         this.timeUnit = patternPO.timeUnit;
+        this.outputMode = patternPO.outputMode;
         this.eventTypes = patternPO.eventTypes;
         this.expression = patternPO.expression;
+        this.returnExpressions = patternPO.returnExpressions;
         this.inputTypeNames = patternPO.inputTypeNames;
         this.inputSchemas = patternPO.inputSchemas;
         this.inputStreamSyncArea = patternPO.inputStreamSyncArea;
@@ -177,7 +187,7 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 				}
 				if (detected) {
 					// ANY-Pattern erkannt
-					this.transfer(this.createComplexEvent(type));
+					this.transfer(this.createComplexEvent(null, null, type));
 				}
 				break;
 			case "ALL":
@@ -211,11 +221,11 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 					EventObject<T> eventObj = new EventObject<T>(event, eventType, schema, port);
 					// Event einsortieren und alte Events entfernen
 					objectLists.get(port).add(eventObj);
-					dropOldEvents();
+					dropOldEvents(port);
 					// Kombinationen suchen und Bedingungen überprüfen
 					List<List<EventObject<T>>> output = checkAssertion(eventObj);
-					for (int i = 0; i < output.size(); i++) {
-						this.transfer(this.createComplexEvent(type));
+					for (List<EventObject<T>> outputObject : output) {
+						this.transfer(this.createComplexEvent(outputObject, eventObj, type));
 					}
 				}
 			case "ABSENCE":
@@ -250,20 +260,48 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 	}
 	
 	/**
-	 * Erzeugt ein komplexes Event.
+	 * Erzeugt ein komplexes Event abhängig vom PatternOutput.
 	 */
-	private Tuple<? extends ITimeInterval> createComplexEvent(String type) {
-		Object[] attributes = new Object[2];
-		attributes[0] = type;
-		attributes[1] = true;
-		Tuple<? extends ITimeInterval> returnEvent = new Tuple<ITimeInterval>(attributes, false);
-		return returnEvent;
+	private Tuple<? extends ITimeInterval> createComplexEvent(List<EventObject<T>> outputObject, EventObject<T> currentObj, String type) {
+		if (outputMode == PatternOutput.SIMPLE) {
+			Object[] attributes = new Object[2];
+			attributes[0] = type;
+			attributes[1] = true;
+			Tuple<? extends ITimeInterval> returnEvent = new Tuple<ITimeInterval>(attributes, false);
+			return returnEvent;
+		}
+		if (outputMode == PatternOutput.EXPRESSIONS) {
+			Object[] values = findExpressionValues(outputObject);
+			if (values != null) {
+				expression.bindMetaAttribute(currentObj.getEvent().getMetadata());
+				expression.bindAdditionalContent(currentObj.getEvent().getAdditionalContent());
+				expression.bindVariables(values);
+				// TODO
+			}
+		}
+		return null;
 	}
 	
-	private void dropOldEvents() {
-		
+	private void dropOldEvents(int port) {
+		EventBuffer<T> currentEvents = objectLists.get(port);
+		// Anzahl Elemente berücksichtigen
+		if (size != null) {
+			while (currentEvents.getSize() > size) {
+				currentEvents.removeFirst();
+			}
+		}
+		// Zeit berücksichtigen
+		if (time != null) {
+			// TODO
+		}
 	}
 	
+	/**
+	 * Prüft für alle gültigen Kombinationen (-> ALL-Pattern), ob die Bedingung erfüllt ist und
+	 * liefert diese in form einer Liste zurück. 
+	 * @param object
+	 * @return
+	 */
 	private List<List<EventObject<T>>> checkAssertion(EventObject<T> object) {
 		List<List<EventObject<T>>> output = new ArrayList<List<EventObject<T>>>();
 		
@@ -289,27 +327,8 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 		if (crossProduct.size() != 0) {
 			// Expressions überprüfen
 			for (List<EventObject<T>> crossElems : crossProduct) {
-				boolean attrMappingFailure = false;
-				Object[] values = new Object[attrMapping.length];
-				for (int i = 0; i < attrMapping.length; i++) {
-					EventObject<T> obj = null;
-					Iterator<EventObject<T>> iterator = crossElems.iterator();
-					while (iterator.hasNext()) {
-						obj = iterator.next();
-						if (obj.getPort() == attrMapping[i].getPort()) {
-							break;
-						}
-					}
-					if (obj != null) {
-						int attrPos = attrMapping[i].getAttrPos();
-						values[i] = obj.getEvent().getAttribute(attrPos);
-					} else {
-						// es gibt kein Objekt mit dem geforderten Attribut
-						attrMappingFailure = true;
-						break;
-					}
-				}
-				if (attrMappingFailure == false) {
+				Object[] values = findExpressionValues(crossElems);
+				if (values != null) {
 					expression.bindMetaAttribute(object.getEvent().getMetadata());
 					expression.bindAdditionalContent(object.getEvent().getAdditionalContent());
 					expression.bindVariables(values);
@@ -322,6 +341,34 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 			}
 		}
 		return output;
+	}
+	
+	/**
+	 * Sucht nach den Werten für die Attribute aus der Expression.
+	 * Bei Erfolg werden die Werte zurückgeliefert, bei misserfolg null.
+	 * @param eventObjects Liste mit Event-Objekten.
+	 * @return values, null bei Misserfolg
+	 */
+	private Object[] findExpressionValues(List<EventObject<T>> eventObjects) {
+		Object[] values = new Object[attrMapping.length];
+		for (int i = 0; i < attrMapping.length; i++) {
+			EventObject<T> obj = null;
+			Iterator<EventObject<T>> iterator = eventObjects.iterator();
+			while (iterator.hasNext()) {
+				obj = iterator.next();
+				if (obj.getPort() == attrMapping[i].getPort()) {
+					break;
+				}
+			}
+			if (obj != null) {
+				int attrPos = attrMapping[i].getAttrPos();
+				values[i] = obj.getEvent().getAttribute(attrPos);
+			} else {
+				// es gibt kein Objekt mit dem geforderten Attribut
+				return null;
+			}
+		}
+		return values;
 	}
 	
 }

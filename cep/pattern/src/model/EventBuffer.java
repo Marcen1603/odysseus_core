@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class EventBuffer<T extends IMetaAttribute> {
 	
-	private List<EventObject<T>> objects;
+	private LinkedList<EventObject<T>> objects;
 	
 	public EventBuffer() {
 		this.objects = new LinkedList<EventObject<T>>();
@@ -26,6 +26,10 @@ public class EventBuffer<T extends IMetaAttribute> {
 	
 	public void add(EventObject<T> object) {
 		objects.add(object);
+	}
+	
+	public void removeFirst() {
+		objects.removeFirst();
 	}
 	
 	public Set<EventObject<T>> toSet() {
@@ -38,6 +42,10 @@ public class EventBuffer<T extends IMetaAttribute> {
 			result.add(object.getEventType());
 		}
 		return result;
+	}
+	
+	public int getSize() {
+		return objects.size();
 	}
 	
 	public boolean contains(String eventType) {
@@ -75,34 +83,5 @@ public class EventBuffer<T extends IMetaAttribute> {
 		}
 		return null;
 	}
-	
-	/**
-	 * Überprüft, ob für diese Menge das All-Pattern erfüllt ist.
-	 * @param eventTypes
-	 * @param expression
-	 * @param attrMapping 
-	 * @return true, wenn alle eventTypes vorhanden sind und die expression erfüllt ist.
-	 */
-	/*public boolean matchAllPattern(List<String> eventTypes, SDFExpression expression, AttributeMap[] attrMapping, Tuple<T> event) {
-		boolean matchEventTypes = containsAllOnlyOnce(eventTypes);
-		if (matchEventTypes) {
-			// Values an Expression binden
-			Object[] values = new Object[attrMapping.length];
-			for (int i = 0; i < attrMapping.length; i++) {
-				EventObject<T> obj = getEventObject(attrMapping[i].getSchema());
-				if (obj != null) {
-					int attrPos = attrMapping[i].getAttrPos();
-					values[i] = obj.getEvent().getAttribute(attrPos);
-				}
-			}
-			
-			expression.bindMetaAttribute(event.getMetadata());
-			expression.bindAdditionalContent(event.getAdditionalContent());
-			expression.bindVariables(values);
-			boolean predicate = expression.getValue();
-			if (predicate) return true;
-		}
-		return false;
-	}*/
 	
 }
