@@ -199,6 +199,10 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		Tuple<?> r = (Tuple<?>) data;
 
 		// Dieser Code macht keinen Sinn...
+		// Denn im Falle eines zu großen Objekts wird ein
+		// temporärer ByteBuffer erzeugt und beschrieben. Der BYteBuffer
+		// des aufrufers wäre gar nicht angefasst worden
+		
 //		int size = memSize(r);
 //		
 //		if (size > buffer.capacity()) {
