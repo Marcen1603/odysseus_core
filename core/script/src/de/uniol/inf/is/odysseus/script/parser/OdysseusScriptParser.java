@@ -472,11 +472,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		addDefaultReplacements(repl);
 		for (String line : text) {
 			String correctLine = removeComments(line).trim();
-			// why replacing here?! twice?!
-			// String replacedLine = useReplacements(correctLine, repl);
-			final int pos = correctLine.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY);
+			// maybe, we have replacements within definitions...
+			String replacedLine = useReplacements(correctLine, repl);
+			final int pos = replacedLine.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY);
 			if (pos != -1) {
-				String[] parts = correctLine.split(" |\t", 3);
+				String[] parts = replacedLine.split(" |\t", 3);
 				// parts[0] is #DEFINE
 				// parts[1] is replacement name
 				// parts[2] is replacement value (optional!)
@@ -484,9 +484,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					repl.put(parts[1].trim(), parts[2].trim());
 				}
 			}
-			final int posLoop = correctLine.indexOf(PARAMETER_KEY + LOOP_START_KEY);
+			final int posLoop = replacedLine.indexOf(PARAMETER_KEY + LOOP_START_KEY);
 			if (posLoop != -1) {
-				String[] parts = correctLine.split(" |\t", 3);
+				String[] parts = replacedLine.split(" |\t", 3);
 				repl.put(parts[1].trim(), parts[1].trim());
 			}
 		}
