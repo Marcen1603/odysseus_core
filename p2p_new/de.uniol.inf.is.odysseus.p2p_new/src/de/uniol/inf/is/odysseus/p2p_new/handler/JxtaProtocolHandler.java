@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.handler;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
@@ -23,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 
 public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByteBufferHandler<T> {
 	
@@ -72,7 +70,10 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 	public void write(T object) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(1024);
 		getDataHandler().writeData(buffer, object);
-		buffer.put(toBytes(object.getMetadata()));
+		if( object.getMetadata() != null ) {
+			byte[] metadataBytes = ObjectByteConverter.objectToBytes(object.getMetadata());
+			buffer.put(metadataBytes);
+		}
 		buffer.flip();
 
 		int messageSizeBytes = buffer.remaining();
@@ -84,24 +85,7 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 		getTransportHandler().send(rawBytes);
 	}
 
-	private static byte[] toBytes(Object obj) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ObjectOutput out = null;
-		try {
-			out = new ObjectOutputStream(bos);
-			out.writeObject(obj);
-			return bos.toByteArray();
-		} catch (IOException e) {
-			LOG.error("Could not convert object {} to byte array", obj, e);
-			return new byte[0];
-		} finally {
-			try {
-				out.close();
-				bos.close();
-			} catch (IOException e) {
-			}
-		}
-	}
+
 
 	@Override
 	public void process(ByteBuffer message) {
