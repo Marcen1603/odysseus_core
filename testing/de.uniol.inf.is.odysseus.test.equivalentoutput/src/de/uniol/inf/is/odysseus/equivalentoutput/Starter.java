@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.equivalentoutput;
 import java.io.IOException;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.equivalentoutput.duplicate.DuplicateCheck;
+import de.uniol.inf.is.odysseus.equivalentoutput.enums.StatusCode;
 import de.uniol.inf.is.odysseus.equivalentoutput.equality.EqualityCheck;
 import de.uniol.inf.is.odysseus.equivalentoutput.order.OrderCheck;
 import de.uniol.inf.is.odysseus.equivalentoutput.reader.StreamReader;
@@ -36,19 +38,22 @@ import de.uniol.inf.is.odysseus.equivalentoutput.tuple.TupleFactory;
 public class Starter {
 
 	public static void main(String[] args) {
-		int check = check(args);
+		StatusCode check = check(args);
 		switch (check) {
-		case 0:
+		case EQUIVALENT_FILES:
 			System.out.println("Both inputs are equivalent and in order");
 			break;
-		case 1:
+		case ERROR_WRONG_PARAMETERS:
 			System.err.println("Not provided enough or wrong parameters");
 			break;
-		case 2:
+		case ERROR_OUT_OF_ORDER:
 			System.err.println("One or both files were not in order");
 			break;
-		case 3:
+		case ERROR_NOT_EQUIVALENT:
 			System.err.println("Both files were not equivalent");
+			break;
+		case ERROR_DUPLICATES:
+			System.err.println("One or both files contained duplicates");
 			break;
 		}
 	}
@@ -58,10 +63,10 @@ public class Starter {
 	 *            : args[0] path0, args[1] path1, (args[2] delimiter)
 	 * @return
 	 */
-	public static int check(String[] args) {
+	public static StatusCode check(String[] args) {
 		if (!(args.length == 2 || args.length == 3)) {
 			System.err.println("Please provide two input files");
-			return 1;
+			return StatusCode.ERROR_WRONG_PARAMETERS;
 		}
 		try {
 			List<String> input0Strings = StreamReader.readFile(args[0]);
@@ -74,18 +79,22 @@ public class Starter {
 			List<Tuple> input0 = TupleFactory.createTuples(input0Strings);
 			List<Tuple> input1 = TupleFactory.createTuples(input1Strings);
 
+			if(DuplicateCheck.containsDuplicates(input0) || DuplicateCheck.containsDuplicates(input1)) {
+				return StatusCode.ERROR_DUPLICATES;
+			}
+			
 			if (!OrderCheck.isInOrder(input0) || !OrderCheck.isInOrder(input1)) {
-				return 2;
+				return StatusCode.ERROR_OUT_OF_ORDER;
 			}
 
 			if (!EqualityCheck.containEachOther(input0, input1)) {
-				return 3;
+				return StatusCode.ERROR_NOT_EQUIVALENT;
 			}
 		} catch (IOException ex) {
 			System.err.println(ex);
-			return 1;
+			return StatusCode.ERROR_WRONG_PARAMETERS;
 		}
 
-		return 0;
+		return StatusCode.EQUIVALENT_FILES;
 	}
 }

@@ -13,45 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.equivalentoutput.equality;
+package de.uniol.inf.is.odysseus.equivalentoutput.duplicate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.equivalentoutput.tuple.Tuple;
 
 /**
- * This class checks if the both inputs are containing each other.
+ * Checks if the given list contains duplicated tuples.
  * 
  * @author Merlin Wasmann
- * 
+ *
  */
-public class EqualityCheck {
-
-	public static boolean containEachOther(List<Tuple> input0, List<Tuple> input1) {
-		if(input0.containsAll(input1) && input1.containsAll(input0)) {
-			return true;
-		} else {
-			detailCheck(input0, input1);
-			return false;
-		}
-	}
+public class DuplicateCheck {
 	
-	private static void detailCheck(List<Tuple> input0, List<Tuple> input1) {
-		int counter = 0;
-		for(Tuple in0 : input0) {
-			if(!input1.contains(in0)) {
-				System.err.println("[DetailCheck] " + in0 + " was not in input1");
-				counter++;
+	public static boolean containsDuplicates(List<Tuple> tuples) {
+		List<Tuple> testList = new ArrayList<Tuple>();
+		testList.addAll(tuples);
+		for(int i = 0; i < testList.size(); i++) {
+			Tuple test = testList.get(i);
+			testList.remove(i);
+			if (testList.contains(test)) {
+				return true;
 			}
+			testList.add(i, test);
 		}
-		for(Tuple in1 : input1) {
-			if(!input0.contains(in1)) {
-				System.err.println("[DetailCheck] " + in1 + " was not in input0");
-				counter++;
-			}
-		}
-		if(counter > 0) {
-			System.err.println(counter + " of " + input0.size() + " tuples could not be matched");
-		}
+		return false;
 	}
+
 }
