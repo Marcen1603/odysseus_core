@@ -407,20 +407,6 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-//	private static String toString(SDFSchema outputSchema) {
-//		final StringBuilder sb = new StringBuilder();
-//		sb.append("[");
-//		final List<SDFAttribute> attributes = outputSchema.getAttributes();
-//		for (int i = 0; i < attributes.size(); i++) {
-//			sb.append("'").append(attributes.get(i).getAttributeName()).append("'");
-//			if (i < attributes.size() - 1) {
-//				sb.append(", ");
-//			}
-//		}
-//		sb.append("]");
-//		return sb.toString();
-//	}
-
 	private static Collection<ILogicalQuery> transformToQueries(List<QueryPart> localQueryParts, IPQLGenerator generator) {
 		final List<ILogicalQuery> localQueries = Lists.newArrayList();
 
@@ -430,14 +416,6 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 		return localQueries;
 	}
-
-//	private static List<SDFAttribute> truncOutputSchemaFromTimestamps(SDFSchema outputSchema) {
-//		// annahme, die beiden neuen attribute sind ganz hinten..
-//		final List<SDFAttribute> newSchema = Lists.newArrayList(outputSchema.getAttributes());
-//		newSchema.remove(newSchema.size() - 1);
-//		newSchema.remove(newSchema.size() - 1);
-//		return newSchema;
-//	}
 
 	private static void tryPublishImpl(QueryPartAdvertisement adv) {
 		try {
