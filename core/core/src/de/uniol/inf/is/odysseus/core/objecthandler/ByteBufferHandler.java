@@ -135,5 +135,8 @@ public class ByteBufferHandler<T> implements
 		return "ByteBufferHandler";
 	}
 
+	protected final IDataHandler<?> getDataHandler()  {
+		return dataHandler;
+	}
 
 }
