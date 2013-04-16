@@ -182,7 +182,6 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 				}
 			}
 		}
-		System.gc();
 	}
 
 	@Override
