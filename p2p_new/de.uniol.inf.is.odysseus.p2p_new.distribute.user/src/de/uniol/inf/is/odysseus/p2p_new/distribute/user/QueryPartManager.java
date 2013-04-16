@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.user;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import net.jxta.document.Advertisement;
 import net.jxta.id.ID;
@@ -10,8 +12,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
@@ -19,11 +34,12 @@ import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 public class QueryPartManager implements IAdvertisementListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryPartManager.class);
+
 	private static QueryPartManager instance;
 
 	private final List<ID> consumedAdvertisementIDs = Lists.newArrayList();
 
-	private IExecutor executor;
+	private IServerExecutor executor;
 
 	public QueryPartManager() {
 		instance = this;
@@ -37,7 +53,13 @@ public class QueryPartManager implements IAdvertisementListener {
 			LOG.debug("PQL-Statement is {}", adv.getPqlStatement());
 
 			try {
-				final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), "Standard");
+				TransformationConfiguration transformationConfiguration = determineTransformationConfiguration(executor, adv.getTransCfgName());
+				transformationConfiguration.setOption("NO_METADATA", true);
+
+				final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), adv.getTransCfgName());
+
+				transformationConfiguration.removeOption("NO_METADATA");
+				removeUnnededOperators(executor, ids);
 
 				// shared parts are always started
 				for (final Integer id : ids) {
@@ -55,9 +77,13 @@ public class QueryPartManager implements IAdvertisementListener {
 
 	// called by OSGi-DS
 	public void bindExecutor(IExecutor exe) {
-		executor = exe;
+		if (exe instanceof IServerExecutor) {
+			executor = (IServerExecutor) exe;
 
-		LOG.debug("Bound Executor {}", exe);
+			LOG.debug("Bound ServerExecutor {}", exe);
+		} else {
+			throw new IllegalArgumentException("Executor " + exe + " is not a ServerExecutor");
+		}
 	}
 
 	@Override
@@ -81,4 +107,56 @@ public class QueryPartManager implements IAdvertisementListener {
 	public static QueryPartManager getInstance() {
 		return instance;
 	}
+
+	private static TransformationConfiguration determineTransformationConfiguration(IServerExecutor executor, String cfgName) {
+		IQueryBuildConfiguration qbc = executor.getQueryBuildConfiguration(cfgName);
+		List<IQueryBuildSetting<?>> configuration = qbc.getConfiguration();
+		QueryBuildConfiguration qbc2 = new QueryBuildConfiguration(configuration.toArray(new IQueryBuildSetting[0]), cfgName);
+		TransformationConfiguration transformationConfiguration = qbc2.getTransformationConfiguration();
+		return transformationConfiguration;
+	}
+
+	private static void removeUnnededOperators(IServerExecutor serverExecutor, Collection<Integer> ids) {
+		for (Integer id : ids) {
+			IPhysicalQuery physicalQuery = serverExecutor.getExecutionPlan().getQueryById(id);
+			removeUnneededOperators(physicalQuery);
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static void removeUnneededOperators(IPhysicalQuery physicalQuery) {
+		Set<IPhysicalOperator> operators = Sets.newHashSet(physicalQuery.getAllOperators());
+		for (IPhysicalOperator operator : operators) {
+			if (operator instanceof MetadataUpdatePO) {
+				MetadataUpdatePO updatePO = (MetadataUpdatePO) operator;
+
+				List<?> subscribedToSource = updatePO.getSubscribedToSource();
+				Map<ISource<?>, Integer> sourcePortMap = Maps.newHashMap();
+				for (Object subSource : subscribedToSource) {
+					PhysicalSubscription<ISource<?>> physSub = (PhysicalSubscription<ISource<?>>) subSource;
+					sourcePortMap.put(physSub.getTarget(), physSub.getSourceOutPort());
+
+					physSub.getTarget().disconnectSink(updatePO, physSub.getSinkInPort(), physSub.getSourceOutPort(), physSub.getTarget().getOutputSchema());
+				}
+				updatePO.unsubscribeFromAllSources();
+
+				List<?> subscriptions = updatePO.getSubscriptions();
+				Map<ISink<?>, Integer> sinkPortMap = Maps.newHashMap();
+				for (Object subSink : subscriptions) {
+					PhysicalSubscription<ISink<?>> physSub = (PhysicalSubscription<ISink<?>>) subSink;
+					sinkPortMap.put(physSub.getTarget(), physSub.getSinkInPort());
+
+					physSub.getTarget().unsubscribeFromSource(updatePO, physSub.getSinkInPort(), physSub.getSourceOutPort(), updatePO.getOutputSchema());
+				}
+				updatePO.unsubscribeFromAllSinks();
+
+				for (ISource source : sourcePortMap.keySet()) {
+					for (ISink sink : sinkPortMap.keySet()) {
+						source.subscribeSink(sink, sinkPortMap.get(sink), sourcePortMap.get(source), source.getOutputSchema());
+					}
+				}
+			}
+		}
+	}
+
 }

@@ -21,7 +21,7 @@ public class ModelBasedDistributor implements ILogicalQueryDistributor {
 	}
 
 	@Override
-	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender, List<ILogicalQuery> queriesToDistribute) {
+	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender, List<ILogicalQuery> queriesToDistribute, String transCfgName) {
 
 		// Anfragen ausschreiben
 		// Jede Anfrage eigene Ausschreibung (Advertisement)
@@ -29,45 +29,45 @@ public class ModelBasedDistributor implements ILogicalQueryDistributor {
 		// Gebote abwarten
 		// asynchroner Vorgang
 		// was passiert dann hier?
-		// werden Anfragen lokal ausgeführt?
+		// werden Anfragen lokal ausgefï¿½hrt?
 
 		// Gebote sammeln
 
 		// Bestimmte Zeit verstreichen lassen
-		// Während dieser Zeit können Gebote abgegeben werden
+		// Wï¿½hrend dieser Zeit kï¿½nnen Gebote abgegeben werden
 
 		// Gebotsphase beendet
 		// Danach eintreffende Gebote werden abgelehnt/ignoriert
 
 		// Sichtung der Gebote
-		// Können mit allen Geboten alle Operatoren einer Anfrage platziert
+		// Kï¿½nnen mit allen Geboten alle Operatoren einer Anfrage platziert
 		// werden?
-		// Was passiert bei Überlappungen?
-		// Überlappungen im Falle der Replikation erwünscht (hier zunächst nicht
+		// Was passiert bei ï¿½berlappungen?
+		// ï¿½berlappungen im Falle der Replikation erwï¿½nscht (hier zunï¿½chst nicht
 		// weiter betrachtet)
 		// Welche Gebote sind "gut"?
 		// NP-Problem?
 
 		// Zuordnung, welches Gebot zu welchem Operator "stattgegeben" wird
-		// Gebote wenn möglich nicht verändern
+		// Gebote wenn mï¿½glich nicht verï¿½ndern
 		// Gebotswert basiert auf nicht bekannten Kostenfunktionen der Anbieter
 		// I. d. R. werden die Operatoren mit einbezogen
-		// Operatoren nachträglich hinzufügen nicht erwünscht (Autonomie)
-		// Kann u. U. die Bedingungen für den Anbieter drastisch ändern
+		// Operatoren nachtrï¿½glich hinzufï¿½gen nicht erwï¿½nscht (Autonomie)
+		// Kann u. U. die Bedingungen fï¿½r den Anbieter drastisch ï¿½ndern
 		// Operatoren aus Geboten entfernen
-		// Auflösung von Überlappungen
-		// Auf den ersten Blick ungefährlicher als das Hinzufügen von Anfragen
+		// Auflï¿½sung von ï¿½berlappungen
+		// Auf den ersten Blick ungefï¿½hrlicher als das Hinzufï¿½gen von Anfragen
 		// Autonomiefrage stellt sich trotzdem
-		// Welche Bedingungen müssen alle Gebote zusammen erfüllen, um eine
-		// Erfolgreiche Zuordnung zu gewährleisten?
+		// Welche Bedingungen mï¿½ssen alle Gebote zusammen erfï¿½llen, um eine
+		// Erfolgreiche Zuordnung zu gewï¿½hrleisten?
 
 		// Nach Zuordnung
 		// Anbieter, welche den Zuschlag erhalten haben, informieren
-		// Anfragen werden zerlegt und verteilt (über PQL)
+		// Anfragen werden zerlegt und verteilt (ï¿½ber PQL)
 		// Spezielle Konfiguration der Sender- und Access-Operatoren
 		// Wie bei manueller Zuordnung
 
-		// Ausführung
+		// Ausfï¿½hrung
 		// ...
 
 		return queriesToDistribute;

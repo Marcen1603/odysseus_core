@@ -34,6 +34,7 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 	private static final String PQL_TAG = "pql";
 	private static final String PEER_ID_TAG = "peerid";
 	private static final String SHARED_QUERY_ID_TAG = "sharedQueryID";
+	private static final String TRANSCFG_NAME_TAG = "transcfg";
 
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG };
 
@@ -44,6 +45,8 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 	private PeerID peerID;
 
 	private ID sharedQueryID;
+	
+	private String transCfgName;
 
 	public QueryPartAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
@@ -96,6 +99,7 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 		appendElement(doc, PQL_TAG, pqlStatement);
 		appendElement(doc, PEER_ID_TAG, peerID.toString());
 		appendElement(doc, SHARED_QUERY_ID_TAG, sharedQueryID.toString());
+		appendElement(doc, TRANSCFG_NAME_TAG, transCfgName);
 
 		return doc;
 	}
@@ -121,6 +125,10 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 	public ID getSharedQueryID() {
 		return sharedQueryID;
 	}
+	
+	public String getTransCfgName() {
+		return transCfgName;
+	}
 
 	@Override
 	public int hashCode() {
@@ -145,6 +153,10 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 	public void setSharedQueryID(ID sharedQueryID) {
 		this.sharedQueryID = sharedQueryID;
 	}
+	
+	public void setTransCfgName(String transCfgName) {
+		this.transCfgName = transCfgName;
+	}
 
 	private void determineFields(TextElement<?> root) {
 		final Enumeration<?> elements = root.getChildren();
@@ -164,6 +176,8 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 			setPeerID(convertToPeerID(elem.getTextValue()));
 		} else if (elem.getName().equals(SHARED_QUERY_ID_TAG)) {
 			setSharedQueryID(convertToID(elem.getTextValue()));
+		} else if (elem.getName().equals(TRANSCFG_NAME_TAG)) {
+			setTransCfgName(elem.getTextValue());
 		}
 	}
 
