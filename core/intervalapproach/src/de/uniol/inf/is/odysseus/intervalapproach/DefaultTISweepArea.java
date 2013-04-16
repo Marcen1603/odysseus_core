@@ -35,14 +35,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSwe
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicate;
 
 /**
- * This sweeparea implementation provides some optimizations on extract and
- * purge. The elements are always sorted and extract and purge only remove
- * elements, until the remove predicate first returns false. The remove
- * predicate is fixed to the TotallyBeforePredicate
+ * This sweeparea implementation provides some optimizations on extract and purge. The elements are always sorted and extract and purge only remove elements, until the remove predicate first returns false. The remove predicate is fixed to the TotallyBeforePredicate
  */
-public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
-		extends AbstractSweepArea<T> implements
-		Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
+public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>> extends AbstractSweepArea<T> implements Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
 
 	Comparator<T> purgeComparator = new Comparator<T>() {
 
@@ -66,8 +61,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		super.setRemovePredicate(TotallyBeforePredicate.getInstance());
 	}
 
-	public DefaultTISweepArea(DefaultTISweepArea<T> defaultTISweepArea)
-			throws InstantiationException, IllegalAccessException {
+	public DefaultTISweepArea(DefaultTISweepArea<T> defaultTISweepArea) throws InstantiationException, IllegalAccessException {
 		super(defaultTISweepArea);
 	}
 
@@ -128,11 +122,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	/**
-	 * Removes all elements from this sweep area that are totally before
-	 * "element". The while loop in this method can be broken, if the next
-	 * element has a start timestamp that is after or equals to the start
-	 * timestamp of "element", because the elements in the sweep area are
-	 * ordered by their start timestamps.
+	 * Removes all elements from this sweep area that are totally before "element". The while loop in this method can be broken, if the next element has a start timestamp that is after or equals to the start timestamp of "element", because the elements in the sweep area are ordered by their start
+	 * timestamps.
 	 */
 	@Override
 	public void purgeElements(T element, Order order) {
@@ -140,8 +131,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		synchronized (getElements()) {
 
 			if (getElements().size() > 10) {
-//				System.err.println("Remove before " + element);
-//				System.err.println("before remove " + getElements().size());
+				// System.err.println("Remove before " + element);
+				// System.err.println("before remove " + getElements().size());
 				// binary search returns
 				// the index of the search key, if it is contained in the list;
 				// otherwise, (-(insertion point) - 1). The insertion point is
@@ -151,29 +142,28 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 				// the specified key. Note that this guarantees that the return
 				// value will be >= 0 if and only if the key is found.
 				// Remark: purgeComparator will never return equals!
-				int delTo = Collections.binarySearch(getElements(), element,
-						purgeComparator);
+				int delTo = Collections.binarySearch(getElements(), element, purgeComparator);
 				// Only remove if before
 				if (delTo < 0) {
 					// find correct position
 					delTo = (delTo + 1) * -1;
 					if (delTo > 0) { // else there is nothing to do
 						if (delTo < getElements().size()) {
-//							System.err.println("remove until pos "
-//									+ (delTo - 1) + " "
-//									+ getElements().get(delTo - 1));
+							// System.err.println("remove until pos "
+							// + (delTo - 1) + " "
+							// + getElements().get(delTo - 1));
 
 							getElements().removeRange(0, delTo - 1);
 						} else {
-//							System.err
-//									.println("remove all --> Last element was "
-//											+ getElements().get(
-//													getElements().size() - 1));
+							// System.err
+							// .println("remove all --> Last element was "
+							// + getElements().get(
+							// getElements().size() - 1));
 							getElements().clear();
 						}
 					}
 				}
-//				System.err.println("after remove " + getElements().size());
+				// System.err.println("after remove " + getElements().size());
 			} else {
 				Iterator<T> it = this.getElements().iterator();
 				// int i = 0;
@@ -185,14 +175,14 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 						it.remove();
 					}
 
-					if (cur.getMetadata().getStart()
-							.afterOrEquals(element.getMetadata().getStart())) {
+					if (cur.getMetadata().getStart().afterOrEquals(element.getMetadata().getStart())) {
 						return;
 					}
 
 				}
 			}
 		}
+		System.gc();
 	}
 
 	@Override
@@ -245,6 +235,23 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 				// Alle Elemente entfernen, die nicht mehr verschnitten werden
 				// k�nnen (also davor liegen)
 				if (s_hat.getMetadata().getStart().before(validity)) {
+					retval.add(s_hat);
+					li.remove();
+				} else {
+					break;
+				}
+			}
+		}
+		return retval.iterator();
+	}
+
+	public Iterator<T> extractElementsEndBefore(PointInTime validity) {
+		ArrayList<T> retval = new ArrayList<T>();
+		synchronized (getElements()) {
+			Iterator<T> li = getElements().iterator();
+			while (li.hasNext()) {
+				T s_hat = li.next();
+				if (s_hat.getMetadata().getEnd().before(validity)) {
 					retval.add(s_hat);
 					li.remove();
 				} else {
@@ -313,16 +320,13 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	/**
-	 * @return the min start timestamp of all elements currently in the sweep
-	 *         area. Should be the start timestamp of the first element in the
-	 *         linked list.
+	 * @return the min start timestamp of all elements currently in the sweep area. Should be the start timestamp of the first element in the linked list.
 	 */
 	@Override
 	public PointInTime getMinTs() {
 		synchronized (getElements()) {
 			if (!this.getElements().isEmpty()) {
-				return this.getElements().get(getElements().size())
-						.getMetadata().getStart();
+				return this.getElements().get(0).getMetadata().getStart();
 			}
 		}
 		return null;
@@ -330,15 +334,12 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 
 	/**
 	 * 
-	 * @return the max start timestamp of all elements currently in the sweep
-	 *         area. Should be the start timestamp of the last element in the
-	 *         linked list.
+	 * @return the max start timestamp of all elements currently in the sweep area. Should be the start timestamp of the last element in the linked list.
 	 */
 	@Override
 	public PointInTime getMaxTs() {
 		if (!this.getElements().isEmpty()) {
-			return this.getElements().get(getElements().size()).getMetadata()
-					.getStart();
+			return this.getElements().get(getElements().size()).getMetadata().getStart();
 		}
 		return null;
 	}
@@ -358,24 +359,19 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 * For Debug-Purposes
 	 * 
 	 * @param baseTime
-	 * @return the current Content of the SweepArea with baseTime as origin of
-	 *         all points of time
+	 * @return the current Content of the SweepArea with baseTime as origin of all points of time
 	 */
 	public String getSweepAreaAsString(PointInTime baseTime) {
-		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size()
-				+ " Elems \n");
+		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size() + " Elems \n");
 		for (T element : getElements()) {
 			buf.append(element).append(" ");
-			buf.append("{META ")
-					.append(element.getMetadata().toString(baseTime))
-					.append("}\n");
+			buf.append("{META ").append(element.getMetadata().toString(baseTime)).append("}\n");
 		}
 		return buf.toString();
 	}
 
 	public String getSweepAreaAsString() {
-		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size()
-				+ " Elems \n");
+		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size() + " Elems \n");
 		for (T element : getElements()) {
 			buf.append(element).append(" ").append("}\n");
 		}
@@ -418,8 +414,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 * @param timestamp
 	 * @return
 	 */
-	public Iterator<T> peekElementsContaing(PointInTime timestamp,
-			boolean includingEndtime) {
+	public Iterator<T> peekElementsContaing(PointInTime timestamp, boolean includingEndtime) {
 		List<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
 			Iterator<T> li = getElements().iterator();
@@ -428,8 +423,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 				if (TimeInterval.inside(s_hat.getMetadata(), timestamp)) {
 					retval.add(s_hat);
 				}
-				if (includingEndtime
-						&& s_hat.getMetadata().getEnd().equals(timestamp)) {
+				if (includingEndtime && s_hat.getMetadata().getEnd().equals(timestamp)) {
 					retval.add(s_hat);
 				}
 			}
