@@ -37,6 +37,8 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	protected BufferedWriter writer;
 	private long delay;
 	private int nanodelay;
+	private int delayeach = 0;
+	private long counter = 0L;
 
 	public LineProtocolHandler() {
 		super();
@@ -54,6 +56,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		if (options.get("nanodelay") != null) {
 			setNanodelay(Integer.parseInt(options.get("nanodelay")));
 		}
+		if(options.get("delayeach") !=null){
+			setDelayeach(Integer.parseInt(options.get("delayeach")));
+		}
 
 	}
 
@@ -70,6 +75,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			writer = new BufferedWriter(new OutputStreamWriter(
 					getTransportHandler().getOutputStream()));
 		}
+		counter = 0;
 	}
 
 	@Override
@@ -108,6 +114,13 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	protected void delay() {
+		if(delayeach>0){
+			counter++;
+			if(counter<delayeach){				
+				return;
+			}
+			counter = 0;
+		}
 		if (delay > 0) {
 			try {
 				Thread.sleep(delay);
@@ -185,5 +198,13 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public void process(ByteBuffer message) {
 		getTransfer().transfer(getDataHandler().readData(message));
+	}
+
+	public int getDelayeach() {
+		return delayeach;
+	}
+
+	public void setDelayeach(int delayeach) {
+		this.delayeach = delayeach;
 	}
 }
