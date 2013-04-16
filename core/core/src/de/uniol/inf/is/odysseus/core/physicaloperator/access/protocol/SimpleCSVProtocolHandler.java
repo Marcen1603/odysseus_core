@@ -57,7 +57,7 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 			dumpEachLine = Integer.parseInt(options.get("dumpeachline"));
 		}
 		if (options.get("lastline") != null) {
-			lastLine = Integer.parseInt(options.get("lasteachline"));
+			lastLine = Integer.parseInt(options.get("lastline"));
 		}
 		if (options.get("debug") != null){
 			debug = Boolean.parseBoolean(options.get("debug"));
