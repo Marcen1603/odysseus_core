@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.equivalentoutput.tuple.Tuple;
 import de.uniol.inf.is.odysseus.equivalentoutput.tuple.TupleFactory;
 
 /**
+ * Testing tool to check if two output-files contain the same elements and if
+ * these elements are in the correct order. To use this tool the output should
+ * be done via FileSink and without the filetype-parameter. If the
+ * filetype-parameter is used, important metadata is discarded.
+ * 
  * @author Merlin Wasmann
  * 
  */
@@ -32,7 +37,7 @@ public class Starter {
 
 	public static void main(String[] args) {
 		int check = check(args);
-		switch(check) {
+		switch (check) {
 		case 0:
 			System.out.println("Both inputs are equivalent and in order");
 			break;
@@ -47,9 +52,10 @@ public class Starter {
 			break;
 		}
 	}
-	
+
 	/**
-	 * @param args: args[0] path0, args[1] path1, (args[2] delimiter)
+	 * @param args
+	 *            : args[0] path0, args[1] path1, (args[2] delimiter)
 	 * @return
 	 */
 	public static int check(String[] args) {
@@ -60,26 +66,26 @@ public class Starter {
 		try {
 			List<String> input0Strings = StreamReader.readFile(args[0]);
 			List<String> input1Strings = StreamReader.readFile(args[1]);
-			
-			if(args.length == 3) {
+
+			if (args.length == 3) {
 				TupleFactory.setDelimiter(args[2]);
 			}
-			
+
 			List<Tuple> input0 = TupleFactory.createTuples(input0Strings);
 			List<Tuple> input1 = TupleFactory.createTuples(input1Strings);
-			
-			if(!OrderCheck.isInOrder(input0) || !OrderCheck.isInOrder(input1)) {
+
+			if (!OrderCheck.isInOrder(input0) || !OrderCheck.isInOrder(input1)) {
 				return 2;
 			}
-			
-			if(!EqualityCheck.containEachOther(input0, input1)) {
+
+			if (!EqualityCheck.containEachOther(input0, input1)) {
 				return 3;
 			}
 		} catch (IOException ex) {
 			System.err.println(ex);
 			return 1;
 		}
-		
+
 		return 0;
 	}
 }
