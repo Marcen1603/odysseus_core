@@ -198,11 +198,12 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	public void writeData(ByteBuffer buffer, Object data) {
 		Tuple<?> r = (Tuple<?>) data;
 
-		int size = memSize(r);
-
-		if (size > buffer.capacity()) {
-			buffer = ByteBuffer.allocate(size * 2);
-		}
+		// Dieser Code macht keinen Sinn...
+//		int size = memSize(r);
+//		
+//		if (size > buffer.capacity()) {
+//			buffer = ByteBuffer.allocate(size * 2);
+//		}
 
 		synchronized (buffer) {
 			for (int i = 0; i < dataHandlers.length; i++) {
