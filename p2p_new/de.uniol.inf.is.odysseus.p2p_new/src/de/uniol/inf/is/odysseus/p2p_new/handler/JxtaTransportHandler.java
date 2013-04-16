@@ -125,7 +125,7 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 			connection.send(message);
 		}
 	}
-
+	
 	protected void processOptions(Map<String, String> options) {
 		final String id = options.get(PIPEID_TAG);
 		if (!Strings.isNullOrEmpty(id)) {

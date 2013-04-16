@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeComparable;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
-public interface IPunctuation extends ITimeComparable, IStreamable {
+public interface IPunctuation extends ITimeComparable, IStreamable, Serializable {
 
 	/**
 	 * Every punctuation needs a time to allow the ordering regarding the stream

@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
  */
 public class MigrationMarkerPunctuation extends AbstractPunctuation {
 	
+	private static final long serialVersionUID = 1L;
 	private ISource<?> source;
 
 	public MigrationMarkerPunctuation(long time, ISource<?> source) {

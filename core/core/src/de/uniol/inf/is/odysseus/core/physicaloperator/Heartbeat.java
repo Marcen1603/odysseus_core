@@ -4,6 +4,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 final public class Heartbeat extends AbstractPunctuation {
 
+	private static final long serialVersionUID = 1L;
+
 	private Heartbeat(long point) {
 		super(point);
 	}

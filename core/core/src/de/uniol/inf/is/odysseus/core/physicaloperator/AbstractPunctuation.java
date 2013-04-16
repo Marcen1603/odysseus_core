@@ -6,6 +6,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 abstract public class AbstractPunctuation implements
 		IPunctuation {
 
+	private static final long serialVersionUID = 1L;
+	
 	final PointInTime point;
 	
 	public AbstractPunctuation(long point) {
