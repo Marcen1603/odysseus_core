@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 
 	Logger LOG = LoggerFactory.getLogger(SimpleCSVProtocolHandler.class);
-	
+
 	private String delimiter;
 	private boolean readFirstLine = true;
 	private boolean firstLineSkipped = false;
@@ -39,6 +39,10 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 	private long lastLine = -1;
 	private long counter = 0;
 	private boolean debug = false;
+	private StringBuffer measurements = new StringBuffer("");
+	private long measureEachLine = -1;
+
+	private long basetime;
 
 	public SimpleCSVProtocolHandler() {
 		super();
@@ -61,12 +65,19 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		if (options.get("dumpeachline") != null) {
 			dumpEachLine = Integer.parseInt(options.get("dumpeachline"));
 		}
+
+		if (options.get("measureeachline") != null) {
+			measureEachLine = Integer.parseInt(options.get("measureeachline"));
+			measurements.setLength(0);
+		}
+
 		if (options.get("lastline") != null) {
 			lastLine = Integer.parseInt(options.get("lastline"));
 		}
-		if (options.get("debug") != null){
+		if (options.get("debug") != null) {
 			debug = Boolean.parseBoolean(options.get("debug"));
 		}
+
 	}
 
 	@Override
@@ -82,12 +93,29 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 			if (debug) {
 				if (dumpEachLine > 0) {
 					if (counter % dumpEachLine == 0) {
-						LOG.debug(counter + " " + data);
+						long time = System.currentTimeMillis();
+						LOG.debug(counter + " " + time + " " + data);
 					}
 				}
+				if (measureEachLine > 0) {
+					if (counter % measureEachLine == 0) {
+						long time = System.currentTimeMillis();
+						measurements.append(counter).append(";").append(time-basetime)
+								.append("\n");
+					}
+				}
+
 				if (lastLine == counter || counter == 0) {
-					LOG.debug(counter + " "
-							+ System.currentTimeMillis());
+					long time = System.currentTimeMillis();
+					if (counter == 0){
+						basetime = time;
+					}
+					LOG.debug(counter + " " + time);
+					measurements.append(counter).append(";").append(time-basetime)
+							.append("\n");
+					if (lastLine == counter) {
+						System.out.println(measurements);
+					}
 				}
 				counter++;
 			}
