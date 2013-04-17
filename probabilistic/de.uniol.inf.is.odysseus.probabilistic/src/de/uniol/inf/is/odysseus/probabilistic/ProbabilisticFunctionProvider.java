@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDoubleToFloa
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDoubleToIntegerFunction;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDoubleToLongFunction;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDoubleToShortFunction;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticGreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticGreaterThanOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticIntegrateFunction;
@@ -64,61 +65,61 @@ import de.uniol.inf.is.odysseus.probabilistic.function.ToProbabilisticDoubleFunc
  * 
  */
 public class ProbabilisticFunctionProvider implements IFunctionProvider {
-	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ProbabilisticFunctionProvider.class);
+    @SuppressWarnings("unused")
+    private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticFunctionProvider.class);
 
-	public ProbabilisticFunctionProvider() {
+    public ProbabilisticFunctionProvider() {
 
-	}
+    }
 
-	@Override
-	public List<IFunction<?>> getFunctions() {
+    @Override
+    public List<IFunction<?>> getFunctions() {
 
-		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+        final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
 
-		functions.add(new ProbabilisticAndOperator());
-		functions.add(new ProbabilisticOrOperator());
-		functions.add(new ProbabilisticNotOperator());
+        functions.add(new ProbabilisticAndOperator());
+        functions.add(new ProbabilisticOrOperator());
+        functions.add(new ProbabilisticNotOperator());
 
-		functions.add(new ProbabilisticSmallerEqualsOperator());
-		functions.add(new ProbabilisticSmallerThanOperator());
-		functions.add(new ProbabilisticGreaterEqualsOperator());
-		functions.add(new ProbabilisticGreaterThanOperator());
+        functions.add(new ProbabilisticEqualsOperator());
+        functions.add(new ProbabilisticSmallerEqualsOperator());
+        functions.add(new ProbabilisticSmallerThanOperator());
+        functions.add(new ProbabilisticGreaterEqualsOperator());
+        functions.add(new ProbabilisticGreaterThanOperator());
 
-		functions.add(new ProbabilisticMinusOperator());
-		functions.add(new ProbabilisticMinusNumberRHSOperator());
-		functions.add(new ProbabilisticMinusNumberLHSOperator());
-		functions.add(new ProbabilisticPlusOperator());
-		functions.add(new ProbabilisticPlusNumberRHSOperator());
-		functions.add(new ProbabilisticPlusNumberLHSOperator());
-		functions.add(new ProbabilisticMultiplicationOperator());
-		functions.add(new ProbabilisticMultiplicationNumberRHSOperator());
-		functions.add(new ProbabilisticMultiplicationNumberLHSOperator());
-		functions.add(new ProbabilisticDivisionOperator());
-		functions.add(new ProbabilisticDivisionNumberRHSOperator());
-		functions.add(new ProbabilisticDivisionNumberLHSOperator());
-		functions.add(new ProbabilisticPowerOperator());
-		functions.add(new ProbabilisticSQRTFunction());
+        functions.add(new ProbabilisticMinusOperator());
+        functions.add(new ProbabilisticMinusNumberRHSOperator());
+        functions.add(new ProbabilisticMinusNumberLHSOperator());
+        functions.add(new ProbabilisticPlusOperator());
+        functions.add(new ProbabilisticPlusNumberRHSOperator());
+        functions.add(new ProbabilisticPlusNumberLHSOperator());
+        functions.add(new ProbabilisticMultiplicationOperator());
+        functions.add(new ProbabilisticMultiplicationNumberRHSOperator());
+        functions.add(new ProbabilisticMultiplicationNumberLHSOperator());
+        functions.add(new ProbabilisticDivisionOperator());
+        functions.add(new ProbabilisticDivisionNumberRHSOperator());
+        functions.add(new ProbabilisticDivisionNumberLHSOperator());
+        functions.add(new ProbabilisticPowerOperator());
+        functions.add(new ProbabilisticSQRTFunction());
 
-		functions.add(new ProbabilisticDoubleToByteFunction());
-		functions.add(new ProbabilisticDoubleToShortFunction());
-		functions.add(new ProbabilisticDoubleToIntegerFunction());
-		functions.add(new ProbabilisticDoubleToLongFunction());
-		functions.add(new ProbabilisticDoubleToFloatFunction());
+        functions.add(new ProbabilisticDoubleToByteFunction());
+        functions.add(new ProbabilisticDoubleToShortFunction());
+        functions.add(new ProbabilisticDoubleToIntegerFunction());
+        functions.add(new ProbabilisticDoubleToLongFunction());
+        functions.add(new ProbabilisticDoubleToFloatFunction());
 
-		functions.add(new ToProbabilisticDoubleFunction());
+        functions.add(new ToProbabilisticDoubleFunction());
 
-		functions.add(new ProbabilisticIntegrateMultivariateFunction());
-		functions.add(new ProbabilisticIntegrateFunction());
+        functions.add(new ProbabilisticIntegrateMultivariateFunction());
+        functions.add(new ProbabilisticIntegrateFunction());
 
-		functions.add(new ProbabilisticContinuousSmallerEqualsOperator());
-		functions.add(new ProbabilisticContinuousSmallerEqualsOperatorVector());
-		functions.add(new ProbabilisticContinuousGreaterEqualsOperator());
-		functions.add(new ProbabilisticContinuousGreaterEqualsOperatorVector());
-		// ProbabilisticFunctionProvider.LOG.info(String.format(
-		// "Register functions: %s", functions));
+        functions.add(new ProbabilisticContinuousSmallerEqualsOperator());
+        functions.add(new ProbabilisticContinuousSmallerEqualsOperatorVector());
+        functions.add(new ProbabilisticContinuousGreaterEqualsOperator());
+        functions.add(new ProbabilisticContinuousGreaterEqualsOperatorVector());
+        // ProbabilisticFunctionProvider.LOG.info(String.format(
+        // "Register functions: %s", functions));
 
-		return functions;
-	}
+        return functions;
+    }
 }
