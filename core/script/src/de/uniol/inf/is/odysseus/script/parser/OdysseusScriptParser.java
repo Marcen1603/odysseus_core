@@ -244,11 +244,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				if (line.indexOf(PARAMETER_KEY + DROPPROCEDURE) != -1) {
 					String dropkey = PARAMETER_KEY + DROPPROCEDURE;
 					String name = line.substring(dropkey.length()).trim();
-					if (getExecutor().containsStoredProcedures(name, caller)) {
-						IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(DROPPROCEDURE);
-						statements.add(new PreParserStatement(DROPPROCEDURE, keyword, procedureLines.toString()));
-						// getExecutor().removeStoredProcedure(name, caller);
-					}
+					IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(DROPPROCEDURE);
+					statements.add(new PreParserStatement(DROPPROCEDURE, keyword, name));
 					continue;
 				}
 
