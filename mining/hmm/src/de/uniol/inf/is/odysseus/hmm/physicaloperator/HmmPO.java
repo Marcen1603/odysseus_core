@@ -98,6 +98,7 @@ public class HmmPO<M extends ITimeInterval> extends
 						}
 					}
 				}
+				br.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
