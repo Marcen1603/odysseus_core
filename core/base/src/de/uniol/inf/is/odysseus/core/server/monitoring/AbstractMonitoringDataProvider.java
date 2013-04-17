@@ -28,21 +28,20 @@ import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 
-public abstract class AbstractMonitoringDataProvider implements
-		IMonitoringDataProvider {
+public abstract class AbstractMonitoringDataProvider implements IMonitoringDataProvider {
 
 	static Logger _logger = null;
 
 	static private Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory
-					.getLogger(AbstractMonitoringDataProvider.class);
+			_logger = LoggerFactory.getLogger(AbstractMonitoringDataProvider.class);
 		}
 		return _logger;
 	}
 
 	@SuppressWarnings("rawtypes")
 	private Map<String, IMonitoringData> metaDataItem;
+	private int hashCode = -1;
 
 	@SuppressWarnings("rawtypes")
 	public AbstractMonitoringDataProvider() {
@@ -57,25 +56,21 @@ public abstract class AbstractMonitoringDataProvider implements
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	public void createAndAddMonitoringData(IPeriodicalMonitoringData item,
-			long period) {
+	public void createAndAddMonitoringData(IPeriodicalMonitoringData item, long period) {
 
 		if (this.metaDataItem.containsKey(item.getType())) {
-			throw new IllegalArgumentException(item.getType()
-					+ " is already registered for " + this);
+			throw new IllegalArgumentException(item.getType() + " is already registered for " + this);
 			// return ;
 		}
 
 		this.metaDataItem.put(item.getType(), item);
 
-		ScheduledFuture future = MonitoringDataScheduler.getInstance()
-				.scheduleAtFixedRate(item, 0, period, TimeUnit.MILLISECONDS);
+		ScheduledFuture future = MonitoringDataScheduler.getInstance().scheduleAtFixedRate(item, 0, period, TimeUnit.MILLISECONDS);
 
 		// Speichere Item und Future in Scheduler, damit das Item spaeter
 		// wieder
 		// angehalten / geloescht werden kann.
-		MonitoringDataScheduler.getInstance().addStartedPeriodicalMetadataItem(
-				item, future);
+		MonitoringDataScheduler.getInstance().addStartedPeriodicalMetadataItem(item, future);
 	}
 
 	@Override
@@ -90,8 +85,7 @@ public abstract class AbstractMonitoringDataProvider implements
 
 	@Override
 	public void addMonitoringData(String type, IMonitoringData<?> item) {
-		getLogger().debug(
-				"Add Monitoring Data " + type + " " + item + " to " + this);
+		getLogger().debug("Add Monitoring Data " + type + " " + item + " to " + this);
 		if (this.metaDataItem.containsKey(type)) {
 			throw new IllegalArgumentException(type + " is already registered");
 			// return;
@@ -123,6 +117,10 @@ public abstract class AbstractMonitoringDataProvider implements
 
 	@Override
 	public int hashCode() {
-		return super.hashCode();
+		// optimization for event dispatcher
+		if (hashCode == -1) {
+			hashCode = super.hashCode();
+		}
+		return hashCode;
 	}
 }
