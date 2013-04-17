@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticAndOperator;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousEqualsOperatorVector;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousGreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousGreaterEqualsOperatorVector;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousGreaterOperator;
@@ -125,6 +127,8 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
         functions.add(new ProbabilisticContinuousGreaterEqualsOperatorVector());
         functions.add(new ProbabilisticContinuousGreaterOperator());
         functions.add(new ProbabilisticContinuousGreaterOperatorVector());
+        functions.add(new ProbabilisticContinuousEqualsOperator());
+        functions.add(new ProbabilisticContinuousEqualsOperatorVector());
         // ProbabilisticFunctionProvider.LOG.info(String.format(
         // "Register functions: %s", functions));
 
