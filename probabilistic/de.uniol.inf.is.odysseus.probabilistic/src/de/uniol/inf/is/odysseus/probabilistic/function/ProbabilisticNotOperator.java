@@ -43,7 +43,7 @@ public class ProbabilisticNotOperator extends
 
 	@Override
 	public Double getValue() {
-		return 1 - ((Number) getInputValue(0)).doubleValue();
+		return 1.0 - getNumericalInputValue(0);
 	}
 
 	@Override

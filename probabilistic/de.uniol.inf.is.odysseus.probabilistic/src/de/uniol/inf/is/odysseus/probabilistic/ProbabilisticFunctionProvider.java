@@ -27,8 +27,12 @@ import de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticAndOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousGreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousGreaterEqualsOperatorVector;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousGreaterOperator;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousGreaterOperatorVector;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousSmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousSmallerEqualsOperatorVector;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousSmallerOperator;
+import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousSmallerOperatorVector;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDivisionNumberLHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDivisionNumberRHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDivisionOperator;
@@ -115,8 +119,12 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 
         functions.add(new ProbabilisticContinuousSmallerEqualsOperator());
         functions.add(new ProbabilisticContinuousSmallerEqualsOperatorVector());
+        functions.add(new ProbabilisticContinuousSmallerOperator());
+        functions.add(new ProbabilisticContinuousSmallerOperatorVector());
         functions.add(new ProbabilisticContinuousGreaterEqualsOperator());
         functions.add(new ProbabilisticContinuousGreaterEqualsOperatorVector());
+        functions.add(new ProbabilisticContinuousGreaterOperator());
+        functions.add(new ProbabilisticContinuousGreaterOperatorVector());
         // ProbabilisticFunctionProvider.LOG.info(String.format(
         // "Register functions: %s", functions));
 

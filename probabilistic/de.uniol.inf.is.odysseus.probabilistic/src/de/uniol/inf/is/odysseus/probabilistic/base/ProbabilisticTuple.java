@@ -293,9 +293,6 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 					final RealMatrix covarianceMatrix = CovarianceMatrixUtils
 							.toMatrix(mixture.getCovarianceMatrix());
 
-					System.out.println(restrictMatrix[newDistrIndex] + " * "
-							+ covarianceMatrix + " * "
-							+ restrictMatrix[newDistrIndex].transpose());
 					mixture.setCovarianceMatrix(CovarianceMatrixUtils
 							.fromMatrix(restrictMatrix[newDistrIndex].multiply(
 									covarianceMatrix).multiply(

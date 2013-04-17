@@ -110,7 +110,6 @@ public class ProbabilisticGreaterEqualsOperator extends
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument(s).");
 		}
-		// accTypes[1] = String.class; // alphabetical order
 		return accTypes;
 	}
 
