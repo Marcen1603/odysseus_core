@@ -192,7 +192,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			resetDefaultReplacements();
 			// first, we rewrite loops to serial query text
 			String[] text = rewriteLoop(textToParse);
-						
+
 			// after that, we are looking for procedures and replace them
 			text = runProcedures(text, caller);
 
@@ -221,28 +221,35 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				if (!isInProcedure) {
 					replacements = getReplacements(text);
 					line = useReplacements(line, replacements).trim();
+
+					// if there is a define-key for replacements, we can continue
+					if (line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY) != -1)
+						continue;
+
+					// same with loop-definition lines: jump to next line, because
+					// we normally handled that before
+					if (line.indexOf(PARAMETER_KEY + LOOP_END_KEY) != -1)
+						continue;
+
+					if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1)
+						continue;
+
+					// If we find an UNDEFINE, we remove the replacement
+					if (line.indexOf(PARAMETER_KEY + IfController.UNDEF_KEY) != -1) {
+						String[] parts = line.trim().split(" |\t", 3);
+						replacements.remove(parts[1]);
+					}
 				}
-
-				// if there is a define-key for replacements, we can continue
-				if (line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY) != -1)
-					continue;
-
-				// same with loop-definition lines: jump to next line, because
-				// we normally handled that before
-				if (line.indexOf(PARAMETER_KEY + LOOP_END_KEY) != -1)
-					continue;
-
-				if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1)
-					continue;
-				
 				// dropping procedures was already done
-				if (line.indexOf(PARAMETER_KEY + DROPPROCEDURE) != -1)
+				if (line.indexOf(PARAMETER_KEY + DROPPROCEDURE) != -1) {
+					String dropkey = PARAMETER_KEY + DROPPROCEDURE;
+					String name = line.substring(dropkey.length()).trim();
+					if (getExecutor().containsStoredProcedures(name, caller)) {
+						IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(DROPPROCEDURE);
+						statements.add(new PreParserStatement(DROPPROCEDURE, keyword, procedureLines.toString()));
+						// getExecutor().removeStoredProcedure(name, caller);
+					}
 					continue;
-
-				// If we find an UNDEFINE, we remove the replacement
-				if (line.indexOf(PARAMETER_KEY + IfController.UNDEF_KEY) != -1) {
-					String[] parts = line.trim().split(" |\t", 3);
-					replacements.remove(parts[1]);
 				}
 
 				// If we find an STORED_PROCEDURE_PROCEDURE, we omit all other
@@ -307,7 +314,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					} else {
 						if (sb == null) {
 							throw new OdysseusScriptException("No key set in line " + (currentLine + 1));
-						} 
+						}
 						sb.append("\n").append(line.trim());
 					}
 
@@ -328,18 +335,13 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	private void resetDefaultReplacements() {
-		this.defaultReplacements.put("NOW", System.currentTimeMillis()+"");
-		
+		this.defaultReplacements.put("NOW", System.currentTimeMillis() + "");
+
 	}
 
 	private String[] runProcedures(String[] text, ISession caller) throws OdysseusScriptException {
 		List<String> lines = new ArrayList<>();
 		for (String line : text) {
-			String dropkey = PARAMETER_KEY + DROPPROCEDURE;
-			if (line.indexOf(dropkey) != -1) {
-				String name = line.substring(dropkey.length()).trim();
-				getExecutor().removeStoredProcedure(name, caller);
-			}
 			if (line.indexOf(PARAMETER_KEY + EXECUTE) != -1) {
 				lines.addAll(runProcedure(line, caller));
 			} else {
@@ -366,16 +368,16 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		int startParamPos = endNamePos + 1;
 		int endParamPos = head.indexOf(")");
 		String paramPart = head.substring(startParamPos, endParamPos);
-		if (paramPart.contains(",")) {
+		if (paramPart.trim().length() > 0) {
 			String[] params = paramPart.split(",");
 			if (params.length != proc.getVariables().size()) {
 				throw new OdysseusScriptException("Stored procedure needs " + proc.getVariables().size() + " parameters!");
 			}
 			Map<String, String> replacements = new HashMap<>();
-			for(int i=0;i<params.length;i++){
+			for (int i = 0; i < params.length; i++) {
 				replacements.put(proc.getVariables().get(i), params[i].trim());
 			}
-			// replace all			
+			// replace all
 			procText = useReplacements(procText, replacements);
 		} else {
 			if (proc.getVariables().size() > 0) {
@@ -478,9 +480,20 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	public Map<String, String> getReplacements(String[] text) throws OdysseusScriptException {
 		Map<String, String> repl = new HashMap<String, String>();
 		addDefaultReplacements(repl);
+		boolean isInProcedure = false;
 		for (String line : text) {
 			String correctLine = removeComments(line).trim();
 			// maybe, we have replacements within definitions...
+			if (line.indexOf(PARAMETER_KEY + STORED_PROCEDURE_PROCEDURE) != -1) {
+				isInProcedure = true;
+				continue;
+			}
+			if (isInProcedure) {
+				if (line.indexOf(STORED_PROCEDURE_END) != -1) {
+					isInProcedure = false;
+				}
+				continue;
+			}
 			String replacedLine = useReplacements(correctLine, repl);
 			final int pos = replacedLine.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY);
 			if (pos != -1) {
@@ -502,9 +515,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	private void addDefaultReplacements(Map<String, String> repl) {
-		for(Entry<String, String> def : this.defaultReplacements.entrySet()){
+		for (Entry<String, String> def : this.defaultReplacements.entrySet()) {
 			repl.put(def.getKey(), def.getValue());
-		}		
+		}
 	}
 
 	protected String useReplacements(String line, Map<String, String> replacements) throws OdysseusScriptException {

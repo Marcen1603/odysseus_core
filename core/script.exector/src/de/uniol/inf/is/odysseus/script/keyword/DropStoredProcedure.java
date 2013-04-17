@@ -1,0 +1,26 @@
+package de.uniol.inf.is.odysseus.script.keyword;
+
+import java.util.Map;
+
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
+
+public class DropStoredProcedure extends AbstractPreParserExecutorKeyword {
+	
+	public static final String DROPPROCEDURE = "DROPPROCEDURE";	
+
+	@Override
+	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+
+	}
+
+	@Override
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {				
+		String name = parameter.trim();
+		if(getServerExecutor().containsStoredProcedures(name, caller)){
+			getServerExecutor().removeStoredProcedure(name, caller);
+		}		
+		return null;
+	}
+
+}

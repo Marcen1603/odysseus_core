@@ -23,8 +23,7 @@ public class CreateStoredProcedureKeyword extends AbstractPreParserExecutorKeywo
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
-		System.out.println(parameter);
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {	
 		int start = parameter.indexOf(KEY_BEGIN) + KEY_BEGIN.length();
 		int end = parameter.indexOf(KEY_END);
 		String[] lines = parameter.split(System.lineSeparator());

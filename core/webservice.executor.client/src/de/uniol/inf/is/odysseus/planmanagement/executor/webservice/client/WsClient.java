@@ -521,4 +521,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 		return null;
 	}
 
+	@Override
+	public boolean containsStoredProcedures(String name, ISession caller) {
+		return false;
+	}
+
 }

@@ -222,5 +222,6 @@ public interface IExecutor extends IClientPlanManager{
 	public void removeStoredProcedure(String name, ISession caller);
 	public StoredProcedure getStoredProcedure(String name, ISession caller);
 	public List<StoredProcedure> getStoredProcedures(ISession caller);
+	public boolean containsStoredProcedures(String name, ISession caller);
 
 }

@@ -277,6 +277,11 @@ public class DashboardPlugInTest {
 		public List<StoredProcedure> getStoredProcedures(ISession caller) {
 			return null;
 		}
+
+		@Override
+		public boolean containsStoredProcedures(String name, ISession caller) {
+			return false;
+		}
 		
 	}
 	

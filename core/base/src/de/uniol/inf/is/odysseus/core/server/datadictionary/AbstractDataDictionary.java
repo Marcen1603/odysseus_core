@@ -946,7 +946,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public boolean containsStoredProcedure(String name, ISession user) {
-		return this.storedProcedures.containsKey(name);
+		String nameNormalized = createUserUri(name, user);
+		return this.storedProcedures.containsKey(nameNormalized);
 	}
 
 	@Override

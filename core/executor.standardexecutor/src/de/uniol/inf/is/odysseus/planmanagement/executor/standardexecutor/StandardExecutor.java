@@ -1057,4 +1057,9 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	public List<StoredProcedure> getStoredProcedures(ISession caller) {		
 		return getDataDictionary().getStoredProcedures(caller);
 	}
+	
+	@Override
+	public boolean containsStoredProcedures(String name, ISession caller) {
+		return getDataDictionary().containsStoredProcedure(name, caller);		
+	}
 }
