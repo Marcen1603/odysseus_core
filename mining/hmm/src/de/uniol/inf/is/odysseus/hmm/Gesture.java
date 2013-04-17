@@ -9,9 +9,9 @@ public class Gesture {
 	private double[][] b;
 	
 	//Constructor
-	public Gesture(String pName, double[] pi, double[][] pA, double[][] pB){
+	public Gesture(String pName, double[] pPi, double[][] pA, double[][] pB){
 		this.name = pName;
-		this.setPi(pi);
+		this.setPi(pPi);
 		this.a = pA;
 		this.b = pB;		
 	}

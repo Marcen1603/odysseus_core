@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.hmm.logicaloperator.HmmAO;
 import de.uniol.inf.is.odysseus.hmm.physicaloperator.HmmPO;
+import de.uniol.inf.is.odysseus.hmm.physicaloperator.HmmStoreInputPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -30,8 +31,12 @@ public class THmmAORule extends
 			replace(operator, po, config);
 			retract(operator);
 			insert(po);
-		}else{
-			//maybe there will be other algorithms...
+		} else if (operator.getMode().equalsIgnoreCase("STORE_INPUT")) {
+			po = new HmmStoreInputPO();
+			po.setOutputSchema(operator.getOutputSchema());
+			replace(operator, po, config);
+			retract(operator);
+			insert(po);
 		}
 
 	}

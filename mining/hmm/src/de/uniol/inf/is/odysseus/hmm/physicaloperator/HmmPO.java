@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.hmm.physicaloperator;
 
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -28,6 +33,80 @@ public class HmmPO<M extends ITimeInterval> extends
 	// Konstruktoren
 	public HmmPO() {
 		super();
+		loadHmmsFromCSV();
+	}
+
+	private void loadHmmsFromCSV() {
+		double[] pi = null;
+		double[][] a = null;
+		double[][] b = null;
+		int numStates = 0;
+		int numObs = 0;
+		String gestureName = "";
+		
+		String path = "gestures";
+		File dir = new File(path);
+		File[] fileList = dir.listFiles();
+		for (File f : fileList) {
+			try {
+				gestureName = f.getName().substring(0, f.getName().length()-4);
+				BufferedReader br = new BufferedReader(new FileReader(f));
+				String line;
+				while((line = br.readLine()) != null) {
+					if(line.charAt(0) == '#') {
+						//Read metadata
+						if(line.contains("Metadata")) {
+							line = br.readLine();
+							String[] lineSplit = line.split(",");
+							numStates = Integer.parseInt(lineSplit[0].trim());
+							numObs = Integer.parseInt(lineSplit[1].trim());
+							//init arrays
+							pi = new double[numStates];
+							a = new double[numStates][numStates];
+							b = new double[numStates][numObs];
+
+						//Read Pi
+						} else if(line.contains("Matrix Pi")) {
+							line = br.readLine();
+							String[] lineSplit = line.split(",");
+							
+							for (int i = 0; i < lineSplit.length; i++) {
+								pi[i] = Double.parseDouble(lineSplit[i]);
+							}
+							
+						//Read A
+						} else if(line.contains("Matrix A")) {
+							int i = 0;
+							while((line = br.readLine()) != null && line.charAt(0) != '#') {
+								String[] lineSplit = line.split(",");
+								for(int j = 0; j < lineSplit.length; j++) {
+									a[i][j] = Double.parseDouble(lineSplit[j]);
+								}
+								i++;
+							}
+							
+						//Read B
+						} else if(line.contains("Matrix B")) {
+							int i = 0;
+							while((line = br.readLine()) != null && line.charAt(0) != '#') {
+								String[] lineSplit = line.split(",");
+								for(int j = 0; j < lineSplit.length; j++) {
+									b[i][j] = Double.parseDouble(lineSplit[j]);
+								}
+								i++;
+							}
+						}
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.err.println("BAD FILE");
+			}
+			
+			gesturelist.add(new Gesture(gestureName, pi, a, b));
+		}
+		
 	}
 
 	public HmmPO(HmmPO<M> splitPO) {
@@ -64,11 +143,7 @@ public class HmmPO<M extends ITimeInterval> extends
 			System.out.println(((Double) object.getAttribute(0)).intValue());
 			int tmp = ((Double) object.getAttribute(0)).intValue();
 			
-			hmm.forwardInit(
-					gesturelist.get(i),
-					newAlphaRow, 
-					tmp);
-
+			hmm.forwardInit(gesturelist.get(i), newAlphaRow, tmp);
 			newWindowGroup.addRow(newAlphaRow);
 		}
 		
@@ -104,16 +179,15 @@ public class HmmPO<M extends ITimeInterval> extends
 		System.out.println("MUUUUUUUUUUUUUUUUUUUUUUUUUH macht die Katze");
 		
 		hmm = new HMM();
+		//**
+		hmm.forward(gesturelist.get(0), new int[] {4, 0, 12, 8});
+		//**
 		//groesse des Windows festlegen
 		//TODO Parameter per Operator übergeben
 		hmmWindow = new HmmWindow(timewindow);
 		
 		//Gestenobjekte erzeugen - zu jeder Geste existiert eine CSV-Datei mit Anz Zustände, Übergangstabelle A und B
 		//TODO alle Dateien einlesen und Gestenobjekt initialisieren
-		double[] bla = {0.2};
-		double[][] test = {{0.1,0.1},{0.1,0.1}}; 
-		gesturelist.add(new Gesture("test1", bla, test, test));
-		gesturelist.add(new Gesture("test1", bla, test, test));
 	}
 
 	@Override
