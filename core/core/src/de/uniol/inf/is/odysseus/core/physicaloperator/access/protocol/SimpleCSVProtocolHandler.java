@@ -41,6 +41,7 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 	private boolean debug = false;
 	private StringBuffer measurements = new StringBuffer("");
 	private long measureEachLine = -1;
+	private long lastDumpTime = 0;
 
 	private long basetime;
 
@@ -77,6 +78,7 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		if (options.get("debug") != null) {
 			debug = Boolean.parseBoolean(options.get("debug"));
 		}
+		lastDumpTime = System.currentTimeMillis();
 
 	}
 
@@ -94,7 +96,8 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 				if (dumpEachLine > 0) {
 					if (counter % dumpEachLine == 0) {
 						long time = System.currentTimeMillis();
-						LOG.debug(counter + " " + time + " " + data);
+						LOG.debug(counter + " " + time + " " +(time-lastDumpTime)+ " " + data);
+						lastDumpTime = time;
 					}
 				}
 				if (measureEachLine > 0) {

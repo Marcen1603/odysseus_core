@@ -711,6 +711,11 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public void addParameterInfo(String key, Object value) {
 		this.infos.put(key, value != null ? value.toString() : null);
 	}
+	
+	@Override
+	public void removeParameterInfo(String key) {
+		this.infos.remove(key);		
+	}
 
 	@Override
 	public void setParameterInfos(Map<String, String> infos) {

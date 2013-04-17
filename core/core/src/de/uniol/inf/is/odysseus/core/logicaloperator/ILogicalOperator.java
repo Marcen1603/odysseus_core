@@ -101,6 +101,12 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 *            the value of the information
 	 */
 	public void addParameterInfo(String key, Object value);
+	
+	/**
+	 * 
+	 * @param key
+	 */
+	public void removeParameterInfo(String key);
 
 	/**
 	 * How many inputs has this logical operator at call time
