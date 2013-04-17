@@ -14,7 +14,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.interval.IntervalDatatypeProvider">
-   <implementation class="de.uniol.inf.is.odysseus.interval.IntervalDatatypeProvider"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.datatype.interval.IntervalDatatypeProvider">
+   <implementation class="de.uniol.inf.is.odysseus.datatype.interval.IntervalDatatypeProvider"/>
    <reference bind="bindDataDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary" name="IDataDictionary" policy="static" unbind="unbindDataDictionary"/>
 </scr:component>
