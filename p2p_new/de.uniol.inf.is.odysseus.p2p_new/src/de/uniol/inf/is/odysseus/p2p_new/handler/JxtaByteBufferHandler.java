@@ -12,26 +12,31 @@ import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 
 @SuppressWarnings("rawtypes")
 public class JxtaByteBufferHandler<T extends IStreamObject> extends ByteBufferHandler<T> {
-	
+
 	public JxtaByteBufferHandler(IDataHandler<?> dataHandler) {
 		super(dataHandler);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized T create() throws IOException, ClassNotFoundException, BufferUnderflowException {
 		T retval = null;
 		ByteBuffer byteBuffer = getByteBuffer();
-		synchronized(byteBuffer){		
+		synchronized (byteBuffer) {
 			byteBuffer.flip();
-			retval = (T)getDataHandler().readData(byteBuffer);
-			
-			byte[] metadataBytes = new byte[byteBuffer.remaining()];
-			byteBuffer.get(metadataBytes);
-			
-			IMetaAttribute metadata = (IMetaAttribute) ObjectByteConverter.bytesToObject(metadataBytes);
-			retval.setMetadata(metadata);
-			byteBuffer.clear();
+			try {
+				retval = (T) getDataHandler().readData(byteBuffer);
+
+				if (byteBuffer.remaining() > 0) {
+					byte[] metadataBytes = new byte[byteBuffer.remaining()];
+					byteBuffer.get(metadataBytes);
+
+					IMetaAttribute metadata = (IMetaAttribute) ObjectByteConverter.bytesToObject(metadataBytes);
+					retval.setMetadata(metadata);
+				}
+			} finally {
+				byteBuffer.clear();
+			}
 		}
 		return retval;
 	}

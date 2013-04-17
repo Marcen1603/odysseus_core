@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.p2p_new.handler;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
@@ -131,14 +130,21 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 				if (size != -1) {
 					if (currentSize + message.remaining() < size) {
 						currentSize = currentSize + message.remaining();
-						messageBuffer.put(message);
+						messageBuffer.put(message.array(), message.position(), message.remaining());
+						message.position(message.position() + message.remaining());
 					} else {
 						messageBuffer.put(message.array(), message.position(), message.remaining());
 						message.position(message.position() + message.remaining());
 						
 						if( currentTypeByte == DATA_BYTE) {
+							messageBuffer.flip();
 							jxtaBufferHandler.put(messageBuffer);
-							getTransfer().transfer(jxtaBufferHandler.create());
+							
+							T objToTransfer = tryCreate(jxtaBufferHandler);
+							if( objToTransfer != null ) {
+								getTransfer().transfer(objToTransfer);
+							}
+							
 						} else if( currentTypeByte == PUNCTUATION_BYTE ) {
 							messageBuffer.flip();
 							transferPunctuation(messageBuffer);
@@ -153,7 +159,7 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 				}
 
 			}
-		} catch (IOException | BufferUnderflowException | ClassNotFoundException e) {
+		} catch (Throwable e) {
 			LOG.error("Could not process message", e);
 			
 			size = -1;
@@ -162,6 +168,15 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 			currentSize = 0;
 			currentTypeByte = NONE_BYTE;
 		} 
+	}
+
+	private static <T extends IStreamObject<?>> T tryCreate(JxtaByteBufferHandler<T> handler) {
+		try {
+			return handler.create();
+		} catch( Throwable t ) {
+			LOG.error("Could not create object to transfer", t);
+			return null;
+		}
 	}
 
 	private void transferPunctuation(ByteBuffer messageBuffer) {
