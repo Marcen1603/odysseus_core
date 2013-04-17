@@ -65,7 +65,7 @@ public class RSwitchSelectionWindowRule extends AbstractRewriteRule<WindowAO> {
 	}
 	
 	private static boolean isValidSelect(SelectAO sel, WindowAO win) {
-		if (sel.getInputAO().equals(win)) {
+		if (sel.getInputAO()!=null && sel.getInputAO().equals(win)) {
 			return true;
 		}		
 		return false;
