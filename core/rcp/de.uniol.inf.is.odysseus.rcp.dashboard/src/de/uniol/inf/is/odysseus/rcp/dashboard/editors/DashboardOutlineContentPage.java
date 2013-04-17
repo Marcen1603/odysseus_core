@@ -26,6 +26,8 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
+
 public class DashboardOutlineContentPage extends ContentOutlinePage implements IDashboardListener, ISelectionListener {
 
 	private final Dashboard dashboard;
@@ -67,5 +69,13 @@ public class DashboardOutlineContentPage extends ContentOutlinePage implements I
 		if (part instanceof DashboardEditor && selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			setSelection(selection);
 		}
+	}
+
+	@Override
+	public void dashboardPartAdded(Dashboard sender, IDashboardPart addedPart) {
+	}
+
+	@Override
+	public void dashboardPartRemoved(Dashboard sender, IDashboardPart removedPart) {
 	}
 }

@@ -135,7 +135,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		
 		dashboard.createPartControl(parent, toolBar);
 		getSite().setSelectionProvider(dashboard);
-		
+
 		try {
 			startDashboard();
 		} catch (Exception ex) {
@@ -181,6 +181,39 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		return dashboard != null;
 	}
 
+	@Override
+	public void dashboardChanged(Dashboard sender) {
+		setDirty(true);
+	}
+	
+
+	@Override
+	public void dashboardPartAdded(Dashboard sender, IDashboardPart addedPart) {
+		DashboardPartController ctrl = new DashboardPartController(addedPart);
+		try {
+			ctrl.start();
+			controllers.put(addedPart, ctrl);
+		} catch (Exception e) {
+			LOG.error("Could not start dashboard part", e);
+		}
+		
+		setDirty(true);
+	}
+
+	@Override
+	public void dashboardPartRemoved(Dashboard sender, IDashboardPart removedPart) {
+		DashboardPartController ctrl = controllers.get(removedPart);
+		if( ctrl != null ) {
+			try {
+				ctrl.stop();
+				controllers.remove(removedPart);
+			} catch (Exception e) {
+				LOG.error("Could not stop dashboard part", e);
+			}
+		}
+		setDirty(true);
+	}
+
 	private void startDashboard() throws Exception {
 		for (DashboardPartController controller : controllers.values()) {
 			controller.start();
@@ -203,10 +236,5 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		}
 
 		return controllers;
-	}
-
-	@Override
-	public void dashboardChanged(Dashboard sender) {
-		setDirty(true);
 	}
 }
