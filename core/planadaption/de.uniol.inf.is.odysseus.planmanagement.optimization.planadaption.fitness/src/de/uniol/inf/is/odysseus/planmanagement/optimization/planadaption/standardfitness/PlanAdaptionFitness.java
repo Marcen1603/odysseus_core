@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionFitness;
+import de.uniol.inf.is.odysseus.core.server.util.CollectLogicalChildrenPlanVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 
 /**
  * 
@@ -69,12 +71,19 @@ public class PlanAdaptionFitness implements IPlanAdaptionFitness {
 		return new Pair<ILogicalOperator, ICost<ILogicalOperator>>(fittest, costDifference);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void estimateAllPlanCosts(List<ILogicalOperator> plans) {
 		for(ILogicalOperator plan : plans) {
 			LOG.debug("Estimating costs for plan: " + plan);
 			List<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
-			operators.add(plan);
-			ICost<ILogicalOperator> cost = this.selectedCostModel.estimateCost(operators, true);
+			
+			GenericGraphWalker walker = new GenericGraphWalker();
+			CollectLogicalChildrenPlanVisitor<ILogicalOperator> visitor = new CollectLogicalChildrenPlanVisitor<ILogicalOperator>();
+			walker.prefixWalk(plan, visitor);
+			
+			operators.addAll(visitor.getResult());
+			
+			ICost<ILogicalOperator> cost = this.selectedCostModel.estimateCost(operators, false);
 			LOG.debug("Costs: " + cost.toString());
 			this.operatorCosts.put(plan, cost);
 		}
