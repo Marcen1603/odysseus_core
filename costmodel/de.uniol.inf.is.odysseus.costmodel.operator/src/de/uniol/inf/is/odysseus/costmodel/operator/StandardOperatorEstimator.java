@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -118,9 +119,22 @@ public class StandardOperatorEstimator<T> implements IOperatorEstimator<T> {
 			}
 		} else {
 			estimation.setSelectivity(1.0);
+			
+			ILogicalOperator instance = (ILogicalOperator) obj;
 
 			if (prevOperators.isEmpty()) {
 				// source
+				// baseHistograms is empty
+				if(baseHistograms.isEmpty()) {
+					estimation.setHistograms(new HashMap<SDFAttribute, IHistogram>());
+				} else {
+					Map<SDFAttribute, IHistogram> histograms = new HashMap<SDFAttribute, IHistogram>();
+					for (SDFAttribute attribute : instance.getOutputSchema()) {
+						if (baseHistograms.containsKey(attribute))
+							histograms.put(attribute, baseHistograms.get(attribute));
+					}
+					estimation.setHistograms(histograms);
+				}
 				estimation.setDataStream(new DataStream<T>(obj, 1.0, 1.0));
 				estimation.setDetailCost(new OperatorDetailCost<T>(obj, DEFAULT_MEMORY_USAGE_BYTES, OperatorCostModelCfg.getInstance().getStandardCpuCost()));
 			} else {
