@@ -87,7 +87,8 @@ public class RelationalSlidingElementWindowTIPO extends
 	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		LOG.warn("Punctuation "+punctuation+" removed!");
+		// FIXME: Do something with punctuations
+		// LOG.warn("Punctuation "+punctuation+" removed!");
 	}
 
 	public int getGroupID(Tuple<ITimeInterval> elem) {

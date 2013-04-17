@@ -144,7 +144,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
 		synchronized (this.outputQueue) {
-			logger.debug("New Punctuation " + punctuation);
+			//logger.debug("New Punctuation " + punctuation);
 			// watermark is needed if new sources are connected at runtime
 			// if watermark == null no object has ever been transferred --> init
 			// phase
