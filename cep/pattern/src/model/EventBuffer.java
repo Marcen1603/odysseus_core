@@ -32,6 +32,10 @@ public class EventBuffer<T extends IMetaAttribute> {
 		objects.removeFirst();
 	}
 	
+	public List<EventObject<T>> getEventObjects() {
+		return objects;
+	}
+	
 	public Set<EventObject<T>> toSet() {
 		return new HashSet<EventObject<T>>(objects);
 	}

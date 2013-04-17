@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import model.PatternOutput;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -18,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -34,6 +36,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	private Integer time;
 	private TimeUnit timeUnit;
 	private Integer size;
+	// Ausgabeverhalten
 	private PatternOutput outputMode;
 	
 	// relevante Event-Typen-Liste
@@ -44,10 +47,8 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	// Bedingung
 	private SDFExpression expression;
 	// Expressions fürs Ausgabeschema
-	private List<SDFExpression> returnExpressions;
+	private List<NamedExpressionItem> returnExpressions;
 	// wiederholen nach erfolg
-	// ausgabeverhalten
-	private boolean simpleOutput;
 	// Zeitfenster ??
 	
 	public PatternMatchingAO() {
@@ -59,14 +60,16 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     
     public PatternMatchingAO(PatternMatchingAO patternAO){
         super(patternAO);
-        this.type = patternAO.getType();
+        this.type = patternAO.type;
+        this.time = patternAO.time;
+    	this.timeUnit = patternAO.timeUnit;
+    	this.size = patternAO.size;
+    	this.outputMode = patternAO.outputMode;
         this.eventTypes = patternAO.getEventTypes();
         this.inputTypeNames = patternAO.getInputTypeNames();
         this.inputSchemas = patternAO.getInputSchemas();
-        this.simpleOutput = patternAO.simpleOutput;
         this.expression = patternAO.expression;
         this.returnExpressions = patternAO.returnExpressions;
-        this.outputMode = patternAO.outputMode;
     }
 	
     @Parameter(type=SDFExpressionParameter.class, optional=true)
@@ -96,12 +99,12 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     	return time;
     }
     
-    @Parameter(type=IntegerParameter.class, optional = true)
-    public void setSize(Integer size) {
+    @Parameter(name = "size", type=IntegerParameter.class, optional = true)
+    public void setBufferSize(Integer size) {
     	this.size = size;
     }
     
-    public Integer getSize() {
+    public Integer getBufferSize() {
     	return size;
     }
     
@@ -114,8 +117,8 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     	return timeUnit;
     }
     
-    @Parameter(type = EnumParameter.class, optional = true)
-    public void setOutputMode(PatternOutput outputMode) {
+    @Parameter(name = "outputmode", type = EnumParameter.class, optional = true)
+    public void setOutput(PatternOutput outputMode) {
     	this.outputMode = outputMode;
     }
     
@@ -134,15 +137,16 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     
     @Parameter(name = "return", type = SDFExpressionParameter.class, isList = true, optional = true)
     public void setReturnExpressions(List<NamedExpressionItem> namedReturnExpressions) {
-		returnExpressions = new ArrayList<>();
-		for (NamedExpressionItem e : namedReturnExpressions) {
-			returnExpressions.add(e.expression);
-		}
+		returnExpressions = namedReturnExpressions;
 		setOutputSchema(null);
     }
     
     public List<SDFExpression> getReturnExpressions() {
-    	return returnExpressions;
+    	List<SDFExpression> expressions = new ArrayList<SDFExpression>();
+    	for (NamedExpressionItem expr : returnExpressions) {
+    		expressions.add(expr.expression);
+    	}
+    	return expressions;
     }
     
     public Map<Integer, String> getInputTypeNames() {
@@ -158,9 +162,8 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		return new PatternMatchingAO(this);
 	}
 	
-	@Override
-	protected SDFSchema getOutputSchemaIntern(int port) {
-        // Input-Typen und Schemas für Ports speichern
+	private SDFSchema calcOutputSchema() {
+		// Input-Typen und Schemas für Ports speichern
 		for (LogicalSubscription s : this.getSubscribedToSource()) {
 			SDFSchema schema = inputSchemas.get(s.getSinkInPort());
 			if (schema == null) {
@@ -179,31 +182,89 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		// TODO: Default ist Port 0 // siehe MapAO
 		//return this.getInputSchema(port);
 		
-		// einfache Variante (ohne Expressions)
-		SDFAttribute type = new SDFAttribute("PATTERN", "type", SDFDatatype.STRING);
-		SDFAttribute detected = new SDFAttribute("PATTERN", "detected", SDFDatatype.BOOLEAN);
-		SDFSchema schema = new SDFSchema("PATTERN", type, detected);
+		SDFSchema schema = null;
+		if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null) {
+			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+			
+			for (NamedExpressionItem expr : returnExpressions) {
+				SDFAttribute attr = null;
+				IExpression<?> mepExpression = expr.expression.getMEPExpression();
+				String exprString;
+				boolean isOnlyAttribute = false;
+				// Determine attribute name
+				if ("".equals(expr.name)) {
+					exprString = expr.expression.toString();
+					// Variable could be source.name oder name, we are looking for name!
+					String[] split = SDFElement.splitURI(exprString);
+					final SDFElement elem;
+					if (split[1] != null && split[1].length() > 0) {
+						elem = new SDFElement(split[0], split[1]);
+					} else {
+						elem = new SDFElement(null, split[0]);
+					}
+
+					// If expression is an attribute use this data type
+					List<SDFAttribute> inAttribs = expr.expression.getAllAttributes();
+					for (SDFAttribute attribute : inAttribs) {
+						if (attribute.equalsCQL(elem)) {
+							attr = new SDFAttribute(elem.getURIWithoutQualName(), elem.getQualName(), attribute.getDatatype());
+							isOnlyAttribute = true;
+						}
+					}
+				} else {
+					exprString = expr.name;
+				}
+				// Expression is an attribute and name is set --> keep Attribute type
+				if (isOnlyAttribute && !"".equals(expr.name)) {
+					attr = new SDFAttribute(attr.getSourceName(), expr.name, attr);
+
+				}
+				// else use the expression data type
+				if (attr == null) {
+					attr = new SDFAttribute(null, exprString, mepExpression.getReturnType());
+				}
+				attrs.add(attr);
+			}
+		} else {
+			// SIMPLE: einfache Variante (ohne Expressions)
+			SDFAttribute type = new SDFAttribute("PATTERN", "type", SDFDatatype.STRING);
+			SDFAttribute detected = new SDFAttribute("PATTERN", "detected", SDFDatatype.BOOLEAN);
+			schema = new SDFSchema("PATTERN", type, detected);
+		}
+		setOutputSchema(schema);
 		return schema;
+	}
+	
+//	@Override
+//	public void initialize() {
+////		calcOutputSchema();
+//	}
+	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int port) {
+//		calcOutputSchema();
+//        return getOutputSchema();
+		return calcOutputSchema();
 	}
 	
 	@Override
 	public boolean isValid() {
 		// Elemente der relevanten Eventliste müssen auch als Quellen vorhanden sein
-		/*boolean help = false;
-		for (String eventType : eventTypes) {
-			help = false;
-			for (String inputType : inputTypeNames.values()) {
-				if (eventType.equals(inputType)) {
-					help = true;
-					break;
-				}				
-			}
-			if (!help) {
-				addError(new IllegalArgumentException("eventTypes have to be defined also as a source."));
-				break;
-			}
-		}
-		return help;*/
+//		boolean help = false;
+//		for (String eventType : eventTypes) {
+//			help = false;
+//			for (String inputType : inputTypeNames.values()) {
+//				if (eventType.equals(inputType)) {
+//					help = true;
+//					break;
+//				}				
+//			}
+//			if (!help) {
+//				addError(new IllegalArgumentException("eventTypes have to be defined also as a source."));
+//				break;
+//			}
+//		}
+//		return help;
 		// TODO
 		// weitere Validierungen
 		return true;

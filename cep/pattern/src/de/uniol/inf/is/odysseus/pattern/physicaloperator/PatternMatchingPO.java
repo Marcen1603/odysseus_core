@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import model.AttributeMap;
 import model.EventBuffer;
@@ -18,8 +19,8 @@ import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -29,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
  * @author Michael Falk
  * @param <T>
  */
-public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>>
+public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>>
 	implements IProcessInternal<Tuple<T>> {
 	
 	private SDFExpression expression;
@@ -68,8 +68,10 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 	 */
 	private Map<Integer, EventBuffer<T>> objectLists;
 	private AttributeMap[] attrMapping;
+	@SuppressWarnings("unused")
+	private Map<SDFExpression, AttributeMap[]> returnAttrMappings;
 	
-	public PatternMatchingPO(String type, int time, int size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
+	public PatternMatchingPO(String type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			SDFExpression expr, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
         super();
@@ -114,20 +116,28 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
     }
 	
     private void init() {
+    	// Defaultwerte setzen
+    	if (timeUnit == null) {
+    		timeUnit = TimeUnit.MILLISECONDS;
+    	}
+    	if (outputMode == null || (outputMode == PatternOutput.EXPRESSIONS && returnExpressions == null)) {
+    		outputMode = PatternOutput.SIMPLE;
+    	}
+    	
+    	// Expressions intitialisieren
     	if (expression != null) {
     		List<SDFAttribute> neededAttr = expression.getAllAttributes();
     		attrMapping = new AttributeMap[neededAttr.size()];
     		int i = 0;
-    		int port = 0;
     		for (SDFAttribute attr : neededAttr) {
+    			int port = 0;
     			// passendes Schema raussuchen
     			while (port < inputSchemas.size()) {
     				SDFSchema schema = inputSchemas.get(port);
     				int attrPos = schema.indexOf(attr);
     				if (attrPos != -1) {
     					// Mapping speichern
-    					attrMapping[i].setPort(port);
-    					attrMapping[i].setAttrPos(attrPos);
+    					attrMapping[i] = new AttributeMap(port, attrPos);
     					break;
     				}
     				port++;
@@ -135,7 +145,42 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
     			i++;
     		}
     	}
+    	if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null && returnExpressions.size() > 0) {
+    		returnAttrMappings = initExpressions(returnExpressions);
+    	}
     	
+    	// Zeit in richtiges Zeitformat konvertieren
+    	if (time != null) {
+    		time = (int) TimeUnit.MILLISECONDS.convert(time, timeUnit);
+    	}
+    }
+
+    private Map<SDFExpression, AttributeMap[]> initExpressions(List<SDFExpression> expressions) {
+    	Map<SDFExpression, AttributeMap[]> attrMappings = new HashMap<SDFExpression, AttributeMap[]>();
+    	for (SDFExpression expression : expressions) {
+    		if (expression != null) {
+    			List<SDFAttribute> neededAttr = expression.getAllAttributes();
+        		AttributeMap[] attrMapping = new AttributeMap[neededAttr.size()];
+        		int i = 0;
+        		for (SDFAttribute attr : neededAttr) {
+        			Iterator<Integer> ports = inputSchemas.keySet().iterator();
+        			// passendes Schema raussuchen
+        			while (ports.hasNext()) {
+        				int port = ports.next();
+        				SDFSchema schema = inputSchemas.get(port);
+        				int attrPos = schema.indexOf(attr);
+        				if (attrPos != -1) {
+        					// Mapping speichern
+        					attrMapping[i] = new AttributeMap(port, attrPos);
+        					break;
+        				}
+        			}
+        			i++;
+        		}
+        		attrMappings.put(expression, attrMapping);
+    		}
+    	}
+    	return attrMappings;
     }
     
 	@Override
@@ -157,7 +202,6 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
     public void process_open() throws OpenFailedException {
         super.process_open();
         inputStreamSyncArea.init(this);
-//        expression.init();
     }
      
 	
@@ -191,37 +235,11 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 				}
 				break;
 			case "ALL":
-				/*if (eventTypes.contains(eventType)) {
-					EventObject<T> eventObj = new EventObject<T>(event, eventType, schema, port);
-					// Event in vorhandene Listen einfügen,
-					// wenn noch nicht vorhanden
-					for (EventBuffer<T> objects : objectLists) {
-						if (!objects.contains(eventType)) {
-							objects.add(eventObj);
-							// Pattern erfüllt?
-							if (objects.matchAllPattern(eventTypes, expression, attrMapping, event)) {
-								// evt. alle bis dahin gesammelten Daten löschen
-								detected = true;
-								break;
-							}
-						}
-					}
-					if (!detected) {
-						// neue Liste erzeugen
-						EventBuffer<T> objects = new EventBuffer<T>();
-						objects.add(eventObj);
-						objectLists.add(objects);
-						if (objects.matchAllPattern(eventTypes, expression, attrMapping, event))
-							detected = true;
-					}
-				}
-				if (detected)
-					this.transfer(this.createComplexEvent(type));*/
 				if (eventTypes.contains(eventType)) {
 					EventObject<T> eventObj = new EventObject<T>(event, eventType, schema, port);
 					// Event einsortieren und alte Events entfernen
 					objectLists.get(port).add(eventObj);
-					dropOldEvents(port);
+					dropOldEvents(eventObj);
 					// Kombinationen suchen und Bedingungen überprüfen
 					List<List<EventObject<T>>> output = checkAssertion(eventObj);
 					for (List<EventObject<T>> outputObject : output) {
@@ -261,29 +279,41 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 	
 	/**
 	 * Erzeugt ein komplexes Event abhängig vom PatternOutput.
+	 * @param outputObject
+	 * @param currentObj
+	 * @param type
+	 * @return Ein komplexes Event oder null
 	 */
-	private Tuple<? extends ITimeInterval> createComplexEvent(List<EventObject<T>> outputObject, EventObject<T> currentObj, String type) {
+	@SuppressWarnings("unchecked")
+	private Tuple<T> createComplexEvent(List<EventObject<T>> outputObject, EventObject<T> currentObj, String type) {
 		if (outputMode == PatternOutput.SIMPLE) {
 			Object[] attributes = new Object[2];
 			attributes[0] = type;
 			attributes[1] = true;
-			Tuple<? extends ITimeInterval> returnEvent = new Tuple<ITimeInterval>(attributes, false);
+			Tuple<T> returnEvent = new Tuple<T>(attributes, false);
 			return returnEvent;
 		}
 		if (outputMode == PatternOutput.EXPRESSIONS) {
+			// TODO: findExpression funktioniert momentan nur für eine Expression !!!
 			Object[] values = findExpressionValues(outputObject);
 			if (values != null) {
-				expression.bindMetaAttribute(currentObj.getEvent().getMetadata());
-				expression.bindAdditionalContent(currentObj.getEvent().getAdditionalContent());
-				expression.bindVariables(values);
-				// TODO
+				Tuple<T> outputVal = new Tuple<T>(returnExpressions.size(), false);
+				outputVal.setMetadata((T) currentObj.getEvent().getMetadata().clone());
+				for (int i = 0; i < returnExpressions.size(); i++) {
+					returnExpressions.get(i).bindMetaAttribute(currentObj.getEvent().getMetadata());
+					returnExpressions.get(i).bindAdditionalContent(currentObj.getEvent().getAdditionalContent());
+					returnExpressions.get(i).bindVariables(values);
+					Object expr = returnExpressions.get(i).getValue();
+					outputVal.setAttribute(i, expr);
+				}
+				return outputVal;
 			}
 		}
 		return null;
 	}
 	
-	private void dropOldEvents(int port) {
-		EventBuffer<T> currentEvents = objectLists.get(port);
+	private void dropOldEvents(EventObject<T> event) {
+		EventBuffer<T> currentEvents = objectLists.get(event.getPort());
 		// Anzahl Elemente berücksichtigen
 		if (size != null) {
 			while (currentEvents.getSize() > size) {
@@ -292,13 +322,26 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 		}
 		// Zeit berücksichtigen
 		if (time != null) {
-			// TODO
+			PointInTime newStartTime = event.getEvent().getMetadata().getStart();
+			for (EventBuffer<T> eventBuffer : objectLists.values()) {
+				// alte Elemente löschen
+				Iterator<EventObject<T>> iterator = eventBuffer.getEventObjects().iterator();
+				while (iterator.hasNext()) {
+					EventObject<T> currEvent = iterator.next();
+					PointInTime currStartTime = currEvent.getEvent().getMetadata().getStart();
+					// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
+					if (newStartTime.minus(currStartTime).getMainPoint() > time) {
+						iterator.remove();
+					}
+				}
+					
+			}
 		}
 	}
 	
 	/**
 	 * Prüft für alle gültigen Kombinationen (-> ALL-Pattern), ob die Bedingung erfüllt ist und
-	 * liefert diese in form einer Liste zurück. 
+	 * liefert diese in form einer Liste zurück.
 	 * @param object
 	 * @return
 	 */
@@ -332,11 +375,11 @@ public class PatternMatchingPO<T extends IMetaAttribute> extends AbstractPipe<Tu
 					expression.bindMetaAttribute(object.getEvent().getMetadata());
 					expression.bindAdditionalContent(object.getEvent().getAdditionalContent());
 					expression.bindVariables(values);
-					boolean predicate = expression.getValue();
-					if (predicate) {
-						// MatchingSet in Ausgabemenge aufnehmen
-						output.add(crossElems);
-					}
+				}
+				boolean predicate = expression.getValue();
+				if (predicate) {
+					// MatchingSet in Ausgabemenge aufnehmen
+					output.add(crossElems);
 				}
 			}
 		}
