@@ -45,15 +45,15 @@ public class IntervalUnionFunction extends AbstractFunction<IntervalDouble> {
 
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > 0) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
+	    if (argPos < 0) {
+            throw new IllegalArgumentException(
+                    "negative argument index not allowed");
+        }
+        if (argPos > this.getArity() - 1) {
+            throw new IllegalArgumentException(this.getSymbol() + " has only "
+                    + this.getArity() + " argument(s).");
+        }
+        return accTypes;
 	}
 
 	@Override
