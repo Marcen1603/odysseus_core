@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.equivalentoutput.equality;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.equivalentoutput.tuple.Tuple;
@@ -27,31 +28,43 @@ import de.uniol.inf.is.odysseus.equivalentoutput.tuple.Tuple;
  */
 public class EqualityCheck {
 
-	public static boolean containEachOther(List<Tuple> input0, List<Tuple> input1) {
-		if(input0.containsAll(input1) && input1.containsAll(input0)) {
+	public static boolean containEachOther(List<Tuple> input0,
+			List<Tuple> input1) {
+		if (input0.containsAll(input1) && input1.containsAll(input0)) {
 			return true;
 		} else {
-			detailCheck(input0, input1);
+			List<Tuple> missing1 = detailCheck(input0, input1);
+			System.err
+					.println(missing1.size()
+							+ " tuples are missing from input1, but are present in input0");
+			for (Tuple missing : missing1) {
+				System.err.println(missing + " missing from input1");
+			}
+			List<Tuple> missing0 = detailCheck(input1, input0);
+			System.err
+					.println(missing0.size()
+							+ " tuples are missing from input0, but are present in input1");
+			for (Tuple missing : missing0) {
+				System.err.println(missing + " missing from input0");
+			}
 			return false;
 		}
 	}
-	
-	private static void detailCheck(List<Tuple> input0, List<Tuple> input1) {
-		int counter = 0;
-		for(Tuple in0 : input0) {
-			if(!input1.contains(in0)) {
-				System.err.println("[DetailCheck] " + in0 + " was not in input1");
-				counter++;
+
+	/**
+	 * counts the amount of tuples which are in input0 but not in input 1
+	 * 
+	 * @param input0
+	 * @param input1
+	 */
+	private static List<Tuple> detailCheck(List<Tuple> input0,
+			List<Tuple> input1) {
+		List<Tuple> missing = new ArrayList<Tuple>();
+		for (Tuple in0 : input0) {
+			if (!input1.contains(in0)) {
+				missing.add(in0);
 			}
 		}
-		for(Tuple in1 : input1) {
-			if(!input0.contains(in1)) {
-				System.err.println("[DetailCheck] " + in1 + " was not in input0");
-				counter++;
-			}
-		}
-		if(counter > 0) {
-			System.err.println(counter + " of " + input0.size() + " tuples could not be matched");
-		}
+		return missing;
 	}
 }

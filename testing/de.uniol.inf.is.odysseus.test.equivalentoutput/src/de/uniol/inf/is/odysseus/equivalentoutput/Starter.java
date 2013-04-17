@@ -21,6 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.equivalentoutput.duplicate.DuplicateCheck;
 import de.uniol.inf.is.odysseus.equivalentoutput.enums.StatusCode;
 import de.uniol.inf.is.odysseus.equivalentoutput.equality.EqualityCheck;
+import de.uniol.inf.is.odysseus.equivalentoutput.interval.IntervalMerge;
 import de.uniol.inf.is.odysseus.equivalentoutput.order.OrderCheck;
 import de.uniol.inf.is.odysseus.equivalentoutput.reader.StreamReader;
 import de.uniol.inf.is.odysseus.equivalentoutput.tuple.Tuple;
@@ -87,7 +88,10 @@ public class Starter {
 				return StatusCode.ERROR_OUT_OF_ORDER;
 			}
 
-			if (!EqualityCheck.containEachOther(input0, input1)) {
+			List<Tuple> merged0 = IntervalMerge.mergeIntervals(input0);
+			List<Tuple> merged1 = IntervalMerge.mergeIntervals(input1);
+			
+			if (!EqualityCheck.containEachOther(merged0, merged1)) {
 				return StatusCode.ERROR_NOT_EQUIVALENT;
 			}
 		} catch (IOException ex) {
