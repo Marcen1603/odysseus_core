@@ -37,7 +37,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 	@Override
 	public void execute(SelectAO operator, RewriteConfiguration config) {
 		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (sel.getInputAO()== operator) {
+			if (sel.getInputAO() !=null && sel.getInputAO()== operator) {
 				if (sel.getPredicate() != null) {
 					if (operator.getPredicate() != null) {
 						operator.setPredicate(ComplexPredicateHelper.createAndPredicate(operator.getPredicate(), sel.getPredicate()));
@@ -64,7 +64,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 			return false;
 		}
 		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (sel.getInputAO()== operator) {
+			if (sel.getInputAO() !=null &&  sel.getInputAO()== operator) {
 				return true;
 			}
 		}
