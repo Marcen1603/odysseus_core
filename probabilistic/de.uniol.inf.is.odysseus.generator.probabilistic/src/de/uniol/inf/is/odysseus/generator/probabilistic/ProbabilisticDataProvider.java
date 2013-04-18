@@ -31,195 +31,193 @@ import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ProbabilisticDataProvider extends StreamClientHandler {
-	private BufferedReader reader;
+    private BufferedReader reader;
 
-	public ProbabilisticDataProvider() {
+    public ProbabilisticDataProvider() {
 
-	}
+    }
 
-	@Override
-	public synchronized List<DataTuple> next() {
-		final List<DataTuple> tuples = new ArrayList<DataTuple>();
-		DataTuple tuple = null;
-		try {
-			tuple = this.generateDataTuple();
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-		if (tuple != null) {
-			tuples.add(tuple);
-		} else {
-			this.close();
-			this.init();
-		}
-		try {
-			Thread.sleep(500);
-		} catch (final InterruptedException e) {
-			e.printStackTrace();
-		}
-		return tuples;
-	}
+    @Override
+    public synchronized List<DataTuple> next() {
+        final List<DataTuple> tuples = new ArrayList<DataTuple>();
+        DataTuple tuple = null;
+        try {
+            tuple = this.generateDataTuple();
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        if (tuple != null) {
+            tuples.add(tuple);
+        } else {
+            this.close();
+            this.init();
+        }
+        try {
+            Thread.sleep(500);
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
+        }
+        return tuples;
+    }
 
-	@Override
-	public void init() {
-		final URL fileURL = Activator.getContext().getBundle()
-				.getEntry("/data/data");
-		try {
-			final InputStream inputStream = fileURL.openConnection()
-					.getInputStream();
-			this.reader = new BufferedReader(new InputStreamReader(inputStream));
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void init() {
+        final URL fileURL = Activator.getContext().getBundle().getEntry("/data/data");
+        try {
+            final InputStream inputStream = fileURL.openConnection().getInputStream();
+            this.reader = new BufferedReader(new InputStreamReader(inputStream));
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	public void close() {
-		if (this.reader != null) {
-			try {
-				this.reader.close();
-			} catch (final IOException e) {
-				e.printStackTrace();
-			} finally {
-				this.reader = null;
-			}
-		}
-	}
+    @Override
+    public void close() {
+        if (this.reader != null) {
+            try {
+                this.reader.close();
+            } catch (final IOException e) {
+                e.printStackTrace();
+            } finally {
+                this.reader = null;
+            }
+        }
+    }
 
-	@Override
-	public ProbabilisticDataProvider clone() {
-		return new ProbabilisticDataProvider();
-	}
+    @Override
+    public ProbabilisticDataProvider clone() {
+        return new ProbabilisticDataProvider();
+    }
 
-	private DataTuple generateDataTuple() throws IOException {
-		final DataTuple tuple = new DataTuple();
-		String line = null;
-		while (line == null) {
-			line = this.reader.readLine();
-			if (line == null) {
-				break;
-			}
-			if (line.startsWith("#")) {
-				line = null;
-			}
-		}
-		if (line != null) {
-			tuple.addLong(System.currentTimeMillis());
-			List<String> distributions = new ArrayList<String>();
-			final String[] values = line.split(",");
-			for (final String value : values) {
-				if (!value.isEmpty()) {
-					if (value.contains("[")) {
-						// Send continuous distribution
-						distributions.add(value);
-					} else {
-						if (value.contains(";")) {
-							// Send discrete probabilistic value
-							generateDiscreteAttribute(tuple, value);
-						} else {
-							// Send continuous probabilistic value (Index to
-							// distribution)
-							tuple.addInteger(value);
-						}
-					}
-				}
-			}
-		
-			for (String value : distributions) {
-				generateContinuousAttribute(tuple, value);
-			}
-			return tuple;
-		}
-		return null;
-	}
+    private DataTuple generateDataTuple() throws IOException {
+        final DataTuple tuple = new DataTuple();
+        String line = null;
+        while (line == null) {
+            line = this.reader.readLine();
+            if (line == null) {
+                break;
+            }
+            if (line.startsWith("#")) {
+                line = null;
+            }
+        }
+        if (line != null) {
+            tuple.addLong(System.currentTimeMillis());
+            List<String> distributions = new ArrayList<String>();
+            final String[] values = line.split(",");
+            for (final String value : values) {
+                if (!value.isEmpty()) {
+                    if (value.contains("[")) {
+                        // Send continuous distribution
+                        distributions.add(value);
+                    } else {
+                        if (value.contains(";")) {
+                            // Send discrete probabilistic value
+                            generateDiscreteAttribute(tuple, value);
+                        } else {
+                            if (value.contains(".")) {
+                                // Send double value
+                                tuple.addDouble(value);
+                            } else {
+                                // Send continuous probabilistic value (Index to
+                                // distribution)
+                                tuple.addInteger(value);
+                            }
+                        }
+                    }
+                }
+            }
 
-	private void generateDiscreteAttribute(DataTuple tuple, String string) {
-		final String[] probabilisticValues = string.split(";");
-		tuple.addInteger(probabilisticValues.length);
-		for (final String probabilisticValue : probabilisticValues) {
-			final String[] probabilisticParameter = probabilisticValue
-					.split(":");
-			// The value
-			tuple.addDouble(probabilisticParameter[0]);
-			// The probability
-			tuple.addDouble(probabilisticParameter[1]);
-		}
-	}
+            for (String value : distributions) {
+                generateContinuousAttribute(tuple, value);
+            }
+            return tuple;
+        }
+        return null;
+    }
 
-	private void generateContinuousAttribute(DataTuple tuple, String string) {
-		String[] components = string.split("<");
-		final String[] mixtures = components[0].split("\\|");
-		tuple.addInteger(mixtures.length);
-		final int dimension = mixtures[0].split(";")[1].split(":").length;
-		tuple.addInteger(dimension);
-		for (final String mixture : mixtures) {
-			generateContinuousAttributeMixture(tuple, dimension, mixture);
-		}
-		if (components.length > 1) {
-			String[] parameter = components[1].split(";");
-			if (parameter.length > 0) {
-				// The scale factor
-				tuple.addDouble(parameter[0]);
-			} else {
-				tuple.addDouble(1.0);
-			}
-			if (parameter.length > 1) {
-				final String[] supportParameter = parameter[1].substring(1,
-						parameter[1].length() - 1).split(":");
-				for (int i = 0; i < dimension * 2; i++) {
-					// The support on each dimension
-					tuple.addDouble(supportParameter[i]);
-				}
-			} else {
-				for (int i = 0; i < dimension * 2; i++) {
-					// The support on each dimension
-					if (i % 2 == 0) {
-						tuple.addDouble(Double.NEGATIVE_INFINITY);
-					} else {
-						tuple.addDouble(Double.POSITIVE_INFINITY);
-					}
-				}
-			}
-		} else {
-			tuple.addDouble(1.0);
-			for (int i = 0; i < dimension * 2; i++) {
-				// The support on each dimension
-				if (i % 2 == 0) {
-					tuple.addDouble(Double.NEGATIVE_INFINITY);
-				} else {
-					tuple.addDouble(Double.POSITIVE_INFINITY);
-				}
-			}
-		}
-	}
+    private void generateDiscreteAttribute(DataTuple tuple, String string) {
+        final String[] probabilisticValues = string.split(";");
+        tuple.addInteger(probabilisticValues.length);
+        for (final String probabilisticValue : probabilisticValues) {
+            final String[] probabilisticParameter = probabilisticValue.split(":");
+            // The value
+            tuple.addDouble(probabilisticParameter[0]);
+            // The probability
+            tuple.addDouble(probabilisticParameter[1]);
+        }
+    }
 
-	private void generateContinuousAttributeMixture(DataTuple tuple,
-			int dimension, String string) {
-		final String[] probabilisticValues = string.split(";");
-		// The weight
-		String weight = probabilisticValues[0];
-		final String[] meanParameter = probabilisticValues[1].substring(1,
-				probabilisticValues[1].length() - 1).split(":");
+    private void generateContinuousAttribute(DataTuple tuple, String string) {
+        String[] components = string.split("<");
+        final String[] mixtures = components[0].split("\\|");
+        tuple.addInteger(mixtures.length);
+        final int dimension = mixtures[0].split(";")[1].split(":").length;
+        tuple.addInteger(dimension);
+        for (final String mixture : mixtures) {
+            generateContinuousAttributeMixture(tuple, dimension, mixture);
+        }
+        if (components.length > 1) {
+            String[] parameter = components[1].split(";");
+            if (parameter.length > 0) {
+                // The scale factor
+                tuple.addDouble(parameter[0]);
+            } else {
+                tuple.addDouble(1.0);
+            }
+            if (parameter.length > 1) {
+                final String[] supportParameter = parameter[1].substring(1, parameter[1].length() - 1).split(":");
+                for (int i = 0; i < dimension * 2; i++) {
+                    // The support on each dimension
+                    tuple.addDouble(supportParameter[i]);
+                }
+            } else {
+                for (int i = 0; i < dimension * 2; i++) {
+                    // The support on each dimension
+                    if (i % 2 == 0) {
+                        tuple.addDouble(Double.NEGATIVE_INFINITY);
+                    } else {
+                        tuple.addDouble(Double.POSITIVE_INFINITY);
+                    }
+                }
+            }
+        } else {
+            tuple.addDouble(1.0);
+            for (int i = 0; i < dimension * 2; i++) {
+                // The support on each dimension
+                if (i % 2 == 0) {
+                    tuple.addDouble(Double.NEGATIVE_INFINITY);
+                } else {
+                    tuple.addDouble(Double.POSITIVE_INFINITY);
+                }
+            }
+        }
+    }
 
-		tuple.addDouble(weight);
-		for (final String element : meanParameter) {
-			// The mean in dimension i
-			tuple.addDouble(element);
-		}
-		final String[] covarianceParameter = probabilisticValues[2].substring(
-				1, probabilisticValues[2].length() - 1).split(":");
-		for (final String element : covarianceParameter) {
-			// The Covariance Entry i
-			tuple.addDouble(element);
-		}
-	}
+    private void generateContinuousAttributeMixture(DataTuple tuple, int dimension, String string) {
+        final String[] probabilisticValues = string.split(";");
+        // The weight
+        String weight = probabilisticValues[0];
+        final String[] meanParameter = probabilisticValues[1].substring(1, probabilisticValues[1].length() - 1).split(":");
 
-	public static void main(String[] args) {
-		ProbabilisticDataProvider provider = new ProbabilisticDataProvider();
-		provider.init();
-		provider.next();
-		provider.next();
+        tuple.addDouble(weight);
+        for (final String element : meanParameter) {
+            // The mean in dimension i
+            tuple.addDouble(element);
+        }
+        final String[] covarianceParameter = probabilisticValues[2].substring(1, probabilisticValues[2].length() - 1).split(":");
+        for (final String element : covarianceParameter) {
+            // The Covariance Entry i
+            tuple.addDouble(element);
+        }
+    }
 
-		provider.next();
-	}
+    public static void main(String[] args) {
+        ProbabilisticDataProvider provider = new ProbabilisticDataProvider();
+        provider.init();
+        provider.next();
+        provider.next();
+
+        provider.next();
+    }
 }
