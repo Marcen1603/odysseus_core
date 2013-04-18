@@ -18,9 +18,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.desc;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -32,8 +29,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 
 public final class DashboardPartDescriptor {
-
-	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartDescriptor.class);
 
 	private static final String DEFAULT_DESCRIPTION = "DashboardPart description for";
 
@@ -51,11 +46,7 @@ public final class DashboardPartDescriptor {
 
 		this.name = name;
 
-		if (Strings.isNullOrEmpty(description)) {
-			LOG.warn("Description for DashboardPartDescriptor {} is null or empty.", name);
-			description = DEFAULT_DESCRIPTION + " " + name;
-		}
-		this.description = description;
+		this.description = !Strings.isNullOrEmpty(description) ? description : DEFAULT_DESCRIPTION + " " + name;
 		this.settingDescriptors = createSettingsMap(settingDescriptors);
 	}
 
