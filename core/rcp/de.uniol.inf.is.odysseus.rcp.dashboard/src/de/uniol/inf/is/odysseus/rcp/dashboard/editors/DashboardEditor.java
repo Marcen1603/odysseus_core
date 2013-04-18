@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.controller.ControllerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
@@ -95,7 +96,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		try {
 			dashboard = DASHBOARD_HANDLER.load(FileUtil.read(this.input.getFile()), DASHBOARD_PART_HANDLER);
 			dashboard.addListener(this);
-			controllers = createControllers(dashboard.getDashboardPartPlacements());
+			controllers = createDashboardPartControllers(dashboard.getDashboardPartPlacements());
 		} catch (DashboardHandlerException ex) {
 			LOG.error("Could not load Dashboard!", ex);
 			throw new PartInitException("Could not load Dashboard!", ex);
@@ -193,7 +194,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		try {
 			ctrl.start();
 			controllers.put(addedPart, ctrl);
-		} catch (Exception e) {
+		} catch (ControllerException e) {
 			LOG.error("Could not start dashboard part", e);
 		}
 		
@@ -214,19 +215,19 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		setDirty(true);
 	}
 
-	private void startDashboard() throws Exception {
+	protected final void startDashboard() throws Exception {
 		for (DashboardPartController controller : controllers.values()) {
 			controller.start();
 		}
 	}
 
-	private void stopDashboard() {
+	protected final void stopDashboard() {
 		for (DashboardPartController controller : controllers.values()) {
 			controller.stop();
 		}
 	}
 
-	private static Map<IDashboardPart, DashboardPartController> createControllers(ImmutableList<DashboardPartPlacement> dashboardPartPlacements) {
+	private static Map<IDashboardPart, DashboardPartController> createDashboardPartControllers(ImmutableList<DashboardPartPlacement> dashboardPartPlacements) {
 		Map<IDashboardPart, DashboardPartController> controllers = Maps.newHashMap();
 
 		for (DashboardPartPlacement place : dashboardPartPlacements) {

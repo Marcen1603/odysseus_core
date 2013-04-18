@@ -54,7 +54,7 @@ public final class DashboardPartController {
 		return dashboardPart;
 	}
 
-	public void start() throws Exception {
+	public void start() throws ControllerException {
 		Preconditions.checkState(status != Status.RUNNING, "Container for DashboardParts already started");
 		Preconditions.checkState(status != Status.PAUSED, "Container for DashboardParts is paused and cannot be started.");
 
@@ -63,27 +63,30 @@ public final class DashboardPartController {
 		IOdysseusScriptParser parser = DashboardPlugIn.getScriptParser();
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
 		
-		List<?> results = parser.execute( parser.parseScript(queryTextLines.toArray(new String[0]), caller), caller, null);  
-		queryIDs = getExecutedQueryIDs(results);
-
-		List<IPhysicalOperator> roots = Lists.newArrayList();
-		for (Integer id : queryIDs) {
-			for( IPhysicalOperator rootOfQuery :  DashboardPlugIn.getExecutor().getPhysicalRoots(id) ) {
-				if( !(rootOfQuery instanceof DefaultStreamConnection)) {
-					roots.add(rootOfQuery);
+		try {
+			List<?> results = parser.execute( parser.parseScript(queryTextLines.toArray(new String[0]), caller), caller, null);  
+			queryIDs = getExecutedQueryIDs(results);
+	
+			List<IPhysicalOperator> roots = Lists.newArrayList();
+			for (Integer id : queryIDs) {
+				for( IPhysicalOperator rootOfQuery :  DashboardPlugIn.getExecutor().getPhysicalRoots(id) ) {
+					if( !(rootOfQuery instanceof DefaultStreamConnection)) {
+						roots.add(rootOfQuery);
+					}
 				}
 			}
+	
+			streamConnection = new DefaultStreamConnection<IStreamObject<?>>(roots);
+			
+			dashboardPart.onStart(roots);
+			
+			streamConnection.addStreamElementListener(dashboardPart);
+			streamConnection.connect();
+	
+			status = Status.RUNNING;
+		} catch( Exception ex ) {
+			throw new ControllerException("Could not start query for dashboardpart", ex);
 		}
-
-		streamConnection = new DefaultStreamConnection<IStreamObject<?>>(roots);
-		
-		dashboardPart.onStart(roots);
-		
-		streamConnection.addStreamElementListener(dashboardPart);
-		streamConnection.connect();
-
-		status = Status.RUNNING;
-
 	}
 
 	public void pause() {
