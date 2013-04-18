@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -50,13 +51,14 @@ public class QueryPartManager implements IAdvertisementListener {
 		final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
 		if (!consumedAdvertisementIDs.contains(adv.getID())) {
 			LOG.debug("Got query part");
-			LOG.debug("PQL-Statement is {}", adv.getPqlStatement());
+			System.out.println("PQL-Statement is :\n\n" + adv.getPqlStatement() + "\n\n");
 
 			try {
-				TransformationConfiguration transformationConfiguration = determineTransformationConfiguration(executor, adv.getTransCfgName());
+				final TransformationConfiguration transformationConfiguration = determineTransformationConfiguration(executor, adv.getTransCfgName());
+				final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, adv.getTransCfgName());
 				transformationConfiguration.setOption("NO_METADATA", true);
 
-				final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), adv.getTransCfgName());
+				final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), adv.getTransCfgName(), configuration);
 
 				transformationConfiguration.removeOption("NO_METADATA");
 				removeUnnededOperators(executor, ids);
@@ -108,50 +110,60 @@ public class QueryPartManager implements IAdvertisementListener {
 		return instance;
 	}
 
+	private static List<IQueryBuildSetting<?>> determineQueryBuildSettings(IServerExecutor executor, String cfgName) {
+		final IQueryBuildConfiguration qbc = executor.getQueryBuildConfiguration(cfgName);
+		final List<IQueryBuildSetting<?>> configuration = qbc.getConfiguration();
+
+		final List<IQueryBuildSetting<?>> settings = Lists.newArrayList();
+		settings.addAll(configuration);
+		settings.add(ParameterDoRewrite.FALSE);
+		return settings;
+	}
+
 	private static TransformationConfiguration determineTransformationConfiguration(IServerExecutor executor, String cfgName) {
-		IQueryBuildConfiguration qbc = executor.getQueryBuildConfiguration(cfgName);
-		List<IQueryBuildSetting<?>> configuration = qbc.getConfiguration();
-		QueryBuildConfiguration qbc2 = new QueryBuildConfiguration(configuration.toArray(new IQueryBuildSetting[0]), cfgName);
-		TransformationConfiguration transformationConfiguration = qbc2.getTransformationConfiguration();
+		final IQueryBuildConfiguration qbc = executor.getQueryBuildConfiguration(cfgName);
+		final List<IQueryBuildSetting<?>> configuration = qbc.getConfiguration();
+		final QueryBuildConfiguration qbc2 = new QueryBuildConfiguration(configuration.toArray(new IQueryBuildSetting[0]), cfgName);
+		final TransformationConfiguration transformationConfiguration = qbc2.getTransformationConfiguration();
 		return transformationConfiguration;
 	}
 
 	private static void removeUnnededOperators(IServerExecutor serverExecutor, Collection<Integer> ids) {
-		for (Integer id : ids) {
-			IPhysicalQuery physicalQuery = serverExecutor.getExecutionPlan().getQueryById(id);
+		for (final Integer id : ids) {
+			final IPhysicalQuery physicalQuery = serverExecutor.getExecutionPlan().getQueryById(id);
 			removeUnneededOperators(physicalQuery);
 		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void removeUnneededOperators(IPhysicalQuery physicalQuery) {
-		Set<IPhysicalOperator> operators = Sets.newHashSet(physicalQuery.getAllOperators());
-		for (IPhysicalOperator operator : operators) {
+		final Set<IPhysicalOperator> operators = Sets.newHashSet(physicalQuery.getAllOperators());
+		for (final IPhysicalOperator operator : operators) {
 			if (operator instanceof MetadataUpdatePO) {
-				MetadataUpdatePO updatePO = (MetadataUpdatePO) operator;
+				final MetadataUpdatePO updatePO = (MetadataUpdatePO) operator;
 
-				List<?> subscribedToSource = updatePO.getSubscribedToSource();
-				Map<ISource<?>, Integer> sourcePortMap = Maps.newHashMap();
-				for (Object subSource : subscribedToSource) {
-					PhysicalSubscription<ISource<?>> physSub = (PhysicalSubscription<ISource<?>>) subSource;
+				final List<?> subscribedToSource = updatePO.getSubscribedToSource();
+				final Map<ISource<?>, Integer> sourcePortMap = Maps.newHashMap();
+				for (final Object subSource : subscribedToSource) {
+					final PhysicalSubscription<ISource<?>> physSub = (PhysicalSubscription<ISource<?>>) subSource;
 					sourcePortMap.put(physSub.getTarget(), physSub.getSourceOutPort());
 
 					physSub.getTarget().disconnectSink(updatePO, physSub.getSinkInPort(), physSub.getSourceOutPort(), physSub.getTarget().getOutputSchema());
 				}
 				updatePO.unsubscribeFromAllSources();
 
-				List<?> subscriptions = updatePO.getSubscriptions();
-				Map<ISink<?>, Integer> sinkPortMap = Maps.newHashMap();
-				for (Object subSink : subscriptions) {
-					PhysicalSubscription<ISink<?>> physSub = (PhysicalSubscription<ISink<?>>) subSink;
+				final List<?> subscriptions = updatePO.getSubscriptions();
+				final Map<ISink<?>, Integer> sinkPortMap = Maps.newHashMap();
+				for (final Object subSink : subscriptions) {
+					final PhysicalSubscription<ISink<?>> physSub = (PhysicalSubscription<ISink<?>>) subSink;
 					sinkPortMap.put(physSub.getTarget(), physSub.getSinkInPort());
 
 					physSub.getTarget().unsubscribeFromSource(updatePO, physSub.getSinkInPort(), physSub.getSourceOutPort(), updatePO.getOutputSchema());
 				}
 				updatePO.unsubscribeFromAllSinks();
 
-				for (ISource source : sourcePortMap.keySet()) {
-					for (ISink sink : sinkPortMap.keySet()) {
+				for (final ISource source : sourcePortMap.keySet()) {
+					for (final ISink sink : sinkPortMap.keySet()) {
 						source.subscribeSink(sink, sinkPortMap.get(sink), sourcePortMap.get(source), source.getOutputSchema());
 					}
 				}
