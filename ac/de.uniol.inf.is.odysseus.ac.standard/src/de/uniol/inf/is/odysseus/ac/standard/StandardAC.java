@@ -586,13 +586,17 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	}
 
 	private static ICost<IPhysicalOperator> mergeCosts(ICost<IPhysicalOperator> a, ICost<IPhysicalOperator> b) {
-		if (a == null && b != null) {
+		if( a == null ) {
+			if( b == null ) {
+				return null;
+			} 
 			return b;
-		} else if (a != null && b == null) {
-			return a;
-		} else if (a == null && b == null) {
-			return null;
+			
 		} 
+		if( b == null ) {
+			return a;
+		} 
+		
 		return a.merge(b);
 	}
 
@@ -608,14 +612,17 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	}
 
 	private static ICost<IPhysicalOperator> substractCosts(ICost<IPhysicalOperator> a, ICost<IPhysicalOperator> b) {
-		if (a == null && b != null) {
+		if( a == null ) {
+			if( b == null ) {
+				return null;
+			} 
 			return b;
-		} else if (a != null && b == null) {
+			
+		} 
+		if( b == null ) {
 			return a;
-		} else if (a == null && b == null) {
-			return null;
-		} else {
-			return a.substract(b);
-		}
+		} 
+		
+		return a.substract(b);
 	}
 }
