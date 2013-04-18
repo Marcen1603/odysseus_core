@@ -140,4 +140,28 @@ public class OperatorEstimation<T> {
 	public T getOperator() {
 		return operator;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		if(getDetailCost() != null ) {
+			sb.append("cpu = ").append(getDetailCost().getProcessorCost()).append(", ");
+			sb.append("mem = ").append(getDetailCost().getMemoryCost()).append(", ");
+		} else {
+			sb.append("no detail cost, ");
+		}
+		
+		if( getDataStream() != null ) {
+			sb.append("r = ").append(getDataStream().getDataRate()).append(", ");
+			sb.append("l = ").append(getDataStream().getIntervalLength()).append(", ");
+		} else {
+			sb.append("no data stream, ");
+		}
+		
+		sb.append("sel = ").append(getSelectivity());
+		sb.append("}");
+		
+		return sb.toString();
+	}
 }
