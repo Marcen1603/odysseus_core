@@ -190,17 +190,20 @@ public class DescriptiveStatistics implements IDescriptiveStatistics{
 	@Override
 	public String csvToString() {
 		prepareStats();
-		return getMin()+";"+getMax()+";"+getMean()+";"+getN()+";"+
-				getStandardDeviation()+";"+getVariance()+";"
-				+getPercentile(5)+";"+
-				+getPercentile(10)+";"+
-				+getPercentile(25)+";"+
-				+getPercentile(50)+";"+
-				+getPercentile(75)+";"+
-				+getPercentile(90)+";"+
-				+getPercentile(95);
+		return getMin()+";"+getMax()+";"+format(getMean())+";"+getN()+";"+
+				format(getStandardDeviation())+";"+format(getVariance())+";"
+				+format(getPercentile(5))+";"+
+				format(getPercentile(10))+";"+
+				format(getPercentile(25))+";"+
+				format(getPercentile(50))+";"+
+				format(getPercentile(75))+";"+
+				format(getPercentile(90))+";"+
+				format(getPercentile(95));
 	}
 	
+	static public String format(double value){
+		return String.format("%.5f",value);
+	}
 	@Override
 	public String getCSVHeader() {
 		return "Min;Max;Mean;Count;StandardDeviation;variance;percentile5;percentile10;percentile25;" +
@@ -215,5 +218,10 @@ public class DescriptiveStatistics implements IDescriptiveStatistics{
 	@Override
 	public IDescriptiveStatistics createInstance() {
 		return new DescriptiveStatistics();
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(format(1.00));
+		System.out.println(format(2348234435.34556456));
 	}
 }
