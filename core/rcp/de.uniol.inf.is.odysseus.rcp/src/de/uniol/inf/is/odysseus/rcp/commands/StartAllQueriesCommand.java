@@ -15,20 +15,34 @@
  */
 package de.uniol.inf.is.odysseus.rcp.commands;
 
-import java.util.List;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 
-public class StartQueryCommand extends AbstractStartQueryCommand{
+public class StartAllQueriesCommand extends AbstractStartQueryCommand{
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		List<Integer> selectedObj = SelectionProvider.getSelection(event);
-		return start(selectedObj);
+		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
+		if (executor != null) {			
+			start(executor.getLogicalQueryIds());
+		} else {
+			logger.error(OdysseusNLS.NoExecutorFound);
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
+			box.setMessage(OdysseusNLS.NoExecutorFound);
+			box.setText("Error");
+			box.open();
+
+			return null;
+		}
+		return null;
 	}
 
 }
