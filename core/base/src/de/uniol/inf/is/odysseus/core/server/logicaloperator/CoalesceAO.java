@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
@@ -18,6 +19,7 @@ public class CoalesceAO extends AggregateAO {
 	private static final long serialVersionUID = 6314887685476173038L;
 	private int maxElementsPerGroup = -1;
 	private boolean createOnHeartbeat = false;
+	private long heartbeatrate = -1;
 
 	public CoalesceAO() {
 	}
@@ -26,6 +28,7 @@ public class CoalesceAO extends AggregateAO {
 		super(coalesceAO);
 		maxElementsPerGroup = coalesceAO.maxElementsPerGroup;
 		createOnHeartbeat = coalesceAO.createOnHeartbeat;
+		heartbeatrate = coalesceAO.heartbeatrate;
 	}
 
 	@Parameter(name = "ATTR", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
@@ -80,5 +83,14 @@ public class CoalesceAO extends AggregateAO {
 	
 	public boolean isCreateOnHeartbeat() {
 		return createOnHeartbeat;
+	}
+
+	public long getHeartbeatrate() {
+		return heartbeatrate;
+	}
+
+	@Parameter(name="heartbeatrate", optional = true, type = LongParameter.class)
+	public void setHeartbeatrate(long heartbeatrate) {
+		this.heartbeatrate = heartbeatrate;
 	}
 }

@@ -55,7 +55,7 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 		} else {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(
 					currentPartialAggregates, object);
-			newP.setMetadata(currentPartialAggregates.getMetadata());
+			newP.setMetadata((M) currentPartialAggregates.getMetadata().clone());
 			currentPartialAggregates = newP;
 		}
 		if (predicate.evaluate(object)) {
@@ -63,12 +63,14 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 			// create IStreamObject
 			IStreamObject<M> out = getGroupProcessor().createOutputElement(0,
 					result);
-			M metadata = object.getMetadata();
+			M metadata = (M) object.getMetadata().clone();
 			metadata.setStart(currentPartialAggregates.getMetadata().getStart());
 			out.setMetadata(metadata);
 			transfer(out);
 			sendPunctuations();
 			currentPartialAggregates = null;
+		}else{
+			createHeartbeat(object.getMetadata().getStart());
 		}
 
 	}

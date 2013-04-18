@@ -64,6 +64,8 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 			newP.setMetadata(newMeta);
 			currentPartialAggregates = newP;
 			currentCount++;
+			createHeartbeat(newMeta.getStart());
+			
 		} else {
 			if (currentPartialAggregates != null) {
 				createAndSend();

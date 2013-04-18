@@ -31,6 +31,7 @@ public class TCoalesceAORule extends AbstractTransformationRule<CoalesceAO> {
 			po = new PredicateCoalescePO<ITimeInterval>(operator.getInputSchema(0), operator.getOutputSchemaIntern(0) , operator.getGroupingAttributes(),
 					operator.getAggregations(), operator.getPredicate());			
 		}
+		po.setHeartbeatRate(operator.getHeartbeatrate());
 		// TODO: Think about it
 		//po.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());
 		defaultExecute(operator, po, config, true, true);
