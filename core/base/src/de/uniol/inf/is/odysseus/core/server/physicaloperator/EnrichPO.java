@@ -145,5 +145,12 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	public void setDataMergeFunction(IDataMergeFunction<T, M> dmf) {
 		this.dataMergeFunction = dmf;
 	}
+	
+	@Override
+	public long getElementsStored() {
+		return cache.size();
+	}
 
+	
+	
 }
