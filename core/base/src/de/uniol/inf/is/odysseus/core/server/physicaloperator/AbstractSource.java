@@ -316,7 +316,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 				currentCount = 0;
 			}
 			consumerCount.put(sub.getSourceOutPort(), currentCount + 1);
+			newReceiver(sub);
 		}
+	}
+	
+	protected void newReceiver(PhysicalSubscription<ISink<? super T>> sink) {
+		// can be overwritten if needed
 	}
 
 	private void removeActiveSubscription(PhysicalSubscription<ISink<? super T>> sub) {
@@ -377,19 +382,24 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 		// necessary to not lose tuples in a plan migration
 		locker.lock();
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
-			if (sink.getSourceOutPort() == sourceOutPort) {
-				try {
-					sink.getTarget().process(cloneIfNessessary(object, sourceOutPort), sink.getSinkInPort());
-				} catch (Exception e) {
-					// Send object that could not be processed to the error port
-					e.printStackTrace();
-					transfer(object, ERRORPORT);
-				}
-			}
+			transfer(object, sourceOutPort, sink);
 		}
 		
 		locker.unlock();
 		fire(this.pushDoneEvent);
+	}
+
+	protected void transfer(T object, int sourceOutPort,
+			PhysicalSubscription<ISink<? super T>> sink) {
+		if (sink.getSourceOutPort() == sourceOutPort) {
+			try {
+				sink.getTarget().process(cloneIfNessessary(object, sourceOutPort), sink.getSinkInPort());
+			} catch (Exception e) {
+				// Send object that could not be processed to the error port
+				e.printStackTrace();
+				transfer(object, ERRORPORT);
+			}
+		}
 	}
 
 	@Override
@@ -792,5 +802,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	public long getElementsStored2(){
 		return -1;
 	}
+
+
 	
 }
