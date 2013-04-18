@@ -173,8 +173,6 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 				try {
 					final OperatorEstimation<ILogicalOperator> estimation = estimator.estimateOperator(operator, prevOperators, baseHistograms);
 
-					LOG.debug("Operator: " + operator.getName() + " Costs: " + estimation.getDetailCost());
-
 					estimatedOperators.put(operator, estimation);
 				} catch (final Throwable t) {
 					LOG.error("Could not estimate costs for logical operator {}", operator, t);
