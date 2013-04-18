@@ -51,31 +51,35 @@ public final class EstimatorHelper {
 	 *         nicht existiert oder (noch) ungültig ist
 	 */
 	public static double getDatarateMetadata(IPhysicalOperator operator) {
-		Double datarate = new Double(-1);
 		try {
 			if (operator.isOpen()) {
 				// directly get the datarate
 				IMonitoringData<Double> datarateMonitoringData = operator.getMonitoringData(MonitoringDataTypes.DATARATE.name);
 				if (datarateMonitoringData != null) {
 
-					datarate = datarateMonitoringData.getValue(); // tuples / ms
+					Double datarate = datarateMonitoringData.getValue(); // tuples / ms
 
-					if (datarate == null)
+					if (datarate == null) {
 						return -1;
+					}
 
-					if (Double.isNaN(datarate))
+					if (Double.isNaN(datarate)) {
 						return -1;
+					}
 
-					if (Math.abs(datarate) < 0.000001)
+					if (Math.abs(datarate) < 0.000001) {
 						return -1;
+					}
 
-					datarate *= 1000; // tupes per sec
+					return datarate * 1000; // tupes per sec
 				}
-
 			}
+			
+			return new Double(-1);
 		} catch (NullPointerException ex) {
+			
+			return new Double(-1);
 		}
-		return datarate;
 	}
 
 	/**
@@ -90,20 +94,22 @@ public final class EstimatorHelper {
 	 *         Metadatum nicht existiert oder (noch) ungültig ist
 	 */
 	public static double getSelectivityMetadata(IPhysicalOperator operator) {
-		Double selectivity = -1.0;
 		try {
 			if (operator.isOpen()) {
 				IMonitoringData<Double> selectivityMonitoringData = operator.getMonitoringData(MonitoringDataTypes.SELECTIVITY.name);
 				if (selectivityMonitoringData != null) {
-					selectivity = selectivityMonitoringData.getValue();
-					if (selectivity == null || Double.isNaN(selectivity))
+					Double selectivity = selectivityMonitoringData.getValue();
+					if (selectivity == null || Double.isNaN(selectivity)) {
 						return -1.0;
-
+					}
+					
+					return selectivity;
 				}
 			}
+			return -1.0;
 		} catch (NullPointerException ex) {
+			return -1.0;
 		}
-		return selectivity;
 	}
 
 	/**

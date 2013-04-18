@@ -84,7 +84,9 @@ public final class MemoryUsageSaver {
 			LOG.error("Could not load file {}", filename, e );
 		}  finally {
 			try {
-				br.close();
+				if( br != null ) {
+					br.close();
+				}
 			} catch (IOException ex) {
 				LOG.error("Could not close reader", ex);
 			}
@@ -108,7 +110,9 @@ public final class MemoryUsageSaver {
 			LOG.error("Could not save {}", filename, e);
 		} finally {
 			try {
-				bw.close();
+				if( bw != null ) {
+					bw.close();
+				}
 			} catch (IOException ex) {}
 		}
 	}
