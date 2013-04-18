@@ -20,7 +20,8 @@ public abstract class AbstractLayer implements ILayer {
 		return name; 
 	}
 	
-    public String getSRID() {
+    @Override
+	public String getSRID() {
 	    return srid;
     }
 
@@ -28,6 +29,7 @@ public abstract class AbstractLayer implements ILayer {
 		this.srid = srid;
 	}
 	
+	@Override
 	public Style getStyle() {
 		return null;
 	}

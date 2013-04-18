@@ -25,15 +25,13 @@ public class LayerTypeRegistry
 
 	public static ILayer getLayer(SDFDatatype datatype){
 		try {
-			if (layertypes.containsKey(datatype.getURI()))
+			if (layertypes.containsKey(datatype.getURI())) {
 				return layertypes.get(datatype.getURI()).getClass().newInstance();
-			else 
-				return null;
+			}
+			return null;
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

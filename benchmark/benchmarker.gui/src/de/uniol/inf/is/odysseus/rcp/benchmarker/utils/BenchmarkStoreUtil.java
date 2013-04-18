@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkResult;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.ProjectView;
 
 /**
- * Diese Klasse speichert/lädt die Objekte/.XMLs und löscht Ergebnisse
+ * Diese Klasse speichert/lï¿½dt die Objekte/.XMLs und lï¿½scht Ergebnisse
  * 
  * @author Stefanie Witzke
  * 
@@ -228,7 +228,9 @@ public class BenchmarkStoreUtil {
 			e.printStackTrace();
 		} finally {
 			try {
-				reader.close();
+				if( reader != null ) {
+					reader.close();
+				}
 			} catch (Exception e) {
 			}
 		}
@@ -278,11 +280,11 @@ public class BenchmarkStoreUtil {
 	}
 
 	/*
-	 * Ergebnisse löschen
+	 * Ergebnisse lï¿½schen
 	 */
 
 	/**
-	 * Diese Methode löscht das übergebene Ergebnis
+	 * Diese Methode lï¿½scht das ï¿½bergebene Ergebnis
 	 * 
 	 * @param benchmark
 	 * @param result

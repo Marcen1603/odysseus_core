@@ -82,8 +82,9 @@ public class ParserDependentWordRule implements IRule {
 		Assert.isNotNull(token);
 
 		// If case-insensitive, convert to lower case before adding to the map
-		if (fIgnoreCase)
+		if (fIgnoreCase) {
 			word = word.toLowerCase();
+		}
 		fWords.put(word, token);
 		if (!parserAndWords.containsKey(parser)) {
 			parserAndWords.put(parser, new ArrayList<String>());
@@ -93,8 +94,9 @@ public class ParserDependentWordRule implements IRule {
 	}
 
 	public void setColumnConstraint(int column) {
-		if (column < 0)
+		if (column < 0) {
 			column = UNDEFINED;
+		}
 		fColumn = column;
 	}
 

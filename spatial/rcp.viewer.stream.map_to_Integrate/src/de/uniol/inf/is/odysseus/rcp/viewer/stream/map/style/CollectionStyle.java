@@ -103,6 +103,7 @@ public class CollectionStyle extends Style{
 		return getImage(list);
 	}
 
+	@Override
 	public void draw(GC gc, int[][] list) {
 		draw(gc, list, getLineColor(), getFillColor());
 		super.draw(gc, list);
@@ -174,6 +175,7 @@ public class CollectionStyle extends Style{
 		return super.contains(style);
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public Style[] getSubstyles() {
 		if (!hasSubstyles())

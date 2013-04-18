@@ -394,7 +394,7 @@ public class MapEditorModel extends ModelObject {
 							}
 						}
 					}
-					if(screenManager!=null && geometryAttribute!=null && visualizationAttributeList!=null){
+					if(screenManager!=null && geometryAttribute!=null){
 						layer = new DiagramLayer(layerConfiguration);
 						((DiagramLayer)layer).init(screenManager, schema, geometryAttribute, visualizationAttributeList);
 						connection.add(layer);
@@ -403,7 +403,7 @@ public class MapEditorModel extends ModelObject {
 			}
 		}
 
-		if (screenManager != null) {
+		if (layer != null && screenManager != null) {
 			layer.init(screenManager, schema, attribute);
 		}
 

@@ -96,6 +96,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		radioTypeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
 		Listener listener = new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				Control[] children = radioTypeSelection.getChildren();
 				if (((Button) e.widget).getText().endsWith("Raster")) {
@@ -161,6 +162,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 			layerPlace.setText(layerOrder.getFirst().getName());
 
 		layerPlace.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 			};
@@ -184,6 +186,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		serverTypeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
 		Listener serverTypeListner = new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				Control[] children = serverTypeSelection.getChildren();
 
@@ -211,6 +214,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		serverTypeButtonWMS.setText("WMS");
 		serverTypeButtonWMS.addListener(SWT.Selection, serverTypeListner);
 		serverTypeButtonWMS.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 //					WMServiceTest wmsTest = new WMServiceTest();
 //					String info = wmsTest.getInfo();
@@ -251,6 +255,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		server.setText("http://oatile2.mqcdn.com/tiles/1.0.0/sat/");
 
 		server.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				//layerConfiguration.setUrl(server.getText());
 				isValidInput();
@@ -314,6 +319,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		attributeSelect.setLayoutData(DialogUtils.getTextDataLayout());
 
 		streamSelect.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				attributeSelect.removeAll();
 				layerConfiguration.setQuery(streamSelect.getText());
@@ -333,6 +339,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				layerConfiguration.setAttribute(attributes);
 				
 				attributeSelect.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						ArrayList<String> attributes = new ArrayList<>();
 						attributes.add(attributeSelect.getText());
@@ -367,6 +374,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		thematicCombo.select(0);
 				
 		thematicCombo.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				if(thematicCombo.getText().equals("ChoroplethLayer")){
 					thematicLayer.getChildren()[2].dispose();
@@ -450,6 +458,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		visualizationSelect.setLayoutData(DialogUtils.getTextDataLayout());
 
 		streamSelect.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				geometrieSelect.removeAll();
 				layerConfiguration.setQuery(streamSelect.getText());
@@ -478,6 +487,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				layerConfiguration.setAttribute(attributes);
 				
 				geometrieSelect.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						ArrayList<String> attributes = new ArrayList<>();
 						attributes.add(geometrieSelect.getText());
@@ -490,6 +500,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				});
 				
 				visualizationSelect.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						ArrayList<String> attributes = new ArrayList<>();
 						attributes.add(geometrieSelect.getText());
@@ -546,6 +557,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		visualizationSelect.setLayoutData(DialogUtils.getTextDataLayout());
 
 		streamSelect.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				geometrieSelect.removeAll();
 				layerConfiguration.setQuery(streamSelect.getText());
@@ -574,6 +586,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				layerConfiguration.setAttribute(attributes);
 				
 				geometrieSelect.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						ArrayList<String> attributes = new ArrayList<>();
 						attributes.add(geometrieSelect.getText());
@@ -586,6 +599,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				});
 				
 				visualizationSelect.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						ArrayList<String> attributes = new ArrayList<>();
 						attributes.add(geometrieSelect.getText());
@@ -624,6 +638,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		numberOfVisAttributesSpinner.setMaximum(10);
 		numberOfVisAttributesSpinner.setSelection(numberOfValues);
 		numberOfVisAttributesSpinner.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				numberOfVisualizationAttributes = numberOfVisAttributesSpinner.getSelection();
 				thematicContainer.getChildren()[2].dispose();
@@ -667,6 +682,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		}
 
 		streamSelect.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				geometrieSelect.removeAll();
 				layerConfiguration.setQuery(streamSelect.getText());
@@ -708,6 +724,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				layerConfiguration.setAttribute(attributes);
 				
 				geometrieSelect.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						ArrayList<String> attributes = new ArrayList<>();
 						attributes.add(geometrieSelect.getText());
@@ -725,6 +742,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				for(int i=0;i<comboList.size();i++){
 					CCombo visualizationSelect = comboList.get(i);
 					visualizationSelect.addSelectionListener(new SelectionAdapter() {
+						@Override
 						public void widgetSelected(SelectionEvent e) {
 							ArrayList<String> attributes = new ArrayList<>();
 							attributes.add(geometrieSelect.getText());
@@ -791,6 +809,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		Button cancelButton = createButton(parent, CANCEL, "Cancel", false);
 		// Add a SelectionListener
 		cancelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setReturnCode(CANCEL);
 				close();
@@ -806,6 +825,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		button.setFont(JFaceResources.getDialogFont());
 		button.setData(new Integer(id));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				if (isValidInput()) {
 					okPressed();

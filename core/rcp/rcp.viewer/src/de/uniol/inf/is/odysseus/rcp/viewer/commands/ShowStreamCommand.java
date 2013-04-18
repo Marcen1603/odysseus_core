@@ -78,7 +78,7 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 				}
 
 				
-				if (optionalOpForStream.isPresent()) {
+				if (optionalOpForStream != null && optionalOpForStream.isPresent()) {
 
 					IPhysicalOperator opForStream = optionalOpForStream.get();
 					// schauen, ob Editor für den Graphen schon offen ist

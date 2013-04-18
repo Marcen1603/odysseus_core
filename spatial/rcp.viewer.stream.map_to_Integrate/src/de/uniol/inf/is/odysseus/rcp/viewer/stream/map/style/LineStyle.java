@@ -38,7 +38,7 @@ public class LineStyle extends Style {
 		draw(gc, list,  getLineColor(), getFillColor());
 	}
 
-	//@Override
+	@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor) {
 		gc.setLineWidth(this.getLineWidth());
 		Color tmp = gc.getForeground();

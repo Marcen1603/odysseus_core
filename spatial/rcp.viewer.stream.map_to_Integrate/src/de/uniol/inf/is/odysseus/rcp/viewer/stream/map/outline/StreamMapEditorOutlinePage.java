@@ -105,6 +105,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		MenuManager menuMgr = new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
 				fillContextMenu(mgr);
 			}
@@ -329,6 +330,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		// });
 
 		mgr.add(new Action("Change Server") {
+			@Override
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
 				if (i.getFirstElement() instanceof RasterLayer) {
@@ -344,6 +346,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		});
 
 		mgr.add(new Action("Linecolor") {
+			@Override
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
 				if (i.getFirstElement() instanceof CollectionStyle)
@@ -364,6 +367,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		});
 
 		mgr.add(new Action("Fillcolor") {
+			@Override
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
 				if (i.getFirstElement() instanceof Style) {

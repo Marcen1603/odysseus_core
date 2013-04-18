@@ -134,10 +134,12 @@ public class VectorLayer extends AbstractLayer{
 		this.style = style;
 	}
 
+	@Override
 	public Style getStyle() {
 		return style;
 	}
 	
+	@Override
 	public void draw(GC gc) {
 		synchronized (geometries) {
 			for (Geometry geometry : geometries) {
@@ -219,6 +221,7 @@ public class VectorLayer extends AbstractLayer{
 		}
 	}
 
+	@Override
 	public void removeLast() {
 		LOG.debug("(REMOVE)Current Geometries:" + geometries.size());
 		synchronized (geometries) {

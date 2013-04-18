@@ -63,6 +63,7 @@ public class LayerPropertyDialog extends PropertyDialog {
 			
 			layerType.addSelectionListener(new SelectionAdapter() {
 				
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					
 					rasterLayer.setVisible(!raster);
@@ -83,6 +84,7 @@ public class LayerPropertyDialog extends PropertyDialog {
 			layerPlace.setOrientation(SWT.CENTER);
 			
 			layerPlace.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					rasterLayer.setVisible(!raster);
 				};
@@ -109,6 +111,7 @@ public class LayerPropertyDialog extends PropertyDialog {
 			serverType.setOrientation(SWT.CENTER);
 			
 			serverType.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					System.out.println(e.data.toString());
 				};
@@ -127,6 +130,7 @@ public class LayerPropertyDialog extends PropertyDialog {
 			server.setOrientation(SWT.CENTER);
 			
 			server.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					System.out.println(e.data.toString());
 				};
