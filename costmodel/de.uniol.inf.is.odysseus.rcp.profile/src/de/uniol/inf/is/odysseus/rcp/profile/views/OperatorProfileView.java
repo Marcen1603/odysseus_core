@@ -150,11 +150,11 @@ public class OperatorProfileView extends ViewPart implements ISelectionProvider 
 					if (e2.hasElementsStoredCount()) {
 						return Long.compare(e1.getElementsStoredCount(), e2.getElementsStoredCount());
 					}
-					return -1;
+					return 1;
 				}
 
 				if (e2.hasElementsStoredCount()) {
-					return 1;
+					return -1;
 				}
 
 				return 0;
