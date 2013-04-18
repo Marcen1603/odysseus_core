@@ -16,11 +16,13 @@ public class ChoroplethStyle extends PolygonStyle{
 		super(style.getLineWidth(), style.getLineColor(), style.getFillColor());
 		this.transparency = style.transparency;
 	}
+	@Override
 	public void draw(GC gc, int[][] list) {
 		gc.setAlpha(transparency);
 		draw(gc, list, getLineColor(), getFillColor());
 		super.draw(gc, list);
 	}
+	@Override
 	public void draw(GC gc, int[] list) {
 		gc.setAlpha(transparency);
 		draw(gc, list, getLineColor(), getFillColor());

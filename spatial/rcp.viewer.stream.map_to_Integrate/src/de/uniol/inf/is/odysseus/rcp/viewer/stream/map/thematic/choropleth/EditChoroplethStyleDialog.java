@@ -104,7 +104,8 @@ public class EditChoroplethStyleDialog extends Dialog{
 	}
 	private void initListener() {
 		valueTextListener = new Listener() {
-		      public void handleEvent(Event e) {
+		      @Override
+			public void handleEvent(Event e) {
 		        String string = e.text;
 		        char[] chars = new char[string.length()];
 		        string.getChars(0, chars.length, chars, 0);
@@ -122,6 +123,7 @@ public class EditChoroplethStyleDialog extends Dialog{
 		};
 			
 		imageLabelListener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				MenuItem item = (MenuItem)event.widget;
 				String text = item.getText();
@@ -211,7 +213,7 @@ public class EditChoroplethStyleDialog extends Dialog{
 		
 		org.eclipse.swt.graphics.Color[] colorArray = new org.eclipse.swt.graphics.Color[numberOfClasses];
 		
-		float difference = ((100f)/((float)(numberOfClasses)))/100f;
+		float difference = ((100f)/(numberOfClasses))/100f;
 		
 		for(int i=0;i<colorArray.length;i++){
 			java.awt.Color c = new java.awt.Color(java.awt.Color.HSBtoRGB(hue, saturation, value));
@@ -241,10 +243,12 @@ public class EditChoroplethStyleDialog extends Dialog{
 		
 		
 		SelectionListener selectionListener = new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				redraw();
 				repackParentShell();
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {}
 		};
 		
@@ -287,7 +291,8 @@ public class EditChoroplethStyleDialog extends Dialog{
 			operatorButton.setText(legend.legendList.get(i).getPredicate().getOperator());
 			operatorButtonList.add(operatorButton);
 			operatorButton.addSelectionListener(new SelectionAdapter() {
-		        public void widgetSelected(SelectionEvent event) {
+		        @Override
+				public void widgetSelected(SelectionEvent event) {
 		            if(operatorButton.getText().equals(Operator.SMALLERTHAN)){
 		            	operatorButton.setText(Operator.SMALLEREQUALTHAN);
 		            }else if(operatorButton.getText().equals(Operator.SMALLEREQUALTHAN)){
@@ -327,6 +332,7 @@ public class EditChoroplethStyleDialog extends Dialog{
 		applyButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		applyButton.setText("Apply");
 		applyButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 	        	applyLegend();
 	          }
@@ -335,7 +341,8 @@ public class EditChoroplethStyleDialog extends Dialog{
 		revertButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		revertButton.setText("Revert");
 		revertButton.addSelectionListener(new SelectionAdapter() {
-	        public void widgetSelected(SelectionEvent event) {
+	        @Override
+			public void widgetSelected(SelectionEvent event) {
 	        	revertLegend();
 	          }
 	        });		
@@ -396,7 +403,8 @@ public class EditChoroplethStyleDialog extends Dialog{
 			operatorButton.setText(Operator.SMALLERTHAN);
 			operatorButtonList.add(operatorButton);
 			operatorButton.addSelectionListener(new SelectionAdapter() {
-		        public void widgetSelected(SelectionEvent event) {
+		        @Override
+				public void widgetSelected(SelectionEvent event) {
 		            if(operatorButton.getText().equals(Operator.SMALLERTHAN)){
 		            	operatorButton.setText(Operator.SMALLEREQUALTHAN);
 		            }else if(operatorButton.getText().equals(Operator.SMALLEREQUALTHAN)){

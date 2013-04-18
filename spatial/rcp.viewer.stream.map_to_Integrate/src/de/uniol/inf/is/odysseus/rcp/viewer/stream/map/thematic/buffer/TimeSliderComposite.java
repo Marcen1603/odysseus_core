@@ -66,6 +66,7 @@ public class TimeSliderComposite extends Composite {
 		beginSlider.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		beginSlider.setValues(0, 0, 1, 1, 1, 1);
 		beginSlider.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
                 if(isEqual==true){
                 	endSlider.setSelection(beginSlider.getSelection());
@@ -83,6 +84,7 @@ public class TimeSliderComposite extends Composite {
 		equalButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 2));
 		equalButton.setText("Equal");
 		equalButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
                 if(equalButton.getSelection()==true){
                 	isEqual=true;
@@ -115,6 +117,7 @@ public class TimeSliderComposite extends Composite {
 		endSlider.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		endSlider.setValues(0, 0, 1, 1, 1, 1);
 		endSlider.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
                 if(isEqual==true){
                 	beginSlider.setSelection(endSlider.getSelection());

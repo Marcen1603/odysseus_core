@@ -56,6 +56,7 @@ public class DynamicBuffer {
 		}
 		
 		screenManager.getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				timeSliderControl.updateSliderRange(new PointInTime(startPointInTime.getMainPoint()-1), endPointInTime);
 			}
@@ -75,6 +76,7 @@ public class DynamicBuffer {
 		
 		
 		screenManager.getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				draw(timeSliderControl.getIntervalMin(), timeSliderControl.getIntervalMax());
 			}
@@ -130,6 +132,7 @@ public class DynamicBuffer {
 		
 		
 		streamMapEditor.getScreenManager().getDisplay().asyncExec(new Runnable() {	
+			@Override
 			public void run() {
 				streamMapEditor.getScreenManager().getCanvas().redraw();
 			}

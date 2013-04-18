@@ -46,6 +46,7 @@ public class DiagramLayer extends AbstractLayer{
 		style = new DiagramStyle(100, false, 200, "PieChart");
 	}
 
+	@Override
 	public DiagramStyle getStyle() {
 		return style;
 	}
@@ -166,6 +167,7 @@ public class DiagramLayer extends AbstractLayer{
 	public void updateStyle(DiagramStyle style){
 		this.style = style;
 		screenManager.getDisplay().asyncExec(new Runnable() {	
+			@Override
 			public void run() {
 				screenManager.getCanvas().redraw();
 			}

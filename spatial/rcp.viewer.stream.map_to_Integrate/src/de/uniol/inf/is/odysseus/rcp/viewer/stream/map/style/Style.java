@@ -111,10 +111,10 @@ public abstract class Style{
 		if(substyle != null){
 			return true;
 		}
-		else {
-			return false;
-		}
+		
+		return false;
 	}
+	
 	public void setActiveStyle(Geometry g){}
 	
 	abstract protected void draw(GC gc, int[] list, Color fcolor, Color bcolor);

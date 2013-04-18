@@ -48,6 +48,7 @@ public class PointStyle extends Style {
 		super.draw(gc, list);
 	}
 
+	@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor) {
 		int halfsize = size / 2;
 		Color tmpb = gc.getBackground();

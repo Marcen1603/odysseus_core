@@ -143,6 +143,7 @@ public class LocationLayer extends AbstractLayer {
 	public void updateLegend(LocationLegend legend){
 		this.legend = legend;
 		screenManager.getDisplay().asyncExec(new Runnable() {	
+			@Override
 			public void run() {
 				screenManager.getCanvas().redraw();
 			}

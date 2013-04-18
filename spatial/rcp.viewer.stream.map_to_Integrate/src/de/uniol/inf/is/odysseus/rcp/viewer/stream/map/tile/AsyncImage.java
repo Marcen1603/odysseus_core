@@ -39,7 +39,8 @@ public final class AsyncImage implements Runnable {
     public static final int IMAGEFETCHER_THREADS = 4;
     private BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>();
     private ThreadFactory threadFactory = new ThreadFactory( ) {
-        public Thread newThread(Runnable r) {
+        @Override
+		public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
             t.setName("Async Image Loader " + t.getId() + " " + System.identityHashCode(t));
             t.setDaemon(true);
@@ -62,7 +63,8 @@ public final class AsyncImage implements Runnable {
         executor.execute(task);
     }
     
-    public void run() {
+    @Override
+	public void run() {
         String url = ProjectionUtil.getTileString(tileServer, x, y, z);
         if (stamp != manager.getTransformation().getZoomStamp().longValue()) {
             //System.err.println("pending load killed: " + url);
@@ -70,7 +72,8 @@ public final class AsyncImage implements Runnable {
                 // here is a race, we just live with.
                 if (!display.isDisposed()) {
                 	display.asyncExec(new Runnable() {
-                        public void run() {
+                        @Override
+						public void run() {
                         	tileServer.getCache().remove(tileServer, x, y, z);
                         }
                     });
@@ -90,7 +93,8 @@ public final class AsyncImage implements Runnable {
                 // here is a race, we just live with.
                 if (!display.isDisposed()) {
                 	display.asyncExec(new Runnable() {
-                        public void run() {
+                        @Override
+						public void run() {
                         	manager.getCanvas().redraw();
                         }
                     });

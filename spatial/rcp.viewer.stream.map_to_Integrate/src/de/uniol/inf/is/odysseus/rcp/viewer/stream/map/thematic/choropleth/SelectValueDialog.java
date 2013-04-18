@@ -51,11 +51,13 @@ public class SelectValueDialog extends Dialog{
 	    buttonOK.setText("Ok");
 	    buttonOK.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 	    buttonOK.addListener(SWT.Selection, new Listener() {
-	        public void handleEvent(Event event) {
+	        @Override
+			public void handleEvent(Event event) {
 	          shell.dispose();
 	        }
 	    });
 	    scale.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				selectedValue = scale.getSelection();
 				valueLabel.setText(Integer.toString(selectedValue));

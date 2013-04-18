@@ -36,33 +36,28 @@ public class Predicate{
 		}else if(operator.equals(Operator.SMALLERTHAN)){
 			if(valueToCheck<value){
 				return true;
-			}else{
-				return false;
 			}
+			return false;
 		}else if(operator.equals(Operator.SMALLEREQUALTHAN)){
 			if(valueToCheck<=value){
 				return true;
-			}else{
-				return false;
 			}
+			return false;
 		}else if(operator.equals(Operator.EQUALTHAN)){
 			if(valueToCheck==value){
 				return true;
-			}else{
-				return false;
 			}
+			return false;
 		}else if(operator.equals(Operator.GREATERQUALTHAN)){
 			if(valueToCheck>=value){
 				return true;
-			}else{
-				return false;
 			}
+			return false;
 		}else if(operator.equals(Operator.GREATERTHAN)){
 			if(valueToCheck>value){
 				return true;
-			}else{
-				return false;
 			}
+			return false;
 		}else{
 			return false;
 		}

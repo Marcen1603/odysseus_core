@@ -21,6 +21,7 @@ public class LocationStyle extends PointStyle{
 		super(style.getShape(), style.getSize(), style.getLineWidth(), style.getLineColor(), style.getFillColor());
 		this.transparency = style.transparency;
 	}
+	@Override
 	public void draw(GC gc, int[] list) {
 		gc.setAlpha(transparency);
 		draw(gc, list, getLineColor(), getFillColor());
@@ -33,6 +34,7 @@ public class LocationStyle extends PointStyle{
 		this.transparency = transparency;
 	}
 	
+	@Override
 	public Image getImage() {
 		int[] list = { DEFAULT_WIDTH / 2, DEFAULT_HEIGHT / 2 };
 		Display display = Display.getCurrent();

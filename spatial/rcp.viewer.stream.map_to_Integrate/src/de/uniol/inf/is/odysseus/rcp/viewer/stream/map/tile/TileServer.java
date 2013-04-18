@@ -15,7 +15,8 @@ public final class TileServer {
         this.cache = new TileCache(manager);;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return url;
     }
 

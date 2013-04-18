@@ -86,12 +86,14 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 	@Override
 	protected void createActions() {
 		editItemAction = new Action("Edit") {
+			@Override
 			public void run() {
 				LOG.debug("Edit: " + treeViewer.getSelection());
 			}
 		};
 
 		addItemAction = new Action("Add") {
+			@Override
 			public void run() {
 
 				if (hasMapEditor()) {
@@ -111,6 +113,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		};
 
 		deleteItemAction = new Action("Remove") {
+			@Override
 			public void run() {
 				TreeSelection selection = ((TreeSelection) treeViewer.getSelection());
 				if (hasMapEditor()) {
@@ -130,6 +133,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		};
 
 		selectAllAction = new Action("Select All") {
+			@Override
 			public void run() {
 				LOG.debug("Delete..");
 			}
@@ -137,6 +141,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 
 
 		upAction = new Action("Up") {
+			@Override
 			public void run() {
 				if (hasMapEditor()) {
 						ILayer layer = (ILayer) ((TreeSelection)treeViewer.getSelection()).getFirstElement();
@@ -146,6 +151,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		};
 
 		downAction = new Action("Down") {
+			@Override
 			public void run() {
 				if (hasMapEditor()) {
 					if (hasMapEditor()) {
@@ -164,6 +170,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		menuMgr.setRemoveAllWhenShown(true);
 		
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
 				fillContextMenu(mgr);
 			}
@@ -229,6 +236,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		
 		if(i.getFirstElement() instanceof ChoroplethLayer){
 			mgr.add(new Action("Edit Settings") {
+				@Override
 				public void run(){
 					ChoroplethLayer layer = (ChoroplethLayer)i.getFirstElement();
 					EditChoroplethStyleDialog dialog = new EditChoroplethStyleDialog(Display.getCurrent().getActiveShell(), layer);
@@ -237,6 +245,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 			});
 		}else if(i.getFirstElement() instanceof LocationLayer){
 			mgr.add(new Action("Edit Settings") {
+				@Override
 				public void run(){
 					LocationLayer layer = (LocationLayer)i.getFirstElement();
 					EditLocationStyleDialog dialog = new EditLocationStyleDialog(Display.getCurrent().getActiveShell(), layer);
@@ -245,6 +254,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 			});
 		}else if(i.getFirstElement() instanceof DiagramLayer){
 			mgr.add(new Action("Edit Settings") {
+				@Override
 				public void run(){
 					DiagramLayer layer = (DiagramLayer)i.getFirstElement();
 					EditDiagramStyleSettings dialog = new EditDiagramStyleSettings(Display.getCurrent().getActiveShell(), layer);
@@ -253,6 +263,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 			});
 		}else{
 			mgr.add(new Action("Linecolor") {
+				@Override
 				public void run() {
 					ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
 					if (i.getFirstElement() instanceof CollectionStyle)
@@ -273,6 +284,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 			});
 
 			mgr.add(new Action("Fillcolor") {
+				@Override
 				public void run() {
 					ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
 					if (i.getFirstElement() instanceof Style) {

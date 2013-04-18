@@ -27,17 +27,21 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 		this.editor = editor;
 	}
 
+	@Override
 	public void mouseEnter(MouseEvent e) {
 		// Evil
 		// basicLayer.getCanvas().forceFocus();
 	}
 
+	@Override
 	public void mouseExit(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseHover(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		if (!editor.isRectangleZoom()) {
 			if (e.button == 1)
@@ -47,6 +51,7 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 		}
 	}
 
+	@Override
 	public void mouseDown(MouseEvent e) {
 		if (!editor.isRectangleZoom()) {
 			if (e.button == 1 && (e.stateMask & SWT.CTRL) != 0) {
@@ -74,6 +79,7 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 		}
 	}
 
+	@Override
 	public void mouseUp(MouseEvent e) {
 		if (!editor.isRectangleZoom()) {
 			if (e.count == 1) {
@@ -100,6 +106,7 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 		}
 	}
 
+	@Override
 	public void mouseMove(MouseEvent e) {
 		if (!editor.isRectangleZoom()) {
 			handlePosition(e);
@@ -124,6 +131,7 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 		}
 	}
 
+	@Override
 	public void mouseScrolled(MouseEvent e) {
 //		if (!editor.isRectangleZoom()) {
 			if (e.count > 0)

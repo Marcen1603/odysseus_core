@@ -69,7 +69,7 @@ public class EditDiagramStyleSettings extends Dialog {
 	
 	private void init() {
 		pufferComposite.setLayout(new FillLayout());
-		style = (DiagramStyle)layer.getStyle();
+		style = layer.getStyle();
 		
 		getShell().setText(layer.getName());
 		
@@ -142,6 +142,7 @@ public class EditDiagramStyleSettings extends Dialog {
 		applyButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		applyButton.setText("Apply");
 		applyButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 	        	applyLegend();
 	          }
@@ -150,7 +151,8 @@ public class EditDiagramStyleSettings extends Dialog {
 		revertButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		revertButton.setText("Revert");
 		revertButton.addSelectionListener(new SelectionAdapter() {
-	        public void widgetSelected(SelectionEvent event) {
+	        @Override
+			public void widgetSelected(SelectionEvent event) {
 	        	revertLegend();
 	          }
 	        });		
@@ -175,6 +177,7 @@ public class EditDiagramStyleSettings extends Dialog {
 	}
 	private void initListener() {
 		editSizeListener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				int value = Integer.parseInt(sizeLabelNumber.getText());
 				SelectValueDialog dialog = new SelectValueDialog(Display.getCurrent().getActiveShell(), 1, 500, value);
@@ -185,6 +188,7 @@ public class EditDiagramStyleSettings extends Dialog {
 			}
 		};
 		editTransparencyListener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				int value = Integer.parseInt(transparencyValueLabel.getText());
 				SelectValueDialog dialog = new SelectValueDialog(Display.getCurrent().getActiveShell(), 0, 255, value);

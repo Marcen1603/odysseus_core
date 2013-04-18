@@ -31,6 +31,7 @@ public class DiagramStyle extends Style{
 		this.transparency = transparency;
 		this.diagramType = type;
 	}
+	@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor) {}
 	public void draw(GC gc, int[] list, LinkedList<Integer> valueList){
 		if(diagramType.equals("PieChart")){
@@ -79,6 +80,7 @@ public class DiagramStyle extends Style{
 		Image transparentImage = new Image(Display.getCurrent(), imageData);
 		return transparentImage;
 	}
+	@Override
 	public Image getImage() {
 		// TODO Auto-generated method stub
 		return null;
