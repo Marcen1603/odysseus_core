@@ -34,18 +34,28 @@ public class EqualityCheck {
 			return true;
 		} else {
 			List<Tuple> missing1 = detailCheck(input0, input1);
-			System.err
-					.println(missing1.size()
-							+ " tuples are missing from input1, but are present in input0");
-			for (Tuple missing : missing1) {
-				System.err.println(missing + " missing from input1");
+			if (!missing1.isEmpty()) {
+				System.err
+						.println(missing1.size()
+								+ " tuples are missing from input1, but are present in input0");
+				for (Tuple missing : missing1) {
+					System.err.println(missing + " missing from input1");
+					System.err.println("originating from ");
+					for (Tuple split : missing.split(new int[] { 5, 9, 8 }))
+						System.err.println(split);
+				}
 			}
 			List<Tuple> missing0 = detailCheck(input1, input0);
-			System.err
-					.println(missing0.size()
-							+ " tuples are missing from input0, but are present in input1");
-			for (Tuple missing : missing0) {
-				System.err.println(missing + " missing from input0");
+			if (!missing0.isEmpty()) {
+				System.err
+						.println(missing0.size()
+								+ " tuples are missing from input0, but are present in input1");
+				for (Tuple missing : missing0) {
+					System.err.println(missing + " missing from input0");
+					System.err.println("originating from ");
+					for (Tuple split : missing.split(new int[] { 5, 9, 8 }))
+						System.err.println(split);
+				}
 			}
 			return false;
 		}

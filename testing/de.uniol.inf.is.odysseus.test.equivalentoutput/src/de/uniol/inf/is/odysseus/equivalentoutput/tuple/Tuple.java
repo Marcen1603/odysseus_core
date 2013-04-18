@@ -15,6 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.equivalentoutput.tuple;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
@@ -58,6 +61,25 @@ public class Tuple implements Comparable<Tuple> {
 
 	public long getEndTimestamp() {
 		return this.endTimestamp;
+	}
+
+	public List<Tuple> split(int[] splitPoints) {
+		List<Tuple> tuples = new ArrayList<Tuple>();
+
+		long start = getStartTimestamp();
+		long end = getEndTimestamp();
+
+		int shift = 0;
+		for (int i = 0; i < splitPoints.length; i++) {
+			String[] attributes = new String[splitPoints[i]];
+			for (int j = 0; j < attributes.length; j++) {
+				attributes[j] = getAttributes()[j + shift];
+			}
+			tuples.add(new Tuple(attributes, start, end));
+
+			shift += attributes.length;
+		}
+		return tuples;
 	}
 
 	@Override
