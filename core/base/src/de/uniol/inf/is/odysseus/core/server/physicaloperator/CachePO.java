@@ -44,7 +44,7 @@ public class CachePO<R extends IStreamObject<IMetaAttribute>> extends AbstractPi
 		synchronized(cache){
 			// add to buffer
 			cache.add(object);
-			if (cache.size() > maxSize){
+			if (maxSize > 0 && cache.size() > maxSize){
 				cache.remove(0);
 			}
 			// deliver to all connected;
