@@ -173,20 +173,7 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 				try {
 					final OperatorEstimation<ILogicalOperator> estimation = estimator.estimateOperator(operator, prevOperators, baseHistograms);
 
-					final boolean isRunning = determineIsRunning(operator);
-
-					if (!onUpdate) {
-						// don't count already running operators
-						if (isRunning) {
-							estimation.setDetailCost(new OperatorDetailCost<ILogicalOperator>(operator, 0, 0));
-						}
-					} else {
-						// don't count stopped operators
-						if (!isRunning) {
-							estimation.setDetailCost(new OperatorDetailCost<ILogicalOperator>(operator, 0, 0));
-
-						}
-					}
+					LOG.debug("Operator: " + operator.getName() + " Costs: " + estimation.getDetailCost());
 
 					estimatedOperators.put(operator, estimation);
 				} catch (final Throwable t) {
