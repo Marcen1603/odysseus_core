@@ -592,9 +592,8 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			return a;
 		} else if (a == null && b == null) {
 			return null;
-		} else {
-			return a.merge(b);
-		}
+		} 
+		return a.merge(b);
 	}
 
 	private static void refreshTimestamps(Map<IPhysicalQuery, Long> timestamps, Collection<IPhysicalQuery> queriesToUpdate) {
