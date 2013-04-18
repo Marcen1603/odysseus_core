@@ -5,6 +5,7 @@ package de.uniol.inf.is.odysseus.costmodel.operator.relational.logical;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
@@ -45,8 +46,18 @@ public class WindowAOEstimator implements IOperatorEstimator<WindowAO> {
 
 		/** 3. Datarate **/
 		// depends on the windowType
-		long windowSize = (windowType.equals(WindowType.TIME) ? instance.getWindowSize() / 1000 : instance.getWindowSize());
+		long windowSize = instance.getWindowSize();
 		long windowAdvance = instance.getWindowAdvance();
+		if(windowType.equals(WindowType.TIME)) {
+			windowSize = TimeUnit.MILLISECONDS.convert(windowSize, instance.getTimeUnit()) / 1000;
+
+			if(windowAdvance > 0) {
+				windowAdvance = TimeUnit.MILLISECONDS.convert(windowAdvance, instance.getTimeUnit()) / 1000;
+			} else {
+				windowAdvance = TimeUnit.MILLISECONDS.convert(
+						instance.getWindowSlide(), instance.getTimeUnit()) / 1000;
+			}
+		}
 
 		double r = lastOpEstimation.getDataStream().getDataRate();
 		double g = 0;
