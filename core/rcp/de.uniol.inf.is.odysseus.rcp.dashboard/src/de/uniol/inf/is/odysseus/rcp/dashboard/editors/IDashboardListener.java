@@ -20,8 +20,10 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 
 public interface IDashboardListener {
 
-	public void dashboardPartAdded( Dashboard sender, IDashboardPart addedPart );
-	public void dashboardPartRemoved( Dashboard sender, IDashboardPart removedPart );
-	public void dashboardChanged( Dashboard sender );
-	
+	public void dashboardChanged(Dashboard sender);
+
+	public void dashboardPartAdded(Dashboard sender, IDashboardPart addedPart);
+
+	public void dashboardPartRemoved(Dashboard sender, IDashboardPart removedPart);
+
 }

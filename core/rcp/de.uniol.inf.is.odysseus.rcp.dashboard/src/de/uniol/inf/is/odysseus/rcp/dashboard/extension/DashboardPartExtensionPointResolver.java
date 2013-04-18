@@ -39,26 +39,16 @@ public class DashboardPartExtensionPointResolver implements IRegistryEventListen
 
 	public DashboardPartExtensionPointResolver() {
 		// Extensions, welche vor dem Listener bereits registriert wurden
-		for(IConfigurationElement element : Platform.getExtensionRegistry().getConfigurationElementsFor(DashboardPlugIn.EXTENSION_POINT_ID)) {
+		for (final IConfigurationElement element : Platform.getExtensionRegistry().getConfigurationElementsFor(DashboardPlugIn.EXTENSION_POINT_ID)) {
 			resolveConfigurationElement(element);
-		}
-	}
-	
-	@Override
-	public void added(IExtension[] extensions) {
-		for( IExtension extension : extensions ) {
-			for( IConfigurationElement element : extension.getConfigurationElements()) {
-				resolveConfigurationElement(element);
-			}
 		}
 	}
 
 	@Override
-	public void removed(IExtension[] extensions) {
-		for( IExtension extension : extensions ) {
-			for( IConfigurationElement element : extension.getConfigurationElements()) {
-				String name = element.getAttribute("name");
-				DashboardPartRegistry.unregister(name);
+	public void added(IExtension[] extensions) {
+		for (final IExtension extension : extensions) {
+			for (final IConfigurationElement element : extension.getConfigurationElements()) {
+				resolveConfigurationElement(element);
 			}
 		}
 	}
@@ -69,48 +59,25 @@ public class DashboardPartExtensionPointResolver implements IRegistryEventListen
 	}
 
 	@Override
+	public void removed(IExtension[] extensions) {
+		for (final IExtension extension : extensions) {
+			for (final IConfigurationElement element : extension.getConfigurationElements()) {
+				final String name = element.getAttribute("name");
+				DashboardPartRegistry.unregister(name);
+			}
+		}
+	}
+
+	@Override
 	public void removed(IExtensionPoint[] extensionPoints) {
 		// do nothing
-	}
-	
-	private static void resolveConfigurationElement(IConfigurationElement element) {
-		try {
-			Class<? extends IDashboardPart> clazz = checkAndGetDashboardPartClass(element.createExecutableExtension("class"));					
-			DashboardPartDescriptor desc = getDashboardPartDescriptorFromExtension(element);
-			DashboardPartRegistry.register(clazz, desc);
-		} catch( Throwable t ) {
-			LOG.error("Could not evaluate extension", t);
-		}
-	}
-	
-	private static DashboardPartDescriptor getDashboardPartDescriptorFromExtension(IConfigurationElement e) throws Exception {
-		String name = e.getAttribute("name");
-		String description = e.getAttribute("description");
-
-		List<SettingDescriptor<?>> settingDescriptors = Lists.newArrayList();
-		for (IConfigurationElement child : e.getChildren()) {
-			settingDescriptors.add(evaluateSetting(child));
-		}
-
-		return new DashboardPartDescriptor(name, description, settingDescriptors);
-	}
-
-	private static SettingDescriptor<?> evaluateSetting(IConfigurationElement e) throws Exception {
-		String name = e.getAttribute("name");
-		String type = e.getAttribute("type");
-		String defaultValue = e.getAttribute("defaultValue");
-		String description = e.getAttribute("description");
-		String isOptional = e.getAttribute("isOptional");
-		String isEditable = e.getAttribute("isEditable");
-
-		return new SettingDescriptor<Object>(name, description, type, convertValue(defaultValue, type), Boolean.valueOf(isOptional), Boolean.valueOf(isEditable));
 	}
 
 	private static Class<? extends IDashboardPart> checkAndGetDashboardPartClass(Object obj) throws Exception {
 		if (!(obj instanceof IDashboardPart)) {
 			throw new Exception("Class " + obj.getClass() + " does not implement the interface " + IDashboardPart.class);
 		}
-		IDashboardPart part = (IDashboardPart) obj;
+		final IDashboardPart part = (IDashboardPart) obj;
 		return part.getClass();
 	}
 
@@ -144,5 +111,38 @@ public class DashboardPartExtensionPointResolver implements IRegistryEventListen
 		}
 
 		throw new Exception("Setting type " + type + " not supported!");
+	}
+
+	private static SettingDescriptor<?> evaluateSetting(IConfigurationElement e) throws Exception {
+		final String name = e.getAttribute("name");
+		final String type = e.getAttribute("type");
+		final String defaultValue = e.getAttribute("defaultValue");
+		final String description = e.getAttribute("description");
+		final String isOptional = e.getAttribute("isOptional");
+		final String isEditable = e.getAttribute("isEditable");
+
+		return new SettingDescriptor<Object>(name, description, type, convertValue(defaultValue, type), Boolean.valueOf(isOptional), Boolean.valueOf(isEditable));
+	}
+
+	private static DashboardPartDescriptor getDashboardPartDescriptorFromExtension(IConfigurationElement e) throws Exception {
+		final String name = e.getAttribute("name");
+		final String description = e.getAttribute("description");
+
+		final List<SettingDescriptor<?>> settingDescriptors = Lists.newArrayList();
+		for (final IConfigurationElement child : e.getChildren()) {
+			settingDescriptors.add(evaluateSetting(child));
+		}
+
+		return new DashboardPartDescriptor(name, description, settingDescriptors);
+	}
+
+	private static void resolveConfigurationElement(IConfigurationElement element) {
+		try {
+			final Class<? extends IDashboardPart> clazz = checkAndGetDashboardPartClass(element.createExecutableExtension("class"));
+			final DashboardPartDescriptor desc = getDashboardPartDescriptorFromExtension(element);
+			DashboardPartRegistry.register(clazz, desc);
+		} catch (final Throwable t) {
+			LOG.error("Could not evaluate extension", t);
+		}
 	}
 }

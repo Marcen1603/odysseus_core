@@ -15,12 +15,12 @@ public class DashboardMenuFactory extends ExtensionContributionFactory {
 
 	@Override
 	public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
-		CommandContributionItemParameter p = new CommandContributionItemParameter(serviceLocator, "", DashboardPlugIn.ADD_DASHBOARD_PART_COMMAND_ID, SWT.PUSH);
-		
-		IContributionItem item = new CommandContributionItem(p);
+		final CommandContributionItemParameter p = new CommandContributionItemParameter(serviceLocator, "", DashboardPlugIn.ADD_DASHBOARD_PART_COMMAND_ID, SWT.PUSH);
+
+		final IContributionItem item = new CommandContributionItem(p);
 		item.setVisible(true);
-		
-		additions.addContributionItem(item, (Expression)null);
+
+		additions.addContributionItem(item, (Expression) null);
 	}
 
 }

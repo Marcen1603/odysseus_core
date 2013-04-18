@@ -32,19 +32,19 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 public class SimpleQueryTextProvider implements IDashboardPartQueryTextProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleQueryTextProvider.class);
-	
+
 	private final ImmutableList<String> queryTextLines;
+
+	public SimpleQueryTextProvider(IFile copyFrom) {
+		Preconditions.checkNotNull(copyFrom, "File for copying query text must not be null!");
+
+		this.queryTextLines = copyQueryTextFromFile(copyFrom);
+	}
 
 	public SimpleQueryTextProvider(List<String> queryTextLines) {
 		Preconditions.checkNotNull(queryTextLines, "QueryTextLines must not be null!");
 
 		this.queryTextLines = ImmutableList.copyOf(queryTextLines);
-	}
-	
-	public SimpleQueryTextProvider( IFile copyFrom ) {
-		Preconditions.checkNotNull(copyFrom, "File for copying query text must not be null!");
-		
-		this.queryTextLines = copyQueryTextFromFile(copyFrom);
 	}
 
 	@Override
@@ -57,16 +57,16 @@ public class SimpleQueryTextProvider implements IDashboardPartQueryTextProvider 
 			if (!file.isSynchronized(IResource.DEPTH_ZERO)) {
 				file.refreshLocal(IResource.DEPTH_ZERO, null);
 			}
-			Scanner lineScanner = new Scanner(file.getContents());
-	
-			List<String> lines = Lists.newArrayList();
-	
+			final Scanner lineScanner = new Scanner(file.getContents());
+
+			final List<String> lines = Lists.newArrayList();
+
 			while (lineScanner.hasNextLine()) {
 				lines.add(lineScanner.nextLine());
 			}
 			lineScanner.close();
 			return ImmutableList.copyOf(lines);
-		} catch( Exception ex ) {
+		} catch (final Exception ex) {
 			LOG.error("Could not copy query text from file {}.", file.getName(), ex);
 			return ImmutableList.of();
 		}

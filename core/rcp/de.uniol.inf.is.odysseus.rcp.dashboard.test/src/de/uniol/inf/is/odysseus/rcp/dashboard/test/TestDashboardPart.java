@@ -32,16 +32,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 public class TestDashboardPart implements IDashboardPart {
 
 	@Override
-	public boolean init(Configuration configuration) {
-		return true;
-	}
+	public void createPartControl(Composite parent, ToolBar toolbar) {
 
-	@Override
-	public void streamElementRecieved(IStreamObject<?> element, int port) {
-	}
-
-	@Override
-	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 	}
 
 	@Override
@@ -50,28 +42,22 @@ public class TestDashboardPart implements IDashboardPart {
 	}
 
 	@Override
-	public void createPartControl(Composite parent, ToolBar toolbar) {
-		
+	public IDashboardPartQueryTextProvider getQueryTextProvider() {
+		return null;
 	}
 
 	@Override
-	public void settingChanged(String settingName, Object oldValue, Object newValue) {
+	public boolean init(Configuration configuration) {
+		return true;
 	}
 
 	@Override
-	public void onStart(List<IPhysicalOperator> physicalRoots) {
+	public void onLoad(Map<String, String> saved) {
+
 	}
 
 	@Override
 	public void onPause() {
-	}
-
-	@Override
-	public void onUnpause() {
-	}
-
-	@Override
-	public void onStop() {
 	}
 
 	@Override
@@ -80,8 +66,23 @@ public class TestDashboardPart implements IDashboardPart {
 	}
 
 	@Override
-	public void onLoad(Map<String, String> saved) {
-		
+	public void onStart(List<IPhysicalOperator> physicalRoots) {
+	}
+
+	@Override
+	public void onStop() {
+	}
+
+	@Override
+	public void onUnpause() {
+	}
+
+	@Override
+	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
+	}
+
+	@Override
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
 	}
 
 	@Override
@@ -89,13 +90,11 @@ public class TestDashboardPart implements IDashboardPart {
 	}
 
 	@Override
-	public IDashboardPartQueryTextProvider getQueryTextProvider() {
-		return null;
+	public void settingChanged(String settingName, Object oldValue, Object newValue) {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	public void streamElementRecieved(IStreamObject<?> element, int port) {
 	}
 
 }
-

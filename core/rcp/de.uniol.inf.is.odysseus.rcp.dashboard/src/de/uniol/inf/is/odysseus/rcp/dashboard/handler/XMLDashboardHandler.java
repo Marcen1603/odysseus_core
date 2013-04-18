@@ -77,47 +77,47 @@ public class XMLDashboardHandler implements IDashboardHandler {
 
 		try {
 
-			Dashboard dashboard = new Dashboard();
+			final Dashboard dashboard = new Dashboard();
 
-			Document doc = getDocument(lines);
-			Node rootNode = getRootNode(doc);
+			final Document doc = getDocument(lines);
+			final Node rootNode = getRootNode(doc);
 
-			NodeList dashboardNodes = rootNode.getChildNodes();
+			final NodeList dashboardNodes = rootNode.getChildNodes();
 			for (int i = 0; i < dashboardNodes.getLength(); i++) {
-				Node dashboardNode = dashboardNodes.item(i);
+				final Node dashboardNode = dashboardNodes.item(i);
 
 				if (dashboardNode.getNodeType() == Node.ELEMENT_NODE && dashboardNode.getNodeName().equals(DASHBOARD_PART_XML_ELEMENT)) {
-					String fileName = getAttribute(dashboardNode, FILE_ATTRIBUTE_NAME, null);
+					final String fileName = getAttribute(dashboardNode, FILE_ATTRIBUTE_NAME, null);
 					if (Strings.isNullOrEmpty(fileName)) {
 						throw new DashboardHandlerException("File of DashboardPart to load is null or empty!");
 					}
 
-					int x = tryToInteger(getAttribute(dashboardNode, X_ATTRIBUTE_NAME, "0"), 0);
-					int y = tryToInteger(getAttribute(dashboardNode, Y_ATTRIBUTE_NAME, "0"), 0);
-					int w = tryToInteger(getAttribute(dashboardNode, WIDTH_ATTRIBUTE_NAME, "100"), 100);
-					int h = tryToInteger(getAttribute(dashboardNode, HEIGHT_ATTRIBUTE_NAME, "100"), 100);
+					final int x = tryToInteger(getAttribute(dashboardNode, X_ATTRIBUTE_NAME, "0"), 0);
+					final int y = tryToInteger(getAttribute(dashboardNode, Y_ATTRIBUTE_NAME, "0"), 0);
+					final int w = tryToInteger(getAttribute(dashboardNode, WIDTH_ATTRIBUTE_NAME, "100"), 100);
+					final int h = tryToInteger(getAttribute(dashboardNode, HEIGHT_ATTRIBUTE_NAME, "100"), 100);
 
-					IPath queryFilePath = new Path(fileName);
-					IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
+					final IPath queryFilePath = new Path(fileName);
+					final IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
 
-					IDashboardPart dashboardPart = partHandler.load(FileUtil.read(dashboardPartFile));
-					DashboardPartPlacement plc = new DashboardPartPlacement(dashboardPart, fileName, x, y, w, h);
+					final IDashboardPart dashboardPart = partHandler.load(FileUtil.read(dashboardPartFile));
+					final DashboardPartPlacement plc = new DashboardPartPlacement(dashboardPart, fileName, x, y, w, h);
 					dashboard.add(plc);
 				}
 			}
 
 			return dashboard;
 
-		} catch (ParserConfigurationException e) {
+		} catch (final ParserConfigurationException e) {
 			LOG.error("Could not load DashboardPart", e);
 			throw new DashboardHandlerException("Could not load DashboardPart", e);
-		} catch (SAXException e) {
+		} catch (final SAXException e) {
 			LOG.error("Could not load DashboardPart", e);
 			throw new DashboardHandlerException("Could not load DashboardPart", e);
-		} catch (CoreException ex) {
+		} catch (final CoreException ex) {
 			LOG.error("Could not load DashboardPart", ex);
 			throw new DashboardHandlerException("Could not load DashboardPart", ex);
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			LOG.error("Could not load DashboardPart", ex);
 			throw new DashboardHandlerException("Could not load DashboardPart", ex);
 		}
@@ -128,52 +128,23 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		Preconditions.checkNotNull(board, "Dashboard to be saved must not be null!");
 
 		try {
-			Document doc = createNewDocument();
-			Element rootElement = createRootElement(doc);
+			final Document doc = createNewDocument();
+			final Element rootElement = createRootElement(doc);
 
-			for (DashboardPartPlacement partPlacement : board.getDashboardPartPlacements()) {
+			for (final DashboardPartPlacement partPlacement : board.getDashboardPartPlacements()) {
 				createDashboardPartElement(doc, rootElement, partPlacement);
 			}
 
 			return saveImpl(doc);
 
-		} catch (ParserConfigurationException ex) {
+		} catch (final ParserConfigurationException ex) {
 			LOG.error("Could not save Dashboard!", ex);
 			throw new DashboardHandlerException("Could not save Dashboard!", ex);
 		}
 	}
 
-	private static List<String> saveImpl(Document doc) throws DashboardHandlerException {
-		try {
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			StreamResult result = new StreamResult(baos);
-
-			transformer.transform(source, result);
-			return FileUtil.separateLines(baos.toString("UTF-8"));
-
-		} catch (TransformerConfigurationException e) {
-			LOG.error("Could not save DashboardPart", e);
-			throw new DashboardHandlerException("Could not save DashboardPart", e);
-		} catch (TransformerException e) {
-			LOG.error("Could not save DashboardPart", e);
-			throw new DashboardHandlerException("Could not save DashboardPart", e);
-		} catch (UnsupportedEncodingException ex) {
-			LOG.error("Could not save DashboardPart", ex);
-			throw new DashboardHandlerException("Could not save DashboardPart", ex);
-		}
-	}
-
-	private static Document createNewDocument() throws ParserConfigurationException {
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		return docBuilder.newDocument();
-	}
-
 	private static void createDashboardPartElement(Document doc, Element rootElement, DashboardPartPlacement placement) {
-		Element element = doc.createElement(DASHBOARD_PART_XML_ELEMENT);
+		final Element element = doc.createElement(DASHBOARD_PART_XML_ELEMENT);
 		element.setAttribute(X_ATTRIBUTE_NAME, String.valueOf(placement.getX()));
 		element.setAttribute(Y_ATTRIBUTE_NAME, String.valueOf(placement.getY()));
 		element.setAttribute(WIDTH_ATTRIBUTE_NAME, String.valueOf(placement.getWidth()));
@@ -182,19 +153,25 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		rootElement.appendChild(element);
 	}
 
+	private static Document createNewDocument() throws ParserConfigurationException {
+		final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		return docBuilder.newDocument();
+	}
+
 	private static Element createRootElement(Document doc) {
-		Element element = doc.createElement(DASHBOARD_XML_ELEMENT);
+		final Element element = doc.createElement(DASHBOARD_XML_ELEMENT);
 		doc.appendChild(element);
 		return element;
 	}
 
 	private static String getAttribute(Node element, String attributeName, String defaultValue) {
-		NamedNodeMap nodeMap = element.getAttributes();
+		final NamedNodeMap nodeMap = element.getAttributes();
 		if (nodeMap == null) {
 			return defaultValue;
 		}
 
-		Node attributeNode = nodeMap.getNamedItem(attributeName);
+		final Node attributeNode = nodeMap.getNamedItem(attributeName);
 		if (attributeNode == null) {
 			return defaultValue;
 		}
@@ -203,16 +180,16 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	}
 
 	private static Document getDocument(List<String> lines) throws ParserConfigurationException, SAXException, IOException {
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-		Document doc = docBuilder.parse(new ByteArrayInputStream(FileUtil.concat(lines).getBytes()));
+		final Document doc = docBuilder.parse(new ByteArrayInputStream(FileUtil.concat(lines).getBytes()));
 		doc.getDocumentElement().normalize();
 		return doc;
 	}
 
 	private static Node getRootNode(Document doc) throws DashboardHandlerException {
-		NodeList nodes = doc.getElementsByTagName(DASHBOARD_XML_ELEMENT);
+		final NodeList nodes = doc.getElementsByTagName(DASHBOARD_XML_ELEMENT);
 		if (nodes.getLength() != 1) {
 			throw new DashboardHandlerException("Malformed XML-File: It must have exactly one " + DASHBOARD_XML_ELEMENT + "-Element.");
 		}
@@ -220,10 +197,33 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		return nodes.item(0);
 	}
 
+	private static List<String> saveImpl(Document doc) throws DashboardHandlerException {
+		try {
+			final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			final Transformer transformer = transformerFactory.newTransformer();
+			final DOMSource source = new DOMSource(doc);
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			final StreamResult result = new StreamResult(baos);
+
+			transformer.transform(source, result);
+			return FileUtil.separateLines(baos.toString("UTF-8"));
+
+		} catch (final TransformerConfigurationException e) {
+			LOG.error("Could not save DashboardPart", e);
+			throw new DashboardHandlerException("Could not save DashboardPart", e);
+		} catch (final TransformerException e) {
+			LOG.error("Could not save DashboardPart", e);
+			throw new DashboardHandlerException("Could not save DashboardPart", e);
+		} catch (final UnsupportedEncodingException ex) {
+			LOG.error("Could not save DashboardPart", ex);
+			throw new DashboardHandlerException("Could not save DashboardPart", ex);
+		}
+	}
+
 	private static int tryToInteger(String value, int defaultValue) {
 		try {
 			return Integer.valueOf(value);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			LOG.error("Could not convert {} to integer! Using {} instead!", new Object[] { value, defaultValue }, t);
 			return defaultValue;
 		}

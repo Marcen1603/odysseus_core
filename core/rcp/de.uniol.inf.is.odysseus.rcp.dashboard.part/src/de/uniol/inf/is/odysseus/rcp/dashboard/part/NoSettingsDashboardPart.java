@@ -27,25 +27,25 @@ public class NoSettingsDashboardPart extends AbstractDashboardPart {
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
-		
-	}
 
-	@Override
-	public void streamElementRecieved(IStreamObject<?> element, int port) {
-		
 	}
 
 	@Override
 	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
-		
-	}
 
-	@Override
-	public void settingChanged(String settingName, Object oldValue, Object newValue) {
-		
 	}
 
 	@Override
 	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	}
+
+	@Override
+	public void settingChanged(String settingName, Object oldValue, Object newValue) {
+
+	}
+
+	@Override
+	public void streamElementRecieved(IStreamObject<?> element, int port) {
+
 	}
 }

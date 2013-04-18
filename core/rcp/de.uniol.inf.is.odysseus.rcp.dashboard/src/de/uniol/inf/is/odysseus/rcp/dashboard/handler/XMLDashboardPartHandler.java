@@ -82,87 +82,160 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(XMLDashboardPartHandler.class);
 
 	@Override
-	public List<String> save(IDashboardPart part) throws DashboardHandlerException {
-		Preconditions.checkNotNull(part, "Part to save must not be null!");
-
-		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-
-			Document doc = docBuilder.newDocument();
-
-			Element rootElement = createRootElement(part.getClass(), doc);
-			appendQueryTextProvider(part.getQueryTextProvider(), doc, rootElement);
-			appendConfiguration(part.getConfiguration(), doc, rootElement);
-			appendCustoms(part, doc, rootElement);
-			return save(doc);
-
-		} catch (ParserConfigurationException e) {
-			LOG.error("Could not save DashboardPart " + part.getClass(), e);
-			throw new DashboardHandlerException("Could not save DashboardPart " + part.getClass(), e);
-		}
-	}
-
-	@Override
 	public IDashboardPart load(List<String> lines) throws DashboardHandlerException {
 		Preconditions.checkNotNull(lines, "Array of lines from must not be null!");
 		Preconditions.checkArgument(!lines.isEmpty(), "Array of lines must not be empty!");
 
 		try {
-			Document doc = getDocument(lines);
-			Node rootNode = getRootNode(doc);
+			final Document doc = getDocument(lines);
+			final Node rootNode = getRootNode(doc);
 
-			DashboardPartDescriptor descriptor = getDashboardPartDescriptor(rootNode);
-			IDashboardPartQueryTextProvider queryTextProvider = getQueryTextProvider(rootNode);
-			Map<String, String> settingsMap = parseSettingsMap(rootNode);
-			Map<String, String> customSettings = getCustoms(doc);
+			final DashboardPartDescriptor descriptor = getDashboardPartDescriptor(rootNode);
+			final IDashboardPartQueryTextProvider queryTextProvider = getQueryTextProvider(rootNode);
+			final Map<String, String> settingsMap = parseSettingsMap(rootNode);
+			final Map<String, String> customSettings = getCustoms(doc);
 
 			return buildDashboardPart(descriptor, queryTextProvider, settingsMap, customSettings);
 
-		} catch (ParserConfigurationException e) {
+		} catch (final ParserConfigurationException e) {
 			LOG.error("Could not load DashboardPart", e);
 			throw new DashboardHandlerException("Could not load DashboardPart", e);
-		} catch (SAXException e) {
+		} catch (final SAXException e) {
 			LOG.error("Could not load DashboardPart", e);
 			throw new DashboardHandlerException("Could not load DashboardPart", e);
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			LOG.error("Could not load DashboardPart", ex);
 			throw new DashboardHandlerException("Could not load DashboardPart", ex);
+		}
+	}
+
+	@Override
+	public List<String> save(IDashboardPart part) throws DashboardHandlerException {
+		Preconditions.checkNotNull(part, "Part to save must not be null!");
+
+		try {
+			final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+			final Document doc = docBuilder.newDocument();
+
+			final Element rootElement = createRootElement(part.getClass(), doc);
+			appendQueryTextProvider(part.getQueryTextProvider(), doc, rootElement);
+			appendConfiguration(part.getConfiguration(), doc, rootElement);
+			appendCustoms(part, doc, rootElement);
+			return save(doc);
+
+		} catch (final ParserConfigurationException e) {
+			LOG.error("Could not save DashboardPart " + part.getClass(), e);
+			throw new DashboardHandlerException("Could not save DashboardPart " + part.getClass(), e);
+		}
+	}
+
+	private static void appendConfiguration(Configuration config, Document doc, Element rootElement) {
+		for (final String name : config.getNames()) {
+
+			final Element settingElement = doc.createElement(SETTING_XML_ELEMENT);
+			settingElement.setAttribute(SETTING_NAME_XML_ATTRIBUTE, name);
+
+			final Object value = config.get(name);
+			settingElement.setAttribute(SETTING_VALUE_XML_ATTRIBUTE, value != null ? value.toString() : NULL_SETTING);
+			rootElement.appendChild(settingElement);
+		}
+	}
+
+	private static void appendCustoms(IDashboardPart part, Document doc, Element rootElement) {
+		final Element customElement = doc.createElement(CUSTOM_XML_ELEMENT);
+
+		final Map<String, String> customSave = part.onSave();
+		if (customSave != null && !customSave.isEmpty()) {
+			for (final String key : customSave.keySet()) {
+				final Element settingElement = doc.createElement(CUSTOM_SETTING_XML_ELEMENT);
+				settingElement.setAttribute(SETTING_NAME_XML_ATTRIBUTE, key);
+
+				final String value = customSave.get(key);
+				settingElement.setAttribute(SETTING_VALUE_XML_ATTRIBUTE, value != null ? value : NULL_SETTING);
+				customElement.appendChild(settingElement);
+
+			}
+		}
+		rootElement.appendChild(customElement);
+	}
+
+	private static void appendQueryTextProvider(IDashboardPartQueryTextProvider queryTextProvider, Document doc, Element rootElement) throws DashboardHandlerException {
+		final Element queryElement = doc.createElement(QUERY_TEXT_XML_ELEMENT);
+		rootElement.appendChild(queryElement);
+
+		if (queryTextProvider instanceof ResourceFileQueryTextProvider) {
+
+			final Element fileElement = doc.createElement(QUERY_TEXT_FILE_PROVIDER_XML_ELEMENT);
+			queryElement.appendChild(fileElement);
+
+			fileElement.setAttribute(FILE_XML_ATTRIBUTE, ((ResourceFileQueryTextProvider) queryTextProvider).getFile().getFullPath().toString());
+
+		} else if (queryTextProvider instanceof SimpleQueryTextProvider) {
+
+			final Element textElement = doc.createElement(QUERY_TEXT_TEXT_PROVIDER_XML_ELEMENT);
+			queryElement.appendChild(textElement);
+			textElement.appendChild(doc.createTextNode(FileUtil.concat(((SimpleQueryTextProvider) queryTextProvider).getQueryText())));
+
+		} else {
+			throw new DashboardHandlerException("Unknown IDashboardPartQueryTextProvider " + queryTextProvider.getClass());
 		}
 	}
 
 	private static IDashboardPart buildDashboardPart(DashboardPartDescriptor descriptor, IDashboardPartQueryTextProvider queryTextProvider, Map<String, String> settingsMap,
 			Map<String, String> customSettings) throws DashboardHandlerException {
 		try {
-			IDashboardPart part = DashboardPartRegistry.createDashboardPart(descriptor.getName());
-			Configuration defaultConfiguration = part.getConfiguration();
-			for (String key : settingsMap.keySet()) {
-				String value = settingsMap.get(key);
+			final IDashboardPart part = DashboardPartRegistry.createDashboardPart(descriptor.getName());
+			final Configuration defaultConfiguration = part.getConfiguration();
+			for (final String key : settingsMap.keySet()) {
+				final String value = settingsMap.get(key);
 				defaultConfiguration.setAsString(key, NULL_SETTING.equals(value) ? null : value);
 			}
 
 			part.setQueryTextProvider(queryTextProvider);
 			part.onLoad(customSettings);
 			return part;
-		} catch (InstantiationException e) {
+		} catch (final InstantiationException e) {
 			LOG.error("Could not load DashboardPart", e);
 			throw new DashboardHandlerException("Could not load DashboardPart", e);
 		}
 	}
 
-	private static Map<String, String> getCustoms(Document doc) {
-		Map<String, String> customSettings = Maps.newHashMap();
-		NodeList customElements = doc.getElementsByTagName(CUSTOM_XML_ELEMENT);
-		if (customElements.getLength() == 1) {
-			Node customElement = customElements.item(0);
+	private static Element createRootElement(Class<? extends IDashboardPart> partClass, Document doc) {
+		final Element rootElement = doc.createElement(DASHBOARD_PART_XML_ELEMENT);
+		doc.appendChild(rootElement);
+		rootElement.setAttribute(CLASS_XML_ATTRIBUTE, partClass.getName());
+		return rootElement;
+	}
 
-			NodeList customSettingElements = customElement.getChildNodes();
+	private static String getAttribute(Node element, String attributeName, String defaultValue) {
+		final NamedNodeMap nodeMap = element.getAttributes();
+		if (nodeMap == null) {
+			return defaultValue;
+		}
+
+		final Node attributeNode = nodeMap.getNamedItem(attributeName);
+		if (attributeNode == null) {
+			return defaultValue;
+		}
+
+		return attributeNode.getNodeValue();
+	}
+
+	private static Map<String, String> getCustoms(Document doc) {
+		final Map<String, String> customSettings = Maps.newHashMap();
+		final NodeList customElements = doc.getElementsByTagName(CUSTOM_XML_ELEMENT);
+		if (customElements.getLength() == 1) {
+			final Node customElement = customElements.item(0);
+
+			final NodeList customSettingElements = customElement.getChildNodes();
 
 			for (int i = 0; i < customSettingElements.getLength(); i++) {
-				Node node = customSettingElements.item(i);
+				final Node node = customSettingElements.item(i);
 
 				if (node.getNodeType() == Node.ELEMENT_NODE && CUSTOM_SETTING_XML_ELEMENT.equals(node.getNodeName())) {
-					String settingName = node.getAttributes().getNamedItem(SETTING_NAME_XML_ATTRIBUTE).getNodeValue();
+					final String settingName = node.getAttributes().getNamedItem(SETTING_NAME_XML_ATTRIBUTE).getNodeValue();
 					String settingValue = node.getAttributes().getNamedItem(SETTING_VALUE_XML_ATTRIBUTE).getNodeValue();
 					if (NULL_SETTING.equals(settingValue)) {
 						settingValue = null;
@@ -177,67 +250,21 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		return customSettings;
 	}
 
-	private static IFile getQueryFile(String fileName) throws FileNotFoundException {
-		IPath queryFilePath = new Path(fileName);
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
-		if (!file.exists()) {
-			throw new FileNotFoundException("File " + file.getName() + " not found in workspace.");
-		}
-		return file;
-	}
-
 	private static DashboardPartDescriptor getDashboardPartDescriptor(Node rootNode) throws DashboardHandlerException {
-		String dashboardPartClass = rootNode.getAttributes().getNamedItem(CLASS_XML_ATTRIBUTE).getNodeValue();
-		Optional<DashboardPartDescriptor> optDescriptor = getDescriptorFromClassName(dashboardPartClass);
+		final String dashboardPartClass = rootNode.getAttributes().getNamedItem(CLASS_XML_ATTRIBUTE).getNodeValue();
+		final Optional<DashboardPartDescriptor> optDescriptor = getDescriptorFromClassName(dashboardPartClass);
 		if (!optDescriptor.isPresent()) {
 			throw new DashboardHandlerException("Unknown class " + dashboardPartClass + " in registry.");
 		}
-		DashboardPartDescriptor descriptor = optDescriptor.get();
+		final DashboardPartDescriptor descriptor = optDescriptor.get();
 		return descriptor;
 	}
 
-	private static Node getRootNode(Document doc) throws DashboardHandlerException {
-		NodeList nodes = doc.getElementsByTagName(DASHBOARD_PART_XML_ELEMENT);
-		if (nodes.getLength() != 1) {
-			throw new DashboardHandlerException("Malformed XML-File: It must have exactly one " + DASHBOARD_PART_XML_ELEMENT + "-Element.");
-		}
-
-		Node rootNode = nodes.item(0);
-		return rootNode;
-	}
-
-	private static Document getDocument(List<String> lines) throws ParserConfigurationException, SAXException, IOException {
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-
-		Document doc = docBuilder.parse(new ByteArrayInputStream(FileUtil.concat(lines).getBytes()));
-		doc.getDocumentElement().normalize();
-		return doc;
-	}
-
-	private static Map<String, String> parseSettingsMap(Node rootNode) {
-		Map<String, String> settingsMap = Maps.newHashMap();
-
-		NodeList settingNodes = rootNode.getChildNodes();
-		for (int i = 0; i < settingNodes.getLength(); i++) {
-			Node settingNode = settingNodes.item(i);
-
-			if (settingNode.getNodeType() == Node.ELEMENT_NODE && settingNode.getNodeName().equals(SETTING_XML_ELEMENT)) {
-				String settingName = settingNode.getAttributes().getNamedItem(SETTING_NAME_XML_ATTRIBUTE).getNodeValue();
-				String settingValue = settingNode.getAttributes().getNamedItem(SETTING_VALUE_XML_ATTRIBUTE).getNodeValue();
-
-				settingsMap.put(settingName, settingValue);
-			}
-		}
-
-		return settingsMap;
-	}
-
 	private static Optional<DashboardPartDescriptor> getDescriptorFromClassName(String className) {
-		List<String> names = DashboardPartRegistry.getDashboardPartNames();
+		final List<String> names = DashboardPartRegistry.getDashboardPartNames();
 
-		for (String name : names) {
-			Optional<Class<? extends IDashboardPart>> desc = DashboardPartRegistry.getDashboardPartClass(name);
+		for (final String name : names) {
+			final Optional<Class<? extends IDashboardPart>> desc = DashboardPartRegistry.getDashboardPartClass(name);
 			if (desc.isPresent() && desc.get().getName().equals(className)) {
 				return DashboardPartRegistry.getDashboardPartDescriptor(name);
 			}
@@ -246,74 +273,47 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		return Optional.absent();
 	}
 
-	private static List<String> save(Document doc) throws DashboardHandlerException {
-		try {
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			StreamResult result = new StreamResult(baos);
+	private static Document getDocument(List<String> lines) throws ParserConfigurationException, SAXException, IOException {
+		final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-			transformer.transform(source, result);
-			return FileUtil.separateLines(baos.toString("UTF-8"));
-
-		} catch (TransformerConfigurationException e) {
-			LOG.error("Could not save DashboardPart", e);
-			throw new DashboardHandlerException("Could not save DashboardPart", e);
-		} catch (TransformerException e) {
-			LOG.error("Could not save DashboardPart", e);
-			throw new DashboardHandlerException("Could not save DashboardPart", e);
-		} catch (UnsupportedEncodingException ex) {
-			LOG.error("Could not save DashboardPart", ex);
-			throw new DashboardHandlerException("Could not save DashboardPart", ex);
-		}
+		final Document doc = docBuilder.parse(new ByteArrayInputStream(FileUtil.concat(lines).getBytes()));
+		doc.getDocumentElement().normalize();
+		return doc;
 	}
 
-	private static void appendQueryTextProvider(IDashboardPartQueryTextProvider queryTextProvider, Document doc, Element rootElement) throws DashboardHandlerException {
-		Element queryElement = doc.createElement(QUERY_TEXT_XML_ELEMENT);
-		rootElement.appendChild(queryElement);
-
-		if (queryTextProvider instanceof ResourceFileQueryTextProvider) {
-
-			Element fileElement = doc.createElement(QUERY_TEXT_FILE_PROVIDER_XML_ELEMENT);
-			queryElement.appendChild(fileElement);
-
-			fileElement.setAttribute(FILE_XML_ATTRIBUTE, ((ResourceFileQueryTextProvider) queryTextProvider).getFile().getFullPath().toString());
-
-		} else if (queryTextProvider instanceof SimpleQueryTextProvider) {
-
-			Element textElement = doc.createElement(QUERY_TEXT_TEXT_PROVIDER_XML_ELEMENT);
-			queryElement.appendChild(textElement);
-			textElement.appendChild(doc.createTextNode(FileUtil.concat(((SimpleQueryTextProvider) queryTextProvider).getQueryText())));
-
-		} else {
-			throw new DashboardHandlerException("Unknown IDashboardPartQueryTextProvider " + queryTextProvider.getClass());
+	private static IFile getQueryFile(String fileName) throws FileNotFoundException {
+		final IPath queryFilePath = new Path(fileName);
+		final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
+		if (!file.exists()) {
+			throw new FileNotFoundException("File " + file.getName() + " not found in workspace.");
 		}
+		return file;
 	}
 
 	private static IDashboardPartQueryTextProvider getQueryTextProvider(Node rootNode) throws DashboardHandlerException, FileNotFoundException {
-		NodeList nodes = rootNode.getChildNodes();
+		final NodeList nodes = rootNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
-			Node node = nodes.item(i);
+			final Node node = nodes.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE && QUERY_TEXT_XML_ELEMENT.equals(node.getNodeName())) {
 
-				NodeList childs = node.getChildNodes();
+				final NodeList childs = node.getChildNodes();
 				for (int j = 0; j < childs.getLength(); j++) {
-					Node child = childs.item(j);
+					final Node child = childs.item(j);
 					if (child.getNodeType() == Node.ELEMENT_NODE) {
 
 						if (QUERY_TEXT_FILE_PROVIDER_XML_ELEMENT.equals(child.getNodeName())) {
 
-							String fileName = getAttribute(child, FILE_XML_ATTRIBUTE, null);
+							final String fileName = getAttribute(child, FILE_XML_ATTRIBUTE, null);
 							if (Strings.isNullOrEmpty(fileName)) {
 								throw new DashboardHandlerException("FileName for query must not be null or empty.");
 							}
 
-							IFile file = getQueryFile(fileName);
+							final IFile file = getQueryFile(fileName);
 							return new ResourceFileQueryTextProvider(file);
 
 						} else if (QUERY_TEXT_TEXT_PROVIDER_XML_ELEMENT.equals(child.getNodeName())) {
-							String queryText = child.getChildNodes().item(0).getNodeValue();
+							final String queryText = child.getChildNodes().item(0).getNodeValue();
 
 							return new SimpleQueryTextProvider(FileUtil.separateLines(queryText));
 						}
@@ -325,54 +325,54 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		return null;
 	}
 
-	private static void appendCustoms(IDashboardPart part, Document doc, Element rootElement) {
-		Element customElement = doc.createElement(CUSTOM_XML_ELEMENT);
+	private static Node getRootNode(Document doc) throws DashboardHandlerException {
+		final NodeList nodes = doc.getElementsByTagName(DASHBOARD_PART_XML_ELEMENT);
+		if (nodes.getLength() != 1) {
+			throw new DashboardHandlerException("Malformed XML-File: It must have exactly one " + DASHBOARD_PART_XML_ELEMENT + "-Element.");
+		}
 
-		Map<String, String> customSave = part.onSave();
-		if (customSave != null && !customSave.isEmpty()) {
-			for (String key : customSave.keySet()) {
-				Element settingElement = doc.createElement(CUSTOM_SETTING_XML_ELEMENT);
-				settingElement.setAttribute(SETTING_NAME_XML_ATTRIBUTE, key);
+		final Node rootNode = nodes.item(0);
+		return rootNode;
+	}
 
-				String value = customSave.get(key);
-				settingElement.setAttribute(SETTING_VALUE_XML_ATTRIBUTE, value != null ? value : NULL_SETTING);
-				customElement.appendChild(settingElement);
+	private static Map<String, String> parseSettingsMap(Node rootNode) {
+		final Map<String, String> settingsMap = Maps.newHashMap();
 
+		final NodeList settingNodes = rootNode.getChildNodes();
+		for (int i = 0; i < settingNodes.getLength(); i++) {
+			final Node settingNode = settingNodes.item(i);
+
+			if (settingNode.getNodeType() == Node.ELEMENT_NODE && settingNode.getNodeName().equals(SETTING_XML_ELEMENT)) {
+				final String settingName = settingNode.getAttributes().getNamedItem(SETTING_NAME_XML_ATTRIBUTE).getNodeValue();
+				final String settingValue = settingNode.getAttributes().getNamedItem(SETTING_VALUE_XML_ATTRIBUTE).getNodeValue();
+
+				settingsMap.put(settingName, settingValue);
 			}
 		}
-		rootElement.appendChild(customElement);
+
+		return settingsMap;
 	}
 
-	private static void appendConfiguration(Configuration config, Document doc, Element rootElement) {
-		for (String name : config.getNames()) {
+	private static List<String> save(Document doc) throws DashboardHandlerException {
+		try {
+			final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			final Transformer transformer = transformerFactory.newTransformer();
+			final DOMSource source = new DOMSource(doc);
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			final StreamResult result = new StreamResult(baos);
 
-			Element settingElement = doc.createElement(SETTING_XML_ELEMENT);
-			settingElement.setAttribute(SETTING_NAME_XML_ATTRIBUTE, name);
+			transformer.transform(source, result);
+			return FileUtil.separateLines(baos.toString("UTF-8"));
 
-			Object value = config.get(name);
-			settingElement.setAttribute(SETTING_VALUE_XML_ATTRIBUTE, value != null ? value.toString() : NULL_SETTING);
-			rootElement.appendChild(settingElement);
+		} catch (final TransformerConfigurationException e) {
+			LOG.error("Could not save DashboardPart", e);
+			throw new DashboardHandlerException("Could not save DashboardPart", e);
+		} catch (final TransformerException e) {
+			LOG.error("Could not save DashboardPart", e);
+			throw new DashboardHandlerException("Could not save DashboardPart", e);
+		} catch (final UnsupportedEncodingException ex) {
+			LOG.error("Could not save DashboardPart", ex);
+			throw new DashboardHandlerException("Could not save DashboardPart", ex);
 		}
-	}
-
-	private static Element createRootElement(Class<? extends IDashboardPart> partClass, Document doc) {
-		Element rootElement = doc.createElement(DASHBOARD_PART_XML_ELEMENT);
-		doc.appendChild(rootElement);
-		rootElement.setAttribute(CLASS_XML_ATTRIBUTE, partClass.getName());
-		return rootElement;
-	}
-
-	private static String getAttribute(Node element, String attributeName, String defaultValue) {
-		NamedNodeMap nodeMap = element.getAttributes();
-		if (nodeMap == null) {
-			return defaultValue;
-		}
-
-		Node attributeNode = nodeMap.getNamedItem(attributeName);
-		if (attributeNode == null) {
-			return defaultValue;
-		}
-
-		return attributeNode.getNodeValue();
 	}
 }

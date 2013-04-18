@@ -35,12 +35,52 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 // -> no default constructor!
 public class InvalidTestDashboardPart implements IDashboardPart {
 
-	public InvalidTestDashboardPart( String someParam ) {
-		
+	public InvalidTestDashboardPart(String someParam) {
+
 	}
-	
+
 	@Override
-	public void streamElementRecieved(IStreamObject<?> element, int port) {
+	public void createPartControl(Composite parent, ToolBar toolbar) {
+	}
+
+	@Override
+	public Configuration getConfiguration() {
+		return null;
+	}
+
+	@Override
+	public IDashboardPartQueryTextProvider getQueryTextProvider() {
+		return null;
+	}
+
+	@Override
+	public boolean init(Configuration configuration) {
+		return false;
+	}
+
+	@Override
+	public void onLoad(Map<String, String> saved) {
+	}
+
+	@Override
+	public void onPause() {
+	}
+
+	@Override
+	public Map<String, String> onSave() {
+		return null;
+	}
+
+	@Override
+	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
+	}
+
+	@Override
+	public void onStop() {
+	}
+
+	@Override
+	public void onUnpause() {
 	}
 
 	@Override
@@ -52,55 +92,15 @@ public class InvalidTestDashboardPart implements IDashboardPart {
 	}
 
 	@Override
-	public void settingChanged(String settingName, Object oldValue, Object newValue) {
-	}
-
-	@Override
-	public boolean init(Configuration configuration) {
-		return false;
-	}
-
-	@Override
-	public Configuration getConfiguration() {
-		return null;
-	}
-
-	@Override
-	public void createPartControl(Composite parent, ToolBar toolbar) {
-	}
-
-	@Override
-	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
-	}
-
-	@Override
-	public void onPause() {
-	}
-
-	@Override
-	public void onUnpause() {
-	}
-
-	@Override
-	public void onStop() {
-	}
-
-	@Override
-	public Map<String, String> onSave() {
-		return null;
-	}
-
-	@Override
-	public void onLoad(Map<String, String> saved) {
-	}
-
-	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider file) {
 	}
 
 	@Override
-	public IDashboardPartQueryTextProvider getQueryTextProvider() {
-		return null;
+	public void settingChanged(String settingName, Object oldValue, Object newValue) {
+	}
+
+	@Override
+	public void streamElementRecieved(IStreamObject<?> element, int port) {
 	}
 
 }

@@ -24,34 +24,34 @@ public final class Setting<T> {
 	private final SettingDescriptor<T> descriptor;
 	private final String type;
 	private T value;
-	
-	public Setting( SettingDescriptor<T> descriptor ) {
+
+	public Setting(SettingDescriptor<T> descriptor) {
 		this.descriptor = Preconditions.checkNotNull(descriptor, "SettingDescriptor for setting must not be null!");
 		this.value = descriptor.getDefaultValue();
 		this.type = descriptor.getType();
 	}
-	
-	public SettingDescriptor<T> getSettingDescriptor() {
-		return descriptor;
-	}
-	
+
 	public T get() {
 		return value;
 	}
-	
-	public void set( T newValue ) {
-		value = newValue;
+
+	public SettingDescriptor<T> getSettingDescriptor() {
+		return descriptor;
 	}
-	
-	@SuppressWarnings("unchecked")
-	public void setAsString( String stringValue ) {
-		value = (T) convertValue( stringValue, type );
-	}
-	
+
 	public void reset() {
 		value = descriptor.getDefaultValue();
 	}
-	
+
+	public void set(T newValue) {
+		value = newValue;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setAsString(String stringValue) {
+		value = (T) convertValue(stringValue, type);
+	}
+
 	private static Object convertValue(String value, String type) {
 		if (value == null) {
 			return null;
@@ -76,8 +76,8 @@ public final class Setting<T> {
 		if ("Float".equalsIgnoreCase(type)) {
 			return Float.valueOf(value);
 		}
-		
-		if( "String".equalsIgnoreCase(type)) {
+
+		if ("String".equalsIgnoreCase(type)) {
 			return value;
 		}
 

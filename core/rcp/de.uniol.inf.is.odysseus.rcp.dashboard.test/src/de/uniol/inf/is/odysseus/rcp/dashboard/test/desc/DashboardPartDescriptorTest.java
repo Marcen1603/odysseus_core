@@ -37,121 +37,121 @@ public class DashboardPartDescriptorTest {
 
 	@Test
 	public void testConstructor() {
-		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", newEmptySettingDescriptorList());
-		assertNotNull(desc);
-	}
-	
-	@Test
-	public void testSmallConstructor() throws Throwable {
-		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description");
+		final DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", newEmptySettingDescriptorList());
 		assertNotNull(desc);
 	}
 
-	@Test(expectedExceptions = {IllegalArgumentException.class, NullPointerException.class})
+	@Test
+	public void testConstructorEmptyOrNullDescription() {
+		final DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", null, newEmptySettingDescriptorList());
+		assertFalse(Strings.isNullOrEmpty(desc.getDescription()));
+	}
+
+	@Test(expectedExceptions = { IllegalArgumentException.class, NullPointerException.class })
 	public void testConstructorNullArgs() {
 		new DashboardPartDescriptor(null, null, null);
 	}
-	
+
+	@Test
+	public void testCreateDefaultConfiguration() {
+		final List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
+		final DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
+
+		final Configuration configuration = desc.createDefaultConfiguration();
+
+		assertNotNull(configuration);
+
+		for (final SettingDescriptor<?> settingDescriptor : settingDescriptors) {
+			assertEquals(configuration.get(settingDescriptor.getName()), settingDescriptor.getDefaultValue());
+		}
+	}
+
+	@Test
+	public void testDuplicateNames() {
+		final List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorListWithDuplicates();
+		final DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
+
+		final Optional<SettingDescriptor<?>> settingDescriptor = desc.getSettingDescriptor("Setting2");
+
+		assertTrue(settingDescriptor.isPresent());
+		assertEquals(settingDescriptor.get().getDescription(), "Another Description of setting2");
+	}
+
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testEmptyNameConstructor() throws Throwable {
 		new DashboardPartDescriptor("", "Description");
 	}
 
-	@Test
-	public void testConstructorEmptyOrNullDescription() {
-		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", null, newEmptySettingDescriptorList());
-		assertFalse( Strings.isNullOrEmpty(desc.getDescription()));
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testGetSettingDescriptorEmptyString() {
+		final List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
+		final DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
+
+		desc.getSettingDescriptor("");
 	}
-	
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testGetSettingDescriptorNull() {
+		final List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
+		final DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
+
+		desc.getSettingDescriptor(null);
+	}
+
 	@Test
 	public void testGetSettingDescriptors() {
-		List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
-		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
-		
-		ImmutableList<String> names = desc.getSettingDescriptorNames();
-		assertEquals( names.size(), settingDescriptors.size());
-		
-		for( int i = 0; i < names.size(); i++ ) {
-			Optional<SettingDescriptor<?>> settingDesc = desc.getSettingDescriptor(settingDescriptors.get(i).getName());
-			
+		final List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
+		final DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
+
+		final ImmutableList<String> names = desc.getSettingDescriptorNames();
+		assertEquals(names.size(), settingDescriptors.size());
+
+		for (int i = 0; i < names.size(); i++) {
+			final Optional<SettingDescriptor<?>> settingDesc = desc.getSettingDescriptor(settingDescriptors.get(i).getName());
+
 			assertTrue(settingDesc.isPresent());
 			assertEquals(settingDesc.get(), settingDescriptors.get(i));
 		}
 	}
-	
-	@Test
-	public void testGetUnknownSettingDescriptor() {
-		List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
-		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
-		
-		assertFalse(desc.hasSettingDescriptor("Waka"));
-		
-		Optional<SettingDescriptor<?>> settingDesc = desc.getSettingDescriptor("Waka");
-		assertFalse(settingDesc.isPresent());
-	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testGetSettingDescriptorNull() {
-		List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
-		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
-		
-		desc.getSettingDescriptor(null);
-	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testGetSettingDescriptorEmptyString() {
-		List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
-		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
-		
-		desc.getSettingDescriptor("");
-	}
-	
-	@Test
-	public void testDuplicateNames() {
-		List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorListWithDuplicates();
-		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
-		
-		Optional<SettingDescriptor<?>> settingDescriptor = desc.getSettingDescriptor("Setting2");
-		
-		assertTrue(settingDescriptor.isPresent());
-		assertEquals(settingDescriptor.get().getDescription(), "Another Description of setting2");
-	}
-	
+
 	@Test
 	public void testGetter() {
-		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description");
-		
+		final DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description");
+
 		assertEquals(desc.getDescription(), "Description");
 		assertEquals(desc.getName(), "Name");
 	}
-	
+
 	@Test
-	public void testCreateDefaultConfiguration() {
-		List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
-		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
-		
-		Configuration configuration = desc.createDefaultConfiguration();
-		
-		assertNotNull(configuration);
-		
-		for( SettingDescriptor<?> settingDescriptor : settingDescriptors ) {
-			assertEquals(configuration.get(settingDescriptor.getName()), settingDescriptor.getDefaultValue());
-		}
+	public void testGetUnknownSettingDescriptor() {
+		final List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
+		final DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
+
+		assertFalse(desc.hasSettingDescriptor("Waka"));
+
+		final Optional<SettingDescriptor<?>> settingDesc = desc.getSettingDescriptor("Waka");
+		assertFalse(settingDesc.isPresent());
 	}
-	
+
+	@Test
+	public void testSmallConstructor() throws Throwable {
+		final DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description");
+		assertNotNull(desc);
+	}
+
 	private static List<SettingDescriptor<?>> newEmptySettingDescriptorList() {
-		return Lists.<SettingDescriptor<?>>newArrayList();
+		return Lists.<SettingDescriptor<?>> newArrayList();
 	}
-	
+
 	private static List<SettingDescriptor<?>> newSettingDescriptorList() {
-		List<SettingDescriptor<?>> settingDescriptors = Lists.newArrayList();
+		final List<SettingDescriptor<?>> settingDescriptors = Lists.newArrayList();
 		settingDescriptors.add(new SettingDescriptor<Integer>("Setting1", "Description of setting1", "Integer", 100, true, true));
 		settingDescriptors.add(new SettingDescriptor<String>("Setting2", "Description of setting2", "String", "Hallo", false, false));
 		return settingDescriptors;
 	}
-	
+
 	private static List<SettingDescriptor<?>> newSettingDescriptorListWithDuplicates() {
-		List<SettingDescriptor<?>> settingDescriptors = Lists.newArrayList();
+		final List<SettingDescriptor<?>> settingDescriptors = Lists.newArrayList();
 		settingDescriptors.add(new SettingDescriptor<Integer>("Setting1", "Description of setting1", "Integer", 100, true, true));
 		settingDescriptors.add(new SettingDescriptor<String>("Setting2", "Description of setting2", "String", "Hallo", false, false));
 		settingDescriptors.add(new SettingDescriptor<String>("Setting2", "Another Description of setting2", "String", "Hallo Again", false, true));

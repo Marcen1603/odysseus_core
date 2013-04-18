@@ -22,24 +22,24 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 public class ContainerSelectionPage extends WizardNewFileCreationPage {
 
 	private final String defaultFileName;
-	
-	public ContainerSelectionPage(String pageName, IStructuredSelection selection ) {
+
+	public ContainerSelectionPage(String pageName, IStructuredSelection selection) {
 		this(pageName, selection, null);
 	}
-	
-	public ContainerSelectionPage(String pageName, IStructuredSelection selection, String defaultFileName ) {
+
+	public ContainerSelectionPage(String pageName, IStructuredSelection selection, String defaultFileName) {
 		super(pageName, selection);
-		
+
 		setTitle("Choose project and folder");
 		setDescription("Choose the project (and folder) in which the new file should be placed.");
-		
+
 		this.defaultFileName = defaultFileName == null ? "" : defaultFileName;
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		setFileName(defaultFileName);
 	}
-	
+
 }

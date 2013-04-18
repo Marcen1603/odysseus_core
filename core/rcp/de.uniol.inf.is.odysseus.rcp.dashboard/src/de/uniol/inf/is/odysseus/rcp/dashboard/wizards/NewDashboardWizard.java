@@ -36,31 +36,31 @@ public class NewDashboardWizard extends Wizard implements INewWizard {
 	}
 
 	@Override
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		containerSelectionPage = new ContainerSelectionPage("Select file name", selection, "dashboard." + DashboardPlugIn.DASHBOARD_EXTENSION);
-	}
-
-	@Override
 	public void addPages() {
 		addPage(containerSelectionPage);
 	}
 
 	@Override
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		containerSelectionPage = new ContainerSelectionPage("Select file name", selection, "dashboard." + DashboardPlugIn.DASHBOARD_EXTENSION);
+	}
+
+	@Override
 	public boolean performFinish() {
 		try {
-			String dashboardFileName = getDashboardPartFileName(containerSelectionPage);
+			final String dashboardFileName = getDashboardPartFileName(containerSelectionPage);
 
-			IPath path = containerSelectionPage.getContainerFullPath().append(dashboardFileName);
-			IFile dashboardFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+			final IPath path = containerSelectionPage.getContainerFullPath().append(dashboardFileName);
+			final IFile dashboardFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 			dashboardFile.create(null, IResource.NONE, null);
 
-			Dashboard dashboard = new Dashboard();
+			final Dashboard dashboard = new Dashboard();
 			FileUtil.write(DASHBOARD_HANDLER.save(dashboard), dashboardFile);
 
 			return true;
-		} catch (CancelException ex) {
+		} catch (final CancelException ex) {
 			return false;
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			LOG.error("Could not finish wizard", ex);
 			return false;
 		}
@@ -69,11 +69,11 @@ public class NewDashboardWizard extends Wizard implements INewWizard {
 	private static String getDashboardPartFileName(ContainerSelectionPage containerPage) throws CancelException {
 		String queryFileName = containerPage.getFileName();
 
-		Optional<String> optionalExtension = getFileExtension(queryFileName);
+		final Optional<String> optionalExtension = getFileExtension(queryFileName);
 		if (!optionalExtension.isPresent()) {
 			queryFileName = queryFileName + "." + DashboardPlugIn.DASHBOARD_EXTENSION;
 		} else {
-			String extension = optionalExtension.get();
+			final String extension = optionalExtension.get();
 			if (!extension.equals(DashboardPlugIn.DASHBOARD_EXTENSION)) {
 
 				if (!isOtherExtensionOk(extension, DashboardPlugIn.DASHBOARD_EXTENSION)) {
@@ -85,7 +85,7 @@ public class NewDashboardWizard extends Wizard implements INewWizard {
 	}
 
 	private static Optional<String> getFileExtension(String fileName) {
-		int lastPoint = fileName.lastIndexOf(".");
+		final int lastPoint = fileName.lastIndexOf(".");
 		if (lastPoint != -1) {
 			return Optional.of(fileName.substring(lastPoint + 1));
 		}
@@ -93,9 +93,9 @@ public class NewDashboardWizard extends Wizard implements INewWizard {
 	}
 
 	private static boolean isOtherExtensionOk(String desiredExtension, String standardExtension) throws CancelException {
-		MessageDialog dlg = new MessageDialog(Display.getCurrent().getActiveShell(), "Custom file extension", null, "Should the file extension '" + desiredExtension + "' be replaced by '"
+		final MessageDialog dlg = new MessageDialog(Display.getCurrent().getActiveShell(), "Custom file extension", null, "Should the file extension '" + desiredExtension + "' be replaced by '"
 				+ standardExtension + "'?", MessageDialog.QUESTION, new String[] { "Replace", "Keep", "Cancel" }, 0);
-		int ret = dlg.open();
+		final int ret = dlg.open();
 		if (ret == 1) {
 			return true;
 		} else if (ret == 0) {

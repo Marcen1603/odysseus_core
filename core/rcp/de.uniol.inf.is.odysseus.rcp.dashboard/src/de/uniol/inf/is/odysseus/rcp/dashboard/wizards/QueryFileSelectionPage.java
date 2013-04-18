@@ -51,7 +51,7 @@ public class QueryFileSelectionPage extends WizardPage {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryFileSelectionPage.class);
 	private final ContainerSelectionPage page1;
-	
+
 	private TableViewer filesTable;
 	private Button copyQueryTextCheck;
 
@@ -67,47 +67,56 @@ public class QueryFileSelectionPage extends WizardPage {
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
-		Composite rootComposite = new Composite(parent, SWT.NONE);
+		final Composite rootComposite = new Composite(parent, SWT.NONE);
 		rootComposite.setLayoutData(new GridData((GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL)));
 		rootComposite.setLayout(new GridLayout(1, true));
-		
-		Composite tableComposite = new Composite(rootComposite, SWT.NONE);
+
+		final Composite tableComposite = new Composite(rootComposite, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		TableColumnLayout tableColumnLayout = new TableColumnLayout();
+		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
 		filesTable = new TableViewer(tableComposite, SWT.FULL_SELECTION);
-		Table table = filesTable.getTable();
+		final Table table = filesTable.getTable();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(true);
 
-		TableViewerColumn fileNameColumn = new TableViewerColumn(filesTable, SWT.NONE);
+		final TableViewerColumn fileNameColumn = new TableViewerColumn(filesTable, SWT.NONE);
 		fileNameColumn.getColumn().setText("Query file");
 		tableColumnLayout.setColumnData(fileNameColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		fileNameColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				IFile file = (IFile)cell.getElement();
+				final IFile file = (IFile) cell.getElement();
 				cell.setText(file.getName());
 			}
 		});
-		
+
 		filesTable.setContentProvider(ArrayContentProvider.getInstance());
 		filesTable.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				if( event.getSelection() != null ) {
+				if (event.getSelection() != null) {
 					setPageComplete(true);
 				}
 			}
-			
+
 		});
-		
+
 		copyQueryTextCheck = new Button(rootComposite, SWT.CHECK);
 		copyQueryTextCheck.setText("Copy query into file (query-file and dashboard part are independent)");
 
 		finishCreation(rootComposite);
+	}
+
+	public IFile getQueryFile() {
+		final IStructuredSelection selection = (IStructuredSelection) filesTable.getSelection();
+		return (IFile) selection.getFirstElement();
+	}
+
+	public boolean isQueryFileCopy() {
+		return copyQueryTextCheck.getSelection();
 	}
 
 	@Override
@@ -115,42 +124,15 @@ public class QueryFileSelectionPage extends WizardPage {
 		super.setVisible(visible);
 
 		if (visible == true) {
-			IPath path = page1.getContainerFullPath();
-			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-			
-			List<IFile> queryFiles = Lists.newArrayList();
+			final IPath path = page1.getContainerFullPath();
+			final IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+
+			final List<IFile> queryFiles = Lists.newArrayList();
 			traverse(resource, queryFiles);
-			
+
 			filesTable.setInput(queryFiles);
 			filesTable.refresh();
 			setPageComplete(false);
-		}
-	}
-	
-	public IFile getQueryFile() {
-		IStructuredSelection selection = (IStructuredSelection) filesTable.getSelection();
-		return (IFile) selection.getFirstElement();
-	}
-	
-	public boolean isQueryFileCopy() {
-		return copyQueryTextCheck.getSelection();
-	}
-
-	private static void traverse(IResource resource, List<IFile> foundFiles) {
-		if( resource instanceof IContainer ) {
-			IContainer container = (IContainer)resource;
-			try {
-				for( IResource res : container.members()) {
-					traverse(res, foundFiles);
-				}
-			} catch (CoreException e) {
-				LOG.error("Exception during finding query-Files.", e);
-			}
-		} else if( resource instanceof IFile ) {
-			IFile file = (IFile)resource;
-			if( OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION.equals(file.getFileExtension())) {
-				foundFiles.add(file);
-			}
 		}
 	}
 
@@ -159,5 +141,23 @@ public class QueryFileSelectionPage extends WizardPage {
 		setMessage(null);
 		setControl(rootComposite);
 		setPageComplete(false);
+	}
+
+	private static void traverse(IResource resource, List<IFile> foundFiles) {
+		if (resource instanceof IContainer) {
+			final IContainer container = (IContainer) resource;
+			try {
+				for (final IResource res : container.members()) {
+					traverse(res, foundFiles);
+				}
+			} catch (final CoreException e) {
+				LOG.error("Exception during finding query-Files.", e);
+			}
+		} else if (resource instanceof IFile) {
+			final IFile file = (IFile) resource;
+			if (OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION.equals(file.getFileExtension())) {
+				foundFiles.add(file);
+			}
+		}
 	}
 }

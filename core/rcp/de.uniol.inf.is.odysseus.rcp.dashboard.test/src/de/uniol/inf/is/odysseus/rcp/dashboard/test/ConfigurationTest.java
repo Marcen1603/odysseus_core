@@ -15,7 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Map;
 
 import org.testng.annotations.BeforeTest;
@@ -33,177 +37,177 @@ public class ConfigurationTest {
 
 	private Configuration configuration;
 	private Map<String, Setting<?>> settingMap;
-	
+
 	@BeforeTest
 	public void createSettingMap() {
-		SettingDescriptor<Integer> intSetting = new SettingDescriptor<Integer>("IntSetting", "Description", "Integer", 100, true, true );
-		SettingDescriptor<String> strSetting = new SettingDescriptor<String>("StrSetting", "Description 2", "String", "Default", true, false);
-		
+		final SettingDescriptor<Integer> intSetting = new SettingDescriptor<Integer>("IntSetting", "Description", "Integer", 100, true, true);
+		final SettingDescriptor<String> strSetting = new SettingDescriptor<String>("StrSetting", "Description 2", "String", "Default", true, false);
+
 		settingMap = Maps.newHashMap();
 		settingMap.put(intSetting.getName(), intSetting.createSetting());
 		settingMap.put(strSetting.getName(), strSetting.createSetting());
-		
+
 		configuration = new Configuration(settingMap);
 	}
-	
+
 	@Test
 	public void testConstructor() {
-		assertNotNull( new Configuration(settingMap));
+		assertNotNull(new Configuration(settingMap));
 	}
-	
+
 	@Test(expectedExceptions = NullPointerException.class)
 	public void testConstructorNullArgs() {
 		new Configuration(null);
 	}
 
 	@Test
-	public void testGetAndSet() {
-		assertEquals(configuration.get("IntSetting"), 100);
-		
-		configuration.set("IntSetting", 200);
-		
-		assertEquals(configuration.get("IntSetting"), 200);
-		
-		configuration.reset("IntSetting");
-		
-		assertEquals(configuration.get("IntSetting"), 100);
-	}
-	
-	@Test
-	public void testSetTwice() throws Throwable {
-		configuration.set("IntSetting", 100);
-		configuration.set("IntSetting", 100);
-	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testGetUnknownSetting() {
-		configuration.get("UnknownSetting");
-	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testSetUnknownSetting() {
-		configuration.set("UnknownSetting", 1000);
-	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testSetNullArgs() throws Throwable {
-		configuration.set(null, 1000);
+	public void testExists() throws Throwable {
+		assertTrue(configuration.exists("IntSetting"));
+		assertFalse(configuration.exists("Waka"));
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testSetEmptyArgs() throws Throwable {
-		configuration.set("", 1000);
+	public void testExistsEmptyArgs() throws Throwable {
+		configuration.exists("");
 	}
-	
+
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testGetNullArgs() throws Throwable {
-		configuration.get(null);
+	public void testExistsNullArgs() throws Throwable {
+		configuration.exists(null);
+	}
+
+	@Test
+	public void testGetAndSet() {
+		assertEquals(configuration.get("IntSetting"), 100);
+
+		configuration.set("IntSetting", 200);
+
+		assertEquals(configuration.get("IntSetting"), 200);
+
+		configuration.reset("IntSetting");
+
+		assertEquals(configuration.get("IntSetting"), 100);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testGetEmptyArgs() throws Throwable {
 		configuration.get("");
 	}
-	
+
+	@Test
+	public void testGetNames() {
+		final ImmutableList<String> settingNames = configuration.getNames();
+		assertEquals(settingNames.size(), 2);
+
+		assertTrue(settingNames.contains("IntSetting"));
+		assertTrue(settingNames.contains("StrSetting"));
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testGetNullArgs() throws Throwable {
+		configuration.get(null);
+	}
+
+	@Test
+	public void testGetSettings() throws Throwable {
+		final ImmutableList<Setting<?>> settings = configuration.getSettings();
+		assertNotNull(settings);
+		assertFalse(settings.isEmpty());
+		assertEquals(settings.size(), settingMap.size());
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testGetUnknownSetting() {
+		configuration.get("UnknownSetting");
+	}
+
+	@Test
+	public void testResetAll() {
+		configuration.set("IntSetting", 200);
+		configuration.set("StrSetting", "Moin");
+
+		configuration.resetAll();
+
+		assertEquals(configuration.get("IntSetting"), 100);
+		assertEquals(configuration.get("StrSetting"), "Default");
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testResetEmptyArgs() throws Throwable {
+		configuration.reset("");
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testResetNullArg() throws Throwable {
+		configuration.reset(null);
+	}
+
 	@Test
 	public void testResetTwice() throws Throwable {
 		configuration.set("IntSetting", 1000);
-		
+
 		configuration.reset("IntSetting");
 		configuration.reset("IntSetting");
 
 		assertEquals(configuration.get("IntSetting"), 100);
 	}
-	
+
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testResetUnknownSetting() {
 		configuration.reset("UnknownSetting");
 	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testResetNullArg() throws Throwable {
-		configuration.reset(null);
-	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testResetEmptyArgs() throws Throwable {
-		configuration.reset("");
-	}
-	
-	@Test
-	public void testGetNames() {
-		ImmutableList<String> settingNames = configuration.getNames();
-		assertEquals(settingNames.size(), 2);
-		
-		assertTrue( settingNames.contains("IntSetting"));
-		assertTrue( settingNames.contains("StrSetting"));
-	}
-	
-	@Test
-	public void testResetAll() {
-		configuration.set("IntSetting", 200);
-		configuration.set("StrSetting", "Moin");
-		
-		configuration.resetAll();
-		
-		assertEquals(configuration.get("IntSetting"), 100);
-		assertEquals(configuration.get("StrSetting"), "Default");
-	}
-	
+
 	@Test
 	public void testSetAsString() throws Throwable {
 		configuration.setAsString("IntSetting", "111");
 		assertEquals(configuration.get("IntSetting"), 111);
 	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testSetAsStringUnknownSetting() throws Throwable {
-		configuration.setAsString("A", "B");
-	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testSetAsStringNullArgs() throws Throwable {
-		configuration.setAsString(null, "1000");
-	}
-	
+
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testSetAsStringEmptyArgs() throws Throwable {
 		configuration.setAsString("", "1000");
 	}
-	
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testSetAsStringNullArgs() throws Throwable {
+		configuration.setAsString(null, "1000");
+	}
+
 	@Test
 	public void testSetAsStringTwice() throws Throwable {
 		configuration.setAsString("IntSetting", "111");
 		configuration.setAsString("IntSetting", "111");
-		assertEquals(configuration.get("IntSetting"), 111);		
+		assertEquals(configuration.get("IntSetting"), 111);
 	}
-	
-	@Test
-	public void testExists() throws Throwable {
-		assertTrue(configuration.exists("IntSetting"));
-		assertFalse(configuration.exists("Waka"));
-	}
-	
+
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testExistsNullArgs() throws Throwable {
-		configuration.exists(null);
+	public void testSetAsStringUnknownSetting() throws Throwable {
+		configuration.setAsString("A", "B");
 	}
-	
+
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testExistsEmptyArgs() throws Throwable {
-		configuration.exists("");
+	public void testSetEmptyArgs() throws Throwable {
+		configuration.set("", 1000);
 	}
-	
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testSetNullArgs() throws Throwable {
+		configuration.set(null, 1000);
+	}
+
 	@Test
-	public void testGetSettings() throws Throwable {
-		ImmutableList<Setting<?>> settings = configuration.getSettings();
-		assertNotNull(settings);
-		assertFalse(settings.isEmpty());
-		assertEquals(settings.size(), settingMap.size());
+	public void testSetTwice() throws Throwable {
+		configuration.set("IntSetting", 100);
+		configuration.set("IntSetting", 100);
 	}
-	
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testSetUnknownSetting() {
+		configuration.set("UnknownSetting", 1000);
+	}
+
 	@Test
 	public void testToString() throws Throwable {
-		assertFalse( Strings.isNullOrEmpty(configuration.toString()));
+		assertFalse(Strings.isNullOrEmpty(configuration.toString()));
 	}
 }

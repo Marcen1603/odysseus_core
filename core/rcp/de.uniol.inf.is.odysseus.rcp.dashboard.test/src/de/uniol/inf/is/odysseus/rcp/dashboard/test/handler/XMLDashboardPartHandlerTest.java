@@ -33,19 +33,19 @@ public class XMLDashboardPartHandlerTest {
 		DashboardPartRegistry.unregisterAll();
 		DashboardPartRegistry.register(TestDashboardPart.class, newDashboardPartDescriptor());
 	}
-	
-	@Test(expectedExceptions = NullPointerException.class)
-	public void testLoadNullArgs() throws Exception {
-		XMLDashboardPartHandler handler = new XMLDashboardPartHandler();
-		handler.load(null);
-	}
-	
+
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testLoadEmptyArrayArgs() throws Exception {
-		XMLDashboardPartHandler handler = new XMLDashboardPartHandler();
-		handler.load(Lists.<String>newArrayList());
+		final XMLDashboardPartHandler handler = new XMLDashboardPartHandler();
+		handler.load(Lists.<String> newArrayList());
 	}
-	
+
+	@Test(expectedExceptions = NullPointerException.class)
+	public void testLoadNullArgs() throws Exception {
+		final XMLDashboardPartHandler handler = new XMLDashboardPartHandler();
+		handler.load(null);
+	}
+
 	private static DashboardPartDescriptor newDashboardPartDescriptor() {
 		return new DashboardPartDescriptor("testDashboardPart", "Something interesting");
 	}

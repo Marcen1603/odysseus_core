@@ -41,18 +41,18 @@ public class AddDashboardPartCommand extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Map<IFile, IDashboardPart> dashboardParts = loadDashboardParts(dashboardPartFiles);
+		final Map<IFile, IDashboardPart> dashboardParts = loadDashboardParts(dashboardPartFiles);
 		if (dashboardParts.isEmpty()) {
 			return null;
 		}
 
-		Dashboard dashboard = dashboardEditor.getDashboard();
+		final Dashboard dashboard = dashboardEditor.getDashboard();
 
-		for (IFile dashboardPartFile : dashboardParts.keySet()) {
-			DashboardPartPlacement place = new DashboardPartPlacement(dashboardParts.get(dashboardPartFile), dashboardPartFile.getFullPath().toString(), 0, 0, 200, 200);
+		for (final IFile dashboardPartFile : dashboardParts.keySet()) {
+			final DashboardPartPlacement place = new DashboardPartPlacement(dashboardParts.get(dashboardPartFile), dashboardPartFile.getFullPath().toString(), 0, 0, 200, 200);
 			dashboard.add(place);
 		}
-		
+
 		dashboardEditor.setDirty(true);
 
 		return null;
@@ -61,14 +61,14 @@ public class AddDashboardPartCommand extends AbstractHandler {
 	@Override
 	public boolean isEnabled() {
 
-		Optional<IEditorPart> editor = getActiveEditor();
+		final Optional<IEditorPart> editor = getActiveEditor();
 		if (!editor.isPresent() || !isValidDashboardEditor(editor.get())) {
 			return false;
-		} 
+		}
 		dashboardEditor = (DashboardEditor) editor.get();
 
-		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
-		List<Object> selectedObjects = getSelectedObjects(selection);
+		final ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
+		final List<Object> selectedObjects = getSelectedObjects(selection);
 		dashboardPartFiles = getDashboardPartFiles(selectedObjects);
 
 		return !dashboardPartFiles.isEmpty();
@@ -77,13 +77,21 @@ public class AddDashboardPartCommand extends AbstractHandler {
 	private static Optional<IEditorPart> getActiveEditor() {
 		try {
 			return Optional.of(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor());
-		} catch( Throwable t ) {
+		} catch (final Throwable t) {
 			return Optional.absent();
 		}
 	}
 
-	private static boolean isValidDashboardEditor(IEditorPart editor) {
-		return editor instanceof DashboardEditor && ((DashboardEditor) editor).hasDashboard();
+	private static List<IFile> getDashboardPartFiles(List<Object> selectedObjects) {
+		LOG.debug("" + selectedObjects);
+		final List<IFile> foundFiles = Lists.newArrayList();
+		for (final Object obj : selectedObjects) {
+			if (isDashboardPartFile(obj)) {
+				foundFiles.add((IFile) obj);
+			}
+		}
+		LOG.debug("" + foundFiles);
+		return foundFiles;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -93,35 +101,27 @@ public class AddDashboardPartCommand extends AbstractHandler {
 		}
 
 		if (selection instanceof StructuredSelection) {
-			StructuredSelection structuredSelection = (StructuredSelection) selection;
+			final StructuredSelection structuredSelection = (StructuredSelection) selection;
 			return ImmutableList.<Object> copyOf(structuredSelection.toList());
 		}
 
 		return Lists.newArrayList();
 	}
 
-	private static List<IFile> getDashboardPartFiles(List<Object> selectedObjects) {
-		LOG.debug(""+selectedObjects);
-		List<IFile> foundFiles = Lists.newArrayList();
-		for (Object obj : selectedObjects) {
-			if (isDashboardPartFile(obj)) {
-				foundFiles.add((IFile) obj);
-			}
-		}
-		LOG.debug(""+foundFiles);
-		return foundFiles;
-	}
-	
 	private static boolean isDashboardPartFile(Object obj) {
 		return obj instanceof IFile && ((IFile) obj).getFileExtension().equals(DashboardPlugIn.DASHBOARD_PART_EXTENSION);
 	}
 
-	private static Map<IFile, IDashboardPart> loadDashboardParts(List<IFile> dashboardPartFiles) {
-		Map<IFile, IDashboardPart> parts = Maps.newHashMap();
+	private static boolean isValidDashboardEditor(IEditorPart editor) {
+		return editor instanceof DashboardEditor && ((DashboardEditor) editor).hasDashboard();
+	}
 
-		for (IFile dashboardPartFile : dashboardPartFiles) {
+	private static Map<IFile, IDashboardPart> loadDashboardParts(List<IFile> dashboardPartFiles) {
+		final Map<IFile, IDashboardPart> parts = Maps.newHashMap();
+
+		for (final IFile dashboardPartFile : dashboardPartFiles) {
 			try {
-				IDashboardPart part = DASHBOARD_PART_HANDLER.load(FileUtil.read(dashboardPartFile));
+				final IDashboardPart part = DASHBOARD_PART_HANDLER.load(FileUtil.read(dashboardPartFile));
 				parts.put(dashboardPartFile, part);
 			} catch (FileNotFoundException | DashboardHandlerException | CoreException ex) {
 				LOG.error("Could not load dashboardPart from file {}!", dashboardPartFile, ex);

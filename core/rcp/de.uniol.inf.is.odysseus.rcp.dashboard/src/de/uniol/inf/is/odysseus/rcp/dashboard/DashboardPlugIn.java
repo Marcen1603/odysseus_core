@@ -29,26 +29,38 @@ import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 public class DashboardPlugIn extends AbstractUIPlugin {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardPlugIn.class);
-	
+
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.dashboard";
 	public static final String EXTENSION_POINT_ID = "de.uniol.inf.is.odysseus.rcp.DashboardPart";
 	public static final String DASHBOARD_PART_EXTENSION = "prt";
 	public static final String DASHBOARD_EXTENSION = "dsh";
-	
+
 	public static final String ADD_DASHBOARD_PART_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.AddDashboardPart";
-	
+
 	private static DashboardPartExtensionPointResolver extensionResolver;
 
 	private static DashboardPlugIn plugin;
 	private static IOdysseusScriptParser scriptParser;
 	private static IExecutor executor;
 	private static ImageManager imageManager;
-	
+
+	public void bindExecutor(IExecutor exec) {
+		executor = exec;
+
+		LOG.debug("Executor {} bound.", exec);
+	}
+
+	public void bindScriptParser(IOdysseusScriptParser parser) {
+		LOG.debug("ScriptParser {} bound.", parser);
+
+		scriptParser = parser;
+	}
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		
+
 		startImpl(context);
 	}
 
@@ -56,66 +68,53 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
-		
+
 		stopImpl();
 	}
 
-	
-	public void bindScriptParser( IOdysseusScriptParser parser ) {
-		LOG.debug("ScriptParser {} bound." , parser);
-		
-		scriptParser = parser;
+	public void unbindExecutor(IExecutor exec) {
+		if (exec == executor) {
+			executor = null;
+
+			LOG.debug("Executor {} unbound.", exec);
+		}
 	}
-	
-	public void unbindScriptParser( IOdysseusScriptParser parser ) {
-		if( parser == scriptParser ) {
+
+	public void unbindScriptParser(IOdysseusScriptParser parser) {
+		if (parser == scriptParser) {
 			LOG.debug("ScriptParser {} unbound.", parser);
-			
+
 			scriptParser = null;
 		}
 	}
-	
-	public void bindExecutor( IExecutor exec ) {
-		executor = exec;
-		
-		LOG.debug("Executor {} bound." , exec);
-	}
-	
-	public void unbindExecutor( IExecutor exec) {
-		if( exec == executor ) {
-			executor = null;
-			
-			LOG.debug("Executor {} unbound." , exec);
-		}
-	}
-	
+
 	public static DashboardPlugIn getDefault() {
 		return plugin;
-	}
-	
-	public static IOdysseusScriptParser getScriptParser() {
-		return scriptParser;
 	}
 
 	public static IExecutor getExecutor() {
 		return executor;
 	}
-	
+
 	public static ImageManager getImageManager() {
 		return imageManager;
+	}
+
+	public static IOdysseusScriptParser getScriptParser() {
+		return scriptParser;
 	}
 
 	private static void startImpl(BundleContext context) {
 		extensionResolver = new DashboardPartExtensionPointResolver();
 		Platform.getExtensionRegistry().addListener(extensionResolver, DashboardPlugIn.EXTENSION_POINT_ID);
-		
+
 		imageManager = new ImageManager(context.getBundle());
 		imageManager.register("dashboardPart", "icons/dashboardPart.jpg");
 	}
-	
+
 	private static void stopImpl() {
 		Platform.getExtensionRegistry().removeListener(extensionResolver);
-		
+
 		imageManager.disposeAll();
 		imageManager = null;
 	}

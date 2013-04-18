@@ -59,10 +59,67 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 	private Dashboard dashboard;
 	private FileEditorInput input;
 	private boolean dirty;
-	
+
 	private DashboardOutlineContentPage outlinePage;
 
 	private Map<IDashboardPart, DashboardPartController> controllers;
+
+	@Override
+	public void createPartControl(Composite parent) {
+		parent.setLayout(new GridLayout());
+		final ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
+
+		dashboard.createPartControl(parent, toolBar);
+		getSite().setSelectionProvider(dashboard);
+
+		try {
+			startDashboard();
+		} catch (final Exception ex) {
+			throw new RuntimeException("Could not start dashboard", ex);
+		}
+	}
+
+	@Override
+	public void dashboardChanged(Dashboard sender) {
+		setDirty(true);
+	}
+
+	@Override
+	public void dashboardPartAdded(Dashboard sender, IDashboardPart addedPart) {
+		final DashboardPartController ctrl = new DashboardPartController(addedPart);
+		try {
+			ctrl.start();
+			controllers.put(addedPart, ctrl);
+		} catch (final ControllerException e) {
+			LOG.error("Could not start dashboard part", e);
+		}
+
+		setDirty(true);
+	}
+
+	@Override
+	public void dashboardPartRemoved(Dashboard sender, IDashboardPart removedPart) {
+		final DashboardPartController ctrl = controllers.get(removedPart);
+		if (ctrl != null) {
+			try {
+				ctrl.stop();
+				controllers.remove(removedPart);
+			} catch (final Exception e) {
+				LOG.error("Could not stop dashboard part", e);
+			}
+		}
+		setDirty(true);
+	}
+
+	@Override
+	public void dispose() {
+		stopDashboard();
+
+		dashboard.dispose();
+		getSite().setSelectionProvider(null);
+
+		super.dispose();
+	}
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -70,10 +127,10 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		try {
 			FileUtil.write(DASHBOARD_HANDLER.save(dashboard), this.input.getFile());
 			setDirty(false);
-		} catch (DashboardHandlerException ex) {
+		} catch (final DashboardHandlerException ex) {
 			LOG.error("Could not save Dashboard!", ex);
 			throw new RuntimeException("Could not save Dashboard!", ex);
-		} catch (CoreException ex) {
+		} catch (final CoreException ex) {
 			LOG.error("Could not save Dashboard!", ex);
 			throw new RuntimeException("Could not save Dashboard!", ex);
 		}
@@ -82,6 +139,25 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 	@Override
 	public void doSaveAs() {
 
+	}
+
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+		if (IContentOutlinePage.class.equals(adapter)) {
+			if (outlinePage == null) {
+				outlinePage = new DashboardOutlineContentPage(dashboard);
+			}
+			return outlinePage;
+		}
+		return super.getAdapter(adapter);
+	}
+
+	public Dashboard getDashboard() {
+		return dashboard;
+	}
+
+	public boolean hasDashboard() {
+		return dashboard != null;
 	}
 
 	@Override
@@ -97,13 +173,13 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 			dashboard = DASHBOARD_HANDLER.load(FileUtil.read(this.input.getFile()), DASHBOARD_PART_HANDLER);
 			dashboard.addListener(this);
 			controllers = createDashboardPartControllers(dashboard.getDashboardPartPlacements());
-		} catch (DashboardHandlerException ex) {
+		} catch (final DashboardHandlerException ex) {
 			LOG.error("Could not load Dashboard!", ex);
 			throw new PartInitException("Could not load Dashboard!", ex);
-		} catch (FileNotFoundException ex) {
+		} catch (final FileNotFoundException ex) {
 			LOG.error("Could not load query file!", ex);
 			throw new PartInitException("Could not load query file!", ex);
-		} catch (CoreException ex) {
+		} catch (final CoreException ex) {
 			LOG.error("Could not load Dashboard!", ex);
 			throw new PartInitException("Could not load Dashboard!", ex);
 		}
@@ -119,49 +195,6 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		return false;
 	}
 
-	@Override
-	public void dispose() {
-		stopDashboard();
-		
-		dashboard.dispose();
-		getSite().setSelectionProvider(null);
-		
-		super.dispose();
-	}
-
-	@Override
-	public void createPartControl(Composite parent) {
-		parent.setLayout(new GridLayout());
-		ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
-		
-		dashboard.createPartControl(parent, toolBar);
-		getSite().setSelectionProvider(dashboard);
-
-		try {
-			startDashboard();
-		} catch (Exception ex) {
-			throw new RuntimeException("Could not start dashboard", ex);
-		}
-	}
-
-	@Override
-	public void setFocus() {
-		if( dashboard != null ) {
-			dashboard.setFocus();
-		}
-	}
-	
-	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
-		if (IContentOutlinePage.class.equals(adapter)) {
-			if (outlinePage == null) {
-				outlinePage = new DashboardOutlineContentPage(dashboard);
-			}
-			return outlinePage;
-		}
-		return super.getAdapter(adapter);
-	}
-	
 	public void setDirty(boolean dirty) {
 		if (dirty != this.dirty) {
 			this.dirty = dirty;
@@ -173,66 +206,36 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 			});
 		}
 	}
-	
-	public Dashboard getDashboard() {
-		return dashboard;
-	}
-	
-	public boolean hasDashboard() {
-		return dashboard != null;
-	}
 
 	@Override
-	public void dashboardChanged(Dashboard sender) {
-		setDirty(true);
-	}
-	
-
-	@Override
-	public void dashboardPartAdded(Dashboard sender, IDashboardPart addedPart) {
-		DashboardPartController ctrl = new DashboardPartController(addedPart);
-		try {
-			ctrl.start();
-			controllers.put(addedPart, ctrl);
-		} catch (ControllerException e) {
-			LOG.error("Could not start dashboard part", e);
+	public void setFocus() {
+		if (dashboard != null) {
+			dashboard.setFocus();
 		}
-		
-		setDirty(true);
 	}
 
-	@Override
-	public void dashboardPartRemoved(Dashboard sender, IDashboardPart removedPart) {
-		DashboardPartController ctrl = controllers.get(removedPart);
-		if( ctrl != null ) {
+	protected final void startDashboard() {
+		for (final DashboardPartController controller : controllers.values()) {
 			try {
-				ctrl.stop();
-				controllers.remove(removedPart);
-			} catch (Exception e) {
-				LOG.error("Could not stop dashboard part", e);
+				controller.start();
+			} catch (final ControllerException ex) {
+				LOG.error("Could not start dashboard", ex);
 			}
-		}
-		setDirty(true);
-	}
-
-	protected final void startDashboard() throws Exception {
-		for (DashboardPartController controller : controllers.values()) {
-			controller.start();
 		}
 	}
 
 	protected final void stopDashboard() {
-		for (DashboardPartController controller : controllers.values()) {
+		for (final DashboardPartController controller : controllers.values()) {
 			controller.stop();
 		}
 	}
 
 	private static Map<IDashboardPart, DashboardPartController> createDashboardPartControllers(ImmutableList<DashboardPartPlacement> dashboardPartPlacements) {
-		Map<IDashboardPart, DashboardPartController> controllers = Maps.newHashMap();
+		final Map<IDashboardPart, DashboardPartController> controllers = Maps.newHashMap();
 
-		for (DashboardPartPlacement place : dashboardPartPlacements) {
-			IDashboardPart part = place.getDashboardPart();
-			DashboardPartController controller = new DashboardPartController(part);
+		for (final DashboardPartPlacement place : dashboardPartPlacements) {
+			final IDashboardPart part = place.getDashboardPart();
+			final DashboardPartController controller = new DashboardPartController(part);
 			controllers.put(part, controller);
 		}
 

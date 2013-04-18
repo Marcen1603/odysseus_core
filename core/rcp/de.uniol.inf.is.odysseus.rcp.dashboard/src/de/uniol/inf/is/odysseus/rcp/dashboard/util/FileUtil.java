@@ -29,43 +29,43 @@ import com.google.common.collect.Lists;
 
 public class FileUtil {
 
-	public static List<String> read(IFile file) throws CoreException {
-		if (!file.isSynchronized(IResource.DEPTH_ZERO)) {
-			file.refreshLocal(IResource.DEPTH_ZERO, null);
-		}
-		Scanner lineScanner = new Scanner(file.getContents());
-
-		List<String> lines = Lists.newArrayList();
-		while (lineScanner.hasNextLine()) {
-			lines.add(lineScanner.nextLine());
-		}
-		
-		lineScanner.close();
-		
-		return ImmutableList.copyOf(lines);		
-	}
-	
-	public static void write( List<String> lines, IFile to ) throws CoreException {
-		String oneString = concat(lines);
-		to.setContents(new ByteArrayInputStream(oneString.getBytes()), IFile.KEEP_HISTORY | IFile.FORCE, null);
-	}
-
 	public static String concat(List<String> lines) {
-		StringBuilder sb = new StringBuilder();
-		for( String line : lines ) {
+		final StringBuilder sb = new StringBuilder();
+		for (final String line : lines) {
 			sb.append(line).append("\n");
 		}
 		return sb.toString();
 	}
 
-	public static List<String> separateLines(String queryText) {
-		Scanner lineScanner = new Scanner(queryText);
+	public static List<String> read(IFile file) throws CoreException {
+		if (!file.isSynchronized(IResource.DEPTH_ZERO)) {
+			file.refreshLocal(IResource.DEPTH_ZERO, null);
+		}
+		final Scanner lineScanner = new Scanner(file.getContents());
 
-		List<String> lines = Lists.newArrayList();
+		final List<String> lines = Lists.newArrayList();
+		while (lineScanner.hasNextLine()) {
+			lines.add(lineScanner.nextLine());
+		}
+
+		lineScanner.close();
+
+		return ImmutableList.copyOf(lines);
+	}
+
+	public static List<String> separateLines(String queryText) {
+		final Scanner lineScanner = new Scanner(queryText);
+
+		final List<String> lines = Lists.newArrayList();
 		while (lineScanner.hasNextLine()) {
 			lines.add(lineScanner.nextLine());
 		}
 		lineScanner.close();
 		return lines;
+	}
+
+	public static void write(List<String> lines, IFile to) throws CoreException {
+		final String oneString = concat(lines);
+		to.setContents(new ByteArrayInputStream(oneString.getBytes()), IResource.KEEP_HISTORY | IResource.FORCE, null);
 	}
 }

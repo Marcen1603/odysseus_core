@@ -31,32 +31,22 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 public class DashboardOutlineContentPage extends ContentOutlinePage implements IDashboardListener, ISelectionListener {
 
 	private final Dashboard dashboard;
-	
+
 	public DashboardOutlineContentPage(Dashboard dashboard) {
 		this.dashboard = Preconditions.checkNotNull(dashboard, "Dashboard for Outline-content must not be null!");
 		this.dashboard.addListener(this);
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		
-		TreeViewer viewer = getTreeViewer();
+
+		final TreeViewer viewer = getTreeViewer();
 		viewer.setContentProvider(new DashboardOutlineContentProvider());
 		viewer.setLabelProvider(new DashboardOutlineLabelProvider());
 		viewer.setInput(dashboard);
-		
+
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
-	}
-	
-	public void refresh() {
-		getTreeViewer().refresh();
-	}
-	
-	@Override
-	public void dispose() {
-		this.dashboard.removeListener(this);
-		super.dispose();
 	}
 
 	@Override
@@ -65,17 +55,27 @@ public class DashboardOutlineContentPage extends ContentOutlinePage implements I
 	}
 
 	@Override
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {	
-		if (part instanceof DashboardEditor && selection instanceof IStructuredSelection && !selection.isEmpty()) {
-			setSelection(selection);
-		}
-	}
-
-	@Override
 	public void dashboardPartAdded(Dashboard sender, IDashboardPart addedPart) {
 	}
 
 	@Override
 	public void dashboardPartRemoved(Dashboard sender, IDashboardPart removedPart) {
+	}
+
+	@Override
+	public void dispose() {
+		this.dashboard.removeListener(this);
+		super.dispose();
+	}
+
+	public void refresh() {
+		getTreeViewer().refresh();
+	}
+
+	@Override
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if (part instanceof DashboardEditor && selection instanceof IStructuredSelection && !selection.isEmpty()) {
+			setSelection(selection);
+		}
 	}
 }

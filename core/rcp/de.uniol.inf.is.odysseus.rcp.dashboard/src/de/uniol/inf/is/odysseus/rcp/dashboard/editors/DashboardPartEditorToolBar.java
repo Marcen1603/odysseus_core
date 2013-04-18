@@ -31,44 +31,44 @@ public class DashboardPartEditorToolBar {
 	private final ToolBar toolBar;
 	private final ToolItem startStopItem;
 	private final ToolItem pauseUnpauseItem;
-	
+
 	private final DashboardPartEditor editor;
-	
-	public DashboardPartEditorToolBar( Composite presentationTab, final DashboardPartEditor editor ) {
-		
+
+	public DashboardPartEditorToolBar(Composite presentationTab, final DashboardPartEditor editor) {
+
 		Preconditions.checkNotNull(presentationTab, "PartController must not be null!");
 		this.editor = Preconditions.checkNotNull(editor, "PartController must not be null!");
-		
+
 		final DashboardPartController partController = editor.getDashboardPartController();
-		
+
 		toolBar = new ToolBar(presentationTab, SWT.WRAP | SWT.RIGHT);
-		
+
 		startStopItem = createToolItem(toolBar, "Stop");
 		startStopItem.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if( startStopItem.getText().equals("Stop")) {
+				if (startStopItem.getText().equals("Stop")) {
 					partController.stop();
 					setStatusToStopped();
 				} else {
 					try {
-						partController.start();			
-					} catch (Exception ex) {
+						partController.start();
+					} catch (final Exception ex) {
 						throw new RuntimeException("Could not start DashboardPart", ex);
 					}
-					
+
 					setStatusToStarted();
 				}
 			}
 		});
-		
+
 		pauseUnpauseItem = createToolItem(toolBar, "Pause");
 		pauseUnpauseItem.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(pauseUnpauseItem.getText().equals("Pause")) {
+				if (pauseUnpauseItem.getText().equals("Pause")) {
 					partController.pause();
 					setStatusToPaused();
 				} else {
@@ -76,36 +76,36 @@ public class DashboardPartEditorToolBar {
 					setStatusToResumed();
 				}
 			}
-			
-		});		
+
+		});
 	}
-	
+
 	public ToolBar getToolBar() {
 		return toolBar;
 	}
-	
-	public void setStatusToStarted() {
-		startStopItem.setText("Stop");		
-		editor.setPartNameSuffix(null);
-	}
-	
-	public void setStatusToStopped() {
-		startStopItem.setText("Start");
-		editor.setPartNameSuffix("Stopped");		
-	}
-	
+
 	public void setStatusToPaused() {
 		pauseUnpauseItem.setText("Res.");
 		editor.setPartNameSuffix("Paused");
 	}
-	
+
 	public void setStatusToResumed() {
 		pauseUnpauseItem.setText("Pause");
 		editor.setPartNameSuffix(null);
 	}
-	
+
+	public void setStatusToStarted() {
+		startStopItem.setText("Stop");
+		editor.setPartNameSuffix(null);
+	}
+
+	public void setStatusToStopped() {
+		startStopItem.setText("Start");
+		editor.setPartNameSuffix("Stopped");
+	}
+
 	private static ToolItem createToolItem(ToolBar tb, String title) {
-		ToolItem toolItem = new ToolItem(tb, SWT.PUSH);
+		final ToolItem toolItem = new ToolItem(tb, SWT.PUSH);
 		toolItem.setText(title);
 		toolItem.setWidth(100);
 		return toolItem;

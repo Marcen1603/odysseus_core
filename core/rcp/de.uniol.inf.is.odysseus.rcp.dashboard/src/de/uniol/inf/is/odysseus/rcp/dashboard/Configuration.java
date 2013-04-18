@@ -30,117 +30,117 @@ import com.google.common.collect.Lists;
 public class Configuration {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Configuration.class);
-	
+
 	private final Map<String, Setting<?>> settings;
 	private final List<IConfigurationListener> listeners = Lists.newArrayList();
-	
-	public Configuration( Map<String, Setting<?>> settings) {
+
+	public Configuration(Map<String, Setting<?>> settings) {
 		this.settings = Preconditions.checkNotNull(settings, "Map of settings must not be null!");
 	}
-	
+
+	public void addListener(IConfigurationListener listener) {
+		Preconditions.checkNotNull(listener, "Listener must not be null!");
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+
+	public boolean exists(String settingName) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
+		return settings.containsKey(settingName);
+	}
+
 	@SuppressWarnings("unchecked")
-	public <T> T get( String settingName ) {
+	public <T> T get(String settingName) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
 		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
-		
+
 		return (T) settings.get(settingName).get();
 	}
-	
-	public <T> void set( String settingName, T value ) {
+
+	public ImmutableList<String> getNames() {
+		return ImmutableList.copyOf(settings.keySet());
+	}
+
+	public ImmutableList<Setting<?>> getSettings() {
+		return ImmutableList.copyOf(settings.values());
+	}
+
+	public void removeListener(IConfigurationListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
+
+	public void reset(String settingName) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
 		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
-		
-		Setting<T> setting = getSettingImpl(settingName);
-		T oldValue = setting.get();
-		if( !Objects.equal(oldValue, value)) {
+
+		final Setting<?> setting = getSettingImpl(settingName);
+		final Object oldValue = setting.get();
+		setting.reset();
+		final Object newValue = setting.get();
+		if (!Objects.equal(oldValue, newValue)) {
+			fireSettingChangeEvent(setting, oldValue);
+		}
+	}
+
+	public void resetAll() {
+		for (final String settingName : getNames()) {
+			reset(settingName);
+		}
+	}
+
+	public <T> void set(String settingName, T value) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
+		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
+
+		final Setting<T> setting = getSettingImpl(settingName);
+		final T oldValue = setting.get();
+		if (!Objects.equal(oldValue, value)) {
 			setting.set(value);
 			fireSettingChangeEvent(setting, oldValue);
 		}
 	}
-	
-	public void setAsString( String settingName, String value ) {
+
+	public void setAsString(String settingName, String value) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
 		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
-		
-		Setting<?> setting = getSettingImpl(settingName);
-		Object oldValue = setting.get();
+
+		final Setting<?> setting = getSettingImpl(settingName);
+		final Object oldValue = setting.get();
 		setting.setAsString(value);
-		Object newValue = setting.get();
-		if( !Objects.equal(oldValue, newValue)) {
+		final Object newValue = setting.get();
+		if (!Objects.equal(oldValue, newValue)) {
 			fireSettingChangeEvent(setting, oldValue);
 		}
 	}
-	
-	public boolean exists( String settingName ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
-		return settings.containsKey(settingName);
-	}
-	
-	public ImmutableList<String> getNames() {
-		return ImmutableList.copyOf(settings.keySet());
-	}
-	
-	public ImmutableList<Setting<?>> getSettings() {
-		return ImmutableList.copyOf(settings.values());
-	}
-	
-	public void reset( String settingName ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
-		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
-		
-		Setting<?> setting = getSettingImpl(settingName);
-		Object oldValue = setting.get();
-		setting.reset();
-		Object newValue = setting.get();
-		if( !Objects.equal(oldValue, newValue)) {
-			fireSettingChangeEvent(setting, oldValue);
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("Configuration{");
+		for (final String settingName : settings.keySet()) {
+			sb.append(settingName).append("=").append(settings.get(settingName)).append(", ");
 		}
+		sb.append("}");
+		return sb.toString();
 	}
-	
-	public void resetAll() {
-		for( String settingName : getNames() ) {
-			reset(settingName);
-		}
-	}
-	
-	public void addListener( IConfigurationListener listener ) {
-		Preconditions.checkNotNull(listener, "Listener must not be null!");
-		synchronized(listeners) {
-			listeners.add(listener);
-		}
-	}
-	
-	public void removeListener( IConfigurationListener listener ) {
-		synchronized(listeners) {
-			listeners.remove(listener);
-		}
-	}
-	
+
 	private void fireSettingChangeEvent(Setting<?> setting, Object oldValue) {
-		synchronized( listeners ) {
-			for( IConfigurationListener listener : listeners ) {
+		synchronized (listeners) {
+			for (final IConfigurationListener listener : listeners) {
 				try {
 					listener.settingChanged(setting.getSettingDescriptor().getName(), oldValue, setting.get());
-				} catch( Throwable t ) {
+				} catch (final Throwable t) {
 					LOG.error("Exception during executing listener for configuration", t);
 				}
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private <T> Setting<T> getSettingImpl( String settingName ) {
+	private <T> Setting<T> getSettingImpl(String settingName) {
 		return (Setting<T>) settings.get(settingName);
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Configuration{");
-		for( String settingName : settings.keySet()) {
-			sb.append(settingName).append("=").append(settings.get(settingName)).append(", ");
-		}
-		sb.append("}");
-		return sb.toString();
 	}
 }

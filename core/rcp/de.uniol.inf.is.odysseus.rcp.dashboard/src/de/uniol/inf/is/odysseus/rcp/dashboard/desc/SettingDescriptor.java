@@ -27,80 +27,73 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 public final class SettingDescriptor<T> {
 
 	// lower case!
-	public static final ImmutableList<String> SUPPORTED_TYPES = ImmutableList.<String>builder()
-			.add("string") 
-			.add("integer")
-			.add("long")
-			.add("double")
-			.add("float")
-			.add("boolean")
-			.build();
-	
+	public static final ImmutableList<String> SUPPORTED_TYPES = ImmutableList.<String> builder().add("string").add("integer").add("long").add("double").add("float").add("boolean").build();
+
 	private static final Logger LOG = LoggerFactory.getLogger(SettingDescriptor.class);
 	private static final String DEFAULT_DESCRIPTION = "Description of Setting";
-	
+
 	private final String name;
 	private final String description;
 	private final String type;
-	
+
 	private final T defaultValue;
 	private final boolean isOptional;
 	private final boolean isEditable;
-	
-	public SettingDescriptor( String name, String description, String type, T defaultValue, boolean optional, boolean editable ) {
-		
+
+	public SettingDescriptor(String name, String description, String type, T defaultValue, boolean optional, boolean editable) {
+
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name of SettingDescriptor must not be null or empty!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(type), "Type of SettingDescriptor must not be null or empty!");
 		Preconditions.checkArgument(SUPPORTED_TYPES.contains(type.toLowerCase()), "Type %s not supported!", type);
 		Preconditions.checkArgument(checkDefaultValueWithType(defaultValue, type), "Default value %s is not from Type %s.", defaultValue, type);
-		
+
 		this.name = name;
 		this.type = type;
-		
-		if( Strings.isNullOrEmpty(description)) {
+
+		if (Strings.isNullOrEmpty(description)) {
 			LOG.warn("Description of Setting " + name + " is null or empty!");
 			this.description = DEFAULT_DESCRIPTION + " " + name;
 		} else {
 			this.description = description;
 		}
-		
+
 		this.defaultValue = defaultValue;
 		isOptional = optional;
 		isEditable = editable;
 	}
 
-	public String getName() {
-		return name;
-	}
-	
-	public T getDefaultValue() {
-		return defaultValue;
-	}
-	
-	public String getDescription() {
-		return description;
-	}
-	
-	public boolean isOptional() {
-		return isOptional;
-	}
-	
-	public boolean isEditable() {
-		return isEditable;
-	}
-	
 	public Setting<T> createSetting() {
 		return new Setting<T>(this);
 	}
-	
+
+	public T getDefaultValue() {
+		return defaultValue;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getName() {
+		return name;
+	}
+
 	public String getType() {
 		return type;
 	}
-	
+
+	public boolean isEditable() {
+		return isEditable;
+	}
+
+	public boolean isOptional() {
+		return isOptional;
+	}
+
 	private static boolean checkDefaultValueWithType(Object defaultValue, String type) {
-		if( defaultValue == null ) {
+		if (defaultValue == null) {
 			return true;
 		}
-		return defaultValue.getClass().getSimpleName().equalsIgnoreCase(type);		
+		return defaultValue.getClass().getSimpleName().equalsIgnoreCase(type);
 	}
 }

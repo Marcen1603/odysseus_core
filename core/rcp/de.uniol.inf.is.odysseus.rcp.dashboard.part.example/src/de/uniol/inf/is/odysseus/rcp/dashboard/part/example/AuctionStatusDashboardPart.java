@@ -68,39 +68,6 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 	}
 
 	@Override
-	public void settingChanged(String settingName, Object oldValue, Object newValue) {
-
-	}
-
-	@Override
-	public void streamElementRecieved(IStreamObject<?> element, int port) {
-		if (!(element instanceof Tuple)) {
-			LOG.error("Could not use stream-objects of class {}. Only {} supported.", element.getClass(), Tuple.class);
-			return;
-		}
-
-		try {
-			Tuple<?> tuple = (Tuple<?>) element;
-			double status = tuple.getAttribute(0);
-			int auctionId = tuple.getAttribute(2);
-
-			updateStatus(auctionId, status);
-
-		} catch (Throwable t) {
-			LOG.error("Could not process Tuple {}!", element, t);
-		}
-	}
-
-	@Override
-	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
-
-	}
-
-	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
-	}
-	
-	@Override
 	public void paintControl(PaintEvent e) {
 		synchronized (markerMap) {
 			checkTimestamps();
@@ -108,12 +75,12 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 			final int markerCount = markerMap.size();
 
 			if (markerCount > 0) {
-				GC gc = e.gc;
+				final GC gc = e.gc;
 
 				int x = MARKER_SPACE_PIXELS;
 				int y = MARKER_SPACE_PIXELS;
 				gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
-				for (Double auctionId : markerMap.keySet()) {
+				for (final Double auctionId : markerMap.keySet()) {
 					gc.setBackground(colorMap[markerMap.get(auctionId).intValue()]);
 					gc.fillOval(x, y, MARKER_SIZE_PIXELS, MARKER_SIZE_PIXELS);
 					gc.drawOval(x, y, MARKER_SIZE_PIXELS, MARKER_SIZE_PIXELS);
@@ -129,16 +96,49 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 		}
 	}
 
+	@Override
+	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
+
+	}
+
+	@Override
+	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	}
+
+	@Override
+	public void settingChanged(String settingName, Object oldValue, Object newValue) {
+
+	}
+
+	@Override
+	public void streamElementRecieved(IStreamObject<?> element, int port) {
+		if (!(element instanceof Tuple)) {
+			LOG.error("Could not use stream-objects of class {}. Only {} supported.", element.getClass(), Tuple.class);
+			return;
+		}
+
+		try {
+			final Tuple<?> tuple = (Tuple<?>) element;
+			final double status = tuple.getAttribute(0);
+			final int auctionId = tuple.getAttribute(2);
+
+			updateStatus(auctionId, status);
+
+		} catch (final Throwable t) {
+			LOG.error("Could not process Tuple {}!", element, t);
+		}
+	}
+
 	private void checkTimestamps() {
-		List<Double> oldAuctionIds = Lists.newArrayList();
-		for (Double auctionId : markerMap.keySet()) {
-			long timestamp = timestampMap.get(auctionId);
+		final List<Double> oldAuctionIds = Lists.newArrayList();
+		for (final Double auctionId : markerMap.keySet()) {
+			final long timestamp = timestampMap.get(auctionId);
 			if (System.currentTimeMillis() - timestamp > MAX_LIFETIME_MILLIS) {
 				oldAuctionIds.add(auctionId);
 			}
 		}
 
-		for (Double oldAuctionId : oldAuctionIds) {
+		for (final Double oldAuctionId : oldAuctionIds) {
 			timestampMap.remove(oldAuctionId);
 			markerMap.remove(oldAuctionId);
 		}

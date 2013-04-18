@@ -57,8 +57,20 @@ public class LineChartDashboardPart extends AbstractChartDashboardPart {
 	}
 
 	@Override
-	protected Dataset createDataset() {
-		return new DefaultCategoryDataset();
+	protected void addPunctuationToChart(IPunctuation punctuation, int port) {
+
+	}
+
+	@Override
+	protected void addStreamElementToChart(Tuple<?> element, int port) {
+		final Object[] xAxisValues = determineValues(element, xAttributes);
+		final Object[] yAxisValues = determineValues(element, yAttributes);
+
+		for (int i = 0; i < xAxisValues.length; i++) {
+			if (xAxisValues[i] != null && yAxisValues[i] != null) {
+				addDataValue((Number) yAxisValues[i], yAttributes[i], (Comparable<?>) xAxisValues[i]);
+			}
+		}
 	}
 
 	@Override
@@ -68,10 +80,15 @@ public class LineChartDashboardPart extends AbstractChartDashboardPart {
 	}
 
 	@Override
+	protected Dataset createDataset() {
+		return new DefaultCategoryDataset();
+	}
+
+	@Override
 	protected void decorateChart(JFreeChart chart) {
 		chart.setBackgroundPaint(Color.white);
 
-		CategoryPlot plot = (CategoryPlot) chart.getPlot();
+		final CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		plot.setBackgroundPaint(Color.WHITE);
 	}
 
@@ -88,42 +105,12 @@ public class LineChartDashboardPart extends AbstractChartDashboardPart {
 		((DefaultCategoryDataset) getDataset()).clear();
 	}
 
-	@Override
-	protected void addStreamElementToChart(Tuple<?> element, int port) {
-		final Object[] xAxisValues = determineValues(element, xAttributes);
-		final Object[] yAxisValues = determineValues(element, yAttributes);
-
-		for (int i = 0; i < xAxisValues.length; i++) {
-			if (xAxisValues[i] != null && yAxisValues[i] != null) {
-				addDataValue((Number) yAxisValues[i], yAttributes[i], (Comparable<?>) xAxisValues[i]);
-			}
-		}
-	}
-
-	@Override
-	protected void addPunctuationToChart(IPunctuation punctuation, int port) {
-
-	}
-
 	private void addDataValue(final Number value, final Comparable<?> xAxis, final Comparable<?> yAxis) {
-		DefaultCategoryDataset dataset = (DefaultCategoryDataset) getDataset();
+		final DefaultCategoryDataset dataset = (DefaultCategoryDataset) getDataset();
 		dataset.addValue(value, xAxis, yAxis);
 		if (dataset.getColumnCount() > getSettingValue(MAX_DATA_COUNT, 50)) {
 			dataset.removeColumn(0);
 		}
-	}
-
-	private <T> T getSettingValue(String settingName, T defValue) {
-		Configuration config = getConfiguration();
-		if (!config.exists(settingName)) {
-			return defValue;
-		}
-
-		T value = config.get(settingName);
-		if (value instanceof String) {
-			return !Strings.isNullOrEmpty((String) value) ? value : defValue;
-		}
-		return value != null ? value : defValue;
 	}
 
 	private void checkAttributeLists() throws Exception {
@@ -141,7 +128,7 @@ public class LineChartDashboardPart extends AbstractChartDashboardPart {
 	}
 
 	private Object[] determineValues(Tuple<?> element, String[] attributes) {
-		Object[] results = new Number[attributes.length];
+		final Object[] results = new Number[attributes.length];
 
 		for (int i = 0; i < attributes.length; i++) {
 			results[i] = element.getAttribute(accessDescriptors.get(attributes[i]));
@@ -150,10 +137,23 @@ public class LineChartDashboardPart extends AbstractChartDashboardPart {
 		return results;
 	}
 
+	private <T> T getSettingValue(String settingName, T defValue) {
+		final Configuration config = getConfiguration();
+		if (!config.exists(settingName)) {
+			return defValue;
+		}
+
+		final T value = config.get(settingName);
+		if (value instanceof String) {
+			return !Strings.isNullOrEmpty((String) value) ? value : defValue;
+		}
+		return value != null ? value : defValue;
+	}
+
 	private static String[] checkAndSplit(String attributeList) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(attributeList), "AttributeList must not be null or empty!");
 
-		String[] attributes = attributeList.split(ATTRIBUTE_SEPARATOR);
+		final String[] attributes = attributeList.split(ATTRIBUTE_SEPARATOR);
 		for (int i = 0; i < attributes.length; i++) {
 			attributes[i] = attributes[i].trim();
 		}
@@ -162,14 +162,14 @@ public class LineChartDashboardPart extends AbstractChartDashboardPart {
 	}
 
 	private static Map<String, Integer> determineAttributeAccess(String[] attributes, List<IPhysicalOperator> operators) throws Exception {
-		Map<String, Integer> descriptors = Maps.newHashMap();
+		final Map<String, Integer> descriptors = Maps.newHashMap();
 
-		for (String attribute : attributes) {
+		for (final String attribute : attributes) {
 			boolean found = false;
-			for (IPhysicalOperator operator : operators) {
-				SDFSchema schema = operator.getOutputSchema();
+			for (final IPhysicalOperator operator : operators) {
+				final SDFSchema schema = operator.getOutputSchema();
 
-				List<SDFAttribute> sdfAttrs = schema.getAttributes();
+				final List<SDFAttribute> sdfAttrs = schema.getAttributes();
 				for (int i = 0; i < sdfAttrs.size(); i++) {
 					if (attribute.equals(sdfAttrs.get(i).getAttributeName())) {
 						descriptors.put(attribute, i);

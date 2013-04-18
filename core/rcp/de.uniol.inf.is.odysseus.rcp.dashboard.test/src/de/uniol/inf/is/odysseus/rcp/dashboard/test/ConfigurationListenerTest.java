@@ -37,21 +37,26 @@ public class ConfigurationListenerTest {
 
 	@BeforeTest
 	public void createSettingMap() {
-		SettingDescriptor<Integer> intSetting = new SettingDescriptor<Integer>("IntSetting", "Description", "Integer", 100, true, true );
-		SettingDescriptor<String> strSetting = new SettingDescriptor<String>("StrSetting", "Description 2", "String", "Default", true, false);
-		
+		final SettingDescriptor<Integer> intSetting = new SettingDescriptor<Integer>("IntSetting", "Description", "Integer", 100, true, true);
+		final SettingDescriptor<String> strSetting = new SettingDescriptor<String>("StrSetting", "Description 2", "String", "Default", true, false);
+
 		settingMap = Maps.newHashMap();
 		settingMap.put(intSetting.getName(), intSetting.createSetting());
 		settingMap.put(strSetting.getName(), strSetting.createSetting());
-		
+
 		configuration = new Configuration(settingMap);
 	}
-	
+
+	@Test(expectedExceptions = NullPointerException.class)
+	public void testAddListenerNullArgs() throws Throwable {
+		configuration.addListener(null);
+	}
+
 	@Test
 	public void testConfigurationListener() throws Throwable {
-		IConfigurationListener listener = new IConfigurationListener() {
-			
-//			@Mock(invocations = 1)
+		final IConfigurationListener listener = new IConfigurationListener() {
+
+			// @Mock(invocations = 1)
 			@Override
 			public void settingChanged(String settingName, Object oldValue, Object newValue) {
 				assertEquals(settingName, "IntSetting");
@@ -59,22 +64,17 @@ public class ConfigurationListenerTest {
 				assertEquals(newValue, 200);
 			}
 		};
-		
+
 		configuration.addListener(listener);
 		configuration.set("IntSetting", 200);
 		configuration.removeListener(listener);
-		
+
 		configuration.set("IntSetting", 300);
 	}
-	
-	@Test(expectedExceptions = NullPointerException.class)
-	public void testAddListenerNullArgs() throws Throwable {
-		configuration.addListener(null);
-	}
-	
+
 	@Test
 	public void testRemoveListenerNullArgs() throws Throwable {
 		configuration.removeListener(null);
 	}
-	
+
 }

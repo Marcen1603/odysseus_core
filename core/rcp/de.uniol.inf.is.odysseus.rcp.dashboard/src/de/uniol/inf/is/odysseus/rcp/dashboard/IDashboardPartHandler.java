@@ -20,7 +20,8 @@ import java.util.List;
 
 public interface IDashboardPartHandler {
 
-	public List<String> save( IDashboardPart part) throws DashboardHandlerException;
-	public IDashboardPart load( List<String> lines) throws DashboardHandlerException, FileNotFoundException;
-	
+	public IDashboardPart load(List<String> lines) throws DashboardHandlerException, FileNotFoundException;
+
+	public List<String> save(IDashboardPart part) throws DashboardHandlerException;
+
 }

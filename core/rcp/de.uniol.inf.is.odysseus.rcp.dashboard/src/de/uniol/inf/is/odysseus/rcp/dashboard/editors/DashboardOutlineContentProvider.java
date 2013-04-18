@@ -22,24 +22,24 @@ import org.eclipse.jface.viewers.Viewer;
 public class DashboardOutlineContentProvider implements ITreeContentProvider {
 
 	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	public void dispose() {
+	}
+
+	@Override
+	public Object[] getChildren(Object parentElement) {
+		if (parentElement instanceof Dashboard) {
+			final Dashboard dashboard = (Dashboard) parentElement;
+			return dashboard.getDashboardPartPlacements().toArray();
+		} else if (parentElement instanceof DashboardPartPlacement) {
+			final DashboardPartPlacement placement = (DashboardPartPlacement) parentElement;
+			return createList(placement);
+		}
+		return null;
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
-	}
-
-	@Override
-	public Object[] getChildren(Object parentElement) {
-		if( parentElement instanceof Dashboard) {
-			Dashboard dashboard = (Dashboard)parentElement;
-			return dashboard.getDashboardPartPlacements().toArray();
-		} else if( parentElement instanceof DashboardPartPlacement ) {
-			DashboardPartPlacement placement = (DashboardPartPlacement)parentElement;
-			return createList(placement);
-		}
-		return null;
 	}
 
 	@Override
@@ -49,26 +49,20 @@ public class DashboardOutlineContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object parentElement) {
-		if( parentElement instanceof Dashboard) {
-			Dashboard dashboard = (Dashboard)parentElement;
+		if (parentElement instanceof Dashboard) {
+			final Dashboard dashboard = (Dashboard) parentElement;
 			return !dashboard.getDashboardPartPlacements().isEmpty();
-		} else if( parentElement instanceof DashboardPartPlacement ) {
+		} else if (parentElement instanceof DashboardPartPlacement) {
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public void dispose() {
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
-	
-	private static Object[] createList( DashboardPartPlacement placement) {
-		return new Object[] {
-			"File = " + placement.getFilename(),
-			"X = " + placement.getX(),
-			"Y = " + placement.getY(),
-			"W = " + placement.getWidth(),
-			"H = " + placement.getHeight()
-		};
+
+	private static Object[] createList(DashboardPartPlacement placement) {
+		return new Object[] { "File = " + placement.getFilename(), "X = " + placement.getX(), "Y = " + placement.getY(), "W = " + placement.getWidth(), "H = " + placement.getHeight() };
 	}
 }

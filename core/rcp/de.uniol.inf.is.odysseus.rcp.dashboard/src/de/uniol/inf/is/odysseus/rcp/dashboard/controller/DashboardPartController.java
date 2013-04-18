@@ -39,7 +39,7 @@ public final class DashboardPartController {
 	}
 
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartController.class);
-	
+
 	private final IDashboardPart dashboardPart;
 	private List<Integer> queryIDs;
 	private DefaultStreamConnection<IStreamObject<?>> streamConnection;
@@ -54,41 +54,6 @@ public final class DashboardPartController {
 		return dashboardPart;
 	}
 
-	public void start() throws ControllerException {
-		Preconditions.checkState(status != Status.RUNNING, "Container for DashboardParts already started");
-		Preconditions.checkState(status != Status.PAUSED, "Container for DashboardParts is paused and cannot be started.");
-
-		List<String> queryTextLines = dashboardPart.getQueryTextProvider().getQueryText();
-
-		IOdysseusScriptParser parser = DashboardPlugIn.getScriptParser();
-		ISession caller = OdysseusRCPPlugIn.getActiveSession();
-		
-		try {
-			List<?> results = parser.execute( parser.parseScript(queryTextLines.toArray(new String[0]), caller), caller, null);  
-			queryIDs = getExecutedQueryIDs(results);
-	
-			List<IPhysicalOperator> roots = Lists.newArrayList();
-			for (Integer id : queryIDs) {
-				for( IPhysicalOperator rootOfQuery :  DashboardPlugIn.getExecutor().getPhysicalRoots(id) ) {
-					if( !(rootOfQuery instanceof DefaultStreamConnection)) {
-						roots.add(rootOfQuery);
-					}
-				}
-			}
-	
-			streamConnection = new DefaultStreamConnection<IStreamObject<?>>(roots);
-			
-			dashboardPart.onStart(roots);
-			
-			streamConnection.addStreamElementListener(dashboardPart);
-			streamConnection.connect();
-	
-			status = Status.RUNNING;
-		} catch( Exception ex ) {
-			throw new ControllerException("Could not start query for dashboardpart", ex);
-		}
-	}
-
 	public void pause() {
 		if (status == Status.PAUSED) {
 			return;
@@ -100,13 +65,39 @@ public final class DashboardPartController {
 		status = Status.PAUSED;
 	}
 
-	public void unpause() {
-		Preconditions.checkState(status == Status.PAUSED, "Container for DashboardParts cannot be unpaused.");
+	public void start() throws ControllerException {
+		Preconditions.checkState(status != Status.RUNNING, "Container for DashboardParts already started");
+		Preconditions.checkState(status != Status.PAUSED, "Container for DashboardParts is paused and cannot be started.");
 
-		dashboardPart.onUnpause();
-		streamConnection.enable();
+		final List<String> queryTextLines = dashboardPart.getQueryTextProvider().getQueryText();
 
-		status = Status.RUNNING;
+		final IOdysseusScriptParser parser = DashboardPlugIn.getScriptParser();
+		final ISession caller = OdysseusRCPPlugIn.getActiveSession();
+
+		try {
+			final List<?> results = parser.execute(parser.parseScript(queryTextLines.toArray(new String[0]), caller), caller, null);
+			queryIDs = getExecutedQueryIDs(results);
+
+			final List<IPhysicalOperator> roots = Lists.newArrayList();
+			for (final Integer id : queryIDs) {
+				for (final IPhysicalOperator rootOfQuery : DashboardPlugIn.getExecutor().getPhysicalRoots(id)) {
+					if (!(rootOfQuery instanceof DefaultStreamConnection)) {
+						roots.add(rootOfQuery);
+					}
+				}
+			}
+
+			streamConnection = new DefaultStreamConnection<IStreamObject<?>>(roots);
+
+			dashboardPart.onStart(roots);
+
+			streamConnection.addStreamElementListener(dashboardPart);
+			streamConnection.connect();
+
+			status = Status.RUNNING;
+		} catch (final Exception ex) {
+			throw new ControllerException("Could not start query for dashboardpart", ex);
+		}
 	}
 
 	public void stop() {
@@ -117,10 +108,10 @@ public final class DashboardPartController {
 		streamConnection.disconnect();
 		dashboardPart.onStop();
 
-		for (Integer id : queryIDs) {
+		for (final Integer id : queryIDs) {
 			try {
 				DashboardPlugIn.getExecutor().removeQuery(id, OdysseusRCPPlugIn.getActiveSession());
-			} catch( Throwable t ) {
+			} catch (final Throwable t) {
 				LOG.error("Exception during stopping query {}.", id, t);
 			}
 		}
@@ -129,14 +120,23 @@ public final class DashboardPartController {
 		status = Status.STOPPED;
 	}
 
-	private static List<Integer> getExecutedQueryIDs(List<?> results) {
-		List<Integer> ids = Lists.newArrayList();
+	public void unpause() {
+		Preconditions.checkState(status == Status.PAUSED, "Container for DashboardParts cannot be unpaused.");
 
-		for (Object result : results) {
+		dashboardPart.onUnpause();
+		streamConnection.enable();
+
+		status = Status.RUNNING;
+	}
+
+	private static List<Integer> getExecutedQueryIDs(List<?> results) {
+		final List<Integer> ids = Lists.newArrayList();
+
+		for (final Object result : results) {
 			if (result instanceof List) {
 				@SuppressWarnings("rawtypes")
-				List list = (List) result;
-				for (Object obj : list) {
+				final List list = (List) result;
+				for (final Object obj : list) {
 					if (obj instanceof Integer) {
 						ids.add((Integer) obj);
 					}

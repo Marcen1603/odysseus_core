@@ -32,65 +32,65 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 
 public final class DashboardPartDescriptor {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartDescriptor.class);
 
 	private static final String DEFAULT_DESCRIPTION = "DashboardPart description for";
-	
+
 	private final Map<String, SettingDescriptor<?>> settingDescriptors;
 	private final String name;
 	private final String description;
-	
-	public DashboardPartDescriptor( String name, String description) {
-		this(name, description, Lists.<SettingDescriptor<?>>newArrayList());
+
+	public DashboardPartDescriptor(String name, String description) {
+		this(name, description, Lists.<SettingDescriptor<?>> newArrayList());
 	}
-	
-	public DashboardPartDescriptor( String name, String description, List<SettingDescriptor<?>> settingDescriptors) {
+
+	public DashboardPartDescriptor(String name, String description, List<SettingDescriptor<?>> settingDescriptors) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name of DashboardPartDescriptor is null or empty!");
 		Preconditions.checkNotNull(settingDescriptors, "List of setting descriptors must not be null or empty!");
-		
+
 		this.name = name;
-		
-		if( Strings.isNullOrEmpty(description)) {
+
+		if (Strings.isNullOrEmpty(description)) {
 			LOG.warn("Description for DashboardPartDescriptor {} is null or empty.", name);
 			description = DEFAULT_DESCRIPTION + " " + name;
 		}
 		this.description = description;
-		this.settingDescriptors = createSettingsMap( settingDescriptors );
+		this.settingDescriptors = createSettingsMap(settingDescriptors);
 	}
-	
-	public ImmutableList<String> getSettingDescriptorNames() {
-		return ImmutableList.copyOf(settingDescriptors.keySet());
-	}
-	
-	public Optional<SettingDescriptor<?>> getSettingDescriptor( String descName ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(descName), "Name of SettingDescriptor is null or empty!");
-		return Optional.<SettingDescriptor<?>>fromNullable(settingDescriptors.get(descName));
-	}
-	
-	public boolean hasSettingDescriptor( String descName ) {
-		return settingDescriptors.containsKey(descName);
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public String getDescription() {
-		return description;
-	}
-	
+
 	public Configuration createDefaultConfiguration() {
-		Map<String, Setting<?>> settings = Maps.newHashMap();
-		for( String settingDescriptor : settingDescriptors.keySet()) {
+		final Map<String, Setting<?>> settings = Maps.newHashMap();
+		for (final String settingDescriptor : settingDescriptors.keySet()) {
 			settings.put(settingDescriptor, settingDescriptors.get(settingDescriptor).createSetting());
 		}
 		return new Configuration(settings);
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Optional<SettingDescriptor<?>> getSettingDescriptor(String descName) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(descName), "Name of SettingDescriptor is null or empty!");
+		return Optional.<SettingDescriptor<?>> fromNullable(settingDescriptors.get(descName));
+	}
+
+	public ImmutableList<String> getSettingDescriptorNames() {
+		return ImmutableList.copyOf(settingDescriptors.keySet());
+	}
+
+	public boolean hasSettingDescriptor(String descName) {
+		return settingDescriptors.containsKey(descName);
+	}
+
 	private static Map<String, SettingDescriptor<?>> createSettingsMap(List<SettingDescriptor<?>> settingDescriptors) {
-		Map<String, SettingDescriptor<?>> map = Maps.newHashMap();
-		for( SettingDescriptor<?> settingDescriptor : settingDescriptors ) {
+		final Map<String, SettingDescriptor<?>> map = Maps.newHashMap();
+		for (final SettingDescriptor<?> settingDescriptor : settingDescriptors) {
 			map.put(settingDescriptor.getName(), settingDescriptor);
 		}
 		return map;

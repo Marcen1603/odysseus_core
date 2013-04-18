@@ -27,52 +27,52 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 
 	private Configuration configuration;
 	private IDashboardPartQueryTextProvider queryTextProvider;
-	
-	@Override
-	public boolean init(Configuration configuration) {
-		this.configuration = configuration;
-		this.configuration.addListener(this);
-		
-		return true;
-	}
 
 	@Override
 	public Configuration getConfiguration() {
 		return configuration;
 	}
-	
+
 	@Override
 	public IDashboardPartQueryTextProvider getQueryTextProvider() {
 		return queryTextProvider;
 	}
 
 	@Override
-	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
-		this.queryTextProvider = Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
+	public boolean init(Configuration configuration) {
+		this.configuration = configuration;
+		this.configuration.addListener(this);
+
+		return true;
+	}
+
+	@Override
+	public void onLoad(Map<String, String> saved) {
+	}
+
+	@Override
+	public void onPause() {
+	}
+
+	@Override
+	public Map<String, String> onSave() {
+		return Maps.newHashMap();
 	}
 
 	@Override
 	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
 	}
-	
-	@Override
-	public void onPause() {
-	}
-	
-	@Override
-	public void onUnpause() {
-	}
-	
+
 	@Override
 	public void onStop() {
 	}
-	
+
 	@Override
-	public Map<String, String> onSave() {
-		return Maps.newHashMap();
+	public void onUnpause() {
 	}
-	
+
 	@Override
-	public void onLoad(Map<String, String> saved) {
+	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
+		this.queryTextProvider = Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
 	}
 }

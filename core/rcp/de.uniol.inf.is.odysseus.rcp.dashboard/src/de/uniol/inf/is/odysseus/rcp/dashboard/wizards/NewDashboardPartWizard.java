@@ -48,14 +48,21 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
 	private static final Logger LOG = LoggerFactory.getLogger(NewDashboardPartWizard.class);
 	private static final String DEFAULT_DASHBOARD_FILENAME = "DashboardPart." + DashboardPlugIn.DASHBOARD_PART_EXTENSION;
-	
+
 	private ContainerSelectionPage containerPage;
 	private DashboardPartTypeSelectionPage partTypePage;
 	private QueryFileSelectionPage queryFilePage;
-	
+
 	public NewDashboardPartWizard() {
 		super();
 		setWindowTitle("New DashboardPart");
+	}
+
+	@Override
+	public void addPages() {
+		addPage(containerPage);
+		addPage(partTypePage);
+		addPage(queryFilePage);
 	}
 
 	@Override
@@ -64,52 +71,52 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 		partTypePage = new DashboardPartTypeSelectionPage("Select type of Dashboard Part");
 		queryFilePage = new QueryFileSelectionPage("Select query", containerPage);
 	}
-	
-	@Override
-	public void addPages() {
-		addPage(containerPage);
-		addPage(partTypePage);
-		addPage(queryFilePage);
-	}
-	
+
 	@Override
 	public boolean performFinish() {
 		try {
-			String dashboardPartFileName = getDashboardPartFileName(containerPage);
+			final String dashboardPartFileName = getDashboardPartFileName(containerPage);
 
-			IPath path = containerPage.getContainerFullPath().append(dashboardPartFileName);
-			IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+			final IPath path = containerPage.getContainerFullPath().append(dashboardPartFileName);
+			final IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 			dashboardPartFile.create(null, IResource.NONE, null);
-			
-			IDashboardPart part = DashboardPartRegistry.createDashboardPart(partTypePage.getSelectedDashboardPartName());
-			Configuration defaultConfiguration = part.getConfiguration();
-			Map<String, String> settings = partTypePage.getSelectedSettings();
-			for( String key : settings.keySet() ) {
+
+			final IDashboardPart part = DashboardPartRegistry.createDashboardPart(partTypePage.getSelectedDashboardPartName());
+			final Configuration defaultConfiguration = part.getConfiguration();
+			final Map<String, String> settings = partTypePage.getSelectedSettings();
+			for (final String key : settings.keySet()) {
 				defaultConfiguration.setAsString(key, settings.get(key));
-			}			
+			}
 			part.setQueryTextProvider(createQueryTextProvider(queryFilePage.isQueryFileCopy(), queryFilePage.getQueryFile()));
-			
-			IDashboardPartHandler handler = new XMLDashboardPartHandler();
-			List<String> lines = handler.save(part);
+
+			final IDashboardPartHandler handler = new XMLDashboardPartHandler();
+			final List<String> lines = handler.save(part);
 			FileUtil.write(lines, dashboardPartFile);
-			
+
 			return true;
-		} catch (CancelException ex) {
+		} catch (final CancelException ex) {
 			return false;
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			LOG.error("Could not finish wizard", ex);
 			return false;
 		}
 	}
 
+	private static IDashboardPartQueryTextProvider createQueryTextProvider(boolean queryFileCopy, IFile queryFile) {
+		if (queryFileCopy) {
+			return new SimpleQueryTextProvider(queryFile);
+		}
+		return new ResourceFileQueryTextProvider(queryFile);
+	}
+
 	private static String getDashboardPartFileName(ContainerSelectionPage containerPage) throws CancelException {
 		String queryFileName = containerPage.getFileName();
 
-		Optional<String> optionalExtension = getFileExtension(queryFileName);
+		final Optional<String> optionalExtension = getFileExtension(queryFileName);
 		if (!optionalExtension.isPresent()) {
 			queryFileName = queryFileName + "." + DashboardPlugIn.DASHBOARD_PART_EXTENSION;
 		} else {
-			String extension = optionalExtension.get();
+			final String extension = optionalExtension.get();
 			if (!extension.equals(DashboardPlugIn.DASHBOARD_PART_EXTENSION)) {
 
 				if (!isOtherExtensionOk(extension, DashboardPlugIn.DASHBOARD_PART_EXTENSION)) {
@@ -120,30 +127,24 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 		return queryFileName;
 	}
 
-	private static boolean isOtherExtensionOk(String desiredExtension, String standardExtension) throws CancelException {
-		MessageDialog dlg = new MessageDialog(Display.getCurrent().getActiveShell(), "Custom file extension", null, "Should the file extension '" + desiredExtension + "' be replaced by '" + standardExtension + "'?", MessageDialog.QUESTION, new String[] { "Replace", "Keep", "Cancel" }, 0);
-		int ret = dlg.open();
-		if (ret == 1) {
-			return true;
-		} else if (ret == 0) {
-			return false;
-		}
-		throw new CancelException();
-	}
-
 	private static Optional<String> getFileExtension(String fileName) {
-		int lastPoint = fileName.lastIndexOf(".");
+		final int lastPoint = fileName.lastIndexOf(".");
 		if (lastPoint != -1) {
 			return Optional.of(fileName.substring(lastPoint + 1));
 		}
 		return Optional.absent();
 	}
 
-	private static IDashboardPartQueryTextProvider createQueryTextProvider(boolean queryFileCopy, IFile queryFile) {
-		if( queryFileCopy ) {
-			return new SimpleQueryTextProvider(queryFile);
-		} 
-		return new ResourceFileQueryTextProvider(queryFile);
+	private static boolean isOtherExtensionOk(String desiredExtension, String standardExtension) throws CancelException {
+		final MessageDialog dlg = new MessageDialog(Display.getCurrent().getActiveShell(), "Custom file extension", null, "Should the file extension '" + desiredExtension + "' be replaced by '"
+				+ standardExtension + "'?", MessageDialog.QUESTION, new String[] { "Replace", "Keep", "Cancel" }, 0);
+		final int ret = dlg.open();
+		if (ret == 1) {
+			return true;
+		} else if (ret == 0) {
+			return false;
+		}
+		throw new CancelException();
 	}
 }
 

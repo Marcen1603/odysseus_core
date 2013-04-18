@@ -50,84 +50,78 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 public class TableDashboardPart extends AbstractDashboardPart {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TableDashboardPart.class);
-	
+
 	private IPhysicalOperator operator;
 
 	private TableViewer tableViewer;
-	
+
 	private String[] attributes;
 	private int[] positions;
-	
-	private List<Tuple<?>> data = Lists.newArrayList();
+
+	private final List<Tuple<?>> data = Lists.newArrayList();
 	private int maxData = 10;
-	
+
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
-		
-		String attributeList = getConfiguration().get("Attributes");
+
+		final String attributeList = getConfiguration().get("Attributes");
 		if (Strings.isNullOrEmpty(attributeList)) {
 			new Label(parent, SWT.NONE).setText("Attribute List is invalid!");
 			return;
 		}
 
 		attributes = attributeList.trim().split(",");
-		for(int i = 0; i < attributes.length; i++) {
+		for (int i = 0; i < attributes.length; i++) {
 			attributes[i] = attributes[i].trim();
 		}
-		
+
 		maxData = determineMaxData(getConfiguration());
 
-		int colCount = attributes.length;
-		
-		Composite tableComposite = new Composite(parent, SWT.NONE);
+		final int colCount = attributes.length;
+
+		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		TableColumnLayout tableColumnLayout = new TableColumnLayout();
+		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
 		tableViewer = new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION);
-		Table table = tableViewer.getTable();
+		final Table table = tableViewer.getTable();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
-		
-		for( int i = 0; i < colCount; i++ ) {
-			
+
+		for (int i = 0; i < colCount; i++) {
+
 			final int finalI = i;
-			
-			TableViewerColumn fileNameColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+
+			final TableViewerColumn fileNameColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 			fileNameColumn.getColumn().setText(attributes[i]);
 			tableColumnLayout.setColumnData(fileNameColumn.getColumn(), new ColumnWeightData(5, 25, true));
 			fileNameColumn.setLabelProvider(new CellLabelProvider() {
 				@Override
 				public void update(ViewerCell cell) {
-					Tuple<?> tuple = (Tuple<?>)cell.getElement();
-					Object attrValue = tuple.getAttributes()[positions[finalI]];
+					final Tuple<?> tuple = (Tuple<?>) cell.getElement();
+					final Object attrValue = tuple.getAttributes()[positions[finalI]];
 					cell.setText(attrValue != null ? attrValue.toString() : "null");
 				}
 			});
 		}
-		
+
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(data);
-		
+
 	}
 
-	private static int determineMaxData(Configuration config) {
-		int maxData = 10;
-		try {
-			maxData = config.get("MaxData");
-			if(maxData < 0 ) {
-				throw new Exception("Negative numbers for maximum data sizes are not allowed!");
-			}
-			
-		} catch( Throwable t ) {
-			LOG.error("Could not determine maximum data size for table-contents. Using 10 as default.", t);
-			maxData = 10;
-		}
-		
-		return maxData;
+	@Override
+	public void onLoad(Map<String, String> saved) {
+
 	}
-	
+
+	@Override
+	public Map<String, String> onSave() {
+		return null;
+	}
+
 	@Override
 	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
 		super.onStart(physicalRoots);
@@ -141,27 +135,9 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void streamElementRecieved(final IStreamObject<?> element, int port) {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				data.add((Tuple<?>)element);
-				if( data.size() > maxData ) {
-					data.remove(0);
-				}
-				
-				if( !tableViewer.getTable().isDisposed()) {
-					tableViewer.refresh();
-				}
-				
-			}
-		});
-	}
-
-	@Override
 	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 	}
-	
+
 	@Override
 	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
 	}
@@ -171,29 +147,53 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 	}
 
+	@Override
+	public void streamElementRecieved(final IStreamObject<?> element, int port) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				data.add((Tuple<?>) element);
+				if (data.size() > maxData) {
+					data.remove(0);
+				}
+
+				if (!tableViewer.getTable().isDisposed()) {
+					tableViewer.refresh();
+				}
+
+			}
+		});
+	}
+
+	private static int determineMaxData(Configuration config) {
+		int maxData = 10;
+		try {
+			maxData = config.get("MaxData");
+			if (maxData < 0) {
+				throw new Exception("Negative numbers for maximum data sizes are not allowed!");
+			}
+
+		} catch (final Throwable t) {
+			LOG.error("Could not determine maximum data size for table-contents. Using 10 as default.", t);
+			maxData = 10;
+		}
+
+		return maxData;
+	}
+
 	private static int[] determinePositions(SDFSchema outputSchema, String[] attributes2) {
-		int[] positions = new int[attributes2.length];
-		
-		for( int i = 0 ; i < attributes2.length; i++ ) {
-			for( int j = 0; j < outputSchema.size(); j++ ) {
-				if( outputSchema.get(j).getAttributeName().equals(attributes2[i])) {
+		final int[] positions = new int[attributes2.length];
+
+		for (int i = 0; i < attributes2.length; i++) {
+			for (int j = 0; j < outputSchema.size(); j++) {
+				if (outputSchema.get(j).getAttributeName().equals(attributes2[i])) {
 					positions[i] = j;
 					break;
 				}
 			}
 		}
-		
+
 		return positions;
-	}
-
-	@Override
-	public Map<String, String> onSave() {
-		return null;
-	}
-
-	@Override
-	public void onLoad(Map<String, String> saved) {
-		
 	}
 
 }

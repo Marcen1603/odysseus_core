@@ -22,7 +22,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
 
 public interface IDashboardHandler {
 
-	public Dashboard load( List<String> lines, IDashboardPartHandler partHandler ) throws DashboardHandlerException, FileNotFoundException;
-	public List<String> save( Dashboard board) throws DashboardHandlerException;
-	
+	public Dashboard load(List<String> lines, IDashboardPartHandler partHandler) throws DashboardHandlerException, FileNotFoundException;
+
+	public List<String> save(Dashboard board) throws DashboardHandlerException;
+
 }

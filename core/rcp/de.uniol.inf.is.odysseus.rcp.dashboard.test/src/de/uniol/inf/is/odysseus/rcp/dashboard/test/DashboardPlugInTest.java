@@ -16,7 +16,6 @@
 
 package de.uniol.inf.is.odysseus.rcp.dashboard.test;
 
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -48,22 +47,32 @@ public class DashboardPlugInTest {
 	private class SampleScriptParser implements IOdysseusScriptParser {
 
 		@Override
-		public List<?> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
-			return null;
-		}
-
-		@Override
 		public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
 			return null;
 		}
 
 		@Override
-		public List<PreParserStatement> parseScript(String completeText, ISession caller) throws OdysseusScriptException {
+		public IExecutor getExecutor() {
 			return null;
 		}
 
 		@Override
-		public List<PreParserStatement> parseScript(String[] textToParse, ISession caller) throws OdysseusScriptException {
+		public Set<String> getKeywordNames() {
+			return null;
+		}
+
+		@Override
+		public String getParameterKey() {
+			return null;
+		}
+
+		@Override
+		public PreParserKeywordRegistry getPreParserKeywordRegistry() {
+			return null;
+		}
+
+		@Override
+		public String getReplacementEndKey() {
 			return null;
 		}
 
@@ -78,17 +87,7 @@ public class DashboardPlugInTest {
 		}
 
 		@Override
-		public String getParameterKey() {
-			return null;
-		}
-
-		@Override
 		public String getReplacementStartKey() {
-			return null;
-		}
-
-		@Override
-		public String getReplacementEndKey() {
 			return null;
 		}
 
@@ -98,47 +97,35 @@ public class DashboardPlugInTest {
 		}
 
 		@Override
-		public Set<String> getKeywordNames() {
-			return null;
-		}
-
-		@Override
 		public Set<String> getStaticWords() {
 			return null;
 		}
 
 		@Override
-		public IExecutor getExecutor() {
+		public List<?> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
 			return null;
 		}
 
 		@Override
-		public PreParserKeywordRegistry getPreParserKeywordRegistry() {			
+		public List<PreParserStatement> parseScript(String completeText, ISession caller) throws OdysseusScriptException {
+			return null;
+		}
+
+		@Override
+		public List<PreParserStatement> parseScript(String[] textToParse, ISession caller) throws OdysseusScriptException {
 			return null;
 		}
 	}
-	
+
 	private class TestExecutor implements IExecutor {
 
 		@Override
-		public void removeQuery(int queryID, ISession caller) throws PlanManagementException {
-		}
-
-		@Override
-		public void startQuery(int queryID, ISession caller) throws PlanManagementException {
-		}
-
-		@Override
-		public void stopQuery(int queryID, ISession caller) throws PlanManagementException {
-		}
-
-		@Override
-		public Collection<String> getQueryBuildConfigurationNames() {
+		public Integer addQuery(ILogicalOperator logicalPlan, ISession user, String queryBuildConfigurationName) throws PlanManagementException {
 			return null;
 		}
 
 		@Override
-		public Set<String> getSupportedQueryParsers() throws PlanManagementException {
+		public Integer addQuery(List<IPhysicalOperator> physicalPlan, ISession user, String queryBuildConfigurationName) throws PlanManagementException {
 			return null;
 		}
 
@@ -148,12 +135,22 @@ public class DashboardPlugInTest {
 		}
 
 		@Override
-		public Integer addQuery(ILogicalOperator logicalPlan, ISession user, String queryBuildConfigurationName) throws PlanManagementException {
+		public void addStoredProcedure(String name, StoredProcedure text, ISession caller) {
+
+		}
+
+		@Override
+		public boolean containsStoredProcedures(String name, ISession caller) {
+			return false;
+		}
+
+		@Override
+		public String getCurrentSchedulerID() {
 			return null;
 		}
 
 		@Override
-		public Integer addQuery(List<IPhysicalOperator> physicalPlan, ISession user, String queryBuildConfigurationName) throws PlanManagementException {
+		public String getCurrentSchedulingStrategyID() {
 			return null;
 		}
 
@@ -178,12 +175,22 @@ public class DashboardPlugInTest {
 		}
 
 		@Override
+		public String getName() {
+			return null;
+		}
+
+		@Override
+		public SDFSchema getOutputSchema(int queryId) {
+			return null;
+		}
+
+		@Override
 		public List<IPhysicalOperator> getPhysicalRoots(int queryID) {
 			return null;
 		}
 
 		@Override
-		public Collection<Integer> startAllClosedQueries(ISession user) {
+		public Collection<String> getQueryBuildConfigurationNames() {
 			return null;
 		}
 
@@ -193,31 +200,37 @@ public class DashboardPlugInTest {
 		}
 
 		@Override
-		public Set<String> getRegisteredSchedulingStrategies() {
-			return null;
-		}
-
-		@Override
 		public Set<String> getRegisteredSchedulers() {
 			return null;
 		}
 
 		@Override
-		public void setScheduler(String scheduler, String schedulerStrategy) {
-		}
-
-		@Override
-		public String getCurrentSchedulerID() {
+		public Set<String> getRegisteredSchedulingStrategies() {
 			return null;
 		}
 
 		@Override
-		public String getCurrentSchedulingStrategyID() {
+		public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller) {
 			return null;
 		}
 
 		@Override
-		public String getName() {
+		public StoredProcedure getStoredProcedure(String name, ISession caller) {
+			return null;
+		}
+
+		@Override
+		public List<StoredProcedure> getStoredProcedures(ISession caller) {
+			return null;
+		}
+
+		@Override
+		public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(ISession caller) {
+			return null;
+		}
+
+		@Override
+		public Set<String> getSupportedQueryParsers() throws PlanManagementException {
 			return null;
 		}
 
@@ -231,8 +244,21 @@ public class DashboardPlugInTest {
 		}
 
 		@Override
+		public void reloadStoredQueries(ISession caller) {
+		}
+
+		@Override
+		public void removeQuery(int queryID, ISession caller) throws PlanManagementException {
+		}
+
+		@Override
 		public ILogicalOperator removeSink(String name, ISession caller) {
 			return null;
+		}
+
+		@Override
+		public void removeStoredProcedure(String name, ISession caller) {
+
 		}
 
 		@Override
@@ -240,108 +266,81 @@ public class DashboardPlugInTest {
 		}
 
 		@Override
-		public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(ISession caller) {
+		public void setScheduler(String scheduler, String schedulerStrategy) {
+		}
+
+		@Override
+		public Collection<Integer> startAllClosedQueries(ISession user) {
 			return null;
 		}
 
 		@Override
-		public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller) {
-			return null;
+		public void startQuery(int queryID, ISession caller) throws PlanManagementException {
 		}
 
 		@Override
-		public void reloadStoredQueries(ISession caller) {
+		public void stopQuery(int queryID, ISession caller) throws PlanManagementException {
 		}
 
-		@Override
-		public SDFSchema getOutputSchema(int queryId) {
-			return null;
-		}
-
-		@Override
-		public void addStoredProcedure(String name, StoredProcedure text, ISession caller) {
-			
-		}
-
-		@Override
-		public StoredProcedure getStoredProcedure(String name, ISession caller) {
-			return null;
-		}
-
-		@Override
-		public void removeStoredProcedure(String name, ISession caller) {
-			
-		}
-
-		@Override
-		public List<StoredProcedure> getStoredProcedures(ISession caller) {
-			return null;
-		}
-
-		@Override
-		public boolean containsStoredProcedures(String name, ISession caller) {
-			return false;
-		}
-		
 	}
-	
+
+	@Test
+	public void testBindExecutor() throws Throwable {
+		final DashboardPlugIn plugin = new DashboardPlugIn();
+
+		final IExecutor executor = new TestExecutor();
+		plugin.bindExecutor(executor);
+
+		assertEquals(DashboardPlugIn.getExecutor(), executor);
+
+		plugin.unbindExecutor(executor);
+
+		assertNull(DashboardPlugIn.getExecutor());
+	}
+
+	@Test
+	public void testBindScriptParser() throws Throwable {
+		final DashboardPlugIn plugin = new DashboardPlugIn();
+
+		final IOdysseusScriptParser parser = new SampleScriptParser();
+		plugin.bindScriptParser(parser);
+
+		assertEquals(DashboardPlugIn.getScriptParser(), parser, "Parser is not equal");
+
+		plugin.unbindScriptParser(parser);
+		assertNull(DashboardPlugIn.getScriptParser(), "Parser is not null after unbind");
+	}
+
 	@Test
 	public void testConstructor() throws Throwable {
 		new DashboardPlugIn();
 	}
-	
-	@Test
-	public void testBindScriptParser() throws Throwable {
-		DashboardPlugIn plugin = new DashboardPlugIn();
-		
-		IOdysseusScriptParser parser = new SampleScriptParser();
-		plugin.bindScriptParser(parser);
-	
-		assertEquals(DashboardPlugIn.getScriptParser(), parser, "Parser is not equal");
-		
-		plugin.unbindScriptParser(parser);
-		assertNull(DashboardPlugIn.getScriptParser(), "Parser is not null after unbind");
-	}
-	
-	@Test
-	public void testUnbindOtherScriptParser() throws Throwable {
-		DashboardPlugIn plugin = new DashboardPlugIn();
 
-		IOdysseusScriptParser parser = new SampleScriptParser();
-		IOdysseusScriptParser parser2 = new SampleScriptParser();
-		
-		plugin.bindScriptParser(parser);
-		plugin.unbindScriptParser(parser2);
-		
-		assertEquals(DashboardPlugIn.getScriptParser(), parser, "Parser not equal after unbound by other parser");
-	}
-	
-	@Test
-	public void testBindExecutor() throws Throwable {
-		DashboardPlugIn plugin = new DashboardPlugIn();
-		
-		IExecutor executor = new TestExecutor();
-		plugin.bindExecutor(executor);
-		
-		assertEquals(DashboardPlugIn.getExecutor(), executor);
-		
-		plugin.unbindExecutor(executor);
-		
-		assertNull(DashboardPlugIn.getExecutor());
-	}
-	
 	@Test
 	public void testUnbindOtherExecutor() throws Throwable {
-		DashboardPlugIn plugin = new DashboardPlugIn();
-		
-		IExecutor executor = new TestExecutor();
-		IExecutor otherExecutor = new TestExecutor();
+		final DashboardPlugIn plugin = new DashboardPlugIn();
+
+		final IExecutor executor = new TestExecutor();
+		final IExecutor otherExecutor = new TestExecutor();
 		plugin.bindExecutor(executor);
-		
+
 		assertEquals(DashboardPlugIn.getExecutor(), executor);
-		
+
 		plugin.unbindExecutor(otherExecutor);
-		
+
 		assertEquals(DashboardPlugIn.getExecutor(), executor);
+	}
+
+	@Test
+	public void testUnbindOtherScriptParser() throws Throwable {
+		final DashboardPlugIn plugin = new DashboardPlugIn();
+
+		final IOdysseusScriptParser parser = new SampleScriptParser();
+		final IOdysseusScriptParser parser2 = new SampleScriptParser();
+
+		plugin.bindScriptParser(parser);
+		plugin.unbindScriptParser(parser2);
+
+		assertEquals(DashboardPlugIn.getScriptParser(), parser, "Parser not equal after unbound by other parser");
 	}
 }

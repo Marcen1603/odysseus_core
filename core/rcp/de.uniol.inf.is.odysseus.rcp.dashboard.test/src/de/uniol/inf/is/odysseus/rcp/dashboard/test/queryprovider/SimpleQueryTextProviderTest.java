@@ -16,10 +16,11 @@
 
 package de.uniol.inf.is.odysseus.rcp.dashboard.test.queryprovider;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.List;
 
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 
 import com.google.common.collect.Lists;
 
@@ -30,24 +31,24 @@ public class SimpleQueryTextProviderTest {
 
 	@Test
 	public void testConstructor() {
-		new SimpleQueryTextProvider(Lists.<String>newArrayList());
+		new SimpleQueryTextProvider(Lists.<String> newArrayList());
 	}
-	
+
+	@Test(expectedExceptions = NullPointerException.class)
+	public void testConstructorNullArgs() {
+		new SimpleQueryTextProvider((List<String>) null);
+	}
+
 	@Test
 	public void testGetText() {
-		List<String> text = Lists.newArrayList();
+		final List<String> text = Lists.newArrayList();
 		text.add("Moin");
 		text.add("Moin2");
-		
-		IDashboardPartQueryTextProvider provider = new SimpleQueryTextProvider(text);
+
+		final IDashboardPartQueryTextProvider provider = new SimpleQueryTextProvider(text);
 		assertEquals(provider.getQueryText().size(), text.size());
-		for( int i = 0; i < text.size(); i++ ) {
+		for (int i = 0; i < text.size(); i++) {
 			assertEquals(provider.getQueryText().get(i), text.get(i));
 		}
-	}
-	
-	@Test( expectedExceptions = NullPointerException.class )
-	public void testConstructorNullArgs() {
-		new SimpleQueryTextProvider((List<String>)null);
 	}
 }

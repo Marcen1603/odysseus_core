@@ -41,18 +41,42 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 		chartComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
-	public final Dataset getDataset() {
-		return dataset;
-	}
-
 	public final JFreeChart getChart() {
 		return chart;
+	}
+
+	public final Dataset getDataset() {
+		return dataset;
 	}
 
 	@Override
 	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
 		super.onStart(physicalRoots);
 		startChart(physicalRoots);
+	}
+
+	@Override
+	public void punctuationElementRecieved(final IPunctuation punctuation, final int port) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (!chartComposite.isDisposed()) {
+					addPunctuationToChart(punctuation, port);
+				}
+			}
+		});
+	}
+
+	@Override
+	public void securityPunctuationElementRecieved(final ISecurityPunctuation sp, final int port) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (!chartComposite.isDisposed()) {
+					addSecurityPunctuationToChart(sp, port);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -72,38 +96,19 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 		});
 	}
 
-	@Override
-	public void punctuationElementRecieved(final IPunctuation punctuation, final int port) {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (!chartComposite.isDisposed()) {
-					addPunctuationToChart(punctuation, port);
-				}
-			}
-		});
-	}
-	
-	@Override
-	public void securityPunctuationElementRecieved(final ISecurityPunctuation sp, final int port) {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (!chartComposite.isDisposed()) {
-					addSecurityPunctuationToChart(sp, port);
-				}
-			}
-		});
-	}
-
 	protected void addPunctuationToChart(IPunctuation punctuation, int port) {
 	}
+
 	protected void addSecurityPunctuationToChart(ISecurityPunctuation punctuation, int port) {
 	}
 
-	protected abstract Dataset createDataset();
-	protected abstract JFreeChart createChart();
-	protected abstract void decorateChart(JFreeChart chart);
-	protected abstract void startChart(List<IPhysicalOperator> physicalRoots) throws Exception;
 	protected abstract void addStreamElementToChart(Tuple<?> element, int port);
+
+	protected abstract JFreeChart createChart();
+
+	protected abstract Dataset createDataset();
+
+	protected abstract void decorateChart(JFreeChart chart);
+
+	protected abstract void startChart(List<IPhysicalOperator> physicalRoots) throws Exception;
 }

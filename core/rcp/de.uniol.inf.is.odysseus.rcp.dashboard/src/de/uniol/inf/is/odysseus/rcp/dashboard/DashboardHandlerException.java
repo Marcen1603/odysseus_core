@@ -23,12 +23,12 @@ public class DashboardHandlerException extends Exception {
 		super();
 	}
 
-	public DashboardHandlerException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
-
 	public DashboardHandlerException(String arg0) {
 		super(arg0);
+	}
+
+	public DashboardHandlerException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
 	}
 
 	public DashboardHandlerException(Throwable arg0) {

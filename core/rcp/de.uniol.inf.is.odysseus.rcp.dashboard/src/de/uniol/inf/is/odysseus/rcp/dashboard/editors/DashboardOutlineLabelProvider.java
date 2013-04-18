@@ -33,17 +33,8 @@ public class DashboardOutlineLabelProvider implements ILabelProvider {
 	}
 
 	@Override
-	public boolean isLabelProperty(Object element, String property) {
-		return false;
-	}
-
-	@Override
-	public void removeListener(ILabelProviderListener listener) {
-	}
-
-	@Override
 	public Image getImage(Object element) {
-		if( element instanceof DashboardPartPlacement ) {
+		if (element instanceof DashboardPartPlacement) {
 			return DashboardPlugIn.getImageManager().get("dashboardPart");
 		}
 		return null;
@@ -51,12 +42,21 @@ public class DashboardOutlineLabelProvider implements ILabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		if( element instanceof DashboardPartPlacement ) {
-			DashboardPartPlacement placement = (DashboardPartPlacement)element;
+		if (element instanceof DashboardPartPlacement) {
+			final DashboardPartPlacement placement = (DashboardPartPlacement) element;
 			return placement.getDashboardPart().getClass().getSimpleName();
-		} else if( element instanceof String ) {
-			return (String)element;
+		} else if (element instanceof String) {
+			return (String) element;
 		}
 		return null;
+	}
+
+	@Override
+	public boolean isLabelProperty(Object element, String property) {
+		return false;
+	}
+
+	@Override
+	public void removeListener(ILabelProviderListener listener) {
 	}
 }

@@ -32,6 +32,11 @@ public class DashboardPartPlacementTest {
 		new DashboardPartPlacement(new TestDashboardPart(), "File", 100, 100, 200, 200);
 	}
 
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testConstructorEmptyFilenameArg() {
+		new DashboardPartPlacement(new TestDashboardPart(), "", 100, 100, 100, 100);
+	}
+
 	@Test(dataProvider = "constructorInvalidPlacementDataDataProvider", expectedExceptions = IllegalArgumentException.class)
 	public void testConstructorInvalidPlacementData(int x, int y, int w, int h) {
 		new DashboardPartPlacement(new TestDashboardPart(), "File", x, y, w, h);
@@ -41,21 +46,16 @@ public class DashboardPartPlacementTest {
 	public void testConstructorNullDashboardPartArg() {
 		new DashboardPartPlacement(null, "File", 100, 100, 100, 100);
 	}
-	
+
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testConstructorNullFilenameArg() {
 		new DashboardPartPlacement(new TestDashboardPart(), null, 100, 100, 100, 100);
 	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testConstructorEmptyFilenameArg() {
-		new DashboardPartPlacement(new TestDashboardPart(), "", 100, 100, 100, 100);
-	}
 
 	@Test
 	public void testGetterAndSetter() {
-		IDashboardPart part = new TestDashboardPart();
-		DashboardPartPlacement place = new DashboardPartPlacement(part, "File", 100, 200, 300, 400);
+		final IDashboardPart part = new TestDashboardPart();
+		final DashboardPartPlacement place = new DashboardPartPlacement(part, "File", 100, 200, 300, 400);
 		assertEquals(place.getDashboardPart(), part);
 		assertEquals(place.getX(), 100);
 		assertEquals(place.getY(), 200);
@@ -75,7 +75,7 @@ public class DashboardPartPlacementTest {
 		place.setWidth(499);
 		assertEquals(place.getWidth(), 499);
 	}
-	
+
 	@DataProvider
 	private static Object[][] constructorInvalidPlacementDataDataProvider() {
 		return new Object[][] { { -1, 1, 1, 1 }, { 1, -1, 1, 1 }, { 1, 1, -1, 1 }, { 1, 1, 1, -1 }, };
