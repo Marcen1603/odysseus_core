@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerListener;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
+import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 
 public class PeerView extends ViewPart implements IPeerListener {
@@ -35,6 +36,8 @@ public class PeerView extends ViewPart implements IPeerListener {
 		for (final String peerID : RCPP2PNewPlugIn.getPeerManager().getRemotePeerIDs()) {
 			onPeerFound(peerManager, peerID);
 		}
+		
+		setPartName("PeerView (" + P2PNewPlugIn.getOwnPeerName() + ")");
 	}
 
 	@Override
