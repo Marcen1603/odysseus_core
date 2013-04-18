@@ -86,15 +86,17 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 
 	@Override
 	public void dashboardPartAdded(Dashboard sender, IDashboardPart addedPart) {
-		final DashboardPartController ctrl = new DashboardPartController(addedPart);
-		try {
-			ctrl.start();
-			controllers.put(addedPart, ctrl);
-		} catch (final ControllerException e) {
-			LOG.error("Could not start dashboard part", e);
+		if( !controllers.containsKey(addedPart)) {
+			final DashboardPartController ctrl = new DashboardPartController(addedPart);
+			try {
+				ctrl.start();
+				controllers.put(addedPart, ctrl);
+			} catch (final ControllerException e) {
+				LOG.error("Could not start dashboard part", e);
+			}
+	
+			setDirty(true);
 		}
-
-		setDirty(true);
 	}
 
 	@Override

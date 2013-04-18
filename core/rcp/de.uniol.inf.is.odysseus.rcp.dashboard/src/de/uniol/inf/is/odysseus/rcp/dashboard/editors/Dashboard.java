@@ -81,7 +81,6 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 	private Composite dashboardComposite;
 	private ToolBar toolBar;
-	private Composite parent;
 	private DropTarget dropTarget;
 
 	private final List<DashboardPartPlacement> dashboardParts = Lists.newArrayList();
@@ -123,7 +122,6 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 	public void createPartControl(Composite parent, ToolBar toolBar) {
 		this.toolBar = toolBar;
-		this.parent = parent;
 
 		dashboardComposite = new Composite(parent, SWT.BORDER);
 		dashboardComposite.setLayout(new FormLayout());
@@ -269,12 +267,21 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	}
 
 	public void remove(DashboardPartPlacement partPlace) {
-		deletePartControl();
+		Preconditions.checkNotNull(partPlace, "Dashboardpart to remove (as placement) must not be null!");
+		
+		Composite compToRemove = containers.get(partPlace);
+		removeListeners(compToRemove);
+		compToRemove.dispose();
 		dashboardParts.remove(partPlace);
-
-		createPartControl(parent, toolBar);
-
+		
 		fireRemovedEvent(partPlace.getDashboardPart());
+		
+//		deletePartControl();
+//		dashboardParts.remove(partPlace);
+//
+//		createPartControl(parent, toolBar);
+//
+//		fireRemovedEvent(partPlace.getDashboardPart());
 	}
 
 	public void removeListener(IDashboardListener listener) {
@@ -351,11 +358,11 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 		}
 	}
 
-	private void deletePartControl() {
-		removeListeners(dashboardComposite);
-		dashboardComposite.dispose();
-		dashboardComposite = null;
-	}
+//	private void deletePartControl() {
+//		removeListeners(dashboardComposite);
+//		dashboardComposite.dispose();
+//		dashboardComposite = null;
+//	}
 
 	private void fireAddedEvent(IDashboardPart part) {
 		synchronized (listeners) {
