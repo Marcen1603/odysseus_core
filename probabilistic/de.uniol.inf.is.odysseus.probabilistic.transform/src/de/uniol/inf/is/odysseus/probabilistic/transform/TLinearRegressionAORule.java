@@ -49,7 +49,6 @@ public class TLinearRegressionAORule extends
 				operator.getInputSchema(), operator.determineDependentList(),
 				operator.determineExplanatoryList());
 		this.defaultExecute(operator, linearRegressionPO, config, true, true);
-
 	}
 
 	@Override

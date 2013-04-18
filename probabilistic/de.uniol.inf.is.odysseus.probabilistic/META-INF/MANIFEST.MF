@@ -7,7 +7,8 @@ Bundle-Activator: de.uniol.inf.is.odysseus.probabilistic.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core
+ de.uniol.inf.is.odysseus.core,
+ org.apache.commons.math3
 Import-Package: com.rits.cloning,
  de.uniol.inf.is.odysseus.interval.transform.join,
  de.uniol.inf.is.odysseus.intervalapproach,
@@ -24,6 +25,7 @@ Service-Component: OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/AggregateFunct
  OSGI-INF/ProbabilisticTupleDataHandler.xml,OSGI-INF/ProbabilisticDoubleDataHandler.xml,OSGI-INF/ProbabilisticFloatDataHandler.xml,OSGI-INF/ProbabilisticLongDataHandler.xml,OSGI-INF/ProbabilisticIntegerDataHandler.xml,OSGI-INF/ProbabilisticShortDataHandler.xml,OSGI-INF/ProbabilisticByteDataHandler.xml,OSGI-INF/ProbabilisticStringDataHandler.xml
 Export-Package: de.uniol.inf.is.odysseus.probabilistic,
  de.uniol.inf.is.odysseus.probabilistic.base,
+ de.uniol.inf.is.odysseus.probabilistic.base.predicate,
  de.uniol.inf.is.odysseus.probabilistic.common,
  de.uniol.inf.is.odysseus.probabilistic.datatype,
  de.uniol.inf.is.odysseus.probabilistic.logicaloperator,

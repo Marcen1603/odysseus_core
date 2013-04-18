@@ -46,7 +46,7 @@ public final class CovarianceMatrixUtils {
 		int dimension = matrix.getColumnDimension();
 		int left = 0;
 		int right = dimension;
-		double[] entries = new double[CovarianceMatrixUtils.getCovarianceTiangleSizeFromDimension(dimension)];
+		double[] entries = new double[CovarianceMatrixUtils.getCovarianceTriangleSizeFromDimension(dimension)];
 		for (int i = 0; i < dimension; i++) {
 			final double[] row = matrix.getRow(i);
 			System.arraycopy(row, i, entries, left, right);
@@ -65,7 +65,7 @@ public final class CovarianceMatrixUtils {
 	 *            The dimension
 	 * @return The number of elements in the triangle
 	 */
-	public static int getCovarianceTiangleSizeFromDimension(int dimension) {
+	public static int getCovarianceTriangleSizeFromDimension(int dimension) {
 		return (int) (0.5 * dimension * (dimension + 1));
 	}
 

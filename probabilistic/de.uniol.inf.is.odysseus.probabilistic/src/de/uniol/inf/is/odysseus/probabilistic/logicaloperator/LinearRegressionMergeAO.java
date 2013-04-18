@@ -1,59 +1,34 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.uniol.inf.is.odysseus.probabilistic.logicaloperator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
-/**
- * 
- * @author Christian Kuka <christian@kuka.cc>
- * 
- */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LinearRegression")
-public class LinearRegressionAO extends UnaryLogicalOp {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LinearRegressionMerge")
+public class LinearRegressionMergeAO extends UnaryLogicalOp {
 
     /**
-	 * 
-	 */
-    private static final long serialVersionUID = 6621664432018792263L;
+     * 
+     */
+    private static final long serialVersionUID = 3075895311156052010L;
     private List<SDFAttribute> dependentAttributes;
     private List<SDFAttribute> explanatoryAttributes;
 
-    public LinearRegressionAO() {
+    public LinearRegressionMergeAO() {
         super();
     }
 
-    public LinearRegressionAO(LinearRegressionAO linearRegressionAO) {
-        super(linearRegressionAO);
-        this.dependentAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.dependentAttributes);
-        this.explanatoryAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.explanatoryAttributes);
-
+    public LinearRegressionMergeAO(LinearRegressionMergeAO linearRegressionMergeAO) {
+        super(linearRegressionMergeAO);
+        this.dependentAttributes = new ArrayList<SDFAttribute>(linearRegressionMergeAO.dependentAttributes);
+        this.explanatoryAttributes = new ArrayList<SDFAttribute>(linearRegressionMergeAO.explanatoryAttributes);
     }
 
     @Parameter(type = ResolvedSDFAttributeParameter.class, name = "DEPENDENT", isList = true, optional = false)
@@ -82,6 +57,11 @@ public class LinearRegressionAO extends UnaryLogicalOp {
         return this.explanatoryAttributes;
     }
 
+    public int getRegressionCoefficientsPos() {
+        SDFSchema schema = this.getInputSchema();
+        return schema.indexOf(schema.findAttribute("__coefficients"));
+    }
+
     public int[] determineDependentList() {
         return calcAttributeList(getInputSchema(), getDependentAttributes());
     }
@@ -105,23 +85,8 @@ public class LinearRegressionAO extends UnaryLogicalOp {
     }
 
     @Override
-    public AbstractLogicalOperator clone() {
-        return new LinearRegressionAO(this);
+    public LinearRegressionMergeAO clone() {
+        return new LinearRegressionMergeAO(this);
     }
 
-    @Override
-    public void initialize() {
-        Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-        for (SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
-            if (getExplanatoryAttributes().contains(inAttr)) {
-                attributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
-            } else {
-                attributes.add(inAttr);
-            }
-        }
-        attributes.add(new SDFAttribute("", "__coefficients", SDFDatatype.MATRIX_DOUBLE));
-
-        SDFSchema outputSchema = new SDFSchema(getInputSchema().getURI(), attributes);
-        this.setOutputSchema(outputSchema);
-    }
 }

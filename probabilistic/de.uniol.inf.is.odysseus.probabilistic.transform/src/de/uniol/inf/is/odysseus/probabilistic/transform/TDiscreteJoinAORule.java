@@ -21,8 +21,14 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.DefaultProbabilisticTIDummyDataCreation;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.DiscreteProbabilisticJoinPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -32,70 +38,101 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class TDiscreteJoinAORule extends AbstractTransformationRule<JoinAO> {
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-	 */
-	@Override
-	public int getPriority() {
-		return 1;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+     */
+    @Override
+    public int getPriority() {
+        return 1;
+    }
 
-	/*
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
-	 * java.lang.Object)
-	 */
-	@Override
-	public void execute(JoinAO operator, TransformationConfiguration config) {
-		// TODO Auto-generated method stub
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public void execute(JoinAO operator, TransformationConfiguration config) {
 
-	}
+        IPredicate pred = operator.getPredicate();
 
-	/*
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
-	 * .Object, java.lang.Object)
-	 */
-	@Override
-	public boolean isExecutable(JoinAO operator,
-			TransformationConfiguration config) {
-		IPredicate<?> predicate = operator.getPredicate();
-		List<SDFAttribute> attributes = predicate.getAttributes();
-		if (TransformUtil.containsDiscreteProbabilisticAttributes(attributes)) {
-			return true;
-		}
-		return false;
-	}
+        DiscreteProbabilisticJoinPO joinPO = new DiscreteProbabilisticJoinPO(TransformUtil.getDiscreteProbabilisticAttributePos(operator.getInputSchema(0)), TransformUtil.getDiscreteProbabilisticAttributePos(operator.getInputSchema(1)));
+        joinPO.setJoinPredicate(pred.clone());
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-	 */
-	@Override
-	public String getName() {
-		return "JoinAO -> discrete probabilistic Join";
-	}
+        // if in both input paths there is no window, we
+        // use a persistent sweep area
+        // check the paths
+        boolean windowFound = false;
+        for (int port = 0; port < 2; port++) {
+            if (!JoinTransformationHelper.checkLogicalPath(operator.getSubscribedToSource(port).getTarget())) {
+                windowFound = true;
+                break;
+            }
+        }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
-	 */
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
-	}
+        if (!windowFound) {
+            joinPO.setTransferFunction(new PersistentTransferArea());
+        }
+        // otherwise we use a LeftJoinTISweepArea
+        else {
+            joinPO.setTransferFunction(new TITransferArea());
+        }
 
-	/*
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
-	 */
-	@Override
-	public Class<? super JoinAO> getConditionClass() {
-		return JoinAO.class;
-	}
+        joinPO.setMetadataMerge(new CombinedMergeFunction());
+        joinPO.setCreationFunction(new DefaultProbabilisticTIDummyDataCreation());
+
+        defaultExecute(operator, joinPO, config, true, true);
+
+    }
+
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+     * .Object, java.lang.Object)
+     */
+    @Override
+    public boolean isExecutable(JoinAO operator, TransformationConfiguration config) {
+        IPredicate<?> predicate = operator.getPredicate();
+        if (predicate != null) {
+            List<SDFAttribute> attributes = predicate.getAttributes();
+            if (TransformUtil.containsDiscreteProbabilisticAttributes(attributes)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+     */
+    @Override
+    public String getName() {
+        return "JoinAO -> discrete probabilistic Join";
+    }
+
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+     */
+    @Override
+    public IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.TRANSFORMATION;
+    }
+
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+     */
+    @Override
+    public Class<? super JoinAO> getConditionClass() {
+        return JoinAO.class;
+    }
+
 }

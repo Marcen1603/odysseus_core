@@ -68,7 +68,7 @@ public class ProbabilisticDistributionHandler extends
 					mean[i] = buffer.getDouble();
 				}
 				final double[] entries = new double[CovarianceMatrixUtils
-						.getCovarianceTiangleSizeFromDimension(dimension)];
+						.getCovarianceTriangleSizeFromDimension(dimension)];
 				for (int i = 0; i < entries.length; i++) {
 					entries[i] = buffer.getDouble();
 				}
