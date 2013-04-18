@@ -63,7 +63,7 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 		this.minSize = po.minSize;
 		this.predicate = po.predicate.clone();
 		this.dataMergeFunction = po.dataMergeFunction.clone();
-		this.dataMergeFunction.init();		
+		this.dataMergeFunction.init();
 		this.metaMergeFunction.init();
 	}
 
@@ -87,23 +87,27 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	}
 
 	@Override
-	protected synchronized void process_next(T object, int port) {
+	protected void process_next(T object, int port) {
 		// if port == 0, it is a cached-object
 		if (port == 0) {
 			this.cache.add(object);
 			// check, whether there are enough items in cache to write out the
 			// buffer
 			if (this.cache.size() >= minSize) {
-				for (T buffered : this.buffer) {
-					processEnrich(buffered);
+				synchronized (this.buffer) {
+					for (T buffered : this.buffer) {
+						processEnrich(buffered);
+					}
+					this.buffer.clear();
 				}
-				this.buffer.clear();
 			}
-		} else {		
+		} else {
 			// if we do not have enough items in cache, we put the objects into
 			// a buffer
 			if (this.cache.size() < minSize) {
-				buffer.add(object);
+				synchronized (this.buffer) {
+					buffer.add(object);
+				}
 			} else {
 				// if we have enough, we can enrich the object without waiting
 				processEnrich(object);
