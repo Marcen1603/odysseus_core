@@ -154,12 +154,15 @@ public class OperatorEstimation<T> {
 		
 		if( getDataStream() != null ) {
 			sb.append("r = ").append(getDataStream().getDataRate()).append(", ");
-			sb.append("l = ").append(getDataStream().getIntervalLength()).append(", ");
+			sb.append("g = ").append(getDataStream().getIntervalLength()).append(", ");
 		} else {
 			sb.append("no data stream, ");
 		}
-		
-		sb.append("sel = ").append(getSelectivity());
+		if( getSelectivity() != null ) {
+			sb.append("sel = ").append(getSelectivity());
+		} else {
+			sb.append("no selectivity");
+		}
 		sb.append("}");
 		
 		return sb.toString();
