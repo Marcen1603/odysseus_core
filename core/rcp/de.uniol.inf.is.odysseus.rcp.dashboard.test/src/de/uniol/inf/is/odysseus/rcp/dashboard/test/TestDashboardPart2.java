@@ -95,4 +95,10 @@ public class TestDashboardPart2 implements IDashboardPart {
 	@Override
 	public void streamElementRecieved(IStreamObject<?> element, int port) {
 	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
 }

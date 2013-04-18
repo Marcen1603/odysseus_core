@@ -45,6 +45,11 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 
 		return true;
 	}
+	
+	@Override
+	public void dispose() {
+		this.configuration.removeListener(this);
+	}
 
 	@Override
 	public void onLoad(Map<String, String> saved) {

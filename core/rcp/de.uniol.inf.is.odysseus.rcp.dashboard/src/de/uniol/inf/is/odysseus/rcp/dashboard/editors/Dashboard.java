@@ -275,9 +275,12 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 		final Composite compToRemove = containers.get(partPlace);
 		removeListeners(compToRemove);
+		
+		partPlace.getDashboardPart().dispose();
 		compToRemove.dispose();
+		
 		dashboardParts.remove(partPlace);
-
+		
 		fireRemovedEvent(partPlace.getDashboardPart());
 	}
 

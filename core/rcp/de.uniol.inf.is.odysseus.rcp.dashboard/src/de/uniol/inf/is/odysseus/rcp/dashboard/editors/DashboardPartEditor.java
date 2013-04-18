@@ -116,6 +116,7 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		dashboardPartController.stop();
 
 		dashboardPart.getConfiguration().removeListener(this);
+		dashboardPart.dispose();
 
 		super.dispose();
 	}
