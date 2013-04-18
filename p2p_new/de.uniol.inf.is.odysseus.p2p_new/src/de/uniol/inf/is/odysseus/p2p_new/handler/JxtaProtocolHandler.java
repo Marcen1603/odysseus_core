@@ -208,9 +208,9 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 	public ITransportExchangePattern getExchangePattern() {
 		if (this.getDirection().equals(ITransportDirection.IN)) {
 			return ITransportExchangePattern.InOnly;
-		} else {
-			return ITransportExchangePattern.OutOnly;
 		}
+		
+		return ITransportExchangePattern.OutOnly;
 	}
 
 	private static void insertInt(byte[] destArray, int offset, int value) {
