@@ -114,7 +114,7 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 		LOG.debug("Query: " +  query + " is set as stopped");
 		this.stoppedQueries.add(query);
 		if(this.currentlyAdaptedQueries.remove(query) && this.currentlyAdaptedQueries.isEmpty()) {
-			getPolicyRuleEngine().start();
+			getPolicyRuleEngine().start(false);
 		}
 	}
 

@@ -70,11 +70,13 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 	private Map<IPhysicalQuery, List<IPhysicalOperator>> queryToOriginalPlan = new HashMap<IPhysicalQuery, List<IPhysicalOperator>>();
 
 	private long blockedTime = OdysseusConfiguration.getLong(
-			"adaption_blockingTime", 40000);
+			"adaption_blockingTime", 60000);
 	private long timerValue = OdysseusConfiguration.getLong("adaption_timer",
 			10000);
 
 	private int runningQueries = 0;
+	
+	private boolean useFirst = false;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
@@ -82,6 +84,13 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 		if(this.stoppedQueries.contains(physicalQuery)) {
 			LOG.debug("Query: " + physicalQuery + " is not adapted because it is stopped.");
 			this.currentlyAdaptedQueries.remove(physicalQuery);
+			return;
+		}
+		if(this.useFirst) {
+			LOG.debug("Only one migration allowed");
+			for(int i : ((IServerExecutor) getExecutor()).getLogicalQueryIds()) {
+				getExecutor().stopQuery(i, user);
+			}
 			return;
 		}
 		LOG.debug("Adapt plan with timer: " + this.timerValue
@@ -97,13 +106,12 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 			LOG.debug("Already using fittest plan");
 			// return;
 			// FIXME (Merlin): nur zu testzwecken. wir wollen migrationen sehen!
-			fittest.setE1(query.getAlternativeLogicalPlans().get(0));
+			fittest.setE1(query.getAlternativeLogicalPlans().get((useFirst ? 1 : 0)));
 		}
 		// gehen wir davon aus, dass es erstmal nur eine wurzel gibt.
 		IPhysicalOperator oldPlan = physicalQuery.getPhysicalChilds().get(0);
 
-		// set the new plan in the query to translate it... gibts denn keine
-		// bessere lösung?
+		// set the new plan in the query to translate it.
 		query.setLogicalPlan(fittest.getE1(), false);
 
 		List<ILogicalQuery> logicalQueries = new ArrayList<ILogicalQuery>();
@@ -117,13 +125,8 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 								.getTransformationConfiguration(), user,
 						this.executor.getDataDictionary());
 		List<IPhysicalOperator> newPlanRoots = newPhysicalQuery.getRoots();
-		// List<IPhysicalQuery> physicalQueries = this.optimizer.optimize(
-		// this.executor, this.executor.getExecutionPlan(),
-		// logicalQueries, this.optimizer.getConfiguration(),
-		// this.executor.getDataDictionary());
-		// List<IPhysicalOperator> newPlanRoots = physicalQueries.get(0)
-		// .getRoots();
 
+		// remove the newPhysicalQuery as Owner from the newly transformed physical plan
 		RemoveOwnersGraphVisitor<IOwnedOperator> removeVisitor = new RemoveOwnersGraphVisitor<>(
 				newPhysicalQuery);
 		GenericGraphWalker walker = new GenericGraphWalker();
@@ -144,6 +147,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 			try {
 				this.migrationStrategy.migrateQuery(this.executor,
 						physicalQuery, newPlanRoots);
+				this.useFirst = !this.useFirst;
 			} catch (MigrationException ex) {
 				throw new QueryOptimizationException(ex);
 			}
@@ -288,7 +292,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 			}
 		}
 		if (this.currentlyAdaptedQueries.isEmpty()) {
-			this.policyRuleEngine.start();
+			this.policyRuleEngine.start(false);
 		}
 	}
 
@@ -313,7 +317,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 		LOG.debug("Plan modification event: " + eventArgs);
 		if (eventArgs.getEventType() == PlanModificationEventType.QUERY_START) {
 			if (this.runningQueries == 0) {
-				this.policyRuleEngine.start();
+				this.policyRuleEngine.start(true);
 			}
 			this.runningQueries++;
 		} else if (eventArgs.getEventType() == PlanModificationEventType.QUERY_STOP) {
@@ -330,7 +334,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 		this.currentlyAdaptedQueries.remove(sender.getPhysicalQuery());
 
 		if (this.currentlyAdaptedQueries.isEmpty()) {
-			this.policyRuleEngine.start();
+			this.policyRuleEngine.start(true);
 		} else {
 			LOG.debug("There are still queries left that are currently adapting");
 		}
@@ -347,7 +351,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 		this.currentlyAdaptedQueries.remove(sender.getPhysicalQuery());
 
 		if (this.currentlyAdaptedQueries.isEmpty()) {
-			this.policyRuleEngine.start();
+			this.policyRuleEngine.start(true);
 		} else {
 			LOG.debug("There are still queries left that are currently adapting");
 		}

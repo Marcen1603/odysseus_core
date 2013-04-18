@@ -114,7 +114,7 @@ public class PlanAdaptionPolicyRuleEngine implements
 	}
 
 	@Override
-	public void start() {
+	public void start(boolean startAfterBlockedTime) {
 		if (this.timer.isRunning()) {
 			LOG.debug("Is already running");
 			return;
