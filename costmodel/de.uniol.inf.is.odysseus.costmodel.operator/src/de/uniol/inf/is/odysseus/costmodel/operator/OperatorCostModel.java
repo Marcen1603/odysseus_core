@@ -39,6 +39,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
@@ -252,7 +254,7 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 		return new OperatorCost<IPhysicalOperator>(estimatedOperators, aggCost.getMemCost(), aggCost.getCpuCost());
 	}
 
-	// sucht aus einem prädikat alle Attribute raus
+	// sucht aus einem prï¿½dikat alle Attribute raus
 	private static void fillWithAttributes(IPredicate<?> predicate, List<SDFAttribute> attributes) {
 		if (predicate instanceof IRelationalPredicate) {
 			final IRelationalPredicate pred = (IRelationalPredicate) predicate;
@@ -274,63 +276,19 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 
 	// holt eine Liste der Histogramme der Attribute, die in der Anfrage
 	// verarbeitet werden
-	@SuppressWarnings("rawtypes")
-	private static <T> Map<SDFAttribute, IHistogram> getBaseHistograms(List<T> physicalOperators) {
+	private static <T> Map<SDFAttribute, IHistogram> getBaseHistograms(List<T> operators) {
 		final Map<SDFAttribute, IHistogram> histograms = new HashMap<SDFAttribute, IHistogram>();
-
-		// Find relevant operators.
-		// Relevant operators are Select and Join
-		final List<IPhysicalOperator> relevantOperators = new ArrayList<IPhysicalOperator>();
-		for (int i = 0; i < physicalOperators.size(); i++) {
-			final Object op = physicalOperators.get(i);
-			if (op instanceof SelectPO || op instanceof JoinTIPO || op instanceof AntiJoinTIPO) {
-				relevantOperators.add((IPhysicalOperator) op);
-			}
+		
+		List<SDFAttribute> relevantAttributes = new ArrayList<SDFAttribute>();
+		
+		if(operators.get(0) instanceof IPhysicalOperator) {
+			LOG.debug("Fetching relevant attributes for physical operators");
+			relevantAttributes = getRelevantAttributesForBaseHistogramsPhysical(operators);
+		} else if(operators.get(0) instanceof ILogicalOperator) {
+			LOG.debug("Fetching relevant attributes for logical operators");
+			relevantAttributes = getRelevantAttributesForBaseHistogramsLogical(operators);
 		}
-
-		if (relevantOperators.isEmpty()) {
-			LOG.info("No relevant operators for selectivity-estimation found. ");
-			return histograms;
-		}
-
-		LOG.debug("Relevant operators are {}", relevantOperators);
-
-		// find relevant attributes
-		// relevant attributes are attributes which are used
-		// in select- and join-operators
-		final List<SDFAttribute> relevantAttributes = new ArrayList<SDFAttribute>();
-		for (final IPhysicalOperator op : relevantOperators) {
-			if (op instanceof SelectPO) {
-				final SelectPO<?> selectPO = (SelectPO) op;
-				final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-				fillWithAttributes(selectPO.getPredicate(), attributes);
-
-				for (final SDFAttribute a : attributes) {
-					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a)) {
-						relevantAttributes.add(a);
-					}
-				}
-
-			} else if (op instanceof JoinTIPO) {
-				final JoinTIPO<?, ?> joinPO = (JoinTIPO) op;
-				final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-				fillWithAttributes(joinPO.getPredicate(), attributes);
-
-				for (final SDFAttribute a : attributes) {
-					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a)) {
-						relevantAttributes.add(a);
-					}
-				}
-
-			} else {
-				final AntiJoinTIPO<?, ?> antiJoin = (AntiJoinTIPO) op;
-				for (final SDFAttribute a : antiJoin.getOutputSchema()) {
-					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a)) {
-						relevantAttributes.add(a);
-					}
-				}
-			}
-		}
+		
 		if (relevantAttributes.isEmpty()) {
 			LOG.info("No relevant attributes found. Selectivity-estimation finished");
 			return histograms;
@@ -350,5 +308,121 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 		}
 
 		return histograms;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private static <T> List<SDFAttribute> getRelevantAttributesForBaseHistogramsPhysical(List<T> physicalOperators) {
+		// Find relevant operators.
+		// Relevant operators are Select and Join
+		final List<IPhysicalOperator> relevantOperators = new ArrayList<IPhysicalOperator>();
+		for (int i = 0; i < physicalOperators.size(); i++) {
+			final Object op = physicalOperators.get(i);
+			if (op instanceof SelectPO || op instanceof JoinTIPO
+					|| op instanceof AntiJoinTIPO) {
+				relevantOperators.add((IPhysicalOperator) op);
+			}
+		}
+
+
+		final List<SDFAttribute> relevantAttributes = new ArrayList<SDFAttribute>();
+		
+		if (relevantOperators.isEmpty()) {
+			LOG.info("No relevant operators for selectivity-estimation found. ");
+			return relevantAttributes;
+		}
+
+		LOG.debug("Relevant operators are {}", relevantOperators);
+
+		// find relevant attributes
+		// relevant attributes are attributes which are used
+		// in select- and join-operators
+		for (final IPhysicalOperator op : relevantOperators) {
+			if (op instanceof SelectPO) {
+				final SelectPO<?> selectPO = (SelectPO) op;
+				final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+				fillWithAttributes(selectPO.getPredicate(), attributes);
+
+				for (final SDFAttribute a : attributes) {
+					if (a.getDatatype().isNumeric()
+							&& !relevantAttributes.contains(a)) {
+						relevantAttributes.add(a);
+					}
+				}
+
+			} else if (op instanceof JoinTIPO) {
+				final JoinTIPO<?, ?> joinPO = (JoinTIPO) op;
+				final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+				fillWithAttributes(joinPO.getPredicate(), attributes);
+
+				for (final SDFAttribute a : attributes) {
+					if (a.getDatatype().isNumeric()
+							&& !relevantAttributes.contains(a)) {
+						relevantAttributes.add(a);
+					}
+				}
+
+			} else {
+				final AntiJoinTIPO<?, ?> antiJoin = (AntiJoinTIPO) op;
+				for (final SDFAttribute a : antiJoin.getOutputSchema()) {
+					if (a.getDatatype().isNumeric()
+							&& !relevantAttributes.contains(a)) {
+						relevantAttributes.add(a);
+					}
+				}
+			}
+		}
+		return relevantAttributes;
+	}
+	
+	private static <T> List<SDFAttribute> getRelevantAttributesForBaseHistogramsLogical(List<T> logicalOperators) {
+		// Find relevant operators.
+		// Relevant operators are Select and Join
+		final List<ILogicalOperator> relevantOperators = new ArrayList<ILogicalOperator>();
+		for (int i = 0; i < logicalOperators.size(); i++) {
+			final Object op = logicalOperators.get(i);
+			if (op instanceof SelectAO || op instanceof JoinAO) {
+				relevantOperators.add((ILogicalOperator) op);
+			}
+		}
+		
+		final List<SDFAttribute> relevantAttributes = new ArrayList<SDFAttribute>();
+
+		if (relevantOperators.isEmpty()) {
+			LOG.info("No relevant operators for selectivity-estimation found. ");
+			return relevantAttributes;
+		}
+
+		LOG.debug("Relevant operators are {}", relevantOperators);
+
+		// find relevant attributes
+		// relevant attributes are attributes which are used
+		// in select- and join-operators
+		for (final ILogicalOperator op : relevantOperators) {
+			if (op instanceof SelectAO) {
+				final SelectAO selectAO = (SelectAO) op;
+				final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+				fillWithAttributes(selectAO.getPredicate(), attributes);
+
+				for (final SDFAttribute a : attributes) {
+					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a)) {
+						relevantAttributes.add(a);
+					}
+				}
+
+			} else if (op instanceof JoinAO) {
+				final JoinAO joinAO = (JoinAO) op;
+				final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+				fillWithAttributes(joinAO.getPredicate(), attributes);
+
+				for (final SDFAttribute a : attributes) {
+					if (a.getDatatype().isNumeric() && !relevantAttributes.contains(a)) {
+						relevantAttributes.add(a);
+					}
+				}
+
+			}
+		}
+		LOG.debug("Relevant attributes are {}", relevantAttributes);
+		return relevantAttributes;
 	}
 }
