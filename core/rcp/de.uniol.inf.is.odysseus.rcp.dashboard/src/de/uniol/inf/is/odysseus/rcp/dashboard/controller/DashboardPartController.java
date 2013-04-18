@@ -119,6 +119,14 @@ public final class DashboardPartController {
 
 		status = Status.STOPPED;
 	}
+	
+	public boolean isStarted() {
+		return status == Status.RUNNING;
+	}
+	
+	public boolean isPaused() {
+		return status == Status.PAUSED;
+	}
 
 	public void unpause() {
 		Preconditions.checkState(status == Status.PAUSED, "Container for DashboardParts cannot be unpaused.");

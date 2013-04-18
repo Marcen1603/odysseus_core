@@ -179,6 +179,10 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 		return selectedDashboardPart;
 	}
 
+	public boolean hasSelection() {
+		return selectedDashboardPart != null;
+	}
+
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (hasSelection() && (e.stateMask & SWT.CTRL) != 0) {
@@ -268,20 +272,13 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 	public void remove(DashboardPartPlacement partPlace) {
 		Preconditions.checkNotNull(partPlace, "Dashboardpart to remove (as placement) must not be null!");
-		
-		Composite compToRemove = containers.get(partPlace);
+
+		final Composite compToRemove = containers.get(partPlace);
 		removeListeners(compToRemove);
 		compToRemove.dispose();
 		dashboardParts.remove(partPlace);
-		
+
 		fireRemovedEvent(partPlace.getDashboardPart());
-		
-//		deletePartControl();
-//		dashboardParts.remove(partPlace);
-//
-//		createPartControl(parent, toolBar);
-//
-//		fireRemovedEvent(partPlace.getDashboardPart());
 	}
 
 	public void removeListener(IDashboardListener listener) {
@@ -348,6 +345,12 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 		}
 	}
 
+	// private void deletePartControl() {
+	// removeListeners(dashboardComposite);
+	// dashboardComposite.dispose();
+	// dashboardComposite = null;
+	// }
+
 	private void addListeners(Control base) {
 		base.addMouseListener(this);
 		base.addKeyListener(this);
@@ -357,12 +360,6 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 			}
 		}
 	}
-
-//	private void deletePartControl() {
-//		removeListeners(dashboardComposite);
-//		dashboardComposite.dispose();
-//		dashboardComposite = null;
-//	}
 
 	private void fireAddedEvent(IDashboardPart part) {
 		synchronized (listeners) {
@@ -403,10 +400,6 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	private DashboardPartPlacement getSelectedDashboardPart() {
 		final ISelection selection = getSelection();
 		return selection.isEmpty() ? null : (DashboardPartPlacement) (((IStructuredSelection) selection).getFirstElement());
-	}
-
-	private boolean hasSelection() {
-		return selectedDashboardPart != null;
 	}
 
 	private void insertDashboardPart(DashboardPartPlacement dashboardPartPlace) {

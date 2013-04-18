@@ -20,10 +20,15 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -40,6 +45,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
@@ -69,6 +75,8 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		parent.setLayout(new GridLayout());
 		final ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
 
+		initToolBar(toolBar);
+
 		dashboard.createPartControl(parent, toolBar);
 		getSite().setSelectionProvider(dashboard);
 
@@ -86,7 +94,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 
 	@Override
 	public void dashboardPartAdded(Dashboard sender, IDashboardPart addedPart) {
-		if( !controllers.containsKey(addedPart)) {
+		if (!controllers.containsKey(addedPart)) {
 			final DashboardPartController ctrl = new DashboardPartController(addedPart);
 			try {
 				ctrl.start();
@@ -94,7 +102,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 			} catch (final ControllerException e) {
 				LOG.error("Could not start dashboard part", e);
 			}
-	
+
 			setDirty(true);
 		}
 	}
@@ -218,11 +226,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 
 	protected final void startDashboard() {
 		for (final DashboardPartController controller : controllers.values()) {
-			try {
-				controller.start();
-			} catch (final ControllerException ex) {
-				LOG.error("Could not start dashboard", ex);
-			}
+			tryStartDashboardPart(controller);
 		}
 	}
 
@@ -230,6 +234,89 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		for (final DashboardPartController controller : controllers.values()) {
 			controller.stop();
 		}
+	}
+
+	private DashboardPartController getControllerFromSelection(IStructuredSelection selection) {
+		final DashboardPartPlacement selectedPlacement = (DashboardPartPlacement) selection.getFirstElement();
+		final IDashboardPart dashboardPart = selectedPlacement.getDashboardPart();
+		final DashboardPartController controller = controllers.get(dashboardPart);
+		return controller;
+	}
+
+	private void initToolBar(ToolBar toolBar) {
+		final ToolItem startButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("start"));
+		startButton.setToolTipText("Start dashboard part(s)");
+		startButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (dashboard.hasSelection()) {
+					final DashboardPartController controller = getControllerFromSelection((IStructuredSelection) dashboard.getSelection());
+					if( controller.isPaused() ) {
+						controller.unpause();
+					} else if (!controller.isStarted()) {
+						tryStartDashboardPart(controller);
+					}
+				} else {
+					for (final DashboardPartController controller : controllers.values()) {
+						if( controller.isPaused() ) {
+							controller.unpause();
+						} else if (!controller.isStarted()) {
+							tryStartDashboardPart(controller);
+						}
+					}
+				}
+			}
+		});
+
+		final ToolItem stopButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("stop"));
+		startButton.setToolTipText("Stop dashboard part(s)");
+		stopButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (dashboard.hasSelection()) {
+					final DashboardPartController controller = getControllerFromSelection((IStructuredSelection) dashboard.getSelection());
+					if( controller.isPaused() ) {
+						controller.unpause();
+					}
+					
+					if (controller.isStarted()) {
+						controller.stop();
+					}
+				} else {
+					for (final DashboardPartController controller : controllers.values()) {
+						if( controller.isPaused() ) {
+							controller.unpause();
+						}
+
+						if (controller.isStarted()) {
+							controller.stop();
+						}
+					}
+				}
+			}
+		});
+		
+		final ToolItem pauseButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("pause"));
+		pauseButton.setToolTipText("Pause dashboard part(s)");
+		pauseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (dashboard.hasSelection()) {
+					final DashboardPartController controller = getControllerFromSelection((IStructuredSelection) dashboard.getSelection());
+					if (controller.isStarted() && !controller.isPaused()) {
+						controller.pause();
+					}
+				} else {
+					for (final DashboardPartController controller : controllers.values()) {
+						if (controller.isStarted() && !controller.isPaused()) {
+							controller.pause();
+						}
+					}
+				}
+			}
+		});
+		
+		new ToolItem(toolBar, SWT.SEPARATOR);
 	}
 
 	private static Map<IDashboardPart, DashboardPartController> createDashboardPartControllers(ImmutableList<DashboardPartPlacement> dashboardPartPlacements) {
@@ -242,5 +329,19 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		}
 
 		return controllers;
+	}
+
+	private static final ToolItem createToolBarButton(ToolBar tb, Image img) {
+		final ToolItem item = new ToolItem(tb, SWT.PUSH);
+		item.setImage(img);
+		return item;
+	}
+
+	private static void tryStartDashboardPart(final DashboardPartController controller) {
+		try {
+			controller.start();
+		} catch (final ControllerException e1) {
+			LOG.error("Could not start dahsboardpart", e1);
+		}
 	}
 }
