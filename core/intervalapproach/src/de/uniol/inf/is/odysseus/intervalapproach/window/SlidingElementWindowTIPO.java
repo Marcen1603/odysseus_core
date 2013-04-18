@@ -141,7 +141,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	}
 	
 	@Override
-	public long getElementsStored() {
+	public long getElementsStored1() {
 		return this._buffer.size();
 	}
 	

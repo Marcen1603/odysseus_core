@@ -785,7 +785,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider i
 	// ------------------------------------------------------
 	// Memory Management
 	// ------------------------------------------------------
-	public long getElementsStored(){
+	public long getElementsStored1(){
+		return -1;
+	}
+	
+	public long getElementsStored2(){
 		return -1;
 	}
 	

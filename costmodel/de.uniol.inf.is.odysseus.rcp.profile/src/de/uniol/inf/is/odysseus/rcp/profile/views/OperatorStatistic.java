@@ -18,7 +18,9 @@ public final class OperatorStatistic {
 	
 	private final int hashID;
 	
-	private final long elementsStoredCount;
+	private final long elementsStoredCount1;
+	private final long elementsStoredCount2;
+
 	private final IPhysicalOperator operator;
 	
 	public OperatorStatistic(IPhysicalOperator operator, OperatorCost<IPhysicalOperator> cost, OperatorEstimation<IPhysicalOperator> est) {
@@ -35,9 +37,11 @@ public final class OperatorStatistic {
 		this.hashID = operator.hashCode();
 		
 		if (operator instanceof AbstractSource){
-			this.elementsStoredCount = ((AbstractSource<?>) operator).getElementsStored(); 
+			this.elementsStoredCount1 = ((AbstractSource<?>) operator).getElementsStored1();
+			this.elementsStoredCount2 = ((AbstractSource<?>) operator).getElementsStored2();			
 		} else {
-			this.elementsStoredCount = -1;
+			this.elementsStoredCount1 = -1;
+			this.elementsStoredCount2 = -1;
 		}
 		
 		this.operator = operator;
@@ -67,12 +71,20 @@ public final class OperatorStatistic {
 		return hashID;
 	}
 	
-	public long getElementsStoredCount() {
-		return elementsStoredCount;
+	public long getElementsStoredCount1() {
+		return elementsStoredCount1;
 	}
 	
-	public boolean hasElementsStoredCount() {
-		return elementsStoredCount >= 0;
+	public boolean hasElementsStoredCount1() {
+		return elementsStoredCount1 >= 0;
+	}
+
+	public long getElementsStoredCount2() {
+		return elementsStoredCount2;
+	}
+	
+	public boolean hasElementsStoredCount2() {
+		return elementsStoredCount2 >= 0;
 	}
 
 	public IPhysicalOperator getOperator() {

@@ -151,8 +151,13 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	}
 	
 	@Override
-	public long getElementsStored() {
+	public long getElementsStored1() {
 		return cache.size();
+	}
+	
+	@Override
+	public long getElementsStored2() {
+		return buffer.size();
 	}
 
 	

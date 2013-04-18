@@ -137,30 +137,53 @@ public class OperatorProfileView extends ViewPart implements ISelectionProvider 
 		};
 
 		// Elements in operator
-		column = createTableColumn(tableViewer, "Elements", new IOperatorStatisticReader() {
+		column = createTableColumn(tableViewer, "Elements (1)", new IOperatorStatisticReader() {
 			@Override
 			public String get(OperatorStatistic statistic) {
-				return statistic.hasElementsStoredCount() ? String.valueOf(statistic.getElementsStoredCount()) : "";
+				return statistic.hasElementsStoredCount1() ? String.valueOf(statistic.getElementsStoredCount1()) : "";
 			}
 		});
 		new ColumnViewerSorter(tableViewer, column) {
 			@Override
 			protected int doCompare(Viewer viewer, OperatorStatistic e1, OperatorStatistic e2) {
-				if (e1.hasElementsStoredCount()) {
-					if (e2.hasElementsStoredCount()) {
-						return Long.compare(e1.getElementsStoredCount(), e2.getElementsStoredCount());
+				if (e1.hasElementsStoredCount1()) {
+					if (e2.hasElementsStoredCount1()) {
+						return Long.compare(e1.getElementsStoredCount1(), e2.getElementsStoredCount1());
 					}
 					return 1;
 				}
 
-				if (e2.hasElementsStoredCount()) {
+				if (e2.hasElementsStoredCount1()) {
 					return -1;
 				}
 
 				return 0;
 			}
 		};
+		// Elements in operator
+		column = createTableColumn(tableViewer, "Elements (2)", new IOperatorStatisticReader() {
+			@Override
+			public String get(OperatorStatistic statistic) {
+				return statistic.hasElementsStoredCount2() ? String.valueOf(statistic.getElementsStoredCount2()) : "";
+			}
+		});
+		new ColumnViewerSorter(tableViewer, column) {
+			@Override
+			protected int doCompare(Viewer viewer, OperatorStatistic e1, OperatorStatistic e2) {
+				if (e1.hasElementsStoredCount2()) {
+					if (e2.hasElementsStoredCount2()) {
+						return Long.compare(e1.getElementsStoredCount2(), e2.getElementsStoredCount2());
+					}
+					return 1;
+				}
 
+				if (e2.hasElementsStoredCount2()) {
+					return -1;
+				}
+
+				return 0;
+			}
+		};
 		column = createTableColumn(tableViewer, "Sel.", new IOperatorStatisticReader() {
 			@Override
 			public String get(OperatorStatistic statistic) {

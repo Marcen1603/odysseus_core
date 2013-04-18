@@ -134,7 +134,7 @@ public class RelationalSlidingElementWindowTIPO extends
 	}
 	
 	@Override
-	public long getElementsStored() {
+	public long getElementsStored1() {
 		long size = 0;
 		Collection<List<IStreamable>> bufs = buffers.values();
 		for (List<IStreamable> b:bufs){

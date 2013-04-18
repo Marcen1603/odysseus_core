@@ -88,7 +88,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 	}
 	
 	@Override
-	public long getElementsStored() {
+	public long getElementsStored1() {
 		return transferFunction.size();
 	}
 }

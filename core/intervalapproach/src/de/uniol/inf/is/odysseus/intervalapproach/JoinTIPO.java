@@ -359,12 +359,13 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 	
 	@Override
-	public long getElementsStored() {
-		long size = areas[0].size();
-		for (int i=1;i<areas.length;i++){
-			size+=areas[i].size();
-		}
-		return size;
+	public long getElementsStored1() {
+		return areas[0].size();
+	}
+	
+	@Override
+	public long getElementsStored2() {
+		return areas[1].size();
 	}
 
 }
