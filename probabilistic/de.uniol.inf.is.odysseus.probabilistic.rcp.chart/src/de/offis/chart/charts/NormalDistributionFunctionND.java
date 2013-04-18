@@ -15,9 +15,13 @@
 package de.offis.chart.charts;
 
 
+import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.NonPositiveDefiniteMatrixException;
+import org.apache.commons.math3.linear.NonSymmetricMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.util.FastMath;
 
 import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
 
@@ -34,21 +38,31 @@ public class NormalDistributionFunctionND {
 	public double getValue(double[] x){
 		int k = x.length;
 		RealMatrix z = matrix.getMatrix();
-		double z_det = new LUDecomposition(z).getDeterminant();
+        double z_det = 0.0;
+        RealMatrix z_inverse = null;
+        try {
+            CholeskyDecomposition decomposition = new CholeskyDecomposition(z);
+            z_det = decomposition.getDeterminant();
+            z_inverse = decomposition.getSolver().getInverse();
+        } catch (NonSymmetricMatrixException | NonPositiveDefiniteMatrixException e) {
+            LUDecomposition decomposition = new LUDecomposition(z);
+            z_det = decomposition.getDeterminant();
+            z_inverse = decomposition.getSolver().getInverse();
+        }
 		RealMatrix x_col = MatrixUtils.createColumnRealMatrix(x);
 		RealMatrix means_col = MatrixUtils.createColumnRealMatrix(means);
 		RealMatrix x_sub_m = x_col.subtract(means_col);
-		RealMatrix z_inverse = new LUDecomposition(z).getSolver().getInverse();
+
 		
 
 		
-		double first = 1/(Math.pow(2*Math.PI, k/2)*Math.pow(z_det, 1/2));
+		double first = 1/(FastMath.pow(2*Math.PI, k/2)*FastMath.pow(z_det, 1/2));
 		RealMatrix factor1 = x_sub_m.transpose();
 		RealMatrix factor2 = factor1.multiply(z_inverse);
 		RealMatrix factor3 = x_sub_m;
 		RealMatrix f4 = factor2.multiply(factor3);
 		double f5 = f4.getEntry(0, 0);
 		double second = -0.5 * f5;
-		return first*Math.exp(second);
+		return first*FastMath.exp(second);
 	}
 }

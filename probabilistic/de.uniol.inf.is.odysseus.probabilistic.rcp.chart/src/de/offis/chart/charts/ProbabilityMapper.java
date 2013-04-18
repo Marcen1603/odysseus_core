@@ -38,9 +38,7 @@ public class ProbabilityMapper implements net.ericaro.surfaceplotter.Mapper {
 		}
 		
 		this.scale = mix.getScale();
-//		this.scale = 5;
 		this.interval = mix.getSupport();
-//		this.interval = new Interval[]{new Interval(-1, 1),new Interval(-1, 1)};
 	}
 
 	@Override

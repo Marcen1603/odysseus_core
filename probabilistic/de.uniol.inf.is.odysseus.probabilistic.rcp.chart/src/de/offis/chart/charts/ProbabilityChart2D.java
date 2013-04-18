@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.swt.SWTException;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -46,6 +45,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewableSDFAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
@@ -103,8 +103,9 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
 			public void run() {
 				try {
 					for (int i = 0; i < getChoosenAttributes(port).size(); i++) {
-						String name = getChoosenAttributes(port).get(i).getName();
-						SDFDatatype type = getChoosenAttributes(port).get(i).getSDFDatatype();
+					    ViewableSDFAttribute attribute = (ViewableSDFAttribute) getChoosenAttributes(port).get(i);
+						String name = attribute.getName();
+						SDFDatatype type = attribute.getSDFDatatype();
 						
 						if(tuple.size() == 0 ){
 							// no data
@@ -112,9 +113,8 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
 						}
 						
 						if(type.getClass().equals(SDFProbabilisticDatatype.class)){
-							
+
 							SDFProbabilisticDatatype probType = (SDFProbabilisticDatatype)type;
-							
 							if(probType.isContinuous()){
 								updateChart((NormalDistributionMixture)tuple.get(i), name);
 							} else if (probType.isDiscrete()){
@@ -123,7 +123,8 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
 							
 						}						
 					}
-				} catch (SWTException e) {
+				} catch (Exception e) {
+				    e.printStackTrace();
 					dispose();
 					return;
 				}
