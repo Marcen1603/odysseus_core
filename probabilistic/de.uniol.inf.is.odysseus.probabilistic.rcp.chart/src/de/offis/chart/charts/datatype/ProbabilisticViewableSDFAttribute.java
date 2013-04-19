@@ -18,31 +18,33 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewableSDFAttribute;
 
-public class ProbViewableSDFAttribute extends ViewableSDFAttribute {
+public class ProbabilisticViewableSDFAttribute extends ViewableSDFAttribute {
 
-	public ProbViewableSDFAttribute(SDFAttribute attribute, String typeName,
-			int index, int port) {
-		super(attribute, typeName, index, port);
-	}
-	
-	@Override
-	public Object evaluate(Tuple<? extends IMetaAttribute> tuple) {
-		ProbabilisticTuple<?> obj = (ProbabilisticTuple<?>)tuple;
-		
-		SDFProbabilisticDatatype type = (SDFProbabilisticDatatype)getSDFDatatype();
-		
-		if(type.isContinuous()){
-			ProbabilisticContinuousDouble attr = (ProbabilisticContinuousDouble)obj.getAttribute(this.index);
-			return obj.getDistribution(attr.getDistribution());
-		} else if (type.isDiscrete()){			
-			return (AbstractProbabilisticValue<?>)obj.getAttribute(this.index);
-		}
-		
-		return null;
-	}
+    public ProbabilisticViewableSDFAttribute(final SDFAttribute attribute, final String typeName, final int index, final int port) {
+        super(attribute, typeName, index, port);
+    }
+
+    @Override
+    public Object evaluate(final Tuple<? extends IMetaAttribute> tuple) {
+        final ProbabilisticTuple<?> obj = (ProbabilisticTuple<?>) tuple;
+
+        final SDFProbabilisticDatatype type = (SDFProbabilisticDatatype) this.getSDFDatatype();
+
+        if (type.isContinuous()) {
+            final ProbabilisticContinuousDouble attr = (ProbabilisticContinuousDouble) obj.getAttribute(this.index);
+            return obj.getDistribution(attr.getDistribution());
+        } else if (type.isDiscrete()) {
+            return obj.getAttribute(this.index);
+        }
+
+        return null;
+    }
+    
+    public int getIndex() {
+        return index;
+    }
 }

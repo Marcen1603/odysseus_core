@@ -14,7 +14,7 @@
  */
 package de.offis.chart.charts;
 
-import de.offis.chart.charts.datatype.ProbViewSchema;
+import de.offis.chart.charts.datatype.ProbabilisticViewSchema;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -42,7 +42,7 @@ public abstract class AbstractProbabilityChart<T, M extends IMetaAttribute> exte
 		for (ISubscription<? extends ISource<?>> s : this.connection
 				.getSubscriptions()) {
 			this.viewSchema.put(s.getSinkInPort(),
-					new ProbViewSchema<T>(s.getSchema(), s.getTarget()
+					new ProbabilisticViewSchema<T>(s.getSchema(), s.getTarget()
 							.getMetaAttributeSchema(), s.getSinkInPort()));
 		}
 		if (validate()) {
