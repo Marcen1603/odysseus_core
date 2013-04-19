@@ -64,7 +64,6 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
     @SuppressWarnings("unchecked")
     @Override
     protected void process_next(ProbabilisticTuple<T> object, int port) {
-
         int currentMixturePos = ((ProbabilisticContinuousDouble) object.getAttribute(dependentAttributePos[0])).getDistribution();
         NormalDistributionMixture currentMixture = object.getDistribution(currentMixturePos);
 
@@ -91,13 +90,9 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
             // ( \beta^T \sigma_A | \beta^T \sigma_A \beta + \sigma)
             //
             newCovarianceMatrix.setSubMatrix(covarianceMatrix.getData(), 0, 0);
-
             newCovarianceMatrix.setSubMatrix(covarianceMatrix.multiply(regressionCoefficients).getData(), 0, covarianceMatrix.getColumnDimension());
-
             newCovarianceMatrix.setSubMatrix(regressionCoefficients.transpose().multiply(covarianceMatrix).getData(), covarianceMatrix.getRowDimension(), 0);
-
             newCovarianceMatrix.setSubMatrix(regressionCoefficients.transpose().multiply(covarianceMatrix).multiply(regressionCoefficients).add(residual).getData(), covarianceMatrix.getRowDimension(), covarianceMatrix.getColumnDimension());
-
             newMixtureComponents.put(new NormalDistribution(newMean, CovarianceMatrixUtils.fromMatrix(newCovarianceMatrix)), mixture.getValue());
         }
 
