@@ -147,9 +147,11 @@ public class FastHeatMapPO<K extends ITimeInterval, T extends IStreamObject<K>> 
 			for(int i = 0; i < this.x; i++) {
 				for(int j = 0; j < this.y; j++) {
 					attributes[2 + i*5*this.y + j*5] = ((xLength / x) * i);
-					attributes[3 + i*5*this.y + j*5] = ((yLength / y) * (j + 1));
+//					added -33960 for correct visualization
+					attributes[3 + i*5*this.y + j*5] = ((yLength / y) * (j + 1))-33960;
 					attributes[4 + i*5*this.y + j*5] = ((xLength / x) * (i + 1));
-					attributes[5 + i*5*this.y + j*5] = ((yLength / y) * j);
+//					added -33960 for correct visualization
+					attributes[5 + i*5*this.y + j*5] = ((yLength / y) * j)-33960;
 					attributes[6 + i*5*this.y + j*5] = map[i][j];
 				}
 			}
