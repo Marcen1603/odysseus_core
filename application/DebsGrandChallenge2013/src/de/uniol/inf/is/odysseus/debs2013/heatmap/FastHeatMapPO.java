@@ -142,22 +142,32 @@ public class FastHeatMapPO<K extends ITimeInterval, T extends IStreamObject<K>> 
 		if((((Long) tuple.getAttribute(tsAtt)) - lastSend) >= 1000000000000L) {
 			lastSend = (Long) tuple.getAttribute(tsAtt);
 			Object[] attributes = new Object[this.x * this.y * 5 + 2];
-			attributes[0] = tuple.getAttribute(tsAtt);
-			attributes[1] = tuple.getAttribute(1);
+			
+			double totalTime = 0;
 			for(int i = 0; i < this.x; i++) {
 				for(int j = 0; j < this.y; j++) {
-					attributes[2 + i*5*this.y + j*5] = ((xLength / x) * i);
-//					added -33960 for correct visualization
-					attributes[3 + i*5*this.y + j*5] = ((yLength / y) * (j + 1))-33960;
-					attributes[4 + i*5*this.y + j*5] = ((xLength / x) * (i + 1));
-//					added -33960 for correct visualization
-					attributes[5 + i*5*this.y + j*5] = ((yLength / y) * j)-33960;
-					attributes[6 + i*5*this.y + j*5] = map[i][j];
+					totalTime += map[i][j];
 				}
 			}
-			Tuple outputTuple = new Tuple<>(attributes, true);
-			outputTuple.setMetadata(tuple.getMetadata());
-			transfer((T) outputTuple);
+			
+			if(totalTime > 0) {
+				attributes[0] = tuple.getAttribute(tsAtt);
+				attributes[1] = tuple.getAttribute(1);
+				for(int i = 0; i < this.x; i++) {
+					for(int j = 0; j < this.y; j++) {
+						attributes[2 + i*5*this.y + j*5] = ((xLength / x) * i);
+	//					added -33960 for correct visualization
+						attributes[3 + i*5*this.y + j*5] = ((yLength / y) * (j + 1))-33960;
+						attributes[4 + i*5*this.y + j*5] = ((xLength / x) * (i + 1));
+	//					added -33960 for correct visualization
+						attributes[5 + i*5*this.y + j*5] = ((yLength / y) * j)-33960;
+						attributes[6 + i*5*this.y + j*5] = map[i][j] / totalTime;
+					}
+				}
+				Tuple outputTuple = new Tuple<>(attributes, true);
+				outputTuple.setMetadata(tuple.getMetadata());
+				transfer((T) outputTuple);
+			}
 		}
 	}
 	
