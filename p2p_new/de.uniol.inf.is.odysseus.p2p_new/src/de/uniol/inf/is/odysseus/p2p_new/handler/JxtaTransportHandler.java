@@ -21,7 +21,6 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.util.AbstractJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.ClientJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
@@ -98,7 +97,6 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 	public void processInOpen() throws IOException {
 		LOG.info("Process In Open");
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
-		P2PNewPlugIn.getDiscoveryService().publish(pipeAdvertisement); // needed?
 
 		connection = new ClientJxtaConnection(pipeAdvertisement);
 		tryConnectAsync();
