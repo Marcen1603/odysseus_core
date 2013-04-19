@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.debs2013.viewer;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,13 +35,13 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 	private static final Logger LOG = LoggerFactory.getLogger(HeatmapView.class);
 	private SDFSchema schema;
 	
-	final int showHeatmapOfPlayerId = 15;
+	private int firstXValue;
 	
 	private Tuple<?> currentTuple;
-//	private ConcurrentHashMap<int[], Double> cellValues; 
 	private ConcurrentHashMap<Integer, int[]> cellCoordinates;
 	private ConcurrentHashMap<Integer, Double> cellValues;
 	private ConcurrentHashMap<Integer, Color> colorMap;
+	private ConcurrentHashMap<Integer, Double> colorValueMap;
 	
 	@Override
 	public void streamElementRecieved(Object element, int port) {
@@ -47,28 +50,21 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 			return;
 		}
 		
-		
 		if(		attributeIndexMap.get("ts")!=null &&
 				attributeIndexMap.get("player_id")!=null&&
-				attributeIndexMap.get("cell_x1")!=null &&
-				attributeIndexMap.get("cell_y1")!=null &&
-				attributeIndexMap.get("cell_x2")!=null &&
-				attributeIndexMap.get("cell_y2")!=null){
+				attributeIndexMap.get("firstXValue")!=null){
 			
 			currentTuple = (Tuple<?>) element;
-			
-			int[] tempArray = {		(int)currentTuple.getAttribute(attributeIndexMap.get("cell_x1")),
-									(int)currentTuple.getAttribute(attributeIndexMap.get("cell_y1")),
-									(int)currentTuple.getAttribute(attributeIndexMap.get("cell_x2")),
-									(int)currentTuple.getAttribute(attributeIndexMap.get("cell_y2"))};
-			
-//			cellValues.put(tempArray, (Double)currentTuple.getAttribute(attributeIndexMap.get("percent_time_in_time_cell")));
-			
-			int hash = getCellHashCode(tempArray);
-			cellCoordinates.put(hash, tempArray);
-			cellValues.put(hash, (Double)currentTuple.getAttribute(attributeIndexMap.get("percent_time_in_time_cell")));
-
-//			currentTuple.put((Integer)tuple.getAttribute(attributeIndexMap.get("sid")), tuple);
+			for(int i=firstXValue;i<(currentTuple.getAttributes().length-2);i = i+5){
+				int[]tempArray = {		(int)currentTuple.getAttribute(i),
+										(int)currentTuple.getAttribute(i+1),
+										(int)currentTuple.getAttribute(i+2),
+										(int)currentTuple.getAttribute(i+3)};
+				
+				int hash = getCellHashCode(tempArray);
+				cellCoordinates.put(hash, tempArray);
+				cellValues.put(hash, (Double)currentTuple.getAttribute(i+4));
+			}
 		}
 		
 	}
@@ -87,10 +83,16 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 		
 		attributeIndexMap = new ConcurrentHashMap<>();
 		for (int i = 0; i < schema.getAttributes().size(); i++) {
-			attributeIndexMap.put(schema.getAttribute(i).getAttributeName(), i);
+			if(schema.getAttribute(i).getAttributeName().contains("ts")){
+				attributeIndexMap.put("ts", i);
+			}else if(schema.getAttribute(i).getAttributeName().contains("player_id")){
+				attributeIndexMap.put("player_id", i);
+			}else if(schema.getAttribute(i).getAttributeName().contains("_x1")){
+				firstXValue = i;
+				attributeIndexMap.put("firstXValue", i);
+				break;
+			}
 		}
-		
-		
 		
 		for (int i = 0; i < schema.getAttributes().size(); i++) {
 			LOG.info(schema.getAttribute(i).getAttributeName() + "  "+schema.getAttribute(i).getDatatype().getQualName());
@@ -102,7 +104,7 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 		cellValues = new ConcurrentHashMap<Integer, Double>();
 		colorMap = new ConcurrentHashMap<Integer, Color>();
 		
-//		GREEN -> RED
+//		YELLOW -> RED
 		colorMap.put(1, new Color(Display.getDefault(), 255,255,178));
 		colorMap.put(2, new Color(Display.getDefault(), 254,204,92));
 		colorMap.put(3, new Color(Display.getDefault(), 253,141,60));
@@ -118,12 +120,8 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 				  GC gc = new GC(soccerFieldDraw);
 				  Font fontTime = new Font(e.display,"Arial", 9, SWT.BOLD | SWT.ITALIC);
 
-				  
-//				  for(Entry<Integer, Double > entry : cellValues.entrySet()) {
-//					    int hash = entry.getKey();
-//					    double cell = entry.getValue();
-//				  }
-				  
+				  //Update (value->color)-mapping
+				  initializeCellValues(cellValues.values());
 				  
 				  for(Entry<Integer, int[] > entry : cellCoordinates.entrySet()) {
 					    int hash = entry.getKey();
@@ -148,9 +146,7 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 							    TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
 							    millis - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis))
 							);
-					  gc.drawText("TS: "+currentTuple.getAttribute(attributeIndexMap.get("ts")).toString()+"    MS: "+millis+" ms"+"    "+time+"\nPlayerId: "+showHeatmapOfPlayerId+"\nWindow: Full Game", 5, 5);
-					  
-					  
+					  gc.drawText("TS: "+currentTuple.getAttribute(attributeIndexMap.get("ts")).toString()+"    MS: "+millis+" ms"+"    "+time+"\nPlayerId: "+currentTuple.getAttribute(attributeIndexMap.get("player_id")), 5, 5); 
 				  }
 				  
 				  fontTime.dispose();
@@ -160,6 +156,21 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 		
 		SoccerFieldViewUpdater up = new SoccerFieldViewUpdater(soccerFieldDraw);
 		up.schedule(1000);
+	}
+	protected void initializeCellValues(Collection<Double> values) {
+		ArrayList<Double> list = new ArrayList<>();
+		for (Double value : values) {
+			if(value>0.0){
+				list.add(value);
+			}
+		}
+		Collections.sort(list);
+		colorValueMap = new ConcurrentHashMap<>();
+		if(list.size()>0){
+			colorValueMap.put(1, list.get((int)Math.ceil((list.size()*0.4))-1));
+			colorValueMap.put(2, list.get((int)Math.ceil((list.size()*0.7))-1));
+			colorValueMap.put(3, list.get((int)Math.ceil((list.size()*0.9))-1));
+		}
 	}
 	@Override
 	public void setFocus() {
@@ -207,11 +218,11 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 		return temp.hashCode();
 	}
 	private Color getColorForPercent(Double percent){
-		if(percent<0.5){
+		if(percent<colorValueMap.get(1)){
 			return colorMap.get(1);
-		}else if(percent<1.0){
+		}else if(percent<colorValueMap.get(2)){
 			return colorMap.get(2);
-		}else if(percent<1.5){
+		}else if(percent<colorValueMap.get(3)){
 			return colorMap.get(3);
 		}else{
 			return colorMap.get(4);

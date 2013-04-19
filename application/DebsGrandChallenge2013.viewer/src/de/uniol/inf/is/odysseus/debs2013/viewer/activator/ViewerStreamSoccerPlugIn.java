@@ -35,8 +35,7 @@ public class ViewerStreamSoccerPlugIn extends AbstractUIPlugin {
 		
 		imageManager = new ImageManager(context.getBundle());
 		imageManager.register("soccer_field", "images/soccer_field.png");
-		imageManager.register("soccer_field_inline", "images/soccer_field_inline.png");
-		imageManager.register("soccer_field_outline", "images/soccer_field_outline.png");
+		imageManager.register("soccer_field_bw", "images/soccer_field_bw.png");
 	}
 
 	@Override

@@ -53,7 +53,7 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 	final int playerSize = 6;
 	final int refereeSize = 6;
 	final int ballSize = 10;
-	final int fontSize = 7;
+	final int fontSize = 8;
 	
 	final int sensorIdToRecognizeTimeProgress = 13;
 	
@@ -117,7 +117,7 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 			public void paintControl(PaintEvent e) {
 				  GC gc = new GC(soccerFieldDraw);
 				  Font fontPlayerId = new Font(e.display,"Arial", fontSize, SWT.BOLD | SWT.ITALIC);
-				  Font fontTime = new Font(e.display,"Arial", 8, SWT.BOLD | SWT.ITALIC);
+				  Font fontTime = new Font(e.display,"Arial", 9, SWT.BOLD | SWT.ITALIC);
 				  gc.setFont(fontPlayerId);
 				  
 				  for(Entry<Integer, Tuple<?> > entry : currentTuple.entrySet()) {
@@ -128,7 +128,7 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 					    	Integer y = (Integer)soccerTuple.getAttribute(attributeIndexMap.get("x"));
 					    	
 					    	if(sidBalls.contains(sid)){
-						    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+						    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
 						    	gc.fillOval(getCoordX(x)-(ballSize/2), getCoordY(y)-(ballSize/2), ballSize, ballSize);
 						    	if(sensorIdToPlayerId.containsKey(sid)){
 						    		gc.drawText(sensorIdToPlayerId.get(sid).toString(), getCoordX(x)-(ballSize/2)+ballSize, getCoordY(y)-(ballSize/2), true);
