@@ -58,7 +58,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 
 		connection = new ClientJxtaConnection(pipeAdvertisement);
-		tryConnectAsync();
+		connection.addListener(this);
+		JxtaPOUtil.tryConnectAsync(connection);
 	}
 	
 	public JxtaReceiverPO(JxtaReceiverPO<T> po) {
@@ -208,39 +209,6 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 			currentTypeByte = JxtaPOUtil.NONE_BYTE;
 		} 
 	}
-
-	private void tryConnectAsync() {
-
-		connection.addListener(this);
-		final Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					connection.connect();
-				} catch (final IOException ex) {
-					LOG.error("Could not connect", ex);
-					connection = null;
-				}
-			}
-		});
-		t.setName("Connect thread for " + connection.getPipeAdvertisement().getPipeID());
-		t.setDaemon(true);
-		t.start();
-	}
-
-//	private void tryDisconnectAsync() {
-//		connection.removeListener(this);
-//		final Thread t = new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				connection.disconnect();
-//				connection = null;
-//			}
-//		});
-//		t.setName("Discconnect thread for " + connection.getPipeAdvertisement().getPipeID());
-//		t.setDaemon(true);
-//		t.start();
-//	}
 
 	private static PipeID convertToPipeID(String text) {
 		try {

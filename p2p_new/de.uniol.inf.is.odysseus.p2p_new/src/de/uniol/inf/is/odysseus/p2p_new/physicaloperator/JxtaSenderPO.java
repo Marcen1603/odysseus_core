@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.physicaloperator;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -18,7 +17,6 @@ import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -44,12 +42,13 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 
 		connection = new ServerJxtaConnection(pipeAdvertisement);
-		tryConnectAsync();
+		connection.addListener(this);
+		JxtaPOUtil.tryConnectAsync(connection);
 	}
 
 	public JxtaSenderPO(JxtaSenderPO<T> po) {
 		super(po);
-		
+
 		this.pipeID = po.pipeID;
 		this.connection = po.connection;
 		this.dataHandler = po.dataHandler;
@@ -60,38 +59,39 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		return new JxtaSenderPO<T>(this);
 	}
 
+	// called by Jxta
 	@Override
 	public void onConnect(AbstractJxtaConnection sender) {
 		LOG.debug("Connected");
-		
+
 		dataHandler = (TupleDataHandler) new TupleDataHandler().createInstance(getOutputSchema());
 	}
 
+	// called by Jxta
 	@Override
 	public void onDisconnect(AbstractJxtaConnection sender) {
 		LOG.debug("Disconnnect");
 	}
 
+	// called by Jxta
 	@Override
 	public void onReceiveData(AbstractJxtaConnection sender, byte[] data) {
-		if( data.length == 2 && data[0] == JxtaPOUtil.CONTROL_BYTE) {
-			if( data[1] == JxtaPOUtil.OPEN_SUBBYTE) {
+		if (data[0] == JxtaPOUtil.CONTROL_BYTE) {
+			if (data[1] == JxtaPOUtil.OPEN_SUBBYTE) {
 				LOG.debug("Received open()");
-				
-				int queryID = determineQueryID(getOwner());
+
+				final int queryID = determineQueryID(getOwner());
 				ExecutorService.getServerExecutor().startQuery(queryID, SessionManagementService.getActiveSession());
-				
-			} else if( data[1] == JxtaPOUtil.CLOSE_SUBBYTE ) {
+
+			} else if (data[1] == JxtaPOUtil.CLOSE_SUBBYTE) {
 				LOG.debug("Received close()");
-				
-				int queryID = determineQueryID(getOwner());
+
+				final int queryID = determineQueryID(getOwner());
 				ExecutorService.getServerExecutor().stopQuery(queryID, SessionManagementService.getActiveSession());
+			} else {
+				LOG.error("Got unknown control subbyte {}", data[1]);
 			}
 		}
-	}
-
-	private int determineQueryID(List<IOperatorOwner> owner) {
-		return owner.get(0).getID();
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		LOG.debug("Sending punctuation {}", punctuation);
-		
+
 		final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
 		buffer.put(ObjectByteConverter.objectToBytes(punctuation));
 		buffer.flip();
@@ -111,13 +111,9 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	}
 
 	@Override
-	protected void process_close() {
-	}
-
-	@Override
 	protected void process_next(T object, int port) {
 		LOG.debug("Sending tupe {}", object);
-		
+
 		final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
 		dataHandler.writeData(buffer, object);
 		if (object.getMetadata() != null) {
@@ -128,44 +124,6 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 		write(buffer, JxtaPOUtil.DATA_BYTE);
 	}
-
-	@Override
-	protected void process_open() throws OpenFailedException {
-	}
-
-	private void tryConnectAsync() {
-
-		LOG.debug("Trying to connect");
-		connection.addListener(this);
-		final Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					connection.connect();
-				} catch (final IOException ex) {
-					LOG.error("Could not connect", ex);
-					connection = null;
-				}
-			}
-		});
-		t.setName("Connect thread for " + connection.getPipeAdvertisement().getPipeID());
-		t.setDaemon(true);
-		t.start();
-	}
-
-//	private void tryDisconnectAsync() {
-//		connection.removeListener(this);
-//		final Thread t = new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				connection.disconnect();
-//				connection = null;
-//			}
-//		});
-//		t.setName("Discconnect thread for " + connection.getPipeAdvertisement().getPipeID());
-//		t.setDaemon(true);
-//		t.start();
-//	}
 
 	private void write(ByteBuffer buffer, byte type) {
 		try {
@@ -203,6 +161,10 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		advertisement.setType(PipeService.UnicastType);
 		LOG.info("Pipe Advertisement with id = {}", pipeID);
 		return advertisement;
+	}
+
+	private static int determineQueryID(List<IOperatorOwner> owner) {
+		return owner.get(0).getID();
 	}
 
 	private static void insertInt(byte[] destArray, int offset, int value) {
