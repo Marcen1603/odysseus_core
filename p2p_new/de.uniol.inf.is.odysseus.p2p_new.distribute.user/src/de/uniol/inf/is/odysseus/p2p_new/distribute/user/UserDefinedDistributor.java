@@ -28,11 +28,11 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class UserDefinedDistributor implements ILogicalQueryDistributor {
@@ -42,13 +42,13 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	private static final String LOCAL_DESTINATION_NAME = "local";
 	private static final String DISTRIBUTION_TYPE = "user";
 
-	private static final String WRAPPER_NAME = "GenericPush";
-	private static final String PROTOCOL_HANDLER_NAME = "JxtaSizeByteBuffer";
-	private static final String DATA_HANDLER_NAME = "NTuple";
+//	private static final String WRAPPER_NAME = "GenericPush";
+//	private static final String PROTOCOL_HANDLER_NAME = "JxtaSizeByteBuffer";
+//	private static final String DATA_HANDLER_NAME = "NTuple";
 	private static final String ACCESS_NAME = "JxtaAccess_";
 	private static final String SENDER_NAME = "JxtaSender_";
-	private static final String TRANSPORT_HANDLER_NAME = "Jxta";
-	private static final String PIPEID_TAG = "pipeid";
+//	private static final String TRANSPORT_HANDLER_NAME = "Jxta";
+//	private static final String PIPEID_TAG = "pipeid";
 
 	private static IPQLGenerator generator;
 	private static IPeerManager peerManager;
@@ -206,11 +206,11 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static Map<String, String> createOptionsMap(PipeID pipeID) {
-		final Map<String, String> options = Maps.newHashMap();
-		options.put(PIPEID_TAG, pipeID.toString());
-		return options;
-	}
+//	private static Map<String, String> createOptionsMap(PipeID pipeID) {
+//		final Map<String, String> options = Maps.newHashMap();
+//		options.put(PIPEID_TAG, pipeID.toString());
+//		return options;
+//	}
 
 	private static Map<ILogicalOperator, String> determineDestinationNames(List<ILogicalOperator> operators) {
 		final Map<ILogicalOperator, String> destinationNames = Maps.newHashMap();
@@ -295,24 +295,34 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	private static void generatePeerConnection(ILogicalOperator startOperator, QueryPart startPart, ILogicalOperator endOperator, QueryPart endPart) {
 		final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
 
-		final AccessAO access = new AccessAO();
-		access.setSource(pipeID.toString());
-		access.setWrapper(WRAPPER_NAME);
-		access.setTransportHandler(TRANSPORT_HANDLER_NAME);
-		access.setProtocolHandler(PROTOCOL_HANDLER_NAME);
-		access.setDataHandler(DATA_HANDLER_NAME);
-		access.setOptions(createOptionsMap(pipeID));
+//		final AccessAO access = new AccessAO();
+//		access.setSource(pipeID.toString());
+//		access.setWrapper(WRAPPER_NAME);
+//		access.setTransportHandler(TRANSPORT_HANDLER_NAME);
+//		access.setProtocolHandler(PROTOCOL_HANDLER_NAME);
+//		access.setDataHandler(DATA_HANDLER_NAME);
+//		access.setOptions(createOptionsMap(pipeID));
+//		access.setOutputSchema(startOperator.getOutputSchema());
+//		access.setName(ACCESS_NAME + connectionNumber);
+//
+//		final SenderAO sender = new SenderAO();
+//		sender.setSink(pipeID.toString());
+//		sender.setWrapper(WRAPPER_NAME);
+//		sender.setTransportHandler(TRANSPORT_HANDLER_NAME);
+//		sender.setProtocolHandler(PROTOCOL_HANDLER_NAME);
+//		sender.setDataHandler(DATA_HANDLER_NAME);
+//		sender.setOptions(createOptionsMap(pipeID));
+//		sender.setName(SENDER_NAME + connectionNumber);
+		
+		final JxtaReceiverAO access = new JxtaReceiverAO();
+		access.setPipeID(pipeID.toString());
 		access.setOutputSchema(startOperator.getOutputSchema());
-		access.setName(ACCESS_NAME + connectionNumber);
+		access.setSchema(startOperator.getOutputSchema().getAttributes());
+		access.setName(ACCESS_NAME + connectionNumber );
 
-		final SenderAO sender = new SenderAO();
-		sender.setSink(pipeID.toString());
-		sender.setWrapper(WRAPPER_NAME);
-		sender.setTransportHandler(TRANSPORT_HANDLER_NAME);
-		sender.setProtocolHandler(PROTOCOL_HANDLER_NAME);
-		sender.setDataHandler(DATA_HANDLER_NAME);
-		sender.setOptions(createOptionsMap(pipeID));
-		sender.setName(SENDER_NAME + connectionNumber);
+		final JxtaSenderAO sender = new JxtaSenderAO();
+		sender.setPipeID(pipeID.toString());
+		sender.setName(SENDER_NAME + connectionNumber );
 
 		final LogicalSubscription removingSubscription = determineSubscription(startOperator, endOperator);
 		startOperator.unsubscribeSink(removingSubscription);

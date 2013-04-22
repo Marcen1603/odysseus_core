@@ -15,9 +15,9 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class QueryPart {
@@ -25,9 +25,9 @@ public class QueryPart {
 	private static final String DESTINATION_PQLPARAMETER_KEY = "DESTINATION";
 	private static final String PARSER_ID = "PQL";
 
-	private final Map<ILogicalOperator, List<AccessAO>> relativeSources;
+	private final Map<ILogicalOperator, List<JxtaReceiverAO>> relativeSources;
 
-	private final Map<ILogicalOperator, List<SenderAO>> relativeSinks;
+	private final Map<ILogicalOperator, List<JxtaSenderAO>> relativeSinks;
 
 	private final Collection<ILogicalOperator> operators;
 
@@ -48,14 +48,14 @@ public class QueryPart {
 		this.relativeSources = determineRelativeSources(this.operators);
 	}
 
-	public final void addAccessAO(AccessAO accessAO, ILogicalOperator forOperator) {
+	public final void addAccessAO(JxtaReceiverAO accessAO, ILogicalOperator forOperator) {
 		Preconditions.checkNotNull(forOperator, "Operator to set sender for must not be null!");
 		Preconditions.checkArgument(relativeSources.containsKey(forOperator));
 
 		relativeSources.get(forOperator).add(accessAO);
 	}
 
-	public final void addSenderAO(SenderAO senderAO, ILogicalOperator forOperator) {
+	public final void addSenderAO(JxtaSenderAO senderAO, ILogicalOperator forOperator) {
 		Preconditions.checkNotNull(forOperator, "Operator to set sender for must not be null!");
 		Preconditions.checkArgument(relativeSinks.containsKey(forOperator));
 
@@ -111,7 +111,7 @@ public class QueryPart {
 
 	private ILogicalOperator getOneTopOperator() {
 		for (final ILogicalOperator relativeSink : relativeSinks.keySet()) {
-			final List<SenderAO> senderAOs = relativeSinks.get(relativeSink);
+			final List<JxtaSenderAO> senderAOs = relativeSinks.get(relativeSink);
 			if (!senderAOs.isEmpty()) {
 				return senderAOs.get(0);
 			}
@@ -129,21 +129,21 @@ public class QueryPart {
 		return false;
 	}
 
-	private static Map<ILogicalOperator, List<SenderAO>> determineRelativeSinks(Collection<ILogicalOperator> operators) {
-		final Map<ILogicalOperator, List<SenderAO>> sinksMap = Maps.newHashMap();
+	private static Map<ILogicalOperator, List<JxtaSenderAO>> determineRelativeSinks(Collection<ILogicalOperator> operators) {
+		final Map<ILogicalOperator, List<JxtaSenderAO>> sinksMap = Maps.newHashMap();
 		for (final ILogicalOperator operator : operators) {
 			if (operator.getSubscriptions().size() == 0 || oneTargetNotInList(operators, operator.getSubscriptions())) {
-				sinksMap.put(operator, new ArrayList<SenderAO>());
+				sinksMap.put(operator, new ArrayList<JxtaSenderAO>());
 			}
 		}
 		return sinksMap;
 	}
 
-	private static Map<ILogicalOperator, List<AccessAO>> determineRelativeSources(Collection<ILogicalOperator> operators) {
-		final Map<ILogicalOperator, List<AccessAO>> sourcesMap = Maps.newHashMap();
+	private static Map<ILogicalOperator, List<JxtaReceiverAO>> determineRelativeSources(Collection<ILogicalOperator> operators) {
+		final Map<ILogicalOperator, List<JxtaReceiverAO>> sourcesMap = Maps.newHashMap();
 		for (final ILogicalOperator operator : operators) {
 			if (operator.getSubscribedToSource().size() == 0 || oneTargetNotInList(operators, operator.getSubscribedToSource())) {
-				sourcesMap.put(operator, new ArrayList<AccessAO>());
+				sourcesMap.put(operator, new ArrayList<JxtaReceiverAO>());
 			}
 		}
 		return sourcesMap;
