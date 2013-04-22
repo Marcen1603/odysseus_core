@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -79,5 +80,18 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
 		this.queryTextProvider = Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
+	}
+	
+	protected <T> T getSettingValue(String settingName, T defValue) {
+		final Configuration config = getConfiguration();
+		if (!config.exists(settingName)) {
+			return defValue;
+		}
+
+		final T value = config.get(settingName);
+		if (value instanceof String) {
+			return !Strings.isNullOrEmpty((String) value) ? value : defValue;
+		}
+		return value != null ? value : defValue;
 	}
 }

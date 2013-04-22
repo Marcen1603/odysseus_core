@@ -36,7 +36,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 
 public class LineChartDashboardPart extends AbstractChartDashboardPart {
 
@@ -137,18 +136,6 @@ public class LineChartDashboardPart extends AbstractChartDashboardPart {
 		return results;
 	}
 
-	private <T> T getSettingValue(String settingName, T defValue) {
-		final Configuration config = getConfiguration();
-		if (!config.exists(settingName)) {
-			return defValue;
-		}
-
-		final T value = config.get(settingName);
-		if (value instanceof String) {
-			return !Strings.isNullOrEmpty((String) value) ? value : defValue;
-		}
-		return value != null ? value : defValue;
-	}
 
 	private static String[] checkAndSplit(String attributeList) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(attributeList), "AttributeList must not be null or empty!");
