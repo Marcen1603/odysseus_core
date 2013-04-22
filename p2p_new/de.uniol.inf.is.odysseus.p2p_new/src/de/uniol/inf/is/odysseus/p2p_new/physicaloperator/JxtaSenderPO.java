@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -36,6 +37,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private final PipeID pipeID;
 	private AbstractJxtaConnection connection;
 	private TupleDataHandler dataHandler;
+	
+	private boolean localControlAllowed = false;
 
 	public JxtaSenderPO(JxtaSenderAO ao) {
 		pipeID = convertToPipeID(ao.getPipeID());
@@ -72,6 +75,26 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	public void onDisconnect(AbstractJxtaConnection sender) {
 		LOG.debug("Disconnnect");
 	}
+	
+	// overwritten to exclude that the sender is opened locally (e.g. by executor)
+	@Override
+	public void open() throws OpenFailedException {
+		if( localControlAllowed ) {
+			super.open();
+		} else {
+			LOG.warn("Opening " + getClass() + " locally not allowed.");
+		}
+	}
+	
+	// overwritten to exclude that the sender is opened locally (e.g. by executor)
+	@Override
+	public void close() {
+		if( localControlAllowed ) {
+			super.close();
+		} else {
+			LOG.warn("Closing " + getClass() + " locally not allowed.");
+		}
+	}
 
 	// called by Jxta
 	@Override
@@ -81,13 +104,24 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 				LOG.debug("Received open()");
 
 				final int queryID = determineQueryID(getOwner());
-				ExecutorService.getServerExecutor().startQuery(queryID, SessionManagementService.getActiveSession());
+				
+				try {
+					localControlAllowed = true;
+					ExecutorService.getServerExecutor().startQuery(queryID, SessionManagementService.getActiveSession());
+				} finally {
+					localControlAllowed = false;
+				}
 
 			} else if (data[1] == JxtaPOUtil.CLOSE_SUBBYTE) {
 				LOG.debug("Received close()");
 
 				final int queryID = determineQueryID(getOwner());
-				ExecutorService.getServerExecutor().stopQuery(queryID, SessionManagementService.getActiveSession());
+				try {
+					localControlAllowed = true;
+					ExecutorService.getServerExecutor().stopQuery(queryID, SessionManagementService.getActiveSession());
+				} finally {
+					localControlAllowed = false;
+				}
 			} else {
 				LOG.error("Got unknown control subbyte {}", data[1]);
 			}
