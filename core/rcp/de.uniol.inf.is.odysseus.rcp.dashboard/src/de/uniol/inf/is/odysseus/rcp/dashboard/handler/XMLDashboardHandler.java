@@ -69,6 +69,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	private static final String WIDTH_ATTRIBUTE_NAME = "w";
 	private static final String HEIGHT_ATTRIBUTE_NAME = "h";
 	private static final String FILE_ATTRIBUTE_NAME = "file";
+	private static final String LOCK_ATTRIBUTE_NAME = "lock";
 
 	@Override
 	public Dashboard load(List<String> lines, IDashboardPartHandler partHandler) throws DashboardHandlerException, FileNotFoundException {
@@ -81,6 +82,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 
 			final Document doc = getDocument(lines);
 			final Node rootNode = getRootNode(doc);
+			dashboard.setLock( Boolean.valueOf(getAttribute(rootNode, LOCK_ATTRIBUTE_NAME, "false")));
 
 			final NodeList dashboardNodes = rootNode.getChildNodes();
 			for (int i = 0; i < dashboardNodes.getLength(); i++) {
@@ -130,7 +132,8 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		try {
 			final Document doc = createNewDocument();
 			final Element rootElement = createRootElement(doc);
-
+			rootElement.setAttribute(LOCK_ATTRIBUTE_NAME, Boolean.toString(board.isLocked()));
+			
 			for (final DashboardPartPlacement partPlacement : board.getDashboardPartPlacements()) {
 				createDashboardPartElement(doc, rootElement, partPlacement);
 			}

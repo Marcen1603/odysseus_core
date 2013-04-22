@@ -82,6 +82,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	private Composite dashboardComposite;
 	private ToolBar toolBar;
 	private DropTarget dropTarget;
+	private boolean isLocked = false;
 
 	private final List<DashboardPartPlacement> dashboardParts = Lists.newArrayList();
 	private IStructuredSelection selectedDashboardPart;
@@ -162,6 +163,14 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 			dropTarget.dispose();
 		}
 	}
+	
+	public boolean isLocked() {
+		return isLocked;
+	}
+	
+	public void setLock( boolean lock ) {
+		isLocked = lock;
+	}
 
 	public Control getControl() {
 		return dashboardComposite;
@@ -173,19 +182,19 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 	@Override
 	public ISelection getSelection() {
-		if (selectedDashboardPart == null) {
+		if (isLocked() || selectedDashboardPart == null) {
 			return StructuredSelection.EMPTY;
 		}
 		return selectedDashboardPart;
 	}
 
 	public boolean hasSelection() {
-		return selectedDashboardPart != null;
+		return !isLocked() && selectedDashboardPart != null;
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (hasSelection() && (e.stateMask & SWT.CTRL) != 0) {
+		if (!isLocked() && hasSelection() && (e.stateMask & SWT.CTRL) != 0) {
 			DashboardPartPlacement selectedDashboardPart = getSelectedDashboardPart();
 
 			if (e.keyCode == SWT.DEL) {
@@ -255,7 +264,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 	@Override
 	public void mouseDown(MouseEvent e) {
-		if (e.button == SELECT_MOUSE_BUTTON_ID) {
+		if (!isLocked() && e.button == SELECT_MOUSE_BUTTON_ID) {
 			setSelection(controlsMap.get(e.widget));
 		}
 	}
@@ -275,12 +284,12 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 		final Composite compToRemove = containers.get(partPlace);
 		removeListeners(compToRemove);
-		
+
 		partPlace.getDashboardPart().dispose();
 		compToRemove.dispose();
-		
+
 		dashboardParts.remove(partPlace);
-		
+
 		fireRemovedEvent(partPlace.getDashboardPart());
 	}
 
@@ -347,12 +356,6 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 			}
 		}
 	}
-
-	// private void deletePartControl() {
-	// removeListeners(dashboardComposite);
-	// dashboardComposite.dispose();
-	// dashboardComposite = null;
-	// }
 
 	private void addListeners(Control base) {
 		base.addMouseListener(this);
