@@ -28,8 +28,10 @@ import de.uniol.inf.is.odysseus.equivalentoutput.tuple.Tuple;
  */
 public class EqualityCheck {
 
-	public static boolean containEachOther(List<Tuple> input0,
-			List<Tuple> input1) {
+	private static boolean verbose = false;
+
+	public static boolean check(List<Tuple> input0, List<Tuple> input1,
+			boolean showDetails) {
 		if (input0.containsAll(input1) && input1.containsAll(input0)) {
 			return true;
 		} else {
@@ -37,24 +39,36 @@ public class EqualityCheck {
 			if (!missing1.isEmpty()) {
 				System.err
 						.println(missing1.size()
-								+ " tuples are missing from input1, but are present in input0");
-				for (Tuple missing : missing1) {
-					System.err.println(missing + " missing from input1");
-					System.err.println("originating from ");
-					for (Tuple split : missing.split(new int[] { 5, 9, 8 }))
-						System.err.println(split);
+								+ " tuples are missing from not_optimized, but are present in optimized");
+				if (showDetails) {
+					for (Tuple missing : missing1) {
+						System.err.println(missing
+								+ " missing from not_optimized");
+
+						if (verbose) {
+							System.err.println("originating from ");
+							for (Tuple split : missing.split(new int[] { 5, 9,
+									8 }))
+								System.err.println(split);
+						}
+					}
 				}
 			}
 			List<Tuple> missing0 = detailCheck(input1, input0);
 			if (!missing0.isEmpty()) {
 				System.err
 						.println(missing0.size()
-								+ " tuples are missing from input0, but are present in input1");
-				for (Tuple missing : missing0) {
-					System.err.println(missing + " missing from input0");
-					System.err.println("originating from ");
-					for (Tuple split : missing.split(new int[] { 5, 9, 8 }))
-						System.err.println(split);
+								+ " tuples are missing from optimized, but are present in not_optimized");
+				if (showDetails) {
+					for (Tuple missing : missing0) {
+						System.err.println(missing + " missing from optimized");
+						if (verbose) {
+							System.err.println("originating from ");
+							for (Tuple split : missing.split(new int[] { 5, 9,
+									8 }))
+								System.err.println(split);
+						}
+					}
 				}
 			}
 			return false;
@@ -62,7 +76,7 @@ public class EqualityCheck {
 	}
 
 	/**
-	 * counts the amount of tuples which are in input0 but not in input 1
+	 * counts the amount of tuples which are in input0 but not in input1
 	 * 
 	 * @param input0
 	 * @param input1
@@ -76,5 +90,13 @@ public class EqualityCheck {
 			}
 		}
 		return missing;
+	}
+
+	public static void setVerbose(boolean v) {
+		verbose = v;
+	}
+
+	public static boolean getVerbose() {
+		return verbose;
 	}
 }

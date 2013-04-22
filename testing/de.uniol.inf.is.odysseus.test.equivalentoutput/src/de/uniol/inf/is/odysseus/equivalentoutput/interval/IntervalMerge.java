@@ -92,7 +92,6 @@ public class IntervalMerge {
 				intervals.add(new ImmutablePair<Long, Long>(tuple.getStartTimestamp(), tuple.getEndTimestamp()));
 				map.put(tuple, intervals);
 			} else {
-				System.out.println(tuple.hashCode() + " has been found in map");
 				map.get(tuple).add(new ImmutablePair<Long, Long>(tuple.getStartTimestamp(), tuple.getEndTimestamp()));
 			}
 		}

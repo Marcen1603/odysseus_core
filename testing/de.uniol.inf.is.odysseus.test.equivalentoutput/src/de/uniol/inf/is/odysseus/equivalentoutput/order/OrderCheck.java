@@ -28,7 +28,11 @@ import de.uniol.inf.is.odysseus.equivalentoutput.tuple.Tuple;
  */
 public class OrderCheck {
 
-	public static boolean isInOrder(List<Tuple> tuples) {
+	public static boolean check(List<Tuple> optimized, List<Tuple> notOptimized, boolean showDetails) {
+		return isInOrder(optimized) && isInOrder(notOptimized);
+	}
+	
+	private static boolean isInOrder(List<Tuple> tuples) {
 		for(int i = 0; i < tuples.size() - 1; i++) {
 			if(tuples.get(i).compareTo(tuples.get(i+1)) < 0) {
 				return false;

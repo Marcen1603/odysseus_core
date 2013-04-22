@@ -24,22 +24,53 @@ import de.uniol.inf.is.odysseus.equivalentoutput.tuple.Tuple;
  * Checks if the given list contains duplicated tuples.
  * 
  * @author Merlin Wasmann
- *
+ * 
  */
 public class DuplicateCheck {
-	
-	public static boolean containsDuplicates(List<Tuple> tuples) {
+
+	public static boolean check(List<Tuple> optimized,
+			List<Tuple> notOptimized, boolean showDetails) {
+		List<Tuple> dupOptimized = detailCheck(optimized);
+		List<Tuple> dupNotOptimized = detailCheck(notOptimized);
+
+		if (!dupOptimized.isEmpty()) {
+			System.err.println("There were " + dupOptimized.size()
+					+ " duplicates in optimized");
+			if (showDetails) {
+				for (Tuple dup : dupOptimized) {
+					System.err.println("Duplicate (optimized) " + dup);
+				}
+			}
+		}
+
+		if (!dupNotOptimized.isEmpty()) {
+			System.err.println("There were " + dupNotOptimized.size()
+					+ " duplicates in notOptimized");
+			if (showDetails) {
+				for (Tuple dup : dupOptimized) {
+					System.err.println("Duplicate (notOptimized) " + dup);
+				}
+			}
+		}
+
+		return dupOptimized.isEmpty() && dupNotOptimized.isEmpty();
+	}
+
+	private static List<Tuple> detailCheck(List<Tuple> tuples) {
+		List<Tuple> duplicates = new ArrayList<Tuple>();
 		List<Tuple> testList = new ArrayList<Tuple>();
 		testList.addAll(tuples);
-		for(int i = 0; i < testList.size(); i++) {
+		for (int i = 0; i < testList.size(); i++) {
 			Tuple test = testList.get(i);
 			testList.remove(i);
 			if (testList.contains(test)) {
-				return true;
+				if (!duplicates.contains(test)) {
+					duplicates.add(test);
+				}
 			}
 			testList.add(i, test);
 		}
-		return false;
+		return duplicates;
 	}
 
 }
