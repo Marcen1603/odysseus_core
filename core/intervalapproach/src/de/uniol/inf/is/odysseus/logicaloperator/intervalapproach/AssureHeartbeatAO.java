@@ -44,6 +44,7 @@ public class AssureHeartbeatAO extends UnaryLogicalOp {
 		this.timeUnit = other.timeUnit;
 		this.sendAlwaysHeartbeat = other.sendAlwaysHeartbeat;
 		this.startAtCurrentTime = other.startAtCurrentTime;
+		this.allowOutOfOrder = other.allowOutOfOrder;
 	}
 
 	public long getRealTimeDelay() {
