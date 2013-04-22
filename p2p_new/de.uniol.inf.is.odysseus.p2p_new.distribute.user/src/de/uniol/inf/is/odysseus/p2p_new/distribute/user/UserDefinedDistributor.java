@@ -302,6 +302,8 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 		startPart.addSenderAO(sender, startOperator);
 		endPart.addAccessAO(access, endOperator);
+		
+		connectionNumber++;
 	}
 
 	private static ID generateSharedQueryID() {
