@@ -12,5 +12,27 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.p2p_new.commands.RefreshPeerViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshPeerViewCommand"
+            name="Refresh">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.p2p_new.PeerView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshPeerViewCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
+      </menuContribution>
+   </extension>
 
 </plugin>

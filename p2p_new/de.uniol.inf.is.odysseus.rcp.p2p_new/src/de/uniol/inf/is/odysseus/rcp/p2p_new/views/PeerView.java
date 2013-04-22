@@ -21,9 +21,11 @@ public class PeerView extends ViewPart implements IPeerListener {
 
 	private static final String UNKNOWN_PEER_NAME = "<unknown>";
 
-	private Text text;
-
 	private final List<String> foundPeerIDs = Lists.newArrayList();
+
+	private static PeerView instance;
+
+	private Text text;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -33,19 +35,30 @@ public class PeerView extends ViewPart implements IPeerListener {
 
 		final IPeerManager peerManager = RCPP2PNewPlugIn.getPeerManager();
 		peerManager.addListener(this);
-		for (final String peerID : RCPP2PNewPlugIn.getPeerManager().getRemotePeerIDs()) {
-			onPeerFound(peerManager, peerID);
-		}
-		
+		refresh();
+
 		setPartName("PeerView (" + P2PNewPlugIn.getOwnPeerName() + ")");
+		instance = this;
 	}
 
 	@Override
 	public void dispose() {
+		instance = null;
+
 		RCPP2PNewPlugIn.getPeerManager().removeListener(this);
 		text.dispose();
 
 		super.dispose();
+	}
+	
+	public final void refresh() {
+		final IPeerManager peerManager = RCPP2PNewPlugIn.getPeerManager();
+		peerManager.checkNewPeers();
+		
+		foundPeerIDs.clear();
+		for (final String peerID : RCPP2PNewPlugIn.getPeerManager().getRemotePeerIDs()) {
+			onPeerFound(peerManager, peerID);
+		}
 	}
 
 	@Override
@@ -99,6 +112,10 @@ public class PeerView extends ViewPart implements IPeerListener {
 				}
 			});
 		}
+	}
+
+	public static Optional<PeerView> getInstance() {
+		return Optional.fromNullable(instance);
 	}
 
 }
