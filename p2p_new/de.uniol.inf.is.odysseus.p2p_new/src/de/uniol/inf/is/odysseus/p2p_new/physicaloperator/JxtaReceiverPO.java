@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -43,7 +43,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	private int currentSize = 0;
 	private ByteBuffer messageBuffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
 	
-	private TupleDataHandler dataHandler;
+	private NullAwareTupleDataHandler dataHandler;
 	private final PipeID pipeID;
 	private AbstractJxtaConnection connection;
 	
@@ -52,7 +52,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	public JxtaReceiverPO(JxtaReceiverAO ao) {
 		SDFSchema schema = new SDFSchema("", ao.getSchema());
 		setOutputSchema(schema);
-		dataHandler = (TupleDataHandler) new TupleDataHandler().createInstance(schema);
+		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(schema);
 
 		pipeID = convertToPipeID(ao.getPipeID());
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
@@ -132,7 +132,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	public void onConnect(AbstractJxtaConnection sender) {
 		LOG.debug("Connected");
 		
-		dataHandler = (TupleDataHandler) new TupleDataHandler().createInstance(getOutputSchema());
+		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(getOutputSchema());
 	}
 
 	@Override

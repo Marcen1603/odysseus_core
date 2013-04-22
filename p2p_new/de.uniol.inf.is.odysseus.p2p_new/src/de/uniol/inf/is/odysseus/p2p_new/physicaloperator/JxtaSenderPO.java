@@ -13,7 +13,7 @@ import net.jxta.protocol.PipeAdvertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -36,7 +36,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	private final PipeID pipeID;
 	private AbstractJxtaConnection connection;
-	private TupleDataHandler dataHandler;
+	private NullAwareTupleDataHandler dataHandler;
 	
 	private boolean localControlAllowed = false;
 
@@ -67,7 +67,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	public void onConnect(AbstractJxtaConnection sender) {
 		LOG.debug("Connected");
 
-		dataHandler = (TupleDataHandler) new TupleDataHandler().createInstance(getOutputSchema());
+		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(getOutputSchema());
 	}
 
 	// called by Jxta
