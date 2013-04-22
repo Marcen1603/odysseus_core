@@ -46,8 +46,6 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 	private static final String SHARED_QUERY_ID_TAG = "sharedQueryID";
 	private static final String TYPE_TAG = "type";
 	private static final String REMOVE_MSG_TYPE = "remove";
-	private static final String START_MSG_TYPE = "start";
-	private static final String STOP_MSG_TYPE = "stop";
 
 	private static QueryPartController instance;
 
@@ -115,19 +113,6 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 				final InputPipe inputPipe = inputPipeMap.remove(sharedQueryID);
 				inputPipe.close();
 				break;
-
-			case START_MSG_TYPE:
-				LOG.debug("Start queries {}", ids);
-
-				tryStartQueries(executor, ids, null);
-				break;
-
-			case STOP_MSG_TYPE:
-				LOG.debug("Stop queries {}", ids);
-
-				tryStopQueries(executor, ids, null);
-				break;
-
 			default:
 				LOG.error("Unknown message type {}", type);
 				break;
@@ -172,23 +157,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 						}
 					}
 
-				} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
-					// ignore
-
-				} else if (PlanModificationEventType.QUERY_START.equals(eventArgs.getEventType())) {
-					LOG.debug("Got START-event for queryid={}", queryID);
-					LOG.debug("Shared query id is {}", sharedQueryID);
-
-					sendMessage(outputPipe, sharedQueryID, START_MSG_TYPE);
-					tryStartQueries(executor, ids, queryID);
-
-				} else if (PlanModificationEventType.QUERY_STOP.equals(eventArgs.getEventType())) {
-					LOG.debug("Got STOP-event for queryid={}", queryID);
-					LOG.debug("Shared query id is {}", sharedQueryID);
-
-					sendMessage(outputPipe, sharedQueryID, STOP_MSG_TYPE);
-					tryStopQueries(executor, ids, queryID);
-				}
+				} 
 			}
 		} finally {
 			inEvent = false;
@@ -346,31 +315,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 				try {
 					executor.removeQuery(id, SessionManagementService.getActiveSession());
 				} catch (final PlanManagementException ex) {
-					LOG.error("Could not stop query with id={}", id, ex);
-				}
-			}
-		}
-	}
-
-	private static void tryStartQueries(IExecutor executor, Collection<Integer> ids, Integer exceptionID) {
-		for (final Integer id : ids) {
-			if (exceptionID == null || id != exceptionID) {
-				try {
-					executor.startQuery(id, SessionManagementService.getActiveSession());
-				} catch (final PlanManagementException ex) {
-					LOG.error("Could not start query with id={}", id, ex);
-				}
-			}
-		}
-	}
-
-	private static void tryStopQueries(IExecutor executor, Collection<Integer> ids, Integer exceptionID) {
-		for (final Integer id : ids) {
-			if (exceptionID == null || id != exceptionID) {
-				try {
-					executor.stopQuery(id, SessionManagementService.getActiveSession());
-				} catch (final PlanManagementException ex) {
-					LOG.error("Could not stop query with id={}", id, ex);
+					LOG.error("Could not remove query with id={}", id, ex);
 				}
 			}
 		}
