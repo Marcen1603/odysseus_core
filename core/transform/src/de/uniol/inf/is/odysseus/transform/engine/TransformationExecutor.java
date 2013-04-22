@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.omg.PortableServer.POAPackage.InvalidPolicyHelper;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -116,7 +118,13 @@ public class TransformationExecutor implements ITransformation {
 			IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
 			GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
 			walker.prefixWalkPhysical(physicalPO, visitor);
-			plan = visitor.getResult();
+			ArrayList<IPhysicalOperator> tmpplan = visitor.getResult();
+			for (IPhysicalOperator op:tmpplan){
+				if (!plan.contains(op)){
+					plan.add(op);
+				}
+			}
+			
 			// Prefix Walker finds only roots that are not part of another query
 			// physicalPO is in every case root of this query, so if not already
 			// found, add to plan
