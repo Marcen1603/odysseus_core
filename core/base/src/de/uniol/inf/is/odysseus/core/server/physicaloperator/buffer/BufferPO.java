@@ -56,6 +56,8 @@ public class BufferPO<T extends IStreamObject<?>> extends
 	private String buffername;
 	
 	private boolean waitForFirst = false;
+	private PointInTime newestTimestamp = null;
+	
 	private ISource<?> source = null;
 
 	public BufferPO() {
@@ -108,6 +110,7 @@ public class BufferPO<T extends IStreamObject<?>> extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public void transferNext() {
+		//dumpBuffer();
 		if (!this.buffer.isEmpty()) {
 			// the transfer might take some time, so pop element first and
 			// release lock on buffer instead of transfer(buffer.pop())
@@ -155,7 +158,7 @@ public class BufferPO<T extends IStreamObject<?>> extends
 	protected void process_next(T object, int port) {
 		synchronized (buffer) {
 			this.buffer.add(object);
-			if(this.waitForFirst) {
+			if(this.waitForFirst || this.newestTimestamp != null) {
 				this.waitForFirst = false;
 				insertMigrationMarkerPunctuation();
 			}
@@ -239,22 +242,58 @@ public class BufferPO<T extends IStreamObject<?>> extends
 		if(this.source == null) {
 			throw new RuntimeException("No source for BufferPO " + toString() + " was set.");
 		}
-		if(this.buffer.isEmpty()) {
-			// wait for the first element to be put into the buffer.
-			this.waitForFirst = true;
-			getLogger().debug("Buffer was empty. Waiting for first element");
-			return;
+
+		synchronized (this.buffer) {
+			if (this.buffer.isEmpty()) {
+				// wait for the first element to be put into the buffer.
+				this.waitForFirst = true;
+				getLogger()
+						.debug("Buffer was empty. Waiting for first element");
+				return;
+			}
+
+			// get the timestamp of the last element in the buffer.
+			PointInTime pit = ((IStreamObject<? extends ITimeInterval>) this.buffer
+					.getLast()).getMetadata().getStart();
+
+			if (this.newestTimestamp == null) {
+				getLogger()
+						.debug("Waiting for next element to check if it has the same timestamp as the current");
+				this.newestTimestamp = pit;
+				return;
+			}
+
+			if (pit.equals(this.newestTimestamp)) {
+				getLogger().debug("Same StartTimestamp as the element before");
+				return;
+			}
+
+			// create new punctuation and insert it at the last position in the
+			// buffer.
+			IPunctuation punctuation = new MigrationMarkerPunctuation(pit,
+					this.source);
+			if (getLogger().isDebugEnabled()) {
+				getLogger().debug(
+						"Insert MigrationMarkerPunctuation in Buffer for "
+								+ this.source.getName() + " ("
+								+ this.source.hashCode() + ") with timestamp "
+								+ punctuation.getTime());
+			}
+			this.buffer.add(this.buffer.size() - 1, punctuation);
+			this.newestTimestamp = null;
 		}
-		// get the timestamp of the last element in the buffer.
-		IStreamable last = this.buffer.getLast();
-		PointInTime pit = ((IStreamObject<? extends ITimeInterval>) last).getMetadata().getStart().plus(1);
-		// create new punctuation and insert it at the last position in the buffer.
-		IPunctuation punctuation = new MigrationMarkerPunctuation(pit, this.source);
-		getLogger().debug("Insert MigrationMarkerPunctuation in Buffer for " + this.source.getName() + " (" + this.source.hashCode() + ") with timestamp " + punctuation.getTime());
-		this.buffer.addLast(punctuation);
 	}
 
 	public void setSource(ISource<?> source) {
 		this.source = source;
+	}
+	
+	public void dumpBuffer() {
+		getLogger().debug("Dumping Buffer {} (#{})", getClass().getSimpleName(), hashCode());
+		synchronized(this.buffer) {
+			for(IStreamable element : this.buffer) {
+				getLogger().debug("--- {}", element);
+			}
+		}
 	}
 }
