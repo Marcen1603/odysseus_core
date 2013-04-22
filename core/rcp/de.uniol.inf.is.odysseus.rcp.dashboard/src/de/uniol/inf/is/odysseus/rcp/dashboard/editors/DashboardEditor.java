@@ -269,7 +269,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		});
 
 		final ToolItem stopButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("stop"));
-		startButton.setToolTipText("Stop dashboard part(s)");
+		stopButton.setToolTipText("Stop dashboard part(s)");
 		stopButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
