@@ -164,13 +164,11 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		}
 	}
 
-	public void registerAsMaster(Collection<ILogicalQuery> queries, final ID sharedQueryID) {
-		Preconditions.checkNotNull(queries, "List of logical queries must not be null!");
+	public void registerAsMaster(ILogicalQuery query, final ID sharedQueryID) {
+		Preconditions.checkNotNull(query, "Logical query must not be null!");
 		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must not be null!");
 
-		for (final ILogicalQuery query : queries) {
-			sharedQueryIDMap.put(query.getID(), sharedQueryID);
-		}
+		sharedQueryIDMap.put(query.getID(), sharedQueryID);
 
 		final PipeAdvertisement adv = createPipeAdvertisement(sharedQueryID);
 

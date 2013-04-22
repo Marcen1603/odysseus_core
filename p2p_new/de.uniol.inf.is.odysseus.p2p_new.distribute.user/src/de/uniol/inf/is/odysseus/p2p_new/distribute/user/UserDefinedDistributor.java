@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
@@ -41,6 +42,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 	private static final String LOCAL_DESTINATION_NAME = "local";
 	private static final String DISTRIBUTION_TYPE = "user";
+	private static final String PARSER_ID = "PQL";
 
 	private static final String ACCESS_NAME = "JxtaReceiver_";
 	private static final String SENDER_NAME = "JxtaSender_";
@@ -100,10 +102,11 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 			insertSenderAndAccess(queryPartDistributionMap);
 
 			final List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID, transCfgName);
-			final Collection<ILogicalQuery> logicalQueries = transformToQueries(localQueryParts, generator);
-			QueryPartController.getInstance().registerAsMaster(logicalQueries, sharedQueryID);
+			final ILogicalQuery logicalQuery = transformToQuery(localQueryParts, generator, query.toString());
+						
+			QueryPartController.getInstance().registerAsMaster(logicalQuery, sharedQueryID);
 
-			localQueries.addAll(logicalQueries);
+			localQueries.add(logicalQuery);
 		}
 
 		return localQueries;
@@ -241,7 +244,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 			operatorsToVisit.removeAll(partOperators);
 
-			final QueryPart part = new QueryPart(partOperators, chosenDestination, baseName + "_" + parts.size());
+			final QueryPart part = new QueryPart(partOperators, chosenDestination);
 			parts.add(part);
 		}
 
@@ -389,14 +392,36 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static Collection<ILogicalQuery> transformToQueries(List<QueryPart> localQueryParts, IPQLGenerator generator) {
-		final List<ILogicalQuery> localQueries = Lists.newArrayList();
+	private static ILogicalQuery transformToQuery(List<QueryPart> queryParts, IPQLGenerator generator, String name) {
+		final Collection<ILogicalOperator> sinks = collectSinks(queryParts);
+		final TopAO topAO = generateTopAO(sinks);
+		
+		final ILogicalQuery logicalQuery = new LogicalQuery();
+		logicalQuery.setLogicalPlan(topAO, true);
+		logicalQuery.setName(name);
+		logicalQuery.setParserId(PARSER_ID);
+		logicalQuery.setPriority(0);
+		logicalQuery.setUser(SessionManagementService.getActiveSession());
+		logicalQuery.setQueryText(generator.generatePQLStatement(topAO));
+		
+		return logicalQuery;
+	}
 
-		for (final QueryPart queryPart : localQueryParts) {
-			localQueries.add(queryPart.toLogicalQuery(generator));
+	private static Collection<ILogicalOperator> collectSinks(List<QueryPart> queryParts) {
+		final Collection<ILogicalOperator> sinks = Lists.newArrayList();
+		for( QueryPart queryPart : queryParts ) {
+			sinks.addAll(queryPart.getRealSinks());
 		}
+		return sinks;
+	}
 
-		return localQueries;
+	private static TopAO generateTopAO(final Collection<ILogicalOperator> sinks) {
+		final TopAO topAO = new TopAO();
+		int inputPort = 0;
+		for( ILogicalOperator sink : sinks ) {
+			topAO.subscribeToSource(sink, inputPort++, 0, sink.getOutputSchema());
+		}
+		return topAO;
 	}
 
 	private static void tryPublishImpl(QueryPartAdvertisement adv) {

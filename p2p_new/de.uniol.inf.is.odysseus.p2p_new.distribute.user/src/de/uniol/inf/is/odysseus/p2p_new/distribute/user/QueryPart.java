@@ -9,21 +9,18 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
-import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class QueryPart {
 
 	private static final String DESTINATION_PQLPARAMETER_KEY = "DESTINATION";
-	private static final String PARSER_ID = "PQL";
 
 	private final Map<ILogicalOperator, List<JxtaReceiverAO>> relativeSources;
 
@@ -33,17 +30,13 @@ public class QueryPart {
 
 	private final String destinationName;
 
-	private final String name;
-
-	public QueryPart(Collection<ILogicalOperator> operators, String destinationName, String partName) {
+	public QueryPart(Collection<ILogicalOperator> operators, String destinationName) {
 		Preconditions.checkNotNull(operators, "List of operators must not be null!");
 		Preconditions.checkArgument(!filter(operators).isEmpty(), "List of operators must not be empty!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(destinationName), "Destination name must not be null or empty!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(partName), "Query Part name must not be null or empty!");
 
 		this.destinationName = destinationName;
 		this.operators = filter(operators);
-		this.name = partName;
 		this.relativeSinks = determineRelativeSinks(this.operators);
 		this.relativeSources = determineRelativeSources(this.operators);
 	}
@@ -70,10 +63,6 @@ public class QueryPart {
 		return destinationName;
 	}
 
-	public final String getName() {
-		return name;
-	}
-
 	public final ImmutableCollection<ILogicalOperator> getOperators() {
 		return ImmutableList.copyOf(operators);
 	}
@@ -92,32 +81,20 @@ public class QueryPart {
 			operator.addParameterInfo(DESTINATION_PQLPARAMETER_KEY, null);
 		}
 	}
-
-	public final ILogicalQuery toLogicalQuery(IPQLGenerator generator) {
-		final ILogicalQuery query = new LogicalQuery();
-		query.setLogicalPlan(getOneTopOperator(), true);
-		query.setName(getName());
-		query.setParserId(PARSER_ID);
-		query.setPriority(0);
-		query.setUser(SessionManagementService.getActiveSession());
-		query.setQueryText(generator.generatePQLStatement(query.getLogicalPlan()));
-		return query;
-	}
-
-	@Override
-	public String toString() {
-		return getName();
-	}
-
-	private ILogicalOperator getOneTopOperator() {
-		for (final ILogicalOperator relativeSink : relativeSinks.keySet()) {
-			final List<JxtaSenderAO> senderAOs = relativeSinks.get(relativeSink);
-			if (!senderAOs.isEmpty()) {
-				return senderAOs.get(0);
+	
+	public Collection<ILogicalOperator> getRealSinks() {
+		List<ILogicalOperator> sinks = Lists.newArrayList();
+		
+		for( ILogicalOperator relativeSink : relativeSinks.keySet() ) {
+			List<JxtaSenderAO> senderAOs = relativeSinks.get(relativeSink);
+			if( senderAOs.isEmpty() ) {
+				sinks.add(relativeSink);
+			} else {
+				sinks.addAll(senderAOs);
 			}
 		}
-
-		return relativeSinks.keySet().iterator().next();
+		
+		return sinks;
 	}
 
 	private static boolean oneTargetNotInList(Collection<ILogicalOperator> operators, Collection<LogicalSubscription> subscriptions) {
