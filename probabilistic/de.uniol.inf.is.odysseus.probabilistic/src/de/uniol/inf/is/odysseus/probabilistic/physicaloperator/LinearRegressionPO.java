@@ -73,25 +73,25 @@ public class LinearRegressionPO<T extends ITimeInterval> extends
 					CovarianceMatrixUtils.fromMatrix(residual));
 			mixture.setAttributes(area.getExplanatoryAttributePos());
 
-			NormalDistributionMixture[] distributios = object
+			NormalDistributionMixture[] distributions = object
 					.getDistributions();
 			Object[] attributes = object.getAttributes();
 
 			ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(
 					new Object[attributes.length + 1],
-					new NormalDistributionMixture[distributios.length + 1],
+					new NormalDistributionMixture[distributions.length + 1],
 					object.requiresDeepClone());
-			outputVal.setDistribution(distributios.length, mixture);
+			outputVal.setDistribution(distributions.length, mixture);
 
-			System.arraycopy(distributios, 0, outputVal.getDistributions(), 0,
-					distributios.length);
+			System.arraycopy(distributions, 0, outputVal.getDistributions(), 0,
+					distributions.length);
 			System.arraycopy(object.getAttributes(), 0,
 					outputVal.getAttributes(), 0, object.getAttributes().length);
 
 			for (int i = 0; i < area.getExplanatoryAttributePos().length; i++) {
 				int pos = area.getExplanatoryAttributePos()[i];
 				outputVal.setAttribute(pos, new ProbabilisticContinuousDouble(
-						distributios.length));
+						distributions.length));
 			}
 			outputVal.setAttribute(object.getAttributes().length,
 					regressionCoefficients.getData());

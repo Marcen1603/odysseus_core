@@ -26,16 +26,13 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class TLinearRegressionAORule extends
 		AbstractTransformationRule<LinearRegressionAO> {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public int getPriority() {
