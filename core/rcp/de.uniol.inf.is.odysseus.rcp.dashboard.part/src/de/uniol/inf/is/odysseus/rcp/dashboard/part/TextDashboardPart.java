@@ -117,12 +117,14 @@ public class TextDashboardPart extends AbstractDashboardPart {
 			for (final String element : pendingElements) {
 				text.append(element + "\n");
 				receivedElements++;
-				if (!isInfinite() && receivedElements > maxElements) {
-					String txt = text.getText();
-					final int pos = txt.indexOf("\n");
-					txt = txt.substring(pos + 1);
-					text.setText(txt);
-					receivedElements--;
+				if (!isInfinite() ) {
+					while(receivedElements > maxElements) {
+						String txt = text.getText();
+						final int pos = txt.indexOf("\n");
+						txt = txt.substring(pos + 1);
+						text.setText(txt);
+						receivedElements--;
+					}
 				}
 			}
 			text.setSelection(text.getCharCount());
