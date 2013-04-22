@@ -63,10 +63,6 @@ public class QueryPartManager implements IAdvertisementListener {
 				transformationConfiguration.removeOption("NO_METADATA");
 				removeUnnededOperators(executor, ids);
 
-				// shared parts are always started
-//				for (final Integer id : ids) {
-//					executor.startQuery(id, SessionManagementService.getActiveSession());
-//				}
 				QueryPartController.getInstance().registerAsSlave(ids, adv.getSharedQueryID());
 
 			} catch (final Throwable t) {
