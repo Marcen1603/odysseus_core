@@ -46,9 +46,6 @@ public class CallActiveGraphEditor extends AbstractHandler implements IHandler {
 		final IWorkbenchPage page = window.getActivePage();
 
 		final IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
-		if (executor == null) {
-			return null;
-		}
 
 		final Collection<Integer> queryIds = executor.getLogicalQueryIds();
 		try {
