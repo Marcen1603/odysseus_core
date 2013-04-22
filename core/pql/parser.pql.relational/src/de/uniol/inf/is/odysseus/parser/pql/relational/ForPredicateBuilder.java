@@ -56,9 +56,9 @@ public class ForPredicateBuilder implements IPredicateBuilder {
 			
 			ForPredicate pred = new ForPredicate(type, attribute, predicate);
 			return pred;
-		}else{
-			throw new IllegalArgumentException("ForListPredicate needs an attribute!");
 		}
+		
+		throw new IllegalArgumentException("ForListPredicate needs an attribute!");
 	}
 
 }
