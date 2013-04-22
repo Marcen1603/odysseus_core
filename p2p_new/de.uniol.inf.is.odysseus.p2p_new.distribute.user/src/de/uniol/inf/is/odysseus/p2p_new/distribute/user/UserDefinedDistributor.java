@@ -42,7 +42,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	private static final String LOCAL_DESTINATION_NAME = "local";
 	private static final String DISTRIBUTION_TYPE = "user";
 
-	private static final String ACCESS_NAME = "JxtaAccess_";
+	private static final String ACCESS_NAME = "JxtaReceiver_";
 	private static final String SENDER_NAME = "JxtaSender_";
 	
 	private static IPQLGenerator generator;
