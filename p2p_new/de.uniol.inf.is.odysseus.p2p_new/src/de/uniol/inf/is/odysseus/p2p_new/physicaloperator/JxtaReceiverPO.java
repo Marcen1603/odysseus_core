@@ -40,6 +40,11 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	private static final byte NONE_BYTE = 0;
 	private static final byte PUNCTUATION_BYTE = 1;
 	private static final byte DATA_BYTE = 2;
+	private static final byte CONTROL_BYTE = 3;
+	
+	private static final byte OPEN_SUBBYTE = 0;
+	private static final byte CLOSE_SUBBYTE = 1;
+	
 	private static final int BUFFER_SIZE_BYTES = 1024;
 	
 	private byte currentTypeByte = NONE_BYTE;
@@ -107,10 +112,30 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	
 	@Override
 	protected void process_close() {
+		LOG.debug("Got open()");
+		
+		try {			
+			byte[] rawData = new byte[2];
+			rawData[0] = CONTROL_BYTE;
+			rawData[1] = CLOSE_SUBBYTE;
+			connection.send(rawData);
+		} catch (IOException e) {
+			LOG.error("Could not send close() to sender");
+		}
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
+		LOG.debug("Got open()");
+		
+		try {			
+			byte[] rawData = new byte[2];
+			rawData[0] = CONTROL_BYTE;
+			rawData[1] = OPEN_SUBBYTE;
+			connection.send(rawData);
+		} catch (IOException e) {
+			throw new OpenFailedException(e);
+		}
 	}
 	
 	@Override

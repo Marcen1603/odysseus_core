@@ -32,13 +32,16 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private static final String PIPE_NAME = "Odysseus Pipe";
 	private static final byte PUNCTUATION_BYTE = 1;
 	private static final byte DATA_BYTE = 2;
+	private static final byte CONTROL_BYTE = 3;
+	
+	private static final byte OPEN_SUBBYTE = 0;
+	private static final byte CLOSE_SUBBYTE = 1;
 
 	private final PipeID pipeID;
 	private AbstractJxtaConnection connection;
 	private TupleDataHandler dataHandler;
 
 	public JxtaSenderPO(JxtaSenderAO ao) {
-
 		pipeID = convertToPipeID(ao.getPipeID());
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 
@@ -73,7 +76,15 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	@Override
 	public void onReceiveData(AbstractJxtaConnection sender, byte[] data) {
-		// process data from receiver
+		if( data.length == 2 && data[0] == CONTROL_BYTE) {
+			if( data[1] == OPEN_SUBBYTE) {
+				LOG.debug("Received open()");
+				open(); // ok?
+			} else if( data[1] == CLOSE_SUBBYTE ) {
+				LOG.debug("Received close()");
+				close(); // ok?
+			}
+		}
 	}
 
 	@Override
