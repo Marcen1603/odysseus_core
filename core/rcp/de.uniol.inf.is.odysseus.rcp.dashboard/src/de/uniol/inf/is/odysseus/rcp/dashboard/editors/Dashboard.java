@@ -147,7 +147,9 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 		dropTarget.addDropListener(new DropTargetAdapter() {
 			@Override
 			public void drop(DropTargetEvent event) {
-				processDropEvent(event);
+				if(!isLocked()) {
+					processDropEvent(event);
+				}
 			}
 		});
 
