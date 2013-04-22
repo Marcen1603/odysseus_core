@@ -61,7 +61,7 @@ public class TransformationExecutor implements ITransformation {
 				"Before transformation: \n"
 						+ planPrinter.createString(logicalOp));
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
-		ArrayList<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
+		ArrayList<IPhysicalOperator> resultPlan = new ArrayList<IPhysicalOperator>();
 		TopAO top = null;
 		if (logicalOp instanceof TopAO) {
 			top = (TopAO) logicalOp;
@@ -116,20 +116,20 @@ public class TransformationExecutor implements ITransformation {
 			IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
 			GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
 			walker.prefixWalkPhysical(physicalPO, visitor);
-			ArrayList<IPhysicalOperator> tmpplan = visitor.getResult();
-			for (IPhysicalOperator op:tmpplan){
-				if (!plan.contains(op)){
-					plan.add(op);
+			ArrayList<IPhysicalOperator> plan = visitor.getResult();
+			for (IPhysicalOperator op:plan){
+				if (!resultPlan.contains(op)){
+					resultPlan.add(op);
 				}
 			}
 			
 			// Prefix Walker finds only roots that are not part of another query
 			// physicalPO is in every case root of this query, so if not already
 			// found, add to plan
-			if (!plan.contains(physicalPO)) {
-				plan.add(physicalPO);
+			if (!resultPlan.contains(physicalPO)) {
+				resultPlan.add(physicalPO);
 			}
-			if (plan.isEmpty()) {
+			if (resultPlan.isEmpty()) {
 				LoggerSystem
 						.printlog(
 								LOGGER_NAME,
@@ -143,11 +143,13 @@ public class TransformationExecutor implements ITransformation {
 					"After transformation: \n"
 							+ physicalPlanPrinter.createString(physicalPO));
 
-			logicalOp.unsubscribeSink(top, 0, 0, logicalOp.getOutputSchema());
+			if( logicalOp != top ) {
+				logicalOp.unsubscribeSink(top, 0, 0, logicalOp.getOutputSchema());
+			}
 			LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO,
 					"Transformation of " + logicalOp + " finished");
 		}
-		return plan;
+		return resultPlan;
 	}
 
 	private void addLogicalOperator(ILogicalOperator op,
