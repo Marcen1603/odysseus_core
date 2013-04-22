@@ -75,7 +75,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 	// 1 = LMB, 2 = MMB, 3 = RMB
 	private static final int SELECT_MOUSE_BUTTON_ID = 1;
-	private static final int SELECTION_BORDER_MARGIN = 3;
+	private static final int SELECTION_BORDER_MARGIN_PIXELS = 3;
 	private static final int MOVE_SELECTION_STEP_SIZE_PIXELS = 10;
 	private static final int RESIZE_SELECTION_STEP_SIZE_PIXELS = 10;
 
@@ -263,7 +263,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	public void mouseDoubleClick(MouseEvent e) {
 		// do nothing
 	}
-
+	
 	@Override
 	public void mouseDown(MouseEvent e) {
 		if (!isLocked() && e.button == SELECT_MOUSE_BUTTON_ID) {
@@ -279,6 +279,13 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	@Override
 	public void paintControl(PaintEvent e) {
 		renderSelectionBorder();
+	}
+	
+	public void update() {
+		for( DashboardPartPlacement partPlace : dashboardParts) {
+			update(partPlace);
+		}
+		fireChangedEvent();
 	}
 
 	public void remove(DashboardPartPlacement partPlace) {
@@ -468,7 +475,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 			final GC gc = new GC(dashboardComposite);
 			gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 			gc.setLineWidth(3);
-			gc.drawRectangle(x - SELECTION_BORDER_MARGIN, y - SELECTION_BORDER_MARGIN, w + SELECTION_BORDER_MARGIN * 2, h + SELECTION_BORDER_MARGIN * 2);
+			gc.drawRectangle(x - SELECTION_BORDER_MARGIN_PIXELS, y - SELECTION_BORDER_MARGIN_PIXELS, w + SELECTION_BORDER_MARGIN_PIXELS * 2, h + SELECTION_BORDER_MARGIN_PIXELS * 2);
 		}
 	}
 
@@ -481,13 +488,16 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	}
 
 	private void updateSelection() {
-		final DashboardPartPlacement placement = getSelectedDashboardPart();
+		update( getSelectedDashboardPart() );
+		fireChangedEvent();
+	}
+	
+	private void update( DashboardPartPlacement placement ) {
 		final Composite comp = containers.get(placement);
 		final FormData fd = (FormData) comp.getLayoutData();
 		updateFormData(fd, placement);
 		dashboardComposite.layout();
 		dashboardComposite.redraw();
-		fireChangedEvent();
 	}
 
 	private static void addControlsToMap(Control innerContainer, DashboardPartPlacement placement, Map<Control, DashboardPartPlacement> controlsMap) {

@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
 import java.io.FileNotFoundException;
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -65,13 +66,15 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 	private Dashboard dashboard;
 	private FileEditorInput input;
 	private boolean dirty;
-
+	private Composite parent;
+		
 	private DashboardOutlineContentPage outlinePage;
 
 	private Map<IDashboardPart, DashboardPartController> controllers;
 
 	@Override
 	public void createPartControl(Composite parent) {
+		this.parent = parent;
 		parent.setLayout(new GridLayout());
 		final ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
 
@@ -317,6 +320,24 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		});
 		
 		new ToolItem(toolBar, SWT.SEPARATOR);
+		
+		final ToolItem layoutButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("layout"));
+		layoutButton.setToolTipText("Layout");
+		layoutButton.setEnabled(!dashboard.isLocked());
+		layoutButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if( !dashboard.isLocked() ) {
+					Collection<DashboardPartPlacement> placements = dashboard.getDashboardPartPlacements();
+					if( !placements.isEmpty() ) {
+						IDashboardLayouter gridLayouter = new GridDashboardLayouter();
+						gridLayouter.layout(dashboard.getDashboardPartPlacements(), parent.getSize().x, parent.getSize().y);
+						dashboard.update();
+					}
+				}
+			}
+		});
+		
 	}
 
 	private static Map<IDashboardPart, DashboardPartController> createDashboardPartControllers(ImmutableList<DashboardPartPlacement> dashboardPartPlacements) {
