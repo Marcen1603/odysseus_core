@@ -67,6 +67,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	}
 	
 	public JxtaReceiverPO(JxtaReceiverPO<T> po) {
+		super(po);
+		
 		setOutputSchema(po.getOutputSchema().clone());
 		
 		this.pipeID = po.pipeID;

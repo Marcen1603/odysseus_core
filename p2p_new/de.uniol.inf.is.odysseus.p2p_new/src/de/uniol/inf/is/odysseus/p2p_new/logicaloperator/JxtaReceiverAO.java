@@ -23,10 +23,12 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	private SDFSchema assignedSchema;
 
 	public JxtaReceiverAO() {
-
+		super();
 	}
 
 	public JxtaReceiverAO(JxtaReceiverAO other) {
+		super(other);
+		
 		this.pipeID = other.pipeID;
 		this.assignedSchema = other.assignedSchema.clone();
 		

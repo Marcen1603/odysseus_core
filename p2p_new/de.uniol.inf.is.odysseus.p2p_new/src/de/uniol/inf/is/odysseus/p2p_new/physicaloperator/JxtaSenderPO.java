@@ -47,6 +47,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	}
 
 	public JxtaSenderPO(JxtaSenderPO<T> po) {
+		super(po);
+		
 		this.pipeID = po.pipeID;
 		this.connection = po.connection;
 		this.dataHandler = po.dataHandler;

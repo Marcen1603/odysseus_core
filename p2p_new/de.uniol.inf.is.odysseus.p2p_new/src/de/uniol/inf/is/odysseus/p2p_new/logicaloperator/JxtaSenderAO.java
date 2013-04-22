@@ -16,10 +16,12 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 	private String pipeID;
 
 	public JxtaSenderAO() {
-
+		super();
 	}
 
 	public JxtaSenderAO(JxtaSenderAO other) {
+		super(other);
+		
 		this.pipeID = other.pipeID;
 	}
 
