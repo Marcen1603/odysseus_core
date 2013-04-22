@@ -17,7 +17,7 @@
 package de.uniol.inf.is.odysseus.debs2013.spatial;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
+//import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
  * @author Philipp Rudolph, Andreas Harre, Jan Sören Schwarz
@@ -28,7 +28,7 @@ public class IsShotOnLeftGoal extends ShotOnGoalDetection{
 	private static final long serialVersionUID = -7862407733680877781L;
 
 	public IsShotOnLeftGoal() {
-		GeometryFactory gf = new GeometryFactory();
+		//GeometryFactory gf = new GeometryFactory();
 		Coordinate[] coordinates = new Coordinate[2];
 		coordinates[0] = new Coordinate(29880, -33968);
 		coordinates[1] = new Coordinate(22560, -33968);
