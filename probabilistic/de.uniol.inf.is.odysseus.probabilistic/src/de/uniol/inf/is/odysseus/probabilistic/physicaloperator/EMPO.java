@@ -45,9 +45,9 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
     private DefaultTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> area;
     private int[] attributes;
 
-    public EMPO(int[] attributes) {
+    public EMPO(int[] attributes, int mixtures) {
         this.attributes = attributes;
-        area = new EMTISweepArea(attributes, 3);
+        area = new EMTISweepArea(attributes, mixtures);
     }
 
     public EMPO(EMPO<T> emPO) {
@@ -63,13 +63,12 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 
     @Override
     protected void process_next(ProbabilisticTuple<T> object, int port) {
-        NormalDistributionMixture[] distributions = object
-                .getDistributions();
+        NormalDistributionMixture[] distributions = object.getDistributions();
         ProbabilisticTuple<T> outputVal = object.clone();
         synchronized (area) {
             area.insert(object);
         }
-        
+
         Map<NormalDistribution, Double> components = new HashMap<NormalDistribution, Double>();
         EMTISweepArea emArea = (EMTISweepArea) this.area;
         for (int i = 0; i < emArea.getMixtures(); i++) {
@@ -80,15 +79,13 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
         mixture.setAttributes(attributes);
         NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
 
-
         for (int a = 0; a < this.attributes.length; a++) {
             outputVal.setAttribute(this.attributes[a], new ProbabilisticContinuousDouble(distributions.length));
         }
-        System.arraycopy(distributions, 0, outputValDistributions, 0,distributions.length);
+        System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
         outputValDistributions[distributions.length] = mixture;
         outputVal.setDistributions(outputValDistributions);
-        
-        System.out.println(outputVal);
+
         this.transfer(outputVal);
     }
 
@@ -140,7 +137,7 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
         tuple6.setMetadata(new TimeIntervalProbabilistic());
         tuple6.getMetadata().setStart(PointInTime.currentPointInTime());
 
-        EMPO<ITimeInterval> em = new EMPO<ITimeInterval>(new int[] { 0, 1,  3 });
+        EMPO<ITimeInterval> em = new EMPO<ITimeInterval>(new int[] { 0, 1, 3 }, 3);
         for (int i = 0; i < 10; i++) {
             em.process_next(tuple1.clone(), 0);
             em.process_next(tuple2.clone(), 0);

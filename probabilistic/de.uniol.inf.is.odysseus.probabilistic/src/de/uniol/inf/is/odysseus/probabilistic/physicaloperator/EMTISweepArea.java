@@ -53,18 +53,9 @@ public class EMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends 
                 this.means[m] = MatrixUtils.createColumnRealMatrix(new double[getDimension()]);
                 this.covarianceMatrices[m] = MatrixUtils.createRealIdentityMatrix(getDimension());
             }
-            System.out.println(getLogLikelihood());
         } else {
             double[][] data = doExpectation();
             doMaximization(data);
-            System.out.println(getLogLikelihood());
-        }
-        for (int i = 0; i < getMixtures(); i++) {
-            System.out.println(i);
-            System.out.println(getWeight(i));
-            System.out.println(getMean(i));
-            System.out.println(getCovarianceMatrix(i));
-            System.out.println("---");
         }
     }
 
@@ -117,6 +108,7 @@ public class EMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends 
         covarianceMatrices[mixture] = covarianceMatrix;
     }
 
+    @SuppressWarnings("unused")
     private double getLogLikelihood() {
         double loglikelihood = 0.0;
         for (int s = 0; s < size(); s++) {
@@ -205,9 +197,9 @@ public class EMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends 
             }
             inverse = luDecomposition.getSolver().getInverse();
         }
-        final double density = 1.0 / (Math.pow(2. * Math.PI, dimension / 2.) * Math.sqrt(determinant));
+        final double density = 1.0 / (FastMath.pow(2. * Math.PI, dimension / 2.) * FastMath.sqrt(determinant));
         final RealMatrix variance = data.subtract(mean);
-        return weight * density * Math.exp(variance.transpose().multiply(inverse).multiply(variance).scalarMultiply(-0.5).getEntry(0, 0));
+        return weight * density * FastMath.exp(variance.transpose().multiply(inverse).multiply(variance).scalarMultiply(-0.5).getEntry(0, 0));
     }
 
     private void initWeights() {

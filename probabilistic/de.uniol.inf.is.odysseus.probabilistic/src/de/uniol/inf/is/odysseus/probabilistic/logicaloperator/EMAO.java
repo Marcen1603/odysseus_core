@@ -17,6 +17,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -26,7 +27,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * 
@@ -41,6 +44,7 @@ public class EMAO extends UnaryLogicalOp {
 	 */
     private static final long serialVersionUID = -4183569304131228484L;
     private List<SDFAttribute> attributes;
+    private int mixtures;
 
     public EMAO() {
         super();
@@ -49,6 +53,7 @@ public class EMAO extends UnaryLogicalOp {
     public EMAO(EMAO emAO) {
         super(emAO);
         this.attributes = new ArrayList<SDFAttribute>(emAO.attributes);
+        this.mixtures = emAO.mixtures;
     }
 
     @Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false)
@@ -62,6 +67,16 @@ public class EMAO extends UnaryLogicalOp {
             this.attributes = new ArrayList<SDFAttribute>();
         }
         return this.attributes;
+    }
+
+    @Parameter(type = IntegerParameter.class, name = "MIXTURES", optional = false)
+    public void setMixtures(final int mixtures) {
+        this.mixtures = mixtures;
+    }
+
+    @GetParameter(name = "MIXTURES")
+    public int getMixtures() {
+        return this.mixtures;
     }
 
     public int[] determineAttributesList() {
@@ -85,5 +100,19 @@ public class EMAO extends UnaryLogicalOp {
     @Override
     public AbstractLogicalOperator clone() {
         return new EMAO(this);
+    }
+    @Override
+    public void initialize() {
+        Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+        for (SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
+            if (getAttributes().contains(inAttr)) {
+                attributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
+            } else {
+                attributes.add(inAttr);
+            }
+        }
+
+        SDFSchema outputSchema = new SDFSchema(getInputSchema().getURI(), attributes);
+        this.setOutputSchema(outputSchema);
     }
 }
