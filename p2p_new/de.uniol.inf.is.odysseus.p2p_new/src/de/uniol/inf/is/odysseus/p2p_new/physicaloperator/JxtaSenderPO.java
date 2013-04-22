@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.pipe.PipeID;
@@ -18,8 +19,11 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.p2p_new.service.ExecutorService;
+import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.util.AbstractJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
@@ -30,12 +34,6 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaSenderPO.class);
 	private static final int BUFFER_SIZE_BYTES = 1024;
 	private static final String PIPE_NAME = "Odysseus Pipe";
-	private static final byte PUNCTUATION_BYTE = 1;
-	private static final byte DATA_BYTE = 2;
-	private static final byte CONTROL_BYTE = 3;
-	
-	private static final byte OPEN_SUBBYTE = 0;
-	private static final byte CLOSE_SUBBYTE = 1;
 
 	private final PipeID pipeID;
 	private AbstractJxtaConnection connection;
@@ -76,15 +74,24 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	@Override
 	public void onReceiveData(AbstractJxtaConnection sender, byte[] data) {
-		if( data.length == 2 && data[0] == CONTROL_BYTE) {
-			if( data[1] == OPEN_SUBBYTE) {
+		if( data.length == 2 && data[0] == JxtaPOUtil.CONTROL_BYTE) {
+			if( data[1] == JxtaPOUtil.OPEN_SUBBYTE) {
 				LOG.debug("Received open()");
-				open(); // ok?
-			} else if( data[1] == CLOSE_SUBBYTE ) {
+				
+				int queryID = determineQueryID(getOwner());
+				ExecutorService.getServerExecutor().startQuery(queryID, SessionManagementService.getActiveSession());
+				
+			} else if( data[1] == JxtaPOUtil.CLOSE_SUBBYTE ) {
 				LOG.debug("Received close()");
-				close(); // ok?
+				
+				int queryID = determineQueryID(getOwner());
+				ExecutorService.getServerExecutor().stopQuery(queryID, SessionManagementService.getActiveSession());
 			}
 		}
+	}
+
+	private int determineQueryID(List<IOperatorOwner> owner) {
+		return owner.get(0).getID();
 	}
 
 	@Override
@@ -100,7 +107,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		buffer.put(ObjectByteConverter.objectToBytes(punctuation));
 		buffer.flip();
 
-		write(buffer, PUNCTUATION_BYTE);
+		write(buffer, JxtaPOUtil.PUNCTUATION_BYTE);
 	}
 
 	@Override
@@ -119,7 +126,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		}
 		buffer.flip();
 
-		write(buffer, DATA_BYTE);
+		write(buffer, JxtaPOUtil.DATA_BYTE);
 	}
 
 	@Override
