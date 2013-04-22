@@ -33,13 +33,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TEMAORule extends AbstractTransformationRule<EMAO> {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
-	}
 
 	@Override
 	public int getPriority() {
@@ -48,9 +42,8 @@ public class TEMAORule extends AbstractTransformationRule<EMAO> {
 
 	@Override
 	public void execute(EMAO operator, TransformationConfiguration config) {
-		IPhysicalOperator emPO = new EMPO<ITimeInterval>();
+		IPhysicalOperator emPO = new EMPO<ITimeInterval>(operator.determineAttributesList());
 		this.defaultExecute(operator, emPO, config, true, true);
-
 	}
 
 	@Override

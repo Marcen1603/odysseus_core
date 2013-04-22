@@ -16,9 +16,17 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 /**
  * 
@@ -28,29 +36,54 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "EM")
 public class EMAO extends UnaryLogicalOp {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -4183569304131228484L;
+    private static final long serialVersionUID = -4183569304131228484L;
+    private List<SDFAttribute> attributes;
 
-	public EMAO() {
-		super();
-	}
+    public EMAO() {
+        super();
+    }
 
-	public EMAO(EMAO emAO) {
-		super(emAO);
-	}
+    public EMAO(EMAO emAO) {
+        super(emAO);
+        this.attributes = new ArrayList<SDFAttribute>(emAO.attributes);
+    }
 
-	@Override
-	public AbstractLogicalOperator clone() {
-		return new EMAO(this);
-	}
+    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false)
+    public void setAttributes(final List<SDFAttribute> attributes) {
+        this.attributes = attributes;
+    }
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+    @GetParameter(name = "ATTRIBUTES")
+    public List<SDFAttribute> getAttributes() {
+        if (this.attributes == null) {
+            this.attributes = new ArrayList<SDFAttribute>();
+        }
+        return this.attributes;
+    }
 
-	}
+    public int[] determineAttributesList() {
+        return calcAttributeList(getInputSchema(), getAttributes());
+    }
+
+    public static int[] calcAttributeList(SDFSchema in, List<SDFAttribute> attributes) {
+        int[] ret = new int[attributes.size()];
+        int i = 0;
+        for (SDFAttribute attr : attributes) {
+            if (!in.contains(attr)) {
+                throw new IllegalArgumentException("no such attribute: " + attr);
+            } else {
+                ret[i] = in.indexOf(attr);
+                i++;
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public AbstractLogicalOperator clone() {
+        return new EMAO(this);
+    }
 }
