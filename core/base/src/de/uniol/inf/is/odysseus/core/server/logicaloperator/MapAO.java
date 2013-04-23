@@ -68,7 +68,7 @@ public class MapAO extends UnaryLogicalOp {
 				// name!
 				String lastString = null;
 				String toSplit;
-				if (exprString.startsWith("__last_")) {
+				if (exprString.startsWith("__")) {
 					toSplit = exprString.substring(exprString.indexOf(".") + 1);
 					lastString = exprString.substring(0,
 							exprString.indexOf(".") - 1);
@@ -89,7 +89,7 @@ public class MapAO extends UnaryLogicalOp {
 				for (SDFAttribute attributeToCheck : inAttribs) {
 					SDFAttribute attribute;
 					String attributeURI = attributeToCheck.getURI();
-					if (attributeURI.startsWith("__last_")) {
+					if (attributeURI.startsWith("__")) {
 						String realAttributeName = attributeURI
 								.substring(attributeURI.indexOf(".") + 1);
 						split = SDFElement.splitURI(realAttributeName);
@@ -124,7 +124,7 @@ public class MapAO extends UnaryLogicalOp {
 				// type
 				if (isOnlyAttribute) {
 					if (!"".equals(expr.name)) {
-						if (!attr.getSourceName().startsWith("__last_")) {
+						if (!attr.getSourceName().startsWith("__")) {
 							attr = new SDFAttribute(attr.getSourceName(),
 									expr.name, attr);
 						} else {
