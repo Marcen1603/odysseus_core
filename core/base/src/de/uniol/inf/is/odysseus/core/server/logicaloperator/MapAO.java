@@ -57,47 +57,86 @@ public class MapAO extends UnaryLogicalOp {
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (NamedExpressionItem expr : namedExpressions) {
 				SDFAttribute attr = null;
-				IExpression<?> mepExpression = expr.expression.getMEPExpression();
+				IExpression<?> mepExpression = expr.expression
+						.getMEPExpression();
 				String exprString;
 				boolean isOnlyAttribute = false;
-				// Determine attribute name
-				if ("".equals(expr.name)) {
 
-					exprString = expr.expression.toString();
-					// Variable could be source.name oder name, we are looking
-					// for
-					// name!
-					String[] split = SDFElement.splitURI(exprString);
-					final SDFElement elem;
-					if (split[1] != null && split[1].length() > 0) {
-						elem = new SDFElement(split[0], split[1]);
-					} else {
-						elem = new SDFElement(null, split[0]);
-					}
-
-					// If expression is an attribute use this data type
-					List<SDFAttribute> inAttribs = expr.expression.getAllAttributes();
-					for (SDFAttribute attribute : inAttribs) {
-						if (attribute.equalsCQL(elem)) {
-							attr = new SDFAttribute(elem.getURIWithoutQualName(), elem.getQualName(), attribute.getDatatype());
-							isOnlyAttribute = true;
-						}
-					}
-
+				exprString = expr.expression.toString();
+				// Variable could be source.name oder name, we are looking
+				// for
+				// name!
+				String lastString = null;
+				String toSplit;
+				if (exprString.startsWith("__last_")) {
+					toSplit = exprString.substring(exprString.indexOf(".") + 1);
+					lastString = exprString.substring(0,
+							exprString.indexOf(".") - 1);
 				} else {
-					exprString = expr.name;
+					toSplit = exprString;
+				}
+				String[] split = SDFElement.splitURI(toSplit);
+				final SDFElement elem;
+				if (split[1] != null && split[1].length() > 0) {
+					elem = new SDFElement(split[0], split[1]);
+				} else {
+					elem = new SDFElement(null, split[0]);
+				}
+
+				// If expression is an attribute use this data type
+				List<SDFAttribute> inAttribs = expr.expression
+						.getAllAttributes();
+				for (SDFAttribute attributeToCheck : inAttribs) {
+					SDFAttribute attribute;
+					String attributeURI = attributeToCheck.getURI();
+					if (attributeURI.startsWith("__last_")) {
+						String realAttributeName = attributeURI
+								.substring(attributeURI.indexOf(".") + 1);
+						split = SDFElement.splitURI(realAttributeName);
+						if (split.length > 1) {
+							attribute = new SDFAttribute(split[0], split[1],
+									attributeToCheck);
+						} else {
+							attribute = new SDFAttribute(null, split[0],
+									attributeToCheck);
+						}
+					} else {
+						attribute = attributeToCheck;
+					}
+					if (attribute.equalsCQL(elem)) {
+						if (lastString != null) {
+							String attrName = elem.getURIWithoutQualName() != null ? elem
+									.getURIWithoutQualName()
+									+ "."
+									+ elem.getQualName() : elem.getQualName();
+							attr = new SDFAttribute(lastString, attrName,
+									attribute.getDatatype());
+						} else {
+							attr = new SDFAttribute(
+									elem.getURIWithoutQualName(),
+									elem.getQualName(), attribute.getDatatype());
+						}
+						isOnlyAttribute = true;
+					}
 				}
 
 				// Expression is an attribute and name is set --> keep Attribute
 				// type
-				if (isOnlyAttribute && !"".equals(expr.name)) {
-					attr = new SDFAttribute(attr.getSourceName(), expr.name, attr);
-
+				if (isOnlyAttribute) {
+					if (!"".equals(expr.name)) {
+						if (!attr.getSourceName().startsWith("__last_")) {
+							attr = new SDFAttribute(attr.getSourceName(),
+									expr.name, attr);
+						} else {
+							attr = new SDFAttribute(null, expr.name, attr);
+						}
+					}
 				}
 
 				// else use the expression data type
 				if (attr == null) {
-					attr = new SDFAttribute(null, exprString, mepExpression.getReturnType());
+					attr = new SDFAttribute(null, expr.name != null ? expr.name
+							: exprString, mepExpression.getReturnType());
 				}
 				attrs.add(attr);
 
