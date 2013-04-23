@@ -47,7 +47,7 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 
     public EMPO(int[] attributes, int mixtures) {
         this.attributes = attributes;
-        area = new EMTISweepArea(attributes, mixtures);
+        area = new BatchEMTISweepArea(attributes, mixtures);
     }
 
     public EMPO(EMPO<T> emPO) {
@@ -70,7 +70,7 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
         }
 
         Map<NormalDistribution, Double> components = new HashMap<NormalDistribution, Double>();
-        EMTISweepArea emArea = (EMTISweepArea) this.area;
+        BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
         for (int i = 0; i < emArea.getMixtures(); i++) {
             NormalDistribution distribution = new NormalDistribution(emArea.getMean(i).getColumn(0), CovarianceMatrixUtils.fromMatrix(emArea.getCovarianceMatrix(i)));
             components.put(distribution, emArea.getWeight(i));

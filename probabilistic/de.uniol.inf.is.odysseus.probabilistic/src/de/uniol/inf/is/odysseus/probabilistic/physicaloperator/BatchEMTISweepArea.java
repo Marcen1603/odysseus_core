@@ -23,10 +23,10 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class EMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> {
+public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> {
 
     @SuppressWarnings("unused")
-    private static Logger LOG = LoggerFactory.getLogger(EMTISweepArea.class);
+    private static Logger LOG = LoggerFactory.getLogger(BatchEMTISweepArea.class);
     private RandomData randomDataGenerator = new RandomDataImpl(new Well19937c());
     private final int mixtures;
     private final int dimension;
@@ -35,7 +35,7 @@ public class EMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends 
     private final RealMatrix[] covarianceMatrices;
     private int[] attributes;
 
-    public EMTISweepArea(int[] attributes, int mixtures) {
+    public BatchEMTISweepArea(int[] attributes, int mixtures) {
         this.attributes = attributes;
         this.dimension = attributes.length;
         this.mixtures = mixtures;
