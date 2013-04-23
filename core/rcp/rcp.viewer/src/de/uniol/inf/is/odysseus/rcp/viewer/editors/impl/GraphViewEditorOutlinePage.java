@@ -89,7 +89,7 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 		super.dispose();
 	}
 	
-	public void setSorting( boolean doSorting ) {
+	public final void setSorting( boolean doSorting ) {
 		if( doSorting ) {
 			viewer.setSorter(new ViewerSorter());
 		} else {
@@ -97,7 +97,7 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 		}
 	}
 	
-	public boolean isSorting() {
+	public final boolean isSorting() {
 		return viewer.getSorter() != null;
 	}
 
