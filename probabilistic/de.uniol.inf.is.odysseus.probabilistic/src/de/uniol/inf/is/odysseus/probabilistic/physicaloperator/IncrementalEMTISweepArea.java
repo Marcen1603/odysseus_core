@@ -11,6 +11,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.random.RandomData;
 import org.apache.commons.math3.random.RandomDataImpl;
 import org.apache.commons.math3.random.Well19937c;
+import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.util.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,6 +218,26 @@ public class IncrementalEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple
 
     /**
      * 
+     * @param data
+     * @param weights
+     * @param means
+     * @param covariances
+     * @return
+     */
+    private double getLogLikelihood(RealMatrix data, RealMatrix weights, RealMatrix means[], RealMatrix covariances[]) {
+        double loglikelihood = 0.0;
+        for (int s = 0; s < data.getColumnDimension(); s++) {
+            double sum = 0.0;
+            for (int m = 0; m < weights.getColumnDimension(); m++) {
+                sum += this.eval(weights.getEntry(0, m), data.getColumnMatrix(s), means[m], covariances[m]);
+            }
+            loglikelihood += FastMath.log(sum);
+        }
+        return loglikelihood / (double) size();
+    }
+
+    /**
+     * 
      * @return The k sums of points
      */
     private RealMatrix getM() {
@@ -244,11 +265,21 @@ public class IncrementalEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple
         return MatrixUtils.createRealMatrix(k, 1);
     }
 
-    private double getBayesianInformationCriterion(int dimension, int m) {
+    /**
+     * 
+     * @param data
+     * @param weights
+     * @param means
+     * @param covariances
+     * @return
+     */
+    private double getBayesianInformationCriterion(RealMatrix data, RealMatrix weights, RealMatrix[] means, RealMatrix[] covariances) {
         double bic = 0.0;
-        double v = ((int) (getMixtures() * (dimension + 1.0) * (dimension + 2.0) / 2.0)) - 1.0;
-        bic = -2 * FastMath.log(getLogLikelihood()) + v * FastMath.log(m);
-
+        int components = weights.getColumnDimension();
+        int size = data.getColumnDimension();
+        int dimension = data.getRowDimension();
+        double v = ((int) (components * (dimension + 1.0) * (dimension + 2.0) / 2.0)) - 1.0;
+        bic = -2 * FastMath.log(getLogLikelihood(data, weights, means, covariances)) + v * FastMath.log(size);
         return bic;
     }
 }
