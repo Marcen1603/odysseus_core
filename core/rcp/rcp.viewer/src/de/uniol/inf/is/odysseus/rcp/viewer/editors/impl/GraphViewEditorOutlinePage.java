@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,8 +47,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 public class GraphViewEditorOutlinePage extends ContentOutlinePage implements ISelectionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GraphViewEditorOutlinePage.class);
-	
-	private PhysicalGraphEditorInput input;
+
+	private static GraphViewEditorOutlinePage instance;
+
+	private final PhysicalGraphEditorInput input;
 
 	public GraphViewEditorOutlinePage(PhysicalGraphEditorInput input) {
 		this.input = input;
@@ -58,7 +60,7 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 
-		TreeViewer viewer = getTreeViewer();
+		final TreeViewer viewer = getTreeViewer();
 		viewer.setContentProvider(new GraphOutlineContentProvider());
 		viewer.setLabelProvider(new GraphOutlineLabelProvider());
 		viewer.addSelectionChangedListener(this);
@@ -66,21 +68,30 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 
-		MenuManager manager = new MenuManager(OdysseusRCPViewerPlugIn.OUTLINE_CONTEXT_MENU_ID, OdysseusRCPViewerPlugIn.OUTLINE_CONTEXT_MENU_ID);
+		final MenuManager manager = new MenuManager(OdysseusRCPViewerPlugIn.OUTLINE_CONTEXT_MENU_ID, OdysseusRCPViewerPlugIn.OUTLINE_CONTEXT_MENU_ID);
 		manager.setRemoveAllWhenShown(true);
-		Menu menu = manager.createContextMenu(viewer.getControl());
+		final Menu menu = manager.createContextMenu(viewer.getControl());
 		viewer.getTree().setMenu(menu);
 
-		IPageSite site = getSite();
+		final IPageSite site = getSite();
 		site.registerContextMenu(OdysseusRCPViewerPlugIn.OUTLINE_CONTEXT_MENU_ID, manager, viewer);
+
+		instance = this;
+	}
+
+	@Override
+	public void dispose() {
+		instance = null;
+
+		super.dispose();
 	}
 
 	@Override
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 		toolBarManager.add(new Action() {
 			@Override
-			public void run() {
-				refresh();
+			public ImageDescriptor getImageDescriptor() {
+				return OdysseusRCPViewerPlugIn.getImageDescriptor("icons/refresh.gif");
 			}
 
 			@Override
@@ -89,8 +100,8 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 			}
 
 			@Override
-			public ImageDescriptor getImageDescriptor() {
-				return OdysseusRCPViewerPlugIn.getImageDescriptor("icons/refresh.gif");
+			public void run() {
+				refresh();
 			}
 		});
 	}
@@ -102,7 +113,7 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 			public void run() {
 				try {
 					getTreeViewer().refresh();
-				} catch (Exception ex) {
+				} catch (final Exception ex) {
 					LOG.error("Could not refresh tree viewer in outline", ex);
 				}
 			}
@@ -112,27 +123,32 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (part instanceof ContentOutline)
+		if (part instanceof ContentOutline) {
 			return;
+		}
 
 		if (selection instanceof IStructuredSelection) {
-			Object selectedObject = ((IStructuredSelection) selection).getFirstElement();
+			final Object selectedObject = ((IStructuredSelection) selection).getFirstElement();
 			if (selectedObject instanceof IOdysseusNodeView || selectedObject instanceof IOdysseusGraphView) {
 				getTreeViewer().setSelection(selection);
-			} else if( selectedObject instanceof IPhysicalOperator ) {
-				Optional<IOdysseusNodeView> optNodeView = findNodeView((IPhysicalOperator)selectedObject, input.getGraphView());
-				if( optNodeView.isPresent() ) {
+			} else if (selectedObject instanceof IPhysicalOperator) {
+				final Optional<IOdysseusNodeView> optNodeView = findNodeView((IPhysicalOperator) selectedObject, input.getGraphView());
+				if (optNodeView.isPresent()) {
 					getTreeViewer().setSelection(new StructuredSelection(optNodeView.get()));
 				}
 			}
 		}
 	}
 
+	public static Optional<GraphViewEditorOutlinePage> getInstance() {
+		return Optional.fromNullable(instance);
+	}
+
 	private static Optional<IOdysseusNodeView> findNodeView(IPhysicalOperator selectedObject, IOdysseusGraphView graph) {
-		for( INodeView<IPhysicalOperator> nodeView : graph.getViewedNodes() ) {
-			if( nodeView.getModelNode() != null && nodeView.getModelNode().getContent() != null ) {
-				if( nodeView.getModelNode().getContent().equals(selectedObject)) {
-					return Optional.of((IOdysseusNodeView)nodeView);
+		for (final INodeView<IPhysicalOperator> nodeView : graph.getViewedNodes()) {
+			if (nodeView.getModelNode() != null && nodeView.getModelNode().getContent() != null) {
+				if (nodeView.getModelNode().getContent().equals(selectedObject)) {
+					return Optional.of((IOdysseusNodeView) nodeView);
 				}
 			}
 		}
