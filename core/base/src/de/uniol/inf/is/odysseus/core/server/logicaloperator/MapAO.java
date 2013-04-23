@@ -56,6 +56,9 @@ public class MapAO extends UnaryLogicalOp {
 		if (namedExpressions != null) {
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (NamedExpressionItem expr : namedExpressions) {
+				
+				// TODO: Maybe here should an attribute resolver be used?
+				
 				SDFAttribute attr = null;
 				IExpression<?> mepExpression = expr.expression
 						.getMEPExpression();
