@@ -31,16 +31,17 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncAre
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 
 /**
  * Operator, um Pattern-Matching durchzuführen.
  * @author Michael Falk
  * @param <T>
  */
-public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>>
+public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, Tuple<T>>
 	implements IProcessInternal<Tuple<T>> {
 	
-	private SDFExpression expression;
+	private List<SDFExpression> assertions;
 	private List<SDFExpression> returnExpressions;
 	/**
 	 * Der Pattern-Typ.
@@ -61,18 +62,15 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	protected IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea;
 	protected ITransferArea<Tuple<T>, Tuple<T>> outputTransferArea;
 	
-	// ALL-Pattern
-	//private DefaultTISweepArea<IStreamObject<? extends ITimeInterval>>
 	/**
 	 * Port-Map, die für jeden Port eine Liste mit Event-Objekten enthält.
 	 */
 	private Map<Integer, EventBuffer<T>> objectLists;
-	private AttributeMap[] attrMapping;
-	@SuppressWarnings("unused")
+	private Map<SDFExpression, AttributeMap[]> attrMappings;
 	private Map<SDFExpression, AttributeMap[]> returnAttrMappings;
 	
 	public PatternMatchingPO(String type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
-			SDFExpression expr, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
+			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
         super();
         this.type = type;
@@ -82,7 +80,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
         this.outputMode = outputMode;
         if (this.outputMode == null) this.outputMode = PatternOutput.SIMPLE;
         this.eventTypes = eventTypes;
-        this.expression = expr;
+        this.assertions = assertions;
         this.returnExpressions = returnExpressions;
         this.inputTypeNames = inputTypeNames;
         this.inputSchemas = inputSchemas;
@@ -95,6 +93,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
             	this.objectLists.put(port, buffer);
         	}
         }
+        this.outputTransferArea = new TITransferArea<>();
         this.init();
     }
 	
@@ -105,13 +104,27 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
         this.size = patternPO.size;
         this.timeUnit = patternPO.timeUnit;
         this.outputMode = patternPO.outputMode;
-        this.eventTypes = patternPO.eventTypes;
-        this.expression = patternPO.expression;
-        this.returnExpressions = patternPO.returnExpressions;
-        this.inputTypeNames = patternPO.inputTypeNames;
-        this.inputSchemas = patternPO.inputSchemas;
-        this.inputStreamSyncArea = patternPO.inputStreamSyncArea;
-        this.objectLists = patternPO.objectLists;
+        this.eventTypes = new ArrayList<String>();
+        for (String eventType : patternPO.eventTypes)
+        	this.eventTypes.add(eventType);
+        this.assertions = new ArrayList<SDFExpression>();
+        for (SDFExpression expr : patternPO.assertions)
+        	this.assertions.add(expr);
+        this.returnExpressions = new ArrayList<SDFExpression>();
+        for (SDFExpression expr : patternPO.returnExpressions)
+        	this.returnExpressions.add(expr);
+        this.inputTypeNames = new HashMap<Integer, String>();
+        this.inputTypeNames.putAll(patternPO.inputTypeNames);
+        this.inputSchemas = new HashMap<Integer, SDFSchema>();
+        this.inputSchemas.putAll(patternPO.inputSchemas);
+        this.inputStreamSyncArea = patternPO.inputStreamSyncArea.clone();
+        this.outputTransferArea = patternPO.outputTransferArea.clone();
+        this.objectLists = new HashMap<Integer, EventBuffer<T>>();
+        this.objectLists.putAll(patternPO.objectLists);
+        this.attrMappings = new HashMap<SDFExpression, AttributeMap[]>();
+        this.attrMappings.putAll(patternPO.attrMappings);
+        this.returnAttrMappings = new HashMap<SDFExpression, AttributeMap[]>();
+        this.returnAttrMappings.putAll(patternPO.returnAttrMappings);
         this.init();
     }
 	
@@ -124,39 +137,26 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
     		outputMode = PatternOutput.SIMPLE;
     	}
     	
-    	// Expressions intitialisieren
-    	if (expression != null) {
-    		List<SDFAttribute> neededAttr = expression.getAllAttributes();
-    		attrMapping = new AttributeMap[neededAttr.size()];
-    		int i = 0;
-    		for (SDFAttribute attr : neededAttr) {
-    			int port = 0;
-    			// passendes Schema raussuchen
-    			while (port < inputSchemas.size()) {
-    				SDFSchema schema = inputSchemas.get(port);
-    				int attrPos = schema.indexOf(attr);
-    				if (attrPos != -1) {
-    					// Mapping speichern
-    					attrMapping[i] = new AttributeMap(port, attrPos);
-    					break;
-    				}
-    				port++;
-    			}
-    			i++;
-    		}
-    	}
-    	if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null && returnExpressions.size() > 0) {
+    	// Assertions intitialisieren
+    	if (assertions != null)
+    		attrMappings = initExpressions(assertions);
+    	if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null)
     		returnAttrMappings = initExpressions(returnExpressions);
-    	}
     	
     	// Zeit in richtiges Zeitformat konvertieren
     	if (time != null) {
     		time = (int) TimeUnit.MILLISECONDS.convert(time, timeUnit);
     	}
     }
-
+    
+    /**
+     * Initialisiert Expressions.
+     * @param expressions
+     * @return liefert eine Map, die einer Expression eine AttributeMap[] zuordnet.
+     */
     private Map<SDFExpression, AttributeMap[]> initExpressions(List<SDFExpression> expressions) {
     	Map<SDFExpression, AttributeMap[]> attrMappings = new HashMap<SDFExpression, AttributeMap[]>();
+    	if (expressions == null) return attrMappings;
     	for (SDFExpression expression : expressions) {
     		if (expression != null) {
     			List<SDFAttribute> neededAttr = expression.getAllAttributes();
@@ -194,7 +194,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	}
 
 	@Override
-	public AbstractPipe<Tuple<? extends ITimeInterval>,Tuple<? extends ITimeInterval>> clone() {
+	public PatternMatchingPO<T> clone() {
 		return new PatternMatchingPO<T>(this);
 	}
 	
@@ -202,11 +202,12 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
     public void process_open() throws OpenFailedException {
         super.process_open();
         inputStreamSyncArea.init(this);
+        outputTransferArea.init(this);
     }
      
 	
 	@Override
-	protected void process_next(Tuple<? extends ITimeInterval> event, int port) {
+	protected void process_next(Tuple<T> event, int port) {
 		inputStreamSyncArea.newElement(event, port);
 	}
 
@@ -221,13 +222,9 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 		switch(type) {
 			// Logische Pattern
 			case "ANY":
-				// Prädikat notwendig?
 				if (eventTypes.contains(eventType)) {
-					// Expression ausführbar?
-//					List<SDFAttribute> attributes = inputSchemas.get(port).getAttributes();
-//					for (AttributeMap attr : attrMapping) {
-//						// TODO: Expressions beim ANY-Pattern
-//					}
+					// Assertions überprüfen
+					
 				}
 				if (detected) {
 					// ANY-Pattern erkannt
@@ -241,9 +238,10 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 					objectLists.get(port).add(eventObj);
 					dropOldEvents(eventObj);
 					// Kombinationen suchen und Bedingungen überprüfen
-					List<List<EventObject<T>>> output = checkAssertion(eventObj);
+					List<List<EventObject<T>>> output = checkAssertions(eventObj, computeCrossProduct(eventObj));
 					for (List<EventObject<T>> outputObject : output) {
-						this.transfer(this.createComplexEvent(outputObject, eventObj, type));
+						Tuple<T> complexEvent = this.createComplexEvent(outputObject, eventObj, type);
+						outputTransferArea.transfer(complexEvent);
 					}
 				}
 			case "ABSENCE":
@@ -294,20 +292,20 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 			return returnEvent;
 		}
 		if (outputMode == PatternOutput.EXPRESSIONS) {
-			// TODO: findExpression funktioniert momentan nur für eine Expression !!!
-			Object[] values = findExpressionValues(outputObject);
-			if (values != null) {
-				Tuple<T> outputVal = new Tuple<T>(returnExpressions.size(), false);
-				outputVal.setMetadata((T) currentObj.getEvent().getMetadata().clone());
-				for (int i = 0; i < returnExpressions.size(); i++) {
-					returnExpressions.get(i).bindMetaAttribute(currentObj.getEvent().getMetadata());
-					returnExpressions.get(i).bindAdditionalContent(currentObj.getEvent().getAdditionalContent());
-					returnExpressions.get(i).bindVariables(values);
-					Object expr = returnExpressions.get(i).getValue();
-					outputVal.setAttribute(i, expr);
+			Tuple<T> outputVal = new Tuple<T>(returnExpressions.size(), false);
+			outputVal.setMetadata((T) currentObj.getEvent().getMetadata().clone());
+			for (int i = 0; i < returnExpressions.size(); i++) {
+				SDFExpression expr = returnExpressions.get(i);
+				Object[] values = findExpressionValues(outputObject, returnAttrMappings.get(expr));
+				if (values != null) {
+					expr.bindMetaAttribute(currentObj.getEvent().getMetadata());
+					expr.bindAdditionalContent(currentObj.getEvent().getAdditionalContent());
+					expr.bindVariables(values);
+					Object exprValue = expr.getValue();
+					outputVal.setAttribute(i, exprValue);
 				}
-				return outputVal;
 			}
+			return outputVal;
 		}
 		return null;
 	}
@@ -340,14 +338,12 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	}
 	
 	/**
-	 * Prüft für alle gültigen Kombinationen (-> ALL-Pattern), ob die Bedingung erfüllt ist und
-	 * liefert diese in form einer Liste zurück.
+	 * Berechnet das Kreuzprodukt von dem Event, das reingekommen ist und den anderen gespeicherten
+	 * Events, die einen anderen Eventtyp haben.
 	 * @param object
 	 * @return
 	 */
-	private List<List<EventObject<T>>> checkAssertion(EventObject<T> object) {
-		List<List<EventObject<T>>> output = new ArrayList<List<EventObject<T>>>();
-		
+	private Set<List<EventObject<T>>> computeCrossProduct(EventObject<T> object) {
 		// Alle EventBuffer außer den des empfangenen Events auswählen
 		List<EventBuffer<T>> relevantEventBuffer = new ArrayList<EventBuffer<T>>();
 		for (Entry<Integer, EventBuffer<T>> eventBuffer : objectLists.entrySet()) {
@@ -365,21 +361,42 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 		Set<EventObject<T>> objSet = new HashSet<EventObject<T>>();
 		objSet.add(object);
 		relevantSets.add(objSet);
-		Set<List<EventObject<T>>> crossProduct = Sets.cartesianProduct(relevantSets);
+		return Sets.cartesianProduct(relevantSets);
+	}
+	
+	/**
+	 * Prüft für alle gültigen Kombinationen (-> ALL-Pattern), ob die Bedingung erfüllt ist und
+	 * liefert diese in form einer Liste zurück.
+	 * @param object
+	 * @return
+	 */
+	private List<List<EventObject<T>>> checkAssertions(EventObject<T> object, Set<List<EventObject<T>>> eventObjectSets) {
+		List<List<EventObject<T>>> output = new ArrayList<List<EventObject<T>>>();
 		
-		if (crossProduct.size() != 0) {
+		if (eventObjectSets.size() != 0) {
 			// Expressions überprüfen
-			for (List<EventObject<T>> crossElems : crossProduct) {
-				Object[] values = findExpressionValues(crossElems);
-				if (values != null) {
-					expression.bindMetaAttribute(object.getEvent().getMetadata());
-					expression.bindAdditionalContent(object.getEvent().getAdditionalContent());
-					expression.bindVariables(values);
+			for (List<EventObject<T>> eventObjectSet : eventObjectSets) {
+				Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings.entrySet().iterator();
+				boolean satisfied = true;
+				while (iterator.hasNext() && satisfied) {
+					Entry<SDFExpression, AttributeMap[]> entry = iterator.next();
+					Object[] values = findExpressionValues(eventObjectSet, entry.getValue());
+					SDFExpression expression = entry.getKey();
+					if (values != null) {
+						expression.bindMetaAttribute(object.getEvent().getMetadata());
+						expression.bindAdditionalContent(object.getEvent().getAdditionalContent());
+						expression.bindVariables(values);
+					}
+					// TODO: Exception, wenn Attribut verlangt, aber nicht vorhanden
+					// -> Sollte konfigurierbar sein
+					boolean predicate = expression.getValue();
+					if (!predicate) {
+						satisfied = false;
+					}
 				}
-				boolean predicate = expression.getValue();
-				if (predicate) {
+				if (satisfied) {
 					// MatchingSet in Ausgabemenge aufnehmen
-					output.add(crossElems);
+					output.add(eventObjectSet);
 				}
 			}
 		}
@@ -392,18 +409,20 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	 * @param eventObjects Liste mit Event-Objekten.
 	 * @return values, null bei Misserfolg
 	 */
-	private Object[] findExpressionValues(List<EventObject<T>> eventObjects) {
+	private Object[] findExpressionValues(List<EventObject<T>> eventObjects, AttributeMap[] attrMapping) {
 		Object[] values = new Object[attrMapping.length];
 		for (int i = 0; i < attrMapping.length; i++) {
 			EventObject<T> obj = null;
 			Iterator<EventObject<T>> iterator = eventObjects.iterator();
+			boolean detected = false;
 			while (iterator.hasNext()) {
 				obj = iterator.next();
 				if (obj.getPort() == attrMapping[i].getPort()) {
+					detected = true;
 					break;
 				}
 			}
-			if (obj != null) {
+			if (obj != null && detected) {
 				int attrPos = attrMapping[i].getAttrPos();
 				values[i] = obj.getEvent().getAttribute(attrPos);
 			} else {

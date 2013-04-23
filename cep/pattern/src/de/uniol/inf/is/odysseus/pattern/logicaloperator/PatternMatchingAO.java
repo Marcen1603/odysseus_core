@@ -45,7 +45,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	private Map<Integer, String> inputTypeNames;
 	private Map<Integer, SDFSchema> inputSchemas;
 	// Bedingung
-	private SDFExpression expression;
+	private List<SDFExpression> assertions;
 	// Expressions fürs Ausgabeschema
 	private List<NamedExpressionItem> returnExpressions;
 	// wiederholen nach erfolg
@@ -68,17 +68,20 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
         this.eventTypes = patternAO.getEventTypes();
         this.inputTypeNames = patternAO.getInputTypeNames();
         this.inputSchemas = patternAO.getInputSchemas();
-        this.expression = patternAO.expression;
+        this.assertions = patternAO.assertions;
         this.returnExpressions = patternAO.returnExpressions;
     }
 	
-    @Parameter(type=SDFExpressionParameter.class, optional=true)
-    public void setAssertion(NamedExpressionItem expr) {
-        this.expression = expr.expression;
+    @Parameter(type=SDFExpressionParameter.class, optional=true, isList=true)
+    public void setAssertions(List<NamedExpressionItem> exprs) {
+        this.assertions = new ArrayList<SDFExpression>();
+        for (NamedExpressionItem expr : exprs) {
+        	assertions.add(expr.expression);
+        }
     }
     
-    public SDFExpression getExpression() {
-    	return expression;
+    public List<SDFExpression> getAssertions() {
+    	return assertions;
     }
     
     @Parameter(type=StringParameter.class)
@@ -162,7 +165,8 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		return new PatternMatchingAO(this);
 	}
 	
-	private SDFSchema calcOutputSchema() {
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int port) {
 		// Input-Typen und Schemas für Ports speichern
 		for (LogicalSubscription s : this.getSubscribedToSource()) {
 			SDFSchema schema = inputSchemas.get(s.getSinkInPort());
@@ -179,52 +183,102 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 				inputTypeNames.put(s.getSinkInPort(), name);
 			}
 		}
-		// TODO: Default ist Port 0 // siehe MapAO
-		//return this.getInputSchema(port);
 		
+		// Ausgabeschema bestimmen
 		SDFSchema schema = null;
 		if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null) {
+			// EXPRESSIONS: Ausgabe hängt vom return-Parameter ab
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-			
 			for (NamedExpressionItem expr : returnExpressions) {
+				
+				// TODO: Maybe here should an attribute resolver be used?
+				
 				SDFAttribute attr = null;
-				IExpression<?> mepExpression = expr.expression.getMEPExpression();
+				IExpression<?> mepExpression = expr.expression
+						.getMEPExpression();
 				String exprString;
 				boolean isOnlyAttribute = false;
-				// Determine attribute name
-				if ("".equals(expr.name)) {
-					exprString = expr.expression.toString();
-					// Variable could be source.name oder name, we are looking for name!
-					String[] split = SDFElement.splitURI(exprString);
-					final SDFElement elem;
-					if (split[1] != null && split[1].length() > 0) {
-						elem = new SDFElement(split[0], split[1]);
-					} else {
-						elem = new SDFElement(null, split[0]);
-					}
 
-					// If expression is an attribute use this data type
-					List<SDFAttribute> inAttribs = expr.expression.getAllAttributes();
-					for (SDFAttribute attribute : inAttribs) {
-						if (attribute.equalsCQL(elem)) {
-							attr = new SDFAttribute(elem.getURIWithoutQualName(), elem.getQualName(), attribute.getDatatype());
-							isOnlyAttribute = true;
+				exprString = expr.expression.toString();
+				// Variable could be source.name oder name, we are looking
+				// for
+				// name!
+				String lastString = null;
+				String toSplit;
+				if (exprString.startsWith("__")) {
+					toSplit = exprString.substring(exprString.indexOf(".") + 1);
+					lastString = exprString.substring(0,
+							exprString.indexOf(".") - 1);
+				} else {
+					toSplit = exprString;
+				}
+				String[] split = SDFElement.splitURI(toSplit);
+				final SDFElement elem;
+				if (split[1] != null && split[1].length() > 0) {
+					elem = new SDFElement(split[0], split[1]);
+				} else {
+					elem = new SDFElement(null, split[0]);
+				}
+
+				// If expression is an attribute use this data type
+				List<SDFAttribute> inAttribs = expr.expression
+						.getAllAttributes();
+				for (SDFAttribute attributeToCheck : inAttribs) {
+					SDFAttribute attribute;
+					String attributeURI = attributeToCheck.getURI();
+					if (attributeURI.startsWith("__")) {
+						String realAttributeName = attributeURI
+								.substring(attributeURI.indexOf(".") + 1);
+						split = SDFElement.splitURI(realAttributeName);
+						if (split.length > 1) {
+							attribute = new SDFAttribute(split[0], split[1],
+									attributeToCheck);
+						} else {
+							attribute = new SDFAttribute(null, split[0],
+									attributeToCheck);
+						}
+					} else {
+						attribute = attributeToCheck;
+					}
+					if (attribute.equalsCQL(elem)) {
+						if (lastString != null) {
+							String attrName = elem.getURIWithoutQualName() != null ? elem
+									.getURIWithoutQualName()
+									+ "."
+									+ elem.getQualName() : elem.getQualName();
+							attr = new SDFAttribute(lastString, attrName,
+									attribute.getDatatype());
+						} else {
+							attr = new SDFAttribute(
+									elem.getURIWithoutQualName(),
+									elem.getQualName(), attribute.getDatatype());
+						}
+						isOnlyAttribute = true;
+					}
+				}
+
+				// Expression is an attribute and name is set --> keep Attribute
+				// type
+				if (isOnlyAttribute) {
+					if (!"".equals(expr.name)) {
+						if (!attr.getSourceName().startsWith("__")) {
+							attr = new SDFAttribute(attr.getSourceName(),
+									expr.name, attr);
+						} else {
+							attr = new SDFAttribute(null, expr.name, attr);
 						}
 					}
-				} else {
-					exprString = expr.name;
 				}
-				// Expression is an attribute and name is set --> keep Attribute type
-				if (isOnlyAttribute && !"".equals(expr.name)) {
-					attr = new SDFAttribute(attr.getSourceName(), expr.name, attr);
 
-				}
 				// else use the expression data type
 				if (attr == null) {
-					attr = new SDFAttribute(null, exprString, mepExpression.getReturnType());
+					attr = new SDFAttribute(null, !"".equals(expr.name) ? expr.name
+							: exprString, mepExpression.getReturnType());
 				}
 				attrs.add(attr);
 			}
+			// Was ist die URI hier??
+			schema = new SDFSchema("PATTERN", attrs);
 		} else {
 			// SIMPLE: einfache Variante (ohne Expressions)
 			SDFAttribute type = new SDFAttribute("PATTERN", "type", SDFDatatype.STRING);
@@ -233,18 +287,6 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		}
 		setOutputSchema(schema);
 		return schema;
-	}
-	
-//	@Override
-//	public void initialize() {
-////		calcOutputSchema();
-//	}
-	
-	@Override
-	protected SDFSchema getOutputSchemaIntern(int port) {
-//		calcOutputSchema();
-//        return getOutputSchema();
-		return calcOutputSchema();
 	}
 	
 	@Override
