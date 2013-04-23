@@ -58,23 +58,23 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 	public SDFAttribute getAttribute(String name)
 			throws AmbiguousAttributeException, NoSuchAttributeException {
 		String[] parts = name.split("\\.", 2); // the attribute can have the
-												// form a.b:c:d
-
+												// form a.b.c.d
+		
 		// source name available
 		String path[] = null;
 		String source = null;
 		if (parts.length == 2) {
-			path = parts[1].split("\\:"); // split b:c:d into {b, c, d}
+			path = parts[1].split("\\."); // split b:c:d into {b, c, d}
 			source = parts[0];
 		}
 		// no source name available
 		else {
-			path = parts[0].split("\\:"); // split b:c:d into {b, c, d}
+			path = parts[0].split("\\."); // split b:c:d into {b, c, d}
 		}
 
 		// Test if special attribute, starting with %
-		if (source != null && source.startsWith("__")) {
-			SDFAttribute attribute = findORAttribute(this.schema, null, path, 0);
+		if (source != null && source.startsWith("__") && parts.length == 2) {
+			SDFAttribute attribute = getAttribute(parts[1]);
 			if (attribute != null){
 				return new SDFAttribute(source+"."+attribute.getSourceName(),attribute.getAttributeName(), attribute);
 			}
