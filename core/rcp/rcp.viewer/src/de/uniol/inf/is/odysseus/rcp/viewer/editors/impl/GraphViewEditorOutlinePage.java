@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.ISelectionListener;
@@ -51,6 +52,8 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 	private static GraphViewEditorOutlinePage instance;
 
 	private final PhysicalGraphEditorInput input;
+	
+	private TreeViewer viewer;
 
 	public GraphViewEditorOutlinePage(PhysicalGraphEditorInput input) {
 		this.input = input;
@@ -60,7 +63,7 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 
-		final TreeViewer viewer = getTreeViewer();
+		viewer = getTreeViewer();
 		viewer.setContentProvider(new GraphOutlineContentProvider());
 		viewer.setLabelProvider(new GraphOutlineLabelProvider());
 		viewer.addSelectionChangedListener(this);
@@ -75,7 +78,7 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 
 		final IPageSite site = getSite();
 		site.registerContextMenu(OdysseusRCPViewerPlugIn.OUTLINE_CONTEXT_MENU_ID, manager, viewer);
-
+		
 		instance = this;
 	}
 
@@ -84,6 +87,18 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 		instance = null;
 
 		super.dispose();
+	}
+	
+	public void setSorting( boolean doSorting ) {
+		if( doSorting ) {
+			viewer.setSorter(new ViewerSorter());
+		} else {
+			viewer.setSorter(null);
+		}
+	}
+	
+	public boolean isSorting() {
+		return viewer.getSorter() != null;
 	}
 
 	@Override
@@ -96,12 +111,63 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 
 			@Override
 			public String getToolTipText() {
-				return "Refresh All";
+				return "Refresh";
 			}
 
 			@Override
 			public void run() {
 				refresh();
+			}
+		});
+		
+		toolBarManager.add(new Action() {
+			@Override
+			public ImageDescriptor getImageDescriptor() {
+				return OdysseusRCPViewerPlugIn.getImageDescriptor("icons/sortAlpha.gif");
+			}
+
+			@Override
+			public String getToolTipText() {
+				return "Sort alphabetically";
+			}
+
+			@Override
+			public void run() {
+				setSorting(!isSorting());
+			}
+		});
+
+		toolBarManager.add(new Action() {
+			@Override
+			public ImageDescriptor getImageDescriptor() {
+				return OdysseusRCPViewerPlugIn.getImageDescriptor("icons/expandall.gif");
+			}
+
+			@Override
+			public String getToolTipText() {
+				return "Expand all";
+			}
+
+			@Override
+			public void run() {
+				viewer.expandAll();
+			}
+		});
+
+		toolBarManager.add(new Action() {
+			@Override
+			public ImageDescriptor getImageDescriptor() {
+				return OdysseusRCPViewerPlugIn.getImageDescriptor("icons/collapseall.gif");
+			}
+
+			@Override
+			public String getToolTipText() {
+				return "Collapse all";
+			}
+
+			@Override
+			public void run() {
+				viewer.collapseAll();
 			}
 		});
 	}
