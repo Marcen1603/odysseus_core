@@ -135,7 +135,7 @@ public class MapAO extends UnaryLogicalOp {
 
 				// else use the expression data type
 				if (attr == null) {
-					attr = new SDFAttribute(null, expr.name != null ? expr.name
+					attr = new SDFAttribute(null, !"".equals(expr.name) ? expr.name
 							: exprString, mepExpression.getReturnType());
 				}
 				attrs.add(attr);
