@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -41,14 +42,16 @@ public class StreamMenuFactory extends ExtensionContributionFactory {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
-		MenuManager manager = new MenuManager("Stream");
-		
+		ImageDescriptor mainIcon = OdysseusRCPViewerPlugIn.getImageDescriptor("icons/application-text.png");
+		MenuManager manager = new MenuManager("Show Stream Elements", mainIcon, null);		
 		for( StreamExtensionDefinition def : definitions ) {
 			CommandContributionItemParameter p = new CommandContributionItemParameter(serviceLocator, "", OdysseusRCPViewerPlugIn.SHOW_STREAM_COMMAND_ID, SWT.PUSH);
 			p.label = def.getLabel();
 			p.parameters = new HashMap<Object, Object>();
 			p.parameters.put(OdysseusRCPViewerPlugIn.STREAM_EDITOR_TYPE_PARAMETER_ID, def.getID());
-			
+			if(def.getIcon()!=null){
+				p.icon = OdysseusRCPViewerPlugIn.getImageDescriptor(def.getIcon());
+			}
 			IContributionItem item = new CommandContributionItem(p);
 			item.setVisible(true);
 			manager.add(item);

@@ -100,7 +100,7 @@
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.editors.impl.GraphViewEditor"
             default="false"
-            icon="icons/graph.jpg"
+            icon="icons/graph.png"
             id="de.uniol.inf.is.odysseus.rcp.editors.GraphEditor"
             name="Graph Editor">
       </editor>
@@ -114,7 +114,7 @@
                id="de.uniol.inf.is.odysseus.rcp.ViewerToolBar">
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.commands.CallActiveGraphEditor"
-                  icon="icons/graph.jpg"
+                  icon="icons/graph.png"
                   label="Active Graph"
                   style="push">
             </command>
@@ -140,7 +140,7 @@
             locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.CallActiveGraphEditor"
-               icon="icons/graph.jpg"
+               icon="icons/graph.png"
                label="Active Graph"
                style="push">
          </command>
@@ -167,7 +167,7 @@
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.editors.GraphEditor?after=additions">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.ResetGraph"
-               icon="icons/reset.gif"
+               icon="icons/refresh.gif"
                label="Reset"
                style="push">
          </command>
@@ -177,23 +177,27 @@
          point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList"
+            icon="icons/application-list.png"
             id="de.uniol.inf.is.odysseus.rcp.streams.List"
-            label="List">
+            label="List- Show all last elements">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList10"
+            icon="icons/application-list.png"
             id="de.uniol.inf.is.odysseus.rcp.streams.List10"
-            label="List 10">
+            label="List- Show last 10 elements">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList50"
+            icon="icons/application-list.png"
             id="de.uniol.inf.is.odysseus.rcp.streams.List50"
-            label="List 50">
+            label="List- Show last 50 elements">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList100"
+            icon="icons/application-list.png"
             id="de.uniol.inf.is.odysseus.rcp.streams.List"
-            label="List 100">
+            label="List- Show last 100 elements">
       </editor>
    </extension>
 </plugin>

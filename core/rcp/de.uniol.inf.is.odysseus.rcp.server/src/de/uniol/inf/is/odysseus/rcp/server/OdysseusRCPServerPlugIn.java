@@ -56,7 +56,8 @@ public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventL
 		super.start(context);
 		
 		imageManager = new ImageManager(context.getBundle());
-		imageManager.register("source", "icons/application-import.png");
+		imageManager.register("source", "icons/sources.png");
+		imageManager.register("sink", "icons/sinks.png");
 		imageManager.register("attribute", "icons/status.png");
 		imageManager.register("loggedinuser", "icons/user--plus.png");
 		imageManager.register("user", "icons/user.png");

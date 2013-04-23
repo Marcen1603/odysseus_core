@@ -19,8 +19,13 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:#EditorContext?after=additions">
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.editor.text.separator3"
+               visible="true">
+         </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
+               icon="Icons/compile.png"
                label="Run Query"
                style="push">
          </command>
@@ -37,7 +42,7 @@
                id="RunToolbar">
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
-                  icon="Icons/run.gif"
+                  icon="Icons/compile.png"
                   label="Run Query"
                   style="push">
             </command>
@@ -52,6 +57,7 @@
          </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
+               icon="Icons/compile.png"
                label="Run Query"
                style="push">
          </command>

@@ -66,9 +66,9 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 		imageManager.register("predicate", "icons/status.png");
 		imageManager.register("schema", "icons/odata.png");
 		imageManager.register("pipe_icon", "icons/task.png");
-		imageManager.register("sink_icon", "icons/monitor.png");
-		imageManager.register("source_icon", "icons/application-import.png");
-		imageManager.register("partof_icon", "icons/graph.jpg");
+		imageManager.register("sink_icon", "icons/sinks.png");
+		imageManager.register("source_icon", "icons/sources.png");
+		imageManager.register("partof_icon", "icons/graph.png");
 		imageManager.register("string", "icons/string.jpg");
 		imageManager.register("subscription", "icons/arrow-000-small.png");
 		imageManager.register("information", "icons/information-white.png");

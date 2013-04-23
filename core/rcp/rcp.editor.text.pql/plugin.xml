@@ -71,7 +71,7 @@
                id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.toolbar1">
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.editor.text.pql.ShowPQLAccessStatementGenWindow"
-                  icon="icons/access.gif"
+                  icon="icons/sources-new.png"
                   label="Generate PQL-ACCESS-Statement"
                   style="push">
             </command>

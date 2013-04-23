@@ -28,10 +28,10 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.rcp.server.views.sink;
+package de.uniol.inf.is.odysseus.rcp.server.views;
 
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
  * @author Dennis Geesen
  * Created at: 24.08.2011
  */
-public class SinkViewContentProvider implements ITreeContentProvider {
+public class OperatorViewContentProvider implements ITreeContentProvider {
 
 	@Override
 	public void dispose() {
@@ -64,10 +64,10 @@ public class SinkViewContentProvider implements ITreeContentProvider {
 		if( parentElement instanceof Set ) {
 			return ((Set<?>)parentElement).toArray();
 		}
-		if( parentElement instanceof Entry ) {
-			@SuppressWarnings("unchecked")
-			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>)parentElement;
-			return entry.getValue().getOutputSchema().toArray();
+		if( parentElement instanceof Entry ) {			
+			Entry<?, ?> entry = (Entry<?, ?>)parentElement;
+			ILogicalOperator op = (ILogicalOperator) entry.getValue();
+			return op.getOutputSchema().toArray();
 		}
 		if( parentElement instanceof SDFAttribute ) {
 			if(((SDFAttribute)parentElement).getDatatype().hasSchema()){

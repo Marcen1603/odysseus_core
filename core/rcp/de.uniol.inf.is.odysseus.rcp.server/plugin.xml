@@ -14,7 +14,7 @@
       <view
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.server.views.sink.SinkView"
-            icon="icons/network-hub.png"
+            icon="icons/sinks.png"
             id="de.uniol.inf.is.odysseus.rcp.views.SinkView"
             name="Sinks"
             restorable="true">
@@ -22,7 +22,7 @@
       <view
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.server.views.source.SourcesView"
-            icon="icons/repository_rep.gif"
+            icon="icons/sources.png"
             id="de.uniol.inf.is.odysseus.rcp.views.SourcesView"
             name="Sources"
             restorable="true">

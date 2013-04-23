@@ -5,28 +5,33 @@
          point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable10Editor"
+            icon="icons/application-table.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table10"
-            label="Table 10">
+            label="Table - Show last 10 elements">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable20Editor"
+            icon="icons/application-table.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table20"
-            label="Table 20">
+            label="Table - Show last 20 elements">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable50Editor"
+            icon="icons/application-table.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table50"
-            label="Table 50">
+            label="Table - Show last 50 elements">
       </editor>
             <editor
-            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable500Editor"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table500"
-            label="Table 500">
+                  class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable500Editor"
+                  icon="icons/application-table.png"
+                  id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table500"
+                  label="Table - Show last 500 elements">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTableInfEditor"
+            icon="icons/application-table.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.TableInf"
-            label="Table">
+            label="Table - Show all last elements">
       </editor>
    </extension>
 

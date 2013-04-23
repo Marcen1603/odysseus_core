@@ -22,6 +22,7 @@ public class StreamExtensionDefinition {
 	private String id;
 	private IConfigurationElement configElement;
 	private String label;
+	private String icon;	
 	
 	public StreamExtensionDefinition() {}
 	
@@ -47,6 +48,14 @@ public class StreamExtensionDefinition {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public void setIcon(String attribute) {
+		this.icon = attribute;		
+	}
+	
+	public String getIcon(){
+		return this.icon;
 	}
 	
 	

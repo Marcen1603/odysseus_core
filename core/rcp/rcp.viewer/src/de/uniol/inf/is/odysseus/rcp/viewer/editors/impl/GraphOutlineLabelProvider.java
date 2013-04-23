@@ -18,20 +18,22 @@ package de.uniol.inf.is.odysseus.rcp.viewer.editors.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
-public class GraphOutlineLabelProvider implements ILabelProvider {
+public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 
 	private final Map<String, Image> images = new HashMap<String, Image>();
 
@@ -39,6 +41,20 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 	// private static final int IMAGE_WIDTH = 20;
 
 	@Override
+	public void update(ViewerCell cell) {
+		Object obj = cell.getElement();
+
+		StyledString styledString = new StyledString();
+
+		styledString = getText(obj, styledString);
+
+		cell.setText(styledString.toString());
+		cell.setStyleRanges(styledString.getStyleRanges());
+		cell.setImage(getImage(obj));
+		super.update(cell);
+
+	}
+
 	public Image getImage(Object element) {
 		if (element instanceof IMonitoringData<?>) {
 			return OdysseusRCPViewerPlugIn.getImageManager().get("metadata");
@@ -56,18 +72,27 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			return OdysseusRCPViewerPlugIn.getImageManager().get("attribute");
 		}
 
-		if (element instanceof StringWrapper) {
+		if (element instanceof NamedList) {
+			NamedList e = (NamedList) element;
+			if (e.getValues().isEmpty()) {
+				return getImage(((NamedList) element).getKey());
+			} else {
+				return getImage(e.getValues().get(0));
+			}
+		}
+
+		if (element instanceof IOperatorOwner) {
 			return OdysseusRCPViewerPlugIn.getImageManager().get("partof_icon");
 		}
 
 		if (element instanceof ISubscription) {
 			return OdysseusRCPViewerPlugIn.getImageManager().get("subscription");
 		}
-		
+
 		if (element instanceof Map) {
 			return OdysseusRCPViewerPlugIn.getImageManager().get("information");
 		}
-		
+
 		if (element instanceof Map.Entry) {
 			return OdysseusRCPViewerPlugIn.getImageManager().get("attribute");
 		}
@@ -109,33 +134,43 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 		return null;
 	}
 
-	@Override
-	public String getText(Object element) {
+	public StyledString getText(Object element, StyledString styledString) {
 		if (element instanceof IOdysseusNodeView) {
 			IOdysseusNodeView node = (IOdysseusNodeView) element;
 			String name = node.getModelNode().getContent().getName();
-			return name;
+			return styledString.append(name);
 		}
 		if (element instanceof ISubscription) {
 			ISubscription<?> s = (ISubscription<?>) element;
 			if (s.getTarget() instanceof IPhysicalOperator) {
-				return " In(" + s.getSinkInPort() + ") " + " out(" + s.getSourceOutPort() + ") " + ((IPhysicalOperator) s.getTarget()).getName();
-			} 
-			
-			return " In(" + s.getSinkInPort() + ") " + " out(" + s.getSourceOutPort() + ") " + s.getTarget();
+				return styledString.append(" In(" + s.getSinkInPort() + ") " + " out(" + s.getSourceOutPort() + ") " + ((IPhysicalOperator) s.getTarget()).getName());
+			}
+
+			return styledString.append(" In(" + s.getSinkInPort() + ") " + " out(" + s.getSourceOutPort() + ") " + s.getTarget());
 		}
 		if (element instanceof SDFSchema) {
-			return "OutputSchema (" + ((SDFSchema) element).getURI() + ")";
+			return styledString.append("OutputSchema (" + ((SDFSchema) element).getURI() + ")");
 		}
 
 		if (element instanceof IPredicate) {
-			return element.toString();
+			return styledString.append(element.toString());
+		}
+
+		if (element instanceof NamedList) {
+			return getText(((NamedList) element).getKey(), styledString);
+		}
+
+		if (element instanceof IOperatorOwner) {
+			IOperatorOwner owner = (IOperatorOwner) element;
+			styledString.append("Query " + owner.getID());
+			return styledString.append(" " + owner.hashCode(), StyledString.QUALIFIER_STYLER);
 		}
 
 		if (element instanceof SDFAttribute) {
-			SDFAttribute a = (SDFAttribute) element;
-			String name = a+" ("+a.getDatatype().getURI()+")";
-			return name;
+			SDFAttribute attribute = (SDFAttribute) element;
+			styledString.append(attribute.getAttributeName());
+			styledString.append("  " + attribute.getDatatype().toString(), StyledString.QUALIFIER_STYLER);
+			return styledString;
 		}
 		if (element instanceof IMonitoringData<?>) {
 			final IMonitoringData<?> monData = (IMonitoringData<?>) element;
@@ -149,35 +184,31 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			} else {
 				valueString = value != null ? value.toString() : "null";
 			}
-			return type + " = " + valueString;
+			return styledString.append(type + " = " + valueString);
 		}
 
 		if (element instanceof StringWrapper) {
-			return ((StringWrapper) element).content;
+			return styledString.append(((StringWrapper) element).content);
 		}
 
 		if (element instanceof StringNode) {
-			return "toString()";
+			return styledString.append("toString()");
 		}
 
 		if (element instanceof Map) {
-			return "Information";
+			return styledString.append("Information");
 		}
 		if (element instanceof Map.Entry) {
 			Map.Entry<?, ?> e = ((Map.Entry<?, ?>) element);
-			return e.getKey() + " = " + e.getValue();
-			
+			return styledString.append(e.getKey() + " = " + e.getValue());
+
 		}
 
 		if (element instanceof String) {
-			return (String) element;
+			return styledString.append((String) element);
 		}
 
-		return element.getClass().getName();
-	}
-
-	@Override
-	public void addListener(ILabelProviderListener listener) {
+		return styledString.append(element.getClass().getName());
 	}
 
 	@Override
@@ -189,10 +220,6 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
-	}
-
-	@Override
-	public void removeListener(ILabelProviderListener listener) {
 	}
 
 }

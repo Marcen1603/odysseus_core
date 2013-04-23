@@ -7,9 +7,9 @@
             allPopups="false"
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
          <menu
-               icon="icons/monitor.png"
+               icon="icons/application-block.png"
                id="de.uniol.inf.is.odysseus.rcp.viewer.stream.charts.menu"
-               label="Charts">
+               label="Show Chart">
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowBarChartCommand"
                   icon="icons/chart_bar.png"
@@ -113,18 +113,18 @@
             allPopups="false"
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.outline">
          <menu
-               icon="icons/monitor.png"
+               icon="icons/application-block.png"
                id="de.uniol.inf.is.odysseus.rcp.viewer.stream.charts.menu"
-               label="Charts">
+               label="Show Chart">
          </menu>
       </menuContribution>
       <menuContribution
             allPopups="false"
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.editors.GraphEditor?after=additions">
          <menu
-               icon="icons/monitor.png"
+               icon="icons/application-block.png"
                id="de.uniol.inf.is.odysseus.rcp.viewer.stream.charts.menu"
-               label="Charts">
+               label="Show Chart">
          </menu>
       </menuContribution>
    </extension>
@@ -348,6 +348,14 @@
       <activityPatternBinding
             activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
             pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.linearFunctionChart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.dialchart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.stepchart">
       </activityPatternBinding>
    </extension>
 

@@ -72,11 +72,18 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 				LOG.error("No output Schema for {}!", node.getModelNode().getContent());
 			}
 
-			StringBuffer owner = new StringBuffer("Part of Query: ");
+			// StringBuffer owner = new StringBuffer("Part of Query: ");
+			// for (IOperatorOwner o : node.getModelNode().getContent().getOwner()) {
+			// owner.append("#").append(o.getID()).append(" ").append("(#").append(o.hashCode()).append(")");
+			// }
+			// children.add(new StringWrapper(owner.toString()));
+
+			NamedList n = new NamedList("Part of query");
 			for (IOperatorOwner o : node.getModelNode().getContent().getOwner()) {
-				owner.append("#").append(o.getID()).append(" ").append("(#").append(o.hashCode()).append(")");
+				n.addValue(o);
 			}
-			children.add(new StringWrapper(owner.toString()));
+			children.add(n);
+
 			if (node.getModelNode().getContent().getUniqueIds().size() > 0) {
 				StringBuffer ids = new StringBuffer("UIDs: ");
 				for (Entry<IOperatorOwner, String> id : node.getModelNode().getContent().getUniqueIds().entrySet()) {
@@ -110,9 +117,13 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 		if (parentElement instanceof Map) {
 			return ((Map<?, ?>) parentElement).entrySet().toArray();
 		}
-		
+
 		if (parentElement instanceof StringNode) {
 			return new Object[] { ((StringNode) parentElement).getContent() };
+		}
+
+		if (parentElement instanceof NamedList) {
+			return ((NamedList) parentElement).getValues().toArray();
 		}
 
 		if (parentElement instanceof SDFSchema) {
@@ -152,6 +163,9 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
+		if (element instanceof NamedList) {
+			return true;
+		}
 		if (element instanceof IOdysseusNodeView) {
 			IOdysseusNodeView node = (IOdysseusNodeView) element;
 			if (node.getModelNode() == null)

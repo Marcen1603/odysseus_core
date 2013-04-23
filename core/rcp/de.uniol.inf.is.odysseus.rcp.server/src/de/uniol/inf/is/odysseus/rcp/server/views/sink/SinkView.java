@@ -48,8 +48,8 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListen
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.server.views.source.SourcesViewContentProvider;
-import de.uniol.inf.is.odysseus.rcp.server.views.source.SourcesViewLabelProvider;
+import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewContentProvider;
+import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewLabelProvider;
 
 /**
  * 
@@ -122,8 +122,8 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 		parent.setLayout(new FillLayout());
 
 		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
-		getTreeViewer().setContentProvider(new SourcesViewContentProvider());
-		getTreeViewer().setLabelProvider(new SourcesViewLabelProvider());
+		getTreeViewer().setContentProvider(new OperatorViewContentProvider());
+		getTreeViewer().setLabelProvider(new OperatorViewLabelProvider("sink"));
 		refresh();
 		IExecutor e = OdysseusRCPPlugIn.getExecutor();
 		if (e instanceof IServerExecutor) {

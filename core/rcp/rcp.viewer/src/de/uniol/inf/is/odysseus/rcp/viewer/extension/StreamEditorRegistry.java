@@ -51,7 +51,7 @@ public class StreamEditorRegistry implements IRegistryEventListener {
 	@Override
 	public void added(IExtension[] extensions) {
 		for( IExtension extension: extensions ) {
-			for(IConfigurationElement element : extension.getConfigurationElements()) {
+			for(IConfigurationElement element : extension.getConfigurationElements()) {				
 				registerStreamEditorDefinition(element);
 			}
 		}
@@ -78,6 +78,7 @@ public class StreamEditorRegistry implements IRegistryEventListener {
 		StreamExtensionDefinition def = new StreamExtensionDefinition();
 		def.setID(e.getAttribute("id"));
 		def.setLabel(e.getAttribute("label"));
+		def.setIcon(e.getAttribute("icon"));
 		def.setConfigElement(e);
 		
 		synchronized(definitions) {

@@ -11,7 +11,7 @@
       <view
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.views.query.QueryView"
-            icon="icons/prop_ps.gif"
+            icon="icons/all-queries.png"
             id="de.uniol.inf.is.odysseus.rcp.views.query.QueryView"
             name="Queries"
             restorable="true">
@@ -21,6 +21,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
+            icon="icons/all-queries.png"
             id="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             name="Queries">
       </perspective>
@@ -177,60 +178,63 @@
                style="push">
          </command>
          <separator
-               name="de.uniol.inf.is.odysseus.rcp.base.separator1">
+               name="de.uniol.inf.is.odysseus.rcp.base.separator1"
+               visible="true">
          </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.StartQueryCommand"
-               icon="icons/gear_run.png"
+               icon="icons/one-query-start.png"
                label="Start Query"
                style="push">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RestartQueryCommand"
-               icon="icons/gear_replace.png"
+               icon="icons/one-query-restart.png"
                label="Restart Query"
                style="push">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand"
-               icon="icons/gear_pause.png"
+               icon="icons/one-query-stop.png"
                label="Stop Query"
                style="push">
          </command>
          <separator
-               name="de.uniol.inf.is.odysseus.rcp.base.separator2">
+               name="de.uniol.inf.is.odysseus.rcp.base.separator2"
+               visible="true">
          </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.StartAllQueriesCommand"
-               icon="icons/gears_run.png"
+               icon="icons/all-queries-start.png"
                label="Start All Queries"
                style="push">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RestartAllQueriesCommand"
-               icon="icons/gears.png"
+               icon="icons/all-queries-restart.png"
                label="Restart All Queries"
                style="push"
                tooltip="Restarts all installed queries">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.StopAllQueriesCommand"
-               icon="icons/gears_pause.png"
+               icon="icons/all-queries-stop.png"
                label="Stop All Queries"
                style="push">
          </command>
          <separator
-               name="de.uniol.inf.is.odysseus.rcp.base.separator4">
+               name="de.uniol.inf.is.odysseus.rcp.base.separator4"
+               visible="true">
          </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand"
-               icon="icons/gear_stop.png"
+               icon="icons/one-query-delete.png"
                label="Remove Query"
                style="push">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveAllQueriesCommand"
-               icon="icons/gears_stop.png"
+               icon="icons/all-queries-delete.png"
                label="Remove All Queries"
                style="push">
          </command>
@@ -240,19 +244,19 @@
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.StartQueryCommand"
-               icon="icons/gear_run.png"
+               icon="icons/one-query-start.png"
                label="Start Query"
                style="push">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RestartQueryCommand"
-               icon="icons/gear_replace.png"
+               icon="icons/one-query-restart.png"
                label="Restart Query"
                style="push">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand"
-               icon="icons/gear_stop.png"
+               icon="icons/one-query-stop.png"
                label="Stop Query"
                style="push">
          </command>
@@ -261,9 +265,38 @@
                visible="true">
          </separator>
          <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.StartAllQueriesCommand"
+               icon="icons/all-queries-start.png"
+               label="Start All Queries"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RestartAllQueriesCommand"
+               icon="icons/all-queries-restart.png"
+               label="Restart All Queries"
+               style="push"
+               tooltip="Restarts all installed queries">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.StopAllQueriesCommand"
+               icon="icons/all-queries-stop.png"
+               label="Stop All Queries"
+               style="push">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.base.separator1"
+               visible="true">
+         </separator>
+         <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand"
-               icon="icons/gear_delete.png"
+               icon="icons/one-query-delete.png"
                label="Remove Query"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveAllQueriesCommand"
+               icon="icons/all-queries-delete.png"
+               label="Remove All Queries"
                style="push">
          </command>
          <separator
@@ -284,10 +317,14 @@
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand"
-               icon="icons/graph.jpg"
+               icon="icons/graph.png"
                label="Show Query Plan"
                style="push">
          </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.base.separator2"
+               visible="true">
+         </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
                icon="icons/refresh.gif"
@@ -300,6 +337,7 @@
             locationURI="menu:file?after=new">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.LoginUserCommand"
+               icon="icons/keys.png"
                label="Change User..."
                style="push">
          </command>
