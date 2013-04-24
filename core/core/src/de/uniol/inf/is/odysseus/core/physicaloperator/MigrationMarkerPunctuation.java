@@ -7,10 +7,10 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 /**
  * @author Merlin Wasmann
- *
+ * 
  */
 public class MigrationMarkerPunctuation extends AbstractPunctuation {
-	
+
 	private static final long serialVersionUID = 1L;
 	private ISource<?> source;
 
@@ -23,27 +23,38 @@ public class MigrationMarkerPunctuation extends AbstractPunctuation {
 		super(point);
 		this.source = source;
 	}
-	
-	public MigrationMarkerPunctuation(AbstractPunctuation punct, ISource<?> source) {
+
+	public MigrationMarkerPunctuation(AbstractPunctuation punct,
+			ISource<?> source) {
 		super(punct);
 		this.source = source;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation#clone()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation#clone
+	 * ()
 	 */
 	@Override
 	public AbstractPunctuation clone() {
 		return new MigrationMarkerPunctuation(getTime(), getSource());
 	}
-	
+
 	@Override
 	public AbstractPunctuation clone(PointInTime newTime) {
 		return new MigrationMarkerPunctuation(point, getSource());
 	}
-	
+
 	public ISource<?> getSource() {
 		return this.source;
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " (" + hashCode() + ") | "
+				+ getTime() + " | from " + getSource().getName();
 	}
 
 }
