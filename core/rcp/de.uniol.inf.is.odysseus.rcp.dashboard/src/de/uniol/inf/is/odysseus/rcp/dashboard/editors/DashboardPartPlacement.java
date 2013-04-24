@@ -35,8 +35,6 @@ public final class DashboardPartPlacement {
 		this.part = Preconditions.checkNotNull(part, "Dashboard Part for positioning must not be null!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(filename), "File of Dashboard Part must not be null!");
 
-		Preconditions.checkArgument(x >= 0, "x must be positive instead of %s", x);
-		Preconditions.checkArgument(y >= 0, "y must be positive instead of %s", y);
 		Preconditions.checkArgument(w >= 0, "Width must be positive instead of %s", w);
 		Preconditions.checkArgument(h >= 0, "Height must be positive instead of %s", h);
 
