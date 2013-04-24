@@ -70,7 +70,7 @@ public class MinusOperator extends AbstractBinaryOperator<Double> {
 		return false;
 	}
 	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.TIMESTAMP, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
 	
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){
