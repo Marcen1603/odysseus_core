@@ -15,6 +15,9 @@ import model.EventBuffer;
 import model.EventObject;
 import model.PatternOutput;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
@@ -40,6 +43,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
  */
 public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, Tuple<T>>
 	implements IProcessInternal<Tuple<T>> {
+	
+	private static Logger logger = LoggerFactory.getLogger(PatternMatchingPO.class);
 	
 	private List<SDFExpression> assertions;
 	private List<SDFExpression> returnExpressions;
@@ -209,6 +214,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	@Override
 	protected void process_next(Tuple<T> event, int port) {
 		inputStreamSyncArea.newElement(event, port);
+		outputTransferArea.newElement(event, port);
 	}
 
 	@Override
@@ -332,7 +338,6 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 						iterator.remove();
 					}
 				}
-					
 			}
 		}
 	}
@@ -389,9 +394,14 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 					}
 					// TODO: Exception, wenn Attribut verlangt, aber nicht vorhanden
 					// -> Sollte konfigurierbar sein
-					boolean predicate = expression.getValue();
-					if (!predicate) {
+					try {
+						boolean predicate = expression.getValue();
+						if (!predicate) {
+							satisfied = false;
+						}
+					} catch (Exception e) {
 						satisfied = false;
+						logger.error("Prädikat wurde zu null ausgewertet", e);
 					}
 				}
 				if (satisfied) {
