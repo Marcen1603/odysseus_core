@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionFitness;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionMigrationFuzzyRuleEngine;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionMigrationRuleEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionPolicyRuleEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionResourceMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationEventSource;
@@ -41,7 +41,7 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 	protected IPlanMigrationStrategy migrationStrategy;
 	protected IPlanAdaptionResourceMonitor resourceMonitor;
 	protected IPlanAdaptionFitness fitness;
-	protected IPlanAdaptionMigrationFuzzyRuleEngine fuzzyRuleEngine;
+	protected IPlanAdaptionMigrationRuleEngine fuzzyRuleEngine;
 	protected IPlanAdaptionPolicyRuleEngine policyRuleEngine;
 	protected IServerExecutor executor;
 
@@ -68,7 +68,7 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 	}
 
 	@Override
-	public IPlanAdaptionMigrationFuzzyRuleEngine getFuzzyRuleEngine() {
+	public IPlanAdaptionMigrationRuleEngine getFuzzyRuleEngine() {
 		return this.fuzzyRuleEngine;
 	}
 

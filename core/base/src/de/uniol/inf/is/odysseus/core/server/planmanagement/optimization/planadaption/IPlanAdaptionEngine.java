@@ -37,7 +37,7 @@ public interface IPlanAdaptionEngine extends IPlanModificationListener, IMigrati
 	public IPlanMigrationStrategy getPlanMigrationStrategy();
 	public IPlanAdaptionResourceMonitor getAdaptionResourceMonitor();
 	public IPlanAdaptionFitness getFitness();
-	public IPlanAdaptionMigrationFuzzyRuleEngine getFuzzyRuleEngine();
+	public IPlanAdaptionMigrationRuleEngine getFuzzyRuleEngine();
 	public IPlanAdaptionPolicyRuleEngine getPolicyRuleEngine();
 	public IServerExecutor getExecutor();
 	

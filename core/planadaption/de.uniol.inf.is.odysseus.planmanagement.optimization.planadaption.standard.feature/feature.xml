@@ -70,13 +70,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.standardfuzzyruleengine"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.standardpolicyruleengine"
          download-size="0"
          install-size="0"
@@ -99,6 +92,13 @@ limitations under the License.
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.standardfitness"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.standardmigrationruleengine"
          download-size="0"
          install-size="0"
          version="0.0.0"

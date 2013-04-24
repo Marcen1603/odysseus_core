@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.standardfuzzyruleengine;
+package de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.standardmigrationruleengine;
 
 import java.util.HashMap;
 
@@ -23,16 +23,16 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionMigrationFuzzyRuleEngine;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionMigrationRuleEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.costmodel.PlanMigration;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.planmigration.PlanMigrationCost;
 
-public class StandardPlanAdaptionMigrationFuzzyRuleEngine implements
-		IPlanAdaptionMigrationFuzzyRuleEngine {
+public class StandardPlanAdaptionMigrationRuleEngine implements
+		IPlanAdaptionMigrationRuleEngine {
 
-	private static final Logger LOG = LoggerFactory.getLogger(StandardPlanAdaptionMigrationFuzzyRuleEngine.class);
+	private static final Logger LOG = LoggerFactory.getLogger(StandardPlanAdaptionMigrationRuleEngine.class);
 	
 	// TODO: werte finden/raten/schätzen
 	@SuppressWarnings({ "rawtypes", "unchecked" })

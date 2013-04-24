@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionFitness;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionMigrationFuzzyRuleEngine;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionMigrationRuleEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionPolicyListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionPolicyRuleEngine;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionResourceMonitor;
@@ -70,9 +70,9 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 	private Map<IPhysicalQuery, List<IPhysicalOperator>> queryToOriginalPlan = new HashMap<IPhysicalQuery, List<IPhysicalOperator>>();
 
 	private long blockedTime = OdysseusConfiguration.getLong(
-			"adaption_blockingTime", 60000);
+			"adaption_blockingTime", 30000);
 	private long timerValue = OdysseusConfiguration.getLong("adaption_timer",
-			10000);
+			5000);
 
 	private int runningQueries = 0;
 	
@@ -209,15 +209,15 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 		}
 	}
 
-	public void bindFuzzyRuleEngine(IPlanAdaptionMigrationFuzzyRuleEngine rule) {
+	public void bindMigrationRuleEngine(IPlanAdaptionMigrationRuleEngine rule) {
 		this.fuzzyRuleEngine = rule;
-		LOG.debug("PlanAdaptionMigrationFuzzyRuleEngine bound");
+		LOG.debug("PlanAdaptionMigrationRuleEngine bound");
 	}
 
-	public void unbindFuzzyRuleEngine(IPlanAdaptionMigrationFuzzyRuleEngine rule) {
+	public void unbindMigrationRuleEngine(IPlanAdaptionMigrationRuleEngine rule) {
 		if (rule.equals(this.fuzzyRuleEngine)) {
 			this.fuzzyRuleEngine = null;
-			LOG.debug("PlanAdaptionMigrationFuzzyRuleEngine unbound");
+			LOG.debug("PlanAdaptionMigrationRuleEngine unbound");
 		}
 	}
 

@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigr
  * @author Merlin Wasmann
  *
  */
-public interface IPlanAdaptionMigrationFuzzyRuleEngine {
+public interface IPlanAdaptionMigrationRuleEngine {
 
 	/**
 	 * Evaluate if a migration is good or not with the given costs.
