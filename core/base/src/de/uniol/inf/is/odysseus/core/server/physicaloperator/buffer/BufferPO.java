@@ -270,7 +270,7 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 			// create new punctuation and insert it at the last position in the
 			// buffer.
-			IPunctuation punctuation = new MigrationMarkerPunctuation(pit,
+			IPunctuation punctuation = new MigrationMarkerPunctuation(this.newestTimestamp,
 					this.source);
 			if (getLogger().isDebugEnabled()) {
 				getLogger().debug(
@@ -289,9 +289,9 @@ public class BufferPO<T extends IStreamObject<?>> extends
 	}
 	
 	public void dumpBuffer() {
-		getLogger().debug("Dumping Buffer {} (#{})", getClass().getSimpleName(), hashCode());
-		synchronized(this.buffer) {
-			for(IStreamable element : this.buffer) {
+		getLogger().debug("Dumping Buffer {}", getName());
+		synchronized (this.buffer) {
+			for (IStreamable element : this.buffer) {
 				getLogger().debug("--- {}", element);
 			}
 		}
