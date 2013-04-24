@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -188,61 +187,20 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			// überlegen.
 			// add buffer to source's subscriptions
 
-			Collection<PhysicalSubscription> afterSourceSubs = ((ISource) metadataUpdatePO)
-					.getSubscriptions();
-			List<ISink> sinks = new ArrayList<ISink>();
-			List<Integer> sinkInPorts = new ArrayList<Integer>();
-			for (PhysicalSubscription<?> sub : afterSourceSubs) {
-				IPhysicalOperator sink = (IPhysicalOperator) sub.getTarget();
-				// filter DataSourceObserver
-				if (sink.isPipe()) {
-					sinks.add((ISink) sink);
-					sinkInPorts.add(sub.getSinkInPort());
-				}
-			}
+//			Collection<PhysicalSubscription> afterSourceSubs = ((ISource) metadataUpdatePO)
+//					.getSubscriptions();
+//			List<ISink> sinks = new ArrayList<ISink>();
+//			List<Integer> sinkInPorts = new ArrayList<Integer>();
+//			for (PhysicalSubscription<?> sub : afterSourceSubs) {
+//				IPhysicalOperator sink = (IPhysicalOperator) sub.getTarget();
+//				// filter DataSourceObserver
+//				if (sink.isPipe()) {
+//					sinks.add((ISink) sink);
+//					sinkInPorts.add(sub.getSinkInPort());
+//				}
+//			}
 
-			buffer.subscribeToSource(metadataUpdatePO, 0, 0,
-					metadataUpdatePO.getOutputSchema());
-			PhysicalSubscription<?> bufferSub = null;
-			for (PhysicalSubscription<?> sub : ((ISource<?>) metadataUpdatePO)
-					.getSubscriptions()) {
-				if (sub.getTarget().equals(buffer)) {
-					bufferSub = sub;
-				}
-			}
-			Set<PhysicalSubscription<?>> unSubscribe = new HashSet<PhysicalSubscription<?>>();
-			for (PhysicalSubscription<?> sub : ((ISource<?>) metadataUpdatePO)
-					.getSubscriptions()) {
-				IPhysicalOperator op = (IPhysicalOperator) sub.getTarget();
-				if (newPlanOperatorsBeforeSources.contains(op)
-						|| oldPlanOperatorsBeforeSources.contains(op)) {
-					// activate connection between source and buffer
-					// deactivate connection between source and subscriptions
-					((AbstractPipe) metadataUpdatePO)
-							.replaceActiveSubscription(sub, bufferSub);
-					unSubscribe.add(sub);
-				} else {
-					LOG.debug("Operator: " + op.getClass().getSimpleName()
-							+ " (" + op.hashCode()
-							+ ") will not be replaced by buffer.");
-				}
-			}
-			// unsubscribe all subscriptions from source
-			// subscribe all subscriptions to buffer
-			for (PhysicalSubscription<?> sub : unSubscribe) {
-				IPhysicalOperator op = (IPhysicalOperator) sub.getTarget();
-				((AbstractPipe) op).unsubscribeFromSource(metadataUpdatePO, 0,
-						0, metadataUpdatePO.getOutputSchema());
-
-				LOG.debug("Operator: " + op.getClass().getSimpleName() + " ("
-						+ op.hashCode() + ") was unsubscribed from source");
-
-				((AbstractPipe) op).subscribeToSource(buffer, 0, 0,
-						buffer.getOutputSchema());
-
-				LOG.debug("Operator: " + op.getClass().getSimpleName() + " ("
-						+ op.hashCode() + ") was subscribed to buffer");
-			}
+			insertBuffer(buffer, metadataUpdatePO, newPlanOperatorsBeforeSources, oldPlanOperatorsBeforeSources);
 
 			LOG.debug("Insert Blocking-Buffer after source ... done");
 		}
@@ -314,6 +272,61 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// we are waiting for the event that is fired.
 	}
 
+	/**
+	 * Insert the buffer between the metadataUpdatePO and the subscribedSinks to the updatePO
+	 * @param buffer Buffer which should be inserted
+	 * @param metadataUpdatePO Operator before which the buffer should be inserted.
+	 * @param newPlanOperatorsBeforeSources Operators which are after the metadataUpdatePO in the new plan
+	 * @param oldPlanOperatorsBeforeSources Operators which are after the metadataUpdatePO in the old plan
+	 */
+	private void insertBuffer(BufferPO buffer, IPhysicalOperator metadataUpdatePO, List<IPhysicalOperator> newPlanOperatorsBeforeSources, List<IPhysicalOperator> oldPlanOperatorsBeforeSources) {
+		buffer.subscribeToSource(metadataUpdatePO, 0, 0,
+				metadataUpdatePO.getOutputSchema());
+		
+		// get the corresponding subscribtion
+		PhysicalSubscription<?> bufferSub = null;
+		for (PhysicalSubscription<?> sub : ((ISource<?>) metadataUpdatePO)
+				.getSubscriptions()) {
+			if (sub.getTarget().equals(buffer)) {
+				bufferSub = sub;
+			}
+		}
+		// replace the activeSinkSubscriptions between updatePO and beforeSourceOperators with updatePO -> buffer
+		Set<PhysicalSubscription<?>> unSubscribe = new HashSet<PhysicalSubscription<?>>();
+		for (PhysicalSubscription<?> sub : ((ISource<?>) metadataUpdatePO)
+				.getSubscriptions()) {
+			IPhysicalOperator op = (IPhysicalOperator) sub.getTarget();
+			if (newPlanOperatorsBeforeSources.contains(op)
+					|| oldPlanOperatorsBeforeSources.contains(op)) {
+				// activate connection between source and buffer
+				// deactivate connection between source and subscriptions
+				((AbstractPipe) metadataUpdatePO)
+						.replaceActiveSubscription(sub, bufferSub);
+				unSubscribe.add(sub);
+			} else {
+				LOG.debug("Operator: " + op.getClass().getSimpleName()
+						+ " (" + op.hashCode()
+						+ ") will not be replaced by buffer.");
+			}
+		}
+		// unsubscribe all subscriptions from source
+		// subscribe all subscriptions to buffer
+		for (PhysicalSubscription<?> sub : unSubscribe) {
+			IPhysicalOperator op = (IPhysicalOperator) sub.getTarget();
+			((AbstractPipe) op).unsubscribeFromSource(metadataUpdatePO, 0,
+					0, metadataUpdatePO.getOutputSchema());
+
+			LOG.debug("Operator: " + op.getClass().getSimpleName() + " ("
+					+ op.hashCode() + ") was unsubscribed from source");
+
+			((AbstractPipe) op).subscribeToSource(buffer, 0, 0,
+					buffer.getOutputSchema());
+
+			LOG.debug("Operator: " + op.getClass().getSimpleName() + " ("
+					+ op.hashCode() + ") was subscribed to buffer");
+		}
+	}
+	
 	/**
 	 * Inserts the router between the plans and the real sink which is
 	 * lastOperatorOldPlan and returns the lastOperatorOldPlan as new root.
