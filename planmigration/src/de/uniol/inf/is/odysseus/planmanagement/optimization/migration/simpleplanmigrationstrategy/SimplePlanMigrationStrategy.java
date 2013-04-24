@@ -173,6 +173,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				// Buffer not connected, so no errors can occur
 				LOG.error("Failed to open Buffer", e);
 			}
+			buffer.setName(metadataUpdatePO.getName());
+			
 			buffer.block();
 			buffer.setOutputSchema(metadataUpdatePO.getOutputSchema());
 
