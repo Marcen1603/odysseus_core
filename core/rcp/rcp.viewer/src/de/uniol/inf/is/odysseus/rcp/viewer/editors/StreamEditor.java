@@ -135,33 +135,36 @@ public class StreamEditor extends EditorPart {
 	}
 
 	protected void fillToolBar(ToolBar bar) {
-		final ToolItem button = createToolBarButton(bar, OdysseusRCPViewerPlugIn.getImageManager().get("stopStream"));
-		button.addSelectionListener(new SelectionAdapter() {
+		final ToolItem startButton = createToolBarButton(bar, OdysseusRCPViewerPlugIn.getImageManager().get("startStream"));
+		final ToolItem stopButton = createToolBarButton(bar, OdysseusRCPViewerPlugIn.getImageManager().get("stopStream"));
+
+		startButton.setToolTipText("Start");
+		startButton.setEnabled(false);
+		startButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (input.getStreamConnection().isConnected()) {
-					input.getStreamConnection().disconnect();
-					button.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("startStream"));
-				} else {
-					input.getStreamConnection().connect();
-					button.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("stopStream"));
-				}
+				input.getStreamConnection().connect();
+				startButton.setEnabled(false);
+				stopButton.setEnabled(true);
 			}
 		});
-		final ToolItem autoShowButton = createToolBarButton(bar, OdysseusRCPViewerPlugIn.getImageManager().get("autoFocusActivate"));
+		stopButton.setToolTipText("Stop");
+		stopButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				input.getStreamConnection().disconnect();
+				stopButton.setEnabled(false);
+				startButton.setEnabled(true);
+			}
+		});
+		final ToolItem autoShowButton = new ToolItem(bar, SWT.CHECK);
+		autoShowButton.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("autoFocusActivate"));
 		autoShowButton.setToolTipText("Show on changes");
 		autoShowButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (autoActivate) {
-					autoShowButton.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("autoFocusActivate"));
-					autoShowButton.setToolTipText("Show on changes");
-					autoActivate = false;
-				} else {
-					autoShowButton.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("autoFocusDeactivate"));
-					autoShowButton.setToolTipText("Do not show on changes");
-					autoActivate = true;
-				}
+				autoActivate = !autoActivate;
+				autoShowButton.setSelection(autoActivate);
 			}
 		});
 
