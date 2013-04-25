@@ -155,6 +155,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_ENTITY)) {
 			try {
 				String uriToStore = createUserUri(uri, caller);
+				if (entityMap.get(uriToStore) != null){
+					throw new IllegalArgumentException("Source "+uri+" already defined! Remove first!");
+				}
 				this.entityMap.put(uriToStore, entity);
 				this.entityFromUser.put(uriToStore, caller.getUser());
 				fireDataDictionaryChangedEvent();
@@ -830,6 +833,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public synchronized void putAccessPlan(String uri, ISource<?> s) {
+		if (sources.containsKey(uri)){
+			throw new IllegalArgumentException("Sourcename "+uri+" already registred! Remove first");
+		}
 		sources.put(uri, s);
 	}
 
