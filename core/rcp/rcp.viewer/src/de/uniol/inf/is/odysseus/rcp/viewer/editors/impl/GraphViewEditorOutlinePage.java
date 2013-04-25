@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.editors.impl;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
