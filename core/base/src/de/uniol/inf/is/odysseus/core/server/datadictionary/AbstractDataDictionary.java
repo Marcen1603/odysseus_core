@@ -181,9 +181,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		}
 		return ret;
 	}
-
-	// TODO: REMOVE Entity
-
+	
+	@Override
+	public void removeEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
+		checkAccessRights(uri, caller, DataDictionaryPermission.REMOVE_ENTITY);
+		entityMap.remove(uri);
+	}
+	
 	// ------------------------------------------------------------------------
 	// View Management
 	// ------------------------------------------------------------------------
@@ -412,10 +416,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	public ILogicalOperator removeViewOrStream(String viewname, ISession caller) {
 		if (this.viewDefinitions.containsKey(viewname)) {
 			checkAccessRights(viewname, caller, DataDictionaryPermission.REMOVE_VIEW);
+			removeEntitySchema(viewname, caller);
 			return removeView(viewname, caller);
 		}
 		if (this.viewDefinitions.containsKey(createUserUri(viewname, caller))) {
 			checkAccessRights(createUserUri(viewname, caller), caller, DataDictionaryPermission.REMOVE_VIEW);
+			removeEntitySchema(createUserUri(viewname, caller), caller);
 			return removeView(createUserUri(viewname, caller), caller);
 		}
 

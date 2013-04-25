@@ -41,15 +41,21 @@ public interface IDataDictionary extends IAddDataType {
 	// -------------------------------------------------------------------------
 	// Entity Management
 	// -------------------------------------------------------------------------
-	void addEntitySchema(String uri, SDFSchema entity, ISession user) throws PermissionException;
+	void addEntitySchema(String uri, SDFSchema entity, ISession user)
+			throws PermissionException;
 
-	SDFSchema getEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException;
+	SDFSchema getEntitySchema(String uri, ISession caller)
+			throws PermissionException, DataDictionaryException;
+
+	void removeEntitySchema(String uri, ISession caller)
+			throws PermissionException, DataDictionaryException;
 
 	// -------------------------------------------------------------------------
 	// View and Stream Management
 	// -------------------------------------------------------------------------
 
-	ILogicalOperator getViewOrStream(String viewname, ISession caller) throws DataDictionaryException;
+	ILogicalOperator getViewOrStream(String viewname, ISession caller)
+			throws DataDictionaryException;
 
 	ILogicalOperator removeViewOrStream(String viewname, ISession caller);
 
@@ -63,7 +69,8 @@ public interface IDataDictionary extends IAddDataType {
 
 	// boolean isView(String name);
 
-	void setView(String viewname, ILogicalOperator topOperator, ISession caller) throws DataDictionaryException;
+	void setView(String viewname, ILogicalOperator topOperator, ISession caller)
+			throws DataDictionaryException;
 
 	Set<Entry<String, ILogicalOperator>> getViews(ISession caller);
 
@@ -73,28 +80,33 @@ public interface IDataDictionary extends IAddDataType {
 	// Stream Management
 	// -------------------------------------------------------------------------
 
-	void setStream(String streamname, ILogicalOperator plan, ISession caller) throws DataDictionaryException;
+	void setStream(String streamname, ILogicalOperator plan, ISession caller)
+			throws DataDictionaryException;
 
 	Set<Entry<String, ILogicalOperator>> getStreams(ISession caller);
 
 	ILogicalOperator getStreamForTransformation(String name, ISession caller);
 
-	AccessAO getStream(String viewname, ISession caller) throws DataDictionaryException;
+	AccessAO getStream(String viewname, ISession caller)
+			throws DataDictionaryException;
 
 	// -------------------------------------------------------------------------
 	// Sink Management
 	// -------------------------------------------------------------------------
 
-	void addSink(String sinkname, ILogicalOperator sink, ISession caller) throws DataDictionaryException;
+	void addSink(String sinkname, ILogicalOperator sink, ISession caller)
+			throws DataDictionaryException;
 
 	ILogicalOperator removeSink(String name, ISession caller);
 
 	Set<Entry<String, ILogicalOperator>> getSinks(ISession caller);
 
-	ILogicalOperator getSinkTop(String sinkname, ISession caller) throws DataDictionaryException;
+	ILogicalOperator getSinkTop(String sinkname, ISession caller)
+			throws DataDictionaryException;
 
-	ILogicalOperator getSinkInput(String sinkname, ISession caller) throws DataDictionaryException;
-	
+	ILogicalOperator getSinkInput(String sinkname, ISession caller)
+			throws DataDictionaryException;
+
 	ILogicalOperator getSinkForTransformation(String name, ISession caller);
 
 	boolean containsSink(String sinkname, ISession caller);
@@ -161,6 +173,7 @@ public interface IDataDictionary extends IAddDataType {
 	ISource<?> getAccessPlan(String uri);
 
 	void putAccessPlan(String uri, ISource<?> s);
+
 	void removeAccessPlan(String uri);
 
 	Map<String, ISource<?>> getSources();
@@ -182,19 +195,18 @@ public interface IDataDictionary extends IAddDataType {
 	void addListener(IDataDictionaryListener listener);
 
 	void removeListener(IDataDictionaryListener listener);
-	
+
 	// -------------------------------------------------------------------------
 	// Stored Procedure Management
 	// -------------------------------------------------------------------------
 	void addStoredProcedure(StoredProcedure procedure, ISession user);
-	
+
 	void removeStoredProcedure(String name, ISession user);
-	
-	boolean containsStoredProcedure(String name, ISession user); 
-	
+
+	boolean containsStoredProcedure(String name, ISession user);
+
 	StoredProcedure getStoredProcedure(String name, ISession user);
 
 	List<StoredProcedure> getStoredProcedures(ISession caller);
-
 
 }
