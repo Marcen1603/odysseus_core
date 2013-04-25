@@ -116,6 +116,7 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		imageManager.register("startAll", "icons/gears_run.png");
 		imageManager.register("stopAll", "icons/gears_stop.png");
 		imageManager.register("pauseAll", "icons/gears_pause.png");
+		imageManager.register("removeAll", "icons/gears_delete.png");
 		imageManager.register("resume", "icons/gear_replace.png");
 		imageManager.register("layout", "icons/layout.gif");
 	}

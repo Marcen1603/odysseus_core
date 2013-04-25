@@ -337,7 +337,29 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 				}
 			}
 		});
-		
+
+		final ToolItem removeButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("removeAll"));
+		removeButton.setToolTipText("Remove all part(s)");
+		removeButton.setEnabled(!dashboard.isLocked());
+		removeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if( !dashboard.isLocked() ) {
+					if (dashboard.hasSelection()) {
+						final IStructuredSelection structSelection = (IStructuredSelection)dashboard.getSelection();
+						final DashboardPartPlacement selectedPlacement = (DashboardPartPlacement) structSelection.getFirstElement();
+						dashboard.remove(selectedPlacement);
+					} else {
+						for (DashboardPartPlacement placement : dashboard.getDashboardPartPlacements()) {
+							dashboard.remove(placement);
+						}
+					}
+				}
+			}
+		});
+
+		new ToolItem(toolBar, SWT.SEPARATOR);
+
 	}
 
 	private static Map<IDashboardPart, DashboardPartController> createDashboardPartControllers(ImmutableList<DashboardPartPlacement> dashboardPartPlacements) {
