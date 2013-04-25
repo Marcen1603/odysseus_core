@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.equivalentoutput.tuple.TupleFactory;
 public class Starter {
 
 	public static void main(String[] args) {
-		List<StatusCode> checks = check(args, false);
+		List<StatusCode> checks = check(args, true);
 		for (StatusCode check : checks) {
 			switch (check) {
 			case EQUIVALENT_FILES:
@@ -64,7 +64,7 @@ public class Starter {
 
 	/**
 	 * @param args
-	 *            : args[0] path0, args[1] path1, (args[2] delimiter)
+	 *            : args[0] path optimized, args[1] path not optimized, (args[2] delimiter)
 	 * @return
 	 */
 	public static List<StatusCode> check(String[] args, boolean merge) {
@@ -89,7 +89,7 @@ public class Starter {
 				codes.add(StatusCode.ERROR_DUPLICATES);
 			}
 
-			if (!OrderCheck.check(input0, input1, false)) {
+			if (!OrderCheck.check(input0, input1, true)) {
 				codes.add(StatusCode.ERROR_OUT_OF_ORDER);
 			}
 

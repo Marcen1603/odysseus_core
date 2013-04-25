@@ -28,13 +28,22 @@ import de.uniol.inf.is.odysseus.equivalentoutput.tuple.Tuple;
  */
 public class OrderCheck {
 
-	public static boolean check(List<Tuple> optimized, List<Tuple> notOptimized, boolean showDetails) {
+	public static boolean check(List<Tuple> optimized,
+			List<Tuple> notOptimized, boolean showDetails) {
+		boolean orderOpt = isInOrder(optimized);
+		boolean orderNotOpt = isInOrder(notOptimized);
+
+		if (showDetails && (!orderOpt || !orderNotOpt)) {
+			System.err.println((!orderOpt && !orderNotOpt ? "Both files were"
+					: (!orderOpt ? "Optimized was" : "Not optimized was"))
+					+ " not in order");
+		}
 		return isInOrder(optimized) && isInOrder(notOptimized);
 	}
-	
+
 	private static boolean isInOrder(List<Tuple> tuples) {
-		for(int i = 0; i < tuples.size() - 1; i++) {
-			if(tuples.get(i).compareTo(tuples.get(i+1)) < 0) {
+		for (int i = 0; i < tuples.size() - 1; i++) {
+			if (tuples.get(i).compareTo(tuples.get(i + 1)) < 0) {
 				return false;
 			}
 		}
