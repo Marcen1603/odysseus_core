@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
@@ -99,18 +98,10 @@ public class FragmentTestsComponent implements ITestComponent, BundleListener {
 			return;
 		}
 		
-		try {
-			File testsDir = new File(FileLocator.toFileURL(fileUrl).getPath());
-
-			// ... and add to queue for later testing if found
-			if (testsDir != null) {
-				logIntoFile("TESTS FOUND - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + NEWLINE);
+		logIntoFile("TESTS FOUND - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + NEWLINE);
 				
-				if(bundleQueue.offer(bundle))
-					alreadyQueued.add(bundle.getBundleId());
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(bundleQueue.offer(bundle)) {
+			alreadyQueued.add(bundle.getBundleId());
 		}
 	}
 	

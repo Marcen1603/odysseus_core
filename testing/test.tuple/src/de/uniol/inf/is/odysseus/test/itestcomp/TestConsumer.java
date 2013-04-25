@@ -67,6 +67,7 @@ public class TestConsumer implements Runnable, ICompareSinkListener {
 		parser = p;
 	}
 	
+	@Override
 	public void run(){
 		try {
 			LOG.debug("Started TestConsumer in new Thread for Test Execution.");
@@ -79,7 +80,7 @@ public class TestConsumer implements Runnable, ICompareSinkListener {
 	}
 	
 	void consume(Bundle bundle){
-		// tests ausführen		
+		// tests ausfï¿½hren		
 		logIntoFile("BUNDLE START TESTS - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + NEWLINE);
 				
 		File testFolder = getTestsFolder(bundle);
@@ -170,7 +171,7 @@ public class TestConsumer implements Runnable, ICompareSinkListener {
 	 * Diese Methode liest den tests/-Ordner der Komponente aus
 	 * und speichert die Queries, welche eine passende Result-csv haben, 
 	 * als gruppierte Liste.
-	 * Unterordner des Gruppenordners werden nicht durchsucht und können
+	 * Unterordner des Gruppenordners werden nicht durchsucht und kï¿½nnen
 	 * als Datenspeicher benutzt werden.
 	 * 
 	 * tests/{GRUPPE}/q1.qry
