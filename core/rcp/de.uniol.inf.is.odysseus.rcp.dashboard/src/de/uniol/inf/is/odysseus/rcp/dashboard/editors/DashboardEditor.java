@@ -247,7 +247,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 	}
 
 	private void initToolBar(ToolBar toolBar) {
-		final ToolItem startButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("start"));
+		final ToolItem startButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("startAll"));
 		startButton.setToolTipText("Start dashboard part(s)");
 		startButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -271,7 +271,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 			}
 		});
 
-		final ToolItem stopButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("stop"));
+		final ToolItem stopButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("stopAll"));
 		stopButton.setToolTipText("Stop dashboard part(s)");
 		stopButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -299,7 +299,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 			}
 		});
 		
-		final ToolItem pauseButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("pause"));
+		final ToolItem pauseButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("pauseAll"));
 		pauseButton.setToolTipText("Pause dashboard part(s)");
 		pauseButton.addSelectionListener(new SelectionAdapter() {
 			@Override

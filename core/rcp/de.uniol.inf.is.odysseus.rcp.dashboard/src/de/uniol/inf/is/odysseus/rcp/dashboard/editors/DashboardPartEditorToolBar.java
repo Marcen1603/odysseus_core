@@ -18,19 +18,23 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 
 public class DashboardPartEditorToolBar {
 
 	private final ToolBar toolBar;
-	private final ToolItem startStopItem;
-	private final ToolItem pauseUnpauseItem;
+	private final ToolItem startItem;
+	private final ToolItem stopItem;
+	private final ToolItem pauseItem;
+	private final ToolItem resumeItem;
 
 	private final DashboardPartEditor editor;
 
@@ -43,38 +47,51 @@ public class DashboardPartEditorToolBar {
 
 		toolBar = new ToolBar(presentationTab, SWT.WRAP | SWT.RIGHT);
 
-		startStopItem = createToolItem(toolBar, "Stop");
-		startStopItem.addSelectionListener(new SelectionAdapter() {
+		startItem = createToolItem(toolBar, "Start", DashboardPlugIn.getImageManager().get("start"));
+		startItem.setEnabled(false);
+		startItem.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (startStopItem.getText().equals("Stop")) {
-					partController.stop();
-					setStatusToStopped();
-				} else {
-					try {
-						partController.start();
-					} catch (final Exception ex) {
-						throw new RuntimeException("Could not start DashboardPart", ex);
-					}
-
-					setStatusToStarted();
+				try {
+					partController.start();
+				} catch (final Exception ex) {
+					throw new RuntimeException("Could not start DashboardPart", ex);
 				}
+
+				setStatusToStarted();
+			}
+		});
+		
+		stopItem = createToolItem(toolBar, "Stop", DashboardPlugIn.getImageManager().get("stop"));
+		stopItem.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				partController.stop();
+				setStatusToStopped();
 			}
 		});
 
-		pauseUnpauseItem = createToolItem(toolBar, "Pause");
-		pauseUnpauseItem.addSelectionListener(new SelectionAdapter() {
+		pauseItem = createToolItem(toolBar, "Pause", DashboardPlugIn.getImageManager().get("pause"));
+		pauseItem.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (pauseUnpauseItem.getText().equals("Pause")) {
-					partController.pause();
-					setStatusToPaused();
-				} else {
-					partController.unpause();
-					setStatusToResumed();
-				}
+				partController.pause();
+				setStatusToPaused();
+			}
+
+		});
+		
+		resumeItem = createToolItem(toolBar, "Resume", DashboardPlugIn.getImageManager().get("resume"));
+		resumeItem.setEnabled(false);
+		resumeItem.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				partController.unpause();
+				setStatusToResumed();
 			}
 
 		});
@@ -85,28 +102,45 @@ public class DashboardPartEditorToolBar {
 	}
 
 	public void setStatusToPaused() {
-		pauseUnpauseItem.setText("Res.");
+		startItem.setEnabled(false);
+		stopItem.setEnabled(false);
+		pauseItem.setEnabled(false);
+		resumeItem.setEnabled(true);
+		
 		editor.setPartNameSuffix("Paused");
 	}
 
 	public void setStatusToResumed() {
-		pauseUnpauseItem.setText("Pause");
+		startItem.setEnabled(false);
+		stopItem.setEnabled(true);
+		pauseItem.setEnabled(true);
+		resumeItem.setEnabled(false);
+		
 		editor.setPartNameSuffix(null);
 	}
 
 	public void setStatusToStarted() {
-		startStopItem.setText("Stop");
+		startItem.setEnabled(false);
+		stopItem.setEnabled(true);
+		pauseItem.setEnabled(true);
+		resumeItem.setEnabled(false);
+		
 		editor.setPartNameSuffix(null);
 	}
 
 	public void setStatusToStopped() {
-		startStopItem.setText("Start");
+		startItem.setEnabled(true);
+		stopItem.setEnabled(false);
+		pauseItem.setEnabled(false);
+		resumeItem.setEnabled(false);
+		
 		editor.setPartNameSuffix("Stopped");
 	}
 
-	private static ToolItem createToolItem(ToolBar tb, String title) {
+	private static ToolItem createToolItem(ToolBar tb, String toolTip, Image image) {
 		final ToolItem toolItem = new ToolItem(tb, SWT.PUSH);
-		toolItem.setText(title);
+		toolItem.setImage(image);
+		toolItem.setToolTipText(toolTip);
 		toolItem.setWidth(100);
 		return toolItem;
 	}

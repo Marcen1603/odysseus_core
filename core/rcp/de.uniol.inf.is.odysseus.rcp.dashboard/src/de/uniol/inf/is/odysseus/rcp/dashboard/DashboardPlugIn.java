@@ -110,9 +110,13 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 
 		imageManager = new ImageManager(context.getBundle());
 		imageManager.register("dashboardPart", "icons/dashboardPart.jpg");
-		imageManager.register("start", "icons/start.png");
-		imageManager.register("stop", "icons/stop.png");
-		imageManager.register("pause", "icons/pause.png");
+		imageManager.register("start", "icons/gear_run.png");
+		imageManager.register("stop", "icons/gear_stop.png");
+		imageManager.register("pause", "icons/gear_pause.png");
+		imageManager.register("startAll", "icons/gears_run.png");
+		imageManager.register("stopAll", "icons/gears_stop.png");
+		imageManager.register("pauseAll", "icons/gears_pause.png");
+		imageManager.register("resume", "icons/gear_replace.png");
 		imageManager.register("layout", "icons/layout.gif");
 	}
 
