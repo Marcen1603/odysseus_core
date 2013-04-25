@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -32,8 +35,6 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
-import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
-import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 /**
@@ -43,23 +44,16 @@ import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
  */
 public class TransformationExecutor implements ITransformation {
 
-	private static final String LOGGER_NAME = "transform";
+	public static final Logger LOGGER = LoggerFactory.getLogger("transform");
 
 	public TransformationExecutor() {
 	}
 
 	@Override
-	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalOp,
-			TransformationConfiguration config, ISession caller,
-			IDataDictionary dd) throws TransformationException {
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO,
-				"Starting transformation of " + logicalOp + "...");
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalOp, TransformationConfiguration config, ISession caller, IDataDictionary dd) throws TransformationException {
+		LOGGER.info("Starting transformation of " + logicalOp + "...");
 		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
-		LoggerSystem.printlog(
-				LOGGER_NAME,
-				Accuracy.TRACE,
-				"Before transformation: \n"
-						+ planPrinter.createString(logicalOp));
+		LOGGER.debug("Before transformation: \n" + planPrinter.createString(logicalOp));
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		ArrayList<IPhysicalOperator> resultPlan = new ArrayList<IPhysicalOperator>();
 		TopAO top = null;
@@ -70,38 +64,24 @@ public class TransformationExecutor implements ITransformation {
 			logicalOp.subscribeSink(top, 0, 0, logicalOp.getOutputSchema());
 		}
 		/**
-		 * creating a new transformation environment changes of inventory aren't
-		 * considered! Otherwise a rule is able to work on different WM.
-		 * therefore: cloning instance by copy constructor! that means:
-		 * Singleton = global state concrete instance = local state for this
-		 * instance
+		 * creating a new transformation environment changes of inventory aren't considered! Otherwise a rule is able to work on different WM. therefore: cloning instance by copy constructor! that means: Singleton = global state concrete instance = local state for this instance
 		 */
-		TransformationInventory concreteTransformInvent = new TransformationInventory(
-				TransformationInventory.getInstance());
-		TransformationEnvironment env = new TransformationEnvironment(config,
-				concreteTransformInvent, caller, dd);
+		TransformationInventory concreteTransformInvent = new TransformationInventory(TransformationInventory.getInstance());
+		TransformationEnvironment env = new TransformationEnvironment(config, concreteTransformInvent, caller, dd);
 
 		addLogicalOperator(top, list, env);
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE,
-				"Processing rules...");
+		LOGGER.trace("Processing rules...");
 		// start transformation
 		env.processEnvironment();
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE,
-				"Processing rules done.");
+		LOGGER.trace("Processing rules done.");
 
 		Map<Integer, IPhysicalOperator> roots = top.getPhysInputOperators();
 		if (roots == null || roots.size() == 0) {
-			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN,
-					"PhysicalInput of TopAO is null!");
-			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN,
-					"Current working memory:");
-			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN, env
-					.getWorkingMemory().getCurrentContent().toString());
-			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN,
-					"Further information: \n"
-							+ env.getWorkingMemory().getDebugTrace());
-			throw new TransformationException("Error during transformation of "
-					+ logicalOp);
+			LOGGER.warn("PhysicalInput of TopAO is null!");
+			LOGGER.warn("Current working memory:");
+			LOGGER.warn(env.getWorkingMemory().getCurrentContent().toString());
+			LOGGER.warn("Further information: \n" + env.getWorkingMemory().getDebugTrace());
+			throw new TransformationException("Error during transformation of " + logicalOp);
 		}
 
 		// FIX: Now done by an explicit RenanePO
@@ -117,12 +97,12 @@ public class TransformationExecutor implements ITransformation {
 			GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
 			walker.prefixWalkPhysical(physicalPO, visitor);
 			ArrayList<IPhysicalOperator> plan = visitor.getResult();
-			for (IPhysicalOperator op:plan){
-				if (!resultPlan.contains(op)){
+			for (IPhysicalOperator op : plan) {
+				if (!resultPlan.contains(op)) {
 					resultPlan.add(op);
 				}
 			}
-			
+
 			// Prefix Walker finds only roots that are not part of another query
 			// physicalPO is in every case root of this query, so if not already
 			// found, add to plan
@@ -130,30 +110,20 @@ public class TransformationExecutor implements ITransformation {
 				resultPlan.add(physicalPO);
 			}
 			if (resultPlan.isEmpty()) {
-				LoggerSystem
-						.printlog(
-								LOGGER_NAME,
-								Accuracy.WARN,
-								"Plan is empty! If transformation was successful, it is possible that there are no root-operators!");
+				LOGGER.warn("Plan is empty! If transformation was successful, it is possible that there are no root-operators!");
 			}
 			SimplePlanPrinter<IPhysicalOperator> physicalPlanPrinter = new SimplePlanPrinter<IPhysicalOperator>();
-			LoggerSystem.printlog(
-					LOGGER_NAME,
-					Accuracy.TRACE,
-					"After transformation: \n"
-							+ physicalPlanPrinter.createString(physicalPO));
+			LOGGER.trace("After transformation: \n" + physicalPlanPrinter.createString(physicalPO));
 
-			if( logicalOp != top ) {
+			if (logicalOp != top) {
 				logicalOp.unsubscribeSink(top, 0, 0, logicalOp.getOutputSchema());
-			}
-			LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO,
-					"Transformation of " + logicalOp + " finished");
+			}			
 		}
+		LOGGER.info("Transformation of " + logicalOp + " finished");
 		return resultPlan;
 	}
 
-	private void addLogicalOperator(ILogicalOperator op,
-			List<ILogicalOperator> inserted, TransformationEnvironment env) {
+	private void addLogicalOperator(ILogicalOperator op, List<ILogicalOperator> inserted, TransformationEnvironment env) {
 		if (op == null) {
 			return;
 		}

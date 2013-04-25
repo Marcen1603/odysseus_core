@@ -26,8 +26,7 @@ import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRuleProvider;
-import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
-import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
+import de.uniol.inf.is.odysseus.ruleengine.system.WorkingMemory;
 
 public abstract class AbstractInventory implements IRuleFlow {
 
@@ -74,15 +73,15 @@ public abstract class AbstractInventory implements IRuleFlow {
 			this.ruleBase.put(group, new PriorityQueue<IRule<?, ?>>());
 		}
 		workFlow.add(group);
-		LoggerSystem.printlog(this.getInventoryName()+" - Group added to workflow: " + group + ". New workflow is: " + workFlow.toString());
+		WorkingMemory.LOGGER.debug(this.getInventoryName()+" - Group added to workflow: " + group + ". New workflow is: " + workFlow.toString());
 	}
 
 	private void addRule(IRule<?, ?> rule, IRuleFlowGroup group) {
 		if (this.ruleBase.containsKey(group)) {
 			if (this.ruleBase.get(group).contains(rule)) {
-				LoggerSystem.printlog(Accuracy.WARN, this.getInventoryName()+" - Rule \"" + rule + "\" already exists in inventory!");
+				WorkingMemory.LOGGER.warn(this.getInventoryName()+" - Rule \"" + rule + "\" already exists in inventory!");
 			}
-			LoggerSystem.printlog(Accuracy.DEBUG, this.getInventoryName()+" - Loading rule - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
+			WorkingMemory.LOGGER.debug(this.getInventoryName()+" - Loading rule - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
 			this.ruleBase.get(group).offer(rule);
 		} else {
 			throw new RuntimeException(this.getInventoryName()+" - Group " + group + " for rule " + rule + " doesn't exist");
@@ -93,15 +92,15 @@ public abstract class AbstractInventory implements IRuleFlow {
 		if (this.ruleBase.containsKey(group)) {
 			if (this.ruleBase.get(group).contains(rule)) {
 				if (this.ruleBase.get(group).remove(rule)) {
-					LoggerSystem.printlog(Accuracy.DEBUG, this.getInventoryName()+" - Rule removed - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
+					WorkingMemory.LOGGER.debug(this.getInventoryName()+" - Rule removed - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
 				} else {
-					LoggerSystem.printlog(Accuracy.WARN, this.getInventoryName()+" - Removing rule \"" + rule + "\" failed!");
+					WorkingMemory.LOGGER.warn(this.getInventoryName()+" - Removing rule \"" + rule + "\" failed!");
 				}
 			} else {
-				LoggerSystem.printlog(Accuracy.WARN, this.getInventoryName()+" - Unable to remove rule \"" + rule + "\", because it does not exists in the inventory!");
+				WorkingMemory.LOGGER.warn(this.getInventoryName()+" - Unable to remove rule \"" + rule + "\", because it does not exists in the inventory!");
 			}
 		} else {
-			LoggerSystem.printlog(Accuracy.WARN, this.getInventoryName()+" - Unable to remove rule \"" + rule + "\", because the given group does not exists in the inventory!");
+			WorkingMemory.LOGGER.warn(this.getInventoryName()+" - Unable to remove rule \"" + rule + "\", because the given group does not exists in the inventory!");
 		}
 	}
 	@Override
@@ -145,7 +144,7 @@ public abstract class AbstractInventory implements IRuleFlow {
 	
 	
 	public void bindRuleProvider(IRuleProvider provider) {
-		LoggerSystem.printlog(Accuracy.DEBUG, getInventoryName()+" - Loading rules for... "+provider);
+		WorkingMemory.LOGGER.debug(getInventoryName()+" - Loading rules for... "+provider);
 		List<IRule<?,?>> rules = provider.getRules();
 		for (IRule<?, ?> rule : rules) {			
 			this.getCurrentInstance().addRule(rule, rule.getRuleFlowGroup());
@@ -155,7 +154,7 @@ public abstract class AbstractInventory implements IRuleFlow {
 	public abstract AbstractInventory getCurrentInstance();
 
 	public void unbindRuleProvider(IRuleProvider provider) {
-		LoggerSystem.printlog(Accuracy.DEBUG, getInventoryName()+" - Removing rules for... "+provider);
+		WorkingMemory.LOGGER.debug(getInventoryName()+" - Removing rules for... "+provider);
 		for (IRule<?, ?> rule : provider.getRules()) {
 			this.getCurrentInstance().removeRule(rule, rule.getRuleFlowGroup());
 		}

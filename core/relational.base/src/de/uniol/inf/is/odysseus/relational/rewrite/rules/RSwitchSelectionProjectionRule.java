@@ -53,6 +53,9 @@ public class RSwitchSelectionProjectionRule extends AbstractRewriteRule<ProjectA
 
 	@Override
 	public boolean isExecutable(ProjectAO proj, RewriteConfiguration config) {
+		if (proj.getSubscriptions().size() > 1) {
+			return false;
+		}
 		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)){
 			return false;
 		}

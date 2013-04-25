@@ -51,6 +51,9 @@ public class RSwitchSelectionRenameRule extends AbstractRewriteRule<RenameAO> {
 
 	@Override
 	public boolean isExecutable(RenameAO ren, RewriteConfiguration config) {
+		if (ren.getSubscriptions().size() > 1) {
+			return false;
+		}
 		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)){
 			return false;
 		}

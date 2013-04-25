@@ -59,6 +59,9 @@ public class RSwitchSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 
 	@Override
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
+		if (join.getSubscriptions().size() > 1) {
+			return false;
+		}
 		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)){
 			return false;
 		}

@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.Collection;
@@ -50,7 +50,10 @@ public class RSwitchProjectionWindowRule extends AbstractRewriteRule<WindowAO> {
 
 	@Override
 	public boolean isExecutable(WindowAO win, RewriteConfiguration config) {
-		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)){
+		if (win.getSubscriptions().size() > 1) {
+			return false;
+		}
+		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)) {
 			return false;
 		}
 		for (ProjectAO proj : this.getAllOfSameTyp(new ProjectAO())) {
@@ -59,21 +62,21 @@ public class RSwitchProjectionWindowRule extends AbstractRewriteRule<WindowAO> {
 			}
 		}
 		return false;
-		
+
 	}
 
 	@Override
 	public String getName() {
 		return "Switch Projection and Window";
 	}
-	
+
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.SWITCH;
 	}
-	
+
 	@Override
-	public Class<? super WindowAO> getConditionClass() {	
+	public Class<? super WindowAO> getConditionClass() {
 		return WindowAO.class;
 	}
 

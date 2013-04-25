@@ -22,19 +22,24 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 
 public class WorkingMemory {
 
+	public static Logger LOGGER = LoggerFactory.getLogger("ruleengine");
+	
 	private Map<IRule<?, ?>, Object> notexecuted = new HashMap<IRule<?, ?>, Object>();
 
 	private IWorkingEnvironment<?> env;
 	private Collection<Object> objects = new HashSet<Object>();
 	private volatile boolean hasChanged = false;
+	private int executedRules = 0;
 
 	private ISession caller;
 	private IDataDictionary dd;
@@ -55,7 +60,7 @@ public class WorkingMemory {
 
 	private void insertObject(Object o, boolean isupdate) {
 		if (!isupdate) {
-			LoggerSystem.printlog(Accuracy.TRACE, "Inserted into memory: \t" + o);
+			LOGGER.trace("Inserted into memory: \t" + o);
 		}
 		this.objects.add(o);
 		this.hasChanged = true;
@@ -63,7 +68,7 @@ public class WorkingMemory {
 
 	public void removeObject(Object o, boolean isupdate) {
 		if (!isupdate) {
-			LoggerSystem.printlog(Accuracy.TRACE, "Removed from memory: \t" + o);
+			LOGGER.trace("Removed from memory: \t" + o);
 		}
 		boolean removed = this.objects.remove(o);
 		if (!removed) {
@@ -73,17 +78,17 @@ public class WorkingMemory {
 	}
 
 	public void updateObject(Object o) {
-		LoggerSystem.printlog(Accuracy.TRACE, "Update memory: \t" + o);
+		LOGGER.trace("Update memory: \t" + o);
 		// removeObject(o, true);
 		// insertObject(o, true);
 	}
 
-	public void process() {
-		LoggerSystem.printlog(Accuracy.TRACE, "Rule engine started and now looking for matches...");
+	public int process() {
+		LOGGER.trace("Rule engine started and now looking for matches...");
 		for (IRuleFlowGroup group : this.env.getRuleFlow()) {
-			LoggerSystem.printlog(Accuracy.TRACE, "Running group: " + group + "...");
+			LOGGER.trace("Running group: " + group + "...");
 			runGroup(group);
-			LoggerSystem.printlog(Accuracy.TRACE, "Group finished: " + group);
+			LOGGER.trace("Group finished: " + group);
 		}
 
 		// Iterator<IRuleFlowGroup> iterator =
@@ -95,6 +100,7 @@ public class WorkingMemory {
 		// runGroup(group);
 		// LoggerSystem.printlog(Accuracy.TRACE, "Group finished: " + group);
 		// }
+		return executedRules;
 	}
 
 	private void runGroup(IRuleFlowGroup group) {
@@ -105,7 +111,7 @@ public class WorkingMemory {
 			runRule(rule);
 			if (hasChanged) {
 				// run group again...
-				LoggerSystem.printlog(Accuracy.TRACE, "Working memory has changed, running this group again!");
+				LOGGER.trace("Working memory has changed, running this group again!");
 				hasChanged = false;
 				runGroup(group);
 			}
@@ -115,29 +121,30 @@ public class WorkingMemory {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void runRule(IRule rule) {
-		LoggerSystem.printlog(Accuracy.TRACE, "Checking rule: " + rule);
+		LOGGER.trace("Checking rule: " + rule);
 		for (Object o : this.objects) {
 			if (ruleMatches(o, rule)) {
-				LoggerSystem.printlog(Accuracy.TRACE, "\t\tType is ok, rule matches...");
+				LOGGER.trace("\t\tType is ok, rule matches...");
 				synchronized (rule) {
 					rule.setCurrentWorkingMemory(this);
 					if (rule.isExecutable(o, this.env.getConfiguration())) {
-						LoggerSystem.printlog(Accuracy.TRACE, "\t\t... and is executable at the moment. Executing rule...");
+						LOGGER.trace("\t\t... and is executable at the moment. Executing rule...");
 						try {
 							rule.execute(o, this.env.getConfiguration());
-							LoggerSystem.printlog(Accuracy.TRACE, "\t\t... rule was executed!");
+							executedRules++;
+							LOGGER.trace("\t\t... rule was executed!");
 							if (this.hasChanged) {
 								// if wm was changed: stop...
 								return;
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
-							LoggerSystem.printlog(Accuracy.ERROR, e.getLocalizedMessage());
+							LOGGER.error(e.getLocalizedMessage());
 							throw new RuntimeException("Transformation Failed in rule " + rule + " " + e.getLocalizedMessage(), e);
 						}
 					} else {
 						this.wasnotexecuted(rule, o);
-						LoggerSystem.printlog(Accuracy.TRACE, "\t\t... but is NOT executable at the moment.");
+						LOGGER.trace("\t\t... but is NOT executable at the moment.");
 					}
 				}
 			} else {
@@ -153,7 +160,7 @@ public class WorkingMemory {
 
 	private static boolean ruleMatches(Object o, IRule<?, ?> rule) {
 		Class<?> pt = rule.getConditionClass();
-		LoggerSystem.printlog(Accuracy.TRACE, "\tChecking object (\"" + o + "\") if its type is an instance of the rule type: " + pt.getCanonicalName() + "...");
+		LOGGER.trace("\tChecking object (\"" + o + "\") if its type is an instance of the rule type: " + pt.getCanonicalName() + "...");
 		return pt.isInstance(o);
 	}
 

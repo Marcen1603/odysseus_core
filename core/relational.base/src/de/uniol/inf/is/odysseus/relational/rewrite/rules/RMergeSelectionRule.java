@@ -60,6 +60,9 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 	
 	@Override
 	public boolean isExecutable(SelectAO operator, RewriteConfiguration config) {
+		if (operator.getSubscriptions().size() > 1) {
+			return false;
+		}
 		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)){
 			return false;
 		}

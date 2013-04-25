@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule;
-import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 
 public abstract class AbstractTransformationRule<T> extends AbstractRule<T, TransformationConfiguration> {
 
@@ -94,8 +93,7 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (ISource<?>) newOperator);
 		} else if (newOperator.isSink()) {
 			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (ISink<?>) newOperator, ignoreSinkInput);
-		} else {
-			LoggerSystem.printlog("ERROR");
+		} else {			
 			throw new RuntimeException(new TransformationException("replace in rule \"" + getName() + "\" failed because the new operator is not an ISink, ISource or IPipe!"));
 		}
 		for (ILogicalOperator o : toUpdate) {

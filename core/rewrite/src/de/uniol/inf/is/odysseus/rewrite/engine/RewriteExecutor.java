@@ -18,6 +18,9 @@ package de.uniol.inf.is.odysseus.rewrite.engine;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -26,16 +29,14 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider;
-import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
-import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 
 public class RewriteExecutor implements IRewrite {
 
-	private static final String LOGGER_NAME = "rewrite";
+	public static final Logger LOGGER = LoggerFactory.getLogger("rewrite");
 
 	@Override
 	public ILogicalOperator rewritePlan(ILogicalOperator plan, RewriteConfiguration conf) {
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Starting rewriting...");
+		LOGGER.info("Starting rewriting...");
 		RewriteInventory rewriteInventory = new RewriteInventory(RewriteInventory.getInstance());
 		
 		RewriteEnvironment env = new RewriteEnvironment(conf, rewriteInventory);
@@ -47,17 +48,17 @@ public class RewriteExecutor implements IRewrite {
 		addLogicalOperator(top, list, env);
 		// *******
 		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Before rewriting: \n"+planPrinter.createString(plan));
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Processing rules...");
+		LOGGER.trace("Before rewriting: \n"+planPrinter.createString(plan));
+		LOGGER.trace("Processing rules...");
 		// start transformation
 		env.processEnvironment();
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Processing rules done.");
+		LOGGER.trace("Processing rules done.");
 		LogicalSubscription sub = top.getSubscribedToSource(0);
 		ILogicalOperator ret = sub.getTarget();
 		top.unsubscribeFromSource(ret, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 		planPrinter = new SimplePlanPrinter<ILogicalOperator>();
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "After rewriting: \n"+planPrinter.createString(ret));
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Rewriting finished.");
+		LOGGER.trace("After rewriting: \n"+planPrinter.createString(ret));
+		LOGGER.info("Rewriting finished.");
 		return ret;
 	}
 

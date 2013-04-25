@@ -50,6 +50,9 @@ public class RSwitchProjectionRenameRule extends AbstractRewriteRule<RenameAO> {
 
 	@Override
 	public boolean isExecutable(RenameAO rename, RewriteConfiguration config) {
+		if (rename.getSubscriptions().size() > 1) {
+			return false;
+		}
 		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)){
 			return false;
 		}

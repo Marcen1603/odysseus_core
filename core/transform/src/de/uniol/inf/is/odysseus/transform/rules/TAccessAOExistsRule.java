@@ -19,8 +19,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
-import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -32,11 +30,8 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 	}
 
 	@Override
-	public void execute(AccessAO accessAO, TransformationConfiguration trafo) {
-		LoggerSystem.printlog(Accuracy.TRACE,"Transform AccessAO: " + accessAO);	
-		ISource<?> accessPO = getDataDictionary().getAccessPlan(accessAO.getSourcename());
-		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafo = " + trafo);
-		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafoHelper = " + trafo.getTransformationHelper());
+	public void execute(AccessAO accessAO, TransformationConfiguration trafo) {		
+		ISource<?> accessPO = getDataDictionary().getAccessPlan(accessAO.getSourcename());			
 		defaultExecute(accessAO, accessPO, trafo, true, true);
 		accessPO.setName(accessAO.getSourcename());
 	}
