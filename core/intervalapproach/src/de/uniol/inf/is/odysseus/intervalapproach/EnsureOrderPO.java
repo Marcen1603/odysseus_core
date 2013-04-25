@@ -42,7 +42,7 @@ public class EnsureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	private ITransferArea<T, T> transferFunction;
 	
-	private boolean firstElement = true;
+	private boolean transferedElements = false;
 
 	public EnsureOrderPO() {
 
@@ -77,15 +77,9 @@ public class EnsureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	 */
 	@Override
 	protected void process_next(T object, int port) {
-		LOG.debug("Process {}", object);
-		// to not lose the first tuples before the first heartbeat.
-		if(this.firstElement) {
-			this.firstElement = false;
-			this.transferFunction.newElement(object, port);
-		} else {
-			// insert object into the transferFunction.
-			this.transferFunction.transfer(object);
-		}
+		// insert object into the transferFunction.
+		this.transferFunction.transfer(object);
+		this.transferedElements = true;
 		
 		if (isDone()) {
 			return;
@@ -103,7 +97,10 @@ public class EnsureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		if (punctuation.isHeartbeat()) {
-			LOG.debug("Received Heartbeat at " + punctuation.getTime());
+			if(!this.transferedElements) {
+				LOG.debug("No elements processed since last punctuation");
+			}
+			this.transferedElements = false;
 			// this inserts the punctuation and allows transferFunction to write
 			// out all tuples with older timestamps.
 			this.transferFunction.newElement(punctuation, port);
