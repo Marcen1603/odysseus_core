@@ -27,16 +27,16 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @author Merlin Wasmann
  * 
  */
-@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "ENSUREORDER", doc = "Operator which ensures the order of tuples")
-public class EnsureOrderAO extends UnaryLogicalOp {
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "ASSUREORDER", doc = "Operator which ensures the order of tuples")
+public class AssureOrderAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1242934768166736002L;
 
-	public EnsureOrderAO() {
+	public AssureOrderAO() {
 		super();
 	}
 	
-	public EnsureOrderAO(EnsureOrderAO ao) {
+	public AssureOrderAO(AssureOrderAO ao) {
 		super(ao);
 	}
 	
@@ -49,7 +49,7 @@ public class EnsureOrderAO extends UnaryLogicalOp {
 	 */
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new EnsureOrderAO(this);
+		return new AssureOrderAO(this);
 	}
 
 }

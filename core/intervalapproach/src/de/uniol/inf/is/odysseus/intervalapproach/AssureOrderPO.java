@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 
 /**
- * Physical implementation of the EnsureOrderAO. All incoming tuples are stored
+ * Physical implementation of the AssureOrderAO. All incoming tuples are stored
  * in a SweepArea and ordered and transfered when a Punctuation is processed.
  * 
  * There has to be an AssureHeartBeatOperator in the plan before this.
@@ -34,27 +34,27 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
  * @author Merlin Wasmann
  * 
  */
-public class EnsureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
+public class AssureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends AbstractPipe<T, T> {
 
 	private final static Logger LOG = LoggerFactory
-			.getLogger(EnsureOrderPO.class);
+			.getLogger(AssureOrderPO.class);
 
 	private ITransferArea<T, T> transferFunction;
 	
 	private boolean transferedElements = false;
 
-	public EnsureOrderPO() {
+	public AssureOrderPO() {
 
 	}
 
-	public EnsureOrderPO(ITransferArea<T, T> transferArea) {
+	public AssureOrderPO(ITransferArea<T, T> transferArea) {
 		this.transferFunction = transferArea;
 	}
 
-	public EnsureOrderPO(EnsureOrderPO<K, T> ensureOrderPO) {
-		super(ensureOrderPO);
-		this.transferFunction = ensureOrderPO.transferFunction.clone();
+	public AssureOrderPO(AssureOrderPO<K, T> assureOrderPO) {
+		super(assureOrderPO);
+		this.transferFunction = assureOrderPO.transferFunction.clone();
 		this.transferFunction.init(this);
 	}
 
@@ -143,8 +143,8 @@ public class EnsureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	 * ()
 	 */
 	@Override
-	public EnsureOrderPO<K, T> clone() {
-		return new EnsureOrderPO<K, T>(this);
+	public AssureOrderPO<K, T> clone() {
+		return new AssureOrderPO<K, T>(this);
 	}
 
 }

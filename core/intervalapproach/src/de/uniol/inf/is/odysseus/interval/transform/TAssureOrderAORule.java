@@ -16,9 +16,9 @@
 package de.uniol.inf.is.odysseus.interval.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnsureOrderAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AssureOrderAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.EnsureOrderPO;
+import de.uniol.inf.is.odysseus.intervalapproach.AssureOrderPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Merlin Wasmann
  *
  */
-public class TEnsureOrderAORule extends AbstractTransformationRule<EnsureOrderAO> {
+public class TAssureOrderAORule extends AbstractTransformationRule<AssureOrderAO> {
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
@@ -43,9 +43,9 @@ public class TEnsureOrderAORule extends AbstractTransformationRule<EnsureOrderAO
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(EnsureOrderAO operator,
+	public void execute(AssureOrderAO operator,
 			TransformationConfiguration config) {
-		EnsureOrderPO orderPO = new EnsureOrderPO();
+		AssureOrderPO orderPO = new AssureOrderPO();
 		
 		orderPO.setTransferFunction(new TITransferArea());
 		
@@ -56,7 +56,7 @@ public class TEnsureOrderAORule extends AbstractTransformationRule<EnsureOrderAO
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public boolean isExecutable(EnsureOrderAO operator,
+	public boolean isExecutable(AssureOrderAO operator,
 			TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet() && config.getMetaTypes().contains(ITimeInterval.class.getCanonicalName()); 
 	}
@@ -66,7 +66,7 @@ public class TEnsureOrderAORule extends AbstractTransformationRule<EnsureOrderAO
 	 */
 	@Override
 	public String getName() {
-		return "EnsureOrderAO -> EnsureOrderPO";
+		return "AssureOrderAO -> AssureOrderPO";
 	}
 
 	/* (non-Javadoc)
@@ -78,8 +78,8 @@ public class TEnsureOrderAORule extends AbstractTransformationRule<EnsureOrderAO
 	}
 	
 	@Override
-	public Class<? super EnsureOrderAO> getConditionClass() {
-		return EnsureOrderAO.class;
+	public Class<? super AssureOrderAO> getConditionClass() {
+		return AssureOrderAO.class;
 	}
 
 }
