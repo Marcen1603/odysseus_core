@@ -109,7 +109,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 
 			// System.out.println("Tuple(after,"+i+1+"): "+outputTuple);
 
-			transfer(outputTuple, port);
+			transfer(outputTuple);
 		}
 		
 		// System.out.println("-----------------------------------)");
