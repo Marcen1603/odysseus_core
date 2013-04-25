@@ -99,6 +99,10 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 			accessPO = executeDeprecated(operator, config);
 
 		}
+		// Assure that each accessoa with a name is registered
+		if (!getDataDictionary().containsViewOrStream(accessPOName, this.getCaller())){
+			getDataDictionary().setStream(accessPOName, operator, getCaller());
+		}
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		defaultExecute(operator, accessPO, config, true, true);
 	}
