@@ -76,9 +76,8 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 			NamedList e = (NamedList) element;
 			if (e.getValues().isEmpty()) {
 				return getImage(((NamedList) element).getKey());
-			} else {
-				return getImage(e.getValues().get(0));
-			}
+			} 
+			return getImage(e.getValues().get(0));
 		}
 
 		if (element instanceof IOperatorOwner) {
