@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.editors.impl;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -121,6 +122,12 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 		});
 		
 		toolBarManager.add(new Action() {
+			
+			@Override
+			public int getStyle() {
+				return Action.AS_CHECK_BOX;
+			}
+			
 			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return OdysseusRCPViewerPlugIn.getImageDescriptor("icons/sortAlpha.gif");
@@ -134,6 +141,7 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 			@Override
 			public void run() {
 				setSorting(!isSorting());
+				setChecked(isSorting());
 			}
 		});
 
