@@ -37,9 +37,6 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 
 	private final Map<String, Image> images = new HashMap<String, Image>();
 
-	// private static final int IMAGE_HEIGHT = 20;
-	// private static final int IMAGE_WIDTH = 20;
-
 	@Override
 	public void update(ViewerCell cell) {
 		Object obj = cell.getElement();
@@ -100,23 +97,6 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 			IOdysseusNodeView node = (IOdysseusNodeView) element;
 			IPhysicalOperator op = node.getModelNode().getContent();
 
-			// if( images.containsKey(node.getModelNode().getName()))
-			// return images.get(node.getModelNode().getName());
-			//
-			// Image image = new Image(PlatformUI.getWorkbench().getDisplay(),
-			// IMAGE_WIDTH, IMAGE_HEIGHT);
-			// GC gc = new GC(image);
-			// for( ISymbolElement<IPhysicalOperator> sym :
-			// node.getSymbolContainer() ) {
-			// if( sym instanceof SWTSymbolElement<?> ) {
-			// SWTSymbolElement<IPhysicalOperator> ele =
-			// (SWTSymbolElement<IPhysicalOperator>)sym;
-			// ele.setActualGC(gc);
-			// ele.draw(Vector.EMPTY_VECTOR, IMAGE_WIDTH, IMAGE_HEIGHT, 1.0f);
-			// }
-			// }
-			// images.put(node.getModelNode().getName(), image);
-			// return image;
 			if (op.isSink() && !op.isSource()) {
 				return OdysseusRCPViewerPlugIn.getImageManager().get("sink_icon");
 			}
