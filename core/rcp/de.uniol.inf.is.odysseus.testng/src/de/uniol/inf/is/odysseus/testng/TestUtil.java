@@ -31,9 +31,8 @@ public class TestUtil {
 		} catch( Exception ex ) {
 			if( ex.getCause() != null ) {
 				throw ex.getCause();
-			} else {
-				throw ex;
-			}
+			} 
+			throw ex;
 		}		
 	}
 	
@@ -48,9 +47,8 @@ public class TestUtil {
 		} catch( Exception ex ) {
 			if( ex.getCause() != null ) {
 				throw ex.getCause();
-			} else {
-				throw ex;
-			}
+			} 
+			throw ex;
 		}
 	}
 
