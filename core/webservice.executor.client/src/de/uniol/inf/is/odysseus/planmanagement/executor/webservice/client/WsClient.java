@@ -394,13 +394,13 @@ public class WsClient implements IExecutor, IClientExecutor {
 		try {
 			if (receivers.containsKey(queryId)) {
 				return Optional.of(receivers.get(queryId));
-			} else {
-				ClientReceiver receiver = new ClientReceiver(new ByteBufferHandler(tdh), new SizeByteBufferHandler(), new NioConnectionHandler(adr.getHostName(), adr.getPort(),
-						false, null, null));
-				receiver.open(null, 0, 0, null, null);
-				receivers.put(queryId, receiver);
-				return Optional.of(receiver);
-			}
+			} 
+			ClientReceiver receiver = new ClientReceiver(new ByteBufferHandler(tdh), new SizeByteBufferHandler(), new NioConnectionHandler(adr.getHostName(), adr.getPort(),
+					false, null, null));
+			receiver.open(null, 0, 0, null, null);
+			receivers.put(queryId, receiver);
+			return Optional.of(receiver);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return Optional.absent();
