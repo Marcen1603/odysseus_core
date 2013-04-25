@@ -33,7 +33,12 @@ public class TupleFactory {
 		
 		String[] attributeArray = tupleString.replaceAll("\\s", "").split(delimiter);
 		long startTimestamp = Long.parseLong(attributeArray[attributeArray.length - 2]);
-		long endTimestamp = Long.parseLong(attributeArray[attributeArray.length - 1]);
+		long endTimestamp;
+		if(attributeArray[attributeArray.length -1].equals("oo")) {
+			endTimestamp = startTimestamp;
+		} else {
+			endTimestamp = Long.parseLong(attributeArray[attributeArray.length - 1]);
+		}
 		return new Tuple(attributeArray, startTimestamp, endTimestamp);
 	}
 	
