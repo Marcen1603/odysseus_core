@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +23,14 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 
 /**
- * This is an abstract parameter. In this abstract base class all attributes are
- * defined, that a common for all parameters
+ * This is an abstract parameter. In this abstract base class all attributes are defined, that a common for all parameters
  * 
  * @author Jonas Jacobi, Marco Grawunder
  */
 public abstract class AbstractParameter<T> implements IParameter<T> {
 
 	private static final String DEFAULT_DOC_TEXT = "No description";
-	
+
 	private static final long serialVersionUID = -5259685918656067407L;
 	private String name;
 	private String doc;
@@ -43,16 +42,16 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	private final List<Exception> errors;
 	private final List<Exception> warnings;
 	protected Object inputValue;
-	
+
 	public AbstractParameter(String name, REQUIREMENT requirement, USAGE usage) {
 		this(name, requirement, usage, null);
 	}
-	
+
 	public AbstractParameter(String name, REQUIREMENT requirement, USAGE usage, String doc) {
 		setName(name);
 		setRequirement(requirement);
 		setDoc(doc);
-		
+
 		this.requirement = requirement;
 		this.usage = usage;
 		value = null;
@@ -74,13 +73,10 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public void setName(String name) {
 		this.name = name.toUpperCase();
 	}
-	
+
 	@Override
-	public void setDoc(String doc ) {
+	public void setDoc(String doc) {
 		this.doc = doc;
-		if( this.doc == null || this.doc.isEmpty() ) {
-			this.doc = DEFAULT_DOC_TEXT;
-		}
 	}
 
 	@Override
@@ -89,8 +85,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	}
 
 	@Override
-	public void setUsage(
-			de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.USAGE usage) {
+	public void setUsage(de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.USAGE usage) {
 		this.usage = usage;
 	}
 
@@ -98,10 +93,14 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public String getName() {
 		return this.name;
 	}
-	
+
 	@Override
 	public String getDoc() {
-		return doc;
+		if (this.doc == null || this.doc.isEmpty()) {
+			return DEFAULT_DOC_TEXT;
+		} else {
+			return this.doc;
+		}
 	}
 
 	@Override
@@ -142,9 +141,9 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		}
 		try {
 			if (inputValue != null) {
-				if(internalValidation()){
+				if (internalValidation()) {
 					internalAssignment();
-				}else{
+				} else {
 					return false;
 				}
 			}
@@ -157,10 +156,10 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 
 	abstract protected void internalAssignment();
 
-	public boolean internalValidation(){
+	public boolean internalValidation() {
 		return true;
 	}
-	
+
 	@Override
 	public final T getValue() {
 		if (!validate()) {
@@ -235,11 +234,11 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 
 	@Override
 	public final String getPQLString() {
-		if( hasValue() ) {
+		if (hasValue()) {
 			return getPQLStringInternal();
 		}
 		return null;
 	}
-	
+
 	protected abstract String getPQLStringInternal();
 }
