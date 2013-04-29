@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, Tuple<T>>
 	implements IProcessInternal<Tuple<T>> {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(PatternMatchingPO.class);
 	
 	private List<SDFExpression> assertions;
@@ -98,7 +99,6 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
         	}
         }
         this.outputTransferArea = new TITransferArea<>();
-        logger.info(eventTypes.get(0) + " " + eventTypes.get(1));
         this.init();
     }
 	
@@ -229,19 +229,20 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 			// Logische Pattern
 			case ANY:
 				if (eventTypes.contains(eventType)) {
-					// Assertions überprüfen
-					int index = eventTypes.indexOf(eventType);
-					SDFExpression assertion = assertions.get(index);
-					Entry<SDFExpression, AttributeMap[]> entry = new SimpleEntry<>(assertion, attrMappings.get(assertion));
-					
-					boolean satisfied = checkAssertion(eventObj, entry);
+					boolean satisfied = true;
+					if (assertions != null) {
+						// Assertions überprüfen
+						int index = eventTypes.indexOf(eventType);
+						SDFExpression assertion = assertions.get(index);
+						Entry<SDFExpression, AttributeMap[]> entry = new SimpleEntry<>(assertion, attrMappings.get(assertion));
+						satisfied = checkAssertion(eventObj, entry);
+					}
 					if (satisfied) {
-						Tuple<T> complexEvent = this.createComplexEvent(eventObj, type);
+						// ANY-Pattern erkannt
+						Tuple<T> complexEvent = this.createComplexEvent(eventObj);
 						outputTransferArea.transfer(complexEvent);
 					}
 				}
-				// ANY-Pattern erkannt
-				this.transfer(this.createComplexEvent(null, null, type));
 				break;
 			case ALL:
 				if (eventTypes.contains(eventType)) {
@@ -251,7 +252,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 					// Kombinationen suchen und Bedingungen überprüfen
 					List<List<EventObject<T>>> output = checkAssertions(eventObj, computeCrossProduct(eventObj), type);
 					for (List<EventObject<T>> outputObject : output) {
-						Tuple<T> complexEvent = this.createComplexEvent(outputObject, eventObj, type);
+						Tuple<T> complexEvent = this.createComplexEvent(outputObject, eventObj);
 						outputTransferArea.transfer(complexEvent);
 					}
 				}
@@ -293,12 +294,13 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	 * @return Ein komplexes Event oder null
 	 */
 	@SuppressWarnings("unchecked")
-	private Tuple<T> createComplexEvent(List<EventObject<T>> outputObjects, EventObject<T> currentObj, PatternType type) {
+	private Tuple<T> createComplexEvent(List<EventObject<T>> outputObjects, EventObject<T> currentObj) {
 		if (outputMode == PatternOutput.SIMPLE) {
 			Object[] attributes = new Object[2];
 			attributes[0] = type;
 			attributes[1] = true;
 			Tuple<T> returnEvent = new Tuple<T>(attributes, false);
+			returnEvent.setMetadata((T) currentObj.getEvent().getMetadata().clone());
 			return returnEvent;
 		}
 		if (outputMode == PatternOutput.EXPRESSIONS) {
@@ -320,9 +322,9 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 		return null;
 	}
 	
-	private Tuple<T> createComplexEvent(EventObject<T> currentObj, PatternType type) {
+	private Tuple<T> createComplexEvent(EventObject<T> currentObj) {
 		List<EventObject<T>> eventObjects = new ArrayList<>();
-		return createComplexEvent(eventObjects, currentObj, type);
+		return createComplexEvent(eventObjects, currentObj);
 	}
 	
 	private void dropOldEvents(EventObject<T> event) {
