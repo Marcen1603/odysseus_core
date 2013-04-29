@@ -14,9 +14,7 @@ import model.AttributeMap;
 import model.EventBuffer;
 import model.EventObject;
 import model.PatternOutput;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import model.PatternType;
 
 import com.google.common.collect.Sets;
 
@@ -44,14 +42,12 @@ import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, Tuple<T>>
 	implements IProcessInternal<Tuple<T>> {
 	
-	private static Logger logger = LoggerFactory.getLogger(PatternMatchingPO.class);
+//	private static Logger logger = LoggerFactory.getLogger(PatternMatchingPO.class);
 	
 	private List<SDFExpression> assertions;
 	private List<SDFExpression> returnExpressions;
-	/**
-	 * Der Pattern-Typ.
-	 */
-	private String type;
+
+	private PatternType type;
 	private Integer time;
 	private Integer size;
 	private TimeUnit timeUnit;
@@ -74,7 +70,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	private Map<SDFExpression, AttributeMap[]> attrMappings;
 	private Map<SDFExpression, AttributeMap[]> returnAttrMappings;
 	
-	public PatternMatchingPO(String type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
+	public PatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
         super();
@@ -83,7 +79,6 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
         this.size = size;
         this.timeUnit = timeUnit;
         this.outputMode = outputMode;
-        if (this.outputMode == null) this.outputMode = PatternOutput.SIMPLE;
         this.eventTypes = eventTypes;
         this.assertions = assertions;
         this.returnExpressions = returnExpressions;
@@ -214,7 +209,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	@Override
 	protected void process_next(Tuple<T> event, int port) {
 		inputStreamSyncArea.newElement(event, port);
-		outputTransferArea.newElement(event, port);
+//		outputTransferArea.newElement(event, port);
 	}
 
 	@Override
@@ -227,7 +222,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 		boolean detected = false;
 		switch(type) {
 			// Logische Pattern
-			case "ANY":
+			case ANY:
 				if (eventTypes.contains(eventType)) {
 					// Assertions überprüfen
 					
@@ -237,35 +232,34 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 					this.transfer(this.createComplexEvent(null, null, type));
 				}
 				break;
-			case "ALL":
+			case ALL:
 				if (eventTypes.contains(eventType)) {
 					EventObject<T> eventObj = new EventObject<T>(event, eventType, schema, port);
 					// Event einsortieren und alte Events entfernen
 					objectLists.get(port).add(eventObj);
 					dropOldEvents(eventObj);
 					// Kombinationen suchen und Bedingungen überprüfen
-					List<List<EventObject<T>>> output = checkAssertions(eventObj, computeCrossProduct(eventObj));
+					List<List<EventObject<T>>> output = checkAssertions(eventObj, computeCrossProduct(eventObj), type);
 					for (List<EventObject<T>> outputObject : output) {
 						Tuple<T> complexEvent = this.createComplexEvent(outputObject, eventObj, type);
 						outputTransferArea.transfer(complexEvent);
 					}
 				}
-			case "ABSENCE":
+			case ABSENCE:
 			// Threshold Pattern
-			case "COUNT":
-			case "VALUE MAX":
-			case "VALUE MIN:":
-			case "FUNCTOR":
+			case COUNT:
+			case VALUE_MAX:
+			case VALUE_MIN:
+			case FUNCTOR:
 			// Subset Selection Pattern
-			case "RELATIVE N HIGHEST":
-			case "RELATIVE N LOWEST":
+			case RELATIVE_N_HIGHEST:
+			case RELATIVE_N_LOWEST:
 			// Modale Pattern
-			case "ALWAYS":
-			case "SOMETIMES":
+			case ALWAYS:
+			case SOMETIMES:
 			// Temporal Order Pattern
-			case "SEQUENCE":
-			case "FIRST N PATTERN":
-			case "LAST N PATTERN":
+			case FIRST_N_PATTERN:
+			case LAST_N_PATTERN:
 		}	
 
 	}
@@ -289,7 +283,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	 * @return Ein komplexes Event oder null
 	 */
 	@SuppressWarnings("unchecked")
-	private Tuple<T> createComplexEvent(List<EventObject<T>> outputObject, EventObject<T> currentObj, String type) {
+	private Tuple<T> createComplexEvent(List<EventObject<T>> outputObject, EventObject<T> currentObj, PatternType type) {
 		if (outputMode == PatternOutput.SIMPLE) {
 			Object[] attributes = new Object[2];
 			attributes[0] = type;
@@ -375,39 +369,32 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	 * @param object
 	 * @return
 	 */
-	private List<List<EventObject<T>>> checkAssertions(EventObject<T> object, Set<List<EventObject<T>>> eventObjectSets) {
+	private List<List<EventObject<T>>> checkAssertions(EventObject<T> object, Set<List<EventObject<T>>> eventObjectSets, PatternType type) {
 		List<List<EventObject<T>>> output = new ArrayList<List<EventObject<T>>>();
 		
-		if (eventObjectSets.size() != 0) {
-			// Expressions überprüfen
-			for (List<EventObject<T>> eventObjectSet : eventObjectSets) {
-				Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings.entrySet().iterator();
-				boolean satisfied = true;
-				while (iterator.hasNext() && satisfied) {
-					Entry<SDFExpression, AttributeMap[]> entry = iterator.next();
-					Object[] values = findExpressionValues(eventObjectSet, entry.getValue());
-					SDFExpression expression = entry.getKey();
-					if (values != null) {
-						expression.bindMetaAttribute(object.getEvent().getMetadata());
-						expression.bindAdditionalContent(object.getEvent().getAdditionalContent());
-						expression.bindVariables(values);
-					}
-					// TODO: Exception, wenn Attribut verlangt, aber nicht vorhanden
-					// -> Sollte konfigurierbar sein
-					try {
-						boolean predicate = expression.getValue();
-						if (!predicate) {
-							satisfied = false;
-						}
-					} catch (Exception e) {
-						satisfied = false;
-						logger.error("Prädikat wurde zu null ausgewertet", e);
-					}
+		// Expressions überprüfen
+		for (List<EventObject<T>> eventObjectSet : eventObjectSets) {
+			Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings.entrySet().iterator();
+			boolean satisfied = true;
+			while (iterator.hasNext() && satisfied) {
+				Entry<SDFExpression, AttributeMap[]> entry = iterator.next();
+				Object[] values = findExpressionValues(eventObjectSet, entry.getValue());
+				SDFExpression expression = entry.getKey();
+				if (values != null) {
+					expression.bindMetaAttribute(object.getEvent().getMetadata());
+					expression.bindAdditionalContent(object.getEvent().getAdditionalContent());
+					expression.bindVariables(values);
 				}
-				if (satisfied) {
-					// MatchingSet in Ausgabemenge aufnehmen
-					output.add(eventObjectSet);
+				// TODO: Exception, wenn Attribut verlangt, aber nicht vorhanden
+				// -> Sollte konfigurierbar sein
+				boolean predicate = expression.getValue();
+				if (!predicate) {
+					satisfied = false;
 				}
+			}
+			if (satisfied) {
+				// MatchingSet in Ausgabemenge aufnehmen
+				output.add(eventObjectSet);
 			}
 		}
 		return output;

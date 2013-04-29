@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import model.PatternOutput;
+import model.PatternType;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
@@ -32,7 +33,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 938637032482611886L;
 	
 	// Pattern-Type
-	private String type;
+	private PatternType type;
 	private Integer time;
 	private TimeUnit timeUnit;
 	private Integer size;
@@ -84,12 +85,12 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     	return assertions;
     }
     
-    @Parameter(type=StringParameter.class)
-    public void setType(String type) {
+    @Parameter(type=EnumParameter.class)
+    public void setType(PatternType type) {
     	this.type = type;
     }
     
-    public String getType() {
+    public PatternType getType() {
     	return type;
     }
     
