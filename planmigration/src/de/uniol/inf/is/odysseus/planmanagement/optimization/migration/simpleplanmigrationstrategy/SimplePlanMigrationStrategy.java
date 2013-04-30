@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -50,6 +51,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorPhysicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.PhysicalPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.PhysicalRestructHelper;
@@ -103,7 +105,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		if (runningQuery.containsCycles()) {
 			throw new RuntimeException("Planmigration assumes acyclic trees");
 		}
-		
+
 		long migrationStart = System.currentTimeMillis();
 
 		// @Marco: Bitte so umbauen, dass beachtet wird,
@@ -179,13 +181,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 			// set the source for this buffer in case it is empty
 			buffer.setSource((ISource<?>) metadataUpdatePO);
-
-			// pause execution by blocking output of buffer
 			context.addBufferPO((BufferPO<?>) buffer);
-
-			// TODO: hier können tupel verloren gehen!!! nochmal mit MG etwas
-			// überlegen.
-			// add buffer to source's subscriptions
 
 //			Collection<PhysicalSubscription> afterSourceSubs = ((ISource) metadataUpdatePO)
 //					.getSubscriptions();
@@ -206,8 +202,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		}
 
 		IPipe<?, ?> router = new MigrationRouterPO(metaDataUpdates, 0, 1);
-
-		router.setOutputSchema(lastOperatorOldPlan.getOutputSchema());
 
 		((MigrationRouterPO<?>) router).addMigrationListener(this);
 
@@ -370,6 +364,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				}
 			}
 		}
+		
+		router.setOutputSchema(oldOpsBeforeSink.get(0).getOutputSchema());
 
 		if (oldOpsBeforeSink.size() > 1 || newOpsBeforeSink.size() > 1) {
 			LOG.error("Sink is subscribed to more than one operator");
@@ -430,6 +426,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	private ISink insertRouterWithoutRealSink(
 			IPhysicalOperator lastOperatorOldPlan,
 			IPhysicalOperator lastOperatorNewPlan, IPipe router) {
+		router.setOutputSchema(lastOperatorOldPlan.getOutputSchema());
 		PhysicalRestructHelper.appendBinaryOperator(router,
 				(ISource) lastOperatorOldPlan, (ISource) lastOperatorNewPlan);
 		if (LOG.isDebugEnabled()) {
@@ -459,10 +456,10 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		}
 		LOG.debug("All buffers blocked");
 
-		LOG.debug("Drain tuples out of plans");
-		for (IPhysicalOperator root : context.getRunningQuery().getRoots()) {
-			MigrationHelper.drainTuples(root);
-		}
+//		LOG.debug("Drain tuples out of plans");
+//		for (IPhysicalOperator root : context.getRunningQuery().getRoots()) {
+//			MigrationHelper.drainTuples(root);
+//		}
 
 		LOG.debug("Disconnect old plan from buffer");
 		List<IPhysicalOperator> bufferParents = context
@@ -582,6 +579,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		LOG.debug("Migration is finished");
 		LOG.debug("Migration duration was " + (System.currentTimeMillis() - context.getMigrationStart()));
+
 		fireMigrationFinishedEvent(this);
 	}
 
@@ -636,6 +634,21 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			}
 		}
 		return newRoots;
+	}
+	
+	@SuppressWarnings("unused")
+	private Set<BufferPO> fetchBuffersFromAllQueries(StrategyContext context) {
+		Set<BufferPO> result = new HashSet<BufferPO>();
+		CollectOperatorPhysicalGraphVisitor<IPhysicalOperator> visitor = new CollectOperatorPhysicalGraphVisitor(BufferPO.class);
+		GenericGraphWalker walker = new GenericGraphWalker();
+
+		for(IPhysicalQuery query : context.getExecutor().getExecutionPlan().getQueries()) {
+			IPhysicalOperator node = query.getRoots().get(0);
+			walker.prefixWalkPhysical(node, visitor);
+			result.addAll((Collection<? extends BufferPO>) visitor.getResult());
+		}
+		
+		return result;
 	}
 
 	/**
