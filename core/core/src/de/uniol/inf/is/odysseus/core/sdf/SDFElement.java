@@ -44,6 +44,8 @@ public class SDFElement implements Serializable, IClone {
 	 * The delimmiter by which the both parts are separated or merged
 	 */
 	final private String delimitter;
+
+	private String calculatedUri;
 	
 	/**
 	 * Creates a new SDFElement. The URI is scanned for '#' or '.' as last sign to 
@@ -180,7 +182,11 @@ public class SDFElement implements Serializable, IClone {
 	 * @return
 	 */
 	public String getURI() {
-		return getURI(uRIWithoutQualName, qualName, false, delimitter);
+		if(calculatedUri==null){
+			calculatedUri = getURI(uRIWithoutQualName, qualName, false, delimitter);
+		}
+		return calculatedUri;
+		
 	}
 
 	@Override
