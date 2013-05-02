@@ -274,10 +274,7 @@ public class BufferPO<T extends IStreamObject<?>> extends
 					this.source);
 			if (getLogger().isDebugEnabled()) {
 				getLogger().debug(
-						"Insert MigrationMarkerPunctuation in Buffer for "
-								+ this.source.getName() + " ("
-								+ this.source.hashCode() + ") with timestamp "
-								+ punctuation.getTime());
+						"Insert MigrationMarkerPunctuation in Buffer for {} with timestamp {}", getName(), punctuation.getTime());
 			}
 			this.buffer.add(this.buffer.size() - 1, punctuation);
 			this.newestTimestamp = null;
