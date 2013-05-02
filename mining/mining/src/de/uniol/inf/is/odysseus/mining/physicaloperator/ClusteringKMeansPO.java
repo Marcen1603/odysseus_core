@@ -81,7 +81,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 	
 	@Override
 	protected synchronized void process_next(Tuple<M> object, int port) {
-		System.out.println(object);
+//		System.out.println(object);
 		PointInTime currentTime = object.getMetadata().getStart();
 		Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
 		List<Tuple<M>> pool = new ArrayList<>();
@@ -153,7 +153,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 					this.transferFunctionTuples.transfer(t);
 				}
 				Tuple<M> mean = cluster.getMean().append(cluster.getNumber(), true);
-				mean.getMetadata().setStartAndEnd(min, currentTime);
+			//	mean.getMetadata().setStartAndEnd(min, currentTime);
 				//this.transferFunctionMeans.transfer(mean);
 			}
 
@@ -176,7 +176,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 	@Override
 	public void transfer(Tuple<M> object, int sourceOutPort) {	
 		super.transfer(object, sourceOutPort);
-		System.out.println("TRANSFER: "+object);
+	//	System.out.println("TRANSFER: "+object);
 	}
 
 	@Override

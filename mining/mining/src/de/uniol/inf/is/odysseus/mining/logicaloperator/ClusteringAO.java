@@ -57,7 +57,7 @@ public class ClusteringAO extends AbstractLogicalOperator {
 		this.attributes = readingSchema;
 	}
 
-	@Parameter(name = "clusterer", type = StringParameter.class)
+	@Parameter(name = "clusterer", type = StringParameter.class, possibleValues = {"kmeans"})
 	public void setAlgorithmus(String clusterer) {
 		this.clustererName = clusterer;
 	}
