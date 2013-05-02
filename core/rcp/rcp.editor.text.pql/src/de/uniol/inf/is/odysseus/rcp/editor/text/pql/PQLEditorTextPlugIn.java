@@ -36,6 +36,9 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 		imageManager.register("pqlOperator", "icons/operator.png");
 		imageManager.register("pqlAttribute", "icons/manParameter.png");
 		imageManager.register("pqlOptionalAttribute", "icons/optParameter.png");
+		imageManager.register("sources", "icons/sources.png");
+		imageManager.register("sinks", "icons/sinks.png");
+		imageManager.register("attribute", "icons/attribute.png");
 	}
 
 	@Override

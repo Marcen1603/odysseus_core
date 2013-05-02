@@ -15,6 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class BooleanParameter extends AbstractParameter<Boolean> {
 	
@@ -37,6 +40,14 @@ public class BooleanParameter extends AbstractParameter<Boolean> {
 		setValue(value);
 	}
 
+	@Override
+	public List<String> getPossibleValues() {
+		List<String>  values = new ArrayList<>();
+		values.add("true");
+		values.add("false");
+		return values;
+	}
+	
 	@Override
 	protected String getPQLStringInternal() {
 		return "'" + Boolean.toString(getValue()) + "'";

@@ -78,4 +78,6 @@ public @interface Parameter {
 	Class<? extends IParameter> keytype() default StringParameter.class;
 	
 	String doc() default "No description";
+	
+	public String[] possibleValues() default {};
 }

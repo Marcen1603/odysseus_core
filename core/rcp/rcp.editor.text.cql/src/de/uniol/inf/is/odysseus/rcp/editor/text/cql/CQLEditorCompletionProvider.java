@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.swt.graphics.Point;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -72,8 +74,8 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 	}
 
 	@Override
-	public List<String> getCompletionSuggestions(String currentToken, String lastToken, IExecutor executor, ISession iSession, IDocument document, int offset) {
-		return new ArrayList<String>();
+	public List<ICompletionProposal> getCompletionSuggestions(String currentToken, String lastToken[], IExecutor executor, ISession iSession, IDocument document, int offset, Point selection) {
+		return new ArrayList<ICompletionProposal>();
 	}
 
 	@Override

@@ -22,7 +22,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -83,6 +86,11 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		super("ACCESS", 0, 0);
 		addParameters(sourceName, host, port, outputschema, type, options, options2, inputSchema, adapter, input, transformer, dataHandler, objectHandler, inputDataHandler, accessConnectionHandler,
 				transportHandler, protocolHandler, wrapper, dateFormat);
+		// TODO: bind through service or why are these handlers not part of server?!
+		protocolHandler.setPossibleValues(ProtocolHandlerRegistry.getHandlerNames());
+		transportHandler.setPossibleValues(TransportHandlerRegistry.getHandlerNames());
+		dataHandler.setPossibleValues(DataHandlerRegistry.getHandlerNames());
+		wrapper.setPossibleValues(WrapperRegistry.getWrapperNames());
 	}
 
 	@Override

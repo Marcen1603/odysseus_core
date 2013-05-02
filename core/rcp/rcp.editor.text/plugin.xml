@@ -26,7 +26,7 @@
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
                icon="Icons/compile.png"
-               label="Run Query"
+               label="Execute Script"
                style="push">
          </command>
          <command
@@ -43,7 +43,7 @@
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
                   icon="Icons/compile.png"
-                  label="Run Query"
+                  label="Execute Script"
                   style="push">
             </command>
          </toolbar>
@@ -58,7 +58,7 @@
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
                icon="Icons/compile.png"
-               label="Run Query"
+               label="Execute Script"
                style="push">
          </command>
       </menuContribution>

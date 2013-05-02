@@ -103,12 +103,21 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
 		OdysseusScriptContentFormatter formatter = new OdysseusScriptContentFormatter();
 		formatter.enablePartitionAwareFormatting(true);
-		for (IOdysseusScriptPartition osp : OdysseusScriptPartitionRegsitry.getParitions()) {			
+		for (IOdysseusScriptPartition osp : OdysseusScriptPartitionRegsitry.getParitions()) {
 			IFormattingStrategy fs = osp.getFormattingStrategy();
 			formatter.setFormattingStrategy(fs, osp.getPartitionTokenName());
 		}
-		formatter.setFormattingStrategy(new DefaultFormattingStrategy(), IDocument.DEFAULT_CONTENT_TYPE);		
+		formatter.setFormattingStrategy(new DefaultFormattingStrategy(), IDocument.DEFAULT_CONTENT_TYPE);
 		return formatter;
 	}
+
+//	@Override
+//	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
+//		return new IInformationControlCreator() {
+//			public IInformationControl createInformationControl(Shell parent) {
+//				return new DefaultInformationControl(parent, new HTMLTextPresenter(false));
+//			}
+//		};
+//	}
 
 }

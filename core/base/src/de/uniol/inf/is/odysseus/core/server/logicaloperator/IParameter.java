@@ -50,4 +50,6 @@ public interface IParameter<T> extends Serializable {
 	public IDataDictionary getDataDictionary();
 	public void clear();
 	public String getPQLString();
+	public List<String> getPossibleValues();
+	public void setPossibleValues(List<String> possibleValues); 
 }

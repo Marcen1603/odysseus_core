@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.completion;
 import java.util.List;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.swt.graphics.Point;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -30,7 +32,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.IOdysseusScri
 public interface IEditorLanguagePropertiesProvider {
 	
 	public List<Character> getTokenSplitters();
-	public List<String> getCompletionSuggestions(String currentToken, String lastToken, IExecutor executor, ISession iSession, IDocument document, int offset);
+	public List<ICompletionProposal> getCompletionSuggestions(String currentToken, String lastSplitters[], IExecutor executor, ISession iSession, IDocument document, int offset, Point selection);
 	public boolean ignoreWhitespaces();
 	public String supportsParser();
 	public List<String> getTerminals();	

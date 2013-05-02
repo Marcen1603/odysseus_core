@@ -200,7 +200,7 @@ public class Variable implements IExpression<Object> {
 			if(this.acceptedTypes[i]!= null){
 				acceptedTypesNew[newIndex++] = this.acceptedTypes[i];
 			}else{
-				LOG.warn(identifier+" accepted type was null!!");
+//				LOG.warn(identifier+" accepted type was null!!");
 //				RuntimeException e = new RuntimeException();
 //				e.printStackTrace();
 			}

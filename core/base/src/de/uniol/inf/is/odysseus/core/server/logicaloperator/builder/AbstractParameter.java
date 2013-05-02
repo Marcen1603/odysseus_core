@@ -43,6 +43,8 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	private final List<Exception> warnings;
 	protected Object inputValue;
 
+	private List<String> possiblevalues = new ArrayList<String>();
+
 	public AbstractParameter(String name, REQUIREMENT requirement, USAGE usage) {
 		this(name, requirement, usage, null);
 	}
@@ -241,4 +243,15 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	}
 
 	protected abstract String getPQLStringInternal();
+	
+	@Override
+	public List<String> getPossibleValues() {	
+		return possiblevalues;
+	}
+	
+	@Override
+	public void setPossibleValues(List<String> possibleValues) {
+		this.possiblevalues = possibleValues;
+		
+	}
 }
