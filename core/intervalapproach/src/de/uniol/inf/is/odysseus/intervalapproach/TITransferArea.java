@@ -209,19 +209,20 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 						if (((IPunctuation) elem).getTime().beforeOrEquals(
 								minimum)) {
 							this.outputQueue.poll();
-							// Avoid sending "outdated" heartbeats
-							while (((IPunctuation) elem).isHeartbeat()) {
-								IStreamable nextElem = outputQueue.peek();
-								if (nextElem != null
-										&& nextElem.isPunctuation()
-										&& ((IPunctuation) elem).isHeartbeat()
-										&& ((IPunctuation) elem).getTime()
-												.afterOrEquals(minimum)) {
-									elem = nextElem;
-								} else {
-									break;
-								}
-							}
+							// FIXME: This will not work!
+//							// Avoid sending "outdated" heartbeats
+//							while (((IPunctuation) elem).isHeartbeat()) {
+//								IStreamable nextElem = outputQueue.peek();
+//								if (nextElem != null
+//										&& nextElem.isPunctuation()
+//										&& ((IPunctuation) elem).isHeartbeat()
+//										&& ((IPunctuation) elem).getTime()
+//												.afterOrEquals(minimum)) {
+//									elem = nextElem;
+//								} else {
+//									break;
+//								}
+//							}
 							po.sendPunctuation((IPunctuation) elem);
 							elem = this.outputQueue.peek();
 						} else {
