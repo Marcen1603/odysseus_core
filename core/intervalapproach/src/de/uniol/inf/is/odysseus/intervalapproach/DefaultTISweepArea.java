@@ -433,4 +433,17 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	public T peekLast() {
 		return getElements().get(getElements().size());
 	}
+
+	public Iterator<T> extractAllElements() {
+		LinkedList<T> result = new LinkedList<T>();
+		synchronized (getElements()) {
+			Iterator<T> it = this.getElements().iterator();
+			while (it.hasNext()) {
+				T next = it.next();
+				it.remove();
+				result.add(next);
+			}
+		}
+		return result.iterator();
+	}
 }

@@ -30,4 +30,6 @@ public interface ITimeInterval extends IMetaAttribute, Comparable<ITimeInterval>
 	public void setEnd(PointInTime point);
 	public void setStartAndEnd(PointInTime start, PointInTime end);
 	public String toString(PointInTime baseTime);
+	@Override
+	public ITimeInterval clone();
 }

@@ -144,7 +144,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	// -----------------------------------------------------------------
 	// Attributzugriffsmethoden
 	// -----------------------------------------------------------------
-
+	
+	
 	@SuppressWarnings("unchecked")
 	public final <K> K getAttribute(int pos) {
 		if (pos < 0 || pos > attributes.length)
