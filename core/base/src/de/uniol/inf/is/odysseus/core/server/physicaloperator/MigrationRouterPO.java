@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,11 +26,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.MigrationMarkerPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationEventSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.exception.MigrationException;
@@ -45,8 +50,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  * @author Merlin Wasmann
  * 
  */
-public class MigrationRouterPO<R extends IStreamObject<?>> extends
-		AbstractPipe<R, R> implements IMigrationEventSource {
+public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
+		extends AbstractPipe<R, R> implements IMigrationEventSource {
 
 	public static final Logger LOG = LoggerFactory
 			.getLogger(MigrationRouterPO.class);
@@ -56,11 +61,13 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 	private int inPortOld;
 	private int inPortNew;
 	private boolean useOld;
+	private ITimeIntervalSweepArea<R>[] areas;
+	private R lastSend = null;
 
 	private Set<IMigrationListener> listener;
 
 	public MigrationRouterPO(List<ISource<?>> sources, int inPortOld,
-			int inPortNew) {
+			int inPortNew, ITimeIntervalSweepArea<R>[] areas) {
 		if (sources == null || sources.isEmpty() || inPortOld == inPortNew) {
 			throw new IllegalArgumentException(
 					(inPortOld == inPortNew ? "Input ports of old and new plan are equal."
@@ -75,10 +82,11 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 		this.inPortNew = inPortNew;
 		this.useOld = true;
 		this.listener = new HashSet<IMigrationListener>();
+		this.areas = areas;
 	}
 
 	public MigrationRouterPO(Set<ISource<?>> sources, int inPortOld,
-			int inPortNew) {
+			int inPortNew, ITimeIntervalSweepArea<R>[] areas) {
 		if (sources == null || sources.isEmpty() || inPortOld == inPortNew) {
 			throw new IllegalArgumentException(
 					(inPortOld == inPortNew ? "Input ports of old and new plan are equal."
@@ -93,6 +101,7 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 		this.inPortNew = inPortNew;
 		this.useOld = true;
 		this.listener = new HashSet<IMigrationListener>();
+		this.areas = areas;
 	}
 
 	@Override
@@ -102,15 +111,55 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 
 	@Override
 	protected void process_next(R object, int port) {
-		if (useOld) {
-			if (port == inPortOld) {
+		boolean finished = false;
+		if (!useOld) {
+			finished = isFinished(object, port);
+		}
+		if (port == this.inPortOld && !finished) {
+			lastSend = object;
+			LOG.debug("transfer old {}", object);
+			transfer(object);
+		}
+
+		// wait until the new plan has caught up on the old plan
+		if (finished
+				&& port == this.inPortNew
+				&& lastSend != null
+				&& !lastSend.equals(object)
+				&& lastSend.getMetadata().getStart()
+						.beforeOrEquals(object.getMetadata().getStart())) {
+			if(port == this.inPortNew) {
+				LOG.debug("transfer new {}", object);
 				transfer(object);
 			}
-		} else {
-			if (port == inPortNew) {
-				transfer(object);
+			fireMigrationFinishedEvent(this);
+		}
+	}
+	
+	private boolean isFinished(R object, int port) {
+		int otherport = port ^ 1;
+		Order order = Order.fromOrdinal(port);
+		synchronized (this.areas[otherport]) {
+			this.areas[otherport].purgeElements(object, order);
+		}
+		Iterator<R> qualifies;
+		synchronized (this.areas) {
+			synchronized (this.areas[otherport]) {
+				qualifies = this.areas[otherport].queryCopy(object, order);
+			}
+			synchronized (this.areas[port]) {
+				this.areas[port].insert(object);
 			}
 		}
+		R elem = null;
+		while (qualifies.hasNext()) {
+			elem = qualifies.next();
+			if (elem.equals(object)) {
+				// migration is finished
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void process_migrationMarkerPunctuation(
@@ -137,7 +186,6 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 		if (this.sourcesToPunctuations.isEmpty()) {
 			useOld = false;
 			LOG.debug("All sources are satisfied");
-			fireMigrationFinishedEvent(this);
 		}
 	}
 
@@ -158,14 +206,53 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 	}
 
 	@Override
+	protected void process_open() throws OpenFailedException {
+		for (int i = 0; i < 2; i++) {
+			this.areas[i].clear();
+			this.areas[i].init();
+		}
+	}
+
+	@Override
+	protected synchronized void process_close() {
+		this.areas[0].clear();
+		this.areas[1].clear();
+	}
+
+	@Override
+	protected synchronized void process_done() {
+		if (isOpen()) {
+			this.areas[0].clear();
+			this.areas[1].clear();
+		}
+	}
+
+	@Override
+	protected boolean isDone() {
+		try {
+			if (getSubscribedToSource(0).isDone()) {
+				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
+			}
+			return getSubscribedToSource(1).isDone()
+					&& getSubscribedToSource(0).isDone() && areas[1].isEmpty();
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return true;
+		}
+	}
+
+	@Override
 	public AbstractPipe<R, R> clone() {
 		MigrationRouterPO<R> clone = new MigrationRouterPO<R>(
 				this.sourcesToPunctuations.keySet(), this.inPortOld,
-				this.inPortNew);
+				this.inPortNew, this.areas);
 		Map<ISource<?>, Pair<IPunctuation, IPunctuation>> stp = new HashMap<ISource<?>, Pair<IPunctuation, IPunctuation>>();
 		stp.putAll(this.sourcesToPunctuations);
 		clone.setSourcesToPunctuations(stp);
 		return clone;
+	}
+
+	public ITimeIntervalSweepArea<R>[] getAreas() {
+		return this.areas;
 	}
 
 	public Set<ISource<?>> getSources() {
@@ -204,7 +291,7 @@ public class MigrationRouterPO<R extends IStreamObject<?>> extends
 	public IPhysicalQuery getPhysicalQuery() {
 		return (IPhysicalQuery) getOwner().get(0);
 	}
-	
+
 	@Override
 	public boolean hasPhysicalQuery() {
 		return getOwner().get(0) != null;

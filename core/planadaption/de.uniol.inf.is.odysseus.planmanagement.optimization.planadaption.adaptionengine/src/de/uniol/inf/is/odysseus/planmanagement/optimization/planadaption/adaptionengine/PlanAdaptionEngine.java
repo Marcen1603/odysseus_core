@@ -48,6 +48,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigr
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.costmodel.PlanMigration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.exception.MigrationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.util.AppendNameLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.RemoveOwnersGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -117,6 +118,10 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 		List<ILogicalQuery> logicalQueries = new ArrayList<ILogicalQuery>();
 		logicalQueries.add(query);
 
+		AppendNameLogicalGraphVisitor<ILogicalOperator> appendVisitor = new AppendNameLogicalGraphVisitor("_migrate");
+		GenericGraphWalker walker0 = new GenericGraphWalker();
+		walker0.prefixWalk(query.getLogicalPlan(), appendVisitor);
+		
 		// translation of the fitter logical plan
 		IPhysicalQuery newPhysicalQuery = this.executor.getCompiler()
 				.transform(
@@ -133,7 +138,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 		for (IPhysicalOperator root : newPlanRoots) {
 			walker.prefixWalkPhysical(root, removeVisitor);
 		}
-
+		
 		// create planmigration
 		// TODO: was passiert mit mehreren Roots?
 		PlanMigration migration = new PlanMigration(oldPlan,

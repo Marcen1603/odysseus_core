@@ -24,6 +24,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -37,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.MigrationRouterPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.IMyLock;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.LockingLock;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPlanMigratable;
@@ -55,6 +58,8 @@ import de.uniol.inf.is.odysseus.core.server.util.PhysicalPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.PhysicalRestructHelper;
 import de.uniol.inf.is.odysseus.core.server.util.RemoveOwnersGraphVisitor;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
+import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
 
 /**
  * SimplePlanMigrationStrategy transfers a currently running physical plan into
@@ -199,7 +204,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			LOG.debug("Insert Blocking-Buffer after source ... done");
 		}
 
-		IPipe<?, ?> router = new MigrationRouterPO(metaDataUpdates, 0, 1);
+		ITimeIntervalSweepArea<? extends IStreamObject<? extends ITimeInterval>>[] areas = new DefaultTISweepArea[2];
+		areas[0] = new DefaultTISweepArea<>();
+		areas[1] = new DefaultTISweepArea<>();
+		areas[0].setQueryPredicate(OverlapsPredicate.getInstance());
+		areas[1].setQueryPredicate(OverlapsPredicate.getInstance());
+		IPipe<?, ?> router = new MigrationRouterPO(metaDataUpdates, 0, 1, areas);
 
 		((MigrationRouterPO<?>) router).addMigrationListener(this);
 
