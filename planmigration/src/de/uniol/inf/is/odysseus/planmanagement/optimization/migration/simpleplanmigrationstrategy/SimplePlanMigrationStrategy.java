@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,7 +50,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
-import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorPhysicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.PhysicalPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.PhysicalRestructHelper;
@@ -636,20 +634,20 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		return newRoots;
 	}
 	
-	@SuppressWarnings("unused")
-	private Set<BufferPO> fetchBuffersFromAllQueries(StrategyContext context) {
-		Set<BufferPO> result = new HashSet<BufferPO>();
-		CollectOperatorPhysicalGraphVisitor<IPhysicalOperator> visitor = new CollectOperatorPhysicalGraphVisitor(BufferPO.class);
-		GenericGraphWalker walker = new GenericGraphWalker();
-
-		for(IPhysicalQuery query : context.getExecutor().getExecutionPlan().getQueries()) {
-			IPhysicalOperator node = query.getRoots().get(0);
-			walker.prefixWalkPhysical(node, visitor);
-			result.addAll((Collection<? extends BufferPO>) visitor.getResult());
-		}
-		
-		return result;
-	}
+//	@SuppressWarnings("unused")
+//	private Set<BufferPO> fetchBuffersFromAllQueries(StrategyContext context) {
+//		Set<BufferPO> result = new HashSet<BufferPO>();
+//		CollectOperatorPhysicalGraphVisitor<IPhysicalOperator> visitor = new CollectOperatorPhysicalGraphVisitor(BufferPO.class);
+//		GenericGraphWalker walker = new GenericGraphWalker();
+//
+//		for(IPhysicalQuery query : context.getExecutor().getExecutionPlan().getQueries()) {
+//			IPhysicalOperator node = query.getRoots().get(0);
+//			walker.prefixWalkPhysical(node, visitor);
+//			result.addAll((Collection<? extends BufferPO>) visitor.getResult());
+//		}
+//		
+//		return result;
+//	}
 
 	/**
 	 * returns the plan root
