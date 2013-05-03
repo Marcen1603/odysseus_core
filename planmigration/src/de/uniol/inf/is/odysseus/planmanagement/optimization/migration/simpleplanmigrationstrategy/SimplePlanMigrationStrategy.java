@@ -170,7 +170,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 					+ metadataUpdatePO.getClass().getSimpleName() + " ("
 					+ metadataUpdatePO.hashCode() + ")");
 
-			BufferPO buffer = new BufferPO();
+			MigrationBuffer buffer = new MigrationBuffer();
 			try {
 				buffer.open();
 			} catch (OpenFailedException e) {
@@ -266,7 +266,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		// resume by unblocking buffers
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
-			buffer.insertMigrationMarkerPunctuation();
+			((MigrationBuffer)buffer).insertMigrationMarkerPunctuation();
 			buffer.unblock();
 		}
 
