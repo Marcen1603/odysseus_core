@@ -137,7 +137,9 @@ public class OdysseusConfiguration {
 				+ "scheduling.conf");
 		props.setProperty("datatypesFromDatatypesFilename", odysseusHome
 				+ "store/datatypes.store");
-
+		props.setProperty("storedProceduresFilename", odysseusHome + "store/procedures.store");
+		props.setProperty("storedProceduresFromUserFilename", odysseusHome + "store/proceduresUser.store");
+		
 		props.setProperty("sessionTimeout", (240 * 60000) + ""); // Milliseconds
 
 		// Scheduling
