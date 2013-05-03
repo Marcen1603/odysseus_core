@@ -8,6 +8,14 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.MigrationMarkerPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 
+/**
+ * Timeinterval-dependant buffer which can be used to insert MigrationMarkerPunctuations into the buffer.
+ * This is used to determine the beginning and the end of a planmigration.
+ * 
+ * @author Marco Grawunder, Merlin Wasmann
+ *
+ * @param <T>
+ */
 public class MigrationBuffer<T extends IStreamObject<?>> extends BufferPO<T> {
 
 	private boolean waitForFirst = false;
