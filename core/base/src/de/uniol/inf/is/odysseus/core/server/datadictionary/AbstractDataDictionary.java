@@ -442,6 +442,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 					// Remove plan from wrapper plan factory
 					removeAccessPlan(viewname);
 					removeAccessPlan(createUserUri(viewname, caller));
+					removeEntitySchema(viewname,caller);
+					removeEntitySchema(createUserUri(viewname, caller), caller);
 					// Remove registered ids
 					RemoveIdLogicalGraphVisitor<ILogicalOperator> visitor = new RemoveIdLogicalGraphVisitor<ILogicalOperator>(this, caller);
 					@SuppressWarnings("rawtypes")
