@@ -32,7 +32,8 @@ public class RuleProvider implements ITransformRuleProvider{
 	public List<IRule<?, ?>> getRules() {
 		ArrayList<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new TVectorquantizationAORule());	
-		rules.add(new THmmAORule());	
+		rules.add(new THmmAORule());
+		rules.add(new TFeatureExtractionAORule());
 		return rules;
 	}
 
