@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.hmm.physicaloperator;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.hmm.CoordinatesCalculator;
 
 public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>>{
