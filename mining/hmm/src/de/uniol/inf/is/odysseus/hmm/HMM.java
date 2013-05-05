@@ -4,11 +4,7 @@ package de.uniol.inf.is.odysseus.hmm;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.hmm.Gesture;
-import de.uniol.inf.is.odysseus.hmm.HmmObservationAlphaRow;
-
-public class HMM<M extends ITimeInterval> {
+public class HMM {
 	//Attributes
 	public static int observationLength = 16;
 	
@@ -57,22 +53,22 @@ public class HMM<M extends ITimeInterval> {
 	 * Optimized Forward Algorithm to work efficiently on data streams.
 	 *  
 	 * @param gesture Given gesture to compute with
-	 * @param alphaRow 
+	 * @param alphas 
 	 * @param observation Given observation sequence
 	 * @return
 	 */
-	public double forwardStream(Gesture gesture, HmmObservationAlphaRow alphaRow, int observation) {
-		double[] newAlphas = new double[alphaRow.getAlphas().length];
-		for (int j = 0; j < alphaRow.getAlphas().length; j++) {
+	public double forwardStream(Gesture gesture, HmmAlphas alphas, int observation) {
+		double[] newAlphas = new double[alphas.getAlphas().length];
+		for (int j = 0; j < alphas.getAlphas().length; j++) {
 			//Calculate new alpha-value for state j
 			double sum = 0;
-			for (int i = 0; i < alphaRow.getAlphas().length; i++) {
-				sum += alphaRow.getAlphas()[i] * gesture.getA()[i][j];
+			for (int i = 0; i < alphas.getAlphas().length; i++) {
+				sum += alphas.getAlphas()[i] * gesture.getA()[i][j];
 			}
 			newAlphas[j] = sum * gesture.getB()[j][observation];
 		}
 		//overwrite alphas with new ones
-		alphaRow.setAlphas(newAlphas);
+		alphas.setAlphas(newAlphas);
 		
 		//return Forward-Probability
 		double prob = 0;
@@ -80,6 +76,15 @@ public class HMM<M extends ITimeInterval> {
 			prob += newAlphas[i];
 		}
 		return prob;
+	}
+	
+	public void forwardInit(Gesture gesture, HmmAlphas alphas, int observation) {
+		for (int i = 0; i < alphas.getAlphas().length; i++) {
+			alphas.getAlphas()[i] = gesture.getPi()[i] * gesture.getB()[i][observation];
+//			System.out.println("Gestenname: " + gesture.getName());
+//			System.out.println("pi: " + gesture.getPi()[i] + " b-wert: " + gesture.getPi()[i] * gesture.getB()[i][observation]);
+//			System.out.println("gesture.getPi()["+i+"] * gesture.getB()["+i+"]["+observation+"]: " + alphas.getAlphas()[i]);
+		}
 	}
 
 
@@ -262,7 +267,7 @@ public class HMM<M extends ITimeInterval> {
 //		System.out.println("trainingdatages: " + trainingData.length);
 		ArrayList<Gesture> trainingResults = new ArrayList<Gesture>();
 		for (int i = 0; i < trainingData.length; i++) {
-			System.out.println("trainingdatainhalt: " + trainingData[i].length);
+//			System.out.println("trainingdatainhalt: " + trainingData[i].length);
 			trainingResults.add(baumwelch(gesture, trainingData[i]));
 		}
 		
@@ -281,7 +286,7 @@ public class HMM<M extends ITimeInterval> {
 		for (int i = 0; i < gesture.getA().length; i++) {
 			for (int j = 0; j < gesture.getA()[i].length; j++) {
 				double sumA = 0;
-				System.err.println("i: " + i + "   j: " + j);
+//				System.err.println("i: " + i + "   j: " + j);
 				for (int k = 0; k < trainingResults.size(); k++) {
 					sumA += trainingResults.get(k)
 							.

@@ -27,9 +27,7 @@ public class FileHandlerHMM {
 	public static ArrayList<int[]> loadTrainingData(String path) {
 		File f = new File(path);
 		ArrayList<int[]> obsSequences = new ArrayList<int[]>();
-		System.err.println("SIUAHDSKJAHDSKAJHDJKS");
 		if(f.exists()) {
-			System.err.println("DRIIIIIIIIN");
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(f));
 				String line;
@@ -127,7 +125,7 @@ public class FileHandlerHMM {
 			BufferedWriter wr = new BufferedWriter(new FileWriter(f));
 			wr.append("# KEEP FILE STRUCTURE\n#\n");
 			wr.append("# Metadata\n");
-			wr.append(gesture.getNumStates() + ", " + HMM.observationLength+"\n");
+			wr.append(gesture.getNumStates() + ", " + HMM.observationLength+ ", " + gesture.getNumMinObs() + ", " + gesture.getNumMaxObs()+"\n");
 			//Append Matrix Pi
 			wr.append("#\n# Matrix Pi\n");
 			for (int i = 0; i < gesture.getPi().length; i++) {
@@ -173,6 +171,8 @@ public class FileHandlerHMM {
 		double[][] b = null;
 		int numStates = 0;
 		int numObs = 0;
+		int numMinObs = 0;
+		int numMaxObs = 0;
 		ArrayList<Gesture> gesturelist = new ArrayList<Gesture>();
 		
 		String path = dirPath;
@@ -192,6 +192,8 @@ public class FileHandlerHMM {
 								String[] lineSplit = line.split(",");
 								numStates = Integer.parseInt(lineSplit[0].trim());
 								numObs = Integer.parseInt(lineSplit[1].trim());
+								numMinObs = Integer.parseInt(lineSplit[2].trim());
+								numMaxObs = Integer.parseInt(lineSplit[3].trim());
 								//init arrays
 								pi = new double[numStates];
 								a = new double[numStates][numStates];
@@ -241,6 +243,8 @@ public class FileHandlerHMM {
 				System.out.println("mach mal" + tmpName);
 				Gesture newGesture = new Gesture(pi, a, b);
 				newGesture.setName(tmpName);
+				newGesture.setNumMinObs(numMinObs);
+				newGesture.setNumMaxObs(numMaxObs);
 				gesturelist.add(newGesture);
 			}
 			System.out.println("-------");

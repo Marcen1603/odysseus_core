@@ -9,6 +9,8 @@ public class Gesture {
 	//Attributes
 	private String name;
 	private int numStates;
+	private int numMinObs;
+	private int numMaxObs;
 	private double[] pi;
 	private double[][] a;
 	private double[][] b;
@@ -19,9 +21,13 @@ public class Gesture {
 	 * @param numStates
 	 * @param sizeObservationAlphabet
 	 * @param observationLength
+	 * @param numMaxObs 
+	 * @param observationLength 
 	 */
-	public Gesture(int numStates, int sizeObservationAlphabet, int observationLength){
+	public Gesture(int numStates, int sizeObservationAlphabet, int numMinObs, int numMaxObs, int observationLength){
 		this.numStates = numStates; 
+		this.setNumMinObs(numMinObs);
+		this.setNumMaxObs(numMaxObs);
 		//Create Pi-Array
 		//Initialize to start in first state
 		this.pi = new double[numStates];
@@ -36,7 +42,7 @@ public class Gesture {
 		
 		//Create A-matix
 		//Initialize with Left-Right-Banded Approach 
-		this.a = new double[numStates][observationLength];
+		this.a = new double[numStates][numStates];
 		for (int i = 0; i < this.a.length; i++) {
 			
 			if(i<this.a.length-1){
@@ -112,6 +118,30 @@ public class Gesture {
 
 	public void setName(String gestureName) {
 		this.name = gestureName;
+	}
+
+
+
+	public int getNumMinObs() {
+		return numMinObs;
+	}
+
+
+
+	public void setNumMinObs(int numMinObs) {
+		this.numMinObs = numMinObs;
+	}
+
+
+
+	public int getNumMaxObs() {
+		return numMaxObs;
+	}
+
+
+
+	public void setNumMaxObs(int numMaxObs) {
+		this.numMaxObs = numMaxObs;
 	}
 	
 }

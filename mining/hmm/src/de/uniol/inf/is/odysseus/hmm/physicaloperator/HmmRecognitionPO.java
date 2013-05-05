@@ -1,23 +1,20 @@
 package de.uniol.inf.is.odysseus.hmm.physicaloperator;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.hmm.FileHandlerHMM;
 import de.uniol.inf.is.odysseus.hmm.Gesture;
-import de.uniol.inf.is.odysseus.hmm.HmmObservationAlphaRow;
+import de.uniol.inf.is.odysseus.hmm.HMM;
+import de.uniol.inf.is.odysseus.hmm.HmmAlphaGroup;
+import de.uniol.inf.is.odysseus.hmm.HmmAlphas;
 import de.uniol.inf.is.odysseus.hmm.HmmWindow;
-import de.uniol.inf.is.odysseus.hmm.HmmWindowGroup;
 
-public class HmmRecognitionPO<M extends ITimeInterval> extends
-		AbstractPipe<Tuple<M>, Tuple<M>> {
+public class HmmRecognitionPO<M extends ITimeInterval> extends	AbstractPipe<Tuple<M>, Tuple<M>> {
 
 //	private List<IPredicate<? super Tuple<M>>> predicates;
 //	private HMMPoint lastValidPoint;
@@ -26,89 +23,17 @@ public class HmmRecognitionPO<M extends ITimeInterval> extends
 //	private ArrayList<HmmWindowGroup> windowGroups= new ArrayList<HmmWindowGroup>();
 //	private int timewindow = 10000;
 //	private int numStates;
-//	private HMM hmm;
-
+	private HMM hmm = new HMM();
+	
+	private String pathToConfigfiles = "G:/_christian/Dokumente/_Studium/sem07/odysseus_trunk/mining/hmm/src/de/uniol/inf/is/odysseus/hmm/gestures/";
+//	private int currentTimestamp = 0; 
+	
 	// Konstruktoren
 	public HmmRecognitionPO() {
 		super();
-		System.out.println("-----------------HmmPO");
-//		loadHmmsFromCSV();
+//		System.out.println("-----------------HmmPO");
 	}
 
-	@SuppressWarnings("unused")
-	private void loadHmmsFromCSV() {
-		double[] pi = null;
-		double[][] a = null;
-		double[][] b = null;
-		int numStates = 0;
-		int numObs = 0;
-		
-		
-		String path = "gestures";
-		File dir = new File(path);
-		File[] fileList = dir.listFiles();
-		for (File f : fileList) {
-			try {
-//				String gestureName = f.getName().substring(0, f.getName().length()-4);
-				BufferedReader br = new BufferedReader(new FileReader(f));
-				String line;
-				while((line = br.readLine()) != null) {
-					if(line.charAt(0) == '#') {
-						//Read metadata
-						if(line.contains("Metadata")) {
-							line = br.readLine();
-							String[] lineSplit = line.split(",");
-							numStates = Integer.parseInt(lineSplit[0].trim());
-							numObs = Integer.parseInt(lineSplit[1].trim());
-							//init arrays
-							pi = new double[numStates];
-							a = new double[numStates][numStates];
-							b = new double[numStates][numObs];
-
-						//Read Pi
-						} else if(line.contains("Matrix Pi")) {
-							line = br.readLine();
-							String[] lineSplit = line.split(",");
-							
-							for (int i = 0; i < lineSplit.length; i++) {
-								pi[i] = Double.parseDouble(lineSplit[i]);
-							}
-							
-						//Read A
-						} else if(line.contains("Matrix A")) {
-							int i = 0;
-							while((line = br.readLine()) != null && line.charAt(0) != '#') {
-								String[] lineSplit = line.split(",");
-								for(int j = 0; j < lineSplit.length; j++) {
-									a[i][j] = Double.parseDouble(lineSplit[j]);
-								}
-								i++;
-							}
-							
-						//Read B
-						} else if(line.contains("Matrix B")) {
-							int i = 0;
-							while((line = br.readLine()) != null && line.charAt(0) != '#') {
-								String[] lineSplit = line.split(",");
-								for(int j = 0; j < lineSplit.length; j++) {
-									b[i][j] = Double.parseDouble(lineSplit[j]);
-								}
-								i++;
-							}
-						}
-					}
-				}
-				br.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.err.println("BAD FILE");
-			}
-			
-			gesturelist.add(new Gesture(pi, a, b));
-		}
-		
-	}
 
 	public HmmRecognitionPO(HmmRecognitionPO<M> splitPO) {
 		super();
@@ -126,42 +51,70 @@ public class HmmRecognitionPO<M extends ITimeInterval> extends
 	protected void process_next(Tuple<M> object, int port) {
 		// Process new input element on input port, a new created element can be
 		// send to the next operator with the transfer-method
-		System.out.println("HMM: process_next");
+//		System.out.println("HMM: process_next");
+		@SuppressWarnings("unchecked")
+		int observation = ((ArrayList<Integer>) object.getAttribute(0)).get(0);
 
+		//1) Window-Einträge (Gruppen) checken. Gruppen mit alten Timestamps rauslöschen.
+		hmmWindow.sweapOldItems();
 		
-		//1) Neue Gruppe anlegen, die AlphaReihen aufnimmt
-		HmmWindowGroup newWindowGroup = new HmmWindowGroup();
-		long currentTimestamp = Long.parseLong(object.getMetadata().getStart().toString());
-		newWindowGroup.setTimestamp(currentTimestamp);
+		//2) Neue Gruppe anlegen, die Alphas aufnimmt
+		HmmAlphaGroup newAlphaGroup = new HmmAlphaGroup();
+//		newAlphaGroup.setTimestamp(currentTimestamp);
 		
 		//Beobachtung kommt an
-		//2) Durch Beobachtung für jede Geste eine neue Reihe anlegen
+		//3) Durch Beobachtung für jede Geste eine neue Alphas anlegen
 		for (int i = 0; i < gesturelist.size(); i++) {
-			HmmObservationAlphaRow newAlphaRow = new HmmObservationAlphaRow(gesturelist.get(i).getNumStates());
+			HmmAlphas newAlphas = new HmmAlphas(gesturelist.get(i).getNumStates());
 			//tuple<m> object übergeben an newAlphaRow und mit Forward Algo, Init-Alphawerte berechnen
-			System.out.println(gesturelist.get(i));
-			System.out.println(newAlphaRow);
-			System.out.println(((Double) object.getAttribute(0)).intValue());
-//			int tmp = ((Double) object.getAttribute(0)).intValue();
-			
-//			hmm.forwardInit(gesturelist.get(i), newAlphaRow, tmp); <--- das war nicht auskommentiert
-			newWindowGroup.addRow(newAlphaRow);
+			hmm.forwardInit(gesturelist.get(i), newAlphas, observation);
+			newAlphaGroup.addRow(newAlphas);
 		}
 		
-		//3) Gruppe ins Window eintragen
-		hmmWindow.addGroup(newWindowGroup);
+		//4) Gruppe ins Window eintragen
+		hmmWindow.addGroup(newAlphaGroup);
 		
-		//4) Window-Einträge (Gruppen) checken. Gruppen mit alten Timestamps rauslöschen.
-		hmmWindow.sweapOldItems(currentTimestamp);
-		
-		
+		//5) Calculate new alphas
+		//Iterate through AlphaGroups
+		int[] highestProbs = new int[hmmWindow.getAlphaGroups().size()];
+		for (int i = 0; i < hmmWindow.getAlphaGroups().size()-1; i++) {
+			
+			//Iterate through Gestures/Alphas
+			double[] probs = new double[gesturelist.size()];
+			for (int j = 0; j < hmmWindow.getAlphaGroups().get(i).getAlphas().size(); j++) {
+				//Fill array with probabilites
+				probs[j] = hmm.forwardStream(gesturelist.get(j), hmmWindow.getAlphaGroups().get(i).getAlphas().get(j), observation);
+//				System.out.println("Probs: " +  probs[j]);
+			}
+			
+			//Determine gesture with greatest probability
+			int gestureIndex = -1;
+			for (int j = 0; j < probs.length; j++) {
+				if(hmmWindow.getAlphaGroups().size()-i >= gesturelist.get(j).getNumMinObs()) {
+					if(gestureIndex == -1) gestureIndex = j;
+					else if (probs[j] > probs[gestureIndex]) {
+						gestureIndex = j;
+					}
+				}
+			}
+			//Remember index of highest probability for this AlphaGroup
+			highestProbs[i] = gestureIndex;
+			//print 
+			if(gestureIndex != -1) {
+				System.err.println("AlphaGroup: " + i + " " + gesturelist.get(gestureIndex).getName() + ": " + probs[gestureIndex]);
+			} else {
+//				System.out.println("AlphaGroup: " + i + " nüx");
+			}
+//			System.out.println("--------------------------");
+		}
+		System.out.println("--------------------------\n");
 		
 		
 //		double handLeftX = object.getAttribute(0);
 		
-		System.out.println("getMetadata():" + object.getMetadata());
-		System.out.println("getStart(): " + object.getMetadata().getStart());
-		System.out.println("getEnd(): " + object.getMetadata().getEnd());
+//		System.out.println("getMetadata():" + object.getMetadata());
+//		System.out.println("getStart(): " + object.getMetadata().getStart());
+//		System.out.println("getEnd(): " + object.getMetadata().getEnd());
 		
 //		HmmObservationAlphaRow newSet = new HmmObservationAlphaRow(hmmWindow.numStates);
 //		int timestamp = Integer.parseInt(object.getMetadata().getStart().toString());
@@ -176,7 +129,17 @@ public class HmmRecognitionPO<M extends ITimeInterval> extends
 	
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		System.out.println("MUUUUUUUUUUUUUUUUUUUUUUUUUH macht die Katze");
+		gesturelist = FileHandlerHMM.loadHMMConfigFromFile(pathToConfigfiles);
+		//Determine maxObsLength
+		int numMaxObs = 0;
+		for (int i = 0; i < gesturelist.size(); i++) {
+			if(gesturelist.get(i).getNumMaxObs() > numMaxObs) numMaxObs = gesturelist.get(i).getNumMaxObs();
+		}
+//		System.out.println(gesturelist.get(1).getName() + ": ");
+		hmm.printAMatrix(gesturelist.get(1));
+		//Create HMMWindow
+		hmmWindow = new HmmWindow(numMaxObs);
+//		System.out.println("MUUUUUUUUUUUUUUUUUUUUUUUUUH macht die Katze");
 //		double wkeit = 0;
 //		hmm = new HMM();
 //		//**

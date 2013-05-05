@@ -54,6 +54,15 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 	}
 	
 	protected void process_open() {
+		//init
+		tracked = true;
+		trackingTime = 0;
+		isTrainingStartet = false;
+		
+		isStartMessageNeeded = true;
+		startTimer = new Timer();
+		timer = new Timer();
+		
 		
 		final String path = pathToTrainingData+gestureName+"Training.csv";
 		System.err.println("GESTURE: " + gestureName);
@@ -103,13 +112,14 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 						if(!observation.isEmpty()) { //<--- ausrufezeihen und so
 							//Training successfully finished
 							if(System.currentTimeMillis()-lastInputTime > 4000) {
-								System.err.println("FIIIIIIIIIINIIIIIIIIIIIIIIIIIIIIISSSSSSSSHHHHHHHHHH\n\n\nFIIIIIIIIIINIIIIIIIIIIIIIISHHH");
+//								System.err.println("FIIIIIIIIIINIIIIIIIIIIIIIIIIIIIIISSSSSSSSHHHHHHHHHH\n\n\nFIIIIIIIIIINIIIIIIIIIIIIIISHHH");
 								try {
 									System.out.println(path);
 									timer.cancel();
 									FileHandlerHMM.appendNewTrainingData(observation, path);
 									ArrayList<int[]> obsSequences = FileHandlerHMM.loadTrainingData(path);
 									createHMMConfigFromUpdatedTrainingData(obsSequences);
+									process_open();
 								} catch (IOException e) {
 									System.err.println("Failed to create new config file");
 									e.printStackTrace();
@@ -145,17 +155,24 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 				numObs++;
 			}
 		}
-		System.out.println("numbObs/obsSequence.size() = " + numObs + "/" + obsSequences.size());
+//		System.out.println("numbObs/obsSequence.size() = " + numObs + "/" + obsSequences.size());
 		int numStates = numObs/obsSequences.size();
-		int observationLength = numObs/obsSequences.size();
+		int observationLength = numObs/obsSequences.size(); 
+		//Determine min and max observation length
+		int numMinObs = 0;
+		int numMaxObs = 0;
+		for (int i = 0; i < obsSequences.size(); i++) {
+			if(numMinObs == 0) numMinObs = obsSequences.get(i).length;
+			if(obsSequences.get(i).length < numMinObs) numMinObs = obsSequences.get(i).length;
+			if(obsSequences.get(i).length > numMaxObs) numMaxObs = obsSequences.get(i).length;
+		}
 		
-		@SuppressWarnings("rawtypes")
 		HMM hmm = new HMM();
 //		System.out.println(numStates + ", " + HMM.observationLength + ", " + observationLength);
-		Gesture gesture = new Gesture(numStates, HMM.observationLength, observationLength);
+		Gesture gesture = new Gesture(numStates, HMM.observationLength, numMinObs, numMaxObs, observationLength);
 		gesture.setName(gestureName);
 		System.out.println("createHMM");
-		hmm.printAMatrix(gesture);
+//		hmm.printAMatrix(gesture);
 		//convert to int[][]
 		int[][] trainingData = new int[obsSequences.size()][];
 		for (int i = 0; i < trainingData.length; i++) {

@@ -1,28 +1,37 @@
 package de.uniol.inf.is.odysseus.hmm;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 
+/**
+ * @author Michael Möbes
+ * @author Christian Pieper
+ *
+ * Contains all AlphaGroups for a given window size
+ *
+ */
 public class HmmWindow {
 	
 //	private int numStates;
-	private int timewindow;
+	private int windowSize;
 	
-	ArrayList<HmmWindowGroup> groups;
+	private ArrayList<HmmAlphaGroup> alphaGroups;
 	
-	public HmmWindow(int timewindow) {
-		this.groups = new ArrayList<HmmWindowGroup>();
-//		this.numStates = numStates;
-		this.timewindow = timewindow;
+	public HmmWindow(int windowSize) {
+		this.alphaGroups = new ArrayList<HmmAlphaGroup>();
+		this.windowSize = windowSize;
 	}
 
 	
-//	public void checkTimestamps(int timeWindow, int timestamp) {
-//		Iterator<HmmObservationAlphaRow> it = alphas.iterator();
+	public void addGroup(HmmAlphaGroup pGroup){
+		alphaGroups.add(pGroup);
+	}
+	
+//	public void sweapOldItems(int currentTimestamp){
+//		Iterator<HmmAlphaGroup> it = groups.iterator();
 //		while(it.hasNext()) {
-//			HmmObservationAlphaRow obs = it.next();
-//			if((timestamp - obs.timestamp) > timeWindow) {
+//			HmmAlphaGroup hwg = it.next();
+//			if((currentTimestamp - hwg.getTimestamp()) > windowSize) {
 //				it.remove();
 //			} else {
 //				break;
@@ -30,20 +39,18 @@ public class HmmWindow {
 //		}
 //	}
 	
-	public void addGroup(HmmWindowGroup pGroup){
-		groups.add(pGroup);
-	}
-	
-	public void sweapOldItems(long currentTimestamp){
-		Iterator<HmmWindowGroup> it = groups.iterator();
-		while(it.hasNext()) {
-			HmmWindowGroup hwg = it.next();
-			if((currentTimestamp - hwg.getTimestamp()) > timewindow) {
-				it.remove();
-			} else {
-				break;
-			}
+	public void sweapOldItems(){
+		if(alphaGroups.size() == windowSize) {
+			alphaGroups.remove(0);
 		}
 	}
 	
+	public ArrayList<HmmAlphaGroup> getAlphaGroups() {
+		return alphaGroups;
+	}
+
+
+	public void setAlphaGroups(ArrayList<HmmAlphaGroup> alphaGroups) {
+		this.alphaGroups = alphaGroups;
+	}
 }
