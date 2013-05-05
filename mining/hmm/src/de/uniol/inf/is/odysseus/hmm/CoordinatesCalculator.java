@@ -59,9 +59,17 @@ public class CoordinatesCalculator {
 	}
 	
 	public int determineTargetCluster(double angle, int numCluster) {
+		angle = angle +(360/numCluster/2);
 		double cluster = (angle/(360/numCluster));
+		if(cluster < 0){
+			cluster = cluster * (-1);
+		}
 //		System.out.println("ANGLE: " + angle);
-		return (int) Math.round(cluster);
+		int output = (int) Math.floor(cluster);
+		if(output == numCluster) {
+			output = 0;
+		}
+		return output;
 	}
 
 //	public int calculateCluster(double current_x, double current_y) {

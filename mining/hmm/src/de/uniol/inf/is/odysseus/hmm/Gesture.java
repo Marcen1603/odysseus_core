@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.hmm;
 
+/**
+ * @author Michael Möbes, mmo
+ * @author Christian Pieper, cpi
+ *
+ */
 public class Gesture {
 	//Attributes
 	private String name;
@@ -8,17 +13,71 @@ public class Gesture {
 	private double[][] a;
 	private double[][] b;
 	
-	//Constructor
-	public Gesture(String pName, double[] pPi, double[][] pA, double[][] pB){
-		this.name = pName;
-		this.setPi(pPi);
-		this.a = pA;
-		this.b = pB;		
+	
+	/** 
+	 * Create and initialize Gesture with standard-values
+	 * @param numStates
+	 * @param sizeObservationAlphabet
+	 * @param observationLength
+	 */
+	public Gesture(int numStates, int sizeObservationAlphabet, int observationLength){
+		this.numStates = numStates; 
+		//Create Pi-Array
+		//Initialize to start in first state
+		this.pi = new double[numStates];
+		for (int i = 0; i < pi.length; i++) {
+			if(i==0) {
+				pi[i] = 1;
+			}else{
+				pi[i] = 0;
+			}
+		}
+		
+		
+		//Create A-matix
+		//Initialize with Left-Right-Banded Approach 
+		this.a = new double[numStates][observationLength];
+		for (int i = 0; i < this.a.length; i++) {
+			
+			if(i<this.a.length-1){
+				 System.out.print("a["+i+"]["+i+"] = (1 - (1/( " + observationLength + "/" + numStates + ")))");
+				a[i][i] 	= (1 - (1/(observationLength/numStates)));
+				System.out.println(a[i][i]);
+				a[i][i+1] 	= 1 - a[i][i];
+			}else{
+				a[i][i] = 1;
+			}
+			
+		}
+		
+		//Create B-matrix
+		//Initialize evenly with 1/M values
+		this.b = new double[numStates][sizeObservationAlphabet];
+		for (int i = 0; i < b.length; i++) {	
+			for (int j = 0; j < b[0].length; j++) {
+				b[i][j] = (double)(1.0/(double)sizeObservationAlphabet);
+			}
+		}
 	}
-
+	
 
 	
-	//Methods
+	/** 
+	 * Create Gesture with existing data
+	 * @param pi Starting distribution for states 
+	 * @param a  2D array of state transition probabilities
+	 * @param b	 2D array of state emission probabilities
+	 */
+	public Gesture(double[] pi, double[][] a, double[][] b){
+		this.numStates = a.length;
+		this.pi = pi;
+		this.a  = a;
+		this.b  = b;		
+	}
+
+	
+	//methods
+	//getter and setter
 	public double[] getPi() {
 		return pi;
 	}
@@ -49,6 +108,10 @@ public class Gesture {
 	
 	public int getNumStates() {
 		return numStates;
+	}
+
+	public void setName(String gestureName) {
+		this.name = gestureName;
 	}
 	
 }

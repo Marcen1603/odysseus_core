@@ -9,8 +9,10 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 
 	//Attributes
 	private double minDistBetweenPoints = 0.15;
-	private CoordinatesCalculator lastValidCoordinate;
-	private boolean isSkeletonTracked = false;
+	static private CoordinatesCalculator lastValidCoordinate;
+//	private boolean isSkeletonTracked = false;
+	static double handLeftX=0;
+	static double handLeftY=0;
 	
 	
 	//Constructors
@@ -35,12 +37,37 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 	protected void process_next(Tuple<M> object, int port) {
 //		System.out.println("FeatureExtraction: process_next");
 		
-		//get X, Y, Z coordinates from incoming data stream
-		double handLeftX = object.getAttribute(0);
-		double handLeftY = object.getAttribute(1);
-		@SuppressWarnings("unused")
-		double handLeftZ = object.getAttribute(2);
 		
+		if(handLeftX != 0){
+			if(handLeftX == (double) object.getAttribute(18)) {
+				
+				if(HmmTrainingPO.tracked == true) {
+					System.out.println("--------- skeleton untracked --------");
+				}
+				HmmTrainingPO.tracked = false;
+			} else {
+				if(HmmTrainingPO.tracked == false){
+					System.out.println("+++++++++++++++++++++++++ SKELETON TRACKED +++++++++++++++++++++++");
+					if(HmmTrainingPO.trackingTime == 0){
+//						System.err.println("zeit setzen");
+						HmmTrainingPO.trackingTime = System.currentTimeMillis();
+					}
+				}
+				HmmTrainingPO.tracked = true;
+			}
+		}
+		
+		
+		//get X, Y, Z coordinates from incoming data stream
+		handLeftX = object.getAttribute(18);
+		handLeftY = object.getAttribute(19);
+		@SuppressWarnings("unused")
+		double handLeftZ = object.getAttribute(20);
+		
+//		System.out.println("Feature Extraction\n " +
+//				"  handLeftX: " + handLeftX +
+//				"  handLeftY: " + handLeftY + "\n");
+				
 		//Debug Output
 //		System.out.println("getMetadata():" + object.getMetadata());
 //		System.out.println("getStart(): " + object.getMetadata().getStart());
@@ -54,12 +81,6 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 			return;
 		}
 		
-		if(handLeftX != lastValidCoordinate.getPoint_x() &&
-				handLeftY != lastValidCoordinate.getPoint_y()){
-			this.isSkeletonTracked = true;
-		} else {
-			this.isSkeletonTracked = false;
-		}
 		
 		//check the distance between 2 coordinates
 		//if minimum distance is sufficient, the new point will be accepted
@@ -69,8 +90,7 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 			double angle = lastValidCoordinate.calculateAngle(handLeftX, handLeftY);
 			
 			//Debug output
-			System.out.println("Feature Extraction\n  Orientation: " + angle + " degree\n" +
-					"  isSkeletonTracked: " + this.isSkeletonTracked+"\n");
+			System.out.println("Feature Extraction\n  Orientation: " + angle + " degree\n");
 			
 			//set this point as last valid one
 			lastValidCoordinate.setPoint(handLeftX, handLeftY);
@@ -99,4 +119,7 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 		return new FeatureExtractionPO<M>(this);
 	}
 
+	public static void setCurrentCoordsAsLastValidPoint() {
+		lastValidCoordinate = new CoordinatesCalculator(handLeftX, handLeftY);
+	}
 }

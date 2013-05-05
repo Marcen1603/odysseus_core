@@ -15,7 +15,7 @@ public class HmmAO extends UnaryLogicalOp implements ILogicalOperator{
 	 */
 	private static final long serialVersionUID = 6352258419499082879L;
 	private String mode;
-	
+	private String gesture;
 	
 	// The default constructor is required as instances of logical operators are
 	// created by newInstance().
@@ -28,6 +28,7 @@ public class HmmAO extends UnaryLogicalOp implements ILogicalOperator{
 	public HmmAO(HmmAO hmmAO) {
 		super(hmmAO);
 		this.mode = hmmAO.mode;
+		this.gesture = hmmAO.gesture;
 	}
 
 	// Clone must call the copy constructor and the copy constructor must call
@@ -43,9 +44,17 @@ public class HmmAO extends UnaryLogicalOp implements ILogicalOperator{
 		this.mode = mode;
 	}
 
-
+	@Parameter(name = "gesture", type = StringParameter.class, optional = true)
+	public void setAlgorithmus(String gesture) {
+		this.gesture = gesture;
+	}
+	
 	public String getMode() {
 		return mode;
+	}
+	
+	public String getGesture() {
+		return gesture;
 	}
 	
 	// Finally, the class needs setters and getters for the parameter it should

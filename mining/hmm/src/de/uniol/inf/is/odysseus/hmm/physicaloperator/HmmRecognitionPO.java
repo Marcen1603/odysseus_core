@@ -12,12 +12,11 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.hmm.Gesture;
-import de.uniol.inf.is.odysseus.hmm.HMM;
 import de.uniol.inf.is.odysseus.hmm.HmmObservationAlphaRow;
 import de.uniol.inf.is.odysseus.hmm.HmmWindow;
 import de.uniol.inf.is.odysseus.hmm.HmmWindowGroup;
 
-public class HmmPO<M extends ITimeInterval> extends
+public class HmmRecognitionPO<M extends ITimeInterval> extends
 		AbstractPipe<Tuple<M>, Tuple<M>> {
 
 //	private List<IPredicate<? super Tuple<M>>> predicates;
@@ -25,31 +24,32 @@ public class HmmPO<M extends ITimeInterval> extends
 	private HmmWindow hmmWindow;
 	private ArrayList<Gesture> gesturelist = new ArrayList<Gesture>();
 //	private ArrayList<HmmWindowGroup> windowGroups= new ArrayList<HmmWindowGroup>();
-	private int timewindow = 10000;
+//	private int timewindow = 10000;
 //	private int numStates;
-	@SuppressWarnings("rawtypes")
-	private HMM hmm;
+//	private HMM hmm;
 
 	// Konstruktoren
-	public HmmPO() {
+	public HmmRecognitionPO() {
 		super();
-		loadHmmsFromCSV();
+		System.out.println("-----------------HmmPO");
+//		loadHmmsFromCSV();
 	}
 
+	@SuppressWarnings("unused")
 	private void loadHmmsFromCSV() {
 		double[] pi = null;
 		double[][] a = null;
 		double[][] b = null;
 		int numStates = 0;
 		int numObs = 0;
-		String gestureName = "";
+		
 		
 		String path = "gestures";
 		File dir = new File(path);
 		File[] fileList = dir.listFiles();
 		for (File f : fileList) {
 			try {
-				gestureName = f.getName().substring(0, f.getName().length()-4);
+//				String gestureName = f.getName().substring(0, f.getName().length()-4);
 				BufferedReader br = new BufferedReader(new FileReader(f));
 				String line;
 				while((line = br.readLine()) != null) {
@@ -105,12 +105,12 @@ public class HmmPO<M extends ITimeInterval> extends
 				System.err.println("BAD FILE");
 			}
 			
-			gesturelist.add(new Gesture(gestureName, pi, a, b));
+			gesturelist.add(new Gesture(pi, a, b));
 		}
 		
 	}
 
-	public HmmPO(HmmPO<M> splitPO) {
+	public HmmRecognitionPO(HmmRecognitionPO<M> splitPO) {
 		super();
 		// initPredicates(splitPO.predicates);
 	}
@@ -142,9 +142,9 @@ public class HmmPO<M extends ITimeInterval> extends
 			System.out.println(gesturelist.get(i));
 			System.out.println(newAlphaRow);
 			System.out.println(((Double) object.getAttribute(0)).intValue());
-			int tmp = ((Double) object.getAttribute(0)).intValue();
+//			int tmp = ((Double) object.getAttribute(0)).intValue();
 			
-			hmm.forwardInit(gesturelist.get(i), newAlphaRow, tmp);
+//			hmm.forwardInit(gesturelist.get(i), newAlphaRow, tmp); <--- das war nicht auskommentiert
 			newWindowGroup.addRow(newAlphaRow);
 		}
 		
@@ -174,26 +174,26 @@ public class HmmPO<M extends ITimeInterval> extends
 
 	}
 	
-	@SuppressWarnings("rawtypes")
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		System.out.println("MUUUUUUUUUUUUUUUUUUUUUUUUUH macht die Katze");
-		
-		hmm = new HMM();
-		//**
-		hmm.forward(gesturelist.get(0), new int[] {4, 0, 12, 8});
-		//**
-		//groesse des Windows festlegen
-		//TODO Parameter per Operator übergeben
-		hmmWindow = new HmmWindow(timewindow);
-		
-		//Gestenobjekte erzeugen - zu jeder Geste existiert eine CSV-Datei mit Anz Zustände, Übergangstabelle A und B
-		//TODO alle Dateien einlesen und Gestenobjekt initialisieren
+//		double wkeit = 0;
+//		hmm = new HMM();
+//		//**
+//		wkeit = hmm.productionProbability(hmm.forward(gesturelist.get(0), new int[] {4, 0, 12, 8, 5}));
+//		System.out.println("wkeit: " + wkeit);
+//		//**
+//		//groesse des Windows festlegen
+//		//TODO Parameter per Operator übergeben
+//		hmmWindow = new HmmWindow(timewindow);
+//		
+//		//Gestenobjekte erzeugen - zu jeder Geste existiert eine CSV-Datei mit Anz Zustände, Übergangstabelle A und B
+//		//TODO alle Dateien einlesen und Gestenobjekt initialisieren
 	}
 
 	@Override
-	public HmmPO<M> clone() {
-		return new HmmPO<M>(this);
+	public HmmRecognitionPO<M> clone() {
+		return new HmmRecognitionPO<M>(this);
 	}
 
 }

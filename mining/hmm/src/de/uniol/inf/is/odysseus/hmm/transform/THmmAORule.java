@@ -5,8 +5,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.hmm.logicaloperator.HmmAO;
-import de.uniol.inf.is.odysseus.hmm.physicaloperator.HmmPO;
-import de.uniol.inf.is.odysseus.hmm.physicaloperator.HmmStoreInputPO;
+import de.uniol.inf.is.odysseus.hmm.physicaloperator.HmmRecognitionPO;
+import de.uniol.inf.is.odysseus.hmm.physicaloperator.HmmTrainingPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -26,13 +26,13 @@ public class THmmAORule extends
 //		defaultExecute(operator, new HmmPO(), config, true, true);
 		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po;
 		if (operator.getMode().equalsIgnoreCase("RECOGNITION")) {
-			po = new HmmPO();
+			po = new HmmRecognitionPO();
 			po.setOutputSchema(operator.getOutputSchema());
 			replace(operator, po, config);
 			retract(operator);
 			insert(po);
-		} else if (operator.getMode().equalsIgnoreCase("STORE_INPUT")) {
-			po = new HmmStoreInputPO();
+		} else if (operator.getMode().equalsIgnoreCase("TRAINING")) {
+			po = new HmmTrainingPO(operator.getGesture());
 			po.setOutputSchema(operator.getOutputSchema());
 			replace(operator, po, config);
 			retract(operator);
