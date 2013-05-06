@@ -30,10 +30,10 @@
 
 package de.uniol.inf.is.odysseus.mining.physicaloperator;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.mining.TupleList;
 import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
 
 /**
@@ -52,11 +52,11 @@ import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
 public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	private IClusterer<M> clusterer;
-	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();	
-	private TITransferArea<Tuple<M>, Tuple<M>> transferFunction = new TITransferArea<Tuple<M>, Tuple<M>>();
-	private int run = 0;
+	private DefaultTISweepArea<TupleList<M>> sweepArea = new DefaultTISweepArea<TupleList<M>>();
+	// private TITransferArea<Tuple<M>, Tuple<M>> transferFunction = new TITransferArea<Tuple<M>, Tuple<M>>();
 	private int[] attributePositions;
-	private PointInTime lastWritten;
+
+	// private ArrayList<TupleList<M>> sweepArea = new ArrayList<TupleList<M>>();
 
 	public ClusteringPO(IClusterer<M> clusterer, int[] attributePositions) {
 		this.clusterer = clusterer;
@@ -73,44 +73,104 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 		return OutputMode.MODIFIED_INPUT;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected synchronized void process_next(Tuple<M> object, int port) {
-		sweepArea.insert(object);		
-
-		System.err.println("---------------------------");
-		System.err.println("in: "+object);
-		System.err.println("---SA: ---");
-		System.err.println(sweepArea.getSweepAreaAsString(object.getMetadata().getStart()));
-		System.err.println("----------");
-		Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(object.getMetadata().getStart());		 
-		Map<Integer, List<Tuple<M>>> clustered = this.clusterer.processClustering(qualifies, attributePositions);
+//		System.out.println("------------------------------------------------------------");
+//		System.out.println("IN: " + object);
+//		System.out.println("SA:" + sweepArea.getSweepAreaAsString());
+		// Iterator<TupleList<M>> qualifies = (new HashSet<TupleList<M>>(sweepArea)).iterator();
+		// sweepArea.purgeElementsBefore(object.getMetadata().getStart());		
 		
-		for (Entry<Integer, List<Tuple<M>>> cluster : clustered.entrySet()) {
-			for (Tuple<M> tuple : cluster.getValue()) {
-				tuple = tuple.append(cluster.getKey());				
-				tuple = tuple.append(run);
-				tuple.getMetadata().setStart(lastWritten);
-				tuple.getMetadata().setEnd(object.getMetadata().getStart());
-				System.err.println("transfer: "+tuple);
-				this.transferFunction.transfer(tuple);
+		
+		
+		
+		
+		Set<Tuple<M>> toCluster = new HashSet<>();
+		Iterator<TupleList<M>> qualifies = sweepArea.extractElementsStartingBefore(object.getMetadata().getStart());
+		
+		if (!qualifies.hasNext()) {
+			TupleList<M> tl = new TupleList<M>(object);
+			M meta = (M) object.getMetadata().clone();
+			tl.setMetadata(meta);
+			sweepArea.insert(tl);
+		} else {
+			while (qualifies.hasNext()) {
+				TupleList<M> next = qualifies.next();
+				// System.out.println("NEXT: " + next);
+				// gibt es einen zeitfortschritt, dann ist next vollständig und kann geclustert werden
+				if (next.getMetadata().getStart().before(object.getMetadata().getStart())) {
+					for (Tuple<M> tuple : next.getList()) {
+						PointInTime start = next.getMetadata().getStart();
+						PointInTime end = PointInTime.min(next.getMetadata().getEnd(), object.getMetadata().getStart());
+						tuple.getMetadata().setStartAndEnd(start, end);
+						toCluster.add(tuple);
+					}
+				}
+				// schneiden sich next und das aktuelle element
+				if (next.getMetadata().getEnd().after(object.getMetadata().getStart())) {
+					// dann erweitere next um das aktuelle element
+					TupleList<M> newList = next.clone();
+					newList.add(object);
+					newList.setMetadata((M) object.getMetadata().clone());
+					newList.getMetadata().setEnd(PointInTime.min(object.getMetadata().getEnd(), next.getMetadata().getEnd()));
+					insertOrReplace(newList);
+					// additionally, there could be a part before the new element
+					if (next.getMetadata().getEnd().before(object.getMetadata().getEnd())) {
+						TupleList<M> tl = new TupleList<M>(object);
+						tl.setMetadata((M) object.getMetadata().clone());
+						tl.getMetadata().setStart(PointInTime.max(object.getMetadata().getStart(), next.getMetadata().getEnd()));
+						insertOrReplace(tl);
+					}
+					// and there could be also a part after the element
+					if (next.getMetadata().getEnd().after(object.getMetadata().getEnd())) {
+						TupleList<M> tl = next.clone();
+						tl.setMetadata((M) object.getMetadata().clone());
+						tl.getMetadata().setEnd(next.getMetadata().getEnd());
+						tl.getMetadata().setStart(object.getMetadata().getEnd());
+						insertOrReplace(tl);
+					}
+				} else {
+					// else, we only add the new object
+					TupleList<M> tl = new TupleList<>(object);
+					tl.setMetadata((M) object.getMetadata().clone());
+					insertOrReplace(tl);
+				}
 			}
 		}
-		run++;
-		transferFunction.newElement(object, port);
-		sweepArea.purgeElementsBefore(object.getMetadata().getStart());
-		lastWritten = object.getMetadata().getStart();
+		Iterator<Tuple<M>> results = calculateClusters(toCluster);
+		while (results.hasNext()) {
+			Tuple<M> result = results.next();
+			// System.out.println("INSERT: " + result);
+			// transferFunction.transfer(result);
+			transfer(result);
+		}
+		// transferFunction.newElement(object, port);
 	}
-	
+
+	private void insertOrReplace(TupleList<M> tuple) {
+//		sweepArea.remove(tuple);
+		sweepArea.insert(tuple);
+	}
+
+	private Iterator<Tuple<M>> calculateClusters(Set<Tuple<M>> toCluster) {
+		ArrayList<Tuple<M>> clustered = new ArrayList<Tuple<M>>();
+		for (Tuple<M> t : toCluster) {
+			clustered.add(t.clone());
+		}
+		return clustered.iterator();
+	}
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		transferFunction.init(this);
-		sweepArea.clear();		
-	}	
+		// transferFunction.init(this);
+		sweepArea.clear();
+	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		transferFunction.sendPunctuation(punctuation);
+		// transferFunction.sendPunctuation(punctuation);
 	}
 
 	@Override

@@ -34,8 +34,11 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
+import de.uniol.inf.is.odysseus.mining.clustering.KMeansClusterer;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClusteringAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClusteringKMeansPO;
+import de.uniol.inf.is.odysseus.mining.physicaloperator.ClusteringPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -51,6 +54,7 @@ public class TClusteringAORule extends AbstractTransformationRule<ClusteringAO> 
 		return 0;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(ClusteringAO operator, TransformationConfiguration config) {
 		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po;
@@ -61,10 +65,15 @@ public class TClusteringAORule extends AbstractTransformationRule<ClusteringAO> 
 			replace(operator, po, config);
 			retract(operator);
 			insert(po);
-		}else{
-			//maybe there will be other algorithms...
+		} else {
+			IClusterer<ITimeInterval> clusterer = new KMeansClusterer<>();
+			po = new ClusteringPO(clusterer, operator.getAttributePositions());
 		}
-		
+		po.setOutputSchema(operator.getOutputSchema());
+		replace(operator, po, config);
+		retract(operator);
+		insert(po);
+
 	}
 
 	@Override
