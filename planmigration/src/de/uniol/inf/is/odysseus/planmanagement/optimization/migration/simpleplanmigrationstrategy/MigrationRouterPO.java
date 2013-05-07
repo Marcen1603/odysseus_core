@@ -16,6 +16,7 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,9 +62,12 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	private Map<ISource<?>, Pair<IPunctuation, IPunctuation>> sourcesToPunctuations;
 	private int inPortOld;
 	private int inPortNew;
-	private boolean useOld;
+	private boolean punctuationsReceived;
+	private boolean onlyNew;
+	private boolean finished;
 	private ITimeIntervalSweepArea<R>[] areas;
 	private R lastSend = null;
+	private List<R> newAfterPunctuations;
 
 	private Set<IMigrationListener> listener;
 
@@ -81,7 +85,10 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		}
 		this.inPortOld = inPortOld;
 		this.inPortNew = inPortNew;
-		this.useOld = true;
+		this.punctuationsReceived = false;
+		this.onlyNew = false;
+		this.finished = false;
+		this.newAfterPunctuations = new ArrayList<R>();
 		this.listener = new HashSet<IMigrationListener>();
 		this.areas = areas;
 	}
@@ -100,7 +107,10 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		}
 		this.inPortOld = inPortOld;
 		this.inPortNew = inPortNew;
-		this.useOld = true;
+		this.punctuationsReceived = false;
+		this.onlyNew = false;
+		this.finished = false;
+		this.newAfterPunctuations = new ArrayList<R>();
 		this.listener = new HashSet<IMigrationListener>();
 		this.areas = areas;
 	}
@@ -112,29 +122,42 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	@Override
 	protected void process_next(R object, int port) {
-		boolean finished = false;
-		if (!useOld) {
-			finished = isFinished(object, port);
+		// check if new has caught up on old.
+		if (punctuationsReceived) {
+			if(!finished) {
+				finished = isFinished(object, port);
+			} /**else {
+				isFinished(object, port);
+			}**/
 		}
-		if (port == this.inPortOld && !finished) {
-			lastSend = object;
-			LOG.debug("transfer old {}", object);
+		
+		// happens if process_next is called while the migration is already finished but the router is not yet removed.
+		if(this.onlyNew && port == this.inPortNew) {
+			LOG.debug("Migration finished processing last tuples");
 			transfer(object);
+			return;
 		}
 
-		// wait until the new plan has caught up on the old plan
-		if (finished
-				&& port == this.inPortNew
-				&& lastSend != null
-				&& !lastSend.equals(object)
-				&& lastSend.getMetadata().getStart()
-						.beforeOrEquals(object.getMetadata().getStart())) {
-			if(port == this.inPortNew) {
-				LOG.debug("transfer new {}", object);
+		// transfer old objects if the port is correct. or check if element is newer than the lastSend-Element from the old plan.
+		if (port == this.inPortOld) {
+			// transfer normally if not finished yet.
+			// if finished only transfer if starttimestamp is equal to the lastSend.starttimestamp
+			if ((finished && lastSend != null && lastSend.getMetadata()
+					.getStart().equals(object.getMetadata().getStart()))
+					|| !finished) {
+				lastSend = object;
+				LOG.debug("Transfer old {}", object);
 				transfer(object);
-			}
+			} 
+		} else if(finished && lastSend != null && object.getMetadata().getStart().after(lastSend.getMetadata().getStart())) {
+			LOG.debug("Transfer new {}", object);
+			transfer(object);
+			this.onlyNew = true;
 			fireMigrationFinishedEvent(this);
+		} else {
+			this.newAfterPunctuations.add(object);
 		}
+
 	}
 	
 	private boolean isFinished(R object, int port) {
@@ -185,7 +208,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		}
 		// are all sources satisfied?
 		if (this.sourcesToPunctuations.isEmpty()) {
-			useOld = false;
+			punctuationsReceived = true;
 			LOG.debug("All sources are satisfied");
 		}
 	}
@@ -241,6 +264,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		}
 	}
 
+	// TODO (Merlin): clone an neue attribute anpassen.
 	@Override
 	public AbstractPipe<R, R> clone() {
 		MigrationRouterPO<R> clone = new MigrationRouterPO<R>(
@@ -283,6 +307,9 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	@Override
 	public void fireMigrationFinishedEvent(IMigrationEventSource sender) {
+		for(R tuple : this.newAfterPunctuations) {
+			LOG.debug("Received after punctuations: {}", tuple);
+		}
 		for (IMigrationListener listener : this.listener) {
 			listener.migrationFinished(sender);
 		}
