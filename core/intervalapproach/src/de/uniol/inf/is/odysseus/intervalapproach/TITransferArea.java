@@ -134,9 +134,6 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 						&& object.getMetadata().getStart().equals(watermark)) {
 					// ignore puncutations that do not change the watermark!
 				} else {
-//					if(po.getName().contains("q0_auction_bid")) {
-//						logger.debug("{} adding {}", po.getName(), object);
-//					}
 					outputQueue.add(object);
 					sendData();
 				}
@@ -237,9 +234,6 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 										.beforeOrEquals(minimum)) {
 							this.outputQueue.poll();
 							elementsSend = true;
-//							if(po.getName().contains("q0_auction_bid")) {
-//								logger.debug("{} transfers {}", po.getName(), elem);
-//							}
 							po.transfer((W) elem);
 							elem = this.outputQueue.peek();
 						} else {

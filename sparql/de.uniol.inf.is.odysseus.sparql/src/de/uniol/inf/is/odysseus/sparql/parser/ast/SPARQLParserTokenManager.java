@@ -5,15 +5,8 @@
  */
 
 package de.uniol.inf.is.odysseus.sparql.parser.ast;
-import java.util.List;
-import java.util.ArrayList;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.*;
-import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
-import de.uniol.inf.is.odysseus.sparql.parser.*;
-import de.uniol.inf.is.odysseus.sparql.*;
 
 /** Token Manager. */
-@SuppressWarnings("all")
 public class SPARQLParserTokenManager implements SPARQLParserConstants
 {
 
