@@ -40,6 +40,7 @@ public class LiesInPredicate extends AbstractPredicate<IStreamObject<? extends I
 	/**
 	 * @deprecated This method is not supported by this predicate.
 	 */
+	@Deprecated
 	@Override
 	public boolean evaluate(IStreamObject<? extends ITimeInterval> input) {
 		throw new UnsupportedOperationException();
