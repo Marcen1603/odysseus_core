@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.equivalentoutput.tuple.TupleFactory;
 public class Starter {
 
 	public static void main(String[] args) {
-		List<StatusCode> checks = check(args, true);
+		List<StatusCode> checks = check(args, false);
 		for (StatusCode check : checks) {
 			switch (check) {
 			case EQUIVALENT_FILES:
@@ -77,6 +77,9 @@ public class Starter {
 		try {
 			List<String> input0Strings = StreamReader.readFile(args[0]);
 			List<String> input1Strings = StreamReader.readFile(args[1]);
+			
+			System.out.println("Optimized " + args[0]);
+			System.out.println("Not optimized " + args[1]);
 
 			if (args.length == 3) {
 				TupleFactory.setDelimiter(args[2]);
