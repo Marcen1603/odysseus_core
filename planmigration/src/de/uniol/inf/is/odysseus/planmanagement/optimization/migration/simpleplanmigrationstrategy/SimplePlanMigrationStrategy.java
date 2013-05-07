@@ -265,7 +265,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		// resume by unblocking buffers
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
-			((MigrationBuffer)buffer).insertMigrationMarkerPunctuation();
+			((MigrationBuffer)buffer).markMigrationStart(root);
 			buffer.unblock();
 		}
 

@@ -16,7 +16,6 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,7 +66,6 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	private boolean finished;
 	private ITimeIntervalSweepArea<R>[] areas;
 	private R lastSend = null;
-	private List<R> newAfterPunctuations;
 
 	private Set<IMigrationListener> listener;
 
@@ -88,7 +86,6 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		this.punctuationsReceived = false;
 		this.onlyNew = false;
 		this.finished = false;
-		this.newAfterPunctuations = new ArrayList<R>();
 		this.listener = new HashSet<IMigrationListener>();
 		this.areas = areas;
 	}
@@ -110,7 +107,6 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		this.punctuationsReceived = false;
 		this.onlyNew = false;
 		this.finished = false;
-		this.newAfterPunctuations = new ArrayList<R>();
 		this.listener = new HashSet<IMigrationListener>();
 		this.areas = areas;
 	}
@@ -154,8 +150,6 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 			transfer(object);
 			this.onlyNew = true;
 			fireMigrationFinishedEvent(this);
-		} else {
-			this.newAfterPunctuations.add(object);
 		}
 
 	}
@@ -307,9 +301,6 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	@Override
 	public void fireMigrationFinishedEvent(IMigrationEventSource sender) {
-		for(R tuple : this.newAfterPunctuations) {
-			LOG.debug("Received after punctuations: {}", tuple);
-		}
 		for (IMigrationListener listener : this.listener) {
 			listener.migrationFinished(sender);
 		}

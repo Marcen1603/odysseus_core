@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -166,7 +167,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	@Override
 	protected void process_next(T object, int port) {
-		
+
 		transferFunction.newElement(object, port);
 
 		if (isDone()) {
@@ -351,6 +352,26 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns the latest endtimestamp in both sweepareas.
+	 * 
+	 * @return
+	 */
+	public PointInTime getLatestEndTimestamp() {
+		PointInTime max = null;
+		Iterator<T> iterator = null;
+		for (int i = 0; i < 2; i++) {
+			iterator = areas[i].iterator();
+			while (iterator.hasNext()) {
+				T next = iterator.next();
+				if (max == null || max.before(next.getMetadata().getEnd())) {
+					max = next.getMetadata().getEnd();
+				}
+			}
+		}
+		return max;
 	}
 
 	@Override

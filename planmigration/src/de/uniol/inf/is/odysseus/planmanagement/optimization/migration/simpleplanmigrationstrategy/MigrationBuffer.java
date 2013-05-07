@@ -1,12 +1,18 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
 
+import java.util.Set;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.MigrationMarkerPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
+import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorPhysicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 
 /**
  * Timeinterval-dependant buffer which can be used to insert MigrationMarkerPunctuations into the buffer.
@@ -16,18 +22,36 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
  *
  * @param <T>
  */
-public class MigrationBuffer<T extends IStreamObject<?>> extends BufferPO<T> {
+public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> extends BufferPO<T> {
 
 	private boolean waitForFirst = false;
+	private boolean markerInserted = false;
 	private PointInTime newestTimestamp = null;
+	private PointInTime latestEndTimestamp = null;
 	
 	private ISource<?> source = null;
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void markMigrationStart(IPhysicalOperator root) {
+		GenericGraphWalker walker = new GenericGraphWalker();
+		CollectOperatorPhysicalGraphVisitor<IPhysicalOperator> visitor = new CollectOperatorPhysicalGraphVisitor(JoinTIPO.class);
+		walker.prefixWalkPhysical(root, visitor);
+		Set<IPhysicalOperator> joins = visitor.getResult();
+		PointInTime latest = null;
+		for(IPhysicalOperator join : joins) {
+			PointInTime end = ((JoinTIPO) join).getLatestEndTimestamp();
+			if(latest == null || (latest != null && end != null && latest.before(end))) {
+				latest = end;
+			}
+		}
+		this.latestEndTimestamp = latest;
+	}
 	
 	/**
 	 * Inserts a MigrationMarkerPunctuation at the last position of the buffer.
 	 */
 	@SuppressWarnings("unchecked")
-	public void insertMigrationMarkerPunctuation() {
+	private void insertMigrationMarkerPunctuation() {
 		if(this.source == null) {
 			throw new RuntimeException("No source for BufferPO " + toString() + " was set.");
 		}
@@ -66,6 +90,7 @@ public class MigrationBuffer<T extends IStreamObject<?>> extends BufferPO<T> {
 						"Insert MigrationMarkerPunctuation in Buffer for {} with timestamp {}", getName(), punctuation.getTime());
 			}
 			this.buffer.add(this.buffer.size() - 1, punctuation);
+			this.markerInserted = true;
 			this.newestTimestamp = null;
 		}
 	}
@@ -74,7 +99,10 @@ public class MigrationBuffer<T extends IStreamObject<?>> extends BufferPO<T> {
 	protected void process_next(T object, int port) {
 		synchronized (buffer) {
 			this.buffer.add(object);
-			if(this.waitForFirst || this.newestTimestamp != null) {
+			// if the received objects starttimestamp is after the latestEndTimestamp the MigrationMarkerPunctuation can be inserted.
+			if (!this.markerInserted && ((this.latestEndTimestamp != null && object.getMetadata()
+					.getStart().after(this.latestEndTimestamp))
+					|| this.waitForFirst || this.newestTimestamp != null)) {
 				this.waitForFirst = false;
 				insertMigrationMarkerPunctuation();
 			}
