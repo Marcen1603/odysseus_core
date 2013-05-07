@@ -282,5 +282,13 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public void setInOrder(boolean isInOrder) {
 		this.inOrder = isInOrder;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return getClass().getSimpleName()+"@"+hashCode()+" "+po.getName();
+	}
 
 }
