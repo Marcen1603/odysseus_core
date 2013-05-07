@@ -388,9 +388,8 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 			if (nr >= 0) {
 				return "['${aggregatefunction" + nr + "}', '${attribute" + nr + "}', '${aggregatename" + nr + "}', '${aggregatedatatype" + nr + "}']";
 				// return "['${aggregatefunction" + nr + "}', '${attribute" + nr + "}', '${aggregatename" + nr + "}', '${aggregate-datatype" + nr + "}']";
-			} else {
-				return "['', '', '', '']";
-			}
+			} 
+			return "['', '', '', '']";
 		} else if (param instanceof CreateSDFAttributeParameter) {
 			return "['${name}','${datatype}']";
 		}
