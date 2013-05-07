@@ -104,7 +104,10 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			}
 		}
 		ILogicalOperator ao = createNewAccessAO(sourceName);
-
+		// Assure that each accessoa with a name is registered
+		if (!getDataDictionary().containsViewOrStream(sourceName, this.getCaller())){
+			getDataDictionary().setStream(sourceName, ao, getCaller());
+		}
 		return ao;
 	}
 
@@ -217,6 +220,10 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	@Override
 	protected boolean internalValidation() {
 		String sourceName = this.sourceName.getValue();
+		
+		if (getDataDictionary().hasEntitySchema(sourceName, getCaller())){
+			throw new QueryParseException("Sourcename "+sourceName+" for AccessAO is already in used (e.g. by a view). Choose another source name!");
+		}
 
 		if (getDataDictionary().containsViewOrStream(sourceName, getCaller())) {
 			if (host.hasValue() || type.hasValue() || port.hasValue() || outputschema.hasValue() || options.hasValue() || inputSchema.hasValue() || adapter.hasValue() || input.hasValue()

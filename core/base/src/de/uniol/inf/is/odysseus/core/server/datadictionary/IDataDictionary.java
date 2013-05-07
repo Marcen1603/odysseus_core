@@ -46,6 +46,9 @@ public interface IDataDictionary extends IAddDataType {
 
 	SDFSchema getEntitySchema(String uri, ISession caller)
 			throws PermissionException, DataDictionaryException;
+	
+	boolean hasEntitySchema(String uri, ISession caller)
+			throws PermissionException, DataDictionaryException;
 
 	void removeEntitySchema(String uri, ISession caller)
 			throws PermissionException, DataDictionaryException;

@@ -183,6 +183,17 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 	
 	@Override
+	public boolean hasEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
+		checkAccessRights(uri, caller, DataDictionaryPermission.GET_ENTITY);
+		SDFSchema ret = entityMap.get(uri);
+		if (ret == null) {
+			ret = entityMap.get(createUserUri(uri, caller));
+		}
+		return ret != null;
+	}
+	
+	
+	@Override
 	public void removeEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
 		checkAccessRights(uri, caller, DataDictionaryPermission.REMOVE_ENTITY);
 		entityMap.remove(uri);
