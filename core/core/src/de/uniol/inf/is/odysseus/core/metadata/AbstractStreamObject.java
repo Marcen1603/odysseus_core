@@ -87,6 +87,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 	// Merge
 	// -------------------------------------
 
+	@Override
 	public IStreamObject<T> merge(IStreamObject<T> left,
 			IStreamObject<T> right, IMetadataMergeFunction<T> metamerge,
 			Order order) {
@@ -126,6 +127,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 		throw new IllegalArgumentException("Results cannot be merged!");
 	}
 
+	@Override
 	abstract public AbstractStreamObject<T> clone();
 
 	@Override

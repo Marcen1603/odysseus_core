@@ -38,6 +38,7 @@ public class RelationalChangeDetectPO extends ChangeDetectPO<Tuple<?>> {
 		this.comparePositions = pipe.comparePositions;
 	}
 
+	@Override
 	protected boolean areDifferent(Tuple<?> object, Tuple<?> lastElement){
 		return !Tuple.equalsAt(object, lastElement, comparePositions);
 	}		

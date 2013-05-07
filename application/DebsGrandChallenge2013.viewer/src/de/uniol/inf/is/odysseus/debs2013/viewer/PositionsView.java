@@ -114,6 +114,7 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 		super.initView(parent);
 
 		soccerFieldDraw.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent e) {
 				  GC gc = new GC(soccerFieldDraw);
 				  Font fontPlayerId = new Font(e.display,"Arial", fontSize, SWT.BOLD | SWT.ITALIC);

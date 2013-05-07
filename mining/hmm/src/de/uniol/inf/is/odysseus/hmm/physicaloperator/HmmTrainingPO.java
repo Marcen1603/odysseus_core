@@ -53,6 +53,7 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 		return null;
 	}
 	
+	@Override
 	protected void process_open() {
 		//init
 		tracked = true;
@@ -137,6 +138,7 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 		}, 2000, 2000);
 	}
 	
+	@Override
 	protected void process_close() {
 //		startTimer.cancel();
 		System.out.println("process_close()");

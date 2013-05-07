@@ -55,7 +55,7 @@ public class HmmRecognitionPO<M extends ITimeInterval> extends	AbstractPipe<Tupl
 		@SuppressWarnings("unchecked")
 		int observation = ((ArrayList<Integer>) object.getAttribute(0)).get(0);
 
-		//1) Window-Einträge (Gruppen) checken. Gruppen mit alten Timestamps rauslöschen.
+		//1) Window-Eintrï¿½ge (Gruppen) checken. Gruppen mit alten Timestamps rauslï¿½schen.
 		hmmWindow.sweapOldItems();
 		
 		//2) Neue Gruppe anlegen, die Alphas aufnimmt
@@ -63,10 +63,10 @@ public class HmmRecognitionPO<M extends ITimeInterval> extends	AbstractPipe<Tupl
 //		newAlphaGroup.setTimestamp(currentTimestamp);
 		
 		//Beobachtung kommt an
-		//3) Durch Beobachtung für jede Geste eine neue Alphas anlegen
+		//3) Durch Beobachtung fï¿½r jede Geste eine neue Alphas anlegen
 		for (int i = 0; i < gesturelist.size(); i++) {
 			HmmAlphas newAlphas = new HmmAlphas(gesturelist.get(i).getNumStates());
-			//tuple<m> object übergeben an newAlphaRow und mit Forward Algo, Init-Alphawerte berechnen
+			//tuple<m> object ï¿½bergeben an newAlphaRow und mit Forward Algo, Init-Alphawerte berechnen
 			hmm.forwardInit(gesturelist.get(i), newAlphas, observation);
 			newAlphaGroup.addRow(newAlphas);
 		}
@@ -103,7 +103,7 @@ public class HmmRecognitionPO<M extends ITimeInterval> extends	AbstractPipe<Tupl
 			if(gestureIndex != -1) {
 				System.err.println("AlphaGroup: " + i + " " + gesturelist.get(gestureIndex).getName() + ": " + probs[gestureIndex]);
 			} else {
-//				System.out.println("AlphaGroup: " + i + " nüx");
+//				System.out.println("AlphaGroup: " + i + " nï¿½x");
 			}
 //			System.out.println("--------------------------");
 		}
@@ -127,6 +127,7 @@ public class HmmRecognitionPO<M extends ITimeInterval> extends	AbstractPipe<Tupl
 
 	}
 	
+	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		gesturelist = FileHandlerHMM.loadHMMConfigFromFile(pathToConfigfiles);
@@ -147,10 +148,10 @@ public class HmmRecognitionPO<M extends ITimeInterval> extends	AbstractPipe<Tupl
 //		System.out.println("wkeit: " + wkeit);
 //		//**
 //		//groesse des Windows festlegen
-//		//TODO Parameter per Operator übergeben
+//		//TODO Parameter per Operator ï¿½bergeben
 //		hmmWindow = new HmmWindow(timewindow);
 //		
-//		//Gestenobjekte erzeugen - zu jeder Geste existiert eine CSV-Datei mit Anz Zustände, Übergangstabelle A und B
+//		//Gestenobjekte erzeugen - zu jeder Geste existiert eine CSV-Datei mit Anz Zustï¿½nde, ï¿½bergangstabelle A und B
 //		//TODO alle Dateien einlesen und Gestenobjekt initialisieren
 	}
 

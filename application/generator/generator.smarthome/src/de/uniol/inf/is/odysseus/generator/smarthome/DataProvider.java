@@ -48,6 +48,7 @@ public class DataProvider extends StreamClientHandler {
 		this.reader = reader;
 	}	
 
+	@Override
 	public String getStreamName(){
 		return this.streamName;
 	}

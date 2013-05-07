@@ -31,6 +31,7 @@ public class CoalesceAO extends AggregateAO {
 		heartbeatrate = coalesceAO.heartbeatrate;
 	}
 
+	@Override
 	@Parameter(name = "ATTR", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
 	public void setGroupingAttributes(List<SDFAttribute> attributes) {
 		for (SDFAttribute a : attributes) {

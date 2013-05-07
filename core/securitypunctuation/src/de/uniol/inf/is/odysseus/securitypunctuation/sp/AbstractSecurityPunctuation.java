@@ -44,26 +44,32 @@ public abstract class AbstractSecurityPunctuation extends AbstractPunctuation im
 		super(punct);
 	}
 
+	@Override
 	public Object getAttribute(String key) {
 		return attributes.get(key);
 	}
 	
+	@Override
 	public Long getLongAttribute(String key) {
 		return (Long) attributes.get(key);
 	}
 	
+	@Override
 	public Integer getIntegerAttribute(String key) {
 		return (Integer) attributes.get(key);
 	}
 	
+	@Override
 	public String getStringAttribute(String key) {
 		return (String) attributes.get(key);
 	}
 	
+	@Override
 	public String[] getStringArrayAttribute(String key) {
 		return (String[]) attributes.get(key);
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public ArrayList<String> getStringArrayListAttribute(String key) {
 		return (ArrayList<String>) attributes.get(key);
@@ -80,10 +86,12 @@ public abstract class AbstractSecurityPunctuation extends AbstractPunctuation im
 	public void setSchema(SDFSchema schema) {
 		this.schema = schema;
 	}
+	@Override
 	public SDFSchema getSchema() {
 		return this.schema;
 	}
 	
+	@Override
 	public int getNumberofAttributes() {
 		return attributes.size();
 	}

@@ -144,6 +144,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 	}
 
+	@Override
 	public IMetadataMergeFunction<Q> getMetadataMerge() {
 		return metadataMerge;
 	}

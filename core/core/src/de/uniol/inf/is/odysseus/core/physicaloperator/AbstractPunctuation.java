@@ -57,8 +57,10 @@ abstract public class AbstractPunctuation implements
 		return false;
 	}
 	
+	@Override
 	abstract public AbstractPunctuation clone();
 
+	@Override
 	abstract public AbstractPunctuation clone(PointInTime newTime);
 
 }

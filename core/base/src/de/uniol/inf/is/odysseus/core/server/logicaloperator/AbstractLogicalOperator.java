@@ -264,38 +264,47 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		this.name = name;
 	}
 
+	@Override
 	public void addOwner(IOperatorOwner owner) {
 		ownerHandler.addOwner(owner);
 	}
 
+	@Override
 	public void addOwner(Collection<IOperatorOwner> owner) {
 		ownerHandler.addOwner(owner);
 	}
 
+	@Override
 	public void removeOwner(IOperatorOwner owner) {
 		ownerHandler.removeOwner(owner);
 	}
 
+	@Override
 	public void removeAllOwners() {
 		ownerHandler.removeAllOwners();
 	}
 
+	@Override
 	public boolean isOwnedBy(IOperatorOwner owner) {
 		return ownerHandler.isOwnedBy(owner);
 	}
 
+	@Override
 	public boolean isOwnedByAny(List<IOperatorOwner> owners) {
 		return ownerHandler.isOwnedByAny(owners);
 	}
 
+	@Override
 	public boolean hasOwner() {
 		return ownerHandler.hasOwner();
 	}
 
+	@Override
 	public List<IOperatorOwner> getOwner() {
 		return ownerHandler.getOwner();
 	}
 
+	@Override
 	public String getOwnerIDs() {
 		return ownerHandler.getOwnerIDs();
 	}

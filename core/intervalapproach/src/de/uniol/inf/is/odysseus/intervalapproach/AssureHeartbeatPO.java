@@ -119,6 +119,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 		sendPunctuation(punctuation);
 	}
 
+	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
 		PointInTime timestamp = punctuation.getTime();
 		//System.err.println("Send Punctuation " + timestamp);

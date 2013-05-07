@@ -121,6 +121,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		return this.requirement == REQUIREMENT.MANDATORY;
 	}
 
+	@Override
 	public boolean isDeprecated() {
 		return this.usage == USAGE.DEPRECATED;
 	}

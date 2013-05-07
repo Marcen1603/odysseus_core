@@ -41,6 +41,7 @@ public class ClassificationAO extends AbstractLogicalOperator {
 		
 	}
 
+	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 
 		List<SDFAttribute> attributes = new ArrayList<>();

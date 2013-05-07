@@ -61,6 +61,7 @@ public class SDFIntervalDatatype extends SDFDatatype {
 	public static final SDFDatatype INTERVAL_BYTE = new SDFIntervalDatatype(
 			"IntervalByte");
 
+	@Override
 	public boolean isNumeric() {
 		return (this.getURI().equals(INTERVAL_LONG.getURI())
 				|| this.getURI().equals(INTERVAL_INTEGER.getURI())
@@ -70,26 +71,32 @@ public class SDFIntervalDatatype extends SDFDatatype {
 				.getURI().equals(INTERVAL_BYTE.getURI()));
 	}
 
+	@Override
 	public boolean isDouble() {
 		return this.getURI().equals(INTERVAL_DOUBLE.getURI());
 	}
 
+	@Override
 	public boolean isInteger() {
 		return this.getURI().equals(INTERVAL_INTEGER.getURI());
 	}
 
+	@Override
 	public boolean isLong() {
 		return this.getURI().equals(INTERVAL_LONG.getURI());
 	}
 
+	@Override
 	public boolean isFloat() {
 		return this.getURI().equals(INTERVAL_FLOAT.getURI());
 	}
 
+	@Override
 	public boolean isShort() {
 		return this.getURI().equals(INTERVAL_SHORT.getURI());
 	}
 
+	@Override
 	public boolean isByte() {
 		return this.getURI().equals(INTERVAL_BYTE.getURI());
 	}

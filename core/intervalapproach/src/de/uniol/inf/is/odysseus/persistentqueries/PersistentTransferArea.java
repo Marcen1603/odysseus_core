@@ -122,6 +122,7 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 		return new PersistentTransferArea<R, W>(this);
 	}
 
+	@Override
 	public void newHeartbeat(PointInTime heartbeat, int inPort) {
 		PointInTime minimum = null;
 		synchronized (minTs) {

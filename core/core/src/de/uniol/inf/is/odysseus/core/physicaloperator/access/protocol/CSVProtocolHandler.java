@@ -162,6 +162,7 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		return retValue;
 	}
 	
+	@Override
 	public void write(T object) throws IOException {
 		if (object instanceof ICSVToString){
 			writer.write(((ICSVToString)object).csvToString());

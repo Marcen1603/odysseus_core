@@ -144,6 +144,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 		return new DirectAttributeResolver(this);
 	}
 
+	@Override
 	public SDFSchema getSchema() {
 		return this.schema;
 	}

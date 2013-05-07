@@ -36,7 +36,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	private ArrayList<Integer> evaluateAttributesCache = new ArrayList<Integer>();
 	
 	/**
-	 * Gibt an, ob die Attribute der SP leer sind - die SP also keinerlei Zugriff gewährt.
+	 * Gibt an, ob die Attribute der SP leer sind - die SP also keinerlei Zugriff gewï¿½hrt.
 	 */
 	private Boolean isEmpty;
 	
@@ -97,6 +97,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		this.setAttribute("ts", ts);
 	}
 	
+	@Override
 	public Boolean evaluate(Long tupleTS, List<String> userRoles, Tuple<?> tuple, SDFSchema schema) {
 		if( !this.isEmpty()
 			&& this.getIntegerAttribute("sign") == 1 
@@ -170,7 +171,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 					}
 				}
 				if(setToNull) {
-					//Timestamp wird evtl. nochmal benötigt, wenn SecShield variabel in die Anfrage eingebaut wird.
+					//Timestamp wird evtl. nochmal benï¿½tigt, wenn SecShield variabel in die Anfrage eingebaut wird.
 					if(!schemaAttribute.equals("ts")) {
 						tuple.setAttribute(i, (Object) null);
 						evaluateAttributesCache.add(i);
@@ -211,7 +212,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 
 	/**
 	 * Logik zum entscheiden, ob auf Tupel union() oder intersect() angewendet werden soll.
-	 * Falls beides nicht zutrifft wird null zurückgegeben.
+	 * Falls beides nicht zutrifft wird null zurï¿½ckgegeben.
 	 */
 	@Override
 	public ISecurityPunctuation processSP(ISecurityPunctuation isp) {
@@ -239,7 +240,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 	
 	/**
-	 * Vereinigt zwei SP und gibt null zurück, falls die Bedingungen für eine Vereinigung nicht erfüllt sind
+	 * Vereinigt zwei SP und gibt null zurï¿½ck, falls die Bedingungen fï¿½r eine Vereinigung nicht erfï¿½llt sind
 	 */
 	@Override
 	public ISecurityPunctuation union(ISecurityPunctuation sp2) {
@@ -250,20 +251,20 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 				
 				newSP.mergeStringArrayList(newSP.getStringArrayListAttribute("streamname"), sp2.getStringArrayListAttribute("streamname"));
 				
-				// kleineren Wählen --> Bereich wird größer
+				// kleineren Wï¿½hlen --> Bereich wird grï¿½ï¿½er
 				if(newSP.getLongAttribute("tupleStartTS") > sp2.getLongAttribute("tupleStartTS")) {
 					newSP.setAttribute("tupleStartTS", sp2.getLongAttribute("tupleStartTS"));
 				} 
 				
-				// größeren Wählen --> Bereich wird größer
+				// grï¿½ï¿½eren Wï¿½hlen --> Bereich wird grï¿½ï¿½er
 				if(newSP.getLongAttribute("tupleEndTS") < sp2.getLongAttribute("tupleEndTS")) {
 					newSP.setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
 				} 
 				newSP.mergeStringArrayList(newSP.getStringArrayListAttribute("attributeNames"), sp2.getStringArrayListAttribute("attributeNames"));
 				newSP.mergeStringArrayList(newSP.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
 				
-				newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
-				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung möglich sein.
+				newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn fï¿½r Tuple, die noch unterwegs sind und vorrangegangene Tupel einschrï¿½nken kï¿½nnen
+				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung mï¿½glich sein.
 				if(sp2.getLongAttribute("ts") > newSP.getLongAttribute("ts")) {
 					newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
 				} 
@@ -273,12 +274,12 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 
 				//MUSS EIGENTLICH IRGENWIE ANDERS!!!!
 				
-				// kleineren Wählen --> Bereich wird größer
+				// kleineren Wï¿½hlen --> Bereich wird grï¿½ï¿½er
 				if(newSP.getLongAttribute("tupleStartTS") > sp2.getLongAttribute("tupleStartTS")) {
 					newSP.setAttribute("tupleStartTS", sp2.getLongAttribute("tupleStartTS"));
 				} 
 				
-				// größeren Wählen --> Bereich wird größer
+				// grï¿½ï¿½eren Wï¿½hlen --> Bereich wird grï¿½ï¿½er
 				if(newSP.getLongAttribute("tupleEndTS") < sp2.getLongAttribute("tupleEndTS")) {
 					newSP.setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
 				} 
@@ -286,8 +287,8 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 				newSP.minusStringArrayList(newSP.getStringArrayListAttribute("attributeNames"), sp2.getStringArrayListAttribute("attributeNames"));
 				newSP.minusStringArrayList(newSP.getStringArrayListAttribute("role"), sp2.getStringArrayListAttribute("role"));
 
-				newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
-				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung möglich sein
+				newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn fï¿½r Tuple, die noch unterwegs sind und vorrangegangene Tupel einschrï¿½nken kï¿½nnen
+				newSP.setAttribute("mutable", 1); //Falls weitere Tupel ankommen die mutable = 2 haben, soll auch die Verarbeitung mï¿½glich sein
 				if(sp2.getLongAttribute("ts") > newSP.getLongAttribute("ts")) {
 					newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
 				} 
@@ -308,20 +309,20 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 
 			newSP.intersectStringArrayList("streamname", sp2.getStringArrayListAttribute("streamname"));
 				
-			// größeren Wählen --> Bereich wird kleiner
+			// grï¿½ï¿½eren Wï¿½hlen --> Bereich wird kleiner
 			if(newSP.getLongAttribute("tupleStartTS") < sp2.getLongAttribute("tupleStartTS")) {
 				newSP.setAttribute("tupleStartTS", sp2.getLongAttribute("tupleStartTS"));
 			} 
 				
-			// kleineren Wählen --> Bereich wird kleiner
+			// kleineren Wï¿½hlen --> Bereich wird kleiner
 			if(newSP.getLongAttribute("tupleEndTS") > sp2.getLongAttribute("tupleEndTS")) {
 				newSP.setAttribute("tupleEndTS", sp2.getLongAttribute("tupleEndTS"));
 			} 
 			newSP.intersectStringArrayList("attributeNames", sp2.getStringArrayListAttribute("attributeNames"));
 			newSP.intersectStringArrayList("role", sp2.getStringArrayListAttribute("role"));
 
-			newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn für Tuple, die noch unterwegs sind und vorrangegangene Tupel einschränken können
-			newSP.setAttribute("mutable", 0); //Da intersect z.B. beim Join ausgeführt wird und die SP danach nicht mehr geändert werden können sollen.
+			newSP.setAttribute("sign", 1); //Sign = 0 macht nur Sinn fï¿½r Tuple, die noch unterwegs sind und vorrangegangene Tupel einschrï¿½nken kï¿½nnen
+			newSP.setAttribute("mutable", 0); //Da intersect z.B. beim Join ausgefï¿½hrt wird und die SP danach nicht mehr geï¿½ndert werden kï¿½nnen sollen.
 			if(sp2.getLongAttribute("ts") > newSP.getLongAttribute("ts")) {
 				newSP.setAttribute("ts", sp2.getLongAttribute("ts"));
 			} 
@@ -397,6 +398,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		this.setAttribute(attribute, list);
 	}
 	
+	@Override
 	public Boolean isEmpty() {
 		if(isEmpty == null) {
 			isEmpty = this.getStringArrayListAttribute("attributeNames").isEmpty()

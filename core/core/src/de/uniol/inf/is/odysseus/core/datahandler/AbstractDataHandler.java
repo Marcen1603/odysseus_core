@@ -87,6 +87,7 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 		return schema;
 	}
 	
+	@Override
 	public void setSchema(SDFSchema schema) {
 		this.schema = schema;
 	}

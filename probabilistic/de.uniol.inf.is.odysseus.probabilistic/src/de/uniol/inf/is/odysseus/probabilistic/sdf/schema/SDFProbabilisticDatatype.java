@@ -120,6 +120,7 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
 						SDFProbabilisticDatatype.PROBABILISTIC_STRING.getURI()));
 	}
 
+	@Override
 	public boolean isNumeric() {
 		return (this.getURI().equals(PROBABILISTIC_LONG.getURI())
 				|| this.getURI().equals(PROBABILISTIC_INTEGER.getURI())
@@ -139,40 +140,47 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
 				.getURI().equals(PROBABILISTIC_CONTINUOUS_BYTE.getURI()));
 	}
 
+	@Override
 	public boolean isDouble() {
 		return this.getURI().equals(PROBABILISTIC_DOUBLE.getURI())
 				|| this.getURI().equals(
 						PROBABILISTIC_CONTINUOUS_DOUBLE.getURI());
 	}
 
+	@Override
 	public boolean isInteger() {
 		return this.getURI().equals(PROBABILISTIC_INTEGER.getURI())
 				|| this.getURI().equals(
 						PROBABILISTIC_CONTINUOUS_INTEGER.getURI());
 	}
 
+	@Override
 	public boolean isLong() {
 		return this.getURI().equals(PROBABILISTIC_LONG.getURI())
 				|| this.getURI().equals(PROBABILISTIC_CONTINUOUS_LONG.getURI());
 	}
 
+	@Override
 	public boolean isFloat() {
 		return this.getURI().equals(PROBABILISTIC_FLOAT.getURI())
 				|| this.getURI()
 						.equals(PROBABILISTIC_CONTINUOUS_FLOAT.getURI());
 	}
 
+	@Override
 	public boolean isShort() {
 		return this.getURI().equals(PROBABILISTIC_SHORT.getURI())
 				|| this.getURI()
 						.equals(PROBABILISTIC_CONTINUOUS_SHORT.getURI());
 	}
 
+	@Override
 	public boolean isByte() {
 		return this.getURI().equals(PROBABILISTIC_BYTE.getURI())
 				|| this.getURI().equals(PROBABILISTIC_CONTINUOUS_BYTE.getURI());
 	}
 
+	@Override
 	public boolean isString() {
 		return this.getURI().equals(PROBABILISTIC_STRING.getURI());
 	}

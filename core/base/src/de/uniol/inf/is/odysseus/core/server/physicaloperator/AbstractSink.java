@@ -198,6 +198,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
 	}
 
+	@Override
 	public void open(IOperatorOwner owner) throws OpenFailedException {
 		List<IOperatorOwner> forOwners = null;
 		if (owner != null) {
@@ -404,6 +405,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		this.infos.put(key, value.toString());		
 	}
 		
+	@Override
 	public void setParameterInfos(Map<String, String> infos) {
 		this.infos = infos;
 	}
@@ -441,38 +443,47 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// Owner Management
 	// ------------------------------------------------------------------------
 
+	@Override
 	public void addOwner(IOperatorOwner owner) {
 		ownerHandler.addOwner(owner);
 	}
 
+	@Override
 	public void addOwner(Collection<IOperatorOwner> owner) {
 		ownerHandler.addOwner(owner);
 	}
 
+	@Override
 	public void removeOwner(IOperatorOwner owner) {
 		ownerHandler.removeOwner(owner);
 	}
 
+	@Override
 	public void removeAllOwners() {
 		ownerHandler.removeAllOwners();
 	}
 
+	@Override
 	public boolean isOwnedBy(IOperatorOwner owner) {
 		return ownerHandler.isOwnedBy(owner);
 	}
 
+	@Override
 	public boolean isOwnedByAny(List<IOperatorOwner> owners) {
 		return ownerHandler.isOwnedByAny(owners);
 	}
 
+	@Override
 	public boolean hasOwner() {
 		return ownerHandler.hasOwner();
 	}
 
+	@Override
 	public List<IOperatorOwner> getOwner() {
 		return ownerHandler.getOwner();
 	}
 
+	@Override
 	public String getOwnerIDs() {
 		return ownerHandler.getOwnerIDs();
 	}
@@ -545,7 +556,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 				sinkInPort = sub.getSinkInPort();
 			}
 		}
-		// und erhöhe um eins
+		// und erhï¿½he um eins
 		sinkInPort++;
 		return sinkInPort;
 	}

@@ -45,6 +45,7 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 		this.classAttribute = classificationLearnAO.classAttribute;
 	}
 
+	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();

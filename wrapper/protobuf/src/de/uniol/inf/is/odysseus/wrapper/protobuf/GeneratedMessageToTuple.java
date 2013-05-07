@@ -43,6 +43,7 @@ public class GeneratedMessageToTuple extends
 		this.schema = schema;
 	}
 
+	@Override
 	public GeneratedMessageToTuple getInstance(Map<String, String> options, SDFSchema schema) {
 		GeneratedMessageToTuple ret = instanceMap.get(schema);
 		if (ret == null){

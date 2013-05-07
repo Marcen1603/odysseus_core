@@ -72,6 +72,7 @@ public class FileHandler extends AbstractFileHandler {
 		InputStream istream = new InputStream() {
 			private int current = 0;
 
+			@Override
 			public int read() throws IOException {
 				if (!buffers[current].hasRemaining()) {
 					current++;

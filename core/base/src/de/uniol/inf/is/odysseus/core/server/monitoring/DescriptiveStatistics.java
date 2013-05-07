@@ -55,6 +55,7 @@ public class DescriptiveStatistics implements IDescriptiveStatistics{
 		return this.count;
 	}
 
+	@Override
 	public void addValue(long value) {
 		if (isEvaluated) {
 			throw new RuntimeException(

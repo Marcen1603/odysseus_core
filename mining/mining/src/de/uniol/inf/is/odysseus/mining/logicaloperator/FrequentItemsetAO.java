@@ -35,6 +35,7 @@ public class FrequentItemsetAO extends AbstractLogicalOperator {
 		return new FrequentItemsetAO(this);
 	}
 
+	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		if (pos == 0) {
 			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();

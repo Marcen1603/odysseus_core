@@ -21,5 +21,6 @@ public interface ITimeIntervalSweepArea<T> extends ITemporalSweepArea<T>{
 
 	public PointInTime getMaxTs();
 	public PointInTime getMinTs();
+	@Override
 	public ITimeIntervalSweepArea<T> clone();
 }

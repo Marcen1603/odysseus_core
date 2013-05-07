@@ -110,9 +110,9 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		}
 		// daten werden verarbeitet, weil wir einen zeitfortschritt haben
 		processData(object.getMetadata().getStart());
-		// anschließend kann das aktuelle Element rein
-		// das aktuelle element wird nicht berücksichtigt, weil ggf. andere
-		// elemente denselben startzeitstempel haben können
+		// anschlieï¿½end kann das aktuelle Element rein
+		// das aktuelle element wird nicht berï¿½cksichtigt, weil ggf. andere
+		// elemente denselben startzeitstempel haben kï¿½nnen
 		// und die sind noch unbekannt.
 		sweepArea.insert(object);
 		counter++;
@@ -121,23 +121,23 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 
 	private void processData(PointInTime currentTime) {		
 		if (currentTime.after(lastCut)) {
-			// hole alle elemente, die definitiv bearbeitet werden können, weil
+			// hole alle elemente, die definitiv bearbeitet werden kï¿½nnen, weil
 			// sie echt vor der aktuellen zeit sind
 			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
 
-			// baue daraus eine transaktion und zähle die vorkommen für die
+			// baue daraus eine transaktion und zï¿½hle die vorkommen fï¿½r die
 			// flist
 			Transaction<M> transaction = new Transaction<M>();
 			while (qualifies.hasNext()) {
 				// wir holen eine kopie
 				Tuple<M> next = qualifies.next().clone();
-				// transaction sorgt dafür, dass alle elemente dieselben zeiten
+				// transaction sorgt dafï¿½r, dass alle elemente dieselben zeiten
 				// haben
 				transaction.addElement(next);
 				this.flist.insertTuple(next);
 			}
 
-			// wenn wir mehr transactions als benötigt angeschaut haben, dann
+			// wenn wir mehr transactions als benï¿½tigt angeschaut haben, dann
 			// entfernen wir zu alte wieder
 			if (this.transactions.size() == this.maxTransactions) {
 				Transaction<M> removed = this.transactions.remove(0);
@@ -202,7 +202,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			}
 
 			lastCut = currentTime;
-			// als letztes können wir noch alle Elemente rauswerfen, die in
+			// als letztes kï¿½nnen wir noch alle Elemente rauswerfen, die in
 			// Zukunft unwichtig sind
 			sweepArea.purgeElementsBefore(currentTime);			
 		}
@@ -239,7 +239,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 				condTree.insertTree(path);
 			}
 			// condTree.printTree();
-			// REMOVE INFREQUENT (bei e wäre es b)
+			// REMOVE INFREQUENT (bei e wï¿½re es b)
 			condTree.removeWithoutMinSupport(minsupport);
 			// condTree.printTree();
 			// if conditional tree is not empty, call recursively fpgrowth
@@ -290,6 +290,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	/**
 	 * @return
 	 */
+	@Override
 	public IMetadataMergeFunction<M> getMetadataMerge() {
 		return this.metadatamergefunction;
 	}

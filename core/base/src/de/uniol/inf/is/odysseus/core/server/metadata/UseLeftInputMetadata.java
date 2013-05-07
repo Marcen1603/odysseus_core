@@ -29,6 +29,7 @@ public class UseLeftInputMetadata<T> implements IMetadataMergeFunction<T> {
 	public void init() {
 	}
 
+	@Override
 	public IMetadataMergeFunction<T> clone(){
 		return this;
 	}

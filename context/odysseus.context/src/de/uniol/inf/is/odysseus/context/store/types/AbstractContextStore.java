@@ -72,6 +72,7 @@ public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterv
 		this.schema = schema;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -80,6 +81,7 @@ public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterv
 		this.name = name;
 	}
 	
+	@Override
 	public int getSize(){
 		return this.size;
 	}
@@ -91,10 +93,12 @@ public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterv
 		return false;
 	}
 	
+	@Override
 	public void addListener(IContextStoreListener listener){
 		this.listeners.add(listener);
 	}
 	
+	@Override
 	public void removeListener(IContextStoreListener listener){
 		this.listeners.remove(listener);
 	}
@@ -105,26 +109,32 @@ public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterv
 		}
 	}
 	
+	@Override
 	public void setWriter(StorePO<T> storePO){
 		this.writer = storePO;
 		logger.debug("set "+this.writer+" as writer for context store "+this);
 	}
 	
+	@Override
 	public boolean hasWriter(){
 		return this.writer!=null;
 	}
+	@Override
 	public void removeWriter(){
 		logger.debug("remove "+this.writer+" as writer for context store "+this);
 		this.writer=null;		
 	}
+	@Override
 	public StorePO<T> getWriter(){
 		return this.writer;
 	}
 	
+	@Override
 	public void open(){
 		notifyListener();
 	}
 	
+	@Override
 	public void close(){
 		internalClear();
 	}

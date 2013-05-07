@@ -147,6 +147,7 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 		return dataMerge;
 	}
 
+	@Override
 	public IMetadataMergeFunction<K> getMetadataMerge() {
 		return metadataMerge;
 	}

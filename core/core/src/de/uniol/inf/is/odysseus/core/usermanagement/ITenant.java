@@ -5,6 +5,7 @@ import java.security.Principal;
 
 public interface ITenant extends IAbstractEntity, Principal, Comparable<ITenant>, Serializable{
 	
+	@Override
 	String getName();
 	void setName(String name);
 

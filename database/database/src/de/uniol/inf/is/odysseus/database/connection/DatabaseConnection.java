@@ -91,6 +91,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 		return this.connection;
 	}
 
+	@Override
 	public boolean testConnection() {
 		try {
 			assertConnection();

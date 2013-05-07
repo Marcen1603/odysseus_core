@@ -116,6 +116,7 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 	public void createPartControl(Composite parent) {
 		super.initView(parent);
 		soccerFieldDraw.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent e) {
 				  GC gc = new GC(soccerFieldDraw);
 				  Font fontTime = new Font(e.display,"Arial", 9, SWT.BOLD | SWT.ITALIC);

@@ -155,6 +155,7 @@ class KMLHandler extends DefaultHandler {
 	 * @exception SAXException
 	 *                Description of the Exception
 	 */
+	@Override
 	public void startElement(String uri, String name, String qName,
 			Attributes atts) throws SAXException {
 		if (name.equalsIgnoreCase(GMLConstants.GML_POLYGON) || name.equalsIgnoreCase(GMLConstants.GML_POINT)) {
@@ -168,6 +169,7 @@ class KMLHandler extends DefaultHandler {
 //		}
 	}
 
+	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (currGeomHandler != null) {
@@ -180,6 +182,7 @@ class KMLHandler extends DefaultHandler {
 		}
 	}
 
+	@Override
 	public void ignorableWhitespace(char[] ch, int start, int length)
 			throws SAXException {
 		if (currGeomHandler != null)
@@ -199,6 +202,7 @@ class KMLHandler extends DefaultHandler {
 	 * @exception SAXException
 	 *                Description of the Exception
 	 */
+	@Override
 	public void endElement(String uri, String name, String qName)
 			throws SAXException {
 //		System.out.println("/" + name);
@@ -236,6 +240,7 @@ class FixingGeometryFactory extends GeometryFactory {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
 	public LinearRing createLinearRing(CoordinateSequence cs) {
 		if (cs.getCoordinate(0).equals(cs.getCoordinate(cs.size() - 1)))
 			return super.createLinearRing(cs);

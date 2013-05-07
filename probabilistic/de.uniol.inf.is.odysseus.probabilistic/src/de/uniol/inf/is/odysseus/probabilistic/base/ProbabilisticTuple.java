@@ -314,7 +314,8 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
      * de.uniol.inf.is.odysseus.core.metadata.IStreamObject,
      * de.uniol.inf.is.odysseus.core.Order)
      */
-    protected IStreamObject<T> process_merge(IStreamObject<T> left, IStreamObject<T> right, Order order) {
+    @Override
+	protected IStreamObject<T> process_merge(IStreamObject<T> left, IStreamObject<T> right, Order order) {
         if (order == Order.LeftRight) {
             return processMergeInternal((ProbabilisticTuple<T>) left, (ProbabilisticTuple<T>) right);
         } else {

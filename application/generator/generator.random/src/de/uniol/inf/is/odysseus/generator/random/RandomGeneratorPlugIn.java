@@ -10,6 +10,7 @@ public class RandomGeneratorPlugIn implements BundleActivator {
 	private RandomStreamClientHandler handler1;
 	private RandomStreamClientHandler handler2;
 	
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		System.out.println("Start Generators of random numbers");
 		
@@ -22,6 +23,7 @@ public class RandomGeneratorPlugIn implements BundleActivator {
 		streamServer2.start();
 	}
 
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		System.out.println("Stop Generators of random numbers");
 		

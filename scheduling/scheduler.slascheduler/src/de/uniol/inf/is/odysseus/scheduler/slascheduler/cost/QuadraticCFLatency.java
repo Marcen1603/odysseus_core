@@ -36,6 +36,7 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 	 *            the sla
 	 * @return the index of the currenly held service level
 	 */
+	@Override
 	public int getCurrentServiceLevelIndex(double conformance, SLA sla) {
 		for (int i = 0; i < sla.getServiceLevel().size(); i++) {
 			if (conformance < sla.getServiceLevel().get(i).getThreshold()) {

@@ -29,6 +29,7 @@ public abstract class AbstractProbabilityChart<T, M extends IMetaAttribute> exte
 		// We need this
 	}
 	
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void initWithOperator(IPhysicalOperator observingOperator) {
 		// create connection

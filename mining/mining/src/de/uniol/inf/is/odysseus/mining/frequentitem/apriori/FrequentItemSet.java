@@ -72,6 +72,7 @@ public class FrequentItemSet<T, M extends ITimeInterval>{
 		return this.items.contains(item);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;

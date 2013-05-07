@@ -137,6 +137,7 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K
 		return new BufferedFilterPO<K, R>(this);
 	}
 
+	@Override
 	public IMetadataMergeFunction<K> getMetadataMerge() {
 		return metadataMerge;
 	}

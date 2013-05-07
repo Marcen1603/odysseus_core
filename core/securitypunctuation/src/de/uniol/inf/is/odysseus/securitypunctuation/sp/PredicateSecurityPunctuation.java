@@ -107,6 +107,7 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 		return null;
 	}
 	
+	@Override
 	public Boolean isEmpty() {
 		if(isEmpty == null) {
 			// isEmpty �berpr�fen!!!

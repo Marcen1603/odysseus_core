@@ -71,6 +71,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 	}
 	
 	
+	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		if (pos == 0) {
 			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();

@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.securitypunctuation.sp.SecurityPunctuation;
 
 /**
- * @author Jan Sören Schwarz
+ * @author Jan Sï¿½ren Schwarz
  * @param <SecurityPunctuation>
  *
  */
@@ -65,6 +65,7 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPun
 	}
 	
 	
+	@Override
 	public ISecurityPunctuation readData(ByteBuffer buffer) {
 		Object[] objects = new Object[securityPunctuationHandlers.length];
 		for(int i=0; i < securityPunctuationHandlers.length; i++) {

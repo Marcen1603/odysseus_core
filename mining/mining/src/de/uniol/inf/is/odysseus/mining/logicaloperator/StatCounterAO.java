@@ -59,6 +59,7 @@ public class StatCounterAO extends AbstractLogicalOperator {
 		return new StatCounterAO(this);
 	}
 
+	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();

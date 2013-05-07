@@ -93,10 +93,12 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		}
 	}
 
+	@Override
 	public String getName(){
 		return this.name;
 	}
 	
+	@Override
 	public String getDoc() {
 		return this.doc;
 	}
@@ -114,6 +116,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		return this.errors;
 	}
 
+	@Override
 	public List<Exception> getWarnings(){
 		return this.warnings;
 	}

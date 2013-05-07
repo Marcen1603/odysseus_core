@@ -11,10 +11,12 @@ public class RCPStreamPlugIn implements BundleActivator {
 		return context;
 	}
 
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		RCPStreamPlugIn.context = bundleContext;
 	}
 
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		RCPStreamPlugIn.context = null;
 	}

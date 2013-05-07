@@ -50,9 +50,11 @@ public abstract class AbstractDatatypeMappingHandler<T> implements IDataTypeMapp
 	}
 		
 	
+	@Override
 	public SDFDatatype getDefaultSDFDatatype(){
 		return defaultSDFDatatype;
 	}
+	@Override
 	public int getDefaultSQLDatatype(){
 		return defaultDBMSType;
 	}

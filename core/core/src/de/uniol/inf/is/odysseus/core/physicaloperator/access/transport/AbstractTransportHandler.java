@@ -77,6 +77,7 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 		return this.exchangePattern;
 	}
 
+	@Override
 	final synchronized public void open() throws UnknownHostException, IOException {
 		if (openCounter == 0) {
 			if (getExchangePattern().equals(ITransportExchangePattern.InOnly) || getExchangePattern().equals(ITransportExchangePattern.InOptionalOut)

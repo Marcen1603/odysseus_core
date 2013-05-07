@@ -24,6 +24,7 @@ final public class Heartbeat extends AbstractPunctuation {
 		return this;
 	}
 	
+	@Override
 	public AbstractPunctuation clone(PointInTime point){
 		return new Heartbeat(point);
 	}

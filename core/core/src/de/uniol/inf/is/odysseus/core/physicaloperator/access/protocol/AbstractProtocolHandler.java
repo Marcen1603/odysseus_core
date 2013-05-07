@@ -58,11 +58,13 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
         return transfer;
     }
 
-    public final void setTransfer(ITransferHandler<T> transfer) {
+    @Override
+	public final void setTransfer(ITransferHandler<T> transfer) {
         this.transfer = transfer;
     }
 
-    public final void setTransportHandler(ITransportHandler transportHandler) {
+    @Override
+	public final void setTransportHandler(ITransportHandler transportHandler) {
         this.transportHandler = transportHandler;
     }
 

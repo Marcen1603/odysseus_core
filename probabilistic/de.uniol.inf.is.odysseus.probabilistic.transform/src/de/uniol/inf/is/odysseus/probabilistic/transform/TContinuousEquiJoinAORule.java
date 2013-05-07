@@ -48,6 +48,7 @@ public class TContinuousEquiJoinAORule extends
 		return 1;
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void execute(JoinAO joinAO,
 			TransformationConfiguration transformConfig) {

@@ -112,6 +112,7 @@ public class PlanAdaptionFitness implements IPlanAdaptionFitness {
 			this.base = base;
 		}
 		
+		@Override
 		public int compare(ILogicalOperator a, ILogicalOperator b) {
 			return base.get(a).compareTo(base.get(b));
 		}

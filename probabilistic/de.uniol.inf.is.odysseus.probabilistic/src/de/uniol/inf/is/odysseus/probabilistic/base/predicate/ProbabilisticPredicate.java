@@ -126,6 +126,7 @@ public class ProbabilisticPredicate extends
 		return (Boolean) this.expression.getValue();
 	}
 
+	@Override
 	public double probabilisticEvaluate(ProbabilisticTuple<?> input) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
@@ -180,6 +181,7 @@ public class ProbabilisticPredicate extends
 		return (Boolean) this.expression.getValue();
 	}
 
+	@Override
 	public double probabilisticEvaluate(ProbabilisticTuple<?> left,
 			ProbabilisticTuple<?> right) {
 		Object[] values = new Object[this.attributePositions.length];
