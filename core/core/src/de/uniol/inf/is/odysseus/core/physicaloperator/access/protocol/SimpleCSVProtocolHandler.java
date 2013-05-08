@@ -39,6 +39,7 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 	private long lastLine = -1;
 	private long counter = 0;
 	private boolean debug = false;
+	private boolean isDone = false;
 	private StringBuffer measurements = new StringBuffer("");
 	private long measureEachLine = -1;
 	private long lastDumpTime = 0;
@@ -118,6 +119,7 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 							.append("\n");
 					if (lastLine == counter) {
 						System.out.println(measurements);
+						isDone = true;
 					}
 				}
 				counter++;
@@ -155,6 +157,14 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		return instance;
 	}
 
+	@Override
+	public boolean isDone() {
+		if (debug){
+			return isDone;
+		}
+		return super.isDone();
+	}
+	
 	@Override
 	public String getName() {
 		return "SimpleCSV";

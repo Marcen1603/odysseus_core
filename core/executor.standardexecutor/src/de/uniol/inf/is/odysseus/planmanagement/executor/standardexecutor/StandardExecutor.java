@@ -75,6 +75,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exceptio
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQueryStarter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
@@ -101,7 +102,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadl
  * @author Wolf Bauer, Jonas Jacobi, Tobias Witt, Marco Grawunder, Dennis Geesen, Timo
  *         Michelsen (AC)
  */
-public class StandardExecutor extends AbstractExecutor implements IAdmissionListener {
+public class StandardExecutor extends AbstractExecutor implements IAdmissionListener, IQueryStarter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StandardExecutor.class);
 	private static final long ADMISSION_REACTION_INTERVAL_MILLIS = 10000;
@@ -623,7 +624,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			this.executionPlanLock.lock();
 			getOptimizer().beforeQueryStart(queryToStart, this.executionPlan);
 			executionPlanChanged();
-			queryToStart.open();
+			queryToStart.open(this);
 			LOG.debug("Query " + queryID + " started.");
 			firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_START, queryToStart));
 		} catch (Exception e) {
@@ -690,7 +691,10 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID);
 		validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
-		
+		stopQuery(queryToStop);
+	}
+
+	private void stopQuery(IPhysicalQuery queryToStop) {
 		if(hasPlanAdaptionEngine()) {
 			// stop adapting this query so the plan cannot change while trying to close it.
 			getPlanAdaptionEngine().setQueryAsStopped(queryToStop);
@@ -702,18 +706,23 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			executionPlanChanged();
 			if (isRunning()) {
 				queryToStop.close();
-				LOG.debug("Query " + queryID + " stopped.");
+				LOG.debug("Query " + queryToStop.getID() + " stopped.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_STOP, queryToStop));
 			} else {
 				throw new RuntimeException("Scheduler not running. Query cannot be stopped");
 			}
 		} catch (Exception e) {
-			LOG.warn("Query not stopped. An Error while optimizing occurd (ID: " + queryID + ")." + e.getMessage());
+			LOG.warn("Query not stopped. An Error while optimizing occurd (ID: " + queryToStop.getID() + ")." + e.getMessage());
 			throw new RuntimeException(e);
 			// return;
 		} finally {
 			this.executionPlanLock.unlock();
 		}
+	}
+	
+	@Override
+	public void done(PhysicalQuery physicalQuery) {
+		stopQuery(physicalQuery);
 	}
 
 	/*

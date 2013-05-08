@@ -28,6 +28,8 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sun.awt.util.IdentityArrayList;
+
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -37,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
@@ -104,6 +107,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * more, there can be more than one query.
 	 */
 	transient private List<IPhysicalOperator> roots;
+	
+	transient private List<IPhysicalOperator> doneRoots = new IdentityArrayList<>();
 
 	/**
 	 * Sources that should be scheduled.
@@ -155,6 +160,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * To avoid dependencies, some values are only set as key value pairs
 	 */
 	final private Map<String, Object> parameters = new HashMap<String, Object>();
+
+	private IQueryStarter queryListener;
 
 	/**
 	 * Creates a query based on a physical plan and
@@ -440,7 +447,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@Override
-	public void open() throws OpenFailedException {
+	public void open(IQueryStarter queryListener) throws OpenFailedException {
+		doneRoots.clear();
+		this.queryListener = queryListener;
 		for (IPhysicalOperator curRoot : getRoots()) {
 			// this also works for cyclic plans,
 			// since if an operator is already open, the
@@ -473,6 +482,17 @@ public class PhysicalQuery implements IPhysicalQuery {
 		opened = false;
 	}
 
+	@Override
+	public void done(IOwnedOperator op) {
+		IPhysicalOperator po = (IPhysicalOperator) op;
+		if (roots.contains(po) && !doneRoots.contains(po)){
+			doneRoots.add(po);
+			if (doneRoots.size() == roots.size()){
+				queryListener.done(this);
+			}
+		}
+	}
+	
 	@Override
 	public boolean isOpened() {
 		return opened;

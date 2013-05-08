@@ -105,7 +105,7 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 	
 	public Set<IPhysicalOperator> getAllOperators();
 
-	void open() throws OpenFailedException;
+	void open(IQueryStarter queryListener) throws OpenFailedException;
 
 	void close();
 

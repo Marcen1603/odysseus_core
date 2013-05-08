@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializeNode;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
@@ -406,4 +407,8 @@ public class LogicalQuery implements ILogicalQuery {
 		return parameters.get(key);
 	}
 
+	@Override
+	public void done(IOwnedOperator op) {
+		// Ignore in logical query
+	}
 }

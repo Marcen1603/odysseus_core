@@ -28,4 +28,6 @@ public interface IOperatorOwner extends Comparable<IOperatorOwner>{
 	 */
 	public int getID();
 	
+	public void done(IOwnedOperator op);
+	
 }

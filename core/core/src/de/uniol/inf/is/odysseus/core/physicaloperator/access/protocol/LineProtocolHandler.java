@@ -92,9 +92,6 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public boolean hasNext() throws IOException {
-		if (isDone()){
-			return true; // To read null!
-		}
 		return reader.ready();
 	}
 
