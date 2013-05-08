@@ -167,6 +167,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	protected synchronized void process_open() throws OpenFailedException {
 		if (!isOpen()) {
 			try {
+				isDone = false;
 				if (protocolHandler != null) {
 					protocolHandler.open();
 				} else {

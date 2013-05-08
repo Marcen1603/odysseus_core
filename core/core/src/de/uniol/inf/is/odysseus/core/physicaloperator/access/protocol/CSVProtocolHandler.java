@@ -35,8 +35,6 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 
 	private char textDelimiter;
 	private char delimiter;
-	private boolean readFirstLine = true;
-	private boolean firstLineSkipped = false;
 
 	public CSVProtocolHandler() {
 		super();
@@ -54,22 +52,11 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 				.toCharArray()[0] : ",".toCharArray()[0];
 		textDelimiter = options.containsKey("textdelimiter") ? options.get(
 				"textdelimiter").toCharArray()[0] : "'".toCharArray()[0];
-
-		if (options.get("readfirstline") != null) {
-			readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
-		} else {
-			readFirstLine = true;
-		}
 	}
 
 	@Override
 	public T getNext() throws IOException {
-		delay();
-		if (!firstLineSkipped && !readFirstLine) {
-			reader.readLine();
-			firstLineSkipped = true;
-		}
-		String line = reader.readLine();
+		String line = super.getNextLine();
 		if (line != null) {
 			return read(line);
 		}

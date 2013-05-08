@@ -33,18 +33,6 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 	Logger LOG = LoggerFactory.getLogger(SimpleCSVProtocolHandler.class);
 
 	private String delimiter;
-	private boolean readFirstLine = true;
-	private boolean firstLineSkipped = false;
-	private long dumpEachLine = -1;
-	private long lastLine = -1;
-	private long counter = 0;
-	private boolean debug = false;
-	private boolean isDone = false;
-	private StringBuffer measurements = new StringBuffer("");
-	private long measureEachLine = -1;
-	private long lastDumpTime = 0;
-
-	private long basetime;
 
 	public SimpleCSVProtocolHandler() {
 		super();
@@ -59,74 +47,14 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 	protected void init(Map<String, String> options) {
 		super.init(options);
 		delimiter = options.get("delimiter");
-		if (options.get("readfirstline") != null) {
-			readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
-		} else {
-			readFirstLine = true;
-		}
-		if (options.get("dumpeachline") != null) {
-			dumpEachLine = Integer.parseInt(options.get("dumpeachline"));
-		}
-
-		if (options.get("measureeachline") != null) {
-			measureEachLine = Integer.parseInt(options.get("measureeachline"));
-			measurements.setLength(0);
-		}
-
-		if (options.get("lastline") != null) {
-			lastLine = Integer.parseInt(options.get("lastline"));
-		}
-		if (options.get("debug") != null) {
-			debug = Boolean.parseBoolean(options.get("debug"));
-		}
-		lastDumpTime = System.currentTimeMillis();
-
 	}
 
 	@Override
 	public T getNext() throws IOException {
-		if (!firstLineSkipped && !readFirstLine) {
-			reader.readLine();
-			firstLineSkipped = true;
-		}
-		delay();
-		if (reader.ready()) {
-			T data = getDataHandler().readData(
-					reader.readLine().split(delimiter));
-			if (debug) {
-				if (dumpEachLine > 0) {
-					if (counter % dumpEachLine == 0) {
-						long time = System.currentTimeMillis();
-						LOG.debug(counter + " " + time + " " +(time-lastDumpTime)+ " " + data);
-						lastDumpTime = time;
-					}
-				}
-				if (measureEachLine > 0) {
-					if (counter % measureEachLine == 0) {
-						long time = System.currentTimeMillis();
-						measurements.append(counter).append(";").append(time-basetime)
-								.append("\n");
-					}
-				}
-
-				if (lastLine == counter || counter == 0) {
-					long time = System.currentTimeMillis();
-					if (counter == 0){
-						basetime = time;
-					}
-					LOG.debug(counter + " " + time);
-					measurements.append(counter).append(";").append(time-basetime)
-							.append("\n");
-					if (lastLine == counter) {
-						System.out.println(measurements);
-						isDone = true;
-					}
-				}
-				counter++;
-			}
-
-			return data;
-		} else {
+		String line = super.getNextLine();
+		if (line != null){
+			return getDataHandler().readData(line.split(delimiter));
+		}else{
 			return null;
 		}
 	}
@@ -155,14 +83,6 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		instance.setTransfer(transfer);
 		instance.init(options);
 		return instance;
-	}
-
-	@Override
-	public boolean isDone() {
-		if (debug){
-			return isDone;
-		}
-		return super.isDone();
 	}
 	
 	@Override

@@ -24,6 +24,9 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -33,12 +36,26 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
+	Logger LOG = LoggerFactory.getLogger(LineProtocolHandler.class);
+
 	protected BufferedReader reader;
 	protected BufferedWriter writer;
 	private long delay;
 	private int nanodelay;
 	private int delayeach = 0;
-	private long counter = 0L;
+	private long delayCounter = 0L;
+
+	protected boolean readFirstLine = true;
+	protected boolean firstLineSkipped = false;
+	private long dumpEachLine = -1;
+	private long lastLine = -1;
+	private long lineCounter = 0L;
+	private boolean debug = false;
+	private boolean isDone = false;
+	private StringBuffer measurements = new StringBuffer("");
+	private long measureEachLine = -1;
+	private long lastDumpTime = 0;
+	private long basetime;
 
 	public LineProtocolHandler() {
 		super();
@@ -56,9 +73,34 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		if (options.get("nanodelay") != null) {
 			setNanodelay(Integer.parseInt(options.get("nanodelay")));
 		}
-		if(options.get("delayeach") !=null){
+		if (options.get("delayeach") != null) {
 			setDelayeach(Integer.parseInt(options.get("delayeach")));
 		}
+
+		if (options.get("readfirstline") != null) {
+			readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
+		} else {
+			readFirstLine = true;
+		}
+		if (options.get("dumpeachline") != null) {
+			dumpEachLine = Integer.parseInt(options.get("dumpeachline"));
+		}
+
+		if (options.get("measureeachline") != null) {
+			measureEachLine = Integer.parseInt(options.get("measureeachline"));
+			measurements.setLength(0);
+		}
+
+		if (options.get("lastline") != null) {
+			lastLine = Integer.parseInt(options.get("lastline"));
+		}
+		if (options.get("maxlines") != null) {
+			lastLine = Integer.parseInt(options.get("maxlines"));
+		}
+		if (options.get("debug") != null) {
+			debug = Boolean.parseBoolean(options.get("debug"));
+		}
+		lastDumpTime = System.currentTimeMillis();
 
 	}
 
@@ -75,7 +117,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			writer = new BufferedWriter(new OutputStreamWriter(
 					getTransportHandler().getOutputStream()));
 		}
-		counter = 0;
+		delayCounter = 0;
+		lineCounter = 0;
+		isDone = false;
 	}
 
 	@Override
@@ -92,14 +136,66 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public boolean hasNext() throws IOException {
-		return reader.ready();
+		if (reader.ready() == false) {
+			isDone = true;
+			return false;
+		}
+		return true;
+	}
+
+	protected String getNextLine() throws IOException {
+		if (!firstLineSkipped && !readFirstLine) {
+			reader.readLine();
+			firstLineSkipped = true;
+		}
+		delay();
+		String line = null;
+		if (hasNext()) {
+			line = reader.readLine();
+		} else {
+			return null;
+		}
+
+		if (debug) {
+			if (dumpEachLine > 0) {
+				if (lineCounter % dumpEachLine == 0) {
+					long time = System.currentTimeMillis();
+					LOG.debug(lineCounter + " " + time + " "
+							+ (time - lastDumpTime) + " " + line);
+					lastDumpTime = time;
+				}
+			}
+			if (measureEachLine > 0) {
+				if (lineCounter % measureEachLine == 0) {
+					long time = System.currentTimeMillis();
+					measurements.append(lineCounter).append(";")
+							.append(time - basetime).append("\n");
+				}
+			}
+
+			if (lastLine == lineCounter || lineCounter == 0) {
+				long time = System.currentTimeMillis();
+				if (lineCounter == 0) {
+					basetime = time;
+				}
+				LOG.debug(lineCounter + " " + time);
+				measurements.append(lineCounter).append(";")
+						.append(time - basetime).append("\n");
+				if (lastLine == lineCounter) {
+					System.out.println(measurements);
+					isDone = true;
+				}
+			}
+			lineCounter++;
+		}
+		return line;
 	}
 
 	@Override
 	public T getNext() throws IOException {
-		delay();
-		if (reader.ready()) {
-			return getDataHandler().readData(reader.readLine());
+		String line = getNextLine();
+		if (line != null) {
+			return getDataHandler().readData(line);
 		} else {
 			return null;
 		}
@@ -111,12 +207,12 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	protected void delay() {
-		if(delayeach>0){
-			counter++;
-			if(counter<delayeach){				
+		if (delayeach > 0) {
+			delayCounter++;
+			if (delayCounter < delayeach) {
 				return;
 			}
-			counter = 0;
+			delayCounter = 0;
 		}
 		if (delay > 0) {
 			try {
@@ -163,14 +259,14 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		this.delay = delay;
 	}
 
-    public void setNanodelay(int nanodelay) {
+	public void setNanodelay(int nanodelay) {
 		this.nanodelay = nanodelay;
 	}
-    
-    public int getNanodelay() {
+
+	public int getNanodelay() {
 		return nanodelay;
 	}
-	
+
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
 		if (this.getDirection().equals(ITransportDirection.IN)) {
@@ -203,5 +299,10 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	public void setDelayeach(int delayeach) {
 		this.delayeach = delayeach;
+	}
+
+	@Override
+	public boolean isDone() {
+		return isDone;
 	}
 }
