@@ -21,6 +21,9 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -34,6 +37,8 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 		types.add("DWD_KL_TUPLE");
 	}
 
+	static private Logger logger = LoggerFactory.getLogger(DWDKLDataHandler.class);
+	
 	@Override
 	public Tuple<?> readData(ByteBuffer buffer) {
 		// TODO Auto-generated method stub
@@ -48,8 +53,17 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	@Override
 	public Tuple<?> readData(String string) {
-		Object[] elems = splitDWDKLDataString(string);
-		return new Tuple<IMetaAttribute>(elems, false);
+		if (string != null && string.length()>1) {
+			Object[] elems = null;
+			try{
+				elems = splitDWDKLDataString(string);
+			}catch(Exception e){
+				logger.error("Error reading string "+string+" ",e);
+			}
+			return new Tuple<IMetaAttribute>(elems, false);
+		}else{
+			return null;
+		}
 	}
 
 	@Override
@@ -80,7 +94,8 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 		String kennung = data.substring(0, 2);
 		// With puffer ;-)
 		Object[] ret = new Object[140];
-		if ("KL".equals(kennung) || "KX".equals(kennung) || "KF".equals(kennung) || "KG".equals(kennung)) {
+		if ("KL".equals(kennung) || "KX".equals(kennung)
+				|| "KF".equals(kennung) || "KG".equals(kennung)) {
 			ret[0] = kennung;
 			int[] pos = { 3, 8, 12, 14, 16, 20, 25, 26, 31, 32, 37, 38, 43, 44,
 					48, 49, 53, 54, 57, 58, 62, 63, 64, 68, 69, 73, 74, 78, 79,
@@ -96,16 +111,17 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 					282, 283 };
 			for (int i = 0; i < pos.length; i++) {
 				if (i < pos.length - 1) {
-					String val = data.substring(pos[i] - 1, pos[i + 1] - 1).trim();
-					try{
-						if (val.length() > 0){
-							ret[i+1] = Integer.parseInt(val);
-						}else{
-							ret[i+1] = 0;
+					String val = data.substring(pos[i] - 1, pos[i + 1] - 1)
+							.trim();
+					try {
+						if (val.length() > 0) {
+							ret[i + 1] = Integer.parseInt(val);
+						} else {
+							ret[i + 1] = 0;
 						}
-						
-					}catch(NumberFormatException e){
-						ret[i+1] = 0;
+
+					} catch (NumberFormatException e) {
+						ret[i + 1] = 0;
 					}
 				}
 			}
