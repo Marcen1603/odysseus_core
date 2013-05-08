@@ -50,8 +50,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 
 	static Logger LOG = LoggerFactory.getLogger(FileSinkPO.class);
 
-	public FileSinkPO(String filename, String sinkType,
-			long writeAfterElements, boolean printMetadata, boolean append) {
+	public FileSinkPO(String filename, String sinkType, long writeAfterElements, boolean printMetadata, boolean append) {
 		this.filename = filename;
 		if ("CSV".equalsIgnoreCase(sinkType)) {
 			csvSink = true;
@@ -90,8 +89,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 			if (xmlSink) {
 				serializer = new Persister();
 			}
-			out = new BufferedWriter(new FileWriter(
-					FileUtils.openOrCreateFile(filename), this.append));
+			out = new BufferedWriter(new FileWriter(FileUtils.openOrCreateFile(filename), this.append));
 			lock.unlock();
 		} catch (IOException e) {
 			OpenFailedException ex = new OpenFailedException(e);
@@ -113,14 +111,13 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 
 					String toWrite = null;
 					if (csvSink) {
-						toWrite = ((ICSVToString) object)
-								.csvToString(printMetadata)+ "\n";
+						toWrite = ((ICSVToString) object).csvToString(printMetadata) + "\n";
 					} else {
 						toWrite = "" + object + "\n";
 					}
 
 					if (writeAfterElements > 0) {
-						writeCache.append(toWrite);//.append("\n");
+						writeCache.append(toWrite);// .append("\n");
 						elementsWritten++;
 						if (writeAfterElements >= elementsWritten) {
 							writeToFile(writeCache.toString());
@@ -150,19 +147,13 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 
 	@Override
 	protected void process_close() {
-		lock.lock();
+
 		if (isOpen()) {
-			try {
-				lock.lock();
-				process_done(0);
-				out.close();
-				out = null;
-				lock.unlock();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			lock.lock();
+			process_done(0);
+			lock.unlock();
+
 		}
-		lock.unlock();
 	}
 
 	@Override
@@ -180,29 +171,28 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 			return false;
 		}
 		FileSinkPO fs = (FileSinkPO) ipo;
-		if (this.getSubscribedToSource().get(0)
-				.equals(fs.getSubscribedToSource().get(0))
-				&& this.filename.equals(fs.getFilename())
-				&& this.csvSink == fs.csvSink) {
+		if (this.getSubscribedToSource().get(0).equals(fs.getSubscribedToSource().get(0)) && this.filename.equals(fs.getFilename()) && this.csvSink == fs.csvSink) {
 			return true;
 		}
 		return false;
 	}
 
-	
 	@Override
 	public void process_done(int port) {
-		if (out != null) {
-			LOG.debug("FileSinkPO finishing...");
-			try {
-				writeToFile(writeCache.toString());
-				lock.lock();
-				out.close();
-				lock.unlock();
-			} catch (IOException e) {
-				e.printStackTrace();
+		if (isOpen()) {
+			if (out != null) {
+				LOG.debug("FileSinkPO finishing...");
+				try {
+					writeToFile(writeCache.toString());
+					lock.lock();
+					out.close();
+					out = null;
+					lock.unlock();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				LOG.debug("FileSinkPO.done");
 			}
-			LOG.debug("FileSinkPO.done");
 		}
 	}
 
