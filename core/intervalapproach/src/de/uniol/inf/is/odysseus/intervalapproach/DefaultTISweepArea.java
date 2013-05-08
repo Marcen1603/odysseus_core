@@ -65,6 +65,18 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		super(defaultTISweepArea);
 	}
 
+	public List<T> queryOverlapsAsList(ITimeInterval t) {
+		ArrayList<T> retval = new ArrayList<T>();
+		synchronized (getElements()) {
+			for (T s : getElements()) {
+				if (TimeInterval.overlaps(s.getMetadata(), t)) {
+					retval.add(s);
+				}
+			}
+		}
+		return retval;
+	}
+
 	public Iterator<T> queryOverlaps(ITimeInterval t) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
