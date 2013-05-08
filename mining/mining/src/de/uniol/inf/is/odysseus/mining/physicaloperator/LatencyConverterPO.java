@@ -40,8 +40,9 @@ public class LatencyConverterPO extends AbstractPipe<Tuple<? extends ILatency>, 
 		double newlatency = latency / factor;
 		latencySum = latencySum + newlatency;
 		if (counter == sample) {
-			Tuple<ILatency> t = new Tuple<>(1, false);
+			Tuple<ILatency> t = new Tuple<>(2, false);
 			t.setAttribute(0, latencySum / counter);
+			t.setAttribute(1, object.getMetadata("CLUSTERING_DURATION"));
 			t.setMetadata(object.getMetadata().clone());
 			transfer(t);
 			counter = 0;

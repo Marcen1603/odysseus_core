@@ -30,19 +30,22 @@
 
 package de.uniol.inf.is.odysseus.mining.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastArrayList;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastLinkedList;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.mining.TupleList;
 import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
 
 /**
@@ -51,12 +54,11 @@ import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
  */
 public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
-	private IClusterer<M> clusterer;
-	private DefaultTISweepArea<TupleList<M>> sweepArea = new DefaultTISweepArea<TupleList<M>>();
-	// private TITransferArea<Tuple<M>, Tuple<M>> transferFunction = new TITransferArea<Tuple<M>, Tuple<M>>();
+	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>(new FastLinkedList<Tuple<M>>());
+	// private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	private FastArrayList<PointInTime> points = new FastArrayList<PointInTime>();
 	private int[] attributePositions;
-
-	// private ArrayList<TupleList<M>> sweepArea = new ArrayList<TupleList<M>>();
+	private IClusterer<M> clusterer;
 
 	public ClusteringPO(IClusterer<M> clusterer, int[] attributePositions) {
 		this.clusterer = clusterer;
@@ -75,96 +77,72 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected synchronized void process_next(Tuple<M> object, int port) {
-//		System.out.println("------------------------------------------------------------");
-//		System.out.println("IN: " + object);
-//		System.out.println("SA:" + sweepArea.getSweepAreaAsString());
+	protected void process_next(Tuple<M> object, int port) {
+		// System.out.println("------------------------------------------------------------");
+		// System.out.println("IN: " + object);
+		// System.out.println("SA:" + sweepArea.getSweepAreaAsString());
 		// Iterator<TupleList<M>> qualifies = (new HashSet<TupleList<M>>(sweepArea)).iterator();
-		// sweepArea.purgeElementsBefore(object.getMetadata().getStart());		
-		
-		
-		
-		
-		
-		Set<Tuple<M>> toCluster = new HashSet<>();
-		Iterator<TupleList<M>> qualifies = sweepArea.extractElementsStartingBefore(object.getMetadata().getStart());
-		
-		if (!qualifies.hasNext()) {
-			TupleList<M> tl = new TupleList<M>(object);
-			M meta = (M) object.getMetadata().clone();
-			tl.setMetadata(meta);
-			sweepArea.insert(tl);
-		} else {
-			while (qualifies.hasNext()) {
-				TupleList<M> next = qualifies.next();
-				// System.out.println("NEXT: " + next);
-				// gibt es einen zeitfortschritt, dann ist next vollständig und kann geclustert werden
-				if (next.getMetadata().getStart().before(object.getMetadata().getStart())) {
-					for (Tuple<M> tuple : next.getList()) {
-						PointInTime start = next.getMetadata().getStart();
-						PointInTime end = PointInTime.min(next.getMetadata().getEnd(), object.getMetadata().getStart());
-						tuple.getMetadata().setStartAndEnd(start, end);
-						toCluster.add(tuple);
+
+		if (!this.points.contains(object.getMetadata().getStart())) {
+			this.points.add(object.getMetadata().getStart());
+		}
+		if (!this.points.contains(object.getMetadata().getEnd())) {
+			this.points.add(object.getMetadata().getEnd());
+		}
+		Collections.sort(this.points);
+		sweepArea.insert(object);
+
+		int removeTill = 0;
+		for (int i = 1; i < this.points.size(); i++) {
+			PointInTime endP = this.points.get(i);
+			PointInTime startP = this.points.get(i - 1);
+			if (endP.beforeOrEquals(object.getMetadata().getStart())) {
+				synchronized (this.sweepArea) {
+					TimeInterval ti = new TimeInterval(startP, endP);
+					List<Tuple<M>> qualifies = this.sweepArea.queryOverlapsAsList(ti);
+					long time = System.currentTimeMillis();
+					long start = System.nanoTime();
+					Map<Integer, List<Tuple<M>>> results = clusterer.processClustering(qualifies, attributePositions);
+					long duration = System.currentTimeMillis() - time;					
+					System.out.println("DURATION: " + duration);
+					long end = System.nanoTime();
+					for (Entry<Integer, List<Tuple<M>>> cluster : results.entrySet()) {
+						for (Tuple<M> result : cluster.getValue()) {
+							Tuple<M> newTuple = result.append(cluster.getKey());
+							M metadata = (M) object.getMetadata().clone();							
+							newTuple.setMetadata(metadata);
+							newTuple.getMetadata().setStartAndEnd(startP, endP);
+							((ILatency)newTuple.getMetadata()).setLatencyStart(start);
+							((ILatency)newTuple.getMetadata()).setLatencyEnd(end);
+							newTuple.setMetadata("CLUSTERING_DURATION", duration);
+							transfer(newTuple);
+						}
 					}
+					System.out.println("TRANSFER: " + (System.currentTimeMillis() - time - duration));
+					removeTill = i;
 				}
-				// schneiden sich next und das aktuelle element
-				if (next.getMetadata().getEnd().after(object.getMetadata().getStart())) {
-					// dann erweitere next um das aktuelle element
-					TupleList<M> newList = next.clone();
-					newList.add(object);
-					newList.setMetadata((M) object.getMetadata().clone());
-					newList.getMetadata().setEnd(PointInTime.min(object.getMetadata().getEnd(), next.getMetadata().getEnd()));
-					insertOrReplace(newList);
-					// additionally, there could be a part before the new element
-					if (next.getMetadata().getEnd().before(object.getMetadata().getEnd())) {
-						TupleList<M> tl = new TupleList<M>(object);
-						tl.setMetadata((M) object.getMetadata().clone());
-						tl.getMetadata().setStart(PointInTime.max(object.getMetadata().getStart(), next.getMetadata().getEnd()));
-						insertOrReplace(tl);
-					}
-					// and there could be also a part after the element
-					if (next.getMetadata().getEnd().after(object.getMetadata().getEnd())) {
-						TupleList<M> tl = next.clone();
-						tl.setMetadata((M) object.getMetadata().clone());
-						tl.getMetadata().setEnd(next.getMetadata().getEnd());
-						tl.getMetadata().setStart(object.getMetadata().getEnd());
-						insertOrReplace(tl);
-					}
-				} else {
-					// else, we only add the new object
-					TupleList<M> tl = new TupleList<>(object);
-					tl.setMetadata((M) object.getMetadata().clone());
-					insertOrReplace(tl);
-				}
+			} else {
+				break;
 			}
 		}
-		Iterator<Tuple<M>> results = calculateClusters(toCluster);
-		while (results.hasNext()) {
-			Tuple<M> result = results.next();
-			// System.out.println("INSERT: " + result);
-			// transferFunction.transfer(result);
-			transfer(result);
+		if (removeTill != 0) {
+			System.out.println("PURGEING...");
+			this.points.removeRange(0, removeTill);
+			long time = System.currentTimeMillis();
+			sweepArea.purgeElementsBefore(object.getMetadata().getStart());
+			long duration = System.currentTimeMillis() - time;
+			System.out.println("DURATION PURGE: " + duration);
 		}
-		// transferFunction.newElement(object, port);
-	}
 
-	private void insertOrReplace(TupleList<M> tuple) {
-//		sweepArea.remove(tuple);
-		sweepArea.insert(tuple);
-	}
-
-	private Iterator<Tuple<M>> calculateClusters(Set<Tuple<M>> toCluster) {
-		ArrayList<Tuple<M>> clustered = new ArrayList<Tuple<M>>();
-		for (Tuple<M> t : toCluster) {
-			clustered.add(t.clone());
-		}
-		return clustered.iterator();
-	}
+	}	
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		super.process_open();
-		// transferFunction.init(this);
+	}
+
+	@Override
+	protected void process_close() {
+		// this might be improvable...
 		sweepArea.clear();
 	}
 

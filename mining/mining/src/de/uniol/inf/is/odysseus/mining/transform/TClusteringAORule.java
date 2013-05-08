@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
 import de.uniol.inf.is.odysseus.mining.clustering.KMeansClusterer;
+import de.uniol.inf.is.odysseus.mining.clustering.WekaClusterer;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClusteringAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClusteringKMeansPO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClusteringPO;
@@ -58,22 +59,26 @@ public class TClusteringAORule extends AbstractTransformationRule<ClusteringAO> 
 	@Override
 	public void execute(ClusteringAO operator, TransformationConfiguration config) {
 		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po;
-		if (operator.getClustererName().equalsIgnoreCase("KMEANS")) {
+		String algorithm = operator.getClustererName().toUpperCase();
+		
+		switch (algorithm) {
+		case "KMEANS":
 			int k = Integer.parseInt(operator.getOptions().get("k").get(0));
-			po = new ClusteringKMeansPO<>(k, operator.getInputSchema(0), operator.getAttributePositions());
-			po.setOutputSchema(operator.getOutputSchema());
-			replace(operator, po, config);
-			retract(operator);
-			insert(po);
-		} else {
-			IClusterer<ITimeInterval> clusterer = new KMeansClusterer<>();
+			po = new ClusteringKMeansPO<>(k, operator.getInputSchema(0), operator.getAttributePositions());			
+			break;
+		case "WEKA":
+			k = Integer.parseInt(operator.getOptions().get("k").get(0));
+			IClusterer<ITimeInterval> clusterer = new WekaClusterer(operator.getInputSchema(0), operator.getAttributePositions());
 			po = new ClusteringPO(clusterer, operator.getAttributePositions());
+			break;
+		default:
+			k = Integer.parseInt(operator.getOptions().get("k").get(0));
+			IClusterer<ITimeInterval> newk = new KMeansClusterer<>(k, operator.getInputSchema(0));
+			po = new ClusteringPO(newk, operator.getAttributePositions());
+			break;
 		}
-		po.setOutputSchema(operator.getOutputSchema());
-		replace(operator, po, config);
-		retract(operator);
-		insert(po);
-
+		
+		defaultExecute(operator, po, config, true, true);	
 	}
 
 	@Override

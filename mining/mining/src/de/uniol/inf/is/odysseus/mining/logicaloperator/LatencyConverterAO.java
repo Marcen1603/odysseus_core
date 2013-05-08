@@ -42,6 +42,8 @@ public class LatencyConverterAO extends UnaryLogicalOp{
 			List<SDFAttribute> attributes = new ArrayList<>();
 			SDFAttribute a = new SDFAttribute(old.getURI(), "latency", SDFDatatype.DOUBLE);
 			attributes.add(a);
+			SDFAttribute b = new SDFAttribute(old.getURI(), "duration", SDFDatatype.DOUBLE);
+			attributes.add(b);
 			SDFSchema schema = new SDFSchema(old.getURI(), attributes);
 			return schema;
 		}

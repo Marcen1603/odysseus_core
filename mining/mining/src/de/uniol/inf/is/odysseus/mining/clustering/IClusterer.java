@@ -30,7 +30,6 @@
 
 package de.uniol.inf.is.odysseus.mining.clustering;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +43,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  */
 public interface IClusterer<M extends ITimeInterval> {
 
-	public Map<Integer, List<Tuple<M>>> processClustering(Iterator<Tuple<M>> tuples, int[] attributes);	
-	public void setOptions(Map<String, List<String>> options);
+	public Map<Integer, List<Tuple<M>>> processClustering(List<Tuple<M>> tuples, int[] attributes);	
+	public void setOptions(Map<String, List<String>> options);	
 }
