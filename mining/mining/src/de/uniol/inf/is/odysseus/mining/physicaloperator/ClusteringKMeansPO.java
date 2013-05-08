@@ -152,7 +152,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 					t.getMetadata().setEnd(currentTime);						
 					this.transferFunctionTuples.transfer(t);
 				}
-				Tuple<M> mean = cluster.getMean().append(cluster.getNumber(), true);
+//				Tuple<M> mean = cluster.getMean().append(cluster.getNumber(), true);
 			//	mean.getMetadata().setStartAndEnd(min, currentTime);
 				//this.transferFunctionMeans.transfer(mean);
 			}
