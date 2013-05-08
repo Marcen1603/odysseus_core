@@ -62,7 +62,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	private Map<String, String> infos = new TreeMap<>();
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 
-	private Map<IOperatorOwner,String> uniqueIds = new TreeMap<>();
+	private Map<IOperatorOwner, String> uniqueIds = new TreeMap<>();
 
 	private volatile boolean allInputsDone = false;
 	final private OwnerHandler ownerHandler;
@@ -371,6 +371,11 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 				break;
 			}
 		}
+		if (allInputsDone) {
+			for (IOperatorOwner owner : getOwner()) {
+				owner.done(this);
+			}
+		}
 	}
 
 	final synchronized public boolean isDone() {
@@ -394,17 +399,17 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
-	public Map<String, String> getParameterInfos() {		
-		return infos;	
+	public Map<String, String> getParameterInfos() {
+		return infos;
 	}
-	
+
 	@Override
 	public void addParameterInfo(String key, Object value) {
-		this.infos.put(key, value.toString());		
+		this.infos.put(key, value.toString());
 	}
-		
+
 	@Override
 	public void setParameterInfos(Map<String, String> infos) {
 		this.infos = infos;
@@ -487,7 +492,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	public String getOwnerIDs() {
 		return ownerHandler.getOwnerIDs();
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Id Management
 	// ------------------------------------------------------------------------
@@ -504,9 +509,9 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	public void removeUniqueId(IOperatorOwner key) {
 		uniqueIds.remove(key);
 	}
-	
+
 	@Override
-	public Map<IOperatorOwner,String> getUniqueIds() {
+	public Map<IOperatorOwner, String> getUniqueIds() {
 		return uniqueIds;
 	}
 
