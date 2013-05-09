@@ -61,8 +61,8 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 		//get X, Y, Z coordinates from incoming data stream
 		handLeftX = object.getAttribute(18);
 		handLeftY = object.getAttribute(19);
-		@SuppressWarnings("unused")
-		double handLeftZ = object.getAttribute(20);
+//		@SuppressWarnings("unused")
+//		double handLeftZ = object.getAttribute(20);
 		
 //		System.out.println("Feature Extraction\n " +
 //				"  handLeftX: " + handLeftX +
