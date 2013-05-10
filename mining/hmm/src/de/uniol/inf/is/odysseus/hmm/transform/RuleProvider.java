@@ -22,9 +22,9 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 /**
+ * RuleProvider
  * 
- * @author Dennis Geesen
- * Created at: 14.05.2012
+ * based on code from Dennis Geesen
  */
 public class RuleProvider implements ITransformRuleProvider{
 

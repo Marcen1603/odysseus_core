@@ -17,13 +17,16 @@ public class THmmAORule extends
 
 	@Override
 	public int getPriority() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 * 
+	 * Choose the correct physical operator by comparing the given parameter from the odysseus query
+	 */
 	@Override
 	public void execute(HmmAO operator, TransformationConfiguration config) {
-//		defaultExecute(operator, new HmmPO(), config, true, true);
 		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po;
 		if (operator.getMode().equalsIgnoreCase("RECOGNITION")) {
 			po = new HmmRecognitionPO();
@@ -38,6 +41,7 @@ public class THmmAORule extends
 			retract(operator);
 			insert(po);
 		}
+//		defaultExecute(operator, new HmmRecognitionPO(), config, true, true);
 
 	}
 
@@ -48,13 +52,11 @@ public class THmmAORule extends
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "HmmAO -> HmmPO";
 	}
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		// TODO Auto-generated method stub
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
