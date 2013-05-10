@@ -2,20 +2,28 @@ package de.uniol.inf.is.odysseus.hmm.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.hmm.CoordinatesCalculator;
 
-public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>>{
+/**
+ * Feature Extraction is used to extract the most important information from
+ * an input stream, e.g. calculating the orientation angle from given coordinates.
+ * 
+ * @author Michael Moebes, mmo
+ * @author Christian Pieper, cpi
+ * 
+ */
+public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
-	//Attributes
-	private double minDistBetweenPoints = 0.15;
+	// Attributes
+	private double minDistBetweenPoints ;
 	static private CoordinatesCalculator lastValidCoordinate;
-//	private boolean isSkeletonTracked = false;
-	static double handLeftX=0;
-	static double handLeftY=0;
-	
-	
-	//Constructors
+	// private boolean isSkeletonTracked = false;
+	static double handLeftX;
+	static double handLeftY;
+
+	// Constructors
 	public FeatureExtractionPO() {
 		super();
 	}
@@ -24,20 +32,30 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 		super();
 		// initPredicates(splitPO.predicates);
 	}
+
 	
-	//Methods
+	// Methods
 	@Override
 	public OutputMode getOutputMode() {
-		//NEW_ELEMENT: operator creates a new element
+		// NEW_ELEMENT: operator creates a new element
 		return OutputMode.NEW_ELEMENT;
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+	 * 
+	 * Sequence of execution:
+	 * 1) Check whether skeleton is tracked
+	 * 
+	 * 2) Check whether the minimum distance is sufficient. 
+	 *    If yes: calculate the orientation angle and give it to output stream.
+	 * 
+	 */
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
-//		System.out.println("FeatureExtraction: process_next");
-		
-		
+		//1) check if skeleton is tracked.
+		//in case it's tracked, the values are different in each iteration
 		if(handLeftX != 0){
 			if(handLeftX == (double) object.getAttribute(18)) {
 				
@@ -49,7 +67,6 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 				if(HmmTrainingPO.tracked == false){
 					System.out.println("+++++++++++++++++++++++++ SKELETON TRACKED +++++++++++++++++++++++");
 					if(HmmTrainingPO.trackingTime == 0){
-//						System.err.println("zeit setzen");
 						HmmTrainingPO.trackingTime = System.currentTimeMillis();
 					}
 				}
@@ -61,12 +78,6 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 		//get X, Y, Z coordinates from incoming data stream
 		handLeftX = object.getAttribute(18);
 		handLeftY = object.getAttribute(19);
-//		@SuppressWarnings("unused")
-//		double handLeftZ = object.getAttribute(20);
-		
-//		System.out.println("Feature Extraction\n " +
-//				"  handLeftX: " + handLeftX +
-//				"  handLeftY: " + handLeftY + "\n");
 				
 		//Debug Output
 //		System.out.println("getMetadata():" + object.getMetadata());
@@ -90,7 +101,7 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 			double angle = lastValidCoordinate.calculateAngle(handLeftX, handLeftY);
 			
 			//Debug output
-			System.out.println("Feature Extraction\n  Orientation: " + angle + " degree\n");
+//			System.out.println("Feature Extraction\n  Orientation: " + angle + " degree\n");
 			
 			//set this point as last valid one
 			lastValidCoordinate.setPoint(handLeftX, handLeftY);
@@ -113,6 +124,18 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_open()
+	 * 
+	 * Set the default values
+	 */
+	@Override
+	protected void process_open() throws OpenFailedException {
+		minDistBetweenPoints = 0.15;
+		handLeftX = 0;
+		handLeftY = 0;
+	}
 
 	@Override
 	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {

@@ -13,14 +13,25 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
+/**
+ * Unary Logical Operator. Process the incoming feature vector, from the Feature Extraction operator 
+ * to determine the cluster id.
+ * Distinguish autonomous the incoming data, e.g. orientation, velocity, coordinates, to determine
+ * the correct method to work with. 
+ * 
+ * @author Michael Moebes, mmo
+ * @author Christian Pieper, cpi
+ *
+ */
 @LogicalOperator(name = "VECTORQUANTIZATION", minInputPorts = 1, maxInputPorts = 1)
-public class VectorquantizationAO extends UnaryLogicalOp implements ILogicalOperator{
+public class VectorquantizationAO extends UnaryLogicalOp implements
+		ILogicalOperator {
 
-	//Attributes
+	// Attributes
 	private int numCluster;
-	
+
 	/**
-	 * 
+	 * Auto-generated serial by eclipse
 	 */
 	private static final long serialVersionUID = 1666674260694172414L;
 
@@ -30,19 +41,15 @@ public class VectorquantizationAO extends UnaryLogicalOp implements ILogicalOper
 		super();
 	}
 
-	
-	//Dieser Konstruktor wird aufgerufen, wenn clone() benutzt wird
+	// Dieser Konstruktor wird aufgerufen, wenn clone() benutzt wird
 	public VectorquantizationAO(VectorquantizationAO vqAO) {
-//		super(vqAO);
+		// super(vqAO);
 		this.numCluster = vqAO.numCluster;
 	}
-	
 
-	// Clone must call the copy constructor and the copy constructor must call
-	// the super copy constructor!
+	// Clone must call the copy constructor and the copy constructor must call the super copy constructor!
 	@Override
 	public AbstractLogicalOperator clone() {
-		// TODO Auto-generated method stub
 		return new VectorquantizationAO(this);
 	}
 
@@ -51,24 +58,24 @@ public class VectorquantizationAO extends UnaryLogicalOp implements ILogicalOper
 		this.numCluster = numCluster;
 		System.out.println("debug VQAO: " + numCluster);
 	}
-	
+
 	// Finally, the class needs setters and getters for the parameter it should keep
 	public int getNumCluster() {
 		return this.numCluster;
 	}
-	
+
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
-		
-		
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();		
-//		SDFAttribute attributeType = new SDFAttribute(null, "datatype", SDFDatatype.STRING);
-//		attributes.add(attributeType);
-		
+
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		// SDFAttribute attributeType = new SDFAttribute(null, "datatype",
+		// SDFDatatype.STRING);
+		// attributes.add(attributeType);
+
 		SDFAttribute attributeId = new SDFAttribute(null, "clusterID", SDFDatatype.INTEGER);
 		attributes.add(attributeId);
-		
-		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
+
+		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(),	attributes);
 		return outSchema;
 	}
 
