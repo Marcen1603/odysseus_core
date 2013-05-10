@@ -24,8 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
  *
  */
 @LogicalOperator(name = "VECTORQUANTIZATION", minInputPorts = 1, maxInputPorts = 1)
-public class VectorquantizationAO extends UnaryLogicalOp implements
-		ILogicalOperator {
+public class VectorquantizationAO extends UnaryLogicalOp implements	ILogicalOperator {
 
 	// Attributes
 	private int numCluster;
@@ -35,8 +34,7 @@ public class VectorquantizationAO extends UnaryLogicalOp implements
 	 */
 	private static final long serialVersionUID = 1666674260694172414L;
 
-	// The default constructor is required as instances of logical operators are
-	// created by newInstance().
+	// The default constructor is required as instances of logical operators are created by newInstance().
 	public VectorquantizationAO() {
 		super();
 	}

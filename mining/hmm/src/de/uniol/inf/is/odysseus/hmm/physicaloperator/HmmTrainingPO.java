@@ -12,13 +12,13 @@ import de.uniol.inf.is.odysseus.hmm.FileHandlerHMM;
 import de.uniol.inf.is.odysseus.hmm.Gesture;
 import de.uniol.inf.is.odysseus.hmm.HMM;
 
-public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
-	//Attributes
+public class HmmTrainingPO<M extends ITimeInterval> extends	AbstractPipe<Tuple<M>, Tuple<M>> {
+	// Attributes
 	private String gestureName;
 	static boolean tracked = true;
 	public static long trackingTime = 0;
 	boolean isTrainingStartet = false;
-	
+
 	boolean isStartMessageNeeded = true;
 	Timer startTimer = new Timer();
 	Timer timer = new Timer();
@@ -26,7 +26,7 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 	ArrayList<Integer> observation = new ArrayList<Integer>();
 	private String pathToConfigfiles = "G:/_christian/Dokumente/_Studium/sem07/odysseus_trunk/mining/hmm/src/de/uniol/inf/is/odysseus/hmm/gestures/";
 	private final String pathToTrainingData = "G:/_christian/Dokumente/_Studium/sem07/odysseus_trunk/mining/hmm/src/de/uniol/inf/is/odysseus/hmm/gestures/trainingdata/";
-	
+
 	public HmmTrainingPO(String gestureName) {
 		this.gestureName = gestureName;
 	}
@@ -39,66 +39,66 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
-		
-		
-		//Set time of input. If delay becomes to great, the training is successfully finished.
+
+		// Set time of input. If delay becomes to great, the training is successfully finished.
 		lastInputTime = System.currentTimeMillis();
-//		int tmp = ((ArrayList<Double>) object.getAttribute(0)).get(0);
 		observation.add(((ArrayList<Integer>) object.getAttribute(0)).get(0).intValue());
-//		System.err.println(((ArrayList<Double>) object.getAttribute(0)).get(0).intValue());
 	}
 
 	@Override
 	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
 		return null;
 	}
-	
+
 	@Override
 	protected void process_open() {
-		//init
+		// initialize default values
 		tracked = true;
 		trackingTime = 0;
 		isTrainingStartet = false;
-		
+
 		isStartMessageNeeded = true;
 		startTimer = new Timer();
 		timer = new Timer();
-		
-		
-		final String path = pathToTrainingData+gestureName+"Training.csv";
+
+		final String path = pathToTrainingData + gestureName + "Training.csv";
 		System.err.println("GESTURE: " + gestureName);
 		System.out.println("Trackingtime: " + trackingTime);
 		System.out.println("isTracked: " + tracked);
-		startTimer.schedule(new TimerTask(){
+		
+		//initialize the training start timer
+		//it counts from 3 to 0, if skeleton is tracked, and prints the countdown.
+		startTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-//				System.out.println("trackingtime: " + trackingTime);
-//				System.out.println("tracked: " + tracked);
-				if(tracked && (trackingTime > 0)){
-					if((System.currentTimeMillis() - trackingTime) > 3000) {
+				// System.out.println("trackingtime: " + trackingTime);
+				// System.out.println("tracked: " + tracked);
+				if (tracked && (trackingTime > 0)) {
+					if ((System.currentTimeMillis() - trackingTime) > 3000) {
 						isTrainingStartet = true;
 						startTimer.cancel();
-					}else if((System.currentTimeMillis() - trackingTime) > 2000) {
+					} else if ((System.currentTimeMillis() - trackingTime) > 2000) {
 						System.out.println("+--- 1");
-					}else if((System.currentTimeMillis() - trackingTime) > 1000) {
+					} else if ((System.currentTimeMillis() - trackingTime) > 1000) {
 						System.out.println("+--- 2");
-					}else{
+					} else {
 						System.out.println("+--- 3");
 					}
 				}
 			}
 		}, 0, 1000);
+
 		
-		//Set timer that checks whether there still are inputs after having started training. If training is ongoing but no new inputs arrive
-		//training state will change to finished
+		//Set timer that checks whether there still are inputs after having started training. 
+		//If training is ongoing but no new inputs arrive training state will change to finished
 		timer.schedule(new TimerTask() {
-			
+
 			@Override
 			public void run() {
 				System.err.println("isTrainingStartet: " + isTrainingStartet);
-				if(isTrainingStartet){
-					
-					if(isStartMessageNeeded) {
+				if (isTrainingStartet) {
+
+					if (isStartMessageNeeded) {
 						System.err.println("\n+-------------");
 						System.err.println("+--- START TRAINING");
 						System.err.println("+-------------\n");
@@ -106,14 +106,14 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 						FeatureExtractionPO.setCurrentCoordsAsLastValidPoint();
 						isStartMessageNeeded = false;
 					}
-//				System.err.println("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
-				//Continue training if tracked
-					if(HmmTrainingPO.tracked) {
-						//Don't finish training if there are no observations
-						if(!observation.isEmpty()) { //<--- ausrufezeihen und so
-							//Training successfully finished
-							if(System.currentTimeMillis()-lastInputTime > 4000) {
-//								System.err.println("FIIIIIIIIIINIIIIIIIIIIIIIIIIIIIIISSSSSSSSHHHHHHHHHH\n\n\nFIIIIIIIIIINIIIIIIIIIIIIIISHHH");
+
+					// Continue training if tracked
+					if (HmmTrainingPO.tracked) {
+						// Don't finish training if there are no observations
+						if (!observation.isEmpty()) { // <--- ausrufezeihen und
+														// so
+							// Training successfully finished
+							if (System.currentTimeMillis() - lastInputTime > 4000) {
 								try {
 									System.out.println(path);
 									timer.cancel();
@@ -121,14 +121,16 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 									ArrayList<int[]> obsSequences = FileHandlerHMM.loadTrainingData(path);
 									createHMMConfigFromUpdatedTrainingData(obsSequences);
 									process_open();
+									
 								} catch (IOException e) {
 									System.err.println("Failed to create new config file");
 									e.printStackTrace();
 								}
-								
+
 							}
 						}
-					//If untracked, clear observations to restart
+						
+					// If untracked, clear observations to restart
 					} else {
 						observation.clear();
 					}
@@ -137,10 +139,10 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 
 		}, 2000, 2000);
 	}
-	
+
 	@Override
 	protected void process_close() {
-//		startTimer.cancel();
+		// startTimer.cancel();
 		System.out.println("process_close()");
 		tracked = false;
 		trackingTime = 0;
@@ -148,34 +150,46 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 		isStartMessageNeeded = true;
 		timer.cancel();
 	}
-	
-	private void createHMMConfigFromUpdatedTrainingData(ArrayList<int[]> obsSequences) {
-		//Calculate floored mean number of observations
+
+	private void createHMMConfigFromUpdatedTrainingData(
+			ArrayList<int[]> obsSequences) {
+		// Calculate floored mean number of observations
 		int numObs = 0;
 		for (int i = 0; i < obsSequences.size(); i++) {
 			for (int j = 0; j < obsSequences.get(i).length; j++) {
 				numObs++;
 			}
 		}
-//		System.out.println("numbObs/obsSequence.size() = " + numObs + "/" + obsSequences.size());
-		int numStates = numObs/obsSequences.size();
-		int observationLength = numObs/obsSequences.size(); 
-		//Determine min and max observation length
+
+		@SuppressWarnings("unused")
+		int numStates = numObs / obsSequences.size();
+		int observationLength = numObs / obsSequences.size();
+		// Determine min and max observation length
 		int numMinObs = 0;
 		int numMaxObs = 0;
 		for (int i = 0; i < obsSequences.size(); i++) {
-			if(numMinObs == 0) numMinObs = obsSequences.get(i).length;
-			if(obsSequences.get(i).length < numMinObs) numMinObs = obsSequences.get(i).length;
-			if(obsSequences.get(i).length > numMaxObs) numMaxObs = obsSequences.get(i).length;
+			if (numMinObs == 0)
+				numMinObs = obsSequences.get(i).length;
+			if (obsSequences.get(i).length < numMinObs)
+				numMinObs = obsSequences.get(i).length;
+			if (obsSequences.get(i).length > numMaxObs)
+				numMaxObs = obsSequences.get(i).length;
 		}
+
 		
 		HMM hmm = new HMM();
-//		System.out.println(numStates + ", " + HMM.observationLength + ", " + observationLength);
-		Gesture gesture = new Gesture(numStates, HMM.observationLength, numMinObs, numMaxObs, observationLength);
+		
+		//creates an HMM config to save it persistent
+		//at the moment the state amount of the created HMM is equal to the minimum observation length,
+		//otherwise there are computation errors possible, in case of to short observation sequences.
+		
+//		Gesture gesture = new Gesture(numStates, HMM.observationLength,	numMinObs, numMaxObs, observationLength);
+		Gesture gesture = new Gesture(numMinObs, HMM.observationLength,	numMinObs, numMaxObs, observationLength);
 		gesture.setName(gestureName);
 		System.out.println("createHMM");
-//		hmm.printAMatrix(gesture);
-		//convert to int[][]
+		
+		// hmm.printAMatrix(gesture);
+		// convert to int[][]
 		int[][] trainingData = new int[obsSequences.size()][];
 		for (int i = 0; i < trainingData.length; i++) {
 			trainingData[i] = obsSequences.get(i);
@@ -183,9 +197,8 @@ public class HmmTrainingPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M
 		for (int i = 0; i < 20; i++) {
 			hmm.training(trainingData, gesture);
 		}
-		
-		
-		//save new gesture to file
+
+		// save new gesture to file
 		FileHandlerHMM.saveHMMConfigToFile(gesture, pathToConfigfiles);
 	}
 

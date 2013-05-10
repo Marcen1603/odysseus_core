@@ -5,22 +5,22 @@ import java.util.ArrayList;
 /**
  * @author Michael Möbes
  * @author Christian Pieper
- *
- * Contains all HmmAlphas for each Gesture for a certain set timestamp
+ * 
+ *         Contains all HmmAlphas for each Gesture for a certain set timestamp
  * 
  */
 public class HmmAlphaGroup {
-	//Attributes
+	// Attributes
 	private ArrayList<HmmAlphas> alphas;
-		
-	//Constructors
-	public HmmAlphaGroup(){
+
+	// Constructors
+	public HmmAlphaGroup() {
 		alphas = new ArrayList<HmmAlphas>();
 	}
-	
-	//Methods
-	public void addRow(HmmAlphas pAlphaRow){
-		alphas.add(pAlphaRow);		
+
+	// Methods
+	public void addRow(HmmAlphas pAlphaRow) {
+		alphas.add(pAlphaRow);
 	}
 
 	public ArrayList<HmmAlphas> getAlphas() {
@@ -30,6 +30,5 @@ public class HmmAlphaGroup {
 	public void setAlphas(ArrayList<HmmAlphas> alphas) {
 		this.alphas = alphas;
 	}
-
 
 }

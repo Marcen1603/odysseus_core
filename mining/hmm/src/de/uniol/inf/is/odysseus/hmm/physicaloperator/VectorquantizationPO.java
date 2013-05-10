@@ -17,12 +17,9 @@ import de.uniol.inf.is.odysseus.hmm.CoordinatesCalculator;
  * @author Christian Pieper, cpi
  *
  */
-public class VectorquantizationPO<M extends ITimeInterval> extends
-		AbstractPipe<Tuple<M>, Tuple<M>> {
+public class VectorquantizationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	// Attributes
-	// private List<IPredicate<? super Tuple<M>>> predicates;
-	// private CoordinatesCalculator lastValidPoint;
 	private int numCluster;
 
 	// Constructors
@@ -35,8 +32,7 @@ public class VectorquantizationPO<M extends ITimeInterval> extends
 		System.out.println("debug vqPO: " + this.numCluster);
 	}
 
-	public VectorquantizationPO(
-			VectorquantizationPO<M> splitPO) {
+	public VectorquantizationPO(VectorquantizationPO<M> splitPO) {
 		super();
 		// initPredicates(splitPO.predicates);
 	}

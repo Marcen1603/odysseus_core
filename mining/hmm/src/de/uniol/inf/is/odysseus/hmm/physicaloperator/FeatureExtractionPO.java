@@ -37,7 +37,6 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 	// Methods
 	@Override
 	public OutputMode getOutputMode() {
-		// NEW_ELEMENT: operator creates a new element
 		return OutputMode.NEW_ELEMENT;
 	}
 
