@@ -13,8 +13,7 @@ Import-Package:
  org.simpleframework.xml,
  org.simpleframework.xml.core,
  org.slf4j
-Service-Component: OSGI-INF/*,
- OSGI-INF/AccessAOBuilderHandler.xml
+Service-Component: OSGI-INF/*
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.core.server,
