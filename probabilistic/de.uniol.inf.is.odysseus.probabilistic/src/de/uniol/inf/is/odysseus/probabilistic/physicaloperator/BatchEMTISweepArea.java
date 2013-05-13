@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.math3.linear.CholeskyDecomposition;
+import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -54,8 +55,10 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
                 this.covarianceMatrices[m] = MatrixUtils.createRealIdentityMatrix(getDimension());
             }
         } else {
-            double[][] data = doExpectation();
-            doMaximization(data);
+            if (isEstimateable()) {
+                double[][] data = doExpectation();
+                doMaximization(data);
+            }
         }
     }
 
@@ -173,29 +176,28 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
         RealMatrix inverse;
         try {
             CholeskyDecomposition choleskyDecomposition = new CholeskyDecomposition(covarianceMatrix);
-            if (choleskyDecomposition.getSolver().isNonSingular()) {
-                // FIXME use 2*sum(log(diag(A)))
-                determinant = choleskyDecomposition.getDeterminant();
-            } else {
+            DecompositionSolver solver = choleskyDecomposition.getSolver();
+            if (!solver.isNonSingular()) {
                 double[] diagonal = new double[covarianceMatrix.getColumnDimension()];
                 Arrays.fill(diagonal, 10E-5);
                 covarianceMatrix = covarianceMatrix.add(MatrixUtils.createRealDiagonalMatrix(diagonal));
                 choleskyDecomposition = new CholeskyDecomposition(covarianceMatrix);
-                determinant = choleskyDecomposition.getDeterminant();
+                solver = choleskyDecomposition.getSolver();
             }
-            inverse = choleskyDecomposition.getSolver().getInverse();
+            determinant = choleskyDecomposition.getDeterminant();
+            inverse = solver.getInverse();
         } catch (Exception e) {
             LUDecomposition luDecomposition = new LUDecomposition(covarianceMatrix);
-            if (luDecomposition.getSolver().isNonSingular()) {
-                determinant = luDecomposition.getDeterminant();
-            } else {
+            DecompositionSolver solver = luDecomposition.getSolver();
+            if (!solver.isNonSingular()) {
                 double[] diagonal = new double[covarianceMatrix.getColumnDimension()];
                 Arrays.fill(diagonal, 10E-5);
                 covarianceMatrix = covarianceMatrix.add(MatrixUtils.createRealDiagonalMatrix(diagonal));
                 luDecomposition = new LUDecomposition(covarianceMatrix);
-                determinant = luDecomposition.getDeterminant();
+                solver = luDecomposition.getSolver();
             }
-            inverse = luDecomposition.getSolver().getInverse();
+            determinant = luDecomposition.getDeterminant();
+            inverse = solver.getInverse();
         }
         final double density = 1.0 / (FastMath.pow(2. * Math.PI, dimension / 2.) * FastMath.sqrt(determinant));
         final RealMatrix variance = data.subtract(mean);
@@ -217,5 +219,10 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
         for (int m = 0; m < getMixtures(); m++) {
             setWeight(m, getWeight(m) / sum);
         }
+    }
+
+    private boolean isEstimateable() {
+        double v = getMixtures() + (getDimension() + (getDimension() * (getDimension() + 1.0)) / 2.0) + 1.0;
+        return v < size();
     }
 }
