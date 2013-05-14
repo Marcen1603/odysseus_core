@@ -50,7 +50,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	private final List<T> bufferedElements = Lists.newArrayList();
 
 	public JxtaReceiverPO(JxtaReceiverAO ao) {
-		SDFSchema schema = new SDFSchema("", ao.getSchema());
+		SDFSchema schema = new SDFSchema(ao.getName() != null ? getName() : "", ao.getSchema());
 		setOutputSchema(schema);
 		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(schema);
 

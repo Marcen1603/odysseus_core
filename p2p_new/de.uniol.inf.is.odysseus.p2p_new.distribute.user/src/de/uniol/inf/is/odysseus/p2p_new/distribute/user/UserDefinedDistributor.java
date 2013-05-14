@@ -29,6 +29,8 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
@@ -289,7 +291,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 		final JxtaReceiverAO access = new JxtaReceiverAO();
 		access.setPipeID(pipeID.toString());
-		access.setOutputSchema(startOperator.getOutputSchema());
+		access.setOutputSchema(generateOutputSchema(ACCESS_NAME + connectionNumber, startOperator.getOutputSchema()));
 		access.setSchema(startOperator.getOutputSchema().getAttributes());
 		access.setName(ACCESS_NAME + connectionNumber );
 
@@ -307,6 +309,14 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		endPart.addAccessAO(access, endOperator);
 		
 		connectionNumber++;
+	}
+
+	private static SDFSchema generateOutputSchema(String basename, SDFSchema outputSchema) {
+		List<SDFAttribute> attributes = Lists.newArrayList();
+		for( SDFAttribute attribute : outputSchema ) {
+			attributes.add(new SDFAttribute(basename, attribute.getAttributeName(), attribute));
+		}
+		return new SDFSchema(basename, attributes);
 	}
 
 	private static ID generateSharedQueryID() {
