@@ -98,7 +98,7 @@ public abstract class AbstractJxtaConnection {
 		}
 	}
 
-	public void send(byte[] message) throws IOException {
+	public synchronized void send(byte[] message) throws IOException {
 		Preconditions.checkNotNull(message, "Byte data must not be null!");
 		Preconditions.checkArgument(message.length > 0, "Byte data must not be empty!");
 
