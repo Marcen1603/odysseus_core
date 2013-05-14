@@ -1,4 +1,4 @@
-package model;
+package de.uniol.inf.is.odysseus.pattern.model;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;

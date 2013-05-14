@@ -11,12 +11,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import model.AttributeMap;
-import model.EventBuffer;
-import model.EventObject;
-import model.PatternOutput;
-import model.PatternType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +20,7 @@ import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -37,6 +32,11 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.pattern.model.AttributeMap;
+import de.uniol.inf.is.odysseus.pattern.model.EventBuffer;
+import de.uniol.inf.is.odysseus.pattern.model.EventObject;
+import de.uniol.inf.is.odysseus.pattern.model.PatternOutput;
+import de.uniol.inf.is.odysseus.pattern.model.PatternType;
 
 /**
  * Operator, um Pattern-Matching durchzuführen.
@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, Tuple<T>>
 	implements IProcessInternal<Tuple<T>> {
 	
-	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(PatternMatchingPO.class);
 	
 	private List<SDFExpression> assertions;
@@ -65,6 +64,14 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	private Map<Integer, String> inputTypeNames;
 	private Map<Integer, SDFSchema> inputSchemas;
 	
+	// ABSENCE
+	private boolean noIncomingEvent = true;
+	private int times = 0;
+	
+	// FUNCTOR
+	private String attribute;
+	private Double value;
+	
 	protected IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea;
 	protected ITransferArea<Tuple<T>, Tuple<T>> outputTransferArea;
 	
@@ -75,7 +82,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	private Map<SDFExpression, AttributeMap[]> attrMappings;
 	private Map<SDFExpression, AttributeMap[]> returnAttrMappings;
 	
-	public PatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
+	public PatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, String attribute, Double value, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
         super();
@@ -84,6 +91,8 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
         this.size = size;
         this.timeUnit = timeUnit;
         this.outputMode = outputMode;
+        this.attribute = attribute;
+        this.value = value;
         this.eventTypes = eventTypes;
         this.assertions = assertions;
         this.returnExpressions = returnExpressions;
@@ -109,6 +118,8 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
         this.size = patternPO.size;
         this.timeUnit = patternPO.timeUnit;
         this.outputMode = patternPO.outputMode;
+        this.attribute = patternPO.attribute;
+        this.value = patternPO.value;
         this.eventTypes = new ArrayList<String>();
         for (String eventType : patternPO.eventTypes)
         	this.eventTypes.add(eventType);
@@ -134,6 +145,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
     }
 	
     private void init() {
+    	logger.info("Operator built.");
     	// Defaultwerte setzen
     	if (timeUnit == null) {
     		timeUnit = TimeUnit.MILLISECONDS;
@@ -225,6 +237,9 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 		if (eventType == null) {
 			throw new InvalidEventException("Der Datentyp des Events ist null!");
 		}
+		if (eventTypes.contains(eventType)) {
+			noIncomingEvent = false;
+		}
 		switch(type) {
 			// Logische Pattern
 			case ANY:
@@ -234,8 +249,10 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 						// Assertions überprüfen
 						int index = eventTypes.indexOf(eventType);
 						SDFExpression assertion = assertions.get(index);
-						Entry<SDFExpression, AttributeMap[]> entry = new SimpleEntry<>(assertion, attrMappings.get(assertion));
-						satisfied = checkAssertion(eventObj, entry);
+						if (assertion != null) {
+							Entry<SDFExpression, AttributeMap[]> entry = new SimpleEntry<>(assertion, attrMappings.get(assertion));
+							satisfied = checkAssertion(eventObj, entry);
+						}
 					}
 					if (satisfied) {
 						// ANY-Pattern erkannt
@@ -252,7 +269,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 					// Kombinationen suchen und Bedingungen überprüfen
 					List<List<EventObject<T>>> output = checkAssertions(eventObj, computeCrossProduct(eventObj), type);
 					for (List<EventObject<T>> outputObject : output) {
-						Tuple<T> complexEvent = this.createComplexEvent(outputObject, eventObj);
+						Tuple<T> complexEvent = this.createComplexEvent(outputObject, eventObj, null);
 						outputTransferArea.transfer(complexEvent);
 					}
 				}
@@ -262,6 +279,14 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 			case VALUE_MAX:
 			case VALUE_MIN:
 			case FUNCTOR:
+				SDFAttribute attr = schema.findAttribute(attribute);
+				int index = schema.indexOf(attr);
+				Double attrValue = event.getAttribute(index);
+				logger.debug("attrValue " + attrValue);
+				if (value < attrValue) {
+					Tuple<T> complexEvent = createComplexEvent(eventObj);
+					outputTransferArea.transfer(complexEvent);
+				}
 			// Subset Selection Pattern
 			case RELATIVE_N_HIGHEST:
 			case RELATIVE_N_LOWEST:
@@ -277,13 +302,25 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 
 	@Override
 	public void process_punctuation_intern(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);	
+		sendPunctuation(punctuation);
 	}
 
 	@Override
 	public void process_newHeartbeat(Heartbeat pointInTime) {
-		// TODO Auto-generated method stub
-		
+		logger.info(pointInTime.toString());
+		if (type == PatternType.ABSENCE && time != null) {
+			// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
+			if ((pointInTime.getTime().getMainPoint() - time * times) >= time) {
+				// Intervall abgelaufen
+				if (noIncomingEvent) {
+					// ABSENCE-Pattern erkannt
+					Tuple<T> complexEvent = createComplexEvent(null, null, pointInTime.getTime());
+					outputTransferArea.transfer(complexEvent);
+				}
+				times++;
+				noIncomingEvent = true;
+			}
+		}
 	}
 	
 	/**
@@ -294,13 +331,20 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	 * @return Ein komplexes Event oder null
 	 */
 	@SuppressWarnings("unchecked")
-	private Tuple<T> createComplexEvent(List<EventObject<T>> outputObjects, EventObject<T> currentObj) {
+	private Tuple<T> createComplexEvent(List<EventObject<T>> outputObjects, EventObject<T> currentObj, PointInTime start) {
+		if (outputObjects == null || currentObj == null) {
+			outputMode = PatternOutput.SIMPLE;
+		}
 		if (outputMode == PatternOutput.SIMPLE) {
 			Object[] attributes = new Object[2];
 			attributes[0] = type;
 			attributes[1] = true;
 			Tuple<T> returnEvent = new Tuple<T>(attributes, false);
-			returnEvent.setMetadata((T) currentObj.getEvent().getMetadata().clone());
+			if (currentObj != null) {
+				returnEvent.setMetadata((T) currentObj.getEvent().getMetadata().clone());
+			} else {
+				returnEvent.setMetadata((T) new TimeInterval(start));
+			}
 			return returnEvent;
 		}
 		if (outputMode == PatternOutput.EXPRESSIONS) {
@@ -324,7 +368,7 @@ public class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tup
 	
 	private Tuple<T> createComplexEvent(EventObject<T> currentObj) {
 		List<EventObject<T>> eventObjects = new ArrayList<>();
-		return createComplexEvent(eventObjects, currentObj);
+		return createComplexEvent(eventObjects, currentObj, null);
 	}
 	
 	private void dropOldEvents(EventObject<T> event) {

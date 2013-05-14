@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import model.PatternOutput;
-import model.PatternType;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
@@ -17,12 +15,15 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.pattern.model.PatternOutput;
+import de.uniol.inf.is.odysseus.pattern.model.PatternType;
 
 /**
  * @author Michael Falk
@@ -39,6 +40,9 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	private Integer size;
 	// Ausgabeverhalten
 	private PatternOutput outputMode;
+	// auszulesendes Attribut
+	private String attribute;
+	private Double value;
 	
 	// relevante Event-Typen-Liste
 	private List<String> eventTypes;
@@ -71,6 +75,8 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
         this.inputSchemas = patternAO.getInputSchemas();
         this.assertions = patternAO.assertions;
         this.returnExpressions = patternAO.returnExpressions;
+        this.attribute = patternAO.attribute;
+        this.value = patternAO.value;
     }
 	
     @Parameter(type=SDFExpressionParameter.class, optional=true, isList=true)
@@ -130,6 +136,24 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     	return outputMode;
     }
     
+    @Parameter(type = StringParameter.class, optional = true)
+    public void setAttribute(String attr) {
+    	this.attribute = attr;
+    }
+    
+    public String getAttribute() {
+    	return attribute;
+    }
+    
+    @Parameter(type = DoubleParameter.class, optional = true)
+    public void setValue(Double value) {
+    	this.value = value;
+    }
+    
+    public Double getValue() {
+    	return value;
+    }
+    
     @Parameter(type = StringParameter.class, isList = true)
     public void setEventTypes(List<String> eventTypes) {
     	this.eventTypes = eventTypes;
@@ -146,6 +170,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     }
     
     public List<SDFExpression> getReturnExpressions() {
+    	if (returnExpressions == null) return null;
     	List<SDFExpression> expressions = new ArrayList<SDFExpression>();
     	for (NamedExpressionItem expr : returnExpressions) {
     		expressions.add(expr.expression);
@@ -180,6 +205,9 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 				name = schema.getURI();
 				if (name == null){
 					throw new IllegalArgumentException("Input stream must have a type.");
+				}
+				if (name.startsWith("System.")) {
+					name = name.substring(7);
 				}
 				inputTypeNames.put(s.getSinkInPort(), name);
 			}

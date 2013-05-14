@@ -1,4 +1,4 @@
-package model;
+package de.uniol.inf.is.odysseus.pattern.model;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -23,7 +23,7 @@ public class TPatternMatchingAORule extends AbstractTransformationRule<PatternMa
 	 @Override
 	 public void execute(PatternMatchingAO operator, TransformationConfiguration config) {
 		 PatternMatchingPO pOperator = new PatternMatchingPO(operator.getType(), operator.getTime(), operator.getBufferSize(),
-				 operator.getTimeUnit(), operator.getOutputMode(), operator.getEventTypes(), operator.getAssertions(),
+				 operator.getTimeUnit(), operator.getOutputMode(), operator.getAttribute(), operator.getValue(), operator.getEventTypes(), operator.getAssertions(),
 				 operator.getReturnExpressions(), operator.getInputTypeNames(), 
 				 operator.getInputSchemas(), new TIInputStreamSyncArea(operator.getSubscribedToSource().size()));
 		 defaultExecute(operator, pOperator, config, true, true);
