@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -147,7 +149,11 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 
 		if (element instanceof SDFAttribute) {
 			SDFAttribute attribute = (SDFAttribute) element;
-			styledString.append(attribute.getAttributeName());
+			if( !Strings.isNullOrEmpty(attribute.getSourceName())) {
+				styledString.append(attribute.getSourceName() + "." + attribute.getAttributeName());
+			} else {
+				styledString.append(attribute.getAttributeName());
+			}
 			styledString.append("  " + attribute.getDatatype().toString(), StyledString.QUALIFIER_STYLER);
 			return styledString;
 		}
