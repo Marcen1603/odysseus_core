@@ -81,6 +81,9 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
 		sb.append("'").append(value.get(0)).append("','").append(value.get(1)).append("','").append(value.get(2)).append("'");
+		if( value.size() == 4 ) {
+			sb.append(",'").append(value.get(3)).append("'");
+		}
 		sb.append("]");
 		return sb.toString();
 	}
