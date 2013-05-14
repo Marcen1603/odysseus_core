@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.cep.epa.exceptions;
 
 /**
  * Diese Exception zeigt an, dass ein Event nicht verarbeitet werden kann, da es
- * entweder von einem ungÃ¼ltigen Datentyp oder null ist.
+ * entweder von einem ungültigen Datentyp oder null ist.
  * 
  * @author Thomas Vogelgesang
  * 

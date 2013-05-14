@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.pattern.physicaloperator;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -35,33 +39,38 @@ import de.uniol.inf.is.odysseus.pattern.model.PatternOutput;
 import de.uniol.inf.is.odysseus.pattern.model.PatternType;
 
 /**
- * Abstrakter physischer Operator, der gemeinsam genutzte Methoden und Daten fürs Pattern-Matching kapselt.
+ * Operator, um Pattern-Matching durchzuführen.
  * @author Michael Falk
  * @param <T>
  */
-public abstract class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, Tuple<T>>
+public class PatternMatchingPO_Save<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, Tuple<T>>
 	implements IProcessInternal<Tuple<T>> {
 	
-	protected static Logger logger = LoggerFactory.getLogger(PatternMatchingPO.class);
+	private static Logger logger = LoggerFactory.getLogger(PatternMatchingPO_Save.class);
 	
-	protected List<SDFExpression> assertions;
-	protected List<SDFExpression> returnExpressions;
+	private List<SDFExpression> assertions;
+	private List<SDFExpression> returnExpressions;
 
-	protected PatternType type;
-	protected Integer time;
-	protected Integer size;
-	protected TimeUnit timeUnit;
-	protected PatternOutput outputMode;
+	private PatternType type;
+	private Integer time;
+	private Integer size;
+	private TimeUnit timeUnit;
+	private PatternOutput outputMode;
 	
 	/**
 	 * Die relevante Event-Typen-Liste.
 	 */
-	protected List<String> eventTypes;
-	protected Map<Integer, String> inputTypeNames;
-	protected Map<Integer, SDFSchema> inputSchemas;
+	private List<String> eventTypes;
+	private Map<Integer, String> inputTypeNames;
+	private Map<Integer, SDFSchema> inputSchemas;
 	
-	private boolean started;
-	protected PointInTime startTime;
+	// ABSENCE
+	private boolean noIncomingEvent = true;
+	private int times = 0;
+	
+	// FUNCTOR
+	private String attribute;
+	private Double value;
 	
 	protected IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea;
 	protected ITransferArea<Tuple<T>, Tuple<T>> outputTransferArea;
@@ -70,11 +79,10 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 	 * Port-Map, die für jeden Port eine Liste mit Event-Objekten enthält.
 	 */
 	private Map<Integer, EventBuffer<T>> objectLists;
+	private Map<SDFExpression, AttributeMap[]> attrMappings;
+	private Map<SDFExpression, AttributeMap[]> returnAttrMappings;
 	
-	protected Map<SDFExpression, AttributeMap[]> attrMappings;
-	protected Map<SDFExpression, AttributeMap[]> returnAttrMappings;
-	
-	public PatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
+	public PatternMatchingPO_Save(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, String attribute, Double value, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
         super();
@@ -83,6 +91,8 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
         this.size = size;
         this.timeUnit = timeUnit;
         this.outputMode = outputMode;
+        this.attribute = attribute;
+        this.value = value;
         this.eventTypes = eventTypes;
         this.assertions = assertions;
         this.returnExpressions = returnExpressions;
@@ -102,12 +112,14 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
     }
 	
 	// Copy-Konstruktor
-    public PatternMatchingPO(PatternMatchingPO<T> patternPO) {
+    public PatternMatchingPO_Save(PatternMatchingPO_Save<T> patternPO) {
         this.type = patternPO.type;
         this.time = patternPO.time;
         this.size = patternPO.size;
         this.timeUnit = patternPO.timeUnit;
         this.outputMode = patternPO.outputMode;
+        this.attribute = patternPO.attribute;
+        this.value = patternPO.value;
         this.eventTypes = new ArrayList<String>();
         for (String eventType : patternPO.eventTypes)
         	this.eventTypes.add(eventType);
@@ -197,6 +209,11 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
+
+	@Override
+	public PatternMatchingPO_Save<T> clone() {
+		return new PatternMatchingPO_Save<T>(this);
+	}
 	
 	@Override
     public void process_open() throws OpenFailedException {
@@ -214,19 +231,76 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 
 	@Override
 	public void process_internal(Tuple<T> event, int port) {
-		// Allgemeine Überprüfungen
-		if (inputTypeNames.get(port) == null) {
+		String eventType = inputTypeNames.get(port);
+		SDFSchema schema = inputSchemas.get(port);
+		EventObject<T> eventObj = new EventObject<T>(event, eventType, schema, port);
+		if (eventType == null) {
 			throw new InvalidEventException("Der Datentyp des Events ist null!");
 		}
-		if (event == null) {
-			throw new InvalidEventException("Das Event ist null!");
+		if (eventTypes.contains(eventType)) {
+			noIncomingEvent = false;
 		}
-		if (!started) {
-			startTime = event.getMetadata().getStart();
-			started = true;
-		}
+		switch(type) {
+			// Logische Pattern
+			case ANY:
+				if (eventTypes.contains(eventType)) {
+					boolean satisfied = true;
+					if (assertions != null) {
+						// Assertions überprüfen
+						int index = eventTypes.indexOf(eventType);
+						SDFExpression assertion = assertions.get(index);
+						if (assertion != null) {
+							Entry<SDFExpression, AttributeMap[]> entry = new SimpleEntry<>(assertion, attrMappings.get(assertion));
+							satisfied = checkAssertion(eventObj, entry);
+						}
+					}
+					if (satisfied) {
+						// ANY-Pattern erkannt
+						Tuple<T> complexEvent = this.createComplexEvent(eventObj);
+						outputTransferArea.transfer(complexEvent);
+					}
+				}
+				break;
+			case ALL:
+				if (eventTypes.contains(eventType)) {
+					// Event einsortieren und alte Events entfernen
+					objectLists.get(port).add(eventObj);
+					dropOldEvents(eventObj);
+					// Kombinationen suchen und Bedingungen überprüfen
+					List<List<EventObject<T>>> output = checkAssertions(eventObj, computeCrossProduct(eventObj), type);
+					for (List<EventObject<T>> outputObject : output) {
+						Tuple<T> complexEvent = this.createComplexEvent(outputObject, eventObj, null);
+						outputTransferArea.transfer(complexEvent);
+					}
+				}
+				break;
+			case ABSENCE:
+			// Threshold Pattern
+			case COUNT:
+			case VALUE_MAX:
+			case VALUE_MIN:
+			case FUNCTOR:
+				SDFAttribute attr = schema.findAttribute(attribute);
+				int index = schema.indexOf(attr);
+				Double attrValue = event.getAttribute(index);
+				logger.debug("attrValue " + attrValue);
+				if (value < attrValue) {
+					Tuple<T> complexEvent = createComplexEvent(eventObj);
+					outputTransferArea.transfer(complexEvent);
+				}
+			// Subset Selection Pattern
+			case RELATIVE_N_HIGHEST:
+			case RELATIVE_N_LOWEST:
+			// Modale Pattern
+			case ALWAYS:
+			case SOMETIMES:
+			// Temporal Order Pattern
+			case FIRST_N_PATTERN:
+			case LAST_N_PATTERN:
+		}	
+
 	}
-	
+
 	@Override
 	public void process_punctuation_intern(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
@@ -234,10 +308,19 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 
 	@Override
 	public void process_newHeartbeat(Heartbeat pointInTime) {
-		// startTime speichern
-		if (!started) {
-			startTime = pointInTime.getTime();
-			started = true;
+		logger.info(pointInTime.toString());
+		if (type == PatternType.ABSENCE && time != null) {
+			// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
+			if ((pointInTime.getTime().getMainPoint() - time * times) >= time) {
+				// Intervall abgelaufen
+				if (noIncomingEvent) {
+					// ABSENCE-Pattern erkannt
+					Tuple<T> complexEvent = createComplexEvent(null, null, pointInTime.getTime());
+					outputTransferArea.transfer(complexEvent);
+				}
+				times++;
+				noIncomingEvent = true;
+			}
 		}
 	}
 	
@@ -249,7 +332,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 	 * @return Ein komplexes Event oder null
 	 */
 	@SuppressWarnings("unchecked")
-	protected Tuple<T> createComplexEvent(List<EventObject<T>> outputObjects, EventObject<T> currentObj, PointInTime start) {
+	private Tuple<T> createComplexEvent(List<EventObject<T>> outputObjects, EventObject<T> currentObj, PointInTime start) {
 		if (outputObjects == null || currentObj == null) {
 			outputMode = PatternOutput.SIMPLE;
 		}
@@ -284,6 +367,64 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 		return null;
 	}
 	
+	private Tuple<T> createComplexEvent(EventObject<T> currentObj) {
+		List<EventObject<T>> eventObjects = new ArrayList<>();
+		return createComplexEvent(eventObjects, currentObj, null);
+	}
+	
+	private void dropOldEvents(EventObject<T> event) {
+		EventBuffer<T> currentEvents = objectLists.get(event.getPort());
+		// Anzahl Elemente berücksichtigen
+		if (size != null) {
+			while (currentEvents.getSize() > size) {
+				currentEvents.removeFirst();
+			}
+		}
+		// Zeit berücksichtigen
+		if (time != null) {
+			PointInTime newStartTime = event.getEvent().getMetadata().getStart();
+			for (EventBuffer<T> eventBuffer : objectLists.values()) {
+				// alte Elemente löschen
+				Iterator<EventObject<T>> iterator = eventBuffer.getEventObjects().iterator();
+				while (iterator.hasNext()) {
+					EventObject<T> currEvent = iterator.next();
+					PointInTime currStartTime = currEvent.getEvent().getMetadata().getStart();
+					// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
+					if (newStartTime.minus(currStartTime).getMainPoint() > time) {
+						iterator.remove();
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Berechnet das Kreuzprodukt von dem Event, das reingekommen ist und den anderen gespeicherten
+	 * Events, die einen anderen Eventtyp haben.
+	 * @param object
+	 * @return
+	 */
+	private Set<List<EventObject<T>>> computeCrossProduct(EventObject<T> object) {
+		// Alle EventBuffer außer den des empfangenen Events auswählen
+		List<EventBuffer<T>> relevantEventBuffer = new ArrayList<EventBuffer<T>>();
+		for (Entry<Integer, EventBuffer<T>> eventBuffer : objectLists.entrySet()) {
+			if (!eventBuffer.getKey().equals(object.getPort())) {
+				relevantEventBuffer.add(eventBuffer.getValue());
+			}
+		}
+		
+		// Kreuzprodukt berechnen
+		List<Set<EventObject<T>>> relevantSets = new ArrayList<Set<EventObject<T>>>();
+		for (EventBuffer<T> objects : relevantEventBuffer) {
+			relevantSets.add(objects.toSet());
+		}
+		// Neues Event auch berücksichtigen
+		Set<EventObject<T>> objSet = new HashSet<EventObject<T>>();
+		objSet.add(object);
+		relevantSets.add(objSet);
+		return Sets.cartesianProduct(relevantSets);
+	}
+	
 	/**
 	 * Prüft für jede gültige Kombination (-> ALL-Pattern), ob alle Bedingungen erfüllt sind.
 	 * Als Ausgabe liefert diese Methode eine Liste der Kombinationen zurück,
@@ -293,7 +434,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 	 * @param type
 	 * @return
 	 */
-	protected List<List<EventObject<T>>> checkAssertions(EventObject<T> object, Set<List<EventObject<T>>> eventObjectSets) {
+	private List<List<EventObject<T>>> checkAssertions(EventObject<T> object, Set<List<EventObject<T>>> eventObjectSets, PatternType type) {
 		List<List<EventObject<T>>> output = new ArrayList<List<EventObject<T>>>();
 		
 		// Expressions überprüfen
@@ -312,7 +453,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 		return output;
 	}
 	
-	protected boolean checkAssertion(EventObject<T> object, List<EventObject<T>> eventObjectSet, Entry<SDFExpression, AttributeMap[]> entry) {
+	private boolean checkAssertion(EventObject<T> object, List<EventObject<T>> eventObjectSet, Entry<SDFExpression, AttributeMap[]> entry) {
 		Object[] values = findExpressionValues(eventObjectSet, entry.getValue());
 		SDFExpression expression = entry.getKey();
 		if (values != null) {
@@ -333,13 +474,19 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 		return true;
 	}
 	
+	private boolean checkAssertion(EventObject<T> object, Entry<SDFExpression, AttributeMap[]> entry) {
+		List<EventObject<T>> eventObjectSet = new ArrayList<>();
+		eventObjectSet.add(object);
+		return checkAssertion(object, eventObjectSet, entry);
+	}
+	
 	/**
 	 * Sucht nach den Werten für die Attribute aus der Expression.
 	 * Bei Erfolg werden die Werte zurückgeliefert, bei misserfolg null.
 	 * @param eventObjects Liste mit Event-Objekten.
 	 * @return values, null bei Misserfolg
 	 */
-	protected Object[] findExpressionValues(List<EventObject<T>> eventObjects, AttributeMap[] attrMapping) {
+	private Object[] findExpressionValues(List<EventObject<T>> eventObjects, AttributeMap[] attrMapping) {
 		Object[] values = new Object[attrMapping.length];
 		for (int i = 0; i < attrMapping.length; i++) {
 			EventObject<T> obj = null;
