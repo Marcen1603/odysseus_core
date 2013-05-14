@@ -68,7 +68,7 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 	}
 
 	@Override
-	public IPlanAdaptionMigrationRuleEngine getFuzzyRuleEngine() {
+	public IPlanAdaptionMigrationRuleEngine getMigrationRuleEngine() {
 		return this.fuzzyRuleEngine;
 	}
 
