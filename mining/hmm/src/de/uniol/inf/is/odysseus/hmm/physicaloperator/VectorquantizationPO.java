@@ -59,9 +59,9 @@ public class VectorquantizationPO<M extends ITimeInterval> extends AbstractPipe<
 		@SuppressWarnings("unchecked")
 		double inputValue = (double) ((ArrayList<Double>) object.getAttribute(1)).get(0);
 		
-//		System.out.println("getMetadata():" + object.getMetadata());
-//		System.out.println("getStart(): " + object.getMetadata().getStart());
-//		System.out.println("getEnd(): " + object.getMetadata().getEnd());
+		System.out.println("getMetadata():" + object.getMetadata());
+		System.out.println("getStart(): " + object.getMetadata().getStart());
+		System.out.println("getEnd(): " + object.getMetadata().getEnd());
 
 	
 		//check the input type

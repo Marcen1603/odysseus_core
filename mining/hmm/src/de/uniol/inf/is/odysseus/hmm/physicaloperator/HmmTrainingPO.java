@@ -61,18 +61,32 @@ public class HmmTrainingPO<M extends ITimeInterval> extends	AbstractPipe<Tuple<M
 		startTimer = new Timer();
 		timer = new Timer();
 
-		final String path = pathToTrainingData + gestureName + "Training.csv";
-		System.err.println("GESTURE: " + gestureName);
-		System.out.println("Trackingtime: " + trackingTime);
-		System.out.println("isTracked: " + tracked);
+//		System.err.println("GESTURE: " + gestureName);
+//		System.out.println("Trackingtime: " + trackingTime);
+//		System.out.println("isTracked: " + tracked);
 		
 		//initialize the training start timer
 		//it counts from 3 to 0, if skeleton is tracked, and prints the countdown.
+		initializeTrainingStartTimer();
+		
+		
+		//Set timer that checks whether there still are inputs after having started training. 
+		//If training is ongoing but no new inputs arrive training state will change to finished
+		initializeTrainingFinishTimer();		
+	}
+
+	
+	/**
+	 * Initializes the training start timer.
+	 * It'll print a countdown from 3 to 0 to the console, if skeleton is tracked.
+	 */
+	private void initializeTrainingStartTimer() {
+		
 		startTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				// System.out.println("trackingtime: " + trackingTime);
-				// System.out.println("tracked: " + tracked);
+//				 System.out.println("trackingtime: " + trackingTime);
+//				 System.out.println("tracked: " + tracked);
 				if (tracked && (trackingTime > 0)) {
 					if ((System.currentTimeMillis() - trackingTime) > 3000) {
 						isTrainingStartet = true;
@@ -87,10 +101,16 @@ public class HmmTrainingPO<M extends ITimeInterval> extends	AbstractPipe<Tuple<M
 				}
 			}
 		}, 0, 1000);
+	}
+	
+	
+	/**
+	 * Initializes a timer that checks whether there still are inputs after having started training. 
+	 * If training is ongoing but no new inputs arrive training state will change to finished.
+	 */
+	private void initializeTrainingFinishTimer() {
+		final String path = pathToTrainingData + gestureName + "Training.csv";
 
-		
-		//Set timer that checks whether there still are inputs after having started training. 
-		//If training is ongoing but no new inputs arrive training state will change to finished
 		timer.schedule(new TimerTask() {
 
 			@Override
@@ -102,6 +122,8 @@ public class HmmTrainingPO<M extends ITimeInterval> extends	AbstractPipe<Tuple<M
 						System.err.println("\n+-------------");
 						System.err.println("+--- START TRAINING");
 						System.err.println("+-------------\n");
+						
+						//delete all unnecessary observation overhead
 						observation.clear();
 						FeatureExtractionPO.setCurrentCoordsAsLastValidPoint();
 						isStartMessageNeeded = false;
@@ -112,8 +134,8 @@ public class HmmTrainingPO<M extends ITimeInterval> extends	AbstractPipe<Tuple<M
 						// Don't finish training if there are no observations
 						if (!observation.isEmpty()) { // <--- ausrufezeihen und
 														// so
-							// Training successfully finished
-							if (System.currentTimeMillis() - lastInputTime > 4000) {
+							//====== Training successfully finished ========================
+							if (System.currentTimeMillis() - lastInputTime > 3000) {
 								try {
 									System.out.println(path);
 									timer.cancel();
@@ -137,8 +159,9 @@ public class HmmTrainingPO<M extends ITimeInterval> extends	AbstractPipe<Tuple<M
 				}
 			}
 
-		}, 2000, 2000);
+		}, 1000, 3000);
 	}
+	
 
 	@Override
 	protected void process_close() {
@@ -151,8 +174,7 @@ public class HmmTrainingPO<M extends ITimeInterval> extends	AbstractPipe<Tuple<M
 		timer.cancel();
 	}
 
-	private void createHMMConfigFromUpdatedTrainingData(
-			ArrayList<int[]> obsSequences) {
+	private void createHMMConfigFromUpdatedTrainingData(ArrayList<int[]> obsSequences) {
 		// Calculate floored mean number of observations
 		int numObs = 0;
 		for (int i = 0; i < obsSequences.size(); i++) {

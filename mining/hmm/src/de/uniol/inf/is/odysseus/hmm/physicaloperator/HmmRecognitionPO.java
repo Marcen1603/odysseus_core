@@ -107,7 +107,9 @@ public class HmmRecognitionPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 			// System.out.println("--------------------------");
 		}
 		System.out.println("--------------------------\n");
-
+		System.out.println("RECOG getMetadata():" + object.getMetadata());
+		System.out.println(object.getMetadata().getStart());
+		
 		// double handLeftX = object.getAttribute(0);
 
 		// System.out.println("getMetadata():" + object.getMetadata());

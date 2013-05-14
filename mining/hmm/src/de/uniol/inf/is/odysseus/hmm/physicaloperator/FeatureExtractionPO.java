@@ -33,7 +33,7 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 		// initPredicates(splitPO.predicates);
 	}
 
-	
+		
 	// Methods
 	@Override
 	public OutputMode getOutputMode() {
@@ -73,7 +73,6 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 			}
 		}
 		
-		
 		//get X, Y, Z coordinates from incoming data stream
 		handLeftX = object.getAttribute(18);
 		handLeftY = object.getAttribute(19);
@@ -99,12 +98,13 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 			//results in orientation e.g. of the hand
 			double angle = lastValidCoordinate.calculateAngle(handLeftX, handLeftY);
 			
-			//Debug output
-//			System.out.println("Feature Extraction\n  Orientation: " + angle + " degree\n");
+//			Debug output
+			System.out.println("Feature Extraction\n  Orientation: " + angle + " degree\n");
 			
 			//set this point as last valid one
 			lastValidCoordinate.setPoint(handLeftX, handLeftY);
 			
+//			System.err.println("getMetadata():" + object.getMetadata());
 			
 			//create a tupel including datatype and value
 			Tuple<M> transferObject = new Tuple<>(2, false);

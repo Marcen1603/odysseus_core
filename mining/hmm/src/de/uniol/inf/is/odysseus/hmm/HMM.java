@@ -21,7 +21,7 @@ public class HMM {
 	 *            Given observation sequence
 	 * @return double[][] array, which contains all alpha-values
 	 */
-	public double[][] forward(Gesture gesture, int[] observations) {
+	private double[][] forward(Gesture gesture, int[] observations) {
 		// 2D matrix numStats x observationsLength
 		double[][] fwd = new double[gesture.getNumStates()][observations.length];
 		// System.out.println("fwd: " + gesture.getNumStates() + " " +
@@ -104,7 +104,7 @@ public class HMM {
 	 *            Given observation sequence
 	 * @return 2D array of backward values
 	 */
-	public double[][] backward(Gesture gesture, int[] observations) {
+	private double[][] backward(Gesture gesture, int[] observations) {
 		// 2D array numStats x observationsLength
 		double[][] bwd = new double[gesture.getNumStates()][observations.length];
 
@@ -130,13 +130,13 @@ public class HMM {
 	
 	/**
 	 * Calculating the production probability of a given model by using the
-	 * prepared forward values
+	 * prepared forward values.
 	 * 
 	 * @param fwd
 	 *            2D array of calculated forward values
 	 * @return probabilty value
 	 */
-	public double productionProbability(double[][] fwd) {
+	private double productionProbability(double[][] fwd) {
 		double sum = 0;
 		for (int i = 0; i < fwd.length; i++) {
 			sum += fwd[i][fwd[0].length - 1];
@@ -144,16 +144,19 @@ public class HMM {
 		return sum;
 	}
 
+	
 	/**
 	 * Calculating the production probability of a given model by using the
-	 * prepared forward values
+	 * prepared backward values.
+	 * 
+	 * Implemented for debugging only.
 	 * 
 	 * @param gesture
 	 * @param bwd double[][] array containing beta-values
 	 * @param int int[][] observations current observation sequence
 	 * @return probability value
 	 */
-	public double productionProbabilityBackwards(Gesture gesture, double[][] bwd, int[] observations) {
+	private double productionProbabilityBackwards(Gesture gesture, double[][] bwd, int[] observations) {
 		double sum = 0;
 		for (int i = 0; i < gesture.getB().length; i++) {
 			sum += gesture.getPi()[i] * gesture.getB()[i][observations[0]] * bwd[i][0];
@@ -162,173 +165,6 @@ public class HMM {
 		return sum;
 	}
 
-	/**
-	 * Processing the Baum-Welch-Algorithm. It runs once for each given observation sequence,
-	 * by using the default HMM Configuration for all iterations. 
-	 * Afterwards there will be computed the average of all values to get the actual probabilities. 
-	 * 
-	 * @param gesture HMM config (e.g. gesture) to train.
-	 * @param observations in[][] of observation sequence
-	 * @return Returning the calculated HMM config (e.g. a gesture) containing pi, a-matrix and b-matrix 
-	 */
-	public Gesture baumwelch(Gesture gesture, int[] observations) {
-		// printPiArray(gesture);
-		// printAMatrix(gesture);
-		// printBMatrix(gesture);
-
-		double[][] fwd = forward(gesture, observations);
-		// calculate backward variables
-		double[][] bwd = backward(gesture, observations);
-		// calculate productionprobability
-		double prodProb = productionProbability(fwd);
-		// double prodProbBackwards = productionProbabilityBackwards(gesture,
-		// bwd, observations);
-
-		// printForwardArray(gesture, observations);
-
-		double[][] improvedA, improvedB;
-		double[] improvedPi;
-
-		// improve fwd and backward variables with given
-		improvedA = improveA(gesture, observations, fwd, bwd, prodProb);
-		improvedB = improveB(gesture, observations, fwd, bwd, prodProb);
-		improvedPi = improvePi(gesture, fwd, bwd, observations, prodProb);
-
-		Gesture g = new Gesture(improvedPi, improvedA, improvedB);
-		return g;
-	}
-
-	
-	
-	/**
-	 * Part of Baum-Welch-Algorithm, which improves the A-matrix.
-	 * 
-	 * @param gesture
-	 * @param observations
-	 * @param fwd
-	 * @param bwd
-	 * @param prodProb
-	 * @return
-	 */
-	public double[][] improveA(Gesture gesture, int[] observations,	double[][] fwd, double[][] bwd, double prodProb) {
-		double[][] improvedA = new double[gesture.getNumStates()][gesture.getNumStates()];
-
-		for (int j = 0; j < gesture.getNumStates(); j++) {
-			for (int i = 0; i < gesture.getNumStates(); i++) {
-				improvedA[i][j] = 0;
-				// Zähler
-				double nominator = 0;
-				// Nenner
-				double denominator = 0;
-
-				// Fraction calculation
-				for (int t = 0; t < observations.length; t++) {
-					// Calculate nominator
-					if (t == observations.length - 1) {
-						nominator += (fwd[i][t] * gesture.getA()[i][j])	/ prodProb;
-					} else {
-						nominator += gamma2(fwd[i][t], gesture.getA()[i][j], gesture.getB()[j][observations[t + 1]], bwd[j][t + 1], prodProb);
-					}
-					// Calculate denominator
-					denominator += gamma1(i, t, fwd, bwd, prodProb);
-				}
-				// save
-				improvedA[i][j] = nominator / denominator;
-			}
-		}
-		return improvedA;
-	}
-
-	
-	/**
-	 * Part of the Baum-Welch-Algorithm, which improves the B-matrix.
-	 * 
-	 * @param gesture
-	 * @param observations
-	 * @param fwd
-	 * @param bwd
-	 * @param prodProb
-	 * @return
-	 */
-	public double[][] improveB(Gesture gesture, int[] observations,	double[][] fwd, double[][] bwd, double prodProb) {
-		double[][] improvedB = new double[gesture.getNumStates()][gesture.getB()[0].length];
-
-		// Run for all B-Values
-		for (int j = 0; j < gesture.getNumStates(); j++) {
-			for (int o_k = 0; o_k < gesture.getB()[0].length; o_k++) {
-				// Zähler
-				double nominator = 0;
-				// Nenner
-				double denominator = 0;
-
-				for (int t = 0; t < observations.length; t++) {
-					// Calculate nominator
-					if (o_k == observations[t]) {
-						nominator += gamma1(j, t, fwd, bwd, prodProb);
-					}
-					// Calculate denominator
-					denominator += gamma1(j, t, fwd, bwd, prodProb);
-
-				}
-				improvedB[j][o_k] = (nominator / denominator);
-			}
-		}
-		return improvedB;
-	}
-
-	
-	/**
-	 * Part of the Baum-Welch-Algorithm, which improves the Pi-array, which means the startprobabilities.
-	 * 
-	 * @param gesture
-	 * @param fwd
-	 * @param bwd
-	 * @param observations
-	 * @param prodProb
-	 * @return
-	 */
-	public double[] improvePi(Gesture gesture, double[][] fwd, double[][] bwd, int[] observations, double prodProb) {
-		double[] improvedPi = new double[gesture.getNumStates()];
-		for (int i = 0; i < gesture.getNumStates(); i++) {
-			improvedPi[i] = gamma1(i, 0, fwd, bwd, prodProb);
-		}
-
-		return improvedPi;
-	}
-
-	
-	/**
-	 * Function needed to calculate the state probability at time t.
-	 * 
-	 * @param S_i
-	 * @param t
-	 * @param fwd
-	 * @param bwd
-	 * @param prodProb
-	 * @return
-	 */
-	private double gamma1(int S_i, int t, double[][] fwd, double[][] bwd, double prodProb) {
-		double nominator;
-		nominator = fwd[S_i][t] * bwd[S_i][t];
-		return nominator / prodProb;
-	}
-
-	
-	/**
-	 * Function needed to calculate the probability of switching from state i, to state j, at time t. 
-	 * 
-	 * @param alpha_t
-	 * @param a_ij
-	 * @param b_jObs
-	 * @param beta_tPlus1
-	 * @param prodProb
-	 * @return
-	 */
-	private double gamma2(double alpha_t, double a_ij, double b_jObs, double beta_tPlus1, double prodProb) {
-		return (alpha_t * a_ij * b_jObs * beta_tPlus1) / prodProb;
-	}
-
-	
 	
 	/**
 	 * Function which runs the Baum-Welch-Algorithm and save the results to the hard disk, using the HMMFileHandler
@@ -386,6 +222,176 @@ public class HMM {
 		gesture.setB(B);
 		gesture.setPi(pi);
 	}
+	
+	
+	/**
+	 * Processing the Baum-Welch-Algorithm. It runs once for each given observation sequence,
+	 * by using the default HMM Configuration for all iterations. 
+	 * Afterwards there will be computed the average of all values to get the actual probabilities. 
+	 * 
+	 * @param gesture HMM config (e.g. gesture) to train.
+	 * @param observations in[][] of observation sequence
+	 * @return Returning the calculated HMM config (e.g. a gesture) containing pi, a-matrix and b-matrix 
+	 */
+	private Gesture baumwelch(Gesture gesture, int[] observations) {
+		// printPiArray(gesture);
+		// printAMatrix(gesture);
+		// printBMatrix(gesture);
+
+		// calculate forward variables
+		double[][] fwd = forward(gesture, observations);
+		// calculate backward variables
+		double[][] bwd = backward(gesture, observations);
+		// calculate productionprobability
+		double prodProb = productionProbability(fwd);
+		// double prodProbBackwards = productionProbabilityBackwards(gesture,
+		// bwd, observations);
+
+		// printForwardArray(gesture, observations);
+
+		double[][] improvedA, improvedB;
+		double[] improvedPi;
+
+		// improve fwd and backward variables with given
+		improvedA = improveA(gesture, observations, fwd, bwd, prodProb);
+		improvedB = improveB(gesture, observations, fwd, bwd, prodProb);
+		improvedPi = improvePi(gesture, fwd, bwd, observations, prodProb);
+
+		Gesture g = new Gesture(improvedPi, improvedA, improvedB);
+		return g;
+	}
+
+	
+	
+	/**
+	 * Part of Baum-Welch-Algorithm, which improves the A-matrix.
+	 * 
+	 * @param gesture
+	 * @param observations
+	 * @param fwd
+	 * @param bwd
+	 * @param prodProb
+	 * @return
+	 */
+	private double[][] improveA(Gesture gesture, int[] observations,	double[][] fwd, double[][] bwd, double prodProb) {
+		double[][] improvedA = new double[gesture.getNumStates()][gesture.getNumStates()];
+
+		for (int j = 0; j < gesture.getNumStates(); j++) {
+			for (int i = 0; i < gesture.getNumStates(); i++) {
+				improvedA[i][j] = 0;
+				// Zähler
+				double nominator = 0;
+				// Nenner
+				double denominator = 0;
+
+				// Fraction calculation
+				for (int t = 0; t < observations.length; t++) {
+					// Calculate nominator
+					if (t == observations.length - 1) {
+						nominator += (fwd[i][t] * gesture.getA()[i][j])	/ prodProb;
+					} else {
+						nominator += gamma2(fwd[i][t], gesture.getA()[i][j], gesture.getB()[j][observations[t + 1]], bwd[j][t + 1], prodProb);
+					}
+					// Calculate denominator
+					denominator += gamma1(i, t, fwd, bwd, prodProb);
+				}
+				// save
+				improvedA[i][j] = nominator / denominator;
+			}
+		}
+		return improvedA;
+	}
+
+	
+	/**
+	 * Part of the Baum-Welch-Algorithm, which improves the B-matrix.
+	 * 
+	 * @param gesture
+	 * @param observations
+	 * @param fwd
+	 * @param bwd
+	 * @param prodProb
+	 * @return
+	 */
+	private double[][] improveB(Gesture gesture, int[] observations,	double[][] fwd, double[][] bwd, double prodProb) {
+		double[][] improvedB = new double[gesture.getNumStates()][gesture.getB()[0].length];
+
+		// Run for all B-Values
+		for (int j = 0; j < gesture.getNumStates(); j++) {
+			for (int o_k = 0; o_k < gesture.getB()[0].length; o_k++) {
+				// Zähler
+				double nominator = 0;
+				// Nenner
+				double denominator = 0;
+
+				for (int t = 0; t < observations.length; t++) {
+					// Calculate nominator
+					if (o_k == observations[t]) {
+						nominator += gamma1(j, t, fwd, bwd, prodProb);
+					}
+					// Calculate denominator
+					denominator += gamma1(j, t, fwd, bwd, prodProb);
+
+				}
+				improvedB[j][o_k] = (nominator / denominator);
+			}
+		}
+		return improvedB;
+	}
+
+	
+	/**
+	 * Part of the Baum-Welch-Algorithm, which improves the Pi-array, which means the startprobabilities.
+	 * 
+	 * @param gesture
+	 * @param fwd
+	 * @param bwd
+	 * @param observations
+	 * @param prodProb
+	 * @return
+	 */
+	private double[] improvePi(Gesture gesture, double[][] fwd, double[][] bwd, int[] observations, double prodProb) {
+		double[] improvedPi = new double[gesture.getNumStates()];
+		for (int i = 0; i < gesture.getNumStates(); i++) {
+			improvedPi[i] = gamma1(i, 0, fwd, bwd, prodProb);
+		}
+
+		return improvedPi;
+	}
+
+	
+	/**
+	 * Function needed to calculate the state probability at time t.
+	 * 
+	 * @param S_i
+	 * @param t
+	 * @param fwd
+	 * @param bwd
+	 * @param prodProb
+	 * @return
+	 */
+	private double gamma1(int S_i, int t, double[][] fwd, double[][] bwd, double prodProb) {
+		double nominator;
+		nominator = fwd[S_i][t] * bwd[S_i][t];
+		return nominator / prodProb;
+	}
+
+	
+	/**
+	 * Function needed to calculate the probability of switching from state i, to state j, at time t. 
+	 * 
+	 * @param alpha_t
+	 * @param a_ij
+	 * @param b_jObs
+	 * @param beta_tPlus1
+	 * @param prodProb
+	 * @return
+	 */
+	private double gamma2(double alpha_t, double a_ij, double b_jObs, double beta_tPlus1, double prodProb) {
+		return (alpha_t * a_ij * b_jObs * beta_tPlus1) / prodProb;
+	}
+
+	
 
 	/* **************************
 	 * ** DEBUGGING TESTOUTPUT ** 
