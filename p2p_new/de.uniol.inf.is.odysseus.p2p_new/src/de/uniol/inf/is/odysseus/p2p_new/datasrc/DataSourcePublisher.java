@@ -128,7 +128,9 @@ public class DataSourcePublisher extends RepeatingJobThread implements IDataDict
 
 		final SourceAdvertisement adv = publishedSources.remove(source.getSourcename());
 		try {
-			P2PNewPlugIn.getDiscoveryService().flushAdvertisement(adv);
+			if( adv != null ) {
+				P2PNewPlugIn.getDiscoveryService().flushAdvertisement(adv);
+			}
 		} catch (final IOException ex) {
 			LOG.error("Could not flush advertisement {}", adv, ex);
 		}
