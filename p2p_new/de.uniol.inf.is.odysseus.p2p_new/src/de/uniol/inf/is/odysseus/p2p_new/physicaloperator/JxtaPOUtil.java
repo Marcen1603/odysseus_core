@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.p2p_new.util.AbstractJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 
 final class JxtaPOUtil {
@@ -63,7 +63,7 @@ final class JxtaPOUtil {
 		return packet;
 	}
 
-	public static void tryConnectAsync(final AbstractJxtaConnection connection) {
+	public static void tryConnectAsync(final IJxtaConnection connection) {
 		LOG.debug("Trying to connect");
 		final Thread t = new Thread(new Runnable() {
 			@Override
@@ -80,7 +80,7 @@ final class JxtaPOUtil {
 		t.start();
 	}
 
-	public static void tryDisconnectAsync(final AbstractJxtaConnection connection) {
+	public static void tryDisconnectAsync(final IJxtaConnection connection) {
 		final Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {

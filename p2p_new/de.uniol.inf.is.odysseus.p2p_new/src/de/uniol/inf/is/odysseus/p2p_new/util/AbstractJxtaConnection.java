@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-public abstract class AbstractJxtaConnection {
+public abstract class AbstractJxtaConnection implements IJxtaConnection {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractJxtaConnection.class);
 
@@ -30,6 +30,7 @@ public abstract class AbstractJxtaConnection {
 		this.pipeAdvertisement = Preconditions.checkNotNull(pipeAdvertisement, "pipeAdvertisement must not be null!");
 	}
 
+	@Override
 	public final void addListener(IJxtaConnectionListener listener) {
 		Preconditions.checkNotNull(listener, "Listener to add must not be null!");
 
@@ -38,6 +39,7 @@ public abstract class AbstractJxtaConnection {
 		}
 	}
 
+	@Override
 	public void connect() throws IOException {
 		fireConnectEvent();
 
@@ -75,6 +77,7 @@ public abstract class AbstractJxtaConnection {
 		readingDataThread.start();
 	}
 
+	@Override
 	public void disconnect() {
 		if (readingDataThread != null) {
 			readingDataThread.stopRunning();
@@ -84,27 +87,31 @@ public abstract class AbstractJxtaConnection {
 		fireDisconnectEvent();
 	}
 
+	@Override
 	public final PipeAdvertisement getPipeAdvertisement() {
 		return pipeAdvertisement;
 	}
 
+	@Override
 	public final boolean isConnected() {
 		return isConnected;
 	}
 
+	@Override
 	public final void removeListener(IJxtaConnectionListener listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
 		}
 	}
 
-	public synchronized void send(byte[] message) throws IOException {
+	@Override
+	public void send(byte[] message) throws IOException {
 		Preconditions.checkNotNull(message, "Byte data must not be null!");
 		Preconditions.checkArgument(message.length > 0, "Byte data must not be empty!");
 
 		if (socketOutputStream != null && isConnected == true) {
 			LOG.info("Sending message");
-
+			
 			socketOutputStream.write(message);
 			socketOutputStream.flush();
 		}

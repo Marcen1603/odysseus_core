@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.util.AbstractJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.ClientJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 
 @SuppressWarnings("rawtypes")
@@ -45,7 +46,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	
 	private NullAwareTupleDataHandler dataHandler;
 	private final PipeID pipeID;
-	private AbstractJxtaConnection connection;
+	private IJxtaConnection connection;
 	
 	private final List<T> bufferedElements = Lists.newArrayList();
 

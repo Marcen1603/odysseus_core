@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.ExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.util.AbstractJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 import de.uniol.inf.is.odysseus.p2p_new.util.ServerJxtaConnection;
@@ -35,7 +36,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private static final String PIPE_NAME = "Odysseus Pipe";
 
 	private final PipeID pipeID;
-	private AbstractJxtaConnection connection;
+	private IJxtaConnection connection;
 	private NullAwareTupleDataHandler dataHandler;
 	
 	private boolean localControlAllowed = false;
