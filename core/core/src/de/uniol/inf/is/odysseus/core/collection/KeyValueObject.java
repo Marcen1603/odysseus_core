@@ -107,7 +107,7 @@ implements Serializable{
 		StringBuffer retBuff = new StringBuffer();
 		retBuff.append(attributes);
 		if (withMetadata && getMetadata() != null) {
-			retBuff.append(";").append(getMetadata().csvToString());
+			retBuff.append(";").append(getMetadata().csvToString(';','\'',null, null, true));
 		}
 		return retBuff.toString();
 	}

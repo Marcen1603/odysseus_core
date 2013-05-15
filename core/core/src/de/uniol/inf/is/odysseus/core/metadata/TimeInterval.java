@@ -38,9 +38,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
 		ITimeInterval.class
 	};
-	
-	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
-	
+		
 	private static final long serialVersionUID = 2210545271466064814L;
 
 	private static final TimeInterval forever = new TimeInterval(
@@ -432,13 +430,13 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	}
 	
 	@Override
-	public String csvToString(NumberFormat ff, NumberFormat nf, boolean withMetadata) {
-		return getStart().toString() + ";" + getEnd().toString();
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		return getStart().toString() + delimiter + getEnd().toString();
 	}
 	
 	@Override
-	public String getCSVHeader() {
-		return "start;end";
+	public String getCSVHeader(char delimiter) {
+		return "start"+delimiter+"end";
 	}
 
 	public static TimeInterval forever() {
@@ -448,16 +446,6 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	@Override
 	public TimeInterval clone() {
 		return new TimeInterval(this);
-	}
-
-	@Override
-	public final String csvToString() {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
-	}
-
-	@Override
-	public final String csvToString(boolean withMetada) {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
 	}
 
 	@Override

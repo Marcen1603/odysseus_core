@@ -42,8 +42,6 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	@Element(name = "statistics")
 	private IDescriptiveStatistics desc = new DescriptiveStatistics();
 	
-	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
-	
 		
 	@Override
 	public void setStartTime(long start) {
@@ -90,23 +88,17 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	}
 	
 	@Override
-	public String csvToString(NumberFormat floatFormatter, NumberFormat numberFormatter, boolean withMetadata) {
-		return numberFormatter.format(queryId)+";"+numberFormatter.format(startTime)+";"+numberFormatter.format(endTime)+";"+numberFormatter.format(getDuration())+";"+size+";"+desc.csvToString(floatFormatter, numberFormatter, withMetadata);
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		if (numberFormatter != null){
+			return numberFormatter.format(queryId)+delimiter+numberFormatter.format(startTime)+delimiter+numberFormatter.format(endTime)+delimiter+numberFormatter.format(getDuration())+delimiter+size+delimiter+desc.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
+		}else{
+			return queryId+delimiter+startTime+delimiter+endTime+delimiter+getDuration()+delimiter+size+delimiter+desc.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
+		}
 	}
 	
 	@Override
-	public final String csvToString() {
-		return this.csvToString(defaultNumberFormat, defaultNumberFormat ,true);
-	}
-
-	@Override
-	public final String csvToString(boolean withMetada) {
-		return this.csvToString(defaultNumberFormat, defaultNumberFormat, withMetada);
-	}
-	
-	@Override
-	public String getCSVHeader() {
-		return "queryId;startTime;endTime;duration;size;"+desc.getCSVHeader();
+	public String getCSVHeader(char delimiter) {
+		return "queryId"+delimiter+"startTime"+delimiter+"endTime"+delimiter+"duration;size;"+desc.getCSVHeader(delimiter);
 	}
 
 	/**
@@ -122,7 +114,7 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	
 	@Override
 	public String toString() {	
-		return csvToString();
+		return csvToString(';','\'',null,null, true);
 	}
 
 }

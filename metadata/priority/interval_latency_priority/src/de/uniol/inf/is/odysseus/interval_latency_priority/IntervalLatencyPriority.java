@@ -98,13 +98,13 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 	}
 
 	@Override
-	public String csvToString(NumberFormat ff,NumberFormat nf, boolean withMetadata) {
-		return super.csvToString(ff,nf,withMetadata) + ";" + this.latency.csvToString(ff,nf,withMetadata)+";"+this.prio.csvToString(ff,nf,withMetadata);
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata) + delimiter + this.latency.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata)+delimiter+this.prio.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
 	}
 
 	@Override
-	public String getCSVHeader() {
-		return super.getCSVHeader()+";"+this.latency.getCSVHeader()+";"+this.prio.getCSVHeader();
+	public String getCSVHeader(char delimiter) {
+		return super.getCSVHeader(delimiter)+"+delimiter+"+this.latency.getCSVHeader(delimiter)+"+delimiter+"+this.prio.getCSVHeader(delimiter);
 	}
 	
 	@Override

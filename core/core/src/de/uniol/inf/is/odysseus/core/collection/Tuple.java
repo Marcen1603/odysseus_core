@@ -42,8 +42,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		implements Serializable, Comparable<Tuple<?>>, ICSVToString {
 
 	private static final long serialVersionUID = 7119095568322125441L;
-	static private NumberFormat defaultNumberFormat = NumberFormat
-			.getInstance();
 
 	protected Object[] attributes;
 
@@ -500,58 +498,57 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	}
 
 	@Override
-	public final String csvToString() {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat, true);
-	}
-
-	@Override
-	public final String csvToString(boolean withMetada) {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
-	}
-
-	@Override
-	public final String csvToString(NumberFormat floatingFormatter,
-			NumberFormat numberFormatter, boolean withMetadata) {
+	public final String csvToString(char delimiter, Character textSeperator,
+			NumberFormat floatingFormatter, NumberFormat numberFormatter,
+			boolean withMetadata) {
 		StringBuffer retBuff = new StringBuffer();
-		String sep = "";
 		if (attributes.length > 0) {
 			for (int i = 0; i < this.attributes.length; ++i) {
 				Object curAttribute = this.attributes[i];
-				retBuff.append(sep);
+				if (i>0){
+					retBuff.append(delimiter);
+				}
 				if (curAttribute == null) {
 					retBuff.append("");
 				} else {
-					if (curAttribute instanceof Number) {
-						if (curAttribute instanceof Double
-								|| curAttribute instanceof Float) {
-							retBuff.append(floatingFormatter
-									.format(curAttribute));
-						} else {
-							retBuff.append(numberFormatter.format(curAttribute));
+					if (floatingFormatter != null || numberFormatter != null) {
+						if (curAttribute instanceof Number) {
+							if (curAttribute instanceof Double
+									|| curAttribute instanceof Float) {
+								retBuff.append(floatingFormatter
+										.format(curAttribute));
+							} else {
+								retBuff.append(numberFormatter
+										.format(curAttribute));
+							}
 						}
 					} else {
-						retBuff.append(curAttribute.toString());
+						if (textSeperator != null
+								&& curAttribute instanceof String) {
+							retBuff.append(textSeperator).append(curAttribute.toString()).append(textSeperator);
+						} else {
+							retBuff.append(curAttribute.toString());
+						}
 					}
 				}
-				sep = ";";
 			}
 		} else {
 			retBuff.append("null");
 		}
 
 		if (withMetadata) {
-			retBuff.append(";").append(getMetadata().csvToString());
+			retBuff.append(delimiter).append(getMetadata().csvToString(delimiter,textSeperator, floatingFormatter, numberFormatter, withMetadata));
 		}
 		return retBuff.toString();
 	}
 
 	@Override
-	public String getCSVHeader() {
+	public String getCSVHeader(char delimiter) {
 		StringBuffer ret = new StringBuffer();
 		for (int i = 0; i < attributes.length; i++) {
-			ret.append(";");
+			ret.append(delimiter);
 		}
-		ret.append(getMetadata().getCSVHeader());
+		ret.append(getMetadata().getCSVHeader(delimiter));
 		return ret.toString();
 	}
 

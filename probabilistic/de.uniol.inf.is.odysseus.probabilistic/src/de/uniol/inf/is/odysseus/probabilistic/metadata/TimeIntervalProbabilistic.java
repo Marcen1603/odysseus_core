@@ -62,13 +62,13 @@ public class TimeIntervalProbabilistic extends TimeInterval implements
 	}
 
 	@Override
-	public String csvToString(NumberFormat ff,NumberFormat nf, boolean withMetadata) {
-		return super.csvToString(ff,nf,withMetadata) + ";" + this.probabilistic.csvToString(ff,nf,withMetadata);
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata) + delimiter + this.probabilistic.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
 	}
 
 	@Override
-	public String getCSVHeader() {
-		return super.getCSVHeader() + ";" + this.probabilistic.getCSVHeader();
+	public String getCSVHeader(char delimiter) {
+		return super.getCSVHeader(delimiter) + delimiter + this.probabilistic.getCSVHeader(delimiter);
 	}
 
 	@Override

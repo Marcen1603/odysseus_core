@@ -51,8 +51,6 @@ public class DescriptiveStatistics implements IDescriptiveStatistics{
 	private long min;
 	@Element
 	private long max;
-
-	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
 	
 	public int getN() {
 		return this.count;
@@ -192,34 +190,50 @@ public class DescriptiveStatistics implements IDescriptiveStatistics{
 	}
 	
 	@Override
-	public String csvToString(NumberFormat floatingFormater, NumberFormat numberFormatter,  boolean withMetada) {
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
 		prepareStats();
-		return numberFormatter.format(getMin())+";"+numberFormatter.format(getMax())+";"+floatingFormater.format(getMean())+";"+numberFormatter.format(getN())+";"+
-		floatingFormater.format(getStandardDeviation())+";"+floatingFormater.format(getVariance())+";"
-				+floatingFormater.format(getPercentile(5))+";"+
-				floatingFormater.format(getPercentile(10))+";"+
-				floatingFormater.format(getPercentile(25))+";"+
-				floatingFormater.format(getPercentile(50))+";"+
-				floatingFormater.format(getPercentile(75))+";"+
-				floatingFormater.format(getPercentile(90))+";"+
-				floatingFormater.format(getPercentile(95));
+		if (floatingFormatter != null && numberFormatter != null){
+		return numberFormatter.format(getMin())+delimiter+numberFormatter.format(getMax())+delimiter+floatingFormatter.format(getMean())+delimiter+numberFormatter.format(getN())+delimiter+
+				floatingFormatter.format(getStandardDeviation())+delimiter+floatingFormatter.format(getVariance())+delimiter
+				+floatingFormatter.format(getPercentile(5))+delimiter+
+				floatingFormatter.format(getPercentile(10))+delimiter+
+				floatingFormatter.format(getPercentile(25))+delimiter+
+				floatingFormatter.format(getPercentile(50))+delimiter+
+				floatingFormatter.format(getPercentile(75))+delimiter+
+				floatingFormatter.format(getPercentile(90))+delimiter+
+				floatingFormatter.format(getPercentile(95));
+		}else{
+			if (floatingFormatter != null){
+				return getMin()+delimiter+getMax()+delimiter+floatingFormatter.format(getMean())+delimiter+getN()+delimiter+
+						floatingFormatter.format(getStandardDeviation())+delimiter+floatingFormatter.format(getVariance())+delimiter
+								+floatingFormatter.format(getPercentile(5))+delimiter+
+								floatingFormatter.format(getPercentile(10))+delimiter+
+								floatingFormatter.format(getPercentile(25))+delimiter+
+								floatingFormatter.format(getPercentile(50))+delimiter+
+								floatingFormatter.format(getPercentile(75))+delimiter+
+								floatingFormatter.format(getPercentile(90))+delimiter+
+								floatingFormatter.format(getPercentile(95));				
+			}else{
+				return ""+getMin()+delimiter+getMax()+delimiter+getMean()+delimiter+getN()+delimiter+
+						getStandardDeviation()+delimiter+getVariance()+delimiter+
+								getPercentile(5)+delimiter+
+								getPercentile(10)+delimiter+
+								getPercentile(25)+delimiter+
+								getPercentile(50)+delimiter+
+								getPercentile(75)+delimiter+
+								getPercentile(90)+delimiter+
+								getPercentile(95);
+
+			}
+		}
+		
 	}
 	
 
 	@Override
-	public String getCSVHeader() {
-		return "Min;Max;Mean;Count;StandardDeviation;variance;percentile5;percentile10;percentile25;" +
-				"percentile50;percentile75;percentile90;percentile95";
-	}
-	
-	@Override
-	public final String csvToString() {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
-	}
-
-	@Override
-	public final String csvToString(boolean withMetada) {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
+	public String getCSVHeader(char delimiter) {
+		return "Min"+delimiter+"Max"+delimiter+"Mean"+delimiter+"Count"+delimiter+"StandardDeviation"+delimiter+"variance"+delimiter+"percentile5"+delimiter+"percentile10"+delimiter+"percentile25"+delimiter +
+				"percentile50"+delimiter+"percentile75"+delimiter+"percentile90"+delimiter+"percentile95";
 	}
 	
 	@Override

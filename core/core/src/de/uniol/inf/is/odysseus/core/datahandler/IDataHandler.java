@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -31,6 +32,7 @@ public interface IDataHandler<T> {
 	public void writeData(ByteBuffer buffer, Object data);
 	public void writeData(StringBuilder string, Object data);
 	public void writeData(List<String> output, Object data);
+	public void writeCSVData(StringBuilder string, Object data, char textSeperator, char delimiter, DecimalFormat floatingFormatter, DecimalFormat numberFormat, boolean writeMetadata);
 	public List<String> getSupportedDataTypes();
 	public int memSize(Object attribute);
 	public IDataHandler<T> createInstance(SDFSchema schema);

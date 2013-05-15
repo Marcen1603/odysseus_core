@@ -29,9 +29,7 @@ public class ScheduleMeta implements ICSVToString{
 	private long inTimeCount;
 	private double rate;
 	private long allSchedulings;
-	
-	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
-	
+		
 	final private LinkedList<IPair<Long, Boolean>> history;
 
 	public ScheduleMeta(long lastSchedule) {
@@ -65,7 +63,7 @@ public class ScheduleMeta implements ICSVToString{
 	}
 	
 	@Override
-	public String csvToString(NumberFormat ff, NumberFormat nf, boolean withMetadata) {
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
 		// FIXME: Formatter to csvPrint
 		StringBuffer ret = new StringBuffer();
 		csvPrint(ret);
@@ -73,8 +71,8 @@ public class ScheduleMeta implements ICSVToString{
 	}
 	
 	@Override
-	public String getCSVHeader() {
-		return "lastDiff;inTimeCount;allSchedulings;factor;historySize";
+	public String getCSVHeader(char delimiter) {
+		return "lastDiff"+delimiter+"inTimeCount"+delimiter+"allSchedulings"+delimiter+"factor"+delimiter+"historySize";
 	}
 
 	private static long getNow() {
@@ -157,14 +155,5 @@ public class ScheduleMeta implements ICSVToString{
 		return ret.toString();
 	}
 
-	@Override
-	public final String csvToString() {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
-	}
-
-	@Override
-	public final String csvToString(boolean withMetada) {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
-	}
 
 }

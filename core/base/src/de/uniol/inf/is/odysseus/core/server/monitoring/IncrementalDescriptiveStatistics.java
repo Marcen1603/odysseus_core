@@ -27,12 +27,18 @@ public class IncrementalDescriptiveStatistics implements IDescriptiveStatistics 
 	private int count = 0;
 	private long sum = 0;
 	private long min = Long.MAX_VALUE;
-	private long max = Long.MIN_VALUE;
-	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();	
-	
+	private long max = Long.MIN_VALUE;	
 	@Override
-	public String csvToString(NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
-		return numberFormatter.format(min)+";"+numberFormatter.format(max)+";"+floatingFormatter.format(getMean())+";"+numberFormatter.format(count)+";"+numberFormatter.format(sum);				
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		if (floatingFormatter != null && numberFormatter != null){
+			return numberFormatter.format(min)+delimiter+numberFormatter.format(max)+delimiter+floatingFormatter.format(getMean())+delimiter+numberFormatter.format(count)+delimiter+numberFormatter.format(sum);				
+		}else{
+			if (floatingFormatter != null){
+				return min+delimiter+max+delimiter+floatingFormatter.format(getMean())+delimiter+count+delimiter+sum;								
+			}else{
+				return ""+min+delimiter+max+delimiter+getMean()+delimiter+count+delimiter+sum;								
+			}
+		}
 	}
 	
 	/**
@@ -43,18 +49,8 @@ public class IncrementalDescriptiveStatistics implements IDescriptiveStatistics 
 	}
 
 	@Override
-	public String getCSVHeader() {
-		return "Min;Max;Mean;Count;Sum";
-	}
-	
-	@Override
-	public final String csvToString() {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
-	}
-
-	@Override
-	public final String csvToString(boolean withMetada) {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
+	public String getCSVHeader(char delimiter) {
+		return "Min"+delimiter+"Max"+delimiter+"Mean"+delimiter+"Count"+delimiter+"Sum";
 	}
 
 	@Override

@@ -61,13 +61,13 @@ public class IntervalPriority extends TimeInterval implements IPriority {
 	}
 	
 	@Override
-	public String csvToString(NumberFormat ff,NumberFormat nf, boolean withMetadata) {
-		return super.csvToString(ff,nf,withMetadata)+";"+this.priority;
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata)+delimiter+this.priority;
 	}
 	
 	@Override
-	public String getCSVHeader() {
-		return super.getCSVHeader()+";priority";
+	public String getCSVHeader(char delimiter) {
+		return super.getCSVHeader(delimiter)+delimiter+"priority";
 	}
 
 	@Override

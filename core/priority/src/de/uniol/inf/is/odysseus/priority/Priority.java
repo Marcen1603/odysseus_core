@@ -22,8 +22,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 public class Priority implements IPriority{
 	
 	private static final long serialVersionUID = 1837720176871400611L;
-
-	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
 	
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
@@ -62,23 +60,17 @@ public class Priority implements IPriority{
 	}
 	
 	@Override
-	public String csvToString(NumberFormat ff, NumberFormat nf, boolean withMetadata) {
-		return nf.format(prio);
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		if (numberFormatter != null){
+			return numberFormatter.format(prio);
+		}else{
+			return prio+"";
+		}
 	}
 	
 	@Override
-	public String getCSVHeader() {
+	public String getCSVHeader(char delimiter) {
 		return "Priority";
-	}
-	
-	@Override
-	public final String csvToString() {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
-	}
-
-	@Override
-	public final String csvToString(boolean withMetada) {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
 	}
 	
 	@Override

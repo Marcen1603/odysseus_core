@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,10 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 	private char textDelimiter;
 	private char delimiter;
 
+	private DecimalFormat floatingFormatter = null;
+	private DecimalFormat numberFormatter = null;
+	private boolean withMetadata = false; 
+	
 	public CSVProtocolHandler() {
 		super();
 	}
@@ -152,7 +157,7 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 	@Override
 	public void write(T object) throws IOException {
 		if (object instanceof ICSVToString){
-			writer.write(((ICSVToString)object).csvToString());
+			writer.write(((ICSVToString)object).csvToString(delimiter, textDelimiter, floatingFormatter, numberFormatter, withMetadata ));
 		}
 		
 	};

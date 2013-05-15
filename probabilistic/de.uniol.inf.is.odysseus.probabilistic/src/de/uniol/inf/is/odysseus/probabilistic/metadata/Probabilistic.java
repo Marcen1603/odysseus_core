@@ -34,8 +34,6 @@ public class Probabilistic implements IProbabilistic {
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IProbabilistic.class };
 	@SuppressWarnings("unused")
 	private final Map<Integer, PBox> pBoxes = new HashMap<Integer, PBox>();
-	
-	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
 
 	/** Tuple existence probability */
 	private double existence;
@@ -54,22 +52,18 @@ public class Probabilistic implements IProbabilistic {
 	}
 
 	@Override
-	public String csvToString(NumberFormat ff,NumberFormat nf, boolean withMetadata) {
-		return "" + ff.format(this.existence);
+	public String csvToString(char delimiter, Character textSeperator,
+			NumberFormat floatingFormatter, NumberFormat numberFormatter,
+			boolean withMetadata) {
+		if (floatingFormatter != null) {
+			return floatingFormatter.format(this.existence);
+		} else {
+			return "" + this.existence;
+		}
 	}
 
 	@Override
-	public final String csvToString() {
-		return this.csvToString(defaultNumberFormat, defaultNumberFormat,true);
-	}
-
-	@Override
-	public final String csvToString(boolean withMetada) {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
-	}
-
-	@Override
-	public String getCSVHeader() {
+	public String getCSVHeader(char delimiter) {
 		return "probability";
 	}
 

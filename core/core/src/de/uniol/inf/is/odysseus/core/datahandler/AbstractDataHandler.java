@@ -15,8 +15,10 @@
   */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
@@ -70,6 +72,17 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
     @Override
     public void writeData(List<String> output, Object data) {
         output.add(data.toString());
+    }
+    
+    @Override
+    public void writeCSVData(StringBuilder string, Object data,
+    		char delimiter, char textSeperator, DecimalFormat floatingFormatter,
+    		DecimalFormat numberFormat, boolean writeMetadata) {
+    	if (data instanceof ICSVToString){
+    		string.append(((ICSVToString)data).csvToString(delimiter,textSeperator,floatingFormatter,numberFormat,writeMetadata));
+    	}else{
+    		// TODO: Find another solution ...
+    	}
     }
 	
 	@Override

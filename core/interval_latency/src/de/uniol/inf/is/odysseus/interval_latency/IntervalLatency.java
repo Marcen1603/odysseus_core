@@ -83,13 +83,13 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 	}
 
 	@Override
-	public String csvToString(NumberFormat ff, NumberFormat nf, boolean withMetadata) {
-		return super.csvToString(ff,nf,withMetadata)+";"+this.latency.csvToString();
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata)+delimiter+this.latency.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
 	}
 	
 	@Override
-	public String getCSVHeader() {
-		return super.getCSVHeader()+";"+this.latency.getCSVHeader();
+	public String getCSVHeader(char delimiter) {
+		return super.getCSVHeader(delimiter)+"+delimiter+"+this.latency.getCSVHeader(delimiter);
 	}
 	
 	@Override

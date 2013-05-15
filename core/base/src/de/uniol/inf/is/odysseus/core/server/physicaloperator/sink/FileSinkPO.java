@@ -50,6 +50,8 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 	private final ReentrantLock lock = new ReentrantLock();
 	private DecimalFormat floatingFormatter;
 	private DecimalFormat numberFormatter;
+	private Character textSeperator = null;
+	private char delimiter = ';';
 
 	static Logger LOG = LoggerFactory.getLogger(FileSinkPO.class);
 
@@ -114,7 +116,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 
 					String toWrite = null;
 					if (csvSink) {
-						toWrite = ((ICSVToString) object).csvToString(floatingFormatter, numberFormatter, printMetadata) + "\n";
+						toWrite = ((ICSVToString) object).csvToString(delimiter,textSeperator,floatingFormatter, numberFormatter, printMetadata) + "\n";
 					} else {
 						toWrite = "" + object + "\n";
 					}

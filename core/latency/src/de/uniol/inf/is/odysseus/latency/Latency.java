@@ -31,8 +31,6 @@ public class Latency implements ILatency{
 	private static final long serialVersionUID = -3355802503979937479L;
 	private long lstart;
 	private long lend;
-
-	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
 	
 	public Latency(){
 		this.lstart = System.nanoTime();
@@ -85,26 +83,19 @@ public class Latency implements ILatency{
 	}
 	
 	@Override
-	public String csvToString(NumberFormat floatingNumberFormatter, NumberFormat numberFormatter, boolean withMetadata) {
-		return numberFormatter.format(this.lstart)+";"+numberFormatter.format(this.lend)+";"+numberFormatter.format(this.lend - this.lstart);
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		StringBuffer retBuffer = new StringBuffer();
+		if (numberFormatter != null){
+			retBuffer.append(numberFormatter.format(this.lstart)).append(delimiter).append(numberFormatter.format(this.lend)).append(delimiter).append(numberFormatter.format(this.lend - this.lstart));
+		}else{
+			retBuffer.append(this.lstart).append(delimiter).append(this.lend).append(delimiter).append(this.lend - this.lstart);
+		}
+		return retBuffer.toString();
 	}
 	
 	@Override
-	public String getCSVHeader() {
-		return "lstart;lend;latency";
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.ICSVToString#csvToString(boolean)
-	 */
-	@Override
-	public final String csvToString() {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
-	}
-
-	@Override
-	public final String csvToString(boolean withMetada) {
-		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
+	public String getCSVHeader(char delimiter) {
+		return "lstart"+delimiter+"lend"+delimiter+"latency";
 	}
 	
 	@Override
