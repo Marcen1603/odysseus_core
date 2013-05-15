@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 @LogicalOperator(name="LatencyConvert", minInputPorts=1, maxInputPorts=1)
 public class LatencyConverterAO extends UnaryLogicalOp{
 
-	private int factor = 100000;
+	private int factor = 1000000;
 	private int sample = 1;
 	
 	private static final long serialVersionUID = 2736049206496339043L;
@@ -40,10 +40,14 @@ public class LatencyConverterAO extends UnaryLogicalOp{
 		if(pos == 0){		
 			SDFSchema old = super.getOutputSchemaIntern(0);
 			List<SDFAttribute> attributes = new ArrayList<>();
-			SDFAttribute a = new SDFAttribute(old.getURI(), "latency", SDFDatatype.DOUBLE);
+			SDFAttribute a = new SDFAttribute(old.getURI(), "tillclustering", SDFDatatype.DOUBLE);
 			attributes.add(a);
-			SDFAttribute b = new SDFAttribute(old.getURI(), "duration", SDFDatatype.DOUBLE);
+			SDFAttribute b = new SDFAttribute(old.getURI(), "forclustering", SDFDatatype.DOUBLE);
 			attributes.add(b);
+			SDFAttribute c = new SDFAttribute(old.getURI(), "fortransfer", SDFDatatype.DOUBLE);
+			attributes.add(c);
+			SDFAttribute d = new SDFAttribute(old.getURI(), "total", SDFDatatype.DOUBLE);
+			attributes.add(d);
 			SDFSchema schema = new SDFSchema(old.getURI(), attributes);
 			return schema;
 		}

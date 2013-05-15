@@ -24,7 +24,7 @@ public class KMeansClusterer<M extends ITimeInterval> implements IClusterer<M> {
 	}
 
 	@Override
-	public Map<Integer, List<Tuple<M>>> processClustering(List<Tuple<M>> tuples, int[] attributes) {
+	public Map<Integer, List<Tuple<M>>> processClustering(List<Tuple<M>> tuples) {
 		List<Tuple<M>> pool = new ArrayList<>();
 
 		for (Tuple<M> newTuple : tuples) {
@@ -40,7 +40,7 @@ public class KMeansClusterer<M extends ITimeInterval> implements IClusterer<M> {
 			for (int i = 0; i < k; i++) {
 				Tuple<M> initialMean = pool.remove(random.nextInt(pool.size()));
 				initialMean.setMetadata("CLUSTERID", i);
-				means.put(i, new Cluster<>(i, initialMean));
+				means.put(i, new Cluster<M>(i, initialMean));
 			}
 			boolean changed = true;
 			// iterate until nothing changed
@@ -88,8 +88,12 @@ public class KMeansClusterer<M extends ITimeInterval> implements IClusterer<M> {
 
 	@Override
 	public void setOptions(Map<String, List<String>> options) {
-		// TODO Auto-generated method stub
+		// not used...
+	}
 
+	@Override
+	public void init(SDFSchema schema) {
+		this.schema = schema;	
 	}
 
 }

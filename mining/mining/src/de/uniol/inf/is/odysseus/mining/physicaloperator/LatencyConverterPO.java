@@ -10,7 +10,9 @@ public class LatencyConverterPO extends AbstractPipe<Tuple<? extends ILatency>, 
 	private double factor;
 	private int sample;
 	private int counter = 0;
-	private double latencySum = 0.0;
+	private double beforeSum = 0.0;
+	private double afterSum = 0.0;
+	private double transferSum = 0.0;
 
 	public LatencyConverterPO(double factor, int sample) {
 		super();
@@ -25,28 +27,56 @@ public class LatencyConverterPO extends AbstractPipe<Tuple<? extends ILatency>, 
 
 	@Override
 	public OutputMode getOutputMode() {
-		return OutputMode.NEW_ELEMENT;
+		return OutputMode.MODIFIED_INPUT;
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		this.counter = 0;
+		this.beforeSum = 0.0;
+		this.afterSum = 0.0;
+		this.transferSum = 0.0;
 	}
 
 	@Override
 	protected void process_next(Tuple<? extends ILatency> object, int port) {
 		counter++;
-		long latency = object.getMetadata().getLatency();
-		double newlatency = latency / factor;
-		latencySum = latencySum + newlatency;
+		//latency till clustering
+		long tillClusteringEnd = ((Long) object.getMetadata("LATENCY_BEFORE"));
+		double timeBeforeClustering = (tillClusteringEnd - object.getMetadata().getLatencyStart())/factor;;
+		
+		// latency after clustering
+		long afterClusteringEnd = ((Long) object.getMetadata("LATENCY_AFTER"));
+		double timeForClustering = (afterClusteringEnd - tillClusteringEnd)/factor;;
+		
+		// total latency till calclatency
+		long latency = object.getMetadata().getLatencyEnd();
+		double transferLatency = (latency - afterClusteringEnd)/factor;
+		
+		
+		
+		beforeSum = beforeSum + timeBeforeClustering;
+		afterSum = afterSum + timeForClustering;
+		transferSum = transferSum + transferLatency;
+		
+		
+	
 		if (counter == sample) {
-			Tuple<ILatency> t = new Tuple<>(2, false);
-			t.setAttribute(0, latencySum / counter);
-			t.setAttribute(1, object.getMetadata("CLUSTERING_DURATION"));
+			Tuple<ILatency> t = new Tuple<>(4, false);
+			double beforeMean = beforeSum / counter;
+			double afterMean = afterSum / counter;
+			double transferMean = transferSum/counter;
+			double total = beforeMean+afterMean+transferMean;
+			t.setAttribute(0, beforeMean);
+			t.setAttribute(1, afterMean);
+			t.setAttribute(2, transferMean);
+			t.setAttribute(3, total);
 			t.setMetadata(object.getMetadata().clone());
 			transfer(t);
 			counter = 0;
-			latencySum = 0.0;
+			this.beforeSum = 0.0;
+			this.afterSum = 0.0;
+			this.transferSum = 0.0;
 		}
 	}
 

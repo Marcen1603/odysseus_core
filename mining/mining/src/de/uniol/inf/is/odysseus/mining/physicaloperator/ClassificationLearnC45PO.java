@@ -97,13 +97,14 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 
 	@Override
 	protected synchronized void process_next(Tuple<M> object, int port) {
-		PointInTime currentTime = object.getMetadata().getStart();
-		process_data(currentTime);
+		process_data(object);
 		sweepArea.insert(object);
 	}
 
-	private synchronized void process_data(PointInTime currentTime) {
+	private synchronized void process_data(Tuple<M> object ) {
+		PointInTime currentTime = object.getMetadata().getStart();
 		if (currentTime.after(lastCut)) {
+			long tillTime = System.nanoTime();
 			init();
 			// get all elements from the sweep area that can be processed
 			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
@@ -138,15 +139,16 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				}
 				// get the best split for the root
 				TreeNode root = new TreeNode();
-				getNextSplit(pool, allAttributes, root);
-				logger.trace("Best split order is: ");
-
+				getNextSplit(pool, allAttributes, root);			
+				long afterTime = System.nanoTime();
 				Tuple<M> newtuple = new Tuple<M>(1, false);
 				@SuppressWarnings("unchecked")
 				M meta = (M) pool.get(pool.size() - 1).getMetadata().clone();
 				meta.setStartAndEnd(totalMin, PointInTime.getInfinityTime());
 				newtuple.setMetadata(meta);
 				newtuple.setAttribute(0, root);
+				newtuple.setMetadata("LATENCY_BEFORE", tillTime);
+				newtuple.setMetadata("LATENCY_AFTER", afterTime);
 				// root.printSubTree();
 				transfer(newtuple);
 
@@ -189,10 +191,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	}
 
 	private void getNextSplit(List<Tuple<M>> pool, List<SDFAttribute> attributesToCheck, TreeNode parent) {
-		logger.trace("----------------------------------");
-		logger.trace("Check for " + parent.getAttribute());
-		ArrayList<SDFAttribute> attributes = new ArrayList<>(attributesToCheck);
-		logger.trace("open: " + attributes);
+		ArrayList<SDFAttribute> attributes = new ArrayList<>(attributesToCheck);	
 		// first, calculate splitting points for pool and attributes!
 		Map<SDFAttribute, List<RelationalPredicate>> splittingPoints = calculateSplittingPoints(pool, attributes);
 		// the, find the best split

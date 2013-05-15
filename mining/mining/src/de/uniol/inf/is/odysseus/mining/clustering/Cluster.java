@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 public class Cluster<M extends ITimeInterval> {
 
 	private List<Tuple<M>> tuples = new ArrayList<Tuple<M>>();
-	private Tuple<M> calculatedMean;
+	private Tuple<?> calculatedMean;
 	private int id; 
 
 	public Cluster(int id, Tuple<M> initialMean) {
@@ -87,7 +87,7 @@ public class Cluster<M extends ITimeInterval> {
 		return Collections.unmodifiableList(this.tuples);
 	}
 
-	public Tuple<M> getMean() {
+	public Tuple<?> getMean() {
 		return this.calculatedMean;
 	}
 
@@ -103,9 +103,9 @@ public class Cluster<M extends ITimeInterval> {
 		if(this.isEmpty()){
 			return;
 		}
-		Tuple<M> mean = this.tuples.get(0).clone();
+		Tuple<?> mean = this.tuples.get(0).clone();
 		for (int k =1 ; k< this.tuples.size(); k++) {
-			Tuple<M> tuple  = this.tuples.get(k);
+			Tuple<?> tuple  = this.tuples.get(k);
 			for (int i = 0; i < tuple.size(); i++) {
 				mean.setAttribute(i, add(tuple.getAttribute(i), mean.getAttribute(i)));
 			}

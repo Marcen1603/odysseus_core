@@ -68,13 +68,14 @@ public class TClusteringAORule extends AbstractTransformationRule<ClusteringAO> 
 			break;
 		case "WEKA":
 			k = Integer.parseInt(operator.getOptions().get("k").get(0));
-			IClusterer<ITimeInterval> clusterer = new WekaClusterer(operator.getInputSchema(0), operator.getAttributePositions());
-			po = new ClusteringPO(clusterer, operator.getAttributePositions());
+			IClusterer<ITimeInterval> clusterer = new WekaClusterer();
+			clusterer.init(operator.getInputSchema(0));
+			po = new ClusteringPO(clusterer);
 			break;
 		default:
 			k = Integer.parseInt(operator.getOptions().get("k").get(0));
 			IClusterer<ITimeInterval> newk = new KMeansClusterer<>(k, operator.getInputSchema(0));
-			po = new ClusteringPO(newk, operator.getAttributePositions());
+			po = new ClusteringPO(newk);
 			break;
 		}
 		

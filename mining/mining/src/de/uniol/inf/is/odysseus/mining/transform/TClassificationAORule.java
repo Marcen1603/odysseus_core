@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.TIInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClassificationAO;
-import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationTreePO;
+import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -39,7 +39,7 @@ public class TClassificationAORule extends AbstractTransformationRule<Classifica
 	@Override
 	public void execute(ClassificationAO operator, TransformationConfiguration config) {
 		TIInputStreamSyncArea<Tuple<ITimeInterval>> inputArea = new TIInputStreamSyncArea<Tuple<ITimeInterval>>(operator.getSubscribedToSource().size());
-		ClassificationTreePO<ITimeInterval> po = new ClassificationTreePO<ITimeInterval>(operator.getInputSchema(0), inputArea);
+		ClassificationPO<ITimeInterval> po = new ClassificationPO<ITimeInterval>(operator.getInputSchema(0), inputArea);
 		defaultExecute(operator, po, config, true, false);
 	}
 

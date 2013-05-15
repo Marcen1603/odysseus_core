@@ -16,7 +16,10 @@
 package de.uniol.inf.is.odysseus.mining.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -24,6 +27,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.mining.MiningDatatypes;
 
 /**
@@ -37,19 +42,27 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 
 	private SDFAttribute classAttribute;
 
+	private Map<String, String> options = new HashMap<>();
+	private String learner;
+	private Map<String, List<String>> nominals;
+
 	public ClassificationLearnAO() {
 
 	}
 
-	public ClassificationLearnAO(ClassificationLearnAO classificationLearnAO) {
-		this.classAttribute = classificationLearnAO.classAttribute;
+	public ClassificationLearnAO(ClassificationLearnAO old) {
+		super(old);
+		this.classAttribute = old.classAttribute;
+		this.learner = old.learner;
+		this.options = new HashMap<String, String>(old.options);
+		this.nominals = old.nominals;
 	}
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		SDFAttribute support = new SDFAttribute(null, "tree", MiningDatatypes.CLASSIFICATION_TREE);
+		SDFAttribute support = new SDFAttribute(null, "tree", MiningDatatypes.CLASSIFIER);
 		attributes.add(support);
 		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
 		return outSchema;
@@ -68,6 +81,42 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 	@Parameter(name = "class", type = ResolvedSDFAttributeParameter.class)
 	public void setClassAttribute(SDFAttribute classAttribute) {
 		this.classAttribute = classAttribute;
+	}
+	
+
+	@Parameter(name = "algorithm", type = StringParameter.class, optional = true, isMap = true)
+	public void setOptions(Map<String, String> options) {
+		for (Entry<String, String> o : options.entrySet()) {
+			this.options.put(o.getKey().toLowerCase(), o.getValue());
+		}
+	}
+
+	@Parameter(name = "nominals", type = StringParameter.class, isList = true, optional = true, isMap = true)
+	public void setNominals(Map<String, List<String>> nominals) {
+		this.nominals = nominals;
+	}
+
+	public Map<SDFAttribute, List<String>> getNominals() {
+		DirectAttributeResolver dar = new DirectAttributeResolver(this.getInputSchema(0));
+		Map<SDFAttribute, List<String>> values = new HashMap<SDFAttribute, List<String>>();
+		for (Entry<String, List<String>> e : this.nominals.entrySet()) {
+			SDFAttribute a = dar.getAttribute(e.getKey());
+			values.put(a, e.getValue());
+		}
+		return values;
+	}
+
+	public Map<String, String> getOptions() {
+		return this.options;
+	}
+
+	public String getLearner() {
+		return learner;
+	}
+
+	@Parameter(name = "learner", type = StringParameter.class, optional = true)
+	public void setLearner(String learner) {
+		this.learner = learner;
 	}
 
 }

@@ -35,6 +35,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -43,6 +44,21 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  */
 public interface IClusterer<M extends ITimeInterval> {
 
-	public Map<Integer, List<Tuple<M>>> processClustering(List<Tuple<M>> tuples, int[] attributes);	
+	/**
+	 * Initializes the clusterer 
+	 * @param schema The schema of the incoming tuples
+	 */
+	public void init(SDFSchema schema);
+	/**
+	 * clusters the given set of tuples
+	 * @param the tuples that should be clustered
+	 * @return tuples a map of clusters (id's) and the assigned tuples
+	 */
+	public Map<Integer, List<Tuple<M>>> processClustering(List<Tuple<M>> tuples);
+	
+	/** 
+	 * This allows to set some options that can be used by the implementing class
+	 * @param options
+	 */
 	public void setOptions(Map<String, List<String>> options);	
 }

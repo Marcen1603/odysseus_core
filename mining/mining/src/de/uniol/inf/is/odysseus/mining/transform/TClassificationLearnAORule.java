@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,19 @@
  */
 package de.uniol.inf.is.odysseus.mining.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
+import de.uniol.inf.is.odysseus.mining.classification.WekaClassificationLearner;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClassificationLearnAO;
-import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationLearnC45PO;
+import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationLearnPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * @author Dennis Geesen
- *
+ * 
  */
 public class TClassificationLearnAORule extends AbstractTransformationRule<ClassificationLearnAO> {
 
@@ -38,8 +38,14 @@ public class TClassificationLearnAORule extends AbstractTransformationRule<Class
 
 	@Override
 	public void execute(ClassificationLearnAO operator, TransformationConfiguration config) {
-		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = new ClassificationLearnC45PO<ITimeInterval>(operator.getClassAttribute(), operator.getInputSchema(0));		
-		defaultExecute(operator, po, config, true, false);		
+		IClassificationLearner<ITimeInterval> learner = null;
+		if (operator.getLearner().equalsIgnoreCase("weka")) {
+			learner = new WekaClassificationLearner<ITimeInterval>();
+		}
+		// extend with others...
+		learner.init(operator.getInputSchema(0), operator.getClassAttribute(), operator.getNominals());
+		ClassificationLearnPO<ITimeInterval> po = new ClassificationLearnPO<>(learner);
+		defaultExecute(operator, po, config, true, false);
 	}
 
 	@Override

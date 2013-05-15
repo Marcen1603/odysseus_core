@@ -27,27 +27,27 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
-import de.uniol.inf.is.odysseus.mining.classification.TreeNode;
+import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
 
 /**
  * @author Dennis Geesen
  * 
  */
-public class ClassificationTreePO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> implements IProcessInternal<Tuple<M>> {
+public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> implements IProcessInternal<Tuple<M>> {
 
-	private static Logger logger = LoggerFactory.getLogger(ClassificationTreePO.class);
+	private static Logger logger = LoggerFactory.getLogger(ClassificationPO.class);
 	private static final int TREE_PORT = 1;
-	private TreeNode classificationTree;
+	private IClassifier<M> classifier;
 	private SDFSchema inputSchema;
 
 	private IInputStreamSyncArea<Tuple<M>> inputStreamSyncArea;
 
-	public ClassificationTreePO(SDFSchema inputschema, IInputStreamSyncArea<Tuple<M>> inputStreamSyncArea) {
+	public ClassificationPO(SDFSchema inputschema, IInputStreamSyncArea<Tuple<M>> inputStreamSyncArea) {
 		this.inputSchema = inputschema;
 		this.inputStreamSyncArea = inputStreamSyncArea;
 	}
 
-	public ClassificationTreePO(ClassificationTreePO<M> classificationTreePO) {
+	public ClassificationPO(ClassificationPO<M> classificationTreePO) {
 		this.inputSchema = classificationTreePO.inputSchema;
 	}
 
@@ -68,9 +68,17 @@ public class ClassificationTreePO<M extends ITimeInterval> extends AbstractPipe<
 	}
 
 	private void process_new_element(Tuple<M> tuple) {
-		if (this.classificationTree != null) {
+		if (this.classifier != null) {
+			long tillLearn = System.nanoTime();
 			Object clazz = classify(tuple);
+			if (clazz == null) {
+				logger.warn("value is unknown, so that the tuple could not be classified, tuple: " + tuple);
+				return;
+			}
+			long afterLearn = System.nanoTime();
 			Tuple<M> newtuple = tuple.append(clazz);
+			newtuple.setMetadata("LATENCY_BEFORE", tillLearn);
+			newtuple.setMetadata("LATENCY_AFTER", afterLearn);
 			transfer(newtuple);
 		}
 	}
@@ -84,34 +92,31 @@ public class ClassificationTreePO<M extends ITimeInterval> extends AbstractPipe<
 	public void process_punctuation_intern(IPunctuation punctuation, int port) {
 		// TODO: What to do with punctuations?
 	}
-	
-	private Object classify(Tuple<M> tuple) {
 
-		TreeNode currentNode = this.classificationTree;
-		while (currentNode.getClazz() == null) {
-			if (currentNode.getAttribute() == null) {
-				logger.error("there is no attribute for the node");
-			}
-			currentNode = currentNode.getMatchingChild(tuple);
-			if (currentNode == null) {
-				logger.warn("value is unknown, so that the tuple could not be classified, tuple: " + tuple);
+	private Object classify(Tuple<M> tuple) {		
+		synchronized (this) {
+			if(classifier == null) {
+				logger.warn("No learned tree yet...");
 				return null;
+			}else{
+				Object clazz = classifier.classify(tuple);											
+				return clazz;
 			}
-		}
-		// System.out.println("tuple: "+tuple+" ---> "+currentNode.getClazz());
-		return currentNode.getClazz();
+		}		
 	}
 
 	/**
 	 * @param object
 	 */
 	private void process_new_tree(Tuple<M> object) {
-		this.classificationTree = object.getAttribute(0);		
+		synchronized (this) {
+			this.classifier = object.getAttribute(0);
+		}
 	}
 
 	@Override
-	public ClassificationTreePO<M> clone() {
-		return new ClassificationTreePO<M>(this);
+	public ClassificationPO<M> clone() {
+		return new ClassificationPO<M>(this);
 	}
 
 	@Override
@@ -121,11 +126,11 @@ public class ClassificationTreePO<M extends ITimeInterval> extends AbstractPipe<
 		} else {
 			process_new_element(tuple);
 
-		}		
+		}
 	}
 
 	@Override
-	public void process_newHeartbeat(Heartbeat pointInTime) {		
+	public void process_newHeartbeat(Heartbeat pointInTime) {
 	}
 
 }

@@ -32,44 +32,44 @@ package de.uniol.inf.is.odysseus.mining.physicaloperator;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastArrayList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastLinkedList;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
+import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
+import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
 
 /**
  * 
  * @author Dennis Geesen Created at: 14.05.2012
  */
-public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
+public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>(new FastLinkedList<Tuple<M>>());
 	// private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	private FastArrayList<PointInTime> points = new FastArrayList<PointInTime>();	
-	private IClusterer<M> clusterer;
+	private IClassificationLearner<M> learn;
+	
 
-	public ClusteringPO(IClusterer<M> clusterer) {
-		this.clusterer = clusterer;		
+	public ClassificationLearnPO(IClassificationLearner<M> learn) {
+		this.learn = learn;				
 	}
 
-	public ClusteringPO(ClusteringPO<M> clusteringPO) {
-		this.clusterer = clusteringPO.clusterer;		
+	public ClassificationLearnPO(ClassificationLearnPO<M> clusteringPO) {
+		this.learn = clusteringPO.learn;		
 	}
 
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -97,22 +97,21 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 					TimeInterval ti = new TimeInterval(startP, endP);
 					List<Tuple<M>> qualifies = this.sweepArea.queryOverlapsAsList(ti);
 
-					long tillclustering = System.nanoTime();
-					Map<Integer, List<Tuple<M>>> results = clusterer.processClustering(qualifies);
-					long afterclustering = System.nanoTime();
-					for (Entry<Integer, List<Tuple<M>>> cluster : results.entrySet()) {
-						for (Tuple<M> result : cluster.getValue()) {
-							Tuple<M> newTuple = result.append(cluster.getKey());
-							M metadata = (M) result.getMetadata().clone();
-							newTuple.setMetadata(metadata);
-							newTuple.getMetadata().setStartAndEnd(startP, endP);
-							// ((ILatency)newTuple.getMetadata()).setLatencyStart(start);
-							// ((ILatency)newTuple.getMetadata()).setLatencyEnd(end);
-							newTuple.setMetadata("LATENCY_BEFORE", tillclustering);
-							newTuple.setMetadata("LATENCY_AFTER", afterclustering);
-							transfer(newTuple);
-						}
-					}
+					long tillLearn = System.nanoTime();
+					
+					IClassifier<M> classifier = learn.createClassifier(qualifies);
+					long afterLearn = System.nanoTime();
+					
+					M metadata = (M) object.getMetadata().clone();
+					Tuple<M> newTuple = new Tuple<M>(1, false);
+					newTuple.setAttribute(0, classifier);
+					newTuple.setMetadata(metadata);
+					newTuple.getMetadata().setStartAndEnd(startP, endP);
+					// ((ILatency)newTuple.getMetadata()).setLatencyStart(start);
+					// ((ILatency)newTuple.getMetadata()).setLatencyEnd(end);
+					newTuple.setMetadata("LATENCY_BEFORE", tillLearn);
+					newTuple.setMetadata("LATENCY_AFTER", afterLearn);
+					transfer(newTuple);
 					// System.out.println("TRANSFER: " + (System.currentTimeMillis() - time - duration));
 					removeTill = i;
 				}
@@ -121,23 +120,16 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 			}
 		}
 		if (removeTill != 0) {
-			// System.out.println("PURGEING...");
 			this.points.removeRange(0, removeTill);
-			// long time = System.currentTimeMillis();
 			sweepArea.purgeElementsBefore(object.getMetadata().getStart());
-			// long duration = System.currentTimeMillis() - time;
-			// System.out.println("DURATION PURGE: " + duration);
 		}
 
 	}
 
-	@Override
-	protected void process_open() throws OpenFailedException {
-	}
+	
 
 	@Override
 	protected void process_close() {
-		// this might be improvable...
 		sweepArea.clear();
 	}
 
@@ -148,7 +140,7 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 
 	@Override
 	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-		return new ClusteringPO<M>(this);
+		return new ClassificationLearnPO<M>(this);
 	}
 
 }
