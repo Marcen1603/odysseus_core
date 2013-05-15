@@ -30,7 +30,7 @@ public class LatencyCalculationPipe<T extends IStreamObject<? extends ILatency>>
 
 	@Override
 	public OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
+		return OutputMode.NEW_ELEMENT;
 	}
 	
 	
