@@ -106,15 +106,8 @@ public abstract class AbstractJxtaConnection implements IJxtaConnection {
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		Preconditions.checkNotNull(message, "Byte data must not be null!");
-		Preconditions.checkArgument(message.length > 0, "Byte data must not be empty!");
-
-		if (socketOutputStream != null && isConnected == true) {
-			LOG.info("Sending message");
-			
-			socketOutputStream.write(message);
-			socketOutputStream.flush();
-		}
+		socketOutputStream.write(message);
+		socketOutputStream.flush();
 	}
 
 	protected final void fireConnectEvent() {
