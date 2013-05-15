@@ -23,16 +23,16 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.org.apache.xml.internal.serialize.TextSerializer;
+
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
+public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 
 	Logger LOG = LoggerFactory.getLogger(SimpleCSVProtocolHandler.class);
-
-	private String delimiter;
 
 	public SimpleCSVProtocolHandler() {
 		super();
@@ -46,14 +46,13 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 	@Override
 	protected void init(Map<String, String> options) {
 		super.init(options);
-		delimiter = options.get("delimiter");
 	}
 
 	@Override
 	public T getNext() throws IOException {
 		String line = super.getNextLine();
 		if (line != null){
-			return getDataHandler().readData(line.split(delimiter));
+			return getDataHandler().readData(line.split(""+delimiter));
 		}else{
 			return null;
 		}
@@ -61,16 +60,9 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 
 	@Override
 	public void write(T object) throws IOException {
-		List<String> output = new ArrayList<String>();
-		getDataHandler().writeData(output, object);
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < output.size(); i++) {
-			if (i != 0) {
-				sb.append(delimiter);
-			}
-			sb.append(output.get(i));
-		}
-		writer.write(sb.toString() + System.lineSeparator());
+		StringBuilder out = new StringBuilder();
+		getDataHandler().writeCSVData(out, object, delimiter, textDelimiter, floatingFormatter, numberFormatter, writeMetadata);
+		writer.write(out.toString() + System.lineSeparator());
 	}
 
 	@Override

@@ -32,10 +32,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
-
-	private char textDelimiter;
-	private char delimiter;
+public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 
 	private DecimalFormat floatingFormatter = null;
 	private DecimalFormat numberFormatter = null;
@@ -53,8 +50,6 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 	@Override
 	protected void init(Map<String, String> options) {
 		super.init(options);
-		delimiter = options.containsKey("delimiter") ? options.get("delimiter")
-				.toCharArray()[0] : ",".toCharArray()[0];
 		textDelimiter = options.containsKey("textdelimiter") ? options.get(
 				"textdelimiter").toCharArray()[0] : "'".toCharArray()[0];
 	}
