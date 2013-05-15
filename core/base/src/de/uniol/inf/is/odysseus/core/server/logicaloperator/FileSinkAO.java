@@ -97,8 +97,8 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		this.printMetadata = printMetadata;
 	}
 	
-	@Parameter(type = StringParameter.class, optional = true)
-	public void setFloatingFormatter(String value){
+	@Parameter(name="FloatingFormatter", type = StringParameter.class, optional = true)
+	public void setFloatFormatter(String value){
 		this.floatingFormatter = new DecimalFormat(value);
 	}
 	
@@ -106,8 +106,8 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		return floatingFormatter;
 	}
 	
-	@Parameter(type = StringParameter.class, optional = true)
-	public void setNumberFormatter(String value){
+	@Parameter(name="NumberFormatter",type = StringParameter.class, optional = true)
+	public void setNumbFormatter(String value){
 		this.numberFormatter = new DecimalFormat(value);
 	}
 	
