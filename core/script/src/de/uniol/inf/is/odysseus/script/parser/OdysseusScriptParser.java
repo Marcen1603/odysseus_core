@@ -623,12 +623,20 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	 */
 	@Override
 	public List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
+		List<ILogicalQuery> queries = new ArrayList<ILogicalQuery>();	
 		try {
-			this.parseAndExecute(query, user, null);
+			List<?> commands = this.parseAndExecute(query, user, null);
+			for(Object command : commands){
+				ArrayList<?> ids = (ArrayList<?>)command;
+				for(Object id : ids){
+					int i = (Integer) id;
+					queries.add(getExecutor().getLogicalQueryById(i));
+				}
+			}
 		} catch (OdysseusScriptException e) {
 			throw new QueryParseException(e);
 		}
-		return new ArrayList<>();
+		return new ArrayList<ILogicalQuery>();
 	}
 
 	/*
