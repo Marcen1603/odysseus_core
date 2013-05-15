@@ -1,0 +1,93 @@
+package de.uniol.inf.is.odysseus.mining.evaluation.command;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
+
+import de.uniol.inf.is.odysseus.mining.evaluation.Activator;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
+
+public class StartEvaluationCommand extends AbstractHandler {
+
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		if (Activator.getExecutor() != null) {
+			for (IFile file : getSelectedFiles()) {
+				try {
+					runIt(file);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} else {
+			System.err.println("EXECUTOR NOT BOUND!!");
+		}
+		return null;
+	}
+
+	private static List<IFile> getSelectedFiles() {
+		List<IFile> foundFiles = new ArrayList<>();
+		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
+
+		if (selection instanceof IStructuredSelection) {
+			List<?> selectedObjects = ((IStructuredSelection) selection).toList();
+			for (Object obj : selectedObjects) {
+				if (obj instanceof IFile) {
+					IFile f = (IFile) obj;
+					if (f.getFileExtension().endsWith("qry")) {
+						foundFiles.add(f);
+					}
+				}
+			}
+		}
+
+		if (foundFiles.isEmpty()) {
+			IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+			if (part instanceof OdysseusScriptEditor) {
+				if (part.getEditorInput() instanceof FileEditorInput) {
+					FileEditorInput input = (FileEditorInput) part.getEditorInput();
+					IFile f = (IFile) input.getFile();
+					if (f.getFileExtension().endsWith("qry")) {
+						foundFiles.add(f);
+					}
+				}
+			}
+		}
+		return foundFiles;
+	}
+
+	private void runIt(IFile file) throws Exception {
+		if (!file.isSynchronized(IResource.DEPTH_ZERO)) {
+			file.refreshLocal(IResource.DEPTH_ZERO, null);
+		}
+		int number = 20;
+		// read lines
+		String lines = "";
+		BufferedReader br = new BufferedReader(new InputStreamReader(file.getContents()));
+		String line = br.readLine();
+		while (line != null) {			
+			lines = lines + line + "\n";
+			line = br.readLine();
+		}
+		br.close();
+		// run job
+		if (!lines.isEmpty()) {
+			Job job = new EvaluationJob("Running Evaluation...", number, lines, file);
+			job.setUser(true);
+			job.schedule();
+		}
+	}
+}
