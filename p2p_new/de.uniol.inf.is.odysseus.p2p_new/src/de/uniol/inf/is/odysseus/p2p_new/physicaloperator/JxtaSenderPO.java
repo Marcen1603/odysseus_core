@@ -136,8 +136,6 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		LOG.debug("Sending punctuation {}", punctuation);
-
 		final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
 		buffer.put(ObjectByteConverter.objectToBytes(punctuation));
 		buffer.flip();
@@ -147,8 +145,6 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	@Override
 	protected void process_next(T object, int port) {
-		LOG.debug("Sending tupe {}", object);
-
 		final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
 		dataHandler.writeData(buffer, object);
 		if (object.getMetadata() != null) {
