@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractT
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.p2p_new.util.AbstractJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.ClientJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.ServerJxtaConnection;
 
@@ -70,17 +71,17 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 	}
 
 	@Override
-	public void onConnect(AbstractJxtaConnection sender) {
+	public void onConnect(IJxtaConnection sender) {
 		LOG.debug("Connected to {}", sender.getPipeAdvertisement().getPipeID());
 	}
 
 	@Override
-	public void onDisconnect(AbstractJxtaConnection sender) {
+	public void onDisconnect(IJxtaConnection sender) {
 		LOG.debug("Disconnected from {}", sender.getPipeAdvertisement().getPipeID());
 	}
 
 	@Override
-	public void onReceiveData(AbstractJxtaConnection sender, byte[] data) {
+	public void onReceiveData(IJxtaConnection sender, byte[] data) {
 		LOG.debug("Got message");
 
 		final ByteBuffer bb = ByteBuffer.allocate(data.length);

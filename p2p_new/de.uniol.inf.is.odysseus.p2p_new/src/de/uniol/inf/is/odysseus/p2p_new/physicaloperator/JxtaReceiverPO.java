@@ -25,8 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
-import de.uniol.inf.is.odysseus.p2p_new.util.AbstractJxtaConnection;
-import de.uniol.inf.is.odysseus.p2p_new.util.ClientJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.ClientJxtaBiDiConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 
@@ -58,7 +57,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 		pipeID = convertToPipeID(ao.getPipeID());
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 
-		connection = new ClientJxtaConnection(pipeAdvertisement);
+		connection = new ClientJxtaBiDiConnection(pipeAdvertisement);
 		connection.addListener(this);
 		JxtaPOUtil.tryConnectAsync(connection);
 	}
@@ -130,19 +129,19 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	}
 
 	@Override
-	public void onConnect(AbstractJxtaConnection sender) {
+	public void onConnect(IJxtaConnection sender) {
 		LOG.debug("Connected");
 		
 		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(getOutputSchema());
 	}
 
 	@Override
-	public void onDisconnect(AbstractJxtaConnection sender) {
+	public void onDisconnect(IJxtaConnection sender) {
 		LOG.debug("Disconnect");
 	}
 
 	@Override
-	public void onReceiveData(AbstractJxtaConnection sender, byte[] data) {
+	public void onReceiveData(IJxtaConnection sender, byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		processData(bb);
 	}

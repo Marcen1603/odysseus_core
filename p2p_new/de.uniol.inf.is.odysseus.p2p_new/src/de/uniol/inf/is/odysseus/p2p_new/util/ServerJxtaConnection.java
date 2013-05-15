@@ -24,7 +24,6 @@ public class ServerJxtaConnection extends AbstractJxtaConnection {
 
 		serverSocket = new JxtaServerSocket(P2PNewPlugIn.getOwnPeerGroup(), getPipeAdvertisement());
 		serverSocket.setSoTimeout(0);
-
 		socket = serverSocket.accept();
 		socket.setSoTimeout(0);
 
