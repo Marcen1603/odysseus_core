@@ -11,7 +11,6 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.random.RandomData;
 import org.apache.commons.math3.random.RandomDataImpl;
 import org.apache.commons.math3.random.Well19937c;
-import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.util.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

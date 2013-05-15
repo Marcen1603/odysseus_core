@@ -63,7 +63,7 @@ public class LinearRegressionPO<T extends ITimeInterval> extends
 		synchronized (area) {
 			area.insert(object);
 		}
-		if (area.isEstimatable()) {
+		if (area.isEstimable()) {
 			RealMatrix regressionCoefficients = area
 					.getRegressionCoefficients();
 			RealMatrix residual = area.getResidual();

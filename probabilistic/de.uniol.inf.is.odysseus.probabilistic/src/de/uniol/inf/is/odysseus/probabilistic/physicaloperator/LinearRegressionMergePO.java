@@ -16,7 +16,6 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
