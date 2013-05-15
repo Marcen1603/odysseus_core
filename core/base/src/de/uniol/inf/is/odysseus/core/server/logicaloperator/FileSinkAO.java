@@ -49,6 +49,9 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	private boolean printMetadata;
 	private DecimalFormat floatingFormatter;
 	private DecimalFormat numberFormatter;
+	
+	private char delimiter = ';';
+	private Character textSeperator = null;
 
 	
 	public FileSinkAO() {
@@ -70,6 +73,8 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		this.append = fileSinkAO.append;
 		this.floatingFormatter = fileSinkAO.floatingFormatter;
 		this.numberFormatter = fileSinkAO.numberFormatter;
+		this.delimiter = fileSinkAO.delimiter;
+		this.textSeperator = fileSinkAO.textSeperator;
 	}
 
 	@Parameter(name = "FILE", type = StringParameter.class)
@@ -139,6 +144,14 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	
 	public boolean getPrintMetadata(){
 		return this.printMetadata;
+	}
+	
+	public char getDelimiter() {
+		return delimiter;
+	}
+	
+	public Character getTextSeperator() {
+		return textSeperator;
 	}
 
 }

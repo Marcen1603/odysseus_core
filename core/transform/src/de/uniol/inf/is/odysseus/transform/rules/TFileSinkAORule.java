@@ -15,7 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileSinkAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.FileSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -32,8 +31,10 @@ public class TFileSinkAORule extends AbstractTransformationRule<FileSinkAO> {
 
 	@Override
 	public void execute(FileSinkAO operator, TransformationConfiguration config) {
-		ISink<?> fileSinkPO = new FileSinkPO(operator.getFilename(), operator.getSinkType(), operator.getWriteAfterElements(), operator.getPrintMetadata(), operator.getAppend());
-		((FileSinkPO)fileSinkPO).setFormatter(operator.getFloatingFormatter(), operator.getNumberFormatter());
+		FileSinkPO fileSinkPO = new FileSinkPO(operator.getFilename(), operator.getSinkType(), operator.getWriteAfterElements(), operator.getPrintMetadata(), operator.getAppend());
+		fileSinkPO.setFormatter(operator.getFloatingFormatter(), operator.getNumberFormatter());
+		fileSinkPO.setDelimiter(operator.getDelimiter());
+		fileSinkPO.setTextSeperator(operator.getTextSeperator());
 		defaultExecute(operator, fileSinkPO, config, true, true);
 	}
 

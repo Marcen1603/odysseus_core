@@ -215,4 +215,11 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 		}
 	}
 
+	public void setDelimiter(char delimiter) {
+		this.delimiter = delimiter;
+	}
+	
+	public void setTextSeperator(Character textSeperator) {
+		this.textSeperator = textSeperator;
+	}
 }
