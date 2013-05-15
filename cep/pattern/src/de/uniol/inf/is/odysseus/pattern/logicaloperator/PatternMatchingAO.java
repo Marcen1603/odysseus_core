@@ -311,8 +311,9 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		} else {
 			// SIMPLE: einfache Variante (ohne Expressions)
 			SDFAttribute type = new SDFAttribute("PATTERN", "type", SDFDatatype.STRING);
+			SDFAttribute timestamp = new SDFAttribute("PATTERN", "timestamp", SDFDatatype.LONG);
 			SDFAttribute detected = new SDFAttribute("PATTERN", "detected", SDFDatatype.BOOLEAN);
-			schema = new SDFSchema("PATTERN", type, detected);
+			schema = new SDFSchema("PATTERN", type, timestamp, detected);
 		}
 		setOutputSchema(schema);
 		return schema;

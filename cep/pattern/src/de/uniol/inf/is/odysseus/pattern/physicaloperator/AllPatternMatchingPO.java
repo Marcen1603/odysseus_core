@@ -39,7 +39,15 @@ public class AllPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 	public AllPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
-        super(type, size, size, timeUnit, outputMode, eventTypes, returnExpressions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
+        super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
+        this.objectLists = new HashMap<Integer, EventBuffer<T>>();
+        // create lists for every port that is in the eventTypes list
+        for (Integer port : this.inputTypeNames.keySet()) {
+        	if (this.eventTypes.contains(this.inputTypeNames.get(port))) {
+        		EventBuffer<T> buffer = new EventBuffer<T>();
+            	this.objectLists.put(port, buffer);
+        	}
+        }
         this.init();
     }
 	
@@ -74,23 +82,19 @@ public class AllPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 		if (eventType == null) {
 			throw new InvalidEventException("Der Datentyp des Events ist null!");
 		}
-		switch(type) {
-			case ALL:
-				if (eventTypes.contains(eventType)) {
-					// Event einsortieren und alte Events entfernen
-					objectLists.get(port).add(eventObj);
-					dropOldEvents(eventObj);
-					// Kombinationen suchen und Bedingungen überprüfen
-					List<List<EventObject<T>>> output = checkAssertions(eventObj, computeCrossProduct(eventObj));
-					for (List<EventObject<T>> outputObject : output) {
-						Tuple<T> complexEvent = this.createComplexEvent(outputObject, eventObj, null);
-						outputTransferArea.transfer(complexEvent);
-					}
+		if (type == PatternType.ALL) {
+			if (eventTypes.contains(eventType)) {
+				// Event einsortieren und alte Events entfernen
+				objectLists.get(port).add(eventObj);
+				dropOldEvents(eventObj);
+				// Kombinationen suchen und Bedingungen überprüfen
+				List<List<EventObject<T>>> output = checkAssertions(eventObj, computeCrossProduct(eventObj));
+				for (List<EventObject<T>> outputObject : output) {
+					Tuple<T> complexEvent = this.createComplexEvent(outputObject, eventObj, null);
+					outputTransferArea.transfer(complexEvent);
 				}
-			default:
-				break;
-		}	
-
+			}
+		}
 	}
 	
 	private void dropOldEvents(EventObject<T> event) {

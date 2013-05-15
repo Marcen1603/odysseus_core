@@ -254,9 +254,14 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 			outputMode = PatternOutput.SIMPLE;
 		}
 		if (outputMode == PatternOutput.SIMPLE) {
-			Object[] attributes = new Object[2];
+			Object[] attributes = new Object[3];
 			attributes[0] = type;
-			attributes[1] = true;
+			if (currentObj != null) {
+				attributes[1] = currentObj.getEvent().getMetadata().getStart().getMainPoint();
+			} else {
+				attributes[1] = start.getMainPoint();
+			}
+			attributes[2] = true;
 			Tuple<T> returnEvent = new Tuple<T>(attributes, false);
 			if (currentObj != null) {
 				returnEvent.setMetadata((T) currentObj.getEvent().getMetadata().clone());

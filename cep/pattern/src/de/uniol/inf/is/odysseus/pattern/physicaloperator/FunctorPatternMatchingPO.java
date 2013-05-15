@@ -29,7 +29,7 @@ public class FunctorPatternMatchingPO<T extends ITimeInterval> extends PatternMa
 	public FunctorPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, String attribute, Double value) {
-        super(type, size, size, timeUnit, outputMode, eventTypes, returnExpressions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
+		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
         this.attribute = attribute;
         this.value = value;
         this.init();

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.pattern.model;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @param <T>
  */
 
-public class EventBuffer<T extends IMetaAttribute> {
+public class EventBuffer<T extends IMetaAttribute> implements Iterable<EventObject<T>> {
 	
 	private LinkedList<EventObject<T>> objects;
 	
@@ -86,6 +87,41 @@ public class EventBuffer<T extends IMetaAttribute> {
 				return obj;
 		}
 		return null;
+	}
+	
+	public void clear() {
+		objects.clear();
+	}
+
+	@Override
+	public Iterator<EventObject<T>> iterator() {
+		return this.objects.iterator();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((objects == null) ? 0 : objects.hashCode());
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EventBuffer<T> other = (EventBuffer<T>) obj;
+		if (objects == null) {
+			if (other.objects != null)
+				return false;
+		} else if (!objects.equals(other.objects))
+			return false;
+		return true;
 	}
 	
 }

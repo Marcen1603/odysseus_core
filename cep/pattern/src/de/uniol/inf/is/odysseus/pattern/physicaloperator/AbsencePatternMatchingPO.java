@@ -22,12 +22,11 @@ public class AbsencePatternMatchingPO<T extends ITimeInterval> extends PatternMa
 	
 	// ABSENCE
 	private boolean noIncomingEvent = true;
-	private int times = 0;
 	
 	public AbsencePatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
-        super(type, size, size, timeUnit, outputMode, eventTypes, returnExpressions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
+		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
         this.init();
     }
 	
@@ -35,7 +34,6 @@ public class AbsencePatternMatchingPO<T extends ITimeInterval> extends PatternMa
     public AbsencePatternMatchingPO(AbsencePatternMatchingPO<T> patternPO) {
     	super(patternPO);
     	this.noIncomingEvent = patternPO.noIncomingEvent;
-    	this.times = patternPO.times;
         this.init();
     }
 	
@@ -64,15 +62,16 @@ public class AbsencePatternMatchingPO<T extends ITimeInterval> extends PatternMa
 		logger.info(pointInTime.toString());
 		if (type == PatternType.ABSENCE && time != null) {
 			// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
-			if ((pointInTime.getTime().getMainPoint() - time * times) >= time) {
+			if (pointInTime.getTime().minus(startTime).getMainPoint() >= time) {
 				// Intervall abgelaufen
 				if (noIncomingEvent) {
 					// ABSENCE-Pattern erkannt
 					Tuple<T> complexEvent = createComplexEvent(null, null, pointInTime.getTime());
 					outputTransferArea.transfer(complexEvent);
 				}
-				times++;
+				// Zustand initialisieren
 				noIncomingEvent = true;
+				startTime = pointInTime.getTime();
 			}
 		}
 	}
