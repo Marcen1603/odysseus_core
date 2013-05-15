@@ -314,6 +314,22 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return comp;
 	}
 	
+	/**
+	 * Removes the first occurrence of the attribute
+	 * @param attribute The attribute to remove
+	 */
+	public static SDFSchema remove(SDFSchema schema, SDFAttribute attribute){
+		Iterator<SDFAttribute> iter = schema.elements.iterator();
+		while(iter.hasNext()){
+			SDFAttribute at = iter.next();
+			if(at.equals(attribute)){
+				iter.remove();
+				return schema;
+			}
+		}
+		return schema;
+	}
+	
 
 
 }
