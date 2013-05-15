@@ -15,6 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.benchmark.result;
 
+import java.text.NumberFormat;
+
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.core.Persist;
@@ -39,7 +41,9 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	private long duration;
 	@Element(name = "statistics")
 	private IDescriptiveStatistics desc = new DescriptiveStatistics();
-
+	
+	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
+	
 		
 	@Override
 	public void setStartTime(long start) {
@@ -86,13 +90,18 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	}
 	
 	@Override
-	public String csvToString() {
-		return queryId+";"+startTime+";"+endTime+";"+getDuration()+";"+size+";"+desc.csvToString();
+	public String csvToString(NumberFormat floatFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		return numberFormatter.format(queryId)+";"+numberFormatter.format(startTime)+";"+numberFormatter.format(endTime)+";"+numberFormatter.format(getDuration())+";"+size+";"+desc.csvToString(floatFormatter, numberFormatter, withMetadata);
 	}
 	
 	@Override
-	public String csvToString(boolean withMetada) {
-		return csvToString();
+	public final String csvToString() {
+		return this.csvToString(defaultNumberFormat, defaultNumberFormat ,true);
+	}
+
+	@Override
+	public final String csvToString(boolean withMetada) {
+		return this.csvToString(defaultNumberFormat, defaultNumberFormat, withMetada);
 	}
 	
 	@Override

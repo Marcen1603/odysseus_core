@@ -81,4 +81,5 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	 */
 	public void close(IOperatorOwner id);
 
+
 }

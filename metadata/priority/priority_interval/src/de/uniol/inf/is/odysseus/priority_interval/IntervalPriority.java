@@ -15,6 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.priority_interval;
 
+import java.text.NumberFormat;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -59,8 +61,8 @@ public class IntervalPriority extends TimeInterval implements IPriority {
 	}
 	
 	@Override
-	public String csvToString() {
-		return super.csvToString()+";"+this.priority;
+	public String csvToString(NumberFormat ff,NumberFormat nf, boolean withMetadata) {
+		return super.csvToString(ff,nf,withMetadata)+";"+this.priority;
 	}
 	
 	@Override

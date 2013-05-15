@@ -15,6 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.latency;
 
+import java.text.NumberFormat;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
@@ -29,6 +31,8 @@ public class Latency implements ILatency{
 	private static final long serialVersionUID = -3355802503979937479L;
 	private long lstart;
 	private long lend;
+
+	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
 	
 	public Latency(){
 		this.lstart = System.nanoTime();
@@ -81,8 +85,8 @@ public class Latency implements ILatency{
 	}
 	
 	@Override
-	public String csvToString() {
-		return ""+ this.lstart+";"+this.lend+";"+(this.lend - this.lstart);
+	public String csvToString(NumberFormat floatingNumberFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		return numberFormatter.format(this.lstart)+";"+numberFormatter.format(this.lend)+";"+numberFormatter.format(this.lend - this.lstart);
 	}
 	
 	@Override
@@ -94,8 +98,13 @@ public class Latency implements ILatency{
 	 * @see de.uniol.inf.is.odysseus.core.server.ICSVToString#csvToString(boolean)
 	 */
 	@Override
-	public String csvToString(boolean withMetada) {
-		return this.csvToString();
+	public final String csvToString() {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
+	}
+
+	@Override
+	public final String csvToString(boolean withMetada) {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
 	}
 	
 	@Override

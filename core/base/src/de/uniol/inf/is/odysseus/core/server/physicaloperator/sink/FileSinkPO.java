@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.sink;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.simpleframework.xml.Serializer;
@@ -47,6 +48,8 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 	Serializer serializer;
 
 	private final ReentrantLock lock = new ReentrantLock();
+	private DecimalFormat floatingFormatter;
+	private DecimalFormat numberFormatter;
 
 	static Logger LOG = LoggerFactory.getLogger(FileSinkPO.class);
 
@@ -111,7 +114,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 
 					String toWrite = null;
 					if (csvSink) {
-						toWrite = ((ICSVToString) object).csvToString(printMetadata) + "\n";
+						toWrite = ((ICSVToString) object).csvToString(floatingFormatter, numberFormatter, printMetadata) + "\n";
 					} else {
 						toWrite = "" + object + "\n";
 					}
@@ -193,6 +196,20 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 				}
 				LOG.debug("FileSinkPO.done");
 			}
+		}
+	}
+
+	public void setFormatter(DecimalFormat floatingFormatter,
+			DecimalFormat numberFormatter) {
+		if (floatingFormatter != null){
+			this.floatingFormatter = floatingFormatter;
+		}else{
+			this.floatingFormatter = new DecimalFormat();
+		}
+		if (numberFormatter != null){
+			this.numberFormatter = numberFormatter;
+		}else{
+			this.numberFormatter = new DecimalFormat();
 		}
 	}
 

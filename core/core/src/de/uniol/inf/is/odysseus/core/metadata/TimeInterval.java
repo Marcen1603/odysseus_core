@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.metadata;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		ITimeInterval.class
 	};
 	
+	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
 	
 	private static final long serialVersionUID = 2210545271466064814L;
 
@@ -430,7 +432,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	}
 	
 	@Override
-	public String csvToString() {
+	public String csvToString(NumberFormat ff, NumberFormat nf, boolean withMetadata) {
 		return getStart().toString() + ";" + getEnd().toString();
 	}
 	
@@ -448,12 +450,14 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return new TimeInterval(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.ICSVToString#csvToString(boolean)
-	 */
 	@Override
-	public String csvToString(boolean withMetada) {
-		return this.csvToString();
+	public final String csvToString() {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
+	}
+
+	@Override
+	public final String csvToString(boolean withMetada) {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
 	}
 
 	@Override

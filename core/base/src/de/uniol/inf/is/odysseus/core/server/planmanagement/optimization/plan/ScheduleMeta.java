@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan;
 
+import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -28,6 +29,8 @@ public class ScheduleMeta implements ICSVToString{
 	private long inTimeCount;
 	private double rate;
 	private long allSchedulings;
+	
+	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
 	
 	final private LinkedList<IPair<Long, Boolean>> history;
 
@@ -62,7 +65,8 @@ public class ScheduleMeta implements ICSVToString{
 	}
 	
 	@Override
-	public String csvToString() {
+	public String csvToString(NumberFormat ff, NumberFormat nf, boolean withMetadata) {
+		// FIXME: Formatter to csvPrint
 		StringBuffer ret = new StringBuffer();
 		csvPrint(ret);
 		return ret.toString();
@@ -153,12 +157,14 @@ public class ScheduleMeta implements ICSVToString{
 		return ret.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.ICSVToString#csvToString(boolean)
-	 */
 	@Override
-	public String csvToString(boolean withMetada) {
-		return this.csvToString();
+	public final String csvToString() {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
+	}
+
+	@Override
+	public final String csvToString(boolean withMetada) {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
 	}
 
 }

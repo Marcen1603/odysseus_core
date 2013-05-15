@@ -32,14 +32,18 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.util.Primes;
 
 /**
- * Klasse repraesentiert ein Tupel im relationalen Modell und dient als Austauschobjekt der relationalen Planoperatoren Kann mit Hilfe einer Oracle Loader Zeile initialisiert werden
+ * Klasse repraesentiert ein Tupel im relationalen Modell und dient als
+ * Austauschobjekt der relationalen Planoperatoren Kann mit Hilfe einer Oracle
+ * Loader Zeile initialisiert werden
  * 
  * @author Marco Grawunder, Jonas Jacobi
  */
-public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> implements Serializable, Comparable<Tuple<?>>, ICSVToString {
+public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
+		implements Serializable, Comparable<Tuple<?>>, ICSVToString {
 
 	private static final long serialVersionUID = 7119095568322125441L;
-	private NumberFormat nf = NumberFormat.getInstance();
+	static private NumberFormat defaultNumberFormat = NumberFormat
+			.getInstance();
 
 	protected Object[] attributes;
 
@@ -54,7 +58,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	// -----------------------------------------------------------------
 
 	/**
-	 * Allows subclasses to call the implicit super constructor. To not allow other classes to use the constructor it is protected.
+	 * Allows subclasses to call the implicit super constructor. To not allow
+	 * other classes to use the constructor it is protected.
 	 */
 	protected Tuple() {
 		requiresDeepClone = false;
@@ -67,7 +72,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	 * @param attributeCount
 	 *            Anzahl der Attribute des Tuples
 	 * @param requiresDeepClone
-	 *            if true, each copy of this tuple will call clone on each attribute
+	 *            if true, each copy of this tuple will call clone on each
+	 *            attribute
 	 */
 	public Tuple(int attributeCount, boolean requiresDeepClone) {
 		this.attributes = new Object[attributeCount];
@@ -84,13 +90,15 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	}
 
 	/**
-	 * Creates a new Tuple without copying the attributes from the other tuple but using the given Attributes
+	 * Creates a new Tuple without copying the attributes from the other tuple
+	 * but using the given Attributes
 	 * 
 	 * @param copy
 	 * @param newAttributes
 	 * @param requiresDeepClone
 	 */
-	protected Tuple(Tuple<T> copy, Object[] newAttributes, boolean requiresDeepClone) {
+	protected Tuple(Tuple<T> copy, Object[] newAttributes,
+			boolean requiresDeepClone) {
 		super(copy);
 		this.requiresDeepClone = requiresDeepClone;
 		if (this.requiresDeepClone) {
@@ -104,7 +112,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 			if (!requiresDeepClone) {
 				int attributeLength = copy.attributes.length;
 				this.attributes = new Object[attributeLength];
-				System.arraycopy(copy.attributes, 0, this.attributes, 0, attributeLength);
+				System.arraycopy(copy.attributes, 0, this.attributes, 0,
+						attributeLength);
 			} else {
 				this.attributes = cloner.deepClone(copy.attributes);
 			}
@@ -119,7 +128,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	 * @param attributes
 	 *            Attributbelegung des neuen Tuples
 	 * @param requiresDeepClone
-	 *            if true, each copy of this tuple will call clone on each attribute
+	 *            if true, each copy of this tuple will call clone on each
+	 *            attribute
 	 */
 	public Tuple(Object[] attributes, boolean requiresDeepClone) {
 		this.attributes = attributes.clone();
@@ -144,8 +154,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	// -----------------------------------------------------------------
 	// Attributzugriffsmethoden
 	// -----------------------------------------------------------------
-	
-	
+
 	@SuppressWarnings("unchecked")
 	public final <K> K getAttribute(int pos) {
 		if (pos < 0 || pos > attributes.length)
@@ -155,8 +164,10 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 
 	@SuppressWarnings("unchecked")
 	public final void addAttributeValue(int pos, Object value) {
-		if (this.attributes[pos] != null && !(this.attributes[pos] instanceof Collection)) {
-			throw new RuntimeException("Cannot add value to non collection type");
+		if (this.attributes[pos] != null
+				&& !(this.attributes[pos] instanceof Collection)) {
+			throw new RuntimeException(
+					"Cannot add value to non collection type");
 		}
 		if (this.attributes[pos] == null) {
 			this.attributes[pos] = new ArrayList<Object>();
@@ -190,15 +201,22 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	// Erzeugen von neuen Objekten, basierend auf dem aktuellen
 
 	/**
-	 * erzeugen eines neuen Objektes, in dem nur die Attribute betrachtet werden, die in der attrList uebergeben werden, die Reihenfolge des neuen Objektes wird durch die Reihenfolge der Attribute im Array festgelegt Beispiel: attrList[1]=14,attrList[2]=12 erzeugt ein neues Objekt, welches die
-	 * Attribute 14 und 12 enthaelt.
+	 * erzeugen eines neuen Objektes, in dem nur die Attribute betrachtet
+	 * werden, die in der attrList uebergeben werden, die Reihenfolge des neuen
+	 * Objektes wird durch die Reihenfolge der Attribute im Array festgelegt
+	 * Beispiel: attrList[1]=14,attrList[2]=12 erzeugt ein neues Objekt, welches
+	 * die Attribute 14 und 12 enthaelt.
 	 * 
-	 * Falls das aktuelle Tuple keine Schemainformationen enthaelt, wird das neue auch ohne erzeugt. Ansonsten enthaelt das neue Tuple auch die passenden Schemainformationen.
+	 * Falls das aktuelle Tuple keine Schemainformationen enthaelt, wird das
+	 * neue auch ohne erzeugt. Ansonsten enthaelt das neue Tuple auch die
+	 * passenden Schemainformationen.
 	 * 
 	 * @param attrList
-	 *            erzeugt ein neues Objekt das die Attribute der Positionen aus attrList enth�lt
+	 *            erzeugt ein neues Objekt das die Attribute der Positionen aus
+	 *            attrList enth�lt
 	 * @param createNew
-	 *            if true, a new tuple will be created, if false the original one will be modified
+	 *            if true, a new tuple will be created, if false the original
+	 *            one will be modified
 	 */
 	public Tuple<T> restrict(int[] attrList, boolean createNew) {
 		Object[] newAttrs = new Object[attrList.length];
@@ -216,7 +234,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	}
 
 	/**
-	 * Creates a new instance from the current tuple and appends the given attribute object to it
+	 * Creates a new instance from the current tuple and appends the given
+	 * attribute object to it
 	 * 
 	 * @param object
 	 *            the object to append
@@ -227,7 +246,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	}
 
 	/**
-	 * Creates a new instance from the current tuple if the createNew param is true or uses the current instance and appends the given attribute object
+	 * Creates a new instance from the current tuple if the createNew param is
+	 * true or uses the current instance and appends the given attribute object
 	 * 
 	 * @param object
 	 *            the object to append
@@ -236,7 +256,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	 * @return the extended tuple
 	 */
 	public Tuple<T> append(Object object, boolean createNew) {
-		Object[] newAttrs = Arrays.copyOf(this.attributes, this.attributes.length + 1);
+		Object[] newAttrs = Arrays.copyOf(this.attributes,
+				this.attributes.length + 1);
 		newAttrs[this.attributes.length] = object;
 		if (createNew) {
 			Tuple<T> newTuple = new Tuple<T>(this, newAttrs, requiresDeepClone);
@@ -257,7 +278,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	}
 
 	/**
-	 * Sets the attribute values of this tuple to the specified values in attributes.
+	 * Sets the attribute values of this tuple to the specified values in
+	 * attributes.
 	 * 
 	 * @param attributes
 	 *            The new attribute values for this tuple.
@@ -292,7 +314,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	}
 
 	@Override
-	protected IStreamObject<T> process_merge(IStreamObject<T> left, IStreamObject<T> right, Order order) {
+	protected IStreamObject<T> process_merge(IStreamObject<T> left,
+			IStreamObject<T> right, Order order) {
 		if (order == Order.LeftRight) {
 			return processMergeInternal((Tuple<T>) left, (Tuple<T>) right);
 		} else {
@@ -301,18 +324,25 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	}
 
 	private IStreamObject<T> processMergeInternal(Tuple<T> left, Tuple<T> right) {
-		Object[] newAttributes = mergeAttributes(left != null ? left.getAttributes() : null, right != null ? right.getAttributes() : null);
-		Tuple<T> r = new Tuple<T>(newAttributes, left.requiresDeepClone() || right.requiresDeepClone());
+		Object[] newAttributes = mergeAttributes(
+				left != null ? left.getAttributes() : null,
+				right != null ? right.getAttributes() : null);
+		Tuple<T> r = new Tuple<T>(newAttributes, left.requiresDeepClone()
+				|| right.requiresDeepClone());
 		return r;
 	}
 
-	private Object[] mergeAttributes(Object[] leftAttributes, Object[] rightAttributes) {
-		Object[] newAttributes = new Object[leftAttributes.length + rightAttributes.length];
+	private Object[] mergeAttributes(Object[] leftAttributes,
+			Object[] rightAttributes) {
+		Object[] newAttributes = new Object[leftAttributes.length
+				+ rightAttributes.length];
 		if (leftAttributes != null) {
-			System.arraycopy(leftAttributes, 0, newAttributes, 0, leftAttributes.length);
+			System.arraycopy(leftAttributes, 0, newAttributes, 0,
+					leftAttributes.length);
 		}
 		if (rightAttributes != null) {
-			System.arraycopy(rightAttributes, 0, newAttributes, leftAttributes.length, rightAttributes.length);
+			System.arraycopy(rightAttributes, 0, newAttributes,
+					leftAttributes.length, rightAttributes.length);
 		}
 		return newAttributes;
 	}
@@ -346,7 +376,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	}
 
 	/**
-	 * Like normal equals-method but has a tolerance for double and float comparisons.
+	 * Like normal equals-method but has a tolerance for double and float
+	 * comparisons.
 	 * 
 	 * @param o
 	 * @return
@@ -388,7 +419,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 		return true;
 	}
 
-	static public boolean equalsAt(Tuple<?> left, Tuple<?> right, int[] comparePositions) {
+	static public boolean equalsAt(Tuple<?> left, Tuple<?> right,
+			int[] comparePositions) {
 		for (int i : comparePositions) {
 			Object a = left.getAttribute(i);
 			Object b = right.getAttribute(i);
@@ -400,8 +432,12 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 	}
 
 	/**
-	 * Liefert 0 wenn die beiden Attributlisten gleich sind ansonsten das erste Element an denen sich die Attributlisten unterscheiden. Die Sortierreihenfolge ist implizit durch die Position in der Liste gegeben wenn das aktuelle Objekt kleiner ist ist der R�ckgabewert negativ ansonsten positiv Es
-	 * wird maximal die kleinere Anzahl der Felder verglichen. Tupel mit NULL-Werten sind ungleich.
+	 * Liefert 0 wenn die beiden Attributlisten gleich sind ansonsten das erste
+	 * Element an denen sich die Attributlisten unterscheiden. Die
+	 * Sortierreihenfolge ist implizit durch die Position in der Liste gegeben
+	 * wenn das aktuelle Objekt kleiner ist ist der R�ckgabewert negativ
+	 * ansonsten positiv Es wird maximal die kleinere Anzahl der Felder
+	 * verglichen. Tupel mit NULL-Werten sind ungleich.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -417,7 +453,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 			if (this.attributes[i] == null || c.getAttribute(i) == null) {
 				compare = i;
 			} else if (this.attributes[i] instanceof Comparable<?>) {
-				compare = ((Comparable<Object>) this.attributes[i]).compareTo(c.getAttribute(i));
+				compare = ((Comparable<Object>) this.attributes[i]).compareTo(c
+						.getAttribute(i));
 			}
 			// } catch (NullPointerException e) {
 			// System.out.println("Exception: " + this + " " + c + " " + i);
@@ -452,7 +489,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 		for (int i = 1; i < this.attributes.length; ++i) {
 			Object curAttribute = this.attributes[i];
 			retBuff.append("|");
-			retBuff.append(curAttribute == null ? "<NULL>" : curAttribute.toString());
+			retBuff.append(curAttribute == null ? "<NULL>" : curAttribute
+					.toString());
 		}
 		retBuff.append(" | META | " + getMetadata());
 		if (getAdditionalContent().size() > 0) {
@@ -463,11 +501,17 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 
 	@Override
 	public final String csvToString() {
-		return this.csvToString(true);
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat, true);
 	}
 
 	@Override
-	public final String csvToString(boolean withMetadata) {
+	public final String csvToString(boolean withMetada) {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
+	}
+
+	@Override
+	public final String csvToString(NumberFormat floatingFormatter,
+			NumberFormat numberFormatter, boolean withMetadata) {
 		StringBuffer retBuff = new StringBuffer();
 		String sep = "";
 		if (attributes.length > 0) {
@@ -478,7 +522,13 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T> imp
 					retBuff.append("");
 				} else {
 					if (curAttribute instanceof Number) {
-						retBuff.append(nf.format(curAttribute));
+						if (curAttribute instanceof Double
+								|| curAttribute instanceof Float) {
+							retBuff.append(floatingFormatter
+									.format(curAttribute));
+						} else {
+							retBuff.append(numberFormatter.format(curAttribute));
+						}
 					} else {
 						retBuff.append(curAttribute.toString());
 					}

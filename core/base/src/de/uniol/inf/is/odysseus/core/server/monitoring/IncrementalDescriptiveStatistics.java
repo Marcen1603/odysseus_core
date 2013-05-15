@@ -28,12 +28,11 @@ public class IncrementalDescriptiveStatistics implements IDescriptiveStatistics 
 	private long sum = 0;
 	private long min = Long.MAX_VALUE;
 	private long max = Long.MIN_VALUE;
-	private NumberFormat nf = NumberFormat.getNumberInstance();
-	
+	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();	
 	
 	@Override
-	public String csvToString() {
-		return min+";"+max+";"+nf.format(getMean())+";"+count+";"+sum;				
+	public String csvToString(NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		return numberFormatter.format(min)+";"+numberFormatter.format(max)+";"+floatingFormatter.format(getMean())+";"+numberFormatter.format(count)+";"+numberFormatter.format(sum);				
 	}
 	
 	/**
@@ -49,8 +48,13 @@ public class IncrementalDescriptiveStatistics implements IDescriptiveStatistics 
 	}
 	
 	@Override
-	public String csvToString(boolean withMetada) {
-		return csvToString();
+	public final String csvToString() {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
+	}
+
+	@Override
+	public final String csvToString(boolean withMetada) {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
 	}
 
 	@Override

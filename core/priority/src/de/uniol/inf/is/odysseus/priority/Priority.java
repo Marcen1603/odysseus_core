@@ -15,12 +15,16 @@
   */
 package de.uniol.inf.is.odysseus.priority;
 
+import java.text.NumberFormat;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class Priority implements IPriority{
 	
 	private static final long serialVersionUID = 1837720176871400611L;
 
+	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
+	
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
 		IPriority.class
@@ -58,8 +62,8 @@ public class Priority implements IPriority{
 	}
 	
 	@Override
-	public String csvToString() {
-		return toString();
+	public String csvToString(NumberFormat ff, NumberFormat nf, boolean withMetadata) {
+		return nf.format(prio);
 	}
 	
 	@Override
@@ -68,8 +72,13 @@ public class Priority implements IPriority{
 	}
 	
 	@Override
-	public String csvToString(boolean withMetadata){
-		return this.csvToString();
+	public final String csvToString() {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
+	}
+
+	@Override
+	public final String csvToString(boolean withMetada) {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
 	}
 	
 	@Override

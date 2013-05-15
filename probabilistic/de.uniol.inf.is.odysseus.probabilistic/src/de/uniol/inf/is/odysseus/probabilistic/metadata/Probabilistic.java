@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,8 @@ public class Probabilistic implements IProbabilistic {
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IProbabilistic.class };
 	@SuppressWarnings("unused")
 	private final Map<Integer, PBox> pBoxes = new HashMap<Integer, PBox>();
+	
+	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
 
 	/** Tuple existence probability */
 	private double existence;
@@ -51,13 +54,18 @@ public class Probabilistic implements IProbabilistic {
 	}
 
 	@Override
-	public String csvToString() {
-		return "" + this.existence;
+	public String csvToString(NumberFormat ff,NumberFormat nf, boolean withMetadata) {
+		return "" + ff.format(this.existence);
 	}
 
 	@Override
-	public String csvToString(final boolean withMetada) {
-		return this.csvToString();
+	public final String csvToString() {
+		return this.csvToString(defaultNumberFormat, defaultNumberFormat,true);
+	}
+
+	@Override
+	public final String csvToString(boolean withMetada) {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
 	}
 
 	@Override

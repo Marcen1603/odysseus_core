@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.text.DecimalFormat;
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -45,7 +47,10 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	
 	private boolean append = false;
 	private boolean printMetadata;
+	private DecimalFormat floatingFormatter;
+	private DecimalFormat numberFormatter;
 
+	
 	public FileSinkAO() {
 	}
 
@@ -63,6 +68,8 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		this.printMetadata = fileSinkAO.printMetadata;
 		this.writeAfterElements = fileSinkAO.writeAfterElements;
 		this.append = fileSinkAO.append;
+		this.floatingFormatter = fileSinkAO.floatingFormatter;
+		this.numberFormatter = fileSinkAO.numberFormatter;
 	}
 
 	@Parameter(name = "FILE", type = StringParameter.class)
@@ -90,7 +97,25 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		this.printMetadata = printMetadata;
 	}
 	
-
+	@Parameter(type = StringParameter.class, optional = true)
+	public void setFloatingFormatter(String value){
+		this.floatingFormatter = new DecimalFormat(value);
+	}
+	
+	public DecimalFormat getFloatingFormatter() {
+		return floatingFormatter;
+	}
+	
+	@Parameter(type = StringParameter.class, optional = true)
+	public void setNumberFormatter(String value){
+		this.numberFormatter = new DecimalFormat(value);
+	}
+	
+	public DecimalFormat getNumberFormatter() {
+		return numberFormatter;
+	}
+	
+	
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new FileSinkAO(this);

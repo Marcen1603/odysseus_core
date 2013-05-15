@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
+import java.text.NumberFormat;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -60,8 +62,8 @@ public class TimeIntervalProbabilistic extends TimeInterval implements
 	}
 
 	@Override
-	public String csvToString() {
-		return super.csvToString() + ";" + this.probabilistic.csvToString();
+	public String csvToString(NumberFormat ff,NumberFormat nf, boolean withMetadata) {
+		return super.csvToString(ff,nf,withMetadata) + ";" + this.probabilistic.csvToString(ff,nf,withMetadata);
 	}
 
 	@Override

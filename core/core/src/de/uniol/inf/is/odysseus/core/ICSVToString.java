@@ -15,8 +15,11 @@
   */
 package de.uniol.inf.is.odysseus.core;
 
+import java.text.NumberFormat;
+
 public interface ICSVToString {
 	public String csvToString();
 	public String csvToString(boolean withMetada);
+	public String csvToString(NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata);
 	public String getCSVHeader();
 }

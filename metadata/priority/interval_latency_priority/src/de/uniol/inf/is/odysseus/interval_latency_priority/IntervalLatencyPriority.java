@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.interval_latency_priority;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -97,8 +98,8 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 	}
 
 	@Override
-	public String csvToString() {
-		return super.csvToString() + ";" + this.latency.csvToString()+";"+this.prio.csvToString();
+	public String csvToString(NumberFormat ff,NumberFormat nf, boolean withMetadata) {
+		return super.csvToString(ff,nf,withMetadata) + ";" + this.latency.csvToString(ff,nf,withMetadata)+";"+this.prio.csvToString(ff,nf,withMetadata);
 	}
 
 	@Override

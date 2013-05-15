@@ -17,6 +17,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.monitoring;
 
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -51,6 +52,8 @@ public class DescriptiveStatistics implements IDescriptiveStatistics{
 	@Element
 	private long max;
 
+	static private NumberFormat defaultNumberFormat = NumberFormat.getInstance();
+	
 	public int getN() {
 		return this.count;
 	}
@@ -189,22 +192,20 @@ public class DescriptiveStatistics implements IDescriptiveStatistics{
 	}
 	
 	@Override
-	public String csvToString() {
+	public String csvToString(NumberFormat floatingFormater, NumberFormat numberFormatter,  boolean withMetada) {
 		prepareStats();
-		return getMin()+";"+getMax()+";"+format(getMean())+";"+getN()+";"+
-				format(getStandardDeviation())+";"+format(getVariance())+";"
-				+format(getPercentile(5))+";"+
-				format(getPercentile(10))+";"+
-				format(getPercentile(25))+";"+
-				format(getPercentile(50))+";"+
-				format(getPercentile(75))+";"+
-				format(getPercentile(90))+";"+
-				format(getPercentile(95));
+		return numberFormatter.format(getMin())+";"+numberFormatter.format(getMax())+";"+floatingFormater.format(getMean())+";"+numberFormatter.format(getN())+";"+
+		floatingFormater.format(getStandardDeviation())+";"+floatingFormater.format(getVariance())+";"
+				+floatingFormater.format(getPercentile(5))+";"+
+				floatingFormater.format(getPercentile(10))+";"+
+				floatingFormater.format(getPercentile(25))+";"+
+				floatingFormater.format(getPercentile(50))+";"+
+				floatingFormater.format(getPercentile(75))+";"+
+				floatingFormater.format(getPercentile(90))+";"+
+				floatingFormater.format(getPercentile(95));
 	}
 	
-	static public String format(double value){
-		return String.format("%.5f",value);
-	}
+
 	@Override
 	public String getCSVHeader() {
 		return "Min;Max;Mean;Count;StandardDeviation;variance;percentile5;percentile10;percentile25;" +
@@ -212,17 +213,18 @@ public class DescriptiveStatistics implements IDescriptiveStatistics{
 	}
 	
 	@Override
-	public String csvToString(boolean withMetada) {
-		return csvToString();
+	public final String csvToString() {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat,true);
 	}
 
+	@Override
+	public final String csvToString(boolean withMetada) {
+		return this.csvToString(defaultNumberFormat,defaultNumberFormat, withMetada);
+	}
+	
 	@Override
 	public IDescriptiveStatistics createInstance() {
 		return new DescriptiveStatistics();
 	}
 	
-	public static void main(String[] args) {
-		System.out.println(format(1.00));
-		System.out.println(format(2348234435.34556456));
-	}
 }
