@@ -15,28 +15,16 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
-
-	private DecimalFormat floatingFormatter = null;
-	private DecimalFormat numberFormatter = null;
-	private boolean withMetadata = false; 
 	
 	public CSVProtocolHandler() {
 		super();
@@ -47,79 +35,7 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 		super(direction, access);
 	}
 
-	@Override
-	protected void init(Map<String, String> options) {
-		super.init(options);
-		textDelimiter = options.containsKey("textdelimiter") ? options.get(
-				"textdelimiter").toCharArray()[0] : "'".toCharArray()[0];
-	}
-
-	@Override
-	public T getNext() throws IOException {
-		String line = super.getNextLine();
-		if (line != null) {
-			return read(line);
-		}
-		return null;
-	}
-
-	@Override
-	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-		CSVProtocolHandler<T> instance = new CSVProtocolHandler<T>(direction,
-				access);
-		instance.setDataHandler(dataHandler);
-		instance.setTransfer(transfer);
-		instance.init(options);
-		return instance;
-	}
-
-	@Override
-	public String getName() {
-		return "CSV";
-	}
-
-	@Override
-	public void onConnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void process(ByteBuffer message) {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				new ByteArrayInputStream(message.array())));
-		if (!firstLineSkipped && !readFirstLine) {
-			try {
-				reader.readLine();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			firstLineSkipped = true;
-		}
-		String line;
-		try {
-			line = reader.readLine();
-			if (line != null) {
-				T retValue = read(line);
-				System.out.println(retValue);
-				getTransfer().transfer(retValue);
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private T read(String line) {
+	protected T readLine(String line) {
 		List<String> ret = new LinkedList<String>();
 		StringBuffer elem = new StringBuffer();
 		boolean overreadModus1 = false;
@@ -150,10 +66,20 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	}
 	
 	@Override
-	public void write(T object) throws IOException {
-		if (object instanceof ICSVToString){
-			writer.write(((ICSVToString)object).csvToString(delimiter, textDelimiter, floatingFormatter, numberFormatter, withMetadata ));
-		}
-		
-	};
+	public String getName() {
+		return "CSV";
+	}
+	
+	@Override
+	public IProtocolHandler<T> createInstance(ITransportDirection direction,
+			IAccessPattern access, Map<String, String> options,
+			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+		CSVProtocolHandler<T> instance = new CSVProtocolHandler<T>(direction,
+				access);
+		instance.setDataHandler(dataHandler);
+		instance.setTransfer(transfer);
+		instance.init(options);
+		return instance;
+	}
+
 }

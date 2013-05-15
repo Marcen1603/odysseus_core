@@ -15,15 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.org.apache.xml.internal.serialize.TextSerializer;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
@@ -42,29 +37,17 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 			IAccessPattern access) {
 		super(direction, access);
 	}
-
+	
 	@Override
-	protected void init(Map<String, String> options) {
-		super.init(options);
+	protected T readLine(String line) {
+		return getDataHandler().readData(line.split(""+delimiter));
 	}
 
 	@Override
-	public T getNext() throws IOException {
-		String line = super.getNextLine();
-		if (line != null){
-			return getDataHandler().readData(line.split(""+delimiter));
-		}else{
-			return null;
-		}
+	public String getName() {
+		return "SimpleCSV";
 	}
-
-	@Override
-	public void write(T object) throws IOException {
-		StringBuilder out = new StringBuilder();
-		getDataHandler().writeCSVData(out, object, delimiter, textDelimiter, floatingFormatter, numberFormatter, writeMetadata);
-		writer.write(out.toString() + System.lineSeparator());
-	}
-
+	
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
@@ -77,9 +60,5 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 		return instance;
 	}
 	
-	@Override
-	public String getName() {
-		return "SimpleCSV";
-	}
 
 }
