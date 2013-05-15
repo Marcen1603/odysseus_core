@@ -48,20 +48,20 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
     /**
      * 
      * @param attributeCount
-     * @param b
+     * @param requiresDeepClone
      */
-    public ProbabilisticTuple(final int attributeCount, final boolean b) {
-        super(attributeCount, b);
+    public ProbabilisticTuple(final int attributeCount, final boolean requiresDeepClone) {
+        super(attributeCount, requiresDeepClone);
         this.distributions = new NormalDistributionMixture[0];
     }
 
     /**
      * 
      * @param attributes
-     * @param b
+     * @param requiresDeepClone
      */
-    public ProbabilisticTuple(final Object[] attributes, final boolean b) {
-        super(attributes, b);
+    public ProbabilisticTuple(final Object[] attributes, final boolean requiresDeepClone) {
+        super(attributes, requiresDeepClone);
         this.distributions = new NormalDistributionMixture[0];
     }
 
@@ -69,10 +69,10 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
      * 
      * @param attributes
      * @param distributions
-     * @param b
+     * @param requiresDeepClone
      */
-    public ProbabilisticTuple(final Object[] attributes, final NormalDistributionMixture[] distributions, final boolean b) {
-        super(attributes, b);
+    public ProbabilisticTuple(final Object[] attributes, final NormalDistributionMixture[] distributions, final boolean requiresDeepClone) {
+        super(attributes, requiresDeepClone);
         this.distributions = distributions;
     }
 
@@ -80,10 +80,10 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
      * 
      * @param copy
      * @param newAttrs
-     * @param b
+     * @param requiresDeepClone
      */
-    public ProbabilisticTuple(final ProbabilisticTuple<T> copy, final Object[] newAttrs, final boolean b) {
-        super(copy, newAttrs, b);
+    public ProbabilisticTuple(final ProbabilisticTuple<T> copy, final Object[] newAttrs, final boolean requiresDeepClone) {
+        super(copy, newAttrs, requiresDeepClone);
         if (copy.distributions != null) {
             for (int i = 0; i < copy.distributions.length; i++) {
                 this.distributions[i] = copy.distributions[i].clone();

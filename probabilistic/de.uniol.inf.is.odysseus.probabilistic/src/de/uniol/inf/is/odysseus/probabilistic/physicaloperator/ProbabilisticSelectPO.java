@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -23,88 +23,157 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticPredicate;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
+ * Implementation of a probabilistic Select operator.
+ * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>
  */
-public class ProbabilisticSelectPO<T extends IStreamObject<?>> extends
-		AbstractPipe<T, T> {
+public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+    /** The predicate */
+    private final ProbabilisticPredicate predicate;
+    /** The heartbeat generation strategy */
+    private IHeartbeatGenerationStrategy<ProbabilisticTuple<T>> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<ProbabilisticTuple<T>>();
 
-	private final IPredicate<? super T> predicate;
-	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<T>();
+    /**
+     * Default constructor.
+     * 
+     * @param predicate
+     */
+    public ProbabilisticSelectPO(final ProbabilisticPredicate predicate) {
+        this.predicate = predicate.clone();
+    }
 
-	public ProbabilisticSelectPO(final IPredicate<? super T> predicate) {
-		this.predicate = predicate.clone();
-	}
+    /**
+     * Clone constructor.
+     * 
+     * @param po
+     */
+    public ProbabilisticSelectPO(final ProbabilisticSelectPO<T> po) {
+        this.predicate = po.predicate.clone();
+        this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy.clone();
+    }
 
-	public ProbabilisticSelectPO(final ProbabilisticSelectPO<T> po) {
-		this.predicate = po.predicate.clone();
-		this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy
-				.clone();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+     * getOutputMode()
+     */
+    @Override
+    public OutputMode getOutputMode() {
+        return OutputMode.MODIFIED_INPUT;
+    }
 
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+     * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void process_next(final ProbabilisticTuple<T> object, final int port) {
+        ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(object.getAttributes(), object.requiresDeepClone());
+        outputVal.setMetadata((T) object.getMetadata().clone());
+        // The MEP function will update the distribution in the meta data. Thus,
+        // first create a copy of the object and perform the evaluation on that
+        // new object.
+        double probability = predicate.probabilisticEvaluate(outputVal);
+        ((IProbabilistic) outputVal.getMetadata()).setExistence(probability);
+        if (probability > 0.0) {
+            transfer(outputVal);
+        }
+    }
 
-	@Override
-	protected void process_next(final T object, final int port) {
-		predicate.getAttributes();
-		predicate.evaluate(object);
-		// ((IProbabilistic) object.getMetadata()).setExistence(prob);
-		transfer(object);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+     * process_open()
+     */
+    @Override
+    public void process_open() throws OpenFailedException {
+        this.predicate.init();
+    }
 
-	@Override
-	public void process_open() throws OpenFailedException {
-		this.predicate.init();
-	}
+    /**
+     * 
+     * @return
+     */
+    public IPredicate<? super ProbabilisticTuple<T>> getPredicate() {
+        return this.predicate;
+    }
 
-	public IPredicate<? super T> getPredicate() {
-		return this.predicate;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
+     * ()
+     */
+    @Override
+    public ProbabilisticSelectPO<T> clone() {
+        return new ProbabilisticSelectPO<T>(this);
+    }
 
-	@Override
-	public ProbabilisticSelectPO<T> clone() {
-		return new ProbabilisticSelectPO<T>(this);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#toString
+     * ()
+     */
+    @Override
+    public String toString() {
+        return super.toString() + " predicate: " + this.getPredicate().toString();
+    }
 
-	@Override
-	public String toString() {
-		return super.toString() + " predicate: "
-				+ this.getPredicate().toString();
-	}
+    /**
+     * 
+     * @return
+     */
+    public IHeartbeatGenerationStrategy<ProbabilisticTuple<T>> getHeartbeatGenerationStrategy() {
+        return this.heartbeatGenerationStrategy;
+    }
 
-	public IHeartbeatGenerationStrategy<T> getHeartbeatGenerationStrategy() {
-		return this.heartbeatGenerationStrategy;
-	}
+    /**
+     * 
+     * @param heartbeatGenerationStrategy
+     */
+    public void setHeartbeatGenerationStrategy(final IHeartbeatGenerationStrategy<ProbabilisticTuple<T>> heartbeatGenerationStrategy) {
+        this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
+    }
 
-	public void setHeartbeatGenerationStrategy(
-			final IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy) {
-		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
+     * process_isSemanticallyEqual
+     * (de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
+     */
+    @Override
+    public boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
+        if (!(ipo instanceof SelectPO<?>)) {
+            return false;
+        }
+        @SuppressWarnings("unchecked")
+        final ProbabilisticSelectPO<T> spo = (ProbabilisticSelectPO<T>) ipo;
+        // Different sources
+        if (!this.hasSameSources(spo)) {
+            return false;
+        }
+        // Predicates match
+        if (this.predicate.equals(spo.getPredicate()) || (this.predicate.isContainedIn(spo.getPredicate()) && spo.getPredicate().isContainedIn(this.predicate))) {
+            return true;
+        }
 
-	@Override
-	public boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
-		if (!(ipo instanceof SelectPO<?>)) {
-			return false;
-		}
-		@SuppressWarnings("unchecked")
-		final ProbabilisticSelectPO<T> spo = (ProbabilisticSelectPO<T>) ipo;
-		// Different sources
-		if (!this.hasSameSources(spo)) {
-			return false;
-		}
-		// Predicates match
-		if (this.predicate.equals(spo.getPredicate())
-				|| (this.predicate.isContainedIn(spo.getPredicate()) && spo
-						.getPredicate().isContainedIn(this.predicate))) {
-			return true;
-		}
-
-		return false;
-	}
+        return false;
+    }
 
 }

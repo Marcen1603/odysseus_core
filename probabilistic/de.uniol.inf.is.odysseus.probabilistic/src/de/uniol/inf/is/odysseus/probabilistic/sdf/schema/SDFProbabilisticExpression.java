@@ -31,6 +31,8 @@ import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture
 import de.uniol.inf.is.odysseus.probabilistic.function.AbstractProbabilisticFunction;
 
 /**
+ * Probabilistic expression that have acces from the payload to the multivariate
+ * distributions.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
@@ -133,10 +135,23 @@ public class SDFProbabilisticExpression extends SDFExpression {
         }
     }
 
+    /**
+     * Gets the distribution at the given index.
+     * 
+     * @param distributionIndex
+     *            The distribution index
+     * @return
+     */
     public NormalDistributionMixture getDistributions(int distributionIndex) {
         return this.distributions.get(distributionIndex);
     }
 
+    /**
+     * Sets the distributions.
+     * 
+     * @param distributions
+     *            The distributions
+     */
     private void setDistributions(List<NormalDistributionMixture> distributions) {
         if (distributions == null) {
             this.distributions = new ArrayList<NormalDistributionMixture>();
