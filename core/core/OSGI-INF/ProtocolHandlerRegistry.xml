@@ -17,7 +17,4 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.core.ProtocolHandlerRegistry">
    <implementation class="de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry"/>
    <reference bind="register" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler" name="IProtocolHandler" policy="dynamic" unbind="remove"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry"/>
-   </service>
 </scr:component>
