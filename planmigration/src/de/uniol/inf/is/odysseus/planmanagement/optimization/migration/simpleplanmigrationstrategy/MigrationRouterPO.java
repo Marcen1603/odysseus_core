@@ -120,11 +120,13 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	protected void process_next(R object, int port) {
 		// check if new has caught up on old.
 		if (punctuationsReceived) {
-			if(!finished) {
-				finished = isFinished(object, port);
-			} /**else {
-				isFinished(object, port);
-			}**/
+//			if(!finished) {
+//				LOG.debug("Processing {} {}", (port == this.inPortNew ? "new" : "old"), object);
+//				finished = isFinished(object, port);
+//			} /**else {
+//				isFinished(object, port);
+//			}**/
+			finished = true;
 		}
 		
 		// happens if process_next is called while the migration is already finished but the router is not yet removed.
@@ -154,6 +156,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean isFinished(R object, int port) {
 		int otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
