@@ -95,7 +95,7 @@ public class PredicateHelper {
 	 *            and the generatedPredicate.
 	 * @return
 	 */
-	public Pair<IRelationalPredicate, Set<IRelationalPredicate>> generatePredicate(
+	public Pair<IPredicate<?>, Set<IRelationalPredicate>> generatePredicate(
 			Set<AccessAO> sources, AccessAO newSource,
 			ILogicalOperator existingJoinPlan) {
 		sources.add(newSource);
@@ -115,18 +115,16 @@ public class PredicateHelper {
 
 		Iterator<IRelationalPredicate> iterator = satisfiablePredicates
 				.iterator();
-		IRelationalPredicate result = iterator.next();
+		IPredicate<?> result = iterator.next();
 		if (satisfiablePredicates.size() > 1) {
 			while (iterator.hasNext()) {
 				IRelationalPredicate next = iterator.next();
-				result = (IRelationalPredicate) ComplexPredicateHelper
+				result = (IPredicate<?>) ComplexPredicateHelper
 						.createAndPredicate(result, next);
 			}
 		}
-		LOG.debug("New predicate: "
-				+ ((RelationalPredicate) result).getExpression()
-						.getExpressionString());
-		return new Pair<IRelationalPredicate, Set<IRelationalPredicate>>(
+		LOG.debug("New predicate: {}", result);
+		return new Pair<IPredicate<?>, Set<IRelationalPredicate>>(
 				result, satisfiablePredicates);
 
 		// Set<SDFExpression> expressions = new HashSet<SDFExpression>();
@@ -162,7 +160,7 @@ public class PredicateHelper {
 	 * @param pair
 	 * @return a new predicate.
 	 */
-	public Pair<IRelationalPredicate, Set<IRelationalPredicate>> generatePredicate(
+	public Pair<IPredicate<?>, Set<IRelationalPredicate>> generatePredicate(
 			Pair<AccessAO, AccessAO> pair) {
 		Set<AccessAO> source = new HashSet<AccessAO>();
 		source.add(pair.getE1());
