@@ -33,8 +33,8 @@ public class PlanGenerationMethodFactory {
 		Map<String, String> configs = config.getValue();
 		if (configs.get("method") == null) {
 			// TODO: error handling
-			configs.put("method", "copy");
-//			configs.put("method", "exhaustiveSearch");
+//			configs.put("method", "copy");
+			configs.put("method", "exhaustiveSearch");
 //			configs.put("method", "dynamicProgramming");
 		}
 		switch (configs.get("method")) {
@@ -46,7 +46,7 @@ public class PlanGenerationMethodFactory {
 			return new IterativeDynamicProgramming(costModel);
 
 		case "exhaustiveSearch":
-			return new ExhaustiveSearch();
+			return new ExhaustiveSearch(costModel);
 
 		case "copy":
 			return new CopyPlanGenerationMethod();
