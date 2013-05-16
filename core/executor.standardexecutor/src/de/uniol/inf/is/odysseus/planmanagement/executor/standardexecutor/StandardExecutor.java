@@ -444,10 +444,12 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			SetOwnerVisitor visitor = new SetOwnerVisitor(query);
 			AbstractTreeWalker.prefixWalk(logicalPlan, visitor);
 			newQueries.add(query);
+			setQueryBuildParameters(query, params);
+
 			Collection<IPhysicalQuery> addedQueries = addQueries(newQueries, new OptimizationConfiguration(params));
 			return addedQueries.iterator().next().getID();
 		} catch (Exception e) {
-			LOG.error("Error adding Queries. Details: " + e.getMessage());
+			LOG.error("Error adding Queries ", e);
 			throw new QueryAddException(e);
 		}
 	}
