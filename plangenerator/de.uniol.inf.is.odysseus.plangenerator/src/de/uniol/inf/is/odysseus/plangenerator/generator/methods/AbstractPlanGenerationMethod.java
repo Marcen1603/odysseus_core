@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PlanGenerationConfiguration;
@@ -135,14 +136,14 @@ public abstract class AbstractPlanGenerationMethod implements
 				AccessAO sourceClone = source.clone();
 				PlanGeneratorHelper.setOriginalForClone(sourceClone, source);
 				// Join von joinClone mit fehlender Quelle.
-				Pair<IRelationalPredicate, Set<IRelationalPredicate>> predicatePair = this.predicateHelper
+				Pair<IPredicate<?>, Set<IRelationalPredicate>> predicatePair = this.predicateHelper
 						.generatePredicate(
 								this.partialJoinPlan2sources.get(joinPlan),
 								sourceClone, joinPlan);
 				JoinAO join = new JoinAO();
 				if (predicatePair == null) {
 					LOG.debug("Inserting true-predicate");
-					predicatePair = new Pair<IRelationalPredicate, Set<IRelationalPredicate>>(
+					predicatePair = new Pair<IPredicate<?>, Set<IRelationalPredicate>>(
 							this.predicateHelper.createTruePredicate(),
 							new HashSet<IRelationalPredicate>());
 				}
@@ -178,7 +179,7 @@ public abstract class AbstractPlanGenerationMethod implements
 		// erzeugen.
 		for (Pair<AccessAO, AccessAO> pair : PlanGeneratorHelper
 				.joinSets(this.sources)) {
-			Pair<IRelationalPredicate, Set<IRelationalPredicate>> predicatePair = this.predicateHelper
+			Pair<IPredicate<?>, Set<IRelationalPredicate>> predicatePair = this.predicateHelper
 					.generatePredicate(pair);
 			ILogicalOperator join = new JoinAO();
 			if (predicatePair.getE1() != null) {
