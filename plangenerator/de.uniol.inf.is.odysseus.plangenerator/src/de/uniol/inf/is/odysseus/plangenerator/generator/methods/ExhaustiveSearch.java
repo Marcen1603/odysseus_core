@@ -18,14 +18,21 @@ package de.uniol.inf.is.odysseus.plangenerator.generator.methods;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PlanGenerationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.util.CollectLogicalChildrenPlanVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.plangenerator.util.PlanGeneratorHelper;
 
 /**
@@ -35,11 +42,17 @@ import de.uniol.inf.is.odysseus.plangenerator.util.PlanGeneratorHelper;
  * @author Merlin Wasmann
  * 
  */
-public class ExhaustiveSearch extends AbstractPlanGenerationMethod {
+public class ExhaustiveSearch extends AbstractPruningPlanGenerationMethod {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ExhaustiveSearch.class);
 
+	public ExhaustiveSearch() {}
+	
+	public ExhaustiveSearch(ICostModel<ILogicalOperator> costModel) {
+		this.costModel = costModel;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -50,6 +63,7 @@ public class ExhaustiveSearch extends AbstractPlanGenerationMethod {
 	 * , de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.
 	 * configuration.PlanGenerationConfiguration)
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<ILogicalOperator> generatePlans(ILogicalOperator plan,
 			PlanGenerationConfiguration config, IOperatorOwner owner) {
@@ -78,18 +92,48 @@ public class ExhaustiveSearch extends AbstractPlanGenerationMethod {
 			}
 			// plans.add(joinPlan);
 		}
-
-		// set the owners
-		for (ILogicalOperator p : plans) {
-			PlanGeneratorHelper.setNewOwnerForPlan(p, owner);
-			PlanGeneratorHelper.printPlan("With owner", p);
+		
+		List<ICost<ILogicalOperator>> costs = new ArrayList<ICost<ILogicalOperator>>();
+		Map<ICost<ILogicalOperator>, ILogicalOperator> costMap = new HashMap<ICost<ILogicalOperator>, ILogicalOperator>();
+		for(ILogicalOperator p : plans) {
+			List<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
+			
+			GenericGraphWalker walker = new GenericGraphWalker();
+			CollectLogicalChildrenPlanVisitor<ILogicalOperator> visitor = new CollectLogicalChildrenPlanVisitor<ILogicalOperator>();
+			walker.prefixWalk(plan, visitor);
+			
+			operators.addAll(visitor.getResult());
+			
+			ICost<ILogicalOperator> cost = this.costModel.estimateCost(operators, true);
+			
+			costs.add(cost);
+			costMap.put(cost, p);
+			LOG.debug("Cost: {} for plan {}", cost, p);
+		}
+		
+		List<ILogicalOperator> sorted = new ArrayList<ILogicalOperator>();
+		Collections.sort(costs);
+		LOG.debug("Costs.size: {}", costs.size());
+		LOG.debug("CostMap.size: {}", costMap.size());
+		for(int i = costs.size() - 1; i >= 0; i--) {
+			LOG.debug("Added plan {}", costMap.get(costs.get(i)));
+			sorted.add(costMap.get(costs.get(i)));
 		}
 
+
+		// set the owners
+		for (ILogicalOperator p : sorted) {
+			PlanGeneratorHelper.setNewOwnerForPlan(p, owner);
+			PlanGeneratorHelper.printPlan("With owner", p);
+			LOG.debug("Outputschema: {}", p.getOutputSchema());
+		}
+		
+		return sorted;
 		// if(!getPredicateHelper().allPredicatesSatisfied()) {
 		// System.err.println("[ExhaustiveSearch] Not all predicates have been satisfied.");
 		// }
 
-		return plans;
+		//return plans;
 	}
 
 }
