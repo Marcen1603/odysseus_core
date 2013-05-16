@@ -32,7 +32,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
@@ -59,6 +62,7 @@ import de.uniol.inf.is.odysseus.core.server.util.RemoveOwnersGraphVisitor;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 
 /**
  * SimplePlanMigrationStrategy transfers a currently running physical plan into
@@ -344,6 +348,22 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			IPhysicalOperator lastOperatorNewPlan, IPipe<?, ?> router) {
 		// get the real sink
 		ISink<?> realSink = (ISink<?>) lastOperatorOldPlan;
+		
+		// remove old projectpo which was inserted to preserve the outputschema
+		IPipe<?, ?> oldOpBeforeSink = (IPipe<?, ?>) realSink.getSubscribedToSource(0).getTarget();
+		if(oldOpBeforeSink instanceof RelationalProjectPO) {
+			LOG.debug("Removing old ProjectPO");
+			// remove the old ProjectPO
+			ISource<?> source = oldOpBeforeSink.getSubscribedToSource(0).getTarget();
+			List<ISink> sinks = new ArrayList<ISink>();
+			sinks.add(realSink);
+			List<Integer> sinkInPorts = new ArrayList<Integer>();
+			sinkInPorts.add(0);
+			
+			PhysicalRestructHelper.removeOperator(source, oldOpBeforeSink.getSubscribedToSource(0).getSourceOutPort(), sinks, sinkInPorts, oldOpBeforeSink);
+		} else {
+			LOG.debug("No old ProjectPO existing, so nothing removed");
+		}
 
 		// collect the operators before the sink in the old plan.
 		List<AbstractSource<?>> oldOpsBeforeSink = new ArrayList<AbstractSource<?>>();
@@ -357,6 +377,38 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 					oldSubscriptions.add(sinkSub);
 				}
 			}
+		}
+		
+		// insert projectpo to preserve outputschema
+		if(!lastOperatorOldPlan.getOutputSchema().equals(lastOperatorNewPlan.getOutputSchema())) {
+			LOG.debug("Insert new ProjectPO");
+			RelationalProjectPO project = createProject(lastOperatorOldPlan.getOutputSchema(), lastOperatorNewPlan.getOutputSchema());
+			ISource newOpBeforeSink = (ISource) ((ISink) lastOperatorNewPlan).getSubscribedToSource(0).getTarget();
+			project.subscribeToSource(newOpBeforeSink, 0, 0, newOpBeforeSink.getOutputSchema());
+			
+			PhysicalSubscription oldSub = null;
+			PhysicalSubscription newSub = null;
+			
+			for(PhysicalSubscription sub : ((AbstractSource<?>) newOpBeforeSink).getSubscriptions()) {
+				if(sub.getTarget().equals(project)) {
+					newSub = sub;
+					continue;
+				}
+				if(sub.getTarget().equals(lastOperatorNewPlan)) {
+					oldSub = sub;
+				}
+			}
+			
+			if(oldSub != null && newSub != null) {
+				((AbstractSource) newOpBeforeSink).replaceActiveSubscription(oldSub, newSub);
+			}
+			
+			((ISink) lastOperatorNewPlan).unsubscribeFromAllSources();
+			((ISink) lastOperatorNewPlan).subscribeToSource(project, 0, 0, project.getOutputSchema());
+		}else {
+			LOG.debug("No ProjectPO needed");
+			LOG.debug("old {}", lastOperatorOldPlan.getOutputSchema());
+			LOG.debug("new {}", lastOperatorNewPlan.getOutputSchema());
 		}
 
 		// collect the operators before the sink in the new plan.
@@ -436,6 +488,33 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			IPhysicalOperator lastOperatorOldPlan,
 			IPhysicalOperator lastOperatorNewPlan, IPipe router) {
 		router.setOutputSchema(lastOperatorOldPlan.getOutputSchema());
+		
+		// insert projectpo to preserve correct outputschema
+		if(!lastOperatorNewPlan.getOutputSchema().equals(lastOperatorOldPlan.getOutputSchema())) {
+			LOG.debug("Inserting new ProjectPO");
+			// insert project to preserve the correct order of the attributes.
+			SDFSchema oldSchema = lastOperatorOldPlan.getOutputSchema();
+			SDFSchema newSchema = lastOperatorNewPlan.getOutputSchema();
+
+			// remove old project to replace it with new one in the new plan
+			if (lastOperatorOldPlan instanceof RelationalProjectPO) {
+				LOG.debug("Removing old ProjectPO");
+				IPhysicalOperator oldProject = lastOperatorOldPlan;
+				IPhysicalOperator newLastOperatorOldPlan = (IPhysicalOperator) ((AbstractSink) lastOperatorOldPlan)
+						.getSubscribedToSource().get(0);
+				((AbstractSink) oldProject).unsubscribeFromAllSources();
+				lastOperatorOldPlan = newLastOperatorOldPlan;
+			} else {
+				LOG.debug("No old ProjectPO existing, so nothing removed");
+			}
+			RelationalProjectPO project = createProject(oldSchema, newSchema);
+			project.subscribeToSource(lastOperatorNewPlan, 0, 0,
+					lastOperatorNewPlan.getOutputSchema());
+			lastOperatorNewPlan = project;
+
+		} else {
+			LOG.debug("No ProjectPO needed");
+		}
 		PhysicalRestructHelper.appendBinaryOperator(router,
 				(ISource) lastOperatorOldPlan, (ISource) lastOperatorNewPlan);
 		if (LOG.isDebugEnabled()) {
@@ -450,6 +529,25 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		return router;
 	}
 
+	private RelationalProjectPO createProject(SDFSchema oldSchema, SDFSchema newSchema) {
+		int[] restrictList = createProjectRestrictList(oldSchema, newSchema);
+		RelationalProjectPO project = new RelationalProjectPO(restrictList);
+		return project;
+	}
+	
+	private int[] createProjectRestrictList(SDFSchema oldSchema, SDFSchema newSchema) {
+		List<SDFAttribute> oldAttrs = oldSchema.getAttributes();
+		List<SDFAttribute> newAttrs = newSchema.getAttributes();
+		
+		int[] restrictList = new int[oldAttrs.size()];
+		
+		for(int i = 0; i < oldAttrs.size(); i++) {
+			restrictList[i] = newAttrs.indexOf(oldAttrs.get(i));
+		}
+		
+		return restrictList;
+	}
+	
 	/**
 	 * Proof of concept for another finished migration handling.
 	 * 
