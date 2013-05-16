@@ -49,7 +49,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	protected boolean firstLineSkipped = false;
 	private long dumpEachLine = -1;
 	private long lastLine = -1;
-	private long lineCounter = 0L;
+	protected long lineCounter = 0L;
 	private boolean debug = false;
 	private boolean isDone = false;
 	private StringBuffer measurements = new StringBuffer("");
