@@ -26,7 +26,7 @@ public class ClientJxtaConnection extends AbstractJxtaConnection {
 	@Override
 	public void connect() throws IOException {
 		clientSocket = determineJxtaClientSocket(getPipeAdvertisement());
-
+		clientSocket.setPerformancePreferences(0, 1, 2);
 		super.connect();
 	}
 

@@ -16,50 +16,51 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-public abstract class AbstractJxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
+public abstract class AbstractJxtaBiDiConnection
+		implements
+			IJxtaConnection,
+			PipeMsgListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractJxtaBiDiConnection.class);
-	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(AbstractJxtaBiDiConnection.class);
+
 	private final PipeAdvertisement pipeAdvertisement;
-	private final List<IJxtaConnectionListener> listeners = Lists.newArrayList();
-	
+	private final List<IJxtaConnectionListener> listeners = Lists
+			.newArrayList();
+
 	private boolean isConnected;
-	
-	public AbstractJxtaBiDiConnection( PipeAdvertisement adv ) {
+
+	public AbstractJxtaBiDiConnection(PipeAdvertisement adv) {
 		Preconditions.checkNotNull(adv, "Pipe advertisement must not be null!");
-		
+
 		pipeAdvertisement = adv;
 	}
 
 	@Override
 	public void removeListener(IJxtaConnectionListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
+		listeners.remove(listener);
 	}
 
 	@Override
 	public void addListener(IJxtaConnectionListener listener) {
-		Preconditions.checkNotNull(listener, "Listener to add must not be null!");
-
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
+		Preconditions.checkNotNull(listener,
+				"Listener to add must not be null!");
+		listeners.add(listener);
 	}
 
 	@Override
 	public void connect() throws IOException {
-		
+
 		getBiDiPipe().setMessageListener(this);
 		isConnected = true;
-		
+
 		fireConnectEvent();
 	}
 
 	@Override
 	public void disconnect() {
 		isConnected = false;
-		
+
 		fireDisconnectEvent();
 	}
 
@@ -71,16 +72,18 @@ public abstract class AbstractJxtaBiDiConnection implements IJxtaConnection, Pip
 	@Override
 	public void send(byte[] message) throws IOException {
 		Message msg = new Message();
-		msg.addMessageElement(new ByteArrayMessageElement("bytes", null, message, null));
-		
+		msg.addMessageElement(new ByteArrayMessageElement("bytes", null,
+				message, null));
+
 		getBiDiPipe().sendMessage(msg);
 	}
-	
+
 	@Override
 	public void pipeMsgEvent(PipeMsgEvent event) {
 		Message msg = event.getMessage();
-		
-		ByteArrayMessageElement bytes = (ByteArrayMessageElement)msg.getMessageElement("bytes");
+
+		ByteArrayMessageElement bytes = (ByteArrayMessageElement) msg
+				.getMessageElement("bytes");
 		fireMessageReceiveEvent(bytes.getBytes());
 	}
 
@@ -90,41 +93,31 @@ public abstract class AbstractJxtaBiDiConnection implements IJxtaConnection, Pip
 	}
 
 	protected final void fireConnectEvent() {
-		synchronized (listeners) {
-			for (final IJxtaConnectionListener listener : listeners) {
-				try {
-					listener.onConnect(this);
-				} catch (final Throwable t) {
-					LOG.error("Exception in JxtaConnection listener", t);
-				}
+		for (final IJxtaConnectionListener listener : listeners) {
+			try {
+				listener.onConnect(this);
+			} catch (final Throwable t) {
+				LOG.error("Exception in JxtaConnection listener", t);
 			}
 		}
 	}
 
 	protected final void fireDisconnectEvent() {
-		synchronized (listeners) {
-			for (final IJxtaConnectionListener listener : listeners) {
-				try {
-					listener.onDisconnect(this);
-				} catch (final Throwable t) {
-					LOG.error("Exception in JxtaConnection listener", t);
-				}
+		for (final IJxtaConnectionListener listener : listeners) {
+			try {
+				listener.onDisconnect(this);
+			} catch (final Throwable t) {
+				LOG.error("Exception in JxtaConnection listener", t);
 			}
 		}
 	}
 
 	protected final void fireMessageReceiveEvent(byte[] data) {
-		Preconditions.checkNotNull(data, "Byte data must not be null!");
-		Preconditions.checkArgument(data.length > 0,
-				"Byte data must not be empty!");
-
-		synchronized (listeners) {
-			for (final IJxtaConnectionListener listener : listeners) {
-				try {
-					listener.onReceiveData(this, data);
-				} catch (final Throwable t) {
-					LOG.error("Exception in JxtaConnection listener", t);
-				}
+		for (final IJxtaConnectionListener listener : listeners) {
+			try {
+				listener.onReceiveData(this, data);
+			} catch (final Throwable t) {
+				LOG.error("Exception in JxtaConnection listener", t);
 			}
 		}
 	}
