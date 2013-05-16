@@ -20,7 +20,7 @@ public class ClientJxtaBiDiConnection extends AbstractJxtaBiDiConnection {
 	public void connect() throws IOException {
 		
 		bidiPipe = new JxtaBiDiPipe();
-		bidiPipe.setReliable(false);
+//		bidiPipe.setReliable(false);
 		
 		boolean done = false;
 		
