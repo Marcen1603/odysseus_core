@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.datasrc;
+package de.uniol.inf.is.odysseus.p2p_new.sources;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,6 +25,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 
 public final class AccessAOCoverter {
 
@@ -55,7 +56,7 @@ public final class AccessAOCoverter {
 		return new String[] { ID_TAG, SOURCE_NAME_TAG };
 	}
 
-	public static AccessAO toAccessAO(TextElement<?> root, SourceAdvertisement adv) {
+	public static AccessAO toAccessAO(TextElement<?> root, StreamAdvertisement adv) {
 		checkType(root);
 
 		final Enumeration<?> elements = root.getChildren();
@@ -69,7 +70,7 @@ public final class AccessAOCoverter {
 	}
 
 	public static Document toDocument(MimeMediaType asMimeType, ID id, AccessAO accessOperator) {
-		final StructuredDocument<?> doc = StructuredDocumentFactory.newStructuredDocument(asMimeType, SourceAdvertisement.getAdvertisementType());
+		final StructuredDocument<?> doc = StructuredDocumentFactory.newStructuredDocument(asMimeType, StreamAdvertisement.getAdvertisementType());
 		if (doc instanceof Attributable) {
 			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
 		}
@@ -139,12 +140,12 @@ public final class AccessAOCoverter {
 	}
 
 	private static void checkType(TextElement<?> root) {
-		if (!root.getName().equals(SourceAdvertisement.getAdvertisementType())) {
-			throw new IllegalArgumentException("Could not construct " + SourceAdvertisement.getAdvertisementType() + " from doc containing a " + root.getName());
+		if (!root.getName().equals(StreamAdvertisement.getAdvertisementType())) {
+			throw new IllegalArgumentException("Could not construct " + StreamAdvertisement.getAdvertisementType() + " from doc containing a " + root.getName());
 		}
 	}
 
-	private static void handleElement(AccessAO accessAO, TextElement<?> elem, SourceAdvertisement adv) {
+	private static void handleElement(AccessAO accessAO, TextElement<?> elem, StreamAdvertisement adv) {
 		if (elem.getName().equals(ID_TAG)) {
 			handleIDTag(adv, elem);
 
@@ -207,7 +208,7 @@ public final class AccessAOCoverter {
 		}
 	}
 
-	private static void handleIDTag(SourceAdvertisement adv, TextElement<?> elem) {
+	private static void handleIDTag(StreamAdvertisement adv, TextElement<?> elem) {
 		try {
 			final URI id = new URI(elem.getTextValue());
 			adv.setID(IDFactory.fromURI(id));
@@ -247,7 +248,7 @@ public final class AccessAOCoverter {
 		final List<SDFAttribute> attributes = Lists.newArrayList();
 		while (children.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) children.nextElement();
-			final SDFAttribute attr = new SDFAttribute(accessAO.getSourcename(), elem.getKey(), DataSourceManager.getDataDictionary().getDatatype(elem.getTextValue()));
+			final SDFAttribute attr = new SDFAttribute(accessAO.getSourcename(), elem.getKey(), DataDictionaryService.get().getDatatype(elem.getTextValue()));
 			attributes.add(attr);
 		}
 

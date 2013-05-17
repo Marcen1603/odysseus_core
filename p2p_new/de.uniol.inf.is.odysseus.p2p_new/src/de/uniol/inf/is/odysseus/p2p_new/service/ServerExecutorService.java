@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 
-public class ExecutorService {
+public class ServerExecutorService {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(ExecutorService.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ServerExecutorService.class);
 	
 	private static IServerExecutor serverExecutor;
 	
@@ -30,11 +30,11 @@ public class ExecutorService {
 		}
 	}
 	
-	public static IServerExecutor getServerExecutor() {
+	public static IServerExecutor get() {
 		return serverExecutor;
 	}
 	
-	public static boolean hasServerExecutor() {
+	public static boolean isBound() {
 		return serverExecutor != null;
 	}
 }

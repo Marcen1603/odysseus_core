@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.p2p_new.datasrc;
+package de.uniol.inf.is.odysseus.p2p_new.sources;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.Element;
 
-public final class SourceAdvertisementInstantiator implements AdvertisementFactory.Instantiator {
+public final class ViewAdvertisementInstantiator implements AdvertisementFactory.Instantiator {
 	/**
 	 * Returns the identifying type of this Advertisement.
 	 * 
@@ -12,7 +12,7 @@ public final class SourceAdvertisementInstantiator implements AdvertisementFacto
 	 */
 	@Override
 	public String getAdvertisementType() {
-		return SourceAdvertisement.getAdvertisementType();
+		return ViewAdvertisement.getAdvertisementType();
 	}
 
 	/**
@@ -24,12 +24,12 @@ public final class SourceAdvertisementInstantiator implements AdvertisementFacto
 	 */
 	@Override
 	public Advertisement newInstance() {
-		return new SourceAdvertisement();
+		return new ViewAdvertisement();
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Advertisement newInstance(Element root) {
-		return new SourceAdvertisement(root);
+		return new ViewAdvertisement(root);
 	}
 }

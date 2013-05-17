@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
-import de.uniol.inf.is.odysseus.p2p_new.service.ExecutorService;
+import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
@@ -107,7 +107,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 				
 				try {
 					localControlAllowed = true;
-					ExecutorService.getServerExecutor().startQuery(queryID, SessionManagementService.getActiveSession());
+					ServerExecutorService.get().startQuery(queryID, SessionManagementService.getActiveSession());
 				} finally {
 					localControlAllowed = false;
 				}
@@ -118,7 +118,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 				final int queryID = determineQueryID(getOwner());
 				try {
 					localControlAllowed = true;
-					ExecutorService.getServerExecutor().stopQuery(queryID, SessionManagementService.getActiveSession());
+					ServerExecutorService.get().stopQuery(queryID, SessionManagementService.getActiveSession());
 				} finally {
 					localControlAllowed = false;
 				}

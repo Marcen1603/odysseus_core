@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.datasrc;
+package de.uniol.inf.is.odysseus.p2p_new.sources;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,39 +16,39 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 
-public final class SourceAdvertisement extends Advertisement implements Serializable {
+public final class StreamAdvertisement extends Advertisement implements Serializable {
 
-	private static final String ADVERTISEMENT_TYPE = "jxta:SourceAdvertisement";
+	private static final String ADVERTISEMENT_TYPE = "jxta:StreamAdvertisement";
 	private static final long serialVersionUID = 1L;
 
 	private ID id;
 
 	private AccessAO accessOperator;
 
-	public SourceAdvertisement(Element<?> root) {
+	public StreamAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
 
 		accessOperator = AccessAOCoverter.toAccessAO(doc, this);
 	}
 
-	public SourceAdvertisement(InputStream stream) throws IOException {
+	public StreamAdvertisement(InputStream stream) throws IOException {
 		this(StructuredDocumentFactory.newStructuredDocument(MimeMediaType.XMLUTF8, Preconditions.checkNotNull(stream, "Stream must not be null!")));
 	}
 
-	public SourceAdvertisement(SourceAdvertisement sourceAdvertisement) {
+	public StreamAdvertisement(StreamAdvertisement sourceAdvertisement) {
 		Preconditions.checkNotNull(sourceAdvertisement, "Advertisement to copy must not be null!");
 
 		accessOperator = sourceAdvertisement.accessOperator;
 		id = sourceAdvertisement.id;
 	}
 
-	SourceAdvertisement() {
+	StreamAdvertisement() {
 		// for JXTA-side instances
 	}
 
 	@Override
-	public SourceAdvertisement clone() {
-		return new SourceAdvertisement(this);
+	public StreamAdvertisement clone() {
+		return new StreamAdvertisement(this);
 	}
 
 	@Override
@@ -56,11 +56,11 @@ public final class SourceAdvertisement extends Advertisement implements Serializ
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof SourceAdvertisement)) {
+		if (!(obj instanceof StreamAdvertisement)) {
 			return false;
 		}
 
-		final SourceAdvertisement other = (SourceAdvertisement) obj;
+		final StreamAdvertisement other = (StreamAdvertisement) obj;
 		if (accessOperator.getSourcename() == null) {
 			if (other.accessOperator.getSourcename() != null) {
 				return false;
