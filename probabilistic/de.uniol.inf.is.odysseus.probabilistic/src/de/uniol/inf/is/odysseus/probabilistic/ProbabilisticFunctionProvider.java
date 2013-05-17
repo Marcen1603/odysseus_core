@@ -73,8 +73,7 @@ import de.uniol.inf.is.odysseus.probabilistic.function.ToProbabilisticDoubleFunc
  */
 public class ProbabilisticFunctionProvider implements IFunctionProvider {
 	/** Logger. */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ProbabilisticFunctionProvider.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticFunctionProvider.class);
 
 	/**
 	 * Default constructor.
@@ -86,8 +85,7 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider#getFunctions()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider#getFunctions()
 	 */
 	@Override
 	public final List<IFunction<?>> getFunctions() {
@@ -133,13 +131,11 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 			functions.add(new ProbabilisticIntegrateFunction());
 
 			functions.add(new ProbabilisticContinuousSmallerEqualsOperator());
-			functions
-					.add(new ProbabilisticContinuousSmallerEqualsOperatorVector());
+			functions.add(new ProbabilisticContinuousSmallerEqualsOperatorVector());
 			functions.add(new ProbabilisticContinuousSmallerOperator());
 			functions.add(new ProbabilisticContinuousSmallerOperatorVector());
 			functions.add(new ProbabilisticContinuousGreaterEqualsOperator());
-			functions
-					.add(new ProbabilisticContinuousGreaterEqualsOperatorVector());
+			functions.add(new ProbabilisticContinuousGreaterEqualsOperatorVector());
 			functions.add(new ProbabilisticContinuousGreaterOperator());
 			functions.add(new ProbabilisticContinuousGreaterOperatorVector());
 			functions.add(new ProbabilisticContinuousEqualsOperator());

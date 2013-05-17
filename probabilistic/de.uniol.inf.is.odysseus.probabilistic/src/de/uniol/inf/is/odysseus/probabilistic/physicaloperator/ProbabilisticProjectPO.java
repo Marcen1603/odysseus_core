@@ -28,9 +28,10 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>
  */
-public class ProbabilisticProjectPO<T extends IMetaAttribute> extends
-		AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
-	Logger logger = LoggerFactory.getLogger(ProbabilisticProjectPO.class);
+public class ProbabilisticProjectPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+	/** Logger. */
+	@SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticProjectPO.class);
 	/** The positions of attributes to restrict on. */
 	private final int[] restrictList;
 
@@ -50,50 +51,42 @@ public class ProbabilisticProjectPO<T extends IMetaAttribute> extends
 	 * @param probabilisticProjectPO
 	 *            The object
 	 */
-	public ProbabilisticProjectPO(
-			final ProbabilisticProjectPO<T> probabilisticProjectPO) {
+	public ProbabilisticProjectPO(final ProbabilisticProjectPO<T> probabilisticProjectPO) {
 		super();
 		final int length = probabilisticProjectPO.restrictList.length;
 		this.restrictList = new int[length];
-		System.arraycopy(probabilisticProjectPO.restrictList, 0,
-				this.restrictList, 0, length);
+		System.arraycopy(probabilisticProjectPO.restrictList, 0, this.restrictList, 0, length);
 
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
-	 * getOutputMode()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# getOutputMode()
 	 */
 	@Override
-	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+	public final de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
-	 * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
 	@Override
-	protected void process_next(final ProbabilisticTuple<T> object,
-			final int port) {
-		final ProbabilisticTuple<T> out = object.restrict(this.restrictList,
-				false);
+	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
+		final ProbabilisticTuple<T> out = object.restrict(this.restrictList, false);
 		this.transfer(out);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-	 * ()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone ()
 	 */
 	@Override
-	public ProbabilisticProjectPO<T> clone() {
+	public final ProbabilisticProjectPO<T> clone() {
 		return new ProbabilisticProjectPO<T>(this);
 	}
 

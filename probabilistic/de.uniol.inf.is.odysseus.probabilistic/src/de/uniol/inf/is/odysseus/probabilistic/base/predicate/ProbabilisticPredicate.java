@@ -17,7 +17,6 @@
 package de.uniol.inf.is.odysseus.probabilistic.base.predicate;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,27 +37,20 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpress
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticPredicate extends
-		AbstractPredicate<ProbabilisticTuple<?>> implements
-		IProbabilisticPredicate {
+public class ProbabilisticPredicate extends AbstractPredicate<ProbabilisticTuple<?>> implements IProbabilisticPredicate {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3159284040915771680L;
 	/** The probabilistic expression. */
-	protected SDFProbabilisticExpression expression;
-
-	protected int[] attributePositions;
-	/** List of needed attributes. */
-	final List<SDFAttribute> neededAttributes;
-
-	protected boolean[] fromRightChannel;
-
-	protected Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
-
-	protected SDFSchema leftSchema;
-	protected SDFSchema rightSchema;
+	private SDFProbabilisticExpression expression;
+	/** The attribute postitions. */
+	private int[] attributePositions;
+	/** Flags indicating the preferred schema for each attribute. */
+	private boolean[] fromRightChannel;
+	/** The replacement map. */
+	private Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
 
 	/**
 	 * Constructs a new probabilistic expression with the given expression.
@@ -66,20 +58,18 @@ public class ProbabilisticPredicate extends
 	 * @param expression
 	 *            The expression
 	 */
-	public ProbabilisticPredicate(SDFExpression expression) {
+	public ProbabilisticPredicate(final SDFExpression expression) {
 		this(new SDFProbabilisticExpression(expression));
 	}
 
 	/**
-	 * Constructs a new probabilistic expression with the given probabilistic
-	 * expression.
+	 * Constructs a new probabilistic expression with the given probabilistic expression.
 	 * 
 	 * @param expression
 	 *            The probabilistic expression
 	 */
-	public ProbabilisticPredicate(SDFProbabilisticExpression expression) {
+	public ProbabilisticPredicate(final SDFProbabilisticExpression expression) {
 		this.expression = expression;
-		this.neededAttributes = expression.getAllAttributes();
 	}
 
 	/**
@@ -88,47 +78,39 @@ public class ProbabilisticPredicate extends
 	 * @param predicate
 	 *            The probabilistic predicate
 	 */
-	public ProbabilisticPredicate(ProbabilisticPredicate predicate) {
-		this.attributePositions = predicate.attributePositions == null ? null
-				: (int[]) predicate.attributePositions.clone();
-		this.fromRightChannel = predicate.fromRightChannel == null ? null
-				: (boolean[]) predicate.fromRightChannel.clone();
-		this.expression = predicate.expression == null ? null
-				: predicate.expression.clone();
-		this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(
-				predicate.replacementMap);
-		this.neededAttributes = new ArrayList<SDFAttribute>(
-				predicate.neededAttributes);
+	public ProbabilisticPredicate(final ProbabilisticPredicate predicate) {
+		this.attributePositions = (int[]) predicate.attributePositions.clone();
+		this.fromRightChannel = (boolean[]) predicate.fromRightChannel.clone();
+		if (predicate.expression == null) {
+			this.expression = null;
+		} else {
+			this.expression = predicate.expression.clone();
+		}
+		this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(predicate.replacementMap);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate
-	 * #init(de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema,
-	 * de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
+	 * @see de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate #init(de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema, de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
 	 */
 	@Override
-	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
-		init(leftSchema, rightSchema, true);
+	public final void init(final SDFSchema left, final SDFSchema right) {
+		init(left, right, true);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.predicate.IPredicate#evaluate(java.lang
-	 * .Object)
+	 * @see de.uniol.inf.is.odysseus.core.predicate.IPredicate#evaluate(java.lang .Object)
 	 */
 	@Override
-	public boolean evaluate(ProbabilisticTuple<?> input) {
+	public final boolean evaluate(final ProbabilisticTuple<?> input) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(this.attributePositions[i]);
 		}
-		((SDFProbabilisticExpression) this.expression).bindDistributions(input
-				.getDistributions());
+		((SDFProbabilisticExpression) this.expression).bindDistributions(input.getDistributions());
 		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
@@ -137,19 +119,15 @@ public class ProbabilisticPredicate extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate
-	 * #probabilisticEvaluate(de.uniol.inf.is.odysseus.probabilistic.base.
-	 * ProbabilisticTuple)
+	 * @see de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate #probabilisticEvaluate(de.uniol.inf.is.odysseus.probabilistic.base. ProbabilisticTuple)
 	 */
 	@Override
-	public double probabilisticEvaluate(ProbabilisticTuple<?> input) {
+	public final double probabilisticEvaluate(final ProbabilisticTuple<?> input) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(this.attributePositions[i]);
 		}
-		((SDFProbabilisticExpression) this.expression).bindDistributions(input
-				.getDistributions());
+		((SDFProbabilisticExpression) this.expression).bindDistributions(input.getDistributions());
 		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return this.expression.getValue();
@@ -158,16 +136,18 @@ public class ProbabilisticPredicate extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.predicate.IPredicate#evaluate(java.lang
-	 * .Object, java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.core.predicate.IPredicate#evaluate(java.lang .Object, java.lang.Object)
 	 */
 	@Override
-	public boolean evaluate(ProbabilisticTuple<?> left,
-			ProbabilisticTuple<?> right) {
+	public final boolean evaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
-			Tuple<?> r = fromRightChannel[i] ? right : left;
+			Tuple<?> r;
+			if (fromRightChannel[i]) {
+				r = right;
+			} else {
+				r = left;
+			}
 			values[i] = r.getAttribute(this.attributePositions[i]);
 		}
 		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
@@ -183,13 +163,10 @@ public class ProbabilisticPredicate extends
 		}
 		NormalDistributionMixture[] distributions = new NormalDistributionMixture[length];
 		if (left.getDistributions() != null) {
-			System.arraycopy(left.getDistributions(), 0, distributions, 0,
-					left.getDistributions().length);
+			System.arraycopy(left.getDistributions(), 0, distributions, 0, left.getDistributions().length);
 		}
 		if (right.getDistributions() != null) {
-			System.arraycopy(right.getDistributions(), 0, distributions, length
-					- right.getDistributions().length,
-					right.getDistributions().length);
+			System.arraycopy(right.getDistributions(), 0, distributions, length - right.getDistributions().length, right.getDistributions().length);
 		}
 		this.expression.bindDistributions(distributions);
 		this.expression.bindAdditionalContent(additionalContent);
@@ -200,18 +177,18 @@ public class ProbabilisticPredicate extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate
-	 * #probabilisticEvaluate(de.uniol.inf.is.odysseus.probabilistic.base.
-	 * ProbabilisticTuple,
-	 * de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple)
+	 * @see de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate #probabilisticEvaluate(de.uniol.inf.is.odysseus.probabilistic.base. ProbabilisticTuple, de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple)
 	 */
 	@Override
-	public double probabilisticEvaluate(ProbabilisticTuple<?> left,
-			ProbabilisticTuple<?> right) {
+	public final double probabilisticEvaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
-			Tuple<?> r = fromRightChannel[i] ? right : left;
+			Tuple<?> r;
+			if (fromRightChannel[i]) {
+				r = right;
+			} else {
+				r = left;
+			}
 			values[i] = r.getAttribute(this.attributePositions[i]);
 		}
 		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
@@ -227,13 +204,10 @@ public class ProbabilisticPredicate extends
 		}
 		NormalDistributionMixture[] distributions = new NormalDistributionMixture[length];
 		if (left.getDistributions() != null) {
-			System.arraycopy(left.getDistributions(), 0, distributions, 0,
-					left.getDistributions().length);
+			System.arraycopy(left.getDistributions(), 0, distributions, 0, left.getDistributions().length);
 		}
 		if (right.getDistributions() != null) {
-			System.arraycopy(right.getDistributions(), 0, distributions, length
-					- right.getDistributions().length,
-					right.getDistributions().length);
+			System.arraycopy(right.getDistributions(), 0, distributions, length - right.getDistributions().length, right.getDistributions().length);
 		}
 		this.expression.bindDistributions(distributions);
 		this.expression.bindAdditionalContent(additionalContent);
@@ -244,59 +218,109 @@ public class ProbabilisticPredicate extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate#
-	 * getAttributes()
+	 * @see de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate# getAttributes()
 	 */
 	@Override
-	public List<SDFAttribute> getAttributes() {
+	public final List<SDFAttribute> getAttributes() {
 		return Collections.unmodifiableList(this.expression.getAllAttributes());
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate #replaceAttribute(de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute, de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute)
 	 */
 	@Override
-	public boolean equals(Object other) {
-		if (!(other instanceof ProbabilisticPredicate)) {
-			return false;
-		}
-		return this.expression
-				.equals(((ProbabilisticPredicate) other).expression);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		return 23 * this.expression.hashCode();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate
-	 * #replaceAttribute(de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute,
-	 * de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute)
-	 */
-	@Override
-	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
+	public final void replaceAttribute(final SDFAttribute curAttr, final SDFAttribute newAttr) {
 		replacementMap.put(curAttr, newAttr);
 	}
 
+	/**
+	 * Gets the expression of this predicate.
+	 * 
+	 * @return The expression
+	 */
+	public final SDFProbabilisticExpression getExpression() {
+		return expression;
+	}
+
+	/**
+	 * Gets the index of the given attribute in the given schema.
+	 * 
+	 * @param schema
+	 *            The schema
+	 * @param attribute
+	 *            The attribute
+	 * @return The index of the attribute
+	 */
+	private int indexOf(final SDFSchema schema, final SDFAttribute attribute) {
+		SDFAttribute cqlAttr = getReplacement(attribute);
+		Iterator<SDFAttribute> iter = schema.iterator();
+		for (int i = 0; iter.hasNext(); ++i) {
+			SDFAttribute a = iter.next();
+			if (cqlAttr.equalsCQL(a)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Gets the replacement for the given attribute.
+	 * 
+	 * @param attribute
+	 *            The attribute
+	 * @return The replacement for the given attribute
+	 */
+	private SDFAttribute getReplacement(final SDFAttribute attribute) {
+		SDFAttribute result = attribute;
+		SDFAttribute tmp = null;
+		while ((tmp = replacementMap.get(result)) != null) {
+			result = tmp;
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param left
+	 *            The schema of the left input tuple
+	 * @param right
+	 *            The schema of the right input tuple
+	 * @param checkRightSchema
+	 *            Flag indicating the preferred schema: <code>true</code> use the schema from the right
+	 */
+	private void init(final SDFSchema left, final SDFSchema right, final boolean checkRightSchema) {
+		List<SDFAttribute> attributes = expression.getAllAttributes();
+		this.attributePositions = new int[attributes.size()];
+		this.fromRightChannel = new boolean[attributes.size()];
+
+		int i = 0;
+		for (SDFAttribute curAttribute : attributes) {
+			int pos = indexOf(left, curAttribute);
+			if (pos == -1) {
+				if (right == null && checkRightSchema) {
+					throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + left + " and rightSchema is null!");
+				}
+				if (checkRightSchema) {
+					pos = indexOf(right, curAttribute);
+					if (pos == -1) {
+						throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + right);
+					}
+				}
+				this.fromRightChannel[i] = true;
+			}
+			this.attributePositions[i++] = pos;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate#clone()
+	 * @see de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate#clone()
 	 */
 	@Override
-	public ProbabilisticPredicate clone() {
+	public final ProbabilisticPredicate clone() {
 		return new ProbabilisticPredicate(this);
 	}
 
@@ -306,86 +330,24 @@ public class ProbabilisticPredicate extends
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		return this.expression.toString();
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param schema
-	 * @param attr
-	 * @return
+	 * @see java.lang.Object#hashCode()
 	 */
-	private int indexOf(SDFSchema schema, SDFAttribute attr) {
-		SDFAttribute cqlAttr = getReplacement(attr);
-		Iterator<SDFAttribute> it = schema.iterator();
-		for (int i = 0; it.hasNext(); ++i) {
-			SDFAttribute a = it.next();
-			if (cqlAttr.equalsCQL(a)) {
-				return i;
-			}
+	@Override
+	public final int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result;
+		if (this.expression != null) {
+			result += this.expression.hashCode();
 		}
-		return -1;
+		return result;
 	}
 
-	/**
-	 * 
-	 * @param a
-	 * @return
-	 */
-	private SDFAttribute getReplacement(SDFAttribute a) {
-		SDFAttribute ret = a;
-		SDFAttribute tmp = null;
-		while ((tmp = replacementMap.get(ret)) != null) {
-			ret = tmp;
-		}
-		return ret;
-	}
-
-	/**
-	 * 
-	 * @param leftSchema
-	 * @param rightSchema
-	 * @param checkRightSchema
-	 */
-	private void init(SDFSchema leftSchema, SDFSchema rightSchema,
-			boolean checkRightSchema) {
-		this.leftSchema = leftSchema;
-		this.rightSchema = rightSchema;
-
-		List<SDFAttribute> neededAttributes = expression.getAllAttributes();
-		this.attributePositions = new int[neededAttributes.size()];
-		this.fromRightChannel = new boolean[neededAttributes.size()];
-
-		int i = 0;
-		for (SDFAttribute curAttribute : neededAttributes) {
-
-			int pos = indexOf(leftSchema, curAttribute);
-			if (pos == -1) {
-				if (rightSchema == null && checkRightSchema) {
-					throw new IllegalArgumentException("Attribute "
-							+ curAttribute + " not in " + leftSchema
-							+ " and rightSchema is null!");
-				}
-				if (checkRightSchema) {
-					pos = indexOf(rightSchema, curAttribute);
-					if (pos == -1) {
-						throw new IllegalArgumentException("Attribute "
-								+ curAttribute + " not in " + rightSchema);
-					}
-				}
-				this.fromRightChannel[i] = true;
-			}
-			this.attributePositions[i++] = pos;
-		}
-	}
-
-	/**
-	 * Gets the expression of this predicate.
-	 * 
-	 * @return The expression
-	 */
-	public SDFProbabilisticExpression getExpression() {
-		return expression;
-	}
 }

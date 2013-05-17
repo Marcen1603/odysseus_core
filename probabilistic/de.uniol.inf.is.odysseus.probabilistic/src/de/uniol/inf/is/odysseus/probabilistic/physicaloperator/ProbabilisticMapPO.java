@@ -17,6 +17,9 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -32,8 +35,10 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpress
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>
  */
-public class ProbabilisticMapPO<T extends IMetaAttribute> extends
-		AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+public class ProbabilisticMapPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+	/** Logger. */
+	@SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticMapPO.class);
 	/** Attribute positions list required for variable bindings. */
 	private int[][] variables;
 	/** The expressions. */
@@ -49,8 +54,7 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends
 	 * @param expressions
 	 *            The probabilistic expression.
 	 */
-	public ProbabilisticMapPO(SDFSchema inputSchema,
-			SDFProbabilisticExpression[] expressions) {
+	public ProbabilisticMapPO(final SDFSchema inputSchema, final SDFProbabilisticExpression[] expressions) {
 		this.inputSchema = inputSchema;
 		init(inputSchema, expressions);
 	}
@@ -63,35 +67,40 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends
 	 * @param expressions
 	 *            The expression.
 	 */
-	public ProbabilisticMapPO(SDFSchema inputSchema, SDFExpression[] expressions) {
+	public ProbabilisticMapPO(final SDFSchema inputSchema, final SDFExpression[] expressions) {
 		this.inputSchema = inputSchema;
 		init(inputSchema, expressions);
 	}
 
 	/**
+	 * Initialize the operator with the given expressions.
 	 * 
 	 * @param schema
-	 * @param expressions
+	 *            The schema
+	 * @param expressionsList
+	 *            The expressions
 	 */
-	private void init(SDFSchema schema, SDFExpression[] expressions) {
-		SDFProbabilisticExpression[] probabilisticExpressions = new SDFProbabilisticExpression[expressions.length];
-		for (int i = 0; i < expressions.length; ++i) {
-			probabilisticExpressions[i] = new SDFProbabilisticExpression(
-					expressions[i]);
+	private void init(final SDFSchema schema, final SDFExpression[] expressionsList) {
+		SDFProbabilisticExpression[] probabilisticExpressions = new SDFProbabilisticExpression[expressionsList.length];
+		for (int i = 0; i < expressionsList.length; ++i) {
+			probabilisticExpressions[i] = new SDFProbabilisticExpression(expressionsList[i]);
 		}
 		init(schema, probabilisticExpressions);
 	}
 
 	/**
+	 * Initialize the operator with the given probabilistic expressions.
 	 * 
 	 * @param schema
-	 * @param expressions
+	 *            The schema
+	 * @param expressionsList
+	 *            The expressions
 	 */
-	private void init(SDFSchema schema, SDFProbabilisticExpression[] expressions) {
-		this.expressions = expressions;
-		this.variables = new int[expressions.length][];
+	private void init(final SDFSchema schema, final SDFProbabilisticExpression[] expressionsList) {
+		this.expressions = expressionsList;
+		this.variables = new int[expressionsList.length][];
 		int i = 0;
-		for (SDFExpression expression : expressions) {
+		for (SDFExpression expression : expressionsList) {
 			List<SDFAttribute> neededAttributes = expression.getAllAttributes();
 			int[] newArray = new int[neededAttributes.size()];
 			this.variables[i++] = newArray;
@@ -104,9 +113,11 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends
 
 	/**
 	 * Clone constructor.
+	 * 
 	 * @param probabilisticMapPO
+	 *            The copy
 	 */
-	public ProbabilisticMapPO(ProbabilisticMapPO<T> probabilisticMapPO) {
+	public ProbabilisticMapPO(final ProbabilisticMapPO<T> probabilisticMapPO) {
 		this.inputSchema = probabilisticMapPO.inputSchema.clone();
 		init(probabilisticMapPO.inputSchema, probabilisticMapPO.expressions);
 	}
@@ -114,25 +125,22 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
-	 * getOutputMode()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# getOutputMode()
 	 */
 	@Override
-	public OutputMode getOutputMode() {
+	public final OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
-	 * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	final protected void process_next(ProbabilisticTuple<T> object, int port) {
-		ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(
-				this.expressions.length, false);
+	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
+		ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, false);
 		outputVal.setMetadata((T) object.getMetadata().clone());
 		synchronized (this.expressions) {
 			for (int i = 0; i < this.expressions.length; ++i) {
@@ -141,10 +149,8 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends
 					values[j] = object.getAttribute(this.variables[i][j]);
 				}
 				this.expressions[i].bindMetaAttribute(object.getMetadata());
-				this.expressions[i]
-						.bindDistributions(object.getDistributions());
-				this.expressions[i].bindAdditionalContent(object
-						.getAdditionalContent());
+				this.expressions[i].bindDistributions(object.getDistributions());
+				this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
 				this.expressions[i].bindVariables(values);
 				outputVal.setAttribute(i, this.expressions[i].getValue());
 				if (this.expressions[i].getType().requiresDeepClone()) {
@@ -161,32 +167,26 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-	 * ()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone ()
 	 */
 	@Override
-	public ProbabilisticMapPO<T> clone() {
+	public final ProbabilisticMapPO<T> clone() {
 		return new ProbabilisticMapPO<T>(this);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
-	 * process_isSemanticallyEqual
-	 * (de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource# process_isSemanticallyEqual (de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
 	 */
 	@Override
 	@SuppressWarnings({ "rawtypes" })
-	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+	public final boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
 		if (!(ipo instanceof ProbabilisticMapPO)) {
 			return false;
 		}
 		ProbabilisticMapPO mapPo = (ProbabilisticMapPO) ipo;
-		if (this.hasSameSources(mapPo)
-				&& this.inputSchema.compareTo(mapPo.inputSchema) == 0) {
+		if (this.hasSameSources(mapPo) && this.inputSchema.compareTo(mapPo.inputSchema) == 0) {
 			if (this.expressions.length == mapPo.expressions.length) {
 				for (int i = 0; i < this.expressions.length; i++) {
 					if (!this.expressions[i].equals(mapPo.expressions[i])) {

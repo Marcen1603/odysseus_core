@@ -21,21 +21,50 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 
 /**
- * Probabilistic predicate to perform evaluation of predicate boolean
- * expressions.
+ * Probabilistic predicate to perform evaluation of predicate boolean expressions.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public interface IProbabilisticPredicate extends
-		IPredicate<ProbabilisticTuple<?>> {
-	public void init(SDFSchema leftSchema, SDFSchema rightSchema);
+public interface IProbabilisticPredicate extends IPredicate<ProbabilisticTuple<?>> {
+	/**
+	 * Initialize the predicate with the input schemas.
+	 * 
+	 * @param leftSchema
+	 *            The {@link SDFSchema schema} from the left stream
+	 * @param rightSchema
+	 *            The {@link SDFSchema schema} from the right stream
+	 */
+	void init(SDFSchema leftSchema, SDFSchema rightSchema);
 
-	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr);
+	/**
+	 * Replace the current attribute with the new attribute.
+	 * 
+	 * @param curAttr
+	 *            The current attribute
+	 * @param newAttr
+	 *            The new attribute
+	 */
+	void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr);
 
-	double probabilisticEvaluate(ProbabilisticTuple<?> left,
-			ProbabilisticTuple<?> right);
+	/**
+	 * Evaluates the predicate on the attributes from the two input tuples.
+	 * 
+	 * @param left
+	 *            The left input tuple
+	 * @param right
+	 *            The right input tuple
+	 * @return The probability that the attributes from the two input tuples holds the predicate
+	 */
+	double probabilisticEvaluate(ProbabilisticTuple<?> left, ProbabilisticTuple<?> right);
 
+	/**
+	 * Evaluates the predicate on the attributes from the input tuple.
+	 * 
+	 * @param input
+	 *            The input tuple
+	 * @return The probability that the attributes from the input tuple holds the predicate
+	 */
 	double probabilisticEvaluate(ProbabilisticTuple<?> input);
 
 }

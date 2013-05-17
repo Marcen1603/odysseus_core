@@ -21,28 +21,44 @@ import org.apache.commons.math3.linear.RealMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
 
 /**
+ * Utility class for covariance handling.
+ * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public final class CovarianceMatrixUtils {
+	/** Constant number used for inverse sum. */
+	private static final int INVERSE_SUM = 8;
 
-	public static RealMatrix toMatrix(CovarianceMatrix covarianceTriangleMatrix) {
-		int size = covarianceTriangleMatrix.size();
-		final RealMatrix covarianceMatrix = MatrixUtils.createRealMatrix(size,
-				size);
+	/**
+	 * Converts the given covarince matrix into a {@link RealMatrix}.
+	 * 
+	 * @param triangleMatrix
+	 *            The triangle covariance matrix
+	 * @return The matrix
+	 */
+	public static RealMatrix toMatrix(final CovarianceMatrix triangleMatrix) {
+		int size = triangleMatrix.size();
+		final RealMatrix matrix = MatrixUtils.createRealMatrix(size, size);
 		int left = 0;
 		int right = size;
 		for (int i = 0; i < size; i++) {
-			final double[] row = covarianceMatrix.getRow(i);
-			System.arraycopy(covarianceTriangleMatrix.getEntries(), left, row,
-					i, right);
-			covarianceMatrix.setRow(i, row);
+			final double[] row = matrix.getRow(i);
+			System.arraycopy(triangleMatrix.getEntries(), left, row, i, right);
+			matrix.setRow(i, row);
 			left += right;
 			right--;
 		}
-		return covarianceMatrix;
+		return matrix;
 	}
 
-	public static CovarianceMatrix fromMatrix(RealMatrix matrix) {
+	/**
+	 * Converts the given matrix into a triangle covariance matrix.
+	 * 
+	 * @param matrix
+	 *            The matrix
+	 * @return The triangle covariance matrix
+	 */
+	public static CovarianceMatrix fromMatrix(final RealMatrix matrix) {
 		int dimension = matrix.getColumnDimension();
 		int left = 0;
 		int right = dimension;
@@ -58,29 +74,31 @@ public final class CovarianceMatrixUtils {
 	}
 
 	/**
-	 * Returns the number of elements of the triangle of a covariance matrix
-	 * with the given dimension
+	 * Returns the number of elements of the triangle of a covariance matrix with the given dimension.
 	 * 
 	 * @param dimension
 	 *            The dimension
 	 * @return The number of elements in the triangle
 	 */
-	public static int getCovarianceTriangleSizeFromDimension(int dimension) {
-		return (int) (0.5 * dimension * (dimension + 1));
+	public static int getCovarianceTriangleSizeFromDimension(final int dimension) {
+		return (int) ((1 / 2) * dimension * (dimension + 1));
 	}
 
 	/**
-	 * Return the dimension for a covariance matrix build up with the given
-	 * triangle
+	 * Return the dimension for a covariance matrix build up with the given triangle.
 	 * 
 	 * @param triangleSize
 	 *            The number of elements in the triangle
 	 * @return The dimension of the covariance matrix
 	 */
-	public static int getCovarianceDimensionFromTriangleSize(int triangleSize) {
-		return (int) (0.5 * (Math.sqrt(8 * triangleSize + 1) - 1));
+	public static int getCovarianceDimensionFromTriangleSize(final int triangleSize) {
+		return (int) ((1 / 2) * (Math.sqrt(INVERSE_SUM * triangleSize + 1) - 1));
 	}
 
+	/**
+	 * Utility constructor.
+	 */
 	private CovarianceMatrixUtils() {
+		throw new UnsupportedOperationException();
 	}
 }

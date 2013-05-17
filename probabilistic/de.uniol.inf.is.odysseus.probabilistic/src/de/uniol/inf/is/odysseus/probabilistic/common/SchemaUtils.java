@@ -30,27 +30,23 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
- * Utility class for transformation rules
+ * Utility class for transformation rules.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
 public final class SchemaUtils {
+	/** Data type used in transformation. */
 	public static final String DATATYPE = "probabilistic";
 
 	/**
-	 * Returns true if this list contains a probabilistic attribute. More
-	 * formally, returns true if and only if this list contains at least one
-	 * attribute that is an {@link SDFProbabilisticDatatype probabilistic
-	 * attribute}
+	 * Returns true if this list contains a probabilistic attribute. More formally, returns true if and only if this list contains at least one attribute that is an {@link SDFProbabilisticDatatype probabilistic attribute}
 	 * 
 	 * @param attributes
 	 *            The list of {@link SDFAttribute attributes}
-	 * @return <code>true</code> if this list contains a
-	 *         {@link SDFProbabilisticDatatype probabilistic attribute}
+	 * @return <code>true</code> if this list contains a {@link SDFProbabilisticDatatype probabilistic attribute}
 	 */
-	public static boolean containsProbabilisticAttributes(
-			final List<SDFAttribute> attributes) {
+	public static boolean containsProbabilisticAttributes(final List<SDFAttribute> attributes) {
 		boolean containsProbabilisticAttribute = false;
 		for (final SDFAttribute attribute : attributes) {
 			if (attribute.getDatatype() instanceof SDFProbabilisticDatatype) {
@@ -61,18 +57,13 @@ public final class SchemaUtils {
 	}
 
 	/**
-	 * Returns true if this list contains a continuous probabilistic attribute.
-	 * More formally, returns true if and only if this list contains at least
-	 * one attribute that is an {@link SDFProbabilisticDatatype probabilistic
-	 * attribute} that is continuous
+	 * Returns true if this list contains a continuous probabilistic attribute. More formally, returns true if and only if this list contains at least one attribute that is an {@link SDFProbabilisticDatatype probabilistic attribute} that is continuous
 	 * 
 	 * @param attributes
 	 *            The list of {@link SDFAttribute attributes}
-	 * @return <code>true</code> if this list contains a continuous
-	 *         {@link SDFProbabilisticDatatype probabilistic attribute}
+	 * @return <code>true</code> if this list contains a continuous {@link SDFProbabilisticDatatype probabilistic attribute}
 	 */
-	public static boolean containsContinuousProbabilisticAttributes(
-			final List<SDFAttribute> attributes) {
+	public static boolean containsContinuousProbabilisticAttributes(final List<SDFAttribute> attributes) {
 		if (attributes != null) {
 			for (final SDFAttribute attribute : attributes) {
 				if (isContinuousProbabilisticAttribute(attribute)) {
@@ -84,21 +75,15 @@ public final class SchemaUtils {
 	}
 
 	/**
-	 * Returns true if this attribute is a continuous probabilistic attribute.
-	 * More formally, returns true if and only if this attribute is an
-	 * {@link SDFProbabilisticDatatype probabilistic attribute} that is
-	 * continuous
+	 * Returns true if this attribute is a continuous probabilistic attribute. More formally, returns true if and only if this attribute is an {@link SDFProbabilisticDatatype probabilistic attribute} that is continuous
 	 * 
 	 * @param attribute
 	 *            The {@link SDFAttribute attribute}
-	 * @return <code>true</code> if this attribute is a continuous
-	 *         {@link SDFProbabilisticDatatype probabilistic attribute}
+	 * @return <code>true</code> if this attribute is a continuous {@link SDFProbabilisticDatatype probabilistic attribute}
 	 */
-	public static boolean isContinuousProbabilisticAttribute(
-			SDFAttribute attribute) {
+	public static boolean isContinuousProbabilisticAttribute(final SDFAttribute attribute) {
 		if (attribute.getDatatype() instanceof SDFProbabilisticDatatype) {
-			SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute
-					.getDatatype();
+			SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute.getDatatype();
 			if (datatype.isContinuous()) {
 				return true;
 			}
@@ -107,18 +92,13 @@ public final class SchemaUtils {
 	}
 
 	/**
-	 * Returns true if this list contains a discrete probabilistic attribute.
-	 * More formally, returns true if and only if this list contains at least
-	 * one attribute that is an {@link SDFProbabilisticDatatype probabilistic
-	 * attribute} that is discrete
+	 * Returns true if this list contains a discrete probabilistic attribute. More formally, returns true if and only if this list contains at least one attribute that is an {@link SDFProbabilisticDatatype probabilistic attribute} that is discrete
 	 * 
 	 * @param attributes
 	 *            The list of {@link SDFAttribute attributes}
-	 * @return <code>true</code> if this list contains a discrete
-	 *         {@link SDFProbabilisticDatatype probabilistic attribute}
+	 * @return <code>true</code> if this list contains a discrete {@link SDFProbabilisticDatatype probabilistic attribute}
 	 */
-	public static boolean containsDiscreteProbabilisticAttributes(
-			final List<SDFAttribute> attributes) {
+	public static boolean containsDiscreteProbabilisticAttributes(final List<SDFAttribute> attributes) {
 		if (attributes != null) {
 			for (final SDFAttribute attribute : attributes) {
 				if (isDiscreteProbabilisticAttribute(attribute)) {
@@ -130,20 +110,15 @@ public final class SchemaUtils {
 	}
 
 	/**
-	 * Returns true if this attribute is a discrete probabilistic attribute.
-	 * More formally, returns true if and only if this attribute is an
-	 * {@link SDFProbabilisticDatatype probabilistic attribute} that is discrete
+	 * Returns true if this attribute is a discrete probabilistic attribute. More formally, returns true if and only if this attribute is an {@link SDFProbabilisticDatatype probabilistic attribute} that is discrete
 	 * 
 	 * @param attribute
 	 *            The {@link SDFAttribute attribute}
-	 * @return <code>true</code> if this attribute is a discrete
-	 *         {@link SDFProbabilisticDatatype probabilistic attribute}
+	 * @return <code>true</code> if this attribute is a discrete {@link SDFProbabilisticDatatype probabilistic attribute}
 	 */
-	public static boolean isDiscreteProbabilisticAttribute(
-			SDFAttribute attribute) {
+	public static boolean isDiscreteProbabilisticAttribute(final SDFAttribute attribute) {
 		if (attribute.getDatatype() instanceof SDFProbabilisticDatatype) {
-			SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute
-					.getDatatype();
+			SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute.getDatatype();
 			if (datatype.isDiscrete()) {
 				return true;
 			}
@@ -152,16 +127,13 @@ public final class SchemaUtils {
 	}
 
 	/**
-	 * Returns the position indexes all continuous probabilistic attributes in
-	 * the schema.
+	 * Returns the position indexes all continuous probabilistic attributes in the schema.
 	 * 
 	 * @param schema
 	 *            The {@link SDFSchema schema}
-	 * @return An array of all attribute indexes in the schema that are
-	 *         continuous {@link SDFProbabilisticDatatype probabilistic
-	 *         attributes}
+	 * @return An array of all attribute indexes in the schema that are continuous {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
-	public static int[] getContinuousProbabilisticAttributePos(SDFSchema schema) {
+	public static int[] getContinuousProbabilisticAttributePos(final SDFSchema schema) {
 		List<SDFAttribute> attributes = getContinuousProbabilisticAttributes(schema);
 		int[] pos = new int[attributes.size()];
 		for (int i = 0; i < attributes.size(); i++) {
@@ -172,15 +144,13 @@ public final class SchemaUtils {
 	}
 
 	/**
-	 * Returns the position indexes all discrete probabilistic attributes in the
-	 * schema.
+	 * Returns the position indexes all discrete probabilistic attributes in the schema.
 	 * 
 	 * @param schema
 	 *            The {@link SDFSchema schema}
-	 * @return An array of all attribute indexes in the schema that are discrete
-	 *         {@link SDFProbabilisticDatatype probabilistic attributes}
+	 * @return An array of all attribute indexes in the schema that are discrete {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
-	public static int[] getDiscreteProbabilisticAttributePos(SDFSchema schema) {
+	public static int[] getDiscreteProbabilisticAttributePos(final SDFSchema schema) {
 		List<SDFAttribute> attributes = getDiscreteProbabilisticAttributes(schema);
 		int[] pos = new int[attributes.size()];
 		for (int i = 0; i < attributes.size(); i++) {
@@ -191,16 +161,13 @@ public final class SchemaUtils {
 	}
 
 	/**
-	 * Returns all attributes from the schema that are continuous probabilistic
-	 * attributes.
+	 * Returns all attributes from the schema that are continuous probabilistic attributes.
 	 * 
 	 * @param schema
 	 *            The {@link SDFSchema schema}
-	 * @return A list of all attributes in the schema that are continuous
-	 *         {@link SDFProbabilisticDatatype probabilistic attributes}
+	 * @return A list of all attributes in the schema that are continuous {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
-	public static List<SDFAttribute> getContinuousProbabilisticAttributes(
-			SDFSchema schema) {
+	public static List<SDFAttribute> getContinuousProbabilisticAttributes(final SDFSchema schema) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute attribute : schema.getAttributes()) {
 			if (isContinuousProbabilisticAttribute(attribute)) {
@@ -211,17 +178,14 @@ public final class SchemaUtils {
 	}
 
 	/**
-	 * Returns all attributes from the schema that are discrete probabilistic
-	 * attributes.
+	 * Returns all attributes from the schema that are discrete probabilistic attributes.
 	 * 
 	 * @param schema
 	 *            The {@link SDFSchema schema}
-	 * @return A list of all attributes in the schema that are discrete
-	 *         {@link SDFProbabilisticDatatype probabilistic attributes}
+	 * @return A list of all attributes in the schema that are discrete {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
 
-	public static List<SDFAttribute> getDiscreteProbabilisticAttributes(
-			SDFSchema schema) {
+	public static List<SDFAttribute> getDiscreteProbabilisticAttributes(final SDFSchema schema) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute attribute : schema.getAttributes()) {
 			if (isDiscreteProbabilisticAttribute(attribute)) {
@@ -240,8 +204,7 @@ public final class SchemaUtils {
 	 *            The list of attributes
 	 * @return An array with the idexes of the attributes in the schema
 	 */
-	public static int[] getAttributePos(SDFSchema schema,
-			List<SDFAttribute> attributes) {
+	public static int[] getAttributePos(final SDFSchema schema, final List<SDFAttribute> attributes) {
 		int[] pos = new int[attributes.size()];
 		for (int i = 0; i < attributes.size(); i++) {
 			SDFAttribute attribute = attributes.get(i);
@@ -259,11 +222,9 @@ public final class SchemaUtils {
 	 *            The expression
 	 * @return <code>true</code> iff the expression is of the given form
 	 */
-	public static boolean isEquiExpression(IExpression<?> expression) {
+	public static boolean isEquiExpression(final IExpression<?> expression) {
 		if (expression instanceof AndOperator) {
-			return isEquiExpression(((AndOperator) expression).getArgument(0))
-					&& isEquiExpression(((AndOperator) expression)
-							.getArgument(1));
+			return isEquiExpression(((AndOperator) expression).getArgument(0)) && isEquiExpression(((AndOperator) expression).getArgument(1));
 
 		}
 		if (expression instanceof EqualsOperator) {
@@ -284,12 +245,10 @@ public final class SchemaUtils {
 	 * 
 	 * @param predicate
 	 *            The relational predicate
-	 * @return <code>true</code> iff the relational predicate is of the given
-	 *         form
+	 * @return <code>true</code> iff the relational predicate is of the given form
 	 */
-	public static boolean isEquiPredicate(RelationalPredicate predicate) {
-		IExpression<?> expression = predicate.getExpression()
-				.getMEPExpression();
+	public static boolean isEquiPredicate(final RelationalPredicate predicate) {
+		IExpression<?> expression = predicate.getExpression().getMEPExpression();
 		return isEquiExpression(expression);
 	}
 
@@ -300,15 +259,17 @@ public final class SchemaUtils {
 	 * 
 	 * @param predicate
 	 *            The relational predicate
-	 * @return <code>true</code> iff the relational predicate is of the given
-	 *         form
+	 * @return <code>true</code> iff the relational predicate is of the given form
 	 */
-	public static boolean isEquiPredicate(ProbabilisticPredicate predicate) {
-		IExpression<?> expression = predicate.getExpression()
-				.getMEPExpression();
+	public static boolean isEquiPredicate(final ProbabilisticPredicate predicate) {
+		IExpression<?> expression = predicate.getExpression().getMEPExpression();
 		return isEquiExpression(expression);
 	}
 
+	/**
+	 * Utility constructor.
+	 */
 	private SchemaUtils() {
+		throw new UnsupportedOperationException();
 	}
 }
