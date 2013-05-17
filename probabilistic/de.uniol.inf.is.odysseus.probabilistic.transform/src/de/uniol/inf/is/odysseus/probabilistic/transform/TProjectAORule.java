@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticProjectPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -49,7 +49,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	@Override
 	public boolean isExecutable(final ProjectAO operator,
 			final TransformationConfiguration transformConfig) {
-		if ((transformConfig.getDataTypes().contains(TransformUtil.DATATYPE))
+		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE))
 				&& (isContinuous(operator))) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;

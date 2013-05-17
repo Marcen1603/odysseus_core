@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
@@ -60,7 +60,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	@Override
 	public boolean isExecutable(final MapAO operator,
 			final TransformationConfiguration transformConfig) {
-		if ((transformConfig.getDataTypes().contains(TransformUtil.DATATYPE))
+		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE))
 				&& (this.isProbabilistic(operator))) {
 			if (operator.getPhysSubscriptionTo() != null) {
 				return true;

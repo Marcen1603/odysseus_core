@@ -25,7 +25,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.AndOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.EqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticPredicate;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
  * Utility class for transformation rules
@@ -33,7 +35,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public final class TransformUtil {
+public final class SchemaUtils {
 	public static final String DATATYPE = "probabilistic";
 
 	/**
@@ -249,16 +251,18 @@ public final class TransformUtil {
 	}
 
 	/**
-	 * Return true if the giiven predicate is of the form A.x=B.y AND A.y=B.z
-	 * AND ...
+	 * Return true if the given expression is of the form:
+	 * 
+	 * A.x=B.y AND A.y=B.z AND * ...
 	 * 
 	 * @param expression
-	 * @return
+	 *            The expression
+	 * @return <code>true</code> iff the expression is of the given form
 	 */
-	public static boolean isEquiPredicate(IExpression<?> expression) {
+	public static boolean isEquiExpression(IExpression<?> expression) {
 		if (expression instanceof AndOperator) {
-			return isEquiPredicate(((AndOperator) expression).getArgument(0))
-					&& isEquiPredicate(((AndOperator) expression)
+			return isEquiExpression(((AndOperator) expression).getArgument(0))
+					&& isEquiExpression(((AndOperator) expression)
 							.getArgument(1));
 
 		}
@@ -273,6 +277,38 @@ public final class TransformUtil {
 		return false;
 	}
 
-	private TransformUtil() {
+	/**
+	 * Return true if the given relational predicate is of the form:
+	 * 
+	 * A.x=B.y AND A.y=B.z AND * ...
+	 * 
+	 * @param predicate
+	 *            The relational predicate
+	 * @return <code>true</code> iff the relational predicate is of the given
+	 *         form
+	 */
+	public static boolean isEquiPredicate(RelationalPredicate predicate) {
+		IExpression<?> expression = predicate.getExpression()
+				.getMEPExpression();
+		return isEquiExpression(expression);
+	}
+
+	/**
+	 * Return true if the given relational predicate is of the form:
+	 * 
+	 * A.x=B.y AND A.y=B.z AND * ...
+	 * 
+	 * @param predicate
+	 *            The relational predicate
+	 * @return <code>true</code> iff the relational predicate is of the given
+	 *         form
+	 */
+	public static boolean isEquiPredicate(ProbabilisticPredicate predicate) {
+		IExpression<?> expression = predicate.getExpression()
+				.getMEPExpression();
+		return isEquiExpression(expression);
+	}
+
+	private SchemaUtils() {
 	}
 }

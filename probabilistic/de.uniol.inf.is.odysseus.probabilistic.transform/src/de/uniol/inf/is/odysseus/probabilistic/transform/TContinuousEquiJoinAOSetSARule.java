@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinPO;
@@ -73,19 +73,19 @@ public class TContinuousEquiJoinAOSetSARule
 					List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
 
 					for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
-						if (TransformUtil
+						if (SchemaUtils
 								.isContinuousProbabilisticAttribute(pair
 										.getE2())) {
 							joinAttributes.add(pair.getE1());
 						}
 					}
-					int[] joinPos = TransformUtil.getAttributePos(schema,
+					int[] joinPos = SchemaUtils.getAttributePos(schema,
 							joinAttributes);
 
 					List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(
 							schema.getAttributes());
 					viewAttributes.removeAll(joinAttributes);
-					int[] viewPos = TransformUtil.getAttributePos(schema,
+					int[] viewPos = SchemaUtils.getAttributePos(schema,
 							viewAttributes);
 					areas[port] = new RegressionTISweepArea(
 							joinPos, viewPos);
@@ -101,7 +101,7 @@ public class TContinuousEquiJoinAOSetSARule
 	@Override
 	public boolean isExecutable(ContinuousProbabilisticEquiJoinPO operator,
 			TransformationConfiguration transformConfig) {
-		if ((transformConfig.getDataTypes().contains(TransformUtil.DATATYPE))
+		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE))
 				&& transformConfig.getMetaTypes().contains(
 						IProbabilistic.class.getCanonicalName())) {
 			if (operator.getAreas() == null) {

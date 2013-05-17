@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
@@ -172,18 +172,18 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 				List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
 
 				for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
-					if (TransformUtil.isContinuousProbabilisticAttribute(pair
+					if (SchemaUtils.isContinuousProbabilisticAttribute(pair
 							.getE2())) {
 						joinAttributes.add(pair.getE1());
 					}
 				}
-				int[] joinPos = TransformUtil.getAttributePos(schema,
+				int[] joinPos = SchemaUtils.getAttributePos(schema,
 						joinAttributes);
 
 				List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(
 						schema.getAttributes());
 				viewAttributes.removeAll(joinAttributes);
-				int[] viewPos = TransformUtil.getAttributePos(schema,
+				int[] viewPos = SchemaUtils.getAttributePos(schema,
 						viewAttributes);
 				areas[port] = new RegressionTISweepArea(
 						joinPos, viewPos);
@@ -208,18 +208,18 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 				List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
 
 				for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
-					if (TransformUtil.isContinuousProbabilisticAttribute(pair
+					if (SchemaUtils.isContinuousProbabilisticAttribute(pair
 							.getE2())) {
 						joinAttributes.add(pair.getE1());
 					}
 				}
-				joinAttributePos[port] = TransformUtil.getAttributePos(schema,
+				joinAttributePos[port] = SchemaUtils.getAttributePos(schema,
 						joinAttributes);
 
 				List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(
 						schema.getAttributes());
 				viewAttributes.removeAll(joinAttributes);
-				int[] viewPos = TransformUtil.getAttributePos(schema,
+				int[] viewPos = SchemaUtils.getAttributePos(schema,
 						viewAttributes);
 			}
 

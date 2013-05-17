@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -71,20 +71,20 @@ public class TContinuousEquiJoinAOSetDMRule
 					List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
 
 					for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
-						if (TransformUtil
+						if (SchemaUtils
 								.isContinuousProbabilisticAttribute(pair
 										.getE2())) {
 							joinAttributes.add(pair.getE1());
 						}
 					}
-					joinAttributePos[port] = TransformUtil.getAttributePos(
+					joinAttributePos[port] = SchemaUtils.getAttributePos(
 							schema, joinAttributes);
 
 					List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(
 							schema.getAttributes());
 					viewAttributes.removeAll(joinAttributes);
 					@SuppressWarnings("unused")
-					int[] viewPos = TransformUtil.getAttributePos(schema,
+					int[] viewPos = SchemaUtils.getAttributePos(schema,
 							viewAttributes);
 				}
 			}
@@ -105,7 +105,7 @@ public class TContinuousEquiJoinAOSetDMRule
 	public boolean isExecutable(
 			ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> operator,
 			TransformationConfiguration config) {
-		if (config.getDataTypes().contains(TransformUtil.DATATYPE)) {
+		if (config.getDataTypes().contains(SchemaUtils.DATATYPE)) {
 			if (operator.getDataMerge() == null) {
 				return true;
 			}

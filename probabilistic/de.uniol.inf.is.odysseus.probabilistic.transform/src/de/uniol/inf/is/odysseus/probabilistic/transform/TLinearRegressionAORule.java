@@ -19,7 +19,7 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.LinearRegressionAO;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.LinearRegressionPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -51,7 +51,7 @@ public class TLinearRegressionAORule extends
 	@Override
 	public boolean isExecutable(LinearRegressionAO operator,
 			TransformationConfiguration config) {
-		if ((config.getDataTypes().contains(TransformUtil.DATATYPE))) {
+		if ((config.getDataTypes().contains(SchemaUtils.DATATYPE))) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
 			}

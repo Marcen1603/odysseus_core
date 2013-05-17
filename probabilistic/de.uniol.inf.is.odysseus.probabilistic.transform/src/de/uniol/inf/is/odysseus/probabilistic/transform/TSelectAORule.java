@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticPredicate;
-import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
@@ -66,7 +66,7 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 
     @Override
     public boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
-        if (transformConfig.getDataTypes().contains(TransformUtil.DATATYPE)) {
+        if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
             if (operator.isAllPhysicalInputSet()) {
                 return true;
             }

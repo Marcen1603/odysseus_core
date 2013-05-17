@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
@@ -96,7 +96,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
             // Reverse mapping of attribute<->distribution
             int[] distributionsDimensions = new int[distributions];
             for (SDFAttribute attr : getSchema().getAttributes()) {
-                if (TransformUtil.isContinuousProbabilisticAttribute(attr)) {
+                if (SchemaUtils.isContinuousProbabilisticAttribute(attr)) {
                     int attributeIndex = getSchema().indexOf(attr);
                     int distributionIndex = ((ProbabilisticContinuousDouble) attributes[attributeIndex]).getDistribution();
                     distribution[distributionIndex].setAttribute(distributionsDimensions[distributionIndex], attributeIndex);

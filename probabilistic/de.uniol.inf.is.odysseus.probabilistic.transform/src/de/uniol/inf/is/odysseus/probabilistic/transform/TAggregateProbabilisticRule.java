@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.intervalapproach.AggregateTIPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.probabilistic.Activator;
-import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions.ProbabilisticConstants;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -86,18 +86,18 @@ public class TAggregateProbabilisticRule extends
 						if (datatype.isContinuous()) {
 							builder = registry
 									.getBuilder(
-											TransformUtil.DATATYPE,
+											SchemaUtils.DATATYPE,
 											ProbabilisticConstants.CONTINUOUS_PROBABILISTIC_NAMESPACE
 													+ p.getE2().getName());
 						} else {
 							builder = registry
 									.getBuilder(
-											TransformUtil.DATATYPE,
+											SchemaUtils.DATATYPE,
 											ProbabilisticConstants.PROBABILISTIC_NAMESPACE
 													+ p.getE2().getName());
 						}
 					} else {
-						builder = registry.getBuilder(TransformUtil.DATATYPE, p
+						builder = registry.getBuilder(SchemaUtils.DATATYPE, p
 								.getE2().getName());
 					}
 					if (builder == null) {
@@ -120,7 +120,7 @@ public class TAggregateProbabilisticRule extends
 	@Override
 	public boolean isExecutable(final AggregateTIPO<?, ?, ?> operator,
 			final TransformationConfiguration config) {
-		if (config.getDataTypes().contains(TransformUtil.DATATYPE)) {
+		if (config.getDataTypes().contains(SchemaUtils.DATATYPE)) {
 			if (operator.getGroupProcessor() == null) {
 				return true;
 			}

@@ -22,6 +22,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 
 /**
+ * Probabilistic predicate to perform evaluation of predicate boolean
+ * expressions.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 

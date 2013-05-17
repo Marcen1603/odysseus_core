@@ -15,18 +15,33 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
+ * Datatype provider for probabilistic datatypes.
+ * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ProbabilisticDatatypeProvider {
+	/** Logger. */
+	private static Logger LOG = LoggerFactory
+			.getLogger(ProbabilisticDatatypeProvider.class);
+	/** The data dictionary. */
 	public static IDataDictionary datadictionary = null;
 
-	protected void bindDataDictionary(final IDataDictionary dd) {
-		ProbabilisticDatatypeProvider.datadictionary = dd;
+	/**
+	 * Bind data dictionary.
+	 * 
+	 * @param dataDictionary
+	 *            The data dictionary
+	 */
+	protected void bindDataDictionary(final IDataDictionary dataDictionary) {
+		ProbabilisticDatatypeProvider.datadictionary = dataDictionary;
 		try {
 			ProbabilisticDatatypeProvider.datadictionary.addDatatype(
 					SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI(),
@@ -54,31 +69,46 @@ public class ProbabilisticDatatypeProvider {
 							.getURI(),
 					SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
 		} catch (final DataDictionaryException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
-	protected void unbindDataDictionary(final IDataDictionary dd) {
+	/**
+	 * Unbind data dictionary.
+	 * 
+	 * @param dataDictionary
+	 *            The data dictionary
+	 */
+	protected void unbindDataDictionary(final IDataDictionary dataDictionary) {
 		try {
-			dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE
-					.getURI());
-			dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT
-					.getURI());
-			dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_LONG
-					.getURI());
-			dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER
-					.getURI());
-			dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_SHORT
-					.getURI());
-			dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_BYTE
-					.getURI());
-			dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_STRING
-					.getURI());
-			dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE
-					.getURI());
+			dataDictionary
+					.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE
+							.getURI());
+			dataDictionary
+					.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT
+							.getURI());
+			dataDictionary
+					.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_LONG
+							.getURI());
+			dataDictionary
+					.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER
+							.getURI());
+			dataDictionary
+					.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_SHORT
+							.getURI());
+			dataDictionary
+					.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_BYTE
+							.getURI());
+			dataDictionary
+					.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_STRING
+							.getURI());
+			dataDictionary
+					.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE
+							.getURI());
 		} catch (final DataDictionaryException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
+		} finally {
+			ProbabilisticDatatypeProvider.datadictionary = null;
 		}
-		ProbabilisticDatatypeProvider.datadictionary = null;
 	}
 }

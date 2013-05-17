@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
-import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.DefaultProbabilisticTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.DiscreteProbabilisticJoinPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -60,7 +60,7 @@ public class TDiscreteJoinAORule extends AbstractTransformationRule<JoinAO> {
 
         IPredicate pred = operator.getPredicate();
 
-        DiscreteProbabilisticJoinPO joinPO = new DiscreteProbabilisticJoinPO(TransformUtil.getDiscreteProbabilisticAttributePos(operator.getInputSchema(0)), TransformUtil.getDiscreteProbabilisticAttributePos(operator.getInputSchema(1)));
+        DiscreteProbabilisticJoinPO joinPO = new DiscreteProbabilisticJoinPO(SchemaUtils.getDiscreteProbabilisticAttributePos(operator.getInputSchema(0)), SchemaUtils.getDiscreteProbabilisticAttributePos(operator.getInputSchema(1)));
         joinPO.setJoinPredicate(pred.clone());
 
         // if in both input paths there is no window, we
@@ -100,7 +100,7 @@ public class TDiscreteJoinAORule extends AbstractTransformationRule<JoinAO> {
         IPredicate<?> predicate = operator.getPredicate();
         if (predicate != null) {
             List<SDFAttribute> attributes = predicate.getAttributes();
-            if (TransformUtil.containsDiscreteProbabilisticAttributes(attributes)) {
+            if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
                 return true;
             }
         }

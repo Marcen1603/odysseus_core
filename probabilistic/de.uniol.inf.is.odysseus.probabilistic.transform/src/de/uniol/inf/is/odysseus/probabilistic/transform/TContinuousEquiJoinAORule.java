@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
-import de.uniol.inf.is.odysseus.probabilistic.common.TransformUtil;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinPO;
@@ -87,7 +87,7 @@ public class TContinuousEquiJoinAORule extends
 			TransformationConfiguration transformConfig) {
 		if (((operator.getPredicate() != null)
 				&& (operator.isAllPhysicalInputSet()) && !(operator instanceof LeftJoinAO))) {
-			if (!TransformUtil
+			if (!SchemaUtils
 					.containsContinuousProbabilisticAttributes(operator
 							.getPredicate().getAttributes())) {
 				return false;
@@ -108,7 +108,7 @@ public class TContinuousEquiJoinAORule extends
 			SDFExpression expr = new SDFExpression(null, mepString, attrRes,
 					MEP.getInstance());
 
-			if (TransformUtil.isEquiPredicate(expr.getMEPExpression())) {
+			if (SchemaUtils.isEquiExpression(expr.getMEPExpression())) {
 				return true;
 			}
 		}

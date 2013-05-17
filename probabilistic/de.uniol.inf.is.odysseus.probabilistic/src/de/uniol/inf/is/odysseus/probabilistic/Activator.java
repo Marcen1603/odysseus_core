@@ -24,14 +24,20 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregat
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class Activator implements BundleActivator {
-
+	/** The bundle context. */
 	private static BundleContext context;
+	/** The aggregate function builder registry. */
 	private static IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry;
 
 	static BundleContext getContext() {
 		return Activator.context;
 	}
 
+	/**
+	 * Gets the aggregate function builder registry.
+	 * 
+	 * @return The registry
+	 */
 	public static IAggregateFunctionBuilderRegistry getAggregateFunctionBuilderRegistry() {
 		return Activator.aggregateFunctionBuilderRegistry;
 	}
@@ -56,15 +62,24 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void stop(final BundleContext bundleContext) throws Exception {
-
 		Activator.context = null;
 	}
 
+	/**
+	 * Binds the aggregate function builder registry.
+	 * 
+	 * @param aggregateFunctionBuilderRegistry
+	 */
 	public void bindAggregateFunctionBuilderRegistry(
 			final IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
 		Activator.aggregateFunctionBuilderRegistry = aggregateFunctionBuilderRegistry;
 	}
 
+	/**
+	 * Unbinds the aggregate function builder registry.
+	 * 
+	 * @param aggregateFunctionBuilderRegistry
+	 */
 	public void unbindAggregateFunctionBuilderRegistry(
 			final IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
 		Activator.aggregateFunctionBuilderRegistry = null;

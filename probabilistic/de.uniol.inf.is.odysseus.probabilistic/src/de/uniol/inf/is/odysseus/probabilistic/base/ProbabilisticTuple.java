@@ -42,7 +42,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
      * 
      */
     private static final long serialVersionUID = -4389825802466821416L;
-    /** The probabilistic distribution function (Gaussian mixture model */
+    /** The probabilistic distribution function (Gaussian mixture model). */
     protected NormalDistributionMixture[] distributions;
 
     /**
