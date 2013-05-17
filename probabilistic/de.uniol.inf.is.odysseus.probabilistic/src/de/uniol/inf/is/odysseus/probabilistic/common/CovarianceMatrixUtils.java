@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
  */
 public final class CovarianceMatrixUtils {
 	/** Constant number used for inverse sum. */
-	private static final int INVERSE_SUM = 8;
+	private static final double INVERSE_SUM = 8.0;
 
 	/**
 	 * Converts the given covarince matrix into a {@link RealMatrix}.
@@ -81,7 +81,7 @@ public final class CovarianceMatrixUtils {
 	 * @return The number of elements in the triangle
 	 */
 	public static int getCovarianceTriangleSizeFromDimension(final int dimension) {
-		return (int) ((1 / 2) * dimension * (dimension + 1));
+		return (int) ((1.0 / 2.0) * dimension * (dimension + 1.0));
 	}
 
 	/**
@@ -92,7 +92,7 @@ public final class CovarianceMatrixUtils {
 	 * @return The dimension of the covariance matrix
 	 */
 	public static int getCovarianceDimensionFromTriangleSize(final int triangleSize) {
-		return (int) ((1 / 2) * (Math.sqrt(INVERSE_SUM * triangleSize + 1) - 1));
+		return (int) ((1.0 / 2.0) * (Math.sqrt(INVERSE_SUM * triangleSize + 1.0) - 1.0));
 	}
 
 	/**

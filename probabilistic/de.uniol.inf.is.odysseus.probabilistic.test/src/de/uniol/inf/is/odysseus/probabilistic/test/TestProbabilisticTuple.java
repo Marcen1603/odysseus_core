@@ -9,15 +9,7 @@ import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture
 import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
 
 public class TestProbabilisticTuple {
-	@Test
-	public void testTriangle() {
-		for (int i = 1; 1 < 100; i++) {
-			int v1 = (int) (0.5 * (Math.sqrt(8 * i + 1) - 1));
-			int v2 = (int) (0.5 * i * (i + 1));
-			System.out.println(v1+ " "+v2);
-			assert v1 == v2;
-		}
-	}
+
 
 	@Test
 	public void f() {
