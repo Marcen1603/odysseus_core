@@ -1,5 +1,5 @@
-/*
- * Copyright 2013 The Odysseus Team
+/********************************************************************************** 
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.base.predicate;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;

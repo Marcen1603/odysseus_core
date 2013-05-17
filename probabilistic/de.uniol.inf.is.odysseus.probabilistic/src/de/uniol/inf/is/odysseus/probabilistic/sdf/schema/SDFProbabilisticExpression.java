@@ -26,148 +26,159 @@ import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpressionParseException;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.function.AbstractProbabilisticFunction;
 
 /**
- * Probabilistic expression that have acces from the payload to the multivariate
- * distributions.
+ * Probabilistic expression that have acces from the payload to the multivariate distributions.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
 public class SDFProbabilisticExpression extends SDFExpression {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = -2862460974715363031L;
-    /** The Gaussion Mixture Models */
-    private List<NormalDistributionMixture> distributions;
+	private static final long serialVersionUID = -2862460974715363031L;
+	/** The Gaussion Mixture Models. */
+	private List<NormalDistributionMixture> distributions = new ArrayList<NormalDistributionMixture>();
 
-    /**
-     * 
-     * @param expression
-     * @param attributeResolver
-     * @param expressionParser
-     */
-    public SDFProbabilisticExpression(IExpression<?> expression, IAttributeResolver attributeResolver, IExpressionParser expressionParser) {
-        super(expression, attributeResolver, expressionParser);
-        init(expression, null, attributeResolver, expressionParser);
-        ;
-    }
+	/**
+	 * Constructs a new probabilistic expression from the given expression using the given attribute resolver and expression parser.
+	 * 
+	 * @param expression
+	 *            The expression
+	 * @param attributeResolver
+	 *            The attribute resolver
+	 * @param parser
+	 *            The expression parser, i.e., MEP
+	 */
+	public SDFProbabilisticExpression(final IExpression<?> expression, final IAttributeResolver attributeResolver, final IExpressionParser parser) {
+		super(expression, attributeResolver, parser);
+		init(expression, null, attributeResolver, parser);
+	}
 
-    /**
-     * 
-     * @param expression
-     * @param attributeResolver
-     * @param expressionParser
-     * @param expressionString
-     */
-    public SDFProbabilisticExpression(IExpression<?> expression, IAttributeResolver attributeResolver, IExpressionParser expressionParser, String expressionString) {
-        super(expression, attributeResolver, expressionParser, expressionString);
-        init(expression, null, attributeResolver, expressionParser);
-    }
+	/**
+	 * Constructs a new probabilistic expression from the given expression using the given attribute resolver, expression parser, and expression string.
+	 * 
+	 * @param expression
+	 *            The expression
+	 * @param attributeResolver
+	 *            The attribute resolver
+	 * @param parser
+	 *            The expression parser, i.e., MEP
+	 * @param string
+	 *            The expression string
+	 */
+	public SDFProbabilisticExpression(final IExpression<?> expression, final IAttributeResolver attributeResolver, final IExpressionParser parser, final String string) {
+		super(expression, attributeResolver, parser, string);
+		init(expression, null, attributeResolver, parser);
+	}
 
-    /**
-     * 
-     * @param expression
-     * @throws SDFExpressionParseException
-     */
-    public SDFProbabilisticExpression(SDFExpression expression) throws SDFExpressionParseException {
-        super(expression);
-        init(expression.getMEPExpression(), expression.getExpressionString(), expression.getAttributeResolver(), expression.getExpressionParser());
-    }
+	/**
+	 * Constructs a new probabilistic expression from the given expression.
+	 * 
+	 * @param expression
+	 *            The expression
+	 */
+	public SDFProbabilisticExpression(final SDFExpression expression) {
+		super(expression);
+		init(expression.getMEPExpression(), expression.getExpressionString(), expression.getAttributeResolver(), expression.getExpressionParser());
+	}
 
-    /**
-     * 
-     * @param value
-     * @param expressionParser
-     * @throws SDFExpressionParseException
-     */
-    public SDFProbabilisticExpression(String value, IExpressionParser expressionParser) throws SDFExpressionParseException {
-        super(value, expressionParser);
-        init(null, value, null, expressionParser);
-    }
+	/**
+	 * Constructs a new probabilistic expression from the given expression string using the given expression parser.
+	 * 
+	 * @param string
+	 *            The expression string
+	 * @param parser
+	 *            The expression parser, i.e., MEP
+	 */
+	public SDFProbabilisticExpression(final String string, final IExpressionParser parser) {
+		super(string, parser);
+		init(null, string, null, parser);
+	}
 
-    /**
-     * 
-     * @param URI
-     * @param value
-     * @param attributeResolver
-     * @param expressionParser
-     * @throws SDFExpressionParseException
-     */
-    public SDFProbabilisticExpression(String URI, String value, IAttributeResolver attributeResolver, IExpressionParser expressionParser) throws SDFExpressionParseException {
-        super(URI, value, attributeResolver, expressionParser);
-        init(null, value, attributeResolver, expressionParser);
-    }
+	/**
+	 * 
+	 * @param uri
+	 *            The URI
+	 * @param string
+	 *            The expression string
+	 * @param attributeResolver
+	 *            The attribute resolver
+	 * @param parser
+	 *            The expression parser, i.e., MEP
+	 */
+	public SDFProbabilisticExpression(final String uri, final String string, final IAttributeResolver attributeResolver, final IExpressionParser parser) {
+		super(uri, string, attributeResolver, parser);
+		init(null, string, attributeResolver, parser);
+	}
 
-    /**
-     * 
-     * @param expre
-     * @param value
-     * @param attributeResolver
-     * @param expressionParser
-     */
-    private void init(IExpression<?> expre, String value, IAttributeResolver attributeResolver, IExpressionParser expressionParser) {
-        if (this.getMEPExpression() instanceof AbstractProbabilisticFunction) {
-            setDistributions(((AbstractProbabilisticFunction<?>) this.getMEPExpression()).getDistributions());
-        }
-    }
+	/**
+	 * 
+	 * @param expression
+	 *            The expression
+	 * @param string
+	 *            The expression string
+	 * @param attributeResolver
+	 *            The attribute resolver
+	 * @param parser
+	 *            The expression parser, i.e., MEP
+	 */
+	private void init(final IExpression<?> expression, final String string, final IAttributeResolver attributeResolver, final IExpressionParser parser) {
+		if (this.getMEPExpression() instanceof AbstractProbabilisticFunction) {
+			setDistributions(((AbstractProbabilisticFunction<?>) this.getMEPExpression()).getDistributions());
+		}
+	}
 
-    /**
-     * Bind the given distributions to the list of available distributions.
-     * 
-     * @param distributions
-     *            The distributions
-     */
-    public void bindDistributions(NormalDistributionMixture[] distributions) {
-        if ((getMEPExpression() instanceof Constant) || (getMEPExpression() instanceof Variable)) {
-            return;
-        }
-        if (this.distributions == null) {
+	/**
+	 * Bind the given distributions to the list of available distributions.
+	 * 
+	 * @param newDistributions
+	 *            The distributions
+	 */
+	public final void bindDistributions(final NormalDistributionMixture[] newDistributions) {
+		if ((getMEPExpression() instanceof Constant) || (getMEPExpression() instanceof Variable)) {
+			return;
+		}
+		this.distributions.clear();
+		this.distributions.addAll(Arrays.asList(newDistributions));
+	}
 
-        } else {
-            this.distributions.clear();
-            this.distributions.addAll(Arrays.asList(distributions));
-        }
-    }
+	/**
+	 * Gets the distribution at the given index.
+	 * 
+	 * @param distributionIndex
+	 *            The distribution index
+	 * @return The distribution at the given index
+	 */
+	public final NormalDistributionMixture getDistributions(final int distributionIndex) {
+		return this.distributions.get(distributionIndex);
+	}
 
-    /**
-     * Gets the distribution at the given index.
-     * 
-     * @param distributionIndex
-     *            The distribution index
-     * @return
-     */
-    public NormalDistributionMixture getDistributions(int distributionIndex) {
-        return this.distributions.get(distributionIndex);
-    }
+	/**
+	 * Sets the distributions.
+	 * 
+	 * @param distributions
+	 *            The distributions
+	 */
+	private void setDistributions(final List<NormalDistributionMixture> distributions) {
+		if (distributions == null) {
+			this.distributions = new ArrayList<NormalDistributionMixture>();
+		} else {
+			this.distributions = distributions;
+		}
+	}
 
-    /**
-     * Sets the distributions.
-     * 
-     * @param distributions
-     *            The distributions
-     */
-    private void setDistributions(List<NormalDistributionMixture> distributions) {
-        if (distributions == null) {
-            this.distributions = new ArrayList<NormalDistributionMixture>();
-        } else {
-            this.distributions = distributions;
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.
-     * SDFExpression#clone()
-     */
-    @Override
-    public SDFProbabilisticExpression clone() {
-        return new SDFProbabilisticExpression(this);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema. SDFExpression#clone()
+	 */
+	@Override
+	public final SDFProbabilisticExpression clone() {
+		return new SDFProbabilisticExpression(this);
+	}
 }

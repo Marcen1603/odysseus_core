@@ -18,9 +18,20 @@ package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
+/**
+ * 
+ * Combination of time interval and probabilisitic meta data.
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 public interface ITimeIntervalProbabilistic extends ITimeInterval,
 		IProbabilistic {
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.metadata.ITimeInterval#clone()
+	 */
 	@Override
 	public ITimeIntervalProbabilistic clone();
 

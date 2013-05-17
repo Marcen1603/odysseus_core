@@ -29,6 +29,11 @@ public class Activator implements BundleActivator {
 	/** The aggregate function builder registry. */
 	private static IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry;
 
+	/**
+	 * Gets the bundle context.
+	 * 
+	 * @return The bundle context
+	 */
 	static BundleContext getContext() {
 		return Activator.context;
 	}
@@ -45,43 +50,40 @@ public class Activator implements BundleActivator {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-	 * )
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext )
 	 */
 	@Override
-	public void start(final BundleContext bundleContext) throws Exception {
+	public final void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-	public void stop(final BundleContext bundleContext) throws Exception {
+	public final void stop(final BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
 
 	/**
 	 * Binds the aggregate function builder registry.
 	 * 
-	 * @param aggregateFunctionBuilderRegistry
+	 * @param registry
+	 *            The aggregation function builder registry
 	 */
-	public void bindAggregateFunctionBuilderRegistry(
-			final IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
-		Activator.aggregateFunctionBuilderRegistry = aggregateFunctionBuilderRegistry;
+	public final void bindAggregateFunctionBuilderRegistry(final IAggregateFunctionBuilderRegistry registry) {
+		Activator.aggregateFunctionBuilderRegistry = registry;
 	}
 
 	/**
 	 * Unbinds the aggregate function builder registry.
 	 * 
-	 * @param aggregateFunctionBuilderRegistry
+	 * @param registry
+	 *            The aggregation function builder registry
 	 */
-	public void unbindAggregateFunctionBuilderRegistry(
-			final IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
+	public final void unbindAggregateFunctionBuilderRegistry(final IAggregateFunctionBuilderRegistry registry) {
 		Activator.aggregateFunctionBuilderRegistry = null;
 	}
 }

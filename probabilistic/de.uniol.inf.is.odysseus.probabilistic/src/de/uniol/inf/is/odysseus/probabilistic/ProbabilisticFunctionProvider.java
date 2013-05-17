@@ -90,7 +90,7 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 	 * de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider#getFunctions()
 	 */
 	@Override
-	public List<IFunction<?>> getFunctions() {
+	public final List<IFunction<?>> getFunctions() {
 		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
 		try {
 			/** Boolean functions for discrete probabilistic values */

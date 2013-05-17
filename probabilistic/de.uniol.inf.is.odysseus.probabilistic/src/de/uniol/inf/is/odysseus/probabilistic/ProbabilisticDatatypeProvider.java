@@ -29,10 +29,10 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  */
 public class ProbabilisticDatatypeProvider {
 	/** Logger. */
-	private static Logger LOG = LoggerFactory
+	private static Logger log = LoggerFactory
 			.getLogger(ProbabilisticDatatypeProvider.class);
 	/** The data dictionary. */
-	public static IDataDictionary datadictionary = null;
+	private static IDataDictionary datadictionary = null;
 
 	/**
 	 * Bind data dictionary.
@@ -40,7 +40,7 @@ public class ProbabilisticDatatypeProvider {
 	 * @param dataDictionary
 	 *            The data dictionary
 	 */
-	protected void bindDataDictionary(final IDataDictionary dataDictionary) {
+	protected final void bindDataDictionary(final IDataDictionary dataDictionary) {
 		ProbabilisticDatatypeProvider.datadictionary = dataDictionary;
 		try {
 			ProbabilisticDatatypeProvider.datadictionary.addDatatype(
@@ -69,7 +69,7 @@ public class ProbabilisticDatatypeProvider {
 							.getURI(),
 					SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
 		} catch (final DataDictionaryException e) {
-			LOG.error(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 	}
 
@@ -79,7 +79,7 @@ public class ProbabilisticDatatypeProvider {
 	 * @param dataDictionary
 	 *            The data dictionary
 	 */
-	protected void unbindDataDictionary(final IDataDictionary dataDictionary) {
+	protected final void unbindDataDictionary(final IDataDictionary dataDictionary) {
 		try {
 			dataDictionary
 					.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE
@@ -106,7 +106,7 @@ public class ProbabilisticDatatypeProvider {
 					.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE
 							.getURI());
 		} catch (final DataDictionaryException e) {
-			LOG.error(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		} finally {
 			ProbabilisticDatatypeProvider.datadictionary = null;
 		}

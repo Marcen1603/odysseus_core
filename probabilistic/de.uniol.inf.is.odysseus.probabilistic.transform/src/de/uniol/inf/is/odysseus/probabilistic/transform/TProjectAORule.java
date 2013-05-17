@@ -42,7 +42,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	public void execute(final ProjectAO projectAO,
 			final TransformationConfiguration transformConfig) {
 		IPhysicalOperator projectPO = new ProbabilisticProjectPO<IMetaAttribute>(
-				projectAO.getInputSchema(), projectAO.determineRestrictList());
+				projectAO.determineRestrictList());
 		this.defaultExecute(projectAO, projectPO, transformConfig, true, true);
 	}
 
