@@ -322,13 +322,15 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
         }
 
         final HashMap<NormalDistributionFunction2D, Double> funcs = new HashMap<>();
-        int dimension = 0;
-        while (dimension < mix.getDimension()) {
-            if (mix.getAttribute(dimension) == index) {
+        final int dimension;
+        int d = 0;
+        while (d < mix.getDimension()) {
+            if (mix.getAttribute(d) == index) {
                 break;
             }
-            dimension++;
+            d++;
         }
+        dimension = d;
         for (final Entry<NormalDistribution, Double> e : mix.getMixtures().entrySet()) {
             final double means = e.getKey().getMean()[dimension];
             final double m = e.getKey().getCovarianceMatrix().getMatrix().getEntry(dimension, dimension);
@@ -341,7 +343,7 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
 
             @Override
             public double getValue(final double x) {
-                if ((x < interval[0].inf()) || (x > interval[0].sup())) {
+                if ((x < interval[dimension].inf()) || (x > interval[dimension].sup())) {
                     return 0.0;
                 }
 

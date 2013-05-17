@@ -56,5 +56,98 @@
             restorable="false">
       </view>
    </extension>
+<extension
+         id="Dashboard Part Defaults"
+         name="Dashboard Part Defaults"
+         point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.probabilistic.rcp.dashboard.ProbabilityChart2DDashboardPart"
+            description="Chart overview of recieved tuples of one query"
+            name="ProbabilityChart2D">
+         <setting
+               description="Comma-separated list of attribute-names shown in the chart. Must be not empty."
+               isEditable="true"
+               isOptional="false"
+               name="Attributes"
+               type="String">
+         </setting>
+         <setting
+               defaultValue="10"
+               description="Number of samples "
+               isEditable="true"
+               isOptional="true"
+               name="Samples"
+               type="Integer">
+         </setting>
+         <setting
+               defaultValue="10"
+               description="Minimum X value"
+               isEditable="true"
+               isOptional="true"
+               name="MinX"
+               type="Double">
+         </setting>
+         <setting
+               defaultValue="10"
+               description="Maximum X value "
+               isEditable="true"
+               isOptional="true"
+               name="MaxX"
+               type="Double">
+         </setting>
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.probabilistic.rcp.dashboard.ProbabilityChart3DDashboardPart"
+            description="Chart overview of recieved tuples of one query"
+            name="ProbabilityChart3D">
+         <setting
+               description="Comma-separated list of attribute-names shown in the chart. Must be not empty."
+               isEditable="true"
+               isOptional="false"
+               name="Attributes"
+               type="String">
+         </setting>
+         <setting
+               defaultValue="10"
+               description="Number of samples "
+               isEditable="true"
+               isOptional="true"
+               name="Samples"
+               type="Integer">
+         </setting>
+         <setting
+               defaultValue="10"
+               description="Minimum X value"
+               isEditable="true"
+               isOptional="true"
+               name="MinX"
+               type="Double">
+         </setting>
+         <setting
+               defaultValue="10"
+               description="Maximum X value "
+               isEditable="true"
+               isOptional="true"
+               name="MaxX"
+               type="Double">
+         </setting>
+                  <setting
+               defaultValue="10"
+               description="Minimum Y value"
+               isEditable="true"
+               isOptional="true"
+               name="MinY"
+               type="Double">
+         </setting>
+         <setting
+               defaultValue="10"
+               description="Maximum Y value "
+               isEditable="true"
+               isOptional="true"
+               name="MaxY"
+               type="Double">
+         </setting>
+      </dashboardPart>
+   </extension>
 
 </plugin>
