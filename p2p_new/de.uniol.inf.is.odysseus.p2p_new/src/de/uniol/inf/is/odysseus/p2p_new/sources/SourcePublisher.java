@@ -90,6 +90,12 @@ public class SourcePublisher {
 			}
 		}
 	}
+
+	public void unpublishAll() {
+		for( String publishedViewName : publishedViews.keySet() ) {
+			unpublish(publishedViewName);
+		}
+	}
 	
 	public void advertise(String sourceName, ISession caller) throws PeerException {
 		if( advertisedSources.containsKey(sourceName)) {
@@ -157,4 +163,5 @@ public class SourcePublisher {
 
 		return adv;
 	}
+
 }

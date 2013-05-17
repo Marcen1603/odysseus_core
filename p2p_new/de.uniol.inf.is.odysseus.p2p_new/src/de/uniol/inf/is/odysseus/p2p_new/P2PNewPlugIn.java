@@ -84,6 +84,7 @@ public class P2PNewPlugIn implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		SourcePublisher.getInstance().unadvertiseAll();
+		SourcePublisher.getInstance().unpublishAll();
 		
 		discoveryService = null;
 		contentService = null;
