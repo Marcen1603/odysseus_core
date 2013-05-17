@@ -15,14 +15,13 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.queryview.physical;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 
 public class PhysicalQueryViewData implements IQueryViewData {
 
-	private static final String UNKNOWN_QUERY_NAME_TEXT = "<unknown>";
+	private static final String UNKNOWN_TEXT = "<unknown>";
     private final int id;
     private final String status;
     private final int priority;
@@ -32,19 +31,13 @@ public class PhysicalQueryViewData implements IQueryViewData {
     private final String queryName;
 
     public PhysicalQueryViewData(int id, String status, int priority, String parserId, String userName, String queryText, String queryName) {
-    	Preconditions.checkArgument(id >= 0, "Id must be zero or positive!");
-    	Preconditions.checkArgument(!Strings.isNullOrEmpty(status), "Status of query must not be null or empty!");
-    	Preconditions.checkArgument(!Strings.isNullOrEmpty(parserId), "ID of parser of query must not be null or empty!");
-    	Preconditions.checkArgument(!Strings.isNullOrEmpty(userName), "Username of query must not be null or empty!");
-    	Preconditions.checkArgument(!Strings.isNullOrEmpty(queryText), "Text of query must not be null or empty!");
-    	
         this.id = id;
-        this.status = status;
+        this.status = Strings.isNullOrEmpty(status) ? UNKNOWN_TEXT : status;
         this.priority = priority;
-        this.parserId = parserId;
-        this.userName = userName;
-        this.queryText = queryText;
-        this.queryName = Strings.isNullOrEmpty(queryName) ? UNKNOWN_QUERY_NAME_TEXT : queryName;
+        this.parserId = Strings.isNullOrEmpty(parserId) ? UNKNOWN_TEXT : parserId;
+        this.userName = Strings.isNullOrEmpty(userName) ? UNKNOWN_TEXT : userName;
+        this.queryText = Strings.isNullOrEmpty(queryText) ? UNKNOWN_TEXT : queryText;
+        this.queryName = Strings.isNullOrEmpty(queryName) ? UNKNOWN_TEXT : queryName;
     }
 
     @Override
