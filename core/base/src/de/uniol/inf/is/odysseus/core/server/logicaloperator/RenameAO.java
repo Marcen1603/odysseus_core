@@ -39,9 +39,10 @@ public class RenameAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 4218605858465342011L;
 	private List<String> aliases = new ArrayList<>();
-	private boolean aliasesAsPairs = false;
+	private boolean aliasesAsPairs;
 	private String typeName;
-	private boolean calculated = false;
+	private boolean calculated;
+	private boolean isNoOp;
 
 	public RenameAO() {
 		super();
@@ -55,6 +56,7 @@ public class RenameAO extends UnaryLogicalOp {
 		super(ao);
 		aliases = ao.aliases;
 		aliasesAsPairs = ao.aliasesAsPairs;
+		isNoOp = ao.isNoOp;
 	}
 
 	@Parameter(type = StringParameter.class, isList = true, optional = true)
@@ -70,6 +72,15 @@ public class RenameAO extends UnaryLogicalOp {
 	@Parameter(name = "Pairs", type = BooleanParameter.class, optional = true)
 	public void setPairs(boolean aliasesAsPairs) {
 		this.aliasesAsPairs = aliasesAsPairs;
+	}
+	
+	@Parameter(name = "isNoOp", type = BooleanParameter.class, optional = true)
+	public void setNoOp( boolean isNoOp ) {
+		this.isNoOp = isNoOp;
+	}
+	
+	public boolean isNoOp() {
+		return isNoOp;
 	}
 	
 	public boolean getPairs() {

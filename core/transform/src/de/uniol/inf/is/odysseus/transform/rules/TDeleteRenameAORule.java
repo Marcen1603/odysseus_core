@@ -46,7 +46,7 @@ public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO> {
 	@Override
 	public boolean isExecutable(RenameAO operator, TransformationConfiguration transformConfig) { 
 		// Remove only if child not rename. Do not remove top renaming, when schemas are different 
-		return (!isInputRenameAO(operator) && !(isLastOne(operator) && !schemaEquals(operator)) && !hasSupscriptions(operator));
+		return !operator.isNoOp() && (!isInputRenameAO(operator) && !(isLastOne(operator) && !schemaEquals(operator)) && !hasSupscriptions(operator));
 	}
 
 	private boolean schemaEquals(RenameAO operator) {
