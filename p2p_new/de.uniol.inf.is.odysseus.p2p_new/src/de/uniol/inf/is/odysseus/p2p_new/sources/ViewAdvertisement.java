@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.Attributable;
@@ -137,6 +138,26 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 
 	public static String getAdvertisementType() {
 		return ADVERTISEMENT_TYPE;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof ViewAdvertisement)) {
+			return false;
+		}
+		
+		ViewAdvertisement adv = (ViewAdvertisement) obj;
+		return Objects.equals(adv.viewName, viewName) && 
+				Objects.equals(adv.id, id) && 
+				Objects.equals(adv.pipeID, pipeID);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(viewName, id, pipeID);
 	}
 
 	private void handleElement(TextElement<?> elem) {

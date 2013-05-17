@@ -4,8 +4,7 @@ import net.jxta.document.Advertisement;
 
 public interface IAdvertisementListener {
 
-	public void advertisementOccured(IAdvertisementManager sender, Advertisement adv);
-
-	public boolean isSelected(Advertisement advertisement);
+	public void advertisementAdded(IAdvertisementManager sender, Advertisement adv);
+	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv);
 
 }

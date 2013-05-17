@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
@@ -26,13 +28,13 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 	private static AdvertisementManager instance;
 
 	private final List<IAdvertisementListener> listeners = Lists.newArrayList();
-
+	
+	private List<Advertisement> knownAdvertisements = Lists.newArrayList();
 	private DiscoveryThread discoveryThread;
 
 	// called by OSGi-DS
 	public final void activate() {
-		P2PNewPlugIn.getDiscoveryService().addDiscoveryListener(this);
-		discoveryThread = new DiscoveryThread(DISCOVERY_INTERVAL_MILLIS);
+		discoveryThread = new DiscoveryThread(DISCOVERY_INTERVAL_MILLIS, this);
 		discoveryThread.start();
 
 		instance = this;
@@ -45,6 +47,16 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 
 		synchronized (listeners) {
 			listeners.add(listener);
+		}
+
+		synchronized (knownAdvertisements) {
+			for (Advertisement adv : knownAdvertisements) {
+				try {
+					listener.advertisementAdded(this, adv);
+				} catch( Throwable t ) {
+					LOG.error("Exception during processing advertisement add {}", adv, t);
+				}
+			}
 		}
 	}
 
@@ -83,36 +95,69 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 		LOG.debug("Unbound advertisement listener {}", listener);
 	}
 
-	protected final void fireAdvertisementEvent(Advertisement advertisement) {
+	protected final void fireAdvertisementAddEvent(Advertisement advertisement) {
 		synchronized (listeners) {
 			for (final IAdvertisementListener entry : listeners) {
 				try {
-					if (entry.isSelected(advertisement)) {
-						try {
-							entry.advertisementOccured(this, advertisement);
-						} catch (final Throwable t) {
-							LOG.error("Exception during processing advertisement {}", advertisement, t);
-						}
-					}
+					entry.advertisementAdded(this, advertisement);
 				} catch (final Throwable t) {
-					LOG.error("Exception during evaluating advertisement with selector: {}", advertisement, t);
+					LOG.error("Exception during processing advertisement add {}", advertisement, t);
+				}
+			}
+		}
+	}
+	
+	protected final void fireAdvertisementRemoveEvent(Advertisement advertisement) {
+		synchronized (listeners) {
+			for (final IAdvertisementListener entry : listeners) {
+				try {
+					entry.advertisementRemoved(this, advertisement);
+				} catch (final Throwable t) {
+					LOG.error("Exception during processing advertisement remove {}", advertisement, t);
 				}
 			}
 		}
 	}
 
 	private void process(DiscoveryEvent event) {
+		List<Advertisement> newAdvertisements = Lists.newArrayList();
+		List<Advertisement> oldAdvertisements = null;
+		synchronized( knownAdvertisements ) {
+			oldAdvertisements = Lists.newArrayList(knownAdvertisements);
+		}
+		
 		final DiscoveryResponseMsg response = event.getResponse();
 		final Enumeration<Advertisement> advs = response.getAdvertisements();
+		
 		while (advs.hasMoreElements()) {
 			final Advertisement adv = advs.nextElement();
+			newAdvertisements.add(adv);
 
-			LOG.debug("Got advertisement of type {}", adv.getClass().getSimpleName());
-			fireAdvertisementEvent(adv);
+			if( oldAdvertisements.contains(adv)) {
+				oldAdvertisements.remove(adv);
+			} else {
+				fireAdvertisementAddEvent(adv);
+			}
+		}
+		
+		for( Advertisement removedAdvertisement : oldAdvertisements) {
+			fireAdvertisementRemoveEvent(removedAdvertisement);
+		}
+		
+		synchronized( knownAdvertisements ) {
+			knownAdvertisements = newAdvertisements;
+			System.out.println("Size = " + knownAdvertisements.size());
 		}
 	}
 
 	public static AdvertisementManager getInstance() {
 		return instance;
+	}
+
+	@Override
+	public ImmutableCollection<Advertisement> getAdvertisements() {
+		synchronized( knownAdvertisements ) {
+			return ImmutableList.copyOf(knownAdvertisements);
+		}
 	}
 }

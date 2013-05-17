@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.jxta.document.Advertisement;
-import net.jxta.id.ID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +37,6 @@ public class QueryPartManager implements IAdvertisementListener {
 
 	private static QueryPartManager instance;
 
-	private final List<ID> consumedAdvertisementIDs = Lists.newArrayList();
-
 	private IServerExecutor executor;
 
 	public QueryPartManager() {
@@ -47,30 +44,32 @@ public class QueryPartManager implements IAdvertisementListener {
 	}
 
 	@Override
-	public void advertisementOccured(IAdvertisementManager sender, Advertisement advertisement) {
-		final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
-		if (!consumedAdvertisementIDs.contains(adv.getID())) {
-			LOG.debug("Got query part");
-			System.out.println("PQL-Statement is :\n\n" + adv.getPqlStatement() + "\n\n");
+	public void advertisementAdded(IAdvertisementManager sender, Advertisement advertisement) {
+		if (advertisement instanceof QueryPartAdvertisement) {
+			final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
+			if (adv.getPeerID().equals(P2PNewPlugIn.getOwnPeerID())) {
+				try {
+					final TransformationConfiguration transformationConfiguration = determineTransformationConfiguration(executor, adv.getTransCfgName());
+					final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, adv.getTransCfgName());
+					transformationConfiguration.setOption("NO_METADATA", true);
 
-			try {
-				final TransformationConfiguration transformationConfiguration = determineTransformationConfiguration(executor, adv.getTransCfgName());
-				final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, adv.getTransCfgName());
-				transformationConfiguration.setOption("NO_METADATA", true);
+					final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), adv.getTransCfgName(), configuration);
 
-				final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), adv.getTransCfgName(), configuration);
+					transformationConfiguration.removeOption("NO_METADATA");
+					removeUnnededOperators(executor, ids);
 
-				transformationConfiguration.removeOption("NO_METADATA");
-				removeUnnededOperators(executor, ids);
+					QueryPartController.getInstance().registerAsSlave(ids, adv.getSharedQueryID());
 
-				QueryPartController.getInstance().registerAsSlave(ids, adv.getSharedQueryID());
-
-			} catch (final Throwable t) {
-				LOG.error("Could not execute query part", t);
-			} finally {
-				consumedAdvertisementIDs.add(adv.getID());
+				} catch (final Throwable t) {
+					LOG.error("Could not execute query part", t);
+				}
 			}
 		}
+	}
+
+	@Override
+	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
+		// do nothing
 	}
 
 	// called by OSGi-DS
@@ -82,15 +81,6 @@ public class QueryPartManager implements IAdvertisementListener {
 		} else {
 			throw new IllegalArgumentException("Executor " + exe + " is not a ServerExecutor");
 		}
-	}
-
-	@Override
-	public boolean isSelected(Advertisement advertisement) {
-		if (advertisement instanceof QueryPartAdvertisement) {
-			final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
-			return adv.getPeerID().equals(P2PNewPlugIn.getOwnPeerID());
-		}
-		return false;
 	}
 
 	// called by OSGi-DS
@@ -166,5 +156,4 @@ public class QueryPartManager implements IAdvertisementListener {
 			}
 		}
 	}
-
 }

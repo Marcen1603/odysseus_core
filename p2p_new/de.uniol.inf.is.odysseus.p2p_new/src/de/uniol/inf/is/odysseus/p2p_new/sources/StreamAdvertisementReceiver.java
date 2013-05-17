@@ -20,29 +20,36 @@ public class StreamAdvertisementReceiver implements IAdvertisementListener {
 	private static final Logger LOG = LoggerFactory.getLogger(StreamAdvertisementReceiver.class);
 	
 	@Override
-	public void advertisementOccured(IAdvertisementManager sender, Advertisement adv) {
-		final StreamAdvertisement srcAdv = (StreamAdvertisement) adv;
-		LOG.debug("Got source advertisement of source {}", srcAdv.getAccessAO());
-
-		final AccessAO accessAO = srcAdv.getAccessAO();
-		final IDataDictionary dataDictionary = DataDictionaryService.get();
-		if (!dataDictionary.containsViewOrStream(accessAO.getSourcename(), SessionManagementService.getActiveSession())) {
-
-			final ILogicalOperator timestampAO = addTimestampAO(accessAO, null);
-			dataDictionary.addEntitySchema(accessAO.getSourcename(), accessAO.getOutputSchema(), SessionManagementService.getActiveSession());
-			dataDictionary.setStream(accessAO.getSourcename(), timestampAO, SessionManagementService.getActiveSession());
-
-			LOG.debug("Registered {} in local data dictionary", accessAO);
-		} else {
-			LOG.debug("Source {} already registered in data dictionary", accessAO);
+	public void advertisementAdded(IAdvertisementManager sender, Advertisement adv) {
+		if( adv instanceof StreamAdvertisement ) {
+			final StreamAdvertisement srcAdv = (StreamAdvertisement) adv;
+			LOG.debug("Got source advertisement of source {}", srcAdv.getAccessAO());
+	
+			final AccessAO accessAO = srcAdv.getAccessAO();
+			final IDataDictionary dataDictionary = DataDictionaryService.get();
+			if (!dataDictionary.containsViewOrStream(accessAO.getSourcename(), SessionManagementService.getActiveSession())) {
+	
+				final ILogicalOperator timestampAO = addTimestampAO(accessAO, null);
+				dataDictionary.addEntitySchema(accessAO.getSourcename(), accessAO.getOutputSchema(), SessionManagementService.getActiveSession());
+				dataDictionary.setStream(accessAO.getSourcename(), timestampAO, SessionManagementService.getActiveSession());
+	
+				LOG.debug("Registered {} in local data dictionary", accessAO);
+			} else {
+				LOG.debug("Source {} already registered in data dictionary", accessAO);
+			}
 		}
 	}
-
+	
 	@Override
-	public boolean isSelected(Advertisement advertisement) {
-		return advertisement instanceof StreamAdvertisement;
+	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
+		if( adv instanceof StreamAdvertisement ) {
+			final StreamAdvertisement srcAdv = (StreamAdvertisement) adv;
+			
+			DataDictionaryService.get().removeViewOrStream(srcAdv.getAccessAO().getSourcename(), SessionManagementService.getActiveSession());
+		}
 	}
 	
+
 	private static ILogicalOperator addTimestampAO(ILogicalOperator operator, String dateFormat) {
 		final TimestampAO timestampAO = new TimestampAO();
 		timestampAO.setDateFormat(dateFormat);
@@ -63,5 +70,4 @@ public class StreamAdvertisementReceiver implements IAdvertisementListener {
 		timestampAO.setName(timestampAO.getStandardName());
 		return timestampAO;
 	}
-	
 }

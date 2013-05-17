@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.p2p_new.sources;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Objects;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.Document;
@@ -50,25 +51,33 @@ public final class StreamAdvertisement extends Advertisement implements Serializ
 	public StreamAdvertisement clone() {
 		return new StreamAdvertisement(this);
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (obj == this) {
 			return true;
 		}
 		if (!(obj instanceof StreamAdvertisement)) {
 			return false;
 		}
-
-		final StreamAdvertisement other = (StreamAdvertisement) obj;
-		if (accessOperator.getSourcename() == null) {
-			if (other.accessOperator.getSourcename() != null) {
+		
+		StreamAdvertisement adv = (StreamAdvertisement) obj;
+		
+		if( adv.accessOperator == null ) {
+			if( accessOperator != null ) {
 				return false;
 			}
-		} else if (!accessOperator.getSourcename().equals(other.accessOperator.getSourcename())) {
+		} else if( accessOperator == null ) {
 			return false;
 		}
-		return true;
+		
+		return Objects.equals(adv.accessOperator.getSourcename(), accessOperator.getSourcename()) && 
+				Objects.equals(adv.id, id);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(accessOperator.getSourcename(), id);
 	}
 
 	public AccessAO getAccessAO() {
@@ -88,14 +97,6 @@ public final class StreamAdvertisement extends Advertisement implements Serializ
 	@Override
 	public String[] getIndexFields() {
 		return AccessAOCoverter.getIndexableFieldTags();
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((accessOperator.getSourcename() == null) ? 0 : accessOperator.getSourcename().hashCode());
-		return result;
 	}
 
 	public void setAccessAO(AccessAO accessOperator) {
