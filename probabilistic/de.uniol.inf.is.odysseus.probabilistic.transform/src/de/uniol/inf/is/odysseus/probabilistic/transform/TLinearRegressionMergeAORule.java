@@ -26,41 +26,76 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * Transformation rule for linear regression merge operator.
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 public class TLinearRegressionMergeAORule extends AbstractTransformationRule<LinearRegressionMergeAO> {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
+	@Override
+	public final int getPriority() {
+		return 1;
+	}
 
-    @Override
-    public int getPriority() {
-        return 1;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public final void execute(final LinearRegressionMergeAO operator, final TransformationConfiguration config) {
+		final IPhysicalOperator linearRegressionMergePO = new LinearRegressionMergePO<ITimeInterval>(operator.getInputSchema(), operator.determineDependentList(), operator.determineExplanatoryList(), operator.getRegressionCoefficientsPos());
+		this.defaultExecute(operator, linearRegressionMergePO, config, true, true);
+	}
 
-    @Override
-    public void execute(LinearRegressionMergeAO operator, TransformationConfiguration config) {
-        IPhysicalOperator linearRegressionMergePO = new LinearRegressionMergePO<ITimeInterval>(operator.getInputSchema(), operator.determineDependentList(), operator.determineExplanatoryList(), operator.getRegressionCoefficientsPos());
-        this.defaultExecute(operator, linearRegressionMergePO, config, true, true);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public final boolean isExecutable(final LinearRegressionMergeAO operator, final TransformationConfiguration config) {
+		if ((config.getDataTypes().contains(SchemaUtils.DATATYPE))) {
+			if (operator.isAllPhysicalInputSet()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    @Override
-    public boolean isExecutable(LinearRegressionMergeAO operator, TransformationConfiguration config) {
-        if ((config.getDataTypes().contains(SchemaUtils.DATATYPE))) {
-            if (operator.isAllPhysicalInputSet()) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
+	@Override
+	public final String getName() {
+		return "LinearRegressionMergeAO -> LinearRegressionMergePO";
+	}
 
-    @Override
-    public String getName() {
-        return "LinearRegressionMergeAO -> LinearRegressionMergePO";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
+	@Override
+	public final IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
 
-    @Override
-    public IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.TRANSFORMATION;
-    }
-
-    @Override
-    public Class<? super LinearRegressionMergeAO> getConditionClass() {
-        return LinearRegressionMergeAO.class;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+	 */
+	@Override
+	public final Class<? super LinearRegressionMergeAO> getConditionClass() {
+		return LinearRegressionMergeAO.class;
+	}
 }

@@ -73,7 +73,7 @@ public class Activator implements BundleActivator {
 	 * @param registry
 	 *            The aggregation function builder registry
 	 */
-	public final void bindAggregateFunctionBuilderRegistry(final IAggregateFunctionBuilderRegistry registry) {
+	protected final synchronized void bindAggregateFunctionBuilderRegistry(final IAggregateFunctionBuilderRegistry registry) {
 		Activator.aggregateFunctionBuilderRegistry = registry;
 	}
 
@@ -83,7 +83,7 @@ public class Activator implements BundleActivator {
 	 * @param registry
 	 *            The aggregation function builder registry
 	 */
-	public final void unbindAggregateFunctionBuilderRegistry(final IAggregateFunctionBuilderRegistry registry) {
+	protected final synchronized void unbindAggregateFunctionBuilderRegistry(final IAggregateFunctionBuilderRegistry registry) {
 		Activator.aggregateFunctionBuilderRegistry = null;
 	}
 }

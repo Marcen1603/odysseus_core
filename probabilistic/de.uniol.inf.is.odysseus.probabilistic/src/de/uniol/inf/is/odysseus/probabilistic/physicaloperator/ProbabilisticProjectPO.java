@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 
 /**
- * Probabilistic project operator.
+ * Implementation of a probabilistic Project operator.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>

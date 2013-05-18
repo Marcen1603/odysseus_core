@@ -43,9 +43,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TContinuousEquiJoinAOSetSARule
-		extends
-		AbstractTransformationRule<ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
+public class TContinuousEquiJoinAOSetSARule extends AbstractTransformationRule<ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
 
 	@Override
 	public int getPriority() {
@@ -53,42 +51,30 @@ public class TContinuousEquiJoinAOSetSARule
 	}
 
 	@Override
-	public void execute(ContinuousProbabilisticEquiJoinPO joinPO,
-			TransformationConfiguration transformConfig) {
-		RegressionTISweepArea[] areas = new RegressionTISweepArea[2];
+	public void execute(final ContinuousProbabilisticEquiJoinPO joinPO, final TransformationConfiguration transformConfig) {
+		final RegressionTISweepArea[] areas = new RegressionTISweepArea[2];
 
 		for (int port = 0; port < 2; port++) {
-			int otherPort = port ^ 1;
-			if (JoinTransformationHelper.checkPhysicalPath(joinPO
-					.getSubscribedToSource(port).getTarget())) {
-				Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+			final int otherPort = port ^ 1;
+			if (JoinTransformationHelper.checkPhysicalPath(joinPO.getSubscribedToSource(port).getTarget())) {
+				final Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
 
-				if (JoinTransformationHelper.checkPredicate(joinPO
-						.getPredicate(), neededAttrs, joinPO
-						.getSubscribedToSource(port).getSchema(), joinPO
-						.getSubscribedToSource(otherPort).getSchema())) {
+				if (JoinTransformationHelper.checkPredicate(joinPO.getPredicate(), neededAttrs, joinPO.getSubscribedToSource(port).getSchema(), joinPO.getSubscribedToSource(otherPort).getSchema())) {
 
-					SDFSchema schema = joinPO.getSubscribedToSource(port)
-							.getSchema();
-					List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
+					final SDFSchema schema = joinPO.getSubscribedToSource(port).getSchema();
+					final List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
 
-					for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
-						if (SchemaUtils
-								.isContinuousProbabilisticAttribute(pair
-										.getE2())) {
+					for (final Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
+						if (SchemaUtils.isContinuousProbabilisticAttribute(pair.getE2())) {
 							joinAttributes.add(pair.getE1());
 						}
 					}
-					int[] joinPos = SchemaUtils.getAttributePos(schema,
-							joinAttributes);
+					final int[] joinPos = SchemaUtils.getAttributePos(schema, joinAttributes);
 
-					List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(
-							schema.getAttributes());
+					final List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(schema.getAttributes());
 					viewAttributes.removeAll(joinAttributes);
-					int[] viewPos = SchemaUtils.getAttributePos(schema,
-							viewAttributes);
-					areas[port] = new RegressionTISweepArea(
-							joinPos, viewPos);
+					final int[] viewPos = SchemaUtils.getAttributePos(schema, viewAttributes);
+					areas[port] = new RegressionTISweepArea(joinPos, viewPos);
 					joinPO.setBetas(areas[port].getRegressionCoefficients(), port);
 				}
 			}
@@ -99,11 +85,8 @@ public class TContinuousEquiJoinAOSetSARule
 	}
 
 	@Override
-	public boolean isExecutable(ContinuousProbabilisticEquiJoinPO operator,
-			TransformationConfiguration transformConfig) {
-		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE))
-				&& transformConfig.getMetaTypes().contains(
-						IProbabilistic.class.getCanonicalName())) {
+	public boolean isExecutable(final ContinuousProbabilisticEquiJoinPO operator, final TransformationConfiguration transformConfig) {
+		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) && transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
 			if (operator.getAreas() == null) {
 				return true;
 			}

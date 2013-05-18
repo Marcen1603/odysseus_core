@@ -27,30 +27,40 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
+ * Transformation rule for linear regression operator.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
- *
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
  */
-public class TLinearRegressionAORule extends
-		AbstractTransformationRule<LinearRegressionAO> {
-
+public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRegressionAO> {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
 	@Override
-	public int getPriority() {
+	public final int getPriority() {
 		return 1;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public void execute(LinearRegressionAO operator,
-			TransformationConfiguration config) {
-		IPhysicalOperator linearRegressionPO = new LinearRegressionPO<ITimeInterval>(
-				operator.getInputSchema(), operator.determineDependentList(),
-				operator.determineExplanatoryList());
+	public final void execute(final LinearRegressionAO operator, final TransformationConfiguration config) {
+		final IPhysicalOperator linearRegressionPO = new LinearRegressionPO<ITimeInterval>(operator.determineDependentList(), operator.determineExplanatoryList());
 		this.defaultExecute(operator, linearRegressionPO, config, true, true);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public boolean isExecutable(LinearRegressionAO operator,
-			TransformationConfiguration config) {
+	public final boolean isExecutable(final LinearRegressionAO operator, final TransformationConfiguration config) {
 		if ((config.getDataTypes().contains(SchemaUtils.DATATYPE))) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
@@ -59,18 +69,33 @@ public class TLinearRegressionAORule extends
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
 	@Override
-	public String getName() {
+	public final String getName() {
 		return "LinearRegressionAO -> LinearRegressionPO";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
 	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
+	public final IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+	 */
 	@Override
-	public Class<? super LinearRegressionAO> getConditionClass() {
+	public final Class<? super LinearRegressionAO> getConditionClass() {
 		return LinearRegressionAO.class;
 	}
 }

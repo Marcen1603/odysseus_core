@@ -18,39 +18,49 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticProjectPO;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * Transformation rule for probabilistic Project operator.
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
 	@Override
-	public int getPriority() {
+	public final int getPriority() {
 		return 1;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public void execute(final ProjectAO projectAO,
-			final TransformationConfiguration transformConfig) {
-		IPhysicalOperator projectPO = new ProbabilisticProjectPO<IMetaAttribute>(
-				projectAO.determineRestrictList());
+	public final void execute(final ProjectAO projectAO, final TransformationConfiguration transformConfig) {
+		final IPhysicalOperator projectPO = new ProbabilisticProjectPO<IMetaAttribute>(projectAO.determineRestrictList());
 		this.defaultExecute(projectAO, projectPO, transformConfig, true, true);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public boolean isExecutable(final ProjectAO operator,
-			final TransformationConfiguration transformConfig) {
-		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE))
-				&& (isContinuous(operator))) {
+	public final boolean isExecutable(final ProjectAO operator, final TransformationConfiguration transformConfig) {
+		if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
 			}
@@ -58,35 +68,34 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
 	@Override
-	public String getName() {
+	public final String getName() {
 		return "ProjectAO -> ProbabilisticProjectPO";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
 	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
+	public final IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+	 */
 	@Override
-	public Class<? super ProjectAO> getConditionClass() {
+	public final Class<? super ProjectAO> getConditionClass() {
 		return ProjectAO.class;
 	}
 
-	private boolean isContinuous(final ProjectAO projectAO) {
-		final SDFSchema schema = projectAO.getInputSchema();
-
-		final int[] restrictList = projectAO.determineRestrictList();
-		boolean isContinuous = false;
-		for (final int index : restrictList) {
-			final SDFAttribute attribute = schema.getAttribute(index);
-			if (attribute.getDatatype() instanceof SDFProbabilisticDatatype) {
-				if (((SDFProbabilisticDatatype) attribute.getDatatype())
-						.isContinuous()) {
-					isContinuous = true;
-				}
-			}
-		}
-		return isContinuous;
-	}
 }

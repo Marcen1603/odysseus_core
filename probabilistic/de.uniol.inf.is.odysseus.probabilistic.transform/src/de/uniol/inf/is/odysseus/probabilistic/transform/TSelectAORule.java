@@ -35,69 +35,107 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * Transformation rule for probabilistic Select operator.
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
+	@Override
+	public final int getPriority() {
+		return 1;
+	}
 
-    @Override
-    public int getPriority() {
-        return 1;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
+		IPhysicalOperator selectPO;
+		if (this.isProbabilistic(selectAO)) {
+			final SDFProbabilisticExpression expression = new SDFProbabilisticExpression(((RelationalPredicate) selectAO.getPredicate()).getExpression());
+			final ProbabilisticPredicate predicate = new ProbabilisticPredicate(expression);
+			selectPO = new ProbabilisticSelectPO(predicate);
+			if (selectAO.getHeartbeatRate() > 0) {
+				((ProbabilisticSelectPO<?>) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));
+			}
+		} else {
+			selectPO = new SelectPO(selectAO.getPredicate());
+			if (selectAO.getHeartbeatRate() > 0) {
+				((SelectPO) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));
+			}
+		}
+		this.defaultExecute(selectAO, selectPO, transformConfig, true, true);
+	}
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    public void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
-        IPhysicalOperator selectPO;
-        if (this.isProbabilistic(selectAO)) {
-            SDFProbabilisticExpression expression = new SDFProbabilisticExpression(((RelationalPredicate) selectAO.getPredicate()).getExpression());
-            ProbabilisticPredicate predicate = new ProbabilisticPredicate(expression);
-            selectPO = new ProbabilisticSelectPO(predicate);
-            if (selectAO.getHeartbeatRate() > 0) {
-                ((ProbabilisticSelectPO<?>) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));
-            }
-        } else {
-            selectPO = new SelectPO(selectAO.getPredicate());
-            if (selectAO.getHeartbeatRate() > 0) {
-                ((SelectPO) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));
-            }
-        }
-        this.defaultExecute(selectAO, selectPO, transformConfig, true, true);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
+		if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
+			if (operator.isAllPhysicalInputSet()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    @Override
-    public boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
-        if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
-            if (operator.isAllPhysicalInputSet()) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
+	@Override
+	public final String getName() {
+		return "SelectAO -> ProbabilisticSelectPO";
+	}
 
-    @Override
-    public String getName() {
-        return "SelectAO -> ProbabilisticSelectPO";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
+	@Override
+	public final IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
 
-    @Override
-    public IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.TRANSFORMATION;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+	 */
+	@Override
+	public final Class<? super SelectAO> getConditionClass() {
+		return SelectAO.class;
+	}
 
-    @Override
-    public Class<? super SelectAO> getConditionClass() {
-        return SelectAO.class;
-    }
+	/**
+	 * Checks whether at least one attribute in the select predicate is a probabilistic attribute.
+	 * 
+	 * @param selectAO
+	 *            The select operator
+	 * @return <code>true</code> iff at least one attribute in the select predicate is a probabilistic attribute
+	 */
+	private boolean isProbabilistic(final SelectAO selectAO) {
+		final List<SDFAttribute> attributes = selectAO.getPredicate().getAttributes();
 
-    private boolean isProbabilistic(final SelectAO selectAO) {
-        final List<SDFAttribute> attributes = selectAO.getPredicate().getAttributes();
-
-        boolean isProbabilistic = false;
-        for (final SDFAttribute attribute : attributes) {
-            if (attribute.getDatatype() instanceof SDFProbabilisticDatatype) {
-                isProbabilistic = true;
-            }
-        }
-        return isProbabilistic;
-    }
+		boolean isProbabilistic = false;
+		for (final SDFAttribute attribute : attributes) {
+			if (attribute.getDatatype() instanceof SDFProbabilisticDatatype) {
+				isProbabilistic = true;
+			}
+		}
+		return isProbabilistic;
+	}
 }

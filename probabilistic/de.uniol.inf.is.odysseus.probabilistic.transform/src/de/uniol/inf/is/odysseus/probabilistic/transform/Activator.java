@@ -19,33 +19,42 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 public class Activator implements BundleActivator {
+	/** The bundle context. */
+	private static BundleContext context;
 
-    private static BundleContext context;
+	/**
+	 * Gets the bundle context.
+	 * 
+	 * @return The bundle context
+	 */
+	static BundleContext getContext() {
+		return Activator.context;
+	}
 
-    static BundleContext getContext() {
-        return Activator.context;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext )
+	 */
+	@Override
+	public final void start(final BundleContext bundleContext) throws Exception {
+		Activator.context = bundleContext;
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-     * )
-     */
-    @Override
-    public void start(final BundleContext bundleContext) throws Exception {
-        Activator.context = bundleContext;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
-    @Override
-    public void stop(final BundleContext bundleContext) throws Exception {
-        Activator.context = null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	@Override
+	public final void stop(final BundleContext bundleContext) throws Exception {
+		Activator.context = null;
+	}
 
 }

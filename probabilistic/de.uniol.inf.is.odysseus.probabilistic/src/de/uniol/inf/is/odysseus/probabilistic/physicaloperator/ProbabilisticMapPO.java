@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 
 /**
- * Probabilistic map operator.
+ * Implementation of a probabilistic Map operator.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>

@@ -41,8 +41,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class TContinuousEquiJoinAORule extends
-		AbstractTransformationRule<JoinAO> {
+public class TContinuousEquiJoinAORule extends AbstractTransformationRule<JoinAO> {
 	@Override
 	public int getPriority() {
 		return 1;
@@ -50,18 +49,15 @@ public class TContinuousEquiJoinAORule extends
 
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void execute(JoinAO joinAO,
-			TransformationConfiguration transformConfig) {
+	public void execute(final JoinAO joinAO, final TransformationConfiguration transformConfig) {
 
-		IPredicate<?> pred = joinAO.getPredicate();
+		final IPredicate<?> pred = joinAO.getPredicate();
 
-		ContinuousProbabilisticEquiJoinPO joinPO = new ContinuousProbabilisticEquiJoinPO();
-		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred
-				.clone());
+		final ContinuousProbabilisticEquiJoinPO joinPO = new ContinuousProbabilisticEquiJoinPO();
+		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred.clone());
 		boolean windowFound = false;
 		for (int port = 0; port < 2; port++) {
-			if (!JoinTransformationHelper.checkLogicalPath(joinAO
-					.getSubscribedToSource(port).getTarget())) {
+			if (!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())) {
 				windowFound = true;
 				break;
 			}
@@ -74,39 +70,30 @@ public class TContinuousEquiJoinAORule extends
 		}
 
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
-		((CombinedMergeFunction) joinPO.getMetadataMerge())
-				.add(new ProbabilisticMergeFunction());
+		((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new ProbabilisticMergeFunction());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
-		defaultExecute(joinAO, joinPO, transformConfig, true, true);
+		this.defaultExecute(joinAO, joinPO, transformConfig, true, true);
 
 	}
 
 	@Override
-	public boolean isExecutable(JoinAO operator,
-			TransformationConfiguration transformConfig) {
-		if (((operator.getPredicate() != null)
-				&& (operator.isAllPhysicalInputSet()) && !(operator instanceof LeftJoinAO))) {
-			if (!SchemaUtils
-					.containsContinuousProbabilisticAttributes(operator
-							.getPredicate().getAttributes())) {
+	public boolean isExecutable(final JoinAO operator, final TransformationConfiguration transformConfig) {
+		if (((operator.getPredicate() != null) && (operator.isAllPhysicalInputSet()) && !(operator instanceof LeftJoinAO))) {
+			if (!SchemaUtils.containsContinuousProbabilisticAttributes(operator.getPredicate().getAttributes())) {
 				return false;
 			}
-			if (!transformConfig.getMetaTypes().contains(
-					IProbabilistic.class.getCanonicalName())) {
+			if (!transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
 				return false;
 			}
 
-			String mepString = operator.getPredicate().toString();
-			SDFSchema leftInputSchema = operator.getInputSchema(0);
-			SDFSchema rightInputSchema = operator.getInputSchema(1);
+			final String mepString = operator.getPredicate().toString();
+			final SDFSchema leftInputSchema = operator.getInputSchema(0);
+			final SDFSchema rightInputSchema = operator.getInputSchema(1);
 
-			SDFSchema inputSchema = SDFSchema.union(leftInputSchema,
-					rightInputSchema);
-			IAttributeResolver attrRes = new DirectAttributeResolver(
-					inputSchema);
-			SDFExpression expr = new SDFExpression(null, mepString, attrRes,
-					MEP.getInstance());
+			final SDFSchema inputSchema = SDFSchema.union(leftInputSchema, rightInputSchema);
+			final IAttributeResolver attrRes = new DirectAttributeResolver(inputSchema);
+			final SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance());
 
 			if (SchemaUtils.isEquiExpression(expr.getMEPExpression())) {
 				return true;

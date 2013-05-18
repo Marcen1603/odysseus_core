@@ -12,7 +12,7 @@ public class TestProbabilisticTuple {
 
 
 	@Test
-	public void f() {
+	public void testRestrict() {
 		final NormalDistributionMixture mixture1 = new NormalDistributionMixture(
 				new double[] { 1.0, 2.0 }, new CovarianceMatrix(new double[] {
 						1.0, 0.0, 1.0 }));

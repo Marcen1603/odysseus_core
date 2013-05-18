@@ -27,28 +27,40 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
+ * Transformation rule for Expectation Maximization (EM) operator.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class TEMAORule extends AbstractTransformationRule<EMAO> {
-
-
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
 	@Override
-	public int getPriority() {
+	public final int getPriority() {
 		return 1;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public void execute(EMAO operator, TransformationConfiguration config) {
-		IPhysicalOperator emPO = new EMPO<ITimeInterval>(operator.determineAttributesList(), operator.getMixtures());
+	public final void execute(final EMAO operator, final TransformationConfiguration config) {
+		final IPhysicalOperator emPO = new EMPO<ITimeInterval>(operator.determineAttributesList(), operator.getMixtures());
 		this.defaultExecute(operator, emPO, config, true, true);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public boolean isExecutable(EMAO operator,
-			TransformationConfiguration config) {
+	public final boolean isExecutable(final EMAO operator, final TransformationConfiguration config) {
 		if ((config.getDataTypes().contains(SchemaUtils.DATATYPE))) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
@@ -57,18 +69,33 @@ public class TEMAORule extends AbstractTransformationRule<EMAO> {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
 	@Override
-	public String getName() {
+	public final String getName() {
 		return "EMAO -> EMPO";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
 	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
+	public final IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+	 */
 	@Override
-	public Class<? super EMAO> getConditionClass() {
+	public final Class<? super EMAO> getConditionClass() {
 		return EMAO.class;
 	}
 

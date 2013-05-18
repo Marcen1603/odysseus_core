@@ -33,35 +33,45 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * Transformation rule for probabilistic Map operator.
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class TMapAORule extends AbstractTransformationRule<MapAO> {
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
 	@Override
-	public int getPriority() {
+	public final int getPriority() {
 		return 1;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public void execute(final MapAO mapAO,
-			final TransformationConfiguration transformConfig) {
-		SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[mapAO
-				.getExpressions().size()];
+	public final void execute(final MapAO mapAO, final TransformationConfiguration transformConfig) {
+		final SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[mapAO.getExpressions().size()];
 		for (int i = 0; i < expressions.length; i++) {
-			expressions[i] = new SDFProbabilisticExpression(mapAO
-					.getExpressions().get(i));
+			expressions[i] = new SDFProbabilisticExpression(mapAO.getExpressions().get(i));
 		}
-		IPhysicalOperator mapPO = new ProbabilisticMapPO<IMetaAttribute>(
-				mapAO.getInputSchema(), expressions);
+		final IPhysicalOperator mapPO = new ProbabilisticMapPO<IMetaAttribute>(mapAO.getInputSchema(), expressions);
 
 		this.defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public boolean isExecutable(final MapAO operator,
-			final TransformationConfiguration transformConfig) {
-		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE))
-				&& (this.isProbabilistic(operator))) {
+	public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
+		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) && (this.isProbabilistic(operator))) {
 			if (operator.getPhysSubscriptionTo() != null) {
 				return true;
 			}
@@ -69,21 +79,43 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
 	@Override
-	public String getName() {
+	public final String getName() {
 		return "MapAO -> ProbabilisticMapPO";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
 	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
+	public final IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+	 */
 	@Override
-	public Class<? super MapAO> getConditionClass() {
+	public final Class<? super MapAO> getConditionClass() {
 		return MapAO.class;
 	}
 
+	/**
+	 * Checks whether at least one attribute in the expressions is a probabilistic attribute.
+	 * 
+	 * @param mapAO
+	 *            The map operator
+	 * @return <code>true</code> iff at least one attribute in the expressions is a probabilistic attribute
+	 */
 	private boolean isProbabilistic(final MapAO mapAO) {
 		boolean isProbabilistic = false;
 		for (final SDFExpression expression : mapAO.getExpressions()) {

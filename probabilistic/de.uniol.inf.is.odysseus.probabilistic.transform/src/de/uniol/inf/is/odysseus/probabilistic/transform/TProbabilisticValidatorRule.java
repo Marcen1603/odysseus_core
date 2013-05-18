@@ -26,36 +26,29 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TProbabilisticValidatorRule extends
-		AbstractTransformationRule<IHasMetadataMergeFunction<?>> {
+public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHasMetadataMergeFunction<?>> {
 
 	@Override
-	public int getPriority() {
+	public final int getPriority() {
 		return 1;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(IHasMetadataMergeFunction<?> operator,
-			TransformationConfiguration config) {
-		if (!((CombinedMergeFunction) operator.getMetadataMerge())
-				.providesMergeFunctionFor(IProbabilistic.class)) {
+	public final void execute(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
+		if (!((CombinedMergeFunction) operator.getMetadataMerge()).providesMergeFunctionFor(IProbabilistic.class)) {
 			// TODO: Make logger
-			System.err.println(this
-					+ " WARN: No Probabilistic merge function set for "
-					+ operator);
+			System.err.println(this + " WARN: No Probabilistic merge function set for " + operator);
 		}
 	}
 
 	@Override
-	public boolean isExecutable(IHasMetadataMergeFunction<?> operator,
-			TransformationConfiguration config) {
+	public final boolean isExecutable(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
 		if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
-			if (config.getMetaTypes().contains(
-					IProbabilistic.class.getCanonicalName())) {
+			if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
 				return true;
 			}
 		}
@@ -63,12 +56,12 @@ public class TProbabilisticValidatorRule extends
 	}
 
 	@Override
-	public String getName() {
+	public final String getName() {
 		return "Probabilistic Validation";
 	}
 
 	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
+	public final IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.VALIDATE;
 	}
 

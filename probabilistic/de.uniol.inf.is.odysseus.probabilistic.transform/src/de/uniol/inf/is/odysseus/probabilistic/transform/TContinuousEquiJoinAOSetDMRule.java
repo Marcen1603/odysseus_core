@@ -39,9 +39,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class TContinuousEquiJoinAOSetDMRule
-		extends
-		AbstractTransformationRule<ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
+public class TContinuousEquiJoinAOSetDMRule extends AbstractTransformationRule<ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
 
 	@Override
 	public int getPriority() {
@@ -49,62 +47,48 @@ public class TContinuousEquiJoinAOSetDMRule
 	}
 
 	@Override
-	public void execute(
-			ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> operator,
-			TransformationConfiguration config) {
+	public void execute(final ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> operator, final TransformationConfiguration config) {
 
-		int[][] joinAttributePos = new int[2][];
+		final int[][] joinAttributePos = new int[2][];
 
 		for (int port = 0; port < 2; port++) {
-			int otherPort = port ^ 1;
-			if (JoinTransformationHelper.checkPhysicalPath(operator
-					.getSubscribedToSource(port).getTarget())) {
-				Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+			final int otherPort = port ^ 1;
+			if (JoinTransformationHelper.checkPhysicalPath(operator.getSubscribedToSource(port).getTarget())) {
+				final Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
 
-				if (JoinTransformationHelper.checkPredicate(operator
-						.getPredicate(), neededAttrs, operator
-						.getSubscribedToSource(port).getSchema(), operator
-						.getSubscribedToSource(otherPort).getSchema())) {
+				if (JoinTransformationHelper.checkPredicate(operator.getPredicate(), neededAttrs, operator.getSubscribedToSource(port).getSchema(), operator.getSubscribedToSource(otherPort).getSchema())) {
 
-					SDFSchema schema = operator.getSubscribedToSource(port)
-							.getSchema();
-					List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
+					final SDFSchema schema = operator.getSubscribedToSource(port).getSchema();
+					final List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
 
-					for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
-						if (SchemaUtils
-								.isContinuousProbabilisticAttribute(pair
-										.getE2())) {
+					for (final Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
+						if (SchemaUtils.isContinuousProbabilisticAttribute(pair.getE2())) {
 							joinAttributes.add(pair.getE1());
 						}
 					}
-					joinAttributePos[port] = SchemaUtils.getAttributePos(
-							schema, joinAttributes);
+					joinAttributePos[port] = SchemaUtils.getAttributePos(schema, joinAttributes);
 
-					List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(
-							schema.getAttributes());
+					final List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(schema.getAttributes());
 					viewAttributes.removeAll(joinAttributes);
 					@SuppressWarnings("unused")
-					int[] viewPos = SchemaUtils.getAttributePos(schema,
-							viewAttributes);
+					final int[] viewPos = SchemaUtils.getAttributePos(schema, viewAttributes);
 				}
 			}
 		}
 
-//		ContinuousProbabilisticEquiJoinMergeFunction<ITimeIntervalProbabilistic> mergeFunction = new ContinuousProbabilisticEquiJoinMergeFunction<ITimeIntervalProbabilistic>(
-//				operator.getOutputSchema().size(), joinAttributePos);
-//
-//		for (int port = 0; port < 2; port++) {
-//			mergeFunction.setBetas(operator.getBetas(port), port);
-//			mergeFunction.setSigmas(operator.getSigmas(port), port);
-//		}
-//		operator.setDataMerge(mergeFunction);
-		update(operator);
+		// ContinuousProbabilisticEquiJoinMergeFunction<ITimeIntervalProbabilistic> mergeFunction = new ContinuousProbabilisticEquiJoinMergeFunction<ITimeIntervalProbabilistic>(
+		// operator.getOutputSchema().size(), joinAttributePos);
+		//
+		// for (int port = 0; port < 2; port++) {
+		// mergeFunction.setBetas(operator.getBetas(port), port);
+		// mergeFunction.setSigmas(operator.getSigmas(port), port);
+		// }
+		// operator.setDataMerge(mergeFunction);
+		this.update(operator);
 	}
 
 	@Override
-	public boolean isExecutable(
-			ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> operator,
-			TransformationConfiguration config) {
+	public boolean isExecutable(final ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> operator, final TransformationConfiguration config) {
 		if (config.getDataTypes().contains(SchemaUtils.DATATYPE)) {
 			if (operator.getDataMerge() == null) {
 				return true;
