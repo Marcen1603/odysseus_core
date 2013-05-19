@@ -146,7 +146,6 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 		
 		synchronized( knownAdvertisements ) {
 			knownAdvertisements = newAdvertisements;
-			System.out.println("Size = " + knownAdvertisements.size());
 		}
 	}
 
