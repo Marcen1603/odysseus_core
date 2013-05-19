@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -49,7 +50,7 @@ public class LinearRegressionAO extends UnaryLogicalOp {
         super();
     }
 
-    public LinearRegressionAO(LinearRegressionAO linearRegressionAO) {
+    public LinearRegressionAO(final LinearRegressionAO linearRegressionAO) {
         super(linearRegressionAO);
         this.dependentAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.dependentAttributes);
         this.explanatoryAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.explanatoryAttributes);
@@ -57,12 +58,12 @@ public class LinearRegressionAO extends UnaryLogicalOp {
     }
 
     @Parameter(type = ResolvedSDFAttributeParameter.class, name = "DEPENDENT", isList = true, optional = false)
-    public void setDependentAttributes(final List<SDFAttribute> dependentAttributes) {
+	public final void setDependentAttributes(final List<SDFAttribute> dependentAttributes) {
         this.dependentAttributes = dependentAttributes;
     }
 
     @GetParameter(name = "DEPENDENT")
-    public List<SDFAttribute> getDependentAttributes() {
+	public final List<SDFAttribute> getDependentAttributes() {
         if (this.dependentAttributes == null) {
             this.dependentAttributes = new ArrayList<SDFAttribute>();
         }
@@ -70,47 +71,34 @@ public class LinearRegressionAO extends UnaryLogicalOp {
     }
 
     @Parameter(type = ResolvedSDFAttributeParameter.class, name = "EXPLANATORY", isList = true, optional = false)
-    public void setExplanatoryAttributes(final List<SDFAttribute> explanatoryAttributes) {
+	public final void setExplanatoryAttributes(final List<SDFAttribute> explanatoryAttributes) {
         this.explanatoryAttributes = explanatoryAttributes;
     }
 
     @GetParameter(name = "EXPLANATORY")
-    public List<SDFAttribute> getExplanatoryAttributes() {
+	public final List<SDFAttribute> getExplanatoryAttributes() {
         if (this.explanatoryAttributes == null) {
             this.explanatoryAttributes = new ArrayList<SDFAttribute>();
         }
         return this.explanatoryAttributes;
     }
 
-    public int[] determineDependentList() {
-        return calcAttributeList(getInputSchema(), getDependentAttributes());
+    public final int[] determineDependentList() {
+        return SchemaUtils.getAttributePos(getInputSchema(), getDependentAttributes());
     }
 
-    public int[] determineExplanatoryList() {
-        return calcAttributeList(getInputSchema(), getExplanatoryAttributes());
+    public final int[] determineExplanatoryList() {
+        return SchemaUtils.getAttributePos(getInputSchema(), getExplanatoryAttributes());
     }
 
-    public static int[] calcAttributeList(SDFSchema in, List<SDFAttribute> attributes) {
-        int[] ret = new int[attributes.size()];
-        int i = 0;
-        for (SDFAttribute attr : attributes) {
-            if (!in.contains(attr)) {
-                throw new IllegalArgumentException("no such attribute: " + attr);
-            } else {
-                ret[i] = in.indexOf(attr);
-                i++;
-            }
-        }
-        return ret;
-    }
 
     @Override
-    public AbstractLogicalOperator clone() {
+	public final AbstractLogicalOperator clone() {
         return new LinearRegressionAO(this);
     }
 
     @Override
-    public void initialize() {
+	public final void initialize() {
         Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
         for (SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
             if (getExplanatoryAttributes().contains(inAttr)) {

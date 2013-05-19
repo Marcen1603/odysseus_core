@@ -22,21 +22,21 @@ import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ProbabilisticFactory extends AbstractMetadataUpdater<IProbabilistic, Tuple<? extends IProbabilistic>> {
+	// FIXME Why do I need the matrix in the attributes? (CK)
+	int[] covarianceMatrixPositions;
 
-    int[] covarianceMatrixPositions;
+	public ProbabilisticFactory(final int pos) {
+		this.covarianceMatrixPositions = new int[] { pos };
+	}
 
-    public ProbabilisticFactory(final int pos) {
-        this.covarianceMatrixPositions = new int[] { pos };
-    }
+	public ProbabilisticFactory(final int[] pos) {
+		this.covarianceMatrixPositions = pos;
+	}
 
-    public ProbabilisticFactory(final int[] pos) {
-        this.covarianceMatrixPositions = pos;
-    }
-
-    @Override
-    public void updateMetadata(final Tuple<? extends IProbabilistic> inElem) {
-        final IProbabilistic metadata = inElem.getMetadata();
-        metadata.setExistence(1.0);
-    }
+	@Override
+	public void updateMetadata(final Tuple<? extends IProbabilistic> inElem) {
+		final IProbabilistic metadata = inElem.getMetadata();
+		metadata.setExistence(1.0);
+	}
 
 }

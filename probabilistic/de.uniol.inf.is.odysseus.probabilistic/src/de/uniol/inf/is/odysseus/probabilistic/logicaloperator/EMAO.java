@@ -29,9 +29,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
+ * Logical operator for Expectation Maximization (EM) classifier.
+ * 
+ * @see de.uniol.inf.is.odysseus.probabilistic.physicaloperator.EMPO for an implementation
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
@@ -39,80 +43,115 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "EM")
 public class EMAO extends UnaryLogicalOp {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = -4183569304131228484L;
-    private List<SDFAttribute> attributes;
-    private int mixtures;
+	private static final long serialVersionUID = -4183569304131228484L;
+	/** The attributes to classify. */
+	private List<SDFAttribute> attributes;
+	/** The number of Gaussian mixtures. */
+	private int mixtures;
 
-    public EMAO() {
-        super();
-    }
+	/**
+	 * Crates a new EM logical operator.
+	 */
+	public EMAO() {
+		super();
+	}
 
-    public EMAO(EMAO emAO) {
-        super(emAO);
-        this.attributes = new ArrayList<SDFAttribute>(emAO.attributes);
-        this.mixtures = emAO.mixtures;
-    }
+	/**
+	 * Clone Constructor.
+	 * 
+	 * @param emAO
+	 *            The copy
+	 */
+	public EMAO(final EMAO emAO) {
+		super(emAO);
+		this.attributes = new ArrayList<SDFAttribute>(emAO.attributes);
+		this.mixtures = emAO.mixtures;
+	}
 
-    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false)
-    public void setAttributes(final List<SDFAttribute> attributes) {
-        this.attributes = attributes;
-    }
+	/**
+	 * Sets the attributes to classify.
+	 * 
+	 * @param attributes
+	 *            The list of attributes
+	 */
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false)
+	public final void setAttributes(final List<SDFAttribute> attributes) {
+		this.attributes = attributes;
+	}
 
-    @GetParameter(name = "ATTRIBUTES")
-    public List<SDFAttribute> getAttributes() {
-        if (this.attributes == null) {
-            this.attributes = new ArrayList<SDFAttribute>();
-        }
-        return this.attributes;
-    }
+	/**
+	 * Gets the attributes to classify.
+	 * 
+	 * @return The list of attributes
+	 */
+	@GetParameter(name = "ATTRIBUTES")
+	public final List<SDFAttribute> getAttributes() {
+		if (this.attributes == null) {
+			this.attributes = new ArrayList<SDFAttribute>();
+		}
+		return this.attributes;
+	}
 
-    @Parameter(type = IntegerParameter.class, name = "MIXTURES", optional = false)
-    public void setMixtures(final int mixtures) {
-        this.mixtures = mixtures;
-    }
+	/**
+	 * Sets the number of Gaussian mixtures.
+	 * 
+	 * @param mixtures
+	 *            The number of Gaussian mixtures.
+	 */
+	@Parameter(type = IntegerParameter.class, name = "MIXTURES", optional = false)
+	public final void setMixtures(final int mixtures) {
+		this.mixtures = mixtures;
+	}
 
-    @GetParameter(name = "MIXTURES")
-    public int getMixtures() {
-        return this.mixtures;
-    }
+	/**
+	 * Gets the number of Gaussian mixtures.
+	 * 
+	 * @return The number of Gaussian mixtures.
+	 */
+	@GetParameter(name = "MIXTURES")
+	public final int getMixtures() {
+		return this.mixtures;
+	}
 
-    public int[] determineAttributesList() {
-        return calcAttributeList(getInputSchema(), getAttributes());
-    }
+	/**
+	 * Gets the positions of the attributes.
+	 * 
+	 * @return The positions of the attributes
+	 */
+	public final int[] determineAttributesList() {
+		return SchemaUtils.getAttributePos(getInputSchema(), getAttributes());
+	}
 
-    public static int[] calcAttributeList(SDFSchema in, List<SDFAttribute> attributes) {
-        int[] ret = new int[attributes.size()];
-        int i = 0;
-        for (SDFAttribute attr : attributes) {
-            if (!in.contains(attr)) {
-                throw new IllegalArgumentException("no such attribute: " + attr);
-            } else {
-                ret[i] = in.indexOf(attr);
-                i++;
-            }
-        }
-        return ret;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#clone()
+	 */
+	@Override
+	public final AbstractLogicalOperator clone() {
+		return new EMAO(this);
+	}
 
-    @Override
-    public AbstractLogicalOperator clone() {
-        return new EMAO(this);
-    }
-    @Override
-    public void initialize() {
-        Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-        for (SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
-            if (getAttributes().contains(inAttr)) {
-                attributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
-            } else {
-                attributes.add(inAttr);
-            }
-        }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#initialize()
+	 */
+	@Override
+	public final void initialize() {
+		Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+		for (SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
+			if (getAttributes().contains(inAttr)) {
+				outputAttributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
+			} else {
+				outputAttributes.add(inAttr);
+			}
+		}
 
-        SDFSchema outputSchema = new SDFSchema(getInputSchema().getURI(), attributes);
-        this.setOutputSchema(outputSchema);
-    }
+		SDFSchema outputSchema = new SDFSchema(getInputSchema().getURI(), outputAttributes);
+		this.setOutputSchema(outputSchema);
+	}
 }

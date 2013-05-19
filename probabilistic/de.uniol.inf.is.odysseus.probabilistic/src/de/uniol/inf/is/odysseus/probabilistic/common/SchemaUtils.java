@@ -202,13 +202,18 @@ public final class SchemaUtils {
 	 *            The schema
 	 * @param attributes
 	 *            The list of attributes
-	 * @return An array with the idexes of the attributes in the schema
+	 * @return An array with the idnexes of the attributes in the schema
 	 */
 	public static int[] getAttributePos(final SDFSchema schema, final List<SDFAttribute> attributes) {
 		int[] pos = new int[attributes.size()];
-		for (int i = 0; i < attributes.size(); i++) {
-			SDFAttribute attribute = attributes.get(i);
-			pos[i] = schema.indexOf(attribute);
+		int i = 0;
+		for (SDFAttribute attribute : attributes) {
+			if (!schema.contains(attribute)) {
+				throw new IllegalArgumentException("No such attribute " + attribute + " in schema " + schema);
+			} else {
+				pos[i] = schema.indexOf(attribute);
+				i++;
+			}
 		}
 		return pos;
 	}

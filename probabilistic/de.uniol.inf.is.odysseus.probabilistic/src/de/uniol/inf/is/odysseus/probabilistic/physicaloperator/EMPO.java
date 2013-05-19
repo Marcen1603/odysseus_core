@@ -16,17 +16,11 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
@@ -34,159 +28,105 @@ import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
 
 /**
+ * Physical operator for Expectation Maximization (EM) classifier.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  * @param <T>
  */
 public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
-    private DefaultTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> area;
-    private int[] attributes;
+	/** The sweep area to hold the data. */
+	private DefaultTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> area;
+	/** The attribute positions. */
+	private int[] attributes;
 
-    public EMPO(int[] attributes, int mixtures) {
-        this.attributes = attributes;
-        area = new BatchEMTISweepArea(attributes, mixtures);
-    }
+	/**
+	 * Creates a new EM operator.
+	 * 
+	 * @param attributes
+	 *            The attribute positions
+	 * @param mixtures
+	 *            The number of mixtures
+	 */
+	public EMPO(final int[] attributes, final int mixtures) {
+		this.attributes = attributes;
+		area = new BatchEMTISweepArea(attributes, mixtures);
+	}
 
-    public EMPO(EMPO<T> emPO) {
-        super(emPO);
-        this.attributes = emPO.attributes.clone();
-        this.area = emPO.area.clone();
-    }
+	/**
+	 * Clone constructor.
+	 * 
+	 * @param emPO
+	 *            The copy
+	 */
+	public EMPO(final EMPO<T> emPO) {
+		super(emPO);
+		this.attributes = emPO.attributes.clone();
+		this.area = emPO.area.clone();
+	}
 
-    @Override
-    public OutputMode getOutputMode() {
-        return OutputMode.NEW_ELEMENT;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#getOutputMode()
+	 */
+	@Override
+	public final OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
+	}
 
-    @Override
-    protected void process_next(ProbabilisticTuple<T> object, int port) {
-        NormalDistributionMixture[] distributions = object.getDistributions();
-        ProbabilisticTuple<T> outputVal = object.clone();
-        synchronized (this.area) {
-            area.purgeElements(object, Order.LeftRight);
-        }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+	 */
+	@Override
+	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
+		NormalDistributionMixture[] distributions = object.getDistributions();
+		ProbabilisticTuple<T> outputVal = object.clone();
+		// Purge old elements out of the sweep area.
+		synchronized (this.area) {
+			area.purgeElements(object, Order.LeftRight);
+		}
+		// Insert the new element into the sweep area.
+		// Expectation-step and Maximization-step will be done during insert.
+		synchronized (area) {
+			area.insert(object);
+		}
 
-        synchronized (area) {
-            area.insert(object);
-        }
+		// Construct the multivariate distribution
+		Map<NormalDistribution, Double> components = new HashMap<NormalDistribution, Double>();
+		BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
+		for (int i = 0; i < emArea.getMixtures(); i++) {
+			NormalDistribution distribution = new NormalDistribution(emArea.getMean(i).getColumn(0), CovarianceMatrixUtils.fromMatrix(emArea.getCovarianceMatrix(i)));
+			components.put(distribution, emArea.getWeight(i));
+		}
+		NormalDistributionMixture mixture = new NormalDistributionMixture(components);
+		mixture.setAttributes(attributes);
+		NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
 
-        Map<NormalDistribution, Double> components = new HashMap<NormalDistribution, Double>();
-        BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
-        for (int i = 0; i < emArea.getMixtures(); i++) {
-            NormalDistribution distribution = new NormalDistribution(emArea.getMean(i).getColumn(0), CovarianceMatrixUtils.fromMatrix(emArea.getCovarianceMatrix(i)));
-            components.put(distribution, emArea.getWeight(i));
-        }
-        NormalDistributionMixture mixture = new NormalDistributionMixture(components);
-        mixture.setAttributes(attributes);
-        NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
+		for (int a = 0; a < this.attributes.length; a++) {
+			outputVal.setAttribute(this.attributes[a], new ProbabilisticContinuousDouble(distributions.length));
+		}
+		// Copy the old distribution to the new tuple
+		System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
+		// And append the new distribution to the end of the array
+		outputValDistributions[distributions.length] = mixture;
+		outputVal.setDistributions(outputValDistributions);
+		// KTHXBYE
+		this.transfer(outputVal);
+	}
 
-        for (int a = 0; a < this.attributes.length; a++) {
-            outputVal.setAttribute(this.attributes[a], new ProbabilisticContinuousDouble(distributions.length));
-        }
-        System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
-        outputValDistributions[distributions.length] = mixture;
-        outputVal.setDistributions(outputValDistributions);
-        System.out.println(outputVal);
-        this.transfer(outputVal);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone()
+	 */
+	@Override
+	public final AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
+		return new EMPO<T>(this);
+	}
 
-    @Override
-    public AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
-        return new EMPO<T>(this);
-    }
-
-    /**
-     * @param args
-     */
-    @SuppressWarnings("unused")
-    public static void main(String[] args) {
-        Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
-        attr.add(new SDFAttribute("", "a", SDFDatatype.DOUBLE));
-        attr.add(new SDFAttribute("", "b", SDFDatatype.DOUBLE));
-        attr.add(new SDFAttribute("", "c", SDFDatatype.DOUBLE));
-        attr.add(new SDFAttribute("", "d", SDFDatatype.DOUBLE));
-
-        SDFSchema schema = new SDFSchema("", attr);
-        Object[] attributes1 = new Object[] { 1.0, 1.0, 6.0, 11.0 };
-        Object[] attributes2 = new Object[] { 2.0, 2.0, 5.0, 12.0 };
-        Object[] attributes3 = new Object[] { 3.0, 3.0, 7.0, 13.0 };
-        Object[] attributes4 = new Object[] { 4.0, 4.0, 8.0, 14.0 };
-        Object[] attributes5 = new Object[] { 5.0, 5.0, 9.0, 15.0 };
-        Object[] attributes6 = new Object[] { 6.0, 6.0, 10.0, 16.0 };
-
-        ProbabilisticTuple<ITimeInterval> tuple1 = new ProbabilisticTuple<>(attributes1, true);
-        tuple1.setMetadata(new TimeIntervalProbabilistic());
-        tuple1.getMetadata().setStart(new PointInTime(1));
-        tuple1.getMetadata().setEnd(new PointInTime(110));
-        
-        ProbabilisticTuple<ITimeInterval> tuple2 = new ProbabilisticTuple<>(attributes2, true);
-        tuple2.setMetadata(new TimeIntervalProbabilistic());
-        tuple2.getMetadata().setStart(new PointInTime(2));
-        tuple2.getMetadata().setEnd(new PointInTime(120));
-
-        ProbabilisticTuple<ITimeInterval> tuple3 = new ProbabilisticTuple<>(attributes3, true);
-        tuple3.setMetadata(new TimeIntervalProbabilistic());
-        tuple3.getMetadata().setStart(new PointInTime(3));
-        tuple3.getMetadata().setEnd(new PointInTime(130));
-
-        ProbabilisticTuple<ITimeInterval> tuple4 = new ProbabilisticTuple<>(attributes4, true);
-        tuple4.setMetadata(new TimeIntervalProbabilistic());
-        tuple4.getMetadata().setStart(new PointInTime(4));
-        tuple4.getMetadata().setEnd(new PointInTime(140));
-
-        ProbabilisticTuple<ITimeInterval> tuple5 = new ProbabilisticTuple<>(attributes5, true);
-        tuple5.setMetadata(new TimeIntervalProbabilistic());
-        tuple5.getMetadata().setStart(new PointInTime(5));
-        tuple5.getMetadata().setEnd(new PointInTime(150));
-
-        ProbabilisticTuple<ITimeInterval> tuple6 = new ProbabilisticTuple<>(attributes6, true);
-        tuple6.setMetadata(new TimeIntervalProbabilistic());
-        tuple6.getMetadata().setStart(new PointInTime(6));
-        tuple6.getMetadata().setEnd(new PointInTime(160));
-
-        EMPO<ITimeInterval> em = new EMPO<ITimeInterval>(new int[] { 0, 1, 3 }, 3);
-        for (int i = 0; i < 100; i++) {
-            ProbabilisticTuple<ITimeInterval> tmpTuple1 = tuple1.clone();
-            tmpTuple1.getMetadata().setEnd(tuple1.getMetadata().getEnd().plus(6));
-            tmpTuple1.getMetadata().setStart(tuple1.getMetadata().getStart().plus(7));
-            tuple1 = tmpTuple1;
-
-            ProbabilisticTuple<ITimeInterval> tmpTuple2 = tuple2.clone();
-            tmpTuple2.getMetadata().setEnd(tuple2.getMetadata().getEnd().plus(6));
-            tmpTuple2.getMetadata().setStart(tuple2.getMetadata().getStart().plus(7));
-            tuple2 = tmpTuple2;
-
-            ProbabilisticTuple<ITimeInterval> tmpTuple3 = tuple3.clone();
-            tmpTuple3.getMetadata().setEnd(tuple3.getMetadata().getEnd().plus(6));
-            tmpTuple3.getMetadata().setStart(tuple3.getMetadata().getStart().plus(7));
-            tuple3 = tmpTuple3;
-
-            ProbabilisticTuple<ITimeInterval> tmpTuple4 = tuple4.clone();
-            tmpTuple4.getMetadata().setEnd(tuple4.getMetadata().getEnd().plus(6));
-            tmpTuple4.getMetadata().setStart(tuple4.getMetadata().getStart().plus(7));
-            tuple4 = tmpTuple4;
-
-            ProbabilisticTuple<ITimeInterval> tmpTuple5 = tuple5.clone();
-            tmpTuple5.getMetadata().setEnd(tuple5.getMetadata().getEnd().plus(6));
-            tmpTuple5.getMetadata().setStart(tuple5.getMetadata().getStart().plus(7));
-            tuple5 = tmpTuple5;
-
-            ProbabilisticTuple<ITimeInterval> tmpTuple6 = tuple6.clone();
-            tmpTuple6.getMetadata().setEnd(tuple6.getMetadata().getEnd().plus(6));
-            tmpTuple6.getMetadata().setStart(tuple6.getMetadata().getStart().plus(7));
-            tuple6 = tmpTuple6;
-
-            em.process_next(tmpTuple1.clone(), 0);
-            em.process_next(tmpTuple2.clone(), 0);
-            em.process_next(tmpTuple3.clone(), 0);
-            em.process_next(tmpTuple4.clone(), 0);
-            em.process_next(tmpTuple5.clone(), 0);
-            em.process_next(tmpTuple6.clone(), 0);
-
-        }
-    }
 }
