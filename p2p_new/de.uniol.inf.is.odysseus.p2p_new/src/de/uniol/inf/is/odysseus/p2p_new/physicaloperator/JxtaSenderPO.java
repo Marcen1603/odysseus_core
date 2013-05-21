@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -44,8 +43,6 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private IJxtaServerConnection connection;
 	private NullAwareTupleDataHandler dataHandler;
 	
-	private boolean localControlAllowed = false;
-
 	public JxtaSenderPO(JxtaSenderAO ao) {
 		pipeID = convertToPipeID(ao.getPipeID());
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
@@ -111,13 +108,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	
 					if( connectionsOpenCalled.size() == 1 ) {
 						final int queryID = determineQueryID(getOwner());
-						
-						try {
-							localControlAllowed = true;
-							ServerExecutorService.get().startQuery(queryID, SessionManagementService.getActiveSession());
-						} finally {
-							localControlAllowed = false;
-						}
+						ServerExecutorService.get().startQuery(queryID, SessionManagementService.getActiveSession());
 					}
 				}
 
@@ -128,12 +119,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 					connectionsOpenCalled.remove(sender);
 					if( connectionsOpenCalled.isEmpty() ) {
 						final int queryID = determineQueryID(getOwner());
-						try {
-							localControlAllowed = true;
-							ServerExecutorService.get().stopQuery(queryID, SessionManagementService.getActiveSession());
-						} finally {
-							localControlAllowed = false;
-						}
+						ServerExecutorService.get().stopQuery(queryID, SessionManagementService.getActiveSession());
 					}
 				}
 				
@@ -142,28 +128,6 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 			}
 		}
 	}
-
-	
-	// overwritten to exclude that the sender is opened locally (e.g. by executor)
-	@Override
-	public void open() throws OpenFailedException {
-		if( localControlAllowed ) {
-			super.open();
-		} else {
-			LOG.warn("Opening " + getClass() + " locally not allowed.");
-		}
-	}
-	
-	// overwritten to exclude that the sender is opened locally (e.g. by executor)
-	@Override
-	public void close() {
-		if( localControlAllowed ) {
-			super.close();
-		} else {
-			LOG.warn("Closing " + getClass() + " locally not allowed.");
-		}
-	}
-
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
