@@ -8,7 +8,7 @@ Bundle-ClassPath: jxse-2.7.jar,
  h2-1.2.127.jar,
  javax.servlet.jar,
  org.mortbay.jetty.jar,
- netty-3.1.5.GA.jar
+ netty-3.2.7.jar
 Export-Package: net.jxse,
  net.jxse.OSGi,
  net.jxse.OSGi.Services,
