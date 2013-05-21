@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionOld;
 import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.ServerJxtaConnection;
 
+@Deprecated
 public class JxtaTransportHandler extends AbstractTransportHandler implements IJxtaConnectionListener {
 
 	public static final String NAME = "JXTA";
