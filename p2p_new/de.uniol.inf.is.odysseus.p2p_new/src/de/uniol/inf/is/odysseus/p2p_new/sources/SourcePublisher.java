@@ -15,14 +15,17 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
+import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
 public class SourcePublisher {
 
@@ -60,7 +63,12 @@ public class SourcePublisher {
 			view.subscribeSink(jxtaSender, 0, 0, view.getOutputSchema());
 			
 			IServerExecutor executor = ServerExecutorService.get();
-			executor.addQuery(jxtaSender, caller, queryBuildConfigurationName);
+			Integer queryID = executor.addQuery(jxtaSender, caller, queryBuildConfigurationName);
+			IPhysicalQuery physicalQuery = executor.getExecutionPlan().getQueryById(queryID);
+			ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
+			logicalQuery.setName(viewName);
+			logicalQuery.setParserId("P2P");
+			logicalQuery.setUser(SessionManagementService.getActiveSession());
 			
 			ViewAdvertisement viewAdvertisement = (ViewAdvertisement)AdvertisementFactory.newAdvertisement(ViewAdvertisement.getAdvertisementType());
 			viewAdvertisement.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
