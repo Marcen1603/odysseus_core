@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
@@ -40,7 +41,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
 // * @author Jonas Jacobi
 // */
 public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
-		extends AbstractPipe<T, T> {
+		extends AbstractPipe<T, T> implements IStatefulOperator {
 	//
 	private static final int LEFT = 0;
 	//
