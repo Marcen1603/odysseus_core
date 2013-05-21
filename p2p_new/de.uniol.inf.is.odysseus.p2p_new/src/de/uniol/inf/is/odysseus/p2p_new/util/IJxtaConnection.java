@@ -9,5 +9,6 @@ public interface IJxtaConnection {
 	
 	void connect() throws IOException;
 	void send(byte[] data) throws IOException;
+	boolean isConnected();
 	void disconnect();
 }

@@ -21,6 +21,7 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
 	
 	private final List<IJxtaConnectionListener> listeners = Lists.newArrayList();
 	private final JxtaBiDiPipe pipe;
+	private boolean isDisconnected;
 	
 	JxtaBiDiConnection( JxtaBiDiPipe pipe ) {
 		Preconditions.checkNotNull(pipe, "Pipe for jxta bidi connection must not be null!");
@@ -51,10 +52,11 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
 			pipe.setMessageListener(null);
 			pipe.close();
 		} catch (IOException e) {
-			LOG.error("Could not close JxtaBiDiPipe", e);
+			LOG.error("Co uld not close JxtaBiDiPipe", e);
+		} finally {
+			isDisconnected = true;
+			fireDisconnectEvent();
 		}
-		
-		fireDisconnectEvent();
 	}
 	
 
@@ -103,5 +105,10 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
 	@Override
 	public void connect() throws IOException {
 		// do nothing
+	}
+
+	@Override
+	public boolean isConnected() {
+		return !isDisconnected;
 	}
 }

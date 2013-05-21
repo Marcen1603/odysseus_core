@@ -42,6 +42,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
 	private ByteBuffer messageBuffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
+	private boolean isDone;
 	
 	private NullAwareTupleDataHandler dataHandler;
 	private final PipeID pipeID;
@@ -98,7 +99,12 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 
 	@Override
 	public boolean isDone() {
-		return false;
+		return isDone;
+	}
+	
+	@Override
+	protected void process_done() {
+		isDone = true;
 	}
 	
 	@Override
