@@ -76,7 +76,7 @@ public final class AccessAOCoverter {
 		}
 
 		appendElement(doc, ID_TAG, id.toString());
-		appendElement(doc, SOURCE_NAME_TAG, accessOperator.getSourcename());
+		appendElement(doc, SOURCE_NAME_TAG, withoutUsername(accessOperator.getSourcename()));
 		final Element<?> inputSchemaElement = appendElement(doc, INPUT_SCHEMA_TAG);
 		if (accessOperator.getInputSchema() != null && !accessOperator.getInputSchema().isEmpty()) {
 			for (final String entry : accessOperator.getInputSchema()) {
@@ -137,6 +137,11 @@ public final class AccessAOCoverter {
 		final Element createElement = appendTo.createElement(tag, value);
 		appendTo.appendChild(createElement);
 		return createElement;
+	}
+
+	private static String withoutUsername(String sourcename) {
+		final int pos = sourcename.indexOf(".");
+		return pos != -1 ? sourcename.substring(pos+1) : sourcename;
 	}
 
 	private static void checkType(TextElement<?> root) {
