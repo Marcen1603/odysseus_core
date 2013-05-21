@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.script.keyword.ExecuteQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LoginUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LogoutUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.ParserPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.PlanGenerationMethodPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SchedulerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StartAllClosedQueriesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StartSchedulerPreParserKeyword;
@@ -62,6 +63,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(DistributionTypePreParserKeyword.KEYWORD, DistributionTypePreParserKeyword.class);
 		keywords.put(CreateStoredProcedureKeyword.STORED_PROCEDURE, CreateStoredProcedureKeyword.class);
 		keywords.put(DropStoredProcedure.DROPPROCEDURE, DropStoredProcedure.class);
+		keywords.put(PlanGenerationMethodPreParserKeyword.PLANGENERATIONMETHOD, PlanGenerationMethodPreParserKeyword.class);
 		return keywords;
 	}
 
