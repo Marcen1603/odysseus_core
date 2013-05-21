@@ -43,6 +43,7 @@ public class PeerManager implements IPeerManager {
 			@Override
 			public void doJob() {
 				try {
+					P2PNewPlugIn.getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, null);
 					final Enumeration<Advertisement> advertisements = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
 					processPeerAdvertisements(advertisements);
 				} catch (final IOException ex) {
