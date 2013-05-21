@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.p2p_new.util;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.List;
-
-import net.jxta.protocol.PipeAdvertisement;
-import net.jxta.socket.JxtaServerSocket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.jxta.protocol.PipeAdvertisement;
+import net.jxta.util.JxtaBiDiPipe;
+import net.jxta.util.JxtaServerPipe;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -24,8 +24,7 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 	private final List<IJxtaConnection> activeConnections = Lists.newArrayList();
 	private final PipeAdvertisement pipeAdvertisement;
 	
-	private JxtaServerSocket serverSocket;
-	
+	private JxtaServerPipe serverPipe;
 	private RepeatingJobThread accepterThread;
 	
 	public JxtaBiDiServerConnection( PipeAdvertisement pipeAdvertisement ) {
@@ -54,18 +53,16 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 	public void start() throws IOException {
 		Preconditions.checkState(accepterThread == null, "JxtaServerConnection is already running!");
 				
-		serverSocket = new JxtaServerSocket(P2PNewPlugIn.getOwnPeerGroup(), pipeAdvertisement);
-		serverSocket.setSoTimeout(0);
+		serverPipe = new JxtaServerPipe(P2PNewPlugIn.getOwnPeerGroup(), getPipeAdvertisement());
+		serverPipe.setPipeTimeout(0);
 
 		accepterThread = new RepeatingJobThread() {
 			@Override
 			public void doJob() {
 				try {
-					Socket socket = serverSocket.accept();
-					socket.setSoTimeout(0);
+					JxtaBiDiPipe pipeToClient = serverPipe.accept();
 					
-					JxtaBiDiConnection connection = new JxtaBiDiConnection(socket);
-					connection.connect();
+					JxtaBiDiConnection connection = new JxtaBiDiConnection(pipeToClient);
 					connection.addListener(JxtaBiDiServerConnection.this);
 					
 					activeConnections.add(connection);
@@ -89,12 +86,6 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 		
 		for( IJxtaConnection connection : activeConnections.toArray(new IJxtaConnection[0])) {
 			connection.disconnect();
-		}
-		
-		try {
-			serverSocket.close();
-		} catch (IOException e) {
-			LOG.error("Could not close server socket", e);
 		}
 	}
 
@@ -122,11 +113,6 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 	public void onDisconnect(IJxtaConnection sender) {
 		activeConnections.remove(sender);
 		fireConnectionRemoveEvent(sender);
-	}
-
-	@Override
-	public void onConnect(IJxtaConnection sender) {
-		// do nothing here
 	}
 	
 	protected final void fireConnectionAddEvent(IJxtaConnection connection) {

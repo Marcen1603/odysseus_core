@@ -138,11 +138,6 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	public void onDisconnect(IJxtaConnection sender) {
 		LOG.debug("Disconnect");
 	}
-
-	@Override
-	public void onConnect(IJxtaConnection sender) {
-		// do nothing here
-	}
 	
 	@Override
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {

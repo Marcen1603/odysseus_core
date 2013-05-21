@@ -98,7 +98,7 @@ public class PeerManager implements IPeerManager {
 		if (getOwnPeerID().equals(peerID)) {
 			return Optional.of(P2PNewPlugIn.getOwnPeerName());
 		}
-		synchronized( knownPeerIDs) {
+		synchronized (knownPeerIDs) {
 			return Optional.fromNullable(knownPeerIDs.get(peerID));
 		}
 	}

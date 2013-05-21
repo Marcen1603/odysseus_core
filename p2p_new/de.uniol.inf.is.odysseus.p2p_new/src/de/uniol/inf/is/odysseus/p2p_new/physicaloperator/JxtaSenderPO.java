@@ -91,11 +91,6 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		LOG.debug("Disconnected");
 	}
 	
-
-	@Override
-	public void onConnect(IJxtaConnection sender) {
-		LOG.debug("Connected");
-	}
 	// called by Jxta
 	@Override
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {

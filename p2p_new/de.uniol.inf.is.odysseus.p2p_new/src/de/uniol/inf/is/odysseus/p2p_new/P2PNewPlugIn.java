@@ -14,7 +14,6 @@ import net.jxta.peer.PeerID;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.peergroup.PeerGroupID;
 import net.jxta.pipe.PipeService;
-import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -38,7 +37,7 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static final String PEER_NAME_SYS_PROPERTY = "peer.name";
 	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
 	private static final String JXTA_LOGGER_NAME = "net.jxta";
-	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.OFF;
+	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.WARNING;
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNewPlugIn.class);
 
 	private static final int PORT = new Random().nextInt(20000) + 10000;
@@ -65,10 +64,8 @@ public class P2PNewPlugIn implements BundleActivator {
 		ownPeerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
 		
 		final File conf = new File("." + System.getProperty("file.separator") + ownPeerName);
-		NetworkManager.RecursiveDelete(conf);
 		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, ownPeerName, conf.toURI());
-		
-		configureNetwork(manager.getConfigurator(), ownPeerID, ownPeerName);
+		manager.setPeerID(ownPeerID);
 
 		final PeerGroup netPeerGroup = manager.startNetwork();
 		ownPeerGroup = createSubGroup(netPeerGroup, SUBGROUP_ID, SUBGROUP_NAME);
@@ -134,19 +131,9 @@ public class P2PNewPlugIn implements BundleActivator {
 		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
 	}
 
-	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID, String peerName) {
-		configurator.setTcpPort(PORT);
-		configurator.setTcpEnabled(true);
-		configurator.setTcpIncoming(true);
-		configurator.setTcpOutgoing(true);
-		configurator.setUseMulticast(true);
-		configurator.setPeerID(peerID);
-		configurator.setName(peerName);
-	}
-
-	@SuppressWarnings("deprecation")
 	private static PeerGroup createSubGroup(PeerGroup parentPeerGroup, PeerGroupID subGroupID, String subGroupName) throws PeerGroupException, IOException, Exception {
-		return parentPeerGroup.newGroup(subGroupID, parentPeerGroup.getAllPurposePeerGroupImplAdvertisement(), subGroupName, "");
+		return parentPeerGroup.newGroup(subGroupID, parentPeerGroup.getAllPurposePeerGroupImplAdvertisement(), subGroupName, "", true);
+//		return parentPeerGroup.newGroup(subGroupID, parentPeerGroup.getAllPurposePeerGroupImplAdvertisement(), subGroupName, "");
 	}
 
 	private static String determinePeerName() {
