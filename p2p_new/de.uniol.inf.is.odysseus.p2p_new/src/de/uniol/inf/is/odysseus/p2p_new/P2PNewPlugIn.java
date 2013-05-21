@@ -59,8 +59,8 @@ public class P2PNewPlugIn implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		System.setProperty("net.jxta.impl.cm.cache.impl", "net.jxta.impl.cm.sql.H2AdvertisementCache");
-		System.setProperty("net.jxta.impl.cm.SrdiIndex.backend.impl", "net.jxta.impl.cm.InMemorySrdi");
+//		System.setProperty("net.jxta.impl.cm.cache.impl", "net.jxta.impl.cm.sql.H2AdvertisementCache");
+//		System.setProperty("net.jxta.impl.cm.SrdiIndex.backend.impl", "net.jxta.impl.cm.InMemorySrdi");
 		
 		configureLogging(bundleContext.getBundle());
 
