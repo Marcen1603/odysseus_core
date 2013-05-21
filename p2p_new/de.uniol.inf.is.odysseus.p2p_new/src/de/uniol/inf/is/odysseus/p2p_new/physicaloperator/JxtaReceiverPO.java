@@ -25,9 +25,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
-import de.uniol.inf.is.odysseus.p2p_new.util.ClientJxtaBiDiConnection;
-import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
-import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
+import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.ClientJxtaBiDiConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionListener;
+import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionOld;
 
 @SuppressWarnings("rawtypes")
 public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSource<T> implements IJxtaConnectionListener {
@@ -45,7 +45,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	
 	private NullAwareTupleDataHandler dataHandler;
 	private final PipeID pipeID;
-	private IJxtaConnection connection;
+	private IJxtaConnectionOld connection;
 	
 	private final List<T> bufferedElements = Lists.newArrayList();
 
@@ -129,19 +129,19 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	}
 
 	@Override
-	public void onConnect(IJxtaConnection sender) {
+	public void onConnect(IJxtaConnectionOld sender) {
 		LOG.debug("Connected");
 		
 		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(getOutputSchema());
 	}
 
 	@Override
-	public void onDisconnect(IJxtaConnection sender) {
+	public void onDisconnect(IJxtaConnectionOld sender) {
 		LOG.debug("Disconnect");
 	}
 
 	@Override
-	public void onReceiveData(IJxtaConnection sender, byte[] data) {
+	public void onReceiveData(IJxtaConnectionOld sender, byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		processData(bb);
 	}

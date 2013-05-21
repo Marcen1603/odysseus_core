@@ -21,11 +21,11 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.p2p_new.util.AbstractJxtaConnection;
-import de.uniol.inf.is.odysseus.p2p_new.util.ClientJxtaConnection;
-import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
-import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
-import de.uniol.inf.is.odysseus.p2p_new.util.ServerJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.AbstractJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.ClientJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionListener;
+import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionOld;
+import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.ServerJxtaConnection;
 
 public class JxtaTransportHandler extends AbstractTransportHandler implements IJxtaConnectionListener {
 
@@ -71,17 +71,17 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 	}
 
 	@Override
-	public void onConnect(IJxtaConnection sender) {
+	public void onConnect(IJxtaConnectionOld sender) {
 		LOG.debug("Connected to {}", sender.getPipeAdvertisement().getPipeID());
 	}
 
 	@Override
-	public void onDisconnect(IJxtaConnection sender) {
+	public void onDisconnect(IJxtaConnectionOld sender) {
 		LOG.debug("Disconnected from {}", sender.getPipeAdvertisement().getPipeID());
 	}
 
 	@Override
-	public void onReceiveData(IJxtaConnection sender, byte[] data) {
+	public void onReceiveData(IJxtaConnectionOld sender, byte[] data) {
 		LOG.debug("Got message");
 
 		final ByteBuffer bb = ByteBuffer.allocate(data.length);

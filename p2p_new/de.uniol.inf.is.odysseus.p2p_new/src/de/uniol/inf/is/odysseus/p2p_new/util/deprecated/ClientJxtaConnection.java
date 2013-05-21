@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.util;
+package de.uniol.inf.is.odysseus.p2p_new.util.deprecated;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 
+@Deprecated
 public class ClientJxtaConnection extends AbstractJxtaConnection {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ClientJxtaConnection.class);

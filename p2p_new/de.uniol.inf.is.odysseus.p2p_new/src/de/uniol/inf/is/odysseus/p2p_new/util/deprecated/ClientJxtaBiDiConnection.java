@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.util;
+package de.uniol.inf.is.odysseus.p2p_new.util.deprecated;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.util.JxtaBiDiPipe;
 
+@Deprecated
 public class ClientJxtaBiDiConnection extends AbstractJxtaBiDiConnection {
 
 	private JxtaBiDiPipe bidiPipe;

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.util;
+package de.uniol.inf.is.odysseus.p2p_new.util.deprecated;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,9 +16,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+
+@Deprecated
 public abstract class AbstractJxtaBiDiConnection
 		implements
-			IJxtaConnection,
+			IJxtaConnectionOld,
 			PipeMsgListener {
 
 	private static final Logger LOG = LoggerFactory

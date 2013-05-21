@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.util;
+package de.uniol.inf.is.odysseus.p2p_new.util.deprecated;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +9,7 @@ import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 
+@Deprecated
 public class ServerJxtaConnection extends AbstractJxtaConnection {
 
 	private JxtaServerSocket serverSocket;

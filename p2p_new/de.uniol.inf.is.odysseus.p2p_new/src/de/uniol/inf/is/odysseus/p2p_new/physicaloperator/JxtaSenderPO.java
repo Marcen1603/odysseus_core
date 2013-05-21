@@ -23,10 +23,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
-import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
-import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
-import de.uniol.inf.is.odysseus.p2p_new.util.ServerJxtaBiDiConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionListener;
+import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionOld;
+import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.ServerJxtaBiDiConnection;
 
 public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements IJxtaConnectionListener {
 
@@ -35,7 +35,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private static final String PIPE_NAME = "Odysseus Pipe";
 
 	private final PipeID pipeID;
-	private IJxtaConnection connection;
+	private IJxtaConnectionOld connection;
 	private NullAwareTupleDataHandler dataHandler;
 	
 	private boolean localControlAllowed = false;
@@ -64,7 +64,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	// called by Jxta
 	@Override
-	public void onConnect(IJxtaConnection sender) {
+	public void onConnect(IJxtaConnectionOld sender) {
 		LOG.debug("Connected");
 
 		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(getOutputSchema());
@@ -72,7 +72,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	// called by Jxta
 	@Override
-	public void onDisconnect(IJxtaConnection sender) {
+	public void onDisconnect(IJxtaConnectionOld sender) {
 		LOG.debug("Disconnnect");
 	}
 	
@@ -98,7 +98,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	// called by Jxta
 	@Override
-	public void onReceiveData(IJxtaConnection sender, byte[] data) {
+	public void onReceiveData(IJxtaConnectionOld sender, byte[] data) {
 		if (data[0] == JxtaPOUtil.CONTROL_BYTE) {
 			if (data[1] == JxtaPOUtil.OPEN_SUBBYTE) {
 				LOG.debug("Received open()");
