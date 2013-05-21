@@ -7,7 +7,7 @@ public interface IJxtaConnection {
 	void addListener( IJxtaConnectionListener listener );
 	void removeListener( IJxtaConnectionListener listener );
 	
+	void connect() throws IOException;
 	void send(byte[] data) throws IOException;
-	
 	void disconnect();
 }

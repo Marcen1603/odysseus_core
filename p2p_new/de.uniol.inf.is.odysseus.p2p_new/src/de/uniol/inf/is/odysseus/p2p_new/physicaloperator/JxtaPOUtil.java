@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
-import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionOld;
 
 final class JxtaPOUtil {
 
@@ -63,7 +63,7 @@ final class JxtaPOUtil {
 		return packet;
 	}
 
-	public static void tryConnectAsync(final IJxtaConnectionOld connection) {
+	public static void tryConnectAsync(final IJxtaConnection connection) {
 		LOG.debug("Trying to connect");
 		final Thread t = new Thread(new Runnable() {
 			@Override
@@ -75,19 +75,19 @@ final class JxtaPOUtil {
 				}
 			}
 		});
-		t.setName("Connect thread for " + connection.getPipeAdvertisement().getPipeID());
+		t.setName("Connect thread");
 		t.setDaemon(true);
 		t.start();
 	}
 
-	public static void tryDisconnectAsync(final IJxtaConnectionOld connection) {
+	public static void tryDisconnectAsync(final IJxtaConnection connection) {
 		final Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				connection.disconnect();
 			}
 		});
-		t.setName("Discconnect thread for " + connection.getPipeAdvertisement().getPipeID());
+		t.setName("Discconnect thread");
 		t.setDaemon(true);
 		t.start();
 	}

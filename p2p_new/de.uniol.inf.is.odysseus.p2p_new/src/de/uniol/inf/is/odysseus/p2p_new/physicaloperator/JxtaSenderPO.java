@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.physicaloperator;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -13,6 +14,8 @@ import net.jxta.protocol.PipeAdvertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -23,19 +26,22 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaServerConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaServerConnectionListener;
+import de.uniol.inf.is.odysseus.p2p_new.util.JxtaBiDiServerConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
-import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionListener;
-import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionOld;
-import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.ServerJxtaBiDiConnection;
 
-public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements IJxtaConnectionListener {
+public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements IJxtaConnectionListener, IJxtaServerConnectionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaSenderPO.class);
 	private static final int BUFFER_SIZE_BYTES = 1024;
 	private static final String PIPE_NAME = "Odysseus Pipe";
 
 	private final PipeID pipeID;
-	private IJxtaConnectionOld connection;
+	private final List<IJxtaConnection> connectionsOpenCalled = Lists.newArrayList();
+	private IJxtaServerConnection connection;
 	private NullAwareTupleDataHandler dataHandler;
 	
 	private boolean localControlAllowed = false;
@@ -44,9 +50,14 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		pipeID = convertToPipeID(ao.getPipeID());
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 
-		connection = new ServerJxtaBiDiConnection(pipeAdvertisement);
-		connection.addListener(this);
-		JxtaPOUtil.tryConnectAsync(connection);
+		try {
+			connection = new JxtaBiDiServerConnection(pipeAdvertisement);
+			connection.addListener(this);
+			connection.start();
+		} catch (IOException e) {
+			LOG.error("Could not create connection", e);
+			connection = null;
+		}
 	}
 
 	public JxtaSenderPO(JxtaSenderPO<T> po) {
@@ -55,6 +66,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		this.pipeID = po.pipeID;
 		this.connection = po.connection;
 		this.dataHandler = po.dataHandler;
+		this.connectionsOpenCalled.addAll(po.connectionsOpenCalled);
 	}
 
 	@Override
@@ -62,18 +74,24 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		return new JxtaSenderPO<T>(this);
 	}
 
-	// called by Jxta
 	@Override
-	public void onConnect(IJxtaConnectionOld sender) {
-		LOG.debug("Connected");
-
-		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(getOutputSchema());
+	public void connectionAdded(IJxtaServerConnection sender, IJxtaConnection addedConnection) {
+		if( dataHandler == null ) {
+			dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(getOutputSchema());
+		}
+		
+		addedConnection.addListener(this);
 	}
 
-	// called by Jxta
 	@Override
-	public void onDisconnect(IJxtaConnectionOld sender) {
-		LOG.debug("Disconnnect");
+	public void connectionRemoved(IJxtaServerConnection sender, IJxtaConnection removedConnection) {
+		removedConnection.removeListener(this);
+		
+	}
+
+	@Override
+	public void onDisconnect(IJxtaConnection sender) {
+		// do nothing
 	}
 	
 	// overwritten to exclude that the sender is opened locally (e.g. by executor)
@@ -98,30 +116,42 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	// called by Jxta
 	@Override
-	public void onReceiveData(IJxtaConnectionOld sender, byte[] data) {
+	public void onReceiveData(IJxtaConnection sender, byte[] data) {
 		if (data[0] == JxtaPOUtil.CONTROL_BYTE) {
 			if (data[1] == JxtaPOUtil.OPEN_SUBBYTE) {
 				LOG.debug("Received open()");
-
-				final int queryID = determineQueryID(getOwner());
 				
-				try {
-					localControlAllowed = true;
-					ServerExecutorService.get().startQuery(queryID, SessionManagementService.getActiveSession());
-				} finally {
-					localControlAllowed = false;
+				synchronized( connectionsOpenCalled ) {
+					connectionsOpenCalled.add(sender);
+	
+					if( connectionsOpenCalled.size() == 1 ) {
+						final int queryID = determineQueryID(getOwner());
+						
+						try {
+							localControlAllowed = true;
+							ServerExecutorService.get().startQuery(queryID, SessionManagementService.getActiveSession());
+						} finally {
+							localControlAllowed = false;
+						}
+					}
 				}
 
 			} else if (data[1] == JxtaPOUtil.CLOSE_SUBBYTE) {
 				LOG.debug("Received close()");
 
-				final int queryID = determineQueryID(getOwner());
-				try {
-					localControlAllowed = true;
-					ServerExecutorService.get().stopQuery(queryID, SessionManagementService.getActiveSession());
-				} finally {
-					localControlAllowed = false;
+				synchronized( connectionsOpenCalled ) {
+					connectionsOpenCalled.remove(sender);
+					if( connectionsOpenCalled.isEmpty() ) {
+						final int queryID = determineQueryID(getOwner());
+						try {
+							localControlAllowed = true;
+							ServerExecutorService.get().stopQuery(queryID, SessionManagementService.getActiveSession());
+						} finally {
+							localControlAllowed = false;
+						}
+					}
 				}
+				
 			} else {
 				LOG.error("Got unknown control subbyte {}", data[1]);
 			}
@@ -130,7 +160,16 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		return false;
+		if( ipo == this ) {
+			return true;
+		}
+		
+		if( !(ipo instanceof JxtaSenderPO )) {
+			return false;
+		}
+		
+		JxtaSenderPO<?> po = (JxtaSenderPO<?>)ipo;
+		return po.pipeID.equals(pipeID);
 	}
 
 	@Override
@@ -168,7 +207,12 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 			// did not apply the "real" size of the object
 			buffer.get(rawBytes, 5, messageSizeBytes);
 
-			connection.send(rawBytes);
+			synchronized( connectionsOpenCalled) {
+				for( IJxtaConnection conn : connectionsOpenCalled) {
+					conn.send(rawBytes);
+				}
+			}
+			
 		} catch (final Throwable t) {
 			LOG.error("Could not write", t);
 		}

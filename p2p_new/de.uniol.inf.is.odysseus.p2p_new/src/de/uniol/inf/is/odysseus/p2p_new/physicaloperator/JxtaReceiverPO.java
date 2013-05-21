@@ -25,9 +25,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
-import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.ClientJxtaBiDiConnection;
-import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionListener;
-import de.uniol.inf.is.odysseus.p2p_new.util.deprecated.IJxtaConnectionOld;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
+import de.uniol.inf.is.odysseus.p2p_new.util.JxtaBiDiClientConnection;
 
 @SuppressWarnings("rawtypes")
 public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSource<T> implements IJxtaConnectionListener {
@@ -45,7 +45,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	
 	private NullAwareTupleDataHandler dataHandler;
 	private final PipeID pipeID;
-	private IJxtaConnectionOld connection;
+	private IJxtaConnection connection;
 	
 	private final List<T> bufferedElements = Lists.newArrayList();
 
@@ -57,7 +57,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 		pipeID = convertToPipeID(ao.getPipeID());
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 
-		connection = new ClientJxtaBiDiConnection(pipeAdvertisement);
+		connection = new JxtaBiDiClientConnection(pipeAdvertisement);
 		connection.addListener(this);
 		JxtaPOUtil.tryConnectAsync(connection);
 	}
@@ -103,7 +103,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	
 	@Override
 	protected void process_close() {
-		LOG.debug("Got open()");
+		LOG.debug("Got close()");
 		
 		try {			
 			connection.send(JxtaPOUtil.generateControlPacket(JxtaPOUtil.CLOSE_SUBBYTE));
@@ -129,19 +129,12 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	}
 
 	@Override
-	public void onConnect(IJxtaConnectionOld sender) {
-		LOG.debug("Connected");
-		
-		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(getOutputSchema());
-	}
-
-	@Override
-	public void onDisconnect(IJxtaConnectionOld sender) {
+	public void onDisconnect(IJxtaConnection sender) {
 		LOG.debug("Disconnect");
 	}
 
 	@Override
-	public void onReceiveData(IJxtaConnectionOld sender, byte[] data) {
+	public void onReceiveData(IJxtaConnection sender, byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		processData(bb);
 	}

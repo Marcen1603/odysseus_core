@@ -15,13 +15,12 @@ import net.jxta.pipe.PipeMsgEvent;
 import net.jxta.pipe.PipeMsgListener;
 import net.jxta.util.JxtaBiDiPipe;
 
-public class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
+class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaBiDiConnection.class);
 	
 	private final List<IJxtaConnectionListener> listeners = Lists.newArrayList();
-	
-	private JxtaBiDiPipe pipe;
+	private final JxtaBiDiPipe pipe;
 	
 	JxtaBiDiConnection( JxtaBiDiPipe pipe ) {
 		Preconditions.checkNotNull(pipe, "Pipe for jxta bidi connection must not be null!");
@@ -49,6 +48,7 @@ public class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
 	@Override
 	public void disconnect() {
 		try {
+			pipe.setMessageListener(null);
 			pipe.close();
 		} catch (IOException e) {
 			LOG.error("Could not close JxtaBiDiPipe", e);
@@ -74,6 +74,10 @@ public class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
 		fireMessageReceiveEvent(bytes.getBytes());
 	}
 	
+	protected final JxtaBiDiPipe getPipe() {
+		return pipe;
+	}
+	
 	protected final void fireDisconnectEvent() {
 		synchronized( listeners ) {
 			for( IJxtaConnectionListener listener : listeners ) {
@@ -94,5 +98,10 @@ public class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
 				LOG.error("Exception in JxtaConnection listener", t);
 			}
 		}
+	}
+
+	@Override
+	public void connect() throws IOException {
+		// do nothing
 	}
 }
