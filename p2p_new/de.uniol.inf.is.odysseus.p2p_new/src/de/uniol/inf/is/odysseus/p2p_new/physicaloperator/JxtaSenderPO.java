@@ -99,27 +99,6 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	public void onConnect(IJxtaConnection sender) {
 		LOG.debug("Connected");
 	}
-	
-	// overwritten to exclude that the sender is opened locally (e.g. by executor)
-	@Override
-	public void open() throws OpenFailedException {
-		if( localControlAllowed ) {
-			super.open();
-		} else {
-			LOG.warn("Opening " + getClass() + " locally not allowed.");
-		}
-	}
-	
-	// overwritten to exclude that the sender is opened locally (e.g. by executor)
-	@Override
-	public void close() {
-		if( localControlAllowed ) {
-			super.close();
-		} else {
-			LOG.warn("Closing " + getClass() + " locally not allowed.");
-		}
-	}
-
 	// called by Jxta
 	@Override
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {
@@ -164,40 +143,66 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		}
 	}
 
+	
+	// overwritten to exclude that the sender is opened locally (e.g. by executor)
+	@Override
+	public void open() throws OpenFailedException {
+		if( localControlAllowed ) {
+			super.open();
+		} else {
+			LOG.warn("Opening " + getClass() + " locally not allowed.");
+		}
+	}
+	
+	// overwritten to exclude that the sender is opened locally (e.g. by executor)
+	@Override
+	public void close() {
+		if( localControlAllowed ) {
+			super.close();
+		} else {
+			LOG.warn("Closing " + getClass() + " locally not allowed.");
+		}
+	}
+
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if( ipo == this ) {
+		if (ipo == this) {
 			return true;
 		}
-		
-		if( !(ipo instanceof JxtaSenderPO )) {
+
+		if (!(ipo instanceof JxtaSenderPO)) {
 			return false;
 		}
-		
-		JxtaSenderPO<?> po = (JxtaSenderPO<?>)ipo;
+
+		JxtaSenderPO<?> po = (JxtaSenderPO<?>) ipo;
 		return po.pipeID.equals(pipeID);
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
-		buffer.put(ObjectByteConverter.objectToBytes(punctuation));
-		buffer.flip();
-
-		write(buffer, JxtaPOUtil.PUNCTUATION_BYTE);
+		if( !connectionsOpenCalled.isEmpty() ) {
+			final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
+			buffer.put(ObjectByteConverter.objectToBytes(punctuation));
+			buffer.flip();
+	
+			write(buffer, JxtaPOUtil.PUNCTUATION_BYTE);
+		}
 	}
 
 	@Override
 	protected void process_next(T object, int port) {
-		final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
-		dataHandler.writeData(buffer, object);
-		if (object.getMetadata() != null) {
-			final byte[] metadataBytes = ObjectByteConverter.objectToBytes(object.getMetadata());
-			buffer.put(metadataBytes);
+		if( !connectionsOpenCalled.isEmpty() ) {
+			final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
+			dataHandler.writeData(buffer, object);
+			if (object.getMetadata() != null) {
+				final byte[] metadataBytes = ObjectByteConverter.objectToBytes(object.getMetadata());
+				buffer.put(metadataBytes);
+			}
+			buffer.flip();
+	
+			write(buffer, JxtaPOUtil.DATA_BYTE);
 		}
-		buffer.flip();
-
-		write(buffer, JxtaPOUtil.DATA_BYTE);
 	}
 	
 	@Override
