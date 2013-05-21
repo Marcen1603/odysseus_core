@@ -43,6 +43,7 @@ class JxtaBiDiConnection implements IJxtaConnection{
 		
 		isConnected = true;
 		fireConnectEvent();
+		
 		readingDataThread = new RepeatingJobThread() {
 
 			private final byte[] buffer = new byte[1024];

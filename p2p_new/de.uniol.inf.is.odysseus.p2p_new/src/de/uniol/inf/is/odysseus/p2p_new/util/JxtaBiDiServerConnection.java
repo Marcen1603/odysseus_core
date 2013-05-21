@@ -56,7 +56,6 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 				
 		serverSocket = new JxtaServerSocket(P2PNewPlugIn.getOwnPeerGroup(), pipeAdvertisement);
 		serverSocket.setSoTimeout(0);
-		serverSocket.setPerformancePreferences(0, 1, 2);
 
 		accepterThread = new RepeatingJobThread() {
 			@Override
