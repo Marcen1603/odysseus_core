@@ -25,6 +25,7 @@ final class JxtaPOUtil {
 
 	public static final byte OPEN_SUBBYTE = 0;
 	public static final byte CLOSE_SUBBYTE = 1;
+	public static final byte DONE_SUBBYTE = 2;
 
 	private JxtaPOUtil() {
 	}

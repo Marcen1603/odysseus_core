@@ -193,29 +193,43 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 		write(buffer, JxtaPOUtil.DATA_BYTE);
 	}
-
-	private void write(ByteBuffer buffer, byte type) {
-		try {
-			final int messageSizeBytes = buffer.remaining();
-			final byte[] rawBytes = new byte[messageSizeBytes + 5];
-
-			// "Header"
-			rawBytes[0] = type;
-			insertInt(rawBytes, 1, messageSizeBytes);
-
-			// buffer.array() returns the complete array (1024 bytes) and
-			// did not apply the "real" size of the object
-			buffer.get(rawBytes, 5, messageSizeBytes);
-
-			synchronized( connectionsOpenCalled) {
-				for( IJxtaConnection conn : connectionsOpenCalled) {
-					conn.send(rawBytes);
+	
+	@Override
+	protected void process_done(int port) {
+		byte[] generateControlPacket = JxtaPOUtil.generateControlPacket(JxtaPOUtil.DONE_SUBBYTE);
+		synchronized( connectionsOpenCalled ) {
+			for( IJxtaConnection conn : connectionsOpenCalled ) {
+				try {
+					conn.send(generateControlPacket);
+				} catch (IOException e) {
+					LOG.error("Could not send done-control-packet", e);
 				}
 			}
-			
-		} catch (final Throwable t) {
-			LOG.error("Could not write", t);
 		}
+	}
+
+	private void write(ByteBuffer buffer, byte type) {
+		final int messageSizeBytes = buffer.remaining();
+		final byte[] rawBytes = new byte[messageSizeBytes + 5];
+
+		// "Header"
+		rawBytes[0] = type;
+		insertInt(rawBytes, 1, messageSizeBytes);
+
+		// buffer.array() returns the complete array (1024 bytes) and
+		// did not apply the "real" size of the object
+		buffer.get(rawBytes, 5, messageSizeBytes);
+
+		synchronized (connectionsOpenCalled) {
+			for (IJxtaConnection conn : connectionsOpenCalled) {
+				try {
+					conn.send(rawBytes);
+				} catch (final Throwable t) {
+					LOG.error("Could not write", t);
+				}
+			}
+		}
+
 	}
 
 	private static PipeID convertToPipeID(String text) {

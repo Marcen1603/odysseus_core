@@ -145,6 +145,14 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 				if (currentTypeByte == JxtaPOUtil.NONE_BYTE) {
 					currentTypeByte = message.get();
 				}
+				
+				if( currentTypeByte == JxtaPOUtil.CONTROL_BYTE) {
+					processCtrlPacket(message);
+					
+					// reset for next message
+					currentTypeByte = JxtaPOUtil.NONE_BYTE;
+					continue;
+				}
 
 				if (size == -1) {
 					while (sizeBuffer.position() < 4 && message.remaining() > 0) {
@@ -201,6 +209,23 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 			currentSize = 0;
 			currentTypeByte = JxtaPOUtil.NONE_BYTE;
 		} 
+	}
+
+	private void processCtrlPacket(ByteBuffer message) {
+		byte subbyte = message.get();
+		if( subbyte == JxtaPOUtil.DONE_SUBBYTE) {
+			tryPropagateDone();
+		} else {
+			LOG.error("Unknown subbyte {}", subbyte);
+		}
+	}
+
+	private void tryPropagateDone() {
+		try {
+			propagateDone();
+		} catch( Throwable t ) {
+			LOG.error("Exception during invoking done", t);
+		}
 	}
 
 	private static PipeID convertToPipeID(String text) {
