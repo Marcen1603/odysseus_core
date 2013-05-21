@@ -66,27 +66,19 @@ public class ModalPatternMatchingPO<T extends ITimeInterval> extends PatternMatc
 		if (eventTypes.contains(eventType)) {
 			eventBuffer.add(eventObj);
 		}
-		if (time != null) {
-			// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
+		if (checkTimeElapsed()) {
 			PointInTime currentTime = event.getMetadata().getStart();
-			if (currentTime.minus(startTime).getMainPoint() >= time) {
-				matching(currentTime);
-				startTime = currentTime;
-				eventBuffer.clear();
-			}
+			matching(currentTime);
+			eventBuffer.clear();
 		}
 	}
 	
 	@Override
 	public void process_newHeartbeat(Heartbeat pointInTime) {
 		super.process_newHeartbeat(pointInTime);
-		if (time != null) {
-			// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
-			if (pointInTime.getTime().minus(startTime).getMainPoint() >= time) {
-				matching(pointInTime.getTime());
-				startTime = pointInTime.getTime();
-				eventBuffer.clear();
-			}
+		if (checkTimeElapsed()) {
+			matching(pointInTime.getTime());
+			eventBuffer.clear();
 		}
 	}
 	

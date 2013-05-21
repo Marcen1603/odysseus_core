@@ -54,25 +54,22 @@ public class AbsencePatternMatchingPO<T extends ITimeInterval> extends PatternMa
 	@Override
 	public void process_internal(Tuple<T> event, int port) {
 		super.process_internal(event, port);
+		noIncomingEvent = false;
 	}
 	
 	@Override
 	public void process_newHeartbeat(Heartbeat pointInTime) {
 		super.process_newHeartbeat(pointInTime);
 		logger.info(pointInTime.toString());
-		if (type == PatternType.ABSENCE && time != null) {
-			// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
-			if (pointInTime.getTime().minus(startTime).getMainPoint() >= time) {
-				// Intervall abgelaufen
-				if (noIncomingEvent) {
-					// ABSENCE-Pattern erkannt
-					Tuple<T> complexEvent = createComplexEvent(null, null, pointInTime.getTime());
-					outputTransferArea.transfer(complexEvent);
-				}
-				// Zustand initialisieren
-				noIncomingEvent = true;
-				startTime = pointInTime.getTime();
+		if (checkTimeElapsed()) {
+			// Intervall abgelaufen
+			if (noIncomingEvent) {
+				// ABSENCE-Pattern erkannt
+				Tuple<T> complexEvent = createComplexEvent(null, null, pointInTime.getTime());
+				outputTransferArea.transfer(complexEvent);
 			}
+			// Zustand initialisieren
+			noIncomingEvent = true;
 		}
 	}
 	

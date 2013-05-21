@@ -29,21 +29,23 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.pattern.model.AttributeMap;
-import de.uniol.inf.is.odysseus.pattern.model.EventBuffer;
 import de.uniol.inf.is.odysseus.pattern.model.EventObject;
 import de.uniol.inf.is.odysseus.pattern.model.PatternOutput;
 import de.uniol.inf.is.odysseus.pattern.model.PatternType;
 
 /**
- * Abstrakter physischer Operator, der gemeinsam genutzte Methoden und Daten fürs Pattern-Matching kapselt.
+ * Abstrakter physischer Operator, der gemeinsam genutzte Methoden und Daten
+ * fürs Pattern-Matching kapselt.
+ * 
  * @author Michael Falk
  * @param <T>
  */
-public abstract class PatternMatchingPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, Tuple<T>>
-	implements IProcessInternal<Tuple<T>> {
-	
-	protected static Logger logger = LoggerFactory.getLogger(PatternMatchingPO.class);
-	
+public abstract class PatternMatchingPO<T extends ITimeInterval> extends
+		AbstractPipe<Tuple<T>, Tuple<T>> implements IProcessInternal<Tuple<T>> {
+
+	protected static Logger logger = LoggerFactory
+			.getLogger(PatternMatchingPO.class);
+
 	protected List<SDFExpression> assertions;
 	protected List<SDFExpression> returnExpressions;
 
@@ -52,160 +54,157 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 	protected Integer size;
 	protected TimeUnit timeUnit;
 	protected PatternOutput outputMode;
-	
+
 	/**
 	 * Die relevante Event-Typen-Liste.
 	 */
 	protected List<String> eventTypes;
 	protected Map<Integer, String> inputTypeNames;
 	protected Map<Integer, SDFSchema> inputSchemas;
-	
+
 	private boolean started;
 	protected PointInTime startTime;
-	
+	private boolean timeElapsed;
+
 	protected IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea;
 	protected ITransferArea<Tuple<T>, Tuple<T>> outputTransferArea;
-	
-	/**
-	 * Port-Map, die für jeden Port eine Liste mit Event-Objekten enthält.
-	 */
-	private Map<Integer, EventBuffer<T>> objectLists;
-	
+
 	protected Map<SDFExpression, AttributeMap[]> attrMappings;
 	protected Map<SDFExpression, AttributeMap[]> returnAttrMappings;
-	
-	public PatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
-			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
+
+	public PatternMatchingPO(PatternType type, Integer time, Integer size,
+			TimeUnit timeUnit, PatternOutput outputMode,
+			List<String> eventTypes, List<SDFExpression> assertions,
+			List<SDFExpression> returnExpressions,
+			Map<Integer, String> inputTypeNames,
+			Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
-        super();
-        this.type = type;
-        this.time = time;
-        this.size = size;
-        this.timeUnit = timeUnit;
-        this.outputMode = outputMode;
-        this.eventTypes = eventTypes;
-        this.assertions = assertions;
-        this.returnExpressions = returnExpressions;
-        this.inputTypeNames = inputTypeNames;
-        this.inputSchemas = inputSchemas;
-        this.inputStreamSyncArea = inputStreamSyncArea;
-        this.objectLists = new HashMap<Integer, EventBuffer<T>>();
-        // create lists for every port that is in the eventTypes list
-        for (Integer port : this.inputTypeNames.keySet()) {
-        	if (this.eventTypes.contains(this.inputTypeNames.get(port))) {
-        		EventBuffer<T> buffer = new EventBuffer<T>();
-            	this.objectLists.put(port, buffer);
-        	}
-        }
-        this.outputTransferArea = new TITransferArea<>();
-        this.init();
-    }
-	
-	// Copy-Konstruktor
-    public PatternMatchingPO(PatternMatchingPO<T> patternPO) {
-        this.type = patternPO.type;
-        this.time = patternPO.time;
-        this.size = patternPO.size;
-        this.timeUnit = patternPO.timeUnit;
-        this.outputMode = patternPO.outputMode;
-        this.eventTypes = new ArrayList<String>();
-        for (String eventType : patternPO.eventTypes)
-        	this.eventTypes.add(eventType);
-        this.assertions = new ArrayList<SDFExpression>();
-        for (SDFExpression expr : patternPO.assertions)
-        	this.assertions.add(expr);
-        this.returnExpressions = new ArrayList<SDFExpression>();
-        for (SDFExpression expr : patternPO.returnExpressions)
-        	this.returnExpressions.add(expr);
-        this.inputTypeNames = new HashMap<Integer, String>();
-        this.inputTypeNames.putAll(patternPO.inputTypeNames);
-        this.inputSchemas = new HashMap<Integer, SDFSchema>();
-        this.inputSchemas.putAll(patternPO.inputSchemas);
-        this.inputStreamSyncArea = patternPO.inputStreamSyncArea.clone();
-        this.outputTransferArea = patternPO.outputTransferArea.clone();
-        this.objectLists = new HashMap<Integer, EventBuffer<T>>();
-        this.objectLists.putAll(patternPO.objectLists);
-        this.attrMappings = new HashMap<SDFExpression, AttributeMap[]>();
-        this.attrMappings.putAll(patternPO.attrMappings);
-        this.returnAttrMappings = new HashMap<SDFExpression, AttributeMap[]>();
-        this.returnAttrMappings.putAll(patternPO.returnAttrMappings);
-        this.init();
-    }
-	
-    private void init() {
-    	logger.info("Operator built.");
-    	// Defaultwerte setzen
-    	if (timeUnit == null) {
-    		timeUnit = TimeUnit.MILLISECONDS;
-    	}
-    	if (outputMode == null || (outputMode == PatternOutput.EXPRESSIONS && returnExpressions == null)) {
-    		outputMode = PatternOutput.SIMPLE;
-    	}
-    	
-    	// Assertions intitialisieren
-    	if (assertions != null)
-    		attrMappings = initExpressions(assertions);
-    	if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null)
-    		returnAttrMappings = initExpressions(returnExpressions);
-    	
-    	// Zeit in richtiges Zeitformat konvertieren
-    	if (time != null) {
-    		time = (int) TimeUnit.MILLISECONDS.convert(time, timeUnit);
-    	}
-    }
-    
-    /**
-     * Initialisiert Expressions.
-     * @param expressions
-     * @return liefert eine Map, die einer Expression eine AttributeMap[] zuordnet.
-     */
-    private Map<SDFExpression, AttributeMap[]> initExpressions(List<SDFExpression> expressions) {
-    	Map<SDFExpression, AttributeMap[]> attrMappings = new HashMap<SDFExpression, AttributeMap[]>();
-    	if (expressions == null) return attrMappings;
-    	for (SDFExpression expression : expressions) {
-    		if (expression != null) {
-    			List<SDFAttribute> neededAttr = expression.getAllAttributes();
-        		AttributeMap[] attrMapping = new AttributeMap[neededAttr.size()];
-        		int i = 0;
-        		for (SDFAttribute attr : neededAttr) {
-        			Iterator<Integer> ports = inputSchemas.keySet().iterator();
-        			// passendes Schema raussuchen
-        			while (ports.hasNext()) {
-        				int port = ports.next();
-        				SDFSchema schema = inputSchemas.get(port);
-        				int attrPos = schema.indexOf(attr);
-        				if (attrPos != -1) {
-        					// Mapping speichern
-        					attrMapping[i] = new AttributeMap(port, attrPos);
-        					break;
-        				}
-        			}
-        			i++;
-        		}
-        		attrMappings.put(expression, attrMapping);
-    		}
-    	}
-    	return attrMappings;
-    }
-    
-	@Override
-	public String toString(){
-		return super.toString() + " type: " + type + " eventTypes: " + eventTypes.toString(); 
+		super();
+		this.type = type;
+		this.time = time;
+		this.size = size;
+		this.timeUnit = timeUnit;
+		this.outputMode = outputMode;
+		this.eventTypes = eventTypes;
+		this.assertions = assertions;
+		this.returnExpressions = returnExpressions;
+		this.inputTypeNames = inputTypeNames;
+		this.inputSchemas = inputSchemas;
+		this.inputStreamSyncArea = inputStreamSyncArea;
+		this.outputTransferArea = new TITransferArea<>();
+		this.init();
 	}
-    
+
+	// Copy-Konstruktor
+	public PatternMatchingPO(PatternMatchingPO<T> patternPO) {
+		this.type = patternPO.type;
+		this.time = patternPO.time;
+		this.size = patternPO.size;
+		this.timeUnit = patternPO.timeUnit;
+		this.outputMode = patternPO.outputMode;
+		this.eventTypes = new ArrayList<String>();
+		for (String eventType : patternPO.eventTypes)
+			this.eventTypes.add(eventType);
+		this.assertions = new ArrayList<SDFExpression>();
+		for (SDFExpression expr : patternPO.assertions)
+			this.assertions.add(expr);
+		this.returnExpressions = new ArrayList<SDFExpression>();
+		for (SDFExpression expr : patternPO.returnExpressions)
+			this.returnExpressions.add(expr);
+		this.inputTypeNames = new HashMap<Integer, String>();
+		this.inputTypeNames.putAll(patternPO.inputTypeNames);
+		this.inputSchemas = new HashMap<Integer, SDFSchema>();
+		this.inputSchemas.putAll(patternPO.inputSchemas);
+		this.inputStreamSyncArea = patternPO.inputStreamSyncArea.clone();
+		this.outputTransferArea = patternPO.outputTransferArea.clone();
+		this.attrMappings = new HashMap<SDFExpression, AttributeMap[]>();
+		this.attrMappings.putAll(patternPO.attrMappings);
+		this.returnAttrMappings = new HashMap<SDFExpression, AttributeMap[]>();
+		this.returnAttrMappings.putAll(patternPO.returnAttrMappings);
+		this.timeElapsed = patternPO.timeElapsed;
+		this.init();
+	}
+
+	private void init() {
+		logger.info("Operator built.");
+		// Defaultwerte setzen
+		if (timeUnit == null) {
+			timeUnit = TimeUnit.MILLISECONDS;
+		}
+		if (outputMode == null
+				|| (outputMode == PatternOutput.EXPRESSIONS && returnExpressions == null)) {
+			outputMode = PatternOutput.SIMPLE;
+		}
+
+		// Assertions intitialisieren
+		if (assertions != null)
+			attrMappings = initExpressions(assertions);
+		if (outputMode == PatternOutput.EXPRESSIONS
+				&& returnExpressions != null)
+			returnAttrMappings = initExpressions(returnExpressions);
+
+		// Zeit in richtiges Zeitformat konvertieren
+		if (time != null) {
+			time = (int) TimeUnit.MILLISECONDS.convert(time, timeUnit);
+		}
+	}
+
+	/**
+	 * Initialisiert Expressions.
+	 * 
+	 * @param expressions
+	 * @return liefert eine Map, die einer Expression eine AttributeMap[]
+	 *         zuordnet.
+	 */
+	private Map<SDFExpression, AttributeMap[]> initExpressions(
+			List<SDFExpression> expressions) {
+		Map<SDFExpression, AttributeMap[]> attrMappings = new HashMap<SDFExpression, AttributeMap[]>();
+		if (expressions == null)
+			return attrMappings;
+		for (SDFExpression expression : expressions) {
+			if (expression != null) {
+				List<SDFAttribute> neededAttr = expression.getAllAttributes();
+				AttributeMap[] attrMapping = new AttributeMap[neededAttr.size()];
+				int i = 0;
+				for (SDFAttribute attr : neededAttr) {
+					Iterator<Integer> ports = inputSchemas.keySet().iterator();
+					// passendes Schema raussuchen
+					while (ports.hasNext()) {
+						int port = ports.next();
+						SDFSchema schema = inputSchemas.get(port);
+						int attrPos = schema.indexOf(attr);
+						if (attrPos != -1) {
+							// Mapping speichern
+							attrMapping[i] = new AttributeMap(port, attrPos);
+							break;
+						}
+					}
+					i++;
+				}
+				attrMappings.put(expression, attrMapping);
+			}
+		}
+		return attrMappings;
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + " type: " + type + " eventTypes: "
+				+ eventTypes.toString();
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
-	
+
 	@Override
-    public void process_open() throws OpenFailedException {
-        super.process_open();
-        inputStreamSyncArea.init(this);
-        outputTransferArea.init(this);
-    }
-     
-	
+	public void process_open() throws OpenFailedException {
+		super.process_open();
+		inputStreamSyncArea.init(this);
+		outputTransferArea.init(this);
+	}
+
 	@Override
 	protected void process_next(Tuple<T> event, int port) {
 		inputStreamSyncArea.newElement(event, port);
@@ -225,6 +224,28 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 			startTime = event.getMetadata().getStart();
 			started = true;
 		}
+		if (time != null) {
+			// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
+			PointInTime currentTime = event.getMetadata().getStart();
+			if (currentTime.minus(startTime).getMainPoint() >= time) {
+				timeElapsed = true;
+				startTime = currentTime;
+			}
+		}
+	}
+	
+	/**
+	 * Prüft, ob das Zeitintervall, festgelegt duch time, abgelaufen ist.
+	 * Falls es abgelaufen ist, wird es zurückgesetzt.
+	 * @return
+	 */
+	protected boolean checkTimeElapsed() {
+		if (timeElapsed) {
+			// Zurücksetzen
+			timeElapsed = false;
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
@@ -239,17 +260,26 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 			startTime = pointInTime.getTime();
 			started = true;
 		}
+		if (time != null) {
+			// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
+			if (pointInTime.getTime().minus(startTime).getMainPoint() >= time) {
+				timeElapsed = true;
+				startTime = pointInTime.getTime();
+			}
+		}
 	}
-	
+
 	/**
 	 * Erzeugt ein komplexes Event abhängig vom PatternOutput.
+	 * 
 	 * @param outputObjects
 	 * @param currentObj
 	 * @param type
 	 * @return Ein komplexes Event oder null
 	 */
 	@SuppressWarnings("unchecked")
-	protected Tuple<T> createComplexEvent(List<EventObject<T>> outputObjects, EventObject<T> currentObj, PointInTime start) {
+	protected Tuple<T> createComplexEvent(List<EventObject<T>> outputObjects,
+			EventObject<T> currentObj, PointInTime start) {
 		if (outputObjects == null || currentObj == null) {
 			outputMode = PatternOutput.SIMPLE;
 		}
@@ -257,14 +287,16 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 			Object[] attributes = new Object[3];
 			attributes[0] = type;
 			if (currentObj != null) {
-				attributes[1] = currentObj.getEvent().getMetadata().getStart().getMainPoint();
+				attributes[1] = currentObj.getEvent().getMetadata().getStart()
+						.getMainPoint();
 			} else {
 				attributes[1] = start.getMainPoint();
 			}
 			attributes[2] = true;
 			Tuple<T> returnEvent = new Tuple<T>(attributes, false);
 			if (currentObj != null) {
-				returnEvent.setMetadata((T) currentObj.getEvent().getMetadata().clone());
+				returnEvent.setMetadata((T) currentObj.getEvent().getMetadata()
+						.clone());
 			} else {
 				returnEvent.setMetadata((T) new TimeInterval(start));
 			}
@@ -272,13 +304,16 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 		}
 		if (outputMode == PatternOutput.EXPRESSIONS) {
 			Tuple<T> outputVal = new Tuple<T>(returnExpressions.size(), false);
-			outputVal.setMetadata((T) currentObj.getEvent().getMetadata().clone());
+			outputVal.setMetadata((T) currentObj.getEvent().getMetadata()
+					.clone());
 			for (int i = 0; i < returnExpressions.size(); i++) {
 				SDFExpression expr = returnExpressions.get(i);
-				Object[] values = findExpressionValues(outputObjects, returnAttrMappings.get(expr));
+				Object[] values = findExpressionValues(outputObjects,
+						returnAttrMappings.get(expr));
 				if (values != null) {
 					expr.bindMetaAttribute(currentObj.getEvent().getMetadata());
-					expr.bindAdditionalContent(currentObj.getEvent().getAdditionalContent());
+					expr.bindAdditionalContent(currentObj.getEvent()
+							.getAdditionalContent());
 					expr.bindVariables(values);
 					Object exprValue = expr.getValue();
 					outputVal.setAttribute(i, exprValue);
@@ -288,22 +323,25 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Prüft für jede gültige Kombination (-> ALL-Pattern), ob alle Bedingungen erfüllt sind.
-	 * Als Ausgabe liefert diese Methode eine Liste der Kombinationen zurück,
-	 * für die die Bedingungen zutreffen.
+	 * Prüft für jede gültige Kombination (-> ALL-Pattern), ob alle Bedingungen
+	 * erfüllt sind. Als Ausgabe liefert diese Methode eine Liste der
+	 * Kombinationen zurück, für die die Bedingungen zutreffen.
+	 * 
 	 * @param object
 	 * @param eventObjectSets
 	 * @param type
 	 * @return
 	 */
-	protected List<List<EventObject<T>>> checkAssertions(EventObject<T> object, Set<List<EventObject<T>>> eventObjectSets) {
+	protected List<List<EventObject<T>>> checkAssertions(EventObject<T> object,
+			Set<List<EventObject<T>>> eventObjectSets) {
 		List<List<EventObject<T>>> output = new ArrayList<List<EventObject<T>>>();
-		
+
 		// Expressions überprüfen
 		for (List<EventObject<T>> eventObjectSet : eventObjectSets) {
-			Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings.entrySet().iterator();
+			Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings
+					.entrySet().iterator();
 			boolean satisfied = true;
 			while (iterator.hasNext() && satisfied) {
 				Entry<SDFExpression, AttributeMap[]> entry = iterator.next();
@@ -316,19 +354,22 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 		}
 		return output;
 	}
-	
-	protected boolean checkAssertion(EventObject<T> object, List<EventObject<T>> eventObjectSet, Entry<SDFExpression, AttributeMap[]> entry) {
+
+	protected boolean checkAssertion(EventObject<T> object,
+			List<EventObject<T>> eventObjectSet,
+			Entry<SDFExpression, AttributeMap[]> entry) {
 		Object[] values = findExpressionValues(eventObjectSet, entry.getValue());
 		SDFExpression expression = entry.getKey();
 		if (values != null) {
 			expression.bindMetaAttribute(object.getEvent().getMetadata());
-			expression.bindAdditionalContent(object.getEvent().getAdditionalContent());
+			expression.bindAdditionalContent(object.getEvent()
+					.getAdditionalContent());
 			expression.bindVariables(values);
 		}
-		
+
 		Object result = expression.getValue();
 		if (result != null) {
-			boolean predicate = (boolean) result; 
+			boolean predicate = (boolean) result;
 			if (!predicate) {
 				return false;
 			}
@@ -337,14 +378,17 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Sucht nach den Werten für die Attribute aus der Expression.
-	 * Bei Erfolg werden die Werte zurückgeliefert, bei misserfolg null.
-	 * @param eventObjects Liste mit Event-Objekten.
+	 * Sucht nach den Werten für die Attribute aus der Expression. Bei Erfolg
+	 * werden die Werte zurückgeliefert, bei misserfolg null.
+	 * 
+	 * @param eventObjects
+	 *            Liste mit Event-Objekten.
 	 * @return values, null bei Misserfolg
 	 */
-	protected Object[] findExpressionValues(List<EventObject<T>> eventObjects, AttributeMap[] attrMapping) {
+	protected Object[] findExpressionValues(List<EventObject<T>> eventObjects,
+			AttributeMap[] attrMapping) {
 		Object[] values = new Object[attrMapping.length];
 		for (int i = 0; i < attrMapping.length; i++) {
 			EventObject<T> obj = null;
@@ -367,5 +411,5 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends Abstrac
 		}
 		return values;
 	}
-	
+
 }
