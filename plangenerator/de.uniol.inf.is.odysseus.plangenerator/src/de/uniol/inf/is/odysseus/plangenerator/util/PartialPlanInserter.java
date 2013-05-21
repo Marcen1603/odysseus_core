@@ -168,7 +168,6 @@ public class PartialPlanInserter {
 		Set<Pair<AccessAO, WindowAO>> repaired = new HashSet<Pair<AccessAO, WindowAO>>();
 		// TODO: Prüfen welches Window zu welchem Access gehört
 		for (AccessAO unWindowed : unWindowedSources) {
-			LOG.debug("Unwindowed source {}", unWindowed.hashCode());
 			SDFSchema sourceOutput = unWindowed.getOutputSchema();
 			for (WindowAO window : windows) {
 				SDFSchema windowInput = PlanGeneratorHelper
@@ -180,7 +179,6 @@ public class PartialPlanInserter {
 					// the window is associate with this source.
 					repaired.add(new Pair<AccessAO, WindowAO>(unWindowed,
 							window));
-					LOG.debug("Fitting window {}", window);
 				}
 			}
 		}
@@ -194,9 +192,7 @@ public class PartialPlanInserter {
 				}
 			}
 			RestructHelper.removeOperator(pair.getE2(), false);
-			LOG.debug("Removing {}", pair.getE2());
 			RestructHelper.insertOperator(pair.getE2(), after, sinkInPort, 0, 0);
-			LOG.debug("Insert {} before {}", pair.getE2(), after);
 		}
 	}
 
