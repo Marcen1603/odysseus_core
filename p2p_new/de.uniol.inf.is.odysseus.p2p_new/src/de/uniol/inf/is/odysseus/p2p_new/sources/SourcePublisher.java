@@ -102,7 +102,7 @@ public class SourcePublisher {
 			return;
 		}
 		
-		final ILogicalOperator stream = DataDictionaryService.get().getStream(sourceName, caller);
+		final ILogicalOperator stream = DataDictionaryService.get().getStreamForTransformation(sourceName, caller);
 		Optional<AccessAO> optAccessAO = determineAccessAO(stream);
 		if (optAccessAO.isPresent()) {
 			final StreamAdvertisement adv = determineStreamAdvertisement(optAccessAO.get());
