@@ -59,17 +59,14 @@ public class P2PNewPlugIn implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-//		System.setProperty("net.jxta.impl.cm.cache.impl", "net.jxta.impl.cm.sql.H2AdvertisementCache");
-//		System.setProperty("net.jxta.impl.cm.SrdiIndex.backend.impl", "net.jxta.impl.cm.InMemorySrdi");
-		
 		configureLogging(bundleContext.getBundle());
 
 		ownPeerName = determinePeerName();
 		ownPeerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
 		
 		final File conf = new File("." + System.getProperty("file.separator") + ownPeerName);
+		NetworkManager.RecursiveDelete(conf);
 		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, ownPeerName, conf.toURI());
-		manager.setConfigPersistent(false);
 		
 		configureNetwork(manager.getConfigurator(), ownPeerID, ownPeerName);
 
@@ -147,6 +144,7 @@ public class P2PNewPlugIn implements BundleActivator {
 		configurator.setName(peerName);
 	}
 
+	@SuppressWarnings("deprecation")
 	private static PeerGroup createSubGroup(PeerGroup parentPeerGroup, PeerGroupID subGroupID, String subGroupName) throws PeerGroupException, IOException, Exception {
 		return parentPeerGroup.newGroup(subGroupID, parentPeerGroup.getAllPurposePeerGroupImplAdvertisement(), subGroupName, "");
 	}
