@@ -115,4 +115,12 @@ public class NoPlanMigrationStrategy implements IPlanMigrationStrategy {
 		// TODO Auto-generated method stub
 		
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IPlanMigrationStrategy#isMigratable(de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery)
+	 */
+	@Override
+	public boolean isMigratable(IPhysicalQuery query) {
+		return true;
+	}
 }

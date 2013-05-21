@@ -104,6 +104,15 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		return newExecutionPlan;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IPlanMigrationStrategy#isMigratable(java.util.List)
+	 */
+	@Override
+	public boolean isMigratable(IPhysicalQuery query) {
+		return ParallelTrackMigratableChecker.isMigratable(query);
+	}
+	
 	@Override
 	public void migrateQuery(IServerExecutor sender,
 			IPhysicalQuery runningQuery, List<IPhysicalOperator> newPlanRoots)
@@ -846,4 +855,5 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	public boolean hasPhysicalQuery() {
 		return this.physicalQuery != null;
 	}
+
 }

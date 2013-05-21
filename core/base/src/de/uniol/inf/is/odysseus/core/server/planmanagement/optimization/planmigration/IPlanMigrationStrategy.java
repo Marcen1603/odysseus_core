@@ -60,4 +60,12 @@ public interface IPlanMigrationStrategy extends IMigrationEventSource, IMigratio
 			List<IPhysicalOperator> newPlanRoot) throws QueryOptimizationException, MigrationException;
 	
 	public String getName();
+	
+	/**
+	 * Check if a plan in the given query can be migrated using this strategy.
+	 * 
+	 * @param query Query containing the plan
+	 * @return 
+	 */
+	public boolean isMigratable(IPhysicalQuery query);
 }
