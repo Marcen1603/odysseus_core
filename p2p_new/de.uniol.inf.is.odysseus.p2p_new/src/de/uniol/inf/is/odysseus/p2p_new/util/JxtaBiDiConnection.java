@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.p2p_new.util;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,25 +12,65 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import net.jxta.endpoint.ByteArrayMessageElement;
-import net.jxta.endpoint.Message;
-import net.jxta.pipe.PipeMsgEvent;
-import net.jxta.pipe.PipeMsgListener;
-import net.jxta.util.JxtaBiDiPipe;
-
-class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
+class JxtaBiDiConnection implements IJxtaConnection{
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaBiDiConnection.class);
 	
 	private final List<IJxtaConnectionListener> listeners = Lists.newArrayList();
-	private final JxtaBiDiPipe pipe;
-	private boolean isDisconnected;
+	private Socket socket;
 	
-	JxtaBiDiConnection( JxtaBiDiPipe pipe ) {
-		Preconditions.checkNotNull(pipe, "Pipe for jxta bidi connection must not be null!");
+	private OutputStream outputStream;
+	private InputStream inputStream;
+	
+	private RepeatingJobThread readingDataThread;
+	
+	private boolean isConnected;
+	
+	JxtaBiDiConnection() {
 		
-		this.pipe = pipe;
-		this.pipe.setMessageListener(this);
+	}
+	
+	JxtaBiDiConnection( Socket socket ) {
+		Preconditions.checkNotNull(socket, "socket must not be null!");
+		
+		this.socket = socket;
+	}
+
+	@Override
+	public void connect() throws IOException {
+		outputStream = socket.getOutputStream();
+		inputStream = socket.getInputStream();
+		
+		isConnected = true;
+		fireConnectEvent();
+		readingDataThread = new RepeatingJobThread() {
+
+			private final byte[] buffer = new byte[1024];
+
+			@Override
+			public void doJob() {
+				try {
+					final int bytesRead = inputStream.read(buffer);
+					if (bytesRead == -1) {
+						disconnect();
+						stopRunning();
+					} else if (bytesRead > 0) {
+						final byte[] msg = new byte[bytesRead];
+						System.arraycopy(buffer, 0, msg, 0, bytesRead);
+						fireMessageReceiveEvent(msg);
+					}
+				} catch (final IOException ex) {
+					LOG.error("Could not read bytes from input stream", ex);
+
+					disconnect();
+					stopRunning();
+				}
+			}
+
+		};
+		readingDataThread.setDaemon(true);
+		readingDataThread.setName("[" + getClass().getSimpleName() + "] Reading data ");
+		readingDataThread.start();
 	}
 	
 	@Override
@@ -48,13 +91,19 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
 
 	@Override
 	public void disconnect() {
+		if( readingDataThread != null) {
+			readingDataThread.stopRunning();
+		}
+		
 		try {
-			pipe.setMessageListener(null);
-			pipe.close();
+			outputStream.close();
+			inputStream.close();
+			
+			socket.close();
 		} catch (IOException e) {
 			LOG.error("Co uld not close JxtaBiDiPipe", e);
 		} finally {
-			isDisconnected = true;
+			isConnected = false;
 			fireDisconnectEvent();
 		}
 	}
@@ -62,22 +111,21 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
 
 	@Override
 	public void send(byte[] data) throws IOException {
-		Message msg = new Message();
-		msg.addMessageElement(new ByteArrayMessageElement("bytes", null, data, null));
-
-		pipe.sendMessage(msg);
+		outputStream.write(data);
+		outputStream.flush();
 	}
 
 	@Override
-	public void pipeMsgEvent(PipeMsgEvent event) {
-		Message msg = event.getMessage();
-
-		ByteArrayMessageElement bytes = (ByteArrayMessageElement) msg.getMessageElement("bytes");
-		fireMessageReceiveEvent(bytes.getBytes());
+	public boolean isConnected() {
+		return isConnected;
 	}
 	
-	protected final JxtaBiDiPipe getPipe() {
-		return pipe;
+	protected final Socket getSocket() {
+		return socket;
+	}
+	
+	protected final void setSocket( Socket socket ) {
+		this.socket = socket;
 	}
 	
 	protected final void fireDisconnectEvent() {
@@ -91,7 +139,19 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
 			}
 		}
 	}
-
+	
+	protected final void fireConnectEvent() {
+		synchronized( listeners ) {
+			for( IJxtaConnectionListener listener : listeners ) {
+				try {
+					listener.onConnect(this);
+				} catch( Throwable t ) {
+					LOG.error("Exception during invoking jxta connection listener", t);
+				}
+			}
+		}
+	}
+	
 	protected final void fireMessageReceiveEvent(byte[] data) {
 		for (final IJxtaConnectionListener listener : listeners) {
 			try {
@@ -102,13 +162,4 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener {
 		}
 	}
 
-	@Override
-	public void connect() throws IOException {
-		// do nothing
-	}
-
-	@Override
-	public boolean isConnected() {
-		return !isDisconnected;
-	}
 }

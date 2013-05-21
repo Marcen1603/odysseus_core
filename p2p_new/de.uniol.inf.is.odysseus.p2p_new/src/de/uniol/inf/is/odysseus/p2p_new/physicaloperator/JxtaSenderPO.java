@@ -91,7 +91,13 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	@Override
 	public void onDisconnect(IJxtaConnection sender) {
-		// do nothing
+		LOG.debug("Disconnected");
+	}
+	
+
+	@Override
+	public void onConnect(IJxtaConnection sender) {
+		LOG.debug("Connected");
 	}
 	
 	// overwritten to exclude that the sender is opened locally (e.g. by executor)

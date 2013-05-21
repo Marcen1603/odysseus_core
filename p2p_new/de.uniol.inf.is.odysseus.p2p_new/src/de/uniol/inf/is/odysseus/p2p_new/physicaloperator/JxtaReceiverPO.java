@@ -140,6 +140,11 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	}
 
 	@Override
+	public void onConnect(IJxtaConnection sender) {
+		// do nothing here
+	}
+	
+	@Override
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		processData(bb);
@@ -252,4 +257,5 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 		LOG.info("Pipe Advertisement with id = {}", pipeID);
 		return advertisement;
 	}
+
 }
