@@ -83,10 +83,17 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 	@Override
 	public void adaptPlan(IPhysicalQuery physicalQuery, ISession user) {
 		if(this.stoppedQueries.contains(physicalQuery)) {
-			LOG.debug("Query: " + physicalQuery + " is not adapted because it is stopped.");
+			LOG.debug("Query: {} is not adapted because it is stopped.", physicalQuery);
 			this.currentlyAdaptedQueries.remove(physicalQuery);
 			return;
 		}
+		
+		if(!this.migrationStrategy.isMigratable(physicalQuery)) {
+			LOG.debug("Query: {} is not adapted because it can not be migrated.", physicalQuery);
+			this.currentlyAdaptedQueries.remove(physicalQuery);
+			return;
+		}
+		
 		if(this.useFirst) {
 			LOG.debug("Only one migration allowed");
 			for(int i : ((IServerExecutor) getExecutor()).getLogicalQueryIds()) {
