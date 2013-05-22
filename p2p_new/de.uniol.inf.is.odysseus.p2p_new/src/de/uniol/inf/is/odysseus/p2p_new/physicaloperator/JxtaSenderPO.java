@@ -91,6 +91,12 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		LOG.debug("Disconnected");
 	}
 	
+
+	@Override
+	public void onConnect(IJxtaConnection sender) {
+		// do nothing
+	}
+	
 	// called by Jxta
 	@Override
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {
@@ -117,7 +123,6 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 						ServerExecutorService.get().stopQuery(queryID, SessionManagementService.getActiveSession());
 					}
 				}
-				
 			} else {
 				LOG.error("Got unknown control subbyte {}", data[1]);
 			}

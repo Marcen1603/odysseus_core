@@ -115,6 +115,11 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 		fireConnectionRemoveEvent(sender);
 	}
 	
+	@Override
+	public void onConnect(IJxtaConnection sender) {
+		// do nothing
+	}
+	
 	protected final void fireConnectionAddEvent(IJxtaConnection connection) {
 		synchronized( listeners ) {
 			for( IJxtaServerConnectionListener listener : listeners ) {

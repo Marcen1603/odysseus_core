@@ -33,8 +33,8 @@ import de.uniol.inf.is.odysseus.p2p_new.util.JxtaBiDiClientConnection;
 public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSource<T> implements IJxtaConnectionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaReceiverPO.class);
-	private static final String PIPE_NAME = "Odysseus Pipe";
 	
+	private static final String PIPE_NAME = "Odysseus Pipe";
 	private static final int BUFFER_SIZE_BYTES = 1024;
 	
 	private byte currentTypeByte = JxtaPOUtil.NONE_BYTE;
@@ -136,9 +136,14 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 
 	@Override
 	public void onDisconnect(IJxtaConnection sender) {
-		LOG.debug("Disconnect");
+		System.err.println("JXTAReceiverPO Disconnect!!");
 	}
-	
+
+	@Override
+	public void onConnect(IJxtaConnection sender) {
+		System.err.println("JXTAReceiverPO Connect!!");
+	}
+
 	@Override
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
@@ -252,5 +257,4 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 		LOG.info("Pipe Advertisement with id = {}", pipeID);
 		return advertisement;
 	}
-
 }
