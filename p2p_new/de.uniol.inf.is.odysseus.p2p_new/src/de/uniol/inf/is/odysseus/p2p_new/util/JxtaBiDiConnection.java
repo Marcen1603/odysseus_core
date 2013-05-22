@@ -19,13 +19,13 @@ import com.google.common.collect.Lists;
 class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener, PipeEventListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaBiDiConnection.class);
-	private static final int PING_INTERVAL = 2000;
+//	private static final int PING_INTERVAL = 2000;
 	
 	private final List<IJxtaConnectionListener> listeners = Lists.newArrayList();
 	private final JxtaBiDiPipe pipe;
 
 	private boolean isDisconnected;
-	private RepeatingJobThread pingThread;
+//	private RepeatingJobThread pingThread;
 	
 	JxtaBiDiConnection( JxtaBiDiPipe pipe ) {
 		Preconditions.checkNotNull(pipe, "Pipe for jxta bidi connection must not be null!");
@@ -53,9 +53,9 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener, PipeEventL
 
 	@Override
 	public void disconnect() {
-		if( pingThread != null ) {
-			pingThread.stopRunning();
-		}
+//		if( pingThread != null ) {
+//			pingThread.stopRunning();
+//		}
 		
 		try {
 			pipe.setMessageListener(null);
@@ -138,25 +138,25 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener, PipeEventL
 	public void connect() throws IOException {
 		fireConnectEvent();
 		
-		pingThread = new RepeatingJobThread(PING_INTERVAL, "Ping Thread") {
-
-			@Override
-			public void doJob() {
-				try {
-					final Message pingMessage = new Message();
-					pingMessage.addMessageElement(new ByteArrayMessageElement("ping", null, new byte[0], null));
-
-					if( !pipe.sendMessage(pingMessage) ) {
-						stopRunning();
-						disconnect();
-					}
-				} catch (IOException e) {
-					stopRunning();
-					disconnect();
-				}
-			}
-		};
-		pingThread.start();
+//		pingThread = new RepeatingJobThread(PING_INTERVAL, "Ping Thread") {
+//
+//			@Override
+//			public void doJob() {
+//				try {
+//					final Message pingMessage = new Message();
+//					pingMessage.addMessageElement(new ByteArrayMessageElement("ping", null, new byte[0], null));
+//
+//					if( !pipe.sendMessage(pingMessage) ) {
+//						stopRunning();
+//						disconnect();
+//					}
+//				} catch (IOException e) {
+//					stopRunning();
+//					disconnect();
+//				}
+//			}
+//		};
+//		pingThread.start();
 	}
 
 	@Override
