@@ -22,6 +22,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption.IPlanAdaptionEngine;
@@ -133,5 +134,17 @@ public abstract class AbstractPlanAdaptionEngine implements IPlanAdaptionEngine 
 		this.stoppedQueries.remove(query);
 	}
 	
+	@Override
+	public void setExecutor(IExecutor executor) {
+		this.executor = (IServerExecutor) executor;
+		this.executor.addPlanModificationListener(this);
+	}
 	
+	@Override
+	public void unsetExecutor(IExecutor executor) {
+		if(this.executor.equals(executor)) {
+			this.executor.removePlanModificationListener(this);
+			this.executor = null;
+		}
+	}
 }

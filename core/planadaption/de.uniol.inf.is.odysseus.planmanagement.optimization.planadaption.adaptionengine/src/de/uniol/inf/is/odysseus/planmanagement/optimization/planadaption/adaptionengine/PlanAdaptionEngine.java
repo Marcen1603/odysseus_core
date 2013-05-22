@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
@@ -163,20 +162,6 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 			} catch (MigrationException ex) {
 				throw new QueryOptimizationException(ex);
 			}
-		}
-	}
-
-	public void bindExecutor(IExecutor executor) {
-		this.executor = (IServerExecutor) executor;
-		this.executor.addPlanModificationListener(this);
-		LOG.debug("Executor bound");
-	}
-
-	public void unbindExecutor(IExecutor executor) {
-		if (executor.equals(this.executor)) {
-			this.executor.removePlanModificationListener(this);
-			this.executor = null;
-			LOG.debug("Executor unbound");
 		}
 	}
 

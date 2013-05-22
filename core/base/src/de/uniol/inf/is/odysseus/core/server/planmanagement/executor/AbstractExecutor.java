@@ -347,10 +347,12 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	public void bindPlanAdaption(IPlanAdaptionEngine adaption) {
 		this.planAdaptionEngine = adaption;
+		this.planAdaptionEngine.setExecutor(this);
 	}
 	
 	public void unbindPlanAdaption(IPlanAdaptionEngine adaption) {
 		if(adaption.equals(this.planAdaptionEngine)) {
+			this.planAdaptionEngine.unsetExecutor(this);
 			this.planAdaptionEngine = null;
 		}
 	}

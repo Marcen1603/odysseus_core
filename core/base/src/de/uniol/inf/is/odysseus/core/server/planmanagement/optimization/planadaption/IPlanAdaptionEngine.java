@@ -16,6 +16,7 @@
 
 package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planadaption;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationListener;
@@ -60,4 +61,16 @@ public interface IPlanAdaptionEngine extends IPlanModificationListener, IMigrati
 	 * @param query
 	 */
 	public void setQueryAsStarted(IPhysicalQuery query);
+	
+	/**
+	 * Avoid cyclic dependency with executor
+	 * 
+	 * @param executor
+	 */
+	public void setExecutor(IExecutor executor);
+
+	/**
+	 * @param executor
+	 */
+	public void unsetExecutor(IExecutor executor);
 }
