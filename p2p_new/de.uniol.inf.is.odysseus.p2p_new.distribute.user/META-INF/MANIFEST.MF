@@ -14,6 +14,6 @@ Require-Bundle: com.google.guava;bundle-version="12.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
- Jxta_2.7;bundle-version="1.0.0"
+ Jxta.2.6;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.distribute.user.UserDefinedDistributorPlugIn
