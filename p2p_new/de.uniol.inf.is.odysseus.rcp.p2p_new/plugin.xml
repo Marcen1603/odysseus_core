@@ -15,7 +15,7 @@
             category="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PCategory"
             class="de.uniol.inf.is.odysseus.rcp.p2p_new.views.P2PSourcesViewPart"
             id="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PStreamAndView"
-            name="Streams/Views"
+            name="P2P Sources"
             restorable="true">
       </view>
       <category
@@ -86,6 +86,17 @@
                minimized="false"
                relationship="stack"
                relative="org.eclipse.ui.console.ConsoleView"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="de.uniol.inf.is.odysseus.rcp.views.SourcesView"
+               minimized="false"
+               moveable="true"
+               ratio="0.3f"
+               relationship="bottom"
+               relative="org.eclipse.ui.navigator.ProjectExplorer"
+               showTitle="true"
                visible="true">
          </view>
       </perspectiveExtension>
