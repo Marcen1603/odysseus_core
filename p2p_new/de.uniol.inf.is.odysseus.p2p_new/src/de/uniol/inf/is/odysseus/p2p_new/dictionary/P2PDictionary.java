@@ -20,22 +20,25 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
-import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisement;
 
-public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
+public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, IPlanModificationListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PDictionary.class);
 
@@ -52,6 +55,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 	private final Map<ViewAdvertisement, Integer> exportedViewsQueryMap = Maps.newHashMap();
 
 	private static IDataDictionary dataDictionary;
+	private static IServerExecutor executor;
 
 	// called by OSGi-DS
 	public void activate() {
@@ -83,6 +87,21 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 			dataDictionary.removeListener(this);
 			dataDictionary = null;
 			LOG.debug("DataDictionary unbound {}", dd);
+		}
+	}
+	
+	public void bindExecutor(IExecutor exe) {
+		executor = (IServerExecutor)exe;
+		executor.addPlanModificationListener(this);
+		
+		LOG.debug("ServerExecutor bound {}", exe);
+	}
+
+	public void unbindExecutor(IExecutor exe) {
+		if (executor == exe) {
+			executor.removePlanModificationListener(this);
+			executor = null;
+			LOG.debug("ServerExectutor unbound {}", exe);
 		}
 	}
 
@@ -285,7 +304,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 				jxtaSender.setPipeID(pipeID.toString());
 				view.subscribeSink(jxtaSender, 0, 0, view.getOutputSchema());
 				
-				IServerExecutor executor = ServerExecutorService.get();
 				Integer queryID = executor.addQuery(jxtaSender, SessionManagementService.getActiveSession(), queryBuildConfigurationName);
 				IPhysicalQuery physicalQuery = executor.getExecutionPlan().getQueryById(queryID);
 				ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
@@ -314,8 +332,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 			ViewAdvertisement exportAdvertisement = optExportAdvertisement.get();
 			
 			Integer queryID = exportedViewsQueryMap.get(exportAdvertisement);
-			ServerExecutorService.get().removeQuery(queryID, SessionManagementService.getActiveSession());
 			exportedViewsQueryMap.remove(exportAdvertisement);
+			if( executor.getExecutionPlan().getQueryById(queryID) != null ) {
+				executor.removeQuery(queryID, SessionManagementService.getActiveSession());
+			}
 			
 			fireViewExportRemoveEvent(exportAdvertisement, viewName);
 			
@@ -375,6 +395,26 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 		// do nothing
 	}
 
+	// called by ServerExecutor
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		final IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
+		final int queryID = query.getID();
+		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
+			
+			String exportedViewName = null;
+			for( ViewAdvertisement exportAdv : exportedViewsQueryMap.keySet() ) {
+				if( exportedViewsQueryMap.get(exportAdv).equals(queryID)) {
+					exportedViewName = exportAdv.getViewName();
+					break; // to avoid ConcurrentMod-Exception
+				}
+			}
+			if( exportedViewName != null ) {
+				removeViewExport(exportedViewName);
+			}
+		}
+	}
+	
 	@Override
 	public void addListener(IP2PDictionaryListener listener) {
 		Preconditions.checkNotNull(listener, "Listener to add must not be null!");
