@@ -26,8 +26,6 @@ public class ViewAdvertisementReceiver implements IAdvertisementListener {
 		if (adv instanceof ViewAdvertisement) {
 			final ViewAdvertisement viewAdvertisement = (ViewAdvertisement) adv;
 			P2PDictionary.getInstance().removeView(viewAdvertisement);
-			
-//			DataDictionaryService.get().removeViewOrStream(((ViewAdvertisement)adv).getViewName(), SessionManagementService.getActiveSession());
 		}		
 	}
 }

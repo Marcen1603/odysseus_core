@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
@@ -31,6 +33,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 	private static IP2PDictionary instance;
 
 	private final List<IP2PDictionaryListener> listeners = Lists.newArrayList();
+	
 	private final List<ViewAdvertisement> publishedViews = Lists.newArrayList();
 	private final Map<ViewAdvertisement, List<ViewAdvertisement>> sameViewsMap = Maps.newHashMap();
 	private final Map<ViewAdvertisement, List<ViewAdvertisement.Same>> cachedSameMap = Maps.newHashMap();
@@ -100,11 +103,17 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 
 	@Override
 	public void removeView(ViewAdvertisement advertisement) {
+		if( advertisement != null && importedViews.containsKey(advertisement)) {
+			importedViews.remove(advertisement);
+			
+			fireViewImportRemoveEvent(advertisement, importedViews.get(advertisement));
+		}
+		
 		if (advertisement != null && publishedViews.contains(advertisement)) {
 			publishedViews.remove(advertisement);
 			cachedSameMap.remove(advertisement);
 			sameViewsMap.remove(advertisement);
-
+			
 			for (List<ViewAdvertisement> sameList : sameViewsMap.values()) {
 				sameList.remove(advertisement);
 			}
@@ -247,6 +256,19 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 				
 				fireViewImportRemoveEvent(advertisement, name);
 			}
+		}
+		
+		Optional<ViewAdvertisement> optOwnAdvertisement = find(P2PNewPlugIn.getOwnPeerID(), name);
+		if( optOwnAdvertisement.isPresent() ) {
+			ViewAdvertisement ownAdvertisement = optOwnAdvertisement.get();
+			
+			try {
+				P2PNewPlugIn.getDiscoveryService().flushAdvertisement(ownAdvertisement);
+			} catch (IOException e) {
+				LOG.error("Could not flush view advertisement {}", ownAdvertisement, e);
+			}
+			
+			removeView(ownAdvertisement);
 		}
 	}
 
