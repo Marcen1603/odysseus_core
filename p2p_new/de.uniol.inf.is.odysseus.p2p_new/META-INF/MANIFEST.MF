@@ -21,7 +21,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  Jxta.2.6;bundle-version="1.0.0"
-Service-Component: OSGI-INF/sessionManagementService.xml, OSGI-INF/advertisementManager.xml, OSGI-INF/jxtaTransportHandler.xml,OSGI-INF/peerManager.xml,OSGI-INF/jxtaProtocolHandler.xml,OSGI-INF/jxtaRuleProvider.xml,OSGI-INF/executorService.xml,OSGI-INF/keywordProvider.xml,OSGI-INF/dataDictionaryService.xml,OSGI-INF/streamAdvertisementReceiver.xml,OSGI-INF/viewAdvertisementReceiver.xml,
+Service-Component: OSGI-INF/sessionManagementService.xml, OSGI-INF/advertisementManager.xml, OSGI-INF/jxtaTransportHandler.xml,OSGI-INF/peerManager.xml,OSGI-INF/jxtaProtocolHandler.xml,OSGI-INF/jxtaRuleProvider.xml,OSGI-INF/executorService.xml,OSGI-INF/keywordProvider.xml,OSGI-INF/dataDictionaryService.xml,OSGI-INF/viewAdvertisementReceiver.xml,
  OSGI-INF/p2pDictionary.xml
 Export-Package: de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.p2p_new.dictionary,

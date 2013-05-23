@@ -20,11 +20,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -34,7 +39,6 @@ import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
-import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisement;
 
@@ -173,7 +177,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		ImmutableList.Builder<ViewAdvertisement> builder = new ImmutableList.Builder<>();
 		for (ViewAdvertisement adv : publishedViews) {
-			if (adv.getViewName().equals(viewName)) {
+			if (adv.getName().equals(viewName)) {
 				builder.add(adv);
 			}
 		}
@@ -189,7 +193,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	@Override
 	public boolean existsView(String viewName) {
 		for (ViewAdvertisement adv : publishedViews) {
-			if (adv.getViewName().equals(viewName)) {
+			if (adv.getName().equals(viewName)) {
 				return true;
 			}
 		}
@@ -225,21 +229,31 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		// einen)
 		ViewAdvertisement advertisement = nonLocalViewAdvs.get(0);
 
-		final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
-		receiverOperator.setPipeID(advertisement.getPipeID().toString());
-		receiverOperator.setOutputSchema(advertisement.getOutputSchema());
-		receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
-		receiverOperator.setName(viewNameToUse + "_Receive");
-		receiverOperator.setDestinationName("local");
+		if( advertisement.isStream() ) {
+			final AccessAO accessAO = advertisement.getAccessAO();
+	
+			final ILogicalOperator timestampAO = addTimestampAO(accessAO, null);
+			dataDictionary.addEntitySchema(accessAO.getSourcename(), accessAO.getOutputSchema(), SessionManagementService.getActiveSession());
+			dataDictionary.setStream(accessAO.getSourcename(), timestampAO, SessionManagementService.getActiveSession());
 
-		final RenameAO renameNoOp = new RenameAO();
-		renameNoOp.setDestinationName("local");
-		renameNoOp.setNoOp(true);
+		} else {
+			final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
+			receiverOperator.setPipeID(advertisement.getPipeID().toString());
+			receiverOperator.setOutputSchema(advertisement.getOutputSchema());
+			receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
+			receiverOperator.setName(viewNameToUse + "_Receive");
+			receiverOperator.setDestinationName("local");
+	
+			final RenameAO renameNoOp = new RenameAO();
+			renameNoOp.setDestinationName("local");
+			renameNoOp.setNoOp(true);
+	
+			receiverOperator.subscribeSink(renameNoOp, 0, 0, receiverOperator.getOutputSchema());
+			renameNoOp.initialize();
+			
+			dataDictionary.setView(viewNameToUse, renameNoOp, SessionManagementService.getActiveSession());
+		}
 
-		receiverOperator.subscribeSink(renameNoOp, 0, 0, receiverOperator.getOutputSchema());
-		renameNoOp.initialize();
-
-		dataDictionary.setView(viewNameToUse, renameNoOp, SessionManagementService.getActiveSession());
 		importedViews.put(advertisement, viewNameToUse);
 
 		fireViewImportEvent(advertisement, viewNameToUse);
@@ -283,46 +297,80 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			throw new PeerException("View " + viewName + " is already ported");
 		}
 		
-		final ILogicalOperator view = DataDictionaryService.get().getView(viewName, SessionManagementService.getActiveSession());
-		
+		final ILogicalOperator view = dataDictionary.getView(viewName, SessionManagementService.getActiveSession());
 		if( view != null ) {
-			try {
-				final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
-			
-				ViewAdvertisement viewAdvertisement = (ViewAdvertisement)AdvertisementFactory.newAdvertisement(ViewAdvertisement.getAdvertisementType());
-				viewAdvertisement.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
-				viewAdvertisement.setOutputSchema(view.getOutputSchema());
-				viewAdvertisement.setPipeID(pipeID);
-				viewAdvertisement.setViewName(viewName);
-				viewAdvertisement.setPeerID(P2PNewPlugIn.getOwnPeerID());
-			
-				P2PNewPlugIn.getDiscoveryService().publish(viewAdvertisement);
-				addView(viewAdvertisement);				
-
-				final JxtaSenderAO jxtaSender = new JxtaSenderAO();
-				jxtaSender.setName(viewName + "_Send");
-				jxtaSender.setPipeID(pipeID.toString());
-				view.subscribeSink(jxtaSender, 0, 0, view.getOutputSchema());
-				
-				Integer queryID = executor.addQuery(jxtaSender, SessionManagementService.getActiveSession(), queryBuildConfigurationName);
-				IPhysicalQuery physicalQuery = executor.getExecutionPlan().getQueryById(queryID);
-				ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
-				logicalQuery.setName(viewName);
-				logicalQuery.setParserId("P2P");
-				logicalQuery.setUser(SessionManagementService.getActiveSession());
-				
-				exportedViewsQueryMap.put(viewAdvertisement, queryID);
-				
-				fireViewExportEvent(viewAdvertisement, viewName);
-				
-				return viewAdvertisement;
-
-			} catch (IOException e) {
-				throw new PeerException("Could not publish view '" + viewName + "'", e);
-			}			
+			return exportViewImpl(viewName, queryBuildConfigurationName, view);			
 		}
 		
-		throw new PeerException("Could not find view '" + viewName + "'");
+		final ILogicalOperator stream = dataDictionary.getStreamForTransformation(viewName, SessionManagementService.getActiveSession());
+		if( stream != null ) {
+			return exportStreamImpl(viewName, queryBuildConfigurationName, stream );
+		}
+		
+		throw new PeerException("Could not find view or stream '" + viewName + "'");
+	}
+
+	private ViewAdvertisement exportStreamImpl(String viewName, String queryBuildConfigurationName, ILogicalOperator stream) throws PeerException {
+		Optional<AccessAO> optAccessAO = determineAccessAO(stream);
+		if (optAccessAO.isPresent()) {
+
+			ViewAdvertisement viewAdvertisement = (ViewAdvertisement) AdvertisementFactory.newAdvertisement(ViewAdvertisement.getAdvertisementType());
+			viewAdvertisement.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+			viewAdvertisement.setName(viewName);
+			viewAdvertisement.setPeerID(P2PNewPlugIn.getOwnPeerID());
+			viewAdvertisement.setAccessAO(optAccessAO.get());
+
+			try {
+				P2PNewPlugIn.getDiscoveryService().publish(viewAdvertisement);
+				addView(viewAdvertisement);
+
+				exportedViewsQueryMap.put(viewAdvertisement, -1);
+
+				fireViewExportEvent(viewAdvertisement, viewName);
+
+				return viewAdvertisement;
+			} catch (final IOException ex) {
+				throw new PeerException("Could not advertise stream '" + viewAdvertisement.getAccessAO().getSourcename() + "'", ex);
+			}
+		}
+		throw new PeerException("Could not find stream '" + stream + "'");
+	}
+
+	private ViewAdvertisement exportViewImpl(String viewName, String queryBuildConfigurationName, final ILogicalOperator view) throws PeerException {
+		try {
+			final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
+		
+			ViewAdvertisement viewAdvertisement = (ViewAdvertisement)AdvertisementFactory.newAdvertisement(ViewAdvertisement.getAdvertisementType());
+			viewAdvertisement.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+			viewAdvertisement.setOutputSchema(view.getOutputSchema());
+			viewAdvertisement.setPipeID(pipeID);
+			viewAdvertisement.setName(viewName);
+			viewAdvertisement.setPeerID(P2PNewPlugIn.getOwnPeerID());
+		
+			P2PNewPlugIn.getDiscoveryService().publish(viewAdvertisement);
+			addView(viewAdvertisement);				
+
+			final JxtaSenderAO jxtaSender = new JxtaSenderAO();
+			jxtaSender.setName(viewName + "_Send");
+			jxtaSender.setPipeID(pipeID.toString());
+			view.subscribeSink(jxtaSender, 0, 0, view.getOutputSchema());
+			
+			Integer queryID = executor.addQuery(jxtaSender, SessionManagementService.getActiveSession(), queryBuildConfigurationName);
+			IPhysicalQuery physicalQuery = executor.getExecutionPlan().getQueryById(queryID);
+			ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
+			logicalQuery.setName(viewName);
+			logicalQuery.setParserId("P2P");
+			logicalQuery.setUser(SessionManagementService.getActiveSession());
+			
+			exportedViewsQueryMap.put(viewAdvertisement, queryID);
+			
+			fireViewExportEvent(viewAdvertisement, viewName);
+			
+			return viewAdvertisement;
+
+		} catch (IOException e) {
+			throw new PeerException("Could not publish view '" + viewName + "'", e);
+		}
 	}
 
 	@Override
@@ -333,7 +381,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			
 			Integer queryID = exportedViewsQueryMap.get(exportAdvertisement);
 			exportedViewsQueryMap.remove(exportAdvertisement);
-			if( executor.getExecutionPlan().getQueryById(queryID) != null ) {
+			if( queryID != -1 && executor.getExecutionPlan().getQueryById(queryID) != null ) {
 				executor.removeQuery(queryID, SessionManagementService.getActiveSession());
 			}
 			
@@ -352,7 +400,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	@Override
 	public Optional<ViewAdvertisement> getExportedAdvertisement(String viewName) {
 		for( ViewAdvertisement adv : exportedViewsQueryMap.keySet() ) {
-			if( adv.getViewName().equals(viewName)) {
+			if( adv.getName().equals(viewName)) {
 				return Optional.of(adv);
 			}
 		}
@@ -405,7 +453,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			String exportedViewName = null;
 			for( ViewAdvertisement exportAdv : exportedViewsQueryMap.keySet() ) {
 				if( exportedViewsQueryMap.get(exportAdv).equals(queryID)) {
-					exportedViewName = exportAdv.getViewName();
+					exportedViewName = exportAdv.getName();
 					break; // to avoid ConcurrentMod-Exception
 				}
 			}
@@ -505,7 +553,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private Optional<ViewAdvertisement> find(PeerID peerID, String viewName) {
 		for (ViewAdvertisement adv : publishedViews) {
-			if (adv.getPeerID().equals(peerID) && adv.getViewName().equals(viewName)) {
+			if (adv.getPeerID().equals(peerID) && adv.getName().equals(viewName)) {
 				return Optional.of(adv);
 			}
 		}
@@ -522,7 +570,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private void checkSameCache(ViewAdvertisement viewAdvertisement) {
 		for (ViewAdvertisement potencialSameAdv : cachedSameMap.keySet().toArray(new ViewAdvertisement[0])) {
 			for (ViewAdvertisement.Same potencialSame : cachedSameMap.get(potencialSameAdv).toArray(new ViewAdvertisement.Same[0])) {
-				if (potencialSame.getPeerID().equals(viewAdvertisement.getPeerID()) && potencialSame.getViewName().equals(viewAdvertisement.getViewName())) {
+				if (potencialSame.getPeerID().equals(viewAdvertisement.getPeerID()) && potencialSame.getViewName().equals(viewAdvertisement.getName())) {
 					addSame(viewAdvertisement, potencialSameAdv);
 
 					cachedSameMap.get(potencialSameAdv).remove(potencialSame);
@@ -547,5 +595,41 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			}
 		}
 		return result;
+	}
+	
+	private static Optional<AccessAO> determineAccessAO(ILogicalOperator start) {
+		if (start instanceof AccessAO) {
+			return Optional.of((AccessAO) start);
+		}
+
+		for (final LogicalSubscription subscription : start.getSubscribedToSource()) {
+			final Optional<AccessAO> optAcccessAO = determineAccessAO(subscription.getTarget());
+			if (optAcccessAO.isPresent()) {
+				return optAcccessAO;
+			}
+		}
+
+		return Optional.absent();
+	}
+	
+	private static ILogicalOperator addTimestampAO(ILogicalOperator operator, String dateFormat) {
+		final TimestampAO timestampAO = new TimestampAO();
+		timestampAO.setDateFormat(dateFormat);
+		if (operator.getOutputSchema() != null) {
+
+			for (final SDFAttribute attr : operator.getOutputSchema()) {
+				if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI()) || SDFDatatype.START_TIMESTAMP_STRING.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
+					timestampAO.setStartTimestamp(attr);
+				}
+
+				if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI()) || SDFDatatype.END_TIMESTAMP_STRING.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
+					timestampAO.setEndTimestamp(attr);
+				}
+
+			}
+		}
+		timestampAO.subscribeTo(operator, operator.getOutputSchema());
+		timestampAO.setName(timestampAO.getStandardName());
+		return timestampAO;
 	}
 }

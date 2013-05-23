@@ -35,7 +35,7 @@ public class ImportCommand extends AbstractHandler implements IHandler {
 				
 				try {
 					// TODO: Auswahl des Namens, falls vergeben
-					dictionary.importView(selectedAdvertisement, selectedAdvertisement.getViewName());
+					dictionary.importView(selectedAdvertisement, selectedAdvertisement.getName());
 					StatusBarManager.getInstance().setMessage("View/Stream successfully imported");
 				} catch (PeerException e) {
 					throw new ExecutionException("Could not import", e);

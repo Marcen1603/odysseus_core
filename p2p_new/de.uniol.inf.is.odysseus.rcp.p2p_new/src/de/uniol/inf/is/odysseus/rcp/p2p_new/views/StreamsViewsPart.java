@@ -337,23 +337,23 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 				
 				entry.index = result.size() + 1;
 				entry.schema = "TODO";
-				entry.type = "View";
+				entry.type = publishedView.isStream() ? "Stream" : "View" ;
 				entry.peerNames = "<unknown>";//getPeerNames(viewAdvs, p2pDictionary);
 				entry.advertisement = publishedView;
 				
-				if( p2pDictionary.isExported(publishedView.getViewName())) {
-					entry.portedViewName = EXPORT_TAG + " " + publishedView.getViewName();
+				if( p2pDictionary.isExported(publishedView.getName())) {
+					entry.portedViewName = EXPORT_TAG + " " + publishedView.getName();
 				} else if( p2pDictionary.isImported(publishedView)) {
 					entry.portedViewName = IMPORT_TAG + " " + p2pDictionary.getImportedViewName(publishedView).get();
 				} else {
 					entry.portedViewName = "";
 				}
-				entry.viewNames = publishedView.getViewName();
+				entry.viewNames = publishedView.getName();
 				
 				result.add(entry);
 			} else {
 				entry.peerNames += " <unknown>";
-				entry.viewNames += publishedView.getViewName();
+				entry.viewNames += publishedView.getName();
 			}
 		}
 		

@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class PublishPreParserKeyword extends AbstractPreParserKeyword {
+public class ExportPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String KEYWORD = "EXPORT";
 	

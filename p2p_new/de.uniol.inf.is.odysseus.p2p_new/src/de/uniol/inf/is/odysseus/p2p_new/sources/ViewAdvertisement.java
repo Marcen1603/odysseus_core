@@ -30,6 +30,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 
@@ -37,11 +38,11 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 
 	public static class Same {
 		private final PeerID peerID;
-		private final String viewName;
+		private final String name;
 		
 		public Same( PeerID peerID, String viewName ) {
 			this.peerID = peerID;
-			this.viewName = viewName;
+			this.name = viewName;
 		}
 		
 		public PeerID getPeerID() {
@@ -49,7 +50,7 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 		}
 		
 		public String getViewName() {
-			return viewName;
+			return name;
 		}
 	}
 	
@@ -59,21 +60,28 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 	private static final Logger LOG = LoggerFactory.getLogger(ViewAdvertisement.class);
 
 	private static final String ID_TAG = "id";
-	private static final String VIEW_NAME_TAG = "viewName";
+	private static final String NAME_TAG = "name";
+	private static final String PEER_ID_TAG = "originalPeerID";
+	
+	// external sources
+	private static final String ACCESS_AO_TAG = "accessAO";
+	
+	// internal sources
 	private static final String PIPEID_TAG = "pipeid";
 	private static final String OUTPUTSCHEMA_TAG = "outputSchema";
-	private static final String PEER_ID_TAG = "originalPeerID";
 	private static final String SAME_AS_TAG = "sameAs";
 
-	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, VIEW_NAME_TAG, PEER_ID_TAG, PIPEID_TAG };
+	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, NAME_TAG, PEER_ID_TAG };
 
 	private List<Same> sameAs;
 	
 	private ID id;
-	private String viewName;
+	private String name;
 	private PipeID pipeID;
 	private PeerID peerID;
 	private SDFSchema outputSchema;
+	
+	private AccessAO accessAO;
 
 	public ViewAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
@@ -93,10 +101,11 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 		Preconditions.checkNotNull(viewAdvertisement, "Advertisement to copy must not be null!");
 
 		id = viewAdvertisement.id;
-		viewName = viewAdvertisement.viewName;
+		name = viewAdvertisement.name;
 		pipeID = viewAdvertisement.pipeID;
 		peerID = viewAdvertisement.peerID;
 		outputSchema = viewAdvertisement.outputSchema;
+		accessAO = viewAdvertisement.accessAO;
 	}
 
 	ViewAdvertisement() {
@@ -116,19 +125,29 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 		}
 
 		appendElement(doc, ID_TAG, id.toString());
-		appendElement(doc, VIEW_NAME_TAG, viewName);
-		appendElement(doc, PIPEID_TAG, pipeID.toString());
+		appendElement(doc, NAME_TAG, name);
 		appendElement(doc, PEER_ID_TAG, peerID.toString());
-
-		final Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
-		for (final SDFAttribute attr : outputSchema) {
-			appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
-		}
 		
-		if( sameAs != null && !sameAs.isEmpty() ) {
-			final Element<?> sameElement = appendElement(doc, SAME_AS_TAG);
-			for( Same same : sameAs ) {
-				appendElement(sameElement, same.getPeerID().toString(), same.getViewName());
+		if( accessAO != null ) {
+			// external source
+			final Element<?> element = appendElement(doc, ACCESS_AO_TAG);
+			AccessAOCoverter.toDocument(element, accessAO);
+			
+		} else {
+		
+			// internal source
+			appendElement(doc, PIPEID_TAG, pipeID.toString());
+	
+			final Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
+			for (final SDFAttribute attr : outputSchema) {
+				appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
+			}
+			
+			if( sameAs != null && !sameAs.isEmpty() ) {
+				final Element<?> sameElement = appendElement(doc, SAME_AS_TAG);
+				for( Same same : sameAs ) {
+					appendElement(sameElement, same.getPeerID().toString(), same.getViewName());
+				}
 			}
 		}
 
@@ -164,6 +183,10 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 		return this.peerID.equals(P2PNewPlugIn.getOwnPeerID());
 	}
 	
+	public boolean isStream() {
+		return accessAO != null;
+	}
+	
 	public void setPeerID(PeerID peerID) {
 		this.peerID = peerID;
 	}
@@ -172,12 +195,12 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 		return peerID;
 	}
 
-	public String getViewName() {
-		return viewName;
+	public String getName() {
+		return name;
 	}
 
-	public void setViewName(String viewName) {
-		this.viewName = viewName;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public void setSameAs(List<Same> sameAs) {
@@ -186,6 +209,14 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 	
 	public List<Same> getSameAs() {
 		return sameAs;
+	}
+	
+	public AccessAO getAccessAO() {
+		return accessAO;
+	}
+	
+	public void setAccessAO(AccessAO accessAO) {
+		this.accessAO = accessAO;
 	}
 
 	@Override
@@ -208,33 +239,36 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 		ViewAdvertisement adv = (ViewAdvertisement) obj;
 		return
 				Objects.equals(adv.id, id) &&
-				Objects.equals(adv.viewName, viewName) && 
+				Objects.equals(adv.name, name) && 
 				Objects.equals(adv.pipeID, pipeID);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(viewName, id, pipeID);
+		return Objects.hash(name, id, pipeID);
 	}
 
 	private void handleElement(TextElement<?> elem) {
 		if (elem.getName().equals(ID_TAG)) {
 			setID(toID(elem));
 
-		} else if (elem.getName().equals(VIEW_NAME_TAG)) {
-			setViewName(elem.getTextValue());
-
-		} else if (elem.getName().equals(PIPEID_TAG)) {
-			setPipeID((PipeID) toID(elem));
-
+		} else if (elem.getName().equals(NAME_TAG)) {
+			setName(elem.getTextValue());
+			
 		} else if (elem.getName().equals(PEER_ID_TAG)) {
 			setPeerID((PeerID) toID(elem));
 
+		} else if( elem.getName().equals(ACCESS_AO_TAG)) {
+			accessAO = AccessAOCoverter.toAccessAO(elem);
+			
+		} else if (elem.getName().equals(PIPEID_TAG)) {
+			setPipeID((PipeID) toID(elem));
+
 		} else if (elem.getName().equals(OUTPUTSCHEMA_TAG)) {
-			setOutputSchema(handleOutputSchemaTag(elem, getViewName()));
+			setOutputSchema(handleOutputSchemaTag(elem, getName()));
 
 		} else if (elem.getName().equals(SAME_AS_TAG)) {
-			setSameAs(handleSameAsTag(elem, getViewName()));
+			setSameAs(handleSameAsTag(elem, getName()));
 
 		}
 	}

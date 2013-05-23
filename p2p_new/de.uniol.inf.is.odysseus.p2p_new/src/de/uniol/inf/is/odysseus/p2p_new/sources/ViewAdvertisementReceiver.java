@@ -11,14 +11,10 @@ public class ViewAdvertisementReceiver implements IAdvertisementListener {
 	public void advertisementAdded(IAdvertisementManager sender, Advertisement adv) {
 		if (adv instanceof ViewAdvertisement ) {
 			final ViewAdvertisement viewAdvertisement = (ViewAdvertisement) adv;
-			
-			if( P2PDictionary.getInstance().existsView(viewAdvertisement)) {
-				return;
+			if( !P2PDictionary.getInstance().existsView(viewAdvertisement)) {
+				P2PDictionary.getInstance().addView(viewAdvertisement);
 			}
-			
-			P2PDictionary.getInstance().addView(viewAdvertisement);
 		}
-
 	}
 
 	@Override
