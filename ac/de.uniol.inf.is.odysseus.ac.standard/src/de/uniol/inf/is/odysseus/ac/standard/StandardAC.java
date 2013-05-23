@@ -122,8 +122,8 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	 * @param executor
 	 *            Neuer {@link IExecutor}
 	 */
-	public void bindExecutor(IExecutor executor) {
-		this.executor = (IServerExecutor) executor;
+	public void setExecutor(IServerExecutor executor) {
+		this.executor = executor;
 
 		this.executor.addPlanModificationListener(this);
 
@@ -293,14 +293,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		LOG.debug("Costmodel unbound: " + costModel.getClass().getSimpleName());
 	}
 
-	/**
-	 * Wird aufgerufen, wenn im OSGi-Framework der {@link IExecutor}
-	 * deregistriert wird.
-	 * 
-	 * @param executor
-	 *            Zu entfernender {@link IExecutor}
-	 */
-	public void unbindExecutor(IExecutor executor) {
+	public void unsetExecutor(IServerExecutor executor) {
 		if (executor == this.executor) {
 			this.executor.removePlanModificationListener(this);
 			this.executor = null;

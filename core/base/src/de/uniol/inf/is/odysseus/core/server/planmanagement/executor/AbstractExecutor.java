@@ -290,18 +290,24 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	public void bindAdmissionControl(IAdmissionControl control) {
-		if (admissionControl != null)
+		if (admissionControl != null){
 			admissionControl.removeListener(this);
+			admissionControl.unsetExecutor(this);
+		}
 
 		admissionControl = control;
-		if (admissionControl != null)
+		if (admissionControl != null){
 			admissionControl.addListener(this);
+			admissionControl.setExecutor(this);
+		}
 	}
 
 	public void unbindAdmissionControl(IAdmissionControl control) {
 		if (admissionControl == control) {
-			if (admissionControl != null)
+			if (admissionControl != null){
 				admissionControl.removeListener(this);
+				admissionControl.unsetExecutor(this);
+			}
 
 			admissionControl = null;
 		}

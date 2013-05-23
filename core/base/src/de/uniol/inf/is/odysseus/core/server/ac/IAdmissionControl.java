@@ -20,6 +20,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -144,4 +145,16 @@ public interface IAdmissionControl {
 	 * @return <code>true</code> bei Überlastungssituation, sonts <code>false</code>.
 	 */
 	public boolean isOverloaded();
+	
+	/**
+	 * Method to register executor
+	 * @param executor
+	 */
+	public void setExecutor(IServerExecutor executor);
+
+	/**
+	 * Method to deregister executor
+	 * @param executor
+	 */
+	public void unsetExecutor(IServerExecutor executor);
 }
