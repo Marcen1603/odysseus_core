@@ -15,7 +15,6 @@ public interface IP2PDictionary {
 	void removeView( ViewAdvertisement advertisement );
 	boolean existsView( ViewAdvertisement advertisement );
 	boolean existsView( String viewName );
-	
 	ImmutableList<ViewAdvertisement> getViews();
 	ImmutableList<ViewAdvertisement> getViews( String viewName );
 	
@@ -23,7 +22,13 @@ public interface IP2PDictionary {
 	boolean isSame( ViewAdvertisement a, ViewAdvertisement b );
 	
 	void importView( ViewAdvertisement advertisement, String viewNameToUse ) throws PeerException;
+	void removeViewImport( ViewAdvertisement advertisement );
 	boolean isImported( ViewAdvertisement advertisement );
 	Optional<String> getImportedViewName( ViewAdvertisement advertisement );
 	Optional<ViewAdvertisement> getImportedAdvertisement( String viewName );
+	
+	ViewAdvertisement exportView( String viewName, String queryBuildConfigurationName ) throws PeerException;
+	void removeViewExport( String viewName );
+	boolean isExported( String viewName );
+	Optional<ViewAdvertisement> getExportedAdvertisement( String viewName );
 }

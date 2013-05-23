@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.document.AdvertisementFactory;
+import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
+import net.jxta.pipe.PipeID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +20,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisement;
 
@@ -39,6 +48,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 	private final Map<ViewAdvertisement, List<ViewAdvertisement.Same>> cachedSameMap = Maps.newHashMap();
 
 	private final Map<ViewAdvertisement, String> importedViews = Maps.newHashMap();
+	
+	private final Map<ViewAdvertisement, Integer> exportedViewsQueryMap = Maps.newHashMap();
 
 	private static IDataDictionary dataDictionary;
 
@@ -214,6 +225,18 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 
 		fireViewImportEvent(advertisement, viewNameToUse);
 	}
+	
+	@Override
+	public void removeViewImport(ViewAdvertisement advertisement) {
+		if (importedViews.containsKey(advertisement)) {
+			String name = importedViews.get(advertisement);
+			importedViews.remove(advertisement);
+			
+			dataDictionary.removeViewOrStream(name, SessionManagementService.getActiveSession());
+			
+			fireViewImportRemoveEvent(advertisement, name);
+		}
+	}
 
 	@Override
 	public Optional<String> getImportedViewName(ViewAdvertisement advertisement) {
@@ -235,6 +258,87 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 		return importedViews.containsKey(advertisement);
 	}
 
+	@Override
+	public ViewAdvertisement exportView(String viewName, String queryBuildConfigurationName) throws PeerException {
+		if( isExported(viewName)) {
+			throw new PeerException("View " + viewName + " is already ported");
+		}
+		
+		final ILogicalOperator view = DataDictionaryService.get().getView(viewName, SessionManagementService.getActiveSession());
+		
+		if( view != null ) {
+			try {
+				final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
+			
+				ViewAdvertisement viewAdvertisement = (ViewAdvertisement)AdvertisementFactory.newAdvertisement(ViewAdvertisement.getAdvertisementType());
+				viewAdvertisement.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+				viewAdvertisement.setOutputSchema(view.getOutputSchema());
+				viewAdvertisement.setPipeID(pipeID);
+				viewAdvertisement.setViewName(viewName);
+				viewAdvertisement.setPeerID(P2PNewPlugIn.getOwnPeerID());
+			
+				P2PNewPlugIn.getDiscoveryService().publish(viewAdvertisement);
+				addView(viewAdvertisement);				
+
+				final JxtaSenderAO jxtaSender = new JxtaSenderAO();
+				jxtaSender.setName(viewName + "_Send");
+				jxtaSender.setPipeID(pipeID.toString());
+				view.subscribeSink(jxtaSender, 0, 0, view.getOutputSchema());
+				
+				IServerExecutor executor = ServerExecutorService.get();
+				Integer queryID = executor.addQuery(jxtaSender, SessionManagementService.getActiveSession(), queryBuildConfigurationName);
+				IPhysicalQuery physicalQuery = executor.getExecutionPlan().getQueryById(queryID);
+				ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
+				logicalQuery.setName(viewName);
+				logicalQuery.setParserId("P2P");
+				logicalQuery.setUser(SessionManagementService.getActiveSession());
+				
+				exportedViewsQueryMap.put(viewAdvertisement, queryID);
+				
+				fireViewExportEvent(viewAdvertisement, viewName);
+				
+				return viewAdvertisement;
+
+			} catch (IOException e) {
+				throw new PeerException("Could not publish view '" + viewName + "'", e);
+			}			
+		}
+		
+		throw new PeerException("Could not find view '" + viewName + "'");
+	}
+
+	@Override
+	public void removeViewExport(String viewName) {
+		Optional<ViewAdvertisement> optExportAdvertisement = getExportedAdvertisement(viewName);
+		if( optExportAdvertisement.isPresent() ) {
+			ViewAdvertisement exportAdvertisement = optExportAdvertisement.get();
+			
+			Integer queryID = exportedViewsQueryMap.get(exportAdvertisement);
+			ServerExecutorService.get().removeQuery(queryID, SessionManagementService.getActiveSession());
+			exportedViewsQueryMap.remove(exportAdvertisement);
+			
+			fireViewExportRemoveEvent(exportAdvertisement, viewName);
+			
+			tryFlushAdvertisement(exportAdvertisement);
+			removeView(exportAdvertisement);
+		}
+	}
+	
+	@Override
+	public boolean isExported(String viewName) {
+		return getExportedAdvertisement(viewName).isPresent();
+	}
+	
+	@Override
+	public Optional<ViewAdvertisement> getExportedAdvertisement(String viewName) {
+		for( ViewAdvertisement adv : exportedViewsQueryMap.keySet() ) {
+			if( adv.getViewName().equals(viewName)) {
+				return Optional.of(adv);
+			}
+		}
+		return Optional.absent();
+	}
+
 	// called by DataDictionary
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
@@ -248,25 +352,18 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 		if( pos >= 0 ) {
 			name = name.substring(pos+1);
 		}
-		Optional<ViewAdvertisement> optAdvertisement = getImportedAdvertisement(name);
-		if( optAdvertisement.isPresent() ) {
-			ViewAdvertisement advertisement = optAdvertisement.get();
-			if( importedViews.containsKey(advertisement) ) {
-				importedViews.remove(advertisement);
-				
-				fireViewImportRemoveEvent(advertisement, name);
-			}
+		
+		Optional<ViewAdvertisement> optViewAdv = getImportedAdvertisement(name);
+		if( optViewAdv.isPresent() ) {
+			removeViewImport(optViewAdv.get());
 		}
+		removeViewExport(name);
 		
 		Optional<ViewAdvertisement> optOwnAdvertisement = find(P2PNewPlugIn.getOwnPeerID(), name);
 		if( optOwnAdvertisement.isPresent() ) {
 			ViewAdvertisement ownAdvertisement = optOwnAdvertisement.get();
 			
-			try {
-				P2PNewPlugIn.getDiscoveryService().flushAdvertisement(ownAdvertisement);
-			} catch (IOException e) {
-				LOG.error("Could not flush view advertisement {}", ownAdvertisement, e);
-			}
+			tryFlushAdvertisement(ownAdvertisement);
 			
 			removeView(ownAdvertisement);
 		}
@@ -342,6 +439,30 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 		}
 	}
 
+	private void fireViewExportEvent(ViewAdvertisement advertisement, String viewName) {
+		synchronized (listeners) {
+			for (IP2PDictionaryListener listener : listeners) {
+				try {
+					listener.viewExported(this, advertisement, viewName);
+				} catch (Throwable t) {
+					LOG.error("Exception during invokinf p2p dictionary listener", t);
+				}
+			}
+		}
+	}
+
+	protected final void fireViewExportRemoveEvent(ViewAdvertisement exportAdvertisement, String name) {
+		synchronized (listeners) {
+			for (IP2PDictionaryListener listener : listeners) {
+				try {
+					listener.viewExportRemoved(this, exportAdvertisement, name);
+				} catch (Throwable t) {
+					LOG.error("Exception during invokinf p2p dictionary listener", t);
+				}
+			}
+		}
+	}
+
 	private Optional<ViewAdvertisement> find(PeerID peerID, String viewName) {
 		for (ViewAdvertisement adv : publishedViews) {
 			if (adv.getPeerID().equals(peerID) && adv.getViewName().equals(viewName)) {
@@ -367,6 +488,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener {
 					cachedSameMap.get(potencialSameAdv).remove(potencialSame);
 				}
 			}
+		}
+	}
+
+	private static void tryFlushAdvertisement(ViewAdvertisement ownAdvertisement) {
+		try {
+			P2PNewPlugIn.getDiscoveryService().flushAdvertisement(ownAdvertisement);
+		} catch (IOException e) {
+			LOG.error("Could not flush view advertisement {}", ownAdvertisement, e);
 		}
 	}
 

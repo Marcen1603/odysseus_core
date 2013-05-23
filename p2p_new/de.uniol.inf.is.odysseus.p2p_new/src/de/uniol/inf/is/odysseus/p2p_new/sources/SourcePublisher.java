@@ -5,29 +5,21 @@ import java.util.Map;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
-import net.jxta.pipe.PipeID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
-import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
-import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
 public class SourcePublisher {
 
@@ -45,61 +37,6 @@ public class SourcePublisher {
 			instance = new SourcePublisher();
 		}
 		return instance;
-	}
-	
-	public void publish(String viewName, String queryBuildConfigurationName, ISession caller) throws PeerException {
-		if( isAlreadyLocallyPublished(viewName)) {
-			return;
-		}
-		
-		final ILogicalOperator view = DataDictionaryService.get().getView(viewName, caller);
-		
-		if( view != null ) {
-			
-			final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
-
-			final JxtaSenderAO jxtaSender = new JxtaSenderAO();
-			jxtaSender.setName(viewName + "_Send");
-			jxtaSender.setPipeID(pipeID.toString());
-			view.subscribeSink(jxtaSender, 0, 0, view.getOutputSchema());
-			
-			IServerExecutor executor = ServerExecutorService.get();
-			Integer queryID = executor.addQuery(jxtaSender, caller, queryBuildConfigurationName);
-			IPhysicalQuery physicalQuery = executor.getExecutionPlan().getQueryById(queryID);
-			ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
-			logicalQuery.setName(viewName);
-			logicalQuery.setParserId("P2P");
-			logicalQuery.setUser(SessionManagementService.getActiveSession());
-			
-			ViewAdvertisement viewAdvertisement = (ViewAdvertisement)AdvertisementFactory.newAdvertisement(ViewAdvertisement.getAdvertisementType());
-			viewAdvertisement.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
-			viewAdvertisement.setOutputSchema(view.getOutputSchema());
-			viewAdvertisement.setPipeID(pipeID);
-			viewAdvertisement.setViewName(viewName);
-			viewAdvertisement.setPeerID(P2PNewPlugIn.getOwnPeerID());
-			
-			try {
-				P2PNewPlugIn.getDiscoveryService().publish(viewAdvertisement);
-				P2PDictionary.getInstance().addView(viewAdvertisement);
-			} catch (IOException e) {
-				throw new PeerException("Could not publish view '" + viewName + "'", e);
-			}			
-		} else {
-			throw new PeerException("Could not find view '" + view + "'");
-		}
-	}
-
-
-	public void unpublish( String viewName ) {
-		Optional<ViewAdvertisement> optAdv = getLocalAdvertisement(viewName);
-		if( optAdv.isPresent() ) {
-			try {
-				P2PNewPlugIn.getDiscoveryService().flushAdvertisement(optAdv.get());
-				P2PDictionary.getInstance().removeView(optAdv.get());
-			} catch (IOException e) {
-				LOG.error("Could not unadvertise stream '{}'", viewName, e);
-			}	
-		}			
 	}
 
 	public void unpublishAll() {
@@ -180,19 +117,5 @@ public class SourcePublisher {
 		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
 
 		return adv;
-	}
-	
-	private static boolean isAlreadyLocallyPublished(String viewName) {
-		return getLocalAdvertisement(viewName).isPresent();
-	}
-	
-	private static Optional<ViewAdvertisement> getLocalAdvertisement(String viewName) {
-		ImmutableList<ViewAdvertisement> viewAdvertisements = P2PDictionary.getInstance().getViews(viewName);
-		for (ViewAdvertisement adv : viewAdvertisements) {
-			if (adv.isLocal()) {
-				return Optional.of(adv);
-			}
-		}
-		return Optional.absent();
 	}
 }

@@ -6,15 +6,15 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
-import de.uniol.inf.is.odysseus.p2p_new.sources.SourcePublisher;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class PublishPreParserKeyword extends AbstractPreParserKeyword {
 
-	public static final String KEYWORD = "PUBLISH";
+	public static final String KEYWORD = "EXPORT";
 	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
@@ -43,7 +43,7 @@ public class PublishPreParserKeyword extends AbstractPreParserKeyword {
 		final String transCfgName = (String) variables.get("TRANSCFG");
 
 		try {
-			SourcePublisher.getInstance().publish(sourceToPublish, transCfgName, caller);
+			P2PDictionary.getInstance().exportView(sourceToPublish, transCfgName);
 		} catch (PeerException e) {
 			throw new OdysseusScriptException(e);
 		}

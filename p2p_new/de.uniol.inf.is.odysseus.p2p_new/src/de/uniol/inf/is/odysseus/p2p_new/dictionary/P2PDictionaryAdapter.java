@@ -35,4 +35,14 @@ public class P2PDictionaryAdapter implements IP2PDictionaryListener {
 		
 	}
 
+	@Override
+	public void viewExported(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+		
+	}
+
+	@Override
+	public void viewExportRemoved(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+		
+	}
+
 }

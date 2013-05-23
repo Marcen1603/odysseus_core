@@ -40,8 +40,11 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 		public String peerNames;
 		
 		public String schema;
-		public String importedViewName;
+		public String portedViewName;
 	}
+
+	private static final String IMPORT_TAG = "[import]";
+	private static final String EXPORT_TAG = "[export]";
 	
 	private static StreamsViewsPart instance;
 	
@@ -161,11 +164,11 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 		
 		/************* Imported as ****************/
 		TableViewerColumn importedViewColumn = new TableViewerColumn(viewsStreamsTable, SWT.NONE);
-		importedViewColumn.getColumn().setText("Imported as");
+		importedViewColumn.getColumn().setText("Ported as");
 		importedViewColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText( ((TableEntry)cell.getElement()).importedViewName);
+				cell.setText( ((TableEntry)cell.getElement()).portedViewName);
 			}
 		});
 		tableColumnLayout.setColumnData(importedViewColumn.getColumn(), new ColumnWeightData(5, 25, true));
@@ -174,7 +177,7 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				TableEntry te1 = (TableEntry)e1;
 				TableEntry te2 = (TableEntry)e2;
-				return te1.importedViewName.compareTo(te2.importedViewName);
+				return te1.portedViewName.compareTo(te2.portedViewName);
 			}
 		};
 
@@ -229,7 +232,7 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 	public void viewImported(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
 		Optional<TableEntry> optEntry = findEntry(advertisement);
 		if( optEntry.isPresent() ) {
-			optEntry.get().importedViewName = viewName;
+			optEntry.get().portedViewName = IMPORT_TAG + " " + viewName ;
 			updateTable();
 		}
 	}
@@ -239,7 +242,7 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 	public void viewImportRemoved(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
 		Optional<TableEntry> optEntry = findEntry(advertisement);
 		if( optEntry.isPresent() ) {
-			optEntry.get().importedViewName = "";
+			optEntry.get().portedViewName = "";
 			updateTable();
 		}
 	}
@@ -254,6 +257,27 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 	@Override
 	public void peerRemoved(IP2PDictionary sender, PeerID id) {
 		// do nothing
+	}
+	
+	// called by p2pDictionary
+	@Override
+	public void viewExported(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+		Optional<TableEntry> optEntry = findEntry(advertisement);
+		if( optEntry.isPresent() ) {
+			optEntry.get().portedViewName = EXPORT_TAG + " " + viewName ;
+			updateTable();
+		}
+		
+	}
+
+	// called by p2pDictionary
+	@Override
+	public void viewExportRemoved(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+		Optional<TableEntry> optEntry = findEntry(advertisement);
+		if( optEntry.isPresent() ) {
+			optEntry.get().portedViewName = "";
+			updateTable();
+		}		
 	}
 	
 	public static Optional<StreamsViewsPart> getInstance() {
@@ -316,7 +340,14 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 				entry.type = "View";
 				entry.peerNames = "<unknown>";//getPeerNames(viewAdvs, p2pDictionary);
 				entry.advertisement = publishedView;
-				entry.importedViewName = "";
+				
+				if( p2pDictionary.isExported(publishedView.getViewName())) {
+					entry.portedViewName = EXPORT_TAG + " " + publishedView.getViewName();
+				} else if( p2pDictionary.isImported(publishedView)) {
+					entry.portedViewName = IMPORT_TAG + " " + p2pDictionary.getImportedViewName(publishedView).get();
+				} else {
+					entry.portedViewName = "";
+				}
 				entry.viewNames = publishedView.getViewName();
 				
 				result.add(entry);
@@ -328,40 +359,4 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 		
 		return result;
 	}
-
-//	private static String getViewNames(List<ViewAdvertisement> viewAdvs) {
-//		List<String> viewNames = Lists.newArrayList();
-//		for( ViewAdvertisement viewAdv : viewAdvs ) {
-//			if( !viewNames.contains(viewAdv.getViewName())) {
-//				viewNames.add(viewAdv.getViewName());
-//			}
-//		}
-//		
-//		StringBuilder sb = new StringBuilder();
-//		
-//		for( int i = 0; i < viewNames.size(); i++ ) {
-//			sb.append(viewNames.get(i));
-//			if( i < viewNames.size() - 1 ) {
-//				sb.append(", ");
-//			}
-//		}
-//		return sb.toString();
-//	}
-
-
-//	private static String getPeerNames(List<ViewAdvertisement> viewAdvs, IP2PDictionary dictionary) {	
-//		StringBuilder sb = new StringBuilder();
-//		
-//		for( int i = 0; i < viewAdvs.size(); i++ ) {
-//			ViewAdvertisement viewAdv = viewAdvs.get(i);
-//			Optional<String> optPeerName = dictionary.getPeerName(viewAdv.getPeerID());
-//			
-//			sb.append( optPeerName.isPresent() ? optPeerName.get() : "<unknwon>");
-//			if( i < viewAdvs.size() - 1 ) {
-//				sb.append(", ");
-//			}
-//		}
-//		return sb.toString();
-//	}
-
 }
