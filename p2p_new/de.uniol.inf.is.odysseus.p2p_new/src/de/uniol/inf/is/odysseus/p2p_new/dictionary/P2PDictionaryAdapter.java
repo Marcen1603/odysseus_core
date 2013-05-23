@@ -30,4 +30,9 @@ public class P2PDictionaryAdapter implements IP2PDictionaryListener {
 		
 	}
 
+	@Override
+	public void viewImportRemoved(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+		
+	}
+
 }

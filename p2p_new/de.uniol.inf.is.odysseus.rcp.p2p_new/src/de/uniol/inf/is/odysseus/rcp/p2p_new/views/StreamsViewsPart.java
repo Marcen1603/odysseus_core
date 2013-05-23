@@ -212,28 +212,45 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 		return Optional.absent();
 	}
 
+	// called by p2pDictionary
 	@Override
 	public void viewAdded(IP2PDictionary sender, ViewAdvertisement viewName) {
 		refreshTable();
 	}
 
+	// called by p2pDictionary
 	@Override
 	public void viewRemoved(IP2PDictionary sender, ViewAdvertisement viewName) {
 		refreshTable();
 	}
 	
-
+	// called by p2pDictionary
 	@Override
 	public void viewImported(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
-		// TODO Auto-generated method stub
-		
+		Optional<TableEntry> optEntry = findEntry(advertisement);
+		if( optEntry.isPresent() ) {
+			optEntry.get().importedViewName = viewName;
+			updateTable();
+		}
+	}
+	
+	// called by p2pDictionary
+	@Override
+	public void viewImportRemoved(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+		Optional<TableEntry> optEntry = findEntry(advertisement);
+		if( optEntry.isPresent() ) {
+			optEntry.get().importedViewName = "";
+			updateTable();
+		}
 	}
 
+	// called by p2pDictionary
 	@Override
 	public void peerAdded(IP2PDictionary sender, PeerID id) {
 		// do nothing
 	}
 
+	// called by p2pDictionary
 	@Override
 	public void peerRemoved(IP2PDictionary sender, PeerID id) {
 		// do nothing
@@ -247,6 +264,10 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 		input.clear();
 		input.addAll( determineTableEntries(p2pDictionary));
 		
+		updateTable();
+	}
+
+	private void updateTable() {
 		if( !PlatformUI.getWorkbench().getDisplay().isDisposed() && !viewsStreamsTable.getTable().isDisposed()) {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				@Override
@@ -257,6 +278,15 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 				}
 			});
 		}
+	}
+	
+	private Optional<TableEntry> findEntry( ViewAdvertisement advertisement ) {
+		for( TableEntry entry : input ) {
+			if( entry.advertisement.equals(advertisement)) {
+				return Optional.of(entry);
+			}
+		}
+		return Optional.absent();
 	}
 	
 	private static List<TableEntry> determineTableEntries(IP2PDictionary p2pDictionary) {

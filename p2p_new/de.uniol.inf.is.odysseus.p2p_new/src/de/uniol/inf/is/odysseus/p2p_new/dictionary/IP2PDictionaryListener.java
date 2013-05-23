@@ -9,6 +9,7 @@ public interface IP2PDictionaryListener {
 	void viewRemoved( IP2PDictionary sender, ViewAdvertisement advertisement );
 	
 	void viewImported( IP2PDictionary sender, ViewAdvertisement advertisement, String viewName );
+	void viewImportRemoved( IP2PDictionary sender, ViewAdvertisement advertisement, String viewName );
 	
 	void peerAdded( IP2PDictionary sender, PeerID id );
 	void peerRemoved( IP2PDictionary sender, PeerID id );
