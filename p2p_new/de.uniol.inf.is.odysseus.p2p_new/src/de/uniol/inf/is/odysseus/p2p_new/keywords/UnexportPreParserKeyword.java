@@ -19,7 +19,7 @@ public class UnexportPreParserKeyword extends AbstractPreParserKeyword {
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		final String sourceToPublish = parameter.trim();
 		
-		P2PDictionary.getInstance().removeViewExport(sourceToPublish);
+		P2PDictionary.getInstance().removeSourceExport(sourceToPublish);
 		
 		return null;
 	}

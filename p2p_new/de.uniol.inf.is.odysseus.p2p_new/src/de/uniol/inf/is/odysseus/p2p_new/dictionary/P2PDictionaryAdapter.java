@@ -1,17 +1,17 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary;
 
 import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
 
 public class P2PDictionaryAdapter implements IP2PDictionaryListener {
 
 	@Override
-	public void viewAdded(IP2PDictionary sender, ViewAdvertisement advertisement) {
+	public void sourceAdded(IP2PDictionary sender, SourceAdvertisement advertisement) {
 
 	}
 
 	@Override
-	public void viewRemoved(IP2PDictionary sender, ViewAdvertisement advertisement) {
+	public void sourceRemoved(IP2PDictionary sender, SourceAdvertisement advertisement) {
 
 	}
 
@@ -26,22 +26,22 @@ public class P2PDictionaryAdapter implements IP2PDictionaryListener {
 	}
 
 	@Override
-	public void viewImported(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+	public void sourceImported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		
 	}
 
 	@Override
-	public void viewImportRemoved(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+	public void sourceImportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		
 	}
 
 	@Override
-	public void viewExported(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+	public void sourceExported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		
 	}
 
 	@Override
-	public void viewExportRemoved(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+	public void sourceExportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		
 	}
 

@@ -4,31 +4,31 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
-import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
 
 public interface IP2PDictionary {
 
 	void addListener( IP2PDictionaryListener listener );
 	void removeListener( IP2PDictionaryListener listener );
 	
-	void addView( ViewAdvertisement advertisement );
-	void removeView( ViewAdvertisement advertisement );
-	boolean existsView( ViewAdvertisement advertisement );
-	boolean existsView( String viewName );
-	ImmutableList<ViewAdvertisement> getViews();
-	ImmutableList<ViewAdvertisement> getViews( String viewName );
+	void addSource( SourceAdvertisement advertisement );
+	void removeSource( SourceAdvertisement advertisement );
+	boolean existsSource( SourceAdvertisement advertisement );
+	boolean existsSource( String viewName );
+	ImmutableList<SourceAdvertisement> getSources();
+	ImmutableList<SourceAdvertisement> getSources( String viewName );
 	
-	ImmutableList<ViewAdvertisement> getSame( ViewAdvertisement advertisement );
-	boolean isSame( ViewAdvertisement a, ViewAdvertisement b );
+	ImmutableList<SourceAdvertisement> getSame( SourceAdvertisement advertisement );
+	boolean isSame( SourceAdvertisement a, SourceAdvertisement b );
 	
-	void importView( ViewAdvertisement advertisement, String viewNameToUse ) throws PeerException;
-	void removeViewImport( ViewAdvertisement advertisement );
-	boolean isImported( ViewAdvertisement advertisement );
-	Optional<String> getImportedViewName( ViewAdvertisement advertisement );
-	Optional<ViewAdvertisement> getImportedAdvertisement( String viewName );
+	void importSource( SourceAdvertisement advertisement, String viewNameToUse ) throws PeerException;
+	void removeSourceImport( SourceAdvertisement advertisement );
+	boolean isImported( SourceAdvertisement advertisement );
+	Optional<String> getImportedSourceName( SourceAdvertisement advertisement );
+	Optional<SourceAdvertisement> getImportedAdvertisement( String viewName );
 	
-	ViewAdvertisement exportView( String viewName, String queryBuildConfigurationName ) throws PeerException;
-	void removeViewExport( String viewName );
+	SourceAdvertisement exportSource( String viewName, String queryBuildConfigurationName ) throws PeerException;
+	void removeSourceExport( String viewName );
 	boolean isExported( String viewName );
-	Optional<ViewAdvertisement> getExportedAdvertisement( String viewName );
+	Optional<SourceAdvertisement> getExportedAdvertisement( String viewName );
 }

@@ -4,7 +4,7 @@ import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.Element;
 
-public final class ViewAdvertisementInstantiator implements AdvertisementFactory.Instantiator {
+public final class SourceAdvertisementInstantiator implements AdvertisementFactory.Instantiator {
 	/**
 	 * Returns the identifying type of this Advertisement.
 	 * 
@@ -12,7 +12,7 @@ public final class ViewAdvertisementInstantiator implements AdvertisementFactory
 	 */
 	@Override
 	public String getAdvertisementType() {
-		return ViewAdvertisement.getAdvertisementType();
+		return SourceAdvertisement.getAdvertisementType();
 	}
 
 	/**
@@ -24,12 +24,12 @@ public final class ViewAdvertisementInstantiator implements AdvertisementFactory
 	 */
 	@Override
 	public Advertisement newInstance() {
-		return new ViewAdvertisement();
+		return new SourceAdvertisement();
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Advertisement newInstance(Element root) {
-		return new ViewAdvertisement(root);
+		return new SourceAdvertisement(root);
 	}
 }

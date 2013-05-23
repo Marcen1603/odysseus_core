@@ -34,30 +34,30 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 
-public class ViewAdvertisement extends Advertisement implements Serializable {
+public class SourceAdvertisement extends Advertisement implements Serializable {
 
 	public static class Same {
 		private final PeerID peerID;
 		private final String name;
 		
-		public Same( PeerID peerID, String viewName ) {
+		public Same( PeerID peerID, String name ) {
 			this.peerID = peerID;
-			this.name = viewName;
+			this.name = name;
 		}
 		
 		public PeerID getPeerID() {
 			return peerID;
 		}
 		
-		public String getViewName() {
+		public String getName() {
 			return name;
 		}
 	}
 	
-	private static final String ADVERTISEMENT_TYPE = "jxta:ViewAdvertisement";
+	private static final String ADVERTISEMENT_TYPE = "jxta:SourceAdvertisement";
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger LOG = LoggerFactory.getLogger(ViewAdvertisement.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SourceAdvertisement.class);
 
 	private static final String ID_TAG = "id";
 	private static final String NAME_TAG = "name";
@@ -83,7 +83,7 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 	
 	private AccessAO accessAO;
 
-	public ViewAdvertisement(Element<?> root) {
+	public SourceAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
 
 		final Enumeration<?> elements = doc.getChildren();
@@ -93,11 +93,11 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 		}
 	}
 
-	public ViewAdvertisement(InputStream stream) throws IOException {
+	public SourceAdvertisement(InputStream stream) throws IOException {
 		this(StructuredDocumentFactory.newStructuredDocument(MimeMediaType.XMLUTF8, Preconditions.checkNotNull(stream, "Stream must not be null!")));
 	}
 
-	public ViewAdvertisement(ViewAdvertisement viewAdvertisement) {
+	public SourceAdvertisement(SourceAdvertisement viewAdvertisement) {
 		Preconditions.checkNotNull(viewAdvertisement, "Advertisement to copy must not be null!");
 
 		id = viewAdvertisement.id;
@@ -108,13 +108,13 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 		accessAO = viewAdvertisement.accessAO;
 	}
 
-	ViewAdvertisement() {
+	SourceAdvertisement() {
 		// for JXTA-side instances
 	}
 
 	@Override
-	public ViewAdvertisement clone() throws CloneNotSupportedException {
-		return new ViewAdvertisement(this);
+	public SourceAdvertisement clone() throws CloneNotSupportedException {
+		return new SourceAdvertisement(this);
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 			if( sameAs != null && !sameAs.isEmpty() ) {
 				final Element<?> sameElement = appendElement(doc, SAME_AS_TAG);
 				for( Same same : sameAs ) {
-					appendElement(sameElement, same.getPeerID().toString(), same.getViewName());
+					appendElement(sameElement, same.getPeerID().toString(), same.getName());
 				}
 			}
 		}
@@ -233,10 +233,10 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 		if (obj == this) {
 			return true;
 		}
-		if (!(obj instanceof ViewAdvertisement)) {
+		if (!(obj instanceof SourceAdvertisement)) {
 			return false;
 		}
-		ViewAdvertisement adv = (ViewAdvertisement) obj;
+		SourceAdvertisement adv = (SourceAdvertisement) obj;
 		return
 				Objects.equals(adv.id, id) &&
 				Objects.equals(adv.name, name) && 

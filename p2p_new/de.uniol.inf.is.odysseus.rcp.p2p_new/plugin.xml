@@ -13,7 +13,7 @@
       </view>
       <view
             category="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PCategory"
-            class="de.uniol.inf.is.odysseus.rcp.p2p_new.views.StreamsViewsPart"
+            class="de.uniol.inf.is.odysseus.rcp.p2p_new.views.P2PSourcesViewPart"
             id="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PStreamAndView"
             name="Streams/Views"
             restorable="true">

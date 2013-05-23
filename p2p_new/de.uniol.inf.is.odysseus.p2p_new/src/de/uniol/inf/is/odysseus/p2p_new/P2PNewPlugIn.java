@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisementInstantiator;
 
 public class P2PNewPlugIn implements BundleActivator {
 
@@ -163,6 +163,6 @@ public class P2PNewPlugIn implements BundleActivator {
 	}
 
 	private static void registerAdvertisementTypes() {
-		AdvertisementFactory.registerAdvertisementInstance(ViewAdvertisement.getAdvertisementType(), new ViewAdvertisementInstantiator());
+		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisementInstantiator());
 	}
 }

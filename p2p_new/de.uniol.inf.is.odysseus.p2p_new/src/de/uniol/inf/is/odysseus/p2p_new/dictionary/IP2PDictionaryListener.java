@@ -1,17 +1,17 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary;
 
-import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
 import net.jxta.peer.PeerID;
 
 public interface IP2PDictionaryListener {
 
-	void viewAdded( IP2PDictionary sender, ViewAdvertisement advertisement );
-	void viewRemoved( IP2PDictionary sender, ViewAdvertisement advertisement );
+	void sourceAdded( IP2PDictionary sender, SourceAdvertisement advertisement );
+	void sourceRemoved( IP2PDictionary sender, SourceAdvertisement advertisement );
 	
-	void viewImported( IP2PDictionary sender, ViewAdvertisement advertisement, String viewName );
-	void viewImportRemoved( IP2PDictionary sender, ViewAdvertisement advertisement, String viewName );
-	void viewExported( IP2PDictionary sender, ViewAdvertisement advertisement, String viewName);
-	void viewExportRemoved(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName);
+	void sourceImported( IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName );
+	void sourceImportRemoved( IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName );
+	void sourceExported( IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName);
+	void sourceExportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName);
 	
 	void peerAdded( IP2PDictionary sender, PeerID id );
 	void peerRemoved( IP2PDictionary sender, PeerID id );

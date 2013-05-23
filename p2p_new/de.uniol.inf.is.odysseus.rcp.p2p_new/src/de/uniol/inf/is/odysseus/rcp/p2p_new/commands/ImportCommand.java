@@ -9,25 +9,25 @@ import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.views.StreamsViewsPart;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.views.P2PSourcesViewPart;
 
 public class ImportCommand extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Optional<StreamsViewsPart> optPart = StreamsViewsPart.getInstance();
+		Optional<P2PSourcesViewPart> optPart = P2PSourcesViewPart.getInstance();
 		if( optPart.isPresent() ){
-			StreamsViewsPart part = optPart.get();
+			P2PSourcesViewPart part = optPart.get();
 			IP2PDictionary dictionary = P2PDictionaryService.get();
 			
-			Optional<ViewAdvertisement> optSelectedAdvertisement = part.getSelectedStreamOrViewID();
+			Optional<SourceAdvertisement> optSelectedAdvertisement = part.getSelectedStreamOrViewID();
 			if( optSelectedAdvertisement.isPresent() ) {
-				ViewAdvertisement selectedAdvertisement = optSelectedAdvertisement.get();
+				SourceAdvertisement selectedAdvertisement = optSelectedAdvertisement.get();
 				
-				if( !dictionary.existsView(selectedAdvertisement)) {
+				if( !dictionary.existsSource(selectedAdvertisement)) {
 					throw new ExecutionException("Could not import since the selected view advertisement is not known");
 				}
 				
@@ -35,7 +35,7 @@ public class ImportCommand extends AbstractHandler implements IHandler {
 				
 				try {
 					// TODO: Auswahl des Namens, falls vergeben
-					dictionary.importView(selectedAdvertisement, selectedAdvertisement.getName());
+					dictionary.importSource(selectedAdvertisement, selectedAdvertisement.getName());
 					StatusBarManager.getInstance().setMessage("View/Stream successfully imported");
 				} catch (PeerException e) {
 					throw new ExecutionException("Could not import", e);

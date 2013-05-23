@@ -25,34 +25,34 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
-import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
 
-public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener {
+public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListener {
 
 	private static class TableEntry {
-		public ViewAdvertisement advertisement;
+		public SourceAdvertisement advertisement;
 		
 		public int index;
 		public String type;
 		
-		public String viewNames;
+		public String sourceNames;
 		public String peerNames;
 		
 		public String schema;
-		public String portedViewName;
+		public String portedName;
 	}
 
 	private static final String IMPORT_TAG = "[import]";
 	private static final String EXPORT_TAG = "[export]";
 	
-	private static StreamsViewsPart instance;
+	private static P2PSourcesViewPart instance;
 	
 	private IP2PDictionary p2pDictionary;
-	private TableViewer viewsStreamsTable;
+	private TableViewer sourcesTable;
 	private List<TableEntry> input = Lists.newArrayList();
 	
-	public StreamsViewsPart() {
+	public P2PSourcesViewPart() {
 	}
 
 	@Override
@@ -64,13 +64,13 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		viewsStreamsTable = new TableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
-		viewsStreamsTable.getTable().setHeaderVisible(true);
-		viewsStreamsTable.getTable().setLinesVisible(true);
-		viewsStreamsTable.setContentProvider(ArrayContentProvider.getInstance());
+		sourcesTable = new TableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
+		sourcesTable.getTable().setHeaderVisible(true);
+		sourcesTable.getTable().setLinesVisible(true);
+		sourcesTable.setContentProvider(ArrayContentProvider.getInstance());
 
 		/************* Index ****************/
-		TableViewerColumn idColumn = new TableViewerColumn(viewsStreamsTable, SWT.NONE);
+		TableViewerColumn idColumn = new TableViewerColumn(sourcesTable, SWT.NONE);
 		idColumn.getColumn().setText("Index");
 		idColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -79,7 +79,7 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 			}
 		});
 		tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(2, 10, true));
-		ColumnViewerSorter sorter = new ColumnViewerSorter(viewsStreamsTable, idColumn) {
+		ColumnViewerSorter sorter = new ColumnViewerSorter(sourcesTable, idColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				TableEntry te1 = (TableEntry)e1;
@@ -90,7 +90,7 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 		sorter.setSorter(sorter, ColumnViewerSorter.NONE);
 
 		/************* Type ****************/
-		TableViewerColumn typeColumn = new TableViewerColumn(viewsStreamsTable, SWT.NONE);
+		TableViewerColumn typeColumn = new TableViewerColumn(sourcesTable, SWT.NONE);
 		typeColumn.getColumn().setText("Type");
 		typeColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -99,7 +99,7 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 			}
 		});
 		tableColumnLayout.setColumnData(typeColumn.getColumn(), new ColumnWeightData(5, 25, true));
-		new ColumnViewerSorter(viewsStreamsTable, typeColumn) {
+		new ColumnViewerSorter(sourcesTable, typeColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				TableEntry te1 = (TableEntry)e1;
@@ -109,27 +109,27 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 		};
 		
 		/************* ViewNames ****************/
-		TableViewerColumn nameColumn = new TableViewerColumn(viewsStreamsTable, SWT.NONE);
+		TableViewerColumn nameColumn = new TableViewerColumn(sourcesTable, SWT.NONE);
 		nameColumn.getColumn().setText("Name(s)");
 		nameColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText( ((TableEntry)cell.getElement()).viewNames);
+				cell.setText( ((TableEntry)cell.getElement()).sourceNames);
 			}
 		});
 		tableColumnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(5, 25, true));
-		sorter = new ColumnViewerSorter(viewsStreamsTable, nameColumn) {
+		sorter = new ColumnViewerSorter(sourcesTable, nameColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				TableEntry te1 = (TableEntry)e1;
 				TableEntry te2 = (TableEntry)e2;
-				return te1.viewNames.compareTo(te2.viewNames);
+				return te1.sourceNames.compareTo(te2.sourceNames);
 			}
 		};
 
 
 		/************* Peer Names ****************/
-		TableViewerColumn peerColumn = new TableViewerColumn(viewsStreamsTable, SWT.NONE);
+		TableViewerColumn peerColumn = new TableViewerColumn(sourcesTable, SWT.NONE);
 		peerColumn.getColumn().setText("Peer(s)");
 		peerColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -138,7 +138,7 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 			}
 		});
 		tableColumnLayout.setColumnData(peerColumn.getColumn(), new ColumnWeightData(5, 25, true));
-		new ColumnViewerSorter(viewsStreamsTable, peerColumn) {
+		new ColumnViewerSorter(sourcesTable, peerColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				return 0;
@@ -146,7 +146,7 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 		};
 
 		/************* Schema ****************/
-		TableViewerColumn schemaColumn = new TableViewerColumn(viewsStreamsTable, SWT.NONE);
+		TableViewerColumn schemaColumn = new TableViewerColumn(sourcesTable, SWT.NONE);
 		schemaColumn.getColumn().setText("Schema");
 		schemaColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -155,7 +155,7 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 			}
 		});
 		tableColumnLayout.setColumnData(schemaColumn.getColumn(), new ColumnWeightData(5, 25, true));
-		new ColumnViewerSorter(viewsStreamsTable, schemaColumn) {
+		new ColumnViewerSorter(sourcesTable, schemaColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				return 0;
@@ -163,27 +163,27 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 		};
 		
 		/************* Imported as ****************/
-		TableViewerColumn importedViewColumn = new TableViewerColumn(viewsStreamsTable, SWT.NONE);
+		TableViewerColumn importedViewColumn = new TableViewerColumn(sourcesTable, SWT.NONE);
 		importedViewColumn.getColumn().setText("Ported as");
 		importedViewColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText( ((TableEntry)cell.getElement()).portedViewName);
+				cell.setText( ((TableEntry)cell.getElement()).portedName);
 			}
 		});
 		tableColumnLayout.setColumnData(importedViewColumn.getColumn(), new ColumnWeightData(5, 25, true));
-		new ColumnViewerSorter(viewsStreamsTable, importedViewColumn) {
+		new ColumnViewerSorter(sourcesTable, importedViewColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				TableEntry te1 = (TableEntry)e1;
 				TableEntry te2 = (TableEntry)e2;
-				return te1.portedViewName.compareTo(te2.portedViewName);
+				return te1.portedName.compareTo(te2.portedName);
 			}
 		};
 
-		getSite().setSelectionProvider(viewsStreamsTable);
+		getSite().setSelectionProvider(sourcesTable);
 		
-		viewsStreamsTable.setInput(input);
+		sourcesTable.setInput(input);
 		refreshTable();
 		
 		instance = this;
@@ -201,13 +201,13 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 
 	@Override
 	public void setFocus() {
-		if( viewsStreamsTable != null ) {
-			viewsStreamsTable.getTable().setFocus();
+		if( sourcesTable != null ) {
+			sourcesTable.getTable().setFocus();
 		}
 	}
 	
-	public Optional<ViewAdvertisement> getSelectedStreamOrViewID() {
-		IStructuredSelection selection = (IStructuredSelection) viewsStreamsTable.getSelection();
+	public Optional<SourceAdvertisement> getSelectedStreamOrViewID() {
+		IStructuredSelection selection = (IStructuredSelection) sourcesTable.getSelection();
 		if( !selection.isEmpty() ) {
 			TableEntry selectedEntry = (TableEntry) selection.getFirstElement();
 			return Optional.of(selectedEntry.advertisement);
@@ -217,32 +217,32 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 
 	// called by p2pDictionary
 	@Override
-	public void viewAdded(IP2PDictionary sender, ViewAdvertisement viewName) {
+	public void sourceAdded(IP2PDictionary sender, SourceAdvertisement viewName) {
 		refreshTable();
 	}
 
 	// called by p2pDictionary
 	@Override
-	public void viewRemoved(IP2PDictionary sender, ViewAdvertisement viewName) {
+	public void sourceRemoved(IP2PDictionary sender, SourceAdvertisement viewName) {
 		refreshTable();
 	}
 	
 	// called by p2pDictionary
 	@Override
-	public void viewImported(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+	public void sourceImported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		Optional<TableEntry> optEntry = findEntry(advertisement);
 		if( optEntry.isPresent() ) {
-			optEntry.get().portedViewName = IMPORT_TAG + " " + viewName ;
+			optEntry.get().portedName = IMPORT_TAG + " " + sourceName ;
 			updateTable();
 		}
 	}
 	
 	// called by p2pDictionary
 	@Override
-	public void viewImportRemoved(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+	public void sourceImportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		Optional<TableEntry> optEntry = findEntry(advertisement);
 		if( optEntry.isPresent() ) {
-			optEntry.get().portedViewName = "";
+			optEntry.get().portedName = "";
 			updateTable();
 		}
 	}
@@ -261,10 +261,10 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 	
 	// called by p2pDictionary
 	@Override
-	public void viewExported(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+	public void sourceExported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		Optional<TableEntry> optEntry = findEntry(advertisement);
 		if( optEntry.isPresent() ) {
-			optEntry.get().portedViewName = EXPORT_TAG + " " + viewName ;
+			optEntry.get().portedName = EXPORT_TAG + " " + sourceName ;
 			updateTable();
 		}
 		
@@ -272,15 +272,15 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 
 	// called by p2pDictionary
 	@Override
-	public void viewExportRemoved(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+	public void sourceExportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String viewName) {
 		Optional<TableEntry> optEntry = findEntry(advertisement);
 		if( optEntry.isPresent() ) {
-			optEntry.get().portedViewName = "";
+			optEntry.get().portedName = "";
 			updateTable();
 		}		
 	}
 	
-	public static Optional<StreamsViewsPart> getInstance() {
+	public static Optional<P2PSourcesViewPart> getInstance() {
 		return Optional.fromNullable(instance);
 	}
 	
@@ -292,19 +292,19 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 	}
 
 	private void updateTable() {
-		if( !PlatformUI.getWorkbench().getDisplay().isDisposed() && !viewsStreamsTable.getTable().isDisposed()) {
+		if( !PlatformUI.getWorkbench().getDisplay().isDisposed() && !sourcesTable.getTable().isDisposed()) {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					if( !viewsStreamsTable.getTable().isDisposed() ) {
-						viewsStreamsTable.refresh();
+					if( !sourcesTable.getTable().isDisposed() ) {
+						sourcesTable.refresh();
 					}
 				}
 			});
 		}
 	}
 	
-	private Optional<TableEntry> findEntry( ViewAdvertisement advertisement ) {
+	private Optional<TableEntry> findEntry( SourceAdvertisement advertisement ) {
 		for( TableEntry entry : input ) {
 			if( entry.advertisement.equals(advertisement)) {
 				return Optional.of(entry);
@@ -317,17 +317,17 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 		
 		List<TableEntry> result = Lists.newArrayList();
 		
-		List<ViewAdvertisement> publishedViews = p2pDictionary.getViews();
-		Map<ViewAdvertisement, TableEntry> consumedAdvs = Maps.newHashMap();
+		List<SourceAdvertisement> publishedSources = p2pDictionary.getSources();
+		Map<SourceAdvertisement, TableEntry> consumedAdvs = Maps.newHashMap();
 		
-		for( ViewAdvertisement publishedView : publishedViews ) {
+		for( SourceAdvertisement publishedSource : publishedSources ) {
 			
-			List<ViewAdvertisement> sameViews = p2pDictionary.getSame(publishedView);
+			List<SourceAdvertisement> sameSources = p2pDictionary.getSame(publishedSource);
 			
 			TableEntry entry = null;
-			for( ViewAdvertisement sameView : sameViews ) {
-				if( consumedAdvs.containsKey(sameView)) {
-					entry = consumedAdvs.get(sameView);
+			for( SourceAdvertisement sameSource : sameSources ) {
+				if( consumedAdvs.containsKey(sameSource)) {
+					entry = consumedAdvs.get(sameSource);
 					break;
 				}
 			}
@@ -337,23 +337,23 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 				
 				entry.index = result.size() + 1;
 				entry.schema = "TODO";
-				entry.type = publishedView.isStream() ? "Stream" : "View" ;
+				entry.type = publishedSource.isStream() ? "Stream" : "View" ;
 				entry.peerNames = "<unknown>";//getPeerNames(viewAdvs, p2pDictionary);
-				entry.advertisement = publishedView;
+				entry.advertisement = publishedSource;
 				
-				if( p2pDictionary.isExported(publishedView.getName())) {
-					entry.portedViewName = EXPORT_TAG + " " + publishedView.getName();
-				} else if( p2pDictionary.isImported(publishedView)) {
-					entry.portedViewName = IMPORT_TAG + " " + p2pDictionary.getImportedViewName(publishedView).get();
+				if( p2pDictionary.isExported(publishedSource.getName())) {
+					entry.portedName = EXPORT_TAG + " " + publishedSource.getName();
+				} else if( p2pDictionary.isImported(publishedSource)) {
+					entry.portedName = IMPORT_TAG + " " + p2pDictionary.getImportedSourceName(publishedSource).get();
 				} else {
-					entry.portedViewName = "";
+					entry.portedName = "";
 				}
-				entry.viewNames = publishedView.getName();
+				entry.sourceNames = publishedSource.getName();
 				
 				result.add(entry);
 			} else {
 				entry.peerNames += " <unknown>";
-				entry.viewNames += publishedView.getName();
+				entry.sourceNames += publishedSource.getName();
 			}
 		}
 		

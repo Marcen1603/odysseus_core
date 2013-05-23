@@ -43,7 +43,7 @@ public class ExportPreParserKeyword extends AbstractPreParserKeyword {
 		final String transCfgName = (String) variables.get("TRANSCFG");
 
 		try {
-			P2PDictionary.getInstance().exportView(sourceToPublish, transCfgName);
+			P2PDictionary.getInstance().exportSource(sourceToPublish, transCfgName);
 		} catch (PeerException e) {
 			throw new OdysseusScriptException(e);
 		}
