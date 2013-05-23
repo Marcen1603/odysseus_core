@@ -4,20 +4,36 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            category="Odysseus"
+            category="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PCategory"
             class="de.uniol.inf.is.odysseus.rcp.p2p_new.views.PeerView"
             icon="icons/peer.png"
             id="de.uniol.inf.is.odysseus.rcp.p2p_new.PeerView"
             name="Peer View"
             restorable="true">
       </view>
+      <view
+            category="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PCategory"
+            class="de.uniol.inf.is.odysseus.rcp.p2p_new.views.StreamsViewsPart"
+            id="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PStreamAndView"
+            name="Streams/Views"
+            restorable="true">
+      </view>
+      <category
+            id="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PCategory"
+            name="P2P">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
       <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.p2p_new.commands.RefreshPeerViewCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.RefreshPeerViewCommand"
-            name="Refresh">
+            name="Refresh Peer View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.p2p_new.commands.ImportCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ImportCommand"
+            name="Import">
       </command>
    </extension>
    <extension
@@ -33,6 +49,46 @@
                tooltip="Refresh">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.p2p_new.P2PStreamAndView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ImportCommand"
+               icon="icons/sources.png"
+               label="Import"
+               style="push"
+               tooltip="Import">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="de.uniol.inf.is.odysseus.rcp.p2p_new.perspectives.P2PPerspective"
+            icon="icons/peerComputing.png"
+            id="de.uniol.inf.is.odysseus.rcp.p2p_new.Perspective"
+            name="P2P">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.uniol.inf.is.odysseus.rcp.p2p_new.Perspective">
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.p2p_new.PeerView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.console.ConsoleView"
+               visible="true">
+         </view>
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PStreamAndView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.console.ConsoleView"
+               visible="true">
+         </view>
+      </perspectiveExtension>
    </extension>
 
 </plugin>

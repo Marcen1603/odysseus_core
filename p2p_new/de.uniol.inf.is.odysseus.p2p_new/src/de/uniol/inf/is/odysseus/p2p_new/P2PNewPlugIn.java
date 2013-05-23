@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.sources.SourcePublisher;
 import de.uniol.inf.is.odysseus.p2p_new.sources.StreamAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.sources.StreamAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisement;
@@ -38,7 +37,7 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static final String PEER_NAME_SYS_PROPERTY = "peer.name";
 	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
 	private static final String JXTA_LOGGER_NAME = "net.jxta";
-	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.WARNING;
+	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.SEVERE;
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNewPlugIn.class);
 
 	private static final int PORT = new Random().nextInt(20000) + 10000;
@@ -65,6 +64,7 @@ public class P2PNewPlugIn implements BundleActivator {
 		ownPeerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
 		
 		final File conf = new File("." + System.getProperty("file.separator") + ownPeerName);
+		NetworkManager.RecursiveDelete(conf);
 		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, ownPeerName, conf.toURI());
 		manager.setPeerID(ownPeerID);
 
@@ -85,8 +85,6 @@ public class P2PNewPlugIn implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		SourcePublisher.getInstance().unadvertiseAll();
-		SourcePublisher.getInstance().unpublishAll();
 		
 		discoveryService = null;
 		contentService = null;

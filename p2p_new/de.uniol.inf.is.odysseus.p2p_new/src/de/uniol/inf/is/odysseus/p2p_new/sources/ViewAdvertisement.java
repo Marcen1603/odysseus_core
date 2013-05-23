@@ -19,6 +19,7 @@ import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
+import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 
 public class ViewAdvertisement extends Advertisement implements Serializable {
@@ -40,14 +42,18 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 
 	private static final String ID_TAG = "id";
 	private static final String VIEW_NAME_TAG = "viewName";
+	private static final String VIEW_ID_TAG = "viewID";
 	private static final String PIPEID_TAG = "pipeid";
 	private static final String OUTPUTSCHEMA_TAG = "outputSchema";
+	private static final String PEER_ID_TAG = "originalPeerID";
 
-	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, VIEW_NAME_TAG, PIPEID_TAG };
+	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, VIEW_NAME_TAG, PIPEID_TAG, PEER_ID_TAG };
 
 	private ID id;
 	private String viewName;
+	private ID viewID;
 	private PipeID pipeID;
+	private PeerID peerID;
 	private SDFSchema outputSchema;
 
 	public ViewAdvertisement(Element<?> root) {
@@ -88,7 +94,9 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 
 		appendElement(doc, ID_TAG, id.toString());
 		appendElement(doc, VIEW_NAME_TAG, viewName);
+		appendElement(doc, VIEW_ID_TAG, viewID.toString());
 		appendElement(doc, PIPEID_TAG, pipeID.toString());
+		appendElement(doc, PEER_ID_TAG, peerID.toString());
 
 		final Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
 		for (final SDFAttribute attr : outputSchema) {
@@ -122,6 +130,18 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 	public PipeID getPipeID() {
 		return pipeID;
 	}
+	
+	public boolean isLocal() {
+		return this.peerID.equals(P2PNewPlugIn.getOwnPeerID());
+	}
+	
+	public void setPeerID(PeerID peerID) {
+		this.peerID = peerID;
+	}
+	
+	public PeerID getPeerID() {
+		return peerID;
+	}
 
 	public String getViewName() {
 		return viewName;
@@ -129,6 +149,14 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
+	}
+	
+	public void setViewID(ID viewID) {
+		this.viewID = viewID;
+	}
+	
+	public ID getViewID() {
+		return viewID;
 	}
 
 	@Override
@@ -148,10 +176,11 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 		if (!(obj instanceof ViewAdvertisement)) {
 			return false;
 		}
-		
 		ViewAdvertisement adv = (ViewAdvertisement) obj;
-		return Objects.equals(adv.viewName, viewName) && 
-				Objects.equals(adv.id, id) && 
+		return
+				Objects.equals(adv.id, id) &&
+				Objects.equals(adv.viewID, viewID) &&
+				Objects.equals(adv.viewName, viewName) && 
 				Objects.equals(adv.pipeID, pipeID);
 	}
 	
@@ -169,6 +198,12 @@ public class ViewAdvertisement extends Advertisement implements Serializable {
 
 		} else if (elem.getName().equals(PIPEID_TAG)) {
 			setPipeID((PipeID) toID(elem));
+
+		} else if (elem.getName().equals(PEER_ID_TAG)) {
+			setPeerID((PeerID) toID(elem));
+
+		} else if (elem.getName().equals(VIEW_ID_TAG)) {
+			setViewID(toID(elem));
 
 		} else if (elem.getName().equals(OUTPUTSCHEMA_TAG)) {
 			setOutputSchema(handleOutputSchemaTag(elem, getViewName()));
