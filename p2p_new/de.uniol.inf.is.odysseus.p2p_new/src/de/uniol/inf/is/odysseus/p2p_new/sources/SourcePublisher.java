@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.pipe.PipeID;
 
@@ -58,7 +57,6 @@ public class SourcePublisher {
 		if( view != null ) {
 			
 			final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
-			final ID viewID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
 
 			final JxtaSenderAO jxtaSender = new JxtaSenderAO();
 			jxtaSender.setName(viewName + "_Send");
@@ -79,7 +77,6 @@ public class SourcePublisher {
 			viewAdvertisement.setPipeID(pipeID);
 			viewAdvertisement.setViewName(viewName);
 			viewAdvertisement.setPeerID(P2PNewPlugIn.getOwnPeerID());
-			viewAdvertisement.setViewID(viewID);
 			
 			try {
 				P2PNewPlugIn.getDiscoveryService().publish(viewAdvertisement);

@@ -6,12 +6,12 @@ import de.uniol.inf.is.odysseus.p2p_new.sources.ViewAdvertisement;
 public class P2PDictionaryAdapter implements IP2PDictionaryListener {
 
 	@Override
-	public void publishedViewAdded(IP2PDictionary sender, ViewAdvertisement advertisement) {
+	public void viewAdded(IP2PDictionary sender, ViewAdvertisement advertisement) {
 
 	}
 
 	@Override
-	public void publishedViewRemoved(IP2PDictionary sender, ViewAdvertisement advertisement) {
+	public void viewRemoved(IP2PDictionary sender, ViewAdvertisement advertisement) {
 
 	}
 
@@ -23,6 +23,11 @@ public class P2PDictionaryAdapter implements IP2PDictionaryListener {
 	@Override
 	public void peerRemoved(IP2PDictionary sender, PeerID id) {
 
+	}
+
+	@Override
+	public void viewImported(IP2PDictionary sender, ViewAdvertisement advertisement, String viewName) {
+		
 	}
 
 }

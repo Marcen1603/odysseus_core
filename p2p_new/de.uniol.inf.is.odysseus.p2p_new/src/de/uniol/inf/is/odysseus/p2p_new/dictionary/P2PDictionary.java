@@ -3,11 +3,12 @@ package de.uniol.inf.is.odysseus.p2p_new.dictionary;
 import java.util.List;
 import java.util.Map;
 
-import net.jxta.id.ID;
+import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -28,7 +29,9 @@ public class P2PDictionary implements IP2PDictionary {
 	private static IP2PDictionary instance;
 
 	private final List<IP2PDictionaryListener> listeners = Lists.newArrayList();
-	private final Map<ID, List<ViewAdvertisement>> publishedViews = Maps.newHashMap();
+	private final List<ViewAdvertisement> publishedViews = Lists.newArrayList();
+	private final Map<ViewAdvertisement, List<ViewAdvertisement>> sameViewsMap = Maps.newHashMap();
+	private final Map<ViewAdvertisement, List<ViewAdvertisement.Same>> cachedSameMap = Maps.newHashMap(); 
 
 	// called by OSGi-DS
 	public void activate() {
@@ -52,122 +55,123 @@ public class P2PDictionary implements IP2PDictionary {
 	public void addView(ViewAdvertisement viewAdvertisement) {
 		Preconditions.checkNotNull(viewAdvertisement, "Viewadvertisement must not be null!");
 		Preconditions.checkArgument(!existsView(viewAdvertisement), "ViewAdvertisement already added!");
-
 		
-		List<ViewAdvertisement> newAdvList = publishedViews.get(viewAdvertisement.getViewID());
-		if( newAdvList == null ) {
-			newAdvList = Lists.newArrayList();
-			publishedViews.put(viewAdvertisement.getViewID(), newAdvList);
+		publishedViews.add(viewAdvertisement);
+		cachedSameMap.put(viewAdvertisement, Lists.<ViewAdvertisement.Same>newArrayList());
+		sameViewsMap.put(viewAdvertisement, Lists.<ViewAdvertisement>newArrayList());
+		
+		if( viewAdvertisement.getSameAs() != null ) {
+			for( ViewAdvertisement.Same sameAs : viewAdvertisement.getSameAs()) {
+				Optional<ViewAdvertisement> optSameAdvertisement = find(sameAs.getPeerID(), sameAs.getViewName());
+				if( optSameAdvertisement.isPresent() ) {
+					addSame(viewAdvertisement, optSameAdvertisement.get());
+				} else {
+					List<ViewAdvertisement.Same> sameList = cachedSameMap.get(viewAdvertisement);
+					sameList.add(sameAs);
+				}
+			}
+			
+			for( ViewAdvertisement potencialSameAdv : cachedSameMap.keySet().toArray(new ViewAdvertisement[0]) ) {
+				for( ViewAdvertisement.Same potencialSame : cachedSameMap.get(potencialSameAdv).toArray(new ViewAdvertisement.Same[0]) ) {
+					if( potencialSame.getPeerID().equals(viewAdvertisement.getPeerID()) && potencialSame.getViewName().equals(viewAdvertisement.getViewName())) {
+						addSame(viewAdvertisement, potencialSameAdv);
+						
+						cachedSameMap.get(potencialSameAdv).remove(potencialSame);
+					}
+				}
+			}
 		}
-		newAdvList.add(viewAdvertisement);
+		
 		fireViewAddEvent(viewAdvertisement);
 	}
 
 	@Override
 	public void removeView(ViewAdvertisement advertisement) {
-		if (advertisement != null && publishedViews.containsKey(advertisement.getViewID())) {
-			List<ViewAdvertisement> advs = publishedViews.get(advertisement.getViewID());
-			advs.remove(advertisement);
+		if (advertisement != null && publishedViews.contains(advertisement)) {
+			publishedViews.remove(advertisement);
+			cachedSameMap.remove(advertisement);
+			sameViewsMap.remove(advertisement);
 			
-			if( advs.isEmpty() ) {
-				publishedViews.remove(advertisement.getViewID());
+			for( List<ViewAdvertisement> sameList : sameViewsMap.values() ) {
+				sameList.remove(advertisement);
 			}
 			
 			fireViewRemoveEvent(advertisement);
 		}
 	}
-
+	
 	@Override
-	public ImmutableList<ViewAdvertisement> getViews() {
-		ImmutableList.Builder<ViewAdvertisement> resultBuild = new ImmutableList.Builder<>();
-		for( List<ViewAdvertisement> advs : publishedViews.values() ) {
-			resultBuild.addAll(advs);
-		}
-		return resultBuild.build();
+	public ImmutableList<ViewAdvertisement> getSame(ViewAdvertisement advertisement) {
+		return ImmutableList.copyOf(sameViewsMap.get(advertisement));
 	}
 
 	@Override
-	public ImmutableList<ViewAdvertisement> getViews(ID viewID) {
-		Preconditions.checkNotNull(viewID, "ViewID to get advertisements must not be null!");
-		
-		return ImmutableList.copyOf(publishedViews.get(viewID));
+	public boolean isSame(ViewAdvertisement a, ViewAdvertisement b) {
+		return sameViewsMap.get(a).contains(b);
+	}
+	
+	@Override
+	public ImmutableList<ViewAdvertisement> getViews() {
+		return ImmutableList.copyOf(publishedViews);
 	}
 
 	@Override
 	public ImmutableList<ViewAdvertisement> getViews(String viewName) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(viewName), "Viewname for getting advertisements must not be null or empty!");
-		
+
 		ImmutableList.Builder<ViewAdvertisement> builder = new ImmutableList.Builder<>();
-		for( List<ViewAdvertisement> advs : publishedViews.values()) {
-			for( ViewAdvertisement adv : advs ) {
-				if( adv.getViewName().equals(viewName)) {
-					builder.add(adv);
-				}
+		for (ViewAdvertisement adv : publishedViews) {
+			if (adv.getViewName().equals(viewName)) {
+				builder.add(adv);
 			}
 		}
-		
+
 		return builder.build();
 	}
-	
-	@Override
-	public ImmutableList<ID> getViewIDs() {
-		return ImmutableList.copyOf(publishedViews.keySet());
-	}
-	
+
 	@Override
 	public boolean existsView(ViewAdvertisement viewAdvertisement) {
-		Preconditions.checkNotNull(viewAdvertisement, "Viewadvertisement must not be null!");
-		
-		List<ViewAdvertisement> advs = publishedViews.get(viewAdvertisement.getViewID());
-		return ( advs != null && advs.contains(viewAdvertisement) );
+		return publishedViews.contains(viewAdvertisement);
 	}
 	
-
-	@Override
-	public boolean existsView(ID id) {
-		Preconditions.checkNotNull(id, "Id must not be null!");
-		
-		return publishedViews.containsKey(id);
-	}
-
 	@Override
 	public boolean existsView(String viewName) {
-		for( List<ViewAdvertisement> advs : publishedViews.values()) {
-			for( ViewAdvertisement adv : advs ) {
-				if( adv.getViewName().equals(viewName)) {
-					return true;
-				}
+		for (ViewAdvertisement adv : publishedViews) {
+			if (adv.getViewName().equals(viewName)) {
+				return true;
 			}
 		}
 		return false;
 	}
 	
 	@Override
-	public void importView(ID viewID, String viewNameToUse) throws PeerException {
-		Preconditions.checkNotNull(viewID, "ViewID to import must not be null!");
+	public void importView(ViewAdvertisement viewAdvertisement, String viewNameToUse) throws PeerException {
+		Preconditions.checkNotNull(viewAdvertisement, "ViewAdvertisement to import must not be null!");
+		Preconditions.checkArgument(existsView(viewAdvertisement), "ViewAdvertisement to import is not known to the p2p dictionary");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(viewNameToUse), "Viewname to use for import must be null or empty!");
 
 		if (DataDictionaryService.get().containsViewOrStream(viewNameToUse, SessionManagementService.getActiveSession())) {
 			throw new PeerException("ViewName '" + viewNameToUse + "' is locally already in use");
 		}
 
-		List<ViewAdvertisement> viewAdvs = publishedViews.get(viewID);
-		if (viewAdvs == null) {
-			throw new PeerException("ViewID " + viewID + " is not known for import");
+		List<ViewAdvertisement> viewAdvs = Lists.newArrayList();
+		viewAdvs.add(viewAdvertisement);
+		if( sameViewsMap.containsKey(viewAdvertisement)) {
+			viewAdvs.addAll(sameViewsMap.get(viewAdvertisement));
 		}
-
+		
 		List<ViewAdvertisement> nonLocalViewAdvs = determineNonLocalViewAdvertisements(viewAdvs);
 		if (nonLocalViewAdvs.isEmpty()) {
-			throw new PeerException("ViewID contains only views locally published");
+			throw new PeerException("ViewAdvertisements contains only views which are published at this peer");
 		}
 
-		// TODO: Geschickte auswahl eines ViewAdvertisements! ( bei mehr als einen)
-		ViewAdvertisement viewAdvertisement = nonLocalViewAdvs.get(0);
+		// TODO: Geschickte auswahl eines ViewAdvertisements! (bei mehr als einen)
+		ViewAdvertisement advertisement = nonLocalViewAdvs.get(0);
 
 		final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
-		receiverOperator.setPipeID(viewAdvertisement.getPipeID().toString());
-		receiverOperator.setOutputSchema(viewAdvertisement.getOutputSchema());
-		receiverOperator.setSchema(viewAdvertisement.getOutputSchema().getAttributes());
+		receiverOperator.setPipeID(advertisement.getPipeID().toString());
+		receiverOperator.setOutputSchema(advertisement.getOutputSchema());
+		receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
 		receiverOperator.setName(viewNameToUse + "_Receive");
 		receiverOperator.setDestinationName("local");
 
@@ -180,16 +184,6 @@ public class P2PDictionary implements IP2PDictionary {
 
 		// TODO: Zuordnung viewNameToUse <-> ViewID merken!
 		DataDictionaryService.get().setView(viewNameToUse, renameNoOp, SessionManagementService.getActiveSession());
-	}
-
-	private static List<ViewAdvertisement> determineNonLocalViewAdvertisements(List<ViewAdvertisement> viewAdvs) {
-		List<ViewAdvertisement> result = Lists.newArrayList();
-		for( ViewAdvertisement viewAdv : viewAdvs ) {
-			if( !viewAdv.isLocal() ) {
-				result.add(viewAdv);
-			}
-		}
-		return result;
 	}
 
 	@Override
@@ -212,7 +206,7 @@ public class P2PDictionary implements IP2PDictionary {
 		synchronized (listeners) {
 			for (IP2PDictionaryListener listener : listeners) {
 				try {
-					listener.publishedViewAdded(this, advertisement);
+					listener.viewAdded(this, advertisement);
 				} catch (Throwable t) {
 					LOG.error("Exception during invokinf p2p dictionary listener", t);
 				}
@@ -224,11 +218,37 @@ public class P2PDictionary implements IP2PDictionary {
 		synchronized (listeners) {
 			for (IP2PDictionaryListener listener : listeners) {
 				try {
-					listener.publishedViewRemoved(this, advertisement);
+					listener.viewRemoved(this, advertisement);
 				} catch (Throwable t) {
 					LOG.error("Exception during invokinf p2p dictionary listener", t);
 				}
 			}
 		}
+	}
+	
+	private Optional<ViewAdvertisement> find(PeerID peerID, String viewName) {
+		for (ViewAdvertisement adv : publishedViews) {
+			if (adv.getPeerID().equals(peerID) && adv.getViewName().equals(viewName)) {
+				return Optional.of(adv);
+			}
+		}
+		return Optional.absent();
+	}
+	
+	private void addSame( ViewAdvertisement adv1, ViewAdvertisement adv2 ) {
+		List<ViewAdvertisement> same1 = sameViewsMap.get(adv1);
+		List<ViewAdvertisement> same2 = sameViewsMap.get(adv2);
+		same1.add(adv2);
+		same2.add(adv1);
+	}
+	
+	private static List<ViewAdvertisement> determineNonLocalViewAdvertisements(List<ViewAdvertisement> viewAdvs) {
+		List<ViewAdvertisement> result = Lists.newArrayList();
+		for (ViewAdvertisement viewAdv : viewAdvs) {
+			if (!viewAdv.isLocal()) {
+				result.add(viewAdv);
+			}
+		}
+		return result;
 	}
 }

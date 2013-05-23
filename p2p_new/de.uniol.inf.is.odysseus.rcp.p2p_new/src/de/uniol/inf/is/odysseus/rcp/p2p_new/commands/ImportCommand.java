@@ -1,9 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.p2p_new.commands;
 
-import java.util.List;
-
-import net.jxta.id.ID;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -27,21 +23,19 @@ public class ImportCommand extends AbstractHandler implements IHandler {
 			StreamsViewsPart part = optPart.get();
 			IP2PDictionary dictionary = P2PDictionaryService.get();
 			
-			Optional<ID> optSelectedID = part.getSelectedStreamOrViewID();
-			if( optSelectedID.isPresent() ) {
-				ID selectedID = optSelectedID.get();
+			Optional<ViewAdvertisement> optSelectedAdvertisement = part.getSelectedStreamOrViewID();
+			if( optSelectedAdvertisement.isPresent() ) {
+				ViewAdvertisement selectedAdvertisement = optSelectedAdvertisement.get();
 				
-				if( !dictionary.existsView(selectedID)) {
-					throw new ExecutionException("Could not import since the selected id is not known");
+				if( !dictionary.existsView(selectedAdvertisement)) {
+					throw new ExecutionException("Could not import since the selected view advertisement is not known");
 				}
 				
-				List<ViewAdvertisement> views = dictionary.getViews(selectedID);
-				
-				// TODO: choose view name
-				ViewAdvertisement viewAdv = views.get(0);
+				// TODO: Alternativ-Advertisements auswählen lassen vom Nutzer
 				
 				try {
-					dictionary.importView(optSelectedID.get(), viewAdv.getViewName());
+					// TODO: Auswahl des Namens, falls vergeben
+					dictionary.importView(selectedAdvertisement, selectedAdvertisement.getViewName());
 					StatusBarManager.getInstance().setMessage("View/Stream successfully imported");
 				} catch (PeerException e) {
 					throw new ExecutionException("Could not import", e);
