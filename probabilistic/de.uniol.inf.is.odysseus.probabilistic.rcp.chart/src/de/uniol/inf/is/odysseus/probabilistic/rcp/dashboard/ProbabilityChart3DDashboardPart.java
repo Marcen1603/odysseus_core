@@ -66,7 +66,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
     // ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/cog.png"));
 
     @Override
-    public void createPartControl(Composite parent, ToolBar toolbar) {
+    public final void createPartControl(final Composite parent, final ToolBar toolbar) {
         final String attributeList = getConfiguration().get("Attributes");
         if (Strings.isNullOrEmpty(attributeList)) {
             new Label(parent, SWT.NONE).setText("Attribute List is invalid!");
@@ -89,7 +89,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
     }
 
     @Override
-    public void streamElementRecieved(IStreamObject<?> element, int port) {
+    public final void streamElementRecieved(final IStreamObject<?> element, final int port) {
         final ProbabilisticTuple<?> probabilisticElement = (ProbabilisticTuple<?>) element;
         PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
             @Override
@@ -120,19 +120,19 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
     }
 
     @Override
-    public void punctuationElementRecieved(IPunctuation point, int port) {
+    public void punctuationElementRecieved(final IPunctuation point, final int port) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+    public void securityPunctuationElementRecieved(final ISecurityPunctuation sp, final int port) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void settingChanged(String settingName, Object oldValue, Object newValue) {
+    public void settingChanged(final String settingName, final Object oldValue, final Object newValue) {
         // TODO Auto-generated method stub
 
     }
@@ -145,7 +145,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * java.util.List)
      */
     @Override
-    public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
+    public final void onStart(final List<IPhysicalOperator> physicalRoots) throws Exception {
         super.onStart(physicalRoots);
         if (physicalRoots.size() > 1) {
             LOG.error("Probability Chart DashboardPart only supports one query!");
@@ -169,7 +169,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
         }
     }
 
-    private boolean isContinuous(int index) {
+    private boolean isContinuous(final int index) {
         if ((index < 0) && (index >= continuousAttributes.length)) {
             return false;
         }
@@ -182,7 +182,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * @param samples
      *            The samples value
      */
-    public void setSamples(final int samples) {
+    public final void setSamples(final int samples) {
         this.samples = samples;
     }
 
@@ -191,7 +191,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * 
      * @return The number of samples
      */
-    public int getSamples() {
+    public final int getSamples() {
         return samples;
     }
 
@@ -201,7 +201,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * @param minX
      *            The minX value
      */
-    public void setMinX(final double minX) {
+    public final void setMinX(final double minX) {
         this.minX = minX;
     }
 
@@ -210,7 +210,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * 
      * @return The minimal X value
      */
-    public double getMinX() {
+    public final double getMinX() {
         return minX;
     }
 
@@ -220,7 +220,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * @param maxX
      *            The maxX value
      */
-    public void setMaxX(final double maxX) {
+    public final void setMaxX(final double maxX) {
         this.maxX = maxX;
     }
 
@@ -229,7 +229,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * 
      * @return The maximal X value
      */
-    public double getMaxX() {
+    public final double getMaxX() {
         return maxX;
     }
 
@@ -239,7 +239,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * @param minY
      *            The minY value
      */
-    public void setMinY(final double minY) {
+    public final void setMinY(final double minY) {
         this.minY = minY;
     }
 
@@ -248,7 +248,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * 
      * @return The minimal Y value
      */
-    public double getMinY() {
+    public final double getMinY() {
         return minY;
     }
 
@@ -258,7 +258,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * @param maxY
      *            The maxY value
      */
-    public void setMaxY(final double maxY) {
+    public final void setMaxY(final double maxY) {
         this.maxY = maxY;
     }
 
@@ -267,7 +267,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * 
      * @return The maximal Y value
      */
-    public double getMaxY() {
+    public final double getMaxY() {
         return maxY;
     }
 
@@ -277,7 +277,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
      * @param attributes
      * @return
      */
-    private static int[] determinePositions(SDFSchema outputSchema, String[] attributes) {
+    private static int[] determinePositions(final SDFSchema outputSchema, final String[] attributes) {
         final int[] positions = new int[attributes.length];
 
         for (int i = 0; i < attributes.length; i++) {
@@ -338,7 +338,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
         // fillLocalMenu(bars.getToolBarManager());
     }
 
-    private void fillLocalMenu(IContributionManager manager) {
+    private void fillLocalMenu(final IContributionManager manager) {
         manager.add(changeAttributesAction);
         manager.add(changeSettingsAction);
     }
