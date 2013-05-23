@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,16 +23,18 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
-import org.apache.commons.httpclient.methods.DeleteMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,264 +47,290 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class HTTPTransportHandler extends AbstractPullTransportHandler {
-	/** Logger */
-	private final Logger LOG = LoggerFactory
-			.getLogger(HTTPTransportHandler.class);
-	/** HTTP Client used for send command */
-	private final HttpClient client = new HttpClient();
-	/** In and output for data transfer */
-	private InputStream input;
-	private OutputStream output;
-	private String uri;
-	private Method method;
-	private String body;
-	@SuppressWarnings("unused")
-	private IAccessPattern transportPattern;
+    /** Logger */
+    private final Logger LOG = LoggerFactory.getLogger(HTTPTransportHandler.class);
+    /** HTTP Client used for send command */
+    private final HttpClient client = new DefaultHttpClient();
+    /** In and output for data transfer */
+    private InputStream input;
+    private OutputStream output;
+    private String uri;
+    private Method method;
+    private String body;
+    @SuppressWarnings("unused")
+    private IAccessPattern transportPattern;
 
-	public static enum Method {
-		GET, POST, PUT, DELETE, HEAD;
+    public static enum Method {
+        GET, POST, PUT, DELETE, HEAD;
 
-		public static Method fromString(final String method) {
-			try {
-				return Method.valueOf(method.toUpperCase());
-			} catch (final Exception e) {
-				return GET;
-			}
-		}
-	}
+        public static Method fromString(final String method) {
+            try {
+                return Method.valueOf(method.toUpperCase());
+            } catch (final Exception e) {
+                return GET;
+            }
+        }
+    }
 
-	/**
+    /**
  * 
  */
-	public HTTPTransportHandler() {
-		super();
-	}
+    public HTTPTransportHandler() {
+        super();
+    }
 
-	/**
-	 * @param protocolHandler
-	 */
-	public HTTPTransportHandler(final IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
-	}
+    /**
+     * @param protocolHandler
+     */
+    public HTTPTransportHandler(final IProtocolHandler<?> protocolHandler) {
+        super(protocolHandler);
+    }
 
-	@Override
-	public void send(final byte[] message) throws IOException {
-		final PostMethod request = new PostMethod(message.toString());
-		final RequestEntity postRequestEntity = new ByteArrayRequestEntity(
-				message);
-		request.setRequestEntity(postRequestEntity);
-		this.client.executeMethod(request);
-	}
+    @Override
+    public void send(final byte[] message) throws IOException {
+        final HttpPost request = new HttpPost(message.toString());
+        final InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message), -1);
+        request.setEntity(postRequestEntity);
+        this.client.execute(request);
+    }
 
-	@Override
-	public ITransportHandler createInstance(
-			final IProtocolHandler<?> protocolHandler,
-			final Map<String, String> options) {
-		final HTTPTransportHandler handler = new HTTPTransportHandler(
-				protocolHandler);
-		handler.init(options);
-		return handler;
-	}
+    @Override
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+        final HTTPTransportHandler handler = new HTTPTransportHandler(protocolHandler);
+        handler.init(options);
+        return handler;
+    }
 
-	protected void init(Map<String, String> options) {
-		if (options.get("uri") != null) {
-			setURI(options.get("uri"));
-		}
-		if (options.get("method") != null) {
-			setMethod(Method.fromString(options.get("method")));
-		} else {
-			setMethod(Method.GET);
-		}
-		if (options.get("body") != null) {
-			setBody(options.get("body"));
-		} else {
-			setBody("");
-		}
-	}
+    protected void init(Map<String, String> options) {
+        if (options.get("uri") != null) {
+            setURI(options.get("uri"));
+        }
+        if (options.get("method") != null) {
+            setMethod(Method.fromString(options.get("method")));
+        } else {
+            setMethod(Method.GET);
+        }
+        if (options.get("body") != null) {
+            setBody(options.get("body"));
+        } else {
+            setBody("");
+        }
+    }
 
-	@Override
-	public InputStream getInputStream() {
-		return this.input;
-	}
+    @Override
+    public InputStream getInputStream() {
+        return this.input;
+    }
 
-	@Override
-	public String getName() {
-		return "HTTP";
-	}
+    @Override
+    public String getName() {
+        return "HTTP";
+    }
 
-	@Override
-	public OutputStream getOutputStream() {
-		return this.output;
-	}
+    @Override
+    public OutputStream getOutputStream() {
+        return this.output;
+    }
 
-	@Override
-	public void processInOpen() throws UnknownHostException, IOException {
-		this.input = new HTTPInputStream(this.method, this.uri);
-	}
+    @Override
+    public void processInOpen() throws UnknownHostException, IOException {
+        this.input = new HTTPInputStream(this.method, this.uri);
+    }
 
-	@Override
-	public void processOutOpen() throws UnknownHostException, IOException {
-		this.output = new HTTPOutputStream(this.method, this.uri);
-	}
+    @Override
+    public void processOutOpen() throws UnknownHostException, IOException {
+        this.output = new HTTPOutputStream(this.method, this.uri);
+    }
 
-	@Override
-	public void processInClose() throws IOException {
-		this.input = null;
-		this.fireOnDisconnect();
-	}
+    @Override
+    public void processInClose() throws IOException {
+        this.input = null;
+        this.fireOnDisconnect();
+    }
 
-	@Override
-	public void processOutClose() throws IOException {
-		this.output = null;
-		this.fireOnDisconnect();
-	}
+    @Override
+    public void processOutClose() throws IOException {
+        this.output = null;
+        this.fireOnDisconnect();
+    }
 
-	public void setMethod(Method method) {
-		this.method = method;
-	}
+    public void setMethod(Method method) {
+        this.method = method;
+    }
 
-	public Method getMethod() {
-		return this.method;
-	}
+    public Method getMethod() {
+        return this.method;
+    }
 
-	public void setURI(String uri) {
-		this.uri = uri;
-	}
+    public void setURI(String uri) {
+        this.uri = uri;
+    }
 
-	public String getURI() {
-		return this.uri;
-	}
+    public String getURI() {
+        return this.uri;
+    }
 
-	public void setBody(String body) {
-		this.body = body;
-	}
+    public void setBody(String body) {
+        this.body = body;
+    }
 
-	public String getBody() {
-		return this.body;
-	}
+    public String getBody() {
+        return this.body;
+    }
 
-	private class HTTPInputStream extends InputStream {
-		/** HTTP Client */
-		private final HttpClient client = new HttpClient();
-		private final Method method;
-		private final String uri;
-		private InputStream stream;
+    private class HTTPInputStream extends InputStream {
+        /** HTTP Client */
+        private final HttpClient client = new DefaultHttpClient();
+        private final Method method;
+        private final String uri;
+        private InputStream stream;
 
-		public HTTPInputStream(final Method method, final String uri) {
-			this.method = method;
-			this.uri = uri;
-		}
+        public HTTPInputStream(final Method method, final String uri) {
+            this.method = method;
+            this.uri = uri;
+        }
 
-		@Override
-		public int read() throws IOException {
-			if (this.isStreamEmpty()) {
-				this.fetch();
-			}
-			return this.stream.read();
-		}
+        @Override
+        public int read() throws IOException {
+            if (this.isStreamEmpty()) {
+                try {
+                    this.fetch();
+                } catch (HttpException e) {
+                    LOG.error(e.getMessage(), e);
+                    throw new IOException(e);
+                }
+            }
+            return this.stream.read();
+        }
 
-		@Override
-		public int available() throws IOException {
-			if (this.isStreamEmpty()) {
-				this.fetch();
-			}
-			return this.stream.available();
-		}
+        @Override
+        public int read(byte[] b) throws IOException {
+            return this.stream.read(b);
+        }
 
-		private boolean isStreamEmpty() throws IOException {
-			return (this.stream == null) || (this.stream.available() == 0);
-		}
+        @Override
+        public int available() throws IOException {
+            if (this.isStreamEmpty()) {
+                try {
+                    this.fetch();
+                } catch (HttpException e) {
+                    LOG.error(e.getMessage(), e);
+                    throw new IOException(e);
+                }
+            }
+            return this.stream.available();
+        }
 
-		private void fetch() throws HttpException, IOException {
-			if (this.stream != null) {
-				this.stream.close();
-			}
-			HttpMethod request = null;
-			switch (this.method) {
-			case POST:
-				request = new PostMethod(this.uri);
-				final RequestEntity postRequestEntity = new ByteArrayRequestEntity(
-						body.getBytes());
-				((PostMethod) request).setRequestEntity(postRequestEntity);
-				break;
-			case PUT:
-				request = new PutMethod(this.uri);
-				final RequestEntity putRequestEntity = new ByteArrayRequestEntity(
-						body.getBytes());
-				((PutMethod) request).setRequestEntity(putRequestEntity);
-				break;
-			case DELETE:
-				request = new DeleteMethod(this.uri);
-				break;
-			case HEAD:
-				request = new HeadMethod(this.uri);
-				break;
-			case GET:
-			default:
-				request = new GetMethod(this.uri);
-			}
-			this.client.executeMethod(request);
-			this.stream = request.getResponseBodyAsStream();
-		}
-	}
+        private boolean isStreamEmpty() throws IOException {
+            return (this.stream == null) || (this.stream.available() == 0);
+        }
 
-	private class HTTPOutputStream extends OutputStream {
-		/** HTTP Client */
-		private final HttpClient client = new HttpClient();
-		private ByteBuffer buffer = ByteBuffer.allocate(1024);
-		private final Method method;
-		private final String uri;
+        private void fetch() throws HttpException, IOException {
+            if (this.stream != null) {
+                this.stream.close();
+            }
+            HttpRequestBase request = null;
+            switch (this.method) {
+            case POST:
+                request = new HttpPost(this.uri);
+                final InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(body.getBytes()), -1);
+                postRequestEntity.setContentType("binary/octet-stream");
+                postRequestEntity.setChunked(true);
+                ((HttpPost) request).setEntity(postRequestEntity);
+                break;
+            case PUT:
+                request = new HttpPut(this.uri);
+                final InputStreamEntity putRequestEntity = new InputStreamEntity(new ByteArrayInputStream(body.getBytes()), -1);
+                putRequestEntity.setContentType("binary/octet-stream");
+                putRequestEntity.setChunked(true);
+                ((HttpPut) request).setEntity(putRequestEntity);
+                break;
+            case DELETE:
+                request = new HttpDelete(this.uri);
+                break;
+            case HEAD:
+                request = new HttpHead(this.uri);
+                break;
+            case GET:
+            default:
+                request = new HttpGet(this.uri);
+            }
+            try {
+                HttpResponse response = this.client.execute(request);
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    this.stream = entity.getContent();
+                }
+                // EntityUtils.consume(entity);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace(request.getRequestLine().toString());
+                }
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+    }
 
-		public HTTPOutputStream(final Method method, final String uri) {
-			this.method = method;
-			this.uri = uri;
-		}
+    private class HTTPOutputStream extends OutputStream {
+        /** HTTP Client */
+        private final HttpClient client = new DefaultHttpClient();
+        private ByteBuffer buffer = ByteBuffer.allocate(1024);
+        private final Method method;
+        private final String uri;
 
-		@Override
-		public void write(final int b) throws IOException {
-			if ((1 + this.buffer.position()) >= this.buffer.capacity()) {
-				final ByteBuffer newBuffer = ByteBuffer
-						.allocate((1 + this.buffer.position()) * 2);
-				final int pos = this.buffer.position();
-				this.buffer.flip();
-				newBuffer.put(this.buffer);
-				this.buffer = newBuffer;
-				this.buffer.position(pos);
-				HTTPTransportHandler.this.LOG.debug("Extending buffer to "
-						+ this.buffer.capacity());
-			}
-			this.buffer.put((byte) b);
-		}
+        public HTTPOutputStream(final Method method, final String uri) {
+            this.method = method;
+            this.uri = uri;
+        }
 
-		@Override
-		public void flush() throws IOException {
-			this.buffer.flip();
-			HttpMethod request = null;
-			switch (this.method) {
-			case POST:
-				request = new PostMethod(this.uri);
-				final RequestEntity postRequestEntity = new ByteArrayRequestEntity(
-						this.buffer.array());
-				((PostMethod) request).setRequestEntity(postRequestEntity);
-				break;
-			case PUT:
-				request = new PutMethod(this.uri);
-				final RequestEntity putRequestEntity = new ByteArrayRequestEntity(
-						this.buffer.array());
-				((PutMethod) request).setRequestEntity(putRequestEntity);
-				break;
-			case DELETE:
-				request = new DeleteMethod(this.uri);
-				break;
-			case HEAD:
-				request = new HeadMethod(this.uri);
-				break;
-			case GET:
-			default:
-				request = new GetMethod(this.uri);
-			}
-			this.client.executeMethod(request);
+        @Override
+        public void write(final int b) throws IOException {
+            if ((1 + this.buffer.position()) >= this.buffer.capacity()) {
+                final ByteBuffer newBuffer = ByteBuffer.allocate((1 + this.buffer.position()) * 2);
+                final int pos = this.buffer.position();
+                this.buffer.flip();
+                newBuffer.put(this.buffer);
+                this.buffer = newBuffer;
+                this.buffer.position(pos);
+                HTTPTransportHandler.this.LOG.debug("Extending buffer to " + this.buffer.capacity());
+            }
+            this.buffer.put((byte) b);
+        }
 
-		}
-	}
+        @Override
+        public void flush() throws IOException {
+            this.buffer.flip();
+            HttpRequestBase request = null;
+            switch (this.method) {
+            case POST:
+                request = new HttpPost(this.uri);
+                InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(this.buffer.array()), -1);
+                postRequestEntity.setContentType("binary/octet-stream");
+                postRequestEntity.setChunked(true);
+                ((HttpPost) request).setEntity(postRequestEntity);
+                break;
+            case PUT:
+                request = new HttpPut(this.uri);
+                InputStreamEntity putRequestEntity = new InputStreamEntity(new ByteArrayInputStream(this.buffer.array()), -1);
+                putRequestEntity.setContentType("binary/octet-stream");
+                putRequestEntity.setChunked(true);
+                ((HttpPut) request).setEntity(putRequestEntity);
+                break;
+            case DELETE:
+                request = new HttpDelete(this.uri);
+                break;
+            case HEAD:
+                request = new HttpHead(this.uri);
+                break;
+            case GET:
+            default:
+                request = new HttpGet(this.uri);
+            }
+            this.client.execute(request);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(request.getRequestLine().toString());
+            }
+
+        }
+    }
 }

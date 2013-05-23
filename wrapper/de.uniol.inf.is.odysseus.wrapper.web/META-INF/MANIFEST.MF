@@ -20,3 +20,9 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  org.slf4j
 Service-Component: OSGI-INF/HTTPTransportHandler.xml,OSGI-INF/HTMLProtocolHandler.xml,
  OSGI-INF/XMLProtocolHandler.xml
+Bundle-ClassPath: .,
+ lib/nekohtml-1.9.6.2.jar,
+ lib/xercesImpl-2.9.1.jar,
+ lib/httpclient-4.2.5.jar,
+ lib/httpcore-4.2.4.jar,
+ lib/commons-logging-1.1.1.jar
