@@ -75,7 +75,7 @@ public class StreamsViewsPart extends ViewPart implements IP2PDictionaryListener
 				cell.setText( String.valueOf(((TableEntry)cell.getElement()).index));
 			}
 		});
-		tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(2, 10, true));
 		ColumnViewerSorter sorter = new ColumnViewerSorter(viewsStreamsTable, idColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
