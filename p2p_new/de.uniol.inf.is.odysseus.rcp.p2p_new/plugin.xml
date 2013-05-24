@@ -65,6 +65,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.ExportCommand"
             name="Export">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.p2p_new.commands.ExportAllCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ExportAllCommand"
+            name="Export all">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -181,12 +186,45 @@
                style="push"
                tooltip="Remove export">
          </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.SourcesView">
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator9"
+               visible="true">
+         </separator>
          <command
-               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveImportCommand"
-               icon="icons/removeImport.png"
-               label="Remove import"
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ExportCommand"
+               icon="icons/export.png"
+               label="Export"
                style="push"
-               tooltip="Remove import">
+               tooltip="Export">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ExportAllCommand"
+               icon="icons/exportAll.png"
+               label="Export all"
+               style="push"
+               tooltip="Export all">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator8"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveExportCommand"
+               icon="icons/removeExport.png"
+               label="Remove export"
+               style="push"
+               tooltip="Remove export">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveExportAllCommand"
+               icon="icons/removeExportAll.png"
+               label="Remove all exports"
+               style="push"
+               tooltip="Remove all exports">
          </command>
       </menuContribution>
    </extension>
