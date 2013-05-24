@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
@@ -38,6 +39,8 @@ public class MapAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -2120387285754464451L;
 	private List<NamedExpressionItem> namedExpressions;
 	private List<SDFExpression> expressions;
+	/** Flag indicating whether each expression should be running in an own thread */
+    private boolean threading = false;
 
 	public MapAO() {
 		super();
@@ -46,6 +49,7 @@ public class MapAO extends UnaryLogicalOp {
 	public MapAO(MapAO ao) {
 		super(ao);
 		this.setExpressions(ao.namedExpressions);
+		this.threading = ao.threading;
 	}
 
 	public List<SDFExpression> getExpressions() {
@@ -157,7 +161,16 @@ public class MapAO extends UnaryLogicalOp {
 		}
 		setOutputSchema(null);
 	}
-
+	
+    @Parameter(type = BooleanParameter.class, name = "threading", optional = true)
+    public void setThreading(boolean threading) {
+        this.threading = threading;
+    }
+    
+    public boolean isThreading() {
+        return threading;
+    }
+    
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		calcOutputSchema();
@@ -173,6 +186,7 @@ public class MapAO extends UnaryLogicalOp {
 	public MapAO clone() {
 		return new MapAO(this);
 	}
+
 
 	// @Override
 	// public int hashCode() {

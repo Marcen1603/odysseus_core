@@ -16,10 +16,12 @@
 package de.uniol.inf.is.odysseus.relational.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalThreadedMapPO;
 import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -34,8 +36,13 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public void execute(MapAO mapAO, TransformationConfiguration transformConfig) {
-		RelationalMapPO<?> mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]), false, false);
-		defaultExecute(mapAO, mapPO, transformConfig, true, true);
+        IPhysicalOperator mapPO;
+        if (!mapAO.isThreading()) {
+            mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]), false, false);
+        } else {
+            mapPO = new RelationalThreadedMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]), false, false);
+        }
+	    defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 
 	@Override
