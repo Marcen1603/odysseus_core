@@ -300,6 +300,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		return importedSources.containsKey(advertisement);
 	}
 	
+	@Override
+	public boolean isImported(String sourceName) {
+		return getImportedSource(sourceName).isPresent();
+	}
 
 	@Override
 	public ImmutableList<SourceAdvertisement> getImportedSources() {
@@ -310,6 +314,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	public SourceAdvertisement exportSource(String sourceName, String queryBuildConfigurationName) throws PeerException {
 		if( isExported(sourceName)) {
 			throw new PeerException("Source " + sourceName + " is already exported");
+		}
+		
+		if( isImported(sourceName)) {
+			throw new PeerException("Source " + sourceName + " is imported and cannot be exported directly");
 		}
 		
 		final ILogicalOperator view = dataDictionary.getView(sourceName, SessionManagementService.getActiveSession());

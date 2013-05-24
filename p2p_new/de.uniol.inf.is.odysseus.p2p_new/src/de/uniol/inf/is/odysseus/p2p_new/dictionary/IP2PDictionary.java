@@ -24,6 +24,7 @@ public interface IP2PDictionary {
 	void importSource( SourceAdvertisement advertisement, String viewNameToUse ) throws PeerException;
 	boolean removeSourceImport( SourceAdvertisement advertisement );
 	boolean isImported( SourceAdvertisement advertisement );
+	boolean isImported( String sourceName );
 	Optional<String> getImportedSourceName( SourceAdvertisement advertisement );
 	Optional<SourceAdvertisement> getImportedSource( String viewName );
 	ImmutableList<SourceAdvertisement> getImportedSources();

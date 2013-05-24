@@ -33,7 +33,7 @@ public class ExportCommand extends AbstractHandler implements IHandler {
 			// TODO: Transformationscfg wählen lassen
 			String sourceName = (String) selectedObject.getKey();
 			try {
-				if (!P2PDictionaryService.get().isExported(sourceName)) {
+				if (!P2PDictionaryService.get().isExported(sourceName) && !P2PDictionaryService.get().isImported(sourceName)) {
 					P2PDictionaryService.get().exportSource(sourceName, "Standard");
 					okCount++;
 				}
