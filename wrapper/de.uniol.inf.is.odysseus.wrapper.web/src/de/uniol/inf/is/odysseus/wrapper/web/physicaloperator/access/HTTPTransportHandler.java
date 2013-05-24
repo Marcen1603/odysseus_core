@@ -35,6 +35,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -183,52 +184,85 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
         private final HttpClient client = new DefaultHttpClient();
         private final Method method;
         private final String uri;
-        private InputStream stream;
+        private ByteBuffer buffer = ByteBuffer.allocate(1024);
+        private boolean refetch = false;
 
         public HTTPInputStream(final Method method, final String uri) {
             this.method = method;
             this.uri = uri;
+            try {
+                fetch();
+            } catch (HttpException | IOException e) {
+                LOG.error(e.getMessage(), e);
+            }
         }
 
         @Override
-        public int read() throws IOException {
-            if (this.isStreamEmpty()) {
+        public synchronized int read() throws IOException {
+            if (isRefetch()) {
                 try {
+                    setRefetch(false);
                     this.fetch();
                 } catch (HttpException e) {
                     LOG.error(e.getMessage(), e);
                     throw new IOException(e);
                 }
+                return -1;
             }
-            return this.stream.read();
+            if (buffer.remaining() == 0) {
+                setRefetch(true);
+                return -1;
+            }
+            return buffer.get() & 0xFF;
         }
 
         @Override
-        public int read(byte[] b) throws IOException {
-            return this.stream.read(b);
+        public int read(byte[] b, int off, int len) throws IOException {
+            if (isRefetch()) {
+                try {
+                    setRefetch(false);
+                    this.fetch();
+                } catch (HttpException e) {
+                    LOG.error(e.getMessage(), e);
+                    throw new IOException(e);
+                }
+                return -1;
+            }
+
+            if (buffer.remaining() == 0) {
+                setRefetch(true);
+                return -1;
+            }
+            len = Math.min(len, buffer.remaining());
+            buffer.get(b, off, len);
+            return len;
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                buffer.clear();
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            } finally {
+                this.client.getConnectionManager().shutdown();
+            }
         }
 
         @Override
         public int available() throws IOException {
-            if (this.isStreamEmpty()) {
-                try {
-                    this.fetch();
-                } catch (HttpException e) {
-                    LOG.error(e.getMessage(), e);
-                    throw new IOException(e);
-                }
-            }
-            return this.stream.available();
+            return this.buffer.remaining();
         }
 
-        private boolean isStreamEmpty() throws IOException {
-            return (this.stream == null) || (this.stream.available() == 0);
+        private boolean isRefetch() {
+            return this.refetch;
+        }
+
+        private void setRefetch(boolean refetch) {
+            this.refetch = refetch;
         }
 
         private void fetch() throws HttpException, IOException {
-            if (this.stream != null) {
-                this.stream.close();
-            }
             HttpRequestBase request = null;
             switch (this.method) {
             case POST:
@@ -259,11 +293,18 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
                 HttpResponse response = this.client.execute(request);
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
-                    this.stream = entity.getContent();
+                    byte[] b = EntityUtils.toByteArray(entity);
+                    if (b.length + 1 > this.buffer.capacity()) {
+                        final ByteBuffer newBuffer = ByteBuffer.allocate(b.length);
+                        this.buffer = newBuffer;
+                        HTTPTransportHandler.this.LOG.debug("Extending buffer to " + this.buffer.capacity());
+                    }
+                    this.buffer.clear();
+                    this.buffer.put(b);
+                    this.buffer.flip();
                 }
-                // EntityUtils.consume(entity);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace(request.getRequestLine().toString());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(request.getRequestLine().toString());
                 }
             } catch (Exception e) {
                 LOG.error(e.getMessage(), e);
@@ -331,6 +372,11 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
                 LOG.trace(request.getRequestLine().toString());
             }
 
+        }
+
+        @Override
+        public void close() throws IOException {
+            this.client.getConnectionManager().shutdown();
         }
     }
 }
