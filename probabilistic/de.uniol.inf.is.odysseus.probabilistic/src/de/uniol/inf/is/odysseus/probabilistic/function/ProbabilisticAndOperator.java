@@ -81,7 +81,7 @@ public class ProbabilisticAndOperator extends AbstractBinaryOperator<Double> {
 		return SDFDatatype.DOUBLE;
 	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
+	public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] {
 		SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER,
 		SDFDatatype.FLOAT, SDFDatatype.LONG, SDFDatatype.DOUBLE };
 
@@ -95,7 +95,7 @@ public class ProbabilisticAndOperator extends AbstractBinaryOperator<Double> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument(s).");
 		}
-		return accTypes;
+		return ACC_TYPES;
 	}
 
 }

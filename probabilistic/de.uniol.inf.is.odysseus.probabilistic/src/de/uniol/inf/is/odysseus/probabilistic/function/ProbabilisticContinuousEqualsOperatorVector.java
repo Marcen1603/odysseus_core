@@ -94,7 +94,7 @@ public class ProbabilisticContinuousEqualsOperatorVector extends AbstractProbabi
         return false;
     }
 
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
             { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT,
                     SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG }, { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE } };
 
@@ -106,6 +106,6 @@ public class ProbabilisticContinuousEqualsOperatorVector extends AbstractProbabi
         if (argPos > this.getArity() - 1) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
         }
-        return accTypes[argPos];
+        return ACC_TYPES[argPos];
     }
 }
