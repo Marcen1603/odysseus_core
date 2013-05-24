@@ -113,8 +113,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 
 		node.jjtGetChild(1).jjtAccept(this, data);
-		SDFSchema outschema = new SDFSchema(name, attributes);
-		dd.addEntitySchema(name, outschema, caller);
+//		SDFSchema outschema = new SDFSchema(name, attributes);
+//		dd.addEntitySchema(name, outschema, caller);
 
 		for (int i = startOtherValues; i < node.jjtGetNumChildren(); ++i) {
 			node.jjtGetChild(i).jjtAccept(this, data);
