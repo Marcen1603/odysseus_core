@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWTException;
+import org.eclipse.ui.PlatformUI;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
@@ -47,7 +48,7 @@ public abstract class AbstractCategorySingleValuesChart extends
 	@Override
 	protected void processElement(final List<Double> tuple,
 			final IMetaAttribute metadata, final int port) {
-		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {

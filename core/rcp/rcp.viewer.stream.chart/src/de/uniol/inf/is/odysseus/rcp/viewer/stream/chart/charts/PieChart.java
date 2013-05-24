@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWTException;
+import org.eclipse.ui.PlatformUI;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
@@ -52,7 +53,7 @@ public class PieChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 
 	@Override
 	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, final int port) {		
-		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {					

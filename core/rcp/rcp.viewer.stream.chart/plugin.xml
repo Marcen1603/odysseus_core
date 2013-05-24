@@ -358,5 +358,68 @@
             pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.stepchart">
       </activityPatternBinding>
    </extension>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.BarChart"
+            description="Visualizes each attribute value as bar"
+            name="Bar Chart">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart"
+            description="Normalizes each value and visualizes then procentual in a pie chart"
+            name="Pie Chart">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ThermometerChart"
+            description="Creates a thermometer for one value that changes the color"
+            name="Thermometer Chart">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.DialChart"
+            description="Creates a clock-face like dial chart "
+            name="Dial Chart">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.AreaChart"
+            description="A chart with filled areas under the lines"
+            name="Area Chart">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYLineChart"
+            description="Creates a XY Line Chart where one value is used for the x-axis"
+            name="XY Line Chart">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.CurveChart"
+            description="Creates a XY chart that connects the points with spline interpolated curves"
+            name="XY Spline Curve Chart">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYBarChart"
+            description="Draws a set of bars for each step along the x-axis"
+            name="XY Bar Chart">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.StepChart"
+            description="Each value is visualized by a certain step to show a stacked bar chart or discrete value switches"
+            name="XY Step Chart">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ScatterPlotChart"
+            description="A scatter plot for three values, x and y for coordinates and z for color"
+            name="Scatter Plot">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart3D"
+            description="A 3D version of the pie chart"
+            name="3D Pie Chart">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.LinearFunctionChart"
+            description="Plots a linear function (mx+b) by using a slope and intercept value"
+            name="Linear Function">
+      </dashboardPart>
+   </extension>
 
 </plugin>

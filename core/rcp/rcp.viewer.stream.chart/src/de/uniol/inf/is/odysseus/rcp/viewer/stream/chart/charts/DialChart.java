@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWTException;
+import org.eclipse.ui.PlatformUI;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.dial.DialBackground;
 import org.jfree.chart.plot.dial.DialCap;
@@ -92,7 +93,7 @@ public class DialChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 
 	@Override
 	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, int port) {
-		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {

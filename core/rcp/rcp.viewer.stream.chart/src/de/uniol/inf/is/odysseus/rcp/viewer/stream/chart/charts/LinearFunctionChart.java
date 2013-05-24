@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWTException;
+import org.eclipse.ui.PlatformUI;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -104,7 +105,7 @@ public class LinearFunctionChart extends AbstractJFreeChart<Double, IMetaAttribu
 
 	@Override
 	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, int port) {
-		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {

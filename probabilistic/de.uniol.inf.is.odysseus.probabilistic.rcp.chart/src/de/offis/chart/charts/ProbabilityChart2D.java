@@ -37,6 +37,7 @@ import de.offis.chart.charts.datatype.ProbabilisticViewSchema;
 import de.offis.chart.charts.datatype.ProbabilisticViewableSDFAttribute;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
@@ -213,7 +214,7 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
     }
 
     @Override
-    protected void initConnection(final IStreamConnection<Object> streamConnection) {
+    protected void initConnection(final IStreamConnection<IStreamObject<?>> streamConnection) {
         for (final ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
             this.viewSchema.put(s.getSinkInPort(), new ProbabilisticViewSchema<Object>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
         }

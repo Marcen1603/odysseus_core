@@ -17,6 +17,7 @@ package de.offis.chart.charts;
 import de.offis.chart.charts.datatype.ProbabilisticViewSchema;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
@@ -34,7 +35,7 @@ public abstract class AbstractProbabilityChart<T, M extends IMetaAttribute> exte
 	public void initWithOperator(IPhysicalOperator observingOperator) {
 		// create connection
 		if (observingOperator instanceof DefaultStreamConnection<?>) {
-			this.connection = (IStreamConnection<Object>) observingOperator;
+			this.connection = (IStreamConnection<IStreamObject<?>>) observingOperator;
 		} else {
 			this.connection = new DefaultStreamConnection(observingOperator);
 		}

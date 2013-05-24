@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -39,40 +40,34 @@ import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
 
-public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPart implements IAttributesChangeable<T>, IStreamElementListener<Object>{
+public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPart implements IAttributesChangeable<T>, IStreamElementListener<IStreamObject<?>> {
 
 	Logger logger = LoggerFactory.getLogger(AbstractChart.class);
 
-	
 	protected Map<Integer, ViewSchema<T>> viewSchema = new HashMap<Integer, ViewSchema<T>>();
-	protected IStreamConnection<Object> connection;
+	protected IStreamConnection<IStreamObject<?>> connection;
 
-	
 	public AbstractChart() {
 		// We need this
 	}
-	
+
 	public void initWithOperator(IPhysicalOperator observingOperator) {
 		this.connection = createConnection(observingOperator);
 		initConnection(connection);
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static IStreamConnection<Object> createConnection(
-			IPhysicalOperator operator) {
+	private static IStreamConnection<IStreamObject<?>> createConnection(IPhysicalOperator operator) {
 		if (operator instanceof DefaultStreamConnection<?>) {
-			return (IStreamConnection<Object>) operator;
+			return (IStreamConnection<IStreamObject<?>>) operator;
 		}
 		return new DefaultStreamConnection(operator);
 	}
-	
-	protected void initConnection(IStreamConnection<Object> streamConnection) {
 
-		for (ISubscription<? extends ISource<?>> s : streamConnection
-				.getSubscriptions()) {
-			this.viewSchema.put(s.getSinkInPort(),
-					new ViewSchema<T>(s.getSchema(), s.getTarget()
-							.getMetaAttributeSchema(), s.getSinkInPort()));
+	protected void initConnection(IStreamConnection<IStreamObject<?>> streamConnection) {
+
+		for (ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
+			this.viewSchema.put(s.getSinkInPort(), new ViewSchema<T>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
 		}
 		if (validate()) {
 			streamConnection.addStreamElementListener(this);
@@ -95,20 +90,18 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	protected void init() {
 
 	}
-	
+
 	@Override
-	public void streamElementRecieved(Object element, int port) {
+	public void streamElementRecieved(IStreamObject<?> element, int port) {
 		if (!(element instanceof Tuple<?>)) {
-			System.out
-					.println("Warning: Stream visualization is only for relational tuple!");
+			System.out.println("Warning: Stream visualization is only for relational tuple!");
 			return;
 		}
 
 		@SuppressWarnings("unchecked")
 		final Tuple<M> tuple = (Tuple<M>) element;
 		try {
-			List<T> values = this.viewSchema.get(port).convertToChoosenFormat(
-					this.viewSchema.get(port).convertToViewableFormat(tuple));
+			List<T> values = this.viewSchema.get(port).convertToChoosenFormat(this.viewSchema.get(port).convertToViewableFormat(tuple));
 			processElement(values, tuple.getMetadata(), port);
 		} catch (SWTException swtex) {
 			System.out.println("WARN: SWT Exception " + swtex.getMessage());
@@ -117,14 +110,16 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	}
 
 	protected abstract void processElement(List<T> tuple, M metadata, int port);
-	
+
 	@Override
 	public void dispose() {
-		if (this.connection.isConnected()) {
-			this.connection.disconnect();
+		if (this.connection != null) {
+			if (this.connection.isConnected()) {
+				this.connection.disconnect();
+			}
 		}
 	}
-	
+
 	@Override
 	public List<IViewableAttribute> getViewableAttributes(int port) {
 		return this.viewSchema.get(port).getViewableAttributes();
@@ -136,8 +131,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	}
 
 	@Override
-	public void setChoosenAttributes(int port,
-			List<IViewableAttribute> choosenAttributes) {
+	public void setChoosenAttributes(int port, List<IViewableAttribute> choosenAttributes) {
 		this.viewSchema.get(port).setChoosenAttributes(choosenAttributes);
 		chartSettingsChanged();
 	}
@@ -151,11 +145,11 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
 
 	}
-	
+
 	@Override
 	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
 	}
-	
+
 	@Override
 	public String getTitle() {
 		return "";
@@ -163,14 +157,13 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 
 	public abstract String getViewID();
 
-	protected String checkAtLeastOneSelectedAttribute(
-			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
-		for (Entry<Integer, Set<IViewableAttribute>> e : selectAttributes
-				.entrySet()) {
+	protected String checkAtLeastOneSelectedAttribute(Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+		for (Entry<Integer, Set<IViewableAttribute>> e : selectAttributes.entrySet()) {
 			if (e.getValue().size() > 0) {
 				return null;
 			}
 		}
 		return "The number of choosen attributes should be at least one!";
 	}
+
 }

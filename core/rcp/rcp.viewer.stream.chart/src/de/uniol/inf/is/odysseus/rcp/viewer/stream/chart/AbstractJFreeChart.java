@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,19 @@ import java.awt.Color;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -33,8 +41,16 @@ import org.jfree.experimental.chart.swt.ChartComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
@@ -42,8 +58,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Ty
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
 
-public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
-		AbstractChart<T,M> implements IChartSettingChangeable {
+public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends AbstractChart<T, M> implements IChartSettingChangeable, IDashboardPart {
 
 	Logger logger = LoggerFactory.getLogger(AbstractJFreeChart.class);
 
@@ -51,12 +66,12 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 		// we need this!
 	}
 
-	protected static ImageDescriptor IMG_MONITOR_EDIT = ImageDescriptor
-			.createFromURL(Activator.getBundleContext().getBundle()
-					.getEntry("icons/monitor_edit.png"));
-	protected static ImageDescriptor IMG_COG = ImageDescriptor
-			.createFromURL(Activator.getBundleContext().getBundle()
-					.getEntry("icons/cog.png"));
+	// protected static ImageDescriptor IMG_MONITOR_EDIT = ImageDescriptor
+	// .createFromURL(Activator.getBundleContext().getBundle()
+	// .getEntry("icons/monitor_edit.png"));
+	// protected static ImageDescriptor IMG_COG = ImageDescriptor
+	// .createFromURL(Activator.getBundleContext().getBundle()
+	// .getEntry("icons/cog.png"));
 
 	protected final static Color DEFAULT_BACKGROUND = Color.WHITE;
 	protected final static Color DEFAULT_BACKGROUND_GRID = Color.GRAY;
@@ -75,17 +90,22 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 		return prefix + "_" + currentUniqueSecondIdentifer;
 	}
 
-
 	@Override
 	public void createPartControl(Composite parent) {
+		initComposite(parent);
+		contributeToActionBars();
+	}
+
+	private void initComposite(Composite parent) {
 		this.chart = createChart();
 		// if(this.chart.getPlot()!=null){
 		// this.chart.getPlot().setBackgroundPaint(DEFAULT_BACKGROUND);
 		// }
 		decorateChart(this.chart);
-		new ChartComposite(parent, SWT.NONE, this.chart, true);
-		createActions();
-		contributeToActionBars();
+
+		ChartComposite chartComposite = new ChartComposite(parent, SWT.NONE, this.chart, true);
+		chartComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		createActions(parent.getShell());
 	}
 
 	@Override
@@ -94,15 +114,9 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 		if (memento != null) {
 			this.queryFileName = memento.getString(QUERY_FILE_NAME);
 			if (this.queryFileName != null && !this.queryFileName.isEmpty()) {
-				List<ISource<?>> sources = ScriptExecutor
-						.loadAndExecuteQueryScript(this.queryFileName);
+				List<ISource<?>> sources = ScriptExecutor.loadAndExecuteQueryScript(this.queryFileName);
 				this.initWithOperator(sources.get(0));
-			} else {
-				// no queryfile -> this was a debug-chart that cannot be
-				// recreated because the according operator is missing
-				// TODO: we need a possibility to stop the initialization
-				// (dispose did not work - causes exceptions)
-			}
+			} 
 		}
 	}
 
@@ -122,20 +136,18 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 		manager.add(changeSettingsAction);
 	}
 
-	private void createActions() {
-		this.changeAttributesAction = new ChangeSelectedAttributesAction<T>(
-				this.getSite().getShell(), this);
+	private void createActions(Shell shell) {
+		this.changeAttributesAction = new ChangeSelectedAttributesAction<T>(shell, this);
 		this.changeAttributesAction.setText("Change Attributes");
-		this.changeAttributesAction
-				.setToolTipText("Configure the attributes that will be shown by the chart");
-		this.changeAttributesAction.setImageDescriptor(IMG_MONITOR_EDIT);
+		this.changeAttributesAction.setToolTipText("Configure the attributes that will be shown by the chart");
+		ImageDescriptor imgDescMonitor = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/monitor_edit.png"));
+		this.changeAttributesAction.setImageDescriptor(imgDescMonitor);
 
-		this.changeSettingsAction = new ChangeSettingsAction(this.getSite()
-				.getShell(), this);
+		this.changeSettingsAction = new ChangeSettingsAction(shell, this);
 		this.changeSettingsAction.setText("Change Settings");
-		this.changeSettingsAction
-				.setToolTipText("Change several settings for this chart");
-		this.changeSettingsAction.setImageDescriptor(IMG_COG);
+		this.changeSettingsAction.setToolTipText("Change several settings for this chart");
+		ImageDescriptor imgDescCog = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/cog.png"));
+		this.changeSettingsAction.setImageDescriptor(imgDescCog);
 
 	}
 
@@ -182,13 +194,11 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 				if (us.type().equals(Type.GET)) {
 					Method other = getAccordingType(us);
 					if (other != null) {
-						MethodSetting ms = new MethodSetting(us.name(), m,
-								other);
+						MethodSetting ms = new MethodSetting(us.name(), m, other);
 						ms.setListGetter(getListMethod(us));
 						settings.add(ms);
 					} else {
-						System.out
-								.println("WARN: setting can not be loaded because there is no getter/setter pair");
+						System.out.println("WARN: setting can not be loaded because there is no getter/setter pair");
 						continue;
 					}
 				}
@@ -226,5 +236,113 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 		this.queryFileName = queryFile;
 	}
 
+	/**
+	 * DASHBOARD IMPLEMENTATIONS
+	 */
+
+	private Configuration configuration;
+	private IDashboardPartQueryTextProvider queryTextProvider;
+
+	@Override
+	public void createPartControl(Composite parent, ToolBar toolbar) {
+		initComposite(parent);			
+		addToToolbar(toolbar, changeAttributesAction);
+		addToToolbar(toolbar, changeSettingsAction);
+	}
+	
+	
+	private void addToToolbar(ToolBar tb, final Action action){
+		final ToolItem toolItem = new ToolItem(tb, SWT.PUSH);		
+		toolItem.setImage(action.getImageDescriptor().createImage());		
+		toolItem.setToolTipText("");
+		toolItem.setWidth(100);		
+		toolItem.addSelectionListener(new SelectionListener() {			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				action.run();				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				action.run();	
+				
+			}
+		});
+	}
+
+	@Override
+	public Configuration getConfiguration() {
+		return configuration;
+	}
+
+	@Override
+	public IDashboardPartQueryTextProvider getQueryTextProvider() {
+		return queryTextProvider;
+	}
+
+	@Override
+	public boolean init(Configuration configuration) {
+		this.configuration = configuration;
+		this.configuration.addListener(this);
+
+		return true;
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		if(this.configuration!=null){
+		this.configuration.removeListener(this);
+		}
+	}
+
+	@Override
+	public void onLoad(Map<String, String> saved) {
+	}
+
+	@Override
+	public void onPause() {
+	}
+
+	@Override
+	public Map<String, String> onSave() {
+		return Maps.newHashMap();
+	}
+
+	@Override
+	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
+		initWithOperator(physicalRoots.get(0));
+	}
+
+	@Override
+	public void onStop() {
+	}
+
+	@Override
+	public void onUnpause() {
+	}
+
+	@Override
+	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
+		this.queryTextProvider = Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
+	}
+
+	protected T getSettingValue(String settingName, T defValue) {
+		final Configuration config = getConfiguration();
+		if (!config.exists(settingName)) {
+			return defValue;
+		}
+
+		final T value = config.get(settingName);
+		if (value instanceof String) {
+			return !Strings.isNullOrEmpty((String) value) ? value : defValue;
+		}
+		return value != null ? value : defValue;
+	}
+
+	@Override
+	public void settingChanged(String settingName, Object oldValue, Object newValue) {
+
+	}
 
 }

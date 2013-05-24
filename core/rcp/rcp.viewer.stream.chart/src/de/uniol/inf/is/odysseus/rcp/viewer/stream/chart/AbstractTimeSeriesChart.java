@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWTException;
+import org.eclipse.ui.PlatformUI;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -32,13 +33,14 @@ import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
-public abstract class AbstractTimeSeriesChart extends
-		AbstractJFreeChart<Double, ITimeInterval> {
+public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double, ITimeInterval> {
 
 	private Map<String, TimeSeries> series = new HashMap<String, TimeSeries>();
 
@@ -86,10 +88,8 @@ public abstract class AbstractTimeSeriesChart extends
 		}
 		ValueAxis domainAxis = getChart().getXYPlot().getDomainAxis();
 		if (domainAxis instanceof NumberAxis) {
-			NumberAxis axis = (NumberAxis) getChart().getXYPlot()
-					.getDomainAxis();
-			axis.setNumberFormatOverride(new SimpleNumberToDateFormat(
-					this.dateformat));
+			NumberAxis axis = (NumberAxis) getChart().getXYPlot().getDomainAxis();
+			axis.setNumberFormatOverride(new SimpleNumberToDateFormat(this.dateformat));
 		}
 		if (domainAxis instanceof DateAxis) {
 			DateAxis axis = (DateAxis) getChart().getXYPlot().getDomainAxis();
@@ -101,65 +101,77 @@ public abstract class AbstractTimeSeriesChart extends
 			this.timefactor = 1000;
 		} else if (this.timeinputgranularity.equals(TIME_NANO)) {
 			this.timefactor = 1000000;
-		}else if (this.timeinputgranularity.equals(TIME_PICO)) {
+		} else if (this.timeinputgranularity.equals(TIME_PICO)) {
 			this.timefactor = 1000000000;
 		}
-		
 
 		min = Double.NaN;
 		max = Double.NaN;
 	}
 
 	@Override
-	public String isValidSelection(
-			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+	public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes) {
 		return checkAtLeastOneSelectedAttribute(selectAttributes);
 	}
 
 	@Override
-	protected void processElement(final List<Double> tuple,
-			final ITimeInterval metadata, final int port) {
-		getSite().getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (choosenXValue == -1) {
-						long time = metadata.getStart().getMainPoint();
-						long millis = time / timefactor;
-						FixedMillisecond ms = new FixedMillisecond(millis);
+	protected void processElement(List<Double> tuple, ITimeInterval metadata, int port) {
+		// this is not needed, since streamElementReceived is overwritten!		
+	}
+	
+	@Override
+	public void streamElementRecieved(IStreamObject<?> element, final int port) {
+		if (!(element instanceof Tuple<?>)) {
+			System.out.println("Warning: Stream visualization is only for relational tuple!");
+			return;
+		}
 
-						for (int i = 0; i < tuple.size(); i++) {
-							double value = tuple.get(i);
-							series.get(
-									getChoosenAttributes(port).get(i).getName())
-									.add(ms, value);
-							adjust(value);
+		@SuppressWarnings("unchecked")
+		final Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) element;
+		try {
+			final List<Double> viewableValues = this.viewSchema.get(port).convertToViewableFormat(tuple);
+			final List<?> values = this.viewSchema.get(port).convertToChoosenFormat(viewableValues);
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						if (choosenXValue == -1) {
+							long time = tuple.getMetadata().getStart().getMainPoint();
+							long millis = time / timefactor;
+							FixedMillisecond ms = new FixedMillisecond(millis);
+
+							for (int i = 0; i < values.size(); i++) {
+								double value = ((Number)values.get(i)).doubleValue();
+								series.get(getChoosenAttributes(port).get(i).getName()).add(ms, value);
+								adjust(value);
+							}
+						} else {
+							for (int i = 0; i < values.size(); i++) {
+								double value = ((Number)values.get(i)).doubleValue();
+								long x = ((Number) viewableValues.get(choosenXValue)).longValue();
+								FixedMillisecond ms = new FixedMillisecond(x);
+								series.get(getChoosenAttributes(port).get(i).getName()).add(ms, value);
+								adjust(value);
+							}
 						}
-					} else {
-						for (int i = 0; i < tuple.size(); i++) {
-							double value = tuple.get(i);
-							long x = tuple.get(choosenXValue).longValue();
-							FixedMillisecond ms = new FixedMillisecond(x);
-							series.get(
-									getChoosenAttributes(port).get(i).getName())
-									.add(ms, value);
-							adjust(value);
-						}
+
+					} catch (SWTException ex) {
+						// widget disposed
+						dispose();
+						return;
+					} catch (SeriesException e) {
+						// System.out.println("Warn: " + e.getLocalizedMessage());
+					} catch (Exception e) {
+						e.printStackTrace();
+
 					}
-
-				} catch (SWTException ex) {
-					// widget disposed
-					dispose();
-					return;
-				} catch (SeriesException e) {
-					// System.out.println("Warn: " + e.getLocalizedMessage());
-				} catch (Exception e) {
-					e.printStackTrace();
-
 				}
-			}
 
-		});
+			});
+		} catch (SWTException swtex) {
+			System.out.println("WARN: SWT Exception " + swtex.getMessage());
+		}
+
 	}
 
 	private void adjust(double value) {
@@ -175,10 +187,8 @@ public abstract class AbstractTimeSeriesChart extends
 			min = value;
 		}
 		if (isAutoadjust()) {
-			getChart().getXYPlot().getRangeAxis()
-					.setLowerBound(min * (1.0 - margin));
-			getChart().getXYPlot().getRangeAxis()
-					.setUpperBound(max * (1.0 + margin));
+			getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 - margin));
+			getChart().getXYPlot().getRangeAxis().setUpperBound(max * (1.0 + margin));
 		}
 
 	}
@@ -262,6 +272,7 @@ public abstract class AbstractTimeSeriesChart extends
 			return;
 		}
 		for (Integer port : getPorts()) {
+
 			for (int i = 0; i < getViewableAttributes(port).size(); i++) {
 				if (getViewableAttributes(port).get(i).getName().equals(value)) {
 					this.choosenXValue = i;
