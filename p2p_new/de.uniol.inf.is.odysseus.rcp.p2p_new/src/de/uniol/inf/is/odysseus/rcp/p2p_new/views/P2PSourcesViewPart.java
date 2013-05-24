@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.jxta.peer.PeerID;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -16,10 +17,12 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -78,7 +81,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 				cell.setText( String.valueOf(((TableEntry)cell.getElement()).index));
 			}
 		});
-		tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(2, 10, true));
+		tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(1, 10, true));
 		ColumnViewerSorter sorter = new ColumnViewerSorter(sourcesTable, idColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -98,7 +101,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 				cell.setText( ((TableEntry)cell.getElement()).type);
 			}
 		});
-		tableColumnLayout.setColumnData(typeColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(typeColumn.getColumn(), new ColumnWeightData(1, 25, true));
 		new ColumnViewerSorter(sourcesTable, typeColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -183,6 +186,14 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 
 		getSite().setSelectionProvider(sourcesTable);
 		
+		// Contextmenu
+		final MenuManager menuManager = new MenuManager();
+		final Menu contextMenu = menuManager.createContextMenu(sourcesTable.getTable());
+		// Set the MenuManager
+		sourcesTable.getTable().setMenu(contextMenu);
+		getSite().registerContextMenu(menuManager, sourcesTable);
+
+		
 		sourcesTable.setInput(input);
 		refreshTable();
 		
@@ -206,13 +217,17 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		}
 	}
 	
-	public Optional<SourceAdvertisement> getSelectedStreamOrViewID() {
+	public ImmutableList<SourceAdvertisement> getSelectedSourceAdvertisements() {
+		ImmutableList.Builder<SourceAdvertisement> resultBuilder = new ImmutableList.Builder<>();
+		
 		IStructuredSelection selection = (IStructuredSelection) sourcesTable.getSelection();
 		if( !selection.isEmpty() ) {
-			TableEntry selectedEntry = (TableEntry) selection.getFirstElement();
-			return Optional.of(selectedEntry.advertisement);
+			for( Object selectedObj : selection.toList() ) {
+				resultBuilder.add(((TableEntry)selectedObj).advertisement);
+			}
+			
 		}
-		return Optional.absent();
+		return resultBuilder.build();
 	}
 
 	// called by p2pDictionary

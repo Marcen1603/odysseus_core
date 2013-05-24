@@ -136,24 +136,31 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	@Override
-	public void removeSource(SourceAdvertisement srcAdvertisement) {
-		if( srcAdvertisement != null && importedSources.containsKey(srcAdvertisement)) {
-			importedSources.remove(srcAdvertisement);
+	public boolean removeSource(SourceAdvertisement srcAdvertisement) {
+		boolean result = false;
+		if( srcAdvertisement != null ) {
 			
-			fireSourceImportRemoveEvent(srcAdvertisement, importedSources.get(srcAdvertisement));
-		}
-		
-		if (srcAdvertisement != null && publishedSources.contains(srcAdvertisement)) {
-			publishedSources.remove(srcAdvertisement);
-			cachedSameMap.remove(srcAdvertisement);
-			sameSourceMap.remove(srcAdvertisement);
-			
-			for (List<SourceAdvertisement> sameList : sameSourceMap.values()) {
-				sameList.remove(srcAdvertisement);
+			if( importedSources.containsKey(srcAdvertisement)) {
+				importedSources.remove(srcAdvertisement);
+				
+				fireSourceImportRemoveEvent(srcAdvertisement, importedSources.get(srcAdvertisement));
+				result = true;
 			}
-
-			fireSourceRemoveEvent(srcAdvertisement);
+			
+			if (publishedSources.contains(srcAdvertisement)) {
+				publishedSources.remove(srcAdvertisement);
+				cachedSameMap.remove(srcAdvertisement);
+				sameSourceMap.remove(srcAdvertisement);
+				
+				for (List<SourceAdvertisement> sameList : sameSourceMap.values()) {
+					sameList.remove(srcAdvertisement);
+				}
+	
+				fireSourceRemoveEvent(srcAdvertisement);
+				result = true;
+			}
 		}
+		return result;
 	}
 
 	@Override
@@ -260,7 +267,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 	
 	@Override
-	public void removeSourceImport(SourceAdvertisement advertisement) {
+	public boolean removeSourceImport(SourceAdvertisement advertisement) {
 		if (importedSources.containsKey(advertisement)) {
 			String name = importedSources.get(advertisement);
 			importedSources.remove(advertisement);
@@ -268,7 +275,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			dataDictionary.removeViewOrStream(name, SessionManagementService.getActiveSession());
 			
 			fireSourceImportRemoveEvent(advertisement, name);
+			return true;
 		}
+		return false;
 	}
 
 	@Override
@@ -277,7 +286,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	@Override
-	public Optional<SourceAdvertisement> getImportedAdvertisement(String sourceName) {
+	public Optional<SourceAdvertisement> getImportedSource(String sourceName) {
 		for (SourceAdvertisement adv : importedSources.keySet()) {
 			if (importedSources.get(adv).equals(sourceName)) {
 				return Optional.of(adv);
@@ -289,6 +298,12 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	@Override
 	public boolean isImported(SourceAdvertisement advertisement) {
 		return importedSources.containsKey(advertisement);
+	}
+	
+
+	@Override
+	public ImmutableList<SourceAdvertisement> getImportedSources() {
+		return ImmutableList.copyOf(importedSources.keySet());
 	}
 
 	@Override
@@ -374,8 +389,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	@Override
-	public void removeSourceExport(String sourceName) {
-		Optional<SourceAdvertisement> optExportAdvertisement = getExportedAdvertisement(sourceName);
+	public boolean removeSourceExport(String sourceName) {
+		Optional<SourceAdvertisement> optExportAdvertisement = getExportedSource(sourceName);
 		if( optExportAdvertisement.isPresent() ) {
 			SourceAdvertisement exportAdvertisement = optExportAdvertisement.get();
 			
@@ -389,22 +404,29 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			
 			tryFlushAdvertisement(exportAdvertisement);
 			removeSource(exportAdvertisement);
+			return true;
 		}
+		return false;
 	}
 	
 	@Override
 	public boolean isExported(String sourceName) {
-		return getExportedAdvertisement(sourceName).isPresent();
+		return getExportedSource(sourceName).isPresent();
 	}
 	
 	@Override
-	public Optional<SourceAdvertisement> getExportedAdvertisement(String sourceName) {
+	public Optional<SourceAdvertisement> getExportedSource(String sourceName) {
 		for( SourceAdvertisement adv : exportedSourcesQueryMap.keySet() ) {
 			if( adv.getName().equals(sourceName)) {
 				return Optional.of(adv);
 			}
 		}
 		return Optional.absent();
+	}
+
+	@Override
+	public ImmutableList<SourceAdvertisement> getExportedSources() {
+		return ImmutableList.copyOf( exportedSourcesQueryMap.keySet());
 	}
 
 	// called by DataDictionary
@@ -421,7 +443,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			name = name.substring(pos+1);
 		}
 		
-		Optional<SourceAdvertisement> optImportedSrcAdvertisement = getImportedAdvertisement(name);
+		Optional<SourceAdvertisement> optImportedSrcAdvertisement = getImportedSource(name);
 		if( optImportedSrcAdvertisement.isPresent() ) {
 			removeSourceImport(optImportedSrcAdvertisement.get());
 		}
@@ -633,4 +655,5 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		timestampAO.setName(timestampAO.getStandardName());
 		return timestampAO;
 	}
+
 }

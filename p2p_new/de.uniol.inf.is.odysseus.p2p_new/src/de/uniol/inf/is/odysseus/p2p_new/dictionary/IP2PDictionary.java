@@ -12,7 +12,7 @@ public interface IP2PDictionary {
 	void removeListener( IP2PDictionaryListener listener );
 	
 	void addSource( SourceAdvertisement advertisement );
-	void removeSource( SourceAdvertisement advertisement );
+	boolean removeSource( SourceAdvertisement advertisement );
 	boolean existsSource( SourceAdvertisement advertisement );
 	boolean existsSource( String viewName );
 	ImmutableList<SourceAdvertisement> getSources();
@@ -22,13 +22,15 @@ public interface IP2PDictionary {
 	boolean isSame( SourceAdvertisement a, SourceAdvertisement b );
 	
 	void importSource( SourceAdvertisement advertisement, String viewNameToUse ) throws PeerException;
-	void removeSourceImport( SourceAdvertisement advertisement );
+	boolean removeSourceImport( SourceAdvertisement advertisement );
 	boolean isImported( SourceAdvertisement advertisement );
 	Optional<String> getImportedSourceName( SourceAdvertisement advertisement );
-	Optional<SourceAdvertisement> getImportedAdvertisement( String viewName );
+	Optional<SourceAdvertisement> getImportedSource( String viewName );
+	ImmutableList<SourceAdvertisement> getImportedSources();
 	
 	SourceAdvertisement exportSource( String viewName, String queryBuildConfigurationName ) throws PeerException;
-	void removeSourceExport( String viewName );
+	boolean removeSourceExport( String viewName );
 	boolean isExported( String viewName );
-	Optional<SourceAdvertisement> getExportedAdvertisement( String viewName );
+	Optional<SourceAdvertisement> getExportedSource( String viewName );
+	ImmutableList<SourceAdvertisement> getExportedSources();
 }
