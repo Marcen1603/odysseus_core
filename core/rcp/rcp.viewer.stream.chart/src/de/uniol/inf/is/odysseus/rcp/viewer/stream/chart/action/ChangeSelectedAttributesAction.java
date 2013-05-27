@@ -49,7 +49,7 @@ public class ChangeSelectedAttributesAction<T> extends Action {
 				for (Entry<Integer, List<IViewableAttribute>> e : attr.entrySet()) {
 					changeable.setChoosenAttributes(e.getKey(), e.getValue());
 				}
-				changeable.chartSettingsChanged();
+				changeable.chartSettingsChanged();				
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.err);

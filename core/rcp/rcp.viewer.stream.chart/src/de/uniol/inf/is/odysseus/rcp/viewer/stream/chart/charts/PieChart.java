@@ -47,7 +47,7 @@ public class PieChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 	}
 
 	@Override
-	public void chartSettingsChanged() {
+	public void reloadChart() {
 
 	}
 

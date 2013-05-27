@@ -99,7 +99,7 @@ public abstract class AbstractCategorySingleValuesChart extends
 	}
 
 	@Override
-	public void chartSettingsChanged() {
+	public void reloadChart() {
 		dcds.clear();
 	}
 

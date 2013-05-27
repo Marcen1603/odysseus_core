@@ -191,8 +191,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			for (final String key : settingsMap.keySet()) {
 				final String value = settingsMap.get(key);
 				defaultConfiguration.setAsString(key, NULL_SETTING.equals(value) ? null : value);
-			}
-
+			}			
 			part.setQueryTextProvider(queryTextProvider);
 			part.onLoad(customSettings);
 			return part;

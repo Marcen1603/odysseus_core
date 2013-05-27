@@ -74,7 +74,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	private Integer choosenXValuePort = 0;
 
 	@Override
-	public void chartSettingsChanged() {
+	public void reloadChart() {
 		series.clear();
 		this.dataset.removeAllSeries();
 		for (Integer port : getPorts()) {

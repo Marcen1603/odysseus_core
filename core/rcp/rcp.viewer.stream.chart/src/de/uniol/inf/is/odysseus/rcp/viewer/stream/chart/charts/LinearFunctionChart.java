@@ -66,7 +66,7 @@ public class LinearFunctionChart extends AbstractJFreeChart<Double, IMetaAttribu
 	double upperX = 3;
 
 	@Override
-	public void chartSettingsChanged() {
+	public void reloadChart() {
 		getChart().getXYPlot().getRangeAxis().setAutoRange(false);
 		getChart().getXYPlot().getDomainAxis().setAutoRange(false);
 		resetRanges();

@@ -50,4 +50,8 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider file);
 	
 	public void dispose();
+	
+	public void addListener(IDashboardPartListener listener);
+	
+	public void removeListener(IDashboardPartListener listener);
 }

@@ -64,6 +64,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IConfigurationListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
@@ -71,7 +72,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTex
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
-public class DashboardPartEditor extends EditorPart implements IConfigurationListener {
+public class DashboardPartEditor extends EditorPart implements IConfigurationListener, IDashboardPartListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartEditor.class);
 	private static final IDashboardPartHandler DASHBOARD_PART_HANDLER = new XMLDashboardPartHandler();
@@ -159,7 +160,7 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		try {
 			dashboardPart = DASHBOARD_PART_HANDLER.load(FileUtil.read(this.input.getFile()));
 			dashboardPart.getConfiguration().addListener(this);
-
+			dashboardPart.addListener(this);
 			dashboardPartController = new DashboardPartController(dashboardPart);
 		} catch (final DashboardHandlerException e) {
 			LOG.error("Could not load DashboardPart for editor from file {}!", this.input.getFile().getName(), e);
@@ -443,5 +444,10 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		if (setting.getSettingDescriptor().isEditable()) {
 			setting.reset();
 		}
+	}
+
+	@Override
+	public void dashboardPartChanged() {
+		setDirty(true);	
 	}
 }

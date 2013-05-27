@@ -18,8 +18,10 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 import java.awt.Color;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IContributionManager;
@@ -42,14 +44,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAction;
@@ -82,6 +83,8 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	private ChangeSelectedAttributesAction<T> changeAttributesAction;
 	private ChangeSettingsAction changeSettingsAction;
 	private String queryFileName = null;
+	
+	private List<IDashboardPartListener> listener = new ArrayList<>();
 
 	private static int currentUniqueSecondIdentifer = 0;
 
@@ -116,7 +119,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 			if (this.queryFileName != null && !this.queryFileName.isEmpty()) {
 				List<ISource<?>> sources = ScriptExecutor.loadAndExecuteQueryScript(this.queryFileName);
 				this.initWithOperator(sources.get(0));
-			} 
+			}
 		}
 	}
 
@@ -154,6 +157,18 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	protected abstract void decorateChart(JFreeChart thechart);
 
 	protected abstract JFreeChart createChart();
+
+	@Override
+	public final void chartSettingsChanged() {
+		fireDashboardChangedEvent();
+		reloadChart();	
+	}
+
+	private void fireDashboardChangedEvent() {
+		for(IDashboardPartListener l : this.listener){
+			l.dashboardPartChanged();
+		}		
+	}	
 
 	@Override
 	public void setFocus() {
@@ -242,30 +257,30 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 
 	private Configuration configuration;
 	private IDashboardPartQueryTextProvider queryTextProvider;
+	private boolean opened = false;
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
-		initComposite(parent);			
+		initComposite(parent);
 		addToToolbar(toolbar, changeAttributesAction);
 		addToToolbar(toolbar, changeSettingsAction);
 	}
-	
-	
-	private void addToToolbar(ToolBar tb, final Action action){
-		final ToolItem toolItem = new ToolItem(tb, SWT.PUSH);		
-		toolItem.setImage(action.getImageDescriptor().createImage());		
+
+	private void addToToolbar(ToolBar tb, final Action action) {
+		final ToolItem toolItem = new ToolItem(tb, SWT.PUSH);
+		toolItem.setImage(action.getImageDescriptor().createImage());
 		toolItem.setToolTipText("");
-		toolItem.setWidth(100);		
-		toolItem.addSelectionListener(new SelectionListener() {			
+		toolItem.setWidth(100);
+		toolItem.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				action.run();				
+				action.run();
 			}
-			
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				action.run();	
-				
+				action.run();
+
 			}
 		});
 	}
@@ -291,14 +306,9 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@Override
 	public void dispose() {
 		super.dispose();
-		if(this.configuration!=null){
-		this.configuration.removeListener(this);
+		if (this.configuration != null) {
+			this.configuration.removeListener(this);
 		}
-	}
-
-	@Override
-	public void onLoad(Map<String, String> saved) {
-		
 	}
 
 	@Override
@@ -307,12 +317,56 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 
 	@Override
 	public Map<String, String> onSave() {
-		return Maps.newHashMap();
+		Map<String, String> toSave = new HashMap<>();
+		if (opened) {
+			for (MethodSetting ms : getChartSettings()) {
+				Object value = null;
+				try {
+					value = ms.getGetter().invoke(this);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if (value != null) {
+					toSave.put(ms.getName(), value.toString());
+				}
+			}
+		}
+		return toSave;
+	}
+
+	@Override
+	public void onLoad(Map<String, String> saved) {
+		for (Entry<String, String> values : saved.entrySet()) {
+			String methodName = values.getKey();
+			String value = values.getValue();
+			try {
+				for (MethodSetting ms : getChartSettings()) {
+					if (ms.getName().equals(methodName)) {
+						Class<?> paramType = ms.getSetter().getParameterTypes()[0];
+						if (paramType.equals(Double.class) || paramType.equals(double.class)) {
+							Double d = Double.parseDouble(value);
+							ms.getSetter().invoke(this, d);
+						} else if (paramType.equals(Integer.class) || paramType.equals(int.class)) {
+							Integer d = Integer.parseInt(value);
+							ms.getSetter().invoke(this, d);
+						} else if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
+							Boolean d = Boolean.getBoolean(value);
+							ms.getSetter().invoke(this, d);
+						} else {
+							ms.getSetter().invoke(this, value);
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
 	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
 		initWithOperator(physicalRoots.get(0));
+		opened = true;
 	}
 
 	@Override
@@ -328,22 +382,20 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 		this.queryTextProvider = Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
 	}
 
-	protected T getSettingValue(String settingName, T defValue) {
-		final Configuration config = getConfiguration();
-		if (!config.exists(settingName)) {
-			return defValue;
-		}
-
-		final T value = config.get(settingName);
-		if (value instanceof String) {
-			return !Strings.isNullOrEmpty((String) value) ? value : defValue;
-		}
-		return value != null ? value : defValue;
-	}
 
 	@Override
 	public void settingChanged(String settingName, Object oldValue, Object newValue) {
 
+	}
+	
+	@Override
+	public void addListener(IDashboardPartListener listener) {
+		this.listener.add(listener);
+	}
+	
+	@Override
+	public void removeListener(IDashboardPartListener listener) {
+		this.listener.remove(listener);
 	}
 
 }

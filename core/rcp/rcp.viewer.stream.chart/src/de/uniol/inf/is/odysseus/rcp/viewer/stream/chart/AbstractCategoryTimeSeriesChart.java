@@ -93,7 +93,7 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractJFreeChart
 	}
 
 	@Override
-	public void chartSettingsChanged() {
+	public void reloadChart() {
 	}
 
 	@Override

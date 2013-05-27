@@ -62,9 +62,9 @@ public class BarChart extends AbstractCategorySingleValuesChart {
 	}
 	
 	@Override
-	public void chartSettingsChanged() {	
-		super.chartSettingsChanged();
+	public void reloadChart() {			
 		getChart().getCategoryPlot().getRangeAxis().setAutoRange(this.autoadjust);
 	}
+	
 
 }

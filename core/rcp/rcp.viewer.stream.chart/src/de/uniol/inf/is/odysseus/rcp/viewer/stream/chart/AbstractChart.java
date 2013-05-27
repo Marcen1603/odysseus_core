@@ -72,10 +72,12 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 		if (validate()) {
 			streamConnection.addStreamElementListener(this);
 			streamConnection.connect();
-			chartSettingsChanged();
+			reloadChart();
 			init();
 		}
 	}
+
+	protected abstract void reloadChart();
 
 	protected boolean validate() {
 		for (Entry<Integer, ViewSchema<T>> e : viewSchema.entrySet()) {
@@ -133,7 +135,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	@Override
 	public void setChoosenAttributes(int port, List<IViewableAttribute> choosenAttributes) {
 		this.viewSchema.get(port).setChoosenAttributes(choosenAttributes);
-		chartSettingsChanged();
+		reloadChart();
 	}
 
 	@Override

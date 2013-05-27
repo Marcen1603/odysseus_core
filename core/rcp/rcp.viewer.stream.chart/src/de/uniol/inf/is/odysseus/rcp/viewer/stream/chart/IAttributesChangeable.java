@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribut
 
 public interface IAttributesChangeable<T> {
 
-	public void chartSettingsChanged();	
+	public void chartSettingsChanged();		
 	/**
 	 * Should return null if everything is ok or a string containing the error message
 	 * @param selectAttributes

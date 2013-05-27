@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 
 // cannot created with reflection (on purpose for testing)
@@ -106,6 +107,17 @@ public class InvalidTestDashboardPart implements IDashboardPart {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addListener(IDashboardPartListener listener) {
+	
+		
+	}
+
+	@Override
+	public void removeListener(IDashboardPartListener listener) {
 		
 	}
 

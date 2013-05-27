@@ -74,7 +74,7 @@ public class DialChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 	private int minorTickCount = 4;
 
 	@Override
-	public void chartSettingsChanged() {
+	public void reloadChart() {
 		DialPlot plot = (DialPlot) getChart().getPlot();
 		StandardDialScale scale = (StandardDialScale) plot.getScale(0);
 		scale.setLowerBound(lowerBound);

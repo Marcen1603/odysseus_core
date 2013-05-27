@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 
 	private Configuration configuration;
 	private IDashboardPartQueryTextProvider queryTextProvider;
+	private List<IDashboardPartListener> listener = new ArrayList<>();
 
 	@Override
 	public Configuration getConfiguration() {
@@ -93,5 +95,15 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 			return !Strings.isNullOrEmpty((String) value) ? value : defValue;
 		}
 		return value != null ? value : defValue;
+	}
+	
+	@Override
+	public void addListener(IDashboardPartListener listener) {
+		this.listener.add(listener);
+	}
+	
+	@Override
+	public void removeListener(IDashboardPartListener listener) {
+		this.listener.remove(listener);
 	}
 }

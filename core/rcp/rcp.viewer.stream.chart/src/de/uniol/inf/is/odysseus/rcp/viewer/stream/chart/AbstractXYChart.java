@@ -123,7 +123,7 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 	}
 
 	@Override
-	public void chartSettingsChanged() {
+	public void reloadChart() {
 		if (!autoadjust) {
 			if (!Double.isNaN(minY)) {
 				getChart().getXYPlot().getRangeAxis().setLowerBound(minY * (1.0 - margin));
@@ -145,7 +145,7 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 				serie.remove(0);
 			}
 		}
-
+		
 	}
 
 	@Override

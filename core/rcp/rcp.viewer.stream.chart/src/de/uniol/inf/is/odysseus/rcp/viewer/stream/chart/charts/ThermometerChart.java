@@ -47,7 +47,7 @@ public class ThermometerChart extends AbstractJFreeChart<Double, IMetaAttribute>
 	protected void init() {	
 		super.init();
 		selectedValue = 0;		
-		chartSettingsChanged();
+		reloadChart();
 		resetBounds();
 	}
 	
@@ -173,8 +173,9 @@ public class ThermometerChart extends AbstractJFreeChart<Double, IMetaAttribute>
 
 
 	@Override
-	public void chartSettingsChanged() {		
-		
+	protected void reloadChart() {
+		resetBounds();		
 	}
+
 
 }
