@@ -15,7 +15,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.p2p_new.dictionary,
- de.uniol.inf.is.odysseus.p2p_new.sources,
  de.uniol.inf.is.odysseus.rcp,
  org.eclipse.ui.console,
  org.eclipse.ui.navigator.resources,

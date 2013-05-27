@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableList;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;

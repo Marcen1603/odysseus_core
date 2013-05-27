@@ -28,7 +28,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
-import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
 
 public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListener {

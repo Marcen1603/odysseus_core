@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.views.P2PSourcesViewPart;
