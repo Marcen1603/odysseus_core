@@ -630,6 +630,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			srcAdvertisement.setName(streamName);
 			srcAdvertisement.setPeerID(localPeerID);
 			srcAdvertisement.setAccessAO(optAccessAO.get());
+			srcAdvertisement.setOutputSchema(stream.getOutputSchema());
 
 			try {
 				P2PNewPlugIn.getDiscoveryService().publish(srcAdvertisement);
