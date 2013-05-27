@@ -347,12 +347,16 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			}
 		}
 		
-		StreamAO ao = new StreamAO(viewname);	
+		String vn = viewname;
+		if (viewname.startsWith(caller.getUser().getName())){
+			 vn = viewname.substring(viewname.indexOf(".")+1);
+		}
+		StreamAO ao = new StreamAO(vn);	
 		ArrayList<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for(SDFAttribute old : this.streamDefinitions.get(viewname).getOutputSchema()){
-			attributes.add(new SDFAttribute(viewname, old.getAttributeName(), old));
+			attributes.add(new SDFAttribute(vn, old.getAttributeName(), old));
 		}
-		SDFSchema schema = new SDFSchema(viewname, attributes);		
+		SDFSchema schema = new SDFSchema(vn, attributes);		
 		ao.setOutputSchema(schema);
 		return ao;
 	}
