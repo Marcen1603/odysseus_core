@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.P2PDictionaryService;
@@ -306,6 +307,10 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	}
 
 	private static String getDestinationName(ILogicalOperator operator) {
+		if( operator instanceof StreamAO ) {
+			return LOCAL_DESTINATION_NAME;
+		}
+		
 		if (!Strings.isNullOrEmpty(operator.getDestinationName())) {
 			return operator.getDestinationName();
 		}
@@ -358,7 +363,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, String transCfgName) {
 		final List<QueryPart> localParts = Lists.newArrayList();
 
-		final String ownPeerID = P2PDictionaryService.get().getLocalPeerName();
+		final PeerID ownPeerID = P2PDictionaryService.get().getLocalPeerID();
 
 		for (final QueryPart part : queryPartDistributionMap.keySet()) {
 			final PeerID assignedPeerID = queryPartDistributionMap.get(part);
