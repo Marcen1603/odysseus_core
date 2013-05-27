@@ -4,10 +4,17 @@ import java.util.List;
 
 import net.jxta.peer.PeerID;
 
+import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -23,23 +30,88 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 	private static final String UNKNOWN_PEER_NAME = "<unknown>";
 
-	private final List<PeerID> foundPeerIDs = Lists.newArrayList();
-
 	private static PeerView instance;
+	
+	private final List<PeerID> foundPeerIDs = Lists.newArrayList();
+	
+	private IP2PDictionary p2pDictionary;
 
-	private Text text;
-
+	private TableViewer peersTable; 
+	
 	@Override
 	public void createPartControl(Composite parent) {
-		text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		text.setEditable(false);
-		text.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-
-		final IP2PDictionary p2pDictionary = P2PDictionaryService.get();
+		p2pDictionary = P2PDictionaryService.get();
 		p2pDictionary.addListener(this);
-		refresh();
+		
+		final Composite tableComposite = new Composite(parent, SWT.NONE);
+		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
+		tableComposite.setLayout(tableColumnLayout);
 
-		setPartName("PeerView (" + p2pDictionary.getLocalPeerName() + ")");
+		peersTable = new TableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
+		peersTable.getTable().setHeaderVisible(true);
+		peersTable.getTable().setLinesVisible(true);
+		peersTable.setContentProvider(ArrayContentProvider.getInstance());
+
+		/************* Index ****************/
+		TableViewerColumn indexColumn = new TableViewerColumn(peersTable, SWT.NONE);
+		indexColumn.getColumn().setText("Index");
+		indexColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				int index = foundPeerIDs.indexOf(cell.getElement());
+				cell.setText(String.valueOf(index));
+			}
+		});
+		tableColumnLayout.setColumnData(indexColumn.getColumn(), new ColumnWeightData(1, 10, true));
+		ColumnViewerSorter sorter = new ColumnViewerSorter(peersTable, indexColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				int index1 = foundPeerIDs.indexOf(e1);
+				int index2 = foundPeerIDs.indexOf(e2);
+				return Integer.compare(index1,index2);
+			}
+		};
+		sorter.setSorter(sorter, ColumnViewerSorter.NONE);
+
+		/************* Name ****************/
+		TableViewerColumn nameColumn = new TableViewerColumn(peersTable, SWT.NONE);
+		nameColumn.getColumn().setText("Name");
+		nameColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setText(determinePeerName((PeerID)cell.getElement()));
+			}
+		});
+		tableColumnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		new ColumnViewerSorter(peersTable, nameColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				String n1 = determinePeerName((PeerID) e1);
+				String n2 = determinePeerName((PeerID) e2);
+				return n1.compareTo(n2);
+			}
+		};
+		
+		/************* PeerID ****************/
+		TableViewerColumn peerIDColumn = new TableViewerColumn(peersTable, SWT.NONE);
+		peerIDColumn.getColumn().setText("PeerID");
+		peerIDColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setText( ((PeerID)cell.getElement()).toString());
+			}
+		});
+		tableColumnLayout.setColumnData(peerIDColumn.getColumn(), new ColumnWeightData(10, 25, true));
+		sorter = new ColumnViewerSorter(peersTable, peerIDColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				return ((PeerID)e1).toString().compareTo(((PeerID)e2).toString());
+			}
+		};
+			
+		peersTable.setInput(foundPeerIDs);
+		refreshTable();
+		
 		instance = this;
 	}
 
@@ -48,53 +120,33 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		instance = null;
 
 		P2PDictionaryService.get().removeListener(this);
-		text.dispose();
 
 		super.dispose();
 	}
 	
-	public final void refresh() {
+	public void refreshTable() {
 		final IP2PDictionary p2pDictionary = P2PDictionaryService.get();
-
+		
 		foundPeerIDs.clear();
-		for (final PeerID peerID : p2pDictionary.getRemotePeerIDs()) {
-			remotePeerAdded(p2pDictionary, peerID, p2pDictionary.getPeerRemoteName(peerID).get());
-		}
-	}
-
-	@Override
-	public void setFocus() {
-		text.setFocus();
-	}
-
-	protected final void refreshText() {
+		foundPeerIDs.addAll(p2pDictionary.getRemotePeerIDs());
+		
 		final Display disp = PlatformUI.getWorkbench().getDisplay();
 		if (!disp.isDisposed()) {
 			disp.asyncExec(new Runnable() {
 
 				@Override
 				public void run() {
-					if (!text.isDisposed()) {
-						text.setRedraw(false);
-
-						text.setText("");
-						synchronized (foundPeerIDs) {
-							for (final PeerID peerID : foundPeerIDs) {
-								final Optional<String> optPeerName = P2PDictionaryService.get().getPeerRemoteName(peerID);
-								if (optPeerName.isPresent()) {
-									text.append(optPeerName.get());
-								} else {
-									text.append(UNKNOWN_PEER_NAME);
-								}
-								text.append(" [" + peerID + "]\n");
-							}
-						}
-
-						text.setRedraw(true);
+					if( !peersTable.getTable().isDisposed() ) {
+						peersTable.refresh();
 					}
 				}
 			});
 		}
+	}
+
+	@Override
+	public void setFocus() {
+		peersTable.getTable().setFocus();
 	}
 
 	public static Optional<PeerView> getInstance() {
@@ -137,7 +189,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			foundPeerIDs.add(id);
 		}
 
-		refreshText();
+		refreshTable();
 	}
 
 	@Override
@@ -146,7 +198,12 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			foundPeerIDs.remove(id);
 		}
 
-		refreshText();
+		refreshTable();
+	}
+	
+	private String determinePeerName( PeerID peerID ) {
+		Optional<String> optPeerName = p2pDictionary.getPeerRemoteName(peerID);
+		return optPeerName.isPresent() ? optPeerName.get() : UNKNOWN_PEER_NAME;
 	}
 
 }
