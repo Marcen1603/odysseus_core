@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementInstantiator;
 
 public class P2PNewPlugIn implements BundleActivator {
 

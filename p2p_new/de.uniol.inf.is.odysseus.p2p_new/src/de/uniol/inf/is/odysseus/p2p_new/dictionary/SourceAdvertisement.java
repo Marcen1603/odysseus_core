@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.sources;
+package de.uniol.inf.is.odysseus.p2p_new.dictionary;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.AccessAOCoverter;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 
 public class SourceAdvertisement extends Advertisement implements Serializable {
@@ -108,7 +109,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		accessAO = viewAdvertisement.accessAO;
 	}
 
-	SourceAdvertisement() {
+	public SourceAdvertisement() {
 		// for JXTA-side instances
 	}
 

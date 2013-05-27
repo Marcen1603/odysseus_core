@@ -1,8 +1,9 @@
-package de.uniol.inf.is.odysseus.p2p_new.sources;
+package de.uniol.inf.is.odysseus.p2p_new.dictionary.sources;
 
 import net.jxta.document.Advertisement;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 
 public class SourceAdvertisementReceiver implements IAdvertisementListener {

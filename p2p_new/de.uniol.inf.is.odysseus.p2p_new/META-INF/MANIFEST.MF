@@ -27,6 +27,5 @@ Export-Package: de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.p2p_new.dictionary,
  de.uniol.inf.is.odysseus.p2p_new.logicaloperator,
  de.uniol.inf.is.odysseus.p2p_new.physicaloperator,
- de.uniol.inf.is.odysseus.p2p_new.sources,
  de.uniol.inf.is.odysseus.p2p_new.util
 Bundle-ActivationPolicy: lazy

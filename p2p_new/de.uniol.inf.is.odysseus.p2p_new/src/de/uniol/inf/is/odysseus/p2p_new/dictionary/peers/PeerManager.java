@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.peers;
+package de.uniol.inf.is.odysseus.p2p_new.dictionary.peers;
 
 import java.util.Enumeration;
 import java.util.List;

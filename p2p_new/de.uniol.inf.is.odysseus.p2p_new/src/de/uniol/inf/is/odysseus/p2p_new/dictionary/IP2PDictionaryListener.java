@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary;
 
-import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
 import net.jxta.peer.PeerID;
 
 public interface IP2PDictionaryListener {

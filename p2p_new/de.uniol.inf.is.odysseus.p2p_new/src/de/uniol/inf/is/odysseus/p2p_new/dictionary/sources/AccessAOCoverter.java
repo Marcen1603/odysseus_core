@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.sources;
+package de.uniol.inf.is.odysseus.p2p_new.dictionary.sources;
 
 import java.util.Enumeration;
 import java.util.List;

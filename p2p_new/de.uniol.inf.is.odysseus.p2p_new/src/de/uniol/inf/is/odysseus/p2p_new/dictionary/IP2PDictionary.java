@@ -6,7 +6,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
-import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
 
 public interface IP2PDictionary {
 	void addListener( IP2PDictionaryListener listener );
