@@ -295,15 +295,15 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		}		
 	}
 	
-	public static Optional<P2PSourcesViewPart> getInstance() {
-		return Optional.fromNullable(instance);
-	}
-	
-	private void refreshTable() {
+	public void refreshTable() {
 		input.clear();
 		input.addAll( determineTableEntries(p2pDictionary));
 		
 		updateTable();
+	}
+	
+	public static Optional<P2PSourcesViewPart> getInstance() {
+		return Optional.fromNullable(instance);
 	}
 
 	private void updateTable() {

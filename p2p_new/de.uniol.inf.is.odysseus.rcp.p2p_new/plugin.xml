@@ -70,6 +70,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.ExportAllCommand"
             name="Export all">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.p2p_new.commands.RefreshP2PSourcesViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshP2PSourcesCommand"
+            name="Refresh P2PSources">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -88,6 +93,17 @@
             allPopups="false"
             locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.p2p_new.P2PSources">
          <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshP2PSourcesCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator6"
+               visible="true">
+         </separator>
+         <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.ImportCommand"
                icon="icons/import.png"
                label="Import"
@@ -101,10 +117,6 @@
                style="push"
                tooltip="Import All">
          </command>
-         <separator
-               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator6"
-               visible="true">
-         </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveImportCommand"
                icon="icons/removeImport.png"
@@ -137,6 +149,10 @@
                style="push"
                tooltip="Remove all exports">
          </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator1"
+               visible="false">
+         </separator>
       </menuContribution>
       <menuContribution
             allPopups="false"
