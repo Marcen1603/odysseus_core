@@ -120,6 +120,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		delayCounter = 0;
 		lineCounter = 0;
 		isDone = false;
+		firstLineSkipped = false;
 	}
 
 	@Override
