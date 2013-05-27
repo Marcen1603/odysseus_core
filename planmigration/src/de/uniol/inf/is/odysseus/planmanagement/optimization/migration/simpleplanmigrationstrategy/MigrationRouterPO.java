@@ -144,11 +144,9 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 					.getStart().equals(object.getMetadata().getStart()))
 					|| !finished) {
 				lastSend = object;
-				LOG.debug("Transfer old {}", object);
 				transfer(object);
 			} 
 		} else if(finished && lastSend != null && object.getMetadata().getStart().after(lastSend.getMetadata().getStart())) {
-			LOG.debug("Transfer new {}", object);
 			transfer(object);
 			this.onlyNew = true;
 			fireMigrationFinishedEvent(this);
@@ -187,6 +185,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 			MigrationMarkerPunctuation p, int port) throws MigrationException {
 		Pair<IPunctuation, IPunctuation> pair = this.sourcesToPunctuations
 				.get(p.getSource());
+		LOG.debug("Receiced punctuation for {} from {}", p.getSource().getName(), (port == 0 ? "old" : "new"));
 		if (pair == null) {
 			throw new MigrationException("Source "
 					+ p.getSource().getClass().getSimpleName() + " ("
