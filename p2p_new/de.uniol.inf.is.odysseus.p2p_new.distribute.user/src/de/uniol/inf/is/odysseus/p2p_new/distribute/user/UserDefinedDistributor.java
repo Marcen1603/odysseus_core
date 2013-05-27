@@ -65,7 +65,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 			return queriesToDistribute;
 		}
 
-		final Collection<PeerID> remotePeerIDs = P2PDictionaryService.get().getPeerIDs();
+		final Collection<PeerID> remotePeerIDs = P2PDictionaryService.get().getRemotePeerIDs();
 		if (remotePeerIDs.isEmpty()) {
 			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
 			return queriesToDistribute;
@@ -124,7 +124,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 		assignedDestinations.put(LOCAL_DESTINATION_NAME, localPeerID);
 		for (final PeerID remotePeerID : remotePeerIDs) {
-			final Optional<String> optRemotePeerName = P2PDictionaryService.get().getPeerName(remotePeerID);
+			final Optional<String> optRemotePeerName = P2PDictionaryService.get().getPeerRemoteName(remotePeerID);
 			if (optRemotePeerName.isPresent()) {
 				assignedDestinations.put(optRemotePeerName.get(), remotePeerID);
 			}

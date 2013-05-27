@@ -57,8 +57,8 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		final IP2PDictionary p2pDictionary = P2PDictionaryService.get();
 
 		foundPeerIDs.clear();
-		for (final PeerID peerID : p2pDictionary.getPeerIDs()) {
-			peerAdded(p2pDictionary, peerID, p2pDictionary.getPeerName(peerID).get());
+		for (final PeerID peerID : p2pDictionary.getRemotePeerIDs()) {
+			remotePeerAdded(p2pDictionary, peerID, p2pDictionary.getPeerRemoteName(peerID).get());
 		}
 	}
 
@@ -80,7 +80,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 						text.setText("");
 						synchronized (foundPeerIDs) {
 							for (final PeerID peerID : foundPeerIDs) {
-								final Optional<String> optPeerName = P2PDictionaryService.get().getPeerName(peerID);
+								final Optional<String> optPeerName = P2PDictionaryService.get().getPeerRemoteName(peerID);
 								if (optPeerName.isPresent()) {
 									text.append(optPeerName.get());
 								} else {
@@ -132,7 +132,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	}
 
 	@Override
-	public void peerAdded(IP2PDictionary sender, PeerID id, String name) {
+	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
 		synchronized (foundPeerIDs) {
 			foundPeerIDs.add(id);
 		}
@@ -141,7 +141,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	}
 
 	@Override
-	public void peerRemoved(IP2PDictionary sender, PeerID id, String name) {
+	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
 		synchronized (foundPeerIDs) {
 			foundPeerIDs.remove(id);
 		}

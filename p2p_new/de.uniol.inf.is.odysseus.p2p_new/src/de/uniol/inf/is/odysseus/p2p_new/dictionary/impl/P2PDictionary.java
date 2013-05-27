@@ -381,7 +381,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	
 	public void addPeer( PeerID peerID, String peerName ) {
 		Preconditions.checkNotNull(peerID, "PeerID to add must not be null!");
-		Preconditions.checkArgument(!existsPeer(peerID), "Peerid is already added");
+		Preconditions.checkArgument(!existsRemotePeer(peerID), "Peerid is already added");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(peerName), "Peername to add must not be null or empty!");
 		
 		knownPeersMap.put(peerID, peerName);
@@ -389,7 +389,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 	
 	public void removePeer( PeerID peerID ) {
-		if( existsPeer(peerID)) {
+		if( existsRemotePeer(peerID)) {
 			String peerName = knownPeersMap.remove(peerID);
 			firePeerRemoveEvent(peerID, peerName);
 		}
@@ -400,14 +400,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 	
 	@Override
-	public boolean existsPeer(PeerID peerID) {
+	public boolean existsRemotePeer(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to add must not be null!");
 
 		return knownPeersMap.containsKey(peerID);
 	}
 	
 	@Override
-	public boolean existsPeer(String peerName) {
+	public boolean existsRemotePeer(String peerName) {
 		Preconditions.checkNotNull(!Strings.isNullOrEmpty(peerName), "Peername to add must not be null or empty!");
 
 		return knownPeersMap.containsValue(peerName);
@@ -440,12 +440,12 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 	
 	@Override
-	public ImmutableList<PeerID> getPeerIDs() {
+	public ImmutableList<PeerID> getRemotePeerIDs() {
 		return ImmutableList.copyOf(knownPeersMap.keySet());
 	}
 	
 	@Override
-	public Optional<String> getPeerName(PeerID peerID) {
+	public Optional<String> getPeerRemoteName(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to get the name from must not be null!");
 		
 		if( peerID.equals(localPeerID)) {
@@ -602,7 +602,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		synchronized (listeners) {
 			for (IP2PDictionaryListener listener : listeners) {
 				try {
-					listener.peerAdded(this, peerID, peerName);
+					listener.remotePeerAdded(this, peerID, peerName);
 				} catch (Throwable t) {
 					LOG.error("Exception during invokinf p2p dictionary listener", t);
 				}
@@ -614,7 +614,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		synchronized (listeners) {
 			for (IP2PDictionaryListener listener : listeners) {
 				try {
-					listener.peerRemoved(this, peerID, peerName);
+					listener.remotePeerRemoved(this, peerID, peerName);
 				} catch (Throwable t) {
 					LOG.error("Exception during invokinf p2p dictionary listener", t);
 				}

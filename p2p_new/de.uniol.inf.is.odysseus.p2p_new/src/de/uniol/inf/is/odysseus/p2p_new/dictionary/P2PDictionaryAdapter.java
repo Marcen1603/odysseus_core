@@ -36,12 +36,12 @@ public class P2PDictionaryAdapter implements IP2PDictionaryListener {
 	}
 
 	@Override
-	public void peerAdded(IP2PDictionary sender, PeerID id, String name) {
+	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
 		
 	}
 
 	@Override
-	public void peerRemoved(IP2PDictionary sender, PeerID id, String name) {
+	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
 		
 	}
 

@@ -1,24 +1,28 @@
 package de.uniol.inf.is.odysseus.p2p_new.peers;
 
-import java.io.IOException;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 
+import net.jxta.discovery.DiscoveryEvent;
+import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
+import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.protocol.PeerAdvertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
-public class PeerManager {
+public class PeerManager implements DiscoveryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
 
@@ -32,22 +36,29 @@ public class PeerManager {
 		peerDiscoveryThread = new RepeatingJobThread(PEER_DISCOVERY_INTERVAL_MILLIS, PEER_DISCOVERY_THREAD_NAME) {
 			@Override
 			public void doJob() {
-				try {
-					P2PNewPlugIn.getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, null);
-					final Enumeration<Advertisement> advertisements = P2PNewPlugIn.getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
-					processPeerAdvertisements(advertisements);
-				} catch (final IOException ex) {
-					LOG.error("Could not get peer advertisements", ex);
-				}
+				P2PNewPlugIn.getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, PeerManager.this);
 			}
 		};
 		peerDiscoveryThread.start();
 
 		LOG.debug("Peer manager activated");
 	}
-
-	public void checkNewPeers() {
-		peerDiscoveryThread.doJob();
+	
+	// called bei JXTA
+	@Override
+	public void discoveryEvent(DiscoveryEvent event) {
+		final DiscoveryResponseMsg response = event.getResponse();
+		final Enumeration<Advertisement> advs = response.getAdvertisements();
+		
+		List<PeerAdvertisement> peerAdvs = Lists.newArrayList();
+		while (advs.hasMoreElements()) {
+			Advertisement adv = advs.nextElement();
+			if( adv instanceof PeerAdvertisement ) {
+				PeerAdvertisement peerAdv = (PeerAdvertisement)adv;
+				peerAdvs.add(peerAdv);
+			}
+		}
+		processPeerAdvertisements(peerAdvs);
 	}
 
 	// called by OSGi-DS
@@ -57,21 +68,19 @@ public class PeerManager {
 		LOG.debug("Peer manager deactivated");
 	}
 
-	private void processPeerAdvertisements(Enumeration<Advertisement> advertisements) {
+	private void processPeerAdvertisements(List<PeerAdvertisement> advertisements) {
 		if( !P2PDictionary.isActivated() ) {
 			return;
 		}
 		
 		final Map<PeerID, String> newIds = Maps.newHashMap();
-		
-		Map<PeerID, String> oldIDs = null;
-		oldIDs = Maps.newHashMap(P2PDictionary.getInstance().getKnownPeersMap());
+		final Map<PeerID, String> oldIDs = Maps.newHashMap(P2PDictionary.getInstance().getKnownPeersMap());
+		final PeerID localPeerID = P2PDictionary.getInstance().getLocalPeerID();
 
-		while (advertisements.hasMoreElements()) {
-			final PeerAdvertisement peerAdvertisement = (PeerAdvertisement) advertisements.nextElement();
+		for( PeerAdvertisement peerAdvertisement : advertisements ) {
 			final PeerID peerID = peerAdvertisement.getPeerID();
 
-			if (!peerID.equals(P2PDictionary.getInstance().getLocalPeerID()) && P2PNewPlugIn.getEndpointService().isReachable(peerID, false)) {
+			if (!peerID.equals(localPeerID) && P2PNewPlugIn.getEndpointService().isReachable(peerID, false)) {
 				final String peerName = peerAdvertisement.getName();
 				
 				newIds.put(peerID, peerName);
@@ -87,4 +96,5 @@ public class PeerManager {
 			P2PDictionary.getInstance().removePeer(lostPeerID);
 		}
 	}
+
 }

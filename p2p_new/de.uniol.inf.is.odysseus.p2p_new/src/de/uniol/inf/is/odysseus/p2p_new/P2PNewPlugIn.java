@@ -68,7 +68,6 @@ public class P2PNewPlugIn implements BundleActivator {
 		final File conf = new File("." + System.getProperty("file.separator") + ownPeerName);
 		NetworkManager.RecursiveDelete(conf);
 		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, ownPeerName, conf.toURI());
-		manager.setPeerID(ownPeerID);
 
 		configureNetwork(manager.getConfigurator(), ownPeerID, ownPeerName);
 
@@ -140,7 +139,6 @@ public class P2PNewPlugIn implements BundleActivator {
 	}
 
 	private static PeerGroup createSubGroup(PeerGroup parentPeerGroup, PeerGroupID subGroupID, String subGroupName) throws PeerGroupException, IOException, Exception {
-//		return parentPeerGroup.newGroup(subGroupID, parentPeerGroup.getAllPurposePeerGroupImplAdvertisement(), subGroupName, "", true);
 		return parentPeerGroup.newGroup(subGroupID, parentPeerGroup.getAllPurposePeerGroupImplAdvertisement(), subGroupName, "");
 	}
 

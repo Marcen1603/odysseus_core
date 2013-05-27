@@ -265,13 +265,13 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 
 	// called by p2pDictionary
 	@Override
-	public void peerAdded(IP2PDictionary sender, PeerID id, String name) {
+	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
 		// do nothing
 	}
 
 	// called by p2pDictionary
 	@Override
-	public void peerRemoved(IP2PDictionary sender, PeerID id, String name) {
+	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
 		// do nothing
 	}
 	
@@ -330,47 +330,51 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 	}
 	
 	private static List<TableEntry> determineTableEntries(IP2PDictionary p2pDictionary) {
-		
+
 		List<TableEntry> result = Lists.newArrayList();
-		
+
 		List<SourceAdvertisement> publishedSources = p2pDictionary.getSources();
 		Map<SourceAdvertisement, TableEntry> consumedAdvs = Maps.newHashMap();
-		
-		for( SourceAdvertisement publishedSource : publishedSources ) {
-			
+
+		for (SourceAdvertisement publishedSource : publishedSources) {
+
 			List<SourceAdvertisement> sameSources = p2pDictionary.getSame(publishedSource);
-			
+
 			TableEntry entry = null;
-			for( SourceAdvertisement sameSource : sameSources ) {
-				if( consumedAdvs.containsKey(sameSource)) {
+			for (SourceAdvertisement sameSource : sameSources) {
+				if (consumedAdvs.containsKey(sameSource)) {
 					entry = consumedAdvs.get(sameSource);
 					break;
 				}
 			}
-			
-			if( entry == null ) {
+
+			if (entry == null) {
 				entry = new TableEntry();
-				
+
 				entry.index = result.size() + 1;
 				entry.schema = "TODO";
-				entry.type = publishedSource.isStream() ? "Stream" : "View" ;
+				entry.type = publishedSource.isStream() ? "Stream" : "View";
 				entry.peerNames = determinePeerName(p2pDictionary, publishedSource.getPeerID());
 				entry.advertisement = publishedSource;
-				entry.portedName = determinePortedName( p2pDictionary, publishedSource);
+				entry.portedName = determinePortedName(p2pDictionary, publishedSource);
 				entry.sourceNames = publishedSource.getName();
-				
+
 				result.add(entry);
 			} else {
 				entry.peerNames += (" " + determinePeerName(p2pDictionary, publishedSource.getPeerID()));
 				entry.sourceNames += publishedSource.getName();
 			}
 		}
-		
+
 		return result;
 	}
 	
 	private static String determinePeerName( IP2PDictionary dict, PeerID peerID ) {
-		Optional<String> optPeerName = dict.getPeerName(peerID);
+		if( peerID.equals(dict.getLocalPeerID())) {
+			return "_local_";
+		}
+		
+		Optional<String> optPeerName = dict.getPeerRemoteName(peerID);
 		if( optPeerName.isPresent() ) {
 			return optPeerName.get();
 		} 

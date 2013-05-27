@@ -34,10 +34,10 @@ public interface IP2PDictionary {
 	Optional<SourceAdvertisement> getExportedSource( String viewName );
 	ImmutableList<SourceAdvertisement> getExportedSources();
 	
-	ImmutableList<PeerID> getPeerIDs();
-	boolean existsPeer( PeerID peerID );
-	boolean existsPeer( String peerName );
-	Optional<String> getPeerName( PeerID peerID );
+	ImmutableList<PeerID> getRemotePeerIDs();
+	boolean existsRemotePeer( PeerID peerID );
+	boolean existsRemotePeer( String peerName );
+	Optional<String> getPeerRemoteName( PeerID peerID );
 	PeerID getLocalPeerID();
 	String getLocalPeerName();
 }
