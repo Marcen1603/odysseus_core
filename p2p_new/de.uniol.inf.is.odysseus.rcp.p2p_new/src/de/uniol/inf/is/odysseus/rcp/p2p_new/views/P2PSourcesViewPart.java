@@ -26,6 +26,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
@@ -352,7 +354,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 				entry = new TableEntry();
 
 				entry.index = result.size() + 1;
-				entry.schema = "TODO";
+				entry.schema = toString(publishedSource.getOutputSchema());
 				entry.type = publishedSource.isStream() ? "Stream" : "View";
 				entry.peerNames = determinePeerName(p2pDictionary, publishedSource.getPeerID());
 				entry.advertisement = publishedSource;
@@ -369,6 +371,25 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		return result;
 	}
 	
+	private static String toString(SDFSchema outputSchema) {
+		if( outputSchema == null || outputSchema.isEmpty() ) {
+			return "[]";
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for( int i = 0; i < outputSchema.size(); i++ ) {
+			SDFAttribute attribute = outputSchema.get(i);
+			sb.append(attribute.getAttributeName()).append(":");
+			sb.append(attribute.getDatatype().getQualName().toUpperCase());
+			if( i < outputSchema.size() - 1 ) {
+				sb.append(", ");
+			}
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
 	private static String determinePeerName( IP2PDictionary dict, PeerID peerID ) {
 		if( peerID.equals(dict.getLocalPeerID())) {
 			return "_local_";
