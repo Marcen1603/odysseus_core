@@ -347,7 +347,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		}
 		
 		StreamAO ao = new StreamAO(viewname);		
-		SDFSchema schema = this.streamDefinitions.get(viewname).getOutputSchema();
+		SDFSchema schema = new SDFSchema(viewname, this.streamDefinitions.get(viewname).getOutputSchema().getAttributes());		
 		ao.setOutputSchema(schema);
 		return ao;
 	}
