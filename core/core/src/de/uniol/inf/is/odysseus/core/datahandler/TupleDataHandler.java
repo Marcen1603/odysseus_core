@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -34,6 +37,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  */
 public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 
+	static final private Logger logger = LoggerFactory.getLogger(TupleDataHandler.class);
+	
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add("Tuple");
@@ -99,7 +104,12 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	public Tuple<?> readData(String[] input) {
 		Object[] attributes = new Object[dataHandlers.length];
 		for (int i = 0; i < input.length; i++) {
+			try{
 			attributes[i] = dataHandlers[i].readData(input[i]);
+			}catch(Exception e){
+				logger.warn("Error Parsing "+input[i]+" with "+dataHandlers[i].getClass()+" "+e.getMessage());
+				attributes[i] = null;
+			}
 		}
 		return new Tuple<IMetaAttribute>(attributes, false);
 	}
