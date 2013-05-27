@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -38,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exceptio
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 
@@ -103,8 +105,12 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		walker.prefixWalk(originalPlan, copyVisitor);
 		ILogicalOperator copiedPlan = copyVisitor.getResult();
 
+		@SuppressWarnings("rawtypes")
+		CollectOperatorLogicalGraphVisitor joinVisitor = new CollectOperatorLogicalGraphVisitor(JoinAO.class);
+		walker.clearVisited();
+		walker.prefixWalk(copiedPlan, joinVisitor);
 		boolean createAlternativePlans = copiedPlan != null && planGeneration != null && query.getAlternativeLogicalPlans().isEmpty()
-				&& planGeneration == ParameterDoPlanGeneration.TRUE;
+				&& planGeneration == ParameterDoPlanGeneration.TRUE && !joinVisitor.getResult().isEmpty();
 		if(createAlternativePlans) {
 			System.out.println("[StandardQueryOptimizer] Creating alternative logical plans");
 			PlanGenerationConfiguration generationConfig = parameters.getPlanGenerationConfiguration();
@@ -117,6 +123,10 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 			} else {
 				System.out.println("[StandardQueryOptimizer] generatePlans has returned an empty list.");
 			}
+		}
+		if(joinVisitor.getResult().isEmpty()) {
+			// query can not be adapted because there are no alternative plans
+			query.setParameter("noAdaption", true);
 		}
 		
 		boolean queryShouldBeRewritten = copiedPlan != null && restruct != null
