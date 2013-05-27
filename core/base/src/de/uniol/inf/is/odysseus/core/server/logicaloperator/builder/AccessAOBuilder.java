@@ -59,6 +59,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	private final StringParameter accessConnectionHandler = new StringParameter("AccessConnectionHandler", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 
+	
+	private final StringParameter source = new StringParameter("source", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 	// TODO: These should be the only parameter in future
 	// Make mandatory
 	private final StringParameter wrapper = new StringParameter("WRAPPER", REQUIREMENT.OPTIONAL);
@@ -80,7 +82,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	public AccessAOBuilder() {
 		super("ACCESS", 0, 0);
-		addParameters(host, port, outputschema, type, options, options2, inputSchema, adapter, input, transformer, dataHandler, objectHandler, inputDataHandler, accessConnectionHandler, transportHandler, protocolHandler, wrapper, dateFormat);
+		addParameters(source, host, port, outputschema, type, options, options2, inputSchema, adapter, input, transformer, dataHandler, objectHandler, inputDataHandler, accessConnectionHandler, transportHandler, protocolHandler, wrapper, dateFormat);
 		// TODO: bind through service or why are these handlers not part of server?!
 		protocolHandler.setPossibleValues(ProtocolHandlerRegistry.getHandlerNames());
 		transportHandler.setPossibleValues(TransportHandlerRegistry.getHandlerNames());
