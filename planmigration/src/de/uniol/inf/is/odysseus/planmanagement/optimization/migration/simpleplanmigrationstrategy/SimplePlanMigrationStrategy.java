@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.IMyLock;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.LockingLock;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
@@ -271,7 +272,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		LOG.debug("Initializing parallel execution plan.");
 
 		try {
-			sender.executionPlanChanged();
+			sender.executionPlanChanged(PlanModificationEventType.PLAN_REOPTIMIZE,(IPhysicalQuery)null);
+
 		} catch (SchedulerException | NoSchedulerLoadedException e) {
 			throw new MigrationException(e);
 		}
@@ -684,7 +686,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		}
 
 		try {
-			context.getExecutor().executionPlanChanged();
+			context.getExecutor().executionPlanChanged(PlanModificationEventType.PLAN_REOPTIMIZE,(IPhysicalQuery)null);
 		} catch (SchedulerException | NoSchedulerLoadedException e) {
 			throw new MigrationException(e);
 		}

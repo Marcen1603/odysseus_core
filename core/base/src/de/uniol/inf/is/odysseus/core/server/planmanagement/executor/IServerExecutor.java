@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ExecutionConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoOptimizerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoSystemMonitorLoadedException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
@@ -65,9 +66,10 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  */
 public interface IServerExecutor extends IExecutor, IPlanScheduling,
 		IPlanManager, IErrorEventHandler, IErrorEventListener, IInfoProvider {
-	
+
 	public Collection<Integer> addQuery(String query, String parserID,
-			ISession user, String queryBuildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting)
+			ISession user, String queryBuildConfigurationName,
+			List<IQueryBuildSetting<?>> overwriteSetting)
 			throws PlanManagementException;
 
 	/**
@@ -82,7 +84,9 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	public Integer addQuery(ILogicalOperator logicalPlan, ISession user,
-			String queryBuildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting) throws PlanManagementException;
+			String queryBuildConfigurationName,
+			List<IQueryBuildSetting<?>> overwriteSetting)
+			throws PlanManagementException;
 
 	/**
 	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als physischer Plan
@@ -94,11 +98,11 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 *            Name der zu verwendeden Build-Configuration
 	 * @throws PlanManagementException
 	 */
-	public Integer addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
-			String queryBuildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting) throws PlanManagementException;
+	public Integer addQuery(List<IPhysicalOperator> physicalPlan,
+			ISession user, String queryBuildConfigurationName,
+			List<IQueryBuildSetting<?>> overwriteSetting)
+			throws PlanManagementException;
 
-	
-	
 	/**
 	 * getConfiguration liefert die aktuelle Konfiguration der
 	 * AUsfuehrungsumgebung.
@@ -106,12 +110,12 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * @return die aktuelle Konfiguration der AUsführungsumgebung
 	 */
 	public ExecutionConfiguration getConfiguration();
-	
+
 	/**
 	 * Get specific query build configuration
 	 */
 	public IQueryBuildConfiguration getQueryBuildConfiguration(String name);
-	
+
 	/**
 	 * Get all QueryBuildConfigurations
 	 * 
@@ -139,7 +143,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 */
 	public OptimizationConfiguration getOptimizerConfiguration()
 			throws NoOptimizerLoadedException;
-	
+
 	/**
 	 * Returns the default System Monitor with an fixed measure period.
 	 * 
@@ -163,11 +167,13 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 			throws NoSystemMonitorLoadedException;
 
 	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
+
 	ICompiler getCompiler();
-	
-	Optional<ILogicalQueryDistributor> getLogicalQueryDistributor( String name );
+
+	Optional<ILogicalQueryDistributor> getLogicalQueryDistributor(String name);
+
 	ImmutableCollection<String> getLogicalQueryDistributorNames();
-	
+
 	// Facade for Compiler
 	public List<ILogicalQuery> translateQuery(String query, String parserID,
 			ISession user) throws QueryParseException;
@@ -180,7 +186,12 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	public boolean removeAllQueries(ISession caller);
 
-	void executionPlanChanged() throws SchedulerException,
+	void executionPlanChanged(PlanModificationEventType type,
+			Collection<IPhysicalQuery> affectedQueries)
+			throws SchedulerException, NoSchedulerLoadedException;
+
+	void executionPlanChanged(PlanModificationEventType type,
+			IPhysicalQuery affectedQuery) throws SchedulerException,
 			NoSchedulerLoadedException;
 
 	public ISchedulerManager getSchedulerManager();

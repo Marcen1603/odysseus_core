@@ -303,7 +303,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		try {
 			// optimize queries and set resulting execution plan
 			optimizedQueries = getOptimizer().optimize(this, getExecutionPlan(), newQueries, conf, getDataDictionary());
-			executionPlanChanged();
+			executionPlanChanged(PlanModificationEventType.QUERY_ADDED,optimizedQueries);
 
 			// store optimized queries
 
@@ -526,7 +526,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			try {
 				executionPlanLock.lock();
 				getOptimizer().beforeQueryRemove(queryToRemove, this.executionPlan, null, getDataDictionary());
-				executionPlanChanged();
+				executionPlanChanged(PlanModificationEventType.QUERY_REMOVE, queryToRemove);
 				stopQuery(queryToRemove.getID(), caller);
 				LOG.info("Removing Query " + queryToRemove.getID());
 				this.executionPlan.removeQuery(queryToRemove.getID());
@@ -625,7 +625,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		try {
 			this.executionPlanLock.lock();
 			getOptimizer().beforeQueryStart(queryToStart, this.executionPlan);
-			executionPlanChanged();
+			executionPlanChanged(PlanModificationEventType.QUERY_START, queryToStart);
 			queryToStart.open(this);
 			LOG.debug("Query " + queryID + " started.");
 			firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_START, queryToStart));
@@ -705,7 +705,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		try {
 			this.executionPlanLock.lock();
 			getOptimizer().beforeQueryStop(queryToStop, this.executionPlan);
-			executionPlanChanged();
+			executionPlanChanged(PlanModificationEventType.QUERY_STOP, queryToStop);
 			if (isRunning()) {
 				queryToStop.close();
 				LOG.debug("Query " + queryToStop.getID() + " stopped.");
@@ -742,7 +742,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		try {
 			this.executionPlanLock.lock();
 			getOptimizer().reoptimize(sender, this.executionPlan);
-			executionPlanChanged();
+			executionPlanChanged(PlanModificationEventType.PLAN_REOPTIMIZE,(IPhysicalQuery)null);
 
 			LOG.debug("Query " + sender.getID() + " reoptimized.");
 			firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REOPTIMIZE, sender));
@@ -770,7 +770,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			try {
 				this.executionPlanLock.lock();
 				getOptimizer().reoptimize(this.executionPlan);
-				executionPlanChanged();
+				executionPlanChanged(PlanModificationEventType.PLAN_REOPTIMIZE,(IPhysicalQuery)null);
 				LOG.debug("Plan reoptimized.");
 				firePlanModificationEvent(new PlanModificationEvent(this, PlanModificationEventType.PLAN_REOPTIMIZE, this.executionPlan));
 			} catch (Exception e) {

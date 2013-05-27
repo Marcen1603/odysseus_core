@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 
@@ -90,6 +91,31 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 	public void refreshScheduling(IExecutionPlan executivePlan)
 			throws NoSchedulerLoadedException;
 
+	
+	/**
+	 * Adds a new query to schedule
+	 * @param affectedQuery
+	 */
+	public void addQuery(IPhysicalQuery affectedQuery);
+
+	/**
+	 * Removes a new query from scheduling
+	 * @param affectedQuery
+	 */
+	public void removeQuery(IPhysicalQuery affectedQuery);
+
+	/**
+	 * Event, that this query is started
+	 * @param affectedQuery
+	 */
+	public void startedQuery(IPhysicalQuery affectedQuery);
+
+	/**
+	 * Event, that this query is stopped
+	 * @param affectedQuery
+	 */
+	public void stoppedQuery(IPhysicalQuery affectedQuery);
+	
 	/**
 	 * Sets how many scheduler should be used.
 	 * 
@@ -162,4 +188,6 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 	public String getActiveSchedulingStrategyID();
 	
 	public void schedulingsChanged();
+
+
 }

@@ -53,14 +53,7 @@ import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
  */
 public class SingleSchedulerManager extends AbstractSchedulerManager implements IInfoProvider, IPlanModificationListener {
 
-    static Logger _logger = null;
-
-    static synchronized Logger getLogger() {
-        if (_logger == null) {
-            _logger = LoggerFactory.getLogger(SingleSchedulerManager.class);
-        }
-        return _logger;
-    }
+    static Logger logger = LoggerFactory.getLogger(SingleSchedulerManager.class);
 
     /**
      * The current active {@link IScheduler}.
@@ -89,7 +82,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
      */
     @SuppressWarnings("unused")
     private void activate() {
-        this.logger.info("Activate schedulererManager.");
+        logger.info("Activate schedulererManager.");
         Set<String> schedulers = getScheduler();
         Set<String> strats = getSchedulingStrategy();
         String defaultScheduler = null;
@@ -125,7 +118,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
 
                 setActiveScheduler(defaultScheduler, defaultStrat, null);
 
-                this.logger.info("Active scheduler. " + this.activeScheduler.getClass());
+                logger.info("Active scheduler. " + this.activeScheduler.getClass());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -252,9 +245,9 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
     @Override
     public void startScheduling() throws NoSchedulerLoadedException, OpenFailedException {
         if (!this.activeScheduler.isRunning()) {
-            this.logger.debug("Start scheduling.");
+            logger.debug("Start scheduling.");
             this.activeScheduler.startScheduling();
-            this.logger.debug("Scheduling started.");
+            logger.debug("Scheduling started.");
         }
     }
 
@@ -268,9 +261,9 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
     @Override
     public void stopScheduling() throws NoSchedulerLoadedException {
         if (this.activeScheduler.isRunning()) {
-            this.logger.debug("Stop scheduling.");
+            logger.debug("Stop scheduling.");
             this.activeScheduler.stopScheduling();
-            this.logger.debug("Scheduling stopped.");
+            logger.debug("Scheduling stopped.");
         }
     }
 
@@ -287,11 +280,37 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
     }
 
     public void refreshScheduling(List<IIterableSource<?>> leafSources, Collection<IPhysicalQuery> partialPlans) {
-        this.logger.debug("Refresh Scheduling. Set Sources");
+        logger.debug("Refresh Scheduling. Set Sources");
         this.activeScheduler.setLeafSources(leafSources);
-        this.logger.debug("Refresh Scheduling. Set Partial Plans");
+        logger.debug("Refresh Scheduling. Set Partial Plans");
         this.activeScheduler.setPartialPlans(partialPlans);
-        this.logger.debug("Refresh Scheduling. Done");
+        logger.debug("Refresh Scheduling. Done");
+    }
+    
+    @Override
+    public void addQuery(IPhysicalQuery affectedQuery) {
+    	logger.debug("AddQuery "+affectedQuery);
+    	this.activeScheduler.addLeafSources(affectedQuery.getLeafSources());
+    	this.activeScheduler.addPartialPlan(affectedQuery);
+    	
+    }
+    
+    @Override
+    public void removeQuery(IPhysicalQuery affectedQuery) {
+    	logger.debug("RemoveQuery "+affectedQuery);
+    	this.activeScheduler.removePartialPlan(affectedQuery);
+    }
+    
+    @Override
+    public void startedQuery(IPhysicalQuery affectedQuery) {
+    	logger.debug("StartedQuery "+affectedQuery);
+    	this.activeScheduler.addLeafSources(affectedQuery.getLeafSources());
+    	this.activeScheduler.addPartialPlan(affectedQuery);   	
+    }
+    
+    @Override
+    public void stoppedQuery(IPhysicalQuery affectedQuery) {
+    	// TODO: Is there anything that needs to be done?    	
     }
 
     /*

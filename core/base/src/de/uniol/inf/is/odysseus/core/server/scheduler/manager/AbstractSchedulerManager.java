@@ -58,7 +58,7 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	/**
 	 * Logger for informations.
 	 */
-	protected Logger logger;
+	private Logger logger;
 
 	/**
 	 * Map of all registered {@link ISchedulerFactory}.
@@ -315,9 +315,11 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 				.get(schedulingStrategy);
 		if (sf != null && ssf != null) {
 			// create the new scheduler
-			int executorThreadsCount = (int) OdysseusConfiguration.getLong("scheduler_simpleThreadScheduler_executorThreadsCount", -1);
-			if( executorThreadsCount <= 0 ) {
-				executorThreadsCount = Runtime.getRuntime().availableProcessors();
+			int executorThreadsCount = (int) OdysseusConfiguration.getLong(
+					"scheduler_simpleThreadScheduler_executorThreadsCount", -1);
+			if (executorThreadsCount <= 0) {
+				executorThreadsCount = Runtime.getRuntime()
+						.availableProcessors();
 			}
 			IScheduler s = sf.createScheduler(ssf, executorThreadsCount);
 			return s;

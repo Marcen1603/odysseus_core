@@ -83,9 +83,9 @@ public abstract class AbstractScheduler implements
 	long linesWritten;
 	StringBuffer toPrint = new StringBuffer();
 
-	private List<IIterableSource<?>> sources;
+	final protected List<IIterableSource<?>> sources = new ArrayList<>();
 
-	private Collection<IPhysicalQuery> partialPlans;
+	final protected Collection<IPhysicalQuery> partialPlans = new ArrayList<>();
 	
 	private final EventHandler eventHandler;
 
@@ -267,9 +267,16 @@ public abstract class AbstractScheduler implements
 
 	@Override
 	final public void setLeafSources(List<IIterableSource<?>> sources) {
-		this.sources = sources;
+		this.sources.clear();
+		addLeafSources(sources);
+	}
+
+	@Override
+	final public void addLeafSources(List<IIterableSource<?>> sources) {
+		this.sources.addAll(sources);
 		process_setLeafSources(sources);
 	}
+
 
 	@Override
 	final public List<IIterableSource<?>> getLeafSources() {
@@ -284,7 +291,8 @@ public abstract class AbstractScheduler implements
 
 	@Override
 	final public void setPartialPlans(Collection<IPhysicalQuery> partialPlans) {
-		this.partialPlans = partialPlans;
+		this.partialPlans.clear();
+		this.partialPlans.addAll(partialPlans);
 		process_setPartialPlans(partialPlans);
 	}
 

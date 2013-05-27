@@ -39,6 +39,10 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 		this.s = s;
 		this.caller = singleThreadScheduler;
 	}
+	
+	public IIterableSource<?> getSource() {
+		return s;
+	}
 
 	@Override
 	public void run() {

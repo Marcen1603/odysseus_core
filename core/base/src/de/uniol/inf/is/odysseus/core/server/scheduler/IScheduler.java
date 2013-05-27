@@ -58,13 +58,14 @@ public interface IScheduler extends IErrorEventHandler, IEventHandler {
 	public boolean isRunning();
 
 	/**
-	 * Set the global sources for scheduling (no pipes).
+	 * Set the global sources for scheduling (no pipes). Clears all existing sources
 	 * 
 	 * @param sources
 	 *            Global sources for scheduling (no pipes).
 	 */
 	public void setLeafSources(List<IIterableSource<?>> sources);
-
+	
+	public void addLeafSources(List<IIterableSource<?>> leafSources);
 
 	public List<IIterableSource<?>> getLeafSources();
 
@@ -78,5 +79,10 @@ public interface IScheduler extends IErrorEventHandler, IEventHandler {
 
 	public Collection<IPhysicalQuery> getPartialPlans();
 
+	public void addPartialPlan(IPhysicalQuery query);
+
+	public void removePartialPlan(IPhysicalQuery affectedQuery);
+
+	
 	
 }

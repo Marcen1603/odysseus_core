@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
@@ -61,16 +63,19 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	 * Thread for execution the registered partial plans.
 	 */
 	protected SchedulingExecutor[] schedulingExecutor;
+	protected int nextExecutorToAssign = 0;
 
 	/**
 	 * Thread for execution the global sources.
 	 */
 	private List<SingleSourceExecutor> sourceThreads = new CopyOnWriteArrayList<SingleSourceExecutor>();
 
-	private List<IIterableSource<?>> sourcesToScheduleBackup;
+//	private List<IIterableSource<?>> sourcesToSchedule;
+//	private Collection<IPhysicalQuery> partialPlans;
 
-	private Collection<IPhysicalQuery> partialPlansBackup;
-	
+	final private Map<IPhysicalQuery, Integer> planScheduledBy = new HashMap<>();
+	final private Map<IPhysicalQuery, IScheduling> partialPlanSchedulingMap = new HashMap<>();
+
 	/**
 	 * Creates a new SingleThreadScheduler.
 	 * 
@@ -86,12 +91,12 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	}
 
 	private void initPlanScheduling() {
-		if( schedulingExecutor != null ) {
-			for( SchedulingExecutor exec : schedulingExecutor ) {
+		if (schedulingExecutor != null) {
+			for (SchedulingExecutor exec : schedulingExecutor) {
 				exec.setUncaughtExceptionHandler(null);
 			}
 		}
-		
+
 		schedulingExecutor = new SchedulingExecutor[planScheduling.length];
 		for (int i = 0; i < planScheduling.length; i++) {
 			schedulingExecutor[i] = new SchedulingExecutor(planScheduling[i],
@@ -107,11 +112,9 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 			throw new SchedulingException("scheduler is already running");
 		}
 		initPlanScheduling();
-		
+
 		super.startScheduling();
 		// Start Source Threads
-		// TODO: Wenn die Threads vorher beendet wurden, kann man die nicht
-		// einfach neu starten
 		for (SingleSourceExecutor source : sourceThreads) {
 			source.start();
 		}
@@ -143,8 +146,8 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 		}
 		super.stopScheduling();
 		// to allow restart of processing init threads again
-		setPartialPlans(partialPlansBackup);
-		setLeafSources(sourcesToScheduleBackup);
+		setPartialPlans(partialPlans);
+		setLeafSources(sources);
 	}
 
 	/*
@@ -157,9 +160,10 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	@Override
 	protected synchronized void process_setPartialPlans(
 			Collection<IPhysicalQuery> partialPlans) {
-		this.partialPlansBackup = partialPlans;
+		planScheduledBy.clear();
+		partialPlanSchedulingMap.clear();
 		logger.debug("Setting new Plans to schedule :" + partialPlans);
-		
+
 		for (int i = 0; i < schedulingExecutor.length; i++) {
 			schedulingExecutor[i].pause();
 			this.planScheduling[i].clear();
@@ -169,16 +173,8 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 			// Create for each partial plan an own scheduling strategy.
 			// These strategies are used for scheduling partial plans.
 			// Round Robin assigment to scheduler
-			int counter = 0;
 			for (IPhysicalQuery partialPlan : partialPlans) {
-				logger.debug("setPartialPlans create new Parts with Scheduling "
-						+ schedulingFactory.getName()+" assigned to thread "+counter);
-				final IScheduling scheduling = schedulingFactory.create(
-						partialPlan, partialPlan.getCurrentPriority());
-				planScheduling[counter++].addPlan(scheduling);
-				if (counter == schedulingExecutor.length){
-					counter = 0;
-				}
+				addPartialPlan(partialPlan);
 			}
 		}
 
@@ -187,6 +183,36 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 		}
 
 		logger.debug("setPartialPlans done");
+	}
+
+	@Override
+	public void addPartialPlan(IPhysicalQuery partialPlan) {
+		if (!partialPlans.contains(partialPlan)) {
+			logger.debug("setPartialPlans create new Parts with Scheduling "
+					+ schedulingFactory.getName() + " assigned to thread "
+					+ nextExecutorToAssign);
+			final IScheduling scheduling = schedulingFactory.create(
+					partialPlan, partialPlan.getCurrentPriority());
+			planScheduledBy.put(partialPlan, nextExecutorToAssign);
+			partialPlanSchedulingMap.put(partialPlan, scheduling);
+			planScheduling[nextExecutorToAssign++].addPlan(scheduling);
+			if (nextExecutorToAssign == schedulingExecutor.length) {
+				nextExecutorToAssign = 0;
+			}
+		}
+	}
+
+	@Override
+	public void removePartialPlan(IPhysicalQuery affectedQuery) {
+		if (partialPlans.contains(affectedQuery)){
+			partialPlans.remove(affectedQuery);
+			Integer scheduler = planScheduledBy.remove(affectedQuery);
+			if (scheduler != null){
+				planScheduling[scheduler].removePlan(partialPlanSchedulingMap.remove(affectedQuery));
+			}else{
+				logger.warn("Potential scheduling removal problem? Trying to remove "+affectedQuery);
+			}
+		}
 	}
 
 	/*
@@ -198,27 +224,43 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	 */
 	@Override
 	protected synchronized void process_setLeafSources(
-			List<IIterableSource<?>> sourcesToSchedule) {
-		if (sourcesToSchedule != null) {
-			this.sourcesToScheduleBackup = sourcesToSchedule;
+			List<IIterableSource<?>> newSources) {
+		synchronized (sourceThreads) {
+			if (newSources != null) {
 
-			for (SingleSourceExecutor source : sourceThreads) {
-				logger.debug("Interrupting running source thread " + source);
-				source.interrupt();
-			}
-			sourceThreads.clear();
-
-			for (IIterableSource<?> source : sourcesToSchedule) {
-				final IIterableSource<?> s = source;
-				SingleSourceExecutor singleSourceExecutor = new SingleSourceExecutor(
-						s, this);
-				sourceThreads.add(singleSourceExecutor);
-				if (this.isRunning() && !singleSourceExecutor.isAlive()) {
-					singleSourceExecutor.start();
+				// 1. Remove all Sources that no longer need to be scheduled
+				// --> are no longer part of sources
+				for (SingleSourceExecutor source : sourceThreads) {
+					logger.debug("Interrupting running source thread " + source);
+					if (!sources.contains(source.getSource())) {
+						source.interrupt();
+						sourceThreads.remove(source);
+					}
+				}
+				// sourceThreads.clear();
+				// Add new Sources
+				for (IIterableSource<?> source : newSources) {
+					final IIterableSource<?> s = source;
+					if (!isScheduled(s)) {
+						SingleSourceExecutor singleSourceExecutor = new SingleSourceExecutor(
+								s, this);
+						sourceThreads.add(singleSourceExecutor);
+						if (this.isRunning() && !singleSourceExecutor.isAlive()) {
+							singleSourceExecutor.start();
+						}
+					}
 				}
 			}
-
 		}
+	}
+
+	private boolean isScheduled(IIterableSource<?> s) {
+		for (SingleSourceExecutor source : sourceThreads) {
+			if (source.getSource().equals(s)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	void removeSourceThread(SingleSourceExecutor singleSourceExecutor) {
@@ -263,11 +305,11 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 		for (IPhysicalQueryScheduling sched : this.planScheduling) {
 			if (sched instanceof IPlanModificationListener) {
 				((IPlanModificationListener) sched)
-				.planModificationEvent(eventArgs);
+						.planModificationEvent(eventArgs);
 			}
 		}
 	}
-	
+
 	public IPhysicalQueryScheduling[] getPlanScheduling() {
 		return planScheduling;
 	}
