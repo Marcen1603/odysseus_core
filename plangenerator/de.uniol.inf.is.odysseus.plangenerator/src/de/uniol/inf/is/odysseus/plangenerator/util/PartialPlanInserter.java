@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 
@@ -155,19 +154,19 @@ public class PartialPlanInserter {
 	}
 
 	private void validateWindowPositions() {
-		Set<AccessAO> sources = PlanGeneratorHelper
+		Set<ILogicalOperator> sources = PlanGeneratorHelper
 				.getAccessOperators(this.copy);
-		Set<AccessAO> unWindowedSources = new HashSet<AccessAO>();
-		for (AccessAO source : sources) {
+		Set<ILogicalOperator> unWindowedSources = new HashSet<ILogicalOperator>();
+		for (ILogicalOperator source : sources) {
 			if (!PlanGeneratorHelper.hasWindowBeforeJoin(source)) {
 				unWindowedSources.add(source);
 			}
 		}
 		Set<WindowAO> windows = PlanGeneratorHelper
 				.getWindowOperators(this.copy);
-		Set<Pair<AccessAO, WindowAO>> repaired = new HashSet<Pair<AccessAO, WindowAO>>();
-		// TODO: Prüfen welches Window zu welchem Access gehört
-		for (AccessAO unWindowed : unWindowedSources) {
+		Set<Pair<ILogicalOperator, WindowAO>> repaired = new HashSet<Pair<ILogicalOperator, WindowAO>>();
+		// TODO: Prüfen welches Window zu welchem Access/Stream gehört
+		for (ILogicalOperator unWindowed : unWindowedSources) {
 			SDFSchema sourceOutput = unWindowed.getOutputSchema();
 			for (WindowAO window : windows) {
 				SDFSchema windowInput = PlanGeneratorHelper
@@ -177,12 +176,12 @@ public class PartialPlanInserter {
 				if (intersect.getAttributes().size() == sourceOutput
 						.getAttributes().size()) {
 					// the window is associate with this source.
-					repaired.add(new Pair<AccessAO, WindowAO>(unWindowed,
+					repaired.add(new Pair<ILogicalOperator, WindowAO>(unWindowed,
 							window));
 				}
 			}
 		}
-		for (Pair<AccessAO, WindowAO> pair : repaired) {
+		for (Pair<ILogicalOperator, WindowAO> pair : repaired) {
 			ILogicalOperator after = pair.getE1().getSubscriptions().iterator()
 					.next().getTarget();
 			int sinkInPort = 0;

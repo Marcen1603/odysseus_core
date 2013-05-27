@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
@@ -53,22 +52,22 @@ public class PredicateHelper {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(PredicateHelper.class);
 
-	private Map<AccessAO, Set<IRelationalPredicate>> unsatisfiedPredicates;
+	private Map<ILogicalOperator, Set<IRelationalPredicate>> unsatisfiedPredicates;
 
 	private Map<ILogicalOperator, Set<IRelationalPredicate>> joinToSatisfiedPredicates;
 
 	private IAttributeResolver resolver;
 
 	public PredicateHelper() {
-		this.unsatisfiedPredicates = new HashMap<AccessAO, Set<IRelationalPredicate>>();
+		this.unsatisfiedPredicates = new HashMap<ILogicalOperator, Set<IRelationalPredicate>>();
 		this.joinToSatisfiedPredicates = new HashMap<ILogicalOperator, Set<IRelationalPredicate>>();
 	}
 
-	public void initialize(Set<AccessAO> sources, Set<JoinAO> joins) {
-		Map<AccessAO, Set<IRelationalPredicate>> predicateMap = collectPredicateMap(
+	public void initialize(Set<ILogicalOperator> sources, Set<JoinAO> joins) {
+		Map<ILogicalOperator, Set<IRelationalPredicate>> predicateMap = collectPredicateMap(
 				sources, joins);
 		SDFSchema schema = null;
-		for (AccessAO source : predicateMap.keySet()) {
+		for (ILogicalOperator source : predicateMap.keySet()) {
 			this.unsatisfiedPredicates.put(source,
 					splitPredicates(predicateMap.get(source)));
 			if (schema == null) {
@@ -96,7 +95,7 @@ public class PredicateHelper {
 	 * @return
 	 */
 	public Pair<IPredicate<?>, Set<IRelationalPredicate>> generatePredicate(
-			Set<AccessAO> sources, AccessAO newSource,
+			Set<ILogicalOperator> sources, ILogicalOperator newSource,
 			ILogicalOperator existingJoinPlan) {
 		sources.add(newSource);
 		if (sources.size() < 2) {
@@ -161,8 +160,8 @@ public class PredicateHelper {
 	 * @return a new predicate.
 	 */
 	public Pair<IPredicate<?>, Set<IRelationalPredicate>> generatePredicate(
-			Pair<AccessAO, AccessAO> pair) {
-		Set<AccessAO> source = new HashSet<AccessAO>();
+			Pair<ILogicalOperator, ILogicalOperator> pair) {
+		Set<ILogicalOperator> source = new HashSet<ILogicalOperator>();
 		source.add(pair.getE1());
 		return generatePredicate(source, pair.getE2(), null);
 	}
@@ -189,12 +188,12 @@ public class PredicateHelper {
 	}
 
 	private Set<IRelationalPredicate> getUnsatisfiedPredicates(
-			Set<AccessAO> sources, ILogicalOperator existingJoinPlan) {
+			Set<ILogicalOperator> sources, ILogicalOperator existingJoinPlan) {
 		Set<IRelationalPredicate> unsatisfied = new HashSet<IRelationalPredicate>();
 		// first collect all predicates which contain attributes originating
 		// from the sources.
-		for (AccessAO source : sources) {
-			AccessAO original = PlanGeneratorHelper.getOriginal2Clone(source);
+		for (ILogicalOperator source : sources) {
+			ILogicalOperator original = PlanGeneratorHelper.getOriginal2Clone(source);
 			unsatisfied.addAll(this.unsatisfiedPredicates.get(original));
 		}
 		// remove all predicates which are already satisfied in the existing
@@ -207,7 +206,7 @@ public class PredicateHelper {
 	}
 
 	private Set<IRelationalPredicate> getSatisfiablePredicates(
-			Set<IRelationalPredicate> predicates, Set<AccessAO> sources) {
+			Set<IRelationalPredicate> predicates, Set<ILogicalOperator> sources) {
 		Set<IRelationalPredicate> satisfiable = new HashSet<IRelationalPredicate>();
 		for (IRelationalPredicate predicate : predicates) {
 			if (isSatisfiable(predicate, sources)) {
@@ -217,10 +216,10 @@ public class PredicateHelper {
 		return satisfiable;
 	}
 
-	private Map<AccessAO, Set<IRelationalPredicate>> collectPredicateMap(
-			Set<AccessAO> sources, Set<JoinAO> joins) {
-		Map<AccessAO, Set<IRelationalPredicate>> predicateMap = new HashMap<AccessAO, Set<IRelationalPredicate>>();
-		for (AccessAO source : sources) {
+	private Map<ILogicalOperator, Set<IRelationalPredicate>> collectPredicateMap(
+			Set<ILogicalOperator> sources, Set<JoinAO> joins) {
+		Map<ILogicalOperator, Set<IRelationalPredicate>> predicateMap = new HashMap<ILogicalOperator, Set<IRelationalPredicate>>();
+		for (ILogicalOperator source : sources) {
 			Set<IRelationalPredicate> predicates = collectPredicates(joins,
 					source);
 			predicateMap.put(source, predicates);
@@ -235,11 +234,11 @@ public class PredicateHelper {
 	 * @param strippedPlan
 	 *            Plan containing only AccessAO and JoinAO operators.
 	 * @param source
-	 *            AccessAO
+	 *            ILogicalOperator (former AccessAO)
 	 * @return a collection of predicates based on the AccessAO.
 	 */
 	private Set<IRelationalPredicate> collectPredicates(Set<JoinAO> joins,
-			AccessAO source) {
+			ILogicalOperator source) {
 		Set<IRelationalPredicate> predicates = new HashSet<IRelationalPredicate>();
 		for (JoinAO join : joins) {
 			for (IPredicate<?> predicate : join.getPredicates()) {
@@ -258,9 +257,9 @@ public class PredicateHelper {
 	 * @return true if satisfiable, false if not
 	 */
 	private boolean isSatisfiable(IRelationalPredicate predicate,
-			Set<AccessAO> sources) {
+			Set<ILogicalOperator> sources) {
 		SDFSchema schema = null;
-		for (AccessAO source : sources) {
+		for (ILogicalOperator source : sources) {
 			if (schema == null) {
 				schema = source.getOutputSchema();
 			} else {

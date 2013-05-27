@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PlanGenerationConfiguration;
 import de.uniol.inf.is.odysseus.plangenerator.util.PartialPlanCollector;
@@ -54,9 +53,9 @@ public abstract class AbstractPlanGenerationMethod implements
 	// map an n (n-way join) to all created join plans for this n.
 	protected List<Collection<ILogicalOperator>> nWayJoinList;
 
-	private Map<ILogicalOperator, Set<AccessAO>> partialJoinPlan2sources;
+	private Map<ILogicalOperator, Set<ILogicalOperator>> partialJoinPlan2sources;
 
-	private Set<AccessAO> sources;
+	private Set<ILogicalOperator> sources;
 	private Set<JoinAO> joins;
 
 	private PredicateHelper predicateHelper;
@@ -80,7 +79,6 @@ public abstract class AbstractPlanGenerationMethod implements
 			PlanGenerationConfiguration config, IOperatorOwner owner);
 
 	protected void initialize(ILogicalOperator plan) {
-		// FIXME: prüfen ob plan überhaupt joins enthält!
 		this.planCopy = PlanGeneratorHelper.copyPlan(plan);
 		this.sources = PlanGeneratorHelper.getAccessOperators(this.planCopy);
 		this.joins = PlanGeneratorHelper.getJoinOperators(this.planCopy);
@@ -88,7 +86,7 @@ public abstract class AbstractPlanGenerationMethod implements
 		this.maxJoinCount = getMaxJoinCount();
 		this.predicateHelper = new PredicateHelper();
 		this.predicateHelper.initialize(this.sources, this.joins);
-		this.partialJoinPlan2sources = new HashMap<ILogicalOperator, Set<AccessAO>>();
+		this.partialJoinPlan2sources = new HashMap<ILogicalOperator, Set<ILogicalOperator>>();
 		this.nWayJoinList = new ArrayList<Collection<ILogicalOperator>>();
 		this.partialPlanCollector = new PartialPlanCollector(this.planCopy);
 	}
@@ -123,17 +121,17 @@ public abstract class AbstractPlanGenerationMethod implements
 		for (ILogicalOperator joinPlan : existingJoinPlans.get(n - 1)) {
 			ILogicalOperator joinClone = joinPlan;
 
-			Set<AccessAO> missing = new HashSet<AccessAO>();
+			Set<ILogicalOperator> missing = new HashSet<ILogicalOperator>();
 			missing.addAll(this.sources);
 			// cannot use removeAll, because these are only clones of the
 			// original sources.
-			for (AccessAO access : this.partialJoinPlan2sources.get(joinPlan)) {
+			for (ILogicalOperator access : this.partialJoinPlan2sources.get(joinPlan)) {
 				missing.remove(PlanGeneratorHelper.getOriginal2Clone(access));
 			}
 
 			// Quellenpaare durchlaufen und prüfen welche Quelle noch fehlt.
-			for (AccessAO source : missing) {
-				AccessAO sourceClone = source.clone();
+			for (ILogicalOperator source : missing) {
+				ILogicalOperator sourceClone = source.clone();
 				PlanGeneratorHelper.setOriginalForClone(sourceClone, source);
 				// Join von joinClone mit fehlender Quelle.
 				Pair<IPredicate<?>, Set<IRelationalPredicate>> predicatePair = this.predicateHelper
@@ -159,7 +157,7 @@ public abstract class AbstractPlanGenerationMethod implements
 				// set predicates as satisfied
 				this.predicateHelper.setSatisfied(join, predicatePair.getE2());
 
-				Set<AccessAO> newSources = new HashSet<AccessAO>();
+				Set<ILogicalOperator> newSources = new HashSet<ILogicalOperator>();
 				newSources.addAll(this.partialJoinPlan2sources.get(joinPlan));
 				newSources.add(sourceClone);
 				this.partialJoinPlan2sources.put(join, newSources);
@@ -177,7 +175,7 @@ public abstract class AbstractPlanGenerationMethod implements
 
 		// Paare durchlaufen und aus jedem Paar einen neuen join-plan
 		// erzeugen.
-		for (Pair<AccessAO, AccessAO> pair : PlanGeneratorHelper
+		for (Pair<ILogicalOperator, ILogicalOperator> pair : PlanGeneratorHelper
 				.joinSets(this.sources)) {
 			Pair<IPredicate<?>, Set<IRelationalPredicate>> predicatePair = this.predicateHelper
 					.generatePredicate(pair);
@@ -196,7 +194,7 @@ public abstract class AbstractPlanGenerationMethod implements
 
 			// add the joined sources to the set of used sources for this
 			// partial plan.
-			Set<AccessAO> sourceSet = new HashSet<AccessAO>();
+			Set<ILogicalOperator> sourceSet = new HashSet<ILogicalOperator>();
 			sourceSet.add(pair.getE1());
 			sourceSet.add(pair.getE2());
 			twoWayJoins.add(join);

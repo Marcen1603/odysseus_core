@@ -17,8 +17,12 @@ package de.uniol.inf.is.odysseus.script.keyword;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PlanGenerationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -32,7 +36,7 @@ public class PlanGenerationMethodPreParserKeyword extends
 
 	public static final String PLANGENERATIONMETHOD = "PLANGENERATIONMETHOD";
 	
-	private static Collection<String> allowedParameters = new ArrayList<String>() {
+	private static final Collection<String> allowedParameters = new ArrayList<String>() {
 		private static final long serialVersionUID = -6089179664464825837L;
 
 	{
@@ -51,7 +55,6 @@ public class PlanGenerationMethodPreParserKeyword extends
 		if(parameter.length() == 0) {
 			throw new OdysseusScriptException("Parameter needed for #" + PLANGENERATIONMETHOD);
 		}
-		variables.put(PLANGENERATIONMETHOD, parameter);
 	}
 
 	/* (non-Javadoc)
@@ -60,7 +63,10 @@ public class PlanGenerationMethodPreParserKeyword extends
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
 			ISession caller) throws OdysseusScriptException {
-		variables.put(PLANGENERATIONMETHOD, parameter);
+		List<IQueryBuildSetting<?>> additionalSettings = getAdditionalTransformationSettings(variables);
+		Map<String, String> config = new HashMap<String, String>();
+		config.put(PLANGENERATIONMETHOD, parameter);
+		additionalSettings.add(new PlanGenerationConfiguration(config));
 		return null;
 	}
 	

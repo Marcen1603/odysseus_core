@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorInputSchemaLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
@@ -49,7 +50,7 @@ public class PlanGeneratorHelper {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(PlanGeneratorHelper.class);
 	
-	private static Map<AccessAO, AccessAO> clone2original = new HashMap<AccessAO, AccessAO>();	
+	private static Map<ILogicalOperator, ILogicalOperator> clone2original = new HashMap<ILogicalOperator, ILogicalOperator>();	
 	private static Map<ILogicalOperator, SDFSchema> operatorInputSchemaMap = new HashMap<ILogicalOperator, SDFSchema>();
 	
 	/**
@@ -98,8 +99,11 @@ public class PlanGeneratorHelper {
 	 * @return a set of all access operators in the plan.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Set<AccessAO> getAccessOperators(ILogicalOperator plan) {
-		CollectOperatorLogicalGraphVisitor<AccessAO> visitor = new CollectOperatorLogicalGraphVisitor<AccessAO>(AccessAO.class);
+	public static Set<ILogicalOperator> getAccessOperators(ILogicalOperator plan) {
+		Set<Class<? extends ILogicalOperator>> classes = new HashSet<Class<? extends ILogicalOperator>>();
+		classes.add(AccessAO.class);
+		classes.add(StreamAO.class);
+		CollectOperatorLogicalGraphVisitor<ILogicalOperator> visitor = new CollectOperatorLogicalGraphVisitor(classes);
 		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalk(plan, visitor);
 		return visitor.getResult();
@@ -119,13 +123,13 @@ public class PlanGeneratorHelper {
 	 * @param sources
 	 * @return
 	 */
-	public static Set<Pair<AccessAO, AccessAO>> joinSets(Set<AccessAO> sources) {
-		Set<Pair<AccessAO, AccessAO>> sets = new HashSet<Pair<AccessAO, AccessAO>>();
-		AccessAO[] sourcesArray = new AccessAO[0];
+	public static Set<Pair<ILogicalOperator, ILogicalOperator>> joinSets(Set<ILogicalOperator> sources) {
+		Set<Pair<ILogicalOperator, ILogicalOperator>> sets = new HashSet<Pair<ILogicalOperator, ILogicalOperator>>();
+		ILogicalOperator[] sourcesArray = new ILogicalOperator[0];
 		sourcesArray = sources.toArray(sourcesArray);
 		for (int i = 0; i < sourcesArray.length - 1; i++) {
 			for (int j = i + 1; j < sourcesArray.length; j++) {
-				Pair<AccessAO, AccessAO> pair = new Pair<AccessAO, AccessAO>(
+				Pair<ILogicalOperator, ILogicalOperator> pair = new Pair<ILogicalOperator, ILogicalOperator>(
 						sourcesArray[i].clone(), sourcesArray[j].clone());
 				sets.add(pair);
 				clone2original.put(pair.getE1(), sourcesArray[i]);
@@ -171,11 +175,11 @@ public class PlanGeneratorHelper {
 		return copyVisitor.getResult();
 	}
 	
-	public static AccessAO getOriginal2Clone(AccessAO clone) {
+	public static ILogicalOperator getOriginal2Clone(ILogicalOperator clone) {
 		return clone2original.get(clone);
 	}
 	
-	public static void setOriginalForClone(AccessAO clone, AccessAO original) {
+	public static void setOriginalForClone(ILogicalOperator clone, ILogicalOperator original) {
 		clone2original.put(clone, original);
 	}
 	
@@ -186,7 +190,7 @@ public class PlanGeneratorHelper {
 	 * @return
 	 */
 	public static ILogicalOperator cloneOperator(ILogicalOperator operator) {
-		if(operator instanceof AccessAO) {
+		if(operator instanceof AccessAO || operator instanceof StreamAO) {
 			// no input schema for sources
 			return operator.clone();
 		}
@@ -209,7 +213,7 @@ public class PlanGeneratorHelper {
 		return operatorInputSchemaMap.get(operator);
 	}
 
-	public static boolean hasWindowBeforeJoin(AccessAO source) {
+	public static boolean hasWindowBeforeJoin(ILogicalOperator source) {
 		ILogicalOperator next = source.getSubscriptions().iterator().next()
 				.getTarget();
 		while (next != null) {
@@ -229,8 +233,8 @@ public class PlanGeneratorHelper {
 	}
 
 	public static boolean hasValidWindowPositions(ILogicalOperator plan) {
-		Set<AccessAO> sources = getAccessOperators(plan);
-		for (AccessAO source : sources) {
+		Set<ILogicalOperator> sources = getAccessOperators(plan);
+		for (ILogicalOperator source : sources) {
 			if (!hasWindowBeforeJoin(source)) {
 				return false;
 			}
