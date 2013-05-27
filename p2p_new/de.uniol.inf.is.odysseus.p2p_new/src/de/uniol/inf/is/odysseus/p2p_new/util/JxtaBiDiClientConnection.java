@@ -18,7 +18,7 @@ public class JxtaBiDiClientConnection extends JxtaBiDiConnection {
 
 	@Override
 	public void connect() throws IOException {
-		getPipe().connect(P2PNewPlugIn.getOwnPeerGroup(), null, pipeAdvertisement, 30000, this);
+		getPipe().connect(P2PNewPlugIn.getOwnPeerGroup(), null, pipeAdvertisement, Integer.MAX_VALUE, this);
 		super.connect();
 	}
 }
