@@ -25,9 +25,9 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
+@SuppressWarnings("unused")
 public class IncrementalEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> {
-
-    @SuppressWarnings("unused")
+    
     private static Logger LOG = LoggerFactory.getLogger(IncrementalEMTISweepArea.class);
     private RandomData randomDataGenerator = new RandomDataImpl(new Well19937c());
     private int mixtures;
@@ -108,8 +108,7 @@ public class IncrementalEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple
     private void setCovarianceMatrix(int mixture, RealMatrix covarianceMatrix) {
         covarianceMatrices[mixture] = covarianceMatrix;
     }
-
-    @SuppressWarnings("unused")
+    
     private double getLogLikelihood() {
         double loglikelihood = 0.0;
         for (int s = 0; s < size(); s++) {
@@ -128,12 +127,13 @@ public class IncrementalEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple
         return probabilities;
     }
 
+    @SuppressWarnings("null")
     private void doMaximization(final double[][] probabilities) {
         int k = 1;// ??
         double lambda = 0.0;
         RealMatrix globalSigma = null;
-        RealMatrix means = getN().power(-1).multiply(getM());
-        RealMatrix sigma = getN().power(-1).multiply(getQ()).subtract(getN().power(2).power(-1).multiply(getM()).multiply(getM().transpose())).add(globalSigma.scalarMultiply(lambda));
+        RealMatrix means = getN().power(-1).multiply(getM());        
+		RealMatrix sigma = getN().power(-1).multiply(getQ()).subtract(getN().power(2).power(-1).multiply(getM()).multiply(getM().transpose())).add(globalSigma.scalarMultiply(lambda));
         double sum = 0.0;
         for (int n = 0; n < k; n++) {
             sum += getN().getEntry(n, 0);

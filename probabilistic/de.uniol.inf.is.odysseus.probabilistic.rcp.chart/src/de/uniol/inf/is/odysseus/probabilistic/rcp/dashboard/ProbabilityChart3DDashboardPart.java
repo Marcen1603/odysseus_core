@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAct
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
+@SuppressWarnings("unused")
 public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ProbabilityChart3DDashboardPart.class);

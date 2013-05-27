@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
+@SuppressWarnings("unused")
 public class ProbabilityMapper implements net.ericaro.surfaceplotter.Mapper {
 
     private Map<NormalDistributionFunctionND, Double> funcs = new ConcurrentHashMap<NormalDistributionFunctionND, Double>();

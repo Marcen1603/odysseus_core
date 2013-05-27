@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
 
+@SuppressWarnings("unused")
 public class TestProbabilisticTuple {
 
 
