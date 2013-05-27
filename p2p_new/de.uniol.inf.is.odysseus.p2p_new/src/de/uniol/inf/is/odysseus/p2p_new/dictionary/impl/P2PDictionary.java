@@ -324,7 +324,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			throw new PeerException("Source " + sourceName + " is imported and cannot be exported directly");
 		}
 		
-		ILogicalOperator viewOrStream = dataDictionary.getViewOrStream(sourceName, SessionManagementService.getActiveSession());
+		ILogicalOperator viewOrStream = dataDictionary.getStreamForTransformation(sourceName, SessionManagementService.getActiveSession());
 		if( viewOrStream != null ) {
 			
 			if( viewOrStream instanceof TimestampAO ) {
