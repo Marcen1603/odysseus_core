@@ -245,7 +245,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			final AccessAO accessAO = advertisement.getAccessAO();
 
 			final ILogicalOperator timestampAO = addTimestampAO(accessAO, null);			
-			dataDictionary.setStream(accessAO.getSourcename(), timestampAO, SessionManagementService.getActiveSession());
+			dataDictionary.setStream(advertisement.getName(), timestampAO, SessionManagementService.getActiveSession());
 
 		} else {
 			final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
@@ -323,15 +323,15 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (isImported(sourceName)) {
 			throw new PeerException("Source " + sourceName + " is imported and cannot be exported directly");
 		}
-
-		final ILogicalOperator view = dataDictionary.getView(sourceName, SessionManagementService.getActiveSession());
-		if (view != null) {
-			return exportView(sourceName, queryBuildConfigurationName, view);
-		}
-
-		final ILogicalOperator stream = dataDictionary.getStreamForTransformation(sourceName, SessionManagementService.getActiveSession());
-		if (stream != null) {
-			return exportStream(sourceName, queryBuildConfigurationName, stream);
+		
+		ILogicalOperator viewOrStream = dataDictionary.getViewOrStream(sourceName, SessionManagementService.getActiveSession());
+		if( viewOrStream != null ) {
+			
+			if( viewOrStream instanceof TimestampAO ) {
+				return exportStream(sourceName, queryBuildConfigurationName, viewOrStream);
+			} 
+				
+			return exportView(sourceName, queryBuildConfigurationName, viewOrStream);
 		}
 
 		throw new PeerException("Could not find view or stream '" + sourceName + "' in datadictionary");
@@ -641,10 +641,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 				return srcAdvertisement;
 			} catch (final IOException ex) {
-				throw new PeerException("Could not advertise stream '" + srcAdvertisement.getAccessAO().getSourcename() + "'", ex);
+				throw new PeerException("Could not advertise stream '" + streamName + "'", ex);
 			}
 		}
-		throw new PeerException("Could not find stream '" + stream + "'");
+		throw new PeerException("Could not find accessAO of stream '" + stream + "'");
 	}
 
 	private SourceAdvertisement exportView(String viewName, String queryBuildConfigurationName, final ILogicalOperator view) throws PeerException {

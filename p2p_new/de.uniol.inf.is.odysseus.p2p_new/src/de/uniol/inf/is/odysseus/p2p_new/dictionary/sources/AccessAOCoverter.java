@@ -23,7 +23,6 @@ public final class AccessAOCoverter {
 	private static final Logger LOG = LoggerFactory.getLogger(AccessAOCoverter.class);
 
 //	private static final String ID_TAG = "id";
-	private static final String SOURCE_NAME_TAG = "sourceName";
 	private static final String INPUT_SCHEMA_TAG = "inputSchema";
 	private static final String INPUT_SCHEMA_ITEM_TAG = "inputSchemaItem";
 	private static final String PORT_TAG = "port";
@@ -66,7 +65,6 @@ public final class AccessAOCoverter {
 //		}
 
 //		appendElement(doc, ID_TAG, id.toString());
-		appendElement(root, SOURCE_NAME_TAG, withoutUsername(accessOperator.getSourcename()));
 		final Element<?> inputSchemaElement = appendElement(root, INPUT_SCHEMA_TAG);
 		if (accessOperator.getInputSchema() != null && !accessOperator.getInputSchema().isEmpty()) {
 			for (final String entry : accessOperator.getInputSchema()) {
@@ -122,27 +120,8 @@ public final class AccessAOCoverter {
 		return ele;
 	}
 
-//	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
-//		final Element createElement = appendTo.createElement(tag, value);
-//		appendTo.appendChild(createElement);
-//		return createElement;
-//	}
-
-	private static String withoutUsername(String sourcename) {
-		final int pos = sourcename.indexOf(".");
-		return pos != -1 ? sourcename.substring(pos+1) : sourcename;
-	}
-
 	private static void handleElement(AccessAO accessAO, TextElement<?> elem) {
-//		if (elem.getName().equals(ID_TAG)) {
-//			handleIDTag(adv, elem);
-//
-//		} else 
-		if (elem.getName().equals(SOURCE_NAME_TAG)) {
-			accessAO.setSource(elem.getTextValue());
-
-		} else if (elem.getName().equals(INPUT_SCHEMA_TAG)) {
+		if (elem.getName().equals(INPUT_SCHEMA_TAG)) {
 			handleInputSchemaElement(accessAO, elem);
 
 		} else if (elem.getName().equals(PORT_TAG)) {
@@ -238,7 +217,7 @@ public final class AccessAOCoverter {
 		final List<SDFAttribute> attributes = Lists.newArrayList();
 		while (children.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) children.nextElement();
-			final SDFAttribute attr = new SDFAttribute(accessAO.getSourcename(), elem.getKey(), DataDictionaryService.get().getDatatype(elem.getTextValue()));
+			final SDFAttribute attr = new SDFAttribute("", elem.getKey(), DataDictionaryService.get().getDatatype(elem.getTextValue()));
 			attributes.add(attr);
 		}
 
