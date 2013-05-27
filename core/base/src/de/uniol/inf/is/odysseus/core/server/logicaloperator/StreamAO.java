@@ -4,7 +4,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts=0, minInputPorts=0, name="STREAM", doc="Allows to access a view or stream")
 public class StreamAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1L;
