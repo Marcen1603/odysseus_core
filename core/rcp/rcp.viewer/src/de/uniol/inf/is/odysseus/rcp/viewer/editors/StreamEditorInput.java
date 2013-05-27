@@ -67,7 +67,7 @@ public class StreamEditorInput implements IStreamEditorInput {
 
 	@Override
 	public String getName() {
-		return operator.getName() + "[" + editorLabel + "]";
+		return operator.getName()+" (Q:"+operator.getOwnerIDs()+") [" + editorLabel + "]";
 	}
 
 	@Override
