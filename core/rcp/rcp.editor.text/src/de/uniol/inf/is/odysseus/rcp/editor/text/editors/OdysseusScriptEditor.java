@@ -31,10 +31,8 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.coloring.OdysseusOccurrencesUpdater;
-import de.uniol.inf.is.odysseus.rcp.editor.text.editors.outline.OdysseusScriptContentOutlinePage;
 
 public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 		IResourceChangeListener, ISaveablePart2 {
@@ -42,7 +40,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 	public final static String EDITOR_MATCHING_BRACKETS = "matchingBrackets";
 	public final static String EDITOR_MATCHING_BRACKETS_COLOR = "matchingBracketsColor";
 
-	private OdysseusScriptContentOutlinePage outlinePage;
+//	private OdysseusScriptContentOutlinePage outlinePage;
 	private OdysseusOccurrencesUpdater occurrencesUpdater;
 
 	public OdysseusScriptEditor() {
@@ -72,12 +70,12 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 		if (this.occurrencesUpdater != null) {
 			this.occurrencesUpdater.update(getSourceViewer());
 		}
-		if (getDocumentProvider() != null && getEditorInput() != null
-				&& getDocumentProvider().getDocument(getEditorInput()) != null
-				&& this.outlinePage != null) {
-			this.outlinePage.setInput(getDocumentProvider().getDocument(
-					getEditorInput()).get());
-		}
+//		if (getDocumentProvider() != null && getEditorInput() != null
+//				&& getDocumentProvider().getDocument(getEditorInput()) != null
+//				&& this.outlinePage != null) {
+//			this.outlinePage.setInput(getDocumentProvider().getDocument(
+//					getEditorInput()).get());
+//		}
 	}
 
 	@Override
@@ -88,14 +86,14 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
-		if (IContentOutlinePage.class.equals(adapter)) {
-			if (outlinePage == null) {
-				outlinePage = new OdysseusScriptContentOutlinePage(
-						getDocumentProvider().getDocument(getEditorInput())
-								.get());
-			}
-			return outlinePage;
-		}
+//		if (IContentOutlinePage.class.equals(adapter)) {
+//			if (outlinePage == null) {
+//				outlinePage = new OdysseusScriptContentOutlinePage(
+//						getDocumentProvider().getDocument(getEditorInput())
+//								.get());
+//			}
+//			return outlinePage;
+//		}
 		return super.getAdapter(adapter);
 	}
 
