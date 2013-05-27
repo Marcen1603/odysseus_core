@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -33,12 +33,15 @@ public class QueryPart {
 	public QueryPart(Collection<ILogicalOperator> operators, String destinationName) {
 		Preconditions.checkNotNull(operators, "List of operators must not be null!");
 		Preconditions.checkArgument(!filter(operators).isEmpty(), "List of operators must not be empty!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(destinationName), "Destination name must not be null or empty!");
 
 		this.destinationName = destinationName;
 		this.operators = filter(operators);
 		this.relativeSinks = determineRelativeSinks(this.operators);
 		this.relativeSources = determineRelativeSources(this.operators);
+	}
+	
+	public QueryPart( Collection<ILogicalOperator> operators ) {
+		this(operators, null);
 	}
 
 	public final void addAccessAO(JxtaReceiverAO accessAO, ILogicalOperator forOperator) {
@@ -59,8 +62,8 @@ public class QueryPart {
 		return relativeSources.containsKey(op);
 	}
 
-	public final String getDestinationName() {
-		return destinationName;
+	public final Optional<String> getDestinationName() {
+		return Optional.fromNullable(destinationName);
 	}
 
 	public final ImmutableCollection<ILogicalOperator> getOperators() {

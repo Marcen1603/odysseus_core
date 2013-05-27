@@ -152,7 +152,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		final List<String> remotePeerIDList = Lists.newArrayList(remotePeerIDs);
 		int peerCounter = 0;
 		for (final QueryPart queryPart : queryParts) {
-			final String destinationName = queryPart.getDestinationName();
+			final String destinationName = queryPart.getDestinationName().get();
 
 			String assignedPeer = assignedDestinations.get(destinationName);
 			if (assignedPeer == null) {
