@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
@@ -346,8 +347,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			}
 		}
 		
-		StreamAO ao = new StreamAO(viewname);		
-		SDFSchema schema = new SDFSchema(viewname, this.streamDefinitions.get(viewname).getOutputSchema().getAttributes());		
+		StreamAO ao = new StreamAO(viewname);	
+		ArrayList<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		for(SDFAttribute old : this.streamDefinitions.get(viewname).getOutputSchema()){
+			attributes.add(new SDFAttribute(viewname, old.getAttributeName(), old));
+		}
+		SDFSchema schema = new SDFSchema(viewname, attributes);		
 		ao.setOutputSchema(schema);
 		return ao;
 	}
