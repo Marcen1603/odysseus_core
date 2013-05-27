@@ -18,14 +18,12 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerCon
 
 public class Heatmap extends RasterLayer {
 
-	HeatmapManager manager;
 	ScreenManager screenManager;
 	RasterLayerConfiguration config;
 	ArrayList<Tuple<?>> data;
 	
 	public Heatmap(RasterLayerConfiguration configuration, ScreenManager screenManager) {
 		super(configuration);
-		manager = new HeatmapManager();
 		this.screenManager = screenManager;
 		this.config = configuration;
 		data = new ArrayList<Tuple<?>>();
