@@ -27,21 +27,22 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisementInstantiator;
 
 public class P2PNewPlugIn implements BundleActivator {
 
 	private static final String PEER_NAME_SYS_PROPERTY = "peer.name";
+	private static final String DEFAULT_PEER_NAME = "OdysseusPeer";
 	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
+	private static final int PORT = new Random().nextInt(20000) + 10000;
 	private static final String JXTA_LOGGER_NAME = "net.jxta";
 	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.SEVERE;
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNewPlugIn.class);
 
-	private static final int PORT = new Random().nextInt(20000) + 10000;
 	private static final String SUBGROUP_NAME = "Odysseus Peer Group";
 	private static final PeerGroupID SUBGROUP_ID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, SUBGROUP_NAME.getBytes());
-	private static final String DEFAULT_PEER_NAME = "OdysseusPeer";
 
 	private static DiscoveryService discoveryService;
 	private static ContentService contentService;
@@ -49,8 +50,6 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static EndpointService endpointService;
 
 	private static PeerGroup ownPeerGroup;
-	private static PeerID ownPeerID;
-	private static String ownPeerName;
 
 	private NetworkManager manager;
 
@@ -58,8 +57,13 @@ public class P2PNewPlugIn implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		configureLogging(bundleContext.getBundle());
 
-		ownPeerName = determinePeerName();
-		ownPeerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
+		String ownPeerName = determinePeerName();
+		PeerID ownPeerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
+		P2PDictionary.setLocalPeerID(ownPeerID);
+		P2PDictionary.setLocalPeerName(ownPeerName);
+		
+		LOG.info("Local peer id = {}", ownPeerID);
+		LOG.info("Local peer name = {}", ownPeerName);
 		
 		final File conf = new File("." + System.getProperty("file.separator") + ownPeerName);
 		NetworkManager.RecursiveDelete(conf);
@@ -108,18 +112,10 @@ public class P2PNewPlugIn implements BundleActivator {
 		return ownPeerGroup;
 	}
 
-	public static PeerID getOwnPeerID() {
-		return ownPeerID;
-	}
-	
-	public static String getOwnPeerName() {
-		return ownPeerName;
-	}
-
 	public static PipeService getPipeService() {
 		return pipeService;
 	}
-	
+
 	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID, String peerName) {
 		configurator.setTcpPort(PORT);
 		configurator.setTcpEnabled(true);
@@ -148,6 +144,10 @@ public class P2PNewPlugIn implements BundleActivator {
 		return parentPeerGroup.newGroup(subGroupID, parentPeerGroup.getAllPurposePeerGroupImplAdvertisement(), subGroupName, "");
 	}
 
+	private static void registerAdvertisementTypes() {
+		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisementInstantiator());
+	}
+
 	private static String determinePeerName() {
 		String peerName = System.getProperty(PEER_NAME_SYS_PROPERTY);
 		if (!Strings.isNullOrEmpty(peerName)) {
@@ -159,10 +159,6 @@ public class P2PNewPlugIn implements BundleActivator {
 			return peerName;
 		}
 
-		return DEFAULT_PEER_NAME + "_" + PORT;
-	}
-
-	private static void registerAdvertisementTypes() {
-		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisementInstantiator());
+		return DEFAULT_PEER_NAME + "_" + System.getProperty("user.name");
 	}
 }

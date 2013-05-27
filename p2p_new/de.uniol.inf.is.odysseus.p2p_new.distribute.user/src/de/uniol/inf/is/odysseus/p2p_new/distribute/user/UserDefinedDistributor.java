@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.user;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +30,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
@@ -50,16 +48,8 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	private static final String SENDER_NAME = "JxtaSender_";
 	
 	private static IPQLGenerator generator;
-	private static IPeerManager peerManager;
 
 	private static int connectionNumber = 0;
-
-	// called by OSGi-DS
-	public final void bindPeerManager(IPeerManager pm) {
-		peerManager = pm;
-
-		LOG.debug("PeerManager bound {}", pm);
-	}
 
 	// called by OSGi-DS
 	public final void bindPQLGenerator(IPQLGenerator gen) {
@@ -75,7 +65,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 			return queriesToDistribute;
 		}
 
-		final Collection<String> remotePeerIDs = peerManager.getRemotePeerIDs();
+		final Collection<PeerID> remotePeerIDs = P2PDictionaryService.get().getPeerIDs();
 		if (remotePeerIDs.isEmpty()) {
 			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
 			return queriesToDistribute;
@@ -100,7 +90,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 			}
 
 			final ID sharedQueryID = generateSharedQueryID();
-			final Map<QueryPart, String> queryPartDistributionMap = assignQueryParts(remotePeerIDs, peerManager.getOwnPeerName(), queryParts);
+			final Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), queryParts);
 			insertSenderAndAccess(queryPartDistributionMap);
 
 			final List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID, transCfgName);
@@ -120,15 +110,6 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	}
 
 	// called by OSGi-DS
-	public final void unbindPeerManager(IPeerManager pm) {
-		if (peerManager == pm) {
-			peerManager = null;
-
-			LOG.debug("PeerManager unbound {}", pm);
-		}
-	}
-
-	// called by OSGi-DS
 	public final void unbindPQLGenerator(IPQLGenerator gen) {
 		if (generator == gen) {
 			generator = null;
@@ -137,24 +118,24 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static Map<QueryPart, String> assignQueryParts(Collection<String> remotePeerIDs, String localPeerID, List<QueryPart> queryParts) {
-		final Map<QueryPart, String> distributed = Maps.newHashMap();
-		final Map<String, String> assignedDestinations = Maps.newHashMap();
+	private static Map<QueryPart, PeerID> assignQueryParts(Collection<PeerID> remotePeerIDs, PeerID localPeerID, List<QueryPart> queryParts) {
+		final Map<QueryPart, PeerID> distributed = Maps.newHashMap();
+		final Map<String, PeerID> assignedDestinations = Maps.newHashMap();
 
 		assignedDestinations.put(LOCAL_DESTINATION_NAME, localPeerID);
-		for (final String remotePeerID : remotePeerIDs) {
-			final Optional<String> optRemotePeerName = peerManager.getPeerName(remotePeerID);
+		for (final PeerID remotePeerID : remotePeerIDs) {
+			final Optional<String> optRemotePeerName = P2PDictionaryService.get().getPeerName(remotePeerID);
 			if (optRemotePeerName.isPresent()) {
 				assignedDestinations.put(optRemotePeerName.get(), remotePeerID);
 			}
 		}
 
-		final List<String> remotePeerIDList = Lists.newArrayList(remotePeerIDs);
+		final List<PeerID> remotePeerIDList = Lists.newArrayList(remotePeerIDs);
 		int peerCounter = 0;
 		for (final QueryPart queryPart : queryParts) {
 			final String destinationName = queryPart.getDestinationName().get();
 
-			String assignedPeer = assignedDestinations.get(destinationName);
+			PeerID assignedPeer = assignedDestinations.get(destinationName);
 			if (assignedPeer == null) {
 				// destination has currently no peer assigned
 				assignedPeer = remotePeerIDList.get(peerCounter);
@@ -216,7 +197,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		return destinationNames;
 	}
 
-	private static Map<QueryPart, ILogicalOperator> determineNextQueryParts(QueryPart currentQueryPart, ILogicalOperator relativeSink, Map<QueryPart, String> queryPartDistributionMap) {
+	private static Map<QueryPart, ILogicalOperator> determineNextQueryParts(QueryPart currentQueryPart, ILogicalOperator relativeSink, Map<QueryPart, PeerID> queryPartDistributionMap) {
 		final Map<QueryPart, ILogicalOperator> next = Maps.newHashMap();
 		if (relativeSink.getSubscriptions().size() > 0) {
 
@@ -335,7 +316,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		return LOCAL_DESTINATION_NAME;
 	}
 
-	private static void insertSenderAndAccess(Map<QueryPart, String> queryPartDistributionMap) {
+	private static void insertSenderAndAccess(Map<QueryPart, PeerID> queryPartDistributionMap) {
 		for (final QueryPart queryPart : queryPartDistributionMap.keySet()) {
 
 			for (final ILogicalOperator relativeSink : queryPart.getRelativeSinks()) {
@@ -350,22 +331,22 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static void logPeerStatus(Collection<String> peerIDs) {
+	private static void logPeerStatus(Collection<PeerID> peerIDs) {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Found {} peers to distribute the queries", peerIDs.size());
-			for (final String peerID : peerIDs) {
+			for (final PeerID peerID : peerIDs) {
 				LOG.debug("\tPeer: {}", peerID);
 			}
 		}
 	}
 
-	private static void publish(QueryPart part, String destinationPeer, ID sharedQueryID, String transCfgName) {
+	private static void publish(QueryPart part, PeerID destinationPeer, ID sharedQueryID, String transCfgName) {
 		Preconditions.checkNotNull(part, "QueryPart to share must not be null!");
 		part.removeDestinationName();
 
 		final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
 		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
-		adv.setPeerID(toPeerID(destinationPeer));
+		adv.setPeerID(destinationPeer);
 		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
 		adv.setSharedQueryID(sharedQueryID);
 		adv.setTransCfgName(transCfgName);
@@ -374,13 +355,13 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		LOG.debug("QueryPart {} published", part);
 	}
 
-	private static List<QueryPart> shareParts(Map<QueryPart, String> queryPartDistributionMap, ID sharedQueryID, String transCfgName) {
+	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, String transCfgName) {
 		final List<QueryPart> localParts = Lists.newArrayList();
 
-		final String ownPeerID = peerManager.getOwnPeerName();
+		final String ownPeerID = P2PDictionaryService.get().getLocalPeerName();
 
 		for (final QueryPart part : queryPartDistributionMap.keySet()) {
-			final String assignedPeerID = queryPartDistributionMap.get(part);
+			final PeerID assignedPeerID = queryPartDistributionMap.get(part);
 			if (assignedPeerID.equals(ownPeerID)) {
 				localParts.add(part);
 				LOG.debug("QueryPart {} locally stored", part);
@@ -390,16 +371,6 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 
 		return localParts;
-	}
-
-	private static PeerID toPeerID(String text) {
-		try {
-			final URI id = new URI(text);
-			return PeerID.create(id);
-		} catch (URISyntaxException | ClassCastException ex) {
-			LOG.error("Could not transform to pipeid: {}", text, ex);
-			return null;
-		}
 	}
 
 	private static ILogicalQuery transformToQuery(List<QueryPart> queryParts, IPQLGenerator generator, String name) {

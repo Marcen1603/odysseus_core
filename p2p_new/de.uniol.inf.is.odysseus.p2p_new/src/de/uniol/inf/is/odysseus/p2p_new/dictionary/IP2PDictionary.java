@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary;
 
+import net.jxta.peer.PeerID;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
@@ -7,12 +9,9 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.sources.SourceAdvertisement;
 
 public interface IP2PDictionary {
-
 	void addListener( IP2PDictionaryListener listener );
 	void removeListener( IP2PDictionaryListener listener );
 	
-	void addSource( SourceAdvertisement advertisement );
-	boolean removeSource( SourceAdvertisement advertisement );
 	boolean existsSource( SourceAdvertisement advertisement );
 	boolean existsSource( String viewName );
 	ImmutableList<SourceAdvertisement> getSources();
@@ -34,4 +33,11 @@ public interface IP2PDictionary {
 	boolean isExported( String viewName );
 	Optional<SourceAdvertisement> getExportedSource( String viewName );
 	ImmutableList<SourceAdvertisement> getExportedSources();
+	
+	ImmutableList<PeerID> getPeerIDs();
+	boolean existsPeer( PeerID peerID );
+	boolean existsPeer( String peerName );
+	Optional<String> getPeerName( PeerID peerID );
+	PeerID getLocalPeerID();
+	String getLocalPeerName();
 }

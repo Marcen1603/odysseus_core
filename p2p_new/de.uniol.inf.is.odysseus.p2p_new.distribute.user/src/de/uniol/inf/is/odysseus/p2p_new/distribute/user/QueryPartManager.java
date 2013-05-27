@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.P2PDictionaryService;
 
 public class QueryPartManager implements IAdvertisementListener {
 
@@ -47,7 +47,7 @@ public class QueryPartManager implements IAdvertisementListener {
 	public void advertisementAdded(IAdvertisementManager sender, Advertisement advertisement) {
 		if (advertisement instanceof QueryPartAdvertisement) {
 			final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
-			if (adv.getPeerID().equals(P2PNewPlugIn.getOwnPeerID())) {
+			if (adv.getPeerID().equals(P2PDictionaryService.get().getLocalPeerID())) {
 				try {
 					final TransformationConfiguration transformationConfiguration = determineTransformationConfiguration(executor, adv.getTransCfgName());
 					final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, adv.getTransCfgName());

@@ -13,6 +13,6 @@ public interface IP2PDictionaryListener {
 	void sourceExported( IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName);
 	void sourceExportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName);
 	
-	void peerAdded( IP2PDictionary sender, PeerID id );
-	void peerRemoved( IP2PDictionary sender, PeerID id );
+	void peerAdded( IP2PDictionary sender, PeerID id, String name );
+	void peerRemoved( IP2PDictionary sender, PeerID id, String name );
 }

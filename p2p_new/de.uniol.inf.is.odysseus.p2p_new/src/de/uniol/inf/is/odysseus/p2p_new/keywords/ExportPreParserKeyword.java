@@ -6,7 +6,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;

@@ -16,16 +16,6 @@ public class P2PDictionaryAdapter implements IP2PDictionaryListener {
 	}
 
 	@Override
-	public void peerAdded(IP2PDictionary sender, PeerID id) {
-
-	}
-
-	@Override
-	public void peerRemoved(IP2PDictionary sender, PeerID id) {
-
-	}
-
-	@Override
 	public void sourceImported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		
 	}
@@ -42,6 +32,16 @@ public class P2PDictionaryAdapter implements IP2PDictionaryListener {
 
 	@Override
 	public void sourceExportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
+		
+	}
+
+	@Override
+	public void peerAdded(IP2PDictionary sender, PeerID id, String name) {
+		
+	}
+
+	@Override
+	public void peerRemoved(IP2PDictionary sender, PeerID id, String name) {
 		
 	}
 

@@ -264,13 +264,13 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 
 	// called by p2pDictionary
 	@Override
-	public void peerAdded(IP2PDictionary sender, PeerID id) {
+	public void peerAdded(IP2PDictionary sender, PeerID id, String name) {
 		// do nothing
 	}
 
 	// called by p2pDictionary
 	@Override
-	public void peerRemoved(IP2PDictionary sender, PeerID id) {
+	public void peerRemoved(IP2PDictionary sender, PeerID id, String name) {
 		// do nothing
 	}
 	

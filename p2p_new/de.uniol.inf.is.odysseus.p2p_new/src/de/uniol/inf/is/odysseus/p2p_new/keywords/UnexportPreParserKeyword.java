@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.p2p_new.keywords;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
