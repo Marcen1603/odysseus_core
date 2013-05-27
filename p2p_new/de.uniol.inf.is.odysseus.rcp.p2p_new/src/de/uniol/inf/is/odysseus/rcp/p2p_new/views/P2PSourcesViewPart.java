@@ -46,6 +46,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		public String portedName;
 	}
 
+	private static final String UNKNOWN_TEXT = "<unknown>";
 	private static final String IMPORT_TAG = "[import]";
 	private static final String EXPORT_TAG = "[export]";
 	
@@ -353,25 +354,36 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 				entry.index = result.size() + 1;
 				entry.schema = "TODO";
 				entry.type = publishedSource.isStream() ? "Stream" : "View" ;
-				entry.peerNames = "<unknown>";//getPeerNames(viewAdvs, p2pDictionary);
+				entry.peerNames = determinePeerName(p2pDictionary, publishedSource.getPeerID());
 				entry.advertisement = publishedSource;
-				
-				if( p2pDictionary.isExported(publishedSource.getName())) {
-					entry.portedName = EXPORT_TAG + " " + publishedSource.getName();
-				} else if( p2pDictionary.isImported(publishedSource)) {
-					entry.portedName = IMPORT_TAG + " " + p2pDictionary.getImportedSourceName(publishedSource).get();
-				} else {
-					entry.portedName = "";
-				}
+				entry.portedName = determinePortedName( p2pDictionary, publishedSource);
 				entry.sourceNames = publishedSource.getName();
 				
 				result.add(entry);
 			} else {
-				entry.peerNames += " <unknown>";
+				entry.peerNames += (" " + determinePeerName(p2pDictionary, publishedSource.getPeerID()));
 				entry.sourceNames += publishedSource.getName();
 			}
 		}
 		
 		return result;
+	}
+	
+	private static String determinePeerName( IP2PDictionary dict, PeerID peerID ) {
+		Optional<String> optPeerName = dict.getPeerName(peerID);
+		if( optPeerName.isPresent() ) {
+			return optPeerName.get();
+		} 
+		return UNKNOWN_TEXT;
+	}
+	
+	private static String determinePortedName( IP2PDictionary dict, SourceAdvertisement srcAdv ) {
+		if( dict.isExported(srcAdv.getName())) {
+			return EXPORT_TAG + " " + srcAdv.getName();
+		} else if( dict.isImported(srcAdv)) {
+			return IMPORT_TAG + " " + dict.getImportedSourceName(srcAdv).get();
+		} else {
+			return "";
+		}
 	}
 }
