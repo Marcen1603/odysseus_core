@@ -28,11 +28,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public interface IDataDictionary extends IAddDataType {
 
@@ -41,17 +39,17 @@ public interface IDataDictionary extends IAddDataType {
 	// -------------------------------------------------------------------------
 	// Entity Management
 	// -------------------------------------------------------------------------
-	void addEntitySchema(String uri, SDFSchema entity, ISession user)
-			throws PermissionException;
+//	private void addEntitySchema(String uri, SDFSchema entity, ISession user)
+//			throws PermissionException;
 
-	SDFSchema getEntitySchema(String uri, ISession caller)
-			throws PermissionException, DataDictionaryException;
-	
-	boolean hasEntitySchema(String uri, ISession caller)
-			throws PermissionException, DataDictionaryException;
+//	SDFSchema getEntitySchema(String uri, ISession caller)
+//			throws PermissionException, DataDictionaryException;
+//	
+//	boolean hasEntitySchema(String uri, ISession caller)
+//			throws PermissionException, DataDictionaryException;
 
-	void removeEntitySchema(String uri, ISession caller)
-			throws PermissionException, DataDictionaryException;
+//	void removeEntitySchema(String uri, ISession caller)
+//			throws PermissionException, DataDictionaryException;
 
 	// -------------------------------------------------------------------------
 	// View and Stream Management
@@ -90,7 +88,7 @@ public interface IDataDictionary extends IAddDataType {
 
 	ILogicalOperator getStreamForTransformation(String name, ISession caller);
 
-	AccessAO getStream(String viewname, ISession caller)
+	StreamAO getStream(String viewname, ISession caller)
 			throws DataDictionaryException;
 
 	// -------------------------------------------------------------------------

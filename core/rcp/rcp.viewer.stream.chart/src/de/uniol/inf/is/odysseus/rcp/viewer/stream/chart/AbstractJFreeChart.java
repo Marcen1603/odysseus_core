@@ -298,6 +298,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 
 	@Override
 	public void onLoad(Map<String, String> saved) {
+		
 	}
 
 	@Override

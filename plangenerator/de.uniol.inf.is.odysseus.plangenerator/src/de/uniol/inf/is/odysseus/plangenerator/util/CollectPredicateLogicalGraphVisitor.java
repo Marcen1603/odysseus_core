@@ -52,13 +52,15 @@ public class CollectPredicateLogicalGraphVisitor<T extends ILogicalOperator>
 			for (SDFAttribute attribute : predicate.getAttributes()) {
 				// FIXME: das funktioniert solange keine komplexeren operatoren wie rename dazukommen :D
 				// FIXME: vor jedem accessao-sourcename steht noch System. davor...
-				if (this.access != null && attribute.getSourceName().equals(this.access.getSourcename().substring(7))) {
-					predicates.add((IRelationalPredicate) predicate);
-				} else if(this.pair != null && 
-						(attribute.getSourceName().equals(this.pair.getE1().getSourcename().substring(7)) 
-								|| attribute.getSourceName().equals(this.pair.getE2().getSourcename()))) {
-					predicates.add((IRelationalPredicate) predicate);
-				}
+				
+				// FIXME: DGe: suorcename in access gibt es so nicht mehr
+//				if (this.access != null && attribute.getSourceName().equals(this.access.getSourcename().substring(7))) {
+//					predicates.add((IRelationalPredicate) predicate);
+//				} else if(this.pair != null && 
+//						(attribute.getSourceName().equals(this.pair.getE1().getSourcename().substring(7)) 
+//								|| attribute.getSourceName().equals(this.pair.getE2().getSourcename()))) {
+//					predicates.add((IRelationalPredicate) predicate);
+//				}
 			}
 		}
 	}

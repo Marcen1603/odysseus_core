@@ -26,7 +26,7 @@ public class FixedSetAccessAO<T extends IStreamObject<? extends IClone>> extends
 	
 	@SafeVarargs
 	public FixedSetAccessAO(String name, String type, T... tuples) {
-		super(name, type, null);
+		super(type, null);
 		this.tuples = tuples;
 	}
 	

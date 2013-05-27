@@ -29,14 +29,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.USAGE;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 /**
  * This Operatorbuilder is used to create a new AccessAO.
@@ -64,7 +62,6 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	// TODO: These should be the only parameter in future
 	// Make mandatory
 	private final StringParameter wrapper = new StringParameter("WRAPPER", REQUIREMENT.OPTIONAL);
-	private final StringParameter sourceName = new StringParameter("SOURCE", REQUIREMENT.MANDATORY);
 	private final StringParameter dataHandler = new StringParameter("DATAHANDLER", REQUIREMENT.OPTIONAL);
 	private final StringParameter objectHandler = new StringParameter("OBJECTHANDLER", REQUIREMENT.OPTIONAL);
 
@@ -75,8 +72,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	private final ListParameter<Option> options2 = new ListParameter<Option>("OPTIONS", REQUIREMENT.OPTIONAL, new CreateOptionParameter("OPTION", REQUIREMENT.MANDATORY));
 
-	private final ListParameter<SDFAttribute> outputschema = new ListParameter<SDFAttribute>("SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter("ATTRIBUTE", REQUIREMENT.MANDATORY,
-			getDataDictionary()));
+	private final ListParameter<SDFAttribute> outputschema = new ListParameter<SDFAttribute>("SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter("ATTRIBUTE", REQUIREMENT.MANDATORY, getDataDictionary()));
 
 	private final ListParameter<String> inputSchema = new ListParameter<String>("INPUTSCHEMA", REQUIREMENT.OPTIONAL, new StringParameter());
 
@@ -84,8 +80,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	public AccessAOBuilder() {
 		super("ACCESS", 0, 0);
-		addParameters(sourceName, host, port, outputschema, type, options, options2, inputSchema, adapter, input, transformer, dataHandler, objectHandler, inputDataHandler, accessConnectionHandler,
-				transportHandler, protocolHandler, wrapper, dateFormat);
+		addParameters(host, port, outputschema, type, options, options2, inputSchema, adapter, input, transformer, dataHandler, objectHandler, inputDataHandler, accessConnectionHandler, transportHandler, protocolHandler, wrapper, dateFormat);
 		// TODO: bind through service or why are these handlers not part of server?!
 		protocolHandler.setPossibleValues(ProtocolHandlerRegistry.getHandlerNames());
 		transportHandler.setPossibleValues(TransportHandlerRegistry.getHandlerNames());
@@ -95,24 +90,6 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
-		String sourceName = this.sourceName.getValue();
-		if (getDataDictionary().containsViewOrStream(sourceName, getCaller())) {
-			try {
-				return getDataDictionary().getViewOrStream(sourceName, getCaller());
-			} catch (DataDictionaryException e) {
-				throw new QueryParseException(e.getMessage());
-			}
-		}
-		ILogicalOperator ao = createNewAccessAO(sourceName);
-		// Assure that each accessoa with a name is registered
-		if (!getDataDictionary().containsViewOrStream(sourceName, this.getCaller())){
-			getDataDictionary().setStream(sourceName, ao, getCaller());
-		}
-		return ao;
-	}
-
-	private ILogicalOperator createNewAccessAO(String sourceName) {
-
 		String wrapperName = adapter.hasValue() ? adapter.getValue() : type.getValue();
 		wrapperName = wrapper.hasValue() ? wrapper.getValue() : wrapperName;
 
@@ -135,16 +112,15 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			}
 		}
 
-		AccessAO ao = new AccessAO(sourceName, wrapperName, optionsMap);
+		AccessAO ao = new AccessAO(wrapperName, optionsMap);
 
 		if (outputschema.hasValue()) {
 			List<SDFAttribute> s2 = new ArrayList<>();
 			// Add source name to attributes
-			for (SDFAttribute a: outputschema.getValue()){
-				s2.add(new SDFAttribute(sourceName, a.getAttributeName(), a));
+			for (SDFAttribute a : outputschema.getValue()) {
+				s2.add(new SDFAttribute("", a.getAttributeName(), a));
 			}
-			SDFSchema schema = new SDFSchema(sourceName, s2);
-			getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
+			SDFSchema schema = new SDFSchema("", s2);
 			ao.setOutputSchema(schema);
 		}
 
@@ -210,39 +186,23 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		timestampAO.setName(timestampAO.getStandardName());
 		return timestampAO;
 	}
-	
+
 	@Override
 	protected void insertParameterInfos(ILogicalOperator op) {
 		// op is timestampao here (instead of accessao)
-		super.insertParameterInfos( op.getSubscribedToSource().iterator().next().getTarget());
+		super.insertParameterInfos(op.getSubscribedToSource().iterator().next().getTarget());
 	}
 
 	@Override
 	protected boolean internalValidation() {
-		String sourceName = this.sourceName.getValue();
-		
-		if (getDataDictionary().hasEntitySchema(sourceName, getCaller())){
-			throw new QueryParseException("Sourcename "+sourceName+" for AccessAO is already in used (e.g. by a view). Choose another source name!");
+		if (type.hasValue() && adapter.hasValue() && wrapper.hasValue()) {
+			addError(new IllegalArgumentException("too much information for the creation of source. expecting wrapper OR type OR adapter."));
+			return false;
 		}
-
-		if (getDataDictionary().containsViewOrStream(sourceName, getCaller())) {
-			if (host.hasValue() || type.hasValue() || port.hasValue() || outputschema.hasValue() || options.hasValue() || inputSchema.hasValue() || adapter.hasValue() || input.hasValue()
-					|| transformer.hasValue() || dataHandler.hasValue() || objectHandler.hasValue() || inputDataHandler.hasValue() || accessConnectionHandler.hasValue() || transportHandler.hasValue()
-					|| protocolHandler.hasValue()) {
-				addError(new IllegalArgumentException("view " + sourceName + " already exists. Use one only parameter source for an existing source."));
-				return false;
-			}
-		} else {
-			if (type.hasValue() && adapter.hasValue() && wrapper.hasValue()) {
-				addError(new IllegalArgumentException("too much information for the creation of source " + sourceName + ". expecting wrapper OR type OR adapter."));
-				return false;
-			}
-			if (!type.hasValue() && !adapter.hasValue() && !wrapper.hasValue()) {
-				addError(new IllegalArgumentException("too less information for the creation of source " + sourceName + ". expecting wrapper, type or adapter."));
-				return false;
-			}
+		if (!type.hasValue() && !adapter.hasValue() && !wrapper.hasValue()) {
+			addError(new IllegalArgumentException("too less information for the creation of source. expecting wrapper, type or adapter."));
+			return false;
 		}
-
 		if (options.hasValue() && options2.hasValue()) {
 			addError(new IllegalArgumentException("Only one kind of options is allowed!"));
 			return false;

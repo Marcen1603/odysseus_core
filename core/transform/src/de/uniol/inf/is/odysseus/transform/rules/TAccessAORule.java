@@ -56,8 +56,8 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 @SuppressWarnings("deprecation")
-public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
-	static Logger LOG = LoggerFactory.getLogger(TAccessAOGenericRule.class);
+public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
+	static Logger LOG = LoggerFactory.getLogger(TAccessAORule.class);
 
 	@Override
 	public int getPriority() {
@@ -66,8 +66,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(AccessAO operator, TransformationConfiguration config) {
-		String accessPOName = operator.getSourcename();
+	public void execute(AccessAO operator, TransformationConfiguration config) {		
 		ISource accessPO = null;
 		if (operator.getTransportHandler() != null) {
 			IDataHandler<?> dataHandler = getDataHandler(operator);
@@ -98,21 +97,18 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 			LOG.warn("DEPRECATED: Use new generic AccessAO style!");
 			accessPO = executeDeprecated(operator, config);
 
-		}
-		getDataDictionary().putAccessPlan(accessPOName, accessPO);
+		}		
 		defaultExecute(operator, accessPO, config, true, true);
 	}
 
 	@Override
 	public boolean isExecutable(AccessAO operator, TransformationConfiguration config) {
-		if(getDataDictionary().getAccessPlan(operator.getSourcename()) == null){
-			if(operator.getWrapper()!=null){
-				if(Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())){
-					return true;
-				}
-				if(Constants.GENERIC_PUSH.equalsIgnoreCase(operator.getWrapper())){
-					return true;
-				}
+		if (operator.getWrapper() != null) {
+			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+				return true;
+			}
+			if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator.getWrapper())) {
+				return true;
 			}
 		}
 		return false;
@@ -145,11 +141,9 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(), ITransportDirection.IN, IAccessPattern.PULL, operator.getOptionsMap(),
-						dataHandler);
+				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(), ITransportDirection.IN, IAccessPattern.PULL, operator.getOptionsMap(), dataHandler);
 			} else {
-				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(), ITransportDirection.IN, IAccessPattern.PUSH, operator.getOptionsMap(),
-						dataHandler);
+				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(), ITransportDirection.IN, IAccessPattern.PUSH, operator.getOptionsMap(), dataHandler);
 			}
 		}
 		return protocolHandler;

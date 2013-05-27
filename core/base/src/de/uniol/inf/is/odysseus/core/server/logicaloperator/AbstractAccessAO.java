@@ -22,8 +22,7 @@ import java.util.Map;
 abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 
 	private static final long serialVersionUID = -5423444612698319659L;
-
-	private String source = null;
+	
 	private List<String> inputSchema = null;
 
 	private int port = -1;
@@ -64,8 +63,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	}
 
 	public AbstractAccessAO(AbstractAccessAO po) {
-		super(po);
-		source = po.source;
+		super(po);		
 		port = po.port;
 		host = po.host;
 		login = po.login;
@@ -82,35 +80,19 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		
 	}
 
-	public AbstractAccessAO(String source, String wrapper, Map<String, String> optionsMap) {
-		this.source = source;
+	public AbstractAccessAO(String wrapper, Map<String, String> optionsMap) {		
 		this.wrapper = wrapper;
 		this.optionsMap = optionsMap;
 	}
 
-	public AbstractAccessAO(String source, String wrapper, String input, String transformer, String dataHandler, Map<String, String> optionsMap){
-		this.source = source;
+	public AbstractAccessAO(String wrapper, String input, String transformer, String dataHandler, Map<String, String> optionsMap){		
 		this.wrapper = wrapper;
 		this.input = input;
 		this.transformer = transformer;
 		this.dataHandler = dataHandler;
 		this.optionsMap = optionsMap;
 	}
-	
-	/**
-	 * @return the source
-	 */
-	public String getSourcename() {
-		return source;
-	}
 
-	/**
-	 * @param source
-	 *            the source to set
-	 */
-	public void setSource(String source) {
-		this.source = source;
-	}
 	
 	public void setInputSchema(List<String> inputSchema) {
 		this.inputSchema = inputSchema;
@@ -120,10 +102,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		return inputSchema;
 	}
 
-	@Override
-	public String getName() {
-		return getSourcename();
-	}
+	
 
 //	private static long genID() {
 //		return ++ID;
@@ -157,9 +136,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 
 	@Override
 	public String toString() {
-		return getName() + " ("
-				+ this.getSourcename() 
-				+ " | " + this.wrapper + ")";
+		return getName() + " (" + this.wrapper + ")";
 	}
 
 	@Override

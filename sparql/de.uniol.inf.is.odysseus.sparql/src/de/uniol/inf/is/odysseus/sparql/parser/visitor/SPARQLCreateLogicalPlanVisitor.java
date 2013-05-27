@@ -1384,8 +1384,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 			ASTSocket socket = (ASTSocket) child;
 			// accAO = new AccessAO(new SDFSource(streamName,
 			// "SPARQL_Access_Socket"));
-			accAO = new AccessAO(
-					node.getStreamName(),
+			accAO = new AccessAO(				
 					"",
 					null);
 			accAO.setHost(socket.getHost());
@@ -1395,8 +1394,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 			ASTChannel channel = (ASTChannel) child;
 			// accAO = new AccessAO(new SDFSource(streamName,
 			// "SPARQL_ACCESS_Channel"));
-			accAO = new AccessAO(
-					streamName,
+			accAO = new AccessAO(					
 					"",
 					null);
 			accAO.setHost(channel.getHost());
@@ -1421,7 +1419,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 		accAO.setOutputSchema(outputSchema);
 
 		// before adding the acces operator, add the corresponding entity
-		dd.addEntitySchema(streamName, outputSchema, user);
+//		dd.addEntitySchema(streamName, outputSchema, user);
 
 		TimestampAO op = addTimestampAO(accAO);
 		if (isPersistent) {

@@ -33,16 +33,14 @@ public class TFixedSetAccessAORule extends AbstractTransformationRule<FixedSetAc
 	}
 
 	@Override
-	public void execute(FixedSetAccessAO<?> accessAO, TransformationConfiguration transformConfig) {
-		String accessPOName = accessAO.getSourcename();
-		ISource<?> accessPO = new FixedSetPO<IStreamObject<?>>(accessAO.getTuples());
-		getDataDictionary().putAccessPlan(accessPOName, accessPO);
+	public void execute(FixedSetAccessAO<?> accessAO, TransformationConfiguration transformConfig) {		
+		ISource<?> accessPO = new FixedSetPO<IStreamObject<?>>(accessAO.getTuples());		
 		defaultExecute(accessAO, accessPO, transformConfig, true, true);
 	}
 
 	@Override
 	public boolean isExecutable(FixedSetAccessAO<?> accessAO, TransformationConfiguration transformConfig) {
-		return (transformConfig.getDataTypes().contains(Relational.RELATIONAL) && getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null);
+		return (transformConfig.getDataTypes().contains(Relational.RELATIONAL));
 	}
 
 	@Override

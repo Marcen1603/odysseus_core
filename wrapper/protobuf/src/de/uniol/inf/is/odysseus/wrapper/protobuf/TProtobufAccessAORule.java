@@ -20,7 +20,6 @@ import java.net.SocketAddress;
 
 import com.google.protobuf.GeneratedMessage;
 
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransformer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -39,7 +38,7 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(AccessAO operator, TransformationConfiguration config) {
-		String accessPOName = operator.getSourcename();
+		
 		ChannelHandlerReceiverPO<?, ?> accessPO = null;
 
 		int port = operator.getPort();
@@ -53,10 +52,7 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 			throw new RuntimeException( new TransformationException("No valid type given: " +operator.getOptionsMap().get("type")));
 		}
 		ITransformer transformer = new GeneratedMessageToTuple().getInstance(operator.getOptionsMap(),operator.getOutputSchema());
-		accessPO = new ChannelHandlerReceiverPO(socketAddress, msg, transformer);
-		IDataDictionary dd = getDataDictionary();
-		dd.putAccessPlan(accessPOName, accessPO);
-
+		accessPO = new ChannelHandlerReceiverPO(socketAddress, msg, transformer);		
 		defaultExecute(operator, accessPO, config, true, true);
 	}
 

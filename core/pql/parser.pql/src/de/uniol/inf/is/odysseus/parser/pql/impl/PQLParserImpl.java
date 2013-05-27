@@ -279,7 +279,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
         {
           {if (true) throw new QueryParseException("multiple definition of view '" + nameStr + "'");}
         }
-        dd.addEntitySchema(nameStr, op.getOutputSchema(), getUser());
         if (isSharedSource)
         {
           dd.setStream(nameStr, op, user);
@@ -598,6 +597,17 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(1, xla); }
   }
 
+  static private boolean jj_3R_13() {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_9() {
+    if (jj_scan_token(23)) return true;
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_15() {
     if (jj_scan_token(IDENTIFIER)) return true;
     if (jj_scan_token(22)) return true;
@@ -689,17 +699,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
 
   static private boolean jj_3R_14() {
     if (jj_3R_16()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_13() {
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_9() {
-    if (jj_scan_token(23)) return true;
-    if (jj_3R_8()) return true;
     return false;
   }
 

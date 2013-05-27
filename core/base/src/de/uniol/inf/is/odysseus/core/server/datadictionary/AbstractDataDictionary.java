@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.StoreException;
@@ -62,7 +62,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	private final IStore<String, ILogicalOperator> streamDefinitions;
 	private final IStore<String, IUser> viewOrStreamFromUser;
 	private final IStore<String, ILogicalOperator> viewDefinitions;
-	private final IStore<String, SDFSchema> entityMap;
+//	private final IStore<String, SDFSchema> entityMap;
 	private final IStore<String, IUser> entityFromUser;
 	private final IStore<String, SDFDatatype> datatypes;
 	private final IStore<Integer, ILogicalQuery> savedQueries;
@@ -88,7 +88,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		streamDefinitions = Preconditions.checkNotNull(createStreamDefinitionsStore(), "Store for streamDefinitions must not be null.");
 		viewOrStreamFromUser = Preconditions.checkNotNull(createViewOrStreamFromUserStore(), "Store for viewOrStreamFromUser must not be null.");
 		viewDefinitions = Preconditions.checkNotNull(createViewDefinitionsStore(), "Store for viewDefinitions must not be null.");
-		entityMap = Preconditions.checkNotNull(createEntityMapStore(), "Store for entityMap must not be null.");
+//		entityMap = Preconditions.checkNotNull(createEntityMapStore(), "Store for entityMap must not be null.");
 		entityFromUser = Preconditions.checkNotNull(createEntityFromUserStore(), "Store for entityFromUser must not be null.");
 		datatypes = Preconditions.checkNotNull(createDatatypesStore(), "Store for datatypes must not be null.");
 		savedQueries = Preconditions.checkNotNull(createSavedQueriesStore(), "Store for savedQueries must not be null.");
@@ -150,54 +150,54 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	// Entity Management
 	// ----------------------------------------------------------------------------
 
-	@Override
-	public void addEntitySchema(String uri, SDFSchema entity, ISession caller) throws PermissionException {
-		if (hasPermission(caller, DataDictionaryPermission.ADD_ENTITY)) {
-			try {
-				String uriToStore = createUserUri(uri, caller);
-				if (entityMap.get(uriToStore) != null){
-					throw new IllegalArgumentException("Source "+uri+" already defined! Remove first!");
-				}
-				this.entityMap.put(uriToStore, entity);
-				this.entityFromUser.put(uriToStore, caller.getUser());
-				fireDataDictionaryChangedEvent();
-			} catch (StoreException e) {
-				throw new RuntimeException(e);
-			}
-		} else {
-			throw new PermissionException("User " + caller.getUser().getName() + "has no permission to add entities.");
-		}
-	}
-
-	@Override
-	public SDFSchema getEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
-		checkAccessRights(uri, caller, DataDictionaryPermission.GET_ENTITY);
-		SDFSchema ret = entityMap.get(uri);
-		if (ret == null) {
-			ret = entityMap.get(createUserUri(uri, caller));
-		}
-		if (ret == null) {
-			throw new DataDictionaryException("no such entity: " + uri + " for user " + caller.getUser().getName());
-		}
-		return ret;
-	}
 	
-	@Override
-	public boolean hasEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
-		checkAccessRights(uri, caller, DataDictionaryPermission.GET_ENTITY);
-		SDFSchema ret = entityMap.get(uri);
-		if (ret == null) {
-			ret = entityMap.get(createUserUri(uri, caller));
-		}
-		return ret != null;
-	}
-	
-	
-	@Override
-	public void removeEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
-		checkAccessRights(uri, caller, DataDictionaryPermission.REMOVE_ENTITY);
-		entityMap.remove(uri);
-	}
+//	private void addEntitySchema(String uri, SDFSchema entity, ISession caller) throws PermissionException {
+//		if (hasPermission(caller, DataDictionaryPermission.ADD_ENTITY)) {
+//			try {
+//				String uriToStore = createUserUri(uri, caller);
+//				if (entityMap.get(uriToStore) != null){
+//					throw new IllegalArgumentException("Source "+uri+" already defined! Remove first!");
+//				}
+//				this.entityMap.put(uriToStore, entity);
+//				this.entityFromUser.put(uriToStore, caller.getUser());
+//				fireDataDictionaryChangedEvent();
+//			} catch (StoreException e) {
+//				throw new RuntimeException(e);
+//			}
+//		} else {
+//			throw new PermissionException("User " + caller.getUser().getName() + "has no permission to add entities.");
+//		}
+//	}
+//
+//	
+//	private SDFSchema getEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
+//		checkAccessRights(uri, caller, DataDictionaryPermission.GET_ENTITY);
+//		SDFSchema ret = entityMap.get(uri);
+//		if (ret == null) {
+//			ret = entityMap.get(createUserUri(uri, caller));
+//		}
+//		if (ret == null) {
+//			throw new DataDictionaryException("no such entity: " + uri + " for user " + caller.getUser().getName());
+//		}
+//		return ret;
+//	}
+//	
+//	
+//	private boolean hasEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
+//		checkAccessRights(uri, caller, DataDictionaryPermission.GET_ENTITY);
+//		SDFSchema ret = entityMap.get(uri);
+//		if (ret == null) {
+//			ret = entityMap.get(createUserUri(uri, caller));
+//		}
+//		return ret != null;
+//	}
+//	
+//	
+//	
+//	private void removeEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
+//		checkAccessRights(uri, caller, DataDictionaryPermission.REMOVE_ENTITY);
+//		entityMap.remove(uri);
+//	}
 	
 	// ------------------------------------------------------------------------
 	// View Management
@@ -313,9 +313,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	@Override
 	public void setStream(String streamname, ILogicalOperator plan, ISession caller) throws DataDictionaryException {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_STREAM)) {
-			if (!this.entityMap.containsKey(streamname) && !this.entityMap.containsKey(createUserUri(streamname, caller))) {
-				throw new DataDictionaryException("No entity for " + createUserUri(streamname, caller) + ". Add entity before adding access operator.");
-			}
+//			if (!this.entityMap.containsKey(streamname) && !this.entityMap.containsKey(createUserUri(streamname, caller))) {
+//				throw new DataDictionaryException("No entity for " + createUserUri(streamname, caller) + ". Add entity before adding access operator.");
+//			}
 			if (streamDefinitions.containsKey(streamname) || streamDefinitions.containsKey(createUserUri(streamname, caller))) {
 				throw new DataDictionaryException("Stream " + createUserUri(streamname, caller) + " already exists. Remove First");
 			}
@@ -335,22 +335,20 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public AccessAO getStream(String viewname, ISession caller) throws DataDictionaryException {
+	public StreamAO getStream(String viewname, ISession caller) throws DataDictionaryException {
 		checkAccessRights(viewname, caller, DataDictionaryPermission.READ);
 
 		if (!this.streamDefinitions.containsKey(viewname)) {
 			if (!this.streamDefinitions.containsKey(createUserUri(viewname, caller))) {
-				throw new DataDictionaryException("no such view: " + viewname);
+				throw new DataDictionaryException("no such stream: " + viewname);
 			} else {
 				viewname = createUserUri(viewname, caller);
 			}
 		}
-		AccessAO ao = new AccessAO(viewname, "", null);
-		ao.setName(viewname);
-
-		SDFSchema entity = getEntitySchema(viewname, caller);
-		ao.setOutputSchema(entity);
-
+		
+		StreamAO ao = new StreamAO(viewname);		
+		SDFSchema schema = this.streamDefinitions.get(viewname).getOutputSchema();
+		ao.setOutputSchema(schema);
 		return ao;
 	}
 
@@ -426,13 +424,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	@Override
 	public ILogicalOperator removeViewOrStream(String viewname, ISession caller) {
 		if (this.viewDefinitions.containsKey(viewname)) {
-			checkAccessRights(viewname, caller, DataDictionaryPermission.REMOVE_VIEW);
-			removeEntitySchema(viewname, caller);
+			checkAccessRights(viewname, caller, DataDictionaryPermission.REMOVE_VIEW);			
 			return removeView(viewname, caller);
 		}
 		if (this.viewDefinitions.containsKey(createUserUri(viewname, caller))) {
-			checkAccessRights(createUserUri(viewname, caller), caller, DataDictionaryPermission.REMOVE_VIEW);
-			removeEntitySchema(createUserUri(viewname, caller), caller);
+			checkAccessRights(createUserUri(viewname, caller), caller, DataDictionaryPermission.REMOVE_VIEW);			
 			return removeView(createUserUri(viewname, caller), caller);
 		}
 
@@ -452,9 +448,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				if (op != null) {
 					// Remove plan from wrapper plan factory
 					removeAccessPlan(viewname);
-					removeAccessPlan(createUserUri(viewname, caller));
-					removeEntitySchema(viewname,caller);
-					removeEntitySchema(createUserUri(viewname, caller), caller);
+					removeAccessPlan(createUserUri(viewname, caller));					
 					// Remove registered ids
 					RemoveIdLogicalGraphVisitor<ILogicalOperator> visitor = new RemoveIdLogicalGraphVisitor<ILogicalOperator>(this, caller);
 					@SuppressWarnings("rawtypes")

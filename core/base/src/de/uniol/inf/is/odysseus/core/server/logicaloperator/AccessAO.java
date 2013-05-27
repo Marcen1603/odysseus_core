@@ -33,12 +33,12 @@ public class AccessAO extends AbstractAccessAO {
 		super(po);
 	}
 
-	public AccessAO(String source, String wrapper, Map<String, String> optionsMap) {
-		super(source, wrapper, optionsMap);
+	public AccessAO(String wrapper, Map<String, String> optionsMap) {
+		super(wrapper, optionsMap);
 	}
 	
-	public AccessAO(String source, String wrapper, String input, String transformer, String dataHandler, Map<String, String> optionsMap){
-		super(source, wrapper, input, transformer, dataHandler, optionsMap);
+	public AccessAO(String wrapper, String input, String transformer, String dataHandler, Map<String, String> optionsMap){
+		super(wrapper, input, transformer, dataHandler, optionsMap);
 	}
 
 	@Override

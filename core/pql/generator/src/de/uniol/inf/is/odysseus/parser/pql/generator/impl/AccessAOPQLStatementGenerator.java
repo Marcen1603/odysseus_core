@@ -61,8 +61,7 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 		operator = determineRealAccessAO(operator);
 		final StringBuilder sb = new StringBuilder();
 		final TimestampAO timestampAO = determineTimestampAO(operator);
-
-		sb.append("source='").append(operator.getSourcename()).append("'");
+		
 		appendIfNeeded(sb, "wrapper", determineWrapper(operator));
 		appendIfNeeded(sb, "transport", operator.getTransportHandler());
 		appendIfNeeded(sb, "protocol", operator.getProtocolHandler());
@@ -175,8 +174,9 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 	}
 
 	private static AccessAO determineRealAccessAO(AccessAO operator) {
-		final ILogicalOperator op = dataDictionary.getStreamForTransformation(operator.getSourcename(), activeUser);
-		return op != null ? determineAccessAO(op) : operator;
+//		final ILogicalOperator op = dataDictionary.getStreamForTransformation(operator.getSourcename(), activeUser);
+//		return op != null ? determineAccessAO(op) : operator;
+		return operator;
 	}
 
 	private static TimestampAO determineTimestampAO(AccessAO operator) {

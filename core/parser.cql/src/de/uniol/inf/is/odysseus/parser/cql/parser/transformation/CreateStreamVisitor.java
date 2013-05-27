@@ -112,10 +112,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			}
 		}
 
-		node.jjtGetChild(1).jjtAccept(this, data);
-		SDFSchema outschema = new SDFSchema(name, attributes);
-		dd.addEntitySchema(name, outschema, caller);
-
+		node.jjtGetChild(1).jjtAccept(this, data);	
 		for (int i = startOtherValues; i < node.jjtGetNumChildren(); ++i) {
 			node.jjtGetChild(i).jjtAccept(this, data);
 		}
@@ -300,7 +297,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		String wrapperName = Constants.GENERIC_PUSH;
 		Map<String, String> options = new HashMap<String, String>();
-		AccessAO source = new AccessAO("$"+name, wrapperName, options);
+		AccessAO source = new AccessAO(wrapperName, options);
 
 		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		source.setTransportHandler("NonBlockingTcp");
@@ -332,7 +329,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		// TODO: read delimiter
 		options.put("delimiter", ";");
 
-		AccessAO source = new AccessAO("$"+name, wrapperName, options);
+		AccessAO source = new AccessAO(wrapperName, options);
 		source.setTransportHandler("File");
 		source.setProtocolHandler(type);
 		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
@@ -358,14 +355,16 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTLoginPassword node, Object data) throws QueryParseException {
-		String user = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		String password = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-
-		try {
-			dd.getStream(name, caller).setLoginInfo(user, password);
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
+		//TODO: reacivate
+//		String user = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+//		String password = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+//
+//		try {
+//			// TODO: 
+//			//dd.getStream(name, caller).setLoginInfo(user, password);
+//		} catch (DataDictionaryException e) {
+//			throw new QueryParseException(e.getMessage());
+//		}
 
 		return null;
 	}

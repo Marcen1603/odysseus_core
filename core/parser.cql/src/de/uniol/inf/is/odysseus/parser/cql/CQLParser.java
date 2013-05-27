@@ -1447,8 +1447,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		List<SDFAttribute> schema = visit(defs, null);		
 		SDFSchema outputSchema = new SDFSchema(sourceName, schema);
 		
-		
-		getDataDictionary().addEntitySchema(sourceName, outputSchema, caller);
+	
 		
 		String wrapper = ((ASTQuotedIdentifier) node.jjtGetChild(0)).getUnquotedName();
 		String protocol = ((ASTQuotedIdentifier) node.jjtGetChild(1)).getUnquotedName();
@@ -1464,7 +1463,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throw new QueryParseException("Wrapper "+wrapper+" is unknown.");
 		}
 		
-		AccessAO access = new AccessAO(sourceName, wrapper, options);
+		AccessAO access = new AccessAO(wrapper, options);
 		access.setProtocolHandler(protocol);
 		access.setDataHandler(datahandler);
 		access.setTransportHandler(transport);

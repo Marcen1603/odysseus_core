@@ -26,9 +26,8 @@ public class RuleProvider implements ITransformRuleProvider {
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
-		//loading default rules		
-		rules.add(new TAccessAOExistsRule());
-		rules.add(new TAccessAOGenericRule());
+		//loading default rules				
+		rules.add(new TAccessAORule());
 		rules.add(new TFileSinkAORule());
 		rules.add(new TSocketSinkAORule());
 		rules.add(new TCreateMetadataRule());
@@ -36,7 +35,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TFilterAORule());
 		rules.add(new TSelectAORule());
 		rules.add(new TRouteAORule());
-		rules.add(new TAccessAOViewRule());
+		rules.add(new TStreamAORule());
 		rules.add(new TUserDefinedOperatorPO());
 		rules.add(new TChangeDetectAORule());
 		rules.add(new TRenameAORule());
