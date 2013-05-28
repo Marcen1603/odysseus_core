@@ -30,15 +30,16 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementIn
 public class P2PNewPlugIn implements BundleActivator {
 
 	private static final String PEER_NAME_SYS_PROPERTY = "peer.name";
+	private static final String PEER_GROUP_NAME_SYS_PROPERTY = "peer.group.name";
+	
 	private static final String DEFAULT_PEER_NAME = "OdysseusPeer";
+	private static final String DEFAULT_PEER_GROUP_NAME = "OdysseusPeerGroup";
+	
 	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
 	private static final int PORT = new Random().nextInt(20000) + 10000;
 	private static final String JXTA_LOGGER_NAME = "net.jxta";
 	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.SEVERE;
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNewPlugIn.class);
-
-	private static final String SUBGROUP_NAME = "Odysseus Peer Group";
-	private static final PeerGroupID SUBGROUP_ID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, SUBGROUP_NAME.getBytes());
 
 	private NetworkManager manager;
 
@@ -58,7 +59,9 @@ public class P2PNewPlugIn implements BundleActivator {
 		configureNetwork(manager.getConfigurator(), ownPeerID, ownPeerName);
 
 		final PeerGroup netPeerGroup = manager.startNetwork();
-		final PeerGroup localPeerGroup = createSubGroup(netPeerGroup, SUBGROUP_ID, SUBGROUP_NAME);
+		final String peerGroupName = determinePeerGroupName();
+		final PeerGroupID peerGroupID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, peerGroupName.getBytes());
+		final PeerGroup localPeerGroup = createSubGroup(netPeerGroup, peerGroupID, peerGroupName);
 		P2PDictionary.setLocalPeerGroup(localPeerGroup);
 
 		registerAdvertisementTypes();
@@ -113,5 +116,19 @@ public class P2PNewPlugIn implements BundleActivator {
 		}
 
 		return DEFAULT_PEER_NAME + "_" + System.getProperty("user.name");
+	}
+	
+	private static String determinePeerGroupName() {
+		String peerGroupName = System.getProperty(PEER_GROUP_NAME_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(peerGroupName)) {
+			return peerGroupName;
+		}
+
+		peerGroupName = OdysseusConfiguration.get(PEER_GROUP_NAME_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(peerGroupName)) {
+			return peerGroupName;
+		}
+
+		return DEFAULT_PEER_GROUP_NAME + "_" + System.getProperty("user.name");
 	}
 }

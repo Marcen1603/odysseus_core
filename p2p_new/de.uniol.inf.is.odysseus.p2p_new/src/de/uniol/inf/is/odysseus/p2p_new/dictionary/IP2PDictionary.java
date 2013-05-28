@@ -41,4 +41,5 @@ public interface IP2PDictionary {
 	PeerID getLocalPeerID();
 	String getLocalPeerName();
 	PeerGroupID getLocalPeerGroupID();
+	String getLocalPeerGroupName();
 }

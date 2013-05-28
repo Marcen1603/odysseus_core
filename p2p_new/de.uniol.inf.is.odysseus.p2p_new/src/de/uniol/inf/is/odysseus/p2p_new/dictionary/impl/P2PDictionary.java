@@ -439,6 +439,11 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		return localPeerGroup;
 	}
 	
+	@Override
+	public String getLocalPeerGroupName() {
+		return localPeerGroup.getPeerGroupName();
+	}
+	
 	// called by activator
 	public static void setLocalPeerID( PeerID peerID ) {
 		Preconditions.checkNotNull(peerID, "PeerID to set locally must not be null!");
