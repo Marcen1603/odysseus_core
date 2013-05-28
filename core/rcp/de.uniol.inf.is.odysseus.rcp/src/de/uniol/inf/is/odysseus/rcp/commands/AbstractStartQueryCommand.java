@@ -38,9 +38,10 @@ public abstract class AbstractStartQueryCommand extends AbstractHandler implemen
 					monitor.beginTask("Starting " + queryCount + " queries", queryCount);
 					for (final Integer qID : queryIds) {
 						try {
-							monitor.subTask("Starting query " + (started + 1) + "of " + queryCount + ": " + qID);
+							monitor.subTask("Starting query " + (started + 1) + "of " + queryCount + ": QID=" + qID);
 							executor.startQuery(qID, OdysseusRCPPlugIn.getActiveSession());
 							monitor.worked(1);
+							started++;
 
 							if( monitor.isCanceled() ) {
 								break;
