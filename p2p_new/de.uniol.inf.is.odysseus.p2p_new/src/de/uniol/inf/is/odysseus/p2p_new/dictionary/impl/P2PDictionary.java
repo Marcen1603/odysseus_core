@@ -327,15 +327,15 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (isImported(sourceName)) {
 			throw new PeerException("Source " + sourceName + " is imported and cannot be exported directly");
 		}
-		
-		ILogicalOperator viewOrStream = dataDictionary.getStreamForTransformation(sourceName, SessionManagementService.getActiveSession());
-		if( viewOrStream != null ) {
-			
-			if( viewOrStream instanceof TimestampAO ) {
-				return exportStream(sourceName, queryBuildConfigurationName, viewOrStream);
-			} 
-				
-			return exportView(sourceName, queryBuildConfigurationName, viewOrStream);
+
+		ILogicalOperator stream = dataDictionary.getStreamForTransformation(sourceName, SessionManagementService.getActiveSession());
+		if (stream != null && stream instanceof TimestampAO) {
+			return exportStream(sourceName, queryBuildConfigurationName, stream);
+		}
+
+		ILogicalOperator view = dataDictionary.getView(sourceName, SessionManagementService.getActiveSession());
+		if (view != null) {
+			return exportView(sourceName, queryBuildConfigurationName, view);
 		}
 
 		throw new PeerException("Could not find view or stream '" + sourceName + "' in datadictionary");
