@@ -8,7 +8,7 @@
             class="de.uniol.inf.is.odysseus.rcp.p2p_new.views.PeerView"
             icon="icons/peer.png"
             id="de.uniol.inf.is.odysseus.rcp.p2p_new.PeerView"
-            name="Peer View"
+            name="Peers"
             restorable="true">
       </view>
       <view
