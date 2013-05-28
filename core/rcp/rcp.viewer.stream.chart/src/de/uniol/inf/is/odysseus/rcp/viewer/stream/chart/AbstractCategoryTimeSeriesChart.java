@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
 import java.awt.Color;
@@ -30,6 +30,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
 public abstract class AbstractCategoryTimeSeriesChart extends AbstractJFreeChart<Double, ITimeInterval> {
 
@@ -46,28 +48,34 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractJFreeChart
 	}
 
 	@Override
-	protected void processElement(final List<Double> tuple, final ITimeInterval metadata, final int port) {		
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
+	protected void processElement(final List<Double> tuple, final ITimeInterval metadata, final int port) {
+		try {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					try {
 
-					int i = 0;
-					for (IViewableAttribute a : getChoosenAttributes(port)) {
-						double value = tuple.get(i);
-						recalcAxis(value);
-						dcds.addValue(value, a.getName(), metadata.getStart());
+						int i = 0;
+						for (IViewableAttribute a : getChoosenAttributes(port)) {
+							double value = tuple.get(i);
+							recalcAxis(value);
+							dcds.addValue(value, a.getName(), metadata.getStart());
 
-						i++;
+							i++;
+						}
+					} catch (SWTException e) {
+						// we assume that we dispose.
+						dispose();
+						return;
 					}
-				} catch (SWTException e) {
-					dispose();
-					return;
+
+					if (dcds.getColumnCount() > maxItems) {
+						dcds.removeColumn(0);
+					}
 				}
-			}
-		});
-		if (dcds.getColumnCount() > this.maxItems) {
-			dcds.removeColumn(0);
+			});
+		} catch (SWTException swtex) {
+			System.out.println("WARN: SWT Exception " + swtex.getMessage());
 		}
 	}
 
@@ -97,9 +105,18 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractJFreeChart
 	}
 
 	@Override
-	public String isValidSelection(
-			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+	public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes) {
 		return checkAtLeastOneSelectedAttribute(selectAttributes);
+	}
+
+	@ChartSetting(name = "Max Shown Items", type = Type.GET)
+	public int getMaxItems() {
+		return maxItems;
+	}
+
+	@ChartSetting(name = "Max Shown Items", type = Type.SET)
+	public void setMaxItems(int maxItems) {
+		this.maxItems = maxItems;
 	}
 
 }
