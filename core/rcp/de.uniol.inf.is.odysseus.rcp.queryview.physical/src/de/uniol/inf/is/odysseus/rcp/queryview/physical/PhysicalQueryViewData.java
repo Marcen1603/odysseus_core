@@ -23,12 +23,13 @@ public class PhysicalQueryViewData implements IQueryViewData {
 
 	private static final String UNKNOWN_TEXT = "<unknown>";
     private final int id;
-    private final String status;
     private final int priority;
     private final String parserId;
     private final String userName;
     private final String queryText;
     private final String queryName;
+    
+    private String status;
 
     public PhysicalQueryViewData(int id, String status, int priority, String parserId, String userName, String queryText, String queryName) {
         this.id = id;
@@ -74,5 +75,8 @@ public class PhysicalQueryViewData implements IQueryViewData {
 	public String getName() {
 		return queryName;
 	}
-
+ 
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }

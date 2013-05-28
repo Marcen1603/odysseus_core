@@ -44,21 +44,7 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 	public void init(QueryView view) {
 		this.view = view;
 		this.view.getTableViewer().addDoubleClickListener(this);
-		this.view.getTableViewer().getTable().addKeyListener(this);
-	}
-
-	@Override
-	public Collection<? extends IQueryViewData> getData() {
-		IExecutor executor = LogicalQueryViewDataProviderPlugIn.getExecutor();
-		
-		List<ILogicalQuery> logicalQueries = getLogicalQueries(executor);
-		
-		return Lists.transform(logicalQueries, new Function<ILogicalQuery, IQueryViewData>() {
-			@Override
-			public IQueryViewData apply(ILogicalQuery logicalQuery) {
-				return new LogicalQueryViewData(logicalQuery);
-			}
-		});
+		this.view.getTableViewer().getTable().addKeyListener(this);		
 	}
 
 	@Override
@@ -72,17 +58,6 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 	public void doubleClick(DoubleClickEvent event) {
 		executeCommand("de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand");
 	}
-	
-	private static List<ILogicalQuery> getLogicalQueries( IExecutor executor ) {
-		Collection<Integer> logicalQueryIds = executor.getLogicalQueryIds();
-		
-		List<ILogicalQuery> logicalQueries = Lists.newArrayListWithCapacity(logicalQueryIds.size());
-		for( Integer id : logicalQueryIds ) {
-			logicalQueries.add( executor.getLogicalQueryById(id));
-		}
-		
-		return logicalQueries;
-	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -94,6 +69,25 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 			executeCommand("de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand");
 		}
 	}
+
+	@Override
+	public void onRefresh(QueryView sender) {
+		IExecutor executor = LogicalQueryViewDataProviderPlugIn.getExecutor();
+
+		List<ILogicalQuery> logicalQueries = getLogicalQueries(executor);
+		List<IQueryViewData> transformed = Lists.transform(logicalQueries, new Function<ILogicalQuery, IQueryViewData>() {
+			@Override
+			public IQueryViewData apply(ILogicalQuery logicalQuery) {
+				return new LogicalQueryViewData(logicalQuery);
+			}
+		});
+
+		sender.clear();
+		for( IQueryViewData data : transformed ) {
+			sender.addData(data);
+		}
+		sender.refreshTable();
+	}
 	
 	private void executeCommand( String cmdID ) {
 		IHandlerService handlerService = (IHandlerService) view.getSite().getService(IHandlerService.class);
@@ -103,4 +97,16 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 			LOG.error("Exception during executing command {}.", cmdID, ex);
 		}		
 	}
+	
+	private static List<ILogicalQuery> getLogicalQueries(IExecutor executor) {
+		Collection<Integer> logicalQueryIds = executor.getLogicalQueryIds();
+
+		List<ILogicalQuery> logicalQueries = Lists.newArrayListWithCapacity(logicalQueryIds.size());
+		for (Integer id : logicalQueryIds) {
+			logicalQueries.add(executor.getLogicalQueryById(id));
+		}
+
+		return logicalQueries;
+	}
+
 }

@@ -15,8 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.views.query;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -26,12 +25,16 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
-public class QueryView extends ViewPart {
+public final class QueryView extends ViewPart {
 
+	private final List<IQueryViewData> data = Lists.newArrayList();
+	
 	private QueryTableViewer tableViewer;
-	private final Collection<IQueryViewData> queries = new ArrayList<IQueryViewData>();
+	private boolean refreshing;
 	private IQueryViewDataProvider dataProvider;
 
 	@Override
@@ -43,8 +46,7 @@ public class QueryView extends ViewPart {
 
 		tableViewer = new QueryTableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
 		dataProvider = determineDataProvider(this);
-		refreshData(dataProvider, queries);
-		tableViewer.setInput(queries);
+		tableViewer.setInput(data);
 		getSite().setSelectionProvider(tableViewer);
 
 		createContextMenu();
@@ -65,24 +67,59 @@ public class QueryView extends ViewPart {
 	public QueryTableViewer getTableViewer() {
 		return tableViewer;
 	}
+	
+	public void refreshData( int id ) {
+		Preconditions.checkArgument(id >= 0, "Id to update query view data must be non-negative");
+		
+		final Optional<IQueryViewData> optElement = getData(id);
 
-	public void refreshTable() {
-		if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					if (dataProvider != null) {
-						refreshData(dataProvider, queries);
-
+		if( optElement.isPresent() ) {
+			if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+	
+					@Override
+					public void run() {
 						if (!tableViewer.getControl().isDisposed()) {
-							tableViewer.refresh();
+							tableViewer.refresh(optElement.get());
 						}
 					}
-				}
-
-			});
+	
+				});
+			}
+		} else {
+			throw new IllegalArgumentException("Element " + id + " is not known in query view");
 		}
+	}
+	
+	public void addData( final IQueryViewData element ) {
+		Preconditions.checkNotNull(element, "QueryViewData to add must not be null!");
+		Preconditions.checkArgument(!data.contains(element), "QueryViewData-instance is already added");
+		Preconditions.checkArgument(!getData(element.getId()).isPresent(), "QueryViewData with id %s  is already added", element.getId());
+		
+		data.add(element);
+	}
+	
+	public void removeData( int id ) {
+		Preconditions.checkArgument(id >= 0, "Id to remove query view data must be non-negative");
+		
+		Optional<IQueryViewData> optData = getData(id);
+		if( optData.isPresent() ) {
+			data.remove(optData.get());
+		} else {
+			throw new IllegalArgumentException("Element with query id " + id + " is not known in query view");
+		}
+	}
+	
+	public Optional<IQueryViewData> getData( int id ) {
+		Preconditions.checkArgument(id >= 0, "Id to get query view data must be non-negative");
+		
+		for( IQueryViewData dat : data ) {
+			if( dat.getId() == id ) {
+				return Optional.of(dat);
+			}
+		}
+		
+		return Optional.absent();
 	}
 
 	@Override
@@ -90,6 +127,31 @@ public class QueryView extends ViewPart {
 		tableViewer.getTable().setFocus();
 	}
 
+	public void refreshTable() {
+		if( refreshing ) {
+			return;
+		}
+		
+		if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+			refreshing = true;
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					if (!tableViewer.getControl().isDisposed()) {
+						tableViewer.refresh();
+					}
+					refreshing = false;
+				}
+
+			});
+		}
+	}
+	
+	public void clear() {
+		data.clear();
+	}
+	
 	private void createContextMenu() {
 		// Contextmenu
 		final MenuManager menuManager = new MenuManager();
@@ -104,10 +166,5 @@ public class QueryView extends ViewPart {
 		final IQueryViewDataProvider dataProvider = QueryViewDataProviderManager.getQueryViewDataProvider();
 		dataProvider.init(view);
 		return dataProvider;
-	}
-
-	private static void refreshData(IQueryViewDataProvider dataProvider, Collection<IQueryViewData> toRefresh) {
-		toRefresh.clear();
-		toRefresh.addAll(dataProvider.getData());
 	}
 }
