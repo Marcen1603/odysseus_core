@@ -196,6 +196,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			// after that, we are looking for procedures and replace them
 			text = runProcedures(text, caller);
 
+			// initialize the replacement using the defaults		
+			Map<String, String> replacements = new HashMap<String, String>(this.defaultReplacements);
+			
 			IfController ifController = new IfController(text);
 			StringBuffer sb = null;
 
@@ -216,15 +219,22 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				}
 
 				line = line.trim();
-				// use replacements if we are not in procedure
-				Map<String, String> replacements = new HashMap<String, String>();
-				if (!isInProcedure) {
-					replacements = getReplacements(text);
+				// use replacements if we are not in procedure				 
+				if (!isInProcedure) {	
+					// first, we use replacements we know so far
 					line = useReplacements(line, replacements).trim();
-
-					// if there is a define-key for replacements, we can continue
-					if (line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY) != -1)
+					// if there is a define-key for replacements, we add this to the replacements
+					if (line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY) != -1){
+						String[] parts = line.split(" |\t", 3);
+						// parts[0] is #DEFINE
+						// parts[1] is replacement name
+						// parts[2] is replacement value (optional!)
+						if (parts.length >= 3) {
+							replacements.put(parts[1].trim(), parts[2].trim());
+						}
 						continue;
+					}
+						
 
 					// same with loop-definition lines: jump to next line, because
 					// we normally handled that before
@@ -478,7 +488,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		Map<String, String> repl = new HashMap<String, String>();
 		addDefaultReplacements(repl);
 		boolean isInProcedure = false;
+			
 		for (String line : text) {
+			
 			String correctLine = removeComments(line).trim();
 			// maybe, we have replacements within definitions...
 			if (line.indexOf(PARAMETER_KEY + STORED_PROCEDURE_PROCEDURE) != -1) {
