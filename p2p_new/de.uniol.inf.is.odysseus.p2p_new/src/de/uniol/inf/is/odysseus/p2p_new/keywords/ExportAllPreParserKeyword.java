@@ -30,6 +30,10 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 			throw new OdysseusScriptException("Cannot export: Name of transformation configuration not set!");
 		}
 		
+		if( !DataDictionaryService.isBound() ) {
+			throw new OdysseusScriptException("Cannot export: Data dictionary is not bound");
+		}
+		
 		if( ServerExecutorService.get().getQueryBuildConfiguration(transCfgName) == null) {
 			throw new OdysseusScriptException("Cannot export: TransformationConfiguration '" + transCfgName + "' not found");
 		}
