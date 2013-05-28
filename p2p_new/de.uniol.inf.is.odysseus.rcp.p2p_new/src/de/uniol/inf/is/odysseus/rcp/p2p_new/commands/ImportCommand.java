@@ -32,7 +32,7 @@ public class ImportCommand extends AbstractHandler implements IHandler {
 
 			for (SourceAdvertisement selectedAdvertisement : selectedAdvertisements) {
 				try {
-					if (!dictionary.isImported(selectedAdvertisement)) {
+					if (dictionary.isImported(selectedAdvertisement)) {
 						throw new ExecutionException("Could not import an already imported source");
 					}
 					// TODO: Alternativ-Advertisements auswählen lassen vom
