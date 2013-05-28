@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
+import org.eclipse.ui.internal.misc.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +38,22 @@ import org.slf4j.LoggerFactory;
 public class OdysseusApplication implements IApplication {
 
 	private static Logger LOG = LoggerFactory.getLogger(OdysseusApplication.class);	
-
+	private static final String DEBUG_SWT_SYS_PROPERTY = "debug.swt";
+	
 	@Override
 	public synchronized Object start(IApplicationContext context) {
 
-		Display display = PlatformUI.createDisplay();
+		Display display;
+		String doDebug = System.getProperty(DEBUG_SWT_SYS_PROPERTY);
+		if( doDebug != null && doDebug.equalsIgnoreCase("true")) {
+			Policy.DEBUG_SWT_GRAPHICS = true;
+			display = PlatformUI.createDisplay();
+			Sleak sleak = new Sleak();
+		    sleak.open();
+		} else {
+			display = PlatformUI.createDisplay();
+		}
+	    
 		try {
 			
 			if( !chooseWorkspace(display) ) {
