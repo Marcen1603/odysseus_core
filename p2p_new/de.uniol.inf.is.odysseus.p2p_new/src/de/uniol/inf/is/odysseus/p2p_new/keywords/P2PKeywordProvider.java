@@ -14,6 +14,7 @@ public class P2PKeywordProvider implements IPreParserKeywordProvider {
 		Map<String, Class<? extends IPreParserKeyword>> keywords = Maps.newHashMap();
 		keywords.put(ExportPreParserKeyword.KEYWORD, ExportPreParserKeyword.class);
 		keywords.put(UnexportPreParserKeyword.KEYWORD, UnexportPreParserKeyword.class);
+		keywords.put(ExportAllPreParserKeyword.KEYWORD, ExportAllPreParserKeyword.class);
 		return keywords;
 	}
 
