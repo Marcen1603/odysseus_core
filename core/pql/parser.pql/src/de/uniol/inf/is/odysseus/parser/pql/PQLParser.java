@@ -52,7 +52,7 @@ public class PQLParser implements IQueryParser {
 //		this.dataDictionary = dd;
 		PQLParserImpl.setUser(user);
 		PQLParserImpl.setDataDictionary(dd);
-		return parse(new StringReader(query),user, dd);
+		return parse(new StringReader(query),user, dd);		
 	}
 
 	@Override
@@ -76,6 +76,7 @@ public class PQLParser implements IQueryParser {
 			List<ILogicalQuery> queries = PQLParserImpl.query();
 			for (ILogicalQuery query : queries) {
 				query.setParserId(getLanguage());
+				query.setUser(user);
 			}
 			return queries;
 		} catch (Exception e) {
