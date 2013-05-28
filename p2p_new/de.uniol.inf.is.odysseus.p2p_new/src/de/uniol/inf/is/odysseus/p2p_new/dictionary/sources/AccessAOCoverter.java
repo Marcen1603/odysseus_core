@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary.sources;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,6 @@ public final class AccessAOCoverter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccessAOCoverter.class);
 
-//	private static final String ID_TAG = "id";
 	private static final String INPUT_SCHEMA_TAG = "inputSchema";
 	private static final String INPUT_SCHEMA_ITEM_TAG = "inputSchemaItem";
 	private static final String PORT_TAG = "port";
@@ -42,10 +43,6 @@ public final class AccessAOCoverter {
 	private static final String TRANSPORTHANDLER_TAG = "transportHandler";
 	private static final String OUTPUTSCHEMA_TAG = "outputSchema";
 
-//	public static String[] getIndexableFieldTags() {
-//		return new String[] { SOURCE_NAME_TAG };
-//	}
-
 	public static AccessAO toAccessAO(TextElement<?> root) {
 		final Enumeration<?> elements = root.getChildren();
 		final AccessAO accessOperator = new AccessAO();
@@ -57,14 +54,7 @@ public final class AccessAOCoverter {
 		return accessOperator;
 	}
 
-//	public static Document toDocument(MimeMediaType asMimeType, ID id, AccessAO accessOperator) {
 	public static void toDocument(Element<?> root, AccessAO accessOperator) {
-//		final StructuredDocument<?> doc = StructuredDocumentFactory.newStructuredDocument(asMimeType, StreamAdvertisement.getAdvertisementType());
-//		if (doc instanceof Attributable) {
-//			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
-//		}
-
-//		appendElement(doc, ID_TAG, id.toString());
 		final Element<?> inputSchemaElement = appendElement(root, INPUT_SCHEMA_TAG);
 		if (accessOperator.getInputSchema() != null && !accessOperator.getInputSchema().isEmpty()) {
 			for (final String entry : accessOperator.getInputSchema()) {
@@ -72,7 +62,7 @@ public final class AccessAOCoverter {
 			}
 		}
 		appendElement(root, PORT_TAG, String.valueOf(accessOperator.getPort()));
-		appendElement(root, HOST_TAG, accessOperator.getHost());
+		appendElement(root, HOST_TAG, determineHost(accessOperator.getHost()));
 		appendElement(root, LOGIN_TAG, accessOperator.getLogin());
 		appendElement(root, PASSWORD_TAG, accessOperator.getPassword());
 		appendElement(root, AUTOCONNECT_TAG, String.valueOf(accessOperator.isAutoReconnectEnabled()));
@@ -102,8 +92,22 @@ public final class AccessAOCoverter {
 				appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
 			}
 		}
+	}
 
-//		return doc;
+	private static String determineHost(String host) {
+		if (host == null) {
+			return null;
+		}
+
+		try {
+			if (host.equalsIgnoreCase("localhost") || host.equalsIgnoreCase("127.0.0.1")) {
+				return InetAddress.getLocalHost().getHostAddress();
+			}
+			return host;
+		} catch (UnknownHostException e) {
+			LOG.error("Could not determine host-name for accessao", e);
+			return host;
+		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -176,15 +180,6 @@ public final class AccessAOCoverter {
 			LOG.warn("Unknown element name: {}", elem.getName());
 		}
 	}
-
-//	private static void handleIDTag(StreamAdvertisement adv, TextElement<?> elem) {
-//		try {
-//			final URI id = new URI(elem.getTextValue());
-//			adv.setID(IDFactory.fromURI(id));
-//		} catch (URISyntaxException | ClassCastException ex) {
-//			LOG.error("Could not set id", ex);
-//		}
-//	}
 
 	private static void handleInputSchemaElement(AccessAO accessAO, TextElement<?> root) {
 		final Enumeration<?> children = root.getChildren();
