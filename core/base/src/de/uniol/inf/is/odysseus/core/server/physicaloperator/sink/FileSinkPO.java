@@ -94,12 +94,15 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 			if (xmlSink) {
 				serializer = new Persister();
 			}
+			LOG.debug("Trying to open "+filename);
 			out = new BufferedWriter(new FileWriter(FileUtils.openOrCreateFile(filename), this.append));
-			lock.unlock();
+			LOG.debug("Open "+filename+" success.");
 		} catch (IOException e) {
 			OpenFailedException ex = new OpenFailedException(e);
 			ex.fillInStackTrace();
 			throw ex;
+		} finally{
+			lock.unlock();
 		}
 
 	}
@@ -192,9 +195,10 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 					lock.lock();
 					out.close();
 					out = null;
-					lock.unlock();
 				} catch (IOException e) {
 					e.printStackTrace();
+				}finally{
+					lock.unlock();
 				}
 				LOG.debug("FileSinkPO.done");
 			}
