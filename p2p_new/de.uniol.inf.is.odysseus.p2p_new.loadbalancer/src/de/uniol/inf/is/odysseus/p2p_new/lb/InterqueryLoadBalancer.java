@@ -28,10 +28,13 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPartAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.lb.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -161,6 +164,9 @@ public class InterqueryLoadBalancer implements ILogicalQueryDistributor {
 		// List of all queryparts over all queries
 		final List<QueryPart> allQueryParts = Lists.newArrayList();
 		final Map<ILogicalQuery, List<QueryPart>> queryPartsMap = Maps.newHashMap();
+		
+		// XXX List of sessions over all queryparts
+		final Map<QueryPart, ISession> sessionMap = Maps.newHashMap();
 
 		for(final ILogicalQuery query : queriesToDistribute) {
 			
@@ -174,12 +180,16 @@ public class InterqueryLoadBalancer implements ILogicalQueryDistributor {
 			LOG.debug("Got {} parts of logical query {}", queryParts.size(), query);
 			
 			// Generate a new logical operator which marks that the query result shall return to this instance
-			List<ILogicalOperator> localPart = Lists.newArrayList();
-			localPart.add(generateRenameAO(queryParts));
-			queryParts.add(new QueryPart(localPart));
+			// TODO
+//			List<ILogicalOperator> localPart = Lists.newArrayList();
+//			localPart.add(generateRenameAO(queryParts));
+//			queryParts.add(new QueryPart(localPart));
 			
 			allQueryParts.addAll(queryParts);
 			queryPartsMap.put(query, queryParts);
+			
+			for(QueryPart part : queryParts)
+				sessionMap.put(part, query.getUser());
 			
 		}
 		
@@ -198,9 +208,8 @@ public class InterqueryLoadBalancer implements ILogicalQueryDistributor {
 				qPDMap.put(part, queryPartDistributionMap.get(part));
 			
 			// publish the queryparts
-			// TODO
 //			publish(qPDMap, sharedQueryID, cfgName);
-			shareParts(qPDMap, sharedQueryID, cfgName);
+			shareParts(qPDMap, sharedQueryID, cfgName, sessionMap);
 		
 		}
 		
@@ -413,25 +422,30 @@ public class InterqueryLoadBalancer implements ILogicalQueryDistributor {
 	 * @param sharedQueryID The {@link ID} for query sharing.
 	 * @param transCfgName The name of the transport configuration.
 	 */
-	// TODO
 //	private static void publish(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, String transCfgName) {
 //		
 //		for(final QueryPart part : queryPartDistributionMap.keySet())
 //			publish(part, queryPartDistributionMap.get(part), sharedQueryID, transCfgName);
 //		
 //	}
-	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, String transCfgName) {
+	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, String transCfgName, 
+			Map<QueryPart, ISession> sessionMap) {
+		
 		final List<QueryPart> localParts = Lists.newArrayList();
-
 		final PeerID ownPeerID = p2pDictionary.getLocalPeerID();
 
-		for (final QueryPart part : queryPartDistributionMap.keySet()) {
+		for(final QueryPart part : queryPartDistributionMap.keySet()) {
+			
 			final PeerID assignedPeerID = queryPartDistributionMap.get(part);
-			if (assignedPeerID.equals(ownPeerID)) {
+			if(assignedPeerID.equals(ownPeerID)) {
+				
 				localParts.add(part);
 				LOG.debug("QueryPart {} locally stored", part);
+				
 			} else {
-				publish(part, assignedPeerID, sharedQueryID, transCfgName);
+				
+				publish(replaceStreamAOs(part, sessionMap.get(part)), assignedPeerID, sharedQueryID, transCfgName);
+				
 			}
 		}
 
@@ -446,53 +460,32 @@ public class InterqueryLoadBalancer implements ILogicalQueryDistributor {
 	 * @param sharedQueryID The {@link ID} for query sharing.
 	 * @param transCfgName The name of the transport configuration.
 	 */
-//	private static void publish(QueryPart part, PeerID destinationPeerID, ID sharedQueryID, String transCfgName) {
-//		
-//		Preconditions.checkNotNull(part, "QueryPart to share must not be null!");
-//		part.removeDestinationName();
-//
-//		// Get a new advertisement
-//		final QueryPartAdvertisement adv = 
-//				(QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
-//		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
-//		adv.setPeerID(destinationPeerID);
-//		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
-//		adv.setSharedQueryID(sharedQueryID);
-//		adv.setTransCfgName(transCfgName);
-//
-//		// Publish query part
-//		try {
-//			
-//			P2PNewPlugIn.getDiscoveryService().publish(adv, 10000, 10000);
-//			LOG.debug("QueryPart {} published", part);	
-//			
-//		} catch(final IOException ex) {
-//			
-//			LOG.error("Could not publish query part", ex);
-//			
-//		}
-//		
-//	}
-	private static void publish(QueryPart part, PeerID destinationPeer, ID sharedQueryID, String transCfgName) {
+	private static void publish(QueryPart part, PeerID destinationPeerID, ID sharedQueryID, String transCfgName) {
+		
 		Preconditions.checkNotNull(part, "QueryPart to share must not be null!");
 		part.removeDestinationName();
 
-		final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
+		// Get a new advertisement
+		final QueryPartAdvertisement adv = 
+				(QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
 		adv.setID(IDFactory.newPipeID(p2pDictionary.getLocalPeerGroupID()));
-		adv.setPeerID(destinationPeer);
+		adv.setPeerID(destinationPeerID);
 		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
 		adv.setSharedQueryID(sharedQueryID);
 		adv.setTransCfgName(transCfgName);
 
-		tryPublishImpl(adv);
-		LOG.debug("QueryPart {} published", part);
-	}
-	private static void tryPublishImpl(QueryPartAdvertisement adv) {
+		// Publish query part
 		try {
+			
 			JxtaServicesProviderService.get().getDiscoveryService().publish(adv, 10000, 10000);
-		} catch (final IOException ex) {
+			LOG.debug("QueryPart {} published", part);	
+			
+		} catch(final IOException ex) {
+			
 			LOG.error("Could not publish query part", ex);
+			
 		}
+		
 	}
 	
 	/**
@@ -532,44 +525,79 @@ public class InterqueryLoadBalancer implements ILogicalQueryDistributor {
 			PeerID localPeerID, List<QueryPart> queryParts) {
 		
 		final Map<QueryPart, PeerID> distributed = Maps.newHashMap();
-		final Map<String, PeerID> assignedDestinations = Maps.newHashMap();
-
-		// Get all present instances
-		for(final PeerID remotePeerID : remotePeerIDs) {
-			
-			// Skip local peer
-			if(remotePeerID == localPeerID)
-				continue;
-			
-			final Optional<String> optRemotePeerName = p2pDictionary.getPeerRemoteName(remotePeerID);
-			if(optRemotePeerName.isPresent())
-				assignedDestinations.put(optRemotePeerName.get(), remotePeerID);
-			
-		}
-
-		// Round-Robin-assignment
-		final List<PeerID> remotePeerIDList = Lists.newArrayList(remotePeerIDs);
 		int peerCounter = 0;
-		for(final QueryPart queryPart : queryParts) {
-			final String destinationName = queryPart.getDestinationName().get();
-
-			PeerID assignedPeer = assignedDestinations.get(destinationName);
-			if(assignedPeer == null) {
-				// destination has currently no peer assigned
-				assignedPeer = remotePeerIDList.get(peerCounter);
-				// using round robin to assign peers
-				peerCounter = (peerCounter + 1) % remotePeerIDList.size();
-				assignedDestinations.put(destinationName, assignedPeer);
-			}
-
-			queryPart.removeDestinationName();
-			distributed.put(queryPart, assignedPeer);
-
-			LOG.debug("Assign query part {} to peer {}", queryPart, assignedPeer);
+		
+		for(final QueryPart part : queryParts) {
+			
+			PeerID peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
+			Optional<String> peerName = p2pDictionary.getPeerRemoteName(peerID);
+			
+			if(part.getDestinationName().isPresent() && part.getDestinationName().get().equals(LOCAL_DESTINATION_NAME)) {
+				
+				// Local part
+				distributed.put(part, localPeerID);
+				
+			} else {
+				
+				// Skip local peer for distributed part
+				while(peerID == localPeerID) {
+					
+					// Round-Robin
+					peerCounter = (peerCounter++) % remotePeerIDs.size();
+					
+				}
+				
+				distributed.put(part, peerID);
+				
+			}			
+			
+			if(peerName.isPresent())
+				LOG.debug("Assign query part {} to peer {}", part, peerName.get());
+			else LOG.debug("Assign query part {} to peer {}", part, peerID);
 			
 		}
 
 		return distributed;
+		
+	}
+	
+	private static QueryPart replaceStreamAOs(QueryPart part, ISession session) {
+		
+		final List<ILogicalOperator> newOperators = Lists.newArrayList();
+		
+		for(ILogicalOperator operator : part.getOperators()) {
+			
+			if(operator instanceof StreamAO)
+				continue;
+			else
+			
+			for(LogicalSubscription sub : operator.getSubscribedToSource()) {
+				
+				if(sub.getTarget() instanceof StreamAO) {
+					
+					StreamAO stream = (StreamAO) sub.getTarget();
+					
+					ILogicalOperator streamPlan = DataDictionaryService.get().
+							getStreamForTransformation(stream.getStreamname(), session);
+					operator.unsubscribeFromSource(sub);
+					operator.subscribeToSource(streamPlan, sub.getSinkInPort(), 
+							sub.getSourceOutPort(), sub.getSchema());
+					streamPlan.subscribeSink(operator, sub.getSourceOutPort(), sub.getSinkInPort(), sub.getSchema());
+					List<ILogicalOperator> streamPlanList = Lists.newArrayList();
+					collectOperators(streamPlan, streamPlanList);
+					newOperators.addAll(streamPlanList);
+					
+				}
+				
+			}
+			
+			newOperators.add(operator);
+			
+		}
+		
+		if(part.getDestinationName().isPresent())
+			return new QueryPart(newOperators, part.getDestinationName().get());
+		else return new QueryPart(newOperators);
 		
 	}
 
