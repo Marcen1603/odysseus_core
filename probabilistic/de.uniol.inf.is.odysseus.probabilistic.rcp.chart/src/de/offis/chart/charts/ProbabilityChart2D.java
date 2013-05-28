@@ -361,4 +361,9 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
             series.add(item);
         }
     }
+
+	@Override
+	protected void reloadChart() {
+		
+	}
 }

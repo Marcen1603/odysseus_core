@@ -159,7 +159,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	protected abstract JFreeChart createChart();
 
 	@Override
-	public final void chartSettingsChanged() {
+	public void chartSettingsChanged() {
 		fireDashboardChangedEvent();
 		reloadChart();	
 	}

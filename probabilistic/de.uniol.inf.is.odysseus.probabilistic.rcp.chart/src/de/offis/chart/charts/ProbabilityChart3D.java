@@ -314,4 +314,9 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistribut
     public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes) {
         return checkAtLeastOneSelectedAttribute(selectAttributes);
     }
+
+	@Override
+	protected void reloadChart() {
+		
+	}
 }
