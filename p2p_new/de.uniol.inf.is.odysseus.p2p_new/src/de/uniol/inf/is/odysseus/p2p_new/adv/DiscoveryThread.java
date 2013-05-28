@@ -36,6 +36,7 @@ public class DiscoveryThread extends RepeatingJobThread {
 	@Override
 	public void doJob() {
 		if( JxtaServicesProvider.isActivated() ) {
+			JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 99, listener);
 			JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99, listener);
 		}
 	}

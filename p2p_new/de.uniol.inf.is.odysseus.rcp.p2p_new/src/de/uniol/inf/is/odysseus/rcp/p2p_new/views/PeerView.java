@@ -187,19 +187,11 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 
 	@Override
 	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
-		synchronized (foundPeerIDs) {
-			foundPeerIDs.add(id);
-		}
-
 		refreshTable();
 	}
 
 	@Override
 	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
-		synchronized (foundPeerIDs) {
-			foundPeerIDs.remove(id);
-		}
-
 		refreshTable();
 	}
 	

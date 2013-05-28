@@ -1,15 +1,13 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary.peers;
 
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import net.jxta.discovery.DiscoveryEvent;
-import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
-import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.protocol.PeerAdvertisement;
 
 import org.slf4j.Logger;
@@ -22,7 +20,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
-public class PeerManager implements DiscoveryListener {
+public class PeerManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerManager.class);
 
@@ -37,7 +35,22 @@ public class PeerManager implements DiscoveryListener {
 			@Override
 			public void doJob() {
 				if( JxtaServicesProvider.isActivated() ) {
-					JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, PeerManager.this);
+					try {
+						
+						Enumeration<Advertisement> advs = JxtaServicesProvider.getInstance().getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
+						List<PeerAdvertisement> peerAdvs = Lists.newArrayList();
+						while (advs.hasMoreElements()) {
+							Advertisement adv = advs.nextElement();
+							if( adv instanceof PeerAdvertisement ) {
+								PeerAdvertisement peerAdv = (PeerAdvertisement)adv;
+								peerAdvs.add(peerAdv);
+							}
+						}
+						processPeerAdvertisements(peerAdvs);
+						
+					} catch (IOException e) {
+						LOG.error("Could not get local advertisements");
+					}
 				}
 			}
 		};
@@ -46,23 +59,6 @@ public class PeerManager implements DiscoveryListener {
 		LOG.debug("Peer manager activated");
 	}
 	
-	// called bei JXTA
-	@Override
-	public void discoveryEvent(DiscoveryEvent event) {
-		final DiscoveryResponseMsg response = event.getResponse();
-		final Enumeration<Advertisement> advs = response.getAdvertisements();
-		
-		List<PeerAdvertisement> peerAdvs = Lists.newArrayList();
-		while (advs.hasMoreElements()) {
-			Advertisement adv = advs.nextElement();
-			if( adv instanceof PeerAdvertisement ) {
-				PeerAdvertisement peerAdv = (PeerAdvertisement)adv;
-				peerAdvs.add(peerAdv);
-			}
-		}
-		processPeerAdvertisements(peerAdvs);
-	}
-
 	// called by OSGi-DS
 	public final void deactivate() {
 		peerDiscoveryThread.stopRunning();
@@ -70,7 +66,7 @@ public class PeerManager implements DiscoveryListener {
 		LOG.debug("Peer manager deactivated");
 	}
 
-	private void processPeerAdvertisements(List<PeerAdvertisement> advertisements) {
+	private static void processPeerAdvertisements(List<PeerAdvertisement> advertisements) {
 		if( !P2PDictionary.isActivated() ) {
 			return;
 		}
