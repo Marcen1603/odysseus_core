@@ -389,16 +389,12 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		
 		knownPeersMap.put(peerID, peerName);
 		firePeerAddEvent(peerID, peerName);
-		
-		System.out.println("Add: " + peerName);
 	}
 	
 	public void removePeer( PeerID peerID ) {
 		if( existsRemotePeer(peerID)) {
 			String peerName = knownPeersMap.remove(peerID);
 			firePeerRemoveEvent(peerID, peerName);
-			
-			System.out.println("Remove : " + peerName);
 		}
 	}
 	
