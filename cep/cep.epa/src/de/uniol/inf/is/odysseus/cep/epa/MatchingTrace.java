@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.State;
  */
 public class MatchingTrace<R> {
 
-	private Map<String, List<MatchedEvent<R>>> stateBuffer = new HashMap<String, List<MatchedEvent<R>>>();
+	final private Map<String, List<MatchedEvent<R>>> stateBuffer = new HashMap<String, List<MatchedEvent<R>>>();
 	/**
 	 * Referenz auf das zuletzt konsumierte Event
 	 */
@@ -51,7 +51,6 @@ public class MatchingTrace<R> {
 	}
 
 	public MatchingTrace(MatchingTrace<R> matchingTrace) {
-		this.stateBuffer = new HashMap<String, List<MatchedEvent<R>>>();
 		for (String s:matchingTrace.stateBuffer.keySet()){
 			this.stateBuffer.put(s, new ArrayList<MatchedEvent<R>>(matchingTrace.stateBuffer.get(s)));
 		}

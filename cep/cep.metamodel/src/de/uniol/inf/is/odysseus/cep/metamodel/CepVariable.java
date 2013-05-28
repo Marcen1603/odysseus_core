@@ -60,25 +60,28 @@ public class CepVariable implements Serializable{
 	 * wobei das erste Zeichen ein Buchstabe sein muss. Darf nicht null oder
 	 * leer sein.
 	 */
-	private String stateIdentifier;
+	final private String stateIdentifier;
+	
+	final private String stateVariable;
+	
 	/**
 	 * Index des Elements im StateBuffer. Negativ, wenn das oberste Element
 	 * referenziert werden soll.
 	 */
-	private Integer index;
+	final private Integer index;
 	/**
 	 * ID des Attributs. Muss von der verwendeten Implementierung von @link
 	 * {@link AbstractEventReader} aufgelöst werden können.
 	 */
 	// TODO: Hier sollte man nicht einen Attributenamen, sondern eine Expression
 	// erlauben. Dann k�nnte man auch sum(i[1]-i[1]) oder so etwas machen ...
-	private String attributename;
+	final private String attributename;
 	/**
 	 * Definiert die Operation, die bei der Aktualisierung der Symboltabelle
 	 * ausgeführt werden soll.
 	 */
 	@SuppressWarnings("rawtypes")
-	private IAggregateFunction operation;
+	final private IAggregateFunction operation;
 
 	/**
 	 * Erzeugt einen Eintrag-Objekt für das Symboltabellenschema
@@ -96,31 +99,39 @@ public class CepVariable implements Serializable{
 	@SuppressWarnings("rawtypes")
 	public CepVariable(String stateIdentifier, Integer index, String attribute, IAggregateFunction operation) {
 		this.stateIdentifier = stateIdentifier;
+		int pos = stateIdentifier.indexOf("[");
+		if (pos > 0){
+			stateVariable = stateIdentifier.substring(0,pos);
+		}else{
+			stateVariable = stateIdentifier;
+		}
 		this.index = index;
 		this.attributename = attribute;
-		this.setOperation(operation);
+		this.operation = operation;
 	}
 
 	public CepVariable(String varName) {
 		String[] split = varName.split(getSeperator());
 		this.operation = symTabOpFac.getOperation(split[0]);
-		this.stateIdentifier = split[1];
-		this.index = -1;
+		this.stateIdentifier = split[1];	
+		int pos = stateIdentifier.indexOf("[");
+		if (pos > 0){
+			stateVariable = stateIdentifier.substring(0,pos);
+		}else{
+			stateVariable = stateIdentifier;
+		}
+		int parse = -1;
 		if (split[2].length() > 0){
 			try{
-				this.index = Integer.parseInt(split[2]);
+				parse = Integer.parseInt(split[2]);
 			}catch(NumberFormatException e){
 				System.err.println("NumberFormatException");
 			}
 		}
+		this.index = parse;
 		this.attributename = split[3];
 	}
 
-	/**
-	 * leerer Standardkonstruktor
-	 */
-	public CepVariable() {
-	}
 	
 	public CepVariable restrictToVariable() {
 		return new CepVariable(null,null,attributename,null);
@@ -148,17 +159,6 @@ public class CepVariable implements Serializable{
 
 	
 	
-	/**
-	 * Setzt den Operator für den Symboltabellenschema-Eintrag.
-	 * 
-	 * @param operation
-	 *            Eine konkrete Implementierung der Symboltabellenoperation,
-	 *            nicht null.
-	 */
-	@SuppressWarnings("rawtypes")
-	public void setOperation(IAggregateFunction operation) {
-		this.operation = operation;
-	}
 
 	/**
 	 * Gibt die Symboltabellenoperation des Schema-Eintrags zurück.
@@ -180,21 +180,10 @@ public class CepVariable implements Serializable{
 		return stateIdentifier;
 	}
 
-	/**
-	 * Setzt den Namen des Events / Zustands, auf das sich der Eintrag im
-	 * Symboltabellensschema bezieht.
-	 * 
-	 * @param eventIdentifier
-	 *            Neuer Name des Events / Zustands. Muss ein String sein, der
-	 *            nur aus Buchstaben und Ziffern besteht, wobei das erste
-	 *            Zeichen ein Buchstabe sein muss. Darf nicht null sein. Ein
-	 *            leerer String kann übergeben werden, wenn sich der Eintrag
-	 *            imer aufs aktuelle Attribut beziehen soll (obwohl dieser Fall
-	 *            typischerweise nicht in der Symboltabelle auftaucht).
-	 */
-	public void setStateIdentifier(String eventIdentifier) {
-		this.stateIdentifier = eventIdentifier;
+	public String getStateVariable(){
+		return stateVariable;
 	}
+	
 
 	/**
 	 * Gibt den Index des Events im {@link StateBuffer} zurück, auf das sich
@@ -208,17 +197,6 @@ public class CepVariable implements Serializable{
 		return index;
 	}
 
-	/**
-	 * Setzt den Index des Events im {@link StateBuffer}, auf den sich der
-	 * Eintrag bezieht.
-	 * 
-	 * @param index
-	 *            Der neue Index. Negative wenn das oberste Element des
-	 *            {@link StateBuffer} referenziert werden soll.
-	 */
-	public void setIndex(Integer index) {
-		this.index = index;
-	}
 
 	/**
 	 * Liefert den Namen des Attributs, auf den sich der Eintrag im
@@ -230,18 +208,6 @@ public class CepVariable implements Serializable{
 		return attributename;
 	}
 
-	/**
-	 * Setzt den Namen des Attributs, auf das sich der Eintrag im
-	 * Symboltabellenschema beziehen soll.
-	 * 
-	 * @param attribute
-	 *            Der neue Attributname, nicht null. Nicht leerer String, der
-	 *            nur aus Buchstaben und Zahlen bestehen darf, wobei das erste
-	 *            Zeichen ein Buchstabe sein muss.
-	 */
-	public void setAttribute(String attributename) {
-		this.attributename = attributename;
-	}
 
 	public String toString(String indent) {
 		String str = "CEP VarName: " + this.getVariableName();

@@ -512,7 +512,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 			// String[] split = varName.split(CepVariable.getSeperator());
 			// int index = split[2].isEmpty() ? -1 : Integer.parseInt(split[2]);
 			MatchedEvent<R> event = instance.getMatchingTrace().getEvent(
-					varName.getStateIdentifier(), varName.getIndex());
+					varName.getStateVariable(), varName.getIndex());
 			if (event != null) {
 				IEventReader<R, ?> eventR = this.eventReader.get(port);
 				if (port > 0) {
