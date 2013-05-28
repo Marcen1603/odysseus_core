@@ -330,6 +330,15 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return schema;
 	}
 	
+	public static SDFSchema changeSourceName(SDFSchema schema, String newName){
+		List<SDFAttribute> newattributeList = new ArrayList<SDFAttribute>();
+		for(SDFAttribute a : schema.getAttributes()){
+			newattributeList.add(new SDFAttribute(newName, a.getAttributeName(), a));
+		}
+		SDFSchema newSchema = new SDFSchema(newName, newattributeList);
+		return newSchema;
+	}
+	
 
 
 }

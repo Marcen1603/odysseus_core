@@ -61,8 +61,8 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 		// finally, there must be a physical transformed stream in the data dictionary,
 		// so use this and transform the operator!
 		ISource<?> po = getDataDictionary().getAccessPlan(operator.getStreamname());		
-		defaultExecute(operator, po, transformConfig, true, true);
-		po.setName(operator.getStreamname());
+		defaultExecute(operator, po, transformConfig, true, true, false);
+		//po.setName(operator.getStreamname());
 
 		
 

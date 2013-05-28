@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
@@ -46,6 +47,7 @@ import de.uniol.inf.is.odysseus.core.server.store.StoreException;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.NullUserException;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.server.util.ClearPhysicalSubscriptionsLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.RemoveIdLogicalGraphVisitor;
@@ -208,6 +210,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	@SuppressWarnings("unchecked")
 	public void setView(String view, ILogicalOperator topOperator, ISession caller) throws DataDictionaryException {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_VIEW)) {
+			
+			setNameToAccess(view, topOperator);
+			
+			
 			String viewNameNormalized = createUserUri(view, caller);
 			if (viewDefinitions.containsKey(viewNameNormalized)) {
 				throw new DataDictionaryException("View " + viewNameNormalized + " already exists. Drop First");
@@ -236,6 +242,19 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		} else {
 			throw new PermissionException("User " + caller.getUser().getName() + " has no permission to add a view.");
 		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void setNameToAccess(String view, ILogicalOperator topOperator) {
+		CollectOperatorLogicalGraphVisitor<ILogicalOperator> collectVisitor = new CollectOperatorLogicalGraphVisitor<ILogicalOperator>(AccessAO.class);		
+		GenericGraphWalker collectWalker = new GenericGraphWalker();
+		collectWalker.prefixWalk(topOperator, collectVisitor);
+		for(ILogicalOperator op : collectVisitor.getResult()){				
+			SDFSchema renamed = SDFSchema.changeSourceName(op.getOutputSchema(), view);
+			op.setOutputSchema(renamed);
+			op.setName(view);
+		}
+		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -320,6 +339,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			if (streamDefinitions.containsKey(streamname) || streamDefinitions.containsKey(createUserUri(streamname, caller))) {
 				throw new DataDictionaryException("Stream " + createUserUri(streamname, caller) + " already exists. Remove First");
 			}
+			setNameToAccess(streamname, plan);
 			synchronized (streamDefinitions) {
 				try {
 					streamDefinitions.put(createUserUri(streamname, caller), plan);

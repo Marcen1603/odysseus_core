@@ -35,12 +35,12 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 
 	static Logger logger = LoggerFactory.getLogger(AbstractTransformationRule.class);
 
-	protected void defaultExecute(ILogicalOperator logical, IPhysicalOperator physical, TransformationConfiguration config, boolean retract, boolean insert, boolean ignoreSinkInput) {
+	protected void defaultExecute(ILogicalOperator logical, IPhysicalOperator physical, TransformationConfiguration config, boolean retract, boolean insert, boolean ignoreSinkInput, boolean rename) {
 		// Check if operator has an id and if this id is not already defined
 		// Attention, id can be null
 		handleOperatorID(logical, physical);
 
-		updatePhysicalOperator(logical, physical);
+		updatePhysicalOperator(logical, physical, rename);
 
 		replace(logical, physical, config, ignoreSinkInput);
 
@@ -52,12 +52,14 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 		}
 	}
 
-	protected void updatePhysicalOperator(ILogicalOperator logical, IPhysicalOperator physical) {
+	protected void updatePhysicalOperator(ILogicalOperator logical, IPhysicalOperator physical, boolean rename) {
 		physical.setOutputSchema(logical.getOutputSchema());
 		if (logical.getOutputSchema() == null) {
 			logger.warn("Operator " + logical + " has not output schema");
 		}
-		physical.setName(logical.getName());
+		if(rename){
+			physical.setName(logical.getName());
+		}
 		physical.getParameterInfos().putAll(logical.getParameterInfos());
 	}
 
@@ -77,7 +79,11 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 	}
 
 	protected void defaultExecute(ILogicalOperator logical, IPhysicalOperator physical, TransformationConfiguration config, boolean retract, boolean insert) {
-		defaultExecute(logical, physical, config, retract, insert, false);
+		defaultExecute(logical, physical, config, retract, insert, false, true);
+	}
+	
+	protected void defaultExecute(ILogicalOperator logical, IPhysicalOperator physical, TransformationConfiguration config, boolean retract, boolean insert, boolean rename) {
+		defaultExecute(logical, physical, config, retract, insert, false, rename);
 	}
 
 	protected void replace(ILogicalOperator oldOperator, IPhysicalOperator newOperator, TransformationConfiguration transformationConfig) {
