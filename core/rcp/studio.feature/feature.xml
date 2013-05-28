@@ -54,6 +54,10 @@ Unless required by applicable law or agreed to in writing, software
          id="org.eclipse.zest"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.rcp.dashboard.feature"
+         version="0.0.0"/>
+
    <requires>
       <import feature="de.uniol.inf.is.odysseus.core.feature" match="greaterOrEqual"/>
    </requires>
