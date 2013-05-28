@@ -26,39 +26,48 @@ public abstract class AbstractStartQueryCommand extends AbstractHandler implemen
 	protected Logger logger = LoggerFactory.getLogger(AbstractStartQueryCommand.class);
 
 	
-	public Object start(Collection<Integer> queryIds){
-		for (final Integer qID : queryIds) {
-			final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
-			if (executor != null) {
-				// Asynchron zur GUI ausf�hren, damit
-				// die GUI bei l�ngeren Queries
-				// nicht warten muss.
-				Job job = new Job("Starting query") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
+	public Object start(final Collection<Integer> queryIds) {
+		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
+		if (executor != null) {
+			
+			final int queryCount = queryIds.size();
+			Job job = new Job("Starting " + queryCount + " queries") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					int started = 0;
+					monitor.beginTask("Starting " + queryCount + " queries", queryCount);
+					for (final Integer qID : queryIds) {
 						try {
+							monitor.subTask("Starting query " + (started + 1) + "of " + queryCount + ": " + qID);
 							executor.startQuery(qID, OdysseusRCPPlugIn.getActiveSession());
-							StatusBarManager.getInstance().setMessage("Query started");
+							monitor.worked(1);
+
+							if( monitor.isCanceled() ) {
+								break;
+							}
+							
 						} catch (PlanManagementException e) {
-							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant start query:\n See error log for details", e);
+							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant start query " + qID + ":\n See error log for details", e);
 						} catch (PermissionException e) {
-							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant start query:\n See error log for details", e);
+							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant start query " + qID + ":\n See error log for details", e);
 						}
-						return Status.OK_STATUS;
 					}
-				};
-				job.setUser(true);
-				job.schedule();
+					monitor.done();
+					StatusBarManager.getInstance().setMessage( started + " queries started");
+					return Status.OK_STATUS;
+				}
+			};
+			job.setUser(true);
+			job.schedule();
 
-			} else {
-				logger.error(OdysseusNLS.NoExecutorFound);
-				MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
-				box.setMessage(OdysseusNLS.NoExecutorFound);
-				box.setText("Error");
-				box.open();
+		} else {
+			logger.error(OdysseusNLS.NoExecutorFound);
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
+			box.setMessage(OdysseusNLS.NoExecutorFound);
+			box.setText("Error");
+			box.open();
 
-				return null;
-			}
+			return null;
 		}
 		return null;
 	}
