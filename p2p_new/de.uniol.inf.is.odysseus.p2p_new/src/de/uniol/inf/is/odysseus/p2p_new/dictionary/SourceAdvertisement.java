@@ -135,14 +135,8 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 			AccessAOCoverter.toDocument(element, accessAO);
 			
 		} else {
-		
 			// internal source
 			appendElement(doc, PIPEID_TAG, pipeID.toString());
-	
-			final Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
-			for (final SDFAttribute attr : outputSchema) {
-				appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
-			}
 			
 			if( sameAs != null && !sameAs.isEmpty() ) {
 				final Element<?> sameElement = appendElement(doc, SAME_AS_TAG);
@@ -151,6 +145,12 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 				}
 			}
 		}
+		
+		final Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
+		for (final SDFAttribute attr : outputSchema) {
+			appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
+		}
+
 
 		return doc;
 	}
