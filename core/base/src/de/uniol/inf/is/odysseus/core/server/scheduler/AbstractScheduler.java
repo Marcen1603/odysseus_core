@@ -292,8 +292,8 @@ public abstract class AbstractScheduler implements
 	@Override
 	final public void setPartialPlans(Collection<IPhysicalQuery> partialPlans) {
 		this.partialPlans.clear();
-		this.partialPlans.addAll(partialPlans);
 		process_setPartialPlans(partialPlans);
+		this.partialPlans.addAll(partialPlans);
 	}
 
 	abstract protected void process_setPartialPlans(
