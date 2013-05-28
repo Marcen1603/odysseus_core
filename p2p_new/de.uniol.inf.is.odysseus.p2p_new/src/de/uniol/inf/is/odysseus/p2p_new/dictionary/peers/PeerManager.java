@@ -36,7 +36,8 @@ public class PeerManager {
 			public void doJob() {
 				if( JxtaServicesProvider.isActivated() ) {
 					try {
-						
+						JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0);
+					
 						Enumeration<Advertisement> advs = JxtaServicesProvider.getInstance().getDiscoveryService().getLocalAdvertisements(DiscoveryService.PEER, null, null);
 						List<PeerAdvertisement> peerAdvs = Lists.newArrayList();
 						while (advs.hasMoreElements()) {

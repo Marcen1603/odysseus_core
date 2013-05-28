@@ -1,12 +1,11 @@
 package de.uniol.inf.is.odysseus.p2p_new.adv;
 
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
 
-import net.jxta.discovery.DiscoveryEvent;
-import net.jxta.discovery.DiscoveryListener;
+import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
-import net.jxta.protocol.DiscoveryResponseMsg;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +18,9 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
-public class AdvertisementManager implements IAdvertisementManager, DiscoveryListener {
+public class AdvertisementManager implements IAdvertisementManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementManager.class);
 	private static final long DISCOVERY_INTERVAL_MILLIS = 5 * 1000;
@@ -30,11 +30,27 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 	private final List<IAdvertisementListener> listeners = Lists.newArrayList();
 	
 	private List<Advertisement> knownAdvertisements = Lists.newArrayList();
-	private DiscoveryThread discoveryThread;
+	private RepeatingJobThread discoveryThread;
 
 	// called by OSGi-DS
 	public final void activate() {
-		discoveryThread = new DiscoveryThread(DISCOVERY_INTERVAL_MILLIS, this);
+		discoveryThread = new RepeatingJobThread(DISCOVERY_INTERVAL_MILLIS, "Advertisement discovery thread") {
+			@Override
+			public void doJob() {
+				if (JxtaServicesProvider.isActivated()) {
+					JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99);
+
+					try {
+						Enumeration<Advertisement> localAdvertisements = JxtaServicesProvider.getInstance().getDiscoveryService().getLocalAdvertisements(DiscoveryService.ADV, null, null);
+						process(localAdvertisements);
+						
+					} catch (IOException e) {
+						LOG.error("Could not get local advertisements", e);
+					}
+				}
+			}
+		};
+		
 		discoveryThread.start();
 
 		instance = this;
@@ -70,15 +86,9 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 	// called by OSGi-DS
 	public final void deactivate() {
 		discoveryThread.stopRunning();
-		JxtaServicesProvider.getInstance().getDiscoveryService().removeDiscoveryListener(this);
 
 		instance = null;
 		LOG.debug("Advertisement manager deactivated");
-	}
-
-	@Override
-	public void discoveryEvent(DiscoveryEvent event) {
-		process(event);
 	}
 
 	@Override
@@ -119,15 +129,12 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 		}
 	}
 
-	private void process(DiscoveryEvent event) {
+	private void process(Enumeration<Advertisement> advs) {
 		List<Advertisement> newAdvertisements = Lists.newArrayList();
 		List<Advertisement> oldAdvertisements = null;
 		synchronized( knownAdvertisements ) {
 			oldAdvertisements = Lists.newArrayList(knownAdvertisements);
 		}
-		
-		final DiscoveryResponseMsg response = event.getResponse();
-		final Enumeration<Advertisement> advs = response.getAdvertisements();
 		
 		while (advs.hasMoreElements()) {
 			final Advertisement adv = advs.nextElement();
