@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.costmodel.operator.util;
+package de.uniol.inf.is.odysseus.core.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +41,11 @@ public class LogicalGraphWalker {
 	 */
 	public LogicalGraphWalker(List<ILogicalOperator> operators) {
 		this.operators = operators;
+	}
+
+	public LogicalGraphWalker(ILogicalOperator logicalPlan) {
+		this.operators = new ArrayList<ILogicalOperator>();
+		this.operators.add(logicalPlan);
 	}
 
 	/**
