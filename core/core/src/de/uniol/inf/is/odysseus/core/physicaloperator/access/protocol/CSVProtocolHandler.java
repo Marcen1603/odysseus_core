@@ -35,6 +35,7 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 		super(direction, access);
 	}
 
+	@Override
 	protected T readLine(String line) {
 		List<String> ret = new LinkedList<String>();
 		StringBuffer elem = new StringBuffer();
