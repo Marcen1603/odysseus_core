@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -9,10 +10,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 
@@ -20,13 +24,14 @@ public class Heatmap extends RasterLayer {
 
 	ScreenManager screenManager;
 	RasterLayerConfiguration config;
-	ArrayList<Tuple<?>> data;
+//	ArrayList<Tuple<?>> data;
+	private LayerUpdater layerUpdater;
 	
 	public Heatmap(RasterLayerConfiguration configuration, ScreenManager screenManager) {
 		super(configuration);
 		this.screenManager = screenManager;
 		this.config = configuration;
-		data = new ArrayList<Tuple<?>>();
+//		data = new ArrayList<Tuple<?>>();
 	}
 	
 	@Override
@@ -83,6 +88,7 @@ public class Heatmap extends RasterLayer {
 		Color[][] colors = createColorArray(4, 4);
 		
 		
+		
 		for(int i = 0; i < colors.length; i++) {
 			for(int j = 0; j < colors[i].length; j++) {
 				gc.setBackground(colors[i][j]);
@@ -105,7 +111,13 @@ public class Heatmap extends RasterLayer {
 			}
 		}
 		
-		for(Tuple<?> tuple : data) {
+		// The tuples are now stored in the LayerUpdater to reduce redundant data; 
+		int geometryAttributeIndex = 1;
+		Envelope searchEnv = new Envelope();
+		List<?> data = layerUpdater.query(searchEnv, geometryAttributeIndex);
+		
+		for(Object dataSet : data) {
+			Tuple tuple = ((DataSet) dataSet).getTuple();
 			// TODO: Do this right, not just testing
 			if((double) tuple.getAttribute(0) == 51.0 ) {
 				red += (int) tuple.getAttribute(2);
@@ -133,15 +145,21 @@ public class Heatmap extends RasterLayer {
 		return 100.0;
 	}
 	
-	/**
-	 * Hopefully the LayerUpdater will fill the tuples in here, so we can build a picture
-	 * from this data
-	 */
-	@Override
-	public void addTuple(Tuple<?> tuple) {
-		System.out.println("Tupel in der Heatmap angekommen: " + tuple.toString());
-		data.add(tuple);
-		// Maybe we should redraw the image
-	}
+//	/**
+//	 * Hopefully the LayerUpdater will fill the tuples in here, so we can build a picture
+//	 * from this data
+//	 */
+//	@Override
+//	public void addTuple(Tuple<?> tuple) {
+//		System.out.println("Tupel in der Heatmap angekommen: " + tuple.toString());
+//		data.add(tuple);
+//		// Maybe we should redraw the image
+//	}
 
+	@Override
+	public void setLayerUpdater(LayerUpdater layerUpdater) {
+		this.layerUpdater = layerUpdater;
+
+	}
+	
 }

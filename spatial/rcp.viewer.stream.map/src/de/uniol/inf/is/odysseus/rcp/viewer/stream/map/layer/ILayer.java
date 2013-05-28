@@ -21,9 +21,9 @@ import org.eclipse.swt.graphics.GC;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
@@ -44,8 +44,8 @@ public interface ILayer extends Serializable {
 	public int getSRID();
 	
 	public String[] getSupprtedDatatypes();
-	
-	public void addTuple(Tuple<?> tuple);
+		
+	public void setLayerUpdater(LayerUpdater layerUpdater);
 	
 	public Style getStyle();
 	

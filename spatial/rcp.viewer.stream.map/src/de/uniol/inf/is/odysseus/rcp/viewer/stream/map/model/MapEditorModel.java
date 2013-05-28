@@ -76,6 +76,9 @@ public class MapEditorModel extends ModelObject {
 	public void init(StreamMapEditorPart editor) {
 		// this.editor = editor;
 		this.screenManager = editor.getScreenManager();
+		for (LayerUpdater layerUpdater : connections.values()) {
+			screenManager.addPropertyChangeListener(layerUpdater);
+		}
 		for (ILayer layer : layers) {
 			if (layer != null)
 				layer.init(screenManager, null, null);

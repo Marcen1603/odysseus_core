@@ -39,6 +39,9 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 
 public class ScreenManager {
@@ -51,10 +54,16 @@ public class ScreenManager {
 	private Canvas canvas;
 	private String infoText;
 
+	private ITimeInterval interval;
+	private ITimeInterval maxInterval;
+	
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private MapMouseListener mouseListener;
 
 	public ScreenManager(ScreenTransformation transformation, StreamMapEditorPart editor) {
+		this.interval = new TimeInterval();
+		this.interval.setStart(PointInTime.getZeroTime());
+		this.maxInterval = new TimeInterval();
 		this.transformation = transformation;
 		this.transformation.setScreenManager(this);
 		this.editor = editor;
@@ -258,6 +267,74 @@ public class ScreenManager {
 		redraw();
 	}
 	
+	public ITimeInterval getInterval() {
+		return interval;
+	}
+	
+	public void setInterval(ITimeInterval interval) {
+		ITimeInterval oldInterval = this.interval;
+		this.interval = interval;
+		this.pcs.firePropertyChange("interval", oldInterval, this.interval);
+	}
+	
+	public PointInTime getIntervalStart() {
+		return this.interval.getStart();
+	}
+
+	public void setIntervalStart(PointInTime intervalStart) {
+		PointInTime oldIntervalStart = this.interval.getStart();
+		this.interval.setStart(intervalStart);
+		System.out.println(this.interval);
+		this.pcs.firePropertyChange("intervalStart", oldIntervalStart, this.interval.getStart());
+	}
+
+	public PointInTime getIntervalEnd() {
+		return this.interval.getEnd();
+	}
+
+	public void setIntervalEnd(PointInTime intervalEnd) {
+		PointInTime oldIntervalEnd = this.interval.getEnd();
+		this.interval.setEnd(intervalEnd);
+		System.out.println(this.interval);
+		this.pcs.firePropertyChange("intervalEnd", oldIntervalEnd, this.interval.getEnd());
+	}
+
+	public ITimeInterval getMaxInterval() {
+		return maxInterval;
+	}
+	
+	public void setMaxInterval(ITimeInterval maxInterval) {
+		ITimeInterval oldMaxInterval = this.maxInterval;
+		this.maxInterval = maxInterval;
+		this.pcs.firePropertyChange("maxInterval", oldMaxInterval, this.maxInterval);
+	}
+
+	public PointInTime getMaxIntervalStart() {
+		return this.maxInterval.getStart();
+	}
+
+	public void setMaxIntervalStart(PointInTime maxIntervalStart) {
+		PointInTime oldMaxIntervalStart = this.maxInterval.getStart();
+		ITimeInterval oldInterval = this.maxInterval.clone();
+		this.maxInterval.setStart(maxIntervalStart);
+		this.pcs.firePropertyChange("maxIntervalStart", oldMaxIntervalStart, this.maxInterval.getStart());
+		this.pcs.firePropertyChange("maxInterval", oldInterval, this.maxInterval);
+	}
+	
+	public PointInTime getMaxIntervalEnd() {
+		return this.maxInterval.getEnd();
+	}
+
+	public void setMaxIntervalEnd(PointInTime maxIntervalEnd) {
+		ITimeInterval oldInterval = this.maxInterval.clone();
+		if (maxIntervalEnd.before(this.maxInterval.getStart()))
+			this.setMaxIntervalStart(maxIntervalEnd);
+		PointInTime oldMaxIntervalEnd = this.maxInterval.getEnd();
+		this.maxInterval.setEnd(maxIntervalEnd.plus(1));
+		this.pcs.firePropertyChange("maxIntervalEnd", oldMaxIntervalEnd, this.maxInterval.getEnd());
+		this.pcs.firePropertyChange("maxInterval", oldInterval, this.maxInterval);
+	}
+	
 	public void zoomOut(Point pivot) {
 
 		double oldScale = this.scale;
@@ -339,7 +416,7 @@ public class ScreenManager {
 		pcs.removePropertyChangeListener(propertyName, listener);
 	}
 
-	int milliseconds = 10;
+	int milliseconds = 20;
 	Renderer renderer = null;
 	public void redraw() {
 		if (renderer == null) {
@@ -362,8 +439,8 @@ public class ScreenManager {
 		public void run() {
 			if (renderComplete == true & redrawIntent == true) {
 				setRenderComplete(false);
-				canvas.redraw();
 				setRedrawIntent(false);
+				canvas.redraw();
 			}
 			if (!canvas.isDisposed())
 				canvas.getDisplay().timerExec(milliseconds, renderer);
@@ -374,4 +451,5 @@ public class ScreenManager {
 		}
 
 	}
+
 }

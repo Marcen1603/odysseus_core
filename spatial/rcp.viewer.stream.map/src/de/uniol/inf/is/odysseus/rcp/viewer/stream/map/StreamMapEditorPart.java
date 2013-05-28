@@ -349,6 +349,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 
 	public TimeSliderComposite createTimeSliderComposite(Composite parent) {
 		timeSliderComposite = new TimeSliderComposite(parent, SWT.BORDER);
+		timeSliderComposite.setScreenmanager(this.screenManager);
 		return timeSliderComposite;
 	}
 	

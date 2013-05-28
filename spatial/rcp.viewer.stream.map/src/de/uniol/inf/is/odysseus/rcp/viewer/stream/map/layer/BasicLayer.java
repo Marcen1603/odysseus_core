@@ -13,9 +13,9 @@ import org.osgeo.proj4j.ProjCoordinate;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
@@ -120,13 +120,12 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
 	    return null;
     }
 
-
 	@Override
-    public void addTuple(Tuple<?> tuple) {
-	    // TODO Auto-generated method stub
-	    
-    }
-
+	public void setLayerUpdater(LayerUpdater layerUpdater) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
     public int getTupleCount() {
 	    // TODO Auto-generated method stub
@@ -146,4 +145,5 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
 		ct.transform(new ProjCoordinate(180, 85), coord1);
 		return new Envelope(coord0.x, coord1.x, coord0.y, coord1.y);
 	}
+
 }

@@ -1,13 +1,14 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
 import java.util.LinkedList;
+
 import org.eclipse.swt.graphics.GC;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.GroupLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
@@ -74,8 +75,9 @@ public class GroupLayer extends LinkedList<ILayer> implements ILayer {
 	}
 
 	@Override
-	public void addTuple(Tuple<?> tuple) {
+	public void setLayerUpdater(LayerUpdater layerUpdater) {
 		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

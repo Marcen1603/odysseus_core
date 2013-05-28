@@ -8,19 +8,20 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 
 public class DataSet {
 
 	private Geometry geometry = null;
-	private Tuple<?> tuple = null;
+	private Tuple<? extends ITimeInterval> tuple = null;
 
-	public DataSet(Geometry geometry, Tuple<?> tuple) {
+	public DataSet(Geometry geometry, Tuple<? extends ITimeInterval> tuple) {
 		this.geometry = geometry;
 		this.tuple = tuple;
 	}
 	
-	public DataSet(Tuple<?> tuple2, int idx, int destSrid, ScreenTransformation transformation) {
+	public DataSet(Tuple<? extends ITimeInterval> tuple2, int idx, int destSrid, ScreenTransformation transformation) {
 		this.tuple = tuple2;
 		init(idx, destSrid, transformation);
 	}
@@ -29,7 +30,7 @@ public class DataSet {
 		return geometry;
 	}
 	
-	public Tuple<?> getTuple() {
+	public Tuple<? extends ITimeInterval> getTuple() {
 		return tuple;
 	}
 

@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.graphics.GC;
@@ -29,11 +28,11 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.index.quadtree.Quadtree;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
@@ -52,64 +51,63 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  * @author Kai Pancratz
  * 
  */
-public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
+public class VectorLayer extends AbstractLayer<VectorLayerConfiguration> {
 
 	private static final long serialVersionUID = 2904911648287160846L;
 
 	static protected String[] types;
-	static{
-		types = new String[]{
-			SDFSpatialDatatype.SPATIAL_GEOMETRY.getURI(),
-			SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION.getURI(),
-			SDFSpatialDatatype.SPATIAL_POINT.getURI(),
-			SDFSpatialDatatype.SPATIAL_MULTI_POINT.getURI(),
-			SDFSpatialDatatype.SPATIAL_LINE_STRING.getURI(),
-			SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING.getURI(),
-			SDFSpatialDatatype.SPATIAL_POLYGON.getURI(),
-			SDFSpatialDatatype.SPATIAL_MULTI_POLYGON.getURI()
-		};
+	static {
+		types = new String[] { SDFSpatialDatatype.SPATIAL_GEOMETRY.getURI(), SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION.getURI(),
+				SDFSpatialDatatype.SPATIAL_POINT.getURI(), SDFSpatialDatatype.SPATIAL_MULTI_POINT.getURI(), SDFSpatialDatatype.SPATIAL_LINE_STRING.getURI(),
+				SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING.getURI(), SDFSpatialDatatype.SPATIAL_POLYGON.getURI(),
+				SDFSpatialDatatype.SPATIAL_MULTI_POLYGON.getURI() };
 	}
-	
+
+	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(VectorLayer.class);
-	
-	private LinkedList<DataSet> dataSets = new LinkedList<DataSet>();
-	private com.vividsolutions.jts.index.quadtree.Quadtree tree = new Quadtree();
-	private Envelope env = new Envelope();
+
+	// private HashMap<Tuple<? extends ITimeInterval>, DataSet> dataSets = new
+	// HashMap<Tuple<? extends ITimeInterval>, DataSet>();
+	// LinkedList<DataSet> dataSets = new LinkedList<DataSet>();
+	// private com.vividsolutions.jts.index.quadtree.Quadtree tree = new
+	// Quadtree();
+	// private Envelope env = new Envelope();
 	private ScreenTransformation transformation = null;
 	private ScreenManager screenManager = null;
 	private SDFAttribute sdfAttribute = null;
 	private Style style = null;
 	private int idx = 0;
 
-    public VectorLayer() {
-	    super(new VectorLayerConfiguration("Default"));
-    }
-	
-    public VectorLayer(VectorLayerConfiguration configuration) {
-	    super(configuration);
-    }
+	private LayerUpdater layerUpdater;
 
-	
+	public VectorLayer() {
+		super(new VectorLayerConfiguration("Default"));
+	}
+
+	public VectorLayer(VectorLayerConfiguration configuration) {
+		super(configuration);
+	}
+
 	@Override
-    public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
-		if(screenManager != null){
+	public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
+		if (screenManager != null) {
 			this.screenManager = screenManager;
 			this.transformation = screenManager.getTransformation();
 		}
-		if(this.screenManager != null && this.sdfAttribute != null){
+		if (this.screenManager != null && this.sdfAttribute != null) {
 			this.style = initStyle();
-//			this.name =  this.sdfAttribute.getAttributeName();
+			// this.name = this.sdfAttribute.getAttributeName();
 			this.active = true;
 		}
-		if(schema != null && attribute != null){
+		if (schema != null && attribute != null) {
 			this.sdfAttribute = attribute;
 			this.style.init(schema);
 			this.idx = schema.indexOf(attribute);
 		}
-    }
-	
-	private Style initStyle(){
-		if(configuration.getStyle() == null){
+	}
+
+	private Style initStyle() {
+		if (configuration.getStyle() == null) {
 			SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) sdfAttribute.getDatatype();
 			if (spatialDatatype.isPoint()) {
 				style = new PointStyle();
@@ -132,11 +130,11 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 				style.addStyle(new LineStyle());
 				style.addStyle(new PolygonStyle());
 			}
-		}	
-		
+		}
+
 		return style;
 	}
-	
+
 	public void setStyle(Style style) {
 		this.style = style;
 	}
@@ -145,26 +143,25 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 	public Style getStyle() {
 		return style;
 	}
-	
+
 	@Override
 	public void draw(GC gc) {
-		if (screenManager != null){
-		Envelope world = screenManager.getViewportWorldCoord();
-			@SuppressWarnings("unchecked")
-			List<Object> result =  this.tree.query(world);
+		if (screenManager != null) {
+			Envelope world = screenManager.getViewportWorldCoord();
+			List<?> result = this.layerUpdater.query(world, idx);
 			for (Object obj : result) {
 				DataSet dataSet = (DataSet) obj;
 				drawGeometry(dataSet.getGeometry(), gc, dataSet.getTuple());
 			}
 		}
-//		synchronized (geometries) {
-//
-//			for (Geometry geometry : geometries) {
-//				drawGeometry(geometry, gc);
-//			}
-//		}
+		// synchronized (geometries) {
+		//
+		// for (Geometry geometry : geometries) {
+		// drawGeometry(geometry, gc);
+		// }
+		// }
 	}
-	
+
 	private void drawGeometry(Geometry geometry, GC gc, Tuple<?> tuple) {
 		if (geometry instanceof Point) {
 			drawPoint((Point) geometry, gc, tuple);
@@ -185,32 +182,30 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 	}
 
 	private void drawPoint(Point point, GC gc, Tuple<?> tuple) {
-		int[] uv = transformation.transformCoord(point.getCoordinate(),point.getSRID());
+		int[] uv = transformation.transformCoord(point.getCoordinate(), point.getSRID());
 		this.style.setActiveStyle(STYLE.POINT);
 		this.style.draw(gc, uv, tuple);
 	}
 
 	private void drawLineString(LineString lineString, GC gc, Tuple<?> tuple) {
 		int i = 0;
-		int[] path = new int[lineString.getNumPoints()
-				+ lineString.getNumPoints()];
+		int[] path = new int[lineString.getNumPoints() + lineString.getNumPoints()];
 		for (Coordinate coord : lineString.getCoordinates()) {
-			int[] uv = transformation.transformCoord(coord,lineString.getSRID());
+			int[] uv = transformation.transformCoord(coord, lineString.getSRID());
 			path[i++] = uv[0];
 			path[i++] = uv[1];
 		}
-		
+
 		this.style.setActiveStyle(STYLE.LINESTRING);
-		
-		this.style.draw(gc, path, tuple);	
+
+		this.style.draw(gc, path, tuple);
 	}
 
 	private int[] drawLinearRing(LineString lineString, GC gc, Tuple<?> tuple) {
 		int i = 0;
-		int[] path = new int[lineString.getNumPoints()
-				+ lineString.getNumPoints()];
+		int[] path = new int[lineString.getNumPoints() + lineString.getNumPoints()];
 		for (Coordinate coord : lineString.getCoordinates()) {
-			int[] uv = transformation.transformCoord(coord,lineString.getSRID());
+			int[] uv = transformation.transformCoord(coord, lineString.getSRID());
 			path[i++] = uv[0];
 			path[i++] = uv[1];
 		}
@@ -224,100 +219,64 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 			list[n + 1] = drawLinearRing(polygon.getInteriorRingN(n), gc, tuple);
 		}
 		this.style.setActiveStyle(STYLE.POLYGON);
-		
 
-		
 		this.style.draw(gc, list, tuple);
 
 	}
-	
-//	public void addGeometry(Geometry geometry) {
-//		synchronized (geometries) {
-//			this.geometries.offer(geometry);
-//		}
-//	}
 
-	public void clean() {
-		LOG.debug("(CLEAN)Current Geometries:" + dataSets.size());
-		synchronized (dataSets) {
-			this.dataSets.clear();
-		}
-	}
+	// public void addGeometry(Geometry geometry) {
+	// synchronized (geometries) {
+	// this.geometries.offer(geometry);
+	// }
+	// }
+
+	// public void clean() {
+	// LOG.debug("(CLEAN)Current Geometries:" + dataSets.size());
+	// synchronized (dataSets) {
+	// this.dataSets.clear();
+	// }
+	// }
 
 	@Override
 	public String getName() {
 		return this.name;
 	}
-	
-	
+
 	@Override
 	public String getComplexName() {
 		// TODO Auto-generated method stub
 		return this.name + " (" + sdfAttribute.getAttributeName() + ")";
 	}
-	
+
 	public SDFAttribute getNativeAttribute() {
 		return this.sdfAttribute;
 	}
-	
+
 	@Override
-    public String[] getSupprtedDatatypes() {
+	public String[] getSupprtedDatatypes() {
 		return types;
-    }
-
-	@Override
-    public void addTuple(Tuple<?> tuple) {
-		int destSrid = screenManager.getSRID();
-		if (this.srid != destSrid)
-			updateTree(destSrid);
-		
-		DataSet dataSet = new DataSet(tuple, idx, destSrid, transformation);
-		synchronized (dataSets) {
-			this.dataSets.offer(dataSet);
-			this.tree.insert(dataSet.getEnvelope(), dataSet);
-			this.env.expandToInclude(dataSet.getEnvelope());
-			
-		}
-		if (this.configuration.getMaxTupleCount() < this.dataSets.size()){
-				LOG.debug("(REMOVE)Current Geometries:" + dataSets.size());
-			synchronized (dataSets) {
-				DataSet toRemove = this.dataSets.poll();
-				this.tree.remove(toRemove.getEnvelope(), toRemove);
-			}
-		}
-    }
-
-	private void updateTree(int destSrid) {
-		synchronized(this.dataSets){
-			this.tree = new Quadtree();
-			this.env = new Envelope();
-			for (DataSet dataSet : this.dataSets) {
-				dataSet.init(idx, destSrid, transformation);
-				tree.insert(dataSet.getEnvelope(), dataSet);
-				this.env.expandToInclude(dataSet.getEnvelope());
-			}
-		}
 	}
-	@Override
-    public int getTupleCount() {
-	    // TODO Auto-generated method stub
-	    return this.dataSets.size();
-    }
 
 	@Override
-	public void setConfiguration(LayerConfiguration configuration){
-		if (configuration instanceof VectorLayerConfiguration){
+	public int getTupleCount() {
+		// TODO Auto-generated method stub
+		return this.layerUpdater.size(idx);
+	}
+
+	@Override
+	public void setConfiguration(LayerConfiguration configuration) {
+		if (configuration instanceof VectorLayerConfiguration) {
 			setVectorLayerConfiguration((VectorLayerConfiguration) configuration);
 		}
 	}
 
-	public void setVectorLayerConfiguration(VectorLayerConfiguration configuration){
+	public void setVectorLayerConfiguration(VectorLayerConfiguration configuration) {
 		this.configuration = configuration;
 		this.name = configuration.getName();
-		if(configuration.getStyle() != null)
+		if (configuration.getStyle() != null)
 			this.setStyle(Style.setStyleByConfig(configuration.getStyle()));
-	}	
-	
+	}
+
 	@Override
 	public VectorLayerConfiguration getConfiguration() {
 		if (this.style != null)
@@ -328,10 +287,13 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration>{
 	@Override
 	public Envelope getEnvelope() {
 		// TODO Auto-generated method stub
-		return this.env;
+		return this.layerUpdater.getEnvelope(idx);
 	}
-	
 
-	
-	
+	@Override
+	public void setLayerUpdater(LayerUpdater layerUpdater) {
+		this.layerUpdater = layerUpdater;
+
+	}
+
 }
