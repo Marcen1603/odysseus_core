@@ -654,7 +654,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			SourceAdvertisement srcAdvertisement = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
 			srcAdvertisement.setID(IDFactory.newPipeID(localPeerGroupID));
-			srcAdvertisement.setName(streamName);
+			srcAdvertisement.setName(withoutUsername(streamName));
 			srcAdvertisement.setPeerID(localPeerID);
 			srcAdvertisement.setAccessAO(optAccessAO.get());
 			srcAdvertisement.setOutputSchema(stream.getOutputSchema());
@@ -683,7 +683,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			viewAdvertisement.setID(IDFactory.newPipeID(localPeerGroupID));
 			viewAdvertisement.setOutputSchema(view.getOutputSchema());
 			viewAdvertisement.setPipeID(pipeID);
-			viewAdvertisement.setName(viewName);
+			viewAdvertisement.setName(withoutUsername(viewName));
 			viewAdvertisement.setPeerID(localPeerID);
 
 			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement);
@@ -793,5 +793,13 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		timestampAO.subscribeTo(operator, operator.getOutputSchema());
 		timestampAO.setName(timestampAO.getStandardName());
 		return timestampAO;
+	}
+	
+	private static String withoutUsername(String streamName) {
+		int pos = streamName.indexOf(".");
+		if (pos >= 0) {
+			return streamName.substring(pos + 1);
+		}
+		return streamName;
 	}
 }
