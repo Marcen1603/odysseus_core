@@ -32,10 +32,12 @@ public abstract class AbstractStartQueryCommand extends AbstractHandler implemen
 			
 			final int queryCount = queryIds.size();
 			Job job = new Job("Starting " + queryCount + " queries") {
+				
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					int started = 0;
 					monitor.beginTask("Starting " + queryCount + " queries", queryCount);
+					
 					for (final Integer qID : queryIds) {
 						try {
 							monitor.subTask("Starting query " + (started + 1) + "of " + queryCount + ": QID=" + qID);
@@ -53,10 +55,12 @@ public abstract class AbstractStartQueryCommand extends AbstractHandler implemen
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant start query " + qID + ":\n See error log for details", e);
 						}
 					}
+					
 					monitor.done();
 					StatusBarManager.getInstance().setMessage( started + " queries started");
 					return Status.OK_STATUS;
 				}
+				
 			};
 			job.setUser(true);
 			job.schedule();

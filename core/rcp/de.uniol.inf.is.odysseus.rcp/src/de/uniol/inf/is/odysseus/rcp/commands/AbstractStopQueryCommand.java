@@ -25,24 +25,37 @@ public abstract class AbstractStopQueryCommand extends AbstractHandler implement
 
 	protected Logger logger = LoggerFactory.getLogger(StopQueryCommand.class);
 
-	public Object stop(Collection<Integer> collection){
+	public Object stop(final Collection<Integer> collection){
 
-		for (final Integer qID : collection) {
 			final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 			if (executor != null) {
-				Job job = new Job("Stopped query") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
+				
+				final int queryCount = collection.size();
+				Job job = new Job("Stopping " + queryCount + " queries") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					monitor.beginTask("Stopping " + queryCount + " queries", queryCount);
+					int stopped = 0;
+					for (final Integer qID : collection) {
 						try {
+							monitor.subTask("Stopping query " + (stopped + 1 ) + " of " + queryCount + ": QID=" + qID);
 							executor.stopQuery(qID, OdysseusRCPPlugIn.getActiveSession());
-							StatusBarManager.getInstance().setMessage("Query stopped");
+							stopped++;
+							monitor.worked(1);
+							
+							if( monitor.isCanceled() ) {
+								break;
+							}
+							
 						} catch (PlanManagementException e) {
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant stop query:\n See error log for details", e);
 						} catch (PermissionException e) {
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant stop query:\n See error log for details", e);
 						}
-						return Status.OK_STATUS;
 					}
+					StatusBarManager.getInstance().setMessage(stopped + " queries stopped");
+					return Status.OK_STATUS;
+				}
 				};
 				job.setUser(true);
 				job.schedule();
@@ -55,7 +68,6 @@ public abstract class AbstractStopQueryCommand extends AbstractHandler implement
 
 				return null;
 			}
-		}
 
 		return null;
 	}

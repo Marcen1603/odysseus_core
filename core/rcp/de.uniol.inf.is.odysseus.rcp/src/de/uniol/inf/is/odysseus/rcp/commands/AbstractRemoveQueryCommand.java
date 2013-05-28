@@ -26,37 +26,51 @@ public abstract class AbstractRemoveQueryCommand extends AbstractHandler impleme
 	protected Logger logger = LoggerFactory.getLogger(AbstractRemoveQueryCommand .class);
 
 	
-	public Object remove(Collection<Integer> queryIds) {
-		
-		for (final Integer qID: queryIds) {
-			final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
-			if (executor != null) {
-				Job job = new Job("Removing query") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
+	public Object remove(final Collection<Integer> queryIds) {
+		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
+		if (executor != null) {
+
+			final int queryCount = queryIds.size();
+
+			Job job = new Job("Removing " + queryCount + " queries") {
+				
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					monitor.beginTask("Removing " + queryCount + " queries", queryCount);
+					int removed = 0;
+					for (final Integer qID : queryIds) {
 						try {
+							monitor.subTask("Removing query " + (removed + 1) + "of " + queryCount + ": QID=" + qID);
 							executor.removeQuery(qID, OdysseusRCPPlugIn.getActiveSession());
-							StatusBarManager.getInstance().setMessage("Query removed successfully");
+							removed++;
+							monitor.worked(1);
+
+							if( monitor.isCanceled() ) {
+								break;
+							}
+
 						} catch (PlanManagementException e) {
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant remove query:\n See error log for details", e);
 						} catch (PermissionException e) {
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant remove query:\n See error log for details", e);
 						}
-						return Status.OK_STATUS;
 					}
-				};
-				job.setUser(true);
-				job.schedule();
+					StatusBarManager.getInstance().setMessage(removed + " queries removed successfully");
+					return Status.OK_STATUS;
+				}
+				
+			};
+			job.setUser(true);
+			job.schedule();
 
-			} else {
-				logger.error(OdysseusNLS.NoExecutorFound);
-				MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
-				box.setMessage(OdysseusNLS.NoExecutorFound);
-				box.setText("Error");
-				box.open();
+		} else {
+			logger.error(OdysseusNLS.NoExecutorFound);
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
+			box.setMessage(OdysseusNLS.NoExecutorFound);
+			box.setText("Error");
+			box.open();
 
-				return null;
-			}
+			return null;
 		}
 		return null;
 	}
