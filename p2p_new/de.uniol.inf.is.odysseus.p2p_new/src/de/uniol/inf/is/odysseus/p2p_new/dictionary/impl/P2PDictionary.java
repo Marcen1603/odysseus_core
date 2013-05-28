@@ -7,6 +7,8 @@ import java.util.Map;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
+import net.jxta.peergroup.PeerGroup;
+import net.jxta.peergroup.PeerGroupID;
 import net.jxta.pipe.PipeID;
 
 import org.slf4j.Logger;
@@ -36,7 +38,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
@@ -56,6 +57,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private static IServerExecutor executor;
 	private static String localPeerName;
 	private static PeerID localPeerID;
+	private static PeerGroup localPeerGroup;
+	private static PeerGroupID localPeerGroupID;
 	
 	private final List<IP2PDictionaryListener> listeners = Lists.newArrayList();
 
@@ -423,6 +426,15 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		return localPeerName;
 	}
 	
+	@Override
+	public PeerGroupID getLocalPeerGroupID() {
+		return localPeerGroupID;
+	}
+	
+	public PeerGroup getLocalPeerGroup() {
+		return localPeerGroup;
+	}
+	
 	// called by activator
 	public static void setLocalPeerID( PeerID peerID ) {
 		Preconditions.checkNotNull(peerID, "PeerID to set locally must not be null!");
@@ -437,6 +449,15 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Preconditions.checkArgument(localPeerName == null, "Local peer name can only be set once");
 		
 		localPeerName = peerName;
+	}
+	
+	// called by activator
+	public static void setLocalPeerGroup( PeerGroup id ) {
+		Preconditions.checkNotNull(id, "PeerGroup must not be null!");
+		Preconditions.checkArgument(localPeerGroup == null, "Local peer group id can only be set once");
+		
+		localPeerGroup = id;
+		localPeerGroupID = id.getPeerGroupID();
 	}
 	
 	@Override
@@ -627,7 +648,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (optAccessAO.isPresent()) {
 
 			SourceAdvertisement srcAdvertisement = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
-			srcAdvertisement.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+			srcAdvertisement.setID(IDFactory.newPipeID(localPeerGroupID));
 			srcAdvertisement.setName(streamName);
 			srcAdvertisement.setPeerID(localPeerID);
 			srcAdvertisement.setAccessAO(optAccessAO.get());
@@ -651,10 +672,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private SourceAdvertisement exportView(String viewName, String queryBuildConfigurationName, final ILogicalOperator view) throws PeerException {
 		try {
-			final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
+			final PipeID pipeID = IDFactory.newPipeID(localPeerGroupID);
 
 			SourceAdvertisement viewAdvertisement = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
-			viewAdvertisement.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+			viewAdvertisement.setID(IDFactory.newPipeID(localPeerGroupID));
 			viewAdvertisement.setOutputSchema(view.getOutputSchema());
 			viewAdvertisement.setPipeID(pipeID);
 			viewAdvertisement.setName(viewName);

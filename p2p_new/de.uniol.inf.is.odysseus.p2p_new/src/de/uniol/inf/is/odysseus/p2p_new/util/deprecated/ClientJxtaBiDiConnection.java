@@ -3,10 +3,9 @@ package de.uniol.inf.is.odysseus.p2p_new.util.deprecated;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
-
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.util.JxtaBiDiPipe;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 
 @Deprecated
 public class ClientJxtaBiDiConnection extends AbstractJxtaBiDiConnection {
@@ -27,7 +26,7 @@ public class ClientJxtaBiDiConnection extends AbstractJxtaBiDiConnection {
 		
 		while( !done ) {
 			try {
-				bidiPipe.connect(P2PNewPlugIn.getOwnPeerGroup(), getPipeAdvertisement(), 3000);
+				bidiPipe.connect(P2PDictionary.getInstance().getLocalPeerGroup(), getPipeAdvertisement(), 3000);
 				done = true;
 			} catch( SocketTimeoutException ex ) {
 				// try again

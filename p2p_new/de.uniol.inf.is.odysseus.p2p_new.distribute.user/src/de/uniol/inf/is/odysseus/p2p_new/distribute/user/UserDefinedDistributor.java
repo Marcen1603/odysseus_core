@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
@@ -270,7 +269,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	}
 
 	private static void generatePeerConnection(ILogicalOperator startOperator, QueryPart startPart, ILogicalOperator endOperator, QueryPart endPart) {
-		final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
+		final PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
 
 		final JxtaReceiverAO access = new JxtaReceiverAO();
 		access.setPipeID(pipeID.toString());
@@ -304,7 +303,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 	private static ID generateSharedQueryID() {
 		final String timestamp = String.valueOf(System.currentTimeMillis());
-		return IDFactory.newContentID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), false, timestamp.getBytes());
+		return IDFactory.newContentID(P2PDictionaryService.get().getLocalPeerGroupID(), false, timestamp.getBytes());
 	}
 
 	private static String getDestinationName(ILogicalOperator operator) {
@@ -351,7 +350,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		part.removeDestinationName();
 
 		final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
-		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
 		adv.setPeerID(destinationPeer);
 		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
 		adv.setSharedQueryID(sharedQueryID);

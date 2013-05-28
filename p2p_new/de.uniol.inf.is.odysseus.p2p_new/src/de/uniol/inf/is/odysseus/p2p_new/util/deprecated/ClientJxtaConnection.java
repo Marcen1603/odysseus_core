@@ -11,7 +11,7 @@ import net.jxta.socket.JxtaSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 
 @Deprecated
 public class ClientJxtaConnection extends AbstractJxtaConnection {
@@ -58,7 +58,7 @@ public class ClientJxtaConnection extends AbstractJxtaConnection {
 		JxtaSocket clientSocket = null;
 		while (clientSocket == null) {
 			try {
-				clientSocket = new JxtaSocket(P2PNewPlugIn.getOwnPeerGroup(), pipeAdvertisement, 5000);
+				clientSocket = new JxtaSocket(P2PDictionary.getInstance().getLocalPeerGroup(), pipeAdvertisement, 5000);
 				clientSocket.setSoTimeout(0);
 				LOG.debug("Client socket created: {}", clientSocket);
 			} catch (final SocketTimeoutException ex) {

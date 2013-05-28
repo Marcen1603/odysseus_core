@@ -6,7 +6,7 @@ import net.jxta.endpoint.EndpointService;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.pipe.PipeService;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 
 public class JxtaServicesProvider implements IJxtaServicesProvider {
 
@@ -19,7 +19,7 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	
 	// called by OSGi
 	public void activate() {
-		PeerGroup ownPeerGroup = P2PNewPlugIn.getOwnPeerGroup();
+		PeerGroup ownPeerGroup = P2PDictionary.getInstance().getLocalPeerGroup();
 		
 		contentService = ownPeerGroup.getContentService();
 		discoveryService = ownPeerGroup.getDiscoveryService();

@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.JxtaServicesProviderService;
@@ -344,7 +343,7 @@ public class InterqueryLoadBalancer implements ILogicalQueryDistributor {
 	private static void generatePeerConnection(ILogicalOperator startOperator, QueryPart startPart, ILogicalOperator endOperator, 
 			QueryPart endPart) {
 		
-		final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID());
+		final PipeID pipeID = IDFactory.newPipeID(p2pDictionary.getLocalPeerGroupID());
 
 		final JxtaReceiverAO access = new JxtaReceiverAO();
 		access.setPipeID(pipeID.toString());
@@ -401,7 +400,7 @@ public class InterqueryLoadBalancer implements ILogicalQueryDistributor {
 	 */
 	private static ID generateSharedQueryID() {
 		
-		return IDFactory.newContentID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), false, 
+		return IDFactory.newContentID(p2pDictionary.getLocalPeerGroupID(), false, 
 				String.valueOf(System.currentTimeMillis()).getBytes());
 		
 	}
@@ -479,7 +478,7 @@ public class InterqueryLoadBalancer implements ILogicalQueryDistributor {
 		part.removeDestinationName();
 
 		final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
-		adv.setID(IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID()));
+		adv.setID(IDFactory.newPipeID(p2pDictionary.getLocalPeerGroupID()));
 		adv.setPeerID(destinationPeer);
 		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
 		adv.setSharedQueryID(sharedQueryID);

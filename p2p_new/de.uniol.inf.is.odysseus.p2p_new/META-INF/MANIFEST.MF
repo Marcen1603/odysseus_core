@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: P2p_new
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p_new
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn
+Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.interval_latency;resolution:=optional,

@@ -3,18 +3,18 @@ package de.uniol.inf.is.odysseus.p2p_new.util;
 import java.io.IOException;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.util.JxtaBiDiPipe;
 import net.jxta.util.JxtaServerPipe;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 
 public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaConnectionListener {
 
@@ -53,7 +53,7 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 	public void start() throws IOException {
 		Preconditions.checkState(accepterThread == null, "JxtaServerConnection is already running!");
 				
-		serverPipe = new JxtaServerPipe(P2PNewPlugIn.getOwnPeerGroup(), getPipeAdvertisement());
+		serverPipe = new JxtaServerPipe(P2PDictionary.getInstance().getLocalPeerGroup(), getPipeAdvertisement());
 		serverPipe.setPipeTimeout(0);
 
 		accepterThread = new RepeatingJobThread() {

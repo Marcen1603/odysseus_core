@@ -36,8 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.JxtaServicesProviderService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.util.OutputPipeResolver;
 
 public class QueryPartController implements IPlanModificationListener, PipeMsgListener {
@@ -263,7 +263,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 	}
 
 	private static PipeAdvertisement createPipeAdvertisement(ID sharedQueryID) {
-		final PipeID pipeID = IDFactory.newPipeID(P2PNewPlugIn.getOwnPeerGroup().getPeerGroupID(), sharedQueryID.toString().getBytes());
+		final PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID(), sharedQueryID.toString().getBytes());
 
 		final PipeAdvertisement adv = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
 		adv.setPipeID(pipeID);

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new;
+package de.uniol.inf.is.odysseus.p2p_new.activator;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,8 +40,6 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static final String SUBGROUP_NAME = "Odysseus Peer Group";
 	private static final PeerGroupID SUBGROUP_ID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, SUBGROUP_NAME.getBytes());
 
-	private static PeerGroup ownPeerGroup;
-
 	private NetworkManager manager;
 
 	@Override
@@ -53,9 +51,6 @@ public class P2PNewPlugIn implements BundleActivator {
 		P2PDictionary.setLocalPeerID(ownPeerID);
 		P2PDictionary.setLocalPeerName(ownPeerName);
 		
-		LOG.info("Local peer id = {}", ownPeerID);
-		LOG.info("Local peer name = {}", ownPeerName);
-		
 		final File conf = new File("." + System.getProperty("file.separator") + ownPeerName);
 		NetworkManager.RecursiveDelete(conf);
 		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, ownPeerName, conf.toURI());
@@ -63,21 +58,16 @@ public class P2PNewPlugIn implements BundleActivator {
 		configureNetwork(manager.getConfigurator(), ownPeerID, ownPeerName);
 
 		final PeerGroup netPeerGroup = manager.startNetwork();
-		ownPeerGroup = createSubGroup(netPeerGroup, SUBGROUP_ID, SUBGROUP_NAME);
+		final PeerGroup localPeerGroup = createSubGroup(netPeerGroup, SUBGROUP_ID, SUBGROUP_NAME);
+		P2PDictionary.setLocalPeerGroup(localPeerGroup);
 
 		registerAdvertisementTypes();
-
-		LOG.debug("JXTA-Network started. Peer {} is in group '{}'", ownPeerName, ownPeerGroup);
 	}
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		manager.stopNetwork();
 		LOG.debug("JXTA-Network stopped");
-	}
-
-	public static PeerGroup getOwnPeerGroup() {
-		return ownPeerGroup;
 	}
 
 	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID, String peerName) {
