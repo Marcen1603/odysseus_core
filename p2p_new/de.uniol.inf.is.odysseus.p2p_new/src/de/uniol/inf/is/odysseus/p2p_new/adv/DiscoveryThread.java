@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.p2p_new.adv;
 
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
 public class DiscoveryThread extends RepeatingJobThread {
@@ -26,7 +26,7 @@ public class DiscoveryThread extends RepeatingJobThread {
 	private static final String THREAD_NAME = "Advertisement discovery";
 	
 	private final DiscoveryListener listener;
-
+	
 	public DiscoveryThread(long discoverIntervalMillis, DiscoveryListener listener) {
 		super(discoverIntervalMillis, THREAD_NAME);
 		
@@ -35,7 +35,9 @@ public class DiscoveryThread extends RepeatingJobThread {
 
 	@Override
 	public void doJob() {
-		P2PNewPlugIn.getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99, listener);
+		if( JxtaServicesProvider.isActivated() ) {
+			JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99, listener);
+		}
 	}
 	
 	

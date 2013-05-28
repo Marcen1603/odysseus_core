@@ -4,16 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
-import net.jxta.content.ContentService;
-import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.endpoint.EndpointService;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.peergroup.PeerGroupID;
-import net.jxta.pipe.PipeService;
 import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 
@@ -44,11 +40,6 @@ public class P2PNewPlugIn implements BundleActivator {
 	private static final String SUBGROUP_NAME = "Odysseus Peer Group";
 	private static final PeerGroupID SUBGROUP_ID = IDFactory.newPeerGroupID(PeerGroupID.defaultNetPeerGroupID, SUBGROUP_NAME.getBytes());
 
-	private static DiscoveryService discoveryService;
-	private static ContentService contentService;
-	private static PipeService pipeService;
-	private static EndpointService endpointService;
-
 	private static PeerGroup ownPeerGroup;
 
 	private NetworkManager manager;
@@ -74,11 +65,6 @@ public class P2PNewPlugIn implements BundleActivator {
 		final PeerGroup netPeerGroup = manager.startNetwork();
 		ownPeerGroup = createSubGroup(netPeerGroup, SUBGROUP_ID, SUBGROUP_NAME);
 
-		discoveryService = ownPeerGroup.getDiscoveryService();
-		contentService = ownPeerGroup.getContentService();
-		pipeService = ownPeerGroup.getPipeService();
-		endpointService = ownPeerGroup.getEndpointService();
-
 		registerAdvertisementTypes();
 
 		LOG.debug("JXTA-Network started. Peer {} is in group '{}'", ownPeerName, ownPeerGroup);
@@ -86,33 +72,12 @@ public class P2PNewPlugIn implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		
-		discoveryService = null;
-		contentService = null;
-		pipeService = null;
-
 		manager.stopNetwork();
 		LOG.debug("JXTA-Network stopped");
 	}
 
-	public static ContentService getContentService() {
-		return contentService;
-	}
-
-	public static DiscoveryService getDiscoveryService() {
-		return discoveryService;
-	}
-
-	public static EndpointService getEndpointService() {
-		return endpointService;
-	}
-
 	public static PeerGroup getOwnPeerGroup() {
 		return ownPeerGroup;
-	}
-
-	public static PipeService getPipeService() {
-		return pipeService;
 	}
 
 	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID, String peerName) {

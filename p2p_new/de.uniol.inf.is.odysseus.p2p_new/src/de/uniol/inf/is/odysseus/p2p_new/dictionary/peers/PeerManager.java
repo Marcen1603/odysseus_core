@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
 public class PeerManager implements DiscoveryListener {
@@ -36,7 +36,9 @@ public class PeerManager implements DiscoveryListener {
 		peerDiscoveryThread = new RepeatingJobThread(PEER_DISCOVERY_INTERVAL_MILLIS, PEER_DISCOVERY_THREAD_NAME) {
 			@Override
 			public void doJob() {
-				P2PNewPlugIn.getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, PeerManager.this);
+				if( JxtaServicesProvider.isActivated() ) {
+					JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, PeerManager.this);
+				}
 			}
 		};
 		peerDiscoveryThread.start();
@@ -80,7 +82,7 @@ public class PeerManager implements DiscoveryListener {
 		for( PeerAdvertisement peerAdvertisement : advertisements ) {
 			final PeerID peerID = peerAdvertisement.getPeerID();
 
-			if (!peerID.equals(localPeerID) && P2PNewPlugIn.getEndpointService().isReachable(peerID, false)) {
+			if (!peerID.equals(localPeerID) && JxtaServicesProvider.getInstance().getEndpointService().isReachable(peerID, false)) {
 				final String peerName = peerAdvertisement.getName();
 				
 				newIds.put(peerID, peerName);

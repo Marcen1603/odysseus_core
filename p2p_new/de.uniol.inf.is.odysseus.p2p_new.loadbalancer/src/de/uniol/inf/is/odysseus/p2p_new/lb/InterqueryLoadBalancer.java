@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPartAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.lb.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
@@ -489,7 +490,7 @@ public class InterqueryLoadBalancer implements ILogicalQueryDistributor {
 	}
 	private static void tryPublishImpl(QueryPartAdvertisement adv) {
 		try {
-			P2PNewPlugIn.getDiscoveryService().publish(adv, 10000, 10000);
+			JxtaServicesProviderService.get().getDiscoveryService().publish(adv, 10000, 10000);
 		} catch (final IOException ex) {
 			LOG.error("Could not publish query part", ex);
 		}

@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
 public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, IPlanModificationListener {
@@ -633,7 +634,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			srcAdvertisement.setOutputSchema(stream.getOutputSchema());
 
 			try {
-				P2PNewPlugIn.getDiscoveryService().publish(srcAdvertisement);
+				JxtaServicesProvider.getInstance().getDiscoveryService().publish(srcAdvertisement);
 				addSource(srcAdvertisement);
 
 				exportedSourcesQueryMap.put(srcAdvertisement, -1);
@@ -659,7 +660,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			viewAdvertisement.setName(viewName);
 			viewAdvertisement.setPeerID(localPeerID);
 
-			P2PNewPlugIn.getDiscoveryService().publish(viewAdvertisement);
+			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement);
 			addSource(viewAdvertisement);
 
 			final JxtaSenderAO jxtaSender = new JxtaSenderAO();
@@ -715,7 +716,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static void tryFlushAdvertisement(SourceAdvertisement srcAdvertisement) {
 		try {
-			P2PNewPlugIn.getDiscoveryService().flushAdvertisement(srcAdvertisement);
+			JxtaServicesProvider.getInstance().getDiscoveryService().flushAdvertisement(srcAdvertisement);
 		} catch (IOException e) {
 			LOG.error("Could not flush view advertisement {}", srcAdvertisement, e);
 		}

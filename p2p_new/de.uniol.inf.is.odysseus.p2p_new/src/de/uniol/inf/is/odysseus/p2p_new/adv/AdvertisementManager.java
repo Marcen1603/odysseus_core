@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 
 public class AdvertisementManager implements IAdvertisementManager, DiscoveryListener {
 
@@ -70,7 +70,7 @@ public class AdvertisementManager implements IAdvertisementManager, DiscoveryLis
 	// called by OSGi-DS
 	public final void deactivate() {
 		discoveryThread.stopRunning();
-		P2PNewPlugIn.getDiscoveryService().removeDiscoveryListener(this);
+		JxtaServicesProvider.getInstance().getDiscoveryService().removeDiscoveryListener(this);
 
 		instance = null;
 		LOG.debug("Advertisement manager deactivated");

@@ -7,7 +7,7 @@ import net.jxta.protocol.PipeAdvertisement;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 
 public abstract class OutputPipeResolver extends StoppableThread {
 
@@ -30,7 +30,7 @@ public abstract class OutputPipeResolver extends StoppableThread {
 		OutputPipe outputPipe = null;
 		while (isRunning()) {
 			try {
-				outputPipe = P2PNewPlugIn.getPipeService().createOutputPipe(pipeAdvertisement, TIMEOUT_MILLIS);
+				outputPipe = JxtaServicesProvider.getInstance().getPipeService().createOutputPipe(pipeAdvertisement, TIMEOUT_MILLIS);
 				outputPipeResolved(outputPipe);
 				stopRunning();
 			} catch (final IOException ex) {

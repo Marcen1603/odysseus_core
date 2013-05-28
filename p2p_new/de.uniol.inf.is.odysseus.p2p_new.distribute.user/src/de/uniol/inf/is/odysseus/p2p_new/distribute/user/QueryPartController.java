@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.util.OutputPipeResolver;
 
 public class QueryPartController implements IPlanModificationListener, PipeMsgListener {
@@ -209,7 +210,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 
 		try {
 			if (!inputPipeMap.containsKey(sharedQueryID)) {
-				final InputPipe inputPipe = P2PNewPlugIn.getPipeService().createInputPipe(adv, this);
+				final InputPipe inputPipe = JxtaServicesProviderService.get().getPipeService().createInputPipe(adv, this);
 				inputPipeMap.put(sharedQueryID, inputPipe);
 				LOG.debug("Created new input pipe for shared query id {}", sharedQueryID);
 				LOG.debug("Pipeid of Advertisementid is {}", adv.getPipeID());

@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNewPlugIn;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -412,7 +413,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 	private static void tryPublishImpl(QueryPartAdvertisement adv) {
 		try {
-			P2PNewPlugIn.getDiscoveryService().publish(adv, 10000, 10000);
+			JxtaServicesProviderService.get().getDiscoveryService().publish(adv, 10000, 10000);
 		} catch (final IOException ex) {
 			LOG.error("Could not publish query part", ex);
 		}
