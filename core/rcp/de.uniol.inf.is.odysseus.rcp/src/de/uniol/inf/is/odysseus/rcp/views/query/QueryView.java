@@ -45,11 +45,13 @@ public final class QueryView extends ViewPart {
 		tableComposite.setLayout(tableColumnLayout);
 
 		tableViewer = new QueryTableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
-		dataProvider = determineDataProvider(this);
 		tableViewer.setInput(data);
 		getSite().setSelectionProvider(tableViewer);
 
 		createContextMenu();
+		
+		dataProvider = determineDataProvider();
+		dataProvider.init(this);
 	}
 
 	@Override
@@ -134,6 +136,7 @@ public final class QueryView extends ViewPart {
 		
 		if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
 			refreshing = true;
+			dataProvider.onRefresh(this);
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 				@Override
@@ -161,10 +164,9 @@ public final class QueryView extends ViewPart {
 		getSite().registerContextMenu(menuManager, tableViewer);
 	}
 
-	private static IQueryViewDataProvider determineDataProvider(QueryView view) {
+	private static IQueryViewDataProvider determineDataProvider() {
 		Preconditions.checkArgument(QueryViewDataProviderManager.hasQueryViewDataProvider(), "QueryView must have at least one data provider!");
 		final IQueryViewDataProvider dataProvider = QueryViewDataProviderManager.getQueryViewDataProvider();
-		dataProvider.init(view);
 		return dataProvider;
 	}
 }
