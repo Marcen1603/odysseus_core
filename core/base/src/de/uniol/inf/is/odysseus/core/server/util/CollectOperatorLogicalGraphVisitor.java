@@ -10,15 +10,15 @@ public class CollectOperatorLogicalGraphVisitor<T extends ILogicalOperator> impl
 		IGraphNodeVisitor<T, Set<T>> {
 
 	private Set<T> operators;
-	private Set<Class<T>> operatorClasses;
+	private Set<Class<? extends T>> operatorClasses;
 	
-	public CollectOperatorLogicalGraphVisitor(Class<T> operatorClass) {
-		this.operatorClasses = new HashSet<Class<T>>();
+	public CollectOperatorLogicalGraphVisitor(Class<? extends T> operatorClass) {
+		this.operatorClasses = new HashSet<Class<? extends T>>();
 		this.operatorClasses.add(operatorClass);
 		this.operators = new HashSet<T>();
 	}
 	
-	public CollectOperatorLogicalGraphVisitor(Set<Class<T>> operatorClasses) {
+	public CollectOperatorLogicalGraphVisitor(Set<Class<? extends T>> operatorClasses) {
 		this.operatorClasses = operatorClasses;
 		this.operators = new HashSet<T>();
 	}
