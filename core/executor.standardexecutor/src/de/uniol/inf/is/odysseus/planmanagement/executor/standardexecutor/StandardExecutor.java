@@ -221,10 +221,19 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		List<ILogicalQuery> queries = getCompiler().translateQuery(queryStr, parameters.getParserID(), user, getDataDictionary());
 		LOG.trace("Number of queries: " + queries.size());
 
+		annotateQueries(queries, queryStr, user, parameters);
+
 		if( parameters.get(ParameterDoDistribute.class).getValue() ) {
 			queries = distributeQueries(parameters, queries);
+			// Distributor could change queries, so they need to be annotated again
+			annotateQueries(queries, queryStr, user, parameters);
 		}
+		
+		return queries;
+	}
 
+	private void annotateQueries(List<ILogicalQuery> queries, String queryStr, ISession user,
+			QueryBuildConfiguration parameters) {
 		String slaName = SLADictionary.getInstance().getUserSLA(user.getUser());
 		SLA sla = SLADictionary.getInstance().getSLA(slaName);
 		// create for each logical plan an intern query
@@ -247,8 +256,6 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			// ((IPhysicalQuery) query).addReoptimizeListener(this);
 			// }
 		}
-
-		return queries;
 	}
 
 	private List<ILogicalQuery> distributeQueries(QueryBuildConfiguration parameters, List<ILogicalQuery> queries) {
