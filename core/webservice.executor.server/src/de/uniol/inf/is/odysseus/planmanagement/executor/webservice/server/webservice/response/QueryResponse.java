@@ -40,13 +40,16 @@ public class QueryResponse extends Response {
 	
 	private LogicalQuery query;
 	
+	private boolean isRunning;
+	
 	public QueryResponse() {
 		super();
 	}
 	
-	public QueryResponse(LogicalQuery value, boolean success) {
+	public QueryResponse(LogicalQuery value, boolean isRunning, boolean success) {
 		super(success);
 		this.query = value;
+		this.isRunning = isRunning;
 	}
 	
 	public LogicalQuery getResponseValue() {
@@ -55,5 +58,9 @@ public class QueryResponse extends Response {
 	
 	public void setResponseValue(LogicalQuery value) {
 		this.query = value;
+	}
+	
+	public boolean isRunning() {
+		return isRunning;
 	}
 }
