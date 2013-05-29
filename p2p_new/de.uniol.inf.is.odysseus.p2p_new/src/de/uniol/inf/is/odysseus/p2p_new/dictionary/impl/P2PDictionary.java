@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
 public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, IPlanModificationListener {
@@ -53,7 +54,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	
 	private static P2PDictionary instance;
 
-	private static IDataDictionary dataDictionary;
 	private static IServerExecutor executor;
 	private static String localPeerName;
 	private static PeerID localPeerID;
@@ -88,21 +88,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	public static boolean isActivated() {
 		return instance != null;
-	}
-
-	public void bindDataDictionary(IDataDictionary dd) {
-		dataDictionary = dd;
-		dataDictionary.addListener(this);
-
-		LOG.debug("DataDictionary bound {}", dd);
-	}
-
-	public void unbindDataDictionary(IDataDictionary dd) {
-		if (dataDictionary == dd) {
-			dataDictionary.removeListener(this);
-			dataDictionary = null;
-			LOG.debug("DataDictionary unbound {}", dd);
-		}
 	}
 
 	public void bindExecutor(IExecutor exe) {
@@ -222,7 +207,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Preconditions.checkArgument(existsSource(srcAdvertisement), "SourceAdvertisement to import is not known to the p2p dictionary");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(sourceNameToUse), "Sourcename to use for import must be null or empty!");
 
-		if (dataDictionary.containsViewOrStream(sourceNameToUse, SessionManagementService.getActiveSession())) {
+		if (DataDictionaryService.get().containsViewOrStream(sourceNameToUse, SessionManagementService.getActiveSession())) {
 			throw new PeerException("SourceName '" + sourceNameToUse + "' is locally already in use");
 		}
 
@@ -249,7 +234,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			final AccessAO accessAO = advertisement.getAccessAO();
 
 			final ILogicalOperator timestampAO = addTimestampAO(accessAO, null);			
-			dataDictionary.setStream(advertisement.getName(), timestampAO, SessionManagementService.getActiveSession());
+			DataDictionaryService.get().setStream(advertisement.getName(), timestampAO, SessionManagementService.getActiveSession());
 
 		} else {
 			final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
@@ -266,7 +251,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			receiverOperator.subscribeSink(renameNoOp, 0, 0, receiverOperator.getOutputSchema());
 			renameNoOp.initialize();
 
-			dataDictionary.setView(sourceNameToUse, renameNoOp, SessionManagementService.getActiveSession());
+			DataDictionaryService.get().setView(sourceNameToUse, renameNoOp, SessionManagementService.getActiveSession());
 		}
 
 		importedSources.put(advertisement, sourceNameToUse);
@@ -280,7 +265,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			String name = importedSources.get(advertisement);
 			importedSources.remove(advertisement);
 
-			dataDictionary.removeViewOrStream(name, SessionManagementService.getActiveSession());
+			DataDictionaryService.get().removeViewOrStream(name, SessionManagementService.getActiveSession());
 
 			fireSourceImportRemoveEvent(advertisement, name);
 			return true;
@@ -328,12 +313,12 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			throw new PeerException("Source " + sourceName + " is imported and cannot be exported directly");
 		}
 
-		ILogicalOperator stream = dataDictionary.getStreamForTransformation(sourceName, SessionManagementService.getActiveSession());
+		ILogicalOperator stream = DataDictionaryService.get().getStreamForTransformation(sourceName, SessionManagementService.getActiveSession());
 		if (stream != null && stream instanceof TimestampAO) {
 			return exportStream(sourceName, queryBuildConfigurationName, stream);
 		}
 
-		ILogicalOperator view = dataDictionary.getView(sourceName, SessionManagementService.getActiveSession());
+		ILogicalOperator view = DataDictionaryService.get().getView(sourceName, SessionManagementService.getActiveSession());
 		if (view != null) {
 			return exportView(sourceName, queryBuildConfigurationName, view);
 		}
