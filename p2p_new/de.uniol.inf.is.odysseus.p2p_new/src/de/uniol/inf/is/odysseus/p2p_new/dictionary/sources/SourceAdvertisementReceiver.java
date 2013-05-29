@@ -13,6 +13,13 @@ public class SourceAdvertisementReceiver implements IAdvertisementListener {
 		if (adv instanceof SourceAdvertisement ) {
 			final SourceAdvertisement srcAdvertisement = (SourceAdvertisement) adv;
 			if( !P2PDictionary.getInstance().existsSource(srcAdvertisement)) {
+				
+				if( srcAdvertisement.getPeerID().equals(P2PDictionary.getInstance().getLocalPeerID()) && srcAdvertisement.isView() ) {
+					// überbleibsel aus alter veröffentlichung (Advertisement-Echo)
+					// --> ignorieren
+					return;
+				}
+				
 				P2PDictionary.getInstance().addSource(srcAdvertisement);
 			}
 		}

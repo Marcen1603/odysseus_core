@@ -50,6 +50,8 @@ import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, IPlanModificationListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PDictionary.class);
+	private static final int EXPORT_INTERVAL_MILLIS = 15000;
+	private static final int EXPORT_LIFETIME_MILLIS = 35000;
 	
 	private static P2PDictionary instance;
 
@@ -67,17 +69,22 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private final Map<SourceAdvertisement, String> importedSources = Maps.newHashMap();
 
 	private final Map<SourceAdvertisement, Integer> exportedSourcesQueryMap = Maps.newHashMap();
+	private final ViewExporterThread viewExporterThread = new ViewExporterThread(EXPORT_INTERVAL_MILLIS, EXPORT_LIFETIME_MILLIS, this);
 	
 	private final Map<PeerID, String> knownPeersMap = Maps.newHashMap();
 
 	// called by OSGi-DS
 	public void activate() {
 		instance = this;
+		
+		viewExporterThread.start();
 	}
 
 	// called by OSGi-DS
 	public void deactivate() {
 		instance = null;
+		
+		viewExporterThread.stopRunning();
 	}
 
 	public static P2PDictionary getInstance() {
@@ -654,7 +661,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			viewAdvertisement.setName(withoutUsername(viewName));
 			viewAdvertisement.setPeerID(localPeerID);
 
-			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement);
+			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement, EXPORT_LIFETIME_MILLIS, EXPORT_LIFETIME_MILLIS);
+			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(viewAdvertisement, EXPORT_LIFETIME_MILLIS);
 			addSource(viewAdvertisement);
 
 			final JxtaSenderAO jxtaSender = new JxtaSenderAO();

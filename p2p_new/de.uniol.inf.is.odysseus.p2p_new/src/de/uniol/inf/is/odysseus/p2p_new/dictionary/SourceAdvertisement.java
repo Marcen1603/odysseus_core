@@ -188,6 +188,10 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		return accessAO != null;
 	}
 	
+	public boolean isView() {
+		return !isStream();
+	}
+	
 	public void setPeerID(PeerID peerID) {
 		this.peerID = peerID;
 	}
