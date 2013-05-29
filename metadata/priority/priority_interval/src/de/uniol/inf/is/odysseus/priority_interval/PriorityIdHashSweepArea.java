@@ -218,4 +218,13 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea#getMaxEndTs()
+	 */
+	@Override
+	public PointInTime getMaxEndTs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

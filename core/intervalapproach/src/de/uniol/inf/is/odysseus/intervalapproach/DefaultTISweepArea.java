@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicat
  * This sweeparea implementation provides some optimizations on extract and purge. The elements are always sorted and extract and purge only remove elements, until the remove predicate first returns false. The remove predicate is fixed to the TotallyBeforePredicate
  */
 public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>> extends AbstractTimeIntervalSweepArea<T> implements Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
-
+	
 	Comparator<T> purgeComparator = new Comparator<T>() {
 
 		@Override
@@ -76,7 +76,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 		return retval;
 	}
-
+	
 	public Iterator<T> queryOverlaps(ITimeInterval t) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {

@@ -281,4 +281,13 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		
 		return s;
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea#getMaxEndTs()
+	 */
+	@Override
+	public PointInTime getMaxEndTs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

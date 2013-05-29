@@ -38,7 +38,7 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 	// the inserts are typically chronologically ordered
 	private final IFastList<T> elements;
 
-	private Comparator<? super T> comparator;
+	protected Comparator<? super T> comparator;
 
 	IPredicate<? super T> queryPredicate;
 

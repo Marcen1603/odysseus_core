@@ -360,15 +360,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	 * 
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public PointInTime getLatestEndTimestamp() {
 		PointInTime max = null;
-		Iterator<T> iterator = null;
-		for (int i = 0; i < 2; i++) {
-			iterator = areas[i].iterator();
-			while (iterator.hasNext()) {
-				T next = iterator.next();
-				if (max == null || max.before(next.getMetadata().getEnd())) {
-					max = next.getMetadata().getEnd();
+		for(int i = 0; i < 2; i++) {
+			synchronized(this.areas[i]) {
+				PointInTime maxi = ((DefaultTISweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i]).getMaxEndTs();
+				if(max == null || maxi.after(max)) {
+					max = maxi;
 				}
 			}
 		}
