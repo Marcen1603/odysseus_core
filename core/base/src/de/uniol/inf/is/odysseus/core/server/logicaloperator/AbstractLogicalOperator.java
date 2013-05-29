@@ -15,6 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -54,7 +57,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	private static final long serialVersionUID = -4425148851059140851L;
 
-	final private transient OwnerHandler ownerHandler;
+	private transient OwnerHandler ownerHandler;
 
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
 	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();
@@ -84,7 +87,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		setName(op.getName());
 		this.ownerHandler = new OwnerHandler(op.ownerHandler);
 		this.outputSchema = new HashMap<>(op.outputSchema);
-		//this.outputSchema = op.outputSchema;
+		// this.outputSchema = op.outputSchema;
 		this.uniqueIdentifier = op.uniqueIdentifier;
 		this.infos = copyParameterInfos(op.infos);
 		this.destinationName = op.destinationName;
@@ -94,12 +97,24 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		ownerHandler = new OwnerHandler();
 	}
 
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException {		
+		try{
+			ois.defaultReadObject(); 
+			ownerHandler = new OwnerHandler();
+		}catch(ClassNotFoundException ex){
+			ex.printStackTrace();
+		}
+		
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-	 * #clone()
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator #clone()
 	 */
 	@Override
 	abstract public AbstractLogicalOperator clone();
@@ -111,9 +126,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-	 * #getPredicate ()
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator #getPredicate ()
 	 */
 	@Override
 	public IPredicate<?> getPredicate() {
@@ -127,9 +140,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-	 * #setPredicate (de.uniol.inf.is.odysseus.core.server.predicate.IPredicate)
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator #setPredicate (de.uniol.inf.is.odysseus.core.server.predicate.IPredicate)
 	 */
 	@Override
 	public void setPredicate(IPredicate<?> predicate) {
@@ -164,9 +175,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-	 * #getInputSchema (int)
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator #getInputSchema (int)
 	 */
 	@Override
 	public SDFSchema getInputSchema(int pos) {
@@ -224,9 +233,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-	 * #getPOName ()
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator #getPOName ()
 	 */
 	@Override
 	public String getName() {
@@ -254,9 +261,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-	 * #setPOName (java.lang.String)
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator #setPOName (java.lang.String)
 	 */
 	@Override
 	@Parameter(name = "Name", type = StringParameter.class, optional = true)
@@ -333,10 +338,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-	 * #setPhysInputPO (int,
-	 * de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator #setPhysInputPO (int, de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
 	@Override
 	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator> subscription) {
@@ -362,9 +364,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-	 * #getPhysInputPO (int)
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator #getPhysInputPO (int)
 	 */
 	@Override
 	public Subscription<IPhysicalOperator> getPhysSubscriptionTo(int port) {
@@ -467,11 +467,10 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public void subscribeSink(ILogicalOperator sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema, boolean asActive) {
+	public void subscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema, boolean asActive) {
 		throw new IllegalArgumentException("This method cannot be called on Logical Operators");
 	}
-	
+
 	@Override
 	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		unsubscribeSink(new LogicalSubscription(sink, sinkInPort, sourceOutPort, schema));
@@ -510,7 +509,6 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		// Nothing special in logical Operators
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
-	
 
 	@Override
 	public void disconnectSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
@@ -720,10 +718,10 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public void addParameterInfo(String key, Object value) {
 		this.infos.put(key, value != null ? value.toString() : null);
 	}
-	
+
 	@Override
 	public void removeParameterInfo(String key) {
-		this.infos.remove(key);		
+		this.infos.remove(key);
 	}
 
 	@Override
