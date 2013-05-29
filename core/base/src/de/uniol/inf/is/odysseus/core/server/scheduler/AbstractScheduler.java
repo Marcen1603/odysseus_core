@@ -293,7 +293,6 @@ public abstract class AbstractScheduler implements
 	final public void setPartialPlans(Collection<IPhysicalQuery> partialPlans) {
 		this.partialPlans.clear();
 		process_setPartialPlans(partialPlans);
-		this.partialPlans.addAll(partialPlans);
 	}
 
 	abstract protected void process_setPartialPlans(

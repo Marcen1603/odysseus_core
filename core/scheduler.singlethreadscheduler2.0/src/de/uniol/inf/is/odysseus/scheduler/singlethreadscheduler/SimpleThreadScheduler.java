@@ -188,6 +188,7 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 	@Override
 	public void addPartialPlan(IPhysicalQuery partialPlan) {
 		if (!partialPlans.contains(partialPlan)) {
+			partialPlans.add(partialPlan);
 			logger.debug("setPartialPlans create new Parts with Scheduling "
 					+ schedulingFactory.getName() + " assigned to thread "
 					+ nextExecutorToAssign);
