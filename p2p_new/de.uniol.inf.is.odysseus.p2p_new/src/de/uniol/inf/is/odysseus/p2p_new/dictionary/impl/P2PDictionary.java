@@ -53,7 +53,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	
 	private static P2PDictionary instance;
 
-//	private static IServerExecutor executor;
 	private static String localPeerName;
 	private static PeerID localPeerID;
 	private static PeerGroup localPeerGroup;
@@ -88,21 +87,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	public static boolean isActivated() {
 		return instance != null;
 	}
-
-//	public void bindExecutor(IExecutor exe) {
-//		executor = (IServerExecutor) exe;
-//		executor.addPlanModificationListener(this);
-//
-//		LOG.debug("ServerExecutor bound {}", exe);
-//	}
-//
-//	public void unbindExecutor(IExecutor exe) {
-//		if (executor == exe) {
-//			executor.removePlanModificationListener(this);
-//			executor = null;
-//			LOG.debug("ServerExectutor unbound {}", exe);
-//		}
-//	}
 
 	public void addSource(SourceAdvertisement srcAdvertisement) {
 		Preconditions.checkNotNull(srcAdvertisement, "Sourceadvertisement must not be null!");
