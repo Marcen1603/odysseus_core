@@ -24,7 +24,6 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -33,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListen
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
@@ -46,6 +44,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
 public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, IPlanModificationListener {
@@ -54,7 +53,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	
 	private static P2PDictionary instance;
 
-	private static IServerExecutor executor;
+//	private static IServerExecutor executor;
 	private static String localPeerName;
 	private static PeerID localPeerID;
 	private static PeerGroup localPeerGroup;
@@ -90,20 +89,20 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		return instance != null;
 	}
 
-	public void bindExecutor(IExecutor exe) {
-		executor = (IServerExecutor) exe;
-		executor.addPlanModificationListener(this);
-
-		LOG.debug("ServerExecutor bound {}", exe);
-	}
-
-	public void unbindExecutor(IExecutor exe) {
-		if (executor == exe) {
-			executor.removePlanModificationListener(this);
-			executor = null;
-			LOG.debug("ServerExectutor unbound {}", exe);
-		}
-	}
+//	public void bindExecutor(IExecutor exe) {
+//		executor = (IServerExecutor) exe;
+//		executor.addPlanModificationListener(this);
+//
+//		LOG.debug("ServerExecutor bound {}", exe);
+//	}
+//
+//	public void unbindExecutor(IExecutor exe) {
+//		if (executor == exe) {
+//			executor.removePlanModificationListener(this);
+//			executor = null;
+//			LOG.debug("ServerExectutor unbound {}", exe);
+//		}
+//	}
 
 	public void addSource(SourceAdvertisement srcAdvertisement) {
 		Preconditions.checkNotNull(srcAdvertisement, "Sourceadvertisement must not be null!");
@@ -334,8 +333,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			Integer queryID = exportedSourcesQueryMap.get(exportAdvertisement);
 			exportedSourcesQueryMap.remove(exportAdvertisement);
-			if (queryID != -1 && executor.getExecutionPlan().getQueryById(queryID) != null) {
-				executor.removeQuery(queryID, SessionManagementService.getActiveSession());
+			if (queryID != -1 && ServerExecutorService.get().getExecutionPlan().getQueryById(queryID) != null) {
+				ServerExecutorService.get().removeQuery(queryID, SessionManagementService.getActiveSession());
 			}
 
 			fireSourceExportRemoveEvent(exportAdvertisement, sourceName);
@@ -679,8 +678,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			jxtaSender.setPipeID(pipeID.toString());
 			view.subscribeSink(jxtaSender, 0, 0, view.getOutputSchema());
 
-			Integer queryID = executor.addQuery(jxtaSender, SessionManagementService.getActiveSession(), queryBuildConfigurationName);
-			IPhysicalQuery physicalQuery = executor.getExecutionPlan().getQueryById(queryID);
+			Integer queryID = ServerExecutorService.get().addQuery(jxtaSender, SessionManagementService.getActiveSession(), queryBuildConfigurationName);
+			IPhysicalQuery physicalQuery = ServerExecutorService.get().getExecutionPlan().getQueryById(queryID);
 			ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
 			logicalQuery.setName(viewName);
 			logicalQuery.setParserId("P2P");
