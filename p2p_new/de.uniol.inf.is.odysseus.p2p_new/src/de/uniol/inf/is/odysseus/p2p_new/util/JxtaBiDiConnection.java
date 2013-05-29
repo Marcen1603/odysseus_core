@@ -19,12 +19,14 @@ import com.google.common.collect.Lists;
 class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener, PipeEventListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaBiDiConnection.class);
+	private static final int MAX_SEND_WAITING_MILLIS = 15000;
 //	private static final int PING_INTERVAL = 2000;
 	
 	private final List<IJxtaConnectionListener> listeners = Lists.newArrayList();
 	private final JxtaBiDiPipe pipe;
 
-	private boolean isDisconnected;
+	private boolean isConnected = false;
+	private boolean isConnectFailed = false;
 //	private RepeatingJobThread pingThread;
 	
 	JxtaBiDiConnection( JxtaBiDiPipe pipe ) {
@@ -60,10 +62,11 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener, PipeEventL
 		try {
 			pipe.setMessageListener(null);
 			pipe.close();
+			
 		} catch (IOException e) {
 			LOG.error("Co uld not close JxtaBiDiPipe", e);
 		} finally {
-			isDisconnected = true;
+			isConnected = false;
 			fireDisconnectEvent();
 		}
 	}
@@ -71,9 +74,30 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener, PipeEventL
 
 	@Override
 	public void send(byte[] data) throws IOException {
+		if( isConnectFailed ) {
+			throw new IOException("Could not send message since connecting failed before");
+		}
+
+		if( !isConnected ) {
+			final long waitingTime = System.currentTimeMillis();
+			while( !isConnected && !isConnectFailed) {
+				try {
+					if( System.currentTimeMillis() - waitingTime > MAX_SEND_WAITING_MILLIS ) {
+						throw new IOException("Cannot send message. Waiting time is too long (connect failed?)");
+					}
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+			
+		if( isConnectFailed ) {
+			throw new IOException("Could not send message since connecting failed before");
+		}
+		
 		Message msg = new Message();
 		msg.addMessageElement(new ByteArrayMessageElement("bytes", null, data, null));
-
+		
 		pipe.sendMessage(msg);
 	}
 
@@ -95,9 +119,45 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener, PipeEventL
 	public void pipeEvent(int event) {
 		System.err.println("Pipe Event: " + event);
 	}
-		
+
+	@Override
+	public void connect() throws IOException {
+		isConnected = true;
+
+		fireConnectEvent();
+		// pingThread = new RepeatingJobThread(PING_INTERVAL, "Ping Thread") {
+		//
+		// @Override
+		// public void doJob() {
+		// try {
+		// final Message pingMessage = new Message();
+		// pingMessage.addMessageElement(new ByteArrayMessageElement("ping",
+		// null, new byte[0], null));
+		//
+		// if( !pipe.sendMessage(pingMessage) ) {
+		// stopRunning();
+		// disconnect();
+		// }
+		// } catch (IOException e) {
+		// stopRunning();
+		// disconnect();
+		// }
+		// }
+		// };
+		// pingThread.start();
+	}
+
+	@Override
+	public boolean isConnected() {
+		return isConnected;
+	}
+	
 	protected final JxtaBiDiPipe getPipe() {
 		return pipe;
+	}
+	
+	protected final void setConnectFail() {
+		isConnectFailed = true;
 	}
 	
 	protected final void fireDisconnectEvent() {
@@ -132,35 +192,5 @@ class JxtaBiDiConnection implements IJxtaConnection, PipeMsgListener, PipeEventL
 				LOG.error("Exception in JxtaConnection listener", t);
 			}
 		}
-	}
-
-	@Override
-	public void connect() throws IOException {
-		fireConnectEvent();
-		
-//		pingThread = new RepeatingJobThread(PING_INTERVAL, "Ping Thread") {
-//
-//			@Override
-//			public void doJob() {
-//				try {
-//					final Message pingMessage = new Message();
-//					pingMessage.addMessageElement(new ByteArrayMessageElement("ping", null, new byte[0], null));
-//
-//					if( !pipe.sendMessage(pingMessage) ) {
-//						stopRunning();
-//						disconnect();
-//					}
-//				} catch (IOException e) {
-//					stopRunning();
-//					disconnect();
-//				}
-//			}
-//		};
-//		pingThread.start();
-	}
-
-	@Override
-	public boolean isConnected() {
-		return !isDisconnected;
 	}
 }

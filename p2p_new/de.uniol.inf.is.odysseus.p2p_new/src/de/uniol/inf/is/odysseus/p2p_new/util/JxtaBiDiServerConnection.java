@@ -53,7 +53,7 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 	public void start() throws IOException {
 		Preconditions.checkState(accepterThread == null, "JxtaServerConnection is already running!");
 				
-		serverPipe = new JxtaServerPipe(P2PDictionary.getInstance().getLocalPeerGroup(), getPipeAdvertisement());
+		serverPipe = new JxtaServerPipe(P2PDictionary.getInstance().getLocalPeerGroup(), pipeAdvertisement);
 		serverPipe.setPipeTimeout(0);
 
 		accepterThread = new RepeatingJobThread() {
@@ -64,6 +64,7 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 					
 					JxtaBiDiConnection connection = new JxtaBiDiConnection(pipeToClient);
 					connection.addListener(JxtaBiDiServerConnection.this);
+					connection.connect();
 					
 					activeConnections.add(connection);
 					fireConnectionAddEvent(connection);
