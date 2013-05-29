@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simplepla
 
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -24,6 +27,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
  */
 public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> extends BufferPO<T> {
 
+	private static final Logger LOG = LoggerFactory.getLogger(MigrationBuffer.class);
+	
 	private boolean waitForFirst = false;
 	private boolean markerInserted = false;
 	private PointInTime newestTimestamp = null;
@@ -45,6 +50,7 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 			}
 		}
 		this.latestEndTimestamp = latest;
+		LOG.debug("Migrationstart marked for {}", this.latestEndTimestamp);
 	}
 	
 	/**
@@ -60,7 +66,7 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 			if (this.buffer.isEmpty()) {
 				// wait for the first element to be put into the buffer.
 				this.waitForFirst = true;
-				getLogger()
+				LOG
 						.debug("Buffer was empty. Waiting for first element");
 				return;
 			}
@@ -70,14 +76,14 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 					.getLast()).getMetadata().getStart();
 
 			if (this.newestTimestamp == null) {
-				getLogger()
+				LOG
 						.debug("Waiting for next element to check if it has the same timestamp as the current");
 				this.newestTimestamp = pit;
 				return;
 			}
 
 			if (pit.equals(this.newestTimestamp)) {
-				getLogger().debug("Same StartTimestamp as the element before");
+				LOG.debug("Same StartTimestamp as the element before");
 				return;
 			}
 
@@ -85,8 +91,9 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 			// buffer.
 			IPunctuation punctuation = new MigrationMarkerPunctuation(this.newestTimestamp,
 					this.source);
-			if (getLogger().isDebugEnabled()) {
-				getLogger().debug(
+			((MigrationMarkerPunctuation) punctuation).setSourceName(getName());
+			if (LOG.isDebugEnabled()) {
+				LOG.debug(
 						"Insert MigrationMarkerPunctuation in Buffer for {} with timestamp {}", getName(), punctuation.getTime());
 			}
 			this.buffer.add(this.buffer.size() - 1, punctuation);
