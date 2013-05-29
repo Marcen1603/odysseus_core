@@ -62,7 +62,7 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 		final StringBuilder sb = new StringBuilder();
 		final TimestampAO timestampAO = determineTimestampAO(operator);
 		
-		appendIfNeeded(sb, "wrapper", determineWrapper(operator));
+		appendIfNeeded(sb, "wrapper", determineWrapper(operator), true);
 		appendIfNeeded(sb, "transport", operator.getTransportHandler());
 		appendIfNeeded(sb, "protocol", operator.getProtocolHandler());
 		appendIfNeeded(sb, "datahandler", operator.getDataHandler());
@@ -79,10 +79,16 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 
 		return sb.toString();
 	}
-
+	
 	private static void appendIfNeeded(StringBuilder sb, String key, String text) {
+		appendIfNeeded(sb, key, text, false);
+	}
+	
+	private static void appendIfNeeded(StringBuilder sb, String key, String text, boolean first) {
 		if (!Strings.isNullOrEmpty(text)) {
-			sb.append(",");
+			if(!first) {
+				sb.append(",");
+			}
 			sb.append(key).append("='").append(text).append("'");
 		}
 	}
