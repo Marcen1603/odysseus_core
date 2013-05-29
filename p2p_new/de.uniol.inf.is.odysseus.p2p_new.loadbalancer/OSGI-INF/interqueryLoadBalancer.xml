@@ -4,6 +4,4 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor"/>
    </service>
-   <reference bind="bindPQLGenerator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator" name="IPQLGenerator" policy="static" unbind="unbindPQLGenerator"/>
-   <reference bind="bindP2PDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary" name="IP2PDictionary" policy="static" unbind="unbindP2PDictionary"/>
 </scr:component>

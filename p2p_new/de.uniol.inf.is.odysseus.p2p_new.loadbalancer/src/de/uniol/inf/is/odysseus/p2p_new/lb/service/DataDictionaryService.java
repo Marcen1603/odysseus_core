@@ -9,27 +9,36 @@ public class DataDictionaryService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DataDictionaryService.class);
 	
-	public static IDataDictionary dataDictionary;
+	private static IDataDictionary dataDictionary;
 	
 	public void bindDataDictionary( IDataDictionary dd ) {
-		dataDictionary = dd;
 		
+		dataDictionary = dd;		
 		LOG.debug("DataDictionary bound {}", dd);
+		
 	}
 	
 	public void unbindDataDictionary( IDataDictionary dd ) {
-		if( dataDictionary == dd ) {
-			dataDictionary = null;
+		
+		if(dataDictionary == dd) {
 			
+			dataDictionary = null;			
 			LOG.debug("DataDictionary unbound {}", dd);
+			
 		}
+		
 	}
 	
 	public static IDataDictionary get() {
+		
 		return dataDictionary;
+		
 	}
 	
 	public static boolean isBound() {
+		
 		return get() != null;
+		
 	}
+	
 }
