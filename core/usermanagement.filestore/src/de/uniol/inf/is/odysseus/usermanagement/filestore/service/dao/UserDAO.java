@@ -40,7 +40,9 @@ public class UserDAO extends AbstractStoreDAO<User>{
 	}
 		
 	UserDAO(ITenant tenant) throws IOException {
-		super(new FileStore<String, User>(tenant.getName()+"_"+OdysseusConfiguration.get("userStoreFilename")), new ArrayList<User>());
+		// FIXME: why here a tenant?!
+		//super(new FileStore<String, User>(tenant.getName()+OdysseusConfiguration.get("userStoreFilename")), new ArrayList<User>());
+		super(new FileStore<String, User>(OdysseusConfiguration.get("userStoreFilename")), new ArrayList<User>());
 	}
 
 }
