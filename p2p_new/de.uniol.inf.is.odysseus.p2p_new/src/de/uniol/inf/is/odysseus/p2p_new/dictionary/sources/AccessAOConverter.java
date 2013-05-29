@@ -20,9 +20,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 
-public final class AccessAOCoverter {
+public final class AccessAOConverter {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AccessAOCoverter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AccessAOConverter.class);
 
 	private static final String INPUT_SCHEMA_TAG = "inputSchema";
 	private static final String INPUT_SCHEMA_ITEM_TAG = "inputSchemaItem";

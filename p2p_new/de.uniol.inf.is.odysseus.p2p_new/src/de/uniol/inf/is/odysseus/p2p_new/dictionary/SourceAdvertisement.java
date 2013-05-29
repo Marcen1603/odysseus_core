@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.AccessAOCoverter;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.AccessAOConverter;
 import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 
 public class SourceAdvertisement extends Advertisement implements Serializable {
@@ -132,7 +132,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		if( accessAO != null ) {
 			// external source
 			final Element<?> element = appendElement(doc, ACCESS_AO_TAG);
-			AccessAOCoverter.toDocument(element, accessAO);
+			AccessAOConverter.toDocument(element, accessAO);
 			
 		} else {
 			// internal source
@@ -260,7 +260,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 			setPeerID((PeerID) toID(elem));
 
 		} else if( elem.getName().equals(ACCESS_AO_TAG)) {
-			accessAO = AccessAOCoverter.toAccessAO(elem);
+			accessAO = AccessAOConverter.toAccessAO(elem);
 			
 		} else if (elem.getName().equals(PIPEID_TAG)) {
 			setPipeID((PipeID) toID(elem));
