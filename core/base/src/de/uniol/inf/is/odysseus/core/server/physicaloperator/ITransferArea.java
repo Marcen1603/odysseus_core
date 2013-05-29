@@ -56,6 +56,7 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	 */
 	void newHeartbeat(PointInTime heartbeat, int inPort);
 
+	PointInTime getMinTs(int inPort);
 	
 	/** Wenn eine Punctuation kommt, muss diese auch korrekt verwaltet werden
 	 * 

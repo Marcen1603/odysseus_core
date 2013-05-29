@@ -274,6 +274,12 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	}
 
 	@Override
+	public PointInTime getMinTs(int inPort) {
+		return minTs.get(inPort);
+	}
+
+	
+	@Override
 	public boolean isInOrder() {
 		return inOrder;
 	}

@@ -60,6 +60,11 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	}
 
 	@Override
+	public PointInTime getMinTs(int inPort) {
+		return minTs[inPort];
+	}
+	
+	@Override
 	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub) {
 		// TODO Auto-generated method stub
 		throw new IllegalArgumentException(
