@@ -136,12 +136,10 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 
 	@Override
 	public void onDisconnect(IJxtaConnection sender) {
-		System.err.println("JXTAReceiverPO Disconnect!!");
 	}
 
 	@Override
 	public void onConnect(IJxtaConnection sender) {
-		System.err.println("JXTAReceiverPO Connect!!");
 	}
 
 	@Override
