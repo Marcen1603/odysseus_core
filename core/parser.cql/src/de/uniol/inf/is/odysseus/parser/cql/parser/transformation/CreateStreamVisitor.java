@@ -306,9 +306,10 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		options.put("autoconnect", autoReconnect + "");
 		source.setProtocolHandler("SizeByteBuffer");
 		source.setOutputSchema(new SDFSchema(name, this.attributes));
+		source.setName(name);
 		ILogicalOperator op = addTimestampAO(source);
 		try {
-			dd.setStream(name, op, caller);
+			dd.setStream(name, op, caller);			
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());
 		}
@@ -336,7 +337,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		source.setOutputSchema(new SDFSchema(name, this.attributes));
 		ILogicalOperator op = addTimestampAO(source);
-		try {
+		try {			
 			dd.setStream(name, op, caller);
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());

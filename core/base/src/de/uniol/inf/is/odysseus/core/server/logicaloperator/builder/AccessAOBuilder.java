@@ -60,7 +60,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	private final StringParameter accessConnectionHandler = new StringParameter("AccessConnectionHandler", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 
 	
-	private final StringParameter source = new StringParameter("source", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
+	private final StringParameter source = new StringParameter("source", REQUIREMENT.MANDATORY);
 	// TODO: These should be the only parameter in future
 	// Make mandatory
 	private final StringParameter wrapper = new StringParameter("WRAPPER", REQUIREMENT.OPTIONAL);
@@ -97,6 +97,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		HashMap<String, String> optionsMap = new HashMap<String, String>();
 
+		String sourcename = source.getValue();
+		
 		if (options.hasValue()) {
 			for (final String item : options.getValue()) {
 				final String[] option = item.split(":");
@@ -115,14 +117,14 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		}
 
 		AccessAO ao = new AccessAO(wrapperName, optionsMap);
-
+		ao.setName(sourcename);		
 		if (outputschema.hasValue()) {
 			List<SDFAttribute> s2 = new ArrayList<>();
 			// Add source name to attributes
 			for (SDFAttribute a : outputschema.getValue()) {
-				s2.add(new SDFAttribute("", a.getAttributeName(), a));
+				s2.add(new SDFAttribute(sourcename, a.getAttributeName(), a));
 			}
-			SDFSchema schema = new SDFSchema("", s2);
+			SDFSchema schema = new SDFSchema(sourcename, s2);
 			ao.setOutputSchema(schema);
 		}
 
@@ -196,7 +198,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	}
 
 	@Override
-	protected boolean internalValidation() {
+	protected boolean internalValidation() {		
+		
 		if (type.hasValue() && adapter.hasValue() && wrapper.hasValue()) {
 			addError(new IllegalArgumentException("too much information for the creation of source. expecting wrapper OR type OR adapter."));
 			return false;

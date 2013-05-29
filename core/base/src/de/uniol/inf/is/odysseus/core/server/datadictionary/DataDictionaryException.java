@@ -22,6 +22,10 @@ public class DataDictionaryException extends RuntimeException {
 	public DataDictionaryException(String message) {
 		super(message);
 	}
+	
+	public DataDictionaryException(Throwable t){
+		super(t);
+	}
 
 
 }

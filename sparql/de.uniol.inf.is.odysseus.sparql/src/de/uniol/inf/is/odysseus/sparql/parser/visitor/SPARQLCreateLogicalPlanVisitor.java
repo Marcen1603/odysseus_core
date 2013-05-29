@@ -1370,16 +1370,16 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 		boolean isPersistent = node.isPersistent();
 
 		// the schema
-		SDFAttribute subject = new SDFAttribute(null, streamName + ".subject",
+		SDFAttribute subject = new SDFAttribute(streamName, streamName + ".subject",
 				SDFDatatype.STRING);
-		SDFAttribute predicate = new SDFAttribute(null, streamName
+		SDFAttribute predicate = new SDFAttribute(streamName, streamName
 				+ ".predicate", SDFDatatype.STRING);
-		SDFAttribute object = new SDFAttribute(null, streamName + ".object",
+		SDFAttribute object = new SDFAttribute(streamName, streamName + ".object",
 				SDFDatatype.STRING);
 
-		SDFSchema outputSchema = new SDFSchema("", subject, predicate, object);
+		SDFSchema outputSchema = new SDFSchema(streamName, subject, predicate, object);
 
-		AbstractAccessAO accAO = null;
+		AbstractAccessAO accAO = null;		
 		if (child instanceof ASTSocket) {
 			ASTSocket socket = (ASTSocket) child;
 			// accAO = new AccessAO(new SDFSource(streamName,
@@ -1388,7 +1388,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 					"",
 					null);
 			accAO.setHost(socket.getHost());
-			accAO.setPort(socket.getPort());
+			accAO.setPort(socket.getPort());			
 
 		} else if (child instanceof ASTChannel) {
 			ASTChannel channel = (ASTChannel) child;
@@ -1398,7 +1398,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 					"",
 					null);
 			accAO.setHost(channel.getHost());
-			accAO.setPort(channel.getPort());
+			accAO.setPort(channel.getPort());			
 
 		} else if (child instanceof ASTCSVSource) {
 			throw new IllegalArgumentException(
@@ -1417,6 +1417,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 		}
 
 		accAO.setOutputSchema(outputSchema);
+		accAO.setName(streamName);
 
 		// before adding the acces operator, add the corresponding entity
 //		dd.addEntitySchema(streamName, outputSchema, user);
@@ -1425,7 +1426,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 		if (isPersistent) {
 			op.setUsingNoTime(true);
 		}
-		try {
+		try {			
 			this.dd.setStream(node.getStreamName(), op, this.user);
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());

@@ -39,17 +39,12 @@ public interface IDataDictionary extends IAddDataType {
 	// -------------------------------------------------------------------------
 	// Entity Management
 	// -------------------------------------------------------------------------
-//	private void addEntitySchema(String uri, SDFSchema entity, ISession user)
-//			throws PermissionException;
-
-//	SDFSchema getEntitySchema(String uri, ISession caller)
-//			throws PermissionException, DataDictionaryException;
+//	void addEntity(String entity, ISession user) throws PermissionException, DataDictionaryException;
 //	
-//	boolean hasEntitySchema(String uri, ISession caller)
-//			throws PermissionException, DataDictionaryException;
+//	void removeEntity(String name, ISession user) throws PermissionException, DataDictionaryException;
+//
+//	boolean containsEntity(String name, ISession user) throws PermissionException, DataDictionaryException;
 
-//	void removeEntitySchema(String uri, ISession caller)
-//			throws PermissionException, DataDictionaryException;
 
 	// -------------------------------------------------------------------------
 	// View and Stream Management

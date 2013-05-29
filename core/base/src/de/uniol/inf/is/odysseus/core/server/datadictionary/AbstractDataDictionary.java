@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.datadictionary;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -65,8 +66,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	private final IStore<String, ILogicalOperator> streamDefinitions;
 	private final IStore<String, IUser> viewOrStreamFromUser;
 	private final IStore<String, ILogicalOperator> viewDefinitions;
-//	private final IStore<String, SDFSchema> entityMap;
 	private final IStore<String, IUser> entityFromUser;
+	private final IStore<String, HashMap<String, ArrayList<String>>> entityUsedBy;
 	private final IStore<String, SDFDatatype> datatypes;
 	private final IStore<Integer, ILogicalQuery> savedQueries;
 	private final IStore<Integer, IUser> savedQueriesForUser;
@@ -87,12 +88,16 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	private final Map<String, IPhysicalOperator> operators = Maps.newHashMap();
 
+	private enum EntityType {
+		STREAM, VIEW, QUERY
+	};
+
 	public AbstractDataDictionary() {
 		streamDefinitions = Preconditions.checkNotNull(createStreamDefinitionsStore(), "Store for streamDefinitions must not be null.");
 		viewOrStreamFromUser = Preconditions.checkNotNull(createViewOrStreamFromUserStore(), "Store for viewOrStreamFromUser must not be null.");
 		viewDefinitions = Preconditions.checkNotNull(createViewDefinitionsStore(), "Store for viewDefinitions must not be null.");
-//		entityMap = Preconditions.checkNotNull(createEntityMapStore(), "Store for entityMap must not be null.");
 		entityFromUser = Preconditions.checkNotNull(createEntityFromUserStore(), "Store for entityFromUser must not be null.");
+		entityUsedBy = Preconditions.checkNotNull(createEntityUsedByStore(), "Store for entityUsedBy must not be null.");
 		datatypes = Preconditions.checkNotNull(createDatatypesStore(), "Store for datatypes must not be null.");
 		savedQueries = Preconditions.checkNotNull(createSavedQueriesStore(), "Store for savedQueries must not be null.");
 		savedQueriesForUser = Preconditions.checkNotNull(createSavedQueriesForUserStore(), "Store for savedQueriesForUser must not be null.");
@@ -117,7 +122,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	protected abstract IStore<String, ILogicalOperator> createViewDefinitionsStore();
 
-	protected abstract IStore<String, SDFSchema> createEntityMapStore();
+	protected abstract IStore<String, HashMap<String, ArrayList<String>>> createEntityUsedByStore();
 
 	protected abstract IStore<String, IUser> createEntityFromUserStore();
 
@@ -153,55 +158,89 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	// Entity Management
 	// ----------------------------------------------------------------------------
 
-	
-//	private void addEntitySchema(String uri, SDFSchema entity, ISession caller) throws PermissionException {
-//		if (hasPermission(caller, DataDictionaryPermission.ADD_ENTITY)) {
-//			try {
-//				String uriToStore = createUserUri(uri, caller);
-//				if (entityMap.get(uriToStore) != null){
-//					throw new IllegalArgumentException("Source "+uri+" already defined! Remove first!");
-//				}
-//				this.entityMap.put(uriToStore, entity);
-//				this.entityFromUser.put(uriToStore, caller.getUser());
-//				fireDataDictionaryChangedEvent();
-//			} catch (StoreException e) {
-//				throw new RuntimeException(e);
-//			}
-//		} else {
-//			throw new PermissionException("User " + caller.getUser().getName() + "has no permission to add entities.");
-//		}
-//	}
-//
-//	
-//	private SDFSchema getEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
-//		checkAccessRights(uri, caller, DataDictionaryPermission.GET_ENTITY);
-//		SDFSchema ret = entityMap.get(uri);
-//		if (ret == null) {
-//			ret = entityMap.get(createUserUri(uri, caller));
-//		}
-//		if (ret == null) {
-//			throw new DataDictionaryException("no such entity: " + uri + " for user " + caller.getUser().getName());
-//		}
-//		return ret;
-//	}
-//	
-//	
-//	private boolean hasEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
-//		checkAccessRights(uri, caller, DataDictionaryPermission.GET_ENTITY);
-//		SDFSchema ret = entityMap.get(uri);
-//		if (ret == null) {
-//			ret = entityMap.get(createUserUri(uri, caller));
-//		}
-//		return ret != null;
-//	}
-//	
-//	
-//	
-//	private void removeEntitySchema(String uri, ISession caller) throws PermissionException, DataDictionaryException {
-//		checkAccessRights(uri, caller, DataDictionaryPermission.REMOVE_ENTITY);
-//		entityMap.remove(uri);
-//	}
-	
+
+	@SuppressWarnings("unchecked")
+	private void addEntityForPlan(ILogicalOperator plan, String identifier, EntityType entityType, ISession caller) {
+		String type = entityType.toString();
+		CollectOperatorLogicalGraphVisitor<ILogicalOperator> collVisitor = new CollectOperatorLogicalGraphVisitor<ILogicalOperator>(AccessAO.class);
+		@SuppressWarnings("rawtypes")
+		GenericGraphWalker collectWalker = new GenericGraphWalker();
+		collectWalker.prefixWalk(plan, collVisitor);
+		for (ILogicalOperator acc : collVisitor.getResult()) {
+			String name = acc.getName();
+			String uri = createUserUri(name, caller);
+			if (!entityType.equals(EntityType.QUERY)) {
+				// in a stream or view definition, the entity may not be defined before!
+				createEntity(uri, caller, type, identifier);
+			} else {
+				// in a query we either reuse the entity or it may new defined.
+
+				// so, if there is already an entity defined, we remember us as new user for the entity
+				if (this.entityFromUser.containsKey(uri)) {
+					if (!this.entityUsedBy.get(uri).containsKey(type)) {
+						ArrayList<String> list = new ArrayList<String>();
+						this.entityUsedBy.get(uri).put(type, list);
+					}
+					this.entityUsedBy.get(uri).get(type).add(identifier);
+				} else {
+					// else, we want to create a new entity
+					createEntity(uri, caller, type, identifier);
+				}
+			}
+		}
+		fireDataDictionaryChangedEvent();
+	}
+
+	private void createEntity(String uri, ISession caller, String type, String identifier) {
+		if (this.entityFromUser.containsKey(uri)) {
+			throw new IllegalArgumentException("There is already a view or stream with sourcename " + uri + ".");
+		}
+		this.entityFromUser.put(uri, caller.getUser());
+		this.entityUsedBy.put(uri, new HashMap<String, ArrayList<String>>());
+		ArrayList<String> list = new ArrayList<String>();
+		list.add(identifier);
+		this.entityUsedBy.get(uri).put(type, list);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void removeEntityForPlan(ILogicalOperator plan, String identifier, EntityType entityType, ISession caller) {
+		String type = entityType.toString();
+		CollectOperatorLogicalGraphVisitor<ILogicalOperator> collVisitor = new CollectOperatorLogicalGraphVisitor<ILogicalOperator>(AccessAO.class);
+		@SuppressWarnings("rawtypes")
+		GenericGraphWalker collectWalker = new GenericGraphWalker();
+		collectWalker.prefixWalk(plan, collVisitor);
+		for (ILogicalOperator acc : collVisitor.getResult()) {
+			String name = acc.getName();
+			String uri = createUserUri(name, caller);
+			if (this.entityFromUser.containsKey(uri)) {
+				if (this.entityUsedBy.get(uri).containsKey(type)) {
+					this.entityUsedBy.get(uri).get(type).remove(identifier);
+					if (this.entityUsedBy.get(uri).get(type).isEmpty()) {
+						this.entityUsedBy.get(uri).remove(type);
+					}
+				}
+			}
+		}
+		// check, whether entity is not used anymore, so we totally remove it
+		Iterator<Entry<String, HashMap<String, ArrayList<String>>>> iterEntity = this.entityUsedBy.entrySet().iterator();
+		while (iterEntity.hasNext()) {
+			Entry<String, HashMap<String, ArrayList<String>>> e = iterEntity.next();
+			boolean empty = true;
+			for (Entry<String, ArrayList<String>> typeEntry : e.getValue().entrySet()) {
+				if (!typeEntry.getValue().isEmpty()) {
+					empty = false;
+				}
+			}
+			if (empty) {
+				iterEntity.remove();
+				this.entityFromUser.remove(e.getKey());
+			}
+		}
+
+		fireDataDictionaryChangedEvent();
+
+	}
+
 	// ------------------------------------------------------------------------
 	// View Management
 	// ------------------------------------------------------------------------
@@ -210,10 +249,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	@SuppressWarnings("unchecked")
 	public void setView(String view, ILogicalOperator topOperator, ISession caller) throws DataDictionaryException {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_VIEW)) {
-			
-			setNameToAccess(view, topOperator);
-			
-			
 			String viewNameNormalized = createUserUri(view, caller);
 			if (viewDefinitions.containsKey(viewNameNormalized)) {
 				throw new DataDictionaryException("View " + viewNameNormalized + " already exists. Drop First");
@@ -227,6 +262,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				synchronized (viewDefinitions) {
 					this.viewDefinitions.put(viewNameNormalized, topOperator);
 					viewOrStreamFromUser.put(viewNameNormalized, caller.getUser());
+					addEntityForPlan(topOperator, viewNameNormalized, EntityType.VIEW, caller);
 				}
 				fireDataDictionaryChangedEvent();
 			} catch (StoreException e) {
@@ -242,19 +278,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		} else {
 			throw new PermissionException("User " + caller.getUser().getName() + " has no permission to add a view.");
 		}
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void setNameToAccess(String view, ILogicalOperator topOperator) {
-		CollectOperatorLogicalGraphVisitor<ILogicalOperator> collectVisitor = new CollectOperatorLogicalGraphVisitor<ILogicalOperator>(AccessAO.class);		
-		GenericGraphWalker collectWalker = new GenericGraphWalker();
-		collectWalker.prefixWalk(topOperator, collectVisitor);
-		for(ILogicalOperator op : collectVisitor.getResult()){				
-			SDFSchema renamed = SDFSchema.changeSourceName(op.getOutputSchema(), view);
-			op.setOutputSchema(renamed);
-			op.setName(view);
-		}
-		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -308,9 +331,16 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			@SuppressWarnings("rawtypes")
 			GenericGraphWalker walker = new GenericGraphWalker();
 			walker.prefixWalk(op, visitor);
+			if(viewname.startsWith(caller.getUser().getName()+".")){
+				removeEntityForPlan(op, viewname, EntityType.VIEW, caller);
+			}else{
+				removeEntityForPlan(op, createUserUri(viewname, caller), EntityType.VIEW, caller);
+			}
+
 			fireViewRemoveEvent(viewname, op);
 			fireViewRemoveEvent(viewname, op);
 			fireDataDictionaryChangedEvent();
+
 		}
 		return op;
 	}
@@ -333,17 +363,14 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	@Override
 	public void setStream(String streamname, ILogicalOperator plan, ISession caller) throws DataDictionaryException {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_STREAM)) {
-//			if (!this.entityMap.containsKey(streamname) && !this.entityMap.containsKey(createUserUri(streamname, caller))) {
-//				throw new DataDictionaryException("No entity for " + createUserUri(streamname, caller) + ". Add entity before adding access operator.");
-//			}
 			if (streamDefinitions.containsKey(streamname) || streamDefinitions.containsKey(createUserUri(streamname, caller))) {
 				throw new DataDictionaryException("Stream " + createUserUri(streamname, caller) + " already exists. Remove First");
 			}
-			setNameToAccess(streamname, plan);
 			synchronized (streamDefinitions) {
 				try {
 					streamDefinitions.put(createUserUri(streamname, caller), plan);
 					viewOrStreamFromUser.put(createUserUri(streamname, caller), caller.getUser());
+					addEntityForPlan(plan, createUserUri(streamname, caller), EntityType.STREAM, caller);
 				} catch (StoreException e) {
 					throw new RuntimeException(e);
 				}
@@ -366,17 +393,17 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				viewname = createUserUri(viewname, caller);
 			}
 		}
-		
+
 		String vn = viewname;
-		if (viewname.startsWith(caller.getUser().getName())){
-			 vn = viewname.substring(viewname.indexOf(".")+1);
+		if (viewname.startsWith(caller.getUser().getName())) {
+			vn = viewname.substring(viewname.indexOf(".") + 1);
 		}
-		StreamAO ao = new StreamAO(vn);	
+		StreamAO ao = new StreamAO(vn);
 		ArrayList<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		for(SDFAttribute old : this.streamDefinitions.get(viewname).getOutputSchema()){
+		for (SDFAttribute old : this.streamDefinitions.get(viewname).getOutputSchema()) {
 			attributes.add(new SDFAttribute(vn, old.getAttributeName(), old));
 		}
-		SDFSchema schema = new SDFSchema(vn, attributes);		
+		SDFSchema schema = new SDFSchema(vn, attributes);
 		ao.setOutputSchema(schema);
 		return ao;
 	}
@@ -453,11 +480,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	@Override
 	public ILogicalOperator removeViewOrStream(String viewname, ISession caller) {
 		if (this.viewDefinitions.containsKey(viewname)) {
-			checkAccessRights(viewname, caller, DataDictionaryPermission.REMOVE_VIEW);			
+			checkAccessRights(viewname, caller, DataDictionaryPermission.REMOVE_VIEW);
 			return removeView(viewname, caller);
 		}
 		if (this.viewDefinitions.containsKey(createUserUri(viewname, caller))) {
-			checkAccessRights(createUserUri(viewname, caller), caller, DataDictionaryPermission.REMOVE_VIEW);			
+			checkAccessRights(createUserUri(viewname, caller), caller, DataDictionaryPermission.REMOVE_VIEW);
 			return removeView(createUserUri(viewname, caller), caller);
 		}
 
@@ -477,13 +504,20 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				if (op != null) {
 					// Remove plan from wrapper plan factory
 					removeAccessPlan(viewname);
-					removeAccessPlan(createUserUri(viewname, caller));					
+					removeAccessPlan(createUserUri(viewname, caller));
 					// Remove registered ids
 					RemoveIdLogicalGraphVisitor<ILogicalOperator> visitor = new RemoveIdLogicalGraphVisitor<ILogicalOperator>(this, caller);
 					@SuppressWarnings("rawtypes")
 					GenericGraphWalker walker = new GenericGraphWalker();
 					walker.prefixWalk(op, visitor);
+					if(viewname.startsWith(caller.getUser().getName()+".")){
+						removeEntityForPlan(op, viewname, EntityType.STREAM, caller);
+					}else{
+						removeEntityForPlan(op, createUserUri(viewname, caller), EntityType.STREAM, caller);
+					}
+
 					fireViewRemoveEvent(viewname, op);
+
 				}
 				return op;
 			}
@@ -659,6 +693,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		this.savedQueries.put(q.getID(), q);
 		this.savedQueriesForUser.put(q.getID(), caller.getUser());
 		this.savedQueriesBuildParameterName.put(q.getID(), buildParameterName);
+		addEntityForPlan(q.getLogicalPlan(), Integer.toString(q.getID()), EntityType.QUERY, caller);
 	}
 
 	@Override
@@ -694,6 +729,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		this.savedQueries.remove(q.getID());
 		this.savedQueriesForUser.remove(q.getID());
 		this.savedQueriesBuildParameterName.remove(q.getID());
+		removeEntityForPlan(q.getLogicalPlan(), Integer.toString(q.getID()), EntityType.QUERY, caller);
 	}
 
 	// ----------------------------------------------------------------------------
@@ -759,8 +795,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	// -------------------------------------------------------------------------------------
 
 	/**
-	 * return true if the given user has permission to access the given view in
-	 * a certain way (action).
+	 * return true if the given user has permission to access the given view in a certain way (action).
 	 * 
 	 * @param uri
 	 *            --> Fully qualified with user name --> user.name
@@ -797,8 +832,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	/**
-	 * checks if the given user has higher permission as the given action. Calls
-	 * the corresponding method in the action class.
+	 * checks if the given user has higher permission as the given action. Calls the corresponding method in the action class.
 	 * 
 	 * @param action
 	 * @param objecturi
@@ -875,8 +909,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public synchronized void putAccessPlan(String uri, ISource<?> s) {
-		if (sources.containsKey(uri)){
-			throw new IllegalArgumentException("Sourcename "+uri+" already registred! Remove first");
+		if (sources.containsKey(uri)) {
+			throw new IllegalArgumentException("Sourcename " + uri + " already registred! Remove first");
 		}
 		sources.put(uri, s);
 	}
@@ -968,7 +1002,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				this.storedProceduresFromUser.put(nameNormalized, caller.getUser());
 				fireDataDictionaryChangedEvent();
 			} else {
-				throw new DataDictionaryException("Stored procedure with name \""+nameNormalized+"\" already used");
+				throw new DataDictionaryException("Stored procedure with name \"" + nameNormalized + "\" already used");
 			}
 		} else {
 			throw new PermissionException("User " + caller.getUser().getName() + "has no permission to add procedures.");
@@ -1011,12 +1045,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			throw new DataDictionaryException("Stored procedure " + name + " does not exist");
 		}
 	}
-	
+
 	@Override
 	public List<StoredProcedure> getStoredProcedures(ISession caller) {
 		List<StoredProcedure> list = new ArrayList<>();
-		for(Entry<String, IUser> e : this.storedProceduresFromUser.entrySet()){
-			if(e.getValue().equals(caller.getUser())){
+		for (Entry<String, IUser> e : this.storedProceduresFromUser.entrySet()) {
+			if (e.getValue().equals(caller.getUser())) {
 				StoredProcedure sp = this.storedProcedures.get(e.getKey());
 				list.add(sp);
 			}

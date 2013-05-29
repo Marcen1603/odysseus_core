@@ -1464,11 +1464,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 		
 		AccessAO access = new AccessAO(wrapper, options);
+		access.setName(sourceName);
 		access.setProtocolHandler(protocol);
 		access.setDataHandler(datahandler);
 		access.setTransportHandler(transport);
 		access.setOutputSchema(outputSchema);
-		getDataDictionary().setStream(sourceName, access, getCaller());
+		getDataDictionary().setStream(sourceName, access, getCaller());		
 		
 		return null;
 	}

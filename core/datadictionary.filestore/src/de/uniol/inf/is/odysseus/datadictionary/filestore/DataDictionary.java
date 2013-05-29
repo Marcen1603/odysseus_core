@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.datadictionary.filestore;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
@@ -52,8 +53,8 @@ public class DataDictionary extends AbstractDataDictionary {
 	}
 
 	@Override
-	protected IStore<String, SDFSchema> createEntityMapStore() {
-		return tryCreateFileStore("entitiesFilename");
+	protected IStore<String, HashMap<String, ArrayList<String>>> createEntityUsedByStore() {
+		return tryCreateFileStore("entityUsedByFileName");
 	}
 
 	@Override

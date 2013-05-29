@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class OdysseusConfiguration {
 
+		
 	static Logger _logger = null;
 
 	static Logger getLogger() {
@@ -116,6 +117,8 @@ public class OdysseusConfiguration {
 				+ "store/sinkDefinitionsUser.store");
 		props.setProperty("entitiesFilename", odysseusHome
 				+ "store/entities.store");
+		props.setProperty("entityUsedByFileName", odysseusHome
+				+ "store/entityUsedBy.store");
 		props.setProperty("sourceTypeMapFilename", odysseusHome
 				+ "store/sourceTypeMap.store");
 		props.setProperty("entityFromUserFilename", odysseusHome

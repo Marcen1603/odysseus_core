@@ -15,11 +15,13 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.datadictionary.mem;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
@@ -43,10 +45,10 @@ public class DataDictionary extends AbstractDataDictionary {
 	}
 
 	@Override
-	protected IStore<String, SDFSchema> createEntityMapStore() {
+	protected IStore<String, HashMap<String, ArrayList<String>>> createEntityUsedByStore() {
 		return newMemoryStore();
 	}
-
+	
 	@Override
 	protected IStore<String, IUser> createEntityFromUserStore() {
 		return newMemoryStore();
