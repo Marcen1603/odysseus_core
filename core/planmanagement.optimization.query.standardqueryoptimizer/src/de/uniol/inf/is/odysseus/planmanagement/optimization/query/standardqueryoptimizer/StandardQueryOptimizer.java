@@ -112,19 +112,20 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		boolean createAlternativePlans = copiedPlan != null && planGeneration != null && query.getAlternativeLogicalPlans().isEmpty()
 				&& planGeneration == ParameterDoPlanGeneration.TRUE && !joinVisitor.getResult().isEmpty();
 		if(createAlternativePlans) {
-			System.out.println("[StandardQueryOptimizer] Creating alternative logical plans");
+			getLogger().debug("Creating alternative logical plans");
 			PlanGenerationConfiguration generationConfig = parameters.getPlanGenerationConfiguration();
 			List<ILogicalOperator> alternativePlans = compiler.generatePlans(copiedPlan, generationConfig, query);
 			query.setAlternativeLogicalPlans(alternativePlans);
 			// this should be the best
 			if(!alternativePlans.isEmpty()) {
-				System.out.println("[StandardQueryOptimizer] generatePlans has returned " + alternativePlans.size() + " plans");
+				getLogger().debug("generatePlans has returned {} plans", alternativePlans.size());
 				copiedPlan = alternativePlans.get(0);
 			} else {
-				System.out.println("[StandardQueryOptimizer] generatePlans has returned an empty list.");
+				getLogger().warn("generatePlans has returned an empty list.");
 			}
 		}
 		if(joinVisitor.getResult().isEmpty()) {
+			getLogger().debug("Query can not be adapted because it does not contain any joins");
 			// query can not be adapted because there are no alternative plans
 			query.setParameter("noAdaption", true);
 		}
