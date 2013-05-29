@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractTimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastArrayList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.IFastList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicat
 /**
  * This sweeparea implementation provides some optimizations on extract and purge. The elements are always sorted and extract and purge only remove elements, until the remove predicate first returns false. The remove predicate is fixed to the TotallyBeforePredicate
  */
-public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>> extends AbstractSweepArea<T> implements Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
+public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>> extends AbstractTimeIntervalSweepArea<T> implements Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
 
 	Comparator<T> purgeComparator = new Comparator<T>() {
 
