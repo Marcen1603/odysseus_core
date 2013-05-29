@@ -13,6 +13,7 @@ public class MigrationMarkerPunctuation extends AbstractPunctuation {
 
 	private static final long serialVersionUID = 1L;
 	private ISource<?> source;
+	private String sourceName = null;
 
 	public MigrationMarkerPunctuation(long time, ISource<?> source) {
 		super(time);
@@ -51,10 +52,18 @@ public class MigrationMarkerPunctuation extends AbstractPunctuation {
 		return this.source;
 	}
 
+	public void setSourceName(String name) {
+		this.sourceName = name;
+	}
+	
+	public String getSourceName() {
+		return (this.sourceName != null ? this.sourceName : this.source.getName());
+	}
+	
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " (" + hashCode() + ") | "
-				+ getTime() + " | from " + getSource().getName();
+				+ getTime() + " | from " + getSourceName();
 	}
 
 }
