@@ -101,5 +101,30 @@ public class RestructHelper {
 		toUpdate.add(toUp.getTarget());
 		return toUpdate;
 	}
+	
+	/**
+	 * Replaces a logical operator by a subplan.
+	 * @param oldOp The logical operator to be replaced.
+	 * @param newOp The subplan to be inserted instead.
+	 */
+	public static void replaceWithSubplan(ILogicalOperator oldOp, ILogicalOperator newOp) {
+		
+		// Replace subscription for each child of the old operator to one of the new
+		for(LogicalSubscription child : oldOp.getSubscriptions()) {
+			
+			child.getTarget().unsubscribeFromSource(child);
+			child.getTarget().subscribeToSource(newOp, child.getSinkInPort(), child.getSourceOutPort(), child.getSchema());
+			
+		}
+		
+		// Replace subscription for each father of the old operator to one of the new
+		for(LogicalSubscription father : oldOp.getSubscribedToSource()) {
+			
+			father.getTarget().unsubscribeSink(father);
+			father.getTarget().subscribeSink(newOp, father.getSinkInPort(), father.getSourceOutPort(), father.getSchema());
+			
+		}
+		
+	}
 
 }
