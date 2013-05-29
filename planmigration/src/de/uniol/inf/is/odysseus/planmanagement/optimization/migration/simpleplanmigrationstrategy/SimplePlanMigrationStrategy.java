@@ -136,6 +136,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				.getPseudoSources(oldPlanRoot);
 		List<ISource<?>> metaDataUpdates = MigrationHelper
 				.getMetaDataUpdatePOs(oldPlanSources);
+		// if there are buffers after a metadataupdate it is part of the source for this plan
+		metaDataUpdates = replaceMDUWithBuffers(metaDataUpdates);
 		List<IPhysicalOperator> oldPlanOperatorsBeforeSources = MigrationHelper
 				.getOperatorsBeforeSources(oldPlanRoot, metaDataUpdates);
 		List<IPhysicalOperator> newPlanOperatorsBeforeSources = MigrationHelper
@@ -190,7 +192,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				// Buffer not connected, so no errors can occur
 				LOG.error("Failed to open Buffer", e);
 			}
-			buffer.setName(metadataUpdatePO.getName());
+			buffer.setName(metadataUpdatePO.getOutputSchema().getAttribute(0).getSourceName());
 			
 			buffer.block();
 			buffer.setOutputSchema(metadataUpdatePO.getOutputSchema());
@@ -278,10 +280,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			throw new MigrationException(e);
 		}
 
+		LOG.debug("Marking migration starts");
 		// resume by unblocking buffers
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
 			((MigrationBuffer)buffer).markMigrationStart(root);
 		}
+		LOG.debug("Unblocking buffers");
 		for(BufferPO<?> buffer : context.getBufferPOs()) {
 			buffer.unblock();
 		}
@@ -752,6 +756,23 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			}
 		}
 		return newRoots;
+	}
+	
+	private List<ISource<?>> replaceMDUWithBuffers(List<ISource<?>> metaDataUpdates) {
+		List<ISource<?>> replace = new ArrayList<ISource<?>>();
+		for(ISource<?> mdu : metaDataUpdates) {
+			boolean replaced = false;
+			for(PhysicalSubscription<?> sub : mdu.getSubscriptions()) {
+				if(!replaced && sub.getTarget() instanceof BufferPO) {
+					replace.add((ISource<?>) sub.getTarget());
+					replaced = true;
+				}
+			}
+			if(!replaced) {
+				replace.add(mdu);
+			}
+		}
+		return replace;
 	}
 	
 //	@SuppressWarnings("unused")
