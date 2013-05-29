@@ -1,7 +1,8 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary.sources;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import net.jxta.document.TextElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -62,7 +64,7 @@ public final class AccessAOConverter {
 			}
 		}
 		appendElement(root, PORT_TAG, String.valueOf(accessOperator.getPort()));
-		appendElement(root, HOST_TAG, determineHost(accessOperator.getHost()));
+		appendElement(root, HOST_TAG, accessOperator.getHost());
 		appendElement(root, LOGIN_TAG, accessOperator.getLogin());
 		appendElement(root, PASSWORD_TAG, accessOperator.getPassword());
 		appendElement(root, AUTOCONNECT_TAG, String.valueOf(accessOperator.isAutoReconnectEnabled()));
@@ -71,7 +73,11 @@ public final class AccessAOConverter {
 		final Map<String, String> options = accessOperator.getOptionsMap();
 		if (options != null && !options.isEmpty()) {
 			for (final String key : options.keySet()) {
-				appendElement(optionsElement, key, options.get(key));
+				if( key.equalsIgnoreCase("host")) {
+					appendElement(optionsElement, key, determineHost(options.get(key)));
+				} else {
+					appendElement(optionsElement, key, options.get(key));
+				}
 			}
 		}
 
@@ -99,15 +105,12 @@ public final class AccessAOConverter {
 			return null;
 		}
 
-		try {
-			if (host.equalsIgnoreCase("localhost") || host.equalsIgnoreCase("127.0.0.1")) {
-				return InetAddress.getLocalHost().getHostAddress();
-			}
-			return host;
-		} catch (UnknownHostException e) {
-			LOG.error("Could not determine host-name for accessao", e);
-			return host;
+		if (host.equalsIgnoreCase("localhost") || host.equalsIgnoreCase("127.0.0.1")) {
+			Optional<String> realHostAddress = determineHostAddress();
+
+			return realHostAddress.isPresent() ? realHostAddress.get() : host;
 		}
+		return host;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -220,5 +223,25 @@ public final class AccessAOConverter {
 			final SDFSchema schema = new SDFSchema(root.getTextValue(), attributes);
 			accessAO.setOutputSchema(schema);
 		}
+	}
+	
+	private static Optional<String> determineHostAddress() {
+		try {
+			Enumeration<NetworkInterface> e= NetworkInterface.getNetworkInterfaces();
+	        while(e.hasMoreElements())
+	        {
+	            Enumeration<InetAddress> ee = e.nextElement().getInetAddresses();
+	            while(ee.hasMoreElements())
+	            {
+	                InetAddress i = ee.nextElement();
+	                if( !i.isLoopbackAddress() && i instanceof Inet4Address) {
+	                	return Optional.of(i.getHostAddress());
+	                }
+	            }
+	        }
+		} catch( Throwable t ) {
+			LOG.error("Could not determine host address", t);
+		}
+		return Optional.absent();
 	}
 }
