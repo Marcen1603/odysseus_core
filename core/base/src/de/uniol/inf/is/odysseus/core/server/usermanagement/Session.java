@@ -28,7 +28,9 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class Session implements ISession {
-    private final static long SESSION_TIMEOUT = OdysseusConfiguration.getLong("sessionTimeout", 10 * 60000);
+
+	private static final long serialVersionUID = -509478572220332340L;
+	private final static long SESSION_TIMEOUT = OdysseusConfiguration.getLong("sessionTimeout", 10 * 60000);
     private final String id = UUID.randomUUID().toString();
     private final IUser user;
     private final ITenant tenant;

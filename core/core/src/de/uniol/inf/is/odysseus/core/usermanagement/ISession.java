@@ -15,10 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.core.usermanagement;
 
+import java.io.Serializable;
+
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public interface ISession {
+public interface ISession extends Serializable{
 	/**
 	 * 
 	 * @return The session ID

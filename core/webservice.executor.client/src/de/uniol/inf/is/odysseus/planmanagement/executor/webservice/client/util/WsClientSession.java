@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class WsClientSession implements ISession {
 
+
+	private static final long serialVersionUID = 1701204665340985896L;
 	private final static long SESSION_TIMEOUT = 10 * 60000;
 	private final String id = UUID.randomUUID().toString();
 	private final IUser user;
