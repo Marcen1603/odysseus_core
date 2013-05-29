@@ -78,10 +78,15 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 			
 			// Generate a new logical operator which marks that the query result shall return to this instance
 			// TODO
-//			List<ILogicalOperator> localPart = Lists.newArrayList();
-//			localPart.add(generateRenameAO(queryParts));
-//			queryParts.add(new QueryPart(localPart));
+			final List<QueryPart> localParts = Lists.newArrayList();
+			for(QueryPart part : queryParts) {
 			
+				ILogicalOperator localPart = this.generateRenameAO(part);
+				localParts.add(new QueryPart(Lists.newArrayList(localPart), AbstractLoadBalancer.getLocalDestinationName()));
+				
+			}
+			
+			queryParts.addAll(localParts);
 			allQueryParts.addAll(queryParts);
 			queryPartsMap.put(query, queryParts);
 			

@@ -5,19 +5,30 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
+/**
+ * Singleton class for the single, static referenced {@link IPQLGenerator}. <br />
+ * The referenced {@link IPQLGenerator} can be accessed by calling {@link #get()}.
+ * @author Michael Brand
+ */
 public class PQLGeneratorService {
 	
+	/**
+	 * The {@link Logger} instance for this class.
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(PQLGeneratorService.class);
 	
 	/**
-	 * The <code>generator</code> generates PQL statements.
+	 * The referenced {@link IPQLGenerator}.
+	 * @see #bindPQLGenerator(IPQLGenerator)
+	 * @see #unbindPQLGenerator(IPQLGenerator)
 	 */
 	private static IPQLGenerator generator;
 	
 	/**
-	 * Binds the {@link IPQLGenerator} to generate PQL statements. <br />
-	 * Called by OSGi-DS
-	 * @param gen The {@link IPQLGenerator} to be binded.
+	 * Binds the referenced {@link IPQLGenerator}. <br />
+	 * Called by OSGI-DS.
+	 * @see #unbindPQLGenerator(IPQLGenerator)
+	 * @param prov An instance of an {@link IPQLGenerator} implementation.
 	 */
 	public final void bindPQLGenerator(IPQLGenerator gen) {
 		
@@ -27,10 +38,10 @@ public class PQLGeneratorService {
 	}
 	
 	/**
-	 * Unbinds the {@link IPQLGenerator}. <br />
-	 * Called by OSGi-DS
+	 * Unbinds an referenced {@link IPQLGenerator}, if <code>gen</code> is the binded on. <br />
+	 * Called by OSGI-DS.
 	 * @see #bindPQLGenerator(IPQLGenerator)
-	 * @param gen The {@link IPQLGenerator} to be unbinded.
+	 * @param gen An instance of an {@link IPQLGenerator} implementation.
 	 */
 	public final void unbindPQLGenerator(IPQLGenerator gen) {
 		
@@ -43,12 +54,20 @@ public class PQLGeneratorService {
 		
 	}
 	
+	/**
+	 * Returns the referenced {@link IPQLGenerator}.
+	 */
 	public static IPQLGenerator get() {
 		
 		return generator;
 		
 	}
 	
+	/**
+	 * Determines, if a referenced {@link IPQLGenerator} is bound.
+	 * @see #bindPQLGenerator(IPQLGenerator)
+	 * @return <code>{@link #get()} != null</code>
+	 */
 	public static boolean isBound() {
 		
 		return get() != null;

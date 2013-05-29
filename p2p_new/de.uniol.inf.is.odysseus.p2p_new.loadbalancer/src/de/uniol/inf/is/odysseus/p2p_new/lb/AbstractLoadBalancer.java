@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.p2p_new.lb.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 
-// TODO javaDoc, auch bei den services
+// TODO javaDoc
 public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractLoadBalancer.class);
@@ -163,11 +163,12 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 	}
 	
-	protected RenameAO generateRenameAO(List<QueryPart> queryParts) {
+	protected RenameAO generateRenameAO(QueryPart queryPart) {
 		
 		final RenameAO renameAO = new RenameAO();
-		renameAO.setDestinationName(AbstractLoadBalancer.getLocalDestinationName());
-		Collection<ILogicalOperator> sinks = this.collectSinks(queryParts);
+		renameAO.setNoOp(true);
+		renameAO.addParameterInfo("isNoOp", "'true'");
+		Collection<ILogicalOperator> sinks = queryPart.getRealSinks();
 		int sinkInPort = 0;
 		for(final ILogicalOperator sink : sinks)
 			renameAO.subscribeToSource(sink, sinkInPort++, 0, sink.getOutputSchema());
@@ -367,7 +368,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	/**
 	 * Collects all real sinks from a list of {@link QueryPart}s.
 	 * @param queryParts The list of {@link QueryPart}s from which the real sinks shall be collected.
-	 * @return The collection of all real sinks.
+	 * @return The collection of all real sinks.	
 	 */
 	protected Collection<ILogicalOperator> collectSinks(List<QueryPart> queryParts) {
 		
@@ -379,7 +380,13 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 	}
 	
-	protected QueryPart replaceStreamAOs(QueryPart part, ISession session) {
+	/**
+	 * Replaces every {@link StreamAO} within a {@link QueryPart} by its logical subplan.
+	 * @param part The {@link QueryPart} where the {@linkStreamAO}s shall be replaced.
+	 * @param user The {@link ISession} instance to identify the user who wants this replacement.
+	 * @return The 
+	 */
+	protected QueryPart replaceStreamAOs(QueryPart part, ISession user) {
 		
 		List<ILogicalOperator> operators = Lists.newArrayList();
 		for(ILogicalOperator operator : part.getOperators())
@@ -389,7 +396,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 			if(operator instanceof StreamAO) {
 				
-				ILogicalOperator streamPlan = DataDictionaryService.get().getStreamForTransformation(((StreamAO) operator).getStreamname(), session);
+				ILogicalOperator streamPlan = DataDictionaryService.get().getStreamForTransformation(((StreamAO) operator).getStreamname(), user);
 				RestructHelper.replaceWithSubplan(operator, streamPlan);
 				
 			}
