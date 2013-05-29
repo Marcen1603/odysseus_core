@@ -234,10 +234,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="de.uniol.inf.is.odysseus.rcp.starter.application"
-            name="Probabilistic Odysseus Studio 2">
+            name="Odysseus Studio 2">
          <property
                name="appName"
-               value="Probabilistic Odysseus Studio 2">
+               value="Odysseus Studio 2">
          </property>
          <property
                name="preferenceCustomization"
