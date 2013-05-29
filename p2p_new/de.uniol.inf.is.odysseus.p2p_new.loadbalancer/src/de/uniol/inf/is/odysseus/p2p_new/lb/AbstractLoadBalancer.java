@@ -28,8 +28,10 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPartAdvertisement;
@@ -50,6 +52,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	private static final String SENDER_NAME = "JxtaSender_";
 	
 	private int numConnections = 0;
+	
+	protected SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
 	
 	/**
 	 * Returns the identifier of the local peer.
@@ -310,7 +314,13 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				localParts.add(part);
 				LOG.debug("QueryPart {} locally stored", part);
 				
-			} else publish(this.replaceStreamAOs(part, sessionMap.get(part)), assignedPeerID, sharedQueryID, transCfgName);
+			} else {
+				
+				QueryPart partToPublish = this.replaceStreamAOs(part, sessionMap.get(part));
+				LOG.debug("Plan of the querypart to publish: {}", this.printer.createString(partToPublish.getOperators().iterator().next()));
+				publish(partToPublish, assignedPeerID, sharedQueryID, transCfgName);
+				
+			}
 
 		}
 
@@ -371,43 +381,24 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	
 	protected QueryPart replaceStreamAOs(QueryPart part, ISession session) {
 		
-		// TODO
+		List<ILogicalOperator> operators = Lists.newArrayList();
+		for(ILogicalOperator operator : part.getOperators())
+			operators.add(operator);
 		
-		final List<ILogicalOperator> newOperators = Lists.newArrayList();
-		
-		for(ILogicalOperator operator : part.getOperators()) {
+		for(ILogicalOperator operator : operators) {
 			
-			if(operator instanceof StreamAO)
-				continue;
-			else
-			
-			for(LogicalSubscription sub : operator.getSubscribedToSource()) {
+			if(operator instanceof StreamAO) {
 				
-				if(sub.getTarget() instanceof StreamAO) {
-					
-					StreamAO stream = (StreamAO) sub.getTarget();
-					
-					ILogicalOperator streamPlan = DataDictionaryService.get().
-							getStreamForTransformation(stream.getStreamname(), session);
-					operator.unsubscribeFromSource(sub);
-					operator.subscribeToSource(streamPlan, sub.getSinkInPort(), 
-							sub.getSourceOutPort(), sub.getSchema());
-					streamPlan.subscribeSink(operator, sub.getSourceOutPort(), sub.getSinkInPort(), sub.getSchema());
-					List<ILogicalOperator> streamPlanList = Lists.newArrayList();
-					collectOperators(streamPlan, streamPlanList);
-					newOperators.addAll(streamPlanList);
-					
-				}
+				ILogicalOperator streamPlan = DataDictionaryService.get().getStreamForTransformation(((StreamAO) operator).getStreamname(), session);
+				RestructHelper.replaceWithSubplan(operator, streamPlan);
 				
 			}
-			
-			newOperators.add(operator);
 			
 		}
 		
 		if(part.getDestinationName().isPresent())
-			return new QueryPart(newOperators, part.getDestinationName().get());
-		else return new QueryPart(newOperators);
+			return new QueryPart(operators, part.getDestinationName().get());
+		else return new QueryPart(operators);
 		
 	}
 
