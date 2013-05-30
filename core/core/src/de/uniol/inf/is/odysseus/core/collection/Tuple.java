@@ -505,27 +505,29 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		if (attributes.length > 0) {
 			for (int i = 0; i < this.attributes.length; ++i) {
 				Object curAttribute = this.attributes[i];
-				if (i>0){
+				if (i > 0) {
 					retBuff.append(delimiter);
 				}
 				if (curAttribute == null) {
 					retBuff.append("");
 				} else {
-					if (floatingFormatter != null || numberFormatter != null) {
-						if (curAttribute instanceof Number) {
-							if (curAttribute instanceof Double
-									|| curAttribute instanceof Float) {
-								retBuff.append(floatingFormatter
-										.format(curAttribute));
-							} else {
-								retBuff.append(numberFormatter
-										.format(curAttribute));
-							}
+					if (curAttribute instanceof Number) {
+						if ((curAttribute instanceof Double || curAttribute instanceof Float)
+								&& floatingFormatter != null) {
+							retBuff.append(floatingFormatter
+									.format(curAttribute));
+						} else if (!((curAttribute instanceof Double || curAttribute instanceof Float))
+								&& numberFormatter != null) {
+							retBuff.append(numberFormatter.format(curAttribute));
+						} else {
+							retBuff.append(curAttribute);
 						}
 					} else {
 						if (textSeperator != null
 								&& curAttribute instanceof String) {
-							retBuff.append(textSeperator).append(curAttribute.toString()).append(textSeperator);
+							retBuff.append(textSeperator)
+									.append(curAttribute.toString())
+									.append(textSeperator);
 						} else {
 							retBuff.append(curAttribute.toString());
 						}
@@ -537,7 +539,9 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		}
 
 		if (withMetadata) {
-			retBuff.append(delimiter).append(getMetadata().csvToString(delimiter,textSeperator, floatingFormatter, numberFormatter, withMetadata));
+			retBuff.append(delimiter).append(
+					getMetadata().csvToString(delimiter, textSeperator,
+							floatingFormatter, numberFormatter, withMetadata));
 		}
 		return retBuff.toString();
 	}
