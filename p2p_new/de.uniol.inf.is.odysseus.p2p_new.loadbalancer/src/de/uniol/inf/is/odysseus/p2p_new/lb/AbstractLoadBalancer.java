@@ -388,9 +388,12 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 */
 	protected QueryPart replaceStreamAOs(QueryPart part, ISession user) {
 		
-		List<ILogicalOperator> operators = Lists.newArrayList();
+		final List<ILogicalOperator> operators = Lists.newArrayList();
 		for(ILogicalOperator operator : part.getOperators())
 			operators.add(operator);
+		
+		final List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
+		final List<ILogicalOperator> operatorsToAdd = Lists.newArrayList();
 		
 		for(ILogicalOperator operator : operators) {
 			
@@ -398,10 +401,17 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 				ILogicalOperator streamPlan = DataDictionaryService.get().getStreamForTransformation(((StreamAO) operator).getStreamname(), user);
 				RestructHelper.replaceWithSubplan(operator, streamPlan);
+				operatorsToRemove.add(operator);
+				operatorsToAdd.add(streamPlan);
 				
 			}
 			
 		}
+		
+		for(ILogicalOperator operator : operatorsToRemove)
+			operators.remove(operator);
+		for(ILogicalOperator operator : operatorsToAdd)
+			operators.add(operator);
 		
 		if(part.getDestinationName().isPresent())
 			return new QueryPart(operators, part.getDestinationName().get());
