@@ -14,7 +14,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.rcp.p2p_new;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
- Jxta.2.6;bundle-version="1.0.0"
+ Jxta.2.6;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.parser.pql.generator;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.p2p_new.distribute
 Service-Component: OSGI-INF/jxtaServicesProviderService.xml,OSGI-INF/p2pDictionaryService.xml,
  OSGI-INF/sessionManagementService.xml, OSGI-INF/queryPartController.xml, OSGI-INF/queryPartManager.xml

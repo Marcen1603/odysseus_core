@@ -133,6 +133,22 @@ public class RestructHelper {
 	}
 	
 	/**
+	 * Creates a new {@link TopAO} on top of the sinks.
+	 * @param sinks The {@link ILogicalOperator}s which shall be subscribed to new {@link TopAO}.
+	 * @return The new {@link TopAO}.
+	 */
+	public static TopAO generateTopAO(final Collection<ILogicalOperator> sinks) {
+		
+		final TopAO topAO = new TopAO();
+		int inputPort = 0;
+		for(ILogicalOperator sink : sinks)
+			topAO.subscribeToSource(sink, inputPort++, 0, sink.getOutputSchema());
+
+		return topAO;
+		
+	}
+	
+	/**
 	 * Removes all {@link TopAO} logical operators from a list of {@link ILogicalOperator}s representing an {@link ILogicalQuery}.
 	 * @param operators The list of {@link ILogicalOperator}s representing an {@link ILogicalQuery}.
 	 */

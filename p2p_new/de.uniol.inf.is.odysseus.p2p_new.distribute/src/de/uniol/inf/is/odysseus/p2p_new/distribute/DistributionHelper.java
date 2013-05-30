@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.lb;
+package de.uniol.inf.is.odysseus.p2p_new.distribute;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -23,15 +23,18 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 /**
  * A collection of useful tools for distributors.
@@ -92,6 +95,7 @@ public class DistributionHelper {
 		int sinkInPort = 0;
 		for(final ILogicalOperator sink : sinks)
 			renameAO.subscribeToSource(sink, sinkInPort++, 0, sink.getOutputSchema());
+		renameAO.initialize();
 		return renameAO;
 		
 	}
@@ -210,7 +214,7 @@ public class DistributionHelper {
 					
 					for (final QueryPart destQueryPart : nextOperators.keySet()) {
 						
-						DistributionHelper.generatePeerConnection(destQueryPart, queryPart, relativeSink, nextOperators.get(destQueryPart), 
+						DistributionHelper.generatePeerConnection(queryPart, destQueryPart, relativeSink, nextOperators.get(destQueryPart), 
 								baseSenderName + connectionNo, baseAccessName + connectionNo, localPeerGroupID);
 						connectionNo++;
 						
@@ -305,6 +309,30 @@ public class DistributionHelper {
 			LOG.error("Could not publish query part", ex);
 			
 		}
+		
+	}
+	
+	/**
+	 * Creates a new {@link ILogicalQuery} from a list of {@link QueryPart}s.
+	 * @param queryParts The list if {@link QueryPart}s which shall be assembled.
+	 * @param generator The {@link IPQLGenerator} to create the PQL statement.
+	 * @param name The name of the new {@link ILogicalQuery}.
+	 * @return The new {@link ILogicalQuery}.
+	 */
+	public static ILogicalQuery transformToQuery(List<QueryPart> queryParts, IPQLGenerator generator, String name) {
+		
+		final Collection<ILogicalOperator> sinks = DistributionHelper.collectSinks(queryParts);
+		final TopAO topAO = RestructHelper.generateTopAO(sinks);
+	
+		final ILogicalQuery logicalQuery = new LogicalQuery();
+		logicalQuery.setLogicalPlan(topAO, true);
+		logicalQuery.setName(name);
+		logicalQuery.setParserId("PQL");
+		logicalQuery.setPriority(0);
+		logicalQuery.setUser(SessionManagementService.getActiveSession());
+		logicalQuery.setQueryText(generator.generatePQLStatement(topAO));
+		
+		return logicalQuery;
 		
 	}
 

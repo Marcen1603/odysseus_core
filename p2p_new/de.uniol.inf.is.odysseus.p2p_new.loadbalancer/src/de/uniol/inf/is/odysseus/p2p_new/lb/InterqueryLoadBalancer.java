@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
+import net.jxta.peergroup.PeerGroupID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,14 +18,12 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.PQLGeneratorService;
-import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 // TODO javaDoc
 // TODO SessionManagementService
@@ -76,8 +75,8 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 			
 			// Get all logical operators of the query and remove the TopAOs
 			final List<ILogicalOperator> operators = Lists.newArrayList();
-			this.collectOperators(query.getLogicalPlan(), operators);
-			this.removeTopAO(operators);
+			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
+			RestructHelper.removeTopAOs(operators);
 			
 			// Split the query into parts
 			final List<QueryPart> queryParts = this.determineQueryParts(operators);
@@ -88,7 +87,7 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 			final List<QueryPart> localParts = Lists.newArrayList();
 			for(QueryPart part : queryParts) {
 			
-				ILogicalOperator localPart = this.generateRenameAO(part);
+				ILogicalOperator localPart = DistributionHelper.generateRenameAO(part);
 				localParts.add(new QueryPart(Lists.newArrayList(localPart), AbstractLoadBalancer.getLocalDestinationName()));
 				
 			}
@@ -105,14 +104,15 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 		// Assign query parts to peers
 		final Map<QueryPart, PeerID> queryPartDistributionMap = 
 				this.assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), allQueryParts);
-		insertSenderAndAccess(queryPartDistributionMap);
+		PeerGroupID localPeerGroupID = P2PDictionaryService.get().getLocalPeerGroupID();
+		DistributionHelper.generatePeerConnections(queryPartDistributionMap, getAccessName(), getSenderName(), localPeerGroupID);
 		
 		final List<ILogicalQuery> localQueries = Lists.newArrayList();
 		
 		for(ILogicalQuery query : queryPartsMap.keySet()) {
 		
 			// Generate an ID for the shared query
-			final ID sharedQueryID = this.generateSharedQueryID();
+			final ID sharedQueryID = DistributionHelper.generateSharedQueryID(localPeerGroupID);
 			
 			// Get all queryParts of this query mapped with the executing peer
 			final Map<QueryPart, PeerID> qPDMap = Maps.newHashMap();	// qPD = queryPartDistribution
@@ -120,7 +120,8 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 				qPDMap.put(part, queryPartDistributionMap.get(part));
 			
 			// publish the queryparts
-			localQueries.add(transformToQuery(this.shareParts(qPDMap, sharedQueryID, cfgName, sessionMap), PQLGeneratorService.get(), query.toString()));
+			localQueries.add(DistributionHelper.transformToQuery(this.shareParts(qPDMap, sharedQueryID, cfgName, sessionMap), 
+					PQLGeneratorService.get(), query.toString()));
 		
 		}
 		
@@ -128,30 +129,6 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 		
 		return localQueries;
 		
-	}
-	
-	private ILogicalQuery transformToQuery(List<QueryPart> queryParts, IPQLGenerator generator, String name) {
-		final Collection<ILogicalOperator> sinks = collectSinks(queryParts);
-		final TopAO topAO = generateTopAO(sinks);
-		
-		final ILogicalQuery logicalQuery = new LogicalQuery();
-		logicalQuery.setLogicalPlan(topAO, true);
-		logicalQuery.setName(name);
-		logicalQuery.setParserId("PQL");
-		logicalQuery.setPriority(0);
-		logicalQuery.setUser(SessionManagementService.getActiveSession());
-		logicalQuery.setQueryText(generator.generatePQLStatement(topAO));
-		
-		return logicalQuery;
-	}
-	
-	private TopAO generateTopAO(final Collection<ILogicalOperator> sinks) {
-		final TopAO topAO = new TopAO();
-		int inputPort = 0;
-		for( ILogicalOperator sink : sinks ) {
-			topAO.subscribeToSource(sink, inputPort++, 0, sink.getOutputSchema());
-		}
-		return topAO;
 	}
 	
 	@Override
