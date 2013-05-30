@@ -20,13 +20,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.P2PDictionaryService;
@@ -49,13 +47,8 @@ public class QueryPartManager implements IAdvertisementListener {
 			final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
 			if (adv.getPeerID().equals(P2PDictionaryService.get().getLocalPeerID())) {
 				try {
-					final TransformationConfiguration transformationConfiguration = determineTransformationConfiguration(executor, adv.getTransCfgName());
 					final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, adv.getTransCfgName());
-					transformationConfiguration.setOption("NO_METADATA", true);
-
 					final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), adv.getTransCfgName(), configuration);
-
-					transformationConfiguration.removeOption("NO_METADATA");
 					removeUnnededOperators(executor, ids);
 
 					QueryPartController.getInstance().registerAsSlave(ids, adv.getSharedQueryID());
@@ -104,14 +97,6 @@ public class QueryPartManager implements IAdvertisementListener {
 		settings.addAll(configuration);
 		settings.add(ParameterDoRewrite.FALSE);
 		return settings;
-	}
-
-	private static TransformationConfiguration determineTransformationConfiguration(IServerExecutor executor, String cfgName) {
-		final IQueryBuildConfiguration qbc = executor.getQueryBuildConfiguration(cfgName);
-		final List<IQueryBuildSetting<?>> configuration = qbc.getConfiguration();
-		final QueryBuildConfiguration qbc2 = new QueryBuildConfiguration(configuration.toArray(new IQueryBuildSetting[0]), cfgName);
-		final TransformationConfiguration transformationConfiguration = qbc2.getTransformationConfiguration();
-		return transformationConfiguration;
 	}
 
 	private static void removeUnnededOperators(IServerExecutor serverExecutor, Collection<Integer> ids) {
