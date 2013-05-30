@@ -92,8 +92,8 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.benchmark.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.debs2013.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.sentimentdection.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.pubsub.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.sentimentdetection.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
