@@ -22,7 +22,8 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	protected boolean addLineNumber = false;
 	protected String delimiterString;
 
-	public AbstractCSVHandler(ITransportDirection direction, IAccessPattern access) {
+	public AbstractCSVHandler(ITransportDirection direction,
+			IAccessPattern access) {
 		super(direction, access);
 	}
 
@@ -33,20 +34,32 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	@Override
 	protected void init(Map<String, String> options) {
 		super.init(options);
-		delimiter = options.containsKey("delimiter") ? options.get("delimiter").toCharArray()[0] : ",".toCharArray()[0];
-		delimiter = options.containsKey("csv.delimiter") ? options.get("csv.delimiter").toCharArray()[0] : ",".toCharArray()[0];
-		textDelimiter = options.containsKey("textdelimiter") ? options.get("textdelimiter").toCharArray()[0] : "'".toCharArray()[0];
-		textDelimiter = options.containsKey("csv.textdelimiter") ? options.get("csv.textdelimiter").toCharArray()[0] : "'".toCharArray()[0];
+		if (options.containsKey("delimiter")) {
+			delimiter = options.get("delimiter").toCharArray()[0];
+		} else {
+			delimiter = options.containsKey("csv.delimiter") ? options.get(
+					"csv.delimiter").toCharArray()[0] : ",".toCharArray()[0];
+		}
+		if (options.containsKey("textdelimiter")) {
+			textDelimiter = options.get("textdelimiter").toCharArray()[0];
+		} else {
+			textDelimiter = options.containsKey("csv.textdelimiter") ? options
+					.get("csv.textdelimiter").toCharArray()[0] : "'"
+					.toCharArray()[0];
+		}
 		// only calc once
 		delimiterString = Character.toString(delimiter);
 		if (options.containsKey("csv.floatingformatter")) {
-			floatingFormatter = new DecimalFormat(options.get("csv.floatingformatter"));
+			floatingFormatter = new DecimalFormat(
+					options.get("csv.floatingformatter"));
 		}
 		if (options.containsKey("csv.numberformatter")) {
-			numberFormatter = new DecimalFormat(options.get("csv.numberformatter"));
+			numberFormatter = new DecimalFormat(
+					options.get("csv.numberformatter"));
 		}
 		if (options.containsKey("csv.writemetadata")) {
-			writeMetadata = Boolean.parseBoolean(options.get("csv.writemetadata"));
+			writeMetadata = Boolean.parseBoolean(options
+					.get("csv.writemetadata"));
 		}
 		if (options.get("addlinenumber") != null) {
 			addLineNumber = Boolean.parseBoolean(options.get("addlinenumber"));
@@ -68,9 +81,9 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 
 	@Override
 	public T getNext() throws IOException {
-		String line = super.getNextLine();		
+		String line = super.getNextLine();
 		if (line != null) {
-			if (addLineNumber) {			
+			if (addLineNumber) {
 				line = super.lineCounter + delimiterString + line;
 			}
 			return readLine(line);
@@ -80,7 +93,8 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 
 	@Override
 	public void process(ByteBuffer message) {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(message.array())));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				new ByteArrayInputStream(message.array())));
 		if (!firstLineSkipped && !readFirstLine) {
 			try {
 				reader.readLine();
@@ -109,7 +123,8 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	@Override
 	public void write(T object) throws IOException {
 		StringBuilder out = new StringBuilder();
-		getDataHandler().writeCSVData(out, object, delimiter, textDelimiter, floatingFormatter, numberFormatter, writeMetadata);
+		getDataHandler().writeCSVData(out, object, delimiter, textDelimiter,
+				floatingFormatter, numberFormatter, writeMetadata);
 		writer.write(out.toString() + System.lineSeparator());
 	}
 
