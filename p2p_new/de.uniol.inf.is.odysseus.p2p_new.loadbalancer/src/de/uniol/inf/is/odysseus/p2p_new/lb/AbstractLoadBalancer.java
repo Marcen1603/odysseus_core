@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.JxtaServicesProviderService;
@@ -172,6 +172,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		int sinkInPort = 0;
 		for(final ILogicalOperator sink : sinks)
 			renameAO.subscribeToSource(sink, sinkInPort++, 0, sink.getOutputSchema());
+		renameAO.initialize();
 		return renameAO;
 		
 	}

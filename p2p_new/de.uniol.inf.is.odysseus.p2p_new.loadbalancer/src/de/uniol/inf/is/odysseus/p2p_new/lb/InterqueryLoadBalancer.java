@@ -17,9 +17,14 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.user.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.lb.service.PQLGeneratorService;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 // TODO javaDoc
 /**
@@ -100,6 +105,8 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 				this.assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), allQueryParts);
 		insertSenderAndAccess(queryPartDistributionMap);
 		
+		final List<ILogicalQuery> localQueries = Lists.newArrayList();
+		
 		for(ILogicalQuery query : queryPartsMap.keySet()) {
 		
 			// Generate an ID for the shared query
@@ -111,12 +118,38 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 				qPDMap.put(part, queryPartDistributionMap.get(part));
 			
 			// publish the queryparts
-			this.shareParts(qPDMap, sharedQueryID, cfgName, sessionMap);
+			localQueries.add(transformToQuery(this.shareParts(qPDMap, sharedQueryID, cfgName, sessionMap), PQLGeneratorService.get(), query.toString()));
 		
 		}
 		
-		return Lists.newArrayList();
 		
+		
+		return localQueries;
+		
+	}
+	
+	private ILogicalQuery transformToQuery(List<QueryPart> queryParts, IPQLGenerator generator, String name) {
+		final Collection<ILogicalOperator> sinks = collectSinks(queryParts);
+		final TopAO topAO = generateTopAO(sinks);
+		
+		final ILogicalQuery logicalQuery = new LogicalQuery();
+		logicalQuery.setLogicalPlan(topAO, true);
+		logicalQuery.setName(name);
+		logicalQuery.setParserId("PQL");
+		logicalQuery.setPriority(0);
+		logicalQuery.setUser(SessionManagementService.getActiveSession());
+		logicalQuery.setQueryText(generator.generatePQLStatement(topAO));
+		
+		return logicalQuery;
+	}
+	
+	private TopAO generateTopAO(final Collection<ILogicalOperator> sinks) {
+		final TopAO topAO = new TopAO();
+		int inputPort = 0;
+		for( ILogicalOperator sink : sinks ) {
+			topAO.subscribeToSource(sink, inputPort++, 0, sink.getOutputSchema());
+		}
+		return topAO;
 	}
 	
 	@Override
