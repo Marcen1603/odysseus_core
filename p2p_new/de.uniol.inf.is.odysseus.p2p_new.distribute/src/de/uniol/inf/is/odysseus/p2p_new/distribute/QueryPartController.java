@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.user;
+package de.uniol.inf.is.odysseus.p2p_new.distribute;
 
 import java.io.IOException;
 import java.net.URI;
@@ -36,8 +36,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.JxtaServicesProviderService;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.JxtaServicesProviderService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.util.OutputPipeResolver;
 
 public class QueryPartController implements IPlanModificationListener, PipeMsgListener {

@@ -5,8 +5,8 @@ import net.jxta.document.AdvertisementFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPartAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPartAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartAdvertisementInstantiator;
 
 /**
  * The activator for the bundle "LoadBalancer".

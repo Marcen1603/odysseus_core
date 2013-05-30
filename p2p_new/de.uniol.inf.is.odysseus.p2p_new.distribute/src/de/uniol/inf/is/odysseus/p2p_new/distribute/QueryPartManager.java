@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.user;
+package de.uniol.inf.is.odysseus.p2p_new.distribute;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +27,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
 
 public class QueryPartManager implements IAdvertisementListener {
 

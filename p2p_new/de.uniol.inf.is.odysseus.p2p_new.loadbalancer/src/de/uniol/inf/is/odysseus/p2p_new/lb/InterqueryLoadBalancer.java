@@ -27,6 +27,8 @@ import de.uniol.inf.is.odysseus.p2p_new.lb.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 // TODO javaDoc
+// TODO SessionManagementService
+
 /**
  * The <code>InterqueryDistributor</code> distributes different {@link ILogicalQuery}s to peers. So the execution can be done in parallel. <br />
  * The {@link ILogicalQuery}s are assigned to a peer via round robin without the local peer. Nothing will be executed local.
@@ -122,7 +124,7 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 		
 		}
 		
-		
+		// TODO registerAsMaster
 		
 		return localQueries;
 		

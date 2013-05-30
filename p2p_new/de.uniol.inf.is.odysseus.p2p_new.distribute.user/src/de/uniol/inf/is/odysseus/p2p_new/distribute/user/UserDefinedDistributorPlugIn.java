@@ -5,6 +5,9 @@ import net.jxta.document.AdvertisementFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartAdvertisementInstantiator;
+
 public class UserDefinedDistributorPlugIn implements BundleActivator {
 
 	@Override

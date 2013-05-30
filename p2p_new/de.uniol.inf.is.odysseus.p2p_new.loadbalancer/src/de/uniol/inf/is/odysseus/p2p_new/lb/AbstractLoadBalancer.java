@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.user.QueryPartAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;

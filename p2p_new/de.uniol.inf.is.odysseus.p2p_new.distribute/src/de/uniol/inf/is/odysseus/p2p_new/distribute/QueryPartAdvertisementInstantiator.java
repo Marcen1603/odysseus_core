@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.user;
+package de.uniol.inf.is.odysseus.p2p_new.distribute;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;

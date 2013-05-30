@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute;
 
+import net.jxta.document.AdvertisementFactory;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -10,10 +12,14 @@ import org.osgi.framework.BundleContext;
 public class DistributionPlugIn implements BundleActivator {
 
 	/**
-	 * Nothing to do.
+	 * Registers a new {@link QueryPartAdvertisement}.
 	 */
 	@Override
-	public void start(BundleContext context) throws Exception {}
+	public void start(BundleContext context) throws Exception {
+		
+		AdvertisementFactory.registerAdvertisementInstance(QueryPartAdvertisement.getAdvertisementType(), new QueryPartAdvertisementInstantiator());
+
+	}
 
 	/**
 	 * Nothing to do.
