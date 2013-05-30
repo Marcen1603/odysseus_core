@@ -45,7 +45,8 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 		final StringBuilder sb = new StringBuilder();
 		final TimestampAO timestampAO = determineTimestampAO(operator);
 		
-		appendIfNeeded(sb, "wrapper", determineWrapper(operator), true);
+		sb.append("source='").append(operator.getName()).append("'");
+		appendIfNeeded(sb, "wrapper", determineWrapper(operator));
 		appendIfNeeded(sb, "transport", operator.getTransportHandler());
 		appendIfNeeded(sb, "protocol", operator.getProtocolHandler());
 		appendIfNeeded(sb, "datahandler", operator.getDataHandler());
