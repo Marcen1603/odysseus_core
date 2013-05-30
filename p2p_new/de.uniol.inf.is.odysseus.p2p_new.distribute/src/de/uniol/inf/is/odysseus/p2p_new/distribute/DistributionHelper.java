@@ -134,10 +134,11 @@ public class DistributionHelper {
 		for(ILogicalOperator operator : operatorsToAdd)
 			operators.add(operator);
 		
-		if(part.getDestinationName().isPresent())
+		if(part.getDestinationName().isPresent()) {
 			return new QueryPart(operators, part.getDestinationName().get());
-		else return new QueryPart(operators);
+		}
 		
+		return new QueryPart(operators);
 	}
 	
 	/**
