@@ -38,7 +38,7 @@ public class DataDictionaryService {
 	}
 	
 	/**
-	 * Unbinds an referenced {@link IDataDictionary}, if <code>dic</code> is the binded on. <br />
+	 * Unbinds an referenced {@link IDataDictionary}, if <code>dic</code> is the binded one. <br />
 	 * Called by OSGI-DS.
 	 * @see #bindDataDictionary(IDataDictionary)
 	 * @param dic An instance of an {@link IDataDictionary} implementation.

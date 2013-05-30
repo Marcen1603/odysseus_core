@@ -19,22 +19,25 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.PQLGeneratorService;
 
-// TODO javaDoc
-// TODO SessionManagementService
-
 /**
  * The <code>InterqueryDistributor</code> distributes different {@link ILogicalQuery}s to peers. So the execution can be done in parallel. <br />
- * The {@link ILogicalQuery}s are assigned to a peer via round robin without the local peer. Nothing will be executed local.
+ * The {@link ILogicalQuery}s are assigned to a peer via round robin without the local peer. Nothing will be executed local. <br />
+ * To use the <code>InterqueryDistributor</code> use the following pre-parser-keywords: <br />
+ * #DODISTRIBUTE true <br />
+ * #DISTRIBUTIONTYPE interquery
  * @author Michael Brand
  */
 public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 
+	/**
+	 * The {@link Logger} instance for this class.
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(InterqueryLoadBalancer.class);
 
 	@Override
@@ -64,12 +67,9 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 			
 		} else this.logPeerStatus(remotePeerIDs);
 		
-		// List of all queryparts over all queries
+		// All queryparts over all queries
 		final List<QueryPart> allQueryParts = Lists.newArrayList();
 		final Map<ILogicalQuery, List<QueryPart>> queryPartsMap = Maps.newHashMap();
-		
-		// List of sessions over all queryparts
-		final Map<QueryPart, ISession> sessionMap = Maps.newHashMap();
 
 		for(final ILogicalQuery query : queriesToDistribute) {
 			
@@ -82,9 +82,10 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 			final List<QueryPart> queryParts = this.determineQueryParts(operators);
 			LOG.debug("Got {} parts of logical query {}", queryParts.size(), query);
 			
-			// Generate a new logical operator which marks that the query result shall return to this instance
-			// TODO
+			// The parts to be executed locally
 			final List<QueryPart> localParts = Lists.newArrayList();
+			
+			// Generate a new logical operator which marks that the query result shall return to this instance
 			for(QueryPart part : queryParts) {
 			
 				ILogicalOperator localPart = DistributionHelper.generateRenameAO(part);
@@ -96,9 +97,6 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 			allQueryParts.addAll(queryParts);
 			queryPartsMap.put(query, queryParts);
 			
-			for(QueryPart part : queryParts)
-				sessionMap.put(part, query.getUser());
-			
 		}
 		
 		// Assign query parts to peers
@@ -107,6 +105,7 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 		PeerGroupID localPeerGroupID = P2PDictionaryService.get().getLocalPeerGroupID();
 		DistributionHelper.generatePeerConnections(queryPartDistributionMap, getAccessName(), getSenderName(), localPeerGroupID);
 		
+		// The queries to be executed locally
 		final List<ILogicalQuery> localQueries = Lists.newArrayList();
 		
 		for(ILogicalQuery query : queryPartsMap.keySet()) {
@@ -119,18 +118,24 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 			for(QueryPart part : queryPartsMap.get(query))
 				qPDMap.put(part, queryPartDistributionMap.get(part));
 			
-			// publish the queryparts
-			localQueries.add(DistributionHelper.transformToQuery(this.shareParts(qPDMap, sharedQueryID, cfgName, sessionMap), 
-					PQLGeneratorService.get(), query.toString()));
+			// publish the queryparts and transform the parts which shall be executed locally into a query
+			ILogicalQuery localQuery = DistributionHelper.transformToQuery(this.shareParts(qPDMap, sharedQueryID, cfgName), 
+					PQLGeneratorService.get(), query.toString());
+			
+			// Registers an sharedQueryID as a master to resolve removed query parts
+			QueryPartController.getInstance().registerAsMaster(localQuery, sharedQueryID);
+			
+			localQueries.add(localQuery);
 		
 		}
-		
-		// TODO registerAsMaster
 		
 		return localQueries;
 		
 	}
 	
+	/**
+	 * Creates one {@link Querypart} for the whole {@link ILogicalQuery}.
+	 */
 	@Override
 	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators) {
 		
@@ -138,6 +143,9 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 		
 	}
 	
+	/**
+	 * Assigns all {@link QueryPart}s, which are not assigned to the local peer yet, to the remote peers via round robin.
+	 */
 	@Override
 	protected Map<QueryPart, PeerID> assignQueryParts(Collection<PeerID> remotePeerIDs, 
 			PeerID localPeerID, List<QueryPart> queryParts) {

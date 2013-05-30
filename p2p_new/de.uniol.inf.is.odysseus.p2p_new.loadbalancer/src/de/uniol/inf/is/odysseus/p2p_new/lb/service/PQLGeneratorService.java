@@ -38,7 +38,7 @@ public class PQLGeneratorService {
 	}
 	
 	/**
-	 * Unbinds an referenced {@link IPQLGenerator}, if <code>gen</code> is the binded on. <br />
+	 * Unbinds an referenced {@link IPQLGenerator}, if <code>gen</code> is the binded one. <br />
 	 * Called by OSGI-DS.
 	 * @see #bindPQLGenerator(IPQLGenerator)
 	 * @param gen An instance of an {@link IPQLGenerator} implementation.

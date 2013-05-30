@@ -38,7 +38,7 @@ public class P2PDictionaryService {
 	}
 	
 	/**
-	 * Unbinds an referenced {@link IP2PDictionary}, if <code>dic</code> is the binded on. <br />
+	 * Unbinds an referenced {@link IP2PDictionary}, if <code>dic</code> is the binded one. <br />
 	 * Called by OSGI-DS.
 	 * @see #bindP2PDictionary(IP2PDictionary)
 	 * @param dic An instance of an {@link IP2PDictionary} implementation.

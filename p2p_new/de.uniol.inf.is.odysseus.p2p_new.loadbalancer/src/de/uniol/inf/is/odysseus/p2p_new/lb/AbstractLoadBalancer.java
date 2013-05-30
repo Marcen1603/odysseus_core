@@ -20,27 +20,43 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.PQLGeneratorService;
+import de.uniol.inf.is.odysseus.p2p_new.lb.service.SessionManagementService;
 
-// TODO javaDoc
+/**
+ * The class for abstract load balancers. <br />
+ * A load balancer distributes queries and/or sources on a network of peers.
+ * @author Michael Brand
+ */
 public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 
+	/**
+	 * The {@link Logger} instance for this class.
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractLoadBalancer.class);
 	
+	/**
+	 * The {@link SimplePlanPrinter} instance for this class.
+	 */
 	protected SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
 	
+	/**
+	 * Returns the base name for acceptor operators.
+	 */
 	protected static String getAccessName() {
 		
 		return "JxtaReceiver_";
 		
 	}
 
+	/**
+	 * Returns the base name for sender operators.
+	 */
 	protected static String getSenderName() {
 		
 		return "JxtaSender_";
@@ -62,9 +78,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	@Override
 	public abstract String getName();
 
-	/**
-	 * @return An empty list, because nothing will be executed local.
-	 */
 	@Override
 	public abstract List<ILogicalQuery> distributeLogicalQueries(IExecutor sender,
 			List<ILogicalQuery> queriesToDistribute, String cfgName);
@@ -117,8 +130,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param sharedQueryID The {@link ID} for query sharing.
 	 * @param transCfgName The name of the transport configuration.
 	 */
-	protected List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, String transCfgName, 
-			Map<QueryPart, ISession> sessionMap) {
+	protected List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, String transCfgName) {
 		
 		final List<QueryPart> localParts = Lists.newArrayList();
 		final PeerID ownPeerID = P2PDictionaryService.get().getLocalPeerID();
@@ -133,7 +145,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 			} else {
 				
-				QueryPart partToPublish = DistributionHelper.replaceStreamAOs(part, sessionMap.get(part), DataDictionaryService.get());
+				QueryPart partToPublish = DistributionHelper.replaceStreamAOs(part, SessionManagementService.getActiveSession(), DataDictionaryService.get());
 				LOG.debug("Plan of the querypart to publish: {}", this.printer.createString(partToPublish.getOperators().iterator().next()));
 				String pqlStatement = PQLGeneratorService.get().generatePQLStatement(partToPublish.getOperators().iterator().next());
 				PeerGroupID localPeerGroupID = P2PDictionaryService.get().getLocalPeerGroupID();

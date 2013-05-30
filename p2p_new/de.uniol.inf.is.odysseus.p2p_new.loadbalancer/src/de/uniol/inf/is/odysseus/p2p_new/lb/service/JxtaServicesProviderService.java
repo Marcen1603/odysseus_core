@@ -38,7 +38,7 @@ public class JxtaServicesProviderService {
 	}
 	
 	/**
-	 * Unbinds an referenced {@link IJxtaServicesProvider}, if <code>prov</code> is the binded on. <br />
+	 * Unbinds an referenced {@link IJxtaServicesProvider}, if <code>prov</code> is the binded one. <br />
 	 * Called by OSGI-DS.
 	 * @see #bindJxtaServicesProvider(IJxtaServicesProvider)
 	 * @param prov An instance of an {@link IJxtaServicesProvider} implementation.
