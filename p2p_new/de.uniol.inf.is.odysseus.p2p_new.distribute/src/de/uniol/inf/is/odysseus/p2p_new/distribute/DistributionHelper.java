@@ -9,15 +9,12 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
-import net.jxta.peergroup.PeerGroupID;
 import net.jxta.pipe.PipeID;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -25,16 +22,17 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.DataDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.JxtaServicesProviderService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
-import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 /**
  * A collection of useful tools for distributors.
@@ -103,11 +101,9 @@ public class DistributionHelper {
 	/**
 	 * Replaces every {@link StreamAO} within a {@link QueryPart} by its logical subplan.
 	 * @param part The {@link QueryPart} where the {@linkStreamAO}s shall be replaced.
-	 * @param user The {@link ISession} instance to identify the user who wants this replacement.
-	 * @param dictionary The {@link IDataDictionary} to get the logical subplan of a {@link StreamAO}.
 	 * @return The new {@link QueryPlan} without the {@link StreamAO}.
 	 */
-	public static QueryPart replaceStreamAOs(QueryPart part, ISession user, IDataDictionary dictionary) {
+	public static QueryPart replaceStreamAOs(QueryPart part) {
 		
 		final List<ILogicalOperator> operators = Lists.newArrayList();
 		for(ILogicalOperator operator : part.getOperators())
@@ -120,7 +116,8 @@ public class DistributionHelper {
 			
 			if(operator instanceof StreamAO) {
 				
-				ILogicalOperator streamPlan = dictionary.getStreamForTransformation(((StreamAO) operator).getStreamname(), user);
+				ILogicalOperator streamPlan = DataDictionaryService.get().getStreamForTransformation(((StreamAO) operator).getStreamname(), 
+						SessionManagementService.getActiveSession());
 				RestructHelper.replaceWithSubplan(operator, streamPlan);
 				operatorsToRemove.add(operator);
 				operatorsToAdd.add(streamPlan);
@@ -198,10 +195,8 @@ public class DistributionHelper {
 	 * extended by a connection number.
 	 * @param baseSenderName The base name of all sending operators to be created. To identify an sending operator the base name will be 
 	 * extended by a connection number.
-	 * @param localPeerGroupID The ID of the local peer group.
 	 */
-	public static void generatePeerConnections(Map<QueryPart, PeerID> queryPartDistributionMap, String baseAccessName, String baseSenderName, 
-			PeerGroupID localPeerGroupID) {
+	public static void generatePeerConnections(Map<QueryPart, PeerID> queryPartDistributionMap, String baseAccessName, String baseSenderName) {
 		
 		int connectionNo = 0;
 		
@@ -216,7 +211,7 @@ public class DistributionHelper {
 					for (final QueryPart destQueryPart : nextOperators.keySet()) {
 						
 						DistributionHelper.generatePeerConnection(queryPart, destQueryPart, relativeSink, nextOperators.get(destQueryPart), 
-								baseSenderName + connectionNo, baseAccessName + connectionNo, localPeerGroupID);
+								baseSenderName + connectionNo, baseAccessName + connectionNo);
 						connectionNo++;
 						
 					}
@@ -236,12 +231,11 @@ public class DistributionHelper {
 	 * @param sourceOfAcceptor The source of <code/>acceptorPart</code>.
 	 * @param senderName The name of the sending operator to be created.
 	 * @param accessName The name of the accessing operator to be created.
-	 * @param localPeerGroupID The ID of the local peer group.
 	 */
 	public static void generatePeerConnection(QueryPart senderPart, QueryPart acceptorPart, ILogicalOperator sinkOfSender, 
-			ILogicalOperator sourceOfAcceptor, String senderName, String accessName, PeerGroupID localPeerGroupID) {
+			ILogicalOperator sourceOfAcceptor, String senderName, String accessName) {
 		
-		final PipeID pipeID = IDFactory.newPipeID(localPeerGroupID);
+		final PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
 
 		final JxtaReceiverAO access = new JxtaReceiverAO();
 		access.setPipeID(pipeID.toString());
@@ -266,44 +260,38 @@ public class DistributionHelper {
 	
 	/**
 	 * Generates an {@link ID} for query sharing.
-	 * @param localPeerGroupID The ID of the local peer group.
 	 * @return The generated {@link ID}.
 	 */
-	public static ID generateSharedQueryID(PeerGroupID localPeerGroupID) {
+	public static ID generateSharedQueryID() {
 		
-		return IDFactory.newContentID(localPeerGroupID, false, String.valueOf(System.currentTimeMillis()).getBytes());
+		return IDFactory.newContentID(P2PDictionaryService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 		
 	}
 	
 	/**
 	 * Publishes a {@link QueryPart} on a peer. The {@link QueryPart} will be stored on that peer. 
 	 * @see net.jxta.discovery.DiscoveryService#publish(net.jxta.document.Advertisement, long, long)
-	 * @param pqlStatement The PQL statement representing the {@link QueryPart} which shall be published.
+	 * @param queryPart The {@link QueryPart} which shall be published.
 	 * @param destinationPeerID The ID of the peer where the {@link QueryPart} shall be published.
-	 * @param localPeerGroupID The ID of the local peer group.
 	 * @param sharedQueryID The {@link ID} for query sharing.
 	 * @param transCfgName The name of the transport configuration.
-	 * @param discoveryService The asynchronous mechanism for discovering services.
 	 */
-	public static void publish(String pqlStatement, PeerID destinationPeerID, PeerGroupID localPeerGroupID, ID sharedQueryID, String transCfgName, 
-			DiscoveryService discoveryService) {
-		
-		Preconditions.checkNotNull(pqlStatement, "PQL Statement to share must not be null!");
+	public static void publish(QueryPart queryPart, PeerID destinationPeerID, ID sharedQueryID, String transCfgName) {
 
 		// Create a new advertisement
 		final QueryPartAdvertisement adv = 
 				(QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
-		adv.setID(IDFactory.newPipeID(localPeerGroupID));
+		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
 		adv.setPeerID(destinationPeerID);
-		adv.setPqlStatement(pqlStatement);
+		adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(queryPart.getOperators().iterator().next()));
 		adv.setSharedQueryID(sharedQueryID);
 		adv.setTransCfgName(transCfgName);
 
 		// Publish query part
 		try {
 			
-			discoveryService.publish(adv, 10000, 10000);
-			LOG.debug("QueryPart {} published", pqlStatement);	
+			JxtaServicesProviderService.get().getDiscoveryService().publish(adv, 10000, 10000);
+			LOG.debug("QueryPart {} published", queryPart);	
 			
 		} catch(final IOException ex) {
 			
@@ -316,11 +304,10 @@ public class DistributionHelper {
 	/**
 	 * Creates a new {@link ILogicalQuery} from a list of {@link QueryPart}s.
 	 * @param queryParts The list if {@link QueryPart}s which shall be assembled.
-	 * @param generator The {@link IPQLGenerator} to create the PQL statement.
 	 * @param name The name of the new {@link ILogicalQuery}.
 	 * @return The new {@link ILogicalQuery}.
 	 */
-	public static ILogicalQuery transformToQuery(List<QueryPart> queryParts, IPQLGenerator generator, String name) {
+	public static ILogicalQuery transformToQuery(List<QueryPart> queryParts, String name) {
 		
 		final Collection<ILogicalOperator> sinks = DistributionHelper.collectSinks(queryParts);
 		final TopAO topAO = RestructHelper.generateTopAO(sinks);
@@ -331,7 +318,7 @@ public class DistributionHelper {
 		logicalQuery.setParserId("PQL");
 		logicalQuery.setPriority(0);
 		logicalQuery.setUser(SessionManagementService.getActiveSession());
-		logicalQuery.setQueryText(generator.generatePQLStatement(topAO));
+		logicalQuery.setQueryText(PQLGeneratorService.get().generatePQLStatement(topAO));
 		
 		return logicalQuery;
 		
