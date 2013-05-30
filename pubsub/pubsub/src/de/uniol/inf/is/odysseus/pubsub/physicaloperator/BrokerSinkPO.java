@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 public class BrokerSinkPO extends AbstractSink<IStreamObject<?>>{
 	
-	private String brokerName;
+	//private String brokerName;
 
 	@Override
 	protected void process_next(IStreamObject<?> object, int port) {

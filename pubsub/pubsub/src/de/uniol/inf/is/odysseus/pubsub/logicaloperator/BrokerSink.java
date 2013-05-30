@@ -5,9 +5,11 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 
+@LogicalOperator(name="BrokerSink", minInputPorts=1, maxInputPorts=1, doc="Subscribe Operator")
 public class BrokerSink extends UnaryLogicalOp{
 	
 	public BrokerSink(){
