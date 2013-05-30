@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, IPlanModificationListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PDictionary.class);
+	private static final String AUTO_IMPORT_SYS_PROPERTY = "peer.autoimport";
 	private static final int EXPORT_INTERVAL_MILLIS = 15000;
 	private static final int EXPORT_LIFETIME_MILLIS = 35000;
 	
@@ -118,6 +119,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 
 		fireSourceAddEvent(srcAdvertisement);
+		
+		if( isAutoImport() && !isImported(srcAdvertisement) && !isExported(srcAdvertisement.getName())) {
+			try {
+				importSource(srcAdvertisement, srcAdvertisement.getName());
+			} catch (PeerException e) {
+				LOG.error("Could not autoimport {}", srcAdvertisement.getName(), e);
+			}
+		}
 	}
 
 	public boolean removeSource(SourceAdvertisement srcAdvertisement) {
@@ -777,5 +786,13 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			return streamName.substring(pos + 1);
 		}
 		return streamName;
+	}
+	
+	private static boolean isAutoImport() {
+		String property = System.getProperty(AUTO_IMPORT_SYS_PROPERTY);
+		if( !Strings.isNullOrEmpty(property)) {
+			return property.equalsIgnoreCase("true");
+		}
+		return false;
 	}
 }

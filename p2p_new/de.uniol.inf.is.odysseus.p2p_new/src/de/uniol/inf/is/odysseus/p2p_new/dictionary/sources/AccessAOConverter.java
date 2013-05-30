@@ -26,6 +26,7 @@ public final class AccessAOConverter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccessAOConverter.class);
 
+	private static final String SOURCE_TAG = "source";
 	private static final String INPUT_SCHEMA_TAG = "inputSchema";
 	private static final String INPUT_SCHEMA_ITEM_TAG = "inputSchemaItem";
 	private static final String PORT_TAG = "port";
@@ -63,6 +64,8 @@ public final class AccessAOConverter {
 				appendElement(inputSchemaElement, INPUT_SCHEMA_ITEM_TAG, entry);
 			}
 		}
+		
+		appendElement(root, SOURCE_TAG, accessOperator.getName());
 		appendElement(root, PORT_TAG, String.valueOf(accessOperator.getPort()));
 		appendElement(root, HOST_TAG, accessOperator.getHost());
 		appendElement(root, LOGIN_TAG, accessOperator.getLogin());
@@ -136,6 +139,9 @@ public final class AccessAOConverter {
 
 		} else if (elem.getName().equals(HOST_TAG)) {
 			accessAO.setHost(elem.getTextValue());
+
+		} else if (elem.getName().equals(SOURCE_TAG)) {
+			accessAO.setName(elem.getTextValue());
 
 		} else if (elem.getName().equals(LOGIN_TAG)) {
 			accessAO.setLogin(elem.getTextValue());
