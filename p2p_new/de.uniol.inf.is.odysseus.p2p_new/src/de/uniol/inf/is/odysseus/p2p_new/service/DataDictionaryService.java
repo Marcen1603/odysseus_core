@@ -9,7 +9,7 @@ public class DataDictionaryService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DataDictionaryService.class);
 	
-	public static IDataDictionary dataDictionary;
+	private static IDataDictionary dataDictionary;
 	
 	public void bindDataDictionary( IDataDictionary dd ) {
 		dataDictionary = dd;
