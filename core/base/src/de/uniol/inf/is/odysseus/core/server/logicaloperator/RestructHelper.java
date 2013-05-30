@@ -19,8 +19,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class RestructHelper {
 	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp remove, boolean reserveOutputSchema) {
@@ -122,6 +127,88 @@ public class RestructHelper {
 			
 			father.getTarget().unsubscribeSink(father);
 			father.getTarget().subscribeSink(newOp, father.getSinkInPort(), father.getSourceOutPort(), father.getSchema());
+			
+		}
+		
+	}
+	
+	/**
+	 * Removes all {@link TopAO} logical operators from a list of {@link ILogicalOperator}s representing an {@link ILogicalQuery}.
+	 * @param operators The list of {@link ILogicalOperator}s representing an {@link ILogicalQuery}.
+	 */
+	public static void removeTopAOs(List<ILogicalOperator> operators) {
+		
+		final List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
+		
+		for(final ILogicalOperator operator : operators) {
+			
+			if(operator instanceof TopAO) {
+				
+				operator.unsubscribeFromAllSources();
+				operatorsToRemove.add(operator);
+				
+			}
+			
+		}
+
+		for(final ILogicalOperator operatorToRemove : operatorsToRemove)
+			operators.remove(operatorToRemove);
+		
+	}
+	
+	/**
+	 * Searches for a {@link LogicalSubscription} between two {@link ILogicalOperator}s.
+	 * @param source The relative source for the {@link LogicalSubscription}.
+	 * @param sink The relative sink for the {@link LogicalSubscription}.
+	 * @return The {@link LogicalSubscription} between <code>source</code> and <code>sink</code> or null, if there is no such subscription.
+	 */
+	public static LogicalSubscription determineSubscription(ILogicalOperator source, ILogicalOperator sink) {
+		
+		for(final LogicalSubscription subscription : source.getSubscriptions()) {
+			
+			if(subscription.getTarget().equals(sink))
+				return subscription;
+
+		}
+		
+		return null;
+		
+	}
+	
+	/**
+	 * Generates a new {@link SDFSchema} with a given base name and adopting {@link SDFAttribute}s of an existing {@link SDFSchema}.  
+	 * @param basename The base name for the new {@link SDFSchema}.
+	 * @param outputSchema The {@link SDFSchema} whose {@link SDFAttribute}s shall be adopted.
+	 * @return The new {@link SDFSchema}.
+	 */
+	public static SDFSchema generateOutputSchema(String basename, SDFSchema outputSchema) {
+		
+		List<SDFAttribute> attributes = Lists.newArrayList();
+		
+		for(SDFAttribute attribute : outputSchema)
+			attributes.add(new SDFAttribute(basename, attribute.getAttributeName(), attribute));
+		
+		return new SDFSchema(basename, attributes);
+		
+	}
+	
+	/**
+	 * Collects recursive all {@link ILogicalOperator}s representing an <code>ILogicalQuery</code>. <br />
+	 * This method should be called with {@link ILogicalQuery#getLogicalPlan()} as <code>currentOperator</code>.
+	 * @param currentOperator The <code>IlogicalOperator</code> to collect next.
+	 * @param list The list of all <code>ILogicalOperators</code> collected so far.
+	 */
+	public static void collectOperators(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
+		
+		if(!list.contains(currentOperator)) {
+
+			list.add(currentOperator);
+
+			for(final LogicalSubscription subscription : currentOperator.getSubscriptions())
+				RestructHelper.collectOperators(subscription.getTarget(), list);
+
+			for(final LogicalSubscription subscription : currentOperator.getSubscribedToSource())
+				RestructHelper.collectOperators(subscription.getTarget(), list);
 			
 		}
 		
