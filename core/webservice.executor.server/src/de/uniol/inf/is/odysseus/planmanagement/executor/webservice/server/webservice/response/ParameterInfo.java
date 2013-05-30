@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
+import java.util.List;
+
 
 /**
  * ParameterInfo contains information about a IParameter
@@ -26,10 +28,18 @@ public class ParameterInfo {
 	public static enum REQUIREMENT {
 		MANDATORY, OPTIONAL
 	}
-
-	private String name;
-	private REQUIREMENT requirement;
+	
+	private String name;	
 	private String value;
+	private REQUIREMENT requirement;
+	private boolean deprecated;
+	private boolean mandatory;
+	private List<String> possibleValues;
+	private String doc;
+	private String dataType;
+	private ParameterInfo listDataType;
+	private ParameterInfo mapKeyDataType;
+	private ParameterInfo mapValueDataType;
 
 	public String getName() {
 		return name;
@@ -38,11 +48,13 @@ public class ParameterInfo {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
+	
 	public REQUIREMENT getRequirement() {
 		return requirement;
 	}
-
+	
+	
 	public void setRequirement(REQUIREMENT requirement) {
 		this.requirement = requirement;
 	}
@@ -54,5 +66,70 @@ public class ParameterInfo {
 	public String getValue() {
 		return this.value;
 	}
+	
+	public boolean isDeprecated() {
+		return this.deprecated;
+	}
+	
+	public void setDepracted(boolean deprecated) {
+		this.deprecated = deprecated;
+	}
+	
+	public boolean isMandatory(){
+		return this.mandatory;
+	}
+	
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+	
+	public List<String> getPossibleValues() {
+		return this.possibleValues;
+	}
+	
+	public void setPossibleValues(List<String> possibleValues) {
+		this.possibleValues = possibleValues;
+	}
+	
+	public String getDoc() {
+		return this.doc;
+	}
+
+	public void setDoc(String doc) {
+		this.doc = doc;
+	}
+	
+	public String getDataType() {
+		return this.dataType;
+	}
+	
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
+	
+	public ParameterInfo getListDataType() {
+		return this.listDataType;
+	}
+	
+	public void setListDataType(ParameterInfo listDataType) {
+		this.listDataType = listDataType;
+	}
+	
+	public ParameterInfo getMapKeyDataType() {
+		return this.mapKeyDataType;
+	}
+	
+	public void setMapKeyDataType(ParameterInfo mapKeyDataType) {
+		this.mapKeyDataType = mapKeyDataType;
+	}
+	
+	public ParameterInfo getMapValueDataType() {
+		return this.mapValueDataType;
+	}
+	
+	public void setMapValueDataType(ParameterInfo mapValueDataType) {
+		this.mapValueDataType = mapValueDataType;
+	}
+	
 
 }

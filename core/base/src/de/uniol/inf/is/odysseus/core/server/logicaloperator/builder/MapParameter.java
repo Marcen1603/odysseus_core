@@ -99,4 +99,12 @@ public class MapParameter<K, V> extends AbstractParameter<Map<K, V>> {
 		sb.append("]");
 		return sb.toString();
 	}
+
+	public IParameter<?> getKeyParameter() {
+		return this.keyParameter;
+	}
+
+	public IParameter<?> getValueParameter() {
+		return this.valueParameter;
+	}
 }

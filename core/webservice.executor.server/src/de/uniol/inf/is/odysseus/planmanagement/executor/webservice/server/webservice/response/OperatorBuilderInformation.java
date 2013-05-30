@@ -31,7 +31,8 @@ public class OperatorBuilderInformation {
 	private int maxInputOperatorCount;
 	
 	private String name;
-
+	private String doc;
+	
 	public Set<ParameterInfo> getParameters() {
 		return parameters;
 	}
@@ -62,5 +63,13 @@ public class OperatorBuilderInformation {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getDoc() {
+		return this.doc;
+	}
+
+	public void setDoc(String doc) {
+		this.doc = doc;
 	}
 }

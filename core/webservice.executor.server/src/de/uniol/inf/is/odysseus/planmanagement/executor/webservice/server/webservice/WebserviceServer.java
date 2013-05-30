@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
@@ -56,6 +55,8 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MapParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ISinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
@@ -644,36 +645,31 @@ public class WebserviceServer {
 			return new SDFSchemaResponse(null, false);
 		}
 	}
-
+	
 	public SourceListResponse getSources(
 			@WebParam(name = "securitytoken") String securityToken) {
 		try {
-			loginWithSecurityToken(securityToken);
-			Map<String, ISource<?>> sources = ExecutorServiceBinding
-					.getExecutor().getDataDictionary().getSources();
+			ISession user = loginWithSecurityToken(securityToken);
+			Set<Entry<String, ILogicalOperator>> sources = ExecutorServiceBinding.getExecutor().getDataDictionary().getStreamsAndViews(user);
 			List<SourceInformation> sourceInfos = new ArrayList<SourceInformation>();
-
-			for (ISource<?> source : sources.values()) {
-				SDFSchema schema = source.getOutputSchema();
+			for (Entry<String, ILogicalOperator> source : sources) {
+				SDFSchema schema = source.getValue().getOutputSchema();				
 				Collection<SDFAttribute> attributes = schema.getAttributes();
 				Collection<SDFAttributeInformation> attributeInfos = new ArrayList<SDFAttributeInformation>();
 				for (SDFAttribute attribute : attributes) {
-					attributeInfos.add(new SDFAttributeInformation(attribute
-							.getSourceName(), attribute.getAttributeName(),
-							new SDFDatatypeInformation(attribute.getDatatype()
-									.getURI())));
+					attributeInfos.add(new SDFAttributeInformation(attribute.getSourceName(), attribute.getAttributeName(),	new SDFDatatypeInformation(attribute.getDatatype().getURI())));
 				}
-				SDFSchemaInformation schemaInfo = new SDFSchemaInformation(
-						schema.getURI(), attributeInfos);
-				sourceInfos.add(new SourceInformation(schemaInfo, source
-						.getName(), source.getOwnerIDs()));
-			}
+				SDFSchemaInformation schemaInfo = new SDFSchemaInformation(schema.getURI(), attributeInfos);
+				sourceInfos.add(new SourceInformation(schemaInfo, source.getKey(), source.getValue().getOwnerIDs()));
+			}			
 			return new SourceListResponse(sourceInfos, true);
 		} catch (WebserviceException e) {
 			e.printStackTrace();
 			return new SourceListResponse(null, false);
 		}
 	}
+
+	
 
 	public OperatorBuilderListResponse getOperatorBuilderList(
 			@WebParam(name = "securitytoken") String securityToken) {
@@ -690,29 +686,50 @@ public class WebserviceServer {
 
 	}
 
+	
 	private List<OperatorBuilderInformation> extractOperatorBuilderInformation(
 			List<IOperatorBuilder> builders) {
 		List<OperatorBuilderInformation> infos = new ArrayList<OperatorBuilderInformation>();
 		for (IOperatorBuilder builder : builders) {
 			OperatorBuilderInformation info = new OperatorBuilderInformation();
-			info.setParameters(extractParameterInformation(builder
-					.getParameters()));
-		}
-		return infos;
-	}
-
-	@SuppressWarnings("rawtypes")
-	private Set<ParameterInfo> extractParameterInformation(
-			Set<IParameter<?>> parameters) {
-		Set<ParameterInfo> infos = new HashSet<ParameterInfo>();
-		for (IParameter parameter : parameters) {
-			ParameterInfo info = new ParameterInfo();
-			info.setName(parameter.getName());
-			info.setRequirement(ParameterInfo.REQUIREMENT.valueOf(parameter
-					.getRequirement().name()));
-			info.setValue((String) parameter.getValue());
+			info.setName(builder.getName());
+			info.setMinInputOperatorCount(builder.getMinInputOperatorCount());
+			info.setMaxInputOperatorCount(builder.getMaxInputOperatorCount());
+			info.setDoc(builder.getDoc());
+			info.setParameters(extractParameterInformation(builder.getParameters()));
 			infos.add(info);
 		}
 		return infos;
 	}
+
+	private Set<ParameterInfo> extractParameterInformation(
+			Set<IParameter<?>> parameters) {
+		Set<ParameterInfo> infos = new HashSet<ParameterInfo>();
+		for (IParameter<?> parameter : parameters) {			
+			infos.add(setParameterInfo(parameter));
+		}
+		return infos;
+	}
+	
+	private ParameterInfo setParameterInfo(IParameter<?> parameter) {
+		ParameterInfo info = new ParameterInfo();
+		info.setName(parameter.getName());
+		info.setRequirement(ParameterInfo.REQUIREMENT.valueOf(parameter.getRequirement().name()));
+		info.setDepracted(parameter.isDeprecated());
+		info.setMandatory(parameter.isMandatory());
+		info.setPossibleValues(parameter.getPossibleValues());
+		info.setDoc(parameter.getDoc());		
+		String dataType = parameter.getClass().getSimpleName();
+		info.setDataType(dataType);
+		if (parameter instanceof ListParameter<?>) {
+			ListParameter<?> listParameter = (ListParameter<?>) parameter;
+			info.setListDataType(setParameterInfo(listParameter.getSingleParameter()));
+		} else if (parameter instanceof MapParameter<?,?>) {
+			MapParameter<?,?> mapParameter = (MapParameter<?,?>) parameter;
+			info.setMapKeyDataType(setParameterInfo(mapParameter.getKeyParameter()));
+			info.setMapValueDataType(setParameterInfo(mapParameter.getValueParameter()));
+		}
+		return info;
+	}	
 }
+
