@@ -43,7 +43,6 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
@@ -51,10 +50,13 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PDictionary.class);
 	private static final String AUTOIMPORT_SYS_PROPERTY = "peer.autoimport";
+	private static final String AUTOEXPORT_SYS_PROPERTY = "peer.autoexport";
 	private static final int EXPORT_INTERVAL_MILLIS = 15000;
 	private static final int EXPORT_LIFETIME_MILLIS = 35000;
 	
 	private static P2PDictionary instance;
+	private static IDataDictionary dataDictionary;
+	private static AutoExporter autoExporter;
 
 	private static String localPeerName;
 	private static PeerID localPeerID;
@@ -86,6 +88,31 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		instance = null;
 		
 		viewExporterThread.stopRunning();
+	}
+	
+	// called by OSGi-DS
+	public void bindDataDictionary( IDataDictionary dd ) {
+		dataDictionary = dd;
+		if( isAutoExport()) {
+			autoExporter = new AutoExporter(this);
+			dataDictionary.addListener(autoExporter);
+		}
+		
+		LOG.debug("DataDictionary bound {}", dd);
+	}
+	
+	// called by OSGi-DS
+	public void unbindDataDictionary( IDataDictionary dd ) {
+		if( dataDictionary == dd ) {
+			if( autoExporter != null ) {
+				dataDictionary.removeListener(autoExporter);
+				autoExporter = null;
+			}
+			
+			dataDictionary = null;
+			
+			LOG.debug("DataDictionary unbound {}", dd);
+		}
 	}
 
 	public static P2PDictionary getInstance() {
@@ -206,7 +233,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Preconditions.checkArgument(existsSource(srcAdvertisement), "SourceAdvertisement to import is not known to the p2p dictionary");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(sourceNameToUse), "Sourcename to use for import must be null or empty!");
 
-		if (DataDictionaryService.get().containsViewOrStream(sourceNameToUse, SessionManagementService.getActiveSession())) {
+		if (dataDictionary.containsViewOrStream(sourceNameToUse, SessionManagementService.getActiveSession())) {
 			throw new PeerException("SourceName '" + sourceNameToUse + "' is locally already in use");
 		}
 
@@ -233,7 +260,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			final AccessAO accessAO = advertisement.getAccessAO();
 
 			final ILogicalOperator timestampAO = addTimestampAO(accessAO, null);			
-			DataDictionaryService.get().setStream(advertisement.getName(), timestampAO, SessionManagementService.getActiveSession());
+			dataDictionary.setStream(advertisement.getName(), timestampAO, SessionManagementService.getActiveSession());
 
 		} else {
 			final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
@@ -250,7 +277,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			receiverOperator.subscribeSink(renameNoOp, 0, 0, receiverOperator.getOutputSchema());
 			renameNoOp.initialize();
 
-			DataDictionaryService.get().setView(sourceNameToUse, renameNoOp, SessionManagementService.getActiveSession());
+			dataDictionary.setView(sourceNameToUse, renameNoOp, SessionManagementService.getActiveSession());
 		}
 
 		importedSources.put(advertisement, sourceNameToUse);
@@ -264,7 +291,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			String name = importedSources.get(advertisement);
 			importedSources.remove(advertisement);
 
-			DataDictionaryService.get().removeViewOrStream(name, SessionManagementService.getActiveSession());
+			dataDictionary.removeViewOrStream(name, SessionManagementService.getActiveSession());
 
 			fireSourceImportRemoveEvent(advertisement, name);
 			return true;
@@ -312,12 +339,12 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			throw new PeerException("Source " + sourceName + " is imported and cannot be exported directly");
 		}
 
-		ILogicalOperator stream = DataDictionaryService.get().getStreamForTransformation(sourceName, SessionManagementService.getActiveSession());
+		ILogicalOperator stream = dataDictionary.getStreamForTransformation(sourceName, SessionManagementService.getActiveSession());
 		if (stream != null && stream instanceof TimestampAO) {
 			return exportStream(sourceName, queryBuildConfigurationName, stream);
 		}
 
-		ILogicalOperator view = DataDictionaryService.get().getView(sourceName, SessionManagementService.getActiveSession());
+		ILogicalOperator view = dataDictionary.getView(sourceName, SessionManagementService.getActiveSession());
 		if (view != null) {
 			return exportView(sourceName, queryBuildConfigurationName, view);
 		}
@@ -790,6 +817,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	
 	private static boolean isAutoImport() {
 		String property = System.getProperty(AUTOIMPORT_SYS_PROPERTY);
+		if( !Strings.isNullOrEmpty(property)) {
+			return property.equalsIgnoreCase("true");
+		}
+		return false;
+	}
+	
+	private static boolean isAutoExport() {
+		String property = System.getProperty(AUTOEXPORT_SYS_PROPERTY);
 		if( !Strings.isNullOrEmpty(property)) {
 			return property.equalsIgnoreCase("true");
 		}
