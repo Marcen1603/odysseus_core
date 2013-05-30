@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.user;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.user.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

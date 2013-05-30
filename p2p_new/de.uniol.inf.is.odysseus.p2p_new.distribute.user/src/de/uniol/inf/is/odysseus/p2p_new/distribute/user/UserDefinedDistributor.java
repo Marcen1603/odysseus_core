@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
