@@ -5,5 +5,4 @@
       <provide interface="de.uniol.inf.is.odysseus.parser.pql.generator.IPQLStatementGenerator"/>
    </service>
    <reference bind="bindDataDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary" name="IDataDictionary" policy="static" unbind="unbindDataDictionary"/>
-   <reference bind="bindSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement" name="ISessionManagement" policy="static" unbind="unbindSessionManagement"/>
 </scr:component>

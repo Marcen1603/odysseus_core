@@ -8,34 +8,23 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.pql.generator.AbstractPQLStatementGenerator;
 
 public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator<AccessAO> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccessAOPQLStatementGenerator.class);
 	private static IDataDictionary dataDictionary;
-	private static ISession activeUser;
 
 	public void bindDataDictionary(IDataDictionary dd) {
 		dataDictionary = dd;
 
 		LOG.debug("DataDictionary bound {}", dd);
-	}
-
-	public void bindSessionManagement(ISessionManagement sm) {
-		activeUser = sm.loginSuperUser(null, "no");
-
-		LOG.debug("SessionManagement bound {}", sm);
 	}
 
 	@Override
@@ -51,14 +40,8 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 		}
 	}
 
-	public void unbindSessionManagement(ISessionManagement sm) {
-		activeUser = null;
-		LOG.debug("SessionManagement unbound {}", sm);
-	}
-
 	@Override
 	protected String generateParameters(AccessAO operator) {
-		operator = determineRealAccessAO(operator);
 		final StringBuilder sb = new StringBuilder();
 		final TimestampAO timestampAO = determineTimestampAO(operator);
 		
@@ -162,27 +145,6 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 			return "'" + element.toString() + "'";
 		}
 		return element.toString();
-	}
-
-	private static AccessAO determineAccessAO(ILogicalOperator start) {
-		if (start instanceof AccessAO) {
-			return (AccessAO) start;
-		}
-
-		for (final LogicalSubscription subscription : start.getSubscribedToSource()) {
-			final AccessAO accessAO = determineAccessAO(subscription.getTarget());
-			if (accessAO != null) {
-				return accessAO;
-			}
-		}
-
-		return null;
-	}
-
-	private static AccessAO determineRealAccessAO(AccessAO operator) {
-//		final ILogicalOperator op = dataDictionary.getStreamForTransformation(operator.getSourcename(), activeUser);
-//		return op != null ? determineAccessAO(op) : operator;
-		return operator;
 	}
 
 	private static TimestampAO determineTimestampAO(AccessAO operator) {
