@@ -24,6 +24,7 @@ public class AdvertisementManager implements IAdvertisementManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementManager.class);
 	private static final long DISCOVERY_INTERVAL_MILLIS = 3 * 1000;
+	private static final int REMOTE_DISCOVERY_COUNT = 5;
 
 	private static AdvertisementManager instance;
 
@@ -35,11 +36,18 @@ public class AdvertisementManager implements IAdvertisementManager {
 	// called by OSGi-DS
 	public final void activate() {
 		discoveryThread = new RepeatingJobThread(DISCOVERY_INTERVAL_MILLIS, "Advertisement discovery thread") {
+			
+			private int remoteCounter = 0;
+			
 			@Override
 			public void doJob() {
 				if (JxtaServicesProvider.isActivated()) {
-					JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99);
-
+					
+					if( remoteCounter == 0 ) {
+						JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99);
+					}
+					remoteCounter = (remoteCounter + 1 ) % REMOTE_DISCOVERY_COUNT;
+					
 					try {
 						Enumeration<Advertisement> localAdvertisements = JxtaServicesProvider.getInstance().getDiscoveryService().getLocalAdvertisements(DiscoveryService.ADV, null, null);
 						process(localAdvertisements);

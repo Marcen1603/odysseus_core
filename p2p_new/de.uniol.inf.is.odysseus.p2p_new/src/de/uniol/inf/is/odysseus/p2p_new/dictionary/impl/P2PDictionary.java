@@ -690,6 +690,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			try {
 				JxtaServicesProvider.getInstance().getDiscoveryService().publish(srcAdvertisement);
+				JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(srcAdvertisement);
 				addSource(srcAdvertisement);
 
 				exportedSourcesQueryMap.put(srcAdvertisement, -1);
