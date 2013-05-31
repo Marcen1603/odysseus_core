@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.pattern.physicaloperator;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,17 +93,6 @@ public class AnyPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 				break;
 		}	
 
-	}
-	
-	private boolean checkAssertion(EventObject<T> object, Entry<SDFExpression, AttributeMap[]> entry) {
-		List<EventObject<T>> eventObjectSet = new ArrayList<>();
-		eventObjectSet.add(object);
-		return checkAssertion(object, eventObjectSet, entry);
-	}
-	
-	private Tuple<T> createComplexEvent(EventObject<T> currentObj) {
-		List<EventObject<T>> eventObjects = new ArrayList<>();
-		return createComplexEvent(eventObjects, currentObj, null);
 	}
 	
 }

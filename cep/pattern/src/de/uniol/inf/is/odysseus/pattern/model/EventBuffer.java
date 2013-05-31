@@ -89,6 +89,36 @@ public class EventBuffer<T extends IMetaAttribute> implements Iterable<EventObje
 		return null;
 	}
 	
+	/**
+	 * Returns the first n EventObjects.
+	 * @param count Indicates n.
+	 * @return
+	 */
+	public List<EventObject<T>> getFirstEventObjects(int count) {
+		List<EventObject<T>> result = new ArrayList<>();
+		if (count > objects.size())
+			count = objects.size();
+		for (int i=0; i < count; i++) {
+			result.add(objects.get(i));
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns the last n EventObjects.
+	 * @param count Indicates n.
+	 * @return
+	 */
+	public List<EventObject<T>> getLastEventObjects(int count) {
+		List<EventObject<T>> result = new ArrayList<>();
+		if (count > objects.size())
+			count = objects.size();
+		for (int i=0; i < count; i++) {
+			result.add(objects.get(objects.size() - 1 - i));
+		}
+		return result;
+	}
+	
 	public void clear() {
 		objects.clear();
 	}

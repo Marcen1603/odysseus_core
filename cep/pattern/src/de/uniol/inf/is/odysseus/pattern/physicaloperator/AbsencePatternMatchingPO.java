@@ -54,7 +54,10 @@ public class AbsencePatternMatchingPO<T extends ITimeInterval> extends PatternMa
 	@Override
 	public void process_internal(Tuple<T> event, int port) {
 		super.process_internal(event, port);
-		noIncomingEvent = false;
+		String eventType = inputTypeNames.get(port);
+		if (eventTypes.contains(eventType)) {
+			noIncomingEvent = false;
+		}
 	}
 	
 	@Override

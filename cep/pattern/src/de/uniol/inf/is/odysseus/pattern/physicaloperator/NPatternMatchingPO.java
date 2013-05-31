@@ -21,20 +21,22 @@ import de.uniol.inf.is.odysseus.pattern.model.PatternType;
  * @author Michael Falk
  * @param <T>
  */
-public class ModalPatternMatchingPO<T extends ITimeInterval> extends PatternMatchingPO<T> {
+public class NPatternMatchingPO<T extends ITimeInterval> extends PatternMatchingPO<T> {
 	
+	private Integer count;
 	private EventBuffer<T> eventBuffer;
 	
-	public ModalPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
+	public NPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
-			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
+			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, Integer count) {
 		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
         eventBuffer = new EventBuffer<T>();
+        this.count = count;
 		this.init();
     }
 	
 	// Copy-Konstruktor
-    public ModalPatternMatchingPO(ModalPatternMatchingPO<T> patternPO) {
+    public NPatternMatchingPO(NPatternMatchingPO<T> patternPO) {
     	super(patternPO);
         this.init();
     }
@@ -49,8 +51,8 @@ public class ModalPatternMatchingPO<T extends ITimeInterval> extends PatternMatc
 	}
 
 	@Override
-	public ModalPatternMatchingPO<T> clone() {
-		return new ModalPatternMatchingPO<T>(this);
+	public NPatternMatchingPO<T> clone() {
+		return new NPatternMatchingPO<T>(this);
 	}
 	
 	@Override
@@ -83,19 +85,18 @@ public class ModalPatternMatchingPO<T extends ITimeInterval> extends PatternMatc
 	 * @param currentTime
 	 */
 	private void matching(PointInTime currentTime) {
-		if (eventBuffer.getSize() != 0) {
+		if (eventBuffer.getSize() != 0 && count != null && count > 0) {
 			// Intervall abgelaufen -> gesammelte Events auswerten
 			EventBuffer<T> results = checkAssertions(eventBuffer);
-			if (type == PatternType.ALWAYS) {
-				if (assertions == null || results.equals(eventBuffer)) {
-					// ALWAY-Pattern erkannt
-					Tuple<T> complexEvent = createComplexEvent(null, null, currentTime);
-					outputTransferArea.transfer(complexEvent);
-				}
-			} else if (type == PatternType.SOMETIMES) {
-				if (assertions == null || results.getSize() >= 1) {
-					// SOMETIMES-Pattern erkannt
-					Tuple<T> complexEvent = createComplexEvent(null, null, currentTime);
+			List<EventObject<T>> objectsToSend = null;
+			if (type == PatternType.FIRST_N) {
+				objectsToSend = results.getFirstEventObjects(count);
+			} else if (type == PatternType.LAST_N) {
+				objectsToSend = results.getLastEventObjects(count);
+			}
+			if (objectsToSend != null) {
+				for (EventObject<T> obj : objectsToSend) {
+					Tuple<T> complexEvent = createComplexEvent(obj);
 					outputTransferArea.transfer(complexEvent);
 				}
 			}

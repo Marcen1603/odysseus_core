@@ -53,8 +53,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	private List<SDFExpression> assertions;
 	// Expressions fürs Ausgabeschema
 	private List<NamedExpressionItem> returnExpressions;
-	// wiederholen nach erfolg
-	// Zeitfenster ??
+	private Integer count;
 	
 	public PatternMatchingAO() {
         super();
@@ -77,6 +76,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
         this.returnExpressions = patternAO.returnExpressions;
         this.attribute = patternAO.attribute;
         this.value = patternAO.value;
+        this.count = patternAO.count;
     }
 	
     @Parameter(type=SDFExpressionParameter.class, optional=true, isList=true)
@@ -85,6 +85,15 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
         for (NamedExpressionItem expr : exprs) {
         	assertions.add(expr.expression);
         }
+    }
+    
+    @Parameter(name = "count", type=IntegerParameter.class, optional=true)
+    public void setCountEvents(Integer count) {
+        this.count = count;
+    }
+    
+    public Integer getCountEvents() {
+        return count;
     }
     
     public List<SDFExpression> getAssertions() {

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.pattern.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.pattern.model.AttributeMap;
+import de.uniol.inf.is.odysseus.pattern.model.EventBuffer;
 import de.uniol.inf.is.odysseus.pattern.model.EventObject;
 import de.uniol.inf.is.odysseus.pattern.model.PatternOutput;
 import de.uniol.inf.is.odysseus.pattern.model.PatternType;
@@ -65,6 +67,8 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	private boolean started;
 	protected PointInTime startTime;
 	private boolean timeElapsed;
+	private int countEvents;
+	private boolean sizeMatched;
 
 	protected IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea;
 	protected ITransferArea<Tuple<T>, Tuple<T>> outputTransferArea;
@@ -122,6 +126,8 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		this.returnAttrMappings = new HashMap<SDFExpression, AttributeMap[]>();
 		this.returnAttrMappings.putAll(patternPO.returnAttrMappings);
 		this.timeElapsed = patternPO.timeElapsed;
+		this.countEvents = patternPO.countEvents;
+		this.sizeMatched = patternPO.sizeMatched;
 		this.init();
 	}
 
@@ -232,17 +238,38 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 				startTime = currentTime;
 			}
 		}
+		if (size != null) {
+			if (eventTypes.contains(inputTypeNames.get(port))) {
+				countEvents++;
+				if (countEvents >= size) {
+					sizeMatched = true;
+					countEvents = 0;
+				}
+			}
+		}
 	}
 	
 	/**
-	 * Prüft, ob das Zeitintervall, festgelegt duch time, abgelaufen ist.
-	 * Falls es abgelaufen ist, wird es zurückgesetzt.
-	 * @return
+	 * Check whether the time interval is over because of the time.
+	 * @return true, when timeElapsed
 	 */
 	protected boolean checkTimeElapsed() {
 		if (timeElapsed) {
 			// Zurücksetzen
 			timeElapsed = false;
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Check whether the interval is over because of the size.
+	 * @return true, when sizeMatched
+	 */
+	protected boolean checkSizeMatched() {
+		if (sizeMatched) {
+			// Zurücksetzen
+			sizeMatched = false;
 			return true;
 		}
 		return false;
@@ -323,6 +350,12 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		}
 		return null;
 	}
+	
+	protected Tuple<T> createComplexEvent(EventObject<T> currentObj) {
+		List<EventObject<T>> eventObjects = new ArrayList<>();
+		eventObjects.add(currentObj);
+		return createComplexEvent(eventObjects, currentObj, null);
+	}
 
 	/**
 	 * Prüft für jede gültige Kombination (-> ALL-Pattern), ob alle Bedingungen
@@ -377,6 +410,40 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Prüft für eine Liste von Events, ob die Bedingungen erfüllt sind.
+	 * Als Ausgabe liefert diese Methode eine Liste der Events zurück,
+	 * die die Bedingungen erfüllen.
+	 * @param object
+	 * @param eventObjectSets
+	 * @param type
+	 * @return
+	 */
+	protected EventBuffer<T> checkAssertions(EventBuffer<T> eventBuffer) {
+		EventBuffer<T> output = new EventBuffer<T>();
+		if (attrMappings == null) return output; 
+		// Expressions für jedes Objekt überprüfen
+		for (EventObject<T> event : eventBuffer) {
+			Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings.entrySet().iterator();
+			boolean satisfied = true;
+			while (iterator.hasNext() && satisfied) {
+				Entry<SDFExpression, AttributeMap[]> entry = iterator.next();
+				satisfied = checkAssertion(event, Arrays.asList(event), entry);
+			}
+			if (satisfied) {
+				// MatchingSet in Ausgabemenge aufnehmen
+				output.add(event);
+			}
+		}
+		return output;
+	}
+	
+	protected boolean checkAssertion(EventObject<T> object, Entry<SDFExpression, AttributeMap[]> entry) {
+		List<EventObject<T>> eventObjectSet = new ArrayList<>();
+		eventObjectSet.add(object);
+		return checkAssertion(object, eventObjectSet, entry);
 	}
 
 	/**

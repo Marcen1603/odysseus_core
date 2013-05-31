@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.pattern.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -76,11 +75,6 @@ public class FunctorPatternMatchingPO<T extends ITimeInterval> extends PatternMa
 				}
 			}
 		}
-	}
-	
-	private Tuple<T> createComplexEvent(EventObject<T> currentObj) {
-		List<EventObject<T>> eventObjects = new ArrayList<>();
-		return createComplexEvent(eventObjects, currentObj, null);
 	}
 	
 }

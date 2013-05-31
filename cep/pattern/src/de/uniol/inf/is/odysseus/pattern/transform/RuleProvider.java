@@ -12,6 +12,7 @@ public class RuleProvider implements ITransformRuleProvider {
 	public List<IRule<?, ?>> getRules() {
 		ArrayList<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new TPatternMatchingAORule());
+//		rules.add(new TPatternAggregateAORule());
 		return rules;
 	}
 }
