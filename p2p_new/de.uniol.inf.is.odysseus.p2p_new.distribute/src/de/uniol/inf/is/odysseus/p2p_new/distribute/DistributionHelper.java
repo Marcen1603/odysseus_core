@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -45,6 +44,15 @@ public class DistributionHelper {
 	 * The {@link Logger} instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(DistributionHelper.class);
+	
+	/**
+	 * Returns the ID for the PQL parser.
+	 */
+	public static String getParserID() {
+		
+		return "PQL";
+		
+	}
 	
 	/**
 	 * Logs the number of available peers and their IDs.
@@ -75,26 +83,6 @@ public class DistributionHelper {
 			sinks.addAll(queryPart.getRealSinks());
 		
 		return sinks;
-		
-	}
-	
-	/**
-	 * Generates a {@link RenameAO} logical operator as a placeholder. <br />
-	 * The {@link RenameAO} will be subscribed to all real sinks of the {@link QueryPart}, but it won't be part of the {@link QueryPart}.
-	 * @param queryPart The {@link QueryPart}.
-	 * @return The new {@link RenameAO} with <code>NoOp</code> set.
-	 */
-	public static RenameAO generateRenameAO(QueryPart queryPart) {
-		
-		final RenameAO renameAO = new RenameAO();
-		renameAO.setNoOp(true);
-		renameAO.addParameterInfo("isNoOp", "'true'");
-		Collection<ILogicalOperator> sinks = queryPart.getRealSinks();
-		int sinkInPort = 0;
-		for(final ILogicalOperator sink : sinks)
-			renameAO.subscribeToSource(sink, sinkInPort++, 0, sink.getOutputSchema());
-		renameAO.initialize();
-		return renameAO;
 		
 	}
 	

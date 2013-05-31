@@ -1,18 +1,12 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 import net.jxta.peer.PeerID;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import com.google.common.collect.ImmutableMap;
 
 // TODO javaDoc
 public class Subcluster {
@@ -45,33 +39,17 @@ public class Subcluster {
 		
 	}
 	
-	private final QueryPart queryPart;
+	private Map<QueryPart, PeerID> subclusterMap;
 	
-	public final QueryPart getQueryPart() {
+	public final ImmutableMap<QueryPart, PeerID> getSubclusterMap() {
 		
-		return this.queryPart;
-		
-	}
-	
-	private Collection<PeerID> subclusterPeerIDs;
-	
-	public final ImmutableCollection<PeerID> getSubclusterPeerIDs() {
-		
-		return ImmutableList.copyOf(subclusterPeerIDs);
-		
-	}
-	
-	public void setSubclusterPeerIDs(Collection<PeerID> peerIDs) {
-		
-		Preconditions.checkArgument(!peerIDs.isEmpty(), "List of peer IDs must not be empty!");
-		
-		this.subclusterPeerIDs = peerIDs;
+		return ImmutableMap.copyOf(subclusterMap);
 		
 	}
 	
 	private Subcluster next;
 	
-	public Optional<Subcluster> getNext() {
+	public final Optional<Subcluster> getNext() {
 		
 		return Optional.fromNullable(next);
 		
@@ -79,25 +57,16 @@ public class Subcluster {
 	
 	public void setNext(Subcluster next) {
 		
-		Preconditions.checkArgument(next.getSubclusterPeerIDs().size() != subclusterPeerIDs.size(), 
-				"Following subcluster must have the same size!");
-		
 		this.next = next;
 		
 	}
 	
-	public Subcluster(QueryPart part) {
+	public Subcluster(Map<QueryPart, PeerID> subclusterMap) {
 		
-		Preconditions.checkNotNull(part, "Query part must not be null!");
+		Preconditions.checkArgument(!subclusterMap.isEmpty(), "Subcluster map must not be empty!");
 		
 		this.subclusterID = SUBCLUSTER_ID_COUNTER++;
-		List<ILogicalOperator> operators = Lists.newArrayList();
-		RestructHelper.collectOperators(part.getOperators().iterator().next(), operators);
-		RestructHelper.removeTopAOs(operators);
-		if(part.getDestinationName().isPresent())
-			this.queryPart = new QueryPart(operators, part.getDestinationName().get());
-		else this.queryPart = new QueryPart(operators);
-		this.subclusterPeerIDs = Lists.newArrayList();
+		this.subclusterMap = subclusterMap;
 		this.next = null;
 		
 	}

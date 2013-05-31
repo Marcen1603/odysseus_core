@@ -17,13 +17,17 @@ import de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 
+// TODO Preconditions in allen Klassen
 /**
  * The class for abstract load balancers. <br />
  * A load balancer distributes queries and/or sources on a network of peers.
@@ -76,12 +80,12 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	
 	@Override
 	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender,
-			List<ILogicalQuery> queriesToDistribute, String cfgName) {
+			List<ILogicalQuery> queries, String cfgName) {
 
-		if(queriesToDistribute == null || queriesToDistribute.isEmpty()) {
+		if(queries == null || queries.isEmpty()) {
 			
 			// Nothing to distribute
-			return queriesToDistribute;
+			return queries;
 			
 		}
 		
@@ -90,15 +94,35 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		if(remotePeerIDs.isEmpty()) {
 			
 			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
-			return queriesToDistribute;
+			return queries;
 			
 		} else DistributionHelper.logPeerStatus(remotePeerIDs);
+		
+		// All queries including copies
+		final List<ILogicalQuery> distributedQueries = Lists.newArrayList();
 		
 		// All queryparts over all queries
 		final Map<ILogicalQuery, List<QueryPart>> queryPartsMap = Maps.newHashMap();
 
-		for(final ILogicalQuery query : queriesToDistribute)
-			this.determineQueryParts(query, queryPartsMap);
+		for(final ILogicalQuery query : queries) {
+			
+			// Generate a new logical operator which marks that the query result shall return to this instance
+			QueryPart localPart = this.createLocalPart();
+			
+			this.determineQueryParts(query, queryPartsMap, localPart);
+			distributedQueries.add(query);
+			
+			// TODO wantedDegree als Parameter
+			final List<ILogicalQuery> copies = this.copyLogicalQuery(query, this.getDegreeOfParallelismn(0, remotePeerIDs.size() - 1) - 1);
+			for(ILogicalQuery copy : copies)
+				this.determineQueryParts(copy, queryPartsMap, localPart);
+			distributedQueries.addAll(copies);
+			
+			// Initialize the operators of the local part
+			for(ILogicalOperator operator : localPart.getOperators())
+				operator.initialize();
+			
+		}
 		
 		// Assign query parts to peers
 		final Map<QueryPart, PeerID> queryPartDistributionMap = 
@@ -133,11 +157,17 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			PeerID localPeerID, Collection<List<QueryPart>> collection);
 	
 	/**
+	 * Creates a new {@link QueryPart} to be executed locally.
+	 */
+	protected abstract QueryPart createLocalPart();
+	
+	/**
 	 * Determines the {@link QueryPart}s of an {@link ILogicalQuery} and stores it in a map.
 	 * @param query The {@link ILogicalQuery}.
 	 * @param queryPartsMap The mapping of {@link ILogicalQuery}s and their {@link QueryPart}s.
+	 * @param localPart The {@link QueryPart} executed locally putting the distributed {@link QueryPart}s together.
 	 */
-	protected void determineQueryParts(ILogicalQuery query, Map<ILogicalQuery, List<QueryPart>> queryPartsMap) {
+	protected void determineQueryParts(ILogicalQuery query, Map<ILogicalQuery, List<QueryPart>> queryPartsMap, QueryPart localPart) {
 		
 		// Get all logical operators of the query and remove the TopAOs
 		final List<ILogicalOperator> operators = Lists.newArrayList();
@@ -148,18 +178,13 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		final List<QueryPart> queryParts = this.determineQueryParts(operators);
 		LOG.debug("Got {} parts of logical query {}", queryParts.size(), query);
 		
-		// The parts to be executed locally
-		final List<QueryPart> localParts = Lists.newArrayList();
-		
-		// Generate a new logical operator which marks that the query result shall return to this instance
-		for(QueryPart part : queryParts) {
-		
-			ILogicalOperator localPart = DistributionHelper.generateRenameAO(part);
-			localParts.add(new QueryPart(Lists.newArrayList(localPart), AbstractLoadBalancer.getLocalDestinationName()));
+		// Subscribe the local part
+		ILogicalOperator localSource = localPart.getRelativeSources().iterator().next();
+		Collection<ILogicalOperator> sinks = queryParts.get(queryParts.size() - 1).getRealSinks();
+		for(ILogicalOperator sink : sinks)
+			localSource.subscribeToSource(sink, localSource.getNumberOfInputs(), 0, sink.getOutputSchema());
 			
-		}
-		
-		queryParts.addAll(localParts);
+		queryParts.add(localPart);
 		queryPartsMap.put(query, queryParts);
 		
 	}
@@ -215,7 +240,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		final ID sharedQueryID = DistributionHelper.generateSharedQueryID();
 		
 		// Get all queryParts of this query mapped with the executing peer
-		final Map<QueryPart, PeerID> queryPartPeerMap = Maps.newHashMap();	// qPD = queryPartDistribution
+		final Map<QueryPart, PeerID> queryPartPeerMap = Maps.newHashMap();
 		for(QueryPart part : queryParts)
 			queryPartPeerMap.put(part, queryPartDistributionMap.get(part));
 		
@@ -228,5 +253,40 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		return localQuery;
 		
 	}
+	
+	/**
+	 * Creates copies of an {@link ILogicalQuery}.
+	 * @param query The {@link ILogicalQuery} to be copied.
+	 * @param numCopies The number of copies to be made.
+	 * @return The list of copies excluding the original {@link ILogicalQuery}.
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected List<ILogicalQuery> copyLogicalQuery(ILogicalQuery query, int numCopies) {
+		
+		final List<ILogicalQuery> copies = Lists.newArrayList();
+		
+		for(int copyNo = 0; copyNo < numCopies; copyNo++) {
+			
+			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(null);
+			GenericGraphWalker walker = new GenericGraphWalker();
+			walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
+			ILogicalQuery copy = new LogicalQuery(DistributionHelper.getParserID(), copyVisitor.getResult(), query.getPriority());
+			copy.setName(query.getName() + "_Copy" + copyNo);
+			copy.setUser(query.getUser());
+			copies.add(copy);
+			
+		}
+		
+		return copies;
+		
+	}
+	
+	/**
+	 * Sets the degree of parallelism for the {@link ILogicalQuery}, e.g. <code>1</code> for not parallize the {@link ILogicalQuery}.
+	 * @param wantedDegree The wanted degree by the user.
+	 * @param maxDegree The maximum possibleDegree.
+	 * @return The degree of parallelism which is determined by the two parameters and the load balancer.
+	 */
+	protected abstract int getDegreeOfParallelismn(int wantedDegree, int maxDegree);
 
 }

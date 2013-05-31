@@ -16,6 +16,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 
@@ -73,6 +74,7 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 					
 					// Local part
 					distributed.put(part, localPeerID);
+					peerName = P2PDictionaryService.get().getPeerRemoteName(localPeerID);
 					
 				} else {
 					
@@ -97,6 +99,29 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 		}
 
 		return distributed;
+		
+	}
+
+	/**
+	 * @return A {@link RenameAO} with no operation.
+	 */
+	@Override
+	protected QueryPart createLocalPart() {
+		
+		final RenameAO renameAO = new RenameAO();
+		renameAO.setNoOp(true);
+		renameAO.addParameterInfo("isNoOp", "'true'");
+		return new QueryPart(Lists.newArrayList((ILogicalOperator) renameAO), AbstractLoadBalancer.getLocalDestinationName());
+		
+	}
+
+	/**
+	 * @return <code>1</code>
+	 */
+	@Override
+	protected int getDegreeOfParallelismn(int wantedDegree, int maxDegree) {
+		
+		return 1;
 		
 	}
 
