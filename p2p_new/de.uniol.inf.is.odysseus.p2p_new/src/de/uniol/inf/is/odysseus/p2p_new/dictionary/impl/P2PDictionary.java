@@ -52,7 +52,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private static final String AUTOIMPORT_SYS_PROPERTY = "peer.autoimport";
 	private static final String AUTOEXPORT_SYS_PROPERTY = "peer.autoexport";
 	private static final int EXPORT_INTERVAL_MILLIS = 15000;
-	private static final int EXPORT_LIFETIME_MILLIS = 35000;
+	private static final int EXPORT_LIFETIME_MILLIS = 60000;
 	
 	private static P2PDictionary instance;
 	private static IDataDictionary dataDictionary;
