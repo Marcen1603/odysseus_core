@@ -6,12 +6,14 @@ import net.jxta.peergroup.PeerGroupID;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 
 public interface IP2PDictionary {
 	void addListener( IP2PDictionaryListener listener );
 	void removeListener( IP2PDictionaryListener listener );
 	
+	boolean checkSource(SourceAdvertisement srcAdvertisement);
 	boolean existsSource( SourceAdvertisement advertisement );
 	boolean existsSource( String viewName );
 	ImmutableList<SourceAdvertisement> getSources();
@@ -20,7 +22,7 @@ public interface IP2PDictionary {
 	ImmutableList<SourceAdvertisement> getSame( SourceAdvertisement advertisement );
 	boolean isSame( SourceAdvertisement a, SourceAdvertisement b );
 	
-	void importSource( SourceAdvertisement advertisement, String viewNameToUse ) throws PeerException;
+	void importSource( SourceAdvertisement advertisement, String viewNameToUse ) throws PeerException, InvalidP2PSource;
 	boolean removeSourceImport( SourceAdvertisement advertisement );
 	boolean isImported( SourceAdvertisement advertisement );
 	boolean isImported( String sourceName );

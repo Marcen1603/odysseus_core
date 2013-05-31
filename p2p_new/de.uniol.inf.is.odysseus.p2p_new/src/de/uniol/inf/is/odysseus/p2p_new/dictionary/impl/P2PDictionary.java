@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary.impl;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
@@ -53,6 +56,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private static final String AUTOEXPORT_SYS_PROPERTY = "peer.autoexport";
 	private static final int EXPORT_INTERVAL_MILLIS = 15000;
 	private static final int EXPORT_LIFETIME_MILLIS = 60000;
+	private static final int REACHABLE_TIMEOUT_MILLIS = 5000;
+	private static final int CHECK_INTERVAL_MILLIS = 10000;
 	
 	private static P2PDictionary instance;
 	private static IDataDictionary dataDictionary;
@@ -68,6 +73,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private final List<SourceAdvertisement> publishedSources = Lists.newArrayList();
 	private final Map<SourceAdvertisement, List<SourceAdvertisement>> sameSourceMap = Maps.newHashMap();
 	private final Map<SourceAdvertisement, List<SourceAdvertisement.Same>> cachedSameMap = Maps.newHashMap();
+	private SourceChecker sourceChecker = new SourceChecker(CHECK_INTERVAL_MILLIS, this);
 
 	private final Map<SourceAdvertisement, String> importedSources = Maps.newHashMap();
 
@@ -81,12 +87,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		instance = this;
 		
 		viewExporterThread.start();
+		sourceChecker.start();
 	}
 
 	// called by OSGi-DS
 	public void deactivate() {
 		instance = null;
 		
+		sourceChecker.stopRunning();
 		viewExporterThread.stopRunning();
 	}
 	
@@ -125,10 +133,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		return instance != null;
 	}
 
-	public void addSource(SourceAdvertisement srcAdvertisement) {
+	public void addSource(SourceAdvertisement srcAdvertisement) throws InvalidP2PSource {
 		Preconditions.checkNotNull(srcAdvertisement, "Sourceadvertisement must not be null!");
 		Preconditions.checkArgument(!existsSource(srcAdvertisement), "SourceAdvertisement already added!");
 
+		if( !checkSource( srcAdvertisement ) ) {
+			throw new InvalidP2PSource("Source {} is invalid");
+		}
+		
 		publishedSources.add(srcAdvertisement);
 		cachedSameMap.put(srcAdvertisement, Lists.<SourceAdvertisement.Same> newArrayList());
 		sameSourceMap.put(srcAdvertisement, Lists.<SourceAdvertisement> newArrayList());
@@ -157,17 +169,26 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			}
 		}
 	}
+	
+	@Override
+	public boolean checkSource(SourceAdvertisement srcAdvertisement) {
+		if( srcAdvertisement.isStream() ) {
+			return checkStreamAdvertisement(srcAdvertisement);
+		} else if( srcAdvertisement.isView() ) {
+			return checkViewAdvertisement(srcAdvertisement);
+		}
+		
+		throw new IllegalArgumentException("SourceAdvertisement is not a view nor a stream: " + srcAdvertisement.getName());
+	}
+	
+
 
 	public boolean removeSource(SourceAdvertisement srcAdvertisement) {
 		boolean result = false;
 		if (srcAdvertisement != null) {
 
-			if (importedSources.containsKey(srcAdvertisement)) {
-				importedSources.remove(srcAdvertisement);
-
-				fireSourceImportRemoveEvent(srcAdvertisement, importedSources.get(srcAdvertisement));
-				result = true;
-			}
+			result = removeSourceImport(srcAdvertisement);
+			result |= removeSourceExport(srcAdvertisement.getName());
 
 			if (publishedSources.contains(srcAdvertisement)) {
 				publishedSources.remove(srcAdvertisement);
@@ -234,11 +255,15 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	@Override
-	public void importSource(SourceAdvertisement srcAdvertisement, String sourceNameToUse) throws PeerException {
+	public void importSource(SourceAdvertisement srcAdvertisement, String sourceNameToUse) throws PeerException, InvalidP2PSource {
 		Preconditions.checkNotNull(srcAdvertisement, "SourceAdvertisement to import must not be null!");
 		Preconditions.checkArgument(existsSource(srcAdvertisement), "SourceAdvertisement to import is not known to the p2p dictionary");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(sourceNameToUse), "Sourcename to use for import must be null or empty!");
 
+		if( !checkSource(srcAdvertisement )) {
+			throw new InvalidP2PSource("Source is invalid!");
+		}
+		
 		final String realSrcNameToUse = removeUserFromName(sourceNameToUse);
 		if (dataDictionary.containsViewOrStream(realSrcNameToUse, SessionManagementService.getActiveSession())) {
 			throw new PeerException("SourceName '" + realSrcNameToUse + "' is locally already in use");
@@ -698,9 +723,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				fireSourceExportEvent(srcAdvertisement, streamName);
 
 				return srcAdvertisement;
-			} catch (final IOException ex) {
+			} catch (final IOException | InvalidP2PSource ex) {
 				throw new PeerException("Could not advertise stream '" + streamName + "'", ex);
-			}
+			} 
 		}
 		throw new PeerException("Could not find accessAO of stream '" + stream + "'");
 	}
@@ -738,7 +763,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			return viewAdvertisement;
 
-		} catch (IOException e) {
+		} catch (IOException | InvalidP2PSource e) {
 			throw new PeerException("Could not publish view '" + viewName + "'", e);
 		}
 	}
@@ -848,5 +873,52 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			return property.equalsIgnoreCase("true");
 		}
 		return false;
+	}
+
+	private static boolean checkViewAdvertisement(SourceAdvertisement srcAdvertisement) {
+		PeerID sourcePeerID = srcAdvertisement.getPeerID();
+		if( sourcePeerID.equals(P2PDictionary.getInstance().getLocalPeerID())) {
+			return true;
+		}
+		
+		if( !JxtaServicesProvider.getInstance().getEndpointService().isReachable(sourcePeerID, false)) {
+			LOG.error("Could not reach peer with exported source {}", srcAdvertisement.getName());
+			return false;
+		}
+		return true;
+	}
+	
+	private static boolean checkStreamAdvertisement(SourceAdvertisement srcAdvertisement) {
+		final AccessAO accessAO = srcAdvertisement.getAccessAO();
+		final Map<String, String> optionsMap = accessAO.getOptionsMap();
+		
+		String host = optionsMap.get("host");
+		if( Strings.isNullOrEmpty(host)) {
+			LOG.error("Host not specified. Invalid sourceAdvertisement in p2p-context: {}", srcAdvertisement.getName());
+			return false;
+		}
+		
+		if( host.equalsIgnoreCase("localhost") && srcAdvertisement.getPeerID().equals(P2PDictionary.getInstance().getLocalPeerID())) {
+			LOG.error("SourceAdvertisement has localhost as host (with non local origin peer): {}", srcAdvertisement.getName());
+			return false;
+		}
+		
+		try {
+			// Nicht zuverlässig. Kann true zurückgeben, obwohl der host
+			// nicht erreichbar ist
+			InetAddress hostAddress = InetAddress.getByName(host);
+			if( !hostAddress.isReachable(REACHABLE_TIMEOUT_MILLIS) ) {
+				LOG.error("Host {} is not reachable");
+				return false;
+			}
+		} catch (UnknownHostException e) {
+			LOG.error("Unknown host {}", host, e );
+			return false;
+		} catch (IOException e) {
+			LOG.error("Could not test for reachability host {}", host, e);
+			return false;
+		} 
+		
+		return true;
 	}
 }
