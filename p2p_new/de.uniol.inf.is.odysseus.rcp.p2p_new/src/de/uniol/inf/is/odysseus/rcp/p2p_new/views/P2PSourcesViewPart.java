@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
 
 public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListener {
 
-	private static class TableEntry {
+	public static class TableEntry {
 		public SourceAdvertisement advertisement;
 		
 		public int index;
