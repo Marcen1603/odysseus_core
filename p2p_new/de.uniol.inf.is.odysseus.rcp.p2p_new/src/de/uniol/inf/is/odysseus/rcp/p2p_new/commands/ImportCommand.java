@@ -6,11 +6,15 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
+import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
@@ -30,22 +34,27 @@ public class ImportCommand extends AbstractHandler implements IHandler {
 
 			List<SourceAdvertisement> selectedAdvertisements = part.getSelectedSourceAdvertisements();
 
+			int okCount = 0;
 			for (SourceAdvertisement selectedAdvertisement : selectedAdvertisements) {
-				try {
-					if (dictionary.isImported(selectedAdvertisement)) {
-						throw new ExecutionException("Could not import an already imported source");
-					}
-					// TODO: Alternativ-Advertisements auswählen lassen vom
-					// Nutzer
+				if (dictionary.isImported(selectedAdvertisement)) {
+					throw new ExecutionException("Could not import an already imported source");
+				}
+				// TODO: Alternativ-Advertisements auswählen lassen vom
+				// Nutzer
 
-					// TODO: Auswahl des Namens, falls vergeben
+				// TODO: Auswahl des Namens, falls vergeben
+				try {
 					dictionary.importSource(selectedAdvertisement, selectedAdvertisement.getName());
-					StatusBarManager.getInstance().setMessage("Source successfully imported as " + selectedAdvertisement.getName());
 					
-				} catch (Throwable t) {
-					LOG.error("Could not import", t);
+					okCount++;
+				} catch (PeerException e) {
+					LOG.error("Could not import source {}", selectedAdvertisement.getName(), e);
+				} catch (InvalidP2PSource e) {
+					LOG.error("Could not import source {}", selectedAdvertisement.getName(), e);
+					MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Invalid source", "Could not import source " + selectedAdvertisement.getName() + " since\nit is invalid (e.g. peer is not reachable).");
 				}
 			}
+			StatusBarManager.getInstance().setMessage(okCount + " source(s) successfully imported");
 		}
 		return null;
 	}
