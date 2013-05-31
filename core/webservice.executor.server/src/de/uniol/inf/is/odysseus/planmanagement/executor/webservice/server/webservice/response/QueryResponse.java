@@ -42,13 +42,16 @@ public class QueryResponse extends Response {
 	
 	private boolean isRunning;
 	
+	private String username;
+	
 	public QueryResponse() {
 		super();
 	}
 	
-	public QueryResponse(LogicalQuery value, boolean isRunning, boolean success) {
+	public QueryResponse(LogicalQuery value, String username, boolean isRunning, boolean success) {
 		super(success);
 		this.query = value;
+		this.username = username;
 		this.isRunning = isRunning;
 	}
 	
@@ -62,5 +65,17 @@ public class QueryResponse extends Response {
 	
 	public boolean isRunning() {
 		return isRunning;
+	}
+	
+	public void setRunning(boolean isRunning) {
+		this.isRunning = isRunning;
+	}
+	
+	public String getUsername() {
+		return this.username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
 	}
 }

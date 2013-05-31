@@ -480,10 +480,10 @@ public class WebserviceServer {
 			IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryById(Integer.valueOf(id));
 			return new QueryResponse((LogicalQuery) ExecutorServiceBinding
 					.getExecutor().getLogicalQueryById(Integer.valueOf(id))
-					,queryById.isOpened(), true);
+					,queryById.getSession().getUser().getName(), queryById.isOpened(), true);
 		} catch (WebserviceException e) {
 			e.printStackTrace();
-			return new QueryResponse(null, false, false);
+			return new QueryResponse(null,null, false, false);
 		}
 	}
 
@@ -494,10 +494,10 @@ public class WebserviceServer {
 			loginWithSecurityToken(securityToken);
 			IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryByName(name);
 			return new QueryResponse((LogicalQuery) ExecutorServiceBinding
-					.getExecutor().getLogicalQueryByName(name), queryById.isOpened(), true);
+					.getExecutor().getLogicalQueryByName(name),queryById.getSession().getUser().getName(), queryById.isOpened(), true);
 		} catch (WebserviceException e) {
 			e.printStackTrace();
-			return new QueryResponse(null, false, false);
+			return new QueryResponse(null,null, false, false);
 		}
 	}
 
