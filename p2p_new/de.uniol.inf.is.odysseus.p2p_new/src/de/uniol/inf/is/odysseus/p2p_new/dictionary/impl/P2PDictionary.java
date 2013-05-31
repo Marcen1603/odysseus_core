@@ -52,8 +52,10 @@ import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, IPlanModificationListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PDictionary.class);
+	
 	private static final String AUTOIMPORT_SYS_PROPERTY = "peer.autoimport";
 	private static final String AUTOEXPORT_SYS_PROPERTY = "peer.autoexport";
+	
 	private static final int EXPORT_INTERVAL_MILLIS = 15000;
 	private static final int EXPORT_LIFETIME_MILLIS = 60000;
 	private static final int REACHABLE_TIMEOUT_MILLIS = 5000;
@@ -61,7 +63,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	
 	private static P2PDictionary instance;
 	private static IDataDictionary dataDictionary;
-	private static AutoExporter autoExporter;
 
 	private static String localPeerName;
 	private static PeerID localPeerID;
@@ -79,6 +80,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private final Map<SourceAdvertisement, Integer> exportedSourcesQueryMap = Maps.newHashMap();
 	private final ViewExporterThread viewExporterThread = new ViewExporterThread(EXPORT_INTERVAL_MILLIS, EXPORT_LIFETIME_MILLIS, this);
+	private AutoExporter autoExporter;
 	
 	private final Map<PeerID, String> knownPeersMap = Maps.newHashMap();
 
