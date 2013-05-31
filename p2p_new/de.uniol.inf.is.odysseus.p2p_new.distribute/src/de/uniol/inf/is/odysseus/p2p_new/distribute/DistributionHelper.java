@@ -223,6 +223,7 @@ public class DistributionHelper {
 	public static void generatePeerConnection(QueryPart senderPart, QueryPart acceptorPart, ILogicalOperator sinkOfSender, 
 			ILogicalOperator sourceOfAcceptor, String senderName, String accessName) {
 		
+		// TODO Bei mehreren Anfragen sagt er mir, die PipeID sei bereits vergeben
 		final PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
 
 		final JxtaReceiverAO access = new JxtaReceiverAO();

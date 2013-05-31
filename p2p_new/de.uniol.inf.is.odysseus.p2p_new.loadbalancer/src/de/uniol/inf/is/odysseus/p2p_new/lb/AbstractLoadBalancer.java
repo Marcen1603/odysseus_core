@@ -45,6 +45,14 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 */
 	protected SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
 	
+	// TODO neu
+	private static int CONNECTION_COUNTER = 0;
+	private static int getNextConnectionNo() {
+		
+		return CONNECTION_COUNTER++;
+		
+	}
+	
 	/**
 	 * Returns the base name for acceptor operators.
 	 */
@@ -127,7 +135,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// Assign query parts to peers
 		final Map<QueryPart, PeerID> queryPartDistributionMap = 
 				this.assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), queryPartsMap.values());
-		DistributionHelper.generatePeerConnections(queryPartDistributionMap, getAccessName(), getSenderName());
+		int connectionNo =  + getNextConnectionNo();
+		DistributionHelper.generatePeerConnections(queryPartDistributionMap, getAccessName() + connectionNo + "_", 
+				getSenderName() + connectionNo + "_");
 		
 		// The queries to be executed locally
 		final List<ILogicalQuery> localQueries = Lists.newArrayList();
