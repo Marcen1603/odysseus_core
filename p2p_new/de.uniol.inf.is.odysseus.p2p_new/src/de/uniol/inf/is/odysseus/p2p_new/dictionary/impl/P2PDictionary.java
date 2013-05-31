@@ -93,6 +93,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	// called by OSGi-DS
 	public void bindDataDictionary( IDataDictionary dd ) {
 		dataDictionary = dd;
+		dataDictionary.addListener(this);
 		if( isAutoExport()) {
 			autoExporter = new AutoExporter(this);
 			dataDictionary.addListener(autoExporter);
@@ -104,6 +105,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	// called by OSGi-DS
 	public void unbindDataDictionary( IDataDictionary dd ) {
 		if( dataDictionary == dd ) {
+			dataDictionary.removeListener(this);
 			if( autoExporter != null ) {
 				dataDictionary.removeListener(autoExporter);
 				autoExporter = null;
@@ -519,18 +521,15 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	// called by DataDictionary
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		int pos = name.indexOf(".");
-		if (pos >= 0) {
-			name = name.substring(pos + 1);
-		}
+		final String realSourceName = removeUserFromName(name);
 
-		Optional<SourceAdvertisement> optImportedSrcAdvertisement = getImportedSource(name);
+		Optional<SourceAdvertisement> optImportedSrcAdvertisement = getImportedSource(realSourceName);
 		if (optImportedSrcAdvertisement.isPresent()) {
 			removeSourceImport(optImportedSrcAdvertisement.get());
 		}
-		removeSourceExport(name);
+		removeSourceExport(realSourceName);
 
-		Optional<SourceAdvertisement> optOwnAdvertisement = find(localPeerID, name);
+		Optional<SourceAdvertisement> optOwnAdvertisement = find(localPeerID, realSourceName);
 		if (optOwnAdvertisement.isPresent()) {
 			SourceAdvertisement ownAdvertisement = optOwnAdvertisement.get();
 
