@@ -3,15 +3,22 @@ package de.uniol.inf.is.odysseus.p2p_new.dictionary.impl;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import net.jxta.document.AdvertisementFactory;
+import net.jxta.endpoint.EndpointAddress;
+import net.jxta.endpoint.MessageTransport;
+import net.jxta.endpoint.router.RouteController;
 import net.jxta.id.IDFactory;
+import net.jxta.impl.endpoint.router.EndpointRouter;
 import net.jxta.peer.PeerID;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.peergroup.PeerGroupID;
 import net.jxta.pipe.PipeID;
+import net.jxta.protocol.RouteAdvertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +90,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private AutoExporter autoExporter;
 	
 	private final Map<PeerID, String> knownPeersMap = Maps.newHashMap();
+	private final Map<PeerID, String> peersAddressMap = Maps.newHashMap();
 
 	// called by OSGi-DS
 	public void activate() {
@@ -447,12 +455,18 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(peerName), "Peername to add must not be null or empty!");
 		
 		knownPeersMap.put(peerID, peerName);
+		Optional<String> optAddress = determineRemotePeerAddress(peerID);
+		if( optAddress.isPresent() ) {
+			peersAddressMap.put(peerID, optAddress.get());
+		}
+		
 		firePeerAddEvent(peerID, peerName);
 	}
 	
 	public void removePeer( PeerID peerID ) {
 		if( existsRemotePeer(peerID)) {
 			String peerName = knownPeersMap.remove(peerID);
+			peersAddressMap.remove(peerID);
 			firePeerRemoveEvent(peerID, peerName);
 		}
 	}
@@ -530,13 +544,29 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 	
 	@Override
-	public Optional<String> getPeerRemoteName(PeerID peerID) {
+	public Optional<String> getRemotePeerName(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to get the name from must not be null!");
 		
 		if( peerID.equals(localPeerID)) {
 			return Optional.of(localPeerName);
 		}
 		return Optional.fromNullable(knownPeersMap.get(peerID));
+	}
+	
+	@Override
+	public Optional<String> getRemotePeerAddress(PeerID peerID) {
+		Preconditions.checkNotNull(peerID, "PeerID to get the address from must not be null!");
+
+		String address = peersAddressMap.get(peerID);
+		if( Strings.isNullOrEmpty(address)) {
+			Optional<String> address2 = determineRemotePeerAddress(peerID);
+			if( address2.isPresent() ) {
+				peersAddressMap.put(peerID, address2.get());
+				return Optional.of(address2.get());
+			} 
+			return Optional.absent();
+		}
+		return Optional.of(address);
 	}
 
 	// called by DataDictionary
@@ -922,5 +952,31 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		} 
 		
 		return true;
+	}
+	
+	private static Optional<String> determineRemotePeerAddress(PeerID peerID) {
+		try {
+			Iterator<MessageTransport> allMessageTransports = JxtaServicesProvider.getInstance().getEndpointService().getAllMessageTransports();
+			while (allMessageTransports.hasNext()) {
+				MessageTransport next = allMessageTransports.next();
+				if (next instanceof EndpointRouter) {
+					RouteController routeController = ((EndpointRouter) next).getRouteController();
+
+					Collection<RouteAdvertisement> routes = routeController.getRoutes(peerID);
+					for (RouteAdvertisement route : routes) {
+						if (peerID.equals(route.getDestPeerID())) {
+							List<EndpointAddress> destEndpointAddresses = route.getDestEndpointAddresses();
+							for (EndpointAddress destEndpointAddress : destEndpointAddresses) {
+								String address = destEndpointAddress.getProtocolAddress();
+								return Optional.of(address);
+							}
+						}
+					}
+				}
+			}
+		} catch (Throwable t) {
+			LOG.error("Could not determine address of peerid {}", peerID, t);
+		}
+		return Optional.absent();
 	}
 }

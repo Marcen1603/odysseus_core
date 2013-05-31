@@ -68,13 +68,13 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 			for(final QueryPart part : partsIter.next()) {
 			
 				PeerID peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
-				Optional<String> peerName = P2PDictionaryService.get().getPeerRemoteName(peerID);
+				Optional<String> peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
 				
 				if(part.getDestinationName().isPresent() && part.getDestinationName().get().equals(AbstractLoadBalancer.getLocalDestinationName())) {
 					
 					// Local part
 					distributed.put(part, localPeerID);
-					peerName = P2PDictionaryService.get().getPeerRemoteName(localPeerID);
+					peerName = P2PDictionaryService.get().getRemotePeerName(localPeerID);
 					
 				} else {
 					

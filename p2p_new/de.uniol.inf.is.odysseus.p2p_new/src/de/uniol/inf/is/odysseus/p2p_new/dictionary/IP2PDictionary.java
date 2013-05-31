@@ -39,7 +39,8 @@ public interface IP2PDictionary {
 	ImmutableList<PeerID> getRemotePeerIDs();
 	boolean existsRemotePeer( PeerID peerID );
 	boolean existsRemotePeer( String peerName );
-	Optional<String> getPeerRemoteName( PeerID peerID );
+	Optional<String> getRemotePeerName( PeerID peerID );
+	Optional<String> getRemotePeerAddress( PeerID peerID );
 	PeerID getLocalPeerID();
 	String getLocalPeerName();
 	PeerGroupID getLocalPeerGroupID();

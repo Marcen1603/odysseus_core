@@ -395,7 +395,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 			return "_local_";
 		}
 		
-		Optional<String> optPeerName = dict.getPeerRemoteName(peerID);
+		Optional<String> optPeerName = dict.getRemotePeerName(peerID);
 		if( optPeerName.isPresent() ) {
 			return optPeerName.get();
 		} 

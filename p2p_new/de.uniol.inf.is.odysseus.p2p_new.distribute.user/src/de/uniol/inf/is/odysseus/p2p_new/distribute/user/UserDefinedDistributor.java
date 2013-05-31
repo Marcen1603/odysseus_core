@@ -129,7 +129,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 		assignedDestinations.put(LOCAL_DESTINATION_NAME, localPeerID);
 		for (final PeerID remotePeerID : remotePeerIDs) {
-			final Optional<String> optRemotePeerName = P2PDictionaryService.get().getPeerRemoteName(remotePeerID);
+			final Optional<String> optRemotePeerName = P2PDictionaryService.get().getRemotePeerName(remotePeerID);
 			if (optRemotePeerName.isPresent()) {
 				assignedDestinations.put(optRemotePeerName.get(), remotePeerID);
 			}

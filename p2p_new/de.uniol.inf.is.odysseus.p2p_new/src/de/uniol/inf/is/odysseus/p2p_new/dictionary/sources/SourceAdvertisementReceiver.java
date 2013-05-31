@@ -1,11 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary.sources;
 
-import java.util.List;
-
 import net.jxta.document.Advertisement;
-import net.jxta.endpoint.EndpointAddress;
-import net.jxta.peer.PeerID;
-import net.jxta.protocol.RouteAdvertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,16 +34,7 @@ public class SourceAdvertisementReceiver implements IAdvertisementListener {
 					LOG.error("Could not add source advertisement", e);
 				}
 			}
-		} else if( adv instanceof RouteAdvertisement ) {
-			RouteAdvertisement routeAdv = (RouteAdvertisement)adv;
-			List<EndpointAddress> destEndpointAddresses = routeAdv.getDestEndpointAddresses();
-			PeerID destPeerID = routeAdv.getDestPeerID();
-			System.out.println();
-			System.out.println("ROUTE: " + P2PDictionary.getInstance().getPeerRemoteName(destPeerID));
-			for( EndpointAddress address : destEndpointAddresses ) {
-				System.out.println("\t" + address.getProtocolAddress());
-			}
-		}
+		} 
 	}
 
 

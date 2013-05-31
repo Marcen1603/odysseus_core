@@ -91,6 +91,27 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 				return n1.compareTo(n2);
 			}
 		};
+		/************* Address ****************/
+		TableViewerColumn addressColumn = new TableViewerColumn(peersTable, SWT.NONE);
+		addressColumn.getColumn().setText("Address");
+		addressColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				Optional<String> optAddress = P2PDictionaryService.get().getRemotePeerAddress((PeerID)cell.getElement());
+				if( optAddress.isPresent() ) {
+					cell.setText(optAddress.get());
+				} else {
+					cell.setText("<unknown>");
+				}
+			}
+		});
+		tableColumnLayout.setColumnData(addressColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		new ColumnViewerSorter(peersTable, addressColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				return 0;
+			}
+		};
 		
 		/************* PeerID ****************/
 		TableViewerColumn peerIDColumn = new TableViewerColumn(peersTable, SWT.NONE);
@@ -196,7 +217,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	}
 	
 	private String determinePeerName( PeerID peerID ) {
-		Optional<String> optPeerName = p2pDictionary.getPeerRemoteName(peerID);
+		Optional<String> optPeerName = p2pDictionary.getRemotePeerName(peerID);
 		return optPeerName.isPresent() ? optPeerName.get() : UNKNOWN_PEER_NAME;
 	}
 
