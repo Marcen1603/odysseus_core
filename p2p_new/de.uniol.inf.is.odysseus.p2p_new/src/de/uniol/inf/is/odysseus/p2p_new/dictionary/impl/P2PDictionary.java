@@ -135,11 +135,11 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		return instance != null;
 	}
 
-	public void addSource(SourceAdvertisement srcAdvertisement) throws InvalidP2PSource {
+	public void addSource(SourceAdvertisement srcAdvertisement, boolean checkIt) throws InvalidP2PSource {
 		Preconditions.checkNotNull(srcAdvertisement, "Sourceadvertisement must not be null!");
 		Preconditions.checkArgument(!existsSource(srcAdvertisement), "SourceAdvertisement already added!");
 
-		if( !checkSource( srcAdvertisement ) ) {
+		if( checkIt && !checkSource( srcAdvertisement ) ) {
 			throw new InvalidP2PSource("Source {} is invalid");
 		}
 		
@@ -718,7 +718,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			try {
 				JxtaServicesProvider.getInstance().getDiscoveryService().publish(srcAdvertisement);
 				JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(srcAdvertisement);
-				addSource(srcAdvertisement);
+				addSource(srcAdvertisement, false);
 
 				exportedSourcesQueryMap.put(srcAdvertisement, -1);
 
@@ -745,7 +745,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement, EXPORT_LIFETIME_MILLIS, EXPORT_LIFETIME_MILLIS);
 			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(viewAdvertisement, EXPORT_LIFETIME_MILLIS);
-			addSource(viewAdvertisement);
+			addSource(viewAdvertisement, false);
 
 			final JxtaSenderAO jxtaSender = new JxtaSenderAO();
 			jxtaSender.setName(viewName + "_Send");
