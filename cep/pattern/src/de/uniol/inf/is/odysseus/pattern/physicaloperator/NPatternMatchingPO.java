@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.pattern.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -92,12 +93,18 @@ public class NPatternMatchingPO<T extends ITimeInterval> extends PatternMatching
 			if (type == PatternType.FIRST_N) {
 				objectsToSend = results.getFirstEventObjects(count);
 			} else if (type == PatternType.LAST_N) {
-				objectsToSend = results.getLastEventObjects(count);
+				List<EventObject<T>> nLastObjects = results.getLastEventObjects(count);
+				objectsToSend = new ArrayList<>();
+				// switch list to keep time order
+				for (int i=0; i < nLastObjects.size(); i++) {
+					objectsToSend.add(nLastObjects.get(nLastObjects.size() - 1 - i));
+				}				
 			}
 			if (objectsToSend != null) {
 				for (EventObject<T> obj : objectsToSend) {
 					Tuple<T> complexEvent = createComplexEvent(obj);
-					outputTransferArea.transfer(complexEvent);
+					// don't work with outputSyncArea
+					transfer(complexEvent);
 				}
 			}
 		}
