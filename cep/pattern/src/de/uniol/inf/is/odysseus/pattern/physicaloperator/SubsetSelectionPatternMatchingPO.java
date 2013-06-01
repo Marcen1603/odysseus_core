@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.pattern.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -66,13 +67,16 @@ public class SubsetSelectionPatternMatchingPO<T extends ITimeInterval> extends B
 	@Override
 	protected void matching(PointInTime currentTime) {
 		if (eventBuffer.getSize() != 0 && count != null && count > 0 && attribute != null) {
-			EventBuffer<T> eventBufferClone = eventBuffer.clone();
+			EventBuffer<T> eventBufferClone = checkAssertions(eventBuffer).clone();
 			List<EventObject<T>> output = new ArrayList<>();
+			List<EventObject<T>> equalValues = new ArrayList<>();
+			
 			// select count times an event
 			for (int i = 0; i < count; i++) {
 				EventObject<T> extremeObj = null;
 				if (eventBufferClone.getSize() > 1) {
 					extremeObj = eventBufferClone.get(0);
+					// Search for max or min
 					for (int j = 1; j < eventBufferClone.getSize(); j++) {
 						EventObject<T> obj = eventBufferClone.get(j);
 						SDFAttribute attr = obj.getSchema().findAttribute(attribute);
@@ -81,24 +85,35 @@ public class SubsetSelectionPatternMatchingPO<T extends ITimeInterval> extends B
 						}
 						int index = obj.getSchema().indexOf(attr);
 						Double attrValue = obj.getEvent().getAttribute(index);
+						// handle equals values in the last iteration
+						if (i == (count - 1) && (Double) extremeObj.getEvent().getAttribute(index) == attrValue) {
+							equalValues.add(obj);
+						}
 						if (type == PatternType.RELATIVE_N_LOWEST) {
 							if ((Double) extremeObj.getEvent().getAttribute(index) > attrValue) {
 								extremeObj = obj;
+								equalValues.clear();
 							}
 						} else if (type == PatternType.RELATIVE_N_HIGHEST) {
 							if ((Double) extremeObj.getEvent().getAttribute(index) < attrValue) {
 								extremeObj = obj;
+								equalValues.clear();
 							}
 						}
 					}
 				} else if (eventBufferClone.getSize() == 1) {
 					extremeObj = eventBufferClone.get(0);
 				}
+				// add to output
 				if (extremeObj != null) {
 					output.add(extremeObj);
 					eventBufferClone.remove(extremeObj);
 				}
 			}
+			output.addAll(equalValues);
+			// sort events to assure correct time order
+			Collections.sort(output);
+			// create complex events
 			for (EventObject<T> obj : output) {
 				Tuple<T> complexEvent = createComplexEvent(obj);
 				transfer(complexEvent);

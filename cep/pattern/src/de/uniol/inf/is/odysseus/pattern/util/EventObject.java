@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.pattern.util;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  *
  * @param <T>
  */
-public class EventObject<T extends IMetaAttribute> {
+public class EventObject<T extends ITimeInterval> implements Comparable<EventObject<T>> {
 	private Tuple<T> event;
 	private String eventType;
 	private SDFSchema schema;
@@ -37,5 +37,10 @@ public class EventObject<T extends IMetaAttribute> {
 	
 	public int getPort() {
 		return port;
+	}
+
+	@Override
+	public int compareTo(EventObject<T> o) {
+		return event.getMetadata().getStart().compareTo(o.getEvent().getMetadata().getStart());
 	}
 }

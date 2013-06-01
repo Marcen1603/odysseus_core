@@ -7,17 +7,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * Speichert Events zwischen.
- * @author Michael
+ * @author Michael Falk
  *
  * @param <T>
  */
 
-public class EventBuffer<T extends IMetaAttribute> implements Iterable<EventObject<T>> {
+public class EventBuffer<T extends ITimeInterval> implements Iterable<EventObject<T>> {
 	
 	private LinkedList<EventObject<T>> objects;
 	
