@@ -29,11 +29,11 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
-import de.uniol.inf.is.odysseus.pattern.model.AttributeMap;
-import de.uniol.inf.is.odysseus.pattern.model.EventBuffer;
-import de.uniol.inf.is.odysseus.pattern.model.EventObject;
-import de.uniol.inf.is.odysseus.pattern.model.PatternOutput;
-import de.uniol.inf.is.odysseus.pattern.model.PatternType;
+import de.uniol.inf.is.odysseus.pattern.util.AttributeMap;
+import de.uniol.inf.is.odysseus.pattern.util.EventBuffer;
+import de.uniol.inf.is.odysseus.pattern.util.EventObject;
+import de.uniol.inf.is.odysseus.pattern.util.PatternOutput;
+import de.uniol.inf.is.odysseus.pattern.util.PatternType;
 
 /**
  * Abstrakter physischer Operator, der gemeinsam genutzte Methoden und Daten

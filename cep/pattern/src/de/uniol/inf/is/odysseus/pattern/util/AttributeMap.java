@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.pattern.model;
+package de.uniol.inf.is.odysseus.pattern.util;
 
 
 /**

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.pattern.model;
+package de.uniol.inf.is.odysseus.pattern.util;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,12 +30,20 @@ public class EventBuffer<T extends IMetaAttribute> implements Iterable<EventObje
 		this.objects = (LinkedList<EventObject<T>>) buffer.objects.clone();
 	}
 	
+	public EventObject<T> get(int i) {
+		return objects.get(i);
+	}
+	
 	public void add(EventObject<T> object) {
 		objects.add(object);
 	}
 	
 	public void removeFirst() {
 		objects.removeFirst();
+	}
+	
+	public void remove(Object obj) {
+		objects.remove(obj);
 	}
 	
 	public List<EventObject<T>> getEventObjects() {
@@ -64,21 +72,6 @@ public class EventBuffer<T extends IMetaAttribute> implements Iterable<EventObje
 	
 	public boolean containsAll(List<String> eventTypes) {
 		return getEventTypes().containsAll(eventTypes);
-	}
-	
-	public boolean containsAllOnlyOnce(List<String> eventTypes) {
-		for (String eventType : eventTypes) {
-			boolean once = false;
-			for (EventObject<T> object : objects) {
-				if (eventType.equals(object.getEventType())) {
-					if (once) {
-						return false;
-					} else once = true;
-				}
-			}
-			if (!once) return false;
-		}
-		return true;
 	}
 	
 	/**
@@ -124,6 +117,10 @@ public class EventBuffer<T extends IMetaAttribute> implements Iterable<EventObje
 		return result;
 	}
 	
+	public EventObject<T> getLastEventObject() {
+		return objects.getLast();
+	}
+	
 	public void clear() {
 		objects.clear();
 	}
@@ -167,6 +164,6 @@ public class EventBuffer<T extends IMetaAttribute> implements Iterable<EventObje
 	@Override
 	public String toString() {
 		return "EventBuffer [objects=" + objects + "]";
-	}	
+	}
 	
 }

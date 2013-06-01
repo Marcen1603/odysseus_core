@@ -11,10 +11,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.pattern.model.EventBuffer;
-import de.uniol.inf.is.odysseus.pattern.model.EventObject;
-import de.uniol.inf.is.odysseus.pattern.model.PatternOutput;
-import de.uniol.inf.is.odysseus.pattern.model.PatternType;
+import de.uniol.inf.is.odysseus.pattern.util.EventBuffer;
+import de.uniol.inf.is.odysseus.pattern.util.EventObject;
+import de.uniol.inf.is.odysseus.pattern.util.PatternOutput;
+import de.uniol.inf.is.odysseus.pattern.util.PatternType;
 
 /**
  * Abstract pattern operator which based on time or size intervals and buffers all relevant events in this interval.

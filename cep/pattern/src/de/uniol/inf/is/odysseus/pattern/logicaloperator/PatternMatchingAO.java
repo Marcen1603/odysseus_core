@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.pattern.model.PatternOutput;
-import de.uniol.inf.is.odysseus.pattern.model.PatternType;
+import de.uniol.inf.is.odysseus.pattern.util.PatternOutput;
+import de.uniol.inf.is.odysseus.pattern.util.PatternType;
 
 /**
  * @author Michael Falk
