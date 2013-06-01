@@ -69,30 +69,24 @@ public class AnyPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 		if (eventType == null) {
 			throw new InvalidEventException("Der Datentyp des Events ist null!");
 		}
-		switch(type) {
-			case ANY:
-				if (eventTypes.contains(eventType)) {
-					boolean satisfied = true;
-					if (assertions != null) {
-						// Assertions überprüfen
-						int index = eventTypes.indexOf(eventType);
-						SDFExpression assertion = assertions.get(index);
-						if (assertion != null) {
-							Entry<SDFExpression, AttributeMap[]> entry = new SimpleEntry<>(assertion, attrMappings.get(assertion));
-							satisfied = checkAssertion(eventObj, entry);
-						}
-					}
-					if (satisfied) {
-						// ANY-Pattern erkannt
-						Tuple<T> complexEvent = this.createComplexEvent(eventObj);
-						outputTransferArea.transfer(complexEvent);
-					}
+		
+		if (eventTypes.contains(eventType)) {
+			boolean satisfied = true;
+			if (assertions != null) {
+				// Assertions überprüfen
+				int index = eventTypes.indexOf(eventType);
+				SDFExpression assertion = assertions.get(index);
+				if (assertion != null) {
+					Entry<SDFExpression, AttributeMap[]> entry = new SimpleEntry<>(assertion, attrMappings.get(assertion));
+					satisfied = checkAssertion(eventObj, entry);
 				}
-				break;
-			default:
-				break;
-		}	
-
+			}
+			if (satisfied) {
+				// ANY-Pattern erkannt
+				Tuple<T> complexEvent = this.createComplexEvent(eventObj);
+				outputTransferArea.transfer(complexEvent);
+			}
+		}
 	}
 	
 }

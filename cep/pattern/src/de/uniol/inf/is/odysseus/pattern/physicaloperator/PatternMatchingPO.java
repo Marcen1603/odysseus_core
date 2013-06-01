@@ -231,7 +231,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 			started = true;
 		}
 		if (time != null) {
-			// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
+			// Annahme: Zeiteinheit von PointInTime ist Millisekunden
 			PointInTime currentTime = event.getMetadata().getStart();
 			if (currentTime.minus(startTime).getMainPoint() >= time) {
 				timeElapsed = true;
@@ -248,9 +248,10 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 			}
 		}
 	}
-	
+
 	/**
 	 * Check whether the time interval is over because of the time.
+	 * 
 	 * @return true, when timeElapsed
 	 */
 	protected boolean checkTimeElapsed() {
@@ -261,9 +262,10 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Check whether the interval is over because of the size.
+	 * 
 	 * @return true, when sizeMatched
 	 */
 	protected boolean checkSizeMatched() {
@@ -274,7 +276,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void process_punctuation_intern(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
@@ -288,7 +290,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 			started = true;
 		}
 		if (time != null) {
-			// Annahme: Zeiteinheit von PointInTime ist Millisekunden 
+			// Annahme: Zeiteinheit von PointInTime ist Millisekunden
 			if (pointInTime.getTime().minus(startTime).getMainPoint() >= time) {
 				timeElapsed = true;
 				startTime = pointInTime.getTime();
@@ -297,17 +299,17 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	}
 
 	/**
-	 * Erzeugt ein komplexes Event abhängig vom PatternOutput.
+	 * Creates a complex event. The output depends on the output mode.
 	 * 
-	 * @param outputObjects
-	 * @param currentObj
-	 * @param type
+	 * @param objectChoices Contains objects which are used to form the output with expressions.
+	 * @param currentObj The current object.
+	 * @param start time, the pattern was detected
 	 * @return Ein komplexes Event oder null
 	 */
 	@SuppressWarnings("unchecked")
-	protected Tuple<T> createComplexEvent(List<EventObject<T>> outputObjects,
+	protected Tuple<T> createComplexEvent(List<EventObject<T>> objectChoices,
 			EventObject<T> currentObj, PointInTime start) {
-		if (outputObjects == null || currentObj == null) {
+		if (currentObj == null) {
 			outputMode = PatternOutput.SIMPLE;
 		}
 		if (outputMode == PatternOutput.SIMPLE) {
@@ -335,7 +337,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 					.clone());
 			for (int i = 0; i < returnExpressions.size(); i++) {
 				SDFExpression expr = returnExpressions.get(i);
-				Object[] values = findExpressionValues(outputObjects,
+				Object[] values = findExpressionValues(objectChoices,
 						returnAttrMappings.get(expr));
 				if (values != null) {
 					expr.bindMetaAttribute(currentObj.getEvent().getMetadata());
@@ -348,13 +350,32 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 			}
 			return outputVal;
 		}
+		if (outputMode == PatternOutput.TUPLE_CONTAINER) {
+			Tuple<T> complexEvent = new Tuple<T>(1, false);
+			complexEvent.setAttribute(0, currentObj.getEvent());
+			return complexEvent;
+		}
 		return null;
 	}
-	
+
+	/**
+	 * Creates a complex event. The complex event uses the given object for output.
+	 * @param currentObj
+	 * @return
+	 */
 	protected Tuple<T> createComplexEvent(EventObject<T> currentObj) {
 		List<EventObject<T>> eventObjects = new ArrayList<>();
 		eventObjects.add(currentObj);
 		return createComplexEvent(eventObjects, currentObj, null);
+	}
+	
+	/**
+	 * Creates a complex event. The complex event uses start for the metadata.
+	 * @param start time, the pattern was detected
+	 * @return
+	 */
+	protected Tuple<T> createComplexEvent(PointInTime start) {
+		return createComplexEvent(null, null, start);
 	}
 
 	/**
@@ -411,22 +432,25 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Prüft für eine Liste von Events, ob die Bedingungen erfüllt sind.
-	 * Als Ausgabe liefert diese Methode eine Liste der Events zurück,
-	 * die die Bedingungen erfüllen.
+	 * Prüft für eine Liste von Events, ob die Bedingungen erfüllt sind. Als
+	 * Ausgabe liefert diese Methode eine Liste der Events zurück, die die
+	 * Bedingungen erfüllen.
+	 * 
 	 * @param object
 	 * @param eventObjectSets
 	 * @param type
 	 * @return
 	 */
 	protected EventBuffer<T> checkAssertions(EventBuffer<T> eventBuffer) {
+		if (attrMappings == null)
+			return eventBuffer;
 		EventBuffer<T> output = new EventBuffer<T>();
-		if (attrMappings == null) return output; 
 		// Expressions für jedes Objekt überprüfen
 		for (EventObject<T> event : eventBuffer) {
-			Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings.entrySet().iterator();
+			Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings
+					.entrySet().iterator();
 			boolean satisfied = true;
 			while (iterator.hasNext() && satisfied) {
 				Entry<SDFExpression, AttributeMap[]> entry = iterator.next();
@@ -439,8 +463,9 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		}
 		return output;
 	}
-	
-	protected boolean checkAssertion(EventObject<T> object, Entry<SDFExpression, AttributeMap[]> entry) {
+
+	protected boolean checkAssertion(EventObject<T> object,
+			Entry<SDFExpression, AttributeMap[]> entry) {
 		List<EventObject<T>> eventObjectSet = new ArrayList<>();
 		eventObjectSet.add(object);
 		return checkAssertion(object, eventObjectSet, entry);

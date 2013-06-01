@@ -25,6 +25,11 @@ public class EventBuffer<T extends IMetaAttribute> implements Iterable<EventObje
 		this.objects = new LinkedList<EventObject<T>>();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public EventBuffer(EventBuffer<T> buffer) {
+		this.objects = (LinkedList<EventObject<T>>) buffer.objects.clone();
+	}
+	
 	public void add(EventObject<T> object) {
 		objects.add(object);
 	}
@@ -153,5 +158,15 @@ public class EventBuffer<T extends IMetaAttribute> implements Iterable<EventObje
 			return false;
 		return true;
 	}
+
+	@Override
+	public EventBuffer<T> clone() {
+		return new EventBuffer<T>(this);
+	}
+
+	@Override
+	public String toString() {
+		return "EventBuffer [objects=" + objects + "]";
+	}	
 	
 }

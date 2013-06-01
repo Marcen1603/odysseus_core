@@ -224,7 +224,11 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		
 		// Ausgabeschema bestimmen
 		SDFSchema schema = null;
-		if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null) {
+		if (outputMode == PatternOutput.TUPLE_CONTAINER) {
+			// create tuple container attribute
+			SDFAttribute tuple = new SDFAttribute("PATTERN", "tuple_container", SDFDatatype.TUPLE);
+			schema = new SDFSchema("PATTERN", tuple);
+		} else if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null) {
 			// EXPRESSIONS: Ausgabe hängt vom return-Parameter ab
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (NamedExpressionItem expr : returnExpressions) {

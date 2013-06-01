@@ -143,7 +143,7 @@ public class TPatternMatchingAORule extends
 					operator.getAssertions(), operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
 					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()));
+							.size()), operator.getAttribute());
 			break;
 		case RELATIVE_N_LOWEST:
 			pOperator = new SubsetSelectionPatternMatchingPO(
@@ -153,7 +153,7 @@ public class TPatternMatchingAORule extends
 					operator.getAssertions(), operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
 					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()));
+							.size()), operator.getAttribute());
 			break;
 		case SOMETIMES:
 			pOperator = new ModalPatternMatchingPO(operator.getType(),
