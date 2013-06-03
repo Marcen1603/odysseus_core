@@ -26,18 +26,15 @@ public class SocketServerConnection implements IJxtaServerConnection, IJxtaConne
 	
 	private final List<IJxtaServerConnectionListener> listeners = Lists.newArrayList();
 	private final List<IJxtaConnection> connections = Lists.newArrayList();
-	private final int port;
 	private final PipeAdvertisement pipeAdvertisement;
 	
 	private boolean started = false;
 	private RepeatingJobThread accepterThread;
 	private ServerSocket serverSocket;
 	
-	public SocketServerConnection( int port, PipeAdvertisement pipeAdvertisement ) {
-		Preconditions.checkArgument(port > 0, "Port for server socket must be positive!");
+	public SocketServerConnection(PipeAdvertisement pipeAdvertisement ) {
 		Preconditions.checkNotNull(pipeAdvertisement, "Pipe Advertisement must not be null!");
 		
-		this.port = port;
 		this.pipeAdvertisement = pipeAdvertisement;
 	}
 	
@@ -63,7 +60,7 @@ public class SocketServerConnection implements IJxtaServerConnection, IJxtaConne
 		
 		started = true;
 		
-		serverSocket = new ServerSocket(port);
+		serverSocket = new ServerSocket(0);
 		serverSocket.setSoTimeout(0);
 		accepterThread = new RepeatingJobThread() {
 			@Override
@@ -83,6 +80,10 @@ public class SocketServerConnection implements IJxtaServerConnection, IJxtaConne
 			};
 		};
 		accepterThread.start();
+	}
+	
+	public final int getPort() {
+		return serverSocket.getLocalPort();
 	}
 
 	@Override
