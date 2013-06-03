@@ -322,7 +322,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		for(int copyNo = 0; copyNo < numCopies; copyNo++) {
 			
-			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(null);
+			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(query);
 			GenericGraphWalker walker = new GenericGraphWalker();
 			walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
 			System.err.println(copyVisitor.getResult());
