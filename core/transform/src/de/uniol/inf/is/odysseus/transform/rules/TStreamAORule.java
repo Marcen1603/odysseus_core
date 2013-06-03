@@ -55,7 +55,7 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 				// and add this to the accessplan
 				getDataDictionary().putAccessPlan(operator.getStreamname(), source);	
 			} else {
-				throw new RuntimeException("Cannot transform view: Root of view plan is no source.");
+				throw new RuntimeException("Cannot transform view: Root of view plan is no source. 0="+roots.get(0)+" list="+roots);
 			}
 		}
 		// finally, there must be a physical transformed stream in the data dictionary,
