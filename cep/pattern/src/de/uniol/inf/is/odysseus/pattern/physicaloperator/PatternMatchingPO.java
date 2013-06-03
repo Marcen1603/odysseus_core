@@ -67,7 +67,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	private boolean started;
 	protected PointInTime startTime;
 	private boolean timeElapsed;
-	private int countEvents;
+	protected int countEvents;
 	private boolean sizeMatched;
 
 	protected IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea;

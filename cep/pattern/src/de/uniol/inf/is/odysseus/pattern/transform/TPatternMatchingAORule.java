@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.pattern.physicaloperator.ModalPatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.NPatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.PatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.SubsetSelectionPatternMatchingPO;
+import de.uniol.inf.is.odysseus.pattern.physicaloperator.TrendPatternMatchingPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -168,6 +169,66 @@ public class TPatternMatchingAORule extends
 		case VALUE_MAX:
 			break;
 		case VALUE_MIN:
+			break;
+		case DECREASING:
+			pOperator = new TrendPatternMatchingPO(operator.getType(),
+					operator.getTime(), operator.getBufferSize(),
+					operator.getTimeUnit(), operator.getOutputMode(),
+					operator.getEventTypes(), operator.getAssertions(),
+					operator.getReturnExpressions(),
+					operator.getInputTypeNames(), operator.getInputSchemas(),
+					new TIInputStreamSyncArea(operator.getSubscribedToSource()
+							.size()), operator.getAttribute());
+			break;
+		case INCREASING:
+			pOperator = new TrendPatternMatchingPO(operator.getType(),
+					operator.getTime(), operator.getBufferSize(),
+					operator.getTimeUnit(), operator.getOutputMode(),
+					operator.getEventTypes(), operator.getAssertions(),
+					operator.getReturnExpressions(),
+					operator.getInputTypeNames(), operator.getInputSchemas(),
+					new TIInputStreamSyncArea(operator.getSubscribedToSource()
+							.size()), operator.getAttribute());
+			break;
+		case NON_DECREASING:
+			pOperator = new TrendPatternMatchingPO(operator.getType(),
+					operator.getTime(), operator.getBufferSize(),
+					operator.getTimeUnit(), operator.getOutputMode(),
+					operator.getEventTypes(), operator.getAssertions(),
+					operator.getReturnExpressions(),
+					operator.getInputTypeNames(), operator.getInputSchemas(),
+					new TIInputStreamSyncArea(operator.getSubscribedToSource()
+							.size()), operator.getAttribute());
+			break;
+		case NON_INCREASING:
+			pOperator = new TrendPatternMatchingPO(operator.getType(),
+					operator.getTime(), operator.getBufferSize(),
+					operator.getTimeUnit(), operator.getOutputMode(),
+					operator.getEventTypes(), operator.getAssertions(),
+					operator.getReturnExpressions(),
+					operator.getInputTypeNames(), operator.getInputSchemas(),
+					new TIInputStreamSyncArea(operator.getSubscribedToSource()
+							.size()), operator.getAttribute());
+			break;
+		case STABLE:
+			pOperator = new TrendPatternMatchingPO(operator.getType(),
+					operator.getTime(), operator.getBufferSize(),
+					operator.getTimeUnit(), operator.getOutputMode(),
+					operator.getEventTypes(), operator.getAssertions(),
+					operator.getReturnExpressions(),
+					operator.getInputTypeNames(), operator.getInputSchemas(),
+					new TIInputStreamSyncArea(operator.getSubscribedToSource()
+							.size()), operator.getAttribute());
+			break;
+		case MIXED:
+			pOperator = new TrendPatternMatchingPO(operator.getType(),
+					operator.getTime(), operator.getBufferSize(),
+					operator.getTimeUnit(), operator.getOutputMode(),
+					operator.getEventTypes(), operator.getAssertions(),
+					operator.getReturnExpressions(),
+					operator.getInputTypeNames(), operator.getInputSchemas(),
+					new TIInputStreamSyncArea(operator.getSubscribedToSource()
+							.size()), operator.getAttribute());
 			break;
 		default:
 			break;

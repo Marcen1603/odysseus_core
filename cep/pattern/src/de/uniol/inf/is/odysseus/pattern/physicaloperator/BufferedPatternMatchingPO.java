@@ -29,6 +29,10 @@ public abstract class BufferedPatternMatchingPO<T extends ITimeInterval> extends
 	 * Buffers the relevant events for one interval.
 	 */
 	protected EventBuffer<T> eventBuffer;
+	/**
+	 * If set to false, the event buffer is not used.
+	 */
+	private boolean useEventBuffer;
 	
 	public BufferedPatternMatchingPO(PatternType type, Integer time,
 			Integer size, TimeUnit timeUnit, PatternOutput outputMode,
@@ -40,11 +44,21 @@ public abstract class BufferedPatternMatchingPO<T extends ITimeInterval> extends
 		super(type, time, size, timeUnit, outputMode, eventTypes, assertions,
 				returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
 		this.eventBuffer = new EventBuffer<T>();
+		this.useEventBuffer = true;
 	}
 
 	public BufferedPatternMatchingPO(BufferedPatternMatchingPO<T> patternPO) {
 		super(patternPO);
 		this.eventBuffer = patternPO.eventBuffer.clone();
+		this.useEventBuffer = patternPO.useEventBuffer;
+	}
+	
+	public boolean isUseEventBuffer() {
+		return useEventBuffer;
+	}
+
+	public void setUseEventBuffer(boolean useEventBuffer) {
+		this.useEventBuffer = useEventBuffer;
 	}
 
 	@Override
@@ -55,13 +69,17 @@ public abstract class BufferedPatternMatchingPO<T extends ITimeInterval> extends
 		EventObject<T> eventObj = new EventObject<T>(event, eventType, schema, port);
 		// only add relevant events
 		if (eventTypes.contains(eventType)) {
-			eventBuffer.add(eventObj);
+			if (useEventBuffer) {
+				eventBuffer.add(eventObj);
+			}
 		}
 		// Check whether the time or size interval is over
 		if (checkTimeElapsed() || checkSizeMatched()) {
 			PointInTime currentTime = event.getMetadata().getStart();
 			matching(currentTime);
-			eventBuffer.clear();
+			if (useEventBuffer) {
+				eventBuffer.clear();
+			}
 		}
 	}
 	
@@ -71,7 +89,9 @@ public abstract class BufferedPatternMatchingPO<T extends ITimeInterval> extends
 		// Check whether the time interval is over
 		if (checkTimeElapsed()) {
 			matching(pointInTime.getTime());
-			eventBuffer.clear();
+			if (useEventBuffer) {
+				eventBuffer.clear();
+			}
 		}
 	}
 	

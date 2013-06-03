@@ -20,25 +20,15 @@ import de.uniol.inf.is.odysseus.pattern.util.PatternType;
  */
 public class AbsencePatternMatchingPO<T extends ITimeInterval> extends PatternMatchingPO<T> {
 	
-	// ABSENCE
-	private boolean noIncomingEvent = true;
-	
 	public AbsencePatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
 		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
-        this.init();
     }
 	
 	// Copy-Konstruktor
     public AbsencePatternMatchingPO(AbsencePatternMatchingPO<T> patternPO) {
     	super(patternPO);
-    	this.noIncomingEvent = patternPO.noIncomingEvent;
-        this.init();
-    }
-	
-    private void init() {
-    	// Pattern-spezifische Initialisierungen
     }
     
 	@Override
@@ -56,7 +46,8 @@ public class AbsencePatternMatchingPO<T extends ITimeInterval> extends PatternMa
 		super.process_internal(event, port);
 		String eventType = inputTypeNames.get(port);
 		if (eventTypes.contains(eventType)) {
-			noIncomingEvent = false;
+			// Intervall neu starten bei Events
+			startTime = event.getMetadata().getStart();
 		}
 	}
 	
@@ -66,13 +57,9 @@ public class AbsencePatternMatchingPO<T extends ITimeInterval> extends PatternMa
 		logger.info(pointInTime.toString());
 		if (checkTimeElapsed()) {
 			// Intervall abgelaufen
-			if (noIncomingEvent) {
-				// ABSENCE-Pattern erkannt
-				Tuple<T> complexEvent = createComplexEvent(null, null, pointInTime.getTime());
-				outputTransferArea.transfer(complexEvent);
-			}
-			// Zustand initialisieren
-			noIncomingEvent = true;
+			// ABSENCE-Pattern erkannt
+			Tuple<T> complexEvent = createComplexEvent(null, null, pointInTime.getTime());
+			outputTransferArea.transfer(complexEvent);
 		}
 	}
 	

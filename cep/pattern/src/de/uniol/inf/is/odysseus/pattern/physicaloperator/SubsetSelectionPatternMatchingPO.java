@@ -20,13 +20,19 @@ import de.uniol.inf.is.odysseus.pattern.util.PatternOutput;
 import de.uniol.inf.is.odysseus.pattern.util.PatternType;
 
 /**
- * Operator, um Pattern-Matching durchzuführen.
+ * Matches the Subset-Selection-Pattern.
  * @author Michael Falk
  * @param <T>
  */
 public class SubsetSelectionPatternMatchingPO<T extends ITimeInterval> extends BufferedPatternMatchingPO<T> {
 	
+	/**
+	 * attribute name which is used for the pattern
+	 */
 	private String attribute;
+	/**
+	 * amount of output events
+	 */
 	private Integer count;
 	
 	public SubsetSelectionPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
