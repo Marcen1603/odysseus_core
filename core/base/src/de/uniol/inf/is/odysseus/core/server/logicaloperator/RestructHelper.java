@@ -115,18 +115,19 @@ public class RestructHelper {
 	public static void replaceWithSubplan(ILogicalOperator oldOp, ILogicalOperator newOp) {
 		
 		// Replace subscription for each child of the old operator to one of the new
-		for(LogicalSubscription child : oldOp.getSubscriptions()) {
-			
-			child.getTarget().unsubscribeFromSource(child);
-			child.getTarget().subscribeToSource(newOp, child.getSinkInPort(), child.getSourceOutPort(), child.getSchema());
-			
-		}
+		// TODO find children
+//		for(LogicalSubscription child : oldOp.getSubscribedToSource()) {
+//			
+//			child.getTarget().unsubscribeFromSource(child);
+//			child.getTarget().subscribeToSource(newOp, child.getSinkInPort(), child.getSourceOutPort(), child.getSchema());
+//			
+//		}
 		
 		// Replace subscription for each father of the old operator to one of the new
-		for(LogicalSubscription father : oldOp.getSubscribedToSource()) {
+		for(LogicalSubscription father : oldOp.getSubscriptions()) {
 			
-			father.getTarget().unsubscribeSink(father);
-			father.getTarget().subscribeSink(newOp, father.getSinkInPort(), father.getSourceOutPort(), father.getSchema());
+			father.getTarget().unsubscribeFromSource(oldOp, father.getSinkInPort(), father.getSourceOutPort(), father.getSchema());
+			father.getTarget().subscribeToSource(newOp, father.getSinkInPort(), father.getSourceOutPort(), father.getSchema());
 			
 		}
 		

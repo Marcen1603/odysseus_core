@@ -123,7 +123,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			distributedQueries.add(query);
 			
 			// TODO wantedDegree als Parameter
-			final List<ILogicalQuery> copies = this.copyLogicalQuery(query, this.getDegreeOfParallelismn(0, remotePeerIDs.size() - 1) - 1);
+			final List<ILogicalQuery> copies = this.copyLogicalQuery(query, this.getDegreeOfParallelismn(0, remotePeerIDs.size()) - 1);
 			for(ILogicalQuery copy : copies)
 				this.determineQueryParts(copy, queryPartsMap, localPart);
 			distributedQueries.addAll(copies);
@@ -325,6 +325,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(null);
 			GenericGraphWalker walker = new GenericGraphWalker();
 			walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
+			System.err.println(copyVisitor.getResult());
 			ILogicalQuery copy = new LogicalQuery(DistributionHelper.getPQLParserID(), copyVisitor.getResult(), query.getPriority());
 			copy.setName(query.getName() + "_Copy" + copyNo);
 			copy.setUser(query.getUser());

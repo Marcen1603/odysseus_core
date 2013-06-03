@@ -274,6 +274,7 @@ public class DistributionHelper {
 		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
 		adv.setPeerID(destinationPeerID);
 		adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(queryPart.getOperators().iterator().next()));
+		
 		adv.setSharedQueryID(sharedQueryID);
 		adv.setTransCfgName(transCfgName);
 
