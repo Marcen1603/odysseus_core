@@ -19,7 +19,7 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	protected DecimalFormat floatingFormatter;
 	protected DecimalFormat numberFormatter;
 	protected boolean writeMetadata;
-	protected boolean trim;
+	protected boolean trim = false;
 	protected boolean addLineNumber = false;
 	protected String delimiterString;
 
