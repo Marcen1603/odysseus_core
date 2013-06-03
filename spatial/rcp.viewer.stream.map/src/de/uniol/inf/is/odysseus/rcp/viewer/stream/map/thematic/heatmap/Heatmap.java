@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerCon
 
 public class Heatmap extends RasterLayer {
 
+	
+	private static final long serialVersionUID = -4394403246757791617L;
 	ScreenManager screenManager;
 	RasterLayerConfiguration config;
 	Envelope heatMapArea;
@@ -119,7 +121,7 @@ public class Heatmap extends RasterLayer {
 		for (Object dataSet : data) {
 			
 			// Get the data from the Tuple (Where it is and value)
-			Tuple tuple = ((DataSet) dataSet).getTuple();
+			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
 			GeometryCollection geoColl = (GeometryCollection) tuple
 					.getAttribute(0);
 			Point point = geoColl.getCentroid();
@@ -147,7 +149,7 @@ public class Heatmap extends RasterLayer {
 		for(Object dataSet : data) {
 			
 			// Get the data from the Tuple (Where it is and value)
-			Tuple tuple = ((DataSet) dataSet).getTuple();
+			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
 			GeometryCollection geoColl = (GeometryCollection) tuple.getAttribute(0);
 			Point point = geoColl.getCentroid();
 			int value = (int) tuple.getAttribute(1);

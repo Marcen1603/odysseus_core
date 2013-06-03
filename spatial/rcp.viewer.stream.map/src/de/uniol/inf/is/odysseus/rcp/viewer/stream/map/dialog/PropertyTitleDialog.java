@@ -111,17 +111,19 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 					if (!(layerType.equals("VectorLayer"))) {
 						configContainer.getChildren()[0].dispose();
 						getVectorConfiguration(configContainer);
-						main.layout(true);
+						configContainer.layout(true);
 						configContainer.redraw();
+						main.layout(true);
 						layerType = "VectorLayer";
 					}
 				}
 				if (((Button) e.widget).getText().endsWith("Thematic")) {
 					if (!(layerType.equals("ThematicLayer"))) {
 						configContainer.getChildren()[0].dispose();
-						getThematicConfiguration(configContainer);
-						main.layout(true);
+						getThematicConfiguration(configContainer);	
+						configContainer.layout(true);
 						configContainer.redraw();
+						main.layout(true);
 						layerType = "ThematicLayer";
 					}
 				}
