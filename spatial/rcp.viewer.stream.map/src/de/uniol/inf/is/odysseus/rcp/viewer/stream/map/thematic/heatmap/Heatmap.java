@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -38,21 +37,10 @@ public class Heatmap extends RasterLayer {
 	
 	@Override
 	public void draw(GC gc) {
-		initHeatMapArea(53.77, 7.00, 47.7, 13.7);
-		Image img = createImage();
-		// Upper left of Germany, bottom right of Germany - have to replace by upper left of incoming data
-		drawImage(gc, img);		
-	}
-	
-	private void initHeatMapArea(double lat1, double lng1, double lat2, double lng2) {
-		ScreenTransformation transformation = screenManager.getTransformation();
-		int srid = config.getSrid();		
-		int[] newUpperRightCoords = transformation.transformCoord(new Coordinate(lng1,lat1), srid);
-		int[] newBottomLeftCoords = transformation.transformCoord(new Coordinate(lng2,lat2), srid);	
-		
-		// Create an Envelope from this coordinates
-		// Maybe it helps us not to get in trouble with negative coordinates
-		heatMapArea = new Envelope(newUpperRightCoords[0], newBottomLeftCoords[0], newUpperRightCoords[1], newBottomLeftCoords[1]);
+		Color minColor = new Color(Display.getDefault(), 0, 255, 0);
+		Color maxColor = new Color(Display.getDefault(), 255, 0, 100);
+		Image img = createImage(20, 20, minColor, maxColor);
+		drawImage(gc, img, false);		
 	}
 	
 	/**
@@ -64,10 +52,11 @@ public class Heatmap extends RasterLayer {
 	 * @param lat2
 	 * @param lng2
 	 */
-	private void drawImage(GC gc, Image img) {
+	private void drawImage(GC gc, Image img, boolean interpolation) {
 		// Draw the picture transparent and without interpolation
 		gc.setAlpha(120);
-		gc.setInterpolation(SWT.NONE);
+		if(!interpolation)
+			gc.setInterpolation(SWT.NONE);
 		gc.drawImage(img, 0, 0, img.getBounds().width, img.getBounds().height,
 				(int) heatMapArea.getMinX(), (int) heatMapArea.getMinY(),
 				(int) heatMapArea.getWidth(), (int) heatMapArea.getHeight());
@@ -75,12 +64,19 @@ public class Heatmap extends RasterLayer {
 		gc.setAlpha(255);
 	}
 	
-	private Image createImage() {
-		Image image = new Image(Display.getDefault(), 10, 10);
+	/**
+	 * Creates an image which can be drawn on the display
+	 * Image has numberX * numberY pixels
+	 * @param numberX pixels in x-direction
+	 * @param numberY pixels in y-direction
+	 * @return Image for the heatmap-overlay with right colors
+	 */
+	private Image createImage(int numberX, int numberY, Color minColor, Color maxColor) {
+		Image image = new Image(Display.getDefault(), numberX, numberY);
 		GC gc = new GC(image);
 		gc.setForeground(new org.eclipse.swt.graphics.Color(Display.getDefault(),0,0,0));
 		gc.setBackground(new org.eclipse.swt.graphics.Color(Display.getDefault(),255,0,0));
-		Color[][] colors = createColorArray(10, 10);		
+		Color[][] colors = createColorArray(numberX, numberY, minColor, maxColor);		
 		
 		for(int i = 0; i < colors.length; i++) {
 			for(int j = 0; j < colors[i].length; j++) {
@@ -92,8 +88,7 @@ public class Heatmap extends RasterLayer {
 		return image;
 	}
 	
-	private Color[][] createColorArray(int x, int y) {
-		// TODO: Calculate size
+	private Color[][] createColorArray(int x, int y, Color minColor, Color maxColor) {
 		Color[][] colors = new Color[x][y];
 
 		// Fill with standard-grey
@@ -116,6 +111,38 @@ public class Heatmap extends RasterLayer {
 		int maxSum = 0;
 		int minSum = 0;
 		
+		// Create heatMapArea with the given tuples
+		// (We could let this out and give an area by the user, but
+		// this seems to be more user-friendly)
+		heatMapArea = new Envelope();
+		for (Object dataSet : data) {
+			
+			// Get the data from the Tuple (Where it is and value)
+			Tuple tuple = ((DataSet) dataSet).getTuple();
+			GeometryCollection geoColl = (GeometryCollection) tuple
+					.getAttribute(0);
+			Point point = geoColl.getCentroid();
+
+			// Calculate, where this belongs in the heatmap
+			ScreenTransformation transformation = screenManager
+					.getTransformation();
+			int srid = config.getSrid();
+			int[] transformedPoint = transformation.transformCoord(
+					point.getCoordinate(), srid);
+
+			Envelope tempEnv = new Envelope(new Coordinate(transformedPoint[0],
+					transformedPoint[1]));
+
+			// If this point is not in the heatMapArea -> expand heatMapArea
+			heatMapArea.expandToInclude(tempEnv);
+		}
+		
+		// If we have just one point -> Expand, so we can see something
+		// on the map
+		if(heatMapArea.getWidth() == 0) {
+			heatMapArea.expandBy(20);
+		}
+		
 		for(Object dataSet : data) {
 			
 			// Get the data from the Tuple (Where it is and value)
@@ -134,13 +161,15 @@ public class Heatmap extends RasterLayer {
 			// If this point is not in the heatMapArea -> expand heatMapArea
 			heatMapArea.expandToInclude(tempEnv);
 			
-			double partsWidth = (int) heatMapArea.getWidth() / (x - 1);
+			 // +1 for the points which are exactly on the border
+			// or if we just have a point as area (just one tuple)
+			double partsWidth = (heatMapArea.getWidth() + 1) / x;
 			int posX = (int) ((tempEnv.getMaxX() - heatMapArea.getMinX()) / partsWidth);
 			
-			double partsHeight = (int) heatMapArea.getHeight() / (y - 1);
+			double partsHeight = (heatMapArea.getHeight() + 1) / y;
 			int posY = (int) ((tempEnv.getMaxY() - heatMapArea.getMinY()) / partsHeight);
 			
-			// Add the value to the sum of this tile in the heatmap
+			// Add the value to the sum of this tile in the heatmap			
 			valueSum[posX][posY] += value;
 			
 			// Get the maximum and minimum sum
@@ -155,8 +184,7 @@ public class Heatmap extends RasterLayer {
 		for (int ix = 0; ix < colors.length; ix++) {
 			for (int iy = 0; iy < colors[ix].length; iy++) {
 				colors[ix][iy] = getColorForValue(valueSum[ix][iy], minSum,
-						maxSum, new Color(Display.getDefault(), 255, 0, 0),
-						new Color(Display.getDefault(), 0, 255, 0));
+						maxSum, minColor, maxColor);
 			}
 		}
 		
