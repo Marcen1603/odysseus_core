@@ -27,9 +27,12 @@ import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorOutlinePage;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.buffer.TimeSliderComposite;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.views.AbstractStreamMapEditorViewPart;
 
 public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor {
@@ -74,6 +77,8 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		mapModel = MapEditorModel.open(file,this);
 		screenManager = new ScreenManager(transformation, this);
 //		screenManager.setSRID(mapModel.getSRID());
+		// Set this so we don't get errors
+		// screenManager.setSRID(4326);
 	}
 
 	@Override
@@ -93,15 +98,18 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		screenManager.setCanvasViewer(screenManager.createCanvas(parent));
 		setTimeSlider(createTimeSliderComposite(parent));
 
-//		//Always add a Basic Layer. 
-//		if(mapModel.getLayers().isEmpty()){
-			BasicLayer basic = new BasicLayer();
-			mapModel.getLayers().addFirst(basic);
-//		}
-			createActions();
-			 createToolbar();
-			 createMenu();
-			 
+		// //Always add a Basic Layer.
+		// if(mapModel.getLayers().isEmpty()){
+		BasicLayer basic = new BasicLayer();
+		mapModel.getLayers().addFirst(basic);
+		// }
+
+
+
+		createActions();
+		createToolbar();
+		createMenu();
+
 		mapModel.init(this);
 	}
 	
@@ -140,9 +148,9 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		
 		addItemAction = new Action("Add new Layer") {
 			@Override
-			public void run() {
+			public void run() {				
 				MapEditorModel model = (MapEditorModel)getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
-				LOG.debug("Delete.." +  model.getLayers().getLast().toString());
+				LOG.debug("Delete.." +  model.getLayers().getLast().toString());				
 			}
 		};
 		//addItemAction.setImageDescriptor(OdysseusMapPlugIn.getDefault().imageDescriptorFromPlugin(OdysseusMapPlugIn.ODYSSEUS_MAP_PLUGIN_ID, "layer_plus_16"));

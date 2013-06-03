@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.Attribu
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.OdysseusMapPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerConfiguration;
@@ -90,7 +91,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		layerTypelabel.setText("Type:");
 
 		final Composite radioTypeSelection = new Composite(layerConfiguration, SWT.NONE);
-		radioTypeSelection.setLayout(DialogUtils.getRadioSelectionLayout(2));
+		radioTypeSelection.setLayout(DialogUtils.getRadioSelectionLayout(3));
 		radioTypeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
 		Listener listener = new Listener() {
@@ -115,6 +116,15 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 						layerType = "VectorLayer";
 					}
 				}
+				if (((Button) e.widget).getText().endsWith("Thematic")) {
+					if (!(layerType.equals("ThematicLayer"))) {
+						configContainer.getChildren()[0].dispose();
+						getThematicConfiguration(configContainer);
+						main.layout(true);
+						configContainer.redraw();
+						layerType = "ThematicLayer";
+					}
+				}
 				for (Control child : children) {
 					if (e.widget != child) {
 						((Button) child).setSelection(false);
@@ -133,7 +143,10 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		radioTypeButtonVector.setText("Vector");
 		radioTypeButtonVector.addListener(SWT.Selection, listener);
 
-
+		Button radioTypeButtonThematic = new Button(radioTypeSelection, SWT.RADIO);
+		radioTypeButtonThematic.setText("Thematic");
+		radioTypeButtonThematic.addListener(SWT.Selection, listener);
+		
 		Label layerPlaceLabel = new Label(layerConfiguration, SWT.FLAT);
 		layerPlaceLabel.setText("Placement (after):");
 
@@ -166,7 +179,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		rasterLayer.setVisible(true);
 
 		Label serverTypeLabel = new Label(rasterLayer, SWT.NONE);
-		serverTypeLabel.setText("Server Type:");
+		serverTypeLabel.setText("(Server) Type:");
 		serverTypeLabel.setLayoutData(DialogUtils.getLabelDataLayout());
 
 		final Composite serverTypeSelection = new Composite(rasterLayer, SWT.NONE);
@@ -219,7 +232,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		Button serverTypeButtonUD = new Button(serverTypeSelection, SWT.RADIO);
 		serverTypeButtonUD.setText("User Defined");
 		serverTypeButtonUD.addListener(SWT.Selection, serverTypeListner);
-
+		
 		Label serverLabel = new Label(rasterLayer, SWT.FLAT);
 		serverLabel.setLayoutData(DialogUtils.getLabelDataLayout());
 		serverLabel.setText("Adresse:");
@@ -332,6 +345,58 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 			};
 		});
 		return vectorLayer;
+	}
+	
+	private Composite getThematicConfiguration(Composite parent) {
+		if (!(layerConfiguration instanceof HeatmapLayerConfiguration))
+			this.layerConfiguration = new HeatmapLayerConfiguration("");
+		final HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) this.layerConfiguration;
+		
+		// Set a few standard-properties (covers whole world, has SRID 4326)
+		heatmapLayerConfiguration.setCoverageGeographic(-180.0,  180.0, -85.0511, 85.0511);
+		heatmapLayerConfiguration.setCoverageProjected(-180.0,  180.0, -85.0511, 85.0511);
+		heatmapLayerConfiguration.setSrid(4326);
+		this.layerConfiguration = heatmapLayerConfiguration;
+		
+		Composite thematicLayer = new Composite(parent, SWT.NONE);
+		thematicLayer.setLayout(DialogUtils.getGroupLayout());
+		thematicLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
+		thematicLayer.setVisible(true);
+
+		if (connections.isEmpty()) {
+			Label streamLabel = new Label(thematicLayer, SWT.NONE);
+			streamLabel.setText("No Streams Available.");
+			streamLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+			setErrorMessage("Please connect a stream to the map.");
+			return thematicLayer;
+		}
+		
+		// Choose between the thematic maps
+		Label mapTypeLabel = new Label(thematicLayer, SWT.NONE);
+		mapTypeLabel.setText("Thematic map type:");
+		mapTypeLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo mapTypeSelect = new CCombo(thematicLayer, SWT.BORDER);
+		mapTypeSelect.setLayoutData(DialogUtils.getTextDataLayout());
+		mapTypeSelect.add("Heatmap");
+		mapTypeSelect.add("Linemap");
+		mapTypeSelect.select(0);
+		
+		// Choose the stream for the thematic map
+		Label streamLabel = new Label(thematicLayer, SWT.NONE);
+		streamLabel.setText("Stream:");
+		streamLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo streamSelect = new CCombo(thematicLayer, SWT.BORDER);
+		streamSelect.setLayoutData(DialogUtils.getTextDataLayout());
+
+		// Add all available streams
+		for (int i = 0; i < connections.toArray().length; i++) {
+			streamSelect.add(((LayerUpdater) connections.toArray()[i]).getQuery().getLogicalQuery().getQueryText(), i);
+		}
+		streamSelect.select(0);
+		
+		return thematicLayer;
 	}
 
 

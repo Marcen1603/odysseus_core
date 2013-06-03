@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 
 public class Heatmap extends RasterLayer {
@@ -29,7 +30,7 @@ public class Heatmap extends RasterLayer {
 	
 	private LayerUpdater layerUpdater;
 	
-	public Heatmap(RasterLayerConfiguration configuration, ScreenManager screenManager) {
+	public Heatmap(HeatmapLayerConfiguration configuration, ScreenManager screenManager) {
 		super(configuration);
 		this.screenManager = screenManager;
 		this.config = configuration;
@@ -38,7 +39,7 @@ public class Heatmap extends RasterLayer {
 	@Override
 	public void draw(GC gc) {
 		Color minColor = new Color(Display.getDefault(), 0, 255, 0);
-		Color maxColor = new Color(Display.getDefault(), 255, 0, 100);
+		Color maxColor = new Color(Display.getDefault(), 255, 0, 0);
 		Image img = createImage(20, 20, minColor, maxColor);
 		drawImage(gc, img, false);		
 	}

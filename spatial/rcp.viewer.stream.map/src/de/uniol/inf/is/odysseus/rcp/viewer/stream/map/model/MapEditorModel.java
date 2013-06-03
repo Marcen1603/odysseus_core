@@ -46,9 +46,11 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.LayerTypeRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.GroupLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
@@ -288,14 +290,16 @@ public class MapEditorModel extends ModelObject {
 	public void addLayer(LayerConfiguration layerConfiguration) {
 		layercount++;
 		ILayer layer = null;
-		if (layerConfiguration instanceof RasterLayerConfiguration)
-			layer = addLayer((RasterLayerConfiguration)layerConfiguration);
+		if (layerConfiguration instanceof HeatmapLayerConfiguration)
+			layer = addLayer((HeatmapLayerConfiguration) layerConfiguration);
+		else if (layerConfiguration instanceof RasterLayerConfiguration)
+			layer = addLayer((RasterLayerConfiguration) layerConfiguration);
 		else if (layerConfiguration instanceof VectorLayerConfiguration)
-			layer = addLayer((VectorLayerConfiguration)layerConfiguration);
-		else if (layerConfiguration instanceof GroupLayerConfiguration){
+			layer = addLayer((VectorLayerConfiguration) layerConfiguration);
+		else if (layerConfiguration instanceof GroupLayerConfiguration) {
 			layer = new GroupLayer((GroupLayerConfiguration) layerConfiguration);
 			if (!groups.containsKey(layer.getName()))
-				groups.put(layer.getName(), (GroupLayer)layer);
+				groups.put(layer.getName(), (GroupLayer) layer);
 		}
 		firePropertyChange(MAP, null, this);
 		if (layerConfiguration.getGroup() != null) {
@@ -303,7 +307,8 @@ public class MapEditorModel extends ModelObject {
 			if (this.groups.containsKey(layerConfiguration.getGroup())) {
 				g = this.groups.get(layerConfiguration.getGroup());
 			} else {
-				g = new GroupLayer(new GroupLayerConfiguration(layerConfiguration.getGroup()));
+				g = new GroupLayer(new GroupLayerConfiguration(
+						layerConfiguration.getGroup()));
 				groups.put(layerConfiguration.getGroup(), g);
 				layers.addLast(g);
 			}
@@ -361,6 +366,19 @@ public class MapEditorModel extends ModelObject {
 		}
 		if (screenManager != null) {
 			layer.init(screenManager, schema, attribute);
+		}
+		return layer;
+	}
+	
+	private ILayer addLayer(HeatmapLayerConfiguration layerConfiguration) {
+		ILayer layer = null;
+		if (screenManager != null) {
+			layer = new Heatmap(layerConfiguration, screenManager);	
+			
+			// Add to all connections (LayerUpdater)
+			for (LayerUpdater connection : connections.values()) {
+				connection.add(layer);
+			}
 		}
 		return layer;
 	}
