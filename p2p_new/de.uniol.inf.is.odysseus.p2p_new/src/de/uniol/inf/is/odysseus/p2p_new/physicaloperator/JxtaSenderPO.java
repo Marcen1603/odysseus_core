@@ -29,8 +29,8 @@ import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaServerConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaServerConnectionListener;
-import de.uniol.inf.is.odysseus.p2p_new.util.JxtaBiDiServerConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
+import de.uniol.inf.is.odysseus.p2p_new.util.connect.bidi.JxtaBiDiServerConnection;
 
 public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements IJxtaConnectionListener, IJxtaServerConnectionListener {
 

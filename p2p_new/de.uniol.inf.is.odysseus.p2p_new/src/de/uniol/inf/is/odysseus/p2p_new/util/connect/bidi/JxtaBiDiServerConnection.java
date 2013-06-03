@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.util;
+package de.uniol.inf.is.odysseus.p2p_new.util.connect.bidi;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,6 +15,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaServerConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaServerConnectionListener;
+import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
 public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaConnectionListener {
 

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.util;
+package de.uniol.inf.is.odysseus.p2p_new.util.connect.bidi;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
