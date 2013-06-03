@@ -48,7 +48,7 @@ public class DistributionHelper {
 	/**
 	 * Returns the ID for the PQL parser.
 	 */
-	public static String getParserID() {
+	public static String getPQLParserID() {
 		
 		return "PQL";
 		
@@ -225,6 +225,7 @@ public class DistributionHelper {
 		
 		// TODO Bei mehreren Anfragen sagt er mir, die PipeID sei bereits vergeben
 		final PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
+		LOG.debug("PipeID {} created", pipeID.toString());
 
 		final JxtaReceiverAO access = new JxtaReceiverAO();
 		access.setPipeID(pipeID.toString());

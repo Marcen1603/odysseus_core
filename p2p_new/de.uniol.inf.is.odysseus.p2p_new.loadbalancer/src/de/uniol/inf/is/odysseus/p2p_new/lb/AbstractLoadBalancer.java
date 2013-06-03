@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -160,11 +162,54 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * Maps each {@link QueryPart} to a peer except the local peer via round robin.
 	 * @param remotePeerIDs The collection of all peer IDs.
 	 * @param localPeerID The ID of the local peer.
-	 * @param collection The list of all {@link QueryPart}s.
+	 * @param queryParts The list of all {@link QueryPart}s.
 	 * @return The mapping of the {@link QueryPart}s and the IDs of the the peers, where each {@link QueryPart} shall be stored.
 	 */
-	protected abstract Map<QueryPart, PeerID> assignQueryParts(Collection<PeerID> remotePeerIDs, 
-			PeerID localPeerID, Collection<List<QueryPart>> collection);
+	protected Map<QueryPart, PeerID> assignQueryParts(Collection<PeerID> remotePeerIDs, 
+			PeerID localPeerID, Collection<List<QueryPart>> queryParts) {
+		
+		final Map<QueryPart, PeerID> distributed = Maps.newHashMap();
+		int peerCounter = 0;
+		final Iterator<List<QueryPart>> partsIter = queryParts.iterator();
+		
+		while(partsIter.hasNext()) {
+		
+			for(final QueryPart part : partsIter.next()) {
+			
+				PeerID peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
+				Optional<String> peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
+				
+				if(part.getDestinationName().isPresent() && part.getDestinationName().get().equals(AbstractLoadBalancer.getLocalDestinationName())) {
+					
+					// Local part
+					distributed.put(part, localPeerID);
+					peerName = P2PDictionaryService.get().getRemotePeerName(localPeerID);
+					
+				} else {
+					
+					// Skip local peer for distributed part
+					while(peerID == localPeerID) {
+						
+						// Round-Robin
+						peerCounter = (peerCounter++) % remotePeerIDs.size();
+						
+					}
+					
+					distributed.put(part, peerID);
+					
+				}			
+				
+				if(peerName.isPresent())
+					LOG.debug("Assign query part {} to peer {}", part, peerName.get());
+				else LOG.debug("Assign query part {} to peer {}", part, peerID);
+				
+			}
+			
+		}
+
+		return distributed;
+		
+	}
 	
 	/**
 	 * Creates a new {@link QueryPart} to be executed locally.
@@ -280,7 +325,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(null);
 			GenericGraphWalker walker = new GenericGraphWalker();
 			walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
-			ILogicalQuery copy = new LogicalQuery(DistributionHelper.getParserID(), copyVisitor.getResult(), query.getPriority());
+			ILogicalQuery copy = new LogicalQuery(DistributionHelper.getPQLParserID(), copyVisitor.getResult(), query.getPriority());
 			copy.setName(query.getName() + "_Copy" + copyNo);
 			copy.setUser(query.getUser());
 			copies.add(copy);
