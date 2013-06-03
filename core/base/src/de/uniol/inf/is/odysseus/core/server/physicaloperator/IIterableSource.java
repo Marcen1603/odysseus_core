@@ -30,6 +30,21 @@ public interface IIterableSource<T> extends ISource<T> {
 	 * @return true, if an element can be transfered. 
 	 */
 	public boolean hasNext();
+
+	/**
+	 * Set time in milliseconds to wait between two hasNext() calls
+	 * Scheduler should respect this value
+	 * 
+	 */
+	public void setDelay(long parseLong);
+	
+	/**
+	 * Get time in milliseconds to wait between two hasNext() calls
+	 * Scheduler should respect this value
+	 * @return
+	 */
+	public long getDelay();	
+
 	/**
 	 * Call {@link #transfer(Object)} with the next element. May only be called
 	 * if a call to hasNext() returns true.
@@ -70,5 +85,6 @@ public interface IIterableSource<T> extends ISource<T> {
 	 * Release Lock
 	 */
 	public void unlock();
+	
 }
 

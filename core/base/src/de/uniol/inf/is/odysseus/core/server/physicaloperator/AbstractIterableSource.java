@@ -25,7 +25,7 @@ public abstract class AbstractIterableSource<T> extends AbstractSource<T>
 		implements IIterableSource<T> {
 
 	private ReentrantLock lock = new ReentrantLock();
-
+	private long delay = 0;
 	
 	public AbstractIterableSource() {
 
@@ -43,5 +43,14 @@ public abstract class AbstractIterableSource<T> extends AbstractSource<T>
 	@Override
 	public void unlock(){
 		lock.unlock();
+	}
+	
+	public void setDelay(long delay) {
+		this.delay = delay;
+	}
+	
+	@Override
+	public long getDelay() {
+		return delay;
 	}
 }

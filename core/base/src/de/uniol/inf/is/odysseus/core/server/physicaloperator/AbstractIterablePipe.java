@@ -27,6 +27,7 @@ public abstract class AbstractIterablePipe<R extends IStreamObject<?>, W extends
 	protected List<IOperatorOwner> deactivateRequestControls = new Vector<IOperatorOwner>();
 	
 	private ReentrantLock lock = new ReentrantLock();
+	private long delay = 0;
 	
 	public AbstractIterablePipe(){}
 	
@@ -53,5 +54,14 @@ public abstract class AbstractIterablePipe<R extends IStreamObject<?>, W extends
 	@Override
 	public void unlock(){
 		lock.unlock();
+	}
+	
+	public void setDelay(long delay) {
+		this.delay = delay;
+	}
+	
+	@Override
+	public long getDelay() {
+		return delay;
 	}
 }

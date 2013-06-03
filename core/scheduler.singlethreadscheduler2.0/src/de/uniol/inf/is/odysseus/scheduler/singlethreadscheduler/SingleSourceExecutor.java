@@ -28,6 +28,7 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 	Logger logger = LoggerFactory.getLogger(SingleSourceExecutor.class);
 
 	private IIterableSource<?> s;
+	private long delay;
 
 	private SimpleThreadScheduler caller;
 
@@ -38,6 +39,7 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 		this.setName(s.getName());
 		this.s = s;
 		this.caller = singleThreadScheduler;
+		this.delay = s.getDelay();
 	}
 	
 	public IIterableSource<?> getSource() {
@@ -63,7 +65,22 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 		}
 		while (!interrupt && !isInterrupted() && s.isOpen() && !s.isDone()) {
 			if (s.hasNext()) {
+				long ct1 = -1;
+				if (delay > 0){
+					ct1 = System.currentTimeMillis();
+				}
 				s.transferNext();
+				if (delay > 0){
+					long ct2 = System.currentTimeMillis();
+					long diff = ct2-ct1;
+					try {
+						if (delay-diff > 0){
+							Thread.sleep(delay-diff);
+						}
+					} catch (InterruptedException e) {
+						// Exception can be ignored
+					}
+				}
 				Thread.yield();
 			}
 		}
