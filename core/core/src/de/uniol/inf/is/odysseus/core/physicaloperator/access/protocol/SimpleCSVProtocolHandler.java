@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -37,17 +39,25 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 			IAccessPattern access) {
 		super(direction, access);
 	}
-	
+
 	@Override
 	protected T readLine(String line) {
-		return getDataHandler().readData(line.split(""+delimiter));
+		String[] ret = line.split("" + delimiter);
+		if (trim) {
+			String[] trimmed = new String[ret.length];
+			for (int i = 0; i < ret.length; i++) {
+				trimmed[i] = (ret[i].trim());
+			}
+			ret = trimmed;
+		}
+		return getDataHandler().readData(ret);
 	}
 
 	@Override
 	public String getName() {
 		return "SimpleCSV";
 	}
-	
+
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
@@ -59,6 +69,5 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 		instance.init(options);
 		return instance;
 	}
-	
 
 }

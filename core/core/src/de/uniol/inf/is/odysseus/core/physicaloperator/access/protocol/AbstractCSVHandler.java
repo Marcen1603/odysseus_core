@@ -19,6 +19,7 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	protected DecimalFormat floatingFormatter;
 	protected DecimalFormat numberFormatter;
 	protected boolean writeMetadata;
+	protected boolean trim;
 	protected boolean addLineNumber = false;
 	protected String delimiterString;
 
@@ -60,6 +61,10 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 		if (options.containsKey("csv.writemetadata")) {
 			writeMetadata = Boolean.parseBoolean(options
 					.get("csv.writemetadata"));
+		}
+		if (options.containsKey("csv.trim")){
+			trim = Boolean.parseBoolean(options
+					.get("csv.trim"));
 		}
 		if (options.get("addlinenumber") != null) {
 			addLineNumber = Boolean.parseBoolean(options.get("addlinenumber"));
@@ -109,7 +114,7 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 			line = reader.readLine();
 			if (line != null) {
 				T retValue = readLine(line);
-				System.out.println(retValue);
+				//System.out.println(retValue);
 				getTransfer().transfer(retValue);
 			}
 		} catch (Exception e) {

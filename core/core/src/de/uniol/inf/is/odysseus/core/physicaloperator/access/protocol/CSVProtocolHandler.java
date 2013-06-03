@@ -62,6 +62,13 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 			}
 		}
 		ret.add(elem.toString());
+		if (trim){
+			List<String> trimmed = new LinkedList<String>();
+			for (String l: ret){
+				trimmed.add(l.trim());
+			}
+			ret = trimmed;
+		}
 		T retValue = getDataHandler().readData(ret);
 		return retValue;
 	}
