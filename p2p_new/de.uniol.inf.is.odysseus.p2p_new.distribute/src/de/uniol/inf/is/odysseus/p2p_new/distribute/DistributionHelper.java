@@ -25,6 +25,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
@@ -106,7 +108,7 @@ public class DistributionHelper {
 				
 				ILogicalOperator streamPlan = DataDictionaryService.get().getStreamForTransformation(((StreamAO) operator).getStreamname(), 
 						SessionManagementService.getActiveSession());
-				RestructHelper.replaceWithSubplan(operator, streamPlan);
+				RestructHelper.replaceWithSubplan(operator, copyLogicalPlan(streamPlan));
 				operatorsToRemove.add(operator);
 				operatorsToAdd.add(streamPlan);
 				
@@ -124,6 +126,40 @@ public class DistributionHelper {
 		}
 		
 		return new QueryPart(operators);
+		
+	}
+	
+	/**
+	 * Copies a logical plan.
+	 * @param originPlan The logical plan to be copied.
+	 * @return A copy of <code>originPlan</code>.
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static ILogicalOperator copyLogicalPlan(ILogicalOperator originPlan) {
+		
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(originPlan.getOwner());
+		GenericGraphWalker walker = new GenericGraphWalker();
+		walker.prefixWalk(originPlan, copyVisitor);
+		return copyVisitor.getResult();
+		
+	}
+	
+	/**
+	 * Copies an {@link ILogicalQuery}.
+	 * @param originQuery The {@link ILogicalQuery} to be copied.
+	 * @return A copy of <code>originQuery</code>.
+	 */
+	public static ILogicalQuery copyLogicalQuery(ILogicalQuery originQuery) {
+		
+		List<ILogicalOperator> operators = Lists.newArrayList();
+		RestructHelper.collectOperators(originQuery.getLogicalPlan(), operators);
+		RestructHelper.removeTopAOs(operators);
+		ILogicalQuery copy = new LogicalQuery(getPQLParserID(), operators.get(0), originQuery.getPriority());
+		copy.setName(originQuery.getName());
+		copy.setQueryText(PQLGeneratorService.get().generatePQLStatement(operators.get(0)));
+		copy.setUser(originQuery.getUser());
+		return copy;
+		
 	}
 	
 	/**
@@ -223,7 +259,6 @@ public class DistributionHelper {
 	public static void generatePeerConnection(QueryPart senderPart, QueryPart acceptorPart, ILogicalOperator sinkOfSender, 
 			ILogicalOperator sourceOfAcceptor, String senderName, String accessName) {
 		
-		// TODO Bei mehreren Anfragen sagt er mir, die PipeID sei bereits vergeben
 		final PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
 		LOG.debug("PipeID {} created", pipeID.toString());
 

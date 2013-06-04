@@ -172,7 +172,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 		
 		/*
 		 * XXX split doesn't work for a reason I don't know.
-		 * Make sure, that a username can not contain dots.
+		 * TODO Make sure, that a username can not contain dots.
 		 */
 		String source = name.substring(name.indexOf(".") + 1);
 		

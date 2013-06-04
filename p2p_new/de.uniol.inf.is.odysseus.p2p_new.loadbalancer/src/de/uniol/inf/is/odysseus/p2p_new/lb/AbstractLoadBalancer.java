@@ -19,17 +19,14 @@ import de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
-import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 
-// TODO Preconditions in allen Klassen
+// TODO Preconditions in allen Klassen des bundles
 /**
  * The class for abstract load balancers. <br />
  * A load balancer distributes queries and/or sources on a network of peers.
@@ -47,8 +44,14 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 */
 	protected SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
 	
-	// TODO neu
+	/**
+	 * The counter for connections to other peers.
+	 */
 	private static int CONNECTION_COUNTER = 0;
+	
+	/**
+	 * Returns the counter for connections to other peers and increases it afterwords.
+	 */
 	private static int getNextConnectionNo() {
 		
 		return CONNECTION_COUNTER++;
@@ -108,9 +111,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 		} else DistributionHelper.logPeerStatus(remotePeerIDs);
 		
-		// All queries including copies
-		final List<ILogicalQuery> distributedQueries = Lists.newArrayList();
-		
 		// All queryparts over all queries
 		final Map<ILogicalQuery, List<QueryPart>> queryPartsMap = Maps.newHashMap();
 
@@ -120,13 +120,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			QueryPart localPart = this.createLocalPart();
 			
 			this.determineQueryParts(query, queryPartsMap, localPart);
-			distributedQueries.add(query);
 			
-			// TODO wantedDegree als Parameter
-			final List<ILogicalQuery> copies = this.copyLogicalQuery(query, this.getDegreeOfParallelismn(0, remotePeerIDs.size()) - 1);
-			for(ILogicalQuery copy : copies)
-				this.determineQueryParts(copy, queryPartsMap, localPart);
-			distributedQueries.addAll(copies);
+			// TODO kopieren und pro kopie determineQueryParts
 			
 			// Initialize the operators of the local part
 			for(ILogicalOperator operator : localPart.getOperators())
@@ -309,34 +304,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 	}
 	
-	/**
-	 * Creates copies of an {@link ILogicalQuery}.
-	 * @param query The {@link ILogicalQuery} to be copied.
-	 * @param numCopies The number of copies to be made.
-	 * @return The list of copies excluding the original {@link ILogicalQuery}.
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected List<ILogicalQuery> copyLogicalQuery(ILogicalQuery query, int numCopies) {
-		
-		final List<ILogicalQuery> copies = Lists.newArrayList();
-		
-		for(int copyNo = 0; copyNo < numCopies; copyNo++) {
-			
-			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(query);
-			GenericGraphWalker walker = new GenericGraphWalker();
-			walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
-			System.err.println(copyVisitor.getResult());
-			ILogicalQuery copy = new LogicalQuery(DistributionHelper.getPQLParserID(), copyVisitor.getResult(), query.getPriority());
-			copy.setName(query.getName() + "_Copy" + copyNo);
-			copy.setUser(query.getUser());
-			copies.add(copy);
-			
-		}
-		
-		return copies;
-		
-	}
-	
+	// TODO wantedDegree als Parameter
 	/**
 	 * Sets the degree of parallelism for the {@link ILogicalQuery}, e.g. <code>1</code> for not parallize the {@link ILogicalQuery}.
 	 * @param wantedDegree The wanted degree by the user.
