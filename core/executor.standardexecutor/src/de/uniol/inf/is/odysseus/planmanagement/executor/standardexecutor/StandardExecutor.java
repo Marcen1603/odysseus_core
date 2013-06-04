@@ -528,8 +528,8 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		LOG.info("Start remove a query (ID: " + queryID + ").");
 
 		IPhysicalQuery queryToRemove = this.executionPlan.getQueryById(queryID);
-		validateUserRight(queryToRemove, caller, ExecutorPermission.REMOVE_QUERY);
 		if (queryToRemove != null && getOptimizer() != null) {
+			validateUserRight(queryToRemove, caller, ExecutorPermission.REMOVE_QUERY);
 			try {
 				executionPlanLock.lock();
 				getOptimizer().beforeQueryRemove(queryToRemove, this.executionPlan, null, getDataDictionary());
