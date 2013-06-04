@@ -18,4 +18,5 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunc
 
 public interface IMerger<R> {
 	IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew);
+	IPartialAggregate<R> merge(IPartialAggregate<R> p, IPartialAggregate<R> toMerge, boolean createNew);
 }

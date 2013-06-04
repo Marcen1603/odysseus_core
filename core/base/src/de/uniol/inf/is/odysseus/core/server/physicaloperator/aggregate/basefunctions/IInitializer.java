@@ -18,4 +18,5 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunc
 
 public interface IInitializer<R> {
 	IPartialAggregate<R> init(R in);
+	IPartialAggregate<R> init(IPartialAggregate<R> in);
 }

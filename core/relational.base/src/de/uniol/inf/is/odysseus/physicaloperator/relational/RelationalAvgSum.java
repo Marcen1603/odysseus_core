@@ -67,6 +67,16 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>>{
 		return pa;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction#init(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate)
+	 */
+	@Override
+	public IPartialAggregate<Tuple<?>> init(IPartialAggregate<Tuple<?>> in) {
+		AvgSumPartialAggregate<Tuple<?>> pa = 
+				new AvgSumPartialAggregate<Tuple<?>>((AvgSumPartialAggregate<Tuple<?>>) in);
+			return pa;
+	}
+	
 	@Override
 	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate p, Tuple toMerge, boolean createNew) {
 		AvgSumPartialAggregate<Tuple> pa = null;
@@ -79,7 +89,7 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>>{
 		}
 		return merge(pa, toMerge);
 	}
-	
+		
 	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate p, Tuple toMerge) {
 		AvgSumPartialAggregate pa = (AvgSumPartialAggregate) p;
 		Double newAggValue = pa.getAggValue().doubleValue() + ((Number)toMerge.getAttribute(pos)).doubleValue(); 
@@ -87,6 +97,34 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>>{
 		return pa;
 	}
 	
+	@Override
+	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p,
+			IPartialAggregate<Tuple<?>> toMerge, boolean createNew) {
+		AvgSumPartialAggregate<Tuple<?>> pa = null;
+		if (createNew){
+			AvgSumPartialAggregate<Tuple<?>> h = (AvgSumPartialAggregate<Tuple<?>>) p;			
+			pa = new AvgSumPartialAggregate<Tuple<?>>(h.getAggValue(), h.getCount());			
+		}else{
+			pa = (AvgSumPartialAggregate<Tuple<?>>) p;
+		}
+		return merge(pa, toMerge);
+	}
+		
+	/**
+	 * @param pa
+	 * @param toMerge
+	 * @return
+	 */
+	public IPartialAggregate<Tuple<?>> merge(
+			AvgSumPartialAggregate<Tuple<?>> pa,
+			IPartialAggregate<Tuple<?>> toMerge) {
+
+		AvgSumPartialAggregate paToMerge = (AvgSumPartialAggregate) toMerge;
+		Double newAggValue = pa.getAggValue().doubleValue() + paToMerge.getAggValue().doubleValue(); 
+		pa.setAggValue(newAggValue, pa.getCount()+paToMerge.getCount());
+		return pa;
+	}
+
 	@Override
 	public Tuple evaluate(IPartialAggregate p) {
 		AvgSumPartialAggregate pa = (AvgSumPartialAggregate) p;

@@ -32,5 +32,21 @@ abstract public class AbstractAggregateFunction<R,W> implements IAggregateFuncti
 		this.name = name;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IInitializer#init(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate)
+	 */
+	@Override
+	public IPartialAggregate<R> init(IPartialAggregate<R> in) {
+		throw new RuntimeException("Sorry. Cannot process partial aggregates as input");
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IMerger#merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate, de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate, boolean)
+	 */
+	@Override
+	public IPartialAggregate<R> merge(IPartialAggregate<R> p,
+			IPartialAggregate<R> toMerge, boolean createNew) {
+		throw new RuntimeException("Sorry. Cannot process partial aggregates as input");
+	}
 	
 }
