@@ -38,6 +38,11 @@ abstract public class MinMax<R extends Comparable<R>, W> extends AbstractAggrega
 	}
 
 	@Override
+	public IPartialAggregate<R> init(IPartialAggregate<R> in) {
+		return new ElementPartialAggregate<R>((ElementPartialAggregate<R>)in);
+	}
+	
+	@Override
 	public IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
 		ElementPartialAggregate<R> pa = null;
 		if (createNew){
@@ -55,6 +60,15 @@ abstract public class MinMax<R extends Comparable<R>, W> extends AbstractAggrega
 			}			
 		}
 		return pa;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction#merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate, de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate, boolean)
+	 */
+	@Override
+	public IPartialAggregate<R> merge(IPartialAggregate<R> p,
+			IPartialAggregate<R> toMerge, boolean createNew) {
+		return merge(p, ((ElementPartialAggregate<R>)toMerge).getElem(), createNew);
 	}
 
 	@Override

@@ -39,6 +39,10 @@ public class CountPartialAggregate<T> implements IPartialAggregate<T> {
 		count=count+1;
 	}
 	
+	public void add(int count){
+		this.count = this.count + count;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer("CountPartialAggregate (").append(hashCode()).append(")").append(count);

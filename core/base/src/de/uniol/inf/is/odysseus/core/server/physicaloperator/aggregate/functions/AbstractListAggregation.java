@@ -33,6 +33,11 @@ abstract public class AbstractListAggregation<R,W> extends AbstractAggregateFunc
 	public IPartialAggregate<R> init(R in) {
 		return new ListPartialAggregate<R>(in);
 	}
+
+	@Override
+	public IPartialAggregate<R> init(IPartialAggregate<R> in) {
+		return new ListPartialAggregate<R>((ListPartialAggregate<R>) in);
+	}
 	
 	@Override
 	public IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
@@ -43,6 +48,16 @@ abstract public class AbstractListAggregation<R,W> extends AbstractAggregateFunc
 		list.addElem(toMerge);
 		return list;
 	}
-
+	
+	@Override
+	public IPartialAggregate<R> merge(IPartialAggregate<R> p,
+			IPartialAggregate<R> toMerge, boolean createNew) {
+		ListPartialAggregate<R> list = (ListPartialAggregate<R>) p;
+		if (createNew){
+			list = new ListPartialAggregate<R>((ListPartialAggregate<R>)p);
+		}
+		list.addAll((ListPartialAggregate<R>)toMerge);
+		return list;
+	}
 
 }

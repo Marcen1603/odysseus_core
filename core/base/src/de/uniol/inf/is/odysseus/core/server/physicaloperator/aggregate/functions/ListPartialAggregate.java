@@ -43,6 +43,11 @@ public class ListPartialAggregate<T> implements IPartialAggregate<T>, Iterable<T
 		return this;
 	}
 
+	public ListPartialAggregate<T> addAll(ListPartialAggregate<T> list){
+		this.elems.addAll(list.elems);
+		return this;
+	}
+	
 	@Override
 	public String toString() {
 		return ""+elems;
