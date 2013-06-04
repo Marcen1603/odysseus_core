@@ -479,6 +479,11 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	}
 
 	@Override
+	public boolean isOwnedByAll(List<IOperatorOwner> owners) {
+		return ownerHandler.isOwnedByAll(owners);
+	}
+	
+	@Override
 	public boolean hasOwner() {
 		return ownerHandler.hasOwner();
 	}

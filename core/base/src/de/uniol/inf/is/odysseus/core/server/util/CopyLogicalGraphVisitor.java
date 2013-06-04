@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.util;
 
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -40,10 +41,16 @@ public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements
 	T root;
 
 	private IOperatorOwner owner;
+	private List<IOperatorOwner> ownerList;
 
 	public CopyLogicalGraphVisitor(IOperatorOwner owner) {
 		this.nodeCopies = new IdentityHashMap<T, T>();
 		this.owner = owner;
+	}
+
+	public CopyLogicalGraphVisitor(List<IOperatorOwner> ownerList) {
+		this.nodeCopies = new IdentityHashMap<T, T>();
+		this.ownerList = ownerList;
 	}
 
 	@Override
@@ -101,7 +108,7 @@ public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements
 	@Override
 	public void nodeAction(T op) {
 		// Copy Plan only for owners (if available)
-		if (!op.hasOwner() || op.isOwnedBy(owner)) {
+		if (!op.hasOwner() || (owner != null && op.isOwnedBy(owner)) || (ownerList !=null && op.isOwnedByAll(ownerList))) {
 			if (this.root == null) {
 				this.root = op;
 			}

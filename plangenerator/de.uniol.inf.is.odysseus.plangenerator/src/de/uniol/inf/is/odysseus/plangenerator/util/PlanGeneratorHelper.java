@@ -169,7 +169,7 @@ public class PlanGeneratorHelper {
 		RemoveOwnersGraphVisitor<ILogicalOperator> removeOwnerVisitor = new RemoveOwnersGraphVisitor<ILogicalOperator>();
 		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalk(plan, removeOwnerVisitor);
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(null);
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>((IOperatorOwner)null);
 		walker = new GenericGraphWalker();
 		walker.prefixWalk(plan, copyVisitor);
 		return copyVisitor.getResult();

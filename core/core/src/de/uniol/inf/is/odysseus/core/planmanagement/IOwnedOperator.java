@@ -71,6 +71,14 @@ public interface IOwnedOperator {
 	 * @return TRUE: This operator is owned by the owner. FALSE: else
 	 */
 	public boolean isOwnedByAny(List<IOperatorOwner> owners);
+	
+	/**
+	 * Checks if this operator is owned by all owners
+	 * 
+	 * @param owners: List of owners that should be checked
+	 * @return
+	 */
+	public boolean isOwnedByAll(List<IOperatorOwner> owners);
 
 
 	/**

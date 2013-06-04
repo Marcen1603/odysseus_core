@@ -298,6 +298,11 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public boolean isOwnedByAny(List<IOperatorOwner> owners) {
 		return ownerHandler.isOwnedByAny(owners);
 	}
+	
+	@Override
+	public boolean isOwnedByAll(List<IOperatorOwner> owners) {
+		return ownerHandler.isOwnedByAll(owners);
+	}
 
 	@Override
 	public boolean hasOwner() {

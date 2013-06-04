@@ -220,6 +220,12 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public boolean isOwnedBy(IOperatorOwner owner) {
 		return ownerHandler.isOwnedBy(owner);
 	}
+	
+	@Override
+	public boolean isOwnedByAll(List<IOperatorOwner> owners) {
+		return ownerHandler.isOwnedByAll(owners);
+	}
+
 
 	@Override
 	public int hashCode() {
