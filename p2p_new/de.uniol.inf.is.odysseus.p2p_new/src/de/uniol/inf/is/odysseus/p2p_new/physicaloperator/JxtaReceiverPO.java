@@ -143,7 +143,12 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		return false; // TODO: implement
+		if( !(ipo instanceof JxtaReceiverPO)) {
+			return false;
+		}
+		
+		JxtaReceiverPO<?> otherReceiver = (JxtaReceiverPO<?>)ipo;
+		return otherReceiver.pipeID.equals(pipeID);
 	}
 
 	@Override
