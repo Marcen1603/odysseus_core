@@ -16,7 +16,7 @@ public abstract class AbstractPQLStatementGenerator<T extends ILogicalOperator> 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractPQLStatementGenerator.class);
 
 	@Override
-	public final String generateStatement(T operator, Map<T, String> otherOperatorNames) {
+	public String generateStatement(T operator, Map<T, String> otherOperatorNames) {
 		try {
 			StringBuilder sb = new StringBuilder();
 
