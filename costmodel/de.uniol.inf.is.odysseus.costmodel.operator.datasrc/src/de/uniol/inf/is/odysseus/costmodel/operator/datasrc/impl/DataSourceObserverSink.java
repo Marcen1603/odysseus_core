@@ -48,6 +48,8 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 
 	private final ISource<? extends IStreamObject<?>> source;
 	private final List<IDataSourceObserverListener> listeners = new ArrayList<IDataSourceObserverListener>();
+	
+	private ISource connectingSource;
 
 	public DataSourceObserverSink( ISource<? extends IStreamObject<?>> source ) {
 		this.source = source;
@@ -74,22 +76,17 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 		Optional<ISource> connectingSource = getMetadataUpdatePOAsSource(source);
 		if( connectingSource.isPresent() ) {
 			connectingSource.get().connectSink(this, 0, 0, connectingSource.get().getOutputSchema());
+			this.connectingSource = connectingSource.get(); 
 			getLogger().debug("Source {} connected", source);					
 		} else {
 			getLogger().error("Could not connect to {}", source);
 		}
 	}
-
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("unchecked")
 	public void disconnect() {
-		Optional<ISource> connectingSource = getMetadataUpdatePOAsSource(source);
-		if( connectingSource.isPresent() ) {
-			connectingSource.get().disconnectSink(this, 0, 0, connectingSource.get().getOutputSchema());
-			getLogger().debug("Source {} disconnected", source);
-		} else {
-			getLogger().error("Could not disconnect from {}", source);
-		}
+		connectingSource.disconnectSink(this, 0, 0, connectingSource.getOutputSchema());
+		getLogger().debug("Source {} disconnected", source);
 	}
 
 	public void addListener( IDataSourceObserverListener listener ) {
