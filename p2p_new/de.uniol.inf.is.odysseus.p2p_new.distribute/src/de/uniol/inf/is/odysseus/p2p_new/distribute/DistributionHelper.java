@@ -1,13 +1,9 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.ID;
@@ -15,9 +11,13 @@ import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -278,18 +278,8 @@ public class DistributionHelper {
 		adv.setSharedQueryID(sharedQueryID);
 		adv.setTransCfgName(transCfgName);
 
-		// Publish query part
-		try {
-			
-			JxtaServicesProviderService.get().getDiscoveryService().publish(adv, 10000, 10000);
-			LOG.debug("QueryPart {} published", queryPart);	
-			
-		} catch(final IOException ex) {
-			
-			LOG.error("Could not publish query part", ex);
-			
-		}
-		
+		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(destinationPeerID.toString(), adv, 15000);
+		LOG.debug("QueryPart {} remotely published at {}", queryPart, destinationPeerID.toString());	
 	}
 	
 	/**
