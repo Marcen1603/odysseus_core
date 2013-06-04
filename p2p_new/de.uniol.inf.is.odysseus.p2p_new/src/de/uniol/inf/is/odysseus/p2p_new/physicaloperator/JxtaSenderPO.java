@@ -295,6 +295,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 					conn.send(rawBytes);
 				} catch (final Throwable t) {
 					LOG.error("Could not write", t);
+					
+					// TODO: connection entfernen
 				}
 			}
 		}

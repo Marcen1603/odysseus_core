@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.p2p_new.util.connect.AbstractJxtaConnection;
 public class SocketConnection extends AbstractJxtaConnection {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SocketConnection.class);
-	private static final int BUFFER_SIZE = 1024;
+	private static final int BUFFER_SIZE = 65536;
 	
 	private final byte[] buffer = new byte[BUFFER_SIZE];
 	
@@ -40,25 +40,25 @@ public class SocketConnection extends AbstractJxtaConnection {
 		inStream = socket.getInputStream();
 		
 		receiverThread = new RepeatingJobThread() {
-				@Override
-				public void doJob() {
-					try {
-						final int bytesRead = inStream.read(buffer);
-						if (bytesRead == -1) {
-							disconnect();
-							stopRunning();
-						} else if (bytesRead > 0) {
-							final byte[] msg = new byte[bytesRead];
-							System.arraycopy(buffer, 0, msg, 0, bytesRead);
-							fireMessageReceiveEvent(msg);
-						}
-					} catch (IOException e) {
-						LOG.error("Could not read from input stream of socket", e);
-						
-						stopRunning();
+			@Override
+			public void doJob() {
+				try {
+					final int bytesRead = inStream.read(buffer);
+					if (bytesRead == -1) {
 						disconnect();
+						stopRunning();
+					} else if (bytesRead > 0) {
+						final byte[] msg = new byte[bytesRead];
+						System.arraycopy(buffer, 0, msg, 0, bytesRead);
+						fireMessageReceiveEvent(msg);
 					}
+				} catch (IOException e) {
+					LOG.error("Could not read from input stream of socket", e);
+
+					stopRunning();
+					disconnect();
 				}
+			}
 		};
 		receiverThread.start();
 		
@@ -70,7 +70,6 @@ public class SocketConnection extends AbstractJxtaConnection {
 		waitForConnect();
 		
 		outStream.write(data);
-		outStream.flush();
 	}
 
 	@Override

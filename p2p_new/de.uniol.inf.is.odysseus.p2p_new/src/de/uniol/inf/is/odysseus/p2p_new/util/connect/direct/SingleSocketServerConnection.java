@@ -27,6 +27,8 @@ public class SingleSocketServerConnection implements IJxtaServerConnection, IJxt
 	private final List<IJxtaServerConnectionListener> listeners = Lists.newArrayList();
 	private final List<IJxtaConnection> connections = Lists.newArrayList();
 	
+	private static final int SEND_BUFFER_SIZE = 65536;
+	
 	private boolean started = false;
 	private ServerSocket serverSocket;
 	private RepeatingJobThread accepterThread;
@@ -68,7 +70,7 @@ public class SingleSocketServerConnection implements IJxtaServerConnection, IJxt
 			public void doJob() {
 				try {
 					Socket clientSocket = serverSocket.accept();
-					
+					clientSocket.setSendBufferSize(SEND_BUFFER_SIZE);
 					IJxtaConnection connection = new SocketConnection(clientSocket);
 					connection.addListener(SingleSocketServerConnection.this);
 					

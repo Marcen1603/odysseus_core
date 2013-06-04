@@ -42,7 +42,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaReceiverPO.class);
 
 	private static final String PIPE_NAME = "Odysseus Pipe";
-	private static final int BUFFER_SIZE_BYTES = 1024;
+	private static final int BUFFER_SIZE_BYTES = 65536;
 
 	private byte currentTypeByte = JxtaPOUtil.NONE_BYTE;
 	private int size = -1;
@@ -187,6 +187,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	private void processData(ByteBuffer message) {
 		try {
 			while (message.remaining() > 0) {
+				
 				if (currentTypeByte == JxtaPOUtil.NONE_BYTE) {
 					currentTypeByte = message.get();
 				}
@@ -198,7 +199,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 					currentTypeByte = JxtaPOUtil.NONE_BYTE;
 					continue;
 				}
-
+				
 				if (size == -1) {
 					while (sizeBuffer.position() < 4 && message.remaining() > 0) {
 						sizeBuffer.put(message.get());
@@ -206,7 +207,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 					if (sizeBuffer.position() == 4) {
 						sizeBuffer.flip();
 						size = sizeBuffer.getInt();
-					}
+					} 
 				}
 
 				if (size != -1) {
@@ -215,8 +216,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 						messageBuffer.put(message.array(), message.position(), message.remaining());
 						message.position(message.position() + message.remaining());
 					} else {
-						messageBuffer.put(message.array(), message.position(), message.remaining());
-						message.position(message.position() + message.remaining());
+						messageBuffer.put(message.array(), message.position(), size - currentSize);
+						message.position(message.position() + ( size - currentSize) );
 
 						if (currentTypeByte == JxtaPOUtil.DATA_BYTE) {
 							messageBuffer.flip();
@@ -243,8 +244,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 						currentTypeByte = JxtaPOUtil.NONE_BYTE;
 					}
 				}
-
-			}
+			} // while
 		} catch (Throwable e) {
 			LOG.error("Could not process message", e);
 
