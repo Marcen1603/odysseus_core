@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
+import net.jxta.peer.PeerID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +29,8 @@ final class JxtaPOUtil {
 	public static final byte CLOSE_SUBBYTE = 1;
 	public static final byte DONE_SUBBYTE = 2;
 	public static final byte PING_SUBBYTE = 3;
+	public static final byte CONNECTION_DATA_SUBBYTE = 4;
+
 
 	private JxtaPOUtil() {
 	}
@@ -64,6 +68,20 @@ final class JxtaPOUtil {
 		packet[1] = type;
 		return packet;
 	}
+	
+	public static byte[] generateSetAddressPacket( PeerID peerID, int port ) {
+		final String peerIDString = peerID.toString();
+		final byte[] peerIDBytes = peerIDString.getBytes();
+		
+		final byte[] packet = new byte[6 + 4 + peerIDBytes.length];
+		packet[0] = CONTROL_BYTE;
+		packet[1] = CONNECTION_DATA_SUBBYTE;
+		insertInt(packet, 2, port);
+		insertInt(packet, 6, peerIDBytes.length);
+		System.arraycopy(peerIDBytes, 0, packet, 10, peerIDBytes.length);
+		
+		return packet;
+	}
 
 	public static void tryConnectAsync(final IJxtaConnection connection) {
 		LOG.debug("Trying to connect");
@@ -92,5 +110,12 @@ final class JxtaPOUtil {
 		t.setName("Discconnect thread");
 		t.setDaemon(true);
 		t.start();
+	}
+	
+	public static void insertInt(byte[] destArray, int offset, int value) {
+		destArray[offset] = (byte) (value >>> 24);
+		destArray[offset + 1] = (byte) (value >>> 16);
+		destArray[offset + 2] = (byte) (value >>> 8);
+		destArray[offset + 3] = (byte) (value);
 	}
 }

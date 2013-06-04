@@ -20,22 +20,26 @@ import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaServerConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaServerConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
-public class SocketServerConnection implements IJxtaServerConnection, IJxtaConnectionListener {
+public class SingleSocketServerConnection implements IJxtaServerConnection, IJxtaConnectionListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(SocketServerConnection.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SingleSocketServerConnection.class);
 	
 	private final List<IJxtaServerConnectionListener> listeners = Lists.newArrayList();
 	private final List<IJxtaConnection> connections = Lists.newArrayList();
-	private final PipeAdvertisement pipeAdvertisement;
 	
 	private boolean started = false;
-	private RepeatingJobThread accepterThread;
 	private ServerSocket serverSocket;
+	private RepeatingJobThread accepterThread;
 	
-	public SocketServerConnection(PipeAdvertisement pipeAdvertisement ) {
-		Preconditions.checkNotNull(pipeAdvertisement, "Pipe Advertisement must not be null!");
-		
-		this.pipeAdvertisement = pipeAdvertisement;
+	public SingleSocketServerConnection(int port) throws IOException {
+		Preconditions.checkArgument(port > 0, "Port must be positive");
+		serverSocket = new ServerSocket(port);
+		serverSocket.setSoTimeout(0);
+	}
+	
+	public SingleSocketServerConnection() throws IOException {
+		serverSocket = new ServerSocket(0);
+		serverSocket.setSoTimeout(0);
 	}
 	
 	@Override
@@ -57,11 +61,8 @@ public class SocketServerConnection implements IJxtaServerConnection, IJxtaConne
 	@Override
 	public void start() throws IOException {
 		Preconditions.checkState(isStarted() == false, "Server socket already started");
-		
+
 		started = true;
-		
-		serverSocket = new ServerSocket(0);
-		serverSocket.setSoTimeout(0);
 		accepterThread = new RepeatingJobThread() {
 			@Override
 			public void doJob() {
@@ -69,23 +70,25 @@ public class SocketServerConnection implements IJxtaServerConnection, IJxtaConne
 					Socket clientSocket = serverSocket.accept();
 					
 					IJxtaConnection connection = new SocketConnection(clientSocket);
-					connection.addListener(SocketServerConnection.this);
+					connection.addListener(SingleSocketServerConnection.this);
 					
 					connection.connect();
-					fireConnectionAddEvent(connection); // TODO: hete insert
+					fireConnectionAddEvent(connection);
 					
 				} catch (IOException e) {
 					LOG.error("Could not accept connections", e);
+				} finally {
+					stopRunning();					
 				}
 			};
 		};
 		accepterThread.start();
 	}
-	
-	public final int getPort() {
+
+	public int getLocalPort() {
 		return serverSocket.getLocalPort();
 	}
-
+	
 	@Override
 	public void stop() {
 		Preconditions.checkState(isStarted() == true, "Server socket is already stopped");
@@ -116,7 +119,7 @@ public class SocketServerConnection implements IJxtaServerConnection, IJxtaConne
 
 	@Override
 	public PipeAdvertisement getPipeAdvertisement() {
-		return pipeAdvertisement;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.AbstractJxtaConnection;
 
-class SocketConnection extends AbstractJxtaConnection {
+public class SocketConnection extends AbstractJxtaConnection {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SocketConnection.class);
 	private static final int BUFFER_SIZE = 1024;

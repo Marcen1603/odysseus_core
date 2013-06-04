@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.AbstractJxtaConnection;
 
-class JxtaBiDiConnection extends AbstractJxtaConnection implements PipeMsgListener {
+public class JxtaBiDiConnection extends AbstractJxtaConnection implements PipeMsgListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaBiDiConnection.class);
 	

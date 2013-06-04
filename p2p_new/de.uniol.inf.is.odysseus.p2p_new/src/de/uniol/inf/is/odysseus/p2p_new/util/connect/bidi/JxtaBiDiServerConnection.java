@@ -128,7 +128,7 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 	
 	protected final void fireConnectionAddEvent(IJxtaConnection connection) {
 		synchronized( listeners ) {
-			for( IJxtaServerConnectionListener listener : listeners ) {
+			for( IJxtaServerConnectionListener listener : listeners.toArray(new IJxtaServerConnectionListener[0]) ) {
 				try {
 					listener.connectionAdded(this, connection);
 				} catch( Throwable t ) {
@@ -140,7 +140,7 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 	
 	protected final void fireConnectionRemoveEvent(IJxtaConnection connection) {
 		synchronized( listeners ) {
-			for( IJxtaServerConnectionListener listener : listeners ) {
+			for( IJxtaServerConnectionListener listener : listeners.toArray(new IJxtaServerConnectionListener[0]) ) {
 				try {
 					listener.connectionRemoved(this, connection);
 				} catch( Throwable t ) {

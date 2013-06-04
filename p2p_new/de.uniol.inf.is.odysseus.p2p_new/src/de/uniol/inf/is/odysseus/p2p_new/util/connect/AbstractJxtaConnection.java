@@ -85,7 +85,7 @@ public abstract class AbstractJxtaConnection implements IJxtaConnection {
 	
 	protected final void fireDisconnectEvent() {
 		synchronized( listeners ) {
-			for( IJxtaConnectionListener listener : listeners ) {
+			for( IJxtaConnectionListener listener : listeners.toArray(new IJxtaConnectionListener[0]) ) {
 				try {
 					listener.onDisconnect(this);
 				} catch( Throwable t ) {
@@ -97,7 +97,7 @@ public abstract class AbstractJxtaConnection implements IJxtaConnection {
 	
 	protected final void fireConnectEvent() {
 		synchronized( listeners ) {
-			for( IJxtaConnectionListener listener : listeners ) {
+			for( IJxtaConnectionListener listener : listeners.toArray(new IJxtaConnectionListener[0]) ) {
 				try {
 					listener.onConnect(this);
 				} catch( Throwable t ) {
@@ -108,11 +108,13 @@ public abstract class AbstractJxtaConnection implements IJxtaConnection {
 	}
 
 	protected final void fireMessageReceiveEvent(byte[] data) {
-		for (final IJxtaConnectionListener listener : listeners) {
-			try {
-				listener.onReceiveData(this, data);
-			} catch (final Throwable t) {
-				LOG.error("Exception in JxtaConnection listener", t);
+		synchronized( listeners ) {
+			for (final IJxtaConnectionListener listener : listeners.toArray(new IJxtaConnectionListener[0])) {
+				try {
+					listener.onReceiveData(this, data);
+				} catch (final Throwable t) {
+					LOG.error("Exception in JxtaConnection listener", t);
+				}
 			}
 		}
 	}
