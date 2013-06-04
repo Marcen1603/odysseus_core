@@ -152,6 +152,8 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 					outputPipe.close();
 					outputPipeMap.remove(sharedQueryID);
 
+					// queryID is already removed here, thats the reason that
+					// it is the exception here
 					tryRemoveQueries(executor, ids, queryID);
 					for (final Integer id : ids) {
 						if (id != queryID) {
