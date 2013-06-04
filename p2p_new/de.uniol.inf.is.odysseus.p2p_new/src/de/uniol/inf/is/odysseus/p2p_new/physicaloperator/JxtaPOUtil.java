@@ -30,7 +30,7 @@ final class JxtaPOUtil {
 	public static final byte DONE_SUBBYTE = 2;
 	public static final byte PING_SUBBYTE = 3;
 	public static final byte CONNECTION_DATA_SUBBYTE = 4;
-
+	public static final byte USE_JXTA_CONNECTION_SUBBYTE = 5;
 
 	private JxtaPOUtil() {
 	}

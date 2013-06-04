@@ -44,8 +44,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private static final String PIPE_NAME = "Odysseus Pipe";
 
 	private final PipeID pipeID;
-	private final Map<IJxtaConnection, SingleSocketServerConnection> connectionsOpenCalled = Maps.newHashMap();
-	private final Map<SingleSocketServerConnection, IJxtaConnection> directConnectionsMap = Maps.newHashMap();
+	private final Map<IJxtaConnection, IJxtaServerConnection> connectionsOpenCalled = Maps.newHashMap();
+	private final Map<IJxtaServerConnection, IJxtaConnection> dataTransmissionConnectionMap = Maps.newHashMap();
 
 	private IJxtaServerConnection connection;
 	private NullAwareTupleDataHandler dataHandler;
@@ -72,6 +72,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		this.connection = po.connection;
 		this.dataHandler = po.dataHandler;
 		this.connectionsOpenCalled.putAll(po.connectionsOpenCalled);
+		this.dataTransmissionConnectionMap.putAll(po.dataTransmissionConnectionMap);
 	}
 
 	@Override
@@ -87,49 +88,40 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 			LOG.debug("{} : Data Handler created", getName());
 
 		}
-
-		if (sender instanceof JxtaBiDiServerConnection) {
+		
+		if( connectionsOpenCalled.containsValue(sender)) {
+			LOG.debug("{} : Got connection for data transmission of type {}", getName(), addedConnection.getClass().getSimpleName());
+			dataTransmissionConnectionMap.put(sender, addedConnection);
+		} else {
 			LOG.debug("{} : Got connection for jxta communication", getName());
 			addedConnection.addListener(this);
-
-		} else if (sender instanceof SingleSocketServerConnection) {
-			LOG.debug("{} : Got connection for direct transmission", getName());
-			directConnectionsMap.put((SingleSocketServerConnection) sender, addedConnection);
 		}
 	}
 
 	// called by jxta bidi server connection
 	@Override
 	public void connectionRemoved(IJxtaServerConnection sender, IJxtaConnection removedConnection) {
-		if (sender instanceof JxtaBiDiServerConnection) {
+		if( connectionsOpenCalled.containsValue(sender)) {
+			LOG.debug("{} : Lost data transmission connection", getName());
+			dataTransmissionConnectionMap.remove(sender);
+			
+		} else {
 			LOG.debug("{} : Lost connection for jxta communication", getName());
-
 			removedConnection.removeListener(this);
-		} else if (sender instanceof SingleSocketServerConnection) {
-			LOG.debug("{} : Lost direct connection", getName());
-
-			IJxtaConnection lostDirectConnection = directConnectionsMap.remove(sender);
-			lostDirectConnection.removeListener(this);
 		}
 	}
 
-	// called by connections
+	// called by connections of jxta 
 	@Override
 	public void onDisconnect(IJxtaConnection sender) {
 		if (sender instanceof JxtaBiDiConnection) {
 			LOG.debug("{} : Jxta connection disconnected", getName());
 
-			stopDirectConnection(sender);
-
-		} else if (sender instanceof SocketConnection) {
-			LOG.debug("{} : Direct connection lost", getName());
-
-			sender.removeListener(this);
-			directConnectionsMap.remove(sender);
-		}
+			stopDirectConnectionServer(sender);
+		} 
 	}
 
-	// called by connections
+	// called by connections of jxta
 	@Override
 	public void onConnect(IJxtaConnection sender) {
 		if (LOG.isDebugEnabled()) {
@@ -145,7 +137,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	// called by Jxta
 	@Override
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {
-		if (sender instanceof JxtaBiDiConnection && data[0] == JxtaPOUtil.CONTROL_BYTE) {
+		if (data[0] == JxtaPOUtil.CONTROL_BYTE) {
 			LOG.debug("{} : Got Control packet", getName());
 
 			if (data[1] == JxtaPOUtil.OPEN_SUBBYTE) {
@@ -154,7 +146,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 				synchronized (connectionsOpenCalled) {
 					if (!connectionsOpenCalled.containsKey(sender)) {
 						try {
-							startDirectConnection(sender);
+							SingleSocketServerConnection directConnectionServer = startDirectConnectionServer(sender);
+							connectionsOpenCalled.put(sender, directConnectionServer);
 
 							if (connectionsOpenCalled.size() == 1) {
 								final int queryID = determineQueryID(getOwner());
@@ -176,7 +169,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 				synchronized (connectionsOpenCalled) {
 					if (connectionsOpenCalled.containsKey(sender)) {
 
-						stopDirectConnection(sender);
+						stopDirectConnectionServer(sender);
+						connectionsOpenCalled.remove(sender);
 
 						if (connectionsOpenCalled.isEmpty()) {
 							final int queryID = determineQueryID(getOwner());
@@ -187,6 +181,11 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 						LOG.error("Got close event from connection which hasnt called open before");
 					}
 				}
+			} else if( data[1] == JxtaPOUtil.USE_JXTA_CONNECTION_SUBBYTE ) {
+				LOG.debug("{} : Received message for using jxta connection for data transmission");
+				stopDirectConnectionServer(sender);
+				dataTransmissionConnectionMap.put(connection, sender);
+				
 			} else {
 				LOG.error("Got unknown control subbyte {}", data[1]);
 			}
@@ -209,7 +208,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		if (!directConnectionsMap.isEmpty()) {
+		if (!dataTransmissionConnectionMap.isEmpty()) {
 			final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
 			buffer.put(ObjectByteConverter.objectToBytes(punctuation));
 			buffer.flip();
@@ -220,7 +219,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	@Override
 	protected void process_next(T object, int port) {
-		if (!directConnectionsMap.isEmpty()) {
+		if (!dataTransmissionConnectionMap.isEmpty()) {
 			final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
 			dataHandler.writeData(buffer, object);
 			if (object.getMetadata() != null) {
@@ -236,8 +235,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	@Override
 	protected void process_done(int port) {
 		byte[] generateControlPacket = JxtaPOUtil.generateControlPacket(JxtaPOUtil.DONE_SUBBYTE);
-		synchronized (directConnectionsMap) {
-			for (IJxtaConnection conn : directConnectionsMap.values()) {
+		synchronized (dataTransmissionConnectionMap) {
+			for (IJxtaConnection conn : dataTransmissionConnectionMap.values()) {
 				try {
 					conn.send(generateControlPacket);
 				} catch (IOException e) {
@@ -247,33 +246,35 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		}
 	}
 
-	private SingleSocketServerConnection startDirectConnection(IJxtaConnection sender) throws IOException {
+	private SingleSocketServerConnection startDirectConnectionServer(IJxtaConnection sender) throws IOException {
 		LOG.debug("{} : Starting server for direct connection", getName());
-		SingleSocketServerConnection directConnection = new SingleSocketServerConnection();
-		directConnection.addListener(this);
-		directConnection.start();
+		SingleSocketServerConnection directConnectionServer = new SingleSocketServerConnection();
+		directConnectionServer.addListener(this);
+		directConnectionServer.start();
 
 		LOG.debug("{} : Send connection info", getName());
-		LOG.debug("{} : Port is {}", getName(), directConnection.getLocalPort());
+		LOG.debug("{} : Port is {}", getName(), directConnectionServer.getLocalPort());
 		LOG.debug("{} : PeerID is {}", getName(), P2PDictionary.getInstance().getLocalPeerID());
 
-		sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnection.getLocalPort()));
+		sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort()));
 
-		connectionsOpenCalled.put(sender, directConnection);
-
-		return directConnection;
+		return directConnectionServer;
 	}
 
-	private void stopDirectConnection(IJxtaConnection sender) {
+	private void stopDirectConnectionServer(IJxtaConnection sender) {
 		LOG.debug("{} : Stopping server for direct connection", getName());
 		
-		SingleSocketServerConnection connection = connectionsOpenCalled.remove(sender);
-		connection.stop();
-		connection.removeListener(this);
-
-		IJxtaConnection directConnection = directConnectionsMap.remove(connection);
-		directConnection.disconnect();
-		directConnection.removeListener(this);
+		IJxtaServerConnection directConnectionServer = connectionsOpenCalled.get(sender);
+		if( directConnectionServer != null ) {
+			directConnectionServer.stop();
+			directConnectionServer.removeListener(this);
+	
+			IJxtaConnection directConnection = dataTransmissionConnectionMap.remove(directConnectionServer);
+			if( directConnection != null ) {
+				directConnection.disconnect();
+				directConnection.removeListener(this);
+			}
+		}
 	}
 
 	private void write(ByteBuffer buffer, byte type) {
@@ -288,8 +289,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		// did not apply the "real" size of the object
 		buffer.get(rawBytes, 5, messageSizeBytes);
 
-		synchronized (directConnectionsMap) {
-			for (IJxtaConnection conn : directConnectionsMap.values()) {
+		synchronized (dataTransmissionConnectionMap) {
+			for (IJxtaConnection conn : dataTransmissionConnectionMap.values()) {
 				try {
 					conn.send(rawBytes);
 				} catch (final Throwable t) {

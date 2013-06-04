@@ -160,8 +160,6 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 			LOG.debug("{} : Direct connection is lost", getName());
 			dataConnection.removeListener(this);
 			dataConnection = null;
-			
-			// TODO: what if jxta-connection is still there?
 		}
 	}
 
@@ -268,8 +266,12 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 			
 		} else if (subbyte == JxtaPOUtil.CONNECTION_DATA_SUBBYTE) {
 			if(!startDirectConnection(message)) {
-				// TODO: Fallback zu Jxta-Übertragung
 				LOG.error("Direct connection NOT established");
+				try {
+					ctrlConnection.send(JxtaPOUtil.generateControlPacket(JxtaPOUtil.USE_JXTA_CONNECTION_SUBBYTE));
+				} catch (IOException e) {
+					LOG.error("Could not send message for starting data transmission with jxta-connection");
+				}
 			}
 			
 		} else {
