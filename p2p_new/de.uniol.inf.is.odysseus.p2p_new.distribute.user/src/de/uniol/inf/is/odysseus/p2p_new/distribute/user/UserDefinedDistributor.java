@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.user;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -360,7 +359,8 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		adv.setSharedQueryID(sharedQueryID);
 		adv.setTransCfgName(transCfgName);
 
-		tryPublishImpl(adv);
+		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(destinationPeer.toString(), adv, 15000);
+		
 		LOG.debug("QueryPart {} published", part);
 	}
 
@@ -412,13 +412,5 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 			topAO.subscribeToSource(sink, inputPort++, 0, sink.getOutputSchema());
 		}
 		return topAO;
-	}
-
-	private static void tryPublishImpl(QueryPartAdvertisement adv) {
-		try {
-			JxtaServicesProviderService.get().getDiscoveryService().publish(adv, 10000, 10000);
-		} catch (final IOException ex) {
-			LOG.error("Could not publish query part", ex);
-		}
 	}
 }
