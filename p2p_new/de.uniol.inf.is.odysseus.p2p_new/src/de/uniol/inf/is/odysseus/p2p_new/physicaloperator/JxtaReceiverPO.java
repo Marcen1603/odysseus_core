@@ -159,6 +159,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 		} else if( sender instanceof SocketClientConnection ) {
 			LOG.debug("{} : Direct connection is lost", getName());
 			dataConnection.removeListener(this);
+			dataConnection = null;
 			
 			// TODO: what if jxta-connection is still there?
 		}
