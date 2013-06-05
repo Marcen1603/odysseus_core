@@ -40,7 +40,7 @@ public class IntraqueryLoadBalancer extends AbstractLoadBalancer {
 	@Override
 	protected QueryPart createLocalPart() {
 	
-		// XXX
+		// XXX SweepArea instead of union. M.B.
 		final UnionAO unionAO = new UnionAO();
 		return new QueryPart(Lists.newArrayList((ILogicalOperator) unionAO), AbstractLoadBalancer.getLocalDestinationName());
 	
@@ -49,7 +49,8 @@ public class IntraqueryLoadBalancer extends AbstractLoadBalancer {
 	@Override
 	protected int getDegreeOfParallelismn(int wantedDegree, int maxDegree) {
 		
-		// XXX
+		// XXX First fix the other wworkaround in this class. M.B.
+		// return Math.min(wantedDegree, maxDegree);
 		return 2;
 		
 	}

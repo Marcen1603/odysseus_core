@@ -158,12 +158,11 @@ public class DistributionHelper {
 	 */
 	public static ILogicalQuery copyLogicalQuery(ILogicalQuery originQuery) {
 		
-		List<ILogicalOperator> operators = Lists.newArrayList();
-		RestructHelper.collectOperators(originQuery.getLogicalPlan(), operators);
-		RestructHelper.removeTopAOs(operators);
-		ILogicalQuery copy = new LogicalQuery(getPQLParserID(), operators.get(0), originQuery.getPriority());
+		ILogicalQuery copy = new LogicalQuery(getPQLParserID(), 
+				DistributionHelper.copyLogicalPlan(originQuery.getLogicalPlan()),
+				originQuery.getPriority());
 		copy.setName(originQuery.getName());
-		copy.setQueryText(PQLGeneratorService.get().generatePQLStatement(operators.get(0)));
+		copy.setQueryText(PQLGeneratorService.get().generatePQLStatement(copy.getLogicalPlan()));
 		copy.setUser(originQuery.getUser());
 		return copy;
 		

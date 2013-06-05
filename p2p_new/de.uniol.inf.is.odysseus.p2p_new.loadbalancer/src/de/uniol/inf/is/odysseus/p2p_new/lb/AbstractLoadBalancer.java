@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +27,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 
-// TODO Preconditions in allen Klassen des bundles
+// TODO Preconditions in allen Klassen des bundles. M.B.
 /**
  * The class for abstract load balancers. <br />
  * A load balancer distributes queries and/or sources on a network of peers.
@@ -113,19 +114,35 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 
 		for(final ILogicalQuery query : queries) {
 			
+			// All copies of the query plus the original query
+			List<ILogicalQuery> queriesToDistribute = Lists.newArrayList(query);
+			queryPartsMap.put(query, new ArrayList<QueryPart>());
+			
 			// Generate a new logical operator which marks that the query result shall return to this instance
 			QueryPart localPart = this.createLocalPart();
 			
-			// Create the parts of the query and subscribe the last part to the local part
-			this.determineQueryParts(query, queryPartsMap, localPart);
-			
-			// Make xopies of the query, create the parts of the copy and subscribe the last part to the local part
+			// Make copies of the query
+			// TODO wantedDegree als Parameter M.B.
 			for(int copyNo = 0; copyNo < this.getDegreeOfParallelismn(0, remotePeerIDs.size()) - 1; copyNo++)
-				this.determineQueryParts(DistributionHelper.copyLogicalQuery(query), queryPartsMap, localPart);
+				queriesToDistribute.add(DistributionHelper.copyLogicalQuery(query));
 			
-			// Initialize the operators of the local part
-			for(ILogicalOperator operator : localPart.getOperators())
-				operator.initialize();
+			for(ILogicalQuery queryToDistribute : queriesToDistribute) {
+			
+				// Get all logical operators of the query and remove the TopAOs
+				final List<ILogicalOperator> operators = Lists.newArrayList();
+				RestructHelper.collectOperators(queryToDistribute.getLogicalPlan(), operators);
+				RestructHelper.removeTopAOs(operators);
+				
+				// Create the queryparts of this query
+				List<QueryPart> parts = this.determineQueryParts(operators);
+				LOG.debug("Got {} parts of logical query {}", parts.size(), query);
+				queryPartsMap.get(query).addAll(parts);
+				
+			}
+			
+			// Subscribe the local part
+			this.subscribeToLocalPart(queryPartsMap.get(query), localPart);
+			queryPartsMap.get(query).add(localPart);
 			
 		}
 		
@@ -139,6 +156,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// The queries to be executed locally
 		final List<ILogicalQuery> localQueries = Lists.newArrayList();
 		
+		// Publish all remote parts and get the local ones
 		for(ILogicalQuery query : queryPartsMap.keySet())
 			localQueries.add(this.shareParts(queryPartsMap.get(query), queryPartDistributionMap, cfgName, query.toString()));
 		
@@ -205,30 +223,26 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	protected abstract QueryPart createLocalPart();
 	
 	/**
-	 * Determines the {@link QueryPart}s of an {@link ILogicalQuery} and stores it in a map.
-	 * @param query The {@link ILogicalQuery}.
-	 * @param queryPartsMap The mapping of {@link ILogicalQuery}s and their {@link QueryPart}s.
-	 * @param localPart The {@link QueryPart} executed locally putting the distributed {@link QueryPart}s together.
+	 * Subscribes a local {@link QueryPart} to a list of {@link QueryPart}s. <br />
+	 * Every sink of each {@link QueryPart} will be subscribed to a different Port of the source of the 
+	 * local {@link QueryPart}.
+	 * @param queryParts The list of {@link QueryPart}s.
+	 * @param localPart The local {@link QueryPart} to be subscribed.
 	 */
-	protected void determineQueryParts(ILogicalQuery query, Map<ILogicalQuery, List<QueryPart>> queryPartsMap, QueryPart localPart) {
+	protected void subscribeToLocalPart(List<QueryPart> queryParts, QueryPart localPart) {
 		
-		// Get all logical operators of the query and remove the TopAOs
-		final List<ILogicalOperator> operators = Lists.newArrayList();
-		RestructHelper.collectOperators(query.getLogicalPlan(), operators);
-		RestructHelper.removeTopAOs(operators);
+		for(QueryPart part : queryParts) {
 		
-		// Split the query into parts
-		final List<QueryPart> queryParts = this.determineQueryParts(operators);
-		LOG.debug("Got {} parts of logical query {}", queryParts.size(), query);
-		
-		// Subscribe the local part
-		ILogicalOperator localSource = localPart.getRelativeSources().iterator().next();
-		Collection<ILogicalOperator> sinks = queryParts.get(queryParts.size() - 1).getRealSinks();
-		for(ILogicalOperator sink : sinks)
-			localSource.subscribeToSource(sink, localSource.getNumberOfInputs(), 0, sink.getOutputSchema());
+			ILogicalOperator localSource = localPart.getRelativeSources().iterator().next();
+			Collection<ILogicalOperator> sinks = part.getRealSinks();
+			for(ILogicalOperator sink : sinks)
+				localSource.subscribeToSource(sink, localSource.getNumberOfInputs(), 0, sink.getOutputSchema());
 			
-		queryParts.add(localPart);
-		queryPartsMap.put(query, queryParts);
+		}
+		
+		// Initialize the operators of the local part
+		for(ILogicalOperator operator : localPart.getOperators())
+			operator.initialize();
 		
 	}
 	
@@ -297,7 +311,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 	}
 	
-	// TODO wantedDegree als Parameter
 	/**
 	 * Sets the degree of parallelism for the {@link ILogicalQuery}, e.g. <code>1</code> for not parallize the {@link ILogicalQuery}.
 	 * @param wantedDegree The wanted degree by the user.
