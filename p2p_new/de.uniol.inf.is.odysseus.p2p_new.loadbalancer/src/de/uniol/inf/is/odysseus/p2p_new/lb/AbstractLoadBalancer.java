@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
@@ -91,7 +92,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	
 	@Override
 	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender,
-			List<ILogicalQuery> queries, String cfgName) {
+			List<ILogicalQuery> queries, QueryBuildConfiguration cfg) {
 
 		if(queries == null || queries.isEmpty()) {
 			
@@ -158,7 +159,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		// Publish all remote parts and get the local ones
 		for(ILogicalQuery query : queryPartsMap.keySet())
-			localQueries.add(this.shareParts(queryPartsMap.get(query), queryPartDistributionMap, cfgName, query.toString()));
+			localQueries.add(this.shareParts(queryPartsMap.get(query), queryPartDistributionMap, cfg, query.toString()));
 		
 		return localQueries;
 		
@@ -252,9 +253,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param queryPartDistributionMap The mapping of the {@link QueryPart}s and the IDs of the the peers, where each {@link QueryPart} 
 	 * shall be stored.
 	 * @param sharedQueryID The {@link ID} for query sharing.
-	 * @param transCfgName The name of the transport configuration.
+	 * @param transCfg The name of the transport configuration.
 	 */
-	protected List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, String transCfgName) {
+	protected List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, QueryBuildConfiguration transCfg) {
 		
 		final List<QueryPart> localParts = Lists.newArrayList();
 		final PeerID ownPeerID = P2PDictionaryService.get().getLocalPeerID();
@@ -271,7 +272,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 				QueryPart partToPublish = DistributionHelper.replaceStreamAOs(part);
 				LOG.debug("Plan of the querypart to publish:\n{}", this.printer.createString(partToPublish.getOperators().iterator().next()));
-				DistributionHelper.publish(partToPublish, assignedPeerID, sharedQueryID, transCfgName);
+				DistributionHelper.publish(partToPublish, assignedPeerID, sharedQueryID, transCfg);
 				
 			}
 
@@ -286,11 +287,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * into an {@link ILogicalQuery}.
 	 * @param queryParts All {@link QueryPart}s of an {@link ILogicalQuery}.
 	 * @param queryPartDistributionMap The mapping of the {@link QueryPart}s and the {@link PeerID}s, where they shall be executed.
-	 * @param transCfgName The name of the transfer configuration.
+	 * @param transCfg The transfer configuration.
 	 * @param queryName The name of the {@link ILogicalQuery}.
 	 * @return The new {@link ILogicalQuery} created from all {@link QueryPart}s, which shall be executed locally.
 	 */
-	protected ILogicalQuery shareParts(List<QueryPart> queryParts, Map<QueryPart, PeerID> queryPartDistributionMap, String transCfgName, 
+	protected ILogicalQuery shareParts(List<QueryPart> queryParts, Map<QueryPart, PeerID> queryPartDistributionMap, QueryBuildConfiguration transCfg, 
 			String queryName) {
 		
 		// Generate an ID for the shared query
@@ -302,7 +303,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			queryPartPeerMap.put(part, queryPartDistributionMap.get(part));
 		
 		// publish the queryparts and transform the parts which shall be executed locally into a query
-		ILogicalQuery localQuery = DistributionHelper.transformToQuery(this.shareParts(queryPartPeerMap, sharedQueryID, transCfgName), queryName);
+		ILogicalQuery localQuery = DistributionHelper.transformToQuery(this.shareParts(queryPartPeerMap, sharedQueryID, transCfg), queryName);
 		
 		// Registers an sharedQueryID as a master to resolve removed query parts
 		QueryPartController.getInstance().registerAsMaster(localQuery, sharedQueryID);

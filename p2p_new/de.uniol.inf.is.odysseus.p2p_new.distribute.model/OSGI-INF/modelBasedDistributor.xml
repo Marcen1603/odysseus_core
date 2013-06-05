@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="de.uniol.inf.is.odysseus.p2p_new.distribute.model.ModelBasedDistributor">
    <implementation class="de.uniol.inf.is.odysseus.p2p_new.distribute.model.ModelBasedDistributor"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor"/>
    </service>
 </scr:component>

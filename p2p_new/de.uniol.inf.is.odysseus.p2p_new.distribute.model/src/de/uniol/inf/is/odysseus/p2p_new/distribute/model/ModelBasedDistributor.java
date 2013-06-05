@@ -5,6 +5,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 
 public class ModelBasedDistributor implements ILogicalQueryDistributor {
 
@@ -21,7 +22,7 @@ public class ModelBasedDistributor implements ILogicalQueryDistributor {
 	}
 
 	@Override
-	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender, List<ILogicalQuery> queriesToDistribute, String transCfgName) {
+	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender, List<ILogicalQuery> queriesToDistribute, QueryBuildConfiguration transCfg) {
 
 		// Anfragen ausschreiben
 		// Jede Anfrage eigene Ausschreibung (Advertisement)

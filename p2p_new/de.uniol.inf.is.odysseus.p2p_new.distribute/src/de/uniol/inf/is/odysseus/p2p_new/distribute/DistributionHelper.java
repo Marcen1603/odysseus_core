@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributo
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.DataDictionaryService;
@@ -305,9 +306,9 @@ public class DistributionHelper {
 	 * @param queryPart The {@link QueryPart} which shall be published.
 	 * @param destinationPeerID The ID of the peer where the {@link QueryPart} shall be published.
 	 * @param sharedQueryID The {@link ID} for query sharing.
-	 * @param transCfgName The name of the transport configuration.
+	 * @param transCfg The transport configuration.
 	 */
-	public static void publish(QueryPart queryPart, PeerID destinationPeerID, ID sharedQueryID, String transCfgName) {
+	public static void publish(QueryPart queryPart, PeerID destinationPeerID, ID sharedQueryID, QueryBuildConfiguration transCfg) {
 
 		// Create a new advertisement
 		final QueryPartAdvertisement adv = 
@@ -317,7 +318,7 @@ public class DistributionHelper {
 		adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(queryPart.getOperators().iterator().next()));
 		
 		adv.setSharedQueryID(sharedQueryID);
-		adv.setTransCfgName(transCfgName);
+		adv.setTransCfgName(transCfg.getName());
 
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(destinationPeerID.toString(), adv, 15000);
 		Optional<String> peerName = P2PDictionaryService.get().getRemotePeerName(destinationPeerID);

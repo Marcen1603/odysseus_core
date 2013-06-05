@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
@@ -63,7 +64,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 	}
 
 	@Override
-	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender, List<ILogicalQuery> queriesToDistribute, String transCfgName) {
+	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender, List<ILogicalQuery> queriesToDistribute, QueryBuildConfiguration transCfg) {
 
 		if (queriesToDistribute == null || queriesToDistribute.isEmpty()) {
 			return queriesToDistribute;
@@ -97,7 +98,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 			final Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), queryParts);
 			insertSenderAndAccess(queryPartDistributionMap);
 
-			final List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID, transCfgName);
+			final List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID, transCfg);
 			final ILogicalQuery logicalQuery = transformToQuery(localQueryParts, generator, query.toString());
 						
 			QueryPartController.getInstance().registerAsMaster(logicalQuery, sharedQueryID);
@@ -348,7 +349,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 
-	private static void publish(QueryPart part, PeerID destinationPeer, ID sharedQueryID, String transCfgName) {
+	private static void publish(QueryPart part, PeerID destinationPeer, ID sharedQueryID, QueryBuildConfiguration transCfg) {
 		Preconditions.checkNotNull(part, "QueryPart to share must not be null!");
 		part.removeDestinationName();
 
@@ -357,14 +358,14 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		adv.setPeerID(destinationPeer);
 		adv.setPqlStatement(generator.generatePQLStatement(part.getOperators().iterator().next()));
 		adv.setSharedQueryID(sharedQueryID);
-		adv.setTransCfgName(transCfgName);
+		adv.setTransCfgName(transCfg.getName());
 
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(destinationPeer.toString(), adv, 15000);
 		
 		LOG.debug("QueryPart {} published", part);
 	}
 
-	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, String transCfgName) {
+	private static List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, QueryBuildConfiguration transCfg) {
 		final List<QueryPart> localParts = Lists.newArrayList();
 
 		final PeerID ownPeerID = P2PDictionaryService.get().getLocalPeerID();
@@ -375,7 +376,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 				localParts.add(part);
 				LOG.debug("QueryPart {} locally stored", part);
 			} else {
-				publish(part, assignedPeerID, sharedQueryID, transCfgName);
+				publish(part, assignedPeerID, sharedQueryID, transCfg);
 			}
 		}
 

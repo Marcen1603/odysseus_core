@@ -265,7 +265,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		if( !ParameterDistributionType.UNDEFINED.equals(distributorName)) {
 			Optional<ILogicalQueryDistributor> optDistributor = getLogicalQueryDistributor(distributorName);
 			if ( optDistributor.isPresent()) {
-				List<ILogicalQuery> distributionResult = optDistributor.get().distributeLogicalQueries(this, queries, parameters.getName());
+				List<ILogicalQuery> distributionResult = optDistributor.get().distributeLogicalQueries(this, queries, parameters);
 				if( distributionResult != null && !distributionResult.isEmpty()) {
 					resultQueries = distributionResult;
 				} else {
