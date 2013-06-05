@@ -422,7 +422,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 				sink.getTarget().process(
 						cloneIfNessessary(object, sourceOutPort),
 						sink.getSinkInPort());
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				// Send object that could not be processed to the error port
 				e.printStackTrace();
 				transfer(object, ERRORPORT);
