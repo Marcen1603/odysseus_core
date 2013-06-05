@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.AdvertisementManagerService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.CompilerService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
@@ -82,6 +83,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 								
 							neededSources.add(source);
 							LOG.debug("Source {} needed for query {}", source, adv.getPqlStatement());
+							AdvertisementManagerService.get().refreshAdvertisements();
 							
 						} while(!neededSourcesMap.replace(adv, oldNeededSources, neededSources));
 						

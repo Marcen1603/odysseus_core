@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 public class JxtaBiDiClientConnection extends JxtaBiDiConnection {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaBiDiClientConnection.class);
-	private static final int MAX_CONNECT_WAITING_TIME_MILLIS = 30000;
+	private static final int MAX_CONNECT_WAITING_TIME_MILLIS = 45000;
 	private final PipeAdvertisement pipeAdvertisement;
 	
 	public JxtaBiDiClientConnection(PipeAdvertisement adv) {
