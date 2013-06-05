@@ -292,6 +292,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		LOG.debug("Parallel execution started.");
 		// we are waiting for the event that is fired.
+		((MigrationRouterPO) router).setPrintNextTuple(true);
 	}
 
 	/**
