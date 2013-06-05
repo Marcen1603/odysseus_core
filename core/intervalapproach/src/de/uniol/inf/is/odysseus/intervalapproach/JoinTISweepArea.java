@@ -39,7 +39,7 @@ public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
 	@Override
 	public void insert(T s) {
 		synchronized (this.getElements()) {
-			setLatestTimeStamp(s.getMetadata().getEnd());
+			setLatestTimeStamp(s);
 			this.getElements().add(s);
 		}
 	}

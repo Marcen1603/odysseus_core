@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 
 public abstract class AbstractTimeIntervalSweepArea<T extends IStreamObject<? extends ITimeInterval>> extends
 		AbstractSweepArea<T> implements ITimeIntervalSweepArea<T>{
-
+	
 	protected PointInTime lastInserted = null;
 
 	public AbstractTimeIntervalSweepArea() {
@@ -39,7 +39,7 @@ public abstract class AbstractTimeIntervalSweepArea<T extends IStreamObject<? ex
 	@Override
 	public void insert(T element) {
 		if (this.comparator == null) {
-			setLatestTimeStamp(element.getMetadata().getEnd());
+			setLatestTimeStamp(element);
 			this.getElements().add(element);
 			return;
 		}
@@ -55,7 +55,7 @@ public abstract class AbstractTimeIntervalSweepArea<T extends IStreamObject<? ex
 				return;
 			}
 		}
-		setLatestTimeStamp(element.getMetadata().getEnd());
+		setLatestTimeStamp(element);
 		this.getElements().add(0, element);
 	}
 	
@@ -64,9 +64,9 @@ public abstract class AbstractTimeIntervalSweepArea<T extends IStreamObject<? ex
 	 * 
 	 * @param current end timestamp of the currently inserted element.
 	 */
-	protected void setLatestTimeStamp(PointInTime current) {
-		if (this.lastInserted == null || current.after(this.lastInserted)) {
-			this.lastInserted = current;
+	protected void setLatestTimeStamp(T current) {
+		if (this.lastInserted == null || current.getMetadata().getEnd().after(this.lastInserted)) {
+			this.lastInserted = current.getMetadata().getEnd();
 		}
 	}
 	
