@@ -29,7 +29,7 @@ public class Write<R> extends AbstractAggregateFunction<R, R> {
 	private static Write instance;
 
 	private Write() {
-		super("WRITE");
+		super("WRITE", false);
 	}
 	
 	static public Write getInstance(){

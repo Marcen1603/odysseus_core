@@ -34,17 +34,17 @@ public class RelationalNth extends Nth<Tuple<?>, Tuple<?>> {
 	private static final long serialVersionUID = -8236978756283300379L;
 	private final static Map<Integer, RelationalNth> instances = new HashMap<Integer, RelationalNth>();
 
-    static public RelationalNth getInstance(Integer n) {
+    static public RelationalNth getInstance(Integer n, boolean partialAggregateInput) {
         RelationalNth instance = instances.get(n);
         if (instance == null) {
-            instance = new RelationalNth(n);
+            instance = new RelationalNth(n, partialAggregateInput);
             instances.put(n, instance);
         }
         return instance;
     }
 
-    private RelationalNth(int n) {
-        super(n);
+    private RelationalNth(int n, boolean partialAggregateInput) {
+        super(n, partialAggregateInput);
     }
 
     @Override

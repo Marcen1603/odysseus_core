@@ -187,7 +187,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
         for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toEval
                 .entrySet()) {
             IEvaluator<R, W> eval = getEvalFunction(e.getKey());
-            W value = eval.evaluate(e.getValue());
+            W value = eval.evaluate(e.getValue());            
             ret.put(e.getKey(), value);
         }
         return ret;

@@ -35,15 +35,15 @@ public class RelationalLast extends Last<Tuple<?>, Tuple<?>> {
 	private static Map<Integer,RelationalLast> instances = new HashMap<Integer, RelationalLast>();
 	private int pos;
 
-    private RelationalLast(int pos) {
-        super();
+    private RelationalLast(int pos, boolean partialAggregateInput) {
+        super(partialAggregateInput);
         this.pos = pos;
     }
 
-    public static RelationalLast getInstance(int pos) {
+    public static RelationalLast getInstance(int pos, boolean partialAggregateInput) {
     	RelationalLast ret = instances.get(pos);
         if (ret == null) {
-            ret = new RelationalLast(pos);
+            ret = new RelationalLast(pos, partialAggregateInput);
         }
         return ret;
     }

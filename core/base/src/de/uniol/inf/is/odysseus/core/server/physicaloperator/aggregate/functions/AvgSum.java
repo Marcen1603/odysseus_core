@@ -25,8 +25,8 @@ abstract public class AvgSum<R, W> extends AbstractAggregateFunction<R, W>{
 	private static final long serialVersionUID = 2341630908327295104L;
 	boolean isAvg;
 	
-	protected AvgSum(boolean isAvg) {
-		super (isAvg?"AVG":"SUM");
+	protected AvgSum(boolean isAvg, boolean partialAggregateInput) {
+		super (isAvg?"AVG":"SUM", partialAggregateInput);
 		this.isAvg = isAvg;
 	}
 

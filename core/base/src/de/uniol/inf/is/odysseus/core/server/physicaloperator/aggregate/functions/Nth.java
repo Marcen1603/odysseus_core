@@ -28,8 +28,8 @@ abstract public class Nth<R, W> extends AbstractAggregateFunction<R, W> {
 	private static final long serialVersionUID = -3840479318065114625L;
 	private int n;
 
-    protected Nth(int n) {
-        super("NTH");
+    protected Nth(int n, boolean partialAggregateInput) {
+        super("NTH", partialAggregateInput);
         this.n = n;
     }
 

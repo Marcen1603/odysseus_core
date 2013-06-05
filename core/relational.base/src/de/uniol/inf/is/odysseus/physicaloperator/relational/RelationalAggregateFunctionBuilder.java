@@ -50,31 +50,31 @@ public class RelationalAggregateFunctionBuilder implements
 	
 	@Override
     public IAggregateFunction<Tuple<?>, Tuple<?>> createAggFunction(
-			AggregateFunction key, int[] pos) {
+			AggregateFunction key, int[] pos, boolean partialAggregateInput) {
 		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
 		if ((key.getName().equalsIgnoreCase("AVG"))
 				|| (key.getName().equalsIgnoreCase("SUM"))) {
 			aggFunc = RelationalAvgSum.getInstance(pos[0],
-					(key.getName().equalsIgnoreCase("AVG")) ? true : false);
+					(key.getName().equalsIgnoreCase("AVG")) ? true : false, partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase("COUNT")) {
-			aggFunc = RelationalCount.getInstance();
+			aggFunc = RelationalCount.getInstance(pos[0],partialAggregateInput);
 		} else if ((key.getName().equalsIgnoreCase("MIN"))
 				|| (key.getName().equalsIgnoreCase("MAX"))) {
 			aggFunc = RelationalMinMax.getInstance(pos[0],
-					(key.getName().equalsIgnoreCase("MAX")) ? true : false);
+					(key.getName().equalsIgnoreCase("MAX")) ? true : false, partialAggregateInput);
 		}else if ((key.getName().equalsIgnoreCase("STDDEV"))){
-			aggFunc = new RelationalStdDev(pos);
+			aggFunc = new RelationalStdDev(pos, partialAggregateInput);
 		} else if ((key.getName().equalsIgnoreCase("NEST"))) {
-			aggFunc = new RelationalNest(pos);
+			aggFunc = new RelationalNest(pos, partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(LAST)) {
-			aggFunc = RelationalLast.getInstance(pos[0]);
+			aggFunc = RelationalLast.getInstance(pos[0], partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(FIRST)) {
-			aggFunc = RelationalFirst.getInstance(pos[0]);
+			aggFunc = RelationalFirst.getInstance(pos[0], partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(RATE)) {
-			aggFunc = RelationalRate.getInstance();
+			aggFunc = RelationalRate.getInstance(partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(NTH)) {
 			aggFunc = RelationalNth.getInstance(Integer.parseInt(key
-					.getProperty("nth")));
+					.getProperty("nth")), partialAggregateInput);
 		} else {
 			throw new IllegalArgumentException("No such Aggregatefunction");
 		}

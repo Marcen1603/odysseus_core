@@ -27,8 +27,8 @@ abstract public class First<R, W> extends AbstractAggregateFunction<R, W> {
 	 */
 	private static final long serialVersionUID = 5606626236472048799L;
 
-	protected First() {
-        super("FIRST");
+	protected First(boolean partialAggregateInput) {
+        super("FIRST", partialAggregateInput);
     }
 
     @Override

@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
@@ -44,6 +45,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	
 	private List<AggregateItem> aggregationItems;
 	private int dumpAtValueCount = -1;
+	private boolean outputPA = false;
 	
 	public AggregateAO() {
 		super();
@@ -59,6 +61,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		groupingAttributes = new ArrayList<SDFAttribute>(op.groupingAttributes);
 		outputAttributList = new ArrayList<SDFAttribute>(op.outputAttributList);
 		dumpAtValueCount = op.dumpAtValueCount;
+		this.outputPA = op.outputPA;
 	}
 
 	public void addAggregation(SDFAttribute attribute,
@@ -171,5 +174,15 @@ public class AggregateAO extends UnaryLogicalOp {
 	public int getDumpAtValueCount() {
 		return dumpAtValueCount;
 	}
+
+	@Parameter(type = BooleanParameter.class, optional = true)
+	public void setOutputPA(boolean outputPA) {
+		this.outputPA = outputPA;
+	}
+	
+	public boolean isOutputPA() {
+		return outputPA;
+	}
+	
 
 }

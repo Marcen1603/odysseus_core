@@ -45,7 +45,7 @@ public class CountPartialAggregate<T> implements IPartialAggregate<T> {
 	
 	@Override
 	public String toString() {
-		StringBuffer ret = new StringBuffer("CountPartialAggregate (").append(hashCode()).append(")").append(count);
+		StringBuffer ret = new StringBuffer("CountPartialAggregate (").append(hashCode()).append(") c=").append(count);
 		return ret.toString();
 	}
 	

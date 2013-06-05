@@ -31,8 +31,8 @@ public class RelationalStdDev
 	private static final long serialVersionUID = -8289285906323304991L;
 	final int attribPos;
 
-	public RelationalStdDev(int[] pos) {
-		super("STDDEV");
+	public RelationalStdDev(int[] pos, boolean partialAggregateInput) {
+		super("STDDEV", partialAggregateInput);
 		this.attribPos = pos[0];
 	}
 

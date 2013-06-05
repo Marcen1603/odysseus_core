@@ -26,8 +26,8 @@ abstract public class MinMax<R extends Comparable<R>, W> extends AbstractAggrega
 	private static final long serialVersionUID = -7793230815454083728L;
 	boolean isMax = true;
 	
-	protected MinMax(boolean isMax) {
-		super (isMax?"MAX":"MIN");
+	protected MinMax(boolean isMax, boolean partialAggregateInput) {
+		super (isMax?"MAX":"MIN",partialAggregateInput);
 		this.isMax = isMax;
 	}
 		

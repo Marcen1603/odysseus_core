@@ -24,6 +24,6 @@ public interface IAggregateFunctionBuilder {
 
 	String getDatamodel();
 	Collection<String> getFunctionNames();
-	IAggregateFunction<?,?> createAggFunction(AggregateFunction e2, int[] posArray);
+	IAggregateFunction<?,?> createAggFunction(AggregateFunction e2, int[] posArray, boolean partialAggregateInput);
 
 }

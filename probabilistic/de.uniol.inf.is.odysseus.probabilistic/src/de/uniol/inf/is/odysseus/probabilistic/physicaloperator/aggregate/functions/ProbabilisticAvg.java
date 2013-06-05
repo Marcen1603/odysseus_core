@@ -40,17 +40,17 @@ public class ProbabilisticAvg extends
 	private static final double BOUND = 0.75;
 	private final int pos;
 
-	public static ProbabilisticAvg getInstance(final int pos) {
+	public static ProbabilisticAvg getInstance(final int pos, boolean partialAggregateInput) {
 		ProbabilisticAvg ret = ProbabilisticAvg.instances.get(pos);
 		if (ret == null) {
-			ret = new ProbabilisticAvg(pos);
+			ret = new ProbabilisticAvg(pos, partialAggregateInput);
 			ProbabilisticAvg.instances.put(pos, ret);
 		}
 		return ret;
 	}
 
-	protected ProbabilisticAvg(final int pos) {
-		super("AVG");
+	protected ProbabilisticAvg(final int pos, boolean partialAggregateInput) {
+		super("AVG", partialAggregateInput);
 		this.pos = pos;
 	}
 

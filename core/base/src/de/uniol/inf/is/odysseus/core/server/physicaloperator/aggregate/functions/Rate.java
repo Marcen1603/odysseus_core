@@ -28,8 +28,8 @@ abstract public class Rate<R extends IStreamObject<?>, W extends IStreamObject<?
 	 */
 	private static final long serialVersionUID = -7073964618277613915L;
 
-	protected Rate() {
-		super("RATE");
+	protected Rate(boolean partialAggregateInput) {
+		super("RATE", partialAggregateInput);
 	}
 
 	@Override

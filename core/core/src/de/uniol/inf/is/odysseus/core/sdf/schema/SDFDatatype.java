@@ -299,10 +299,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	}
 
 	public boolean isPartialAggregate() {
-		return this.getURI().equals(AVG_SUM_PARTIAL_AGGREGATE)
-				|| this.getURI().equals(COUNT_PARTIAL_AGGREGATE)
-				|| this.getURI().equals(ELEMENT_PARTIAL_AGGREGATE)
-				|| this.getURI().equals(LIST_PARTIAL_AGGREGATE);
+		return this.getURI().equals(AVG_SUM_PARTIAL_AGGREGATE.getURI())
+				|| this.getURI().equals(COUNT_PARTIAL_AGGREGATE.getURI())
+				|| this.getURI().equals(ELEMENT_PARTIAL_AGGREGATE.getURI())
+				|| this.getURI().equals(LIST_PARTIAL_AGGREGATE.getURI());
 	}
 
 	public boolean isDouble() {

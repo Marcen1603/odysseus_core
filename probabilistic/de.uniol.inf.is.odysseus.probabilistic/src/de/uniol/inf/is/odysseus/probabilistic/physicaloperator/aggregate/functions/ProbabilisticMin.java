@@ -40,17 +40,17 @@ public class ProbabilisticMin extends
 	@SuppressWarnings("unused")
 	private final int pos;
 
-	public static ProbabilisticMin getInstance(final int pos) {
+	public static ProbabilisticMin getInstance(final int pos, boolean partialAggregateInput) {
 		ProbabilisticMin ret = ProbabilisticMin.instances.get(pos);
 		if (ret == null) {
-			ret = new ProbabilisticMin(pos);
+			ret = new ProbabilisticMin(pos, partialAggregateInput);
 			ProbabilisticMin.instances.put(pos, ret);
 		}
 		return ret;
 	}
 
-	protected ProbabilisticMin(final int pos) {
-		super("MIN");
+	protected ProbabilisticMin(final int pos, boolean partialAggregateInput) {
+		super("MIN", partialAggregateInput);
 		this.pos = pos;
 	}
 

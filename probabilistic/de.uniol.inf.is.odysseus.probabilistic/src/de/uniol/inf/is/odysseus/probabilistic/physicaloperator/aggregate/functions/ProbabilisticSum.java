@@ -37,17 +37,17 @@ public class ProbabilisticSum extends
 	private static Map<Integer, ProbabilisticSum> instances = new HashMap<Integer, ProbabilisticSum>();
 	private final int pos;
 
-	public static ProbabilisticSum getInstance(final int pos) {
+	public static ProbabilisticSum getInstance(final int pos, boolean partialAggregateInput) {
 		ProbabilisticSum ret = ProbabilisticSum.instances.get(pos);
 		if (ret == null) {
-			ret = new ProbabilisticSum(pos);
+			ret = new ProbabilisticSum(pos, partialAggregateInput);
 			ProbabilisticSum.instances.put(pos, ret);
 		}
 		return ret;
 	}
 
-	protected ProbabilisticSum(final int pos) {
-		super("SUM");
+	protected ProbabilisticSum(final int pos, boolean partialAggregateInput) {
+		super("SUM", partialAggregateInput);
 		this.pos = pos;
 	}
 

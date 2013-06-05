@@ -37,17 +37,17 @@ public class ProbabilisticCount extends
 	private static Map<Integer, ProbabilisticCount> instances = new HashMap<Integer, ProbabilisticCount>();
 	private final int pos;
 
-	public static ProbabilisticCount getInstance(final int pos) {
+	public static ProbabilisticCount getInstance(final int pos, boolean partialAggregateInput) {
 		ProbabilisticCount ret = ProbabilisticCount.instances.get(pos);
 		if (ret == null) {
-			ret = new ProbabilisticCount(pos);
+			ret = new ProbabilisticCount(pos, partialAggregateInput);
 			ProbabilisticCount.instances.put(pos, ret);
 		}
 		return ret;
 	}
 
-	protected ProbabilisticCount(final int pos) {
-		super("COUNT");
+	protected ProbabilisticCount(final int pos, boolean partialAggregateInput) {
+		super("COUNT", partialAggregateInput);
 		this.pos = pos;
 	}
 

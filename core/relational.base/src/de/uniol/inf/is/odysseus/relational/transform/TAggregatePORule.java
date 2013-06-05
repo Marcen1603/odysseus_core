@@ -65,16 +65,20 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 					FESortedClonablePair<SDFSchema, AggregateFunction> p = new FESortedClonablePair<SDFSchema, AggregateFunction>(
 							attrList, e.getKey());
 					int[] posArray = new int[p.getE1().size()];
+					boolean partialAggregateInput = false;
 					for (int i = 0; i < p.getE1().size(); ++i) {
 						SDFAttribute attr = p.getE1().get(i);
 						posArray[i] = inputSchema.indexOf(attr);
+						if (attr.getDatatype().isPartialAggregate()){
+							partialAggregateInput = true;
+						}
 					}
 					IAggregateFunctionBuilderRegistry registry = Activator.getAggregateFunctionBuilderRegistry();
 					IAggregateFunctionBuilder builder = registry.getBuilder(Relational.RELATIONAL,p.getE2().getName());
 					if (builder == null){
 						throw new RuntimeException("Could not find a builder for "+p.getE2().getName());
 					}
-					IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray);
+					IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput);
 					aggregatePO.setInitFunction(p, aggFunction);
 					aggregatePO.setMergeFunction(p, aggFunction);
 					aggregatePO.setEvalFunction(p, aggFunction);

@@ -32,8 +32,8 @@ public class RelationalNest extends AbstractListAggregation<Tuple<? extends IMet
 	private static final long serialVersionUID = -9172869315418294224L;
 	private int[] restrictList;
 
-	public RelationalNest(int[] restrictList){
-		super("NEST");
+	public RelationalNest(int[] restrictList, boolean partialAggregateInput){
+		super("NEST", partialAggregateInput);
 		this.restrictList = restrictList;
 	}
 	

@@ -35,15 +35,15 @@ public class RelationalFirst extends First<Tuple<?>, Tuple<?>> {
 	private static Map<Integer, RelationalFirst> instances = new HashMap<Integer, RelationalFirst>();
 	private int pos;
 
-	private RelationalFirst(int pos) {
-		super();
+	private RelationalFirst(int pos, boolean partialAggregateInput) {
+		super(partialAggregateInput);
 		this.pos = pos;
 	}
 
-	public static RelationalFirst getInstance(int pos) {
+	public static RelationalFirst getInstance(int pos, boolean partialAggregateInput) {
 		RelationalFirst ret = instances.get(pos);
 		if (ret == null) {
-			ret = new RelationalFirst(pos);
+			ret = new RelationalFirst(pos, partialAggregateInput);
 		}
 		return ret;
 	}

@@ -27,8 +27,8 @@ abstract public class Last<R, W> extends AbstractAggregateFunction<R, W> {
 	 */
 	private static final long serialVersionUID = 4460706645733648643L;
 
-	protected Last() {
-        super("LAST");
+	protected Last(boolean partialAggregateInput) {
+        super("LAST", partialAggregateInput);
     }
 
     @Override

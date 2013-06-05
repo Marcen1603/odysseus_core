@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,15 +48,16 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private final Map<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>>();
 	private int dumpAtValueCount = -1;
 	private long createOutputCounter = 0;
+	private boolean outputPA = false;
 
-//	public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
-//			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
-//			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
-//			IGroupProcessor<R, W> grProcessor) {
-//		super(inputSchema, outputSchema, groupingAttributes, aggregations);
-//		setGroupProcessor(grProcessor);
-//		transferArea = new TITransferArea<W, W>();
-//	}
+	// public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
+	// SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
+	// Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
+	// IGroupProcessor<R, W> grProcessor) {
+	// super(inputSchema, outputSchema, groupingAttributes, aggregations);
+	// setGroupProcessor(grProcessor);
+	// transferArea = new TITransferArea<W, W>();
+	// }
 
 	public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
 			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
@@ -81,6 +82,14 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		this.dumpAtValueCount = dumpAtValueCount;
 	}
 
+	public void setOutputPA(boolean outputPA) {
+		this.outputPA = outputPA;
+	}
+
+	public boolean isOutputPA() {
+		return outputPA;
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -90,7 +99,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
 		getGroupProcessor().init();
-		transferArea.init((AbstractPipe<W, W>)this);
+		transferArea.init((AbstractPipe<W, W>) this);
 	}
 
 	@Override
@@ -111,12 +120,11 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		return super.isDone() && transferArea.size() == 0;
 	}
 
-		
 	@Override
 	protected synchronized void process_next(R object, int port) {
-		
+
 		// Determine if there is any data from previous runs to write
-		createOutput(object.getMetadata().getStart());
+		//createOutput(object.getMetadata().getStart());
 
 		// Create group ID from input object
 		Integer groupID = getGroupProcessor().getGroupID(object);
@@ -132,6 +140,9 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 		// Update sweep area with new element
 		updateSA(sa, object);
+		
+		// Is there any new output to write now?
+		createOutput(object.getMetadata().getStart());
 	}
 
 	private synchronized void createOutput(PointInTime timestamp) {
@@ -168,7 +179,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 				}
 			}
 		}
-		//transferArea.newElement(new Heartbeat(border),0);
+		// transferArea.newElement(new Heartbeat(border),0);
 		transferArea.newHeartbeat(border, 0);
 		// System.out.println(this+"Found Bordertime "+border+" at timestamp "+timestamp);
 		// for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema,
@@ -185,11 +196,16 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		while (results.hasNext()) {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e = results
 					.next();
-			PairMap<SDFSchema, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(e);
-			W out = getGroupProcessor().createOutputElement(groupID, r);
+			W out = null;
+			if (outputPA) {					
+				out = getGroupProcessor().createOutputElement2(groupID, e);
+			} else {
+				PairMap<SDFSchema, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(e);
+				out = getGroupProcessor().createOutputElement(groupID, r);
+			}
 			out.setMetadata(e.getMetadata());
-			transferArea.transfer(out);
 			// System.out.println(this+"Move to tranfer area "+out);
+			transferArea.transfer(out);
 		}
 	}
 
@@ -209,7 +225,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	@Override
-	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
+	public synchronized void processPunctuation(IPunctuation punctuation,
+			int port) {
 		createOutput(punctuation.getTime());
 	}
 

@@ -16,20 +16,27 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions;
 
 abstract public class AbstractAggregateFunction<R,W> implements IAggregateFunction<R,W> {
-
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1420819068822674498L;
-	String name = "";
+	final private String name;
+	final private boolean partialAggregateInput;
+
 	
 	@Override
 	public String getName() {
 		return name;
 	}
 	
-	protected AbstractAggregateFunction(String name) {
+	protected AbstractAggregateFunction(String name, boolean partialAggregateInput) {
 		this.name = name;
+		this.partialAggregateInput = partialAggregateInput;
+	}
+	
+	public boolean isPartialAggregateInput() {
+		return partialAggregateInput;
 	}
 	
 	/* (non-Javadoc)

@@ -18,14 +18,18 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 public interface IGroupProcessor<R, W extends IClone> {
 
-	abstract public Integer getGroupID(R elem);
+	public Integer getGroupID(R elem);
 
-	abstract public void init();
+	public void init();
 
-	abstract public W createOutputElement(Integer groupID,
+	public W createOutputElement(Integer groupID,
 			PairMap<SDFSchema, AggregateFunction, W, ?> r);
+
+	public W createOutputElement2(Integer groupID,
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, ?> e);
 
 }

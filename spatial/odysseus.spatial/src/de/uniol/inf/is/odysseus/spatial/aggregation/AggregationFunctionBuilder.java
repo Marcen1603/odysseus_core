@@ -45,10 +45,10 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
     }
 
     @Override
-    public IAggregateFunction<?, ?> createAggFunction(final AggregateFunction key, final int[] pos) {
+    public IAggregateFunction<?, ?> createAggFunction(final AggregateFunction key, final int[] pos, boolean partialAggregateInput) {
         IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
         if (key.getName().equalsIgnoreCase(AggregationFunctionBuilder.UNION_GEOMETRY)) {
-            aggFunc = new UnionGeometry(pos);
+            aggFunc = new UnionGeometry(pos, partialAggregateInput);
         }
         else {
             throw new IllegalArgumentException(String.format("No such Aggregatefunction: %s", key.getName()));

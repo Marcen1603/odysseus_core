@@ -30,13 +30,13 @@ public class RelationalRate extends
 	private static final long serialVersionUID = -2723042267161464535L;
 	private static RelationalRate instance;
 
-	private RelationalRate() {
-		super();
+	private RelationalRate(boolean partialAggregateInput) {
+		super(partialAggregateInput);
 	}
 
-	public static RelationalRate getInstance() {
+	public static RelationalRate getInstance(boolean partialAggregateInput) {
 		if (instance == null) {
-			instance = new RelationalRate();
+			instance = new RelationalRate(partialAggregateInput);
 		}
 		return instance;
 	}

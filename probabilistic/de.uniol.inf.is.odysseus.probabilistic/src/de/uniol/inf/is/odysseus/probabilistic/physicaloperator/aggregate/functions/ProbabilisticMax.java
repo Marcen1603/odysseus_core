@@ -38,17 +38,17 @@ public class ProbabilisticMax extends
 	@SuppressWarnings("unused")
 	private final int pos;
 
-	public static ProbabilisticMax getInstance(final int pos) {
+	public static ProbabilisticMax getInstance(final int pos, boolean partialAggregateInput) {
 		ProbabilisticMax ret = ProbabilisticMax.instances.get(pos);
 		if (ret == null) {
-			ret = new ProbabilisticMax(pos);
+			ret = new ProbabilisticMax(pos, partialAggregateInput);
 			ProbabilisticMax.instances.put(pos, ret);
 		}
 		return ret;
 	}
 
-	protected ProbabilisticMax(final int pos) {
-		super("MAX");
+	protected ProbabilisticMax(final int pos, boolean partialAggregateInput) {
+		super("MAX", partialAggregateInput);
 		this.pos = pos;
 	}
 

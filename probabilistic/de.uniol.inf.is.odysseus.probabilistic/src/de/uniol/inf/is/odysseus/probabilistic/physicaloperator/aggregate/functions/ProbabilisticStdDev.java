@@ -38,17 +38,17 @@ public class ProbabilisticStdDev extends
 	@SuppressWarnings("unused")
 	private final int pos;
 
-	public static ProbabilisticStdDev getInstance(final int pos) {
+	public static ProbabilisticStdDev getInstance(final int pos, boolean partialAggregateInput) {
 		ProbabilisticStdDev ret = ProbabilisticStdDev.instances.get(pos);
 		if (ret == null) {
-			ret = new ProbabilisticStdDev(pos);
+			ret = new ProbabilisticStdDev(pos, partialAggregateInput);
 			ProbabilisticStdDev.instances.put(pos, ret);
 		}
 		return ret;
 	}
 
-	protected ProbabilisticStdDev(final int pos) {
-		super("STDDEV");
+	protected ProbabilisticStdDev(final int pos,boolean partialAggregateInput) {
+		super("STDDEV", partialAggregateInput);
 		this.pos = pos;
 	}
 

@@ -43,15 +43,15 @@ public class RelationalSymbolTableOperationFactory implements
 	private static IAggregateFunction createNewFunction(String name) {
 		IAggregateFunction func = null;
 		if ("COUNT".equalsIgnoreCase(name)){
-			func = RelationalCount.getInstance();
+			func = RelationalCount.getInstance(0, false);
 		}else if ("SUM".equalsIgnoreCase(name)){
-			func = RelationalAvgSum.getInstance(0, false);
+			func = RelationalAvgSum.getInstance(0, false, false);
 		}else if ("AVG".equalsIgnoreCase(name)){
-			func = RelationalAvgSum.getInstance(0, true);
+			func = RelationalAvgSum.getInstance(0, true, false);
 		}else if ("MAX".equalsIgnoreCase(name)){
-			func = RelationalMinMax.getInstance(0, true);
+			func = RelationalMinMax.getInstance(0, true, false);
 		}else if ("MIN".equalsIgnoreCase(name)){
-			func = RelationalMinMax.getInstance(0, false);
+			func = RelationalMinMax.getInstance(0, false, false);
 		}else if ("WRITE".equalsIgnoreCase(name)){
 			func = Write.getInstance();
 		}

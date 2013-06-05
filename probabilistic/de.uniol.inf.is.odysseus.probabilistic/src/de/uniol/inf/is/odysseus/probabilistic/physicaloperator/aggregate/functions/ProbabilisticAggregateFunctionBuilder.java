@@ -44,30 +44,30 @@ public class ProbabilisticAggregateFunctionBuilder implements
 
 	@Override
 	public IAggregateFunction<?, ?> createAggFunction(
-			final AggregateFunction key, final int[] pos) {
+			final AggregateFunction key, final int[] pos, boolean partialAggregateInput) {
 		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
 		if (key.getName().equalsIgnoreCase(
 				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "AVG")) {
-			aggFunc = ProbabilisticAvg.getInstance(pos[0]);
+			aggFunc = ProbabilisticAvg.getInstance(pos[0], partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(
 				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "SUM")) {
-			aggFunc = ProbabilisticSum.getInstance(pos[0]);
+			aggFunc = ProbabilisticSum.getInstance(pos[0], partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(
 				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "COUNT")) {
-			aggFunc = ProbabilisticCount.getInstance(pos[0]);
+			aggFunc = ProbabilisticCount.getInstance(pos[0], partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(
 				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "MIN")) {
-			aggFunc = ProbabilisticMin.getInstance(pos[0]);
+			aggFunc = ProbabilisticMin.getInstance(pos[0], partialAggregateInput);
 			throw new IllegalArgumentException(
 					"MIN Aggregatefunction not implemented");
 		} else if (key.getName().equalsIgnoreCase(
 				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "MAX")) {
-			aggFunc = ProbabilisticMax.getInstance(pos[0]);
+			aggFunc = ProbabilisticMax.getInstance(pos[0],partialAggregateInput);
 			throw new IllegalArgumentException(
 					"MAX Aggregatefunction not implemented");
 		} else if (key.getName().equalsIgnoreCase(
 				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "STDDEV")) {
-			aggFunc = ProbabilisticStdDev.getInstance(pos[0]);
+			aggFunc = ProbabilisticStdDev.getInstance(pos[0], partialAggregateInput);
 			throw new IllegalArgumentException(
 					"STDDEV Aggregatefunction not implemented");
 		} else if (key.getName().equalsIgnoreCase(
