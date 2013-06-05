@@ -269,7 +269,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	public AbstractPipe<R, R> clone() {
 		MigrationRouterPO<R> clone = new MigrationRouterPO<R>(
 				this.sourcesToPunctuations.keySet(), this.inPortOld,
-				this.inPortNew, this.areas);
+				this.inPortNew, this.areas.clone());
 		Map<ISource<?>, Pair<IPunctuation, IPunctuation>> stp = new HashMap<ISource<?>, Pair<IPunctuation, IPunctuation>>();
 		stp.putAll(this.sourcesToPunctuations);
 		clone.setSourcesToPunctuations(stp);
