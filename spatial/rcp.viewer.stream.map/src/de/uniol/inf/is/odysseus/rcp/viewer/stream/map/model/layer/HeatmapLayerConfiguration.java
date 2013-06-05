@@ -11,6 +11,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer;
  */
 public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 
+	private static final long serialVersionUID = -7225910571344993841L;
+
 	public HeatmapLayerConfiguration(RasterLayerConfiguration toCopy) {
 		super(toCopy);
 	}
