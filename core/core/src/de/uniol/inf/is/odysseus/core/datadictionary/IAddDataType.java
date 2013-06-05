@@ -31,5 +31,6 @@ public interface IAddDataType {
 	 * @param dt: The data type 
 	 */
 	public void addDatatype(String name, SDFDatatype dt);
+	public void addDatatype(SDFDatatype dt);
 
 }

@@ -568,6 +568,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			throw new DataDictionaryException("Type '" + name + "' already exists.");
 		}
 	}
+	
+	@Override
+	public void addDatatype(SDFDatatype dt) {
+		addDatatype(dt.getURI(), dt);
+	}
 
 	@Override
 	public void removeDatatype(String name) throws DataDictionaryException {
