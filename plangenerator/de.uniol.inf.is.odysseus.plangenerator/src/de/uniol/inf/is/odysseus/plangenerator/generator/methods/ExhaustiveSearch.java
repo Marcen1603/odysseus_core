@@ -63,7 +63,7 @@ public class ExhaustiveSearch extends AbstractPruningPlanGenerationMethod {
 	 * , de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.
 	 * configuration.PlanGenerationConfiguration)
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<ILogicalOperator> generatePlans(ILogicalOperator plan,
 			PlanGenerationConfiguration config, IOperatorOwner owner) {
@@ -115,11 +115,12 @@ public class ExhaustiveSearch extends AbstractPruningPlanGenerationMethod {
 		Collections.sort(costs);
 		LOG.debug("Costs.size: {}", costs.size());
 		LOG.debug("CostMap.size: {}", costMap.size());
-		for(int i = costs.size() - 1; i >= 0; i--) {
+		for(int i = 0; i < costs.size(); i++) {
 			LOG.debug("Added plan {}", costMap.get(costs.get(i)));
 			sorted.add(costMap.get(costs.get(i)));
 		}
 
+		sorted.add(0, plan);
 
 		// set the owners
 		for (ILogicalOperator p : sorted) {
@@ -129,11 +130,6 @@ public class ExhaustiveSearch extends AbstractPruningPlanGenerationMethod {
 		}
 		
 		return sorted;
-		// if(!getPredicateHelper().allPredicatesSatisfied()) {
-		// System.err.println("[ExhaustiveSearch] Not all predicates have been satisfied.");
-		// }
-
-		//return plans;
 	}
 
 }
