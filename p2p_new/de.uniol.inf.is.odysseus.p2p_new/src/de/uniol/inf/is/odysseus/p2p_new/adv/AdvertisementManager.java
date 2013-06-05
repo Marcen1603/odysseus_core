@@ -23,8 +23,8 @@ import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 public class AdvertisementManager implements IAdvertisementManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementManager.class);
-	private static final long DISCOVERY_INTERVAL_MILLIS = 3 * 1000;
-	private static final int REMOTE_DISCOVERY_COUNT = 5;
+	private static final long DISCOVERY_INTERVAL_MILLIS = 2 * 1000;
+	private static final int REMOTE_DISCOVERY_COUNT = 2;
 
 	private static AdvertisementManager instance;
 
