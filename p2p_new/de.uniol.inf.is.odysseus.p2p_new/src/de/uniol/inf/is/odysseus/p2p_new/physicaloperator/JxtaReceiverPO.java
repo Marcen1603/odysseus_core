@@ -112,6 +112,9 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		if( !(ipo instanceof JxtaReceiverPO)) {
 			return false;
 		}
+		if( ipo == this ) {
+			return true;
+		}
 		
 		JxtaReceiverPO<?> otherReceiver = (JxtaReceiverPO<?>)ipo;
 		return otherReceiver.pipeID.equals(pipeID);
