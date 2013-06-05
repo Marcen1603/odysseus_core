@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -137,6 +138,22 @@ public class QueryPart {
 			}
 		}
 		return filteredOperators.build();
+	}
+	
+	@Override
+	public String toString() {
+		
+		String strPart = new String();
+		Iterator<ILogicalOperator> iter = this.operators.iterator();
+		
+		while(iter.hasNext())
+			strPart += iter.next().getName() + " ";
+		
+		if(this.destinationName != null)
+			strPart += "; Destination= " + this.destinationName;
+		
+		return strPart;
+		
 	}
 
 }
