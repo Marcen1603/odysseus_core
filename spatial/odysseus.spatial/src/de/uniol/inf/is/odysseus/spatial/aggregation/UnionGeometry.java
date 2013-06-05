@@ -33,8 +33,8 @@ public class UnionGeometry extends AbstractAggregateFunction<Tuple<?>, Tuple<?>>
     private static final long serialVersionUID = -594477978741672401L;
     private final int         attribPos;
 
-    public UnionGeometry(final int[] pos) {
-        super("MergeGeometry");
+    public UnionGeometry(final int[] pos, boolean partialAggregateInput) {
+        super("MergeGeometry", partialAggregateInput);
         this.attribPos = pos[0];
     }
 

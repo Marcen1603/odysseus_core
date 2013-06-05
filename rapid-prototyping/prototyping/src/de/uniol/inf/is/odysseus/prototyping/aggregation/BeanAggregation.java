@@ -61,8 +61,8 @@ public class BeanAggregation extends
 	 * @param pos
 	 * @param className
 	 */
-	public BeanAggregation(int pos, String className) {
-		this(new int[] { pos }, className);
+	public BeanAggregation(int pos, String className, boolean partialAggregateInput) {
+		this(new int[] { pos }, className, partialAggregateInput);
 	}
 
 	/**
@@ -70,8 +70,8 @@ public class BeanAggregation extends
 	 * @param pos
 	 * @param className
 	 */
-	public BeanAggregation(int[] pos, String className) {
-		super(className);
+	public BeanAggregation(int[] pos, String className, boolean partialAggregateInput) {
+		super(className, partialAggregateInput);
 		this.positions = pos;
 		this.beanClassName = className;
 	}

@@ -44,12 +44,12 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
 
 	@Override
 	public IAggregateFunction<?, ?> createAggFunction(AggregateFunction key,
-			int[] pos) {
+			int[] pos, boolean partialAggregateInput) {
 		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
 		if (key.getName().equalsIgnoreCase(SCRIPT)) {
-			aggFunc = new JSR223Aggregation(pos, key.getProperty("resource"));
+			aggFunc = new JSR223Aggregation(pos, key.getProperty("resource"), partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(BEAN)) {
-			aggFunc = new BeanAggregation(pos, key.getProperty("resource"));
+			aggFunc = new BeanAggregation(pos, key.getProperty("resource"), partialAggregateInput);
 		} else {
 			throw new IllegalArgumentException(String.format(
 					"No such Aggregatefunction: %s", key.getName()));

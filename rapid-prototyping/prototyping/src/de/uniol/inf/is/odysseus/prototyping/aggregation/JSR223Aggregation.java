@@ -74,8 +74,8 @@ public class JSR223Aggregation extends
 	 * @param pos
 	 * @param fileName
 	 */
-	public JSR223Aggregation(int pos, String fileName) {
-		this(new int[] { pos }, fileName);
+	public JSR223Aggregation(int pos, String fileName, boolean partialAggregateInput) {
+		this(new int[] { pos }, fileName, partialAggregateInput);
 	}
 
 	/**
@@ -83,8 +83,8 @@ public class JSR223Aggregation extends
 	 * @param pos
 	 * @param fileName
 	 */
-	public JSR223Aggregation(int[] pos, String fileName) {
-		super("JSR223Aggregation");
+	public JSR223Aggregation(int[] pos, String fileName, boolean partialAggregateInput) {
+		super("JSR223Aggregation", partialAggregateInput);
 		this.positions = pos;
 		this.fileName = fileName;
 		String extension = this.fileName.substring(this.fileName
