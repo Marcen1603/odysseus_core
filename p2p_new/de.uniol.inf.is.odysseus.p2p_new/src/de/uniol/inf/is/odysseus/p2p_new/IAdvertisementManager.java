@@ -11,4 +11,6 @@ public interface IAdvertisementManager {
 	public void removeAdvertisementListener(IAdvertisementListener listener);
 
 	public ImmutableCollection<Advertisement> getAdvertisements();
+	
+	public void refreshAdvertisements();
 }
