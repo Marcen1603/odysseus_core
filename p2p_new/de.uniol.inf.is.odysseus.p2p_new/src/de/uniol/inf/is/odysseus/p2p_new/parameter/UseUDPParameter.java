@@ -13,7 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.p2p_new.keywords;
+package de.uniol.inf.is.odysseus.p2p_new.parameter;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.IOptimizationSetting;
