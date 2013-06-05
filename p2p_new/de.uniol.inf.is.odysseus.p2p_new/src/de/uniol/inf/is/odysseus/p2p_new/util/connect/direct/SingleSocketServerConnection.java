@@ -27,7 +27,7 @@ public class SingleSocketServerConnection implements IJxtaServerConnection, IJxt
 	private final List<IJxtaServerConnectionListener> listeners = Lists.newArrayList();
 	private final List<IJxtaConnection> connections = Lists.newArrayList();
 	
-	private static final int SEND_BUFFER_SIZE = 65536;
+	private static final int SEND_BUFFER_SIZE = 4096;
 	
 	private boolean started = false;
 	private ServerSocket serverSocket;

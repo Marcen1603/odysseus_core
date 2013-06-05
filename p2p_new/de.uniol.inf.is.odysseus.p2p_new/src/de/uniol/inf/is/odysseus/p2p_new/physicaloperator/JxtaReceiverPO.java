@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
-import java.util.List;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.ID;
@@ -18,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -26,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
@@ -37,19 +34,18 @@ import de.uniol.inf.is.odysseus.p2p_new.util.connect.bidi.JxtaBiDiClientConnecti
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.direct.SocketClientConnection;
 
 @SuppressWarnings("rawtypes")
-public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSource<T> implements IJxtaConnectionListener {
+public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> implements IJxtaConnectionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaReceiverPO.class);
 
 	private static final String PIPE_NAME = "Odysseus Pipe";
-	private static final int BUFFER_SIZE_BYTES = 65536;
+	private static final int BUFFER_SIZE_BYTES = 4096;
 
 	private byte currentTypeByte = JxtaPOUtil.NONE_BYTE;
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
 	private ByteBuffer messageBuffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
-	private boolean isDone;
 
 	private final PipeID pipeID;
 	private final PipeAdvertisement pipeAdvertisement; 
@@ -57,9 +53,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 	private NullAwareTupleDataHandler dataHandler;
 	private IJxtaConnection ctrlConnection;
 	private SocketClientConnection dataConnection;
-
-	private final List<T> bufferedElements = Lists.newArrayList();
-
+	
 	public JxtaReceiverPO(JxtaReceiverAO ao) {
 		SDFSchema schema = new SDFSchema(ao.getName() != null ? getName() : "", ao.getSchema());
 		setOutputSchema(schema);
@@ -90,34 +84,6 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 		return new JxtaReceiverPO<T>(this);
 	}
 
-	@Override
-	public boolean hasNext() {
-		synchronized (bufferedElements) {
-			return !bufferedElements.isEmpty();
-		}
-	}
-
-	@Override
-	public void transferNext() {
-		T ele = null;
-		synchronized (bufferedElements) {
-			ele = bufferedElements.remove(0);
-		}
-
-		if (ele != null) {
-			transfer(ele);
-		}
-	}
-
-	@Override
-	public boolean isDone() {
-		return isDone;
-	}
-
-	@Override
-	protected void process_done() {
-		isDone = true;
-	}
 
 	@Override
 	protected void process_close() {
@@ -176,18 +142,20 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 
 	@Override
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {
-		ByteBuffer bb = ByteBuffer.wrap(data);
-		if( sender instanceof JxtaBiDiClientConnection ) {
-			processData(bb);
-		} else if( sender instanceof SocketClientConnection ) {
-			processData(bb); // TODO: separate
+		if( isOpen() ) {
+			ByteBuffer bb = ByteBuffer.wrap(data);
+			if( sender instanceof JxtaBiDiClientConnection ) {
+				processData(bb);
+			} else if( sender instanceof SocketClientConnection ) {
+				processData(bb); // TODO: separate
+			}
 		}
 	}
 
 	private void processData(ByteBuffer message) {
 		try {
 			while (message.remaining() > 0) {
-				
+
 				if (currentTypeByte == JxtaPOUtil.NONE_BYTE) {
 					currentTypeByte = message.get();
 				}
@@ -199,7 +167,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 					currentTypeByte = JxtaPOUtil.NONE_BYTE;
 					continue;
 				}
-				
+
 				if (size == -1) {
 					while (sizeBuffer.position() < 4 && message.remaining() > 0) {
 						sizeBuffer.put(message.get());
@@ -207,7 +175,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 					if (sizeBuffer.position() == 4) {
 						sizeBuffer.flip();
 						size = sizeBuffer.getInt();
-					} 
+					}
 				}
 
 				if (size != -1) {
@@ -217,16 +185,14 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractIterableSou
 						message.position(message.position() + message.remaining());
 					} else {
 						messageBuffer.put(message.array(), message.position(), size - currentSize);
-						message.position(message.position() + ( size - currentSize) );
+						message.position(message.position() + (size - currentSize));
 
 						if (currentTypeByte == JxtaPOUtil.DATA_BYTE) {
 							messageBuffer.flip();
 
 							T objToTransfer = JxtaPOUtil.createStreamObject(messageBuffer, dataHandler);
 							if (objToTransfer != null) {
-								synchronized (bufferedElements) {
-									bufferedElements.add(objToTransfer);
-								}
+								transfer(objToTransfer);
 							}
 
 						} else if (currentTypeByte == JxtaPOUtil.PUNCTUATION_BYTE) {
