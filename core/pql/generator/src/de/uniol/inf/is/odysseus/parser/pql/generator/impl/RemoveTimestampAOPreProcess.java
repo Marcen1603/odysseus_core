@@ -2,8 +2,10 @@ package de.uniol.inf.is.odysseus.parser.pql.generator.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -34,14 +36,14 @@ public class RemoveTimestampAOPreProcess implements IPQLGeneratorPreProcessor {
 					if (!isTimestampAONeeded(timestampAO, outputSchema)) {
 	
 						timestampAO.unsubscribeFromAllSources();
-						List<ILogicalOperator> nextOperators = determineNextOperators(timestampAO);
+						Map<ILogicalOperator, Integer> nextOperatorPortMap = determineNextOperators(timestampAO);
 						for (LogicalSubscription sub : timestampAO.getSubscriptions()) {
 							timestampAO.unsubscribeSink(sub);
 						}
 	
 						int portCount = 0;
-						for (ILogicalOperator nextOperator : nextOperators) {
-							accessAO.subscribeSink(nextOperator, 0, portCount++, accessAO.getOutputSchema());
+						for (ILogicalOperator nextOperator : nextOperatorPortMap.keySet()) {
+							accessAO.subscribeSink(nextOperator, nextOperatorPortMap.get(nextOperator), portCount++, accessAO.getOutputSchema());
 						}
 					}
 				}
@@ -49,11 +51,11 @@ public class RemoveTimestampAOPreProcess implements IPQLGeneratorPreProcessor {
 		}
 	}
 
-	private static List<ILogicalOperator> determineNextOperators(TimestampAO timestampAO) {
-		List<ILogicalOperator> nextOperators = Lists.newArrayList();
+	private static Map<ILogicalOperator, Integer> determineNextOperators(TimestampAO timestampAO) {
+		Map<ILogicalOperator, Integer> nextOperators = Maps.newHashMap();
 		
 		for( LogicalSubscription sub : timestampAO.getSubscriptions() ) {
-			nextOperators.add(sub.getTarget());
+			nextOperators.put(sub.getTarget(), sub.getSinkInPort());
 		}
 		
 		return nextOperators;
