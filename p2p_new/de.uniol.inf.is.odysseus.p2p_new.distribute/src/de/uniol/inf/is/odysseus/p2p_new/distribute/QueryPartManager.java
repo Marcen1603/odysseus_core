@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.CompilerService;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
 
@@ -38,14 +37,12 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	private static QueryPartManager instance;
 
 	private IServerExecutor executor;
+	private IDataDictionary dataDictionary;
 	
 	private ConcurrentMap<QueryPartAdvertisement, List<String>> neededSourcesMap = Maps.newConcurrentMap();
 
 	public QueryPartManager() {
-		
-		DataDictionaryService.get().addListener(this);
 		instance = this;
-		
 	}
 
 	@Override
@@ -62,7 +59,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 				neededSourcesMap.putIfAbsent(adv, neededSources);
 				final List<ILogicalQuery> queries = CompilerService.get().translateQuery(
 						((QueryPartAdvertisement) advertisement).getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), 
-						DataDictionaryService.get());
+						dataDictionary);
 				for(ILogicalQuery query : queries) {
 					
 					final List<ILogicalOperator> operators = Lists.newArrayList();
@@ -79,7 +76,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 							
 							oldNeededSources = neededSourcesMap.get(adv);
 							
-							if(DataDictionaryService.get().containsViewOrStream(source, SessionManagementService.getActiveSession()) ||
+							if(dataDictionary.containsViewOrStream(source, SessionManagementService.getActiveSession()) ||
 									neededSourcesMap.get(adv).contains(source))
 								break;
 								
@@ -148,6 +145,22 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 			executor = null;
 		}
 	}
+	
+	// called by OSGi-DS
+	public void bindDataDictionary(IDataDictionary dd ) {
+		dataDictionary = dd;
+		
+		LOG.debug("DataDictionary bound {}", dd);
+	}
+	
+	// called by OSGi-DS
+	public void unbindDataDictionary(IDataDictionary dd ) {
+		if( dataDictionary == dd ) {
+			dataDictionary = null;
+			
+			LOG.debug("DataDictionary unbound {}", dd );
+		}
+	}
 
 	public static QueryPartManager getInstance() {
 		return instance;
@@ -167,7 +180,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	public void addedViewDefinition(IDataDictionary sender, String name,
 			ILogicalOperator op) {
 		
-		if(sender != DataDictionaryService.get())
+		if(sender != dataDictionary)
 			return;
 		
 		/*
