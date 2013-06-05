@@ -34,4 +34,9 @@ public class Option {
 		return value;
 	}
 
+	@Override
+	public String toString() {
+		return "['"+name+"','"+value+"']";
+	}
+	
 }
