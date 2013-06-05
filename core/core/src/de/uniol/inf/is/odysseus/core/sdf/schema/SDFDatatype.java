@@ -215,12 +215,12 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			dd.addDatatype(SDFDatatype.MV);
 			dd.addDatatype(SDFDatatype.TIMESTAMP);
 			dd.addDatatype(SDFDatatype.BOOLEAN);
-			
+
 			dd.addDatatype(SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE);
 			dd.addDatatype(SDFDatatype.COUNT_PARTIAL_AGGREGATE);
 			dd.addDatatype(SDFDatatype.ELEMENT_PARTIAL_AGGREGATE);
 			dd.addDatatype(SDFDatatype.LIST_PARTIAL_AGGREGATE);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -296,6 +296,13 @@ public class SDFDatatype extends SDFElement implements Serializable {
 				|| this.getURI().equals(POINT_IN_TIME.getURI())
 				|| this.getURI().equals(START_TIMESTAMP.getURI())
 				|| this.getURI().equals(END_TIMESTAMP.getURI());
+	}
+
+	public boolean isPartialAggregate() {
+		return this.getURI().equals(AVG_SUM_PARTIAL_AGGREGATE)
+				|| this.getURI().equals(COUNT_PARTIAL_AGGREGATE)
+				|| this.getURI().equals(ELEMENT_PARTIAL_AGGREGATE)
+				|| this.getURI().equals(LIST_PARTIAL_AGGREGATE);
 	}
 
 	public boolean isDouble() {
