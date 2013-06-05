@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/httpcomponents-client-4.2.5/lib/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/httpcomponents-client-4.2.5/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/httpcomponents-client-4.2.5/lib/fluent-hc-4.2.5.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/httpcomponents-client-4.2.5/lib/httpclient-4.2.5.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/httpcomponents-client-4.2.5/lib/httpclient-cache-4.2.5.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/httpcomponents-client-4.2.5/lib/httpcore-4.2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/httpcomponents-client-4.2.5/lib/httpmime-4.2.5.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-beanutils-1.8.3/commons-beanutils-1.8.3.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-beanutils-1.8.3/commons-beanutils-1.8.3-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-beanutils-1.8.3/commons-beanutils-1.8.3-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-beanutils-1.8.3/commons-beanutils-bean-collections-1.8.3.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-beanutils-1.8.3/commons-beanutils-core-1.8.3.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-cli-1.2/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-cli-1.2/commons-cli-1.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-cli-1.2/commons-cli-1.2-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-io-2.4/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-io-2.4/commons-io-2.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-io-2.4/commons-io-2.4-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-io-2.4/commons-io-2.4-tests.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/commons-io-2.4/commons-io-2.4-test-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/json_simple/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/xmlbeans-2.6.0/lib/jsr173_1.0_api.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/xmlbeans-2.6.0/lib/resolver.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/xmlbeans-2.6.0/lib/xbean.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/xmlbeans-2.6.0/lib/xbean_xpath.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/xmlbeans-2.6.0/lib/xmlbeans-qname.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/xmlbeans-2.6.0/lib/xmlpublic.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/bcprov-jdk15on-148.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/junit-4.11.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/rsyntaxtextarea-2.0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/soapui-4.5.0.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/soapui-pro-4.5.0.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/soapui-xmlbeans-4.5.0.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/wsdl4j-qname-1.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/jars/xercesImpl-2.8.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
