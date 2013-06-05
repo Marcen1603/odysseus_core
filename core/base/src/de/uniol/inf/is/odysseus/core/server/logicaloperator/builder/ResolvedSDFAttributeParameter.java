@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 public class ResolvedSDFAttributeParameter extends
@@ -50,6 +52,9 @@ public class ResolvedSDFAttributeParameter extends
 
 	@Override
 	protected String getPQLStringInternal() {
+		if( !Strings.isNullOrEmpty(getValue().getSourceName())) {
+			return "'" + getValue().getSourceName() + "." + getValue().getAttributeName() + "'";
+		} 
 		return "'" + getValue().getAttributeName() + "'";
 	}
 }
