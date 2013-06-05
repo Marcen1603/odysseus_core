@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -14,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 //TODO
@@ -132,13 +134,17 @@ public class WSEnrichAO extends UnaryLogicalOp {
 
 	}
 	
-	//TODO
+	//TODO später noch ändern, wenn XML-Verarbeitung funktioniert
 	public void initialize() {
 		
+		SDFAttribute attribute = new SDFAttribute("Webservice-Daten", "KeyValueParameter", SDFDatatype.STRING);
+		SDFSchema webserviceData = new SDFSchema("", attribute);
+		SDFSchema outputSchema = SDFSchema.union(getInputSchema(), webserviceData);
+		setOutputSchema(outputSchema);
 		
 	}
 	
-	protected SDFSchema getOutputSchemaIntern(int pos) {
+	protected SDFSchema getOutputSchemaIntern(int port) {
 		return super.getOutputSchema();
 	}
 	
@@ -232,7 +238,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	 * Setter for the arguments received from the Datastream
 	 * @param arguments
 	 */
-//	@Parameter(type = OptionParameter.class, name = "arguments", isList = true)
+	@Parameter(type = OptionParameter.class, name = "arguments", isList = true)
 	public void setArguments(List<Option> arguments) {
 		this.arguments = arguments;
 	}
