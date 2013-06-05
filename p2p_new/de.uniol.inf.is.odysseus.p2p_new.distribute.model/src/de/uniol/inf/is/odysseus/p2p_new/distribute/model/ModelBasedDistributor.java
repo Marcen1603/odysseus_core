@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.model;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 
 public class ModelBasedDistributor implements ILogicalQueryDistributor {
 

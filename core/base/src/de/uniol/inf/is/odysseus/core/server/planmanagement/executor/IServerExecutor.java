@@ -24,13 +24,13 @@ import javax.security.auth.login.Configuration;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 
-import de.uniol.inf.is.odysseus.core.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
@@ -80,7 +80,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 *            logischer Plan der Anfrage
 	 * @param queryBuildConfigurationName
 	 *            Name der zu verwendeden Build-Configuration
-	 * @return vorläufige ID der neuen Anfrage
+	 * @return vorlï¿½ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
 	public Integer addQuery(ILogicalOperator logicalPlan, ISession user,

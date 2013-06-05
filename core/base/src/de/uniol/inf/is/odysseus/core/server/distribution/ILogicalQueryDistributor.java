@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.distribution;
+package de.uniol.inf.is.odysseus.core.server.distribution;
 
 import java.util.List;
 
