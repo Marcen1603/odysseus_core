@@ -46,12 +46,18 @@ public class DatarateCalcPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 		elementsRead++;		
 		if (elementsRead % updateRate == 0) {
 			long now = System.nanoTime();
-			long lastPeriod = now - lastTimestamp;
-			long fullPeriod = now - firstTimestamp;
-			double elementsLastPeriod = Math.round(updateRate / lastPeriod * 100.0)/100.0; 
-			double elementsAll = Math.round(elementsRead / fullPeriod * 100.0)/100.0; 
+			long lastPeriodNano = now - lastTimestamp;
+			long fullPeriodNano = now - firstTimestamp;
 			
-			transfer(new StreamString(elementsLastPeriod+";"+elementsAll));
+			double lastDataRateNano = updateRate / (double)lastPeriodNano;
+			double fullDataRateNano = elementsRead / (double)fullPeriodNano;
+			
+			double lastDataRateSecond = lastDataRateNano * 1000000000.0;
+			double fullDataRateSecond = fullDataRateNano * 1000000000.0;
+			
+//			System.out.println(String.format("%-10.3f; %-10.3f", lastDataRateSecond, fullDataRateSecond));
+			transfer(new StreamString(lastDataRateSecond+";"+fullDataRateSecond));
+			lastTimestamp = now;
 		}
 	}
 
