@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.bidi.JxtaBiDiClientConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.direct.SocketClientConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.connect.udp.UDPConnection;
 
 @SuppressWarnings("rawtypes")
 public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> implements IJxtaConnectionListener {
@@ -52,7 +53,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	
 	private NullAwareTupleDataHandler dataHandler;
 	private IJxtaConnection ctrlConnection;
-	private SocketClientConnection dataConnection;
+	private IJxtaConnection dataConnection;
 	
 	public JxtaReceiverPO(JxtaReceiverAO ao) {
 		SDFSchema schema = new SDFSchema(ao.getName() != null ? getName() : "", ao.getSchema());
@@ -122,11 +123,11 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 	@Override
 	public void onDisconnect(IJxtaConnection sender) {
-		if( sender instanceof JxtaBiDiClientConnection ) {
-			LOG.debug("{} : JxtaConnection is lost", getName());
+		if( sender == ctrlConnection ) {
+			LOG.debug("{} : JxtaConnection (ctrl) is lost", getName());
 			stopDirectConnection();
-		} else if( sender instanceof SocketClientConnection ) {
-			LOG.debug("{} : Direct connection is lost", getName());
+		} else if( sender == dataConnection ) {
+			LOG.debug("{} : Direct connection (data) is lost", getName());
 			dataConnection.removeListener(this);
 			dataConnection = null;
 		}
@@ -135,9 +136,9 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	@Override
 	public void onConnect(IJxtaConnection sender) {
 		if( LOG.isDebugEnabled() ) {
-			if( sender instanceof JxtaBiDiClientConnection ) {
+			if( sender == ctrlConnection ) {
 				LOG.debug("{} : Connectio with JxtaSender established", getName());
-			} else if( sender instanceof SocketClientConnection ) {
+			} else if( sender == dataConnection ) {
 				LOG.debug("{} : Direct connection established", getName());
 			}
 		}
@@ -147,11 +148,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {
 		if( isOpen() ) {
 			ByteBuffer bb = ByteBuffer.wrap(data);
-			if( sender instanceof JxtaBiDiClientConnection ) {
-				processData(bb);
-			} else if( sender instanceof SocketClientConnection ) {
-				processData(bb); // TODO: separate
-			}
+			processData(bb);
 		}
 	}
 
@@ -250,6 +247,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 	private boolean startDirectConnection(ByteBuffer message) {
 		LOG.debug("{} : Got connection info for direct connection", getName());
+		boolean useUDP = message.get() == 1 ? true : false;
+		LOG.debug("{} : We should use UDP as direct connection", getName());
 		int port = determinePort(message);
 		LOG.debug("{} : Port is {}", getName(), port);
 		PeerID peerID = determinePeerID(message);
@@ -265,10 +264,17 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			return false;
 		}
 		
-		LOG.debug("{} : Address is {}", getName(), optAddress.get());
+		final String realAddress = optAddress.get().substring(0, optAddress.get().indexOf(":"));
+		LOG.debug("{} : Address is {}", getName(), realAddress);
 		try {
 			LOG.debug("{} : Starting direct connection", getName());
-			dataConnection = new SocketClientConnection(optAddress.get().substring(0, optAddress.get().indexOf(":")), port, pipeAdvertisement);
+			if( useUDP ) {
+				dataConnection = new UDPConnection(realAddress, port);
+				LOG.debug("{} : Using UDP", getName());
+			} else {
+				dataConnection = new SocketClientConnection(realAddress, port, pipeAdvertisement);
+				LOG.debug("{} : Using TCP", getName());
+			}
 			dataConnection.addListener(this);
 			dataConnection.connect();
 

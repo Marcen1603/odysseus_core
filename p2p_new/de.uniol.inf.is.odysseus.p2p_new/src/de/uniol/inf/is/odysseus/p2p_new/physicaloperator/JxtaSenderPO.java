@@ -146,7 +146,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 				synchronized (connectionsOpenCalled) {
 					if (!connectionsOpenCalled.containsKey(sender)) {
 						try {
-							SingleSocketServerConnection directConnectionServer = startDirectConnectionServer(sender);
+							IJxtaServerConnection directConnectionServer = startDirectConnectionServer(sender);
 							connectionsOpenCalled.put(sender, directConnectionServer);
 
 							if (connectionsOpenCalled.size() == 1) {
@@ -246,7 +246,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		}
 	}
 
-	private SingleSocketServerConnection startDirectConnectionServer(IJxtaConnection sender) throws IOException {
+	private IJxtaServerConnection startDirectConnectionServer(IJxtaConnection sender) throws IOException {
 		LOG.debug("{} : Starting server for direct connection", getName());
 		SingleSocketServerConnection directConnectionServer = new SingleSocketServerConnection();
 		directConnectionServer.addListener(this);
@@ -256,7 +256,17 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		LOG.debug("{} : Port is {}", getName(), directConnectionServer.getLocalPort());
 		LOG.debug("{} : PeerID is {}", getName(), P2PDictionary.getInstance().getLocalPeerID());
 
-		sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort()));
+		sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort(), false));
+
+//		UDPServerConnection directConnectionServer = new UDPServerConnection();
+//		directConnectionServer.addListener(this);
+//		directConnectionServer.start();
+//
+//		LOG.debug("{} : Send connection info", getName());
+//		LOG.debug("{} : Port is {}", getName(), directConnectionServer.getLocalPort());
+//		LOG.debug("{} : PeerID is {}", getName(), P2PDictionary.getInstance().getLocalPeerID());
+//
+//		sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort(), true));
 
 		return directConnectionServer;
 	}

@@ -69,16 +69,17 @@ final class JxtaPOUtil {
 		return packet;
 	}
 	
-	public static byte[] generateSetAddressPacket( PeerID peerID, int port ) {
+	public static byte[] generateSetAddressPacket( PeerID peerID, int port, boolean useUDP ) {
 		final String peerIDString = peerID.toString();
 		final byte[] peerIDBytes = peerIDString.getBytes();
 		
-		final byte[] packet = new byte[6 + 4 + peerIDBytes.length];
+		final byte[] packet = new byte[6 + 4 + peerIDBytes.length + 1];
 		packet[0] = CONTROL_BYTE;
 		packet[1] = CONNECTION_DATA_SUBBYTE;
-		insertInt(packet, 2, port);
-		insertInt(packet, 6, peerIDBytes.length);
-		System.arraycopy(peerIDBytes, 0, packet, 10, peerIDBytes.length);
+		packet[2] = useUDP ? (byte)1 : (byte)0;
+		insertInt(packet, 3, port);
+		insertInt(packet, 7, peerIDBytes.length);
+		System.arraycopy(peerIDBytes, 0, packet, 11, peerIDBytes.length);
 		
 		return packet;
 	}
