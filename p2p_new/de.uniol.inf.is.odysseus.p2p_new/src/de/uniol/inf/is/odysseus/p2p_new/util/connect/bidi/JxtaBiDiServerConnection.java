@@ -17,15 +17,13 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
-import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaServerConnection;
-import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaServerConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.p2p_new.util.connect.AbstractJxtaServerConnection;
 
-public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaConnectionListener {
+public class JxtaBiDiServerConnection extends AbstractJxtaServerConnection implements IJxtaConnectionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaBiDiServerConnection.class);
 	
-	private final List<IJxtaServerConnectionListener> listeners = Lists.newArrayList();
 	private final List<IJxtaConnection> activeConnections = Lists.newArrayList();
 	private final PipeAdvertisement pipeAdvertisement;
 	
@@ -38,22 +36,6 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 		this.pipeAdvertisement = pipeAdvertisement;
 	}
 	
-	@Override
-	public void addListener(IJxtaServerConnectionListener listener) {
-		Preconditions.checkNotNull(listener, "Listener to add to jxta server connection must not be null!");
-		
-		synchronized( listeners ) {
-			listeners.add(listener);
-		}
-	}
-
-	@Override
-	public void removeListener(IJxtaServerConnectionListener listener) {
-		synchronized( listeners ) {
-			listeners.remove(listener);
-		}
-	}
-
 	@Override
 	public void start() throws IOException {
 		Preconditions.checkState(accepterThread == null, "JxtaServerConnection is already running!");
@@ -124,29 +106,5 @@ public class JxtaBiDiServerConnection implements IJxtaServerConnection, IJxtaCon
 	@Override
 	public void onConnect(IJxtaConnection sender) {
 		// do nothing
-	}
-	
-	protected final void fireConnectionAddEvent(IJxtaConnection connection) {
-		synchronized( listeners ) {
-			for( IJxtaServerConnectionListener listener : listeners.toArray(new IJxtaServerConnectionListener[0]) ) {
-				try {
-					listener.connectionAdded(this, connection);
-				} catch( Throwable t ) {
-					LOG.error("Exception during invoking jxta server connection listener", t);
-				}
-			}
-		}
-	}
-	
-	protected final void fireConnectionRemoveEvent(IJxtaConnection connection) {
-		synchronized( listeners ) {
-			for( IJxtaServerConnectionListener listener : listeners.toArray(new IJxtaServerConnectionListener[0]) ) {
-				try {
-					listener.connectionRemoved(this, connection);
-				} catch( Throwable t ) {
-					LOG.error("Exception during invoking jxta server connection listener", t);
-				}
-			}
-		}
 	}
 }
