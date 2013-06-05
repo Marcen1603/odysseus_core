@@ -66,6 +66,9 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	private boolean finished;
 	private ITimeIntervalSweepArea<R>[] areas;
 	private R lastSend = null;
+	
+	// Evaluation
+	private boolean printNextTuple = false;
 
 	private Set<IMigrationListener> listener;
 
@@ -118,14 +121,14 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	@Override
 	protected void process_next(R object, int port) {
+		if(isPrintNextTuple()) {
+			// Evaluation
+			LOG.debug("FIRST TUPLE WITH PARALLEL EXECUTION {} TIMESTAMP {}", object, System.currentTimeMillis());
+			setPrintNextTuple(false);
+		}
+		
 		// check if new has caught up on old.
 		if (punctuationsReceived) {
-//			if(!finished) {
-//				LOG.debug("Processing {} {}", (port == this.inPortNew ? "new" : "old"), object);
-//				finished = isFinished(object, port);
-//			} /**else {
-//				isFinished(object, port);
-//			}**/
 			finished = true;
 		}
 		
@@ -148,6 +151,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 			} 
 		} else if(finished && lastSend != null && object.getMetadata().getStart().after(lastSend.getMetadata().getStart())) {
 			transfer(object);
+			LOG.debug("LAST TUPLE WITH PARALLEL EXECUTION {} TIMESTAMP {}", object, System.currentTimeMillis());
 			this.onlyNew = true;
 			fireMigrationFinishedEvent(this);
 		}
@@ -260,7 +264,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		}
 	}
 
-	// TODO (Merlin): clone an neue attribute anpassen.
+	@SuppressWarnings("unchecked")
 	@Override
 	public AbstractPipe<R, R> clone() {
 		MigrationRouterPO<R> clone = new MigrationRouterPO<R>(
@@ -269,6 +273,10 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		Map<ISource<?>, Pair<IPunctuation, IPunctuation>> stp = new HashMap<ISource<?>, Pair<IPunctuation, IPunctuation>>();
 		stp.putAll(this.sourcesToPunctuations);
 		clone.setSourcesToPunctuations(stp);
+		clone.finished = this.finished;
+		clone.lastSend = (R) this.lastSend.clone();
+		clone.onlyNew = this.onlyNew;
+		clone.punctuationsReceived = this.punctuationsReceived;
 		return clone;
 	}
 
@@ -324,5 +332,19 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		for (IMigrationListener listener : this.listener) {
 			listener.migrationFailed(sender, ex);
 		}
+	}
+
+	/**
+	 * @return the printNextTuple
+	 */
+	public boolean isPrintNextTuple() {
+		return printNextTuple;
+	}
+
+	/**
+	 * @param printNextTuple the printNextTuple to set
+	 */
+	public void setPrintNextTuple(boolean printNextTuple) {
+		this.printNextTuple = printNextTuple;
 	}
 }
