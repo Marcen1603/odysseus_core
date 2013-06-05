@@ -6,6 +6,7 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(name = "JXTASENDER", doc = "Send data with JXTA", minInputPorts = 1, maxInputPorts = 1)
@@ -35,8 +36,10 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 		return this.pipeID;
 	}
 	
+	@Parameter(name = "useUDP", doc = "Specifies if an unreliable but fast udp-connection should be used", type = BooleanParameter.class, optional = true)
 	public void setUseUDP(boolean useUDP) {
 		this.useUDP = useUDP;
+		addParameterInfo("USEUDP", "'" + (useUDP ? "true" : "false") + "'");
 	}
 	
 	public boolean isUseUDP() {

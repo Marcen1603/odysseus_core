@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.P2PDictionarySer
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.p2p_new.parameter.UseUDPParameter;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class UserDefinedDistributor implements ILogicalQueryDistributor {
@@ -96,7 +97,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 			final ID sharedQueryID = generateSharedQueryID();
 			final Map<QueryPart, PeerID> queryPartDistributionMap = assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), queryParts);
-			insertSenderAndAccess(queryPartDistributionMap);
+			insertSenderAndAccess(queryPartDistributionMap, transCfg);
 
 			final List<QueryPart> localQueryParts = shareParts(queryPartDistributionMap, sharedQueryID, transCfg);
 			final ILogicalQuery logicalQuery = transformToQuery(localQueryParts, generator, query.toString());
@@ -272,7 +273,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		throw new IllegalArgumentException("Could not find query part for logical operator " + target);
 	}
 
-	private static void generatePeerConnection(ILogicalOperator startOperator, QueryPart startPart, ILogicalOperator endOperator, QueryPart endPart) {
+	private static void generatePeerConnection(ILogicalOperator startOperator, QueryPart startPart, ILogicalOperator endOperator, QueryPart endPart, boolean useUDP) {
 		final PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
 
 		final JxtaReceiverAO access = new JxtaReceiverAO();
@@ -284,6 +285,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		final JxtaSenderAO sender = new JxtaSenderAO();
 		sender.setPipeID(pipeID.toString());
 		sender.setName(SENDER_NAME + connectionNumber );
+		sender.setUseUDP(useUDP);
 
 		final LogicalSubscription removingSubscription = determineSubscription(startOperator, endOperator);
 		startOperator.unsubscribeSink(removingSubscription);
@@ -325,14 +327,17 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		return LOCAL_DESTINATION_NAME;
 	}
 
-	private static void insertSenderAndAccess(Map<QueryPart, PeerID> queryPartDistributionMap) {
+	private static void insertSenderAndAccess(Map<QueryPart, PeerID> queryPartDistributionMap, QueryBuildConfiguration transCfg) {
+		UseUDPParameter useUDPParameter = transCfg.get(UseUDPParameter.class);
+		boolean useUDP = useUDPParameter != null ? useUDPParameter.getValue() : false;
+		
 		for (final QueryPart queryPart : queryPartDistributionMap.keySet()) {
 
 			for (final ILogicalOperator relativeSink : queryPart.getRelativeSinks()) {
 				final Map<QueryPart, ILogicalOperator> nextOperators = determineNextQueryParts(queryPart, relativeSink, queryPartDistributionMap);
 				if (!nextOperators.isEmpty()) {
 					for (final QueryPart destQueryPart : nextOperators.keySet()) {
-						generatePeerConnection(relativeSink, queryPart, nextOperators.get(destQueryPart), destQueryPart);
+						generatePeerConnection(relativeSink, queryPart, nextOperators.get(destQueryPart), destQueryPart, useUDP);
 					}
 				}
 			}
