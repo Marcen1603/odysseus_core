@@ -113,6 +113,18 @@ public class AdvertisementManager implements IAdvertisementManager {
 		LOG.debug("Unbound advertisement listener {}", listener);
 	}
 
+	@Override
+	public ImmutableCollection<Advertisement> getAdvertisements() {
+		synchronized( knownAdvertisements ) {
+			return ImmutableList.copyOf(knownAdvertisements);
+		}
+	}
+
+	@Override
+	public void refreshAdvertisements() {
+		JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99);
+	}
+
 	protected final void fireAdvertisementAddEvent(Advertisement advertisement) {
 		synchronized (listeners) {
 			for (final IAdvertisementListener entry : listeners) {
@@ -166,12 +178,5 @@ public class AdvertisementManager implements IAdvertisementManager {
 
 	public static AdvertisementManager getInstance() {
 		return instance;
-	}
-
-	@Override
-	public ImmutableCollection<Advertisement> getAdvertisements() {
-		synchronized( knownAdvertisements ) {
-			return ImmutableList.copyOf(knownAdvertisements);
-		}
 	}
 }
