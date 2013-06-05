@@ -14,6 +14,7 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 1L;
 
 	private String pipeID;
+	private boolean useUDP;
 
 	public JxtaSenderAO() {
 		super();
@@ -32,6 +33,14 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 
 	public String getPipeID() {
 		return this.pipeID;
+	}
+	
+	public void setUseUDP(boolean useUDP) {
+		this.useUDP = useUDP;
+	}
+	
+	public boolean isUseUDP() {
+		return useUDP;
 	}
 
 	@Override

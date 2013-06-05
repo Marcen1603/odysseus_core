@@ -780,8 +780,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			final JxtaSenderAO jxtaSender = new JxtaSenderAO();
 			jxtaSender.setName(viewName + "_Send");
 			jxtaSender.setPipeID(pipeID.toString());
+			jxtaSender.setUseUDP(false);
 			view.subscribeSink(jxtaSender, 0, 0, view.getOutputSchema());
-
+			
 			Integer queryID = ServerExecutorService.get().addQuery(jxtaSender, SessionManagementService.getActiveSession(), queryBuildConfigurationName);
 			IPhysicalQuery physicalQuery = ServerExecutorService.get().getExecutionPlan().getQueryById(queryID);
 			ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();

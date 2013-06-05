@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.p2p_new.util.connect.bidi.JxtaBiDiConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.bidi.JxtaBiDiServerConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.direct.SingleSocketServerConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.direct.SocketConnection;
+import de.uniol.inf.is.odysseus.p2p_new.util.connect.udp.UDPServerConnection;
 
 public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements IJxtaConnectionListener, IJxtaServerConnectionListener {
 
@@ -46,12 +47,14 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private final PipeID pipeID;
 	private final Map<IJxtaConnection, IJxtaServerConnection> connectionsOpenCalled = Maps.newHashMap();
 	private final Map<IJxtaServerConnection, IJxtaConnection> dataTransmissionConnectionMap = Maps.newHashMap();
+	private final boolean useUDP;
 
 	private IJxtaServerConnection connection;
 	private NullAwareTupleDataHandler dataHandler;
 
 	public JxtaSenderPO(JxtaSenderAO ao) {
 		pipeID = convertToPipeID(ao.getPipeID());
+		useUDP = ao.isUseUDP();
 		final PipeAdvertisement pipeAdvertisement = createPipeAdvertisement(pipeID);
 
 		try {
@@ -73,6 +76,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		this.dataHandler = po.dataHandler;
 		this.connectionsOpenCalled.putAll(po.connectionsOpenCalled);
 		this.dataTransmissionConnectionMap.putAll(po.dataTransmissionConnectionMap);
+		this.useUDP = po.useUDP;
 	}
 
 	@Override
@@ -248,7 +252,22 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	private IJxtaServerConnection startDirectConnectionServer(IJxtaConnection sender) throws IOException {
 		LOG.debug("{} : Starting server for direct connection", getName());
-		SingleSocketServerConnection directConnectionServer = new SingleSocketServerConnection();
+		if (!useUDP) {
+			SingleSocketServerConnection directConnectionServer = new SingleSocketServerConnection();
+
+			directConnectionServer.addListener(this);
+			directConnectionServer.start();
+
+			LOG.debug("{} : Send connection info", getName());
+			LOG.debug("{} : Port is {}", getName(), directConnectionServer.getLocalPort());
+			LOG.debug("{} : PeerID is {}", getName(), P2PDictionary.getInstance().getLocalPeerID());
+
+			sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort(), false));
+			return directConnectionServer;
+
+		}
+		
+		UDPServerConnection directConnectionServer = new UDPServerConnection();
 		directConnectionServer.addListener(this);
 		directConnectionServer.start();
 
@@ -256,17 +275,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		LOG.debug("{} : Port is {}", getName(), directConnectionServer.getLocalPort());
 		LOG.debug("{} : PeerID is {}", getName(), P2PDictionary.getInstance().getLocalPeerID());
 
-		sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort(), false));
-
-//		UDPServerConnection directConnectionServer = new UDPServerConnection();
-//		directConnectionServer.addListener(this);
-//		directConnectionServer.start();
-//
-//		LOG.debug("{} : Send connection info", getName());
-//		LOG.debug("{} : Port is {}", getName(), directConnectionServer.getLocalPort());
-//		LOG.debug("{} : PeerID is {}", getName(), P2PDictionary.getInstance().getLocalPeerID());
-//
-//		sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort(), true));
+		sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort(), true));
 
 		return directConnectionServer;
 	}
