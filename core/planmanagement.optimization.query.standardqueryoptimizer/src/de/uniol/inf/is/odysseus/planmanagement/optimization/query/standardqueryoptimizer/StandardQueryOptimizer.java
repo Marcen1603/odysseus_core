@@ -104,30 +104,35 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalk(originalPlan, copyVisitor);
 		ILogicalOperator copiedPlan = copyVisitor.getResult();
-
-		@SuppressWarnings("rawtypes")
-		CollectOperatorLogicalGraphVisitor joinVisitor = new CollectOperatorLogicalGraphVisitor(JoinAO.class);
-		walker.clearVisited();
-		walker.prefixWalk(copiedPlan, joinVisitor);
+		
 		boolean createAlternativePlans = copiedPlan != null && planGeneration != null && query.getAlternativeLogicalPlans().isEmpty()
-				&& planGeneration == ParameterDoPlanGeneration.TRUE && !joinVisitor.getResult().isEmpty();
+				&& planGeneration == ParameterDoPlanGeneration.TRUE;
 		if(createAlternativePlans) {
-			getLogger().debug("Creating alternative logical plans");
-			PlanGenerationConfiguration generationConfig = parameters.getPlanGenerationConfiguration();
-			List<ILogicalOperator> alternativePlans = compiler.generatePlans(copiedPlan, generationConfig, query);
-			query.setAlternativeLogicalPlans(alternativePlans);
-			// this should be the best
-			if(!alternativePlans.isEmpty()) {
-				getLogger().debug("generatePlans has returned {} plans", alternativePlans.size());
-				copiedPlan = alternativePlans.get(0);
+			@SuppressWarnings("rawtypes")
+			CollectOperatorLogicalGraphVisitor joinVisitor = new CollectOperatorLogicalGraphVisitor(JoinAO.class);
+			walker.clearVisited();
+			walker.prefixWalk(copiedPlan, joinVisitor);
+			if(joinVisitor.getResult().isEmpty()) {
+				getLogger().debug("Query can not be adapted because it does not contain any joins");
+				// query can not be adapted because there are no alternative plans
+				query.setParameter("noAdaption", true);
 			} else {
-				getLogger().warn("generatePlans has returned an empty list.");
+				getLogger().debug("Creating alternative logical plans");
+				PlanGenerationConfiguration generationConfig = parameters
+						.getPlanGenerationConfiguration();
+				List<ILogicalOperator> alternativePlans = compiler
+						.generatePlans(copiedPlan, generationConfig, query);
+				query.setAlternativeLogicalPlans(alternativePlans);
+				// this should be the best
+				if (!alternativePlans.isEmpty()) {
+					getLogger().debug("generatePlans has returned {} plans",
+							alternativePlans.size());
+					copiedPlan = alternativePlans.get(0);
+				} else {
+					getLogger().warn(
+							"generatePlans has returned an empty list.");
+				}
 			}
-		}
-		if(joinVisitor.getResult().isEmpty()) {
-			getLogger().debug("Query can not be adapted because it does not contain any joins");
-			// query can not be adapted because there are no alternative plans
-			query.setParameter("noAdaption", true);
 		}
 		
 		boolean queryShouldBeRewritten = copiedPlan != null && restruct != null
