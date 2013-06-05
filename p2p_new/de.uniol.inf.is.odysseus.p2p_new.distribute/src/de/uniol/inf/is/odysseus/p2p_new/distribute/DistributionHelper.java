@@ -14,6 +14,7 @@ import net.jxta.pipe.PipeID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -66,8 +67,14 @@ public class DistributionHelper {
 		if(LOG.isDebugEnabled()) {
 			
 			LOG.debug("Found {} peers to distribute the queries", peerIDs.size());
-			for(final PeerID peerID : peerIDs)
-				LOG.debug("\tPeer:{}", peerID);
+			for(final PeerID peerID : peerIDs) {
+				
+				Optional<String> peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
+				if(peerName.isPresent())
+					LOG.debug("\tPeer: {}", peerName.get());
+				else LOG.debug("\tPeer: {}", peerID);
+				
+			}
 			
 		}
 		
@@ -314,7 +321,11 @@ public class DistributionHelper {
 		adv.setTransCfgName(transCfgName);
 
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(destinationPeerID.toString(), adv, 15000);
-		LOG.debug("QueryPart {} remotely published at {}", queryPart, destinationPeerID.toString());	
+		Optional<String> peerName = P2PDictionaryService.get().getRemotePeerName(destinationPeerID);
+		if(peerName.isPresent())
+			LOG.debug("QueryPart {} remotely published at {}", queryPart, peerName.get());
+		else LOG.debug("QueryPart {} remotely published at {}", queryPart, destinationPeerID);
+		
 	}
 	
 	/**

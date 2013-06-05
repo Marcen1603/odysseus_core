@@ -47,16 +47,13 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	/**
 	 * The counter for connections to other peers.
 	 */
-	private static int CONNECTION_COUNTER = 0;
+	private static int connectionCounter = 0;
 	
 	/**
-	 * Returns the counter for connections to other peers and increases it afterwords.
+	 * The index within a collection of {@link PeerID}s, which indicates the 
+	 * remote peer, to which the next {@link QueryPart} shall be assigned.
 	 */
-	private static int getNextConnectionNo() {
-		
-		return CONNECTION_COUNTER++;
-		
-	}
+	private static int peerCounter = 0;
 	
 	/**
 	 * Returns the base name for acceptor operators.
@@ -119,9 +116,12 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			// Generate a new logical operator which marks that the query result shall return to this instance
 			QueryPart localPart = this.createLocalPart();
 			
+			// Create the parts of the query and subscribe the last part to the local part
 			this.determineQueryParts(query, queryPartsMap, localPart);
 			
-			// TODO kopieren und pro kopie determineQueryParts
+			// Make xopies of the query, create the parts of the copy and subscribe the last part to the local part
+			for(int copyNo = 0; copyNo < this.getDegreeOfParallelismn(0, remotePeerIDs.size()) - 1; copyNo++)
+				this.determineQueryParts(DistributionHelper.copyLogicalQuery(query), queryPartsMap, localPart);
 			
 			// Initialize the operators of the local part
 			for(ILogicalOperator operator : localPart.getOperators())
@@ -132,7 +132,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// Assign query parts to peers
 		final Map<QueryPart, PeerID> queryPartDistributionMap = 
 				this.assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), queryPartsMap.values());
-		int connectionNo =  + getNextConnectionNo();
+		int connectionNo =  connectionCounter++;
 		DistributionHelper.generatePeerConnections(queryPartDistributionMap, getAccessName() + connectionNo + "_", 
 				getSenderName() + connectionNo + "_");
 		
@@ -164,7 +164,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			PeerID localPeerID, Collection<List<QueryPart>> queryParts) {
 		
 		final Map<QueryPart, PeerID> distributed = Maps.newHashMap();
-		int peerCounter = 0;
 		final Iterator<List<QueryPart>> partsIter = queryParts.iterator();
 		
 		while(partsIter.hasNext()) {
@@ -182,15 +181,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 					
 				} else {
 					
-					// Skip local peer for distributed part
-					while(peerID == localPeerID) {
-						
-						// Round-Robin
-						peerCounter = (peerCounter++) % remotePeerIDs.size();
-						
-					}
-					
+					// Round-Robin
 					distributed.put(part, peerID);
+					peerCounter = (++peerCounter) % remotePeerIDs.size();					
 					
 				}			
 				
@@ -263,7 +256,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			} else {
 				
 				QueryPart partToPublish = DistributionHelper.replaceStreamAOs(part);
-				LOG.debug("Plan of the querypart to publish: {}", this.printer.createString(partToPublish.getOperators().iterator().next()));
+				LOG.debug("Plan of the querypart to publish:\n{}", this.printer.createString(partToPublish.getOperators().iterator().next()));
 				DistributionHelper.publish(partToPublish, assignedPeerID, sharedQueryID, transCfgName);
 				
 			}
