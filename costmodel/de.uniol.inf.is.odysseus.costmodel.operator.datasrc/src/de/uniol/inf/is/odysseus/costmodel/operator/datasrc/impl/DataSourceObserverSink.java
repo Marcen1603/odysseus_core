@@ -49,7 +49,7 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 	private final ISource<? extends IStreamObject<?>> source;
 	private final List<IDataSourceObserverListener> listeners = new ArrayList<IDataSourceObserverListener>();
 	
-	private ISource connectingSource;
+	private ISource<? extends IStreamObject<?>> connectingSource;
 
 	public DataSourceObserverSink( ISource<? extends IStreamObject<?>> source ) {
 		this.source = source;
@@ -83,7 +83,6 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void disconnect() {
 		connectingSource.disconnectSink(this, 0, 0, connectingSource.getOutputSchema());
 		getLogger().debug("Source {} disconnected", source);
