@@ -74,9 +74,12 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 					final FESortedClonablePair<SDFSchema, AggregateFunction> p = new FESortedClonablePair<SDFSchema, AggregateFunction>(attrList, e.getKey());
 					final int[] posArray = new int[p.getE1().size()];
 					boolean partialAggregateInput = false;
+					String inDatatype = null;
 					for (int i = 0; i < p.getE1().size(); ++i) {
 						final SDFAttribute attr = p.getE1().get(i);
 						posArray[i] = inputSchema.indexOf(attr);
+						// For most cases its the only datatype ... so keep one of them
+						inDatatype = attr.getDatatype().getURI();
 						if (attr.getDatatype().isPartialAggregate()){
 							partialAggregateInput = true;
 						}
@@ -98,7 +101,7 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 						throw new RuntimeException("Could not find a builder for " + p.getE2().getName());
 					}
 					@SuppressWarnings("rawtypes")
-					final IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput, e.getValue().getDatatype().getURI());
+					final IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput, inDatatype);
 					operator.setInitFunction(p, aggFunction);
 					operator.setMergeFunction(p, aggFunction);
 					operator.setEvalFunction(p, aggFunction);
