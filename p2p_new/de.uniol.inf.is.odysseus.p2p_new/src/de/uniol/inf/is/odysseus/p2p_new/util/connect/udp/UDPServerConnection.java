@@ -52,9 +52,9 @@ public class UDPServerConnection extends AbstractJxtaServerConnection {
 							
 							activeConnectionsMap.put(d, connection);
 							fireConnectionAddEvent(connection);
-						} else {
-							sendAckPacket(packet.getAddress(), packet.getPort());
 						}
+						
+						sendAckPacket(packet.getAddress(), packet.getPort());
 					} else {
 						UDPConnection connection = (UDPConnection) activeConnectionsMap.get(d);
 						connection.recieve(packet.getData());
