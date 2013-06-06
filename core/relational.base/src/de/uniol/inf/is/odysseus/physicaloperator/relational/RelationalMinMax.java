@@ -16,19 +16,22 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.MinMax;
 
-public class RelationalMinMax extends MinMax<Tuple<?>, Tuple<?>> {
+public class RelationalMinMax extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 571119114462961967L;
 
-	int[] attrList = new int[1];
+	final private int attrList[] = new int[1];
+	final private boolean isMax;
+	final private String datatype;
 
+	
 	//static Map<Boolean, Map<Integer, RelationalMinMax>> instances = new HashMap<Boolean, Map<Integer, RelationalMinMax>>();
 
 	static public RelationalMinMax getInstance(int pos, boolean isMax,
@@ -53,14 +56,16 @@ public class RelationalMinMax extends MinMax<Tuple<?>, Tuple<?>> {
 
 	private RelationalMinMax(int pos, boolean isMax,
 			boolean partialAggregateInput, String datatype) {
-		super(isMax, partialAggregateInput, datatype);
-		attrList[0] = pos;
+		super (isMax?"MAX":"MIN",partialAggregateInput);
+		this.attrList[0] = pos;
+		this.isMax = isMax;
+		this.datatype = datatype;
 	}
 
 	@Override
 	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
 		if (isPartialAggregateInput()) {
-			return new RelationalElementPartialAggregate(in.getAttribute(attrList[0]), datatype) ;
+			return in.getAttribute(attrList[0]);
 		} else {
 			return new RelationalElementPartialAggregate(in.restrict(attrList, true), datatype);
 		}
@@ -87,6 +92,15 @@ public class RelationalMinMax extends MinMax<Tuple<?>, Tuple<?>> {
 		return pa;
 	}
 
+	@Override
+	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p,
+			IPartialAggregate<Tuple<?>> toMerge, boolean createNew) {
+		return merge(p, ((RelationalElementPartialAggregate)toMerge).getElem(), createNew);
+	}
 
+	@Override
+	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
+		return ((RelationalElementPartialAggregate)p).getElem();
+	}
 
 }
