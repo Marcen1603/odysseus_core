@@ -27,21 +27,23 @@ public class Write<R> extends AbstractAggregateFunction<R, R> {
 	 */
 	private static final long serialVersionUID = -4490710243269539616L;
 	private static Write instance;
+	final private String datatype;
 
-	private Write() {
+	private Write(String datatype) {
 		super("WRITE", false);
+		this.datatype = datatype;
 	}
 	
-	static public Write getInstance(){
+	static public Write getInstance(String datatype){
 		if (instance == null){
-			instance = new Write();
+			instance = new Write(datatype);
 		}
 		return instance;
 	}
 
 	@Override
 	public IPartialAggregate<R> init(R in) {
-		return new ElementPartialAggregate<R>(in);
+		return new ElementPartialAggregate<R>(in, datatype);
 	}
 
 	@Override

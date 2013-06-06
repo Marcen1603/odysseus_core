@@ -44,7 +44,7 @@ public class ProbabilisticAggregateFunctionBuilder implements
 
 	@Override
 	public IAggregateFunction<?, ?> createAggFunction(
-			final AggregateFunction key, final int[] pos, boolean partialAggregateInput) {
+			final AggregateFunction key, final int[] pos, boolean partialAggregateInput, String datatype) {
 		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
 		if (key.getName().equalsIgnoreCase(
 				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "AVG")) {
@@ -57,17 +57,17 @@ public class ProbabilisticAggregateFunctionBuilder implements
 			aggFunc = ProbabilisticCount.getInstance(pos[0], partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(
 				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "MIN")) {
-			aggFunc = ProbabilisticMin.getInstance(pos[0], partialAggregateInput);
+			aggFunc = ProbabilisticMin.getInstance(pos[0], partialAggregateInput, datatype);
 			throw new IllegalArgumentException(
 					"MIN Aggregatefunction not implemented");
 		} else if (key.getName().equalsIgnoreCase(
 				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "MAX")) {
-			aggFunc = ProbabilisticMax.getInstance(pos[0],partialAggregateInput);
+			aggFunc = ProbabilisticMax.getInstance(pos[0],partialAggregateInput, datatype);
 			throw new IllegalArgumentException(
 					"MAX Aggregatefunction not implemented");
 		} else if (key.getName().equalsIgnoreCase(
 				ProbabilisticConstants.PROBABILISTIC_NAMESPACE + "STDDEV")) {
-			aggFunc = ProbabilisticStdDev.getInstance(pos[0], partialAggregateInput);
+			aggFunc = ProbabilisticStdDev.getInstance(pos[0], partialAggregateInput, datatype);
 			throw new IllegalArgumentException(
 					"STDDEV Aggregatefunction not implemented");
 		} else if (key.getName().equalsIgnoreCase(

@@ -26,14 +26,16 @@ abstract public class Last<R, W> extends AbstractAggregateFunction<R, W> {
 	 * 
 	 */
 	private static final long serialVersionUID = 4460706645733648643L;
+	final private String datatype;
 
-	protected Last(boolean partialAggregateInput) {
+	protected Last(boolean partialAggregateInput, String datatype) {
         super("LAST", partialAggregateInput);
+        this.datatype = datatype;
     }
 
     @Override
     public IPartialAggregate<R> init(R in) {
-        IPartialAggregate<R> pa = new ElementPartialAggregate<R>(in);
+        IPartialAggregate<R> pa = new ElementPartialAggregate<R>(in, datatype);
         return pa;
     }
 
@@ -41,7 +43,7 @@ abstract public class Last<R, W> extends AbstractAggregateFunction<R, W> {
     public IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
         ElementPartialAggregate<R> pa = null;
         if (createNew) {
-            pa = new ElementPartialAggregate<R>(((ElementPartialAggregate<R>) p).getElem());
+            pa = new ElementPartialAggregate<R>(((ElementPartialAggregate<R>) p).getElem(), datatype);
         }
         else {
             pa = (ElementPartialAggregate<R>) p;

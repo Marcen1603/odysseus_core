@@ -45,7 +45,7 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
     }
 
     @Override
-    public IAggregateFunction<?, ?> createAggFunction(final AggregateFunction key, final int[] pos, boolean partialAggregateInput) {
+    public IAggregateFunction<?, ?> createAggFunction(final AggregateFunction key, final int[] pos, boolean partialAggregateInput, String datatype) {
         IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
         if (key.getName().equalsIgnoreCase(AggregationFunctionBuilder.UNION_GEOMETRY)) {
             aggFunc = new UnionGeometry(pos, partialAggregateInput);

@@ -49,11 +49,11 @@ public class RelationalSymbolTableOperationFactory implements
 		}else if ("AVG".equalsIgnoreCase(name)){
 			func = RelationalAvgSum.getInstance(0, true, false);
 		}else if ("MAX".equalsIgnoreCase(name)){
-			func = RelationalMinMax.getInstance(0, true, false);
+			func = RelationalMinMax.getInstance(0, true, false, "");
 		}else if ("MIN".equalsIgnoreCase(name)){
-			func = RelationalMinMax.getInstance(0, false, false);
+			func = RelationalMinMax.getInstance(0, false, false, "");
 		}else if ("WRITE".equalsIgnoreCase(name)){
-			func = Write.getInstance();
+			func = Write.getInstance("");
 		}
 		return func;
 	}

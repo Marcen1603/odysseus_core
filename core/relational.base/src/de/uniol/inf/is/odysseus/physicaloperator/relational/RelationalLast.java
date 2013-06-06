@@ -15,13 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Last;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -32,20 +29,16 @@ public class RelationalLast extends Last<Tuple<?>, Tuple<?>> {
 	 * 
 	 */
 	private static final long serialVersionUID = 7968553167073220101L;
-	private static Map<Integer,RelationalLast> instances = new HashMap<Integer, RelationalLast>();
+	//private static Map<Integer,RelationalLast> instances = new HashMap<Integer, RelationalLast>();
 	private int pos;
 
-    private RelationalLast(int pos, boolean partialAggregateInput) {
-        super(partialAggregateInput);
+    private RelationalLast(int pos, boolean partialAggregateInput, String datatype) {
+        super(partialAggregateInput, datatype);
         this.pos = pos;
     }
 
-    public static RelationalLast getInstance(int pos, boolean partialAggregateInput) {
-    	RelationalLast ret = instances.get(pos);
-        if (ret == null) {
-            ret = new RelationalLast(pos, partialAggregateInput);
-        }
-        return ret;
+    public static RelationalLast getInstance(int pos, boolean partialAggregateInput, String datatype) {
+        return new RelationalLast(pos, partialAggregateInput, datatype);
     }
 
     @Override

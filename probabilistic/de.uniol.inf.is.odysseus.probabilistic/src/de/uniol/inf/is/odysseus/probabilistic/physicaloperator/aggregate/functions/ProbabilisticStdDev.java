@@ -15,9 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
@@ -34,27 +31,24 @@ public class ProbabilisticStdDev extends
 	 * 
 	 */
 	private static final long serialVersionUID = -45894921488698597L;
-	private static Map<Integer, ProbabilisticStdDev> instances = new HashMap<Integer, ProbabilisticStdDev>();
+	//private static Map<Integer, ProbabilisticStdDev> instances = new HashMap<Integer, ProbabilisticStdDev>();
 	@SuppressWarnings("unused")
 	private final int pos;
+	final private String datatype;
 
-	public static ProbabilisticStdDev getInstance(final int pos, boolean partialAggregateInput) {
-		ProbabilisticStdDev ret = ProbabilisticStdDev.instances.get(pos);
-		if (ret == null) {
-			ret = new ProbabilisticStdDev(pos, partialAggregateInput);
-			ProbabilisticStdDev.instances.put(pos, ret);
-		}
-		return ret;
+	public static ProbabilisticStdDev getInstance(final int pos, boolean partialAggregateInput, String datatype) {
+		return new ProbabilisticStdDev(pos, partialAggregateInput, datatype);
 	}
 
-	protected ProbabilisticStdDev(final int pos,boolean partialAggregateInput) {
+	protected ProbabilisticStdDev(final int pos,boolean partialAggregateInput, String datatype) {
 		super("STDDEV", partialAggregateInput);
 		this.pos = pos;
+		this.datatype = datatype;
 	}
 
 	@Override
 	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-		return new ElementPartialAggregate<Tuple<?>>(in);
+		return new ElementPartialAggregate<Tuple<?>>(in, datatype);
 	}
 
 	@Override

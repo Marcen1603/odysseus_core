@@ -16,9 +16,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
@@ -36,27 +34,25 @@ public class ProbabilisticMin extends
 	 * 
 	 */
 	private static final long serialVersionUID = -4241950598685654559L;
-	private static Map<Integer, ProbabilisticMin> instances = new HashMap<Integer, ProbabilisticMin>();
+	//private static Map<Integer, ProbabilisticMin> instances = new HashMap<Integer, ProbabilisticMin>();
 	@SuppressWarnings("unused")
 	private final int pos;
+	final private String datatype;
 
-	public static ProbabilisticMin getInstance(final int pos, boolean partialAggregateInput) {
-		ProbabilisticMin ret = ProbabilisticMin.instances.get(pos);
-		if (ret == null) {
-			ret = new ProbabilisticMin(pos, partialAggregateInput);
-			ProbabilisticMin.instances.put(pos, ret);
-		}
-		return ret;
+	public static ProbabilisticMin getInstance(final int pos, boolean partialAggregateInput, String datatype) {
+
+		return new ProbabilisticMin(pos, partialAggregateInput, datatype);
 	}
 
-	protected ProbabilisticMin(final int pos, boolean partialAggregateInput) {
+	protected ProbabilisticMin(final int pos, boolean partialAggregateInput, String datatype) {
 		super("MIN", partialAggregateInput);
 		this.pos = pos;
+		this.datatype = datatype;
 	}
 
 	@Override
 	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-		return new ElementPartialAggregate<Tuple<?>>(in);
+		return new ElementPartialAggregate<Tuple<?>>(in, datatype);
 	}
 
 	@Override

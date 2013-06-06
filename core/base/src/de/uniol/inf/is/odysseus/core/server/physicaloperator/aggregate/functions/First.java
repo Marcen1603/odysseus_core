@@ -26,14 +26,16 @@ abstract public class First<R, W> extends AbstractAggregateFunction<R, W> {
 	 * 
 	 */
 	private static final long serialVersionUID = 5606626236472048799L;
+	final private String datatype;
 
-	protected First(boolean partialAggregateInput) {
+	protected First(boolean partialAggregateInput, String datatype) {
         super("FIRST", partialAggregateInput);
+        this.datatype = datatype;
     }
 
     @Override
     public IPartialAggregate<R> init(R in) {
-        IPartialAggregate<R> pa = new ElementPartialAggregate<R>(in);
+        IPartialAggregate<R> pa = new ElementPartialAggregate<R>(in, datatype);
         return pa;
     }
 
@@ -41,7 +43,7 @@ abstract public class First<R, W> extends AbstractAggregateFunction<R, W> {
     public IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
         ElementPartialAggregate<R> pa = null;
         if (createNew) {
-            pa = new ElementPartialAggregate<R>(((ElementPartialAggregate<R>) p).getElem());
+            pa = new ElementPartialAggregate<R>(((ElementPartialAggregate<R>) p).getElem(), datatype);
         }
         else {
             pa = (ElementPartialAggregate<R>) p;

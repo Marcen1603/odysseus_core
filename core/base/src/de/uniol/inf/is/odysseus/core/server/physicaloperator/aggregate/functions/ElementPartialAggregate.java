@@ -20,17 +20,24 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 
 public class ElementPartialAggregate<T> implements IPartialAggregate<T> {
 	T elem;
+	final String datatype;
 	
-	public ElementPartialAggregate(T elem) {
+	public ElementPartialAggregate(T elem, String datatype) {
 		setElem(elem);
+		this.datatype = datatype;
 	}
 	
 	public ElementPartialAggregate(IPartialAggregate<T> p) {
 		setElem(((ElementPartialAggregate<T>)p).getElem());
+		this.datatype = ((ElementPartialAggregate<T>)p).getDatatype();
 	}
 
 	public T getElem() {
 		return elem;
+	}
+	
+	public String getDatatype() {
+		return datatype;
 	}
 	
 	public void setElem(T elem) {

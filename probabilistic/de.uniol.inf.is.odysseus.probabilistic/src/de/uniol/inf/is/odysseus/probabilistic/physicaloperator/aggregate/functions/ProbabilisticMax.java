@@ -15,9 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
@@ -34,27 +31,24 @@ public class ProbabilisticMax extends
 	 * 
 	 */
 	private static final long serialVersionUID = 8103927421161762878L;
-	private static Map<Integer, ProbabilisticMax> instances = new HashMap<Integer, ProbabilisticMax>();
+	//private static Map<Integer, ProbabilisticMax> instances = new HashMap<Integer, ProbabilisticMax>();
 	@SuppressWarnings("unused")
 	private final int pos;
+	final private String datatype;
 
-	public static ProbabilisticMax getInstance(final int pos, boolean partialAggregateInput) {
-		ProbabilisticMax ret = ProbabilisticMax.instances.get(pos);
-		if (ret == null) {
-			ret = new ProbabilisticMax(pos, partialAggregateInput);
-			ProbabilisticMax.instances.put(pos, ret);
-		}
-		return ret;
+	public static ProbabilisticMax getInstance(final int pos, boolean partialAggregateInput, String datatype) {
+		return new ProbabilisticMax(pos, partialAggregateInput, datatype);
 	}
 
-	protected ProbabilisticMax(final int pos, boolean partialAggregateInput) {
+	protected ProbabilisticMax(final int pos, boolean partialAggregateInput, String datatype) {
 		super("MAX", partialAggregateInput);
 		this.pos = pos;
+		this.datatype = datatype;
 	}
 
 	@Override
 	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-		return new ElementPartialAggregate<Tuple<?>>(in);
+		return new ElementPartialAggregate<Tuple<?>>(in, datatype);
 	}
 
 	@Override

@@ -78,7 +78,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 					if (builder == null){
 						throw new RuntimeException("Could not find a builder for "+p.getE2().getName());
 					}
-					IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput);
+					IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput, e.getValue().getDatatype().getURI());
 					aggregatePO.setInitFunction(p, aggFunction);
 					aggregatePO.setMergeFunction(p, aggFunction);
 					aggregatePO.setEvalFunction(p, aggFunction);

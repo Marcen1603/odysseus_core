@@ -15,12 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.MinMax;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class RelationalMinMax extends MinMax<Tuple<?>, Tuple<?>> {
 
@@ -34,7 +31,7 @@ public class RelationalMinMax extends MinMax<Tuple<?>, Tuple<?>> {
 	//static Map<Boolean, Map<Integer, RelationalMinMax>> instances = new HashMap<Boolean, Map<Integer, RelationalMinMax>>();
 
 	static public RelationalMinMax getInstance(int pos, boolean isMax,
-			boolean partialAggregateInput) {
+			boolean partialAggregateInput, String datatype) {
 //		Map<Integer, RelationalMinMax> in = instances.get(isMax);
 //		RelationalMinMax ret;
 //		if (in == null) {
@@ -50,12 +47,12 @@ public class RelationalMinMax extends MinMax<Tuple<?>, Tuple<?>> {
 //			}
 //		}
 //		return ret;
-		return new RelationalMinMax(pos, isMax, partialAggregateInput);
+		return new RelationalMinMax(pos, isMax, partialAggregateInput, datatype);
 	}
 
 	private RelationalMinMax(int pos, boolean isMax,
-			boolean partialAggregateInput) {
-		super(isMax, partialAggregateInput);
+			boolean partialAggregateInput, String datatype) {
+		super(isMax, partialAggregateInput, datatype);
 		attrList[0] = pos;
 	}
 

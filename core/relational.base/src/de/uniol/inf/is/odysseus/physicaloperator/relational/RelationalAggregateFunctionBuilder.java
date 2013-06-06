@@ -50,7 +50,7 @@ public class RelationalAggregateFunctionBuilder implements
 	
 	@Override
     public IAggregateFunction<Tuple<?>, Tuple<?>> createAggFunction(
-			AggregateFunction key, int[] pos, boolean partialAggregateInput) {
+			AggregateFunction key, int[] pos, boolean partialAggregateInput, String datatype) {
 		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
 		if ((key.getName().equalsIgnoreCase("AVG"))
 				|| (key.getName().equalsIgnoreCase("SUM"))) {
@@ -61,15 +61,15 @@ public class RelationalAggregateFunctionBuilder implements
 		} else if ((key.getName().equalsIgnoreCase("MIN"))
 				|| (key.getName().equalsIgnoreCase("MAX"))) {
 			aggFunc = RelationalMinMax.getInstance(pos[0],
-					(key.getName().equalsIgnoreCase("MAX")) ? true : false, partialAggregateInput);
+					(key.getName().equalsIgnoreCase("MAX")) ? true : false, partialAggregateInput, datatype);
 		}else if ((key.getName().equalsIgnoreCase("STDDEV"))){
 			aggFunc = new RelationalStdDev(pos, partialAggregateInput);
 		} else if ((key.getName().equalsIgnoreCase("NEST"))) {
 			aggFunc = new RelationalNest(pos, partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(LAST)) {
-			aggFunc = RelationalLast.getInstance(pos[0], partialAggregateInput);
+			aggFunc = RelationalLast.getInstance(pos[0], partialAggregateInput, datatype);
 		} else if (key.getName().equalsIgnoreCase(FIRST)) {
-			aggFunc = RelationalFirst.getInstance(pos[0], partialAggregateInput);
+			aggFunc = RelationalFirst.getInstance(pos[0], partialAggregateInput, datatype);
 		} else if (key.getName().equalsIgnoreCase(RATE)) {
 			aggFunc = RelationalRate.getInstance(partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(NTH)) {

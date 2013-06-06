@@ -98,7 +98,7 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 						throw new RuntimeException("Could not find a builder for " + p.getE2().getName());
 					}
 					@SuppressWarnings("rawtypes")
-					final IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput);
+					final IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput, e.getValue().getDatatype().getURI());
 					operator.setInitFunction(p, aggFunction);
 					operator.setMergeFunction(p, aggFunction);
 					operator.setEvalFunction(p, aggFunction);

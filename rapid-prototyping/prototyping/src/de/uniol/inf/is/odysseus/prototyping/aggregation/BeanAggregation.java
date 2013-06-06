@@ -55,14 +55,15 @@ public class BeanAggregation extends
 	private Method evaluateMethod = null;
 	/** Position array to support multiple attributes for aggregation */
 	private int[] positions;
+	final private String datatype;
 
 	/**
 	 * 
 	 * @param pos
 	 * @param className
 	 */
-	public BeanAggregation(int pos, String className, boolean partialAggregateInput) {
-		this(new int[] { pos }, className, partialAggregateInput);
+	public BeanAggregation(int pos, String className, boolean partialAggregateInput, String datatype) {
+		this(new int[] { pos }, className, partialAggregateInput, datatype);
 	}
 
 	/**
@@ -70,10 +71,11 @@ public class BeanAggregation extends
 	 * @param pos
 	 * @param className
 	 */
-	public BeanAggregation(int[] pos, String className, boolean partialAggregateInput) {
+	public BeanAggregation(int[] pos, String className, boolean partialAggregateInput, String datatype) {
 		super(className, partialAggregateInput);
 		this.positions = pos;
 		this.beanClassName = className;
+		this.datatype = datatype;
 	}
 
 	/*
@@ -151,7 +153,7 @@ public class BeanAggregation extends
 			LOG.error(e.getMessage(), e);
 		}
 		IPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(
-				ret);
+				ret, datatype);
 		return pa;
 	}
 
@@ -172,7 +174,7 @@ public class BeanAggregation extends
 		ElementPartialAggregate<Tuple<?>> pa = null;
 		if (createNew) {
 			pa = new ElementPartialAggregate<Tuple<?>>(
-					((ElementPartialAggregate<Tuple<?>>) p).getElem());
+					((ElementPartialAggregate<Tuple<?>>) p).getElem(), datatype);
 		} else {
 			pa = (ElementPartialAggregate<Tuple<?>>) p;
 		}
@@ -261,7 +263,7 @@ public class BeanAggregation extends
 	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
 		// The result tuple
 		ElementPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(
-				((ElementPartialAggregate<Tuple<?>>) p).getElem());
+				((ElementPartialAggregate<Tuple<?>>) p).getElem(), datatype);
 
 		Tuple<?> ret = null;
 		try {

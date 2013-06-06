@@ -15,9 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
@@ -32,20 +29,18 @@ public class RelationalFirst extends First<Tuple<?>, Tuple<?>> {
 	 * 
 	 */
 	private static final long serialVersionUID = 9099860331313991458L;
-	private static Map<Integer, RelationalFirst> instances = new HashMap<Integer, RelationalFirst>();
+//	private static Map<Integer, RelationalFirst> instances = new HashMap<Integer, RelationalFirst>();
 	private int pos;
 
-	private RelationalFirst(int pos, boolean partialAggregateInput) {
-		super(partialAggregateInput);
+	private RelationalFirst(int pos, boolean partialAggregateInput,
+			String datatype) {
+		super(partialAggregateInput, datatype);
 		this.pos = pos;
 	}
 
-	public static RelationalFirst getInstance(int pos, boolean partialAggregateInput) {
-		RelationalFirst ret = instances.get(pos);
-		if (ret == null) {
-			ret = new RelationalFirst(pos, partialAggregateInput);
-		}
-		return ret;
+	public static RelationalFirst getInstance(int pos,
+			boolean partialAggregateInput, String datatype) {
+		return new RelationalFirst(pos, partialAggregateInput, datatype);
 	}
 
 	@Override

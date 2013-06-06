@@ -24,17 +24,19 @@ abstract public class MinMax<R extends Comparable<R>, W> extends AbstractAggrega
 	 * 
 	 */
 	private static final long serialVersionUID = -7793230815454083728L;
-	boolean isMax = true;
+	final boolean isMax;
+	final String datatype;
 	
-	protected MinMax(boolean isMax, boolean partialAggregateInput) {
+	protected MinMax(boolean isMax, boolean partialAggregateInput, String datatype) {
 		super (isMax?"MAX":"MIN",partialAggregateInput);
 		this.isMax = isMax;
+		this.datatype = datatype;
 	}
 		
 	
 	@Override
 	public IPartialAggregate<R> init(R in) {
-		return new ElementPartialAggregate<R>(in);
+		return new ElementPartialAggregate<R>(in, datatype);
 	}
 
 	@Override
