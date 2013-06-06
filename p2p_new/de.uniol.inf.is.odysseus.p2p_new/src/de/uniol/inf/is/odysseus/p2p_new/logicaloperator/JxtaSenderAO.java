@@ -25,6 +25,7 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 		super(other);
 		
 		this.pipeID = other.pipeID;
+		this.useUDP = other.useUDP;
 	}
 
 	@Override
@@ -39,7 +40,7 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 	@Parameter(name = "useUDP", doc = "Specifies if an unreliable but fast udp-connection should be used", type = BooleanParameter.class, optional = true)
 	public void setUseUDP(boolean useUDP) {
 		this.useUDP = useUDP;
-		addParameterInfo("USEUDP", "'" + (useUDP ? "true" : "false") + "'");
+		addParameterInfo("useUDP", "'" + (useUDP ? "true" : "false") + "'");
 	}
 	
 	public boolean isUseUDP() {

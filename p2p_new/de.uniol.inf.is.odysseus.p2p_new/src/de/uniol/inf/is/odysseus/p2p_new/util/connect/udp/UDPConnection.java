@@ -62,6 +62,7 @@ public class UDPConnection extends AbstractJxtaConnection {
 					byte[] buffer = new byte[BUFFER_SIZE];
 					DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
 					socket.receive(packet);
+					
 					recieve(packet.getData());
 				} catch (IOException e) {
 					LOG.error("Could not receive datagram packet", e);

@@ -264,7 +264,6 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 			sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort(), false));
 			return directConnectionServer;
-
 		}
 		
 		UDPServerConnection directConnectionServer = new UDPServerConnection();
