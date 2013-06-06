@@ -69,13 +69,15 @@ public class JSR223Aggregation extends
 	/** Position array to support multiple attributes for aggregation */
 	private int[] positions;
 
+	final private String datatype;
+
 	/**
 	 * 
 	 * @param pos
 	 * @param fileName
 	 */
-	public JSR223Aggregation(int pos, String fileName, boolean partialAggregateInput) {
-		this(new int[] { pos }, fileName, partialAggregateInput);
+	public JSR223Aggregation(int pos, String fileName, boolean partialAggregateInput, String datatype) {
+		this(new int[] { pos }, fileName, partialAggregateInput, datatype);
 	}
 
 	/**
@@ -83,9 +85,10 @@ public class JSR223Aggregation extends
 	 * @param pos
 	 * @param fileName
 	 */
-	public JSR223Aggregation(int[] pos, String fileName, boolean partialAggregateInput) {
+	public JSR223Aggregation(int[] pos, String fileName, boolean partialAggregateInput, String datatype) {
 		super("JSR223Aggregation", partialAggregateInput);
 		this.positions = pos;
+		this.datatype = datatype;
 		this.fileName = fileName;
 		String extension = this.fileName.substring(this.fileName
 				.lastIndexOf(".") + 1);
@@ -173,7 +176,7 @@ public class JSR223Aggregation extends
 		}
 		ret = new Tuple(retObj, false);
 		IPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(
-				ret);
+				ret,datatype);
 		return pa;
 	}
 
@@ -193,7 +196,7 @@ public class JSR223Aggregation extends
 		ElementPartialAggregate<Tuple<?>> pa = null;
 		if (createNew) {
 			pa = new ElementPartialAggregate<Tuple<?>>(
-					((ElementPartialAggregate<Tuple<?>>) p).getElem());
+					((ElementPartialAggregate<Tuple<?>>) p).getElem(), datatype);
 		} else {
 			pa = (ElementPartialAggregate<Tuple<?>>) p;
 		}
@@ -246,7 +249,7 @@ public class JSR223Aggregation extends
 	@Override
 	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
 		ElementPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(
-				((ElementPartialAggregate<Tuple<?>>) p).getElem());
+				((ElementPartialAggregate<Tuple<?>>) p).getElem(), datatype);
 
 		Tuple<?> ret = null;
 		Bindings bindings = this.engine.createBindings();
