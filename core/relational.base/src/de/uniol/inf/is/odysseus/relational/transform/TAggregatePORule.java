@@ -70,6 +70,9 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 					for (int i = 0; i < p.getE1().size(); ++i) {
 						SDFAttribute attr = p.getE1().get(i);
 						posArray[i] = inputSchema.indexOf(attr);
+						if (attr.getDatatype().isPartialAggregate()){
+							partialAggregateInput = true;
+						}
 						// For most cases its the only datatype ... so keep one of them
 						datatype = attr.getDatatype().getURI();
 					}
