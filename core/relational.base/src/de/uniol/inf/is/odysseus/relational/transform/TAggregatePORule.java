@@ -66,19 +66,19 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 							attrList, e.getKey());
 					int[] posArray = new int[p.getE1().size()];
 					boolean partialAggregateInput = false;
+					String datatype = null;
 					for (int i = 0; i < p.getE1().size(); ++i) {
 						SDFAttribute attr = p.getE1().get(i);
 						posArray[i] = inputSchema.indexOf(attr);
-						if (attr.getDatatype().isPartialAggregate()){
-							partialAggregateInput = true;
-						}
+						// For most cases its the only datatype ... so keep one of them
+						datatype = attr.getDatatype().getURI();
 					}
 					IAggregateFunctionBuilderRegistry registry = Activator.getAggregateFunctionBuilderRegistry();
 					IAggregateFunctionBuilder builder = registry.getBuilder(Relational.RELATIONAL,p.getE2().getName());
 					if (builder == null){
 						throw new RuntimeException("Could not find a builder for "+p.getE2().getName());
 					}
-					IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput, e.getValue().getDatatype().getURI());
+					IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput, datatype);
 					aggregatePO.setInitFunction(p, aggFunction);
 					aggregatePO.setMergeFunction(p, aggFunction);
 					aggregatePO.setEvalFunction(p, aggFunction);
