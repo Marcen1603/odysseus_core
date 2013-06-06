@@ -21,14 +21,15 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class DoubleHandler extends AbstractDataHandler<Double> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
-		types.add("Double");
-		types.add("Float");
-		types.add("MV");
+		types.add(SDFDatatype.DOUBLE.getURI());
+		types.add(SDFDatatype.FLOAT.getURI());
+		types.add("MV"); //??
 	}
 
 	@Override

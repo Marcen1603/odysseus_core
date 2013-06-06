@@ -41,7 +41,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	
 	static protected List<String> types = new ArrayList<String>();
 	static {
-		types.add("Tuple");
+		types.add(SDFDatatype.TUPLE.getURI());
 	}
 
 	IDataHandler<?>[] dataHandlers = null;

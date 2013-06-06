@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
@@ -35,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public class DateHandler extends AbstractDataHandler<Long> {
 	static protected List<String> types = new ArrayList<String>();
 	static{
-		types.add("Date");
+		types.add(SDFDatatype.DATE.getURI());
 	}
 
 	@Override

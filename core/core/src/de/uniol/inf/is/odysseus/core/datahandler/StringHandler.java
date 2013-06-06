@@ -29,6 +29,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class StringHandler extends AbstractDataHandler<String> {
@@ -37,8 +38,8 @@ public class StringHandler extends AbstractDataHandler<String> {
 	
 	static protected List<String> types = new ArrayList<String>();
 	static {
-		types.add("String");
-		types.add("StartTimestampString");
+		types.add(SDFDatatype.STRING.getURI());
+		types.add(SDFDatatype.START_TIMESTAMP_STRING.getURI());
 	}
 	private Charset charset = Charset.forName("UTF-8");
 	private CharsetDecoder decoder = charset.newDecoder();

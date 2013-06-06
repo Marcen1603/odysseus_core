@@ -21,16 +21,17 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
 public class LongHandler extends AbstractDataHandler<Long> {
 	static protected List<String> types = new ArrayList<String>();
 	static{
-		types.add("Long");
-		types.add("Timestamp");
-		types.add("StartTimestamp");
-		types.add("EndTimestamp");
+		types.add(SDFDatatype.LONG.getURI());
+		types.add(SDFDatatype.TIMESTAMP.getURI());
+		types.add(SDFDatatype.START_TIMESTAMP.getURI());
+		types.add(SDFDatatype.END_TIMESTAMP.getURI());
 	}
 	
 	@Override

@@ -21,13 +21,14 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
 public class ShortDataHandler extends AbstractDataHandler<Short> {
 	static protected List<String> types = new ArrayList<String>();
 	static {		
-		types.add("Short");		
+		types.add(SDFDatatype.SHORT.getURI());		
 	}
 
 	@Override

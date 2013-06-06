@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
@@ -28,7 +29,7 @@ public class ObjectDataHandler<M> extends AbstractDataHandler<M> {
 
 	static protected List<String> types = new ArrayList<String>();
 	static{
-		types.add("Object");
+		types.add(SDFDatatype.OBJECT.getURI());
 	}
 	
 	@Override

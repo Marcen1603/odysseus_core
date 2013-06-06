@@ -31,7 +31,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 
 	static protected List<String> types = new ArrayList<String>();
 	static{
-		types.add("MULTI_VALUE");
+		types.add("MULTI_VALUE"); //??
 	}
 	
 	SDFSchema subType = null;
