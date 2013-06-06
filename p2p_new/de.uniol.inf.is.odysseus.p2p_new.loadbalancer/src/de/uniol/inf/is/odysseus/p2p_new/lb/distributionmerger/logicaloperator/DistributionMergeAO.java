@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator;
+package de.uniol.inf.is.odysseus.p2p_new.lb.distributionmerger.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 
 // TODO javaDoc M.B.
 // TODO setPredicates needed? M.B.
-@LogicalOperator(name="FANIN", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE)
+@LogicalOperator(name="DISTRIBUTION_MERGE", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE)
 public class DistributionMergeAO extends BinaryLogicalOp {
 	
 	public DistributionMergeAO() {
