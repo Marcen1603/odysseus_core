@@ -56,7 +56,7 @@ public class DatarateCalcPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 			double fullDataRateSecond = fullDataRateNano * 1000000000.0;
 			
 //			System.out.println(String.format("%-10.3f; %-10.3f", lastDataRateSecond, fullDataRateSecond));
-			transfer(new StreamString(lastDataRateSecond+";"+fullDataRateSecond));
+			transfer(new StreamString(String.format("%-10.3f; %-10.3f", lastDataRateSecond, fullDataRateSecond)));
 			lastTimestamp = now;
 		}
 	}
