@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 
 // TODO Preconditions in allen Klassen des bundles. M.B.
+// TODO javaDoc in some files. M.B.
 /**
  * The class for abstract load balancers. <br />
  * A load balancer distributes queries and/or sources on a network of peers.
@@ -121,9 +122,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			List<ILogicalQuery> queriesToDistribute = Lists.newArrayList(query);
 			queryPartsMap.put(query, new ArrayList<QueryPart>());
 			
-			// Generate a new logical operator which marks that the query result shall return to this instance
-			QueryPart localPart = this.createLocalPart();
-			
 			// Make copies of the query
 			// TODO wantedDegree als Parameter M.B.
 			for(int copyNo = 0; copyNo < this.getDegreeOfParallelismn(0, remotePeerIDs.size()) - 1; copyNo++)
@@ -143,7 +141,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 			}
 			
-			// Subscribe the local part
+			// Generate a new logical operator which marks that the query result shall return to this instance
+			QueryPart localPart = this.createLocalPart(queryPartsMap.get(query));
 			this.subscribeToLocalPart(queryPartsMap.get(query), localPart);
 			queryPartsMap.get(query).add(localPart);
 			
@@ -222,8 +221,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	
 	/**
 	 * Creates a new {@link QueryPart} to be executed locally.
+	 * @param parts A list of {@link QueryPart}s, which shall be merged by the local {@link QueryPart}.
 	 */
-	protected abstract QueryPart createLocalPart();
+	protected abstract QueryPart createLocalPart(List<QueryPart> parts);
 	
 	/**
 	 * Subscribes a local {@link QueryPart} to a list of {@link QueryPart}s. <br />
@@ -235,11 +235,15 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	protected void subscribeToLocalPart(List<QueryPart> queryParts, QueryPart localPart) {
 		
 		for(QueryPart part : queryParts) {
-		
-			ILogicalOperator localSource = localPart.getRelativeSources().iterator().next();
+			
+			Iterator<ILogicalOperator> localSourceIter = localPart.getRelativeSources().iterator();
 			Collection<ILogicalOperator> sinks = part.getRealSinks();
-			for(ILogicalOperator sink : sinks)
+			for(ILogicalOperator sink : sinks) {
+				
+				ILogicalOperator localSource = localSourceIter.next();
 				localSource.subscribeToSource(sink, localSource.getNumberOfInputs(), 0, sink.getOutputSchema());
+				
+			}
 			
 		}
 		

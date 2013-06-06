@@ -6,8 +6,8 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.lb.distributionmerger.logicaloperator.DistributionMergeAO;
 
 /**
  * The <code>IntraqueryLoadBalancer</code> parallelizes each {@link ILogicalQuery} on different peers. <br />
@@ -36,20 +36,24 @@ public class IntraqueryLoadBalancer extends AbstractLoadBalancer {
 		return Lists.newArrayList(new QueryPart(operators));
 		
 	}
-
-	@Override
-	protected QueryPart createLocalPart() {
 	
-		// XXX SweepArea instead of union. M.B.
-		final UnionAO unionAO = new UnionAO();
-		return new QueryPart(Lists.newArrayList((ILogicalOperator) unionAO), AbstractLoadBalancer.getLocalDestinationName());
+	@Override
+	protected QueryPart createLocalPart(List<QueryPart> parts) {
+		
+		final List<ILogicalOperator> operators = Lists.newArrayList();
+		
+		// All queryparts are equal
+		for(@SuppressWarnings("unused") ILogicalOperator sink : parts.get(0).getRealSinks())
+			operators.add(new DistributionMergeAO());
+		
+		return new QueryPart(operators, AbstractLoadBalancer.getLocalDestinationName());
 	
 	}
 
 	@Override
 	protected int getDegreeOfParallelismn(int wantedDegree, int maxDegree) {
 		
-		// XXX First fix the other wworkaround in this class. M.B.
+		// XXX First fix the other workaround in this class. M.B.
 		// return Math.min(wantedDegree, maxDegree);
 		return 2;
 		

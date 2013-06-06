@@ -41,12 +41,21 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 	 * @return A {@link RenameAO} with no operation.
 	 */
 	@Override
-	protected QueryPart createLocalPart() {
+	protected QueryPart createLocalPart(List<QueryPart> parts) {
 		
-		final RenameAO renameAO = new RenameAO();
-		renameAO.setNoOp(true);
-		renameAO.addParameterInfo("isNoOp", "'true'");
-		return new QueryPart(Lists.newArrayList((ILogicalOperator) renameAO), AbstractLoadBalancer.getLocalDestinationName());
+		final List<ILogicalOperator> operators = Lists.newArrayList();
+		
+		// All queryparts are equal
+		for(@SuppressWarnings("unused") ILogicalOperator sink : parts.get(0).getRealSinks()) {
+			
+			final RenameAO renameAO = new RenameAO();
+			renameAO.setNoOp(true);
+			renameAO.addParameterInfo("isNoOp", "'true'");
+			operators.add(renameAO);
+			
+		}
+		
+		return new QueryPart(operators, AbstractLoadBalancer.getLocalDestinationName());
 		
 	}
 
