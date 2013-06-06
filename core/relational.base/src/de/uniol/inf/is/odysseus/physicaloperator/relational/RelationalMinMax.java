@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.MinMax;
 
 public class RelationalMinMax extends MinMax<Tuple<?>, Tuple<?>> {
@@ -56,20 +57,36 @@ public class RelationalMinMax extends MinMax<Tuple<?>, Tuple<?>> {
 		attrList[0] = pos;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
 		if (isPartialAggregateInput()) {
-			return init((IPartialAggregate<Tuple<?>>) in.getAttribute(attrList[0]));
+			return new RelationalElementPartialAggregate(in.getAttribute(attrList[0]), datatype) ;
 		} else {
-			return super.init(in.restrict(attrList, true));
+			return new RelationalElementPartialAggregate(in.restrict(attrList, true), datatype);
 		}
 	}
-
+	
 	@Override
-	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p,
-			Tuple<?> toMerge, boolean createNew) {
-		return super.merge(p, toMerge.restrict(attrList, true), createNew);
+	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p, Tuple<?> merge, boolean createNew) {
+		Tuple<?> toMerge = merge.restrict(attrList, true);
+		ElementPartialAggregate<Tuple<?>> pa = null;
+		if (createNew){
+			pa = new RelationalElementPartialAggregate(p);
+		}else{
+			pa = (RelationalElementPartialAggregate) p;	
+		}		
+		if (isMax){
+			if (pa.getElem().compareTo(toMerge) < 0){
+				pa.setElem(toMerge);
+			}
+		}else{
+			if (pa.getElem().compareTo(toMerge) > 0){
+				pa.setElem(toMerge);
+			}			
+		}
+		return pa;
 	}
+
+
 
 }
