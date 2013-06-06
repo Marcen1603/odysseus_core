@@ -39,7 +39,10 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	 */
 	private static final String SERVICE_METHOD_SOAP = "SOAP";
 	
-	static Logger loger = LoggerFactory.getLogger(WSEnrichAO.class);
+	/**
+	 * For Logging
+	 */
+	static Logger logger = LoggerFactory.getLogger(WSEnrichAO.class);
 	
 	/**
 	 * The service Method to call a Webservice: REST or SOAP

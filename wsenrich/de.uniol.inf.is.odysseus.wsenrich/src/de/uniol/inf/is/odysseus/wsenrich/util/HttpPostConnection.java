@@ -172,7 +172,8 @@ public class HttpPostConnection implements IConnectionForWebservices {
 		}
 		
 	}
-
+	
+	//TODO: Eventuell mit Interface arbeiten, damit nicht nur XML übergeben werden kann???
 	/**
 	 * Opens the Http Post Connection with a Document, 
 	 * not Key-Value-Pairs

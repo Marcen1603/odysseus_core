@@ -91,8 +91,7 @@ public class HttpGetConnection implements IConnectionForWebservices {
 	@Override
 	public void addHeader(String argument, String value) {
 		
-		this.httpGet.addHeader(argument, value);
-		
+		this.httpGet.addHeader(argument, value);	
 	}
 
 }
