@@ -17,9 +17,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
 
-public class ElementPartialAggreagateDataHandler extends AbstractDataHandler<ElementPartialAggregate<?>> {
+public class ElementPartialAggregateDataHandler extends AbstractDataHandler<ElementPartialAggregate<?>> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ElementPartialAggreagateDataHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ElementPartialAggregateDataHandler.class);
 
 	static protected List<String> types = new ArrayList<String>();
 	static {
@@ -87,7 +87,7 @@ public class ElementPartialAggreagateDataHandler extends AbstractDataHandler<Ele
 	@Override
 	protected IDataHandler<ElementPartialAggregate<?>> getInstance(
 			SDFSchema schema) {
-		return new ElementPartialAggreagateDataHandler();
+		return new ElementPartialAggregateDataHandler();
 	}
 
 	@Override
