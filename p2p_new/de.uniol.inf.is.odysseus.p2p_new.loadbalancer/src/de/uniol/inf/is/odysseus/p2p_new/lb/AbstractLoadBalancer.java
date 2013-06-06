@@ -108,7 +108,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
 			return queries;
 			
-		} else DistributionHelper.logPeerStatus(remotePeerIDs);
+		} 
+		
+		DistributionHelper.logPeerStatus(remotePeerIDs);
 		
 		// All queryparts over all queries
 		final Map<ILogicalQuery, List<QueryPart>> queryPartsMap = Maps.newHashMap();
