@@ -1,11 +1,8 @@
 package de.uniol.inf.is.odysseus.wsenrich.logicaloperator;
 
 import java.util.List;
-
-import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -18,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-//TODO
+//TODO  libs checken!!!
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="WSENRICH")
 public class WSEnrichAO extends UnaryLogicalOp {
 
@@ -148,7 +145,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		return super.getOutputSchema();
 	}
 	
-	private static String sdfSchemaToString(SDFSchema schema, String identifier) {
+/*	private static String sdfSchemaToString(SDFSchema schema, String identifier) {
 		StringBuilder sb = new StringBuilder(140);
 		sb.append(identifier + ", Schema=[");
 		boolean addComma = false;
@@ -162,7 +159,9 @@ public class WSEnrichAO extends UnaryLogicalOp {
 			sb.append("]");
 			return sb.toString();
 		}
-		
+
+*/		
+
 	/**
 	 * @return The Service-Method. REST or SOAP
 	 */
@@ -260,9 +259,6 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	public void setOperation(String operation) {
 		this.operation = operation;
 	}
-	
-	
-	
-	
+		
 
 }

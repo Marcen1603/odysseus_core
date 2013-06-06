@@ -76,6 +76,12 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		dataMergeFunction.init();
 		
 	}
+	
+	@Override
+	protected synchronized void process_close() {
+		
+		//TODO
+	}
 
 	@Override
 	public AbstractPipe<Tuple<T>, Tuple<T>> clone() {
@@ -105,6 +111,25 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		}
 		
 	}
+	
+	/**
+	 * Returns the Attributes that are defined in the Query for the
+	 * Webservice. 
+	 * @param inputTuple the current tuple from the input stream
+	 * @return the attributes for the webservicequery
+	 */
+/*	private Object[] getQueryParameters(Tuple<T> inputTuple) {
+		
+		Object[] queryParameters = new Object[parameterPositions.length];
+		
+		for(int i = 0; i < queryParameters.length; i++) {
+			
+			queryParameters[i] = inputTuple.getAttribute(parameterPositions[i]);
+		}
+		
+		return queryParameters;
+	}
+*/
 	
 	/**
 	 * Compares all class attributes, that were present in the AO
