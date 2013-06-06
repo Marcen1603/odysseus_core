@@ -106,8 +106,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			"AvgSumPartialAggregate");
 	public static final SDFDatatype COUNT_PARTIAL_AGGREGATE = new SDFDatatype(
 			"CountPartialAggregate");
-	public static final SDFDatatype ELEMENT_PARTIAL_AGGREGATE = new SDFDatatype(
-			"ElementPartialAggregate");
+	public static final SDFDatatype RELATIONAL_ELEMENT_PARTIAL_AGGREGATE = new SDFDatatype(
+			"RelationalElementPartialAggregate");
 	public static final SDFDatatype LIST_PARTIAL_AGGREGATE = new SDFDatatype(
 			"ListPartialAggregate");
 
@@ -221,7 +221,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 
 			dd.addDatatype(SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE);
 			dd.addDatatype(SDFDatatype.COUNT_PARTIAL_AGGREGATE);
-			dd.addDatatype(SDFDatatype.ELEMENT_PARTIAL_AGGREGATE);
+			dd.addDatatype(SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE);
 			dd.addDatatype(SDFDatatype.LIST_PARTIAL_AGGREGATE);
 
 		} catch (Exception e) {
@@ -304,7 +304,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public boolean isPartialAggregate() {
 		return this.getURI().equals(AVG_SUM_PARTIAL_AGGREGATE.getURI())
 				|| this.getURI().equals(COUNT_PARTIAL_AGGREGATE.getURI())
-				|| this.getURI().equals(ELEMENT_PARTIAL_AGGREGATE.getURI())
+				|| this.getURI().equals(RELATIONAL_ELEMENT_PARTIAL_AGGREGATE.getURI())
 				|| this.getURI().equals(LIST_PARTIAL_AGGREGATE.getURI());
 	}
 

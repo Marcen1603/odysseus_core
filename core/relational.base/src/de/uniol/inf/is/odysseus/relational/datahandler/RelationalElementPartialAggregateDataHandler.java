@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.datahandler;
+package de.uniol.inf.is.odysseus.relational.datahandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,56 +15,56 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.StringHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalElementPartialAggregate;
 
-public class ElementPartialAggregateDataHandler extends AbstractDataHandler<ElementPartialAggregate<?>> {
+public class RelationalElementPartialAggregateDataHandler extends AbstractDataHandler<RelationalElementPartialAggregate> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ElementPartialAggregateDataHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RelationalElementPartialAggregateDataHandler.class);
 
 	static protected List<String> types = new ArrayList<String>();
 	static {
-		types.add(SDFDatatype.ELEMENT_PARTIAL_AGGREGATE.getURI());
+		types.add(SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE.getURI());
 	}
 	
 	StringHandler typeHandler = new StringHandler();
 	
 	@Override
-	public ElementPartialAggregate<?> readData(ByteBuffer buffer) {
+	public RelationalElementPartialAggregate readData(ByteBuffer buffer) {
 		String type = typeHandler.readData(buffer);
 		IDataHandler<?> contentHandler = DataHandlerRegistry.getDataHandler(type, (SDFSchema)null);
 		if (contentHandler != null){
 			Object data = contentHandler.readData(buffer);
-			return new ElementPartialAggregate<Object>(data, type);
+			return new RelationalElementPartialAggregate(data, type);
 		}else{
 			throw new IllegalArgumentException("No Datahandler von type "+type+" registered!");
 		}
 	}
 
 	@Override
-	public ElementPartialAggregate<?> readData(ObjectInputStream inputStream)
+	public RelationalElementPartialAggregate readData(ObjectInputStream inputStream)
 			throws IOException {
 		String type = typeHandler.readData(inputStream);
 		IDataHandler<?> contentHandler = DataHandlerRegistry.getDataHandler(type, (SDFSchema)null);
 		if (contentHandler != null){
 			Object data = contentHandler.readData(inputStream);
-			return new ElementPartialAggregate<Object>(data, type);
+			return new RelationalElementPartialAggregate(data, type);
 		}else{
 			throw new IllegalArgumentException("No Datahandler von type "+type+" registered!");
 		}	
 	}
 
 	@Override
-	public ElementPartialAggregate<?> readData(String string) {
+	public RelationalElementPartialAggregate readData(String string) {
 		throw new RuntimeException("Sorry. Currently not implemented");
 	}
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		ElementPartialAggregate<?> agg = (ElementPartialAggregate<?>) data;
+		RelationalElementPartialAggregate agg = (RelationalElementPartialAggregate) data;
 		IDataHandler<?> contentHandler = DataHandlerRegistry.getDataHandler(agg.getDatatype(), (SDFSchema)null);
 		if (contentHandler != null){
 			typeHandler.writeData(buffer, agg.getDatatype());
-			contentHandler.writeData(buffer, agg.getElem());
+			contentHandler.writeData(buffer, agg.getValue());
 		}else{
 			
 		}
@@ -72,12 +72,12 @@ public class ElementPartialAggregateDataHandler extends AbstractDataHandler<Elem
 
 	@Override
 	public int memSize(Object attribute) {
-		ElementPartialAggregate<?> agg = (ElementPartialAggregate<?>) attribute;
+		RelationalElementPartialAggregate agg = (RelationalElementPartialAggregate) attribute;
 		IDataHandler<?> contentHandler = DataHandlerRegistry.getDataHandler(agg.getDatatype(), (SDFSchema)null);
 		int size = 0;
 		if (contentHandler != null){
 			size += typeHandler.memSize(agg.getDatatype());
-			size += contentHandler.memSize(agg.getElem());
+			size += contentHandler.memSize(agg.getValue());
 		}else{
 			LOG.error("No datahandler for "+agg.getDatatype()+" found!");
 		}
@@ -85,9 +85,9 @@ public class ElementPartialAggregateDataHandler extends AbstractDataHandler<Elem
 	}
 
 	@Override
-	protected IDataHandler<ElementPartialAggregate<?>> getInstance(
+	protected IDataHandler<RelationalElementPartialAggregate> getInstance(
 			SDFSchema schema) {
-		return new ElementPartialAggregateDataHandler();
+		return new RelationalElementPartialAggregateDataHandler();
 	}
 
 	@Override

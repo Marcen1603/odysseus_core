@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 public class ElementPartialAggregate<T> implements IPartialAggregate<T> {
 	T elem;
 	final String datatype;
-	
+		
 	public ElementPartialAggregate(T elem, String datatype) {
 		setElem(elem);
 		this.datatype = datatype;
@@ -39,7 +39,7 @@ public class ElementPartialAggregate<T> implements IPartialAggregate<T> {
 	public String getDatatype() {
 		return datatype;
 	}
-	
+		
 	public void setElem(T elem) {
 		this.elem = elem;
 	}

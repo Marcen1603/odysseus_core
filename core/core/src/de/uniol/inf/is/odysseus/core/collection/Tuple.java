@@ -139,6 +139,27 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			this.cloner = null;
 		}
 	}
+	
+	/**
+	 * Erzeugt ein neues Tuple mit einem Attribut 
+	 * 
+	 * @param attribute
+	 *            Attributbelegung des neuen Tuples
+	 * @param requiresDeepClone
+	 *            if true, each copy of this tuple will call clone on each
+	 *            attribute
+	 */
+	public Tuple(Object attribute, boolean requiresDeepClone) {
+		this.attributes = new Object[1];  
+		attributes[0] = attribute;
+		this.requiresDeepClone = requiresDeepClone;
+		// calcSize();
+		if (this.requiresDeepClone) {
+			this.cloner = new Cloner();
+		} else {
+			this.cloner = null;
+		}
+	}
 
 	// -----------------------------------------------------------------
 	// static Hilfsmethoden
