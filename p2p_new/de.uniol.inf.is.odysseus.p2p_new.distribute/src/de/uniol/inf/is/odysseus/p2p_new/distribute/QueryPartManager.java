@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.service.CompilerService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
 
+// TODO javaDoc M.B.
 public class QueryPartManager implements IAdvertisementListener, IDataDictionaryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryPartManager.class);

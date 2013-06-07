@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.util.OutputPipeResolver;
 
+// TODO javaDoc M.B.
 public class QueryPartController implements IPlanModificationListener, PipeMsgListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryPartController.class);

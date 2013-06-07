@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -61,9 +62,12 @@ public class DistributionHelper {
 	/**
 	 * Logs the number of available peers and their IDs.
 	 * @see Logger#debug(String)
-	 * @param peerIDs The collection of all peer IDs.
+	 * @param peerIDs The collection of all peer IDs. <br />
+	 * <code>peerIDs</code> must not be null.
 	 */
 	public static void logPeerStatus(Collection<PeerID> peerIDs) {
+		
+		Preconditions.checkNotNull(peerIDs, "peerIDs must not be null!");
 		
 		if(LOG.isDebugEnabled()) {
 			
@@ -83,12 +87,16 @@ public class DistributionHelper {
 	
 	/**
 	 * Collects all real sinks from a list of {@link QueryPart}s.
-	 * @param queryParts The list of {@link QueryPart}s from which the real sinks shall be collected.
+	 * @param queryParts The list of {@link QueryPart}s from which the real sinks shall be collected. <br />
+	 * <code>queryParts</code> must not be null.
 	 * @return The collection of all real sinks.	
 	 */
 	public static Collection<ILogicalOperator> collectSinks(List<QueryPart> queryParts) {
 		
+		Preconditions.checkNotNull(queryParts, "queryParts must not be null!");
+		
 		final Collection<ILogicalOperator> sinks = Lists.newArrayList();
+		
 		for(QueryPart queryPart : queryParts)
 			sinks.addAll(queryPart.getRealSinks());
 		
@@ -98,10 +106,13 @@ public class DistributionHelper {
 	
 	/**
 	 * Replaces every {@link StreamAO} within a {@link QueryPart} by its logical subplan.
-	 * @param part The {@link QueryPart} where the {@linkStreamAO}s shall be replaced.
+	 * @param part The {@link QueryPart} where the {@linkStreamAO}s shall be replaced. <br />
+	 * <code>part</code> must not be null.
 	 * @return The new {@link QueryPlan} without the {@link StreamAO}.
 	 */
 	public static QueryPart replaceStreamAOs(QueryPart part) {
+		
+		Preconditions.checkNotNull(part,"part must not be null!");
 		
 		final List<ILogicalOperator> operators = Lists.newArrayList();
 		for(ILogicalOperator operator : part.getOperators())
@@ -129,9 +140,8 @@ public class DistributionHelper {
 		for(ILogicalOperator operator : operatorsToAdd)
 			operators.add(operator);
 		
-		if(part.getDestinationName().isPresent()) {
+		if(part.getDestinationName().isPresent())
 			return new QueryPart(operators, part.getDestinationName().get());
-		}
 		
 		return new QueryPart(operators);
 		
@@ -139,11 +149,14 @@ public class DistributionHelper {
 	
 	/**
 	 * Copies a logical plan.
-	 * @param originPlan The logical plan to be copied.
+	 * @param originPlan The logical plan to be copied. <br />
+	 * <code>originPlan</code> must not be null.
 	 * @return A copy of <code>originPlan</code>.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ILogicalOperator copyLogicalPlan(ILogicalOperator originPlan) {
+		
+		Preconditions.checkNotNull(originPlan, "originplan must not be null!");
 		
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(originPlan.getOwner());
 		GenericGraphWalker walker = new GenericGraphWalker();
@@ -154,10 +167,15 @@ public class DistributionHelper {
 	
 	/**
 	 * Copies an {@link ILogicalQuery}.
-	 * @param originQuery The {@link ILogicalQuery} to be copied.
+	 * @param originQuery The {@link ILogicalQuery} to be copied. <br />
+	 * <code>originQuery</code> must not be null and it must have a logical plan.
+	 * @see ILogicalQuery#getLogicalPlan()
 	 * @return A copy of <code>originQuery</code>.
 	 */
 	public static ILogicalQuery copyLogicalQuery(ILogicalQuery originQuery) {
+		
+		Preconditions.checkNotNull(originQuery, "originQuery must not be null!");
+		Preconditions.checkNotNull(originQuery.getLogicalPlan(), "originQuery must have a logical plan!");
 		
 		ILogicalQuery copy = new LogicalQuery(getPQLParserID(), 
 				DistributionHelper.copyLogicalPlan(originQuery.getLogicalPlan()),
@@ -169,16 +187,24 @@ public class DistributionHelper {
 		
 	}
 	
+	// TODO preconditions M.B.
 	/**
 	 * Determines the {@link QueryPart}s containing {@link ILogicalOperator}s which are subscribed to a given {@link ILogicalOperator}. <br />
 	 * {@link ILogicalOperator}s within the same {@link QueryPart} are ignored.
-	 * @param relativeSink The {@link ILogicalOperator} whose next {@link ILogicalOperator}s are sought-after.
-	 * @param currentQueryPart The {@link QueryPart} containing <code>relativeSink</code>.
-	 * @param queryParts The set of {@link QueryPart}s.
+	 * @param relativeSink The {@link ILogicalOperator} whose next {@link ILogicalOperator}s are sought-after.  <br />
+	 * <code>relativeSink</code> must not be null.
+	 * @param currentQueryPart The {@link QueryPart} containing <code>relativeSink</code>. <br />
+	 * <code>currentQueryPart</code> must not be null.
+	 * @param queryParts The set of {@link QueryPart}s. <br />
+	 * <code>queryParts</code> must not be null.
 	 * @return The mapping of the next {@link ILogicalOperator}s an the {@link QueryPart}s containing them.
 	 */
 	public static Map<QueryPart, ILogicalOperator> determineNextQueryParts(ILogicalOperator relativeSink, QueryPart currentQueryPart, 
 			Set<QueryPart> queryParts) {
+		
+		Preconditions.checkNotNull(relativeSink, "relativeSink must not be null!");
+		Preconditions.checkNotNull(currentQueryPart, "currentQueryPart must not be null!");
+		Preconditions.checkNotNull(queryParts, "queryParts must not be null!");
 		
 		final Map<QueryPart, ILogicalOperator> next = Maps.newHashMap();
 		
@@ -200,12 +226,17 @@ public class DistributionHelper {
 	
 	/**
 	 * Searches for an {@link ILogicalOperator} within a set of {@link QueryPart}s.
-	 * @param target The sought-after {@link ILogicalOperator}.
-	 * @param parts The set of {@link QueryPart}s.
+	 * @param target The sought-after {@link ILogicalOperator}. <br />
+	 * <code>target</code> must not be null.
+	 * @param parts The set of {@link QueryPart}s. <br />
+	 * <code>parts</code> must not be null.
 	 * @return The {@link QueryPart} containing <code>target</code>
 	 * @throws IllegalArgumentExcepion if <code>target</code> can not be found.
 	 */
 	public static QueryPart findLogicalOperator(ILogicalOperator target, Set<QueryPart> parts) throws IllegalArgumentException {
+		
+		Preconditions.checkNotNull(target, "target must not be null!");
+		Preconditions.checkNotNull(parts, "parts must not be null!");
 		
 		for(final QueryPart part : parts) {
 			
@@ -221,13 +252,20 @@ public class DistributionHelper {
 	/**
 	 * Generates the needed connections between the peers to distribute a list of {@link QueryPart}s.
 	 * @param queryPartDistributionMap The mapping of the {@link QueryPart}s to be distributed and the {@link PeerID}s of the peers, 
-	 * where they shall be executed.
+	 * where they shall be executed. <br />
+	 * <code>queryPartsDistributionMap</code> must not be null.
 	 * @param baseAccessName The base name of all accessing operators to be created. To identify an accessing operator the base name will be 
-	 * extended by a connection number.
+	 * extended by a connection number. <br />
+	 * <code>baseAccessName</code> must not be null.
 	 * @param baseSenderName The base name of all sending operators to be created. To identify an sending operator the base name will be 
-	 * extended by a connection number.
+	 * extended by a connection number. <br />
+	 * <code>baseSenderName</code> must not be null.
 	 */
 	public static void generatePeerConnections(Map<QueryPart, PeerID> queryPartDistributionMap, String baseAccessName, String baseSenderName) {
+		
+		Preconditions.checkNotNull(queryPartDistributionMap, "queryPartDistributionMap must not be null!");
+		Preconditions.checkNotNull(baseAccessName, "baseAccessName must not be null!");
+		Preconditions.checkNotNull(baseSenderName, "baseSenderName must not be null!");
 		
 		int connectionNo = 0;
 		
@@ -256,7 +294,8 @@ public class DistributionHelper {
 	
 	/**
 	 * Generates a connection between two Peers, one sender and one acceptor.
-	 * @param senderPart The {@link QueryPart} to be executed by the sender.
+	 * @param senderPart The {@link QueryPart} to be executed by the sender. <br />
+	 * <code>senderPart</code> must not be null.
 	 * @param acceptorPart The {@link QueryPart} to be executed by the acceptor.
 	 * @param sinkOfSender The sink of <code/>senderPart</code>.
 	 * @param sourceOfAcceptor The source of <code/>acceptorPart</code>.

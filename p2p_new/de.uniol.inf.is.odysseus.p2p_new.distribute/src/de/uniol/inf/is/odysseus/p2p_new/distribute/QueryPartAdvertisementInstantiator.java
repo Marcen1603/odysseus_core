@@ -4,7 +4,12 @@ import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.Element;
 
+/**
+ * The instantiator for {@link QueryPartAdvertisement}.
+ * @author Timo Michelsen
+ */
 public final class QueryPartAdvertisementInstantiator implements AdvertisementFactory.Instantiator {
+	
 	/**
 	 * Returns the identifying type of this Advertisement.
 	 * 
@@ -12,7 +17,9 @@ public final class QueryPartAdvertisementInstantiator implements AdvertisementFa
 	 */
 	@Override
 	public String getAdvertisementType() {
+		
 		return QueryPartAdvertisement.getAdvertisementType();
+		
 	}
 
 	/**
@@ -24,12 +31,17 @@ public final class QueryPartAdvertisementInstantiator implements AdvertisementFa
 	 */
 	@Override
 	public Advertisement newInstance() {
+		
 		return new QueryPartAdvertisement();
+		
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Advertisement newInstance(Element root) {
+		
 		return new QueryPartAdvertisement(root);
+		
 	}
+	
 }

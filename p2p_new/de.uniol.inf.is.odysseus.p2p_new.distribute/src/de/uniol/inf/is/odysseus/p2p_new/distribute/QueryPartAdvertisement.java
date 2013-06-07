@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+// TODO javaDoc M.B.
 public final class QueryPartAdvertisement extends Advertisement implements Serializable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryPartAdvertisement.class);
