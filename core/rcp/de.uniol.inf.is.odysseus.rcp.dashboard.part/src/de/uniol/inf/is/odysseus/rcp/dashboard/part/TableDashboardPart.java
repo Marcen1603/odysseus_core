@@ -60,7 +60,8 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 	private final List<Tuple<?>> data = Lists.newArrayList();
 	private int maxData = 10;
-
+	private boolean refreshing = false;
+	
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
 
@@ -148,21 +149,30 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void streamElementRecieved(final IStreamObject<?> element, int port) {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
+	public void streamElementRecieved(IStreamObject<?> element, int port) {
+		if( element != null ) {
+			synchronized( data ) {
 				data.add((Tuple<?>) element);
 				if (data.size() > maxData) {
 					data.remove(0);
 				}
-
-				if (!tableViewer.getTable().isDisposed()) {
-					tableViewer.refresh();
-				}
-
 			}
-		});
+			
+			if( !refreshing && tableViewer.getInput() != null) {
+				refreshing = true;
+				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						synchronized( data ) {
+							if (!tableViewer.getTable().isDisposed()) {
+								tableViewer.refresh();
+							}
+							refreshing = false;
+						}
+					}
+				});
+			}
+		}
 	}
 
 	private static int determineMaxData(Configuration config) {
