@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.lb;
 
 import java.util.List;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -28,10 +29,13 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 	}
 	
 	/**
-	 * Creates one {@link Querypart} for the whole {@link ILogicalQuery}.
+	 * Returns one {@link Querypart} for the whole {@link ILogicalQuery}.
 	 */
 	@Override
 	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators) {
+		
+		Preconditions.checkNotNull(operators, "operators must be not null!");
+		Preconditions.checkArgument(operators.size() > 0, "operators must be not empty!");
 		
 		return Lists.newArrayList(new QueryPart(operators));
 		
@@ -42,6 +46,9 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 	 */
 	@Override
 	protected QueryPart createLocalPart(List<QueryPart> parts) {
+		
+		Preconditions.checkNotNull(parts, "parts must be not null!");
+		Preconditions.checkArgument(parts.size() > 0, "parts must be not empty!");
 		
 		final List<ILogicalOperator> operators = Lists.newArrayList();
 		

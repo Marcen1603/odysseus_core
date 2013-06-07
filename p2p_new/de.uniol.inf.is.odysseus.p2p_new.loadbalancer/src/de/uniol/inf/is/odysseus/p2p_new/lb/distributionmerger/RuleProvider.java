@@ -7,9 +7,15 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
-// TODO javaDoc
+/**
+ * The Provider of the {@link TDistributionMergeAORule}.
+ * @author Michael Brand
+ */
 public class RuleProvider implements ITransformRuleProvider {
 
+	/**
+	 * Returns a new {@link TDistributionMergeAORule}.
+	 */
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		

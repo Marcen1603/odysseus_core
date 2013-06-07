@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -28,8 +29,6 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 
-// TODO Preconditions in allen Klassen des bundles. M.B.
-// TODO javaDoc in some files. M.B.
 /**
  * The class for abstract load balancers. <br />
  * A load balancer distributes queries and/or sources on a network of peers.
@@ -91,9 +90,16 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	@Override
 	public abstract String getName();
 	
+	/**
+	 * Returns all {@link ILogicalQuery}s to be executed locally. This will be all {@link IlogicalQuery}s within <code>queries</code> modified due 
+	 * to the distribution plus copies of the {@link ILogicalQuery}s as the case may be. The returned {@link ILogicalQuerie}s will be semantically 
+	 * equivalent to those in <code>queries</code>.
+	 */
 	@Override
 	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender,
 			List<ILogicalQuery> queries, QueryBuildConfiguration cfg) {
+		
+		Preconditions.checkNotNull(cfg, "cfg must be not null!");
 
 		if(queries == null || queries.isEmpty()) {
 			
@@ -168,20 +174,29 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	
 	/**
 	 * Splits an {@link ILogicalQuery} into a list of {@link QueryPart}s.
-	 * @param operators The list of {@link ILogicalOperator}s representing the{@link ILogicalQuery}.
+	 * @param operators The list of {@link ILogicalOperator}s representing the{@link ILogicalQuery}. <br />
+	 * <code>operators</code> must not be null and not empty.
 	 * @return The list of {@link QueryPart}s.
 	 */
 	protected abstract List<QueryPart> determineQueryParts(List<ILogicalOperator> operators);
 	
 	/**
 	 * Maps each {@link QueryPart} to a peer except the local peer via round robin.
-	 * @param remotePeerIDs The collection of all peer IDs.
-	 * @param localPeerID The ID of the local peer.
-	 * @param queryParts The list of all {@link QueryPart}s.
+	 * @param remotePeerIDs The collection of all peer IDs. <br />
+	 * <code>remotePeerIDs</code> must not be null and not empty.
+	 * @param localPeerID The ID of the local peer. <br />
+	 * <code>localPeerID</code> must not be null.
+	 * @param queryParts The list of all {@link QueryPart}s. <br />
+	 * <code>queryParts</code> must not be null.
 	 * @return The mapping of the {@link QueryPart}s and the IDs of the the peers, where each {@link QueryPart} shall be stored.
 	 */
 	protected Map<QueryPart, PeerID> assignQueryParts(Collection<PeerID> remotePeerIDs, 
 			PeerID localPeerID, Collection<List<QueryPart>> queryParts) {
+		
+		Preconditions.checkNotNull(remotePeerIDs, "remotePeerIDs must be not null!");
+		Preconditions.checkArgument(remotePeerIDs.size() > 0, "remotePeerIDs must be not empty!");
+		Preconditions.checkNotNull(localPeerID, "localPeerID must be not null!");
+		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
 		
 		final Map<QueryPart, PeerID> distributed = Maps.newHashMap();
 		final Iterator<List<QueryPart>> partsIter = queryParts.iterator();
@@ -221,7 +236,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	
 	/**
 	 * Creates a new {@link QueryPart} to be executed locally.
-	 * @param parts A list of {@link QueryPart}s, which shall be merged by the local {@link QueryPart}.
+	 * @param parts A list of {@link QueryPart}s, which shall be merged by the local {@link QueryPart}. <br />
+	 * <code>parts</code> must not be null and not empty.
 	 */
 	protected abstract QueryPart createLocalPart(List<QueryPart> parts);
 	
@@ -229,10 +245,15 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * Subscribes a local {@link QueryPart} to a list of {@link QueryPart}s. <br />
 	 * Every sink of each {@link QueryPart} will be subscribed to a different Port of the source of the 
 	 * local {@link QueryPart}.
-	 * @param queryParts The list of {@link QueryPart}s.
-	 * @param localPart The local {@link QueryPart} to be subscribed.
+	 * @param queryParts The list of {@link QueryPart}s. <br />
+	 * <code>queryParts</code> must not be null.
+	 * @param localPart The local {@link QueryPart} to be subscribed. <br />
+	 * <code>localPart</code> must not be null.
 	 */
 	protected void subscribeToLocalPart(List<QueryPart> queryParts, QueryPart localPart) {
+		
+		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
+		Preconditions.checkNotNull(localPart, "localPart must be not null!");
 		
 		for(QueryPart part : queryParts) {
 			
@@ -254,14 +275,20 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 	
 	/**
-	 * Determines which <code>QueryPart</code>s shall be executed locally and publishes the rest on the mapped peers.
-	 * @see InterqueryLoadBalancer#publish(QueryPart, String, ID, String)
+	 * Determines which {@link QueryPart}s shall be executed locally and publishes the rest on the mapped peers.
 	 * @param queryPartDistributionMap The mapping of the {@link QueryPart}s and the IDs of the the peers, where each {@link QueryPart} 
-	 * shall be stored.
-	 * @param sharedQueryID The {@link ID} for query sharing.
-	 * @param transCfg The name of the transport configuration.
+	 * shall be stored. <br />
+	 * <code>queryPartDistributionMap</code> must not be null.
+	 * @param sharedQueryID The {@link ID} for query sharing. <br />
+	 * <code>sharedQueryID</code> must not be null.
+	 * @param transCfg The name of the transport configuration. <br />
+	 * <code>transCfg</code> must not be null.
 	 */
 	protected List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, QueryBuildConfiguration transCfg) {
+		
+		Preconditions.checkNotNull(queryPartDistributionMap, "queryPartDistributionMap must be not null!");
+		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must be not null!");
+		Preconditions.checkNotNull(transCfg, "transCfg must be not null!");
 		
 		final List<QueryPart> localParts = Lists.newArrayList();
 		final PeerID ownPeerID = P2PDictionaryService.get().getLocalPeerID();
@@ -291,14 +318,21 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	/**
 	 * Shares all {@link QueryPart} of an {@link ILogicalQuery}, which shall be published and transforms all locally {@link QueryPart}s 
 	 * into an {@link ILogicalQuery}.
-	 * @param queryParts All {@link QueryPart}s of an {@link ILogicalQuery}.
-	 * @param queryPartDistributionMap The mapping of the {@link QueryPart}s and the {@link PeerID}s, where they shall be executed.
-	 * @param transCfg The transfer configuration.
+	 * @param queryParts All {@link QueryPart}s of an {@link ILogicalQuery}. <br />
+	 * <code>queryParts</code> must not be null.
+	 * @param queryPartDistributionMap The mapping of the {@link QueryPart}s and the {@link PeerID}s, where they shall be executed. <br />
+	 * <code>queryPartDistributionMap</code> must not be null.
+	 * @param transCfg The transfer configuration. <br />
+	 * <code>transCfg</code> must not be null.
 	 * @param queryName The name of the {@link ILogicalQuery}.
 	 * @return The new {@link ILogicalQuery} created from all {@link QueryPart}s, which shall be executed locally.
 	 */
 	protected ILogicalQuery shareParts(List<QueryPart> queryParts, Map<QueryPart, PeerID> queryPartDistributionMap, QueryBuildConfiguration transCfg, 
 			String queryName) {
+		
+		Preconditions.checkNotNull(queryPartDistributionMap, "queryPartDistributionMap must be not null!");
+		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
+		Preconditions.checkNotNull(transCfg, "transCfg must be not null!");
 		
 		// Generate an ID for the shared query
 		final ID sharedQueryID = DistributionHelper.generateSharedQueryID();
@@ -319,9 +353,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 	
 	/**
-	 * Sets the degree of parallelism for the {@link ILogicalQuery}, e.g. <code>1</code> for not parallize the {@link ILogicalQuery}.
-	 * @param wantedDegree The wanted degree by the user.
-	 * @param maxDegree The maximum possibleDegree.
+	 * Sets the degree of parallelism for the {@link ILogicalQuery}, e.g. <code>1</code> for no parallelization of the {@link ILogicalQuery}.
+	 * @param wantedDegree The wanted degree by the user. <br />
+	 * <code>wantedDegree</code> must greater than zero.
+	 * @param maxDegree The maximum possibleDegree. <br />
+	 * <code>maxDegree</code> must greater than zero.
 	 * @return The degree of parallelism which is determined by the two parameters and the load balancer.
 	 */
 	protected abstract int getDegreeOfParallelismn(int wantedDegree, int maxDegree);

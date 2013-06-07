@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSwe
 import de.uniol.inf.is.odysseus.core.server.predicate.EqualsPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 
+// TODO Check usage of PriorityQueues instead of SweepAreas with IStreamable as elements (see InputAreas) M.B.
 // TODO javaDoc M.B.
 public class DistributionMergePO<T extends IStreamObject<? extends ITimeInterval>> 
 		extends AbstractPipe<T, T> {

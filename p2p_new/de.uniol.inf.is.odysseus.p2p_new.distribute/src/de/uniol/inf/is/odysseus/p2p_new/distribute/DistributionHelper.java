@@ -187,7 +187,6 @@ public class DistributionHelper {
 		
 	}
 	
-	// TODO preconditions M.B.
 	/**
 	 * Determines the {@link QueryPart}s containing {@link ILogicalOperator}s which are subscribed to a given {@link ILogicalOperator}. <br />
 	 * {@link ILogicalOperator}s within the same {@link QueryPart} are ignored.
@@ -296,14 +295,24 @@ public class DistributionHelper {
 	 * Generates a connection between two Peers, one sender and one acceptor.
 	 * @param senderPart The {@link QueryPart} to be executed by the sender. <br />
 	 * <code>senderPart</code> must not be null.
-	 * @param acceptorPart The {@link QueryPart} to be executed by the acceptor.
-	 * @param sinkOfSender The sink of <code/>senderPart</code>.
-	 * @param sourceOfAcceptor The source of <code/>acceptorPart</code>.
+	 * @param acceptorPart The {@link QueryPart} to be executed by the acceptor. <br />
+	 * <code>acceptorPart</code> must not be null.
+	 * @param sinkOfSender The sink of <code/>senderPart</code>. <br />
+	 * <code>sinkOfSender</code> must not be null and it must have an output schema.
+	 * @see ILogicalOperator#getOutputSchema()
+	 * @param sourceOfAcceptor The source of <code/>acceptorPart</code>. <br />
+	 * <code>sourceOfAcceptor</code> must not be null.
 	 * @param senderName The name of the sending operator to be created.
 	 * @param accessName The name of the accessing operator to be created.
 	 */
 	public static void generatePeerConnection(QueryPart senderPart, QueryPart acceptorPart, ILogicalOperator sinkOfSender, 
 			ILogicalOperator sourceOfAcceptor, String senderName, String accessName) {
+		
+		Preconditions.checkNotNull(senderPart, "senderPart must not be null!");
+		Preconditions.checkNotNull(acceptorPart, "acceptorPart must not be null!");
+		Preconditions.checkNotNull(sinkOfSender, "sinkOfSender must not be null!");
+		Preconditions.checkNotNull(sinkOfSender.getOutputSchema(), "sinkOfSender must have an output schema!");
+		Preconditions.checkNotNull(sourceOfAcceptor, "sourceOfAcceptor must not be null!");
 		
 		final PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
 		LOG.debug("PipeID {} created", pipeID.toString());
@@ -342,12 +351,21 @@ public class DistributionHelper {
 	/**
 	 * Publishes a {@link QueryPart} on a peer. The {@link QueryPart} will be stored on that peer. 
 	 * @see net.jxta.discovery.DiscoveryService#publish(net.jxta.document.Advertisement, long, long)
-	 * @param queryPart The {@link QueryPart} which shall be published.
-	 * @param destinationPeerID The ID of the peer where the {@link QueryPart} shall be published.
-	 * @param sharedQueryID The {@link ID} for query sharing.
-	 * @param transCfg The transport configuration.
+	 * @param queryPart The {@link QueryPart} which shall be published. <br />
+	 * <code>queryPart</code> must not be null.
+	 * @param destinationPeerID The ID of the peer where the {@link QueryPart} shall be published. <br />
+	 * <code>destinationPeerID</code> must not be null.
+	 * @param sharedQueryID The {@link ID} for query sharing. <br />
+	 * <code>sharedQueryID</code> must not be null.
+	 * @param transCfg The transport configuration. <br />
+	 * <code>trancCfg</code> must not be null.
 	 */
 	public static void publish(QueryPart queryPart, PeerID destinationPeerID, ID sharedQueryID, QueryBuildConfiguration transCfg) {
+		
+		Preconditions.checkNotNull(queryPart, "queryPart must not be null!");
+		Preconditions.checkNotNull(destinationPeerID, "destinationPeerID must not be null!");
+		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must not be null!");
+		Preconditions.checkNotNull(transCfg, "transCfg must not be null!");
 
 		// Create a new advertisement
 		final QueryPartAdvertisement adv = 
@@ -369,11 +387,14 @@ public class DistributionHelper {
 	
 	/**
 	 * Creates a new {@link ILogicalQuery} from a list of {@link QueryPart}s.
-	 * @param queryParts The list if {@link QueryPart}s which shall be assembled.
+	 * @param queryParts The list if {@link QueryPart}s which shall be assembled. <br />
+	 * <code>queryParts</code> must not be null.
 	 * @param name The name of the new {@link ILogicalQuery}.
 	 * @return The new {@link ILogicalQuery}.
 	 */
 	public static ILogicalQuery transformToQuery(List<QueryPart> queryParts, String name) {
+		
+		Preconditions.checkNotNull(queryParts, "queryParts must not be null!");
 		
 		final Collection<ILogicalOperator> sinks = DistributionHelper.collectSinks(queryParts);
 		final TopAO topAO = RestructHelper.generateTopAO(sinks);

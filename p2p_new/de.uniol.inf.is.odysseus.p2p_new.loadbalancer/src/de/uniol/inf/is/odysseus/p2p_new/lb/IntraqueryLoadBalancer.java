@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.lb;
 
 import java.util.List;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -28,10 +29,13 @@ public class IntraqueryLoadBalancer extends AbstractLoadBalancer {
 	}
 
 	/**
-	 * Creates one {@link Querypart} for the whole {@link ILogicalQuery}.
+	 * Returns one {@link Querypart} for the whole {@link ILogicalQuery}.
 	 */
 	@Override
 	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators) {
+		
+		Preconditions.checkNotNull(operators, "operators must be not null!");
+		Preconditions.checkArgument(operators.size() > 0, "operators must be not empty!");
 		
 		return Lists.newArrayList(new QueryPart(operators));
 		
@@ -39,6 +43,9 @@ public class IntraqueryLoadBalancer extends AbstractLoadBalancer {
 	
 	@Override
 	protected QueryPart createLocalPart(List<QueryPart> parts) {
+		
+		Preconditions.checkNotNull(parts, "parts must be not null!");
+		Preconditions.checkArgument(parts.size() > 0, "parts must be not empty!");
 		
 		final List<ILogicalOperator> operators = Lists.newArrayList();
 		
@@ -53,7 +60,10 @@ public class IntraqueryLoadBalancer extends AbstractLoadBalancer {
 	@Override
 	protected int getDegreeOfParallelismn(int wantedDegree, int maxDegree) {
 		
-		// XXX First fix the other workaround in this class. M.B.
+		Preconditions.checkArgument(wantedDegree > 0, "wantedDegree must be greater than zero!");
+		Preconditions.checkArgument(maxDegree > 0, "maxDegree must be greater than zero!");
+		
+		// XXX First fix the TODO-Mark in AbstractLoadBalancer. M.B.
 		// return Math.min(wantedDegree, maxDegree);
 		return 2;
 		

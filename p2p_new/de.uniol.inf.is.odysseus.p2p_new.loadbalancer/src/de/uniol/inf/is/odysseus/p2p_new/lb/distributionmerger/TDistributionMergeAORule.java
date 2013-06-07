@@ -8,7 +8,11 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-// TODO javaDoc
+/**
+ * The rule of transformation for the {@link DistributionMergeAO}. Any {@link DistributionMergeAO} will be 
+ * transformed into a new {@link DistributionMergePO}.
+ * @author Michael Brand
+ */
 public class TDistributionMergeAORule extends AbstractTransformationRule<DistributionMergeAO> {
 
 	 @Override
@@ -21,16 +25,16 @@ public class TDistributionMergeAORule extends AbstractTransformationRule<Distrib
 	  
 	 @SuppressWarnings("rawtypes")
 	@Override
-	 public void execute(DistributionMergeAO routeAO, TransformationConfiguration config) { 
+	 public void execute(DistributionMergeAO mergeAO, TransformationConfiguration config) { 
 		 
-		 defaultExecute(routeAO, new DistributionMergePO(), config, true, true);
+		 defaultExecute(mergeAO, new DistributionMergePO(), config, true, true);
 		 
 	 }
 	 
 	 @Override
-	public boolean isExecutable(DistributionMergeAO operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(DistributionMergeAO mergeAO, TransformationConfiguration transformConfig) {
 		 
-		return operator.isAllPhysicalInputSet() &&
+		return mergeAO.isAllPhysicalInputSet() &&
 				transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName());
 		
 	}
