@@ -36,8 +36,10 @@ public class DistributionTypePreParserKeyword extends AbstractPreParserKeyword {
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller) throws OdysseusScriptException {
 		
-		if( !ExecutorHandler.getServerExecutor().getLogicalQueryDistributorNames().contains(parameter)) {
-			throw new OdysseusScriptException("Specified logical query distributor '" + parameter + "' not found.");
+		String[] parameters = parameter.split(" ");
+		String distributorName = parameters[0];
+		if( !ExecutorHandler.getServerExecutor().getLogicalQueryDistributorNames().contains(distributorName)) {
+			throw new OdysseusScriptException("Specified logical query distributor '" + distributorName + "' not found.");
 		}
 	}
 

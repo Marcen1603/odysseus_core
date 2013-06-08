@@ -16,7 +16,8 @@ import de.uniol.inf.is.odysseus.p2p_new.lb.distributionmerger.logicaloperator.Di
  * But the local peer will get all results and returns them to the {@link IExecutor}. <br />
  * To use the <code>IntraqueryLoadBalancer</code> use the following pre-parser-keywords: <br />
  * #DODISTRIBUTE true <br />
- * #DISTRIBUTIONTYPE intraquery
+ * #DISTRIBUTIONTYPE intraquery <code>degree of parallelism</code> <br />
+ * where <code>degree of parallelism</code> has to be an integer greater than zero.
  * @author Michael Brand
  */
 public class IntraqueryLoadBalancer extends AbstractLoadBalancer {
@@ -63,9 +64,7 @@ public class IntraqueryLoadBalancer extends AbstractLoadBalancer {
 		Preconditions.checkArgument(wantedDegree > 0, "wantedDegree must be greater than zero!");
 		Preconditions.checkArgument(maxDegree > 0, "maxDegree must be greater than zero!");
 		
-		// XXX First fix the TODO-Mark in AbstractLoadBalancer. M.B.
-		// return Math.min(wantedDegree, maxDegree);
-		return 2;
+		return Math.min(wantedDegree, maxDegree);
 		
 	}
 

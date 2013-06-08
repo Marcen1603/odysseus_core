@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
@@ -100,6 +101,30 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			List<ILogicalQuery> queries, QueryBuildConfiguration cfg) {
 		
 		Preconditions.checkNotNull(cfg, "cfg must be not null!");
+		
+		// Read out the wanted degree of parallelism from the given distribution type parameter
+		String[] strParameters = cfg.get(ParameterDistributionType.class).getValue().split(" ");
+		int wantedDegreeOfParallelism = 1;
+		if(strParameters.length > 1) {
+			
+			try {
+				
+				wantedDegreeOfParallelism = Integer.parseInt(strParameters[1]);
+				if(wantedDegreeOfParallelism < 1) {
+					
+					LOG.error("{} is an invalid degree of parallelism. Degree settet to 1", strParameters[1]);
+					wantedDegreeOfParallelism = 1;
+					
+				}
+				
+			} catch(NumberFormatException e) {
+				
+				e.printStackTrace();
+				LOG.error("Could not parse {} to an integer. Degree settet to 1", strParameters[1]);
+				
+			}
+			
+		}
 
 		if(queries == null || queries.isEmpty()) {
 			
@@ -129,8 +154,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			queryPartsMap.put(query, new ArrayList<QueryPart>());
 			
 			// Make copies of the query
-			// TODO wantedDegree als Parameter M.B.
-			for(int copyNo = 0; copyNo < this.getDegreeOfParallelismn(0, remotePeerIDs.size()) - 1; copyNo++)
+			for(int copyNo = 0; copyNo < this.getDegreeOfParallelismn(wantedDegreeOfParallelism, remotePeerIDs.size()) - 1; copyNo++)
 				queriesToDistribute.add(DistributionHelper.copyLogicalQuery(query));
 			
 			for(ILogicalQuery queryToDistribute : queriesToDistribute) {

@@ -259,7 +259,8 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	}
 
 	private List<ILogicalQuery> distributeQueries(QueryBuildConfiguration parameters, List<ILogicalQuery> queries) {
-		String distributorName = parameters.get(ParameterDistributionType.class).getValue();
+		String[] strParameters = parameters.get(ParameterDistributionType.class).getValue().split(" ");
+		String distributorName = strParameters[0];
 		List<ILogicalQuery> resultQueries = Lists.newArrayList();
 		
 		if( !ParameterDistributionType.UNDEFINED.equals(distributorName)) {
