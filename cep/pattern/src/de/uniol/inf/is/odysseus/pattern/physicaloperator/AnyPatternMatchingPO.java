@@ -25,8 +25,8 @@ public class AnyPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 	
 	public AnyPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
-			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
-		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
+			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, Integer inputPort) {
+		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea, inputPort);
     }
 	
     public AnyPatternMatchingPO(AnyPatternMatchingPO<T> patternPO) {
@@ -64,7 +64,7 @@ public class AnyPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 			if (satisfied) {
 				// detected the ANY-Pattern
 				Tuple<T> complexEvent = this.createComplexEvent(eventObj);
-				outputTransferArea.transfer(complexEvent);
+				transfer(complexEvent);
 			}
 		}
 	}

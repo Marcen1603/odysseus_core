@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -56,6 +55,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	protected Integer size;
 	protected TimeUnit timeUnit;
 	protected PatternOutput outputMode;
+	protected Integer inputPort;
 
 	/**
 	 * Die relevante Event-Typen-Liste.
@@ -82,7 +82,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 			List<SDFExpression> returnExpressions,
 			Map<Integer, String> inputTypeNames,
 			Map<Integer, SDFSchema> inputSchemas,
-			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
+			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, Integer inputPort) {
 		super();
 		this.type = type;
 		this.time = time;
@@ -96,6 +96,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		this.inputSchemas = inputSchemas;
 		this.inputStreamSyncArea = inputStreamSyncArea;
 		this.outputTransferArea = new TITransferArea<>();
+		this.inputPort = inputPort;
 		this.init();
 	}
 
@@ -128,6 +129,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		this.timeElapsed = patternPO.timeElapsed;
 		this.countEvents = patternPO.countEvents;
 		this.sizeMatched = patternPO.sizeMatched;
+		this.inputPort = patternPO.inputPort;
 		this.init();
 	}
 
@@ -309,7 +311,8 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	@SuppressWarnings("unchecked")
 	protected Tuple<T> createComplexEvent(List<EventObject<T>> objectChoices,
 			EventObject<T> currentObj, PointInTime start) {
-		if (currentObj == null) {
+		if (currentObj == null && objectChoices == null) {
+			// e.g. absence pattern
 			outputMode = PatternOutput.SIMPLE;
 		}
 		if (outputMode == PatternOutput.SIMPLE) {
@@ -352,8 +355,30 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		}
 		if (outputMode == PatternOutput.TUPLE_CONTAINER) {
 			Tuple<T> complexEvent = new Tuple<T>(1, false);
-			complexEvent.setAttribute(0, currentObj.getEvent());
+			if (currentObj == null && objectChoices.size() > 0) {
+				// create tuple with matching set
+				complexEvent.setMetadata((T) objectChoices.get(objectChoices.size()-1).getEvent().getMetadata().clone());
+				List<Tuple<T>> tupleList = new ArrayList<>();
+				for (EventObject<T> obj : objectChoices) {
+					tupleList.add(obj.getEvent());
+				}
+				complexEvent.setAttribute(0, tupleList);
+			} else {
+				complexEvent.setMetadata((T) currentObj.getEvent().getMetadata().clone());
+				complexEvent.setAttribute(0, currentObj.getEvent());
+			}
 			return complexEvent;
+		}
+		if (outputMode == PatternOutput.INPUT) {
+			if (currentObj == null) {
+				// return first object from inputport
+				for (EventObject<T> obj : objectChoices) {
+					if (obj.getPort() == inputPort) {
+						return obj.getEvent();
+					}
+				}
+			}
+			return currentObj.getEvent();
 		}
 		return null;
 	}
@@ -376,37 +401,6 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	 */
 	protected Tuple<T> createComplexEvent(PointInTime start) {
 		return createComplexEvent(null, null, start);
-	}
-
-	/**
-	 * Prüft für jede gültige Kombination (-> ALL-Pattern), ob alle Bedingungen
-	 * erfüllt sind. Als Ausgabe liefert diese Methode eine Liste der
-	 * Kombinationen zurück, für die die Bedingungen zutreffen.
-	 * 
-	 * @param object
-	 * @param eventObjectSets
-	 * @param type
-	 * @return
-	 */
-	protected List<List<EventObject<T>>> checkAssertions(EventObject<T> object,
-			Set<List<EventObject<T>>> eventObjectSets) {
-		List<List<EventObject<T>>> output = new ArrayList<List<EventObject<T>>>();
-
-		// Expressions überprüfen
-		for (List<EventObject<T>> eventObjectSet : eventObjectSets) {
-			Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings
-					.entrySet().iterator();
-			boolean satisfied = true;
-			while (iterator.hasNext() && satisfied) {
-				Entry<SDFExpression, AttributeMap[]> entry = iterator.next();
-				satisfied = checkAssertion(object, eventObjectSet, entry);
-			}
-			if (satisfied) {
-				// MatchingSet in Ausgabemenge aufnehmen
-				output.add(eventObjectSet);
-			}
-		}
-		return output;
 	}
 
 	protected boolean checkAssertion(EventObject<T> object,
@@ -432,38 +426,23 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		}
 		return true;
 	}
-
+	
 	/**
-	 * Prüft für eine Liste von Events, ob die Bedingungen erfüllt sind. Als
-	 * Ausgabe liefert diese Methode eine Liste der Events zurück, die die
-	 * Bedingungen erfüllen.
-	 * 
-	 * @param object
-	 * @param eventObjectSets
-	 * @param type
-	 * @return
+	 * Checks all assertions on one event object.
+	 * @param event
+	 * @return true, if all assertions are satisfied
 	 */
-	protected EventBuffer<T> checkAssertions(EventBuffer<T> eventBuffer) {
-		if (attrMappings == null)
-			return eventBuffer;
-		EventBuffer<T> output = new EventBuffer<T>();
-		// Expressions für jedes Objekt überprüfen
-		for (EventObject<T> event : eventBuffer) {
-			Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings
-					.entrySet().iterator();
-			boolean satisfied = true;
-			while (iterator.hasNext() && satisfied) {
-				Entry<SDFExpression, AttributeMap[]> entry = iterator.next();
-				satisfied = checkAssertion(event, Arrays.asList(event), entry);
-			}
-			if (satisfied) {
-				// MatchingSet in Ausgabemenge aufnehmen
-				output.add(event);
-			}
+	protected boolean checkAssertions(EventObject<T> event) {
+		Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings
+				.entrySet().iterator();
+		boolean satisfied = true;
+		while (iterator.hasNext() && satisfied) {
+			Entry<SDFExpression, AttributeMap[]> entry = iterator.next();
+			satisfied = checkAssertion(event, Arrays.asList(event), entry);
 		}
-		return output;
+		return satisfied;
 	}
-
+	
 	protected boolean checkAssertion(EventObject<T> object,
 			Entry<SDFExpression, AttributeMap[]> entry) {
 		List<EventObject<T>> eventObjectSet = new ArrayList<>();
@@ -471,6 +450,28 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		return checkAssertion(object, eventObjectSet, entry);
 	}
 
+	/**
+	 * Prüft für eine Liste von Events, ob die Bedingungen erfüllt sind. Als
+	 * Ausgabe liefert diese Methode eine Liste der Events zurück, die die
+	 * Bedingungen erfüllen.
+	 * 
+	 * @param eventBuffer
+	 * @return
+	 */
+	protected EventBuffer<T> calcSatisfiedEvents(EventBuffer<T> eventBuffer) {
+		if (attrMappings == null)
+			return eventBuffer;
+		EventBuffer<T> output = new EventBuffer<T>();
+		// Expressions für jedes Objekt überprüfen
+		for (EventObject<T> event : eventBuffer) {
+			if (checkAssertions(event)) {
+				// MatchingSet in Ausgabemenge aufnehmen
+				output.add(event);
+			}
+		}
+		return output;
+	}
+	
 	/**
 	 * Sucht nach den Werten für die Attribute aus der Expression. Bei Erfolg
 	 * werden die Werte zurückgeliefert, bei misserfolg null.

@@ -24,21 +24,15 @@ public class ModalPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 	
 	public ModalPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
-			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
-		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
-		this.init();
+			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, Integer inputPort) {
+		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea, inputPort);
     }
 	
 	// Copy-Konstruktor
     public ModalPatternMatchingPO(ModalPatternMatchingPO<T> patternPO) {
     	super(patternPO);
-        this.init();
     }
 	
-    private void init() {
-    	// Pattern-spezifische Initialisierungen
-    }
-    
 	@Override
 	public String toString() {
 		return super.toString() + " type: " + type + " eventTypes: " + eventTypes.toString(); 
@@ -63,18 +57,16 @@ public class ModalPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 	protected void matching(PointInTime currentTime) {
 		if (eventBuffer.getSize() != 0) {
 			// Intervall abgelaufen -> gesammelte Events auswerten
-			EventBuffer<T> results = checkAssertions(eventBuffer);
+			EventBuffer<T> results = calcSatisfiedEvents(eventBuffer);
 			if (type == PatternType.ALWAYS) {
 				if (assertions == null || results.equals(eventBuffer)) {
 					// ALWAY-Pattern erkannt
-					Tuple<T> complexEvent = createComplexEvent(null, null, currentTime);
-					outputTransferArea.transfer(complexEvent);
+					transferEvents(results, currentTime, false);
 				}
 			} else if (type == PatternType.SOMETIMES) {
 				if (assertions == null || results.getSize() >= 1) {
 					// SOMETIMES-Pattern erkannt
-					Tuple<T> complexEvent = createComplexEvent(null, null, currentTime);
-					outputTransferArea.transfer(complexEvent);
+					transferEvents(results, currentTime, false);
 				}
 			}
 		}

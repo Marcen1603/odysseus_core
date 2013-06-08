@@ -31,20 +31,14 @@ public class NPatternMatchingPO<T extends ITimeInterval> extends BufferedPattern
 	
 	public NPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
-			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, Integer count) {
-		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
+			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, Integer count, Integer inputPort) {
+		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea, inputPort);
         this.count = count;
-		this.init();
     }
 	
 	// Copy-Konstruktor
     public NPatternMatchingPO(NPatternMatchingPO<T> patternPO) {
     	super(patternPO);
-        this.init();
-    }
-	
-    private void init() {
-    	// Pattern-spezifische Initialisierungen
     }
     
 	@Override
@@ -71,7 +65,7 @@ public class NPatternMatchingPO<T extends ITimeInterval> extends BufferedPattern
 	protected void matching(PointInTime currentTime) {
 		if (eventBuffer.getSize() != 0 && count != null && count > 0) {
 			// Intervall abgelaufen -> gesammelte Events auswerten
-			EventBuffer<T> results = checkAssertions(eventBuffer);
+			EventBuffer<T> results = calcSatisfiedEvents(eventBuffer);
 			List<EventObject<T>> objectsToSend = null;
 			if (type == PatternType.FIRST_N) {
 				objectsToSend = results.getFirstEventObjects(count);

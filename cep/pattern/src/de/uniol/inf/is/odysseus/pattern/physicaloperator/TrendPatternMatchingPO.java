@@ -37,7 +37,7 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 	/**
 	 * saves the value from the last event
 	 */
-	private Double lastValue;
+	private Integer lastValue;
 	/**
 	 * count how many values processed
 	 */
@@ -45,9 +45,8 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 	
 	public TrendPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
-			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, String attribute) {
-		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
-		this.setUseEventBuffer(false);
+			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, String attribute, Integer inputPort) {
+		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea, inputPort);
 		this.attribute = attribute;
 		this.mixedSatisfied = new boolean[2];
     }
@@ -70,13 +69,14 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 	public void process_internal(Tuple<T> event, int port) {
 		String eventType = inputTypeNames.get(port);
 		SDFSchema schema = inputSchemas.get(port);
-		// filter events by event types
-		if (eventTypes.contains(inputTypeNames.get(port))) {
-			EventObject<T> eventObj = new EventObject<T>(event, eventType, schema, port);
+		EventObject<T> eventObj = new EventObject<T>(event, eventType, schema, port);
+		// filter events by event types and by assertion satisfaction
+		if (eventTypes.contains(inputTypeNames.get(port)) && checkAssertions(eventObj)) {
 			SDFAttribute attr = eventObj.getSchema().findAttribute(attribute);
 			if (attr != null) {
 				int index = eventObj.getSchema().indexOf(attr);
-				Double attrValue = eventObj.getEvent().getAttribute(index);
+				// prevent ClassCastException, attrValue only have to be numeric
+				Integer attrValue = eventObj.getEvent().getAttribute(index);//((Number) eventObj.getEvent().getAttribute(index)).doubleValue();
 				if (type != PatternType.MIXED && (satisfied || countValues == 1)) {
 					// choose operator by pattern type
 					switch (type) {
@@ -101,8 +101,10 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 					if (!satisfied) {
 						// pattern now can't be true anymore
 						// -> reset interval on current event
+						// -> and reset the event buffer list
 						// the mixed pattern can also be true later
 						startTime = event.getMetadata().getStart();
+						eventBuffer.clear();
 						countEvents = 0;
 						countValues = 0;
 					}
@@ -135,15 +137,14 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 	protected void matching(PointInTime currentTime) {
 		if (satisfied) {
 			// create complex event
-			Tuple<T> complexEvent = createComplexEvent(currentTime);
-			transfer(complexEvent);
-			// initiate state
-			satisfied = false;
-			mixedSatisfied[0] = false;
-			mixedSatisfied[1] = false;
-			lastValue = null;
-			countValues = 0;
+			transferEvents(eventBuffer, currentTime, false);
 		}
+		// initiate state
+		satisfied = false;
+		mixedSatisfied[0] = false;
+		mixedSatisfied[1] = false;
+		lastValue = null;
+		countValues = 0;
 	}
 	
 }

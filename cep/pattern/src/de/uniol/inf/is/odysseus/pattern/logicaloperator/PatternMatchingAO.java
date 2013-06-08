@@ -40,6 +40,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	private Integer size;
 	// Ausgabeverhalten
 	private PatternOutput outputMode;
+	private Integer inputPort;
 	// auszulesendes Attribut
 	private String attribute;
 	private Double value;
@@ -77,6 +78,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
         this.attribute = patternAO.attribute;
         this.value = patternAO.value;
         this.count = patternAO.count;
+        this.inputPort = patternAO.inputPort;
     }
 	
     @Parameter(type=SDFExpressionParameter.class, optional=true, isList=true)
@@ -172,6 +174,15 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     	return eventTypes;
     }
     
+    @Parameter(name = "inputport", type=IntegerParameter.class, optional = true)
+    public void setInputPort(Integer port) {
+    	this.inputPort = port;
+    }
+    
+    public Integer getInputPort() {
+    	return inputPort;
+    }
+    
     @Parameter(name = "return", type = SDFExpressionParameter.class, isList = true, optional = true)
     public void setReturnExpressions(List<NamedExpressionItem> namedReturnExpressions) {
 		returnExpressions = namedReturnExpressions;
@@ -224,7 +235,16 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		
 		// Ausgabeschema bestimmen
 		SDFSchema schema = null;
-		if (outputMode == PatternOutput.TUPLE_CONTAINER) {
+		if (outputMode == PatternOutput.INPUT) {
+			if (inputPort == null || inputPort < 0 || inputPort > this.getNumberOfInputs()) {
+				inputPort = 0;
+			}
+			LogicalSubscription s = this.getSubscribedToSource(inputPort);
+			schema = inputSchemas.get(s.getSinkInPort());
+			if (schema == null) {
+				schema = s.getSchema();
+			}
+		} else if (outputMode == PatternOutput.TUPLE_CONTAINER) {
 			// create tuple container attribute
 			SDFAttribute tuple = new SDFAttribute("PATTERN", "tuple_container", SDFDatatype.TUPLE);
 			schema = new SDFSchema("PATTERN", tuple);

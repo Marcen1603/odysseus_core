@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.pattern.util.AttributeMap;
 import de.uniol.inf.is.odysseus.pattern.util.EventBuffer;
 import de.uniol.inf.is.odysseus.pattern.util.EventObject;
 import de.uniol.inf.is.odysseus.pattern.util.PatternOutput;
@@ -38,8 +39,8 @@ public class AllPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 	
 	public AllPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
-			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
-        super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
+			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, Integer inputPort) {
+        super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea, inputPort);
         this.objectLists = new HashMap<Integer, EventBuffer<T>>();
         // create lists for every port that is in the eventTypes list
         for (Integer port : this.inputTypeNames.keySet()) {
@@ -88,9 +89,9 @@ public class AllPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 				objectLists.get(port).add(eventObj);
 				dropOldEvents(eventObj);
 				// Kombinationen suchen und Bedingungen überprüfen
-				List<List<EventObject<T>>> output = checkAssertions(eventObj, computeCrossProduct(eventObj));
+				List<List<EventObject<T>>> output = calcSatisfiedCombinations(eventObj, computeCrossProduct(eventObj));
 				for (List<EventObject<T>> outputObject : output) {
-					Tuple<T> complexEvent = this.createComplexEvent(outputObject, eventObj, null);
+					Tuple<T> complexEvent = this.createComplexEvent(outputObject, null, null);
 					outputTransferArea.transfer(complexEvent);
 				}
 			}
@@ -148,6 +149,37 @@ public class AllPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 		objSet.add(object);
 		relevantSets.add(objSet);
 		return Sets.cartesianProduct(relevantSets);
+	}
+	
+	/**
+	 * Prüft für jede gültige Kombination (-> ALL-Pattern), ob alle Bedingungen
+	 * erfüllt sind. Als Ausgabe liefert diese Methode eine Liste der
+	 * Kombinationen zurück, für die die Bedingungen zutreffen.
+	 * 
+	 * @param object
+	 * @param eventObjectSets
+	 * @param type
+	 * @return
+	 */
+	private List<List<EventObject<T>>> calcSatisfiedCombinations(EventObject<T> object,
+			Set<List<EventObject<T>>> eventObjectSets) {
+		List<List<EventObject<T>>> output = new ArrayList<List<EventObject<T>>>();
+
+		// Expressions überprüfen
+		for (List<EventObject<T>> eventObjectSet : eventObjectSets) {
+			Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings
+					.entrySet().iterator();
+			boolean satisfied = true;
+			while (iterator.hasNext() && satisfied) {
+				Entry<SDFExpression, AttributeMap[]> entry = iterator.next();
+				satisfied = checkAssertion(object, eventObjectSet, entry);
+			}
+			if (satisfied) {
+				// MatchingSet in Ausgabemenge aufnehmen
+				output.add(eventObjectSet);
+			}
+		}
+		return output;
 	}
 	
 }

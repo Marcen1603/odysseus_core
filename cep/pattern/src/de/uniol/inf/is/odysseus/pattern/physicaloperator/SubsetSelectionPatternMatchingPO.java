@@ -37,8 +37,8 @@ public class SubsetSelectionPatternMatchingPO<T extends ITimeInterval> extends B
 	
 	public SubsetSelectionPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
-			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, Integer count, String attribute) {
-		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
+			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, Integer count, String attribute, Integer inputPort) {
+		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea, inputPort);
 		this.attribute = attribute;
 		this.count = count;
     }
@@ -73,7 +73,7 @@ public class SubsetSelectionPatternMatchingPO<T extends ITimeInterval> extends B
 	@Override
 	protected void matching(PointInTime currentTime) {
 		if (eventBuffer.getSize() != 0 && count != null && count > 0 && attribute != null) {
-			EventBuffer<T> eventBufferClone = checkAssertions(eventBuffer).clone();
+			EventBuffer<T> eventBufferClone = calcSatisfiedEvents(eventBuffer).clone();
 			List<EventObject<T>> output = new ArrayList<>();
 			List<EventObject<T>> equalValues = new ArrayList<>();
 			

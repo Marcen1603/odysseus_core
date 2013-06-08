@@ -23,7 +23,7 @@ public class AbsencePatternMatchingPO<T extends ITimeInterval> extends PatternMa
 	public AbsencePatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
-		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
+		super(type, time, size, timeUnit, outputMode, eventTypes, assertions, returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea, null);
     }
 	
 	// Copy-Konstruktor

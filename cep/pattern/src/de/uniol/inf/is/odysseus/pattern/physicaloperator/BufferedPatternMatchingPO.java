@@ -40,9 +40,9 @@ public abstract class BufferedPatternMatchingPO<T extends ITimeInterval> extends
 			List<SDFExpression> returnExpressions,
 			Map<Integer, String> inputTypeNames,
 			Map<Integer, SDFSchema> inputSchemas,
-			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea) {
+			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, Integer inputPort) {
 		super(type, time, size, timeUnit, outputMode, eventTypes, assertions,
-				returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea);
+				returnExpressions, inputTypeNames, inputSchemas, inputStreamSyncArea, inputPort);
 		this.eventBuffer = new EventBuffer<T>();
 		this.useEventBuffer = true;
 	}
@@ -91,6 +91,28 @@ public abstract class BufferedPatternMatchingPO<T extends ITimeInterval> extends
 			matching(pointInTime.getTime());
 			if (useEventBuffer) {
 				eventBuffer.clear();
+			}
+		}
+	}
+	
+	/**
+	 * Creates the complex event(s) and transfer it. Depends on the output mode.
+	 * SIMPLE in general only produces one complex event,
+	 * the other output modes produces a set of complex events.
+	 * @param results represents the matching set
+	 * @param currentTime current time
+	 * @param useTransferArea if true the outputTransferArea is used
+	 */
+	protected void transferEvents(EventBuffer<T> results, PointInTime currentTime, boolean useTransferArea) {
+		if (outputMode == PatternOutput.SIMPLE) {
+			Tuple<T> complexEvent = createComplexEvent(null, null, currentTime);
+			transfer(complexEvent);
+		} else {
+			for (EventObject<T> event : results) {
+				if (useTransferArea)
+					outputTransferArea.transfer(event.getEvent());
+				else
+					transfer(event.getEvent());
 			}
 		}
 	}
