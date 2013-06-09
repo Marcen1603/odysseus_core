@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.lb.distributionmerger.physicaloperator;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.physicaloperator;
 
 import java.util.Iterator;
 import java.util.Map;

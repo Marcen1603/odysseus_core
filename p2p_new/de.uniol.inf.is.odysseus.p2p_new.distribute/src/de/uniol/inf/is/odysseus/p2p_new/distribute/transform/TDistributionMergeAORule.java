@@ -1,9 +1,9 @@
-package de.uniol.inf.is.odysseus.p2p_new.lb.distributionmerger;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.lb.distributionmerger.logicaloperator.DistributionMergeAO;
-import de.uniol.inf.is.odysseus.p2p_new.lb.distributionmerger.physicaloperator.DistributionMergePO;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.DistributionMergeAO;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.physicaloperator.DistributionMergePO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

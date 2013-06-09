@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.lb.distributionmerger;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.transform;
 
 import java.util.List;
 
