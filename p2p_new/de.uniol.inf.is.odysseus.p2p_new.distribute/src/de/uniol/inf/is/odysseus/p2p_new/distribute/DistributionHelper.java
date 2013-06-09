@@ -319,12 +319,13 @@ public class DistributionHelper {
 
 		final JxtaReceiverAO access = new JxtaReceiverAO();
 		access.setPipeID(pipeID.toString());
-		access.setOutputSchema(RestructHelper.generateOutputSchema(accessName, sinkOfSender.getOutputSchema()));
+		access.setOutputSchema(sinkOfSender.getOutputSchema());
 		access.setSchema(sinkOfSender.getOutputSchema().getAttributes());
 		access.setName(accessName);
 
 		final JxtaSenderAO sender = new JxtaSenderAO();
 		sender.setPipeID(pipeID.toString());
+		sender.setOutputSchema(sinkOfSender.getOutputSchema());
 		sender.setName(senderName);
 
 		final LogicalSubscription removingSubscription = RestructHelper.determineSubscription(sinkOfSender, sourceOfAcceptor);

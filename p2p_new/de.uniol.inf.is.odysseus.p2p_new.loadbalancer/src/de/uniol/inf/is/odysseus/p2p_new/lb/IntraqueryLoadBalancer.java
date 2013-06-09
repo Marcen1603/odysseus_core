@@ -41,14 +41,4 @@ public class IntraqueryLoadBalancer extends AbstractLoadBalancer {
 		
 	}
 
-	@Override
-	protected int getDegreeOfParallelismn(int wantedDegree, int maxDegree) {
-		
-		Preconditions.checkArgument(wantedDegree > 0, "wantedDegree must be greater than zero!");
-		Preconditions.checkArgument(maxDegree > 0, "maxDegree must be greater than zero!");
-		
-		return Math.min(wantedDegree, maxDegree);
-		
-	}
-
 }

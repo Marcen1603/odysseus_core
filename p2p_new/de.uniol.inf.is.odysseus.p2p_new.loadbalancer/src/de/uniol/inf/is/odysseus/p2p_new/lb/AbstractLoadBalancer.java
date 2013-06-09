@@ -16,6 +16,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -161,6 +162,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			for(int copyNo = 0; copyNo < degreeOfParallelism - 1; copyNo++)
 				queriesToDistribute.add(DistributionHelper.copyLogicalQuery(query));
 			
+			// The local part of this query plus all of it copies
+			QueryPart localPart = null;
+			
 			for(ILogicalQuery queryToDistribute : queriesToDistribute) {
 			
 				// Get all logical operators of the query and remove the TopAOs
@@ -173,10 +177,17 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				LOG.debug("Got {} parts of logical query {}", parts.size(), query);
 				queryPartsMap.get(query).addAll(parts);
 				
+				// Create the local part if it hasn't been done before
+				if(localPart == null) {
+					
+					// Generate a new logical operator which marks that the query result shall return to this instance
+					localPart = this.createLocalPart(queryPartsMap.get(query), degreeOfParallelism);
+					
+				}
+				
 			}
 			
-			// Generate a new logical operator which marks that the query result shall return to this instance
-			QueryPart localPart = this.createLocalPart(queryPartsMap.get(query), degreeOfParallelism);
+			// Subscribe all copies plus the origin query to the local part
 			this.subscribeToLocalPart(queryPartsMap.get(query), localPart);
 			queryPartsMap.get(query).add(localPart);
 			
@@ -281,18 +292,31 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		final List<ILogicalOperator> operators = Lists.newArrayList();
 		
-		// All queryparts are equal
-		for(@SuppressWarnings("unused") ILogicalOperator sink : parts.get(0).getRealSinks()) {
+		for(QueryPart part : parts) {
 			
-			if(degreeOfParallelism == 1) {
-			
-				// No merging needed
-				final RenameAO renameAO = new RenameAO();
-				renameAO.setNoOp(true);
-				renameAO.addParameterInfo("isNoOp", "'true'");
-				operators.add(renameAO);
+			for(ILogicalOperator sink : part.getRealSinks()) {
 				
-			} else operators.add(new DistributionMergeAO());
+				// Get all sources of any other query part subscribed to the sink
+				Map<QueryPart, ILogicalOperator> sourcesMap = DistributionHelper.determineNextQueryParts(
+						sink, part, Sets.newHashSet(parts));
+				
+				if(!sourcesMap.isEmpty()) {
+					
+					// If there are any sources in other queryParts, there will be no local part created for 
+					// the sink
+					continue;
+					
+				} else if(degreeOfParallelism == 1) {
+					
+					// No merging needed
+					final RenameAO renameAO = new RenameAO();
+					renameAO.setNoOp(true);
+					renameAO.addParameterInfo("isNoOp", "'true'");
+					operators.add(renameAO);
+					
+				} else operators.add(new DistributionMergeAO());
+				
+			}
 			
 		}
 		
@@ -318,10 +342,19 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 			Iterator<ILogicalOperator> localSourceIter = localPart.getRelativeSources().iterator();
 			Collection<ILogicalOperator> sinks = part.getRealSinks();
+			
 			for(ILogicalOperator sink : sinks) {
 				
-				ILogicalOperator localSource = localSourceIter.next();
-				localSource.subscribeToSource(sink, localSource.getNumberOfInputs(), 0, sink.getOutputSchema());
+				// Get all sources of any other query part subscribed to the sink
+				Map<QueryPart, ILogicalOperator> sourcesMap = DistributionHelper.determineNextQueryParts(
+						sink, part, Sets.newHashSet(queryParts));
+				
+				if(sourcesMap.isEmpty()) {
+				
+					ILogicalOperator localSource = localSourceIter.next();
+					localSource.subscribeToSource(sink, localSource.getNumberOfInputs(), 0, sink.getOutputSchema());
+					
+				}
 				
 			}
 			
@@ -417,8 +450,15 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * <code>wantedDegree</code> must greater than zero.
 	 * @param maxDegree The maximum possibleDegree. <br />
 	 * <code>maxDegree</code> must greater than zero.
-	 * @return The degree of parallelism which is determined by the two parameters and the load balancer.
+	 * @return The minimum of the two parameters.
 	 */
-	protected abstract int getDegreeOfParallelismn(int wantedDegree, int maxDegree);
+	protected int getDegreeOfParallelismn(int wantedDegree, int maxDegree) {
+		
+		Preconditions.checkArgument(wantedDegree > 0, "wantedDegree must be greater than zero!");
+		Preconditions.checkArgument(maxDegree > 0, "maxDegree must be greater than zero!");
+		
+		return Math.min(wantedDegree, maxDegree);
+		
+	}
 
 }
