@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.DistributionMergeAO;
 
 /**
  * The <code>IntraqueryLoadBalancer</code> parallelizes each {@link ILogicalQuery} on different peers. <br />
@@ -40,22 +39,6 @@ public class IntraqueryLoadBalancer extends AbstractLoadBalancer {
 		
 		return Lists.newArrayList(new QueryPart(operators));
 		
-	}
-	
-	@Override
-	protected QueryPart createLocalPart(List<QueryPart> parts) {
-		
-		Preconditions.checkNotNull(parts, "parts must be not null!");
-		Preconditions.checkArgument(parts.size() > 0, "parts must be not empty!");
-		
-		final List<ILogicalOperator> operators = Lists.newArrayList();
-		
-		// All queryparts are equal
-		for(@SuppressWarnings("unused") ILogicalOperator sink : parts.get(0).getRealSinks())
-			operators.add(new DistributionMergeAO());
-		
-		return new QueryPart(operators, AbstractLoadBalancer.getLocalDestinationName());
-	
 	}
 
 	@Override

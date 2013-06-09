@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 
 /**
@@ -38,31 +37,6 @@ public class InterqueryLoadBalancer extends AbstractLoadBalancer {
 		Preconditions.checkArgument(operators.size() > 0, "operators must be not empty!");
 		
 		return Lists.newArrayList(new QueryPart(operators));
-		
-	}
-
-	/**
-	 * @return A {@link RenameAO} with no operation.
-	 */
-	@Override
-	protected QueryPart createLocalPart(List<QueryPart> parts) {
-		
-		Preconditions.checkNotNull(parts, "parts must be not null!");
-		Preconditions.checkArgument(parts.size() > 0, "parts must be not empty!");
-		
-		final List<ILogicalOperator> operators = Lists.newArrayList();
-		
-		// All queryparts are equal
-		for(@SuppressWarnings("unused") ILogicalOperator sink : parts.get(0).getRealSinks()) {
-			
-			final RenameAO renameAO = new RenameAO();
-			renameAO.setNoOp(true);
-			renameAO.addParameterInfo("isNoOp", "'true'");
-			operators.add(renameAO);
-			
-		}
-		
-		return new QueryPart(operators, AbstractLoadBalancer.getLocalDestinationName());
 		
 	}
 

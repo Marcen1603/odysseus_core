@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -28,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.DistributionMergeAO;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 
 /**
@@ -101,6 +103,24 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			List<ILogicalQuery> queries, QueryBuildConfiguration cfg) {
 		
 		Preconditions.checkNotNull(cfg, "cfg must be not null!");
+
+		if(queries == null || queries.isEmpty()) {
+			
+			// Nothing to distribute
+			return queries;
+			
+		}
+		
+		// Get all available peers
+		final Collection<PeerID> remotePeerIDs = P2PDictionaryService.get().getRemotePeerIDs();
+		if(remotePeerIDs.isEmpty()) {
+			
+			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
+			return queries;
+			
+		} 
+		
+		DistributionHelper.logPeerStatus(remotePeerIDs);
 		
 		// Read out the wanted degree of parallelism from the given distribution type parameter
 		String[] strParameters = cfg.get(ParameterDistributionType.class).getValue().split(" ");
@@ -125,24 +145,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			}
 			
 		}
-
-		if(queries == null || queries.isEmpty()) {
-			
-			// Nothing to distribute
-			return queries;
-			
-		}
 		
-		// Get all available peers
-		final Collection<PeerID> remotePeerIDs = P2PDictionaryService.get().getRemotePeerIDs();
-		if(remotePeerIDs.isEmpty()) {
-			
-			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
-			return queries;
-			
-		} 
-		
-		DistributionHelper.logPeerStatus(remotePeerIDs);
+		int degreeOfParallelism = this.getDegreeOfParallelismn(wantedDegreeOfParallelism, remotePeerIDs.size());
 		
 		// All queryparts over all queries
 		final Map<ILogicalQuery, List<QueryPart>> queryPartsMap = Maps.newHashMap();
@@ -154,7 +158,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			queryPartsMap.put(query, new ArrayList<QueryPart>());
 			
 			// Make copies of the query
-			for(int copyNo = 0; copyNo < this.getDegreeOfParallelismn(wantedDegreeOfParallelism, remotePeerIDs.size()) - 1; copyNo++)
+			for(int copyNo = 0; copyNo < degreeOfParallelism - 1; copyNo++)
 				queriesToDistribute.add(DistributionHelper.copyLogicalQuery(query));
 			
 			for(ILogicalQuery queryToDistribute : queriesToDistribute) {
@@ -172,7 +176,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			}
 			
 			// Generate a new logical operator which marks that the query result shall return to this instance
-			QueryPart localPart = this.createLocalPart(queryPartsMap.get(query));
+			QueryPart localPart = this.createLocalPart(queryPartsMap.get(query), degreeOfParallelism);
 			this.subscribeToLocalPart(queryPartsMap.get(query), localPart);
 			queryPartsMap.get(query).add(localPart);
 			
@@ -260,10 +264,41 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	
 	/**
 	 * Creates a new {@link QueryPart} to be executed locally.
-	 * @param parts A list of {@link QueryPart}s, which shall be merged by the local {@link QueryPart}. <br />
+	 * @param parts A list of semantically equal {@link QueryPart}s, 
+	 * which shall be merged by the local {@link QueryPart}. <br />
 	 * <code>parts</code> must not be null and not empty.
+	 * @param degreeOfParallelism The degree of parallelism. <br />
+	 * <code>degreeOfParallelism</code> must greater than zero.
+	 * @return For each sink: <br />
+	 * If <code>degreeOfParallelism</code> is <code>1</code>: A {@link RenameAO} with no operation. <br />
+	 * If <code>degreeOfParallelism</code> is greater than<code>1</code>: A {@link DistributionMergeAO}.
 	 */
-	protected abstract QueryPart createLocalPart(List<QueryPart> parts);
+	protected QueryPart createLocalPart(List<QueryPart> parts, int degreeOfParallelism) {
+		
+		Preconditions.checkNotNull(parts, "parts must be not null!");
+		Preconditions.checkArgument(parts.size() > 0, "parts must be not empty!");
+		Preconditions.checkArgument(degreeOfParallelism > 0, "degreeOfParallelism must be greater than zero!");
+		
+		final List<ILogicalOperator> operators = Lists.newArrayList();
+		
+		// All queryparts are equal
+		for(@SuppressWarnings("unused") ILogicalOperator sink : parts.get(0).getRealSinks()) {
+			
+			if(degreeOfParallelism == 1) {
+			
+				// No merging needed
+				final RenameAO renameAO = new RenameAO();
+				renameAO.setNoOp(true);
+				renameAO.addParameterInfo("isNoOp", "'true'");
+				operators.add(renameAO);
+				
+			} else operators.add(new DistributionMergeAO());
+			
+		}
+		
+		return new QueryPart(operators, AbstractLoadBalancer.getLocalDestinationName());
+		
+	}
 	
 	/**
 	 * Subscribes a local {@link QueryPart} to a list of {@link QueryPart}s. <br />
