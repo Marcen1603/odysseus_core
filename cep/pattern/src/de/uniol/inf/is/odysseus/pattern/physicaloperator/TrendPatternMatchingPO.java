@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.pattern.util.EventBuffer;
 import de.uniol.inf.is.odysseus.pattern.util.EventObject;
 import de.uniol.inf.is.odysseus.pattern.util.PatternOutput;
 import de.uniol.inf.is.odysseus.pattern.util.PatternType;
@@ -37,12 +38,12 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 	/**
 	 * saves the value from the last event
 	 */
-	private Integer lastValue;
+	private Double lastValue;
 	/**
 	 * count how many values processed
 	 */
 	private int countValues;
-	
+		
 	public TrendPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,
 			IInputStreamSyncArea<Tuple<T>> inputStreamSyncArea, String attribute, Integer inputPort) {
@@ -76,7 +77,9 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 			if (attr != null) {
 				int index = eventObj.getSchema().indexOf(attr);
 				// prevent ClassCastException, attrValue only have to be numeric
-				Integer attrValue = eventObj.getEvent().getAttribute(index);//((Number) eventObj.getEvent().getAttribute(index)).doubleValue();
+				//Integer attrValue = eventObj.getEvent().getAttribute(index);
+				Double attrValue = ((Number) eventObj.getEvent().getAttribute(index)).doubleValue();
+				attrValue = Math.rint(attrValue * 10000) / 10000;
 				if (type != PatternType.MIXED && (satisfied || countValues == 1)) {
 					// choose operator by pattern type
 					switch (type) {
@@ -137,7 +140,8 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 	protected void matching(PointInTime currentTime) {
 		if (satisfied) {
 			// create complex event
-			transferEvents(eventBuffer, currentTime, false);
+			EventBuffer<T> results = calcSatisfiedEvents(eventBuffer);
+			transferEvents(results, currentTime, false);
 		}
 		// initiate state
 		satisfied = false;

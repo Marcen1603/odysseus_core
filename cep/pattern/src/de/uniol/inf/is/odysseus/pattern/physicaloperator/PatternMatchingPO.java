@@ -433,6 +433,10 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	 * @return true, if all assertions are satisfied
 	 */
 	protected boolean checkAssertions(EventObject<T> event) {
+		if (attrMappings == null) {
+			// no assertions -> true
+			return true;
+		}
 		Iterator<Entry<SDFExpression, AttributeMap[]>> iterator = attrMappings
 				.entrySet().iterator();
 		boolean satisfied = true;
