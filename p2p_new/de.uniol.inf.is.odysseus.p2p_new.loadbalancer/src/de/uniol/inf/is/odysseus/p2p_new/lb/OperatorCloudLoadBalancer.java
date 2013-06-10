@@ -10,7 +10,18 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 
-// TODO javaDoc M.B.
+/**
+ * The <code>OperatorCloudLoadBalancer</code> splits an {@link ILogicalQuery} after each {@link ILogicalOperator} 
+ * and parallelizes each {@link ILogicalOperator} on different peers. <br />
+ * The copies of an {@link ILogicalOperator} are assigned to a peer via round robin without the local peer. 
+ * But the local peer will get all results and returns them to the {@link IExecutor}. <br />
+ * To use the <code>OperatorCloudLoadBalancer</code> use the following pre-parser-keywords: <br />
+ * #DODISTRIBUTE true <br />
+ * #DISTRIBUTIONTYPE operatorcloud <code>degree of parallelism</code> <br />
+ * where <code>degree of parallelism</code> has to be an integer greater than zero, "min" for <code>1</code> or 
+ * "max" for {@link Integer#MAX_VALUE}.
+ * @author Michael Brand
+ */
 public class OperatorCloudLoadBalancer extends AbstractLoadBalancer {
 
 	@Override
