@@ -102,11 +102,11 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		final SDFAttribute[] attributes = outputSchema.toArray(new SDFAttribute[0]);
 		for (int i = 0; i < attributes.length; i++) {
 			final SDFAttribute attribute = attributes[i];
-			sb.append("['");
+			sb.append("[");
 			if( !Strings.isNullOrEmpty(attribute.getSourceName())) {
-				sb.append(attribute.getSourceName()).append(".");
+				sb.append("'").append(attribute.getSourceName()).append("',");
 			}
-			sb.append(attribute.getAttributeName());
+			sb.append("'").append(attribute.getAttributeName());
 			sb.append("', '");
 			sb.append(attribute.getDatatype().getURI());
 			sb.append("']");
