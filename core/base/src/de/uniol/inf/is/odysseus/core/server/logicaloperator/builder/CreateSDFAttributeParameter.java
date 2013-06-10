@@ -65,34 +65,36 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 	@Override
 	protected void internalAssignment() {
 		List<String> list = (List<String>) inputValue;
-		if (list.size() != 2) {
-			throw new IllegalArgumentException("Wrong number of inputs for SDFAttribute. Expecting id and datatype.");
+		if (list.size() == 3){
+			setValue(determineAttribute(list.get(0), list.get(1), list.get(2)));
+		}else if (list.size() == 2){
+			setValue(determineAttribute(null, list.get(0), list.get(1)));	
+		}else{
+			throw new IllegalArgumentException("Wrong number of inputs for SDFAttribute. Expecting [sourcename] attributename and datatype.");
 		}
-		setValue(determineAttribute(list.get(0), list.get(1)));
 	}
 
 	@Override
 	protected String getPQLStringInternal() {
 		String attributeFullName = getValue().getAttributeName();
-		if (!Strings.isNullOrEmpty(getValue().getSourceName())) {
-			attributeFullName = getValue().getSourceName() + "." + attributeFullName;
-		}
-
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
+		if (!Strings.isNullOrEmpty(getValue().getSourceName())) {
+			sb.append("'").append(getValue().getSourceName()).append("',") ;
+		}
 		sb.append("'").append(attributeFullName).append("','").append(getValue().getDatatype().getURI()).append("'");
 		sb.append("]");
 		return sb.toString();
 	}
 
-	private SDFAttribute determineAttribute(String attributeName, String dataTypeName) {
+	private SDFAttribute determineAttribute(String sourcename, String attributeName, String dataTypeName) {
 		try {
 			final int pos = attributeName.indexOf(".");
 			if (pos != -1) {
 				final String prefix = attributeName.substring(0, pos);
 				return new SDFAttribute(prefix, attributeName.substring(pos + 1), dataDictionary.getDatatype(dataTypeName));
 			}
-			return new SDFAttribute(null, attributeName, dataDictionary.getDatatype(dataTypeName));
+			return new SDFAttribute(sourcename, attributeName, dataDictionary.getDatatype(dataTypeName));
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e);
 		}
