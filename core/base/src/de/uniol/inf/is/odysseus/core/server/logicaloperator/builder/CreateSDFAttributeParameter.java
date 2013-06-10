@@ -34,7 +34,6 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 	private static final long serialVersionUID = -544787040358885000L;
 	
 	private static IDataDictionary dataDictionary;
-//	private static ISession caller;
 
 	public CreateSDFAttributeParameter() {
 	}
@@ -61,18 +60,6 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 			LOG.debug("Data Dictionary bound");
 		}
 	}	
-	
-//	// called by OSGi-DS
-//	public void bindSessionManagement( ISessionManagement dd ) {
-//		caller = dd.loginSuperUser(null, "");
-//		
-//		LOG.debug("Active User bound bound");
-//	}
-//	
-//	// called by OSGi-DS
-//	public void unbindSessionManagement( ISessionManagement dd ) {
-//		caller = null;
-//	}	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -103,17 +90,7 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 			final int pos = attributeName.indexOf(".");
 			if (pos != -1) {
 				final String prefix = attributeName.substring(0, pos);
-//				if (getDataDictionary().containsViewOrStream(prefix, caller)) {
-					return new SDFAttribute(prefix, attributeName.substring(pos + 1), dataDictionary.getDatatype(dataTypeName));
-//				}
-
-//				final int pos2 = attributeName.indexOf(".", pos + 1);
-//				if (pos2 != -1) {
-//					final String prefix2 = attributeName.substring(0, pos2);
-//					if (getDataDictionary().containsViewOrStream(prefix2, caller)) {
-//						return new SDFAttribute(prefix2, attributeName.substring(pos2 + 1), dataDictionary.getDatatype(dataTypeName));
-//					}
-//				}
+				return new SDFAttribute(prefix, attributeName.substring(pos + 1), dataDictionary.getDatatype(dataTypeName));
 			}
 			return new SDFAttribute(null, attributeName, dataDictionary.getDatatype(dataTypeName));
 		} catch (DataDictionaryException e) {
