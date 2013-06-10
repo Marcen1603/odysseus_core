@@ -89,11 +89,6 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 
 	private SDFAttribute determineAttribute(String sourcename, String attributeName, String dataTypeName) {
 		try {
-			final int pos = attributeName.indexOf(".");
-			if (pos != -1) {
-				final String prefix = attributeName.substring(0, pos);
-				return new SDFAttribute(prefix, attributeName.substring(pos + 1), dataDictionary.getDatatype(dataTypeName));
-			}
 			return new SDFAttribute(sourcename, attributeName, dataDictionary.getDatatype(dataTypeName));
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e);
