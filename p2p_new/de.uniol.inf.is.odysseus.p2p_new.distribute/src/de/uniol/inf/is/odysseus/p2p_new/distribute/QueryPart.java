@@ -157,7 +157,7 @@ public class QueryPart {
 
 	/**
 	 * Returns an immutable copy of the collection of all {@link ILogicalOperator}s, 
-	 * which have no sources in this {@link QueryPart}.
+	 * which have no sinks in this {@link QueryPart}.
 	 */
 	public final ImmutableCollection<ILogicalOperator> getRelativeSinks() {
 		
@@ -167,7 +167,7 @@ public class QueryPart {
 
 	/**
 	 * Returns an immutable copy of the collection of all {@link ILogicalOperator}s, 
-	 * which have no sinks in this {@link QueryPart}.
+	 * which have no sources in this {@link QueryPart}.
 	 */
 	public final ImmutableCollection<ILogicalOperator> getRelativeSources() {
 		
@@ -297,6 +297,25 @@ public class QueryPart {
 		}
 		
 		return filteredOperators.build();
+		
+	}
+	
+	/**
+	 * Returns the first {@link JxtaSenderAO} found or, if no {@link JxtaSenderAO} found, the first 
+	 * relative sink found.
+	 * @see #addSenderAO(JxtaSenderAO, ILogicalOperator)
+	 * @see #getRealSinks()
+	 */
+	public ILogicalOperator getLogicalPlan() {
+		
+		for(ILogicalOperator operator : this.relativeSinks.keySet()) {
+			
+			if(!this.relativeSinks.get(operator).isEmpty())
+				return this.relativeSinks.get(operator).get(0);
+			
+		}
+		
+		return this.relativeSinks.keySet().iterator().next();
 		
 	}
 	

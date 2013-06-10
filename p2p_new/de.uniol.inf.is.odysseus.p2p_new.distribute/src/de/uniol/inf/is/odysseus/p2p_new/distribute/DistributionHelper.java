@@ -127,9 +127,10 @@ public class DistributionHelper {
 				
 				ILogicalOperator streamPlan = DataDictionaryService.get().getStreamForTransformation(((StreamAO) operator).getStreamname(), 
 						SessionManagementService.getActiveSession());
-				RestructHelper.replaceWithSubplan(operator, copyLogicalPlan(streamPlan));
+				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
+				RestructHelper.replaceWithSubplan(operator, streamPlanCopy);
 				operatorsToRemove.add(operator);
-				operatorsToAdd.add(streamPlan);
+				operatorsToAdd.add(streamPlanCopy);
 				
 			}
 			
@@ -373,7 +374,7 @@ public class DistributionHelper {
 				(QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
 		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
 		adv.setPeerID(destinationPeerID);
-		adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(queryPart.getOperators().iterator().next()));
+		adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(queryPart.getLogicalPlan()));
 		
 		adv.setSharedQueryID(sharedQueryID);
 		adv.setTransCfgName(transCfg.getName());

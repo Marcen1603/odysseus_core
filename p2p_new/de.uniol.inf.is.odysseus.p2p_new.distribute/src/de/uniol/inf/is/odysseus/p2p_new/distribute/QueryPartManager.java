@@ -55,6 +55,9 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 			final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
 			
 			if(adv.getPeerID().equals(P2PDictionaryService.get().getLocalPeerID())) {
+				
+				LOG.debug("PQL statement to be executed on peer {}: {}", P2PDictionaryService.get().getLocalPeerName(), 
+						((QueryPartAdvertisement) advertisement).getPqlStatement());
 					
 				final List<String> neededSources = determineNeededSources(adv);
 					

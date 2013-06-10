@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 
 /**
@@ -38,7 +39,7 @@ public class QueryCloudLoadBalancer extends AbstractLoadBalancer {
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(operators.size() > 0, "operators must be not empty!");
 		
-		return Lists.newArrayList(new QueryPart(operators));
+		return Lists.newArrayList(DistributionHelper.replaceStreamAOs(new QueryPart(operators)));
 		
 	}
 

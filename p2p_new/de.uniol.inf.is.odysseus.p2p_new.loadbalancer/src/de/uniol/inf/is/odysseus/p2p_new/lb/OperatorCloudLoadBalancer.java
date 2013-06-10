@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 
 /**
@@ -41,20 +41,9 @@ public class OperatorCloudLoadBalancer extends AbstractLoadBalancer {
 		Preconditions.checkArgument(operators.size() > 0, "operators must be not empty!");
 		
 		List<QueryPart> parts = Lists.newArrayList();
-		for(int index = 1; index < operators.size(); index++) {
+		for(ILogicalOperator operator : operators) {
 			
-			ILogicalOperator nextOp = operators.get(index);
-			ILogicalOperator operator = operators.get(index - 1);
-			
-			if(operator instanceof StreamAO)
-				continue;
-			
-			List<ILogicalOperator> opsForPart = Lists.newArrayList(operator);
-			
-			if(nextOp instanceof StreamAO)
-				opsForPart.add(nextOp);
-			
-			parts.add(new QueryPart(opsForPart));
+			parts.add(DistributionHelper.replaceStreamAOs(new QueryPart(Lists.newArrayList(operator))));
 			
 		}
 		

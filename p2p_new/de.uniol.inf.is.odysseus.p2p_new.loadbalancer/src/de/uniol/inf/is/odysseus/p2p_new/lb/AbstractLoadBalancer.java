@@ -420,9 +420,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 			} else {
 				
-				QueryPart partToPublish = DistributionHelper.replaceStreamAOs(part);
-				LOG.debug("Plan of the querypart to publish:\n{}", this.printer.createString(partToPublish.getOperators().iterator().next()));
-				DistributionHelper.publish(partToPublish, assignedPeerID, sharedQueryID, transCfg);
+				LOG.debug("Plan of the querypart to publish:\n{}", this.printer.createString(part.getLogicalPlan()));
+				DistributionHelper.publish(part, assignedPeerID, sharedQueryID, transCfg);
 				
 			}
 
