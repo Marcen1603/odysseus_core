@@ -62,6 +62,27 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	private static int peerCounter = 0;
 	
 	/**
+	 * The parameter to determine that the minimum degree of parallelism should be used.
+	 */
+	public static final String MIN_PARAM = "min";
+	
+	/**
+	 * The minimum value of parallelism.
+	 */
+	public static final int MIN_VALUE = 1;
+	
+	/**
+	 * The parameter to determine that the maximum degree of parallelism should be used.
+	 */
+	public static final String MAX_PARAM = "max";
+	
+	/**
+	 * The maximum value of parallelism. <br />
+	 * This leads to the usage of the number of available remote Peers as the degree of parallelism.
+	 */
+	public static final int MAX_VALUE = Integer.MAX_VALUE;
+	
+	/**
 	 * Returns the base name for acceptor operators.
 	 */
 	protected static String getAccessName() {
@@ -125,23 +146,27 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		// Read out the wanted degree of parallelism from the given distribution type parameter
 		String[] strParameters = cfg.get(ParameterDistributionType.class).getValue().split(" ");
-		int wantedDegreeOfParallelism = 1;
+		int wantedDegreeOfParallelism = MIN_VALUE;
 		if(strParameters.length > 1) {
 			
-			try {
-				
+			if(strParameters[1].toLowerCase().equals(MIN_PARAM))
+				wantedDegreeOfParallelism = MIN_VALUE;
+			else if(strParameters[1].toLowerCase().equals(MAX_PARAM))
+				wantedDegreeOfParallelism = MAX_VALUE;
+			else try {
+			
 				wantedDegreeOfParallelism = Integer.parseInt(strParameters[1]);
-				if(wantedDegreeOfParallelism < 1) {
+				if(wantedDegreeOfParallelism < MIN_VALUE) {
 					
-					LOG.error("{} is an invalid degree of parallelism. Degree settet to 1", strParameters[1]);
-					wantedDegreeOfParallelism = 1;
+					LOG.error("{} is an invalid degree of parallelism. Degree settet to {}", strParameters[1], MIN_VALUE);
+					wantedDegreeOfParallelism = MIN_VALUE;
 					
 				}
 				
 			} catch(NumberFormatException e) {
 				
 				e.printStackTrace();
-				LOG.error("Could not parse {} to an integer. Degree settet to 1", strParameters[1]);
+				LOG.error("Could not parse {} to an integer. Degree settet to {}", strParameters[1], MIN_VALUE);
 				
 			}
 			
