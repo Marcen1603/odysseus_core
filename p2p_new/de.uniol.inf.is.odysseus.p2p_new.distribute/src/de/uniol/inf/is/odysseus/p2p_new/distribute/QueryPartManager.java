@@ -56,41 +56,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 			
 			if(adv.getPeerID().equals(P2PDictionaryService.get().getLocalPeerID())) {
 					
-				// determine needed sources
-				final List<String> neededSources = Lists.newArrayList();
-				neededSourcesMap.putIfAbsent(adv, neededSources);
-				final List<ILogicalQuery> queries = CompilerService.get().translateQuery(
-						((QueryPartAdvertisement) advertisement).getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), 
-						dataDictionary);
-				for(ILogicalQuery query : queries) {
-					
-					final List<ILogicalOperator> operators = Lists.newArrayList();
-					RestructHelper.collectOperators(query.getLogicalPlan(), operators);
-					
-					for(ILogicalOperator operator : operators) {
-						
-						if(!(operator instanceof AccessAO))
-							continue;
-						String source = ((AccessAO) operator).getName();
-						
-						List<String> oldNeededSources;
-						do {
-							
-							oldNeededSources = neededSourcesMap.get(adv);
-							
-							if(dataDictionary.containsViewOrStream(source, SessionManagementService.getActiveSession()) ||
-									neededSourcesMap.get(adv).contains(source))
-								break;
-								
-							neededSources.add(source);
-							LOG.debug("Source {} needed for query {}", source, adv.getPqlStatement());
-							AdvertisementManagerService.get().refreshAdvertisements();
-							
-						} while(!neededSourcesMap.replace(adv, oldNeededSources, neededSources));
-						
-					}
-
-				}
+				final List<String> neededSources = determineNeededSources(adv);
 					
 				if(neededSources.isEmpty()) {
 					
@@ -105,6 +71,41 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 				
 			}
 		}
+	}
+
+	private List<String> determineNeededSources(final QueryPartAdvertisement adv) {
+		final List<String> neededSources = Lists.newArrayList();
+		neededSourcesMap.putIfAbsent(adv, neededSources);
+		final List<ILogicalQuery> queries = CompilerService.get().translateQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), dataDictionary);
+		for (ILogicalQuery query : queries) {
+
+			final List<ILogicalOperator> operators = Lists.newArrayList();
+			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
+
+			for (ILogicalOperator operator : operators) {
+
+				if (!(operator instanceof AccessAO))
+					continue;
+				String source = ((AccessAO) operator).getName();
+
+				List<String> oldNeededSources;
+				do {
+
+					oldNeededSources = neededSourcesMap.get(adv);
+
+					if (dataDictionary.containsViewOrStream(source, SessionManagementService.getActiveSession()) || neededSourcesMap.get(adv).contains(source))
+						break;
+
+					neededSources.add(source);
+					LOG.debug("Source {} needed for query {}", source, adv.getPqlStatement());
+					AdvertisementManagerService.get().refreshAdvertisements();
+
+				} while (!neededSourcesMap.replace(adv, oldNeededSources, neededSources));
+
+			}
+
+		}
+		return neededSources;
 	}
 	
 	private void callExecutor(QueryPartAdvertisement adv) {
