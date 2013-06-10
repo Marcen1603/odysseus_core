@@ -79,8 +79,7 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 				// prevent ClassCastException, attrValue only have to be numeric
 				//Integer attrValue = eventObj.getEvent().getAttribute(index);
 				Double attrValue = ((Number) eventObj.getEvent().getAttribute(index)).doubleValue();
-				attrValue = Math.rint(attrValue * 10000) / 10000;
-				if (type != PatternType.MIXED && (satisfied || countValues == 1)) {
+				if (type != PatternType.MIXED && type != PatternType.NON_STABLE && (satisfied || countValues == 1)) {
 					// choose operator by pattern type
 					switch (type) {
 					case INCREASING:
@@ -90,7 +89,7 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 						satisfied = lastValue > attrValue;
 						break;
 					case STABLE:
-						satisfied = lastValue == attrValue;
+						satisfied = lastValue.equals(attrValue);
 						break;
 					case NON_INCREASING:
 						satisfied = lastValue >= attrValue;
@@ -111,6 +110,9 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 						countEvents = 0;
 						countValues = 0;
 					}
+				}
+				if (type == PatternType.NON_STABLE && countValues >= 1 && !satisfied) {
+					satisfied = !lastValue.equals(attrValue);
 				}
 				if (type == PatternType.MIXED && countValues >= 1 && !satisfied) {
 					if (lastValue < attrValue) {

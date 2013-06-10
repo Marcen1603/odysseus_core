@@ -221,6 +221,16 @@ public class TPatternMatchingAORule extends
 					new TIInputStreamSyncArea(operator.getSubscribedToSource()
 							.size()), operator.getAttribute(), operator.getInputPort());
 			break;
+		case NON_STABLE:
+			pOperator = new TrendPatternMatchingPO(operator.getType(),
+					operator.getTime(), operator.getBufferSize(),
+					operator.getTimeUnit(), operator.getOutputMode(),
+					operator.getEventTypes(), operator.getAssertions(),
+					operator.getReturnExpressions(),
+					operator.getInputTypeNames(), operator.getInputSchemas(),
+					new TIInputStreamSyncArea(operator.getSubscribedToSource()
+							.size()), operator.getAttribute(), operator.getInputPort());
+			break;
 		case MIXED:
 			pOperator = new TrendPatternMatchingPO(operator.getType(),
 					operator.getTime(), operator.getBufferSize(),
