@@ -134,8 +134,6 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		refreshTable();
 		
 		instance = this;
-		
-		setPartName(getPartName() + " [" +p2pDictionary.getLocalPeerGroupName() + ":" + p2pDictionary.getLocalPeerName() + "]");
 	}
 
 	@Override

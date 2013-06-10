@@ -284,5 +284,11 @@
          </view>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.p2p_new.StartUp">
+      </startup>
+   </extension>
 
 </plugin>
