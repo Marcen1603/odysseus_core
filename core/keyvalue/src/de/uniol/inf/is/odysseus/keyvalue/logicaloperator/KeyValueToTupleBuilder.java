@@ -17,7 +17,7 @@ public class KeyValueToTupleBuilder extends AbstractOperatorBuilder {
 
 	private final ListParameter<SDFAttribute> outputschema = new ListParameter<SDFAttribute>(
 			"SCHEMA", REQUIREMENT.MANDATORY, new CreateSDFAttributeParameter(
-					"ATTRIBUTE", REQUIREMENT.MANDATORY, getDataDictionary()));
+					"ATTRIBUTE", REQUIREMENT.MANDATORY));
 	
 	private final StringParameter type = new StringParameter(
 			"type", REQUIREMENT.MANDATORY);

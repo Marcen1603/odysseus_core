@@ -50,7 +50,7 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 	 * later binding)
 	 */
 	private final ListParameter<SDFAttribute> schema = new ListParameter<SDFAttribute>("SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter("ATTRIBUTE",
-			REQUIREMENT.MANDATORY, getDataDictionary()));
+			REQUIREMENT.MANDATORY));
 
 	/** Options as key value map */
 	private final ListParameter<Option> options = new ListParameter<Option>("OPTIONS", REQUIREMENT.OPTIONAL, new CreateOptionParameter("OPTION", REQUIREMENT.MANDATORY));

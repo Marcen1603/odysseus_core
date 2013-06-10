@@ -17,58 +17,108 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
-public class CreateSDFAttributeParameter extends
-		AbstractParameter<SDFAttribute> {
+public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute> {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(CreateSDFAttributeParameter.class);
+	
 	private static final long serialVersionUID = -544787040358885000L;
-	private IDataDictionary dd;
+	
+	private static IDataDictionary dataDictionary;
+//	private static ISession caller;
 
-	public CreateSDFAttributeParameter(){
+	public CreateSDFAttributeParameter() {
+	}
+
+	public CreateSDFAttributeParameter(String name, REQUIREMENT requirement, USAGE usage) {
+		super(name, requirement, usage);
+	}
+
+	public CreateSDFAttributeParameter(String name, REQUIREMENT requirement) {
+		this(name, requirement, USAGE.RECENT);
+	}
+	
+	// called by OSGi-DS
+	public void bindDataDictionary( IDataDictionary dd ) {
+		dataDictionary = dd;
 		
+		LOG.debug("Data Dictionary bound");
 	}
 	
-	public CreateSDFAttributeParameter(String name, REQUIREMENT requirement, IDataDictionary dd, USAGE usage) {
-		super(name, requirement,usage);
-		this.dd = dd;
-	}
+	// called by OSGi-DS
+	public void unbindDataDictionary( IDataDictionary dd ) {
+		if( dataDictionary == dd ) {
+			dataDictionary = null;
+			LOG.debug("Data Dictionary bound");
+		}
+	}	
 	
-	public CreateSDFAttributeParameter(String name, REQUIREMENT requirement, IDataDictionary dd) {
-		super(name, requirement,USAGE.RECENT);
-		this.dd = dd;
-	}
+//	// called by OSGi-DS
+//	public void bindSessionManagement( ISessionManagement dd ) {
+//		caller = dd.loginSuperUser(null, "");
+//		
+//		LOG.debug("Active User bound bound");
+//	}
+//	
+//	// called by OSGi-DS
+//	public void unbindSessionManagement( ISessionManagement dd ) {
+//		caller = null;
+//	}	
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void internalAssignment() {
 		List<String> list = (List<String>) inputValue;
 		if (list.size() != 2) {
-			throw new IllegalArgumentException(
-					"Wrong number of inputs for SDFAttribute. Expecting id and datatype.");
+			throw new IllegalArgumentException("Wrong number of inputs for SDFAttribute. Expecting id and datatype.");
 		}
-		SDFAttribute attribute;
-		try {
-			attribute = new SDFAttribute(null,list.get(0), dd.getDatatype(list.get(1)));
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		setValue(attribute);
+		setValue(determineAttribute(list.get(0), list.get(1)));
 	}
 
 	@Override
-	public void setDataDictionary(IDataDictionary dataDictionary) {
-		this.dd = dataDictionary;
-	}
-	
-	@Override
 	protected String getPQLStringInternal() {
+		String attributeFullName = getValue().getAttributeName();
+		if (!Strings.isNullOrEmpty(getValue().getSourceName())) {
+			attributeFullName = getValue().getSourceName() + "." + attributeFullName;
+		}
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		sb.append("'").append(getValue().getAttributeName()).append("','").append(getValue().getDatatype().getURI()).append("'");
+		sb.append("'").append(attributeFullName).append("','").append(getValue().getDatatype().getURI()).append("'");
 		sb.append("]");
 		return sb.toString();
 	}
+
+	private SDFAttribute determineAttribute(String attributeName, String dataTypeName) {
+		try {
+			final int pos = attributeName.indexOf(".");
+			if (pos != -1) {
+				final String prefix = attributeName.substring(0, pos);
+//				if (getDataDictionary().containsViewOrStream(prefix, caller)) {
+					return new SDFAttribute(prefix, attributeName.substring(pos + 1), dataDictionary.getDatatype(dataTypeName));
+//				}
+
+//				final int pos2 = attributeName.indexOf(".", pos + 1);
+//				if (pos2 != -1) {
+//					final String prefix2 = attributeName.substring(0, pos2);
+//					if (getDataDictionary().containsViewOrStream(prefix2, caller)) {
+//						return new SDFAttribute(prefix2, attributeName.substring(pos2 + 1), dataDictionary.getDatatype(dataTypeName));
+//					}
+//				}
+			}
+			return new SDFAttribute(null, attributeName, dataDictionary.getDatatype(dataTypeName));
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e);
+		}
+	}
+
 }

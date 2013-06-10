@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -63,13 +62,11 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		if( name == null && getName() != null ) {
 			super.setName(null);
 			
-			applyNameToSchema();
-		}
-		
-		if( (getName() == null && name != null) || !getName().equals(name)) {
+			removeParameterInfo("NAME");
+		} else if( (getName() == null && name != null) || !getName().equals(name)) {
 			super.setName(name);
 		
-			applyNameToSchema();
+			addParameterInfo("NAME", "'" + name + "'");
 		}
 	}
 
@@ -83,9 +80,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	@Parameter(name="SCHEMA", type = CreateSDFAttributeParameter.class, isList=true,optional=false)
 	public void setSchema(List<SDFAttribute> outputSchema) {
 		assignedSchema = new SDFSchema(getName() != null ? getName() : "", outputSchema);
-		addParameterInfo("SCHEMA", convertSchema(outputSchema));
-		
-		applyNameToSchema();
+		addParameterInfo("SCHEMA", schemaToString(outputSchema));
 	}
 	
 	public List<SDFAttribute> getSchema() {
@@ -97,21 +92,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		return assignedSchema;
 	}
 
-	private void applyNameToSchema() {
-		if( assignedSchema != null ) {
-			List<SDFAttribute> attributes = Lists.newArrayList();
-			
-			final String nameToApply = getName() != null ? getName() : "";
-			for( SDFAttribute attribute : assignedSchema ) {
-				attributes.add(new SDFAttribute(nameToApply, attribute.getAttributeName(), attribute));
-			}
-			
-			assignedSchema = new SDFSchema(getName() != null ? getName() : "", attributes);
-			addParameterInfo("SCHEMA", convertSchema(attributes));
-		}
-	}
-	
-	private static String convertSchema(List<SDFAttribute> outputSchema) {
+	private static String schemaToString(List<SDFAttribute> outputSchema) {
 		if (outputSchema.isEmpty()) {
 			return "[]";
 		}
@@ -122,6 +103,9 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		for (int i = 0; i < attributes.length; i++) {
 			final SDFAttribute attribute = attributes[i];
 			sb.append("['");
+			if( !Strings.isNullOrEmpty(attribute.getSourceName())) {
+				sb.append(attribute.getSourceName()).append(".");
+			}
 			sb.append(attribute.getAttributeName());
 			sb.append("', '");
 			sb.append(attribute.getDatatype().getURI());

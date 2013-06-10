@@ -69,29 +69,27 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	private final StringParameter transportHandler = new StringParameter("transport", REQUIREMENT.OPTIONAL);
 	private final StringParameter protocolHandler = new StringParameter("protocol", REQUIREMENT.OPTIONAL);
-
 	private final ListParameter<String> options = new ListParameter<String>("OPTIONS_OLD", REQUIREMENT.OPTIONAL, new StringParameter());
-
 	private final ListParameter<Option> options2 = new ListParameter<Option>("OPTIONS", REQUIREMENT.OPTIONAL, new CreateOptionParameter("OPTION", REQUIREMENT.MANDATORY));
-
-	private final ListParameter<SDFAttribute> outputschema = new ListParameter<SDFAttribute>("SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter("ATTRIBUTE", REQUIREMENT.MANDATORY, getDataDictionary()));
-
 	private final ListParameter<String> inputSchema = new ListParameter<String>("INPUTSCHEMA", REQUIREMENT.OPTIONAL, new StringParameter());
-
 	private final StringParameter dateFormat = new StringParameter("dateFormat", REQUIREMENT.OPTIONAL);
+	private final ListParameter<SDFAttribute> outputschema = new ListParameter<SDFAttribute>("SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter("ATTRIBUTE", REQUIREMENT.MANDATORY));
 
 	public AccessAOBuilder() {
 		super("ACCESS", 0, 0);
+				
 		addParameters(source, host, port, outputschema, type, options, options2, inputSchema, adapter, input, transformer, dataHandler, objectHandler, inputDataHandler, accessConnectionHandler, transportHandler, protocolHandler, wrapper, dateFormat);
 		// TODO: bind through service or why are these handlers not part of server?!
 		protocolHandler.setPossibleValues(ProtocolHandlerRegistry.getHandlerNames());
 		transportHandler.setPossibleValues(TransportHandlerRegistry.getHandlerNames());
 		dataHandler.setPossibleValues(DataHandlerRegistry.getHandlerNames());
 		wrapper.setPossibleValues(WrapperRegistry.getWrapperNames());
+		
 	}
 
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
+
 		String wrapperName = adapter.hasValue() ? adapter.getValue() : type.getValue();
 		wrapperName = wrapper.hasValue() ? wrapper.getValue() : wrapperName;
 

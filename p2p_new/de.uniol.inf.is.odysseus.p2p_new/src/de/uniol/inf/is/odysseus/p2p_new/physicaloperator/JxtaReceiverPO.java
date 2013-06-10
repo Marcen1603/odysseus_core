@@ -56,7 +56,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	private IJxtaConnection dataConnection;
 	
 	public JxtaReceiverPO(JxtaReceiverAO ao) {
-		SDFSchema schema = new SDFSchema(ao.getName() != null ? getName() : "", ao.getSchema());
+		SDFSchema schema = ao.getOutputSchema().clone();
 		setOutputSchema(schema);
 		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(schema);
 
