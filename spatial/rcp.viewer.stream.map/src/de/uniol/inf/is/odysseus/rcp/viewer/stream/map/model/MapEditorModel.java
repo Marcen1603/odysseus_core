@@ -48,9 +48,11 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.GroupLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LinemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.linemap.LinemapLayer;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
@@ -290,7 +292,9 @@ public class MapEditorModel extends ModelObject {
 	public void addLayer(LayerConfiguration layerConfiguration) {
 		layercount++;
 		ILayer layer = null;
-		if (layerConfiguration instanceof HeatmapLayerConfiguration)
+		if (layerConfiguration instanceof LinemapLayerConfiguration)
+			layer = addLayer((LinemapLayerConfiguration) layerConfiguration);
+		else if (layerConfiguration instanceof HeatmapLayerConfiguration)
 			layer = addLayer((HeatmapLayerConfiguration) layerConfiguration);
 		else if (layerConfiguration instanceof RasterLayerConfiguration)
 			layer = addLayer((RasterLayerConfiguration) layerConfiguration);
@@ -370,14 +374,41 @@ public class MapEditorModel extends ModelObject {
 		return layer;
 	}
 	
+	/**
+	 * Adds an HeatmapLayer to the map 
+	 * @param layerConfiguration
+	 * @return The layer
+	 */
 	private ILayer addLayer(HeatmapLayerConfiguration layerConfiguration) {
 		ILayer layer = null;
 		if (screenManager != null) {
 			layer = new Heatmap(layerConfiguration, screenManager);	
 			
-			// Add to all connections (LayerUpdater)
+			// Add to the selected connection (LayerUpdater)
 			for (LayerUpdater connection : connections.values()) {
-				connection.add(layer);
+				if (connection.getQuery().getLogicalQuery().getQueryText().equals(layerConfiguration.getQuery())) {
+					connection.add(layer);
+				}				
+			}
+		}
+		return layer;
+	}
+	
+	/**
+	 * Adds a LinemapLayer to the map
+	 * @param layerConfiguration
+	 * @return The layer
+	 */
+	private ILayer addLayer(LinemapLayerConfiguration layerConfiguration) {
+		ILayer layer = null;
+		if (screenManager != null) {
+			layer = new LinemapLayer(layerConfiguration, screenManager);	
+			
+			// Add to the selected connection (LayerUpdater)
+			for (LayerUpdater connection : connections.values()) {
+				if (connection.getQuery().getLogicalQuery().getQueryText().equals(layerConfiguration.getQuery())) {
+					connection.add(layer);
+				}	
 			}
 		}
 		return layer;

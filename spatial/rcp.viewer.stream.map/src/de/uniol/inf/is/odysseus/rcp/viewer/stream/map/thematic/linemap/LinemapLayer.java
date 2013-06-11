@@ -24,19 +24,20 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.DataSet;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LinemapLayerConfiguration;
 
-public class LinemapLayer extends VectorLayer {
+public class LinemapLayer extends RasterLayer {
 
 	private static final long serialVersionUID = -6639695562970893314L;
 	private LayerUpdater layerUpdater;
 	ScreenManager screenManager;
-	VectorLayerConfiguration config;
+	LinemapLayerConfiguration config;
 	HashMap<Integer, Color> colors;
 
-	public LinemapLayer(VectorLayerConfiguration config,
+	public LinemapLayer(LinemapLayerConfiguration config,
 			ScreenManager screenManager) {
+		super(config);
 		this.screenManager = screenManager;
 		this.config = config;
 		colors = new HashMap<Integer, Color>();

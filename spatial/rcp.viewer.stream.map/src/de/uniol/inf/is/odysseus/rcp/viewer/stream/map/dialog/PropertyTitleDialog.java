@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.Attribu
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.OdysseusMapPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerConfiguration;
@@ -350,15 +349,15 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 	}
 	
 	private Composite getThematicConfiguration(Composite parent) {
-		if (!(layerConfiguration instanceof HeatmapLayerConfiguration))
-			this.layerConfiguration = new HeatmapLayerConfiguration("");
-		final HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) this.layerConfiguration;
-		
-		// Set a few standard-properties (covers whole world, has SRID 4326)
-		heatmapLayerConfiguration.setCoverageGeographic(-180.0,  180.0, -85.0511, 85.0511);
-		heatmapLayerConfiguration.setCoverageProjected(-180.0,  180.0, -85.0511, 85.0511);
-		heatmapLayerConfiguration.setSrid(4326);
-		this.layerConfiguration = heatmapLayerConfiguration;
+//		if (!(layerConfiguration instanceof HeatmapLayerConfiguration))
+//			this.layerConfiguration = new HeatmapLayerConfiguration("");
+//		final HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) this.layerConfiguration;
+//		
+//		// Set a few standard-properties (covers whole world, has SRID 4326)
+//		heatmapLayerConfiguration.setCoverageGeographic(-180.0,  180.0, -85.0511, 85.0511);
+//		heatmapLayerConfiguration.setCoverageProjected(-180.0,  180.0, -85.0511, 85.0511);
+//		heatmapLayerConfiguration.setSrid(4326);
+//		this.layerConfiguration = heatmapLayerConfiguration;
 		
 		Composite thematicLayer = new Composite(parent, SWT.NONE);
 		thematicLayer.setLayout(DialogUtils.getGroupLayout());
@@ -397,6 +396,14 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 			streamSelect.add(((LayerUpdater) connections.toArray()[i]).getQuery().getLogicalQuery().getQueryText(), i);
 		}
 		streamSelect.select(0);
+		
+		// Add a listeter -> created right layerConfiguration
+		ThematicSelectionListener thematicSelectionListener = new ThematicSelectionListener(layerConfiguration, mapTypeSelect, streamSelect, this);
+		mapTypeSelect.addSelectionListener(thematicSelectionListener);
+		streamSelect.addSelectionListener(thematicSelectionListener);
+		
+		// Initialize selection
+		thematicSelectionListener.widgetSelected(null);
 		
 		return thematicLayer;
 	}
