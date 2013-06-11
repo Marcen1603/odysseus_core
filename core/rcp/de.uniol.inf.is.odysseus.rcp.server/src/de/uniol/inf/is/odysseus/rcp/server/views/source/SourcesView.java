@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.server.views.source;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -78,6 +79,18 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 
 	public TreeViewer getTreeViewer() {
 		return viewer;
+	}
+	
+	public final void setSorting( boolean doSorting ) {
+		if( doSorting ) {
+			viewer.setSorter(new ViewerSorter());
+		} else {
+			viewer.setSorter(null);
+		}
+	}
+	
+	public final boolean isSorting() {
+		return viewer.getSorter() != null;
 	}
 
 	public void refresh() {

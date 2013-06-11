@@ -138,6 +138,7 @@
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.DropAllSources"
                icon="icons/delete.png"
+               id="DropAllSources"
                label="Drop all sources"
                style="push"
                tooltip="Drop all sources">

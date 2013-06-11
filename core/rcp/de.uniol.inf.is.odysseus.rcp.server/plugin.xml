@@ -99,6 +99,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.RefreshMEPFunctionsViewCommand"
             name="Refresh MEP Functions View">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.server.commands.SetSortingInSourcesViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.SetSortingInSourcesViewCommand"
+            name="Sort in SourcesView">
+      </command>
     </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -111,6 +116,20 @@
                label="Refresh"
                style="push">
          </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.SourcesView?before=DropAllSources">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.SetSortingInSourcesViewCommand"
+               icon="icons/sortAlpha.gif"
+               label="Sort alphabetically"
+               style="toggle">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.server.separator1"
+               visible="true">
+         </separator>
       </menuContribution>
    </extension>
 
