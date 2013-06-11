@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +53,12 @@ public class SocketConnection extends AbstractJxtaConnection {
 						System.arraycopy(buffer, 0, msg, 0, bytesRead);
 						fireMessageReceiveEvent(msg);
 					}
-				} catch (IOException e) {
+				} catch (SocketException e) {
+					LOG.warn("Could not read from input stream of socket", e);
+					stopRunning();
+					disconnect();
+				} catch( IOException e ) {
 					LOG.error("Could not read from input stream of socket", e);
-
 					stopRunning();
 					disconnect();
 				}
