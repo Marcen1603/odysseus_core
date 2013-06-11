@@ -82,6 +82,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 */
 	public static final int MAX_VALUE = Integer.MAX_VALUE;
 	
+	// TODO uncomment the following line to write the result into a file
+//	private int test_counter = 0;
+	
 	/**
 	 * Returns the base name for acceptor operators.
 	 */
@@ -339,7 +342,28 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 					renameAO.addParameterInfo("isNoOp", "'true'");
 					operators.add(renameAO);
 					
-				} else operators.add(new DistributionMergeAO());
+					// TODO uncomment the following lines to write the result into a file
+//					final FileSinkAO fileAO = new FileSinkAO();
+//					String fileName = String.valueOf(test_counter++) + "_" + part.toString() + ".csv";
+//					fileAO.setFilename(fileName);
+//					fileAO.subscribeToSource(renameAO, 0, 0, renameAO.getOutputSchema());
+//					operators.add(fileAO);
+//					LOG.debug("FileSinkAO with the file {} added", fileName);
+					
+				} else {
+					
+					final DistributionMergeAO mergeAO = new DistributionMergeAO();
+					operators.add(mergeAO);
+					
+					// TODO uncomment the following lines to write the result into a file
+//					final FileSinkAO fileAO = new FileSinkAO();
+//					String fileName = String.valueOf(test_counter++) + "_" + part.toString() + ".csv";
+//					fileAO.setFilename(fileName);
+//					fileAO.subscribeToSource(mergeAO, 0, 0, mergeAO.getOutputSchema());
+//					operators.add(fileAO);
+//					LOG.debug("FileSinkAO with the file {} added", fileName);
+					
+				}
 				
 			}
 			
