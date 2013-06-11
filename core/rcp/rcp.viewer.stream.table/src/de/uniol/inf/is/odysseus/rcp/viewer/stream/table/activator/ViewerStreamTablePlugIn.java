@@ -35,6 +35,7 @@ public class ViewerStreamTablePlugIn extends AbstractUIPlugin {
 		
 		imageManager = new ImageManager(context.getBundle());
 		imageManager.register("filter", "icons/filter.png");
+		imageManager.register("desync", "icons/desync.png");
 	}
 
 	@Override

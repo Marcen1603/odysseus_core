@@ -180,7 +180,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	private boolean isInfinite() {
 		return maxElements < 0;
 	}
-
+	
 	private static void waiting() {
 		try {
 			Thread.sleep(REFRESH_INTERVAL_MILLIS);

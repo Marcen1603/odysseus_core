@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -50,7 +51,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.table.activator.ViewerStreamTablePlugIn;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class StreamTableEditor implements IStreamEditorType {
 
@@ -65,6 +65,10 @@ public class StreamTableEditor implements IStreamEditorType {
 	private List<Tuple<?>> tuples = new ArrayList<Tuple<?>>();
 	private List<Integer> shownAttributes = new ArrayList<Integer>();
 	private int maxTuplesCount;
+	private boolean isRefreshing;
+	
+	private boolean isDesync;
+	private RefreshTableThread desyncThread;
 
 	public StreamTableEditor(int maxTuples) {
 		setMaxTuplesCount(maxTuples);
@@ -106,12 +110,18 @@ public class StreamTableEditor implements IStreamEditorType {
 			tuples.remove(tuples.size() - 1);
 		}
 
-		if (hasTableViewer() && !getTableViewer().getTable().isDisposed()) {
+		if (!isDesync && !isRefreshing && hasTableViewer() && !getTableViewer().getTable().isDisposed()) {
+			isRefreshing = true;
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					if (!getTableViewer().getTable().isDisposed())
-						getTableViewer().refresh();
+					try {
+						if (!getTableViewer().getTable().isDisposed()) {
+							getTableViewer().refresh();
+						}
+					} finally {
+						isRefreshing = false;
+					}
 				}
 			});
 			editor.activateIfNeeded();
@@ -135,6 +145,7 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	@Override
 	public void dispose() {
+		stopRefreshThread();
 	}
 
 	@Override
@@ -158,6 +169,24 @@ public class StreamTableEditor implements IStreamEditorType {
 					getParent().layout();
 				}
 			}
+		});
+		
+		final ToolItem desyncButton = new ToolItem(toolbar, SWT.CHECK);
+		desyncButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("desync"));
+		desyncButton.setToolTipText("Desyncronize");
+		desyncButton.setSelection(isDesync);
+		desyncButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				isDesync = desyncButton.getSelection();
+				if( isDesync ) {
+					desyncThread = new RefreshTableThread(getTableViewer());
+					desyncThread.start();
+				} else {
+					stopRefreshThread();
+				}
+			}
+
 		});
 
 		toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
@@ -286,6 +315,13 @@ public class StreamTableEditor implements IStreamEditorType {
 			}
 		} finally {
 			tableViewer.getTable().setRedraw(true);
+		}
+	}
+	
+	private void stopRefreshThread() {
+		if( desyncThread != null ) {
+			desyncThread.stopRunning();
+			desyncThread = null;
 		}
 	}
 
