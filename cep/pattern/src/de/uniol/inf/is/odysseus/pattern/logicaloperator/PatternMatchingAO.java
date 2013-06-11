@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
@@ -43,7 +42,6 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	private Integer inputPort;
 	// auszulesendes Attribut
 	private String attribute;
-	private Double value;
 	
 	// relevante Event-Typen-Liste
 	private List<String> eventTypes;
@@ -76,7 +74,6 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
         this.assertions = patternAO.assertions;
         this.returnExpressions = patternAO.returnExpressions;
         this.attribute = patternAO.attribute;
-        this.value = patternAO.value;
         this.count = patternAO.count;
         this.inputPort = patternAO.inputPort;
     }
@@ -155,16 +152,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     public String getAttribute() {
     	return attribute;
     }
-    
-    @Parameter(type = DoubleParameter.class, optional = true)
-    public void setValue(Double value) {
-    	this.value = value;
-    }
-    
-    public Double getValue() {
-    	return value;
-    }
-    
+
     @Parameter(type = StringParameter.class, isList = true)
     public void setEventTypes(List<String> eventTypes) {
     	this.eventTypes = eventTypes;

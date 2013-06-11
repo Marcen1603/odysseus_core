@@ -55,10 +55,12 @@ public class AnyPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 			if (assertions != null) {
 				// check assertions
 				int index = eventTypes.indexOf(eventType);
-				SDFExpression assertion = assertions.get(index);
-				if (assertion != null) {
-					Entry<SDFExpression, AttributeMap[]> entry = new SimpleEntry<>(assertion, attrMappings.get(assertion));
-					satisfied = checkAssertion(eventObj, entry);
+				if (index < assertions.size()) {
+					SDFExpression assertion = assertions.get(index);
+					if (assertion != null) {
+						Entry<SDFExpression, AttributeMap[]> entry = new SimpleEntry<>(assertion, attrMappings.get(assertion));
+						satisfied = checkAssertion(eventObj, entry);
+					}
 				}
 			}
 			if (satisfied) {

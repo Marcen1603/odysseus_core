@@ -73,61 +73,65 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 		EventObject<T> eventObj = new EventObject<T>(event, eventType, schema, port);
 		// filter events by event types and by assertion satisfaction
 		if (eventTypes.contains(inputTypeNames.get(port)) && checkAssertions(eventObj)) {
-			SDFAttribute attr = eventObj.getSchema().findAttribute(attribute);
-			if (attr != null) {
-				int index = eventObj.getSchema().indexOf(attr);
-				// prevent ClassCastException, attrValue only have to be numeric
-				//Integer attrValue = eventObj.getEvent().getAttribute(index);
-				Double attrValue = ((Number) eventObj.getEvent().getAttribute(index)).doubleValue();
-				if (type != PatternType.MIXED && type != PatternType.NON_STABLE && (satisfied || countValues == 1)) {
-					// choose operator by pattern type
-					switch (type) {
-					case INCREASING:
-						satisfied = lastValue < attrValue;
-						break;
-					case DECREASING:
-						satisfied = lastValue > attrValue;
-						break;
-					case STABLE:
-						satisfied = lastValue.equals(attrValue);
-						break;
-					case NON_INCREASING:
-						satisfied = lastValue >= attrValue;
-						break;
-					case NON_DECREASING:
-						satisfied = lastValue <= attrValue;
-						break;
-					default:
-						break;
+			if (attribute != null) {
+				SDFAttribute attr = eventObj.getSchema().findAttribute(attribute);
+				if (attr != null) {
+					int index = eventObj.getSchema().indexOf(attr);
+					// prevent ClassCastException, attrValue only have to be numeric
+					//Integer attrValue = eventObj.getEvent().getAttribute(index);
+					Double attrValue = ((Number) eventObj.getEvent().getAttribute(index)).doubleValue();
+					if (type != PatternType.MIXED && type != PatternType.NON_STABLE && (satisfied || countValues == 1)) {
+						// choose operator by pattern type
+						switch (type) {
+						case INCREASING:
+							satisfied = lastValue < attrValue;
+							break;
+						case DECREASING:
+							satisfied = lastValue > attrValue;
+							break;
+						case STABLE:
+							satisfied = lastValue.equals(attrValue);
+							break;
+						case NON_INCREASING:
+							satisfied = lastValue >= attrValue;
+							break;
+						case NON_DECREASING:
+							satisfied = lastValue <= attrValue;
+							break;
+						default:
+							break;
+						}
+						if (!satisfied) {
+							// pattern now can't be true anymore
+							// -> reset interval on current event
+							// -> and reset the event buffer list
+							// the mixed pattern can also be true later
+							startTime = event.getMetadata().getStart();
+							eventBuffer.clear();
+							countEvents = 0;
+							countValues = 0;
+						}
 					}
-					if (!satisfied) {
-						// pattern now can't be true anymore
-						// -> reset interval on current event
-						// -> and reset the event buffer list
-						// the mixed pattern can also be true later
-						startTime = event.getMetadata().getStart();
-						eventBuffer.clear();
-						countEvents = 0;
-						countValues = 0;
+					if (type == PatternType.NON_STABLE && countValues >= 1 && !satisfied) {
+						satisfied = !lastValue.equals(attrValue);
 					}
+					if (type == PatternType.MIXED && countValues >= 1 && !satisfied) {
+						if (lastValue < attrValue) {
+							// detect increasing
+							mixedSatisfied[0] = true;
+						} else if (lastValue > attrValue) {
+							// detect decreasing
+							mixedSatisfied[1] = true;
+						}
+						if (mixedSatisfied[0] && mixedSatisfied[1]) {
+							satisfied = true;
+						}
+					}
+					lastValue = attrValue;
+					countValues++;
 				}
-				if (type == PatternType.NON_STABLE && countValues >= 1 && !satisfied) {
-					satisfied = !lastValue.equals(attrValue);
-				}
-				if (type == PatternType.MIXED && countValues >= 1 && !satisfied) {
-					if (lastValue < attrValue) {
-						// detect increasing
-						mixedSatisfied[0] = true;
-					} else if (lastValue > attrValue) {
-						// detect decreasing
-						mixedSatisfied[1] = true;
-					}
-					if (mixedSatisfied[0] && mixedSatisfied[1]) {
-						satisfied = true;
-					}
-				}
-				lastValue = attrValue;
-				countValues++;
+			} else {
+				logger.error("attribute is null");
 			}
 		}
 		super.process_internal(event, port);

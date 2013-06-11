@@ -355,7 +355,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		}
 		if (outputMode == PatternOutput.TUPLE_CONTAINER) {
 			Tuple<T> complexEvent = new Tuple<T>(1, false);
-			if (currentObj == null && objectChoices.size() > 0) {
+			if (objectChoices != null && objectChoices.size() > 0) {
 				// create tuple with matching set
 				complexEvent.setMetadata((T) objectChoices.get(objectChoices.size()-1).getEvent().getMetadata().clone());
 				List<Tuple<T>> tupleList = new ArrayList<>();

@@ -1,12 +1,5 @@
 package de.uniol.inf.is.odysseus.pattern.transform;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.TIInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.pattern.logicaloperator.PatternMatchingAO;
@@ -81,8 +74,6 @@ public class TPatternMatchingAORule extends
 					new TIInputStreamSyncArea(operator.getSubscribedToSource()
 							.size()), operator.getInputPort());
 			break;
-		case COUNT:
-			break;
 		case FIRST_N:
 			pOperator = new NPatternMatchingPO<>(operator.getType(), operator.getTime(),
 					operator.getBufferSize(), operator.getTimeUnit(),
@@ -93,23 +84,6 @@ public class TPatternMatchingAORule extends
 							.size()), operator.getCountEvents(), operator.getInputPort());
 			break;
 		case FUNCTOR:
-			String sourceName = operator.getInputTypeNames().get(0);
-
-			// Aggregation
-			AggregateAO aggrAO = new AggregateAO();
-			String attributeName = "price";
-			SDFAttribute attribute = new SDFAttribute(sourceName, attributeName, SDFDatatype.DOUBLE);
-			SDFAttribute outAttribute = new SDFAttribute(null, "min_price", SDFDatatype.DOUBLE);
-
-			aggrAO.addAggregation(attribute, new AggregateFunction("MIN"),
-					outAttribute);
-			this.insert(aggrAO);
-			
-			// Subscriptions umändern
-			LogicalSubscription subcribeToSource = operator.getSubscribedToSource(0);
-			ILogicalOperator source = subcribeToSource.getTarget();			
-			RestructHelper.insertOperator(aggrAO, source, 0, 0, 0);
-
 			pOperator = new AnyPatternMatchingPO(operator.getType(),
 					operator.getTime(), operator.getBufferSize(),
 					operator.getTimeUnit(), operator.getOutputMode(),
@@ -118,15 +92,6 @@ public class TPatternMatchingAORule extends
 					operator.getInputTypeNames(), operator.getInputSchemas(),
 					new TIInputStreamSyncArea(operator.getSubscribedToSource()
 							.size()), operator.getInputPort());
-//			pOperator = new FunctorPatternMatchingPO(operator.getType(),
-//					operator.getTime(), operator.getBufferSize(),
-//					operator.getTimeUnit(), operator.getOutputMode(),
-//					operator.getEventTypes(), operator.getAssertions(),
-//					operator.getReturnExpressions(),
-//					operator.getInputTypeNames(), operator.getInputSchemas(),
-//					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-//							.size()), operator.getAttribute(),
-//					operator.getValue());
 			break;
 		case LAST_N:
 			pOperator = new NPatternMatchingPO<>(operator.getType(), operator.getTime(),
@@ -166,10 +131,6 @@ public class TPatternMatchingAORule extends
 					operator.getInputTypeNames(), operator.getInputSchemas(),
 					new TIInputStreamSyncArea(operator.getSubscribedToSource()
 							.size()), operator.getInputPort());
-			break;
-		case VALUE_MAX:
-			break;
-		case VALUE_MIN:
 			break;
 		case DECREASING:
 			pOperator = new TrendPatternMatchingPO(operator.getType(),

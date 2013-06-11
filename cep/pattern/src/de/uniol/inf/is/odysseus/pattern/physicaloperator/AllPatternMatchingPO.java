@@ -91,8 +91,10 @@ public class AllPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 				// Kombinationen suchen und Bedingungen überprüfen
 				List<List<EventObject<T>>> output = calcSatisfiedCombinations(eventObj, computeCrossProduct(eventObj));
 				for (List<EventObject<T>> outputObject : output) {
-					Tuple<T> complexEvent = this.createComplexEvent(outputObject, null, null);
-					outputTransferArea.transfer(complexEvent);
+					if (outputObject != null && output.size() > 0) {
+						Tuple<T> complexEvent = this.createComplexEvent(outputObject, outputObject.get(outputObject.size() - 1), null);
+						outputTransferArea.transfer(complexEvent);
+					}
 				}
 			}
 		}
