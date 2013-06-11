@@ -206,9 +206,7 @@ public class UriBuilder {
 		addParameters();
 		buildUrlAfterArguments();
 		return getUri();
-		
-		
-		
+
 	}
 
 }
