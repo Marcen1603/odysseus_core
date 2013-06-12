@@ -152,7 +152,15 @@ public class Heatmap extends RasterLayer {
 			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
 			GeometryCollection geoColl = (GeometryCollection) tuple.getAttribute(0);
 			Point point = geoColl.getCentroid();
-			int value = (int) tuple.getAttribute(1);
+			
+			double value = 0;			
+			try {
+				value = (int) tuple.getAttribute(1);
+			} catch (ClassCastException e) {
+				// Ok, not an int, then it's a double
+				value = (double) tuple.getAttribute(1);
+			}
+			
 			
 			// Calculate, where this belongs in the heatmap
 			ScreenTransformation transformation = screenManager.getTransformation();
@@ -230,8 +238,22 @@ public class Heatmap extends RasterLayer {
 				* maxColor.getGreen();
 		double b = weightMinColor * minColor.getBlue() + valueWeight
 				* maxColor.getBlue();
+		
+		// Ensure, that all values are allowed
+		if (r < 0)
+			r = 0;
+		if (r > 255)
+			r = 255;
+		if (g < 0)
+			g = 0;
+		if (g > 255)
+			g = 255;
+		if (b < 0)
+			b = 0;
+		if (b > 255)
+			b = 255;
+		
 		Color color = new Color(Display.getDefault(), (int) r, (int) g, (int) b);
-
 		return color;
 	}
 
