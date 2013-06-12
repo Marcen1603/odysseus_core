@@ -49,7 +49,6 @@ public class AllPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
             	this.objectLists.put(port, buffer);
         	}
         }
-        this.init();
     }
 	
 	// Copy-Konstruktor
@@ -57,13 +56,8 @@ public class AllPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
     	super(patternPO);
         this.objectLists = new HashMap<Integer, EventBuffer<T>>();
         this.objectLists.putAll(patternPO.objectLists);
-        this.init();
     }
 	
-    private void init() {
-    	// Pattern-spezifische Initialisierungen
-    }
-    
 	@Override
 	public String toString(){
 		return super.toString() + " type: " + type + " eventTypes: " + eventTypes.toString(); 
