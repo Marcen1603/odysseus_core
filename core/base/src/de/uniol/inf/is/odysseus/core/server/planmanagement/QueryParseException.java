@@ -20,6 +20,9 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManag
 public class QueryParseException extends PlanManagementException {
 	private static final long serialVersionUID = -3000645620548786308L;
 	
+	private int line = -1;
+	private int column = -1;
+	
 	public QueryParseException(String message) {
 		super(message);
 	}
@@ -30,6 +33,40 @@ public class QueryParseException extends PlanManagementException {
 	
 	public QueryParseException(String message, Throwable e) {
 		super(message, e);
+	}
+	
+	public QueryParseException(String message, int line, int column) {
+		super(message);
+		this.line = line;
+		this.column = column;
+	}
+	
+	public QueryParseException(Exception e, int line, int column) {
+		super(e);
+		this.line = line;
+		this.column = column;
+	}
+	
+	public QueryParseException(String message, Throwable e, int line, int column) {
+		super(message, e);
+		this.line = line;
+		this.column = column;
+	}
+
+	public int getColumn() {
+		return column;
+	}
+
+	public void setColumn(int column) {
+		this.column = column;
+	}
+
+	public int getLine() {
+		return line;
+	}
+
+	public void setLine(int line) {
+		this.line = line;
 	}
 
 }

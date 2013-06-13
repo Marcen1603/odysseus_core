@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
+import de.uniol.inf.is.odysseus.parser.pql.impl.ParseException;
 
 public class PQLParser implements IQueryParser {
 
@@ -79,7 +80,27 @@ public class PQLParser implements IQueryParser {
 				query.setUser(user);
 			}
 			return queries;
-		} catch (Exception e) {
+		}catch(ParseException e){			
+			String message = "PQL could not be correctly parsed!";
+			message = message + System.lineSeparator();				
+			message = message + "This is, because PQL found \""+e.currentToken.next+"\" after \""+e.currentToken+"\" and \""+e.currentToken.next+"\" is not an allowed value here!";
+			message = message + System.lineSeparator();				
+			message = message + "However, PQL exspects one of the following tokens after \""+e.currentToken+"\": ";				
+			int line = e.currentToken.next.beginLine;
+			int column = e.currentToken.next.beginColumn;						
+			String sep = "";
+			for(int[] expectedSequence : e.expectedTokenSequences){
+				for(int token : expectedSequence){
+					message = message + sep + e.tokenImage[token];
+					sep = ",";
+				}
+			}
+			QueryParseException qpe = new QueryParseException(message);
+			qpe.setColumn(column);
+			qpe.setLine(line);
+			throw qpe;
+		}	
+		catch (Exception e) {						
 			throw new QueryParseException(e);
 		}
 	}

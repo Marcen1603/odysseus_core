@@ -125,7 +125,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			for (IFile file : optFileToRun) {
 				result.addAll(readLinesFromFile(file));
 			}
-			
+
 			execute(result.toArray(new String[result.size()]));
 		} catch (Exception ex) {
 			LOG.error("Exception during running query file", ex);
@@ -159,14 +159,21 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 				IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
 				try {
 					executor.addQuery(concatLines(text), "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), "Standard");
-				} catch( Throwable ex ) {
-					Throwable cause = ex;
-					// Exceptions are wrapped ... try to find the real cause :-)
-					while ((cause instanceof OdysseusScriptException || cause instanceof QueryParseException) && cause.getCause() != null){
-						cause = cause.getCause();
+				} catch (QueryParseException ex) {
+									
+					if (ex.getCause() instanceof QueryParseException) {
+						QueryParseException qpe = (QueryParseException) ex.getCause();
+						return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parsing of Odysseus script failed in line " + qpe.getLine() + " at column " + qpe.getColumn(), qpe);
+					} else {
+						Throwable cause = ex;
+						while ((cause instanceof OdysseusScriptException || cause instanceof QueryParseException) && cause.getCause() != null) {
+							cause = cause.getCause();
+							return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parsing of Odysseus script failed", cause);
+						}
 					}
-					
-					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", cause);
+					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parsing of Odysseus script failed in line " + ex.getLine() + " at column " + ex.getColumn(), ex);
+				} catch (Throwable ex) {
+					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", ex);
 				}
 				return Status.OK_STATUS;
 			}
@@ -175,11 +182,10 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 		job.setUser(true);
 		job.schedule();
 	}
-	
 
 	private static String concatLines(String[] text) {
 		StringBuilder sb = new StringBuilder();
-		for( String t : text ) {
+		for (String t : text) {
 			sb.append(t).append("\n");
 		}
 		return sb.toString();

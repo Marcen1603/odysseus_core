@@ -20,6 +20,8 @@ public class OdysseusScriptException extends Exception {
 	private static final long serialVersionUID = 1L;
 	private static final String exceptionMessage = "Error during processing query-file";
 	
+	private PreParserStatement failedStatement;
+	
 	public OdysseusScriptException() {
 		this(exceptionMessage);
 	}
@@ -36,6 +38,21 @@ public class OdysseusScriptException extends Exception {
 		this(exceptionMessage, ex);
 	}
 	
+	public OdysseusScriptException( String msg, PreParserStatement failedStatement ) {
+		super(msg);
+		this.failedStatement = failedStatement;
+	}
+	
+	public OdysseusScriptException( String msg, Throwable ex, PreParserStatement failedStatement ) {
+		super(msg, ex);
+		this.failedStatement = failedStatement;
+	}
+	
+	public OdysseusScriptException( Throwable ex, PreParserStatement failedStatement) {
+		this(exceptionMessage, ex);
+		this.failedStatement = failedStatement;
+	}
+	
 	public String getRootMessage(){
 		Throwable current = this;
 		while(current.getCause()!=null){
@@ -43,6 +60,16 @@ public class OdysseusScriptException extends Exception {
 		}
 		return current.getMessage();				
 	}
+
+	public PreParserStatement getFailedStatement() {
+		return failedStatement;
+	}
+
+	public void setFailedStatement(PreParserStatement failedStatement) {
+		this.failedStatement = failedStatement;
+	}
+	
+	
 	
 	
 }

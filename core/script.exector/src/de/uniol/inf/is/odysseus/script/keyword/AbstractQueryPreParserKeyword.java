@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanManager;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -42,8 +40,6 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 
 public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractQueryPreParserKeyword.class);
-	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		try {
@@ -77,19 +73,19 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 		String parserID = (String) variables.get(ParserPreParserKeyword.PARSER);
 		String transCfgName = (String) variables.get(TransCfgPreParserKeyword.TRANSCFG);
 		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables.get(TransCfgPreParserKeyword.ADD_TRANS_PARAMS);
-		
+
 		ISession queryCaller = (ISession) variables.get("USER");
 		String queryName = (String) variables.get(QueryNamePreParserKeyword.QNAME);
-		if (queryName != null && queryName.trim().length() > 0){
-			if (addSettings == null){
+		if (queryName != null && queryName.trim().length() > 0) {
+			if (addSettings == null) {
 				addSettings = new ArrayList<>();
 			}
 			addSettings.add(new ParameterQueryName(queryName));
 		}
-		if (queryCaller == null){
+		if (queryCaller == null) {
 			queryCaller = caller;
 		}
-		
+
 		try {
 			parserID = parserID.trim();
 			transCfgName = transCfgName.trim();
@@ -102,7 +98,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 				if (!(executor instanceof IServerExecutor)) {
 					throw new QueryParseException("Additional transformation parameter currently not supported on clients");
 				}
-				queriesToStart = ((IServerExecutor)executor).addQuery(queryText, parserID, queryCaller, transCfgName, addSettings);
+				queriesToStart = ((IServerExecutor) executor).addQuery(queryText, parserID, queryCaller, transCfgName, addSettings);
 
 			} else {
 				queriesToStart = executor.addQuery(queryText, parserID, queryCaller, transCfgName);
@@ -110,29 +106,33 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 
 			ISink defaultSink = variables.containsKey("_defaultSink") ? (ISink) variables.get("_defaultSink") : null;
 			if (defaultSink != null && executor instanceof IPlanManager) {
-				appendSinkToQueries(defaultSink, queriesToStart, (IPlanManager)executor);
+				appendSinkToQueries(defaultSink, queriesToStart, (IPlanManager) executor);
 			}
 
 			if (startQuery()) {
 				for (Integer q : queriesToStart) {
 					try {
 						executor.startQuery(q, queryCaller);
-					} catch( Throwable t ) {
-						LOG.error("Could not start query in script", t);
+					} catch (Throwable t) {
+						throw new OdysseusScriptException("Query could not be started!", t);
 					}
 				}
 			}
 
 			return queriesToStart;
+		} catch (QueryParseException ex) {
+			throw new OdysseusScriptException("Query could not be parsed!", ex);
+		} catch (PlanManagementException ex) {
+			throw new OdysseusScriptException("Adding new query failed!", ex);
 		} catch (Exception ex) {
-			throw new OdysseusScriptException("Query Execution Error", ex);
+			throw new OdysseusScriptException("Error while executing Odysseus script during executing a query!", ex);
 		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void appendSinkToQueries(ISink<?> defaultSink, Iterable<Integer> queriesToStart, IPlanManager planManager) {
-		List<IPhysicalOperator> roots = Lists.<IPhysicalOperator>newArrayList(defaultSink);
-			
+	private static void appendSinkToQueries(ISink<?> defaultSink, Iterable<Integer> queriesToStart, IPlanManager planManager) throws PlanManagementException {
+		List<IPhysicalOperator> roots = Lists.<IPhysicalOperator> newArrayList(defaultSink);
+
 		for (Integer queryId : queriesToStart) {
 			IPhysicalQuery physicalQuery = planManager.getExecutionPlan().getQueryById(queryId);
 			for (IPhysicalOperator operator : physicalQuery.getRoots()) {

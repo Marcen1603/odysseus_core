@@ -27,11 +27,13 @@ public final class PreParserStatement {
 	private IPreParserKeyword keyword;
 	private String keywordText;
 	private String parameter;
+	private int line;
 	
-	public PreParserStatement( String keywordText, IPreParserKeyword keyword, String parameter ) {
+	public PreParserStatement( String keywordText, IPreParserKeyword keyword, String parameter, int line ) {
 		this.keyword = keyword;
 		this.keywordText = keywordText;
 		this.parameter = parameter;
+		this.line = line;
 	}
 	
 	public void validate( Map<String, Object> variables, ISession caller ) throws OdysseusScriptException {
@@ -59,5 +61,13 @@ public final class PreParserStatement {
 	@Override
 	public String toString() {
 		return keyword+" "+keywordText;
+	}
+
+	public int getLine() {
+		return line;
+	}
+
+	public void setLine(int line) {
+		this.line = line;
 	}
 }

@@ -66,6 +66,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	public static final String SINGLE_LINE_COMMENT_KEY = "///";
 
 	private int currentLine;
+	private int keyStartedAtLine;
 
 	private Map<String, String> defaultReplacements = new HashMap<>();
 
@@ -154,10 +155,16 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 
 		List results = Lists.newArrayList();
 		for (PreParserStatement stmt : statements) {
-			Optional<?> optionalResult = stmt.execute(variables, caller, this);
-			if (optionalResult.isPresent()) {
-				results.add(optionalResult.get());
+			try {
+				Optional<?> optionalResult = stmt.execute(variables, caller, this);
+				if (optionalResult.isPresent()) {
+					results.add(optionalResult.get());
+				}
+			} catch (OdysseusScriptException ex) {	
+				ex.setFailedStatement(stmt);						
+				throw ex;
 			}
+			
 		}
 
 		return results;
@@ -170,12 +177,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	 */
 	@Override
 	public List<PreParserStatement> parseScript(String completeText, ISession caller) throws OdysseusScriptException {
-		List<String> lines = null;
-		try {
-			lines = splitToList(completeText);
-		} catch (Exception ex) {
-			throw new OdysseusScriptException("cannot parse script ", ex);
-		}
+		List<String> lines = null;		
+		lines = splitToList(completeText);		
 		return parseScript(lines.toArray(new String[lines.size()]), caller);
 	}
 
@@ -196,15 +199,16 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			// after that, we are looking for procedures and replace them
 			text = runProcedures(text, caller);
 
-			// initialize the replacement using the defaults		
+			// initialize the replacement using the defaults
 			Map<String, String> replacements = new HashMap<String, String>(this.defaultReplacements);
-			
+
 			IfController ifController = new IfController(text);
 			StringBuffer sb = null;
 
 			String currentKey = null;
 			boolean isInProcedure = false;
 			StringBuilder procedureLines = new StringBuilder();
+			keyStartedAtLine = 1;
 			for (currentLine = 0; currentLine < text.length; currentLine++) {
 				String line = text[currentLine].trim();
 
@@ -219,12 +223,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				}
 
 				line = line.trim();
-				// use replacements if we are not in procedure				 
-				if (!isInProcedure) {	
+				// use replacements if we are not in procedure
+				if (!isInProcedure) {
 					// first, we use replacements we know so far
 					line = useReplacements(line, replacements).trim();
 					// if there is a define-key for replacements, we add this to the replacements
-					if (line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY) != -1){
+					if (line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY) != -1) {
 						String[] parts = line.split(" |\t", 3);
 						// parts[0] is #DEFINE
 						// parts[1] is replacement name
@@ -234,7 +238,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 						}
 						continue;
 					}
-						
 
 					// same with loop-definition lines: jump to next line, because
 					// we normally handled that before
@@ -255,7 +258,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					String dropkey = PARAMETER_KEY + DROPPROCEDURE;
 					String name = line.substring(dropkey.length()).trim();
 					IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(DROPPROCEDURE);
-					statements.add(new PreParserStatement(DROPPROCEDURE, keyword, name));
+					statements.add(new PreParserStatement(DROPPROCEDURE, keyword, name, keyStartedAtLine));
+					keyStartedAtLine = currentLine+1;
 					continue;
 				}
 
@@ -275,7 +279,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					if (line.indexOf(STORED_PROCEDURE_END) != -1) {
 						// and put all into the keyword
 						IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(STORED_PROCEDURE_PROCEDURE);
-						statements.add(new PreParserStatement(STORED_PROCEDURE_PROCEDURE, keyword, procedureLines.toString()));
+						statements.add(new PreParserStatement(STORED_PROCEDURE_PROCEDURE, keyword, procedureLines.toString(), keyStartedAtLine));
+						keyStartedAtLine = currentLine+1;
 						isInProcedure = false;
 					}
 					// and we omit procedure-lines
@@ -301,7 +306,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 									// that we have seen until now
 									if (sb != null && currentKey != null) {
 										IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
-										statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
+										statements.add(new PreParserStatement(currentKey, keyword, sb.toString(), keyStartedAtLine));
+										keyStartedAtLine = currentLine+1;
 									}
 
 									// set values to find our new parameter (that starts at this line)
@@ -332,7 +338,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			// statement/parameter
 			if (sb != null && currentKey != null) {
 				IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
-				statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
+				statements.add(new PreParserStatement(currentKey, keyword, sb.toString(), keyStartedAtLine));
+				keyStartedAtLine = currentLine+1;
 			}
 
 			return statements;
@@ -402,6 +409,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		for (int linenr = 0; linenr < textToParse.length; linenr++) {
 			String line = textToParse[linenr].trim();
 			if (line.startsWith(SINGLE_LINE_COMMENT_KEY)) {
+				text.add(line);
 				continue;
 			}
 			if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1) {
@@ -488,9 +496,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		Map<String, String> repl = new HashMap<String, String>();
 		addDefaultReplacements(repl);
 		boolean isInProcedure = false;
-			
+
 		for (String line : text) {
-			
+
 			String correctLine = removeComments(line).trim();
 			// maybe, we have replacements within definitions...
 			if (line.indexOf(PARAMETER_KEY + STORED_PROCEDURE_PROCEDURE) != -1) {
@@ -635,18 +643,29 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	 */
 	@Override
 	public List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
-		List<ILogicalQuery> queries = new ArrayList<ILogicalQuery>();	
+		List<ILogicalQuery> queries = new ArrayList<ILogicalQuery>();
 		try {
 			List<?> commands = this.parseAndExecute(query, user, null);
-			for(Object command : commands){
-				ArrayList<?> ids = (ArrayList<?>)command;
-				for(Object id : ids){
+			for (Object command : commands) {
+				ArrayList<?> ids = (ArrayList<?>) command;
+				for (Object id : ids) {
 					int i = (Integer) id;
 					queries.add(getExecutor().getLogicalQueryById(i));
 				}
 			}
 		} catch (OdysseusScriptException e) {
-			throw new QueryParseException(e);
+			if(e.getFailedStatement()!=null){
+				String message = "Odysseus Script error in statement "+e.getFailedStatement().getKeywordText()+" in line "+e.getFailedStatement().getLine();
+				if(e.getCause() instanceof QueryParseException){
+					QueryParseException qpe = (QueryParseException) e.getCause();
+					int line = qpe.getLine()+e.getFailedStatement().getLine()+2; // +2, because line starts at 1 (+1) and text after keyword-line (also +1)
+					int column = qpe.getColumn();
+					throw new QueryParseException(message, e, line, column);
+				}				
+				throw new QueryParseException(message, e);
+			}else{
+				throw new QueryParseException("Parsing Odysseus script failed with an unknown reason!", e);
+			}
 		}
 		return new ArrayList<ILogicalQuery>();
 	}
