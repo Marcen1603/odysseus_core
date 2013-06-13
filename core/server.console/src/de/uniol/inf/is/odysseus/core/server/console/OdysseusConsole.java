@@ -209,11 +209,11 @@ public class OdysseusConsole implements CommandProvider,
 			for (String tmp : tmpArgs) {
 				if (tmp.isEmpty()) {
 					continue;
-				} else {
-					StringBuilder builder = new StringBuilder();
-					builder.append(tmp);
-					newArgs.add(builder.toString());
-				}
+				} 
+				
+				StringBuilder builder = new StringBuilder();
+				builder.append(tmp);
+				newArgs.add(builder.toString());		
 			}
 			this.args = newArgs.toArray(new String[newArgs.size()]);
 		}
@@ -354,7 +354,7 @@ public class OdysseusConsole implements CommandProvider,
 		Set<String> bufferList = this.executor
 				.getRegisteredBufferPlacementStrategiesIDs();
 		if (bufferList != null) {
-			String current = (String) this.executor.getConfiguration()
+			String current = this.executor.getConfiguration()
 					.get(ParameterBufferPlacementStrategy.class).getValue()
 					.getName();
 			ci.println("Available bufferplacement strategies:");
@@ -441,16 +441,16 @@ public class OdysseusConsole implements CommandProvider,
 									.getBufferPlacementStrategy(bufferName)));
 					ci.println("Strategy " + bufferName + " set.");
 					return;
+				} 
+				
+				this.executor.getConfiguration().set(
+						new ParameterBufferPlacementStrategy());
+				if ("no strategy".equalsIgnoreCase(bufferName)) {
+					ci.println("Current strategy removed.");
 				} else {
-					this.executor.getConfiguration().set(
-							new ParameterBufferPlacementStrategy());
-					if ("no strategy".equalsIgnoreCase(bufferName)) {
-						ci.println("Current strategy removed.");
-					} else {
-						ci.println("Strategy not found. Current strategy removed.");
-					}
-					return;
+					ci.println("Strategy not found. Current strategy removed.");
 				}
+				return;
 
 			} catch (Exception e) {
 				ci.println(e.getMessage());
@@ -636,7 +636,7 @@ public class OdysseusConsole implements CommandProvider,
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			int depth = 0;
-			if (args != null && args.length > 1) {
+			if (args.length > 1) {
 				depth = Integer.valueOf(args[1]);
 			}
 			if (depth < 1) {
@@ -979,7 +979,7 @@ public class OdysseusConsole implements CommandProvider,
 			}
 		}
 
-		if (args != null && args.length > 0) {
+		if (args.length > 0) {
 			BufferedReader br = null;
 			File file = null;
 			try {
@@ -1040,7 +1040,7 @@ public class OdysseusConsole implements CommandProvider,
 			}
 		}
 
-		if (args != null && args.length > 0) {
+		if (args.length > 0) {
 			BufferedReader br = null;
 			File file = null;
 			try {
@@ -1155,11 +1155,11 @@ public class OdysseusConsole implements CommandProvider,
 		if (eclipseConsole) {
 			this.addQueryWithEclipseConsoleOutput(query);
 			return;
-		} else {
-			this.executor.addQuery(query, parser(), currentUser,
-					defaultBuildConfiguration);
-			return;
-		}
+		} 
+		
+		this.executor.addQuery(query, parser(), currentUser,
+				defaultBuildConfiguration);
+		return;
 	}
 
 	@Help(parameter = "<path>", description = "Sets the path from which to read files."
