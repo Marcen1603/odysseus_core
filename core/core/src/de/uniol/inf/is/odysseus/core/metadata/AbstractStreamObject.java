@@ -91,9 +91,13 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 	public IStreamObject<T> merge(IStreamObject<T> left,
 			IStreamObject<T> right, IMetadataMergeFunction<T> metamerge,
 			Order order) {
+		// Preserve meta data
+		T metadateleft = left.getMetadata();
+		T metadateright = right.getMetadata();
+
 		IStreamObject<T> ret = process_merge(left, right, order);
-		ret.setMetadata(metamerge.mergeMetadata(left.getMetadata(),
-				right.getMetadata()));
+		ret.setMetadata(metamerge.mergeMetadata(metadateleft,
+				metadateright));
 		
 		// TODO: Merge function in cases where key is same!!
 		
