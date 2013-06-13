@@ -109,7 +109,6 @@ public class Heatmap extends RasterLayer {
 		searchEnv.expandToInclude(new Coordinate(Integer.MIN_VALUE, Integer.MAX_VALUE));	// Top left
 		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE, Integer.MIN_VALUE)); 	// Bottom right
 		List<?> data = layerUpdater.query(searchEnv, geometryAttributeIndex);
-		
 		int[][] valueSum = new int[x][y];
 		int maxSum = 0;
 		int minSum = 0;

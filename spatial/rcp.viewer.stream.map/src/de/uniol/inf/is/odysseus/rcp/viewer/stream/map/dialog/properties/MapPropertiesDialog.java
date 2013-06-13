@@ -13,29 +13,30 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -109,30 +110,29 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		treeViewer.setInput(new PropertiesModel(map.getLayers().toArray(), map
 				.getFile()));
 		treeViewer.refresh();
-//		treeViewer.expandAll();
+		treeViewer.expandAll();
 
-		// treeViewer.getTree().setSelection(treeViewer.getTree().getItem(0));
-		// treeViewer.setSelection(treeViewer.getSelection(), true);
+		treeViewer.getTree().setSelection(treeViewer.getTree().getItem(0));
+		treeViewer.setSelection(treeViewer.getSelection(), true);
 
-//		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-//			public void selectionChanged(SelectionChangedEvent event) {
-//				if (event.getSelection().isEmpty()) {
-//					return;
-//				}
-//				if (event.getSelection() instanceof IStructuredSelection) {
-//					IStructuredSelection selection = (IStructuredSelection) event
-//							.getSelection();
-//
-//					if (selection.getFirstElement() instanceof PropertiesCategory) {
-//
-//					}
-//				}
-//			}
-//		});
+		// Add a listener -> shows right settings for the layers
+		treeViewer.addSelectionChangedListener(new TreeListener(container, this));
 
 		Tree tree = treeViewer.getTree();
 		tree.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 1));
 
+		// Fill the right area with standard-content
+		createStandardContent(container);
+
+		return area;
+	}
+	
+	/**
+	 * Fills the container with standardcontent (srid and query) 
+	 * for non-thematic maps
+	 * @param container
+	 */
+	public void createStandardContent(Composite container) {
 		Group grpMap = new Group(container, SWT.NONE);
 		grpMap.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		grpMap.setText("Map");
@@ -143,16 +143,18 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		txtSridInput = new Text(grpMap, SWT.BORDER);
 		txtSridInput.setText(Integer.toString(map.getSRID()));
-		
-				Label lblQueries = new Label(grpMap, SWT.NONE);
-				lblQueries.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-				lblQueries
-						.setText("Query: " + map.getQryFileList().getLast().getName());
+
+		Label lblQueries = new Label(grpMap, SWT.NONE);
+		lblQueries.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
+				false, 2, 1));
+		lblQueries
+				.setText("Query: " + map.getQryFileList().getLast().getName());
 		new Label(grpMap, SWT.NONE);
 
 		txtQueriesInput = new Text(grpMap, SWT.MULTI | SWT.BORDER | SWT.WRAP
 				| SWT.V_SCROLL);
-		txtQueriesInput.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		txtQueriesInput.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true, 1, 1));
 		try {
 			txtQueriesInput.setText(convertStreamToString(map.getQryFileList()
 					.getLast().getContents()));
@@ -160,7 +162,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 			e.printStackTrace();
 		}
 
-		return area;
+		container.layout();
 	}
 
 	@SuppressWarnings("resource")
