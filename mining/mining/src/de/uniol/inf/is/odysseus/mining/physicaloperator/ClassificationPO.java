@@ -15,36 +15,41 @@
  */
 package de.uniol.inf.is.odysseus.mining.physicaloperator;
 
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
+import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
 
 /**
  * @author Dennis Geesen
  * 
  */
-public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> implements IProcessInternal<Tuple<M>> {
+public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	private static Logger logger = LoggerFactory.getLogger(ClassificationPO.class);
 	private static final int TREE_PORT = 1;
-	private IClassifier<M> classifier;
 	private SDFSchema inputSchema;
-
-	private IInputStreamSyncArea<Tuple<M>> inputStreamSyncArea;
+	private DefaultTISweepArea<Tuple<M>> treeSA = new DefaultTISweepArea<>();
+	private DefaultTISweepArea<Tuple<M>> elementSA = new DefaultTISweepArea<Tuple<M>>();
+	@SuppressWarnings("unchecked")
+	private DefaultTISweepArea<Tuple<M>> areas[] = new DefaultTISweepArea[2];
+	private Lock lock = new ReentrantLock();
 
 	public ClassificationPO(SDFSchema inputschema, IInputStreamSyncArea<Tuple<M>> inputStreamSyncArea) {
 		this.inputSchema = inputschema;
-		this.inputStreamSyncArea = inputStreamSyncArea;
 	}
 
 	public ClassificationPO(ClassificationPO<M> classificationTreePO) {
@@ -59,78 +64,53 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		this.inputStreamSyncArea.init(this);
+		elementSA.clear();
+		treeSA.clear();
+		areas[TREE_PORT] = treeSA;
+		areas[(TREE_PORT + 1) % 2] = elementSA;
 	}
 
 	@Override
-	protected synchronized void process_next(Tuple<M> tuple, int port) {
-		inputStreamSyncArea.newElement(tuple, port);
+	protected void process_next(Tuple<M> tuple, int port) {
+		int other = (port + 1) % 2;
+		lock.lock();
+		areas[other].purgeElements(tuple, Order.LeftRight);
+		areas[port].insert(tuple);
+		List<Tuple<M>> qualifies = areas[other].queryOverlapsAsList(tuple.getMetadata());
+		lock.unlock();
+		for (Tuple<M> qualified : qualifies) {
+			if (port == 0) {
+				IClassifier<M> classifier = qualified.getAttribute(0);
+				classifyAndTransfer(classifier, tuple);
+			} else {
+				IClassifier<M> classifier = tuple.getAttribute(0);
+				classifyAndTransfer(classifier, qualified);
+			}
+		}
+
 	}
 
-	private void process_new_element(Tuple<M> tuple) {
-		if (this.classifier != null) {
-			long tillLearn = System.nanoTime();
-			Object clazz = classify(tuple);
-			if (clazz == null) {
-				logger.warn("value is unknown, so that the tuple could not be classified, tuple: " + tuple);
-				return;
-			}
-			long afterLearn = System.nanoTime();
-			Tuple<M> newtuple = tuple.append(clazz);
-			newtuple.setMetadata("LATENCY_BEFORE", tillLearn);
-			newtuple.setMetadata("LATENCY_AFTER", afterLearn);
-			transfer(newtuple);
+	private void classifyAndTransfer(IClassifier<M> classifier, Tuple<M> toClassify) {
+		long tillLearn = System.nanoTime();
+		Object clazz = classifier.classify(toClassify);
+		if (clazz == null) {
+			logger.warn("value is unknown, so that the tuple could not be classified, tuple: " + toClassify);
+			return;
 		}
+		long afterLearn = System.nanoTime();
+		Tuple<M> newtuple = toClassify.append(clazz);
+		newtuple.setMetadata("LATENCY_BEFORE", tillLearn);
+		newtuple.setMetadata("LATENCY_AFTER", afterLearn);
+		transfer(newtuple);
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		inputStreamSyncArea.newElement(punctuation, port);
-	}
-
-	@Override
-	public void process_punctuation_intern(IPunctuation punctuation, int port) {
-		// TODO: What to do with punctuations?
-	}
-
-	private Object classify(Tuple<M> tuple) {		
-		synchronized (this) {
-			if(classifier == null) {
-				logger.warn("No learned tree yet...");
-				return null;
-			}else{
-				Object clazz = classifier.classify(tuple);											
-				return clazz;
-			}
-		}		
-	}
-
-	/**
-	 * @param object
-	 */
-	private void process_new_tree(Tuple<M> object) {
-		synchronized (this) {
-			this.classifier = object.getAttribute(0);
-		}
 	}
 
 	@Override
 	public ClassificationPO<M> clone() {
 		return new ClassificationPO<M>(this);
-	}
-
-	@Override
-	public void process_internal(Tuple<M> tuple, int port) {
-		if (port == TREE_PORT) {
-			process_new_tree(tuple);
-		} else {
-			process_new_element(tuple);
-
-		}
-	}
-
-	@Override
-	public void process_newHeartbeat(Heartbeat pointInTime) {
 	}
 
 }

@@ -44,7 +44,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 				String date = dateFormat.format(cal.getTime());
 				for (int window = 100; window <= 1000000; window=window*10) {
 					for (int i = 1; i <= number; i++) {
-						String prefix = "Performing Evaluation Number " + i + " for window size "+window+"\n";
+						String prefix = "Performing Evaluation Number " + i + " / "+number+" for window size "+window+"\n";
 						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
 						}
