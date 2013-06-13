@@ -789,6 +789,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			logicalQuery.setName(viewName);
 			logicalQuery.setParserId("P2P");
 			logicalQuery.setUser(SessionManagementService.getActiveSession());
+			logicalQuery.setQueryText("Exporting " + viewName);
 
 			exportedSourcesQueryMap.put(viewAdvertisement, queryID);
 

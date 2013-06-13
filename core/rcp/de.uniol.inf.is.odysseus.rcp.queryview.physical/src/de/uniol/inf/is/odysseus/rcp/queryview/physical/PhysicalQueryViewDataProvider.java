@@ -55,12 +55,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 		view.getTableViewer().getTable().addKeyListener(this);
 		listenToExecutor();
 		
-		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn.getServerExecutor();
-		Collection<IPhysicalQuery> queries = executor.getExecutionPlan().getQueries();
-		for( IPhysicalQuery query : queries ) {
-			view.addData(create(query));
-		}
-		view.refreshTable();
+		onRefresh(view);
 	}
 
 	@Override
@@ -118,7 +113,14 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 
 	@Override
 	public void onRefresh(QueryView sender) {
-		// do nothig here (events do it)
+		view.clear();
+		
+		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn.getServerExecutor();
+		Collection<IPhysicalQuery> queries = executor.getExecutionPlan().getQueries();
+		for( IPhysicalQuery query : queries ) {
+			view.addData(create(query));
+		}
+		view.refreshTable();
 	}
 	
 	private void executeCommand( String cmdID ) {

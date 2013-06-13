@@ -248,6 +248,10 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			if (Strings.isNullOrEmpty(query.getQueryText())) {
 				query.setQueryText(queryStr);
 			}
+			
+			if( Strings.isNullOrEmpty(query.getParserId())) {
+				query.setParserId(parameters.getParserID());
+			}
 
 			query.setUser(user);
 			query.setParameter(SLA.class.getName(), sla);
@@ -453,7 +457,8 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			AbstractTreeWalker.prefixWalk(logicalPlan, visitor);
 			newQueries.add(query);
 			setQueryBuildParameters(query, params);
-
+			
+			annotateQueries(newQueries, "", user, params);
 			Collection<IPhysicalQuery> addedQueries = addQueries(newQueries, new OptimizationConfiguration(params));
 			return addedQueries.iterator().next().getID();
 		} catch (Exception e) {
