@@ -13,6 +13,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -35,8 +36,11 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap.TraceLayer;
 
 /**
  * 
@@ -46,7 +50,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
  * 
  */
 public class MapPropertiesDialog extends TitleAreaDialog {
-	
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(TitleAreaDialog.class);
 
@@ -98,8 +102,8 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
 		container.setLayout(new GridLayout(2, false));
-		GridData gd_container = new GridData(GridData.FILL, SWT.FILL,
-				true, true);
+		GridData gd_container = new GridData(GridData.FILL, SWT.FILL, true,
+				true);
 		gd_container.heightHint = 317;
 		container.setLayoutData(gd_container);
 
@@ -116,7 +120,8 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		treeViewer.setSelection(treeViewer.getSelection(), true);
 
 		// Add a listener -> shows right settings for the layers
-		treeViewer.addSelectionChangedListener(new TreeListener(container, this));
+		treeViewer
+				.addSelectionChangedListener(new TreeListener(container, this));
 
 		Tree tree = treeViewer.getTree();
 		tree.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 1));
@@ -126,10 +131,11 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		return area;
 	}
-	
+
 	/**
-	 * Fills the container with standardcontent (srid and query) 
-	 * for non-thematic maps
+	 * Fills the container with standardcontent (srid and query) for
+	 * non-thematic maps
+	 * 
 	 * @param container
 	 */
 	public void createStandardContent(Composite container) {
@@ -194,7 +200,9 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
-				if (isValidInput()) {
+				// Check for valid input, if standard-properties are shown
+				if (!txtSridInput.isDisposed() && isValidInput()) {
+					// Non-thematic
 					try {
 						map.getQryFileList()
 								.getLast()
@@ -203,15 +211,28 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 												txtQueriesInput.getText()
 														.getBytes("UTF-8")),
 										true, true, null);
-//						map = MapEditorModel.open(map.getQryFileList().getLast(),
-//								editor);
 						map.setSrid(Integer.parseInt(txtSridInput.getText()));
 					} catch (UnsupportedEncodingException | CoreException e) {
 						LOG.debug("Changing Map Porperties failed");
 						e.printStackTrace();
+					}					
+				} else {
+
+					IStructuredSelection selection = (IStructuredSelection) treeViewer
+							.getSelection();
+					if (selection.getFirstElement() instanceof Heatmap) {
+						// OK-Options for the heatmap menu
+						Heatmap heatmap = (Heatmap) selection.getFirstElement();
+						// Should have been set in the TreeListener
+						if(layerConfiguration != null && layerConfiguration instanceof HeatmapLayerConfiguration)
+							heatmap.setConfiguration((HeatmapLayerConfiguration)layerConfiguration);
+
+					} else if (selection.getFirstElement() instanceof TraceLayer) {
+						// OK-Options for the linemap menu
+
 					}
-					okPressed();
 				}
+				okPressed();
 			}
 		});
 		if (defaultButton) {
@@ -251,3 +272,4 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		return new Point(748, 522);
 	}
 }
+ 

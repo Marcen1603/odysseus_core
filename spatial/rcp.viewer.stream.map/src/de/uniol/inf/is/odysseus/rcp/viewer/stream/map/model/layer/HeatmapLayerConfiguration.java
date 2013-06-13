@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Shows, that this RasterLayer is an heatmap. (Makes it possible to add a heatmap via the "New Layer"-dialog)
@@ -16,15 +17,42 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	private int geometricAttributePosition;
 	private Color minColor;
 	private Color maxColor;
+	private int alpha;
+	private boolean interpolation;
+	
+	public HeatmapLayerConfiguration(HeatmapLayerConfiguration toCopy) {
+		// TODO: Maybe better a full copy, but what is the envelope (coverageGeographic)
+		super(toCopy.getName());
+		super.setSrid(4326); //???
+		setQuery(toCopy.getQuery());
+		setGeometricAttributePosition(toCopy.getGeometricAttributePosition());
+		setMinColor(toCopy.getMinColor());
+		setMaxColor(toCopy.getMaxColor());
+		setAlpha(toCopy.getAlpha());
+		setInterpolation(toCopy.isInterpolation());
+	}
 	
 	public HeatmapLayerConfiguration(RasterLayerConfiguration toCopy) {
-		super(toCopy);
+		// TODO: Maybe better a full copy, but what is the envelope (coverageGeographic)
+		super(toCopy.getName());
+		super.setSrid(4326); //???
 		setQuery("");
 		setGeometricAttributePosition(0);
+		setMinColor(new Color(Display.getDefault(),0,255,0));
+		setMaxColor(new Color(Display.getDefault(),255,0,0));
+		setAlpha(50);
+		setInterpolation(false);
 	}
 	
 	public HeatmapLayerConfiguration(String name) {
 		super(name);
+		super.setSrid(4326); //???
+		setQuery("");
+		setGeometricAttributePosition(0);
+		setMinColor(new Color(Display.getDefault(),0,255,0));
+		setMaxColor(new Color(Display.getDefault(),255,0,0));
+		setAlpha(50);
+		setInterpolation(false);
 	}	
 
 	public String getQuery() {
@@ -57,6 +85,32 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 
 	public void setMaxColor(Color maxColor) {
 		this.maxColor = maxColor;
+	}
+
+	public int getAlpha() {
+		return alpha;
+	}
+
+	/**
+	 * Sets the value which controls, how transparent the layer is
+	 * 0 = transparent; 255 = opaque
+	 * @param alpha
+	 */
+	public void setAlpha(int alpha) {
+		this.alpha = alpha;
+	}
+
+	public boolean isInterpolation() {
+		return interpolation;
+	}
+
+	/**
+	 * Defines, whether the tiles should be strict divided (clear lines, false)
+	 * or if they are drawn with interpolation (true)
+	 * @param interpolation
+	 */
+	public void setInterpolation(boolean interpolation) {
+		this.interpolation = interpolation;
 	}
 
 }

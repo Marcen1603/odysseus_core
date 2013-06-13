@@ -1,15 +1,15 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.linemap;
+package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
-public class LineElement implements Comparable<LineElement>{
+public class TraceElement implements Comparable<TraceElement>{
 	
 	private Coordinate coordinate;
 	private PointInTime startTime;
 	
-	public LineElement(Coordinate coordinate, PointInTime startTime) {
+	public TraceElement(Coordinate coordinate, PointInTime startTime) {
 		this.setCoordinate(coordinate);
 		this.setStartTime(startTime);
 	}
@@ -31,7 +31,7 @@ public class LineElement implements Comparable<LineElement>{
 	}
 
 	@Override
-	public int compareTo(LineElement other) {
+	public int compareTo(TraceElement other) {
 		return other.getStartTime().compareTo(startTime);		
 	}
 	

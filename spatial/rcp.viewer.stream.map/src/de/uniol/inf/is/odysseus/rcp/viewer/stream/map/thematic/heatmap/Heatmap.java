@@ -20,14 +20,13 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 
 public class Heatmap extends RasterLayer {
 
 	
 	private static final long serialVersionUID = -4394403246757791617L;
 	ScreenManager screenManager;
-	RasterLayerConfiguration config;
+	HeatmapLayerConfiguration config;
 	Envelope heatMapArea;
 	
 	private LayerUpdater layerUpdater;
@@ -57,7 +56,7 @@ public class Heatmap extends RasterLayer {
 	 */
 	private void drawImage(GC gc, Image img, boolean interpolation) {
 		// Draw the picture transparent and without interpolation
-		gc.setAlpha(120);
+		gc.setAlpha(config.getAlpha());
 		if(!interpolation)
 			gc.setInterpolation(SWT.NONE);
 		gc.drawImage(img, 0, 0, img.getBounds().width, img.getBounds().height,
@@ -259,6 +258,18 @@ public class Heatmap extends RasterLayer {
 	@Override
 	public void setLayerUpdater(LayerUpdater layerUpdater) {
 		this.layerUpdater = layerUpdater;
+	}
+	
+	public HeatmapLayerConfiguration getConfig() {
+		return config;
+	}
+	
+	/**
+	 * Sets the configuration for this layer
+	 * @param config
+	 */
+	public void setConfiguration(HeatmapLayerConfiguration config) {
+		this.config = config;
 	}
 	
 }

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.linemap;
+package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LinemapLayerConfiguration;
 
-public class LinemapLayer extends RasterLayer {
+public class TraceLayer extends RasterLayer {
 
 	private static final long serialVersionUID = -6639695562970893314L;
 	private LayerUpdater layerUpdater;
@@ -35,7 +35,7 @@ public class LinemapLayer extends RasterLayer {
 	LinemapLayerConfiguration config;
 	HashMap<Integer, Color> colors;
 
-	public LinemapLayer(LinemapLayerConfiguration config,
+	public TraceLayer(LinemapLayerConfiguration config,
 			ScreenManager screenManager) {
 		super(config);
 		this.screenManager = screenManager;
@@ -69,7 +69,7 @@ public class LinemapLayer extends RasterLayer {
 		GeometryFactory factory = new GeometryFactory();
 
 		// List with all lists (for every id one list) of the coordinates
-		HashMap<Integer, ArrayList<LineElement>> lineList = new HashMap<Integer, ArrayList<LineElement>>();
+		HashMap<Integer, ArrayList<TraceElement>> lineList = new HashMap<Integer, ArrayList<TraceElement>>();
 
 		for (Object dataSet : data) {
 			// Get the data from the Tuple (point, id and starttime)
@@ -81,14 +81,14 @@ public class LinemapLayer extends RasterLayer {
 			PointInTime startTime = timeInterval.getStart();
 			
 			// Create new LineElement
-			LineElement lineElement = new LineElement(point.getCoordinate(), startTime);
+			TraceElement lineElement = new TraceElement(point.getCoordinate(), startTime);
 			
 			int id = (int) tuple.getAttribute(1);
 
 			// If this is the first coordinate for this key,
 			// create a new ArrayList
 			if (lineList.get(id) == null) {
-				lineList.put(new Integer(id), new ArrayList<LineElement>());
+				lineList.put(new Integer(id), new ArrayList<TraceElement>());
 			}
 			
 			// Add a new color for this line
@@ -113,12 +113,12 @@ public class LinemapLayer extends RasterLayer {
 		for (Integer key : keySet) {
 			
 			// Get the next list of coordinates for new line
-			ArrayList<LineElement> tempList = lineList.get(key);
+			ArrayList<TraceElement> tempList = lineList.get(key);
 			
 			// Sort the list (hopefully it works)
 			Collections.sort(tempList);
 			
-			LineElement[] lineElements = tempList.toArray(new LineElement[1]);
+			TraceElement[] lineElements = tempList.toArray(new TraceElement[1]);
 			Coordinate[] coordsForLineString = new Coordinate[lineElements.length];
 			
 			// Copy all coords from the (sorted) lineElements to the new array

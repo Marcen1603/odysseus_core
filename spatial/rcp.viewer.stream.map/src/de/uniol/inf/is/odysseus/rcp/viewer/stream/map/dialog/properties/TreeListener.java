@@ -22,8 +22,10 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.linemap.LinemapLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap.TraceLayer;
 
 public class TreeListener implements ISelectionChangedListener {
 
@@ -45,6 +47,10 @@ public class TreeListener implements ISelectionChangedListener {
 					.getSelection();
 
 			if (selection.getFirstElement() instanceof Heatmap) {
+				// Create a new configuration, that is used, if the user clicks ok
+				Heatmap heatmap = (Heatmap) selection.getFirstElement();
+				HeatmapLayerConfiguration newConfig = new HeatmapLayerConfiguration(heatmap.getConfig());
+				
 				// Remove everything except the Tree on the left
 				removeContent(container);
 
@@ -105,6 +111,20 @@ public class TreeListener implements ISelectionChangedListener {
 					}
 				});
 				
+				// Transparency
+				Label transparencyLabel = new Label(settingsContainer, SWT.NONE);
+				transparencyLabel.setText("Transparency (0 = transparent): ");
+				
+				Spinner transparencyInput = new Spinner(settingsContainer, SWT.NONE);
+				transparencyInput.setValues(newConfig.getAlpha(), 0, 255, 0, 1, 1);
+				transparencyInput.addSelectionListener(new SpinnerListener(newConfig, transparencyInput, this) {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						heatmapLayerConfig.setAlpha(spinner.getSelection());
+						treeListener.updateParentConfig(heatmapLayerConfig);
+					}
+				});
+				
 				// Number of tiles
 				Label numTilesWidthLabel = new Label(settingsContainer, SWT.NONE);
 				numTilesWidthLabel.setText("Number of tiles horizontal: ");
@@ -138,15 +158,41 @@ public class TreeListener implements ISelectionChangedListener {
 				statisticsContainer.setText("Heatmap statistics");
 				statisticsContainer.setLayout(new GridLayout(2, false));
 
-				// Give Ok-Button the functionality
-				
+				// Give the OK-Button the posibility to set a new config
+				parentDialog.setLayerConfiguration(newConfig);
 				// Redraw the container
 				container.layout();
 
-				// Do we need this here?
-				// Heatmap heatmap = (Heatmap) selection.getFirstElement();
-			} else if (selection.getFirstElement() instanceof LinemapLayer) {
-				// Show the settings for the linemap
+				
+			} else if (selection.getFirstElement() instanceof TraceLayer) {
+				// Show the settings for the tracemap
+				
+				// Remove everything except the Tree on the left
+				removeContent(container);
+				
+				// New container, so we have the boxes above each other, not next to each other
+				Composite tracemapContainer = new Composite(container, SWT.NONE);
+				 tracemapContainer.setLayout(new GridLayout(1, false));
+				 tracemapContainer.setLayoutData(new GridData(SWT.FILL,
+						SWT.FILL, true, true, 1, 1));
+				
+				// Show the settings for the heatmap
+				Group settingsContainer = new Group( tracemapContainer, SWT.NONE);
+				settingsContainer.setLayoutData(new GridData(SWT.FILL,
+						SWT.FILL, true, true, 1, 1));
+				settingsContainer.setText("Heatmap settings");
+				settingsContainer.setLayout(new GridLayout(2, false));
+				
+				// Position of geometry-Attribute
+				Label geoAttrLabel = new Label(settingsContainer, SWT.NONE);
+				geoAttrLabel.setText("Position Geo-Attribute: ");
+
+				Text geoAttrInput = new Text(settingsContainer, SWT.BORDER);
+				geoAttrInput.setText("0");
+				
+				// Redraw the container
+				container.layout();			
+				
 			} else {
 				// Show normal content - not for thematic maps
 
@@ -156,9 +202,7 @@ public class TreeListener implements ISelectionChangedListener {
 				// Fill with standard-content
 				parentDialog.createStandardContent(container);
 			}
-
 		}
-
 	}
 
 	/**
@@ -174,5 +218,12 @@ public class TreeListener implements ISelectionChangedListener {
 				child.dispose();
 		}
 	}
-
+	
+	/**
+	 * Updates the config of the parent (necessary for ok-click)
+	 * @param config
+	 */
+	private void updateParentConfig(LayerConfiguration config) {
+		parentDialog.setLayerConfiguration(config);
+	}
 }

@@ -52,7 +52,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LinemapLayerCo
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.linemap.LinemapLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap.TraceLayer;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
@@ -402,7 +402,7 @@ public class MapEditorModel extends ModelObject {
 	private ILayer addLayer(LinemapLayerConfiguration layerConfiguration) {
 		ILayer layer = null;
 		if (screenManager != null) {
-			layer = new LinemapLayer(layerConfiguration, screenManager);	
+			layer = new TraceLayer(layerConfiguration, screenManager);	
 			
 			// Add to the selected connection (LayerUpdater)
 			for (LayerUpdater connection : connections.values()) {
