@@ -213,7 +213,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		for (ILogicalOperator acc : collVisitor.getResult()) {
 			String name = acc.getName();
 			String uri = createUserUri(name, caller);
-			if (this.entityFromUser.containsKey(uri)) {
+			if (this.entityUsedBy.containsKey(uri)) {
 				if (this.entityUsedBy.get(uri).containsKey(type)) {
 					this.entityUsedBy.get(uri).get(type).remove(identifier);
 					if (this.entityUsedBy.get(uri).get(type).isEmpty()) {
@@ -338,7 +338,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				removeEntityForPlan(op, createUserUri(viewname, caller), EntityType.VIEW, caller);
 			}
 
-			fireViewRemoveEvent(viewname, op);
 			fireViewRemoveEvent(viewname, op);
 			fireDataDictionaryChangedEvent();
 
