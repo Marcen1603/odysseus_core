@@ -409,6 +409,7 @@ attributeName
 whereExpression[StateMachine stmachine]
 @init {
 List<AttributeExpression> compareExpressions = new ArrayList<AttributeExpression>();
+List<AttributeExpression> idExpressions = new ArrayList<AttributeExpression>();
 List assignExpressions = new ArrayList();
 }
   :
@@ -416,7 +417,7 @@ List assignExpressions = new ArrayList();
     WHEREEXPRESSION
     (
       compareExpression[stmachine,compareExpressions]
-      | idexpression[stmachine.getStates(),compareExpressions]
+      | idexpression[stmachine.getStates(),idExpressions,compareExpressions]
       | assignment[stmachine, assignExpressions]
     )*
    )
@@ -484,11 +485,27 @@ List assignExpressions = new ArrayList();
     			ignore.appendAND("false");
     			break;
     		case PARTITION_CONTIGUITY:
-    			throw new QueryParseException(
-    					"PARTITION_CONTIGUITY not implemented yet");
-    			//break;
+    		  // set to false, because the whole expression will be negated (so this
+    		  // will be true again
+          ignore.getCondition().setEventTypeChecking(false);
+          // Remark: idExpression are automatically generated in state increasing order
+          if (idExpressions.size() > 0){
+            AttributeExpression ce = idExpressions.remove(0);
+            PathAttribute attr = ce.get(s.getId());
+            if (attr != null) {
+            // Anpassen der Variablennamen für das Metamodell:
+            String fullExpression = tranformAttributesToMetamodell(ce, s);
+            ignore.appendAND(fullExpression);
+            ignore.negateExpression();
+          }else{
+            throw new QueryParseException(
+                          "PARTITION_CONTIGUITY error: attribute "+attr+" not found!"); 
+          }
+    				}
+    			break;
     		case SKIP_TILL_ANY_MATCH:
     			ignore.getCondition().setEventTypeChecking(false);
+    			break;
     		default:
     			ignore.getCondition().setEventTypeChecking(false);
     		}
@@ -669,7 +686,7 @@ kAttributeUsage[StringBuffer name, StringBuffer usage]
    }
   ;
 
-idexpression[List<State> states, List<AttributeExpression> compareExpressions]
+idexpression[List<State> states, List<AttributeExpression> idExpressions, List<AttributeExpression> compareExpressions]
   :
   ^(IDEXPRESSION var=NAME)
   
@@ -683,11 +700,17 @@ idexpression[List<State> states, List<AttributeExpression> compareExpressions]
     			var.getText());
     	attr.add(b);
     	StringBuffer expr = new StringBuffer();
-    	expr.append(t).append(t).append(t).append(states.get(i).getId())
-    			.append(".").append(var.getText());
-    	expr.append(t).append(t).append(t).append(states.get(i + 1).getId())
-    			.append(".").append(var.getText());
-    	compareExpressions.add(new AttributeExpression(attr, expr.toString()));
+//    	expr.append(t).append(t).append(t).append(states.get(i).getId())
+//    			.append(".").append(var.getText());
+      expr.append(a.getFullAttributeName());
+    	expr.append(" == ");
+//    	expr.append(t).append(t).append(t).append(states.get(i + 1).getId())
+//    			.append(".").append(var.getText());
+      expr.append(b.getFullAttributeName());
+    	AttributeExpression toAdd =	new AttributeExpression(attr, expr.toString());
+    	// Special handling for partition contiguity necessary
+    	idExpressions.add(toAdd);
+    	compareExpressions.add(toAdd);
     }
    }
   ;
