@@ -1,94 +1,129 @@
 package de.uniol.inf.is.odysseus.wsenrich.util;
 
-import java.io.InputStream;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.uniol.inf.is.odysseus.wsenrich.exceptions.DatafieldNotFoundException;
 
 public class XmlKeyFinder {
 	
 	/**
-	 * For Logging
+	 * The Start of a Element
 	 */
-	static Logger logger = LoggerFactory.getLogger(XmlKeyFinder.class);
+	private static final Character STARTTAG = '<';
 	
 	/**
-	 * The parsing-object for the xml-document
+	 * The End of a Element
 	 */
-	private XMLStreamReader parser;
+	private static final Character ENDTAG = '>';
 	
 	/**
-	 * The value of the searched xml-document
+	 * The Starttag of the Soap-Body
+	 */
+	private static final String BODY_STARTTAG = "<soap:Body>";
+	
+	/**
+	 * The Endtag of the Soap-Body
+	 */
+	private static final String BODY_ENDTAG = "</soapenv:Body>";
+	
+	/**
+	 * The message 
+	 */
+	private StringBuffer message;
+	
+	/**
+	 * The searched element
+	 */
+	private String search;
+	
+	/**
+	 * The value of the searched Element
 	 */
 	private Object value;
 	
 	/**
-	 * Constructor for the Xml Parser
-	 * @param input the xml-document as a input source
+	 * Constructor for the XmlKeyFinder. It searched the given message
+	 * for the first occurence of the search and returns the value of
+	 * the element
+	 * @param message the xml message
+	 * @param search the searched element
 	 */
-	public XmlKeyFinder(InputStream input) {
-				
-		try {
-			XMLInputFactory factory = XMLInputFactory.newInstance();
-			this.parser = factory.createXMLStreamReader(input);
-			
-		} catch (XMLStreamException e) {
-			
-			logger.error("Exception by parsing XML-Document: {}", e.getMessage());
+	public XmlKeyFinder(String message, String search) {
+		
+		this.message = new StringBuffer(message);
+		this.search = search;
+		cutStartofMessage();
+		cutEndofMessage();
+	}
+	
+	/**
+	 * @return the searched element
+	 */
+	public String getSearch() {
+		
+		return this.search;
+	}
+	
+	/**
+	 * Setter for the searched element
+	 * @param search the searched element
+	 */
+	public void setSearch(String search) {
+		
+		this.search = search;
+	}
+	
+	/**
+	 * Cuts the start of the message (if there´s content before data)
+	 * Example: If the message is a soap message, this method cuts all
+	 * meta informations
+	 */
+	private void cutStartofMessage() {
+		
+		int endOfStartMessage = this.message.indexOf(BODY_STARTTAG);
+		if(endOfStartMessage != -1) {
+			this.message.delete(0, endOfStartMessage);
+		}		
+	}
+	
+	/**
+	 * cuts the end of a message (if there´s content after data)
+	 * Example: If the message is a soap message, this method cuts
+	 * all meta informations after data
+	 */
+	private void cutEndofMessage() {
+		
+		int startOfEndMessage = this.message.indexOf(BODY_ENDTAG);
+		if(startOfEndMessage != -1) {
+			this.message.delete(startOfEndMessage, this.message.length());
 		}
 		
 	}
 	
 	/**
-	 * search the xml document for the specified name
-	 * @param elementName the name of the element to search for
-	 * @return the value of the searched xml document
+	 * searches the message for the first occurence of the search and
+	 * returns the value of the element
+	 * @param search the element name to search for
+	 * @return the value of the searched element
+	 * @throws DatafieldNotFoundException if the searched element ist not in the message
 	 */
-	public Object getElementByName(String elementName) {
+	public Object getValueOf(String search) throws DatafieldNotFoundException {
 		
-		boolean found = false;
-
-		try {
-			while(parser.hasNext()) {
-				
-				switch (parser.getEventType()) {
-				
-				case XMLStreamConstants.START_ELEMENT:
-					if(parser.getLocalName().equals(elementName)) {
-						found = true;
-						parser.next();
-					}
-					
-				case XMLStreamConstants.CHARACTERS:
-					if(found) {
-						if(!parser.isWhiteSpace()) {
-							this.value = parser.getText();
-							found = false;
-							return this.value;
-						}
-						
-					}
-				}
-				parser.next();
-			} 
-		} catch (XMLStreamException e) {
-			e.printStackTrace();
+		if(!this.search.equals(search)) {
+			this.search = search;
+		}
+		int match = this.message.indexOf(STARTTAG + search);
+		
+		if(match == -1) {
+			throw new DatafieldNotFoundException();
+			
+		} else {
+			int endOfElement = this.message.indexOf(ENDTAG.toString(), match);
+			int endOfValue = this.message.indexOf(ENDTAG.toString(), endOfElement + 1);
+			String temp = this.message.substring(endOfElement + 1, endOfValue - search.length() - 2);
+			this.value = temp;
 			
 		}
-		return this.value;
-		
-		
-	}
-	
-	/**
-	 * @return the value of the searched xml-document
-	 */
-	public Object getValue() {
-		return this.value;
+		return value;
 	}
 
 }

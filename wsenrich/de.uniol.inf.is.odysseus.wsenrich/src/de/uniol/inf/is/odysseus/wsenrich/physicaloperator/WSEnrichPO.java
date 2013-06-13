@@ -22,11 +22,15 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final String urlsuffix;
 	private final List<Option> arguments;
 	private final String operation;
+	private final List<SDFAttribute> receivedData;
+	private final String charset;
+	private final String returnType;
 	private final int[] parameterPositions;
 	private final IDataMergeFunction<Tuple<T>, T> dataMergeFunction;
 	
 	public WSEnrichPO(String serviceMethod, String method, String url, String urlsuffix,
-					List<Option> arguments, String operation, IDataMergeFunction<Tuple<T>, T> dataMergeFunction) {
+					List<Option> arguments, String operation, List<SDFAttribute> receivedData,
+					String charset, String returnType, IDataMergeFunction<Tuple<T>, T> dataMergeFunction) {
 						
 		super();
 		this.serviceMethod = serviceMethod;
@@ -35,6 +39,9 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.urlsuffix = urlsuffix;
 		this.arguments = arguments;
 		this.operation = operation;
+		this.receivedData = receivedData;
+		this.charset = charset;
+		this.returnType = returnType;
 		this.parameterPositions = new int[arguments.size()];
 		this.dataMergeFunction = dataMergeFunction;
 						
@@ -49,6 +56,9 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.urlsuffix = wsEnrichPO.urlsuffix;
 		this.arguments = wsEnrichPO.arguments;
 		this.operation = wsEnrichPO.operation;
+		this.receivedData = wsEnrichPO.receivedData;
+		this.charset = wsEnrichPO.charset;
+		this.returnType = wsEnrichPO.returnType;
 		this.parameterPositions = Arrays.copyOf(
 				wsEnrichPO.parameterPositions,
 				wsEnrichPO.parameterPositions.length);
@@ -176,6 +186,20 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 				return false;
 		} else if (!operation.equals(other.operation))
 			return false;
+		if(charset == null || charset.equals("")) {
+			if(other.charset != null || !other.charset.equals("")) {
+				return false;
+			}
+		} else if (!charset.equals(other.charset)) {
+			return false;
+		}
+		if(returnType == null || returnType.equals("")) {
+			if(other.returnType != null || !other.returnType.equals("")) {
+				return false;
+			}
+		} else if(!returnType.equals(other.returnType)) {
+			return false;
+		}
 		return true;
 		
 	}

@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.wsenrich.logicaloperator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 //TODO  libs checken!!!
@@ -35,9 +36,19 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	private static final String SERVICE_METHOD_REST = "REST";
 	
 	/**
-	 * Static Variable for the Service Mehtod Soap
+	 * Static Variable for the Service Method Soap
 	 */
 	private static final String SERVICE_METHOD_SOAP = "SOAP";
+	
+	/**
+	 * Static Variable for the return Type of a webservice-response as XML
+	 */
+	private static final String RETURN_TYPE_XML = "XML";
+	
+	/**
+	 * Static Variable for the return Type of a webservice-response as JSON
+	 */
+	private static final String RETURN_TYPE_JSON = "JSON";
 	
 	/**
 	 * For Logging
@@ -73,16 +84,31 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	 * The name of the operation to call a Soap-Webservice
 	 */
 	private String operation;
-
+	
 	/**
-	 * Default-Konstruktor for the WSEnrichAO
+	 * The data fields of the webservice
+	 */
+	private List<SDFAttribute> receivedData;
+	
+	/**
+	 * The charset that is used for the webservice conversation
+	 */
+	private String charset;
+	
+	/**
+	 * The return Type of a webservice-response, can be XML or JSON
+	 */
+	private String returnType;
+	
+	/**
+	 * Default-Constructor for the WSEnrichAO
 	 */
 	public WSEnrichAO() {
 		super();
 	}
 
 	/**
-	 * Konstruktor for the WSEnrichAO
+	 * Constructor for the WSEnrichAO
 	 * 
 	 * @param wsEnrichAO
 	 */
@@ -95,6 +121,9 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		this.urlsuffix = wsEnrichAO.urlsuffix;
 		this.arguments = wsEnrichAO.arguments;
 		this.operation = wsEnrichAO.operation;
+		this.receivedData = wsEnrichAO.receivedData;
+		this.charset = wsEnrichAO.charset;
+		this.returnType = wsEnrichAO.returnType;
 
 	}
 
@@ -119,9 +148,9 @@ public class WSEnrichAO extends UnaryLogicalOp {
 					"The serviceMethod must be \"REST\" or \"SOAP\""));
 			valid = false;
 		}
-		if (serviceMethod.equals(SERVICE_METHOD_REST) && (!operation.equals("") || operation == null)) {
+		if (serviceMethod.equals(SERVICE_METHOD_REST) && (!operation.equals("") || operation != null)) {
 			addError(new IllegalParameterException(
-					"If you want to receive Data from a REST-Service you donï¿½t need to define a operation!"));
+					"If you want to receive Data from a REST-Service you don´t have to define a operation!"));
 			valid = false;
 		}
 		if (serviceMethod.equals(SERVICE_METHOD_SOAP) && (operation.equals("") || operation == null)) {
@@ -129,25 +158,33 @@ public class WSEnrichAO extends UnaryLogicalOp {
 					"If you want to receive Data from a SOAP-Servie you have to define a operation!"));
 			valid = false;
 		}
+		if (receivedData == null) {
+			addError(new IllegalParameterException(
+					"You have to declare min 1 Datafield of the webservice for the Outputschema."));
+			valid = false;
+		}
+		if (!returnType.equals(RETURN_TYPE_XML) || returnType.equals(RETURN_TYPE_JSON)) {
+			addError(new IllegalParameterException(
+				"You have to declare the return type of the webservice-response. This can be JSON or XML."));
+			valid = false;
+		}
 
 		return valid;
 
 	}
 	
-	//TODO spï¿½ter noch ï¿½ndern, wenn XML-Verarbeitung funktioniert
-	@Override
+	//TODO später noch ändern, wenn XML-Verarbeitung funktioniert
 	public void initialize() {
-		
-		SDFAttribute attribute = new SDFAttribute("Webservice-Daten", "KeyValueParameter", SDFDatatype.STRING);
-		SDFSchema webserviceData = new SDFSchema("", attribute);
+
+		SDFSchema webserviceData = new SDFSchema("", receivedData);
 		SDFSchema outputSchema = SDFSchema.union(getInputSchema(), webserviceData);
 		setOutputSchema(outputSchema);
 		
 	}
 	
-	@Override
 	protected SDFSchema getOutputSchemaIntern(int port) {
-		return super.getOutputSchema();
+		return getOutputSchema();
+		
 	}
 	
 /*	private static String sdfSchemaToString(SDFSchema schema, String identifier) {
@@ -223,7 +260,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	}
 	
 	/**
-	 * Setter for the static part oo the Url after Arguments (optional)
+	 * Setter for the static part of the Url after Arguments (optional)
 	 * @param urlSuffix
 	 */
 	@Parameter(type = StringParameter.class, name ="urlSuffix", optional = true)
@@ -263,6 +300,50 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	@Parameter(type = StringParameter.class, name = "operation", optional = true)
 	public void setOperation(String operation) {
 		this.operation = operation;
+	}
+	
+	/**
+	 * @return The Datafields received through the webservice
+	 */
+	public List<SDFAttribute> getReceivedData() {
+		return getOutputSchema().getAttributes();
+	}
+	
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "datafields")
+	public void setReceivedData(List<SDFAttribute> receivedData) {
+		this.receivedData = receivedData;
+	}
+	
+	/**
+	 * @return The used charset for the webservice conversation
+	 */
+	public String getCharset() {
+		return this.charset;
+	}
+	
+	/**
+	 * Setter for the charset
+	 * @param charset The charset. Standard ist UTF-8
+	 */
+	@Parameter(type = StringParameter.class, name = "charset", optional = true)
+	public void setCharset(String charset) {
+		this.charset = charset;
+	}
+	
+	/**
+	 * @return The return-type of the webservice-response, can be JSON or XML
+	 */
+	public String getReturnType() {
+		return this.returnType;
+	}
+	
+	/**
+	 * Setter for the return type of the webservice-response. Can be XML or JSON
+	 * @param returnType the return type 
+	 */
+	@Parameter(type = StringParameter.class, name = "returnType")
+	public void setReturnType(String returnType) {
+		this.returnType = returnType;
 	}
 		
 
