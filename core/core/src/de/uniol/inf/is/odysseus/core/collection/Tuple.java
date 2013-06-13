@@ -355,14 +355,10 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			Object[] rightAttributes) {
 		Object[] newAttributes = new Object[leftAttributes.length
 				+ rightAttributes.length];
-		if (leftAttributes != null) {
-			System.arraycopy(leftAttributes, 0, newAttributes, 0,
-					leftAttributes.length);
-		}
-		if (rightAttributes != null) {
-			System.arraycopy(rightAttributes, 0, newAttributes,
-					leftAttributes.length, rightAttributes.length);
-		}
+		System.arraycopy(leftAttributes, 0, newAttributes, 0,
+				leftAttributes.length);
+		System.arraycopy(rightAttributes, 0, newAttributes,
+				leftAttributes.length, rightAttributes.length);
 		return newAttributes;
 	}
 

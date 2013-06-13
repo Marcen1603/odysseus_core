@@ -145,7 +145,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 						ipos.remove(op1);
 						newOps.remove(op1);
 
-						// Reiteration (möglicherweise neue identische
+						// Reiteration (mï¿½glicherweise neue identische
 						// Operatoren)
 						return true;
 						// break;
@@ -180,7 +180,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 									.isContainedIn((IPipe) op2)
 							&& (newOps.contains(op1) || restructuringAllowed)) {
 						replaceInput(op1, op2);
-						// Reiteration (möglicherweise neue identische
+						// Reiteration (mï¿½glicherweise neue identische
 						// Operatoren)
 						return true;
 						// break;
@@ -191,7 +191,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 									.isContainedIn((IPipe) op1)
 							&& (newOps.contains(op2) || restructuringAllowed)) {
 						replaceInput(op2, op1);
-						// Reiteration (möglicherweise neue identische
+						// Reiteration (mï¿½glicherweise neue identische
 						// Operatoren)
 						return true;
 						// break;
@@ -207,7 +207,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			IPhysicalOperator replacement, IDataDictionary dd) {
 		// Austausch von Operatoren
 
-		// Holen sämtlicher Subscriptions von bei dem zu ersetzenden Operator
+		// Holen sï¿½mtlicher Subscriptions von bei dem zu ersetzenden Operator
 		// angemeldeten sinks
 		Collection<ISubscription> sinks = new ArrayList(
 				((IPipe) toReplace).getSubscriptions());
@@ -228,7 +228,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 			boolean isActive = ((AbstractSource) toReplace)
 					.isActive((PhysicalSubscription) sub);
-			// Subscription löschen
+			// Subscription lï¿½schen
 			((IPipe) toReplace).unsubscribeSink(sub);
 
 			// System.out.println(s.getName() + " unsubscribed from " +
@@ -244,7 +244,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 		// Holen der Quellen, bei denen der zu ersetzende Operator bislang
 		// angemeldet war
-		// (Sind die gleichen wie von op2, ansonsten hätte
+		// (Sind die gleichen wie von op2, ansonsten hï¿½tte
 		// op2.isSemanticallyEqual(op2) false ergeben)
 		Collection<ISubscription<IPhysicalOperator>> sources = new ArrayList<ISubscription<IPhysicalOperator>>(
 				((IPipe) toReplace).getSubscribedToSource());
@@ -270,12 +270,10 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		for (Entry<IOperatorOwner, String> id : toReplace.getUniqueIds()
 				.entrySet()) {
 			dd.getOperator(id.getValue());
-			if (id != null) {
-				dd.removeOperator(id.getValue());
-				toRemove.add(id.getKey());
-				replacement.addUniqueId(id.getKey(), id.getValue());
-				dd.setOperator(id.getValue(), replacement);
-			}
+			dd.removeOperator(id.getValue());
+			toRemove.add(id.getKey());
+			replacement.addUniqueId(id.getKey(), id.getValue());
+			dd.setOperator(id.getValue(), replacement);
 		}
 		for (IOperatorOwner id : toRemove) {
 			toReplace.removeUniqueId(id);
@@ -303,9 +301,9 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 					sub.getSourceOutPort(), sub.getSchema());
 		}
 
-		// Hinzufügen des op2-Operators in den einzelnen Queries, die als
+		// Hinzufï¿½gen des op2-Operators in den einzelnen Queries, die als
 		// Besitzer von op1 eingetragen sind
-		// (Denn dieser Operator ist nun Teil der Query, da er als Eingang für
+		// (Denn dieser Operator ist nun Teil der Query, da er als Eingang fï¿½r
 		// op1 dient.
 		List<IOperatorOwner> owner = new ArrayList<IOperatorOwner>(
 				op1.getOwner());

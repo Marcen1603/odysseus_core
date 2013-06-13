@@ -45,7 +45,7 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 		PointInTime latest = null;
 		for(IPhysicalOperator join : joins) {
 			PointInTime end = ((JoinTIPO) join).getLatestEndTimestamp();
-			if(latest == null || (latest != null && end != null && latest.before(end))) {
+			if(latest == null || (end != null && latest.before(end))) {
 				latest = end;
 			}
 		}
