@@ -56,39 +56,21 @@ public class UriGetBuilder implements IRequestBuilder {
 	 */
 	private StringBuffer uri;
 	
-	
-	public UriGetBuilder() {
-		this.url = "";
-		this.arguments = null;
-		this.urlsuffix = "";
-		this.uri = new StringBuffer();
-		
-	}
-	
 	/**
-	 * Konstructor for building an Uri for the given Parameters
-	 * @param url the static part of the url before arguments
-	 * @param arguments die arguments as Key-Value-Parts
-	 * @param urlsuffix the static part of the url after arguments,
-	 * can be null or ""
-	 * 
+	 * Default Constructor for the UriGetBuilder
 	 */
-	public UriGetBuilder(String url, Object value, String urlsuffix ) {
+	public UriGetBuilder() {
 		
-		this.url = url;
-		this.arguments = (List<Option>) arguments;
-		this.urlsuffix = urlsuffix;
 		this.uri = new StringBuffer();
-		buildUrlBeforeArguments();
-		addParameters();
-		buildUrlAfterArguments();
-				
+		
 	}
 	
 	/**
 	 * Builds the static part of the uri before arguments
 	 */
 	private void buildUrlBeforeArguments() {
+		
+		this.uri.delete(0, this.uri.length());
 		
 		//Adds the URL Suffix if its not present in url
 		if(!this.url.contains(URLPREFIX)) {
@@ -108,7 +90,7 @@ public class UriGetBuilder implements IRequestBuilder {
 	private void addParameters() {
 		
 		//Adds the arguments
-		for(Option argument : arguments) {
+		for(Option argument : this.arguments) {
 				
 			//replaces whitespaces if present
 			String name = argument.getName().replace(BLANK, BLANKDELMITTER);
@@ -129,7 +111,7 @@ public class UriGetBuilder implements IRequestBuilder {
 	private void buildUrlAfterArguments() {
 		
 		//adds the urlsuffix if present
-		if(this.urlsuffix != null || !this.urlsuffix.equals("")) {
+		if(!this.urlsuffix.equals("") || this.urlsuffix != null  ) {
 			
 			this.uri.append(this.urlsuffix);
 		}
@@ -144,6 +126,69 @@ public class UriGetBuilder implements IRequestBuilder {
 	@Override
 	public String getPostData() {
 		return null;
+	}
+	
+	@Override
+	public String getName() {
+		return "GET";
+	}
+	
+	@Override
+	public UriGetBuilder createInstance() {
+		return new UriGetBuilder();
+	}
+
+	@Override
+	public String getUrlPrefix() {
+		
+		return this.url;
+	}
+
+	@Override
+	public void setUrlPrefix(String urlPrefix) {
+		
+		this.url = urlPrefix;
+		
+	}
+
+	@Override
+	public String getUrlSuffix() {
+		
+		return this.urlsuffix;
+	}
+
+	@Override
+	public void setUrlSuffix(String urlSuffix) {
+		
+		this.urlsuffix = urlSuffix;
+		
+	}
+
+	@Override
+	public List<Option> getArguments() {
+
+		return this.arguments;
+	}
+
+	@Override
+	public void setArguments(List<Option> arguments) {
+		
+		this.arguments = arguments;
+		
+	}
+	
+	@Override
+	public void buildUri() {
+		
+		this.buildUrlBeforeArguments();
+		this.addParameters();
+		this.buildUrlAfterArguments();
+	}
+	
+	//Nothing to do 
+	@Override
+	public void setPostData(String doc) {
+		
 	}
 
 }

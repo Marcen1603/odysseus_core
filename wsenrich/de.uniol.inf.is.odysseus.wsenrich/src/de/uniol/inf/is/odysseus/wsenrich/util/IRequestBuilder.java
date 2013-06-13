@@ -1,6 +1,60 @@
 package de.uniol.inf.is.odysseus.wsenrich.util;
 
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+
 public interface IRequestBuilder {
+	
+	/**
+	 * @return the static part of the url before arguments
+	 */
+	public String getUrlPrefix();
+	
+	/**
+	 * Setter for the static part of the url before arguments
+	 * @param urlPrefix
+	 */
+	public void setUrlPrefix(String urlPrefix);
+	
+	/**
+	 * @return the static part of the url after arguments
+	 */
+	public String getUrlSuffix();
+	
+	/**
+	 * Setter for the static part of the url after arguments
+	 * @param urlSuffix
+	 */
+	public void setUrlSuffix(String urlSuffix);
+	
+	/**
+	 * @return the Arguments
+	 */
+	public List<Option> getArguments();
+	
+	/**
+	 * Setter for the arguments
+	 * @param value
+	 */
+	public void setArguments(List<Option> arguments);
+	
+	/**
+	 * @return The Post-Data as a String representation
+	 */
+	public String getPostData();
+	
+	/**
+	 * Setter for the Post data
+	 * @param doc the post data
+	 */
+	public void setPostData(String doc);
+	
+	/**
+	 * builds the url for the given parameters
+	 */
+	public void buildUri();
+	
 	
 	/**
 	 * @return The builded Uri for the given Parameters
@@ -8,8 +62,12 @@ public interface IRequestBuilder {
 	public String getUri();
 	
 	/**
-	 * @return The Post-Data as a String representation
+	 * @return The name of the Uri Builder
 	 */
-	public String getPostData();
+	public String getName();
 	
+	/**
+	 * Creates a instance of a class who implements this class
+	 */
+	public IRequestBuilder createInstance();
 }

@@ -28,6 +28,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		if(logical.getServiceMethod().equals("REST")) {
 			if(logical.getMethod().equals("GET")) {
 				//IConnectionForWebservices con = ConnectionForWebservicesRegistry.getInstance("GET");
+				//IRequestBuilder builder = RequstBuilderRegistry.getInstance("GET");
 				
 			}
 			

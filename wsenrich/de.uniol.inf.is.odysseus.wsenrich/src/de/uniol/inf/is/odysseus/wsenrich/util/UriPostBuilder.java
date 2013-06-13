@@ -40,7 +40,7 @@ public class UriPostBuilder implements IRequestBuilder {
 	/**
 	 * The arguments as Key-Value-Pairs
 	 */
-	Object arguments;
+	List<Option> arguments;
 	
 	/**
 	 * The Data for the Http-Post
@@ -54,36 +54,16 @@ public class UriPostBuilder implements IRequestBuilder {
 	
 	
 	public UriPostBuilder() {
-		this.url = "";
-		this.postData = null;
-		this.arguments = null;
-		this.uri = null;
+		//Needed for RequestBuilderRegistry
 	}
 	
 	/**
-	 * Constructor for building an Uri for the given Parameters
-	 * @param url the static part of the url before arguments
-	 * @param arguments die arguments as Key-Value-Parts
-	 * @param urlsuffix the static part of the url after arguments,
-	 * can be null or ""
-	 * 
-	 */
-	public UriPostBuilder(String url, Object value, String urlsuffix ) {
-		
-		this.url = url;
-		this.postData = new StringBuffer();
-		this.arguments = value;
-		this.uri = new StringBuffer();
-		buildUrl();
-		addParameters();
-
-				
-	}
-	
-	/**
-	 * Builds the static part of the uri before arguments
+	 * Builds the static part of the uri
 	 */
 	private void buildUrl() {
+		
+		this.uri = new StringBuffer();
+		this.uri.delete(0, this.uri.length());
 		
 		//Adds the URL Suffix if its not present in url
 		if(!this.url.contains(URLPREFIX)) {
@@ -97,17 +77,15 @@ public class UriPostBuilder implements IRequestBuilder {
 	}
 	
 	/**
-	 * Adds Parameter to the uri
+	 * Adds Key Value Parameter to the Uri
 	 */
-	@SuppressWarnings("unchecked")
 	private void addParameters() {
 		
-		if(this.arguments instanceof List) {
+		if(this.arguments != null) {
 			
-			List<Option> temp = (List<Option>) arguments;
-			
+			this.postData.delete(0, this.postData.length());
 			//Adds the arguments
-			for(Option argument : temp) {
+			for(Option argument : this.arguments) {
 				
 			//replaces whitespaces if present
 			String name = argument.getName().replace(BLANK, BLANKDELMITTER);
@@ -117,29 +95,78 @@ public class UriPostBuilder implements IRequestBuilder {
 					+ value + ARGUMENTDELMITER);
 			
 			}
-			//remove the last argumentdelmitter
-			this.uri.deleteCharAt(this.uri.length()-1);
-							
-		} else {
-			this.postData.append(arguments);
-		}
-			
-			
-		
+		}	
 	}
-	
-	/**
-	 * @return The builded Uri for the given Parameters
-	 */
-	public String getUri() {
-		return this.uri.toString();
-	}
-	
 	
 	@Override
 	public String getPostData() {
 		return this.postData.toString();
 	}
+	
+	@Override
+	public void setPostData(String doc) {
+		this.postData = new StringBuffer(doc);
+		
+	}
+	
+	@Override
+	public String getName() {
+		return "POST";
+	}
+	
+	@Override
+	public UriPostBuilder createInstance() {
+		return new UriPostBuilder();
+	}
+
+	@Override
+	public String getUrlPrefix() {
+		return this.url;
+	}
+
+	@Override
+	public void setUrlPrefix(String urlPrefix) {
+		this.url = urlPrefix;
+		
+	}
+
+	@Override
+	public String getUrlSuffix() {
+		return "";
+	}
+
+	//Nothing to do
+	@Override
+	public void setUrlSuffix(String urlSuffix) {
+
+	}
+
+	@Override
+	public List<Option> getArguments() {
+		
+		return this.arguments;
+	}
+		
+	@Override
+	public void setArguments(List<Option> arguments) {
+		
+		this.arguments = arguments;
+		
+	}
+
+	@Override
+	public void buildUri() {
+		this.buildUrl();
+		this.addParameters();
+		
+	}
+	
+	@Override
+	public String getUri() {
+		return this.uri.toString();
+	}
+
+	
 
 }
 

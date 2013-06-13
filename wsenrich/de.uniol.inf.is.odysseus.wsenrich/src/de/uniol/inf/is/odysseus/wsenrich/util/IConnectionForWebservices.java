@@ -63,8 +63,6 @@ public interface IConnectionForWebservices {
 	
 	/**
 	 * Creates a instance of a class who implements this class
-	 * @param uri the uri to cal
-	 * @param value the arguments 
 	 */
 	public IConnectionForWebservices createInstance();
 	
