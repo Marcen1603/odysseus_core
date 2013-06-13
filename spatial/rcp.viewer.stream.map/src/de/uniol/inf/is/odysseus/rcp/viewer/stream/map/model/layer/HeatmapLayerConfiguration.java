@@ -19,17 +19,23 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	private Color maxColor;
 	private int alpha;
 	private boolean interpolation;
+	private boolean autoPosition;
+	private int numTilesWidth;
+	private int numTilesHeight;
 	
 	public HeatmapLayerConfiguration(HeatmapLayerConfiguration toCopy) {
 		// TODO: Maybe better a full copy, but what is the envelope (coverageGeographic)
 		super(toCopy.getName());
 		super.setSrid(4326); //???
 		setQuery(toCopy.getQuery());
-		setGeometricAttributePosition(toCopy.getGeometricAttributePosition());
+		setGeometricAttributePosition(toCopy.getGeometricAttributePosition()); //Here should be a point
 		setMinColor(toCopy.getMinColor());
 		setMaxColor(toCopy.getMaxColor());
 		setAlpha(toCopy.getAlpha());
 		setInterpolation(toCopy.isInterpolation());
+		setNumTilesHeight(toCopy.getNumTilesHeight());
+		setNumTilesWidth(toCopy.getNumTilesWidth());
+		setAutoPosition(toCopy.isAutoPosition());
 	}
 	
 	public HeatmapLayerConfiguration(RasterLayerConfiguration toCopy) {
@@ -37,22 +43,28 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		super(toCopy.getName());
 		super.setSrid(4326); //???
 		setQuery("");
-		setGeometricAttributePosition(0);
+		setGeometricAttributePosition(0); //Here should be a point
 		setMinColor(new Color(Display.getDefault(),0,255,0));
 		setMaxColor(new Color(Display.getDefault(),255,0,0));
 		setAlpha(50);
 		setInterpolation(false);
+		setNumTilesHeight(10);
+		setNumTilesWidth(10);
+		setAutoPosition(true);
 	}
 	
 	public HeatmapLayerConfiguration(String name) {
 		super(name);
 		super.setSrid(4326); //???
 		setQuery("");
-		setGeometricAttributePosition(0);
+		setGeometricAttributePosition(0); //Here should be a point
 		setMinColor(new Color(Display.getDefault(),0,255,0));
 		setMaxColor(new Color(Display.getDefault(),255,0,0));
 		setAlpha(50);
 		setInterpolation(false);
+		setNumTilesHeight(10);
+		setNumTilesWidth(10);
+		setAutoPosition(true);
 	}	
 
 	public String getQuery() {
@@ -111,6 +123,30 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	 */
 	public void setInterpolation(boolean interpolation) {
 		this.interpolation = interpolation;
+	}
+
+	public int getNumTilesWidth() {
+		return numTilesWidth;
+	}
+
+	public void setNumTilesWidth(int numTilesWidth) {
+		this.numTilesWidth = numTilesWidth;
+	}
+
+	public int getNumTilesHeight() {
+		return numTilesHeight;
+	}
+
+	public void setNumTilesHeight(int numTilesHeight) {
+		this.numTilesHeight = numTilesHeight;
+	}
+
+	public boolean isAutoPosition() {
+		return autoPosition;
+	}
+
+	public void setAutoPosition(boolean autoPosition) {
+		this.autoPosition = autoPosition;
 	}
 
 }

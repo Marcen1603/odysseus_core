@@ -39,9 +39,9 @@ public class Heatmap extends RasterLayer {
 	
 	@Override
 	public void draw(GC gc) {
-		Color minColor = new Color(Display.getDefault(), 0, 255, 0);
-		Color maxColor = new Color(Display.getDefault(), 255, 0, 0);
-		Image img = createImage(20, 20, minColor, maxColor);
+		Color minColor = config.getMinColor();
+		Color maxColor = config.getMaxColor();
+		Image img = createImage(config.getNumTilesWidth(), config.getNumTilesHeight(), minColor, maxColor);
 		drawImage(gc, img, false);		
 	}
 	
@@ -101,13 +101,12 @@ public class Heatmap extends RasterLayer {
 		}
 		
 		// The tuples are now stored in the LayerUpdater to reduce redundant data
-		int geometryAttributeIndex = 0;			// Here should be a point
 		Envelope searchEnv = new Envelope();
 		searchEnv.init(new Coordinate(49.7, 11.7)); // Maybe somewhere in Germany
 		// Get everything
 		searchEnv.expandToInclude(new Coordinate(Integer.MIN_VALUE, Integer.MAX_VALUE));	// Top left
 		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE, Integer.MIN_VALUE)); 	// Bottom right
-		List<?> data = layerUpdater.query(searchEnv, geometryAttributeIndex);
+		List<?> data = layerUpdater.query(searchEnv, config.getGeometricAttributePosition());
 		int[][] valueSum = new int[x][y];
 		int maxSum = 0;
 		int minSum = 0;

@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerCo
  * @author Tobias Brandt
  *
  */
-public class SpinnerListener extends SelectionAdapter {
+public abstract class SpinnerListener extends SelectionAdapter {
 	
 	HeatmapLayerConfiguration heatmapLayerConfig;
 	Spinner spinner;
