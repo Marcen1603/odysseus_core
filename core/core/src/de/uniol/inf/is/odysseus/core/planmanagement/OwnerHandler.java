@@ -67,6 +67,7 @@ public class OwnerHandler implements IOwnedOperator {
 		return false;
 	}
 	
+	@Override
 	public boolean isOwnedByAll(List<IOperatorOwner> owners){
 		return this.owners.containsAll(owners);
 	}

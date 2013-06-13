@@ -45,6 +45,7 @@ public abstract class AbstractIterableSource<T> extends AbstractSource<T>
 		lock.unlock();
 	}
 	
+	@Override
 	public void setDelay(long delay) {
 		this.delay = delay;
 	}

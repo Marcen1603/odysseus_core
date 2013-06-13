@@ -56,6 +56,7 @@ public abstract class AbstractIterablePipe<R extends IStreamObject<?>, W extends
 		lock.unlock();
 	}
 	
+	@Override
 	public void setDelay(long delay) {
 		this.delay = delay;
 	}

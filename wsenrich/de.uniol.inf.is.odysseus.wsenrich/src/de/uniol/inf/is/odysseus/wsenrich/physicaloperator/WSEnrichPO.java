@@ -134,6 +134,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	/**
 	 * Compares all class attributes, that were present in the AO
 	 */
+	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		
 		if(this == ipo) 

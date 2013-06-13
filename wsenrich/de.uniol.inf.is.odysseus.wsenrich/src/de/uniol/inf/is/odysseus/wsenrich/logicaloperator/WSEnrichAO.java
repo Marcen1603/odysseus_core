@@ -121,7 +121,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		}
 		if (serviceMethod.equals(SERVICE_METHOD_REST) && (!operation.equals("") || operation == null)) {
 			addError(new IllegalParameterException(
-					"If you want to receive Data from a REST-Service you don´t need to define a operation!"));
+					"If you want to receive Data from a REST-Service you donï¿½t need to define a operation!"));
 			valid = false;
 		}
 		if (serviceMethod.equals(SERVICE_METHOD_SOAP) && (operation.equals("") || operation == null)) {
@@ -134,7 +134,8 @@ public class WSEnrichAO extends UnaryLogicalOp {
 
 	}
 	
-	//TODO später noch ändern, wenn XML-Verarbeitung funktioniert
+	//TODO spï¿½ter noch ï¿½ndern, wenn XML-Verarbeitung funktioniert
+	@Override
 	public void initialize() {
 		
 		SDFAttribute attribute = new SDFAttribute("Webservice-Daten", "KeyValueParameter", SDFDatatype.STRING);
@@ -144,6 +145,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		
 	}
 	
+	@Override
 	protected SDFSchema getOutputSchemaIntern(int port) {
 		return super.getOutputSchema();
 	}
