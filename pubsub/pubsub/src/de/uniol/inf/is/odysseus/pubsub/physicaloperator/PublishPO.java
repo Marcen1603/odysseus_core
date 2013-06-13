@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
-public class BrokerSinkPO extends AbstractSink<IStreamObject<?>>{
+public class PublishPO extends AbstractSink<IStreamObject<?>>{
 	
 	//private String brokerName;
 
@@ -22,7 +22,7 @@ public class BrokerSinkPO extends AbstractSink<IStreamObject<?>>{
 
 	@Override
 	public AbstractSink<IStreamObject<?>> clone() {
-		return new BrokerSinkPO();
+		return new PublishPO();
 	}
 
 }

@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TBrokerRule extends AbstractTransformationRule<Subscribe> {
+public class TPublishRule extends AbstractTransformationRule<Subscribe> {
 
 	@Override
 	public int getPriority() {
@@ -29,7 +29,7 @@ public class TBrokerRule extends AbstractTransformationRule<Subscribe> {
 
 	@Override
 	public String getName() {
-		return "SubscribeAO -> SubscribePO";
+		return "Publish -> PublishPO";
 	}
 
 	@Override
