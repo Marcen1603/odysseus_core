@@ -26,14 +26,9 @@ public class HttpPostConnection implements IConnectionForWebservices {
 	private String url;
 	
 	/**
-	 * XML-Part of the Http-Post-Request
+	 * The Post Data
 	 */
-	private String xmlPart;
-	
-	/**
-	 * Arguments as argument&value
-	 */
-	private List<NameValuePair> arguments;
+	private Object argument;
 	
 	/**
 	 * The client-side Http client
@@ -56,48 +51,42 @@ public class HttpPostConnection implements IConnectionForWebservices {
 	 * @param url the url for the request
 	 * @param arguments the arguments which will be added in the Http Body
 	 */
-	public HttpPostConnection(String url, List<Option> arguments) {
-		
-		this.url = url;
-		this.xmlPart = null;
-		this.arguments = castOptionsListToNameValuePair(arguments);
-		this.httpClient = new DefaultHttpClient();
-		this.httpPost = new HttpPost(url);
-		this.connect();
-		
+	public HttpPostConnection() {
+		//Needed for ConnectionForWebservicesRegistry
 	}
 	
-	/**
-	 * Constructor for the Http Post Connection with a Document, for
-	 * example a XML Document.
-	 * Connects automatically to the given Url
-	 * @param url the url for the request
-	 * @param document the document which will be added in the Http Body
-	 */
-	public HttpPostConnection(String url, String document) {
-		
+	@Override
+	public void setUri(String url) {
 		this.url = url;
-		this.xmlPart = document;
-		this.arguments = null;
-		this.httpClient = new DefaultHttpClient();
-		this.httpPost = new HttpPost(url);
-		this.connect();
 	}
 	
+	@Override
+	public void setArgument(Object value) {
+		this.argument = value;
+	}
 	
-	
+	@Override
+	public Object getArgument() {
+		return this.argument;
+	}
+		
+		
 	@Override
 	public void connect() {
 		
-		if(this.xmlPart == null) {
-			connectWithArguments();	
+		if(this.argument instanceof List) {
 			
-		} else if (this.arguments == null) {
-			connectWithDocument();
-			
-		} else throw new IllegalParameterException(
-				"There are no arguments or XML-Part defined. " +
-				"Set arguments or XML Dokument and try again.");
+			@SuppressWarnings("unchecked")
+			List<Option> temp = (List<Option>) argument;
+			connectWithArguments(castOptionsListToNameValuePair(temp));
+		} else if(this.argument == null) {
+			 throw new IllegalParameterException(
+					"There are no arguments or XML-Part defined. " +
+					"Set arguments or XML Dokument and try again.");
+		} else {
+			String document = (String) argument;
+			connectWithDocument(document);
+		} 
 
 	}
 
@@ -154,10 +143,11 @@ public class HttpPostConnection implements IConnectionForWebservices {
 	 * Opens the Http Post Connection with Arguments
 	 * Arguments will be added in the Http Body
 	 */
-	private void connectWithArguments() {
+	private void connectWithArguments(List<NameValuePair> arguments) {
 		
 		try {
-			
+			this.httpClient = new DefaultHttpClient();
+			this.httpPost = new HttpPost(url);
 			this.httpPost.setEntity(new UrlEncodedFormEntity(arguments));			
 			this.response = this.httpClient.execute(httpPost);
 			
@@ -173,16 +163,16 @@ public class HttpPostConnection implements IConnectionForWebservices {
 		
 	}
 	
-	//TODO: Eventuell mit Interface arbeiten, damit nicht nur XML übergeben werden kann???
 	/**
 	 * Opens the Http Post Connection with a Document, 
 	 * not Key-Value-Pairs
 	 */
-	private void connectWithDocument() {
+	private void connectWithDocument(String document) {
 		
 		try {
-			
-			this.httpPost.setEntity(new StringEntity(xmlPart));
+			this.httpClient = new DefaultHttpClient();
+			this.httpPost = new HttpPost(url);
+			this.httpPost.setEntity(new StringEntity(document));
 			this.response = this.httpClient.execute(httpPost);
 			
 		} catch (ClientProtocolException e) {
@@ -195,6 +185,16 @@ public class HttpPostConnection implements IConnectionForWebservices {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	@Override
+	public String getName() {
+		return "POST";
+	}
+	
+	@Override
+	public HttpPostConnection createInstance() {
+		return new HttpPostConnection();
 	}
 
 }

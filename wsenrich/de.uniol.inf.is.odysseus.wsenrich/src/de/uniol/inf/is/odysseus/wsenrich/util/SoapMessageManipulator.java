@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 
-public class SoapMessageManipulator {
+public class SoapMessageManipulator implements IXmlMessageManipulator {
 	
 	private static final Character STARTTAG = '<';
 	
@@ -56,7 +56,7 @@ public class SoapMessageManipulator {
 	}
 	
 	/**
-	 * Builds the fixed ent part (after arguments) of the Soap Message. Includes Soap-Envelope Endtag and
+	 * Builds the fixed end part (after arguments) of the Soap Message. Includes Soap-Envelope Endtag and
 	 * the Soap-Body Endtag
 	 */
 	private StringBuffer buildEndOfMessage() {
@@ -84,7 +84,7 @@ public class SoapMessageManipulator {
 	/**
 	 * Adds the arguments to the message
 	 */
-	public StringBuffer buildArgumentsOfMessage(List<Option> arguments) {
+	private StringBuffer buildArgumentsOfMessage(List<Option> arguments) {
 		
 		this.arguments = arguments;
 		this.argumentsOfMesssage = new StringBuffer();
@@ -133,10 +133,8 @@ public class SoapMessageManipulator {
 		return this.endOfMessage.toString();
 	}
 	
-	/**
-	 * @return the builded message
-	 */
-	public String buildMessage() {
+	@Override
+	public String getMessage() {
 		
 		StringBuffer output = new StringBuffer();
 		output.append(this.startOfMessage);

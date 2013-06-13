@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.wsenrich.util;
 
 import de.uniol.inf.is.odysseus.wsenrich.exceptions.DatafieldNotFoundException;
 
-public class XmlKeyFinder {
+public class XmlKeyFinder implements IKeyFinder {
 	
 	/**
 	 * The Start of a Element
@@ -55,22 +55,30 @@ public class XmlKeyFinder {
 		cutEndofMessage();
 	}
 	
-	/**
-	 * @return the searched element
-	 */
+	@Override
 	public String getSearch() {
 		
 		return this.search;
 	}
 	
-	/**
-	 * Setter for the searched element
-	 * @param search the searched element
-	 */
+	@Override
 	public void setSearch(String search) {
 		
 		this.search = search;
 	}
+	
+	@Override
+	public String getMessage() {
+		
+		return this.message.toString();
+	}
+	
+	@Override
+	public void setMessage(String message) {
+		
+		this.message = new StringBuffer(message);
+	}
+	
 	
 	/**
 	 * Cuts the start of the message (if there´s content before data)
@@ -99,13 +107,7 @@ public class XmlKeyFinder {
 		
 	}
 	
-	/**
-	 * searches the message for the first occurence of the search and
-	 * returns the value of the element
-	 * @param search the element name to search for
-	 * @return the value of the searched element
-	 * @throws DatafieldNotFoundException if the searched element ist not in the message
-	 */
+	@Override
 	public Object getValueOf(String search) throws DatafieldNotFoundException {
 		
 		if(!this.search.equals(search)) {
@@ -125,5 +127,6 @@ public class XmlKeyFinder {
 		}
 		return value;
 	}
+
 
 }

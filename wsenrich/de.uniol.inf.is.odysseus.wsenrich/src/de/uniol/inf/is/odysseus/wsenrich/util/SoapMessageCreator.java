@@ -18,7 +18,9 @@ import com.eviware.soapui.support.SoapUIException;
 
 import de.uniol.inf.is.odysseus.wsenrich.exceptions.OperationNotFoundException;
 
-public class SoapMessageCreator {
+public class SoapMessageCreator implements ISoapMessageCreator {
+	
+	private static SoapMessageCreator instance = null;
 	
 	/**
 	 * For Logging
@@ -45,6 +47,10 @@ public class SoapMessageCreator {
 	 */
 	private WsdlInterface wsdl;
 	
+	/**
+	 * The SoapMessage
+	 */
+	private String soapMessage;
 	
 	/**
 	 * Constructor for the SoapMessageCreator
@@ -52,11 +58,26 @@ public class SoapMessageCreator {
 	 * @param wsdlUrl the url to the wsdl-file
 	 * @param operationName the name of the operation to call
 	 */
-	public SoapMessageCreator(String wsdlUrl) {
+	private SoapMessageCreator(String wsdlUrl, String operationName) {
 		
 		this.wsdlUrl = wsdlUrl;
+		this.operationName = operationName;
 		readWsdl();
+		this.soapMessage = SetSoapMessage(operationName);
 		
+		
+	}
+	
+	/**
+	 * Singleton Pattern 
+	 * @param wsdlUrl The url to the wsdl-file
+	 * @return SoapMessageCreator
+	 */
+	public static SoapMessageCreator getInstance(String wsdlUrl, String operationName) {
+		if(instance == null) {
+			instance = new SoapMessageCreator(wsdlUrl, operationName);
+		}
+		return instance;
 	}
 	
 	/**
@@ -94,7 +115,7 @@ public class SoapMessageCreator {
 	 * Setter for the operation 
 	 * @param operation the name of the operation
 	 */
-	private void setOperation(String operation) {
+	private void setOperationName(String operation) {
 		
 		this.operationName = operation;
 	}
@@ -102,7 +123,7 @@ public class SoapMessageCreator {
 	/**
 	 * @return the name of the operation
 	 */
-	private String getOperation() {
+	public String getOperationName() {
 		
 		return this.operationName;
 	}
@@ -112,11 +133,11 @@ public class SoapMessageCreator {
 	 * @param operationName the name of the operation where the soap-message
 	 * has to be created
 	 */
-	public String getSOAPMessage(String operationName) {
+	private String SetSoapMessage(String operationName) {
 		
 		if(this.operationName == null || this.operationName.equals("")) {
 			
-			setOperation(operationName);	
+			setOperationName(operationName);	
 		}
 		
 		try {
@@ -132,8 +153,6 @@ public class SoapMessageCreator {
 			
 		}
 		return "";
-			
-		
 	}
 	
 	/**
@@ -147,10 +166,10 @@ public class SoapMessageCreator {
 		
 		if(this.operationName == null || this.operationName.equals("")) {
 			
-			setOperation(operationName);
+			setOperationName(operationName);
 		}
 		
-		WsdlOperation operation = (WsdlOperation) this.wsdl.getOperationByName(this.getOperation());
+		WsdlOperation operation = (WsdlOperation) this.wsdl.getOperationByName(this.getOperationName());
 		
 		try {
 			
@@ -186,7 +205,7 @@ public class SoapMessageCreator {
 		
 		for(int i = 0; i < operations.length; i++) {
 			
-			if(operations[i].getName().equals(getOperation())) {
+			if(operations[i].getName().equals(getOperationName())) {
 				found = true;
 				break;		
 			}
@@ -214,6 +233,13 @@ public class SoapMessageCreator {
 	public String[] getEndpointAdress() {
 		
 		return wsdl.getEndpoints();
+	}
+	
+	/**
+	 * @return The generated Soap-Message
+	 */
+	public String getSoapMessage() {
+		return this.soapMessage;
 	}
 
 }

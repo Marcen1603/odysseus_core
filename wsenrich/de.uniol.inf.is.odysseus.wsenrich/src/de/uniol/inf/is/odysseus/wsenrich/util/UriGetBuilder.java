@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 
-public class UriBuilder {
+public class UriGetBuilder implements IRequestBuilder {
 	
 	/**
 	 * Static variable for the Argumentdelmiter is "&"
@@ -56,13 +56,14 @@ public class UriBuilder {
 	 */
 	private StringBuffer uri;
 	
-	/**
-	 * The cleandes static Url Part before arguments
-	 * Is only used to rebuild fast a new URI with 
-	 * new Parameters.
-	 */
-	private StringBuffer cleanedUrlPart;
 	
+	public UriGetBuilder() {
+		this.url = "";
+		this.arguments = null;
+		this.urlsuffix = "";
+		this.uri = new StringBuffer();
+		
+	}
 	
 	/**
 	 * Konstructor for building an Uri for the given Parameters
@@ -72,59 +73,17 @@ public class UriBuilder {
 	 * can be null or ""
 	 * 
 	 */
-	public UriBuilder(String url, List<Option> arguments, String urlsuffix ) {
+	public UriGetBuilder(String url, Object value, String urlsuffix ) {
 		
 		this.url = url;
-		this.arguments = arguments;
+		this.arguments = (List<Option>) arguments;
 		this.urlsuffix = urlsuffix;
 		this.uri = new StringBuffer();
-		this.cleanedUrlPart = new StringBuffer();
 		buildUrlBeforeArguments();
 		addParameters();
 		buildUrlAfterArguments();
 				
 	}
-	/*
-	
-	private void buildURI() {
-		
-		//Adds the URL Suffix if its not present in url
-		if(!this.url.contains(URLPREFIX)) {
-			
-			this.uri.append(URLPREFIX + this.url + URLDELMITER);
-			
-		} else {
-			
-			this.uri.append(this.url + URLDELMITER);
-			
-		}
-		
-		this.cleanedUrlPart.append(this.uri);
-		
-		//Adds the arguments
-		for(Option argument : arguments) {
-			
-			//replaces whitespaces if present
-			String name = argument.getName().replace(BLANK, BLANKDELMITTER);
-			String value = argument.getValue().replace(BLANK, BLANKDELMITTER);
-			
-			this.uri.append(name + KEYVALUEDELMITER
-				+ value + ARGUMENTDELMITER);
-			
-			
-		}
-		
-		//remove the last argumentdelmitter
-		this.uri.deleteCharAt(this.uri.length()-1);
-		
-		//adds the urlsuffix if present
-		if(this.urlsuffix != null || !this.urlsuffix.equals("")) {
-			
-			this.uri.append(this.urlsuffix);
-			
-		}
-		
-	} */
 	
 	/**
 	 * Builds the static part of the uri before arguments
@@ -141,9 +100,6 @@ public class UriBuilder {
 			this.uri.append(this.url + URLDELMITER);
 			
 		}
-		
-		this.cleanedUrlPart.append(this.uri);
-		
 	}
 	
 	/**
@@ -163,7 +119,6 @@ public class UriBuilder {
 				
 				
 		}
-			
 		//remove the last argumentdelmitter
 		this.uri.deleteCharAt(this.uri.length()-1);
 	}
@@ -177,36 +132,18 @@ public class UriBuilder {
 		if(this.urlsuffix != null || !this.urlsuffix.equals("")) {
 			
 			this.uri.append(this.urlsuffix);
-			
 		}
-		
-		
 	}
 	
-	/**
-	 * @return The builded Uri for the given Parameters
-	 */
+	@Override
 	public String getUri() {
 		
 		return this.uri.toString();
 	}
 	
-	/**
-	 * Rebuild The Uri with new Parameters.
-	 * This requires that the static part before and after the
-	 * arguments are equal to the instantioation of this Class
-	 * @param arguments
-	 * @return
-	 */
-	public String changeParameters(List<Option> arguments) {
-		
-		this.arguments = arguments;
-		this.uri.delete(0, this.uri.length());
-		this.uri.append(this.cleanedUrlPart);
-		addParameters();
-		buildUrlAfterArguments();
-		return getUri();
-
+	@Override
+	public String getPostData() {
+		return null;
 	}
 
 }

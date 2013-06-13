@@ -40,5 +40,34 @@ public interface IConnectionForWebservices {
 	 */
 	public void addHeader(String argument, String value);
 	
+	/**
+	 * Setter for the uri
+	 * @param uri the uri for the request
+	 */
+	public void setUri(String uri);
+	
+	/**
+	 * Setter for the Arguments
+	 * @param value The arguments
+	 */
+	public void setArgument(Object value);
+	
+	/**
+	 * @return The arguments of the request or the Document of a Post-Request
+	 */
+	public Object getArgument();
+	/**
+	 * @return The name of the Connection method
+	 */
+	public String getName();
+	
+	/**
+	 * Creates a instance of a class who implements this class
+	 * @param uri the uri to cal
+	 * @param value the arguments 
+	 */
+	public IConnectionForWebservices createInstance();
+	
+	
 
 }

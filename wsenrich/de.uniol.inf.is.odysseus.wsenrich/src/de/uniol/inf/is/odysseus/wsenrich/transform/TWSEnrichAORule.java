@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.wsenrich.logicaloperator.WSEnrichAO;
 import de.uniol.inf.is.odysseus.wsenrich.physicaloperator.WSEnrichPO;
 
+
 public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 
 	@Override
@@ -24,7 +25,13 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = 
 				new RelationalMergeFunction<ITimeInterval>(logical.getOutputSchema().size());
 		
-		//TODO: Hier Initialisierung des Verfahrens(REST, SOAP, XML, JSON & CO???
+		if(logical.getServiceMethod().equals("REST")) {
+			if(logical.getMethod().equals("GET")) {
+				//IConnectionForWebservices con = ConnectionForWebservicesRegistry.getInstance("GET");
+				
+			}
+			
+		}
 		
 		WSEnrichPO<ITimeInterval> physical = new WSEnrichPO<ITimeInterval>(
 			logical.getServiceMethod(),

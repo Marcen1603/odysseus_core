@@ -30,25 +30,36 @@ public class HttpGetConnection implements IConnectionForWebservices {
 	private HttpResponse response;
 	
 	/**
-	 * Konstruktor for a Http Get Request.
-	 * Konstruktor connects automatically to the
+	 * Constructor for a Http Get Request.
+	 * Constructor connects automatically to the
 	 * given Uri 
 	 * @param uri the uri for the request
 	 */
-	public HttpGetConnection(String uri) {
-		
+	public HttpGetConnection() {
+		//Needed for the ConnectionForWebserviceRegistery
+	}
+	
+	@Override
+	public void setUri(String uri) {
 		this.uri = uri;
-		this.httpClient = new DefaultHttpClient();
-		this.httpGet = new HttpGet(uri);
-		this.connect();
-		
-	}	
+	}
+	
+	@Override
+	public void setArgument(Object value) {
+
+	}
+	
+	@Override
+	public Object getArgument() {
+		return null;
+	}
 	
 	@Override
 	public void connect() {
 		
 		try {
-			
+			this.httpClient = new DefaultHttpClient();
+			this.httpGet = new HttpGet(uri);
 			this.response = this.httpClient.execute(httpGet);
 			
 		} catch (ClientProtocolException e) {
@@ -92,6 +103,16 @@ public class HttpGetConnection implements IConnectionForWebservices {
 	public void addHeader(String argument, String value) {
 		
 		this.httpGet.addHeader(argument, value);	
+	}
+	
+	@Override
+	public String getName() {
+		return "GET";
+	}
+	
+	@Override
+	public HttpGetConnection createInstance() {
+		return new HttpGetConnection();
 	}
 
 }

@@ -1,146 +1,107 @@
 package de.uniol.inf.is.odysseus.wsenrich.util;
 
-import java.io.IOException;
-
-import org.json.simple.parser.ContentHandler;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import de.uniol.inf.is.odysseus.wsenrich.exceptions.DatafieldNotFoundException;
+import de.uniol.inf.is.odysseus.wsenrich.logicaloperator.WSEnrichAO;
 
-public class JsonKeyFinder implements ContentHandler {
-
+public class JsonKeyFinder implements IKeyFinder {
+	
 	/**
 	 * For Logging
 	 */
-	static Logger logger = LoggerFactory.getLogger(JsonKeyFinder.class);
+	static Logger logger = LoggerFactory.getLogger(WSEnrichAO.class);
 	
 	/**
-	 * The Value of the searched Datafield
+	 * The Json Parser Object
+	 */
+	private JSONParser parser;
+	
+	/**
+	 * The ContentHandler Object for Json Data
+	 */
+	private JsonContentHandler reader;
+	
+	/**
+	 * The Json Message
+	 */
+	private String message;
+	
+	/**
+	 * The searched Element
+	 */
+	private String search;
+	
+	/**
+	 * The value of the searched Element
 	 */
 	private Object value;
 	
 	/**
-	 * returns true if a element with the specified name was found
+	 * Constructor for the JsonKeyFinder. It searched the given message
+	 * for the first occurence of the search and returns the value of
+	 * the element
+	 * @param message the json message
+	 * @param search the searched element
 	 */
-	private boolean found = false;
-	
-	/**
-	 * true if the end of the Json Objects is archieved
-	 */
-	private boolean end = false;
-	
-	/**
-	 * The name of a Json Datafield
-	 */
-	private String key;
-	
-	/**
-	 * The name of the Datafield to seach for
-	 */
-	private String matchKey;
-	
-	/**
-	 * Sets the key to search for in the Json Object
-	 * @param matchKey the key to search for
-	 */
-	public void setMatchKey(String matchKey) {
+	public JsonKeyFinder(String message, String search) {
 		
-		this.matchKey = matchKey;
-	}
-	
-	/**
-	 * @return the value of the searched Datafield
-	 */
-	public Object getValue() {
-		
-		return this.value;
-	}
-	
-	/**
-	 * @return true if the end of the Json Object is archieved
-	 */
-	public boolean isEnd() {
-		
-		return this.end;
-	}
-	
-	/**
-	 * @return true if a datafield with the specified name was found
-	 */
-	public boolean isFound() {
-		
-		return this.found;
+		this.parser = new JSONParser();
+		this.reader = new JsonContentHandler();
+		this.message = message;
+		this.search = search;
+			
 	}
 	
 	@Override
-	public boolean endArray() throws ParseException, IOException {
-		// TODO Auto-generated method stub
-		return true;
+	public String getSearch() {
+		return this.search;
 	}
 
 	@Override
-	public void endJSON() throws ParseException, IOException {
-		
-		this.end = true;
-		
-		if(this.value == null && this.end) {
-			logger.error("The specified dataelement was not found in the Json Object");
-		}
-		
-	}
+	public void setSearch(String search) {
+		this.search = search;
 
-	@Override
-	public boolean endObject() throws ParseException, IOException {
+	}
 	
-		return true;
+	@Override
+	public String getMessage() {
+		return this.message;
+	}
+	
+	@Override
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	@Override
-	public boolean endObjectEntry() throws ParseException, IOException {
-
-		return true;
-	}
-
-	@Override
-	public boolean primitive(Object arg0) throws ParseException, IOException {
+	public Object getValueOf(String search) throws DatafieldNotFoundException {
 		
-		if(key != null) {
-			if(key.equals(matchKey)) {
-			this.found = true;
-			this.value = arg0;
-			return false;
+		if(!this.search.equals(search)) 
+			this.search = search;
+		
+		reader.setMatchKey(this.search);
+		
+		try {
+		
+			while(!reader.isFound()) {
+				parser.parse(message, reader, true);
+			
+				if(reader.isFound()) {
+					this.value = reader.getValue();
+					return this.value;
+				}
+				
+				if(reader.isEnd()) {
+					throw new DatafieldNotFoundException();
+				}
 			}
+		} catch (ParseException pe) {
+			logger.error("Ecxception while parsing Json Document. Cause: {}", pe.getMessage());
 		}
-		return true;
-	}
-
-	@Override
-	public boolean startArray() throws ParseException, IOException {
-	
-		return true;
-	}
-
-	@Override
-	public void startJSON() throws ParseException, IOException {
-		
-		this.found = false;
-		this.end = false;
-		
-	}
-
-	@Override
-	public boolean startObject() throws ParseException, IOException {
-
-		return true;
-	}
-
-	@Override
-	public boolean startObjectEntry(String arg0) throws ParseException,
-			IOException {
-		
-		this.key = arg0;
-		return true;
-
+		return null;
 	}
 
 }
