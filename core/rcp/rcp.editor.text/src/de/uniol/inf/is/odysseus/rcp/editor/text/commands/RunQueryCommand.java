@@ -167,11 +167,10 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					} else {
 						Throwable cause = ex;
 						while ((cause instanceof OdysseusScriptException || cause instanceof QueryParseException) && cause.getCause() != null) {
-							cause = cause.getCause();
-							return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parsing of Odysseus script failed", cause);
+							cause = cause.getCause();							
 						}
-					}
-					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parsing of Odysseus script failed in line " + ex.getLine() + " at column " + ex.getColumn(), ex);
+						return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parsing of Odysseus script failed in line " + ex.getLine() + " at column " + ex.getColumn(), cause);
+					}					
 				} catch (Throwable ex) {
 					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", ex);
 				}
