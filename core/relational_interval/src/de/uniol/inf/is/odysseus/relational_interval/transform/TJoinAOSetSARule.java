@@ -15,20 +15,11 @@
   */
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
-import de.uniol.inf.is.odysseus.persistentqueries.HashJoinSweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -55,36 +46,39 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		areas[0] = new JoinTISweepArea();
 		areas[1] = new JoinTISweepArea();
 		
-		try{
-		// check the paths
-		for(int port = 0; port<2; port++){
-			int otherPort = port^1;
-			if(JoinTransformationHelper.checkPhysicalPath(joinPO.getSubscribedToSource(port).getTarget())){
-				// check the predicate and calculate
-				// the restrictList
-				Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();				
-				
-				if(JoinTransformationHelper.checkPredicate(
-						joinPO.getPredicate(),
-						neededAttrs,
-						joinPO.getSubscribedToSource(port).getSchema(),
-						joinPO.getSubscribedToSource(otherPort).getSchema())){
-				
-					// transform the set into a list to guarantee the
-					// same order of attributes for both restrict lists
-					List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
-					for(Pair<SDFAttribute, SDFAttribute> pair: neededAttrs){
-						neededAttrsList.add(pair);
-					}
-					
-					Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(joinPO, neededAttrsList, port);
-					areas[port] = new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2());
-				}
-			}
-		}
-		}catch(Exception e){
-			// can fail --> set default areas
-		}
+		// This will only work, if the current plan is not distributed! 
+		// FIXME: Find a better solution !
+		
+//		try{
+//		// check the paths
+//		for(int port = 0; port<2; port++){
+//			int otherPort = port^1;
+//			if(JoinTransformationHelper.checkPhysicalPath(joinPO.getSubscribedToSource(port).getTarget())){
+//				// check the predicate and calculate
+//				// the restrictList
+//				Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();				
+//				
+//				if(JoinTransformationHelper.checkPredicate(
+//						joinPO.getPredicate(),
+//						neededAttrs,
+//						joinPO.getSubscribedToSource(port).getSchema(),
+//						joinPO.getSubscribedToSource(otherPort).getSchema())){
+//				
+//					// transform the set into a list to guarantee the
+//					// same order of attributes for both restrict lists
+//					List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
+//					for(Pair<SDFAttribute, SDFAttribute> pair: neededAttrs){
+//						neededAttrsList.add(pair);
+//					}
+//					
+//					Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(joinPO, neededAttrsList, port);
+//					areas[port] = new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2());
+//				}
+//			}
+//		}
+//		}catch(Exception e){
+//			// can fail --> set default areas
+//		}
 		
 		
 		joinPO.setAreas(areas);
