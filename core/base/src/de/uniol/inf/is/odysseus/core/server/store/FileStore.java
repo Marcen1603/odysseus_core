@@ -172,4 +172,9 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		}
 	}
 
+	@Override
+	public int size() {
+		return cache.size();
+	}
+
 }

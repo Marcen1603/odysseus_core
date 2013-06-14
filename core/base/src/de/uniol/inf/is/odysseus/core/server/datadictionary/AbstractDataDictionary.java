@@ -159,7 +159,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	// Entity Management
 	// ----------------------------------------------------------------------------
 
-
 	@SuppressWarnings("unchecked")
 	private void addEntityForPlan(ILogicalOperator plan, String identifier, EntityType entityType, ISession caller) {
 		String type = entityType.toString();
@@ -222,21 +221,25 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				}
 			}
 		}
+		// System.out.println(this.entityFromUser);
 		// check, whether entity is not used anymore, so we totally remove it
 		Iterator<Entry<String, HashMap<String, ArrayList<String>>>> iterEntity = this.entityUsedBy.entrySet().iterator();
 		while (iterEntity.hasNext()) {
 			Entry<String, HashMap<String, ArrayList<String>>> e = iterEntity.next();
-			boolean empty = true;
-			for (Entry<String, ArrayList<String>> typeEntry : e.getValue().entrySet()) {
+			boolean empty = true;			
+			for (Entry<String, ArrayList<String>> typeEntry : e.getValue().entrySet()) {				
 				if (!typeEntry.getValue().isEmpty()) {
-					empty = false;
+					empty = false;					
 				}
 			}
-			if (empty) {
+			if (empty) {				
+				synchronized (this.entityFromUser) {					
+					this.entityFromUser.remove(e.getKey());					
+				}
 				iterEntity.remove();
-				this.entityFromUser.remove(e.getKey());
 			}
 		}
+		// System.out.println(this.entityFromUser);
 
 		fireDataDictionaryChangedEvent();
 
@@ -297,7 +300,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		if (found) {
 			checkAccessRights(viewname, caller, DataDictionaryPermission.READ);
 			ILogicalOperator logicalPlan = this.viewDefinitions.get(viewname);
-			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>((IOperatorOwner)null);
+			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>((IOperatorOwner) null);
 			@SuppressWarnings("rawtypes")
 			GenericGraphWalker walker = new GenericGraphWalker();
 			walker.prefixWalk(logicalPlan, copyVisitor);
@@ -332,9 +335,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			@SuppressWarnings("rawtypes")
 			GenericGraphWalker walker = new GenericGraphWalker();
 			walker.prefixWalk(op, visitor);
-			if(viewname.startsWith(caller.getUser().getName()+".")){
+			if (viewname.startsWith(caller.getUser().getName() + ".")) {
 				removeEntityForPlan(op, viewname, EntityType.VIEW, caller);
-			}else{
+			} else {
 				removeEntityForPlan(op, createUserUri(viewname, caller), EntityType.VIEW, caller);
 			}
 
@@ -510,9 +513,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 					@SuppressWarnings("rawtypes")
 					GenericGraphWalker walker = new GenericGraphWalker();
 					walker.prefixWalk(op, visitor);
-					if(viewname.startsWith(caller.getUser().getName()+".")){
+					if (viewname.startsWith(caller.getUser().getName() + ".")) {
 						removeEntityForPlan(op, viewname, EntityType.STREAM, caller);
-					}else{
+					} else {
 						removeEntityForPlan(op, createUserUri(viewname, caller), EntityType.STREAM, caller);
 					}
 
@@ -567,7 +570,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			throw new DataDictionaryException("Type '" + name + "' already exists.");
 		}
 	}
-	
+
 	@Override
 	public void addDatatype(SDFDatatype dt) {
 		addDatatype(dt.getURI(), dt);

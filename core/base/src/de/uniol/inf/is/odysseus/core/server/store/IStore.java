@@ -30,4 +30,5 @@ public interface IStore<IDType extends Comparable<?>, STORETYPE> {
 	boolean isEmpty();
 	void clear() throws StoreException;
 	public void commit();
+	public int size();
 }
