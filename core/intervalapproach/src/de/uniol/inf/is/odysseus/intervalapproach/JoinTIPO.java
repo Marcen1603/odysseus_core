@@ -170,10 +170,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	protected void process_next(T object, int port) {
 
 		transferFunction.newElement(object, port);
-
-		if (object.getMetadata().getStart().getMainPoint() == 38500){
-			System.out.println("ACTION");
-		}
 		
 		if (isDone()) {
 			// TODO bei den sources abmelden ?? MG: Warum??
@@ -220,9 +216,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		while (qualifies.hasNext()) {
 			T next = qualifies.next();
 			T newElement = dataMerge.merge(object, next, metadataMerge, order);
-			if (newElement.getMetadata() == null){
-				System.out.println("WHHOOOO");
-			}
 			transferFunction.transfer(newElement);
 		}
 
