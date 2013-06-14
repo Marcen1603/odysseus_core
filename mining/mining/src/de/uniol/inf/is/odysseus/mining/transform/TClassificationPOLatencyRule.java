@@ -1,5 +1,5 @@
 /********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,10 @@
  */
 package de.uniol.inf.is.odysseus.mining.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.mining.logicaloperator.ClassificationAO;
+import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -29,37 +26,45 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * @author Dennis Geesen
- * 
+ *
  */
-public class TClassificationAORule extends AbstractTransformationRule<ClassificationAO> {
+public class TClassificationPOLatencyRule  extends AbstractTransformationRule<ClassificationPO<?>> {
 
 	@Override
 	public int getPriority() {
-		return 0;
+		return 10;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void execute(ClassificationPO<?> classifictionpo, TransformationConfiguration config) {
+		((CombinedMergeFunction)classifictionpo.getMetadataMerge()).add(new LatencyMergeFunction());		
 	}
 
 	@Override
-	public void execute(ClassificationAO operator, TransformationConfiguration config) {
-		CombinedMergeFunction<ITimeInterval> metaDataMerge = new CombinedMergeFunction<ITimeInterval>();
-		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
-		TITransferArea<Tuple<ITimeInterval>, Tuple<ITimeInterval>> transferFunction = new TITransferArea<>();
-		ClassificationPO<ITimeInterval> po = new ClassificationPO<ITimeInterval>(operator.getInputSchema(0), metaDataMerge, transferFunction);
-		defaultExecute(operator, po, config, true, true);
-	}
-
-	@Override
-	public boolean isExecutable(ClassificationAO operator, TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet();
+	public boolean isExecutable(ClassificationPO<?> cpo, TransformationConfiguration config) {
+		if(cpo.getMetadataMerge() instanceof CombinedMergeFunction){
+			if(config.getMetaTypes().contains(ILatency.class.getCanonicalName())){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public String getName() {
-		return "ClassificationAO -> ClassificationPO";
+		return  "ClassificationPO add MetadataMerge (ILatency)";
 	}
-
+	
+	
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
+		return TransformRuleFlowGroup.METAOBJECTS;
+	}
+	
+	@Override
+	public Class<? super ClassificationPO<?>> getConditionClass() {	
+		return ClassificationPO.class;
 	}
 
 }
