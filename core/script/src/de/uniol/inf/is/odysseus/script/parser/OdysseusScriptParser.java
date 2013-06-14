@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -193,6 +194,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
 		try {
 			resetDefaultReplacements();
+			
+			textToParse = removeAllComments(textToParse);
+			
 			// first, we rewrite loops to serial query text
 			String[] text = rewriteLoop(textToParse);
 
@@ -211,11 +215,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			keyStartedAtLine = 1;
 			for (currentLine = 0; currentLine < text.length; currentLine++) {
 				String line = text[currentLine].trim();
-
-				// remove comments
-				line = removeComments(line);
-				if ((line == null) || (line.equals("null")))
-					continue;
 
 				// check if we are an executable line
 				if (!ifController.canExecuteNextLine()) {
@@ -346,6 +345,21 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		} catch (OdysseusScriptException ex) {
 			throw new OdysseusScriptException("[Line " + (currentLine + 1) + "]" + ex.getMessage(), ex);
 		}
+	}
+
+	private String[] removeAllComments(String[] textToParse) {
+		List<String> resultText = Lists.newArrayList();
+		for( String line : textToParse ) {
+			String result = removeComments(line);
+			if( result != null ) {
+				result = result.trim();
+			}
+			
+			if( !Strings.isNullOrEmpty(result)) {
+				resultText.add(result);
+			}
+		}
+		return resultText.toArray(new String[resultText.size()]);
 	}
 
 	private void resetDefaultReplacements() {
