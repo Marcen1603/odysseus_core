@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.pattern.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.*;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -35,11 +37,11 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	// Pattern-Type
 	private PatternType type;
 	private Integer time;
-	private TimeUnit timeUnit;
+	private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
 	private Integer size;
 	// Ausgabeverhalten
-	private PatternOutput outputMode;
-	private Integer inputPort;
+	private PatternOutput outputMode = PatternOutput.SIMPLE;
+	private Integer inputPort = 0;
 	// auszulesendes Attribut
 	private String attribute;
 	
@@ -56,9 +58,6 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	
 	public PatternMatchingAO() {
         super();
-        this.eventTypes = new ArrayList<String>();
-        this.inputTypeNames = new HashMap<Integer, String>();
-        this.inputSchemas = new HashMap<Integer, SDFSchema>();
     }
     
     public PatternMatchingAO(PatternMatchingAO patternAO){
@@ -201,26 +200,6 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int port) {
-		// Input-Typen und Schemas für Ports speichern
-		for (LogicalSubscription s : this.getSubscribedToSource()) {
-			SDFSchema schema = inputSchemas.get(s.getSinkInPort());
-			if (schema == null) {
-				schema = s.getSchema();
-				inputSchemas.put(s.getSinkInPort(), schema);
-			}
-			String name = inputTypeNames.get(s.getSinkInPort());
-			if (name == null) {
-				name = schema.getURI();
-				if (name == null){
-					throw new IllegalArgumentException("Input stream must have a type.");
-				}
-				if (name.startsWith("System.")) {
-					name = name.substring(7);
-				}
-				inputTypeNames.put(s.getSinkInPort(), name);
-			}
-		}
-		
 		// Ausgabeschema bestimmen
 		SDFSchema schema = null;
 		if (outputMode == PatternOutput.INPUT) {
@@ -342,25 +321,119 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	
 	@Override
 	public boolean isValid() {
-		// Elemente der relevanten Eventliste müssen auch als Quellen vorhanden sein
-//		boolean help = false;
-//		for (String eventType : eventTypes) {
-//			help = false;
-//			for (String inputType : inputTypeNames.values()) {
-//				if (eventType.equals(inputType)) {
-//					help = true;
-//					break;
-//				}				
-//			}
-//			if (!help) {
-//				addError(new IllegalArgumentException("eventTypes have to be defined also as a source."));
-//				break;
-//			}
-//		}
-//		return help;
-		// TODO
-		// weitere Validierungen
-		return true;
+		if (inputSchemas == null && inputTypeNames == null) {
+			// Input-Typen und Schemas für Ports speichern
+	        inputTypeNames = new HashMap<Integer, String>();
+	        inputSchemas = new HashMap<Integer, SDFSchema>();
+			for (LogicalSubscription s : this.getSubscribedToSource()) {
+				SDFSchema schema = inputSchemas.get(s.getSinkInPort());
+				if (schema == null) {
+					schema = s.getSchema();
+					inputSchemas.put(s.getSinkInPort(), schema);
+				}
+				String name = inputTypeNames.get(s.getSinkInPort());
+				if (name == null) {
+					name = schema.getURI();
+					if (name == null){
+						throw new IllegalArgumentException("Input stream must have a type.");
+					}
+					if (name.startsWith("System.")) {
+						name = name.substring(7);
+					}
+					inputTypeNames.put(s.getSinkInPort(), name);
+				}
+			}
+		}
+		boolean help = false;
+		// check conversion to enum goes automatically (type, timeUnit and outputMode)
+		// check value of eventTypes
+		for (String eventType : eventTypes) {
+			help = false;
+			for (String inputType : inputTypeNames.values()) {
+				if (eventType.equals(inputType)) {
+					help = true;
+					break;
+				}				
+			}
+			if (!help) {
+				addError(new IllegalArgumentException("one or more elements from eventTypes don't exist as sources."));
+				break;
+			}
+		}
+		// check value of time
+		if (time != null) {
+			if (time <= 0) {
+				help = false;
+				addError(new IllegalArgumentException("time has to be a positive numeric value."));
+			}
+		}
+		// check value of size
+		if (size != null) {
+			if (size <= 0) {
+				help = false;
+				addError(new IllegalArgumentException("size has to be a positive numeric value."));
+			}
+		}
+		// check value of count
+		if (count != null) {
+			if (count <= 0) {
+				help = false;
+				addError(new IllegalArgumentException("count has to be a positive numeric value."));
+			}
+		}
+		// check value of inputPort
+		if (inputPort < 0 || inputPort > inputTypeNames.size() - 1) {
+			help = false;
+			addError(new IllegalArgumentException("inputPort has to be a positive numeric value and the input port must exit."));
+		}
+		// check value of timeUnit
+		if (timeUnit == TimeUnit.NANOSECONDS || timeUnit == TimeUnit.MICROSECONDS) {
+			help = false;
+			addError(new IllegalArgumentException("timeUnit doesn't accept the values MICROSECONDS and NANOSECONDS."));
+		}
+		// check value of attribute
+		if (attribute != null) {
+			// every schema must contain this attribute
+			for (SDFSchema schema : inputSchemas.values()) {
+				if (schema.findAttribute(attribute) == null) {
+					// no attribute found
+					help = false;
+					addError(new IllegalArgumentException("the schema " + schema.getURIWithoutQualName()
+							+ " doesn't contain the attribute."));
+				}				
+			}
+		}
+		// check pattern constraints
+		List<PatternType> patternList = Arrays.asList(RELATIVE_N_HIGHEST, RELATIVE_N_LOWEST);
+		if (patternList.contains(type)) {
+			if (attribute == null || count == null || time == null || size == null) {
+				help = false;
+				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
+			}
+		}
+		patternList = Arrays.asList(ALWAYS, SOMETIMES);
+		if (patternList.contains(type)) {
+			if (time == null || size == null) {
+				help = false;
+				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
+			}
+		}
+		patternList = Arrays.asList(FIRST_N, LAST_N);
+		if (patternList.contains(type)) {
+			if (count == null || time == null || size == null) {
+				help = false;
+				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
+			}
+		}
+		patternList = Arrays.asList(INCREASING, DECREASING, STABLE,
+				NON_DECREASING, NON_INCREASING, NON_STABLE, MIXED);
+		if (patternList.contains(type)) {
+			if (attribute == null || time == null || size == null) {
+				help = false;
+				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
+			}
+		}
+		return help;
 	}
 
 }

@@ -281,7 +281,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 
 	@Override
 	public void process_punctuation_intern(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
+		inputStreamSyncArea.newElement(punctuation, port);
 	}
 
 	@Override
