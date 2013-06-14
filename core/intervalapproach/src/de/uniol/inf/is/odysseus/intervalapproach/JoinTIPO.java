@@ -182,7 +182,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 			// werden muss, man also ressourcen spart
 			return;
 		}
-		if (getLogger().isDebugEnabled()){
+		if (getLogger().isDebugEnabled()) {
 			if (!isOpen()) {
 				getLogger().error(
 						"process next called on non opened operator " + this
@@ -192,38 +192,36 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		int otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
+		Iterator<T> qualifies;
+		// Avoid removing elements while querying for potential hits
+		synchronized (this) {
 
-		if (inOrder) {
-			synchronized (this.areas[otherport]) {
+			if (inOrder) {
 				areas[otherport].purgeElements(object, order);
 			}
-		}
-		
-		synchronized (this) {
+
 			// status could change, if the other port was done and
 			// its sweeparea is now empty after purging
 			if (isDone()) {
 				propagateDone();
 				return;
 			}
-		}
-		Iterator<T> qualifies;
-		synchronized (this.areas) {
-			synchronized (this.areas[otherport]) {
-				qualifies = areas[otherport].queryCopy(object, order);
-			}
-			// Warum erst hier?
-			//transferFunction.newElement(object, port);
-			synchronized (areas[port]) {
-				areas[port].insert(object);
-			}
-		}
 
+			qualifies = areas[otherport].queryCopy(object, order);
+
+			// Warum erst hier?
+			// transferFunction.newElement(object, port);
+			areas[port].insert(object);
+		}
 		while (qualifies.hasNext()) {
 			T next = qualifies.next();
 			T newElement = dataMerge.merge(object, next, metadataMerge, order);
+			if (newElement.getMetadata() == null){
+				System.out.println("WHHOOOO");
+			}
 			transferFunction.transfer(newElement);
 		}
+
 	}
 
 	@Override
@@ -291,8 +289,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation,
-			int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		if (punctuation.isHeartbeat()) {
 			this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
 		}
@@ -354,7 +351,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the latest endtimestamp in both sweepareas.
 	 * 
@@ -363,10 +360,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	@SuppressWarnings("unchecked")
 	public PointInTime getLatestEndTimestamp() {
 		PointInTime max = null;
-		for(int i = 0; i < 2; i++) {
-			synchronized(this.areas[i]) {
-				PointInTime maxi = ((DefaultTISweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i]).getMaxEndTs();
-				if(max == null || maxi.after(max)) {
+		for (int i = 0; i < 2; i++) {
+			synchronized (this.areas[i]) {
+				PointInTime maxi = ((DefaultTISweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i])
+						.getMaxEndTs();
+				if (max == null || maxi.after(max)) {
 					max = maxi;
 				}
 			}
@@ -376,14 +374,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	@Override
 	public String toString() {
-		return super.toString()+" predicate: "+this.joinPredicate;
+		return super.toString() + " predicate: " + this.joinPredicate;
 	}
-	
+
 	@Override
 	public long getElementsStored1() {
 		return areas[0].size();
 	}
-	
+
 	@Override
 	public long getElementsStored2() {
 		return areas[1].size();
