@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 
 	@Override
 	protected T readLine(String line) {
-		String[] ret = line.split("" + delimiter);
+		String[] ret = line.split(Pattern.quote(""+delimiter));
 		if (trim) {
 			String[] trimmed = new String[ret.length];
 			for (int i = 0; i < ret.length; i++) {
