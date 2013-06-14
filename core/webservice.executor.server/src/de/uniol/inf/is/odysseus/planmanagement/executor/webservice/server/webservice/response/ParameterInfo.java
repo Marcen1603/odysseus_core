@@ -66,15 +66,15 @@ public class ParameterInfo {
 	public String getValue() {
 		return this.value;
 	}
-	
+
 	public boolean isDeprecated() {
-		return this.deprecated;
+		return deprecated;
 	}
-	
-	public void setDepracted(boolean deprecated) {
+
+	public void setDeprecated(boolean deprecated) {
 		this.deprecated = deprecated;
 	}
-	
+
 	public boolean isMandatory(){
 		return this.mandatory;
 	}

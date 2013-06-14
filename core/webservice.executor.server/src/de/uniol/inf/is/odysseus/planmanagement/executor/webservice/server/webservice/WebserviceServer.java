@@ -169,9 +169,7 @@ public class WebserviceServer {
 			@WebParam(name = "transformationconfig") String transCfg) {
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
-			IntegerCollectionResponse response = new IntegerCollectionResponse(
-					ExecutorServiceBinding.getExecutor().addQuery(query,
-							parser, user, transCfg), true);
+			IntegerCollectionResponse response = new IntegerCollectionResponse(ExecutorServiceBinding.getExecutor().addQuery(query,	parser, user, transCfg), true);
 			return response;
 		} catch (WebserviceException e) {
 			e.printStackTrace();
@@ -715,7 +713,7 @@ public class WebserviceServer {
 		ParameterInfo info = new ParameterInfo();
 		info.setName(parameter.getName());
 		info.setRequirement(ParameterInfo.REQUIREMENT.valueOf(parameter.getRequirement().name()));
-		info.setDepracted(parameter.isDeprecated());
+		info.setDeprecated(parameter.isDeprecated());
 		info.setMandatory(parameter.isMandatory());
 		info.setPossibleValues(parameter.getPossibleValues());
 		info.setDoc(parameter.getDoc());		
