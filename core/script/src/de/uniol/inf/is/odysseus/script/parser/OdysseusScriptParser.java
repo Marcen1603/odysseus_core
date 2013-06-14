@@ -663,9 +663,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					throw new QueryParseException(message, e, line, column);
 				}				
 				throw new QueryParseException(message, e);
-			}else{
-				throw new QueryParseException("Parsing Odysseus script failed with an unknown reason!", e);
 			}
+			throw new QueryParseException("Parsing Odysseus script failed with an unknown reason!", e);
 		}
 		return new ArrayList<ILogicalQuery>();
 	}
