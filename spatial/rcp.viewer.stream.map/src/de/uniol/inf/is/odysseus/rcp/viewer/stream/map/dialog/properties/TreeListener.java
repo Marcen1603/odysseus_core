@@ -127,7 +127,7 @@ public class TreeListener implements ISelectionChangedListener {
 		// New container, so we have the boxes above each other, not
 		// next to each other
 		Composite heatmapContainer = new Composite(container, SWT.NONE);
-		heatmapContainer.setLayout(new GridLayout(1, false));
+		heatmapContainer.setLayout(new GridLayout(2, false));
 		heatmapContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true, 1, 1));
 
@@ -379,8 +379,44 @@ public class TreeListener implements ISelectionChangedListener {
 		statisticsContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
 				true, true, 1, 1));
 		statisticsContainer.setText("Heatmap statistics");
-		statisticsContainer.setLayout(new GridLayout(2, false));
+		statisticsContainer.setLayout(new GridLayout(1, false));
 
+		// Maximal value
+		Label maxValueLabel = new Label(statisticsContainer, SWT.NONE);
+		maxValueLabel.setText("Maximal value of a tile: "
+				+ String.valueOf(heatmap.getMaxValue()));
+
+		// Minimal value
+		Label minValueLabel = new Label(statisticsContainer, SWT.NONE);
+		minValueLabel.setText("Minimal value of a tile: "
+				+ String.valueOf(heatmap.getMinValue()));
+
+		// Sum value
+		Label sumValueLabel = new Label(statisticsContainer, SWT.NONE);
+		sumValueLabel.setText("Sum of all values: "
+				+ String.valueOf(heatmap.getTotalValue()));
+
+		// Number of elements
+		Label numElementsLabel = new Label(statisticsContainer, SWT.NONE);
+		numElementsLabel.setText("Number of elements: "
+				+ String.valueOf(heatmap.getTotalNumberOfElements()));
+
+		// Average value
+		Label avgValueLabel = new Label(statisticsContainer, SWT.NONE);
+		avgValueLabel.setText("Average value of an element: "
+				+ String.valueOf(heatmap.getAverageValueOfElement()));
+
+		// Number of Tiles
+		Label numTilesLabel = new Label(statisticsContainer, SWT.NONE);
+		numTilesLabel.setText("Number of tiles: "
+				+ String.valueOf(heatmap.getNumberOfTiles()));
+
+		// Average sum of tile
+		Label avgTileValueLabel = new Label(statisticsContainer, SWT.NONE);
+		avgTileValueLabel.setText("Average sum of a tile: "
+				+ String.valueOf(heatmap.getAverageValueOfTile()));
+		
+		
 		// Give the OK-Button the possibility to set a new config
 		parentDialog.setLayerConfiguration(newConfig);
 		// Redraw the container

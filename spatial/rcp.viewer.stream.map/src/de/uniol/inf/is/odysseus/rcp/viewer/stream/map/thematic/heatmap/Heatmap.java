@@ -25,16 +25,21 @@ public class Heatmap extends RasterLayer {
 
 	
 	private static final long serialVersionUID = -4394403246757791617L;
-	ScreenManager screenManager;
-	HeatmapLayerConfiguration config;
-	Envelope heatMapArea;
-	
+	private ScreenManager screenManager;
+	private HeatmapLayerConfiguration config;
+	private Envelope heatMapArea;
+	private double minValue;
+	private double maxValue;
+	private int totalNumberOfElement;
+	private double totalValue;
 	private LayerUpdater layerUpdater;
 	
 	public Heatmap(HeatmapLayerConfiguration configuration, ScreenManager screenManager) {
 		super(configuration);
 		this.screenManager = screenManager;
 		this.config = configuration;
+		minValue = 0;
+		maxValue = 0;
 	}
 	
 	@Override
@@ -153,6 +158,8 @@ public class Heatmap extends RasterLayer {
 			heatMapArea.expandBy(20);
 		}
 		
+		totalNumberOfElement = data.size();
+		int tempTotalValue = 0;
 		for(Object dataSet : data) {
 			
 			// Get the data from the Tuple (Where it is and value)
@@ -190,15 +197,25 @@ public class Heatmap extends RasterLayer {
 
 				// Add the value to the sum of this tile in the heatmap
 				valueSum[posX][posY] += value;
-
+				// and to the total value
+				tempTotalValue += value;
+				
 				// Get the maximum and minimum sum
-				if (valueSum[posX][posY] > maxSum)
+				if (valueSum[posX][posY] > maxSum) {
 					maxSum = valueSum[posX][posY];
-				if (valueSum[posX][posY] < minSum)
+					this.maxValue = maxSum;
+				}
+					
+				if (valueSum[posX][posY] < minSum) {
 					minSum = valueSum[posX][posY];
+					this.minValue = minSum;
+				}
+					
 			}
 
 		}
+		
+		totalValue = tempTotalValue;
 		
 		// Fill the colors-array with
 		// the right color for the valueSum
@@ -276,6 +293,57 @@ public class Heatmap extends RasterLayer {
 		return config;
 	}
 	
+	/**
+	 * Returns the minimal value of all tiles
+	 * @return
+	 */
+	public double getMinValue() {
+		return minValue;
+	}
+
+	/**
+	 * Returns the maximal value of all tiles
+	 * @return
+	 */
+	public double getMaxValue() {
+		return maxValue;
+	}
+	
+	/**
+	 * Returns the sum of all values of points which are in the chosen area
+	 * @return
+	 */
+	public double getTotalValue() {
+		return totalValue;
+	}
+	
+	/**
+	 * Returns the total number of Elements (from the datastream) which are in the chosen area
+	 * @return
+	 */
+	public double getTotalNumberOfElements() {
+		return totalNumberOfElement;
+	}
+	
+	/**
+	 * Returns the average value of an element
+	 * @return
+	 */
+	public double getAverageValueOfElement() {
+		return totalValue / totalNumberOfElement;
+	}
+	
+	/**
+	 * Returns the average sum of an tile
+	 * @return
+	 */
+	public double getAverageValueOfTile() {
+		return totalValue / getNumberOfTiles();
+	}
+	
+	public double getNumberOfTiles() {
+		return config.getNumTilesHeight() * config.getNumTilesWidth();
+	}
 	/**
 	 * Sets the configuration for this layer
 	 * @param config
