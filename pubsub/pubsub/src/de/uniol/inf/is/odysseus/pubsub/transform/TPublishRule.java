@@ -1,14 +1,13 @@
 package de.uniol.inf.is.odysseus.pubsub.transform;
 
-import de.uniol.inf.is.odysseus.pubsub.logicaloperator.Subscribe;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.pubsub.logicaloperator.Publish;
+import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
-public class TPublishRule extends AbstractTransformationRule<Subscribe> {
+public class TPublishRule extends AbstractTransformationRule<Publish> {
 
 	@Override
 	public int getPriority() {
@@ -16,13 +15,13 @@ public class TPublishRule extends AbstractTransformationRule<Subscribe> {
 	}
 
 	@Override
-	public void execute(Subscribe subscribeAO, TransformationConfiguration config) {
-		defaultExecute(subscribeAO, new SubscribePO(subscribeAO.getPredicates()), config,
+	public void execute(Publish publish, TransformationConfiguration config) {
+		defaultExecute(publish, new PublishPO(), config,
 				true, true);
 	}
 
 	@Override
-	public boolean isExecutable(Subscribe operator,
+	public boolean isExecutable(Publish operator,
 			TransformationConfiguration transformConfig) {
 		return operator.isAllPhysicalInputSet();
 	}
@@ -38,8 +37,8 @@ public class TPublishRule extends AbstractTransformationRule<Subscribe> {
 	}
 
 	@Override
-	public Class<? super Subscribe> getConditionClass() {
-		return Subscribe.class;
+	public Class<? super Publish> getConditionClass() {
+		return Publish.class;
 	}
 
 }

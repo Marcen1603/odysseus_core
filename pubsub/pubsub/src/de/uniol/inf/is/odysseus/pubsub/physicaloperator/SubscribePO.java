@@ -31,8 +31,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T>{
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		// Broker b = getBroker("Broker 1");
-		// b.subscribe(predicates, this);
+		//BrokerService.subscribe("Broker_1", predicates, this);
 	}
 
 	@Override

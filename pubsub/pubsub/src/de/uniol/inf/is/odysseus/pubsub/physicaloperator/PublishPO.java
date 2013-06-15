@@ -10,8 +10,7 @@ public class PublishPO extends AbstractSink<IStreamObject<?>>{
 
 	@Override
 	protected void process_next(IStreamObject<?> object, int port) {
-		// Broker b = getBroker("Broker1");
-		// b.transfer;
+		// BrokerService.transfer(object);
 	}
 
 	@Override

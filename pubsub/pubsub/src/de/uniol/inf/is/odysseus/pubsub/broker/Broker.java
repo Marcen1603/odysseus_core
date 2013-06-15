@@ -1,7 +1,31 @@
 package de.uniol.inf.is.odysseus.pubsub.broker;
 
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
+
 public class Broker {
-	
-	// Hier soll die Brokerlogik enthalten sein. Der Broker soll als OSGi Service implementiert und von den 
-	// Publish und Subscribe Operatoren verwendet werden
+
+	private String name;
+
+	public Broker(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setSubscription(List<IPredicate<?>> predicates,
+			SubscribePO<?> subscriber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void removeSubscription(List<IPredicate<?>> predicates,
+			SubscribePO<?> subscriber) {
+		// TODO Auto-generated method stub
+		
+	}
 }
