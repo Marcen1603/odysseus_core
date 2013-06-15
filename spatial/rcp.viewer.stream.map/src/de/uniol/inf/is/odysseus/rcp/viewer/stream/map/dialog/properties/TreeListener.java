@@ -244,7 +244,7 @@ public class TreeListener implements ISelectionChangedListener {
 
 		// Transparency
 		Label transparencyLabel = new Label(settingsContainer, SWT.NONE);
-		transparencyLabel.setText("Transparency (0 = transparent): ");
+		transparencyLabel.setText("Opacity (0 = transparent): ");
 
 		Spinner transparencyInput = new Spinner(settingsContainer, SWT.NONE);
 		transparencyInput.setValues(newConfig.getAlpha(), 0, 255, 0, 1, 1);
@@ -291,7 +291,6 @@ public class TreeListener implements ISelectionChangedListener {
 		// Position of layer
 		Label autoPositionLabel = new Label(settingsContainer, SWT.NONE);
 		autoPositionLabel.setText("Automatic positioning: ");
-
 		Button autoPositionButton = new Button(settingsContainer, SWT.CHECK);
 		autoPositionButton.setEnabled(true);
 		autoPositionButton.setSelection(newConfig.isAutoPosition());
@@ -306,13 +305,75 @@ public class TreeListener implements ISelectionChangedListener {
 		});
 
 		// SouthWest
-		Label manPosSWLabel = new Label(settingsContainer, SWT.NONE);
-		manPosSWLabel.setText("Southwest: ");
+		// Latitude
+		Label manPosSWLatLabel = new Label(settingsContainer, SWT.NONE);
+		manPosSWLatLabel.setText("Southwest Latitude: ");
 
+		Spinner manPosSWLatInput = new Spinner(settingsContainer, SWT.NONE);
+		manPosSWLatInput.setValues((int) newConfig.getLatSW() * 1000, -90000,
+				90000, 3, 1000, 1000);
+		manPosSWLatInput.addSelectionListener(new SpinnerListener(newConfig,
+				manPosSWLatInput, this) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				heatmapLayerConfig.setLatSW(value);
+				treeListener.updateParentConfig(heatmapLayerConfig);
+			}
+		});
+		
+		// Longitude
+		Label manPosSWLngLabel = new Label(settingsContainer, SWT.NONE);
+		manPosSWLngLabel.setText("Southwest Longitude: ");
+
+		Spinner manPosSWLngInput = new Spinner(settingsContainer, SWT.NONE);
+		manPosSWLngInput.setValues((int) newConfig.getLngSW() * 1000, -180000,
+				180000, 3, 1000, 1000);
+		manPosSWLngInput.addSelectionListener(new SpinnerListener(newConfig,
+				manPosSWLngInput, this) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				heatmapLayerConfig.setLngSW(value);
+				treeListener.updateParentConfig(heatmapLayerConfig);
+			}
+		});
+		
 		// NorthEast
-		Label manPosNELabel = new Label(settingsContainer, SWT.NONE);
-		manPosNELabel.setText("Northeast: ");
+		// Latitude
+		Label manPosNELatLabel = new Label(settingsContainer, SWT.NONE);
+		manPosNELatLabel.setText("Northeast Latitude: ");
 
+		Spinner manPosNELatInput = new Spinner(settingsContainer, SWT.NONE);
+		manPosNELatInput.setValues((int) newConfig.getLatNE() * 1000, -90000,
+				90000, 3, 1000, 1000);
+		manPosNELatInput.addSelectionListener(new SpinnerListener(newConfig,
+				manPosNELatInput, this) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				heatmapLayerConfig.setLatNE(value);
+				treeListener.updateParentConfig(heatmapLayerConfig);
+			}
+		});
+		
+		// Longitude
+		Label manPosNELngLabel = new Label(settingsContainer, SWT.NONE);
+		manPosNELngLabel.setText("Northeast Longitude: ");
+
+		Spinner manPosNELngInput = new Spinner(settingsContainer, SWT.NONE);
+		manPosNELngInput.setValues((int) newConfig.getLngNE() * 1000, -180000,
+				180000, 3, 1000, 1000);
+		manPosNELngInput.addSelectionListener(new SpinnerListener(newConfig,
+				manPosNELngInput, this) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				heatmapLayerConfig.setLngNE(value);
+				treeListener.updateParentConfig(heatmapLayerConfig);
+			}
+		});
+		
 		// Show the statistics for this layer
 		Group statisticsContainer = new Group(heatmapContainer, SWT.NONE);
 		statisticsContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL,

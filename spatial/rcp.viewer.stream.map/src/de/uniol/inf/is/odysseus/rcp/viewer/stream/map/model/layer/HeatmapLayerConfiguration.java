@@ -22,6 +22,10 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	private boolean autoPosition;
 	private int numTilesWidth;
 	private int numTilesHeight;
+	private double latSW; // Latitude Southwest
+	private double lngSW;
+	private double latNE;
+	private double lngNE;
 	
 	public HeatmapLayerConfiguration(HeatmapLayerConfiguration toCopy) {
 		// TODO: Maybe better a full copy, but what is the envelope (coverageGeographic)
@@ -36,6 +40,10 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		setNumTilesHeight(toCopy.getNumTilesHeight());
 		setNumTilesWidth(toCopy.getNumTilesWidth());
 		setAutoPosition(toCopy.isAutoPosition());
+		setLatNE(toCopy.getLatNE());
+		setLngNE(toCopy.getLngNE());
+		setLatSW(toCopy.getLatSW());
+		setLngSW(toCopy.getLngSW());
 	}
 	
 	public HeatmapLayerConfiguration(RasterLayerConfiguration toCopy) {
@@ -51,6 +59,11 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		setNumTilesHeight(10);
 		setNumTilesWidth(10);
 		setAutoPosition(true);
+		// Round about ... Germany
+		setLatNE(54);
+		setLngNE(14);
+		setLatSW(47);
+		setLngSW(7);
 	}
 	
 	public HeatmapLayerConfiguration(String name) {
@@ -65,6 +78,11 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		setNumTilesHeight(10);
 		setNumTilesWidth(10);
 		setAutoPosition(true);
+		// Round about ... Germany
+		setLatNE(54);
+		setLngNE(14);
+		setLatSW(47);
+		setLngSW(7);
 	}	
 
 	public String getQuery() {
@@ -147,6 +165,70 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 
 	public void setAutoPosition(boolean autoPosition) {
 		this.autoPosition = autoPosition;
+	}
+	
+	/**
+	 * Returns the Latitude value for the southWest-Point
+	 * @return
+	 */
+	public double getLatSW() {
+		return latSW;
+	}
+
+	/**
+	 * Set the Latitude value for the southWest-Point
+	 * @param latSW
+	 */
+	public void setLatSW(double latSW) {
+		this.latSW = latSW;
+	}
+
+	/**
+	 * Returns the Longitude value for the southWest-Point
+	 * @return
+	 */
+	public double getLngSW() {
+		return lngSW;
+	}
+
+	/**
+	 * Set the Longitude value for the southWest-Point
+	 * @param lngSW
+	 */
+	public void setLngSW(double lngSW) {
+		this.lngSW = lngSW;
+	}
+
+	/**
+	 * Return the Latitude value for the northEast-Point
+	 * @return
+	 */
+	public double getLatNE() {
+		return latNE;
+	}
+
+	/**
+	 * Set the Latitude value for the northEast-Point
+	 * @return
+	 */
+	public void setLatNE(double latNE) {
+		this.latNE = latNE;
+	}
+
+	/**
+	 * Return the Longitude value for the northEast-Point
+	 * @return
+	 */
+	public double getLngNE() {
+		return lngNE;
+	}
+
+	/**
+	 * Set the Latitude value for the northEast-Point
+	 * @param lngNE
+	 */
+	public void setLngNE(double lngNE) {
+		this.lngNE = lngNE;
 	}
 
 }

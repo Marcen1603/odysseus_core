@@ -114,27 +114,37 @@ public class Heatmap extends RasterLayer {
 		// Create heatMapArea with the given tuples
 		// (We could let this out and give an area by the user, but
 		// this seems to be more user-friendly)
-		heatMapArea = new Envelope();
-		for (Object dataSet : data) {
-			
-			// Get the data from the Tuple (Where it is and value)
-			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
-			GeometryCollection geoColl = (GeometryCollection) tuple
-					.getAttribute(0);
-			Point point = geoColl.getCentroid();
+		ScreenTransformation transformation = screenManager
+				.getTransformation();
+		int srid = config.getSrid();
+		if (config.isAutoPosition()) {
+			// If the user wants the layer to be auto-positioned
+			heatMapArea = new Envelope();
+			for (Object dataSet : data) {
 
-			// Calculate, where this belongs in the heatmap
-			ScreenTransformation transformation = screenManager
-					.getTransformation();
-			int srid = config.getSrid();
-			int[] transformedPoint = transformation.transformCoord(
-					point.getCoordinate(), srid);
+				// Get the data from the Tuple (Where it is and value)
+				Tuple<?> tuple = ((DataSet) dataSet).getTuple();
+				GeometryCollection geoColl = (GeometryCollection) tuple
+						.getAttribute(0);
+				Point point = geoColl.getCentroid();
 
-			Envelope tempEnv = new Envelope(new Coordinate(transformedPoint[0],
-					transformedPoint[1]));
+				// Calculate, where this belongs in the heatmap				
+				
+				int[] transformedPoint = transformation.transformCoord(
+						point.getCoordinate(), srid);
 
-			// If this point is not in the heatMapArea -> expand heatMapArea
-			heatMapArea.expandToInclude(tempEnv);
+				Envelope tempEnv = new Envelope(new Coordinate(
+						transformedPoint[0], transformedPoint[1]));
+
+				// If this point is not in the heatMapArea -> expand heatMapArea
+				heatMapArea.expandToInclude(tempEnv);
+			}
+		} else {
+			// Position is set by the user	
+			// Transform the given area to the screen
+			int[] southWest = transformation.transformCoord(new Coordinate(config.getLngSW(), config.getLatSW()), srid); // SouthWest
+			int[] northEast =  transformation.transformCoord(new Coordinate(config.getLngNE(), config.getLatNE()), srid); // northEast
+			heatMapArea = new Envelope(southWest[0], northEast[0], southWest[1], northEast[1]);
 		}
 		
 		// If we have just one point -> Expand, so we can see something
@@ -157,34 +167,37 @@ public class Heatmap extends RasterLayer {
 				// Ok, not an int, then it's a double
 				value = (double) tuple.getAttribute(1);
 			}
-			
-			
+		
 			// Calculate, where this belongs in the heatmap
-			ScreenTransformation transformation = screenManager.getTransformation();
-			int srid = config.getSrid();		
 			int[] transformedPoint = transformation.transformCoord(point.getCoordinate(), srid);
 			
 			Envelope tempEnv = new Envelope(new Coordinate(transformedPoint[0], transformedPoint[1]));
 			
-			// If this point is not in the heatMapArea -> expand heatMapArea
-			heatMapArea.expandToInclude(tempEnv);
+			// If this point is not in the heatMapArea -> expand heatMapArea (should not happen if auto-positioning is on)
+			//heatMapArea.expandToInclude(tempEnv);
 			
-			 // +1 for the points which are exactly on the border
-			// or if we just have a point as area (just one tuple)
-			double partsWidth = (heatMapArea.getWidth() + 1) / x;
-			int posX = (int) ((tempEnv.getMaxX() - heatMapArea.getMinX()) / partsWidth);
-			
-			double partsHeight = (heatMapArea.getHeight() + 1) / y;
-			int posY = (int) ((tempEnv.getMaxY() - heatMapArea.getMinY()) / partsHeight);
-			
-			// Add the value to the sum of this tile in the heatmap			
-			valueSum[posX][posY] += value;
-			
-			// Get the maximum and minimum sum
-			if(valueSum[posX][posY] > maxSum)
-				maxSum = valueSum[posX][posY];
-			if(valueSum[posX][posY] < minSum)
-				minSum = valueSum[posX][posY];
+			if (heatMapArea.covers(tempEnv)) {
+				// Just calculate with this point if its in the area
+				// (maybe the area the user gave us does not include every point
+				// in the data)
+				// +1 for the points which are exactly on the border
+				// or if we just have a point as area (just one tuple)
+				double partsWidth = (heatMapArea.getWidth() + 1) / x;
+				int posX = (int) ((tempEnv.getMaxX() - heatMapArea.getMinX()) / partsWidth);
+
+				double partsHeight = (heatMapArea.getHeight() + 1) / y;
+				int posY = (int) ((tempEnv.getMaxY() - heatMapArea.getMinY()) / partsHeight);
+
+				// Add the value to the sum of this tile in the heatmap
+				valueSum[posX][posY] += value;
+
+				// Get the maximum and minimum sum
+				if (valueSum[posX][posY] > maxSum)
+					maxSum = valueSum[posX][posY];
+				if (valueSum[posX][posY] < minSum)
+					minSum = valueSum[posX][posY];
+			}
+
 		}
 		
 		// Fill the colors-array with
