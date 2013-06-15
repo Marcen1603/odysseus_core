@@ -41,5 +41,12 @@ Unless required by applicable law or agreed to in writing, software
       <import plugin="de.uniol.inf.is.odysseus.rcp.viewer" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views"/>
    </requires>
+   
+   <plugin
+         id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
