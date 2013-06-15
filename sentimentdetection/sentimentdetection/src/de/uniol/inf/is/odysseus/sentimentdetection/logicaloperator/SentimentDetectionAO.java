@@ -30,8 +30,7 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 	
 	@Override
 	public AbstractLogicalOperator clone() {
-		// TODO Auto-generated method stub
-		return null;
+	     return new SentimentDetectionAO(this);
 	}
 
 }
