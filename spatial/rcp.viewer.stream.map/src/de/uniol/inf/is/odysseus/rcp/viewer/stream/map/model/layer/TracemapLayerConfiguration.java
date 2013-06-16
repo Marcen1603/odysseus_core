@@ -20,6 +20,9 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	private HashMap<Integer, Color> colors;
 	private int numOfLineElements;
 	private boolean autoTransparency;
+	private boolean markEndpoint;
+	private int lineWidth;
+	private int geometricAttributePosition;
 	
 	public TracemapLayerConfiguration(String name) {
 		super(name);
@@ -27,6 +30,9 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 		colors = new HashMap<Integer, Color>();
 		numOfLineElements = 10;
 		autoTransparency = true;
+		lineWidth = 3;
+		geometricAttributePosition = 0;
+		markEndpoint = false;
 	}
 	
 	public TracemapLayerConfiguration(TracemapLayerConfiguration toCopy) {
@@ -36,6 +42,9 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 		setColors(toCopy.getColors());
 		setNumOfLineElements(toCopy.getNumOfLineElements());
 		setAutoTransparency(toCopy.isAutoTransparency());
+		setLineWidth(toCopy.getLineWidth());
+		setGeometricAttributePosition(toCopy.getGeometricAttributePosition());
+		setMarkEndpoint(toCopy.isMarkEndpoint());
 	}
 
 	public void setQuery(String query) {
@@ -96,5 +105,39 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 
 	public void setAutoTransparency(boolean autoTransparency) {
 		this.autoTransparency = autoTransparency;
+	}
+
+	public int getLineWidth() {
+		return lineWidth;
+	}
+
+	public void setLineWidth(int lineWidth) {
+		this.lineWidth = lineWidth;
+	}
+
+	public int getGeometricAttributePosition() {
+		return geometricAttributePosition;
+	}
+
+	public void setGeometricAttributePosition(int geometricAttributePosition) {
+		this.geometricAttributePosition = geometricAttributePosition;
+	}
+
+	/**
+	 * Decides, if a marker (circle) is drawn at the newest position of the line
+	 * 
+	 * @return
+	 */
+	public boolean isMarkEndpoint() {
+		return markEndpoint;
+	}
+
+	/**
+	 * Decides, if a marker (circle) is drawn at the newest position of the line
+	 * 
+	 * @param markEndpoint
+	 */
+	public void setMarkEndpoint(boolean markEndpoint) {
+		this.markEndpoint = markEndpoint;
 	}
 }

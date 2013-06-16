@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.properties;
 
+import java.util.HashMap;
+
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -19,7 +21,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
@@ -102,8 +103,8 @@ public class TreeListener implements ISelectionChangedListener {
 		tracemapContainer.setLayout(new GridLayout(1, false));
 		tracemapContainer.setLayoutData(new GridData(SWT.FILL,
 				SWT.FILL, true, true, 1, 1));
-
-		// Show the settings for the heatmap
+		
+		// Show the settings for the tracemap
 		Group settingsContainer = new Group(tracemapContainer, SWT.NONE);
 		settingsContainer.setLayoutData(new GridData(SWT.FILL,
 				SWT.FILL, true, true, 1, 1));
@@ -114,8 +115,56 @@ public class TreeListener implements ISelectionChangedListener {
 		Label geoAttrLabel = new Label(settingsContainer, SWT.NONE);
 		geoAttrLabel.setText("Position Geo-Attribute: ");
 
-		Text geoAttrInput = new Text(settingsContainer, SWT.BORDER);
-		geoAttrInput.setText("0");
+		Spinner geoAttrInput = new Spinner(settingsContainer, SWT.NONE);
+		geoAttrInput.setValues(newConfig.getGeometricAttributePosition(), 0,
+				255, 0, 1, 1);
+		geoAttrInput.addSelectionListener(new SpinnerListener(newConfig,
+				geoAttrInput, this) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TracemapLayerConfiguration tracemapLayerConfig = (TracemapLayerConfiguration) layerConfig;
+				tracemapLayerConfig.setGeometricAttributePosition((spinner
+						.getSelection()));
+				treeListener.updateParentConfig(tracemapLayerConfig);
+			}
+		});
+		
+		// Mark end of line
+		Label markEndIfLineLabel = new Label(settingsContainer, SWT.NONE);
+		markEndIfLineLabel.setText("Mark end of line: ");
+		
+		Button markEndIfLineButton = new Button(settingsContainer, SWT.CHECK);
+		markEndIfLineButton.setEnabled(true);
+		markEndIfLineButton.setSelection(newConfig.isMarkEndpoint());
+		markEndIfLineButton.addSelectionListener(new ButtonListener(
+				newConfig, this, markEndIfLineButton) {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) layerConfiguration;
+				tracemapLayerConfiguration
+						.setMarkEndpoint((correspondingButton.getSelection()));
+				treeListener.updateParentConfig(tracemapLayerConfiguration);
+			}
+		});
+		
+		// Width of lines
+		Label lineWidthLabel = new Label(settingsContainer, SWT.NONE);
+		lineWidthLabel.setText("Width of lines: ");
+
+		Spinner lineWidthInput = new Spinner(settingsContainer, SWT.NONE);
+		lineWidthInput.setValues(newConfig.getLineWidth(), 0,
+				255, 0, 1, 1);
+		lineWidthInput.addSelectionListener(new SpinnerListener(newConfig,
+				lineWidthInput, this) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TracemapLayerConfiguration tracemapLayerConfig = (TracemapLayerConfiguration) layerConfig;
+				tracemapLayerConfig.setLineWidth((spinner
+						.getSelection()));
+				treeListener.updateParentConfig(tracemapLayerConfig);
+			}
+		});
 		
 		// Automatic transparency
 		Label autoTransparencyLabel = new Label(settingsContainer, SWT.NONE);
@@ -138,7 +187,7 @@ public class TreeListener implements ISelectionChangedListener {
 		// Number of elements to show
 		Label numElements = new Label(settingsContainer, SWT.NONE);
 		numElements.setText("Number of elements to show (if no auto-transparency): ");
-
+		
 		Spinner numElementsInput = new Spinner(settingsContainer, SWT.NONE);
 		numElementsInput.setValues(newConfig.getNumOfLineElements(), 1,
 				Integer.MAX_VALUE, 0, 1, 1);
@@ -179,6 +228,26 @@ public class TreeListener implements ISelectionChangedListener {
 					key, this, colorView));
 		}
 		
+		// Show the statistics for the tracemap
+		Group statisticsContainer = new Group(tracemapContainer, SWT.NONE);
+		statisticsContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true, 1, 1));
+		statisticsContainer.setText("Tracemap statistics");
+		statisticsContainer.setLayout(new GridLayout(1, false));
+		
+		// Length of the traces
+		HashMap<Integer, Double> distances = tracemap.getAllLineDistances();
+		for(Integer key : distances.keySet()) {
+			Label lenTraceLabel = new Label(statisticsContainer, SWT.NONE);
+		lenTraceLabel.setText("Length of trace " + key + ": "
+				+ String.valueOf(distances.get(key) + " km"));		
+		}
+		
+//		// Speed of the trace
+//				Label speedTraceLabel = new Label(statisticsContainer, SWT.NONE);
+//				speedTraceLabel.setText("Speed of trace " + 1 + " (km/h): "
+//						+ String.valueOf(3));
+				
 		// Redraw the container
 		container.layout();
 	}
