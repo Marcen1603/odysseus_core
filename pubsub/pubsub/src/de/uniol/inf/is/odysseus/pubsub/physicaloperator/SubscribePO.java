@@ -6,7 +6,10 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.pubsub.broker.BrokerService;
+import de.uniol.inf.is.odysseus.pubsub.broker.IBroker;
 
 /**
  * 
@@ -16,22 +19,28 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  */
 public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T>{
 
-	private ArrayList<IPredicate<? super T>> predicates;
-
+	private List<IPredicate<? super T>> predicates;
+	private SDFSchema schema;
+	private String brokerName;
 	
-	public SubscribePO(List<IPredicate<? super T>> predicates)  {
+	public SubscribePO(List<IPredicate<? super T>> predicates, String brokername, SDFSchema schema)  {
         super();
         initPredicates(predicates);
+        this.brokerName = brokername;
+        this.schema = schema;
     }
 
 	public SubscribePO(SubscribePO<T> splitPO) {
 		super();
+		this.brokerName = splitPO.brokerName;
+		this.schema = splitPO.schema;
         initPredicates(splitPO.predicates);
     }
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		//BrokerService.subscribe("Broker_1", predicates, this);
+		IBroker<T> b = BrokerService.getBrokerByName(brokerName);
+		b.subscribe(predicates, this);
 	}
 
 	@Override

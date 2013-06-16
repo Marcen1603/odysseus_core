@@ -16,8 +16,8 @@ public class TSubscribeRule extends AbstractTransformationRule<Subscribe> {
 	}
 
 	@Override
-	public void execute(Subscribe subscribeAO, TransformationConfiguration config) {
-		defaultExecute(subscribeAO, new SubscribePO(subscribeAO.getPredicates()), config,
+	public void execute(Subscribe subscribe, TransformationConfiguration config) {
+		defaultExecute(subscribe, new SubscribePO(subscribe.getPredicates(), subscribe.getDefaultBroker(), subscribe.getSchema()), config,
 				true, true);
 	}
 

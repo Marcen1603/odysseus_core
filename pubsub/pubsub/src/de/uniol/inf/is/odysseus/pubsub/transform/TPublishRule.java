@@ -16,7 +16,7 @@ public class TPublishRule extends AbstractTransformationRule<Publish> {
 
 	@Override
 	public void execute(Publish publish, TransformationConfiguration config) {
-		defaultExecute(publish, new PublishPO(), config,
+		defaultExecute(publish, new PublishPO(publish.getDefaultBroker()), config,
 				true, true);
 	}
 

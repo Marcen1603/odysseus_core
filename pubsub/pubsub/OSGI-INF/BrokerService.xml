@@ -17,6 +17,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.pubsub.broker.BrokerService">
    <implementation class="de.uniol.inf.is.odysseus.pubsub.broker.BrokerService"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.pubsub.broker.IBrokerService"/>
+      <provide bind="registerBrokers" unbind="unregisterBrokers" cardinality="0..n" interface="de.uniol.inf.is.odysseus.pubsub.broker.IBroker"/>
    </service>
 </scr:component>
