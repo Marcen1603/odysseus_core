@@ -13,14 +13,14 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerCo
  *
  */
 
-public abstract class ColorListener extends SelectionAdapter{
+public abstract class HeatColorListener extends SelectionAdapter{
 
 	
 	HeatmapLayerConfiguration heatmapLayerConfiguration;
 	TreeListener treeListener;
 	Label correspondingLabel;
 	
-	public ColorListener(HeatmapLayerConfiguration heatmapLayerConfiguration, TreeListener treeListener, Label correspondingLabel) {
+	public HeatColorListener(HeatmapLayerConfiguration heatmapLayerConfiguration, TreeListener treeListener, Label correspondingLabel) {
 		this.heatmapLayerConfiguration = heatmapLayerConfiguration;
 		this.treeListener = treeListener;
 		this.correspondingLabel = correspondingLabel;

@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Tree;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap.TraceLayer;
 
@@ -47,38 +48,14 @@ public class TreeListener implements ISelectionChangedListener {
 					.getSelection();
 
 			if (selection.getFirstElement() instanceof Heatmap) {
+				// Show the settings for the heatmap
 				Heatmap heatmap = (Heatmap) selection.getFirstElement();
 				createHeatmapMenu(heatmap);
 
 			} else if (selection.getFirstElement() instanceof TraceLayer) {
 				// Show the settings for the tracemap
-
-				// Remove everything except the Tree on the left
-				removeContent(container);
-
-				// New container, so we have the boxes above each other, not
-				// next to each other
-				Composite tracemapContainer = new Composite(container, SWT.NONE);
-				tracemapContainer.setLayout(new GridLayout(1, false));
-				tracemapContainer.setLayoutData(new GridData(SWT.FILL,
-						SWT.FILL, true, true, 1, 1));
-
-				// Show the settings for the heatmap
-				Group settingsContainer = new Group(tracemapContainer, SWT.NONE);
-				settingsContainer.setLayoutData(new GridData(SWT.FILL,
-						SWT.FILL, true, true, 1, 1));
-				settingsContainer.setText("Heatmap settings");
-				settingsContainer.setLayout(new GridLayout(2, false));
-
-				// Position of geometry-Attribute
-				Label geoAttrLabel = new Label(settingsContainer, SWT.NONE);
-				geoAttrLabel.setText("Position Geo-Attribute: ");
-
-				Text geoAttrInput = new Text(settingsContainer, SWT.BORDER);
-				geoAttrInput.setText("0");
-
-				// Redraw the container
-				container.layout();
+				TraceLayer tracemap = (TraceLayer) selection.getFirstElement();
+				createTraceLayerpMenu(tracemap);				
 
 			} else {
 				// Show normal content - not for thematic maps
@@ -111,8 +88,99 @@ public class TreeListener implements ISelectionChangedListener {
 	 * 
 	 * @param config
 	 */
-	private void updateParentConfig(LayerConfiguration config) {
+	void updateParentConfig(LayerConfiguration config) {
 		parentDialog.setLayerConfiguration(config);
+	}
+	
+	private void createTraceLayerpMenu(TraceLayer tracemap) {
+		// Remove everything except the Tree on the left
+		removeContent(container);
+		TracemapLayerConfiguration newConfig = new TracemapLayerConfiguration(tracemap.getConfig());
+		
+		// New container
+		Composite tracemapContainer = new Composite(container, SWT.NONE);
+		tracemapContainer.setLayout(new GridLayout(1, false));
+		tracemapContainer.setLayoutData(new GridData(SWT.FILL,
+				SWT.FILL, true, true, 1, 1));
+
+		// Show the settings for the heatmap
+		Group settingsContainer = new Group(tracemapContainer, SWT.NONE);
+		settingsContainer.setLayoutData(new GridData(SWT.FILL,
+				SWT.FILL, true, true, 1, 1));
+		settingsContainer.setText("Tracemap settings");
+		settingsContainer.setLayout(new GridLayout(2, false));
+
+		// Position of geometry-Attribute
+		Label geoAttrLabel = new Label(settingsContainer, SWT.NONE);
+		geoAttrLabel.setText("Position Geo-Attribute: ");
+
+		Text geoAttrInput = new Text(settingsContainer, SWT.BORDER);
+		geoAttrInput.setText("0");
+		
+		// Automatic transparency
+		Label autoTransparencyLabel = new Label(settingsContainer, SWT.NONE);
+		autoTransparencyLabel.setText("Automatic transparency: ");
+		Button autoTransparencyButton = new Button(settingsContainer, SWT.CHECK);
+		autoTransparencyButton.setEnabled(true);
+		autoTransparencyButton.setSelection(newConfig.isAutoTransparency());
+		autoTransparencyButton.addSelectionListener(new ButtonListener(
+				newConfig, this, autoTransparencyButton) {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) layerConfiguration;
+				tracemapLayerConfiguration
+						.setAutoTransparency(correspondingButton.getSelection());
+				treeListener.updateParentConfig(tracemapLayerConfiguration);
+			}
+		});
+		
+		// Number of elements to show
+		Label numElements = new Label(settingsContainer, SWT.NONE);
+		numElements.setText("Number of elements to show (if no auto-transparency): ");
+
+		Spinner numElementsInput = new Spinner(settingsContainer, SWT.NONE);
+		numElementsInput.setValues(newConfig.getNumOfLineElements(), 1,
+				Integer.MAX_VALUE, 0, 1, 1);
+		numElementsInput.addSelectionListener(new SpinnerListener(newConfig,
+				numElementsInput, this) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TracemapLayerConfiguration tracemapLayerConfig = (TracemapLayerConfiguration) layerConfig;
+				tracemapLayerConfig.setNumOfLineElements(spinner.getSelection());
+				treeListener.updateParentConfig(tracemapLayerConfig);
+			}
+		});
+		
+		
+		// Color settings
+		// Show the chooser and a label with the selected color next to
+		// it
+		for (Integer key : newConfig.getColors().keySet()) {
+			Label colorLabel = new Label(settingsContainer, SWT.NONE);
+			colorLabel.setText("Choose color for id: " + key);
+
+			Composite colorContainer = new Composite(settingsContainer,
+					SWT.NONE);
+			colorContainer.setLayout(new GridLayout(2, false));
+			colorContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+					true, true, 1, 0));
+
+			Button colorButton = new Button(colorContainer, SWT.PUSH);
+			colorButton.setText("Change color ...");
+
+			Label colorView = new Label(colorContainer, SWT.NONE);
+			colorView.setText("      ");
+			colorView.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true,
+					true, 1, 1));
+			colorView.setBackground(newConfig.getColorForId(key));
+
+			colorButton.addSelectionListener(new TraceColorListener(newConfig,
+					key, this, colorView));
+		}
+		
+		// Redraw the container
+		container.layout();
 	}
 
 	private void createHeatmapMenu(Heatmap heatmap) {
@@ -124,8 +192,7 @@ public class TreeListener implements ISelectionChangedListener {
 		// Remove everything except the Tree on the left
 		removeContent(container);
 
-		// New container, so we have the boxes above each other, not
-		// next to each other
+		// New container
 		Composite heatmapContainer = new Composite(container, SWT.NONE);
 		heatmapContainer.setLayout(new GridLayout(2, false));
 		heatmapContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
@@ -149,6 +216,7 @@ public class TreeListener implements ISelectionChangedListener {
 				geoAttrInput, this) {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setGeometricAttributePosition((spinner
 						.getSelection()));
 				treeListener.updateParentConfig(heatmapLayerConfig);
@@ -175,7 +243,7 @@ public class TreeListener implements ISelectionChangedListener {
 				true, 1, 1));
 		minColorView.setBackground(newConfig.getMinColor());
 
-		colorMinButton.addSelectionListener(new ColorListener(newConfig, this,
+		colorMinButton.addSelectionListener(new HeatColorListener(newConfig, this,
 				minColorView) {
 			public void widgetSelected(SelectionEvent e) {
 				Shell s = new Shell(Display.getDefault());
@@ -218,7 +286,7 @@ public class TreeListener implements ISelectionChangedListener {
 				true, 1, 1));
 		maxColorView.setBackground(newConfig.getMaxColor());
 
-		colorMaxButton.addSelectionListener(new ColorListener(newConfig, this,
+		colorMaxButton.addSelectionListener(new HeatColorListener(newConfig, this,
 				maxColorView) {
 			public void widgetSelected(SelectionEvent e) {
 				Shell s = new Shell(Display.getDefault());
@@ -252,6 +320,7 @@ public class TreeListener implements ISelectionChangedListener {
 				transparencyInput, this) {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setAlpha(spinner.getSelection());
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
@@ -268,6 +337,7 @@ public class TreeListener implements ISelectionChangedListener {
 				numTilesWidthInput, this) {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setNumTilesWidth(spinner.getSelection());
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
@@ -283,6 +353,7 @@ public class TreeListener implements ISelectionChangedListener {
 				numTilesHeightInput, this) {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setNumTilesHeight(spinner.getSelection());
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
@@ -299,8 +370,10 @@ public class TreeListener implements ISelectionChangedListener {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
 				heatmapLayerConfiguration.setAutoPosition(correspondingButton
 						.getSelection());
+				treeListener.updateParentConfig(heatmapLayerConfiguration);
 			}
 		});
 
@@ -317,6 +390,7 @@ public class TreeListener implements ISelectionChangedListener {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLatSW(value);
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
@@ -334,6 +408,7 @@ public class TreeListener implements ISelectionChangedListener {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLngSW(value);
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
@@ -352,6 +427,7 @@ public class TreeListener implements ISelectionChangedListener {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLatNE(value);
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
@@ -369,6 +445,7 @@ public class TreeListener implements ISelectionChangedListener {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLngNE(value);
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}

@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.GroupLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LinemapLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
@@ -292,8 +292,8 @@ public class MapEditorModel extends ModelObject {
 	public void addLayer(LayerConfiguration layerConfiguration) {
 		layercount++;
 		ILayer layer = null;
-		if (layerConfiguration instanceof LinemapLayerConfiguration)
-			layer = addLayer((LinemapLayerConfiguration) layerConfiguration);
+		if (layerConfiguration instanceof TracemapLayerConfiguration)
+			layer = addLayer((TracemapLayerConfiguration) layerConfiguration);
 		else if (layerConfiguration instanceof HeatmapLayerConfiguration)
 			layer = addLayer((HeatmapLayerConfiguration) layerConfiguration);
 		else if (layerConfiguration instanceof RasterLayerConfiguration)
@@ -399,7 +399,7 @@ public class MapEditorModel extends ModelObject {
 	 * @param layerConfiguration
 	 * @return The layer
 	 */
-	private ILayer addLayer(LinemapLayerConfiguration layerConfiguration) {
+	private ILayer addLayer(TracemapLayerConfiguration layerConfiguration) {
 		ILayer layer = null;
 		if (screenManager != null) {
 			layer = new TraceLayer(layerConfiguration, screenManager);	

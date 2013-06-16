@@ -6,7 +6,7 @@ import org.eclipse.swt.events.SelectionEvent;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LinemapLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;
 
 public class ThematicSelectionListener extends SelectionAdapter{
 
@@ -42,9 +42,9 @@ public class ThematicSelectionListener extends SelectionAdapter{
 			propertyDialog.setLayerConfiguration(config);			
 		} else if(this.combobox.getText().equals("Linemap")) {
 			// User has selected the Linemap
-			if (!(this.config instanceof LinemapLayerConfiguration))
-				this.config = new LinemapLayerConfiguration("");
-			final LinemapLayerConfiguration linemapLayerConfiguration = (LinemapLayerConfiguration) this.config;
+			if (!(this.config instanceof TracemapLayerConfiguration))
+				this.config = new TracemapLayerConfiguration("");
+			final TracemapLayerConfiguration linemapLayerConfiguration = (TracemapLayerConfiguration) this.config;
 
 			linemapLayerConfiguration.setQuery(streamSelectionBox.getText());
 			this.config = linemapLayerConfiguration;

@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap.TraceLayer;
@@ -215,7 +216,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 					} catch (UnsupportedEncodingException | CoreException e) {
 						LOG.debug("Changing Map Porperties failed");
 						e.printStackTrace();
-					}					
+					}
 				} else {
 
 					IStructuredSelection selection = (IStructuredSelection) treeViewer
@@ -224,11 +225,17 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 						// OK-Options for the heatmap menu
 						Heatmap heatmap = (Heatmap) selection.getFirstElement();
 						// Should have been set in the TreeListener
-						if(layerConfiguration != null && layerConfiguration instanceof HeatmapLayerConfiguration)
-							heatmap.setConfiguration((HeatmapLayerConfiguration)layerConfiguration);
+						if (layerConfiguration != null
+								&& layerConfiguration instanceof HeatmapLayerConfiguration)
+							heatmap.setConfiguration((HeatmapLayerConfiguration) layerConfiguration);
 
 					} else if (selection.getFirstElement() instanceof TraceLayer) {
 						// OK-Options for the linemap menu
+						TraceLayer tracemap = (TraceLayer) selection
+								.getFirstElement();
+						if (layerConfiguration != null
+								&& layerConfiguration instanceof TracemapLayerConfiguration)
+							tracemap.setConfiguration((TracemapLayerConfiguration) layerConfiguration);
 
 					}
 				}

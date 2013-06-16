@@ -289,10 +289,6 @@ public class Heatmap extends RasterLayer {
 		this.layerUpdater = layerUpdater;
 	}
 	
-	public HeatmapLayerConfiguration getConfig() {
-		return config;
-	}
-	
 	/**
 	 * Returns the minimal value of all tiles
 	 * @return
@@ -344,6 +340,7 @@ public class Heatmap extends RasterLayer {
 	public double getNumberOfTiles() {
 		return config.getNumTilesHeight() * config.getNumTilesWidth();
 	}
+	
 	/**
 	 * Sets the configuration for this layer
 	 * @param config
@@ -352,4 +349,7 @@ public class Heatmap extends RasterLayer {
 		this.config = config;
 	}
 	
+	public HeatmapLayerConfiguration getConfig() {
+		return config;
+	}
 }

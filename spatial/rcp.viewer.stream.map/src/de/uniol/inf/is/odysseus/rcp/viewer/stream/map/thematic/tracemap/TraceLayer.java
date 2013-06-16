@@ -25,22 +25,20 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LinemapLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;
 
 public class TraceLayer extends RasterLayer {
 
 	private static final long serialVersionUID = -6639695562970893314L;
 	private LayerUpdater layerUpdater;
 	ScreenManager screenManager;
-	LinemapLayerConfiguration config;
-	HashMap<Integer, Color> colors;
+	TracemapLayerConfiguration config;
 
-	public TraceLayer(LinemapLayerConfiguration config,
+	public TraceLayer(TracemapLayerConfiguration config,
 			ScreenManager screenManager) {
 		super(config);
 		this.screenManager = screenManager;
 		this.config = config;
-		colors = new HashMap<Integer, Color>();
 	}
 
 	@Override
@@ -51,7 +49,7 @@ public class TraceLayer extends RasterLayer {
 			Set<Integer> keySet = linesToDraw.keySet();
 			for (Integer key : keySet) {
 				// Draw with the right color
-				drawLineString(linesToDraw.get(key), gc, colors.get(key));
+				drawLineString(linesToDraw.get(key), gc, config.getColorForId(key));
 			}
 		}
 	}
@@ -93,12 +91,12 @@ public class TraceLayer extends RasterLayer {
 			
 			// Add a new color for this line
 			// (Random)
-			if (colors.get(id) == null) {
+			if (config.getColorForId(id) == null) {
 				int r = (int) (Math.random() * (256));
 				int g = (int) (Math.random() * (256));
 				int b = (int) (Math.random() * (256));
-				colors.put(new Integer(id), new Color(Display.getDefault(), r,
-						g, b));
+				config.setColorForId(id, new Color(Display.getDefault(), r, g,
+						b));
 			}
 
 			// Put the coordinate into the right ArrayList
@@ -146,7 +144,15 @@ public class TraceLayer extends RasterLayer {
 		
 		// The line is drawn from
 		// new to old
-		int numberOfPoints = line.getCoordinates().length;
+		int numberOfPoints = 0;
+		if(config.isAutoTransparency()) {
+			numberOfPoints = line.getCoordinates().length;
+		} else {
+			// The lines which are in the order after the maximum number will
+			// be drawn full transparent
+			numberOfPoints = config.getNumOfLineElements();
+		}
+	    
 		int alphaStep = 255 / numberOfPoints;
 		int alpha = 255;
 
@@ -159,20 +165,22 @@ public class TraceLayer extends RasterLayer {
 			if (coordinate2 != null) {
 				coordinate1 = coordinate2.clone();
 			}				
-			coordinate2 = transformation.transformCoord(coord, line.getSRID());
-
-			// Transparency (newer lines should be better to see)
-			gc.setAlpha(alpha);
-			alpha -= alphaStep;
-			
-			// Max-value is 255 
-			// (should not get above this, this is just extra security)
-			if (alpha <= 0)
-				alpha = 0;
+			coordinate2 = transformation.transformCoord(coord, line.getSRID());			
 
 			if (coordinate1 != null) {
+				// We have more than one point
 				gc.drawLine(coordinate1[0], coordinate1[1], coordinate2[0],
 						coordinate2[1]);
+				
+				// Transparency (newer lines should be better to see)			
+				alpha -= alphaStep;
+				
+				// Max-value is 255 
+				// (should not get above this, this is just extra security)
+				if (alpha <= 0)
+					alpha = 0;
+				
+				gc.setAlpha(alpha);
 			}
 
 		}
@@ -185,5 +193,17 @@ public class TraceLayer extends RasterLayer {
 	@Override
 	public void setLayerUpdater(LayerUpdater layerUpdater) {
 		this.layerUpdater = layerUpdater;
+	}
+	
+	/**
+	 * Sets the configuration for this layer
+	 * @param config
+	 */
+	public void setConfiguration(TracemapLayerConfiguration config) {
+		this.config = config;
+	}
+	
+	public TracemapLayerConfiguration getConfig() {
+		return config;
 	}
 }

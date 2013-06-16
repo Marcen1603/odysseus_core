@@ -4,16 +4,16 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
 
 public abstract class ButtonListener extends SelectionAdapter{
 
-	HeatmapLayerConfiguration heatmapLayerConfiguration;
+	LayerConfiguration layerConfiguration;
 	TreeListener treeListener;
 	Button correspondingButton;
 	
-	public ButtonListener(HeatmapLayerConfiguration heatmapLayerConfiguration, TreeListener treeListener, Button correspondingButton) {
-		this.heatmapLayerConfiguration = heatmapLayerConfiguration;
+	public ButtonListener(LayerConfiguration layerConfiguration, TreeListener treeListener, Button correspondingButton) {
+		this.layerConfiguration = layerConfiguration;
 		this.treeListener = treeListener;
 		this.correspondingButton = correspondingButton;
 	}
