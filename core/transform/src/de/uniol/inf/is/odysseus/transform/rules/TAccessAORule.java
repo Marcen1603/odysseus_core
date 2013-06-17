@@ -113,6 +113,12 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 						"scheduler.delay")));
 			}
 		}
+		if (operator.getOptionsMap().containsKey("scheduler.yieldrate")) {
+			if (accessPO instanceof IIterableSource) {
+				((IIterableSource)accessPO).setYieldRate(Integer.parseInt(operator.getOptionsMap().get(
+						"scheduler.yieldrate")));
+			}
+		}		
 		defaultExecute(operator, accessPO, config, true, true);
 	}
 

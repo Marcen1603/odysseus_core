@@ -27,10 +27,12 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 
 	Logger logger = LoggerFactory.getLogger(SingleSourceExecutor.class);
 
-	private IIterableSource<?> s;
-	private long delay;
+	final private IIterableSource<?> s;
+	final private long delay;
+	final private int yieldRate;
+	private int yieldCounter = 0;
 
-	private SimpleThreadScheduler caller;
+	final private SimpleThreadScheduler caller;
 
 	private boolean interrupt;
 
@@ -40,8 +42,9 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 		this.s = s;
 		this.caller = singleThreadScheduler;
 		this.delay = s.getDelay();
+		this.yieldRate = s.getYieldRate();
 	}
-	
+
 	public IIterableSource<?> getSource() {
 		return s;
 	}
@@ -52,7 +55,8 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 		logger.debug("Adding Source. " + s + ".Waiting for open ...");
 		s.subscribe(this, POEventType.OpenDone);
 		synchronized (this) {
-			while (!interrupt && !s.isOpen() && !isInterrupted() && caller.isRunning()) {
+			while (!interrupt && !s.isOpen() && !isInterrupted()
+					&& caller.isRunning()) {
 				try {
 					this.wait(1000);
 				} catch (InterruptedException ignored) {
@@ -66,19 +70,29 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 		while (!interrupt && !isInterrupted() && s.isOpen() && !s.isDone()) {
 			if (s.hasNext()) {
 				long ct1 = -1;
-				if (delay > 0){
+				if (delay > 0) {
 					ct1 = System.currentTimeMillis();
 				}
 				s.transferNext();
-				if (delay > 0){
+				if (delay > 0) {
 					long ct2 = System.currentTimeMillis();
-					long diff = ct2-ct1;
+					long diff = ct2 - ct1;
 					try {
-						if (delay-diff > 0){
-							Thread.sleep(delay-diff);
+						if (delay - diff > 0) {
+							Thread.sleep(delay - diff);
 						}
 					} catch (InterruptedException e) {
 						// Exception can be ignored
+					}
+				}
+				if (yieldRate > 0) {
+					yieldCounter++;
+					if (yieldRate == yieldCounter) {
+						yieldCounter = 0;
+						try {
+							Thread.sleep(0);
+						} catch (InterruptedException e) {
+						}
 					}
 				}
 				Thread.yield();

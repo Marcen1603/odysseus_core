@@ -36,7 +36,7 @@ public interface IIterableSource<T> extends ISource<T> {
 	 * Scheduler should respect this value
 	 * 
 	 */
-	public void setDelay(long parseLong);
+	public void setDelay(long delay);
 	
 	/**
 	 * Get time in milliseconds to wait between two hasNext() calls
@@ -45,6 +45,18 @@ public interface IIterableSource<T> extends ISource<T> {
 	 */
 	public long getDelay();	
 
+	/**
+	 * Scheduler specific value, works only in pull based schedulers
+	 * @param yieldRate
+	 */
+	public void setYieldRate(int yieldRate);
+
+	/**
+	 * 
+	 * @returns the yieldrate (-1 == do not yield)
+	 */
+	int getYieldRate();
+	
 	/**
 	 * Call {@link #transfer(Object)} with the next element. May only be called
 	 * if a call to hasNext() returns true.
@@ -85,6 +97,7 @@ public interface IIterableSource<T> extends ISource<T> {
 	 * Release Lock
 	 */
 	public void unlock();
+
 	
 }
 
