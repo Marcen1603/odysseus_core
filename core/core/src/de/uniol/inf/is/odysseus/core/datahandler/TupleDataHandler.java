@@ -157,7 +157,9 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	@Override
 	public Tuple<?> readData(String string) {
-		throw new RuntimeException("Sorry. Currently not implemented");
+		String[] str = new String[1];
+		str[0] = string;
+		return readData(str);
 	}
 
 	/*
