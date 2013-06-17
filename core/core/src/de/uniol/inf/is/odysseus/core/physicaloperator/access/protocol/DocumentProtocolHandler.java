@@ -106,7 +106,7 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
             StringBuilder builder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
-                builder.append(line);
+                builder.append(line).append("\n");
             }
 
             if (debug) {
