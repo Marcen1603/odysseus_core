@@ -7,30 +7,30 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(name="Publish", minInputPorts=1, maxInputPorts=1, doc="Publish Operator")
-public class Publish extends UnaryLogicalOp{
+public class PublishAO extends UnaryLogicalOp{
 	
-	private String defaultBroker;
+	private String topologyType;
 	
-	public Publish(){
+	public PublishAO(){
 		super();
 	}
 	
-	public Publish(Publish publish){
+	public PublishAO(PublishAO publish){
 		super(publish);
 	}
 	
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new Publish(this);
+		return new PublishAO(this);
 	}
 	
-	@Parameter(type=StringParameter.class)
-	public void setDefaultBroker(String defaultBroker){
-		this.defaultBroker = defaultBroker;
+	@Parameter(name="topologyType", type=StringParameter.class)
+	public void setTopologyType(String topologyType){
+		this.topologyType = topologyType;
 	}
 	
-	public String getDefaultBroker(){
-		return defaultBroker;
+	public String getTopologyType(){
+		return topologyType;
 	}
 
 }

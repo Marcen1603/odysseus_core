@@ -1,27 +1,29 @@
 package de.uniol.inf.is.odysseus.pubsub.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.pubsub.logicaloperator.Publish;
+import de.uniol.inf.is.odysseus.pubsub.logicaloperator.PublishAO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TPublishRule extends AbstractTransformationRule<Publish> {
+
+public class TPublishAORule extends AbstractTransformationRule<PublishAO> {
 
 	@Override
 	public int getPriority() {
 		return 0;
 	}
 
+	@SuppressWarnings({ "rawtypes" })
 	@Override
-	public void execute(Publish publish, TransformationConfiguration config) {
-		defaultExecute(publish, new PublishPO(publish.getDefaultBroker()), config,
+	public void execute(PublishAO publish, TransformationConfiguration config) {
+		defaultExecute(publish, new PublishPO(publish.getTopologyType()), config,
 				true, true);
 	}
 
 	@Override
-	public boolean isExecutable(Publish operator,
+	public boolean isExecutable(PublishAO operator,
 			TransformationConfiguration transformConfig) {
 		return operator.isAllPhysicalInputSet();
 	}
@@ -37,8 +39,8 @@ public class TPublishRule extends AbstractTransformationRule<Publish> {
 	}
 
 	@Override
-	public Class<? super Publish> getConditionClass() {
-		return Publish.class;
+	public Class<? super PublishAO> getConditionClass() {
+		return PublishAO.class;
 	}
 
 }

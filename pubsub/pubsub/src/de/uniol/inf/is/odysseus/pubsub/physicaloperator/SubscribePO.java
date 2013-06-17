@@ -8,8 +8,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.pubsub.broker.BrokerService;
-import de.uniol.inf.is.odysseus.pubsub.broker.IBroker;
+import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
+import de.uniol.inf.is.odysseus.pubsub.broker.topology.IBrokerTopology;
 
 /**
  * 
@@ -22,25 +22,36 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T>{
 	private List<IPredicate<? super T>> predicates;
 	private SDFSchema schema;
 	private String brokerName;
+	private String topologyType;
 	
-	public SubscribePO(List<IPredicate<? super T>> predicates, String brokername, SDFSchema schema)  {
+	public SubscribePO(List<IPredicate<? super T>> predicates, String brokername, SDFSchema schema, String topologyType)  {
         super();
-        initPredicates(predicates);
         this.brokerName = brokername;
         this.schema = schema;
+        this.topologyType = topologyType;
+        initPredicates(predicates);
     }
 
 	public SubscribePO(SubscribePO<T> splitPO) {
 		super();
 		this.brokerName = splitPO.brokerName;
 		this.schema = splitPO.schema;
+		this.topologyType = splitPO.topologyType;
         initPredicates(splitPO.predicates);
     }
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		IBroker<T> b = BrokerService.getBrokerByName(brokerName);
-		b.subscribe(predicates, this);
+		@SuppressWarnings("unchecked")
+		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry.getTopologyByType(topologyType);
+		b.subscribe(predicates, null, brokerName); 
+	}
+	
+	@Override
+	protected void process_close() throws OpenFailedException {
+		@SuppressWarnings("unchecked")
+		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry.getTopologyByType(topologyType);
+		b.unsubscribe(predicates, null, brokerName); 
 	}
 
 	@Override

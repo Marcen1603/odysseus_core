@@ -11,8 +11,8 @@ public class RuleProvider implements ITransformRuleProvider {
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		ArrayList<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
-		rules.add(new TSubscribeRule());
-		rules.add(new TPublishRule());
+		rules.add(new TSubscribeAORule());
+		rules.add(new TPublishAORule());
 		return rules;
 	}
 }

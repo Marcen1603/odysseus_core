@@ -14,4 +14,9 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> implements IBro
 		return name;
 	}
 	
+	@Override
+	public boolean hasSubscriptions() {
+		return true;
+	}
+	
 }
