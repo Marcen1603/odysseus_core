@@ -235,12 +235,14 @@ public class TreeListener implements ISelectionChangedListener {
 		statisticsContainer.setText("Tracemap statistics");
 		statisticsContainer.setLayout(new GridLayout(1, false));
 		
-		// Length of the traces
+		// Length and speed of the traces
 		HashMap<Integer, Double> distances = tracemap.getAllLineDistances();
+		HashMap<Integer, Double> speeds = tracemap.getAllLineSpeeds();
+		
 		for(Integer key : distances.keySet()) {
 			Label lenTraceLabel = new Label(statisticsContainer, SWT.NONE);
 		lenTraceLabel.setText("Length of trace " + key + ": "
-				+ String.valueOf(distances.get(key) + " km"));		
+				+ String.valueOf(distances.get(key)) + " km (" + speeds.get(key) + " km/h)");		
 		}
 		
 		// Speed of the trace

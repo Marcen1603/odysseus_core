@@ -33,12 +33,14 @@ public class TraceLayer extends RasterLayer {
 	private LayerUpdater layerUpdater;
 	private ScreenManager screenManager;
 	private TracemapLayerConfiguration config;
+	private HashMap<Integer, PointInTime[]> timeHashMap;
 
 	public TraceLayer(TracemapLayerConfiguration config,
 			ScreenManager screenManager) {
 		super(config);
 		this.screenManager = screenManager;
 		this.config = config;
+		timeHashMap = new HashMap<Integer, PointInTime[]>();
 	}
 
 	@Override
@@ -118,8 +120,18 @@ public class TraceLayer extends RasterLayer {
 			// Get the next list of coordinates for new line
 			ArrayList<TraceElement> tempList = lineList.get(key);
 
-			// Sort the list (hopefully it works)
+			// Sort the list (TraceElement sorts by starttime)
 			Collections.sort(tempList);
+
+			// Get the first and the last starttimestamp
+			// To calculate the speed of a geo-object in a trace
+			PointInTime[] startEndTime = new PointInTime[2];
+			if (tempList.size() > 0) {
+				startEndTime[0] = tempList.get(0).getStartTime();
+				startEndTime[1] = tempList.get(tempList.size() - 1)
+						.getStartTime();
+			}
+			timeHashMap.put(key, startEndTime);
 
 			TraceElement[] lineElements = tempList.toArray(new TraceElement[1]);
 			Coordinate[] coordsForLineString = new Coordinate[lineElements.length];
@@ -135,7 +147,7 @@ public class TraceLayer extends RasterLayer {
 				lines.put(key, line);
 			}
 		}
-		
+
 		return lines;
 	}
 
@@ -177,10 +189,10 @@ public class TraceLayer extends RasterLayer {
 					coordinate2 = transformation.transformCoord(coord,
 							line.getSRID());
 					// Circle around should be red (red border)
-					gc.setForeground(new Color(Display.getDefault(), 255, 0, 0)); 
+					gc.setForeground(new Color(Display.getDefault(), 255, 0, 0));
 					// Background (for circle around)
 					gc.drawOval(coordinate2[0] - 2, coordinate2[1] - 2,
-							circleWidth + 4, circleWidth + 4); 
+							circleWidth + 4, circleWidth + 4);
 					gc.setForeground(color);
 					gc.drawOval(coordinate2[0], coordinate2[1], circleWidth,
 							circleWidth); // Foreground (Point)
@@ -210,7 +222,7 @@ public class TraceLayer extends RasterLayer {
 		gc.setAlpha(255);
 		gc.setLineWidth(originalLineWidth);
 	}
-	
+
 	/**
 	 * 
 	 * @return length in km
@@ -231,39 +243,65 @@ public class TraceLayer extends RasterLayer {
 
 		return d;
 	}
-	
+
 	/**
 	 * 
-	 * @param id of the LineString
+	 * @param id
+	 *            of the LineString
 	 * @return Distance of the lineString in km
 	 */
 	public double getDistanceOfLineString(LineString line) {
 		Coordinate tempCoord1 = null;
 		Coordinate tempCoord2 = null;
 		double distanceInKm = 0;
-		
-		for(Coordinate coord : line.getCoordinates()) {
-			if(tempCoord2 != null) {
+
+		for (Coordinate coord : line.getCoordinates()) {
+			if (tempCoord2 != null) {
 				tempCoord1 = (Coordinate) tempCoord2.clone();
 			}
 			tempCoord2 = coord;
-			if(tempCoord1 != null && tempCoord2 != null)
-				distanceInKm += getDistance(tempCoord1.y, tempCoord1.x, tempCoord2.y, tempCoord2.x);
+			if (tempCoord1 != null && tempCoord2 != null)
+				distanceInKm += getDistance(tempCoord1.y, tempCoord1.x,
+						tempCoord2.y, tempCoord2.x);
 		}
 		return distanceInKm;
 	}
-	
+
 	public HashMap<Integer, Double> getAllLineDistances() {
 		// Get all lines
 		HashMap<Integer, LineString> lines = getLines();
 		HashMap<Integer, Double> distances = new HashMap<Integer, Double>();
-		
+
 		// Calculate distance for each line
-		for(Integer key : lines.keySet()) {
+		for (Integer key : lines.keySet()) {
 			distances.put(key, getDistanceOfLineString(lines.get(key)));
 		}
-		
+
 		return distances;
+	}
+
+	/**
+	 * 
+	 * @return Speed of all geo-objects (traces)
+	 */
+	public HashMap<Integer, Double> getAllLineSpeeds() {
+		HashMap<Integer, Double> distances = getAllLineDistances();
+		HashMap<Integer, Double> speeds = new HashMap<Integer, Double>();
+		int msToHours = 1000 * 60 * 60;
+
+		// Calculate speed for every trace
+		for (Integer key : distances.keySet()) {
+			double distance = distances.get(key);
+			// We assume that the timestamps are in ms - so convert them to
+			// hours
+			long time1 = timeHashMap.get(key)[0].getMainPoint();
+			long time2 = timeHashMap.get(key)[1].getMainPoint();
+			double durationInHours = (double) (time1 - time2) / (double) msToHours;
+			double speed = distance / durationInHours;
+			speeds.put(key, speed);
+		}
+
+		return speeds;
 	}
 
 	@Override
