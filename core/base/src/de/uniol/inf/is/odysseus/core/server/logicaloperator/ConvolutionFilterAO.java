@@ -23,9 +23,9 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateOptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
@@ -133,7 +133,7 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 		return gauss;
 	}
 
-	@Parameter(name = "options", isList = true, type = CreateOptionParameter.class, optional = true)
+	@Parameter(name = "options", isList = true, type = OptionParameter.class, optional = true)
 	public void setOptions(List<Option> ops) {
 		for (Option option : ops) {
 			options.put(option.getName().toLowerCase(), Double.parseDouble(option.getValue()));

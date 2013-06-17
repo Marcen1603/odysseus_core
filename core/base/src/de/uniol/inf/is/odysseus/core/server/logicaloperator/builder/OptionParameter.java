@@ -19,15 +19,22 @@ public class OptionParameter extends AbstractParameter<Option> {
 		super();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void internalAssignment() {
-		Option option = new Option((String)((List<?>)inputValue).get(0),(String)((List<?>)inputValue).get(1));
-		setValue((Option)option);
+		List<String> list = (List<String>) inputValue;
+		if (list.size() != 2) {
+			throw new IllegalArgumentException("Wrong number of inputs for Option. Expecting name and value.");
+		}
+		Option option = new Option(list.get(0), list.get(1));
+		setValue(option);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected String getPQLStringInternal() {
-		return "['"+getValue().name+"','"+getValue()+"]";
+		List<String> list = (List<String>) inputValue;
+		return "['" + list.get(0) + "','" + list.get(1) + "']";
 	}
 
 }

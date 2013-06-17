@@ -70,7 +70,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	private final StringParameter transportHandler = new StringParameter("transport", REQUIREMENT.OPTIONAL);
 	private final StringParameter protocolHandler = new StringParameter("protocol", REQUIREMENT.OPTIONAL);
 	private final ListParameter<String> options = new ListParameter<String>("OPTIONS_OLD", REQUIREMENT.OPTIONAL, new StringParameter());
-	private final ListParameter<Option> options2 = new ListParameter<Option>("OPTIONS", REQUIREMENT.OPTIONAL, new CreateOptionParameter("OPTION", REQUIREMENT.MANDATORY));
+	private final ListParameter<Option> options2 = new ListParameter<Option>("OPTIONS", REQUIREMENT.OPTIONAL, new OptionParameter("OPTION", REQUIREMENT.MANDATORY));
 	private final ListParameter<String> inputSchema = new ListParameter<String>("INPUTSCHEMA", REQUIREMENT.OPTIONAL, new StringParameter());
 	private final StringParameter dateFormat = new StringParameter("dateFormat", REQUIREMENT.OPTIONAL);
 	private final ListParameter<SDFAttribute> outputschema = new ListParameter<SDFAttribute>("SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter("ATTRIBUTE", REQUIREMENT.MANDATORY));

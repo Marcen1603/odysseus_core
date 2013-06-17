@@ -53,7 +53,7 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 			REQUIREMENT.MANDATORY));
 
 	/** Options as key value map */
-	private final ListParameter<Option> options = new ListParameter<Option>("OPTIONS", REQUIREMENT.OPTIONAL, new CreateOptionParameter("OPTION", REQUIREMENT.MANDATORY));
+	private final ListParameter<Option> options = new ListParameter<Option>("OPTIONS", REQUIREMENT.OPTIONAL, new OptionParameter("OPTION", REQUIREMENT.MANDATORY));
 
 	/**
 	 * Default constructor for the operator builder
