@@ -243,7 +243,7 @@ public class TreeListener implements ISelectionChangedListener {
 				+ String.valueOf(distances.get(key) + " km"));		
 		}
 		
-//		// Speed of the trace
+		// Speed of the trace
 //				Label speedTraceLabel = new Label(statisticsContainer, SWT.NONE);
 //				speedTraceLabel.setText("Speed of trace " + 1 + " (km/h): "
 //						+ String.valueOf(3));
