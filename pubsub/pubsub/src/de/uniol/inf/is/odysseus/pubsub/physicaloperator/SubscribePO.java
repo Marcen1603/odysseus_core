@@ -44,14 +44,14 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T>{
 	protected void process_open() throws OpenFailedException {
 		@SuppressWarnings("unchecked")
 		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry.getTopologyByType(topologyType);
-		b.subscribe(predicates, null, brokerName); 
+		b.subscribe(predicates, this, brokerName); 
 	}
 	
 	@Override
 	protected void process_close() throws OpenFailedException {
 		@SuppressWarnings("unchecked")
 		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry.getTopologyByType(topologyType);
-		b.unsubscribe(predicates, null, brokerName); 
+		b.unsubscribe(predicates, this, brokerName); 
 	}
 
 	@Override
