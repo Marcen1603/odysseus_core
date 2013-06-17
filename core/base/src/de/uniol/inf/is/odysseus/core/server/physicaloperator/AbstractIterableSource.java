@@ -26,6 +26,7 @@ public abstract class AbstractIterableSource<T> extends AbstractSource<T>
 
 	private ReentrantLock lock = new ReentrantLock();
 	private long delay = 0;
+	private int yieldRate = 0;
 	
 	public AbstractIterableSource() {
 
@@ -53,5 +54,15 @@ public abstract class AbstractIterableSource<T> extends AbstractSource<T>
 	@Override
 	public long getDelay() {
 		return delay;
+	}
+	
+	@Override
+	public void setYieldRate(int yieldRate) {
+		this.yieldRate = yieldRate;
+	}
+	
+	@Override
+	public int getYieldRate() {
+		return yieldRate;
 	}
 }
