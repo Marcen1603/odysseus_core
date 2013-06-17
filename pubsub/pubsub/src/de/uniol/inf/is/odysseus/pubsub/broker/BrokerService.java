@@ -10,12 +10,12 @@ public class BrokerService<T extends IStreamObject<?>> {
 
 	static List<IBroker> brokers;
 	
-	public static void registerBrokers() {
+	public static void registerBrokers(IBroker broker) {
 		brokers = new ArrayList<IBroker>();
 		brokers.add(new SimpleBroker("Broker_0"));			
 	}
 	
-	public static void unregisterBrokers() {
+	public static void unregisterBrokers(IBroker broker) {
 		brokers.clear();
 	}
 	
