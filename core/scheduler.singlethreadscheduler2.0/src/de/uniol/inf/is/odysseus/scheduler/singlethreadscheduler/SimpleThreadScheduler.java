@@ -103,6 +103,7 @@ public class SimpleThreadScheduler extends AbstractScheduler implements
 					timeSlicePerStrategy, this, trainSize);
 			schedulingExecutor[i].setUncaughtExceptionHandler(this);
 			schedulingExecutor[i].setPriority(Thread.NORM_PRIORITY);
+			schedulingExecutor[i].setName("Scheduling Executor #"+i);
 		}
 	}
 
