@@ -20,7 +20,7 @@ public class TSentimentDetectionAORule extends
 	@Override
 	public void execute(SentimentDetectionAO sentimentDetectionAO,
 			TransformationConfiguration config) {
-		defaultExecute(sentimentDetectionAO, new SentimentDetectionPO(), config, true, true);
+		defaultExecute(sentimentDetectionAO, new SentimentDetectionPO(sentimentDetectionAO.getOutputType()), config, true, true);
 	}
 
 	@Override

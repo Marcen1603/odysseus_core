@@ -9,12 +9,22 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe<Tuple <T>,Tuple <T>> {
 	
 	private static int ctr = 0;
+	
+	private String outputtype;
 
 	public SentimentDetectionPO() {
+		super();
+	}
+	
+	
+	public SentimentDetectionPO(String outputtype) {
+		super();
+		this.outputtype = outputtype;
 	}
 
 	public SentimentDetectionPO(SentimentDetectionPO<T> senti) {
 		super(senti);
+		this.outputtype = senti.outputtype;
 	}
 
 	@Override
@@ -25,6 +35,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void process_next(Tuple object, int port) {
+		
+		System.out.println("Es wurde folgender OutputType gesetzt: "+outputtype);
 		//get inputSize of the object	
 		int inputSize = object.size();
 		

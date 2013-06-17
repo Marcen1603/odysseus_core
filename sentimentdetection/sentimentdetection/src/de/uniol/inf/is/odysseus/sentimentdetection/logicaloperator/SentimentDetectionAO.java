@@ -10,19 +10,25 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 
 
 @LogicalOperator(name="SENTIMENTDETECTION", minInputPorts=1, maxInputPorts=1)
 public class SentimentDetectionAO extends UnaryLogicalOp{
 
+	private String outputtype;
+	
 	
 	public SentimentDetectionAO(){
 		super();
+		
 	}
 	
 	public SentimentDetectionAO(SentimentDetectionAO sentimentDetectionAO){
         super(sentimentDetectionAO);
+        this.outputtype = sentimentDetectionAO.outputtype;
     }
 	
 
@@ -47,5 +53,16 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 		
 		return getOutputSchema();
 	}
+	
+	@Parameter(name="outputtype", type=StringParameter.class)
+	public void setOutputType(String outputtype){
+		this.outputtype = outputtype;
+	}
+	
+	public String getOutputType(){
+		return outputtype;
+	}
+	
+	
 
 }
