@@ -35,8 +35,6 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
     private int delayeach = 0;
     private long delayCounter = 0L;
 
-    protected boolean readFirstLine = true;
-    protected boolean firstLineSkipped = false;
     private long dumpEachDocument = -1;
     private long lastDocument = -1;
     protected long documentCounter = 0L;
