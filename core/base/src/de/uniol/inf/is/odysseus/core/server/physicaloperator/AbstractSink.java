@@ -64,7 +64,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	private Map<IOperatorOwner, String> uniqueIds = new TreeMap<>();
 
-	private volatile boolean allInputsDone = false;
+	private boolean allInputsDone = false;
 	final private OwnerHandler ownerHandler;
 	final private List<IOperatorOwner> openFor = new ArrayList<>();
 
