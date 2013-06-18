@@ -18,6 +18,7 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends AbstractBroke
 		brokerBus.add(new SimpleBroker<T>("Broker_0"));
 	}
 	
+	@Override
 	public String getName(){
 		return TOPOLOGY_NAME;
 	}

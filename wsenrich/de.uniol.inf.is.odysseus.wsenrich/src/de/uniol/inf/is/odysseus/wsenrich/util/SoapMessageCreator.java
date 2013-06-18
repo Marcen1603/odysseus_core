@@ -123,6 +123,7 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 	/**
 	 * @return the name of the operation
 	 */
+	@Override
 	public String getOperationName() {
 		
 		return this.operationName;
@@ -221,6 +222,7 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 	/**
 	 * @return the amount of all operations found in the wsdl-file
 	 */
+	@Override
 	public Operation[] getOperationsOfWsdl() {
 		
 		return wsdl.getAllOperations();
@@ -230,6 +232,7 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 	/**
 	 * @return the amount of all messages found in the wsdl-file
 	 */
+	@Override
 	public String[] getEndpointAdress() {
 		
 		return wsdl.getEndpoints();
@@ -238,6 +241,7 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 	/**
 	 * @return The generated Soap-Message
 	 */
+	@Override
 	public String getSoapMessage() {
 		return this.soapMessage;
 	}

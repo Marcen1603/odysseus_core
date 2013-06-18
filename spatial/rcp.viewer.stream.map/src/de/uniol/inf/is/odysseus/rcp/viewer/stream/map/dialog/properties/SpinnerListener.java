@@ -24,6 +24,7 @@ public abstract class SpinnerListener extends SelectionAdapter {
 		this.treeListener = treeListener;
 	}
 	
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		// To Override
 	}

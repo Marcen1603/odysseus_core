@@ -316,6 +316,7 @@ public class TreeListener implements ISelectionChangedListener {
 
 		colorMinButton.addSelectionListener(new HeatColorListener(newConfig, this,
 				minColorView) {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Shell s = new Shell(Display.getDefault());
 				ColorDialog cd = new ColorDialog(s);
@@ -359,6 +360,7 @@ public class TreeListener implements ISelectionChangedListener {
 
 		colorMaxButton.addSelectionListener(new HeatColorListener(newConfig, this,
 				maxColorView) {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Shell s = new Shell(Display.getDefault());
 				ColorDialog cd = new ColorDialog(s);

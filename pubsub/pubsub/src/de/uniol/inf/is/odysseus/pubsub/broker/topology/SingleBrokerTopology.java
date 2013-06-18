@@ -16,6 +16,7 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends AbstractBr
 		singleBroker = new SimpleBroker<T>("Broker_0");
 	}
 	
+	@Override
 	public String getName(){
 		return TOPOLOGY_NAME;
 	}

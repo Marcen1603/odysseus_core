@@ -19,5 +19,6 @@ public abstract class TextListener implements ModifyListener{
 		this.correspondingText = correspondingText;
 	}	
 	
+	@Override
 	abstract public void modifyText(ModifyEvent e);
 }

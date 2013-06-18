@@ -218,6 +218,7 @@ public class TimeSliderComposite extends Composite implements PropertyChangeList
 	@Override
 	public void propertyChange(final PropertyChangeEvent evt) {
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if ("maxInterval".equals(evt.getPropertyName())) {
 					ITimeInterval interval = ((ITimeInterval) evt.getNewValue());

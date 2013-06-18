@@ -27,6 +27,7 @@ public class TraceColorListener extends SelectionAdapter {
 		this.id = id;
 	}
 
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		Shell s = new Shell(Display.getDefault());
 		ColorDialog cd = new ColorDialog(s); 

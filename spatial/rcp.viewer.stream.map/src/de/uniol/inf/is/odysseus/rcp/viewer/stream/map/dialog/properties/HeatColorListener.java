@@ -26,5 +26,6 @@ public abstract class HeatColorListener extends SelectionAdapter{
 		this.correspondingLabel = correspondingLabel;
 	}	
 	
+	@Override
 	abstract public void widgetSelected(SelectionEvent e);
 }

@@ -10,6 +10,7 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> implements IBro
 		this.name = name;
 	}
 	
+	@Override
 	public String getName() {
 		return name;
 	}
