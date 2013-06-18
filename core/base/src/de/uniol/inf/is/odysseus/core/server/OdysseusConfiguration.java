@@ -143,7 +143,7 @@ public class OdysseusConfiguration {
 		props.setProperty("storedProceduresFilename", odysseusHome + "store/procedures.store");
 		props.setProperty("storedProceduresFromUserFilename", odysseusHome + "store/proceduresUser.store");
 		
-		props.setProperty("sessionTimeout", (240 * 60000) + ""); // Milliseconds
+		props.setProperty("sessionTimeout", (24 * 60 * 60000) + ""); // Milliseconds
 
 		// Scheduling
 		props.setProperty("debug_Scheduler", Boolean.FALSE.toString());

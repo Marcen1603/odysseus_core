@@ -173,7 +173,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 				// in a stream or view definition, the entity may not be defined before!
 				createEntity(uri, caller, type, identifier);
 			} else {
-				// in a query we either reuse the entity or it may new defined.
+				// in a query we either reuse the entity or it may be new defined.
 
 				// so, if there is already an entity defined, we remember us as new user for the entity
 				if (this.entityFromUser.containsKey(uri)) {
