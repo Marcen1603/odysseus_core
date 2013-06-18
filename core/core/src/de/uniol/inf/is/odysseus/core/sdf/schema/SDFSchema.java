@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,10 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	 * contains the names of all real sources
 	 */
 	private List<String> baseSourceNames = new ArrayList<String>();
-	
+
 	protected SDFSchema(String URI) {
 		super(URI);
-		if(!URI.equals("")) {
+		if (!URI.equals("")) {
 			baseSourceNames.add(URI);
 		}
 	}
@@ -49,29 +49,36 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	 */
 	public SDFSchema(String uri, SDFSchema attributes1) {
 		super(uri, attributes1);
-		if(attributes1.getBaseSourceNames() != null) {
-			if(attributes1.getBaseSourceNames().size() == 1 && attributes1.getBaseSourceNames().get(0).equals("")) {
-				baseSourceNames.add(uri);
+		if (attributes1 != null) {
+			if (attributes1.getBaseSourceNames() != null) {
+				if (attributes1.getBaseSourceNames().size() == 1
+						&& attributes1.getBaseSourceNames().get(0).equals("")) {
+					baseSourceNames.add(uri);
+				}
+				baseSourceNames.addAll(attributes1.getBaseSourceNames());
 			}
-			baseSourceNames.addAll(attributes1.getBaseSourceNames());
 		}
 	}
 
 	public SDFSchema(String uri, SDFAttribute attribute,
 			SDFAttribute... attributes1) {
 		super(uri);
-		elements.add(attribute);
-		for (SDFAttribute a : attributes1) {
-			elements.add(a);
+		if (attribute != null) {
+			elements.add(attribute);
 		}
-		if(!uri.equals("")) {
+		if (attributes1 != null) {
+			for (SDFAttribute a : attributes1) {
+				elements.add(a);
+			}
+		}
+		if (!uri.equals("")) {
 			baseSourceNames.add(uri);
 		}
 	}
 
 	public SDFSchema(String uri, Collection<SDFAttribute> attributes1) {
 		super(uri, attributes1);
-		if(!uri.equals("")) {
+		if (!uri.equals("")) {
 			baseSourceNames.add(uri);
 		}
 	}
@@ -90,7 +97,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	}
 
 	private void addBaseSourceNames(Collection<String> baseSourceNames) {
-		if(baseSourceNames != null) {
+		if (baseSourceNames != null) {
 			this.baseSourceNames.addAll(baseSourceNames);
 		}
 	}
@@ -126,8 +133,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			} else if (splitted.size() == 2) {
 				for (SDFAttribute a : elems) {
 					if (a.getAttributeName().equalsIgnoreCase(splitted.get(1))
-							&& (a.getSourceName() != null && a.getSourceName().equalsIgnoreCase(
-									splitted.get(0)))) {
+							&& (a.getSourceName() != null && a.getSourceName()
+									.equalsIgnoreCase(splitted.get(0)))) {
 						return a;
 					}
 				}
@@ -149,12 +156,11 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 						// Complex Types could be tuples or beans
 						if (a.getDatatype().isTuple()) {
 							return findAttribute(splitted, a.getDatatype()
-									.getSchema().getAttributes(),
-									position + 1);
+									.getSchema().getAttributes(), position + 1);
 						} else if (a.getDatatype().isBean()) {
 							return findAttribute(splitted, a.getDatatype()
-									.getSubType().getSchema()
-									.getAttributes(), position + 1);
+									.getSubType().getSchema().getAttributes(),
+									position + 1);
 						}
 				}
 			} else { // splitted.size()-position == 1
@@ -192,9 +198,9 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		}
 		String name = getNewName(attributes1, attributes2);
 		SDFSchema newSet = new SDFSchema(name, attributes1);
-		
+
 		newSet.addBaseSourceNames(attributes2.getBaseSourceNames());
-		
+
 		for (int i = 0; i < attributes2.size(); i++) {
 			if (!newSet.contains(attributes2.getAttribute(i))) {
 				newSet.elements.add(attributes2.getAttribute(i));
@@ -313,32 +319,33 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		}
 		return comp;
 	}
-	
+
 	/**
 	 * Removes the first occurrence of the attribute
-	 * @param attribute The attribute to remove
+	 * 
+	 * @param attribute
+	 *            The attribute to remove
 	 */
-	public static SDFSchema remove(SDFSchema schema, SDFAttribute attribute){
+	public static SDFSchema remove(SDFSchema schema, SDFAttribute attribute) {
 		Iterator<SDFAttribute> iter = schema.elements.iterator();
-		while(iter.hasNext()){
+		while (iter.hasNext()) {
 			SDFAttribute at = iter.next();
-			if(at.equals(attribute)){
+			if (at.equals(attribute)) {
 				iter.remove();
 				return schema;
 			}
 		}
 		return schema;
 	}
-	
-	public static SDFSchema changeSourceName(SDFSchema schema, String newName){
+
+	public static SDFSchema changeSourceName(SDFSchema schema, String newName) {
 		List<SDFAttribute> newattributeList = new ArrayList<SDFAttribute>();
-		for(SDFAttribute a : schema.getAttributes()){
-			newattributeList.add(new SDFAttribute(newName, a.getAttributeName(), a));
+		for (SDFAttribute a : schema.getAttributes()) {
+			newattributeList.add(new SDFAttribute(newName,
+					a.getAttributeName(), a));
 		}
 		SDFSchema newSchema = new SDFSchema(newName, newattributeList);
 		return newSchema;
 	}
-	
-
 
 }

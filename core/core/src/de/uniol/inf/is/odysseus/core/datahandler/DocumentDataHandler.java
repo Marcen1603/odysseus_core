@@ -25,7 +25,7 @@ public class DocumentDataHandler extends AbstractDataHandler<Document<?>> {
 	static {
 		types.add(SDFDatatype.DOCUMENT.getURI());
 	}
-	
+
 	@Override
 	public Document<?> readData(ByteBuffer buffer) {
 		return new Document<>(stringHandler.readData(buffer));
@@ -46,6 +46,13 @@ public class DocumentDataHandler extends AbstractDataHandler<Document<?>> {
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		stringHandler.writeData(buffer, ((Document<IMetaAttribute>)data).getContent());
+	}
+	
+	@SuppressWarnings("unchecked")
+
+	@Override
+	public void writeData(List<String> output, Object data) {
+		stringHandler.writeData(output, ((Document<IMetaAttribute>)data).getContent());
 	}
 
 	@SuppressWarnings("unchecked")

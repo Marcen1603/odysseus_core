@@ -23,8 +23,6 @@ import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.InputDataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.objecthandler.ObjectHandlerRegistry;
@@ -36,7 +34,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IToObjectInputStreamTransformer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IToStringArrayTransformer;
@@ -198,8 +195,12 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 			} else if (operator.getOutputSchema() != null) {
 				dataHandler = DataHandlerRegistry.getDataHandler(
 						operator.getDataHandler(), operator.getOutputSchema());
+			}else{
+				dataHandler = DataHandlerRegistry.getDataHandler(
+						operator.getDataHandler(), operator.getOutputSchema());
 			}
 		}
+		
 		return dataHandler;
 	}
 
