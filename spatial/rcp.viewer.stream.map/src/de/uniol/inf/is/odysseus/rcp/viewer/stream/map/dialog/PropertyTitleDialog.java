@@ -380,7 +380,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		final CCombo mapTypeSelect = new CCombo(thematicLayer, SWT.BORDER);
 		mapTypeSelect.setLayoutData(DialogUtils.getTextDataLayout());
 		mapTypeSelect.add("Heatmap");
-		mapTypeSelect.add("Linemap");
+		mapTypeSelect.add("Tracemap");
 		mapTypeSelect.select(0);
 		
 		// Choose the stream for the thematic map

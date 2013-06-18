@@ -191,10 +191,10 @@ public class TraceLayer extends RasterLayer {
 					// Circle around should be red (red border)
 					gc.setForeground(new Color(Display.getDefault(), 255, 0, 0));
 					// Background (for circle around)
-					gc.drawOval(coordinate2[0] - 2, coordinate2[1] - 2,
+					gc.drawOval(coordinate2[0] - 2 - (circleWidth / 2), coordinate2[1] - 2 - (circleWidth / 2),
 							circleWidth + 4, circleWidth + 4);
 					gc.setForeground(color);
-					gc.drawOval(coordinate2[0], coordinate2[1], circleWidth,
+					gc.drawOval(coordinate2[0] - (circleWidth / 2), coordinate2[1] - (circleWidth / 2), circleWidth,
 							circleWidth); // Foreground (Point)
 				}
 			}

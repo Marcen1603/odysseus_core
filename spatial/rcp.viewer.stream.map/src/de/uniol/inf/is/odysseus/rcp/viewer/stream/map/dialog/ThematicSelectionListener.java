@@ -40,7 +40,7 @@ public class ThematicSelectionListener extends SelectionAdapter{
 			this.config = heatmapLayerConfiguration;
 			
 			propertyDialog.setLayerConfiguration(config);			
-		} else if(this.combobox.getText().equals("Linemap")) {
+		} else if(this.combobox.getText().equals("Tracemap")) {
 			// User has selected the Linemap
 			if (!(this.config instanceof TracemapLayerConfiguration))
 				this.config = new TracemapLayerConfiguration("");
