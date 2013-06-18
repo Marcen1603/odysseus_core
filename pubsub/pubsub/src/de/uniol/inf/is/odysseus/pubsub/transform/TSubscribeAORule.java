@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
-
 public class TSubscribeAORule extends AbstractTransformationRule<SubscribeAO> {
 
 	@Override
@@ -17,9 +16,14 @@ public class TSubscribeAORule extends AbstractTransformationRule<SubscribeAO> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(SubscribeAO subscribe, TransformationConfiguration config) {
-		defaultExecute(subscribe, new SubscribePO(subscribe.getPredicates(), subscribe.getBrokerName(), subscribe.getSchema(), subscribe.getTopologyType()), config,
-				true, true);
+	public void execute(SubscribeAO subscribe,
+			TransformationConfiguration config) {
+		defaultExecute(
+				subscribe,
+				new SubscribePO(subscribe.getPredicates(), subscribe
+						.getBrokerName(), subscribe.getSchema(), subscribe
+						.getTopics(), subscribe.getDomain()), config, true,
+				true);
 	}
 
 	@Override

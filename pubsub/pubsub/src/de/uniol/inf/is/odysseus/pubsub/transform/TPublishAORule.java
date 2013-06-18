@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-
 public class TPublishAORule extends AbstractTransformationRule<PublishAO> {
 
 	@Override
@@ -15,11 +14,11 @@ public class TPublishAORule extends AbstractTransformationRule<PublishAO> {
 		return 0;
 	}
 
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(PublishAO publish, TransformationConfiguration config) {
-		defaultExecute(publish, new PublishPO(publish.getTopologyType()), config,
-				true, true);
+		defaultExecute(publish, new PublishPO(publish.getTopologyType(),
+				publish.getDomain(), publish.getTopics()), config, true, true);
 	}
 
 	@Override

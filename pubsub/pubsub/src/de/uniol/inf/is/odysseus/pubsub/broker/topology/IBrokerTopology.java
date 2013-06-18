@@ -11,7 +11,24 @@ import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
 public interface IBrokerTopology<T extends IStreamObject<?>> {
 	
-	String getName();
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	IBrokerTopology<?> getInstance(String name);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	String getType();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	String getDomain();
 	
 	/**
 	 * subscribes a Subscriber with given Filterpredicates on a given broker
@@ -44,7 +61,17 @@ public interface IBrokerTopology<T extends IStreamObject<?>> {
 	 */
 	List<IBroker<T>> getAdressedBrokers();
 
-	void advertise(List<Topic> predicates, PublishPO<T> publisher);
+	/**
+	 * 
+	 * @param topics
+	 * @param publisher
+	 */
+	void advertise(List<Topic> topics, PublishPO<T> publisher);
 
-	void unadvertise(List<Topic> predicates, PublishPO<T> publisher);
+	/**
+	 * 
+	 * @param topics
+	 * @param publisher
+	 */
+	void unadvertise(List<Topic> topics, PublishPO<T> publisher);
 }

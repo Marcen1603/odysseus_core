@@ -9,16 +9,21 @@ import de.uniol.inf.is.odysseus.pubsub.broker.SimpleBroker;
 
 public class SingleBrokerTopology<T extends IStreamObject<?>> extends AbstractBrokerTopology<T>{
 
-	private final String TOPOLOGY_NAME = "SingleBroker";
+	private final String TOPOLOGY_TYPE = "SingleBroker";
 	private IBroker<T> singleBroker;
 	
 	public SingleBrokerTopology(){
 		singleBroker = new SimpleBroker<T>("Broker_0");
 	}
 	
+	public SingleBrokerTopology(String domain){
+		singleBroker = new SimpleBroker<T>("Broker_0");
+		setDomain(domain);
+	}
+	
 	@Override
-	public String getName(){
-		return TOPOLOGY_NAME;
+	public String getType(){
+		return TOPOLOGY_TYPE;
 	}
 
 	@Override
@@ -33,6 +38,11 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends AbstractBr
 	IBroker<T> getBrokerByName(String name) {
 		// Single Broker architecture, ignore name
 		return singleBroker;
+	}
+
+	@Override
+	public IBrokerTopology<?> getInstance(String domain) {
+		return new SingleBrokerTopology<T>(domain);
 	}
 
 }

@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.pubsub.logicaloperator;
 
 
+import java.util.ArrayList;
 import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -9,16 +11,18 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(name="Subscribe", minInputPorts=1, maxInputPorts=1, doc="Subscribe Operator")
 public class SubscribeAO extends UnaryLogicalOp{
 
 	private SDFSchema schema;
+	private String source;
 	private String brokername;
-	private String topologyType;
+	private String domain;
+	private List<String> topics;
 	
 	public SubscribeAO(){
 		super();
@@ -27,19 +31,20 @@ public class SubscribeAO extends UnaryLogicalOp{
 	public SubscribeAO(SubscribeAO subscribeAO){
 		super(subscribeAO);
 		this.schema = subscribeAO.schema;
+		this.source = subscribeAO.source;
 		this.brokername = subscribeAO.brokername;
-		this.topologyType = subscribeAO.topologyType;
+		this.domain = subscribeAO.domain;
+		this.topics = new ArrayList<String>(subscribeAO.topics);
 	}
 	
-	@Override
-    @Parameter(name="predicates", type=PredicateParameter.class, isList=true)
-    public void setPredicates(List<IPredicate<?>> predicates) {
-        super.setPredicates(predicates);
-    }
-	
-	@Parameter(name="schema", type=ResolvedSDFAttributeParameter.class, isList=true)
+	@Parameter(name="schema", type=CreateSDFAttributeParameter.class, isList=true, doc="")
 	public void setSchema(List<SDFAttribute> sdfAttributes){
-		this.schema = new SDFSchema("bla", sdfAttributes);
+		this.schema = new SDFSchema(source, sdfAttributes);
+	}
+	
+	@Parameter(name="source", type=StringParameter.class)
+	public void setSource(String source){
+		this.source = source;
 	}
 	
 	@Parameter(name="brokername", type=StringParameter.class)
@@ -47,9 +52,28 @@ public class SubscribeAO extends UnaryLogicalOp{
 		this.brokername = brokerName;
 	}
 	
-	@Parameter(name="topologyType", type=StringParameter.class)
-	public void setTopologyType(String topologyType){
-		this.topologyType = topologyType;
+	@Parameter(name="domain", type=StringParameter.class, doc="")
+	public void setDomain(String domain){
+		this.domain = domain;
+	}
+	
+	@Override
+    @Parameter(name="predicates", type=PredicateParameter.class, isList=true, doc="")
+    public void setPredicates(List<IPredicate<?>> predicates) {
+        super.setPredicates(predicates);
+    }
+	
+	@Parameter(name="topics", type=StringParameter.class, isList=true, optional=true, doc="")
+	public void setTopics(List<String> topics){
+		this.topics = topics;
+	}
+	
+	public String getDomain(){
+		return domain;
+	}
+	
+	public List<String> getTopics(){
+		return topics;
 	}
 	
 	public SDFSchema getSchema(){
@@ -60,8 +84,8 @@ public class SubscribeAO extends UnaryLogicalOp{
 		return brokername;
 	}
 	
-	public String getTopologyType(){
-		return topologyType;
+	public String getSource(){
+		return source;
 	}
 	
 	

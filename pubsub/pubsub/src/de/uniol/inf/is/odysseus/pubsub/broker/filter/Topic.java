@@ -5,7 +5,8 @@ import java.util.List;
 public class Topic {
 	private List<Topic> childs;
 	private String name;
-
+	
+	
 	public List<Topic> getChilds() {
 		return childs;
 	}

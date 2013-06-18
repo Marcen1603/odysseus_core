@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.pubsub.broker.SimpleBroker;
 
 public class BusBrokerTopology<T extends IStreamObject<?>> extends AbstractBrokerTopology<T> {
 
-	private final String TOPOLOGY_NAME = "BusTopology";
+	private final String TOPOLOGY_TYPE = "BusTopology";
 	private List<IBroker<T>> brokerBus;
 	
 	public BusBrokerTopology(){
@@ -18,9 +18,16 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends AbstractBroke
 		brokerBus.add(new SimpleBroker<T>("Broker_0"));
 	}
 	
+	public BusBrokerTopology(String domain){
+		brokerBus = new ArrayList<IBroker<T>>();
+		// add first Broker to Bus
+		brokerBus.add(new SimpleBroker<T>("Broker_0"));
+		setDomain(domain);
+	}
+	
 	@Override
-	public String getName(){
-		return TOPOLOGY_NAME;
+	public String getType(){
+		return TOPOLOGY_TYPE;
 	}
 
 
@@ -50,6 +57,11 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends AbstractBroke
 		IBroker<T> newBroker = new SimpleBroker<T>(name);
 		brokerBus.add(newBroker);
 		return newBroker;
+	}
+
+	@Override
+	public IBrokerTopology<?> getInstance(String domain) {
+		return new BusBrokerTopology<T>(domain);
 	}
 
 }

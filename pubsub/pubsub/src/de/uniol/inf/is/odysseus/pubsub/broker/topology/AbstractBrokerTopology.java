@@ -12,7 +12,9 @@ import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 public abstract class AbstractBrokerTopology<T extends IStreamObject<?>> implements IBrokerTopology<T>{
 	
 	abstract IBroker<T> getBrokerByName(String name);
-
+	
+	private String domainName;
+	
 	@Override
 	public void subscribe(List<IPredicate<? super T>> predicates,
 			SubscribePO<T> subscriber, String brokerName) {
@@ -53,6 +55,15 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>> impleme
 		for (IBroker<T> broker : brokers) {
 			broker.removeAdvertisement(predicates, publisher);			
 		}
+	}
+	
+	
+	public String getDomain() {
+		return domainName;
+	}
+	
+	public void setDomain(String domain){
+		this.domainName = domain;
 	}
 	
 

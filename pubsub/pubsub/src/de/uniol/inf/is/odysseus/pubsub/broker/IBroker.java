@@ -35,19 +35,19 @@ public interface IBroker<T extends IStreamObject<?>> {
 	
 	/**
 	 * 
-	 * @param predicates
-	 * @param subscriber
+	 * @param topics
+	 * @param publisher
 	 */
-	void setAdvertisement(List<Topic> predicates,
-			PublishPO<T> subscriber);
+	void setAdvertisement(List<Topic> topics,
+			PublishPO<T> publisher);
 	
 	/**
 	 * 
-	 * @param predicates
-	 * @param subscriber
+	 * @param topics
+	 * @param publisher
 	 */
-	void removeAdvertisement(List<Topic> predicates,
-			PublishPO<T> subscriber);
+	void removeAdvertisement(List<Topic> topics,
+			PublishPO<T> publisher);
 	
 	/**
 	 * 
