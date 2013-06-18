@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.core.datahandler.DocumentHandler">
-   <implementation class="de.uniol.inf.is.odysseus.core.datahandler.DocumentHandler"/>
+   <implementation class="de.uniol.inf.is.odysseus.core.datahandler.DocumentDataHandler"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.datahandler.IDataHandler"/>
    </service>
