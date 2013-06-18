@@ -350,7 +350,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	public PointInTime getMaxTs() {
 		if (!this.getElements().isEmpty()) {
-			return this.getElements().get(getElements().size()).getMetadata().getStart();
+			return this.getElements().get(getElements().size()-1).getMetadata().getStart();
 		}
 		return null;
 	}
