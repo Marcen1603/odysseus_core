@@ -71,6 +71,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.BooleanResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ConnectionInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ConnectionInformationResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.CreateQueryResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.GraphNode;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.IntegerCollectionResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.OperatorBuilderInformation;
@@ -162,21 +163,22 @@ public class WebserviceServer {
 		return new Response(false);
 	}
 
-	public IntegerCollectionResponse addQuery(
+	public CreateQueryResponse addQuery(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "parser") String parser,
 			@WebParam(name = "query") String query,
 			@WebParam(name = "transformationconfig") String transCfg) {
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
-			IntegerCollectionResponse response = new IntegerCollectionResponse(ExecutorServiceBinding.getExecutor().addQuery(query,	parser, user, transCfg), true);
+			CreateQueryResponse response = new CreateQueryResponse(ExecutorServiceBinding.getExecutor().addQuery(query,	parser, user, transCfg), true, null);
 			return response;
 		} catch (WebserviceException e) {
 			e.printStackTrace();
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
+			return new CreateQueryResponse(null, false, e.getMessage());
 		}
-		return new IntegerCollectionResponse(null, false);
+		return new CreateQueryResponse(null, false, null);
 	}
 
 	public StringListResponse getInstalledSources(
