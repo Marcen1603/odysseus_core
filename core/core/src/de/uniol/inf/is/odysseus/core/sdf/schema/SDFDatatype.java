@@ -54,6 +54,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	 * predefined datatypes
 	 */
 	public static final SDFDatatype STRING = new SDFDatatype("String");
+	public static final SDFDatatype DOCUMENT = new SDFDatatype("Document");
 	public static final SDFDatatype LONG = new SDFDatatype("Long");
 	public static final SDFDatatype INTEGER = new SDFDatatype("Integer");
 	public static final SDFDatatype BYTE = new SDFDatatype("Byte");
@@ -215,6 +216,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			dd.addDatatype(SDFDatatype.BYTE);
 
 			dd.addDatatype(SDFDatatype.STRING);
+			dd.addDatatype(SDFDatatype.DOCUMENT);
 			dd.addDatatype(SDFDatatype.MV);
 			dd.addDatatype(SDFDatatype.TIMESTAMP);
 			dd.addDatatype(SDFDatatype.BOOLEAN);
