@@ -391,7 +391,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 
 		ILogicalOperator stream = dataDictionary.getStreamForTransformation(realSourceName, SessionManagementService.getActiveSession());
-		if (stream != null && stream instanceof TimestampAO) {
+		if (stream != null ) {
 			return exportStream(realSourceName, queryBuildConfigurationName, stream);
 		}
 
