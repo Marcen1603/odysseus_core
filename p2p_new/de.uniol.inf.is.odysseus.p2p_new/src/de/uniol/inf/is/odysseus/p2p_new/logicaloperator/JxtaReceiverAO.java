@@ -79,7 +79,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 
 	@Parameter(name="SCHEMA", type = CreateSDFAttributeParameter.class, isList=true,optional=false)
 	public void setSchema(List<SDFAttribute> outputSchema) {
-		assignedSchema = new SDFSchema(getName() != null ? getName() : "", outputSchema);
+		assignedSchema = new SDFSchema("", outputSchema);
 		addParameterInfo("SCHEMA", schemaToString(outputSchema));
 	}
 	

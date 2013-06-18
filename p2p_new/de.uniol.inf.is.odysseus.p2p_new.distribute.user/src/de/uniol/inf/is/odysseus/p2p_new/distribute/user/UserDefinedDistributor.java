@@ -278,7 +278,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 
 		final JxtaReceiverAO access = new JxtaReceiverAO();
 		access.setPipeID(pipeID.toString());
-		access.setOutputSchema(generateOutputSchema(ACCESS_NAME + connectionNumber, startOperator.getOutputSchema()));
+		access.setOutputSchema(generateOutputSchema(startOperator.getOutputSchema()));
 		access.setSchema(startOperator.getOutputSchema().getAttributes());
 		access.setName(ACCESS_NAME + connectionNumber );
 
@@ -299,12 +299,12 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		connectionNumber++;
 	}
 
-	private static SDFSchema generateOutputSchema(String basename, SDFSchema outputSchema) {
+	private static SDFSchema generateOutputSchema(SDFSchema outputSchema) {
 		List<SDFAttribute> attributes = Lists.newArrayList();
 		for( SDFAttribute attribute : outputSchema ) {
-			attributes.add(new SDFAttribute(basename, attribute.getAttributeName(), attribute));
+			attributes.add(new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName(), attribute));
 		}
-		return new SDFSchema(basename, attributes);
+		return new SDFSchema("", attributes);
 	}
 
 	private static ID generateSharedQueryID() {
