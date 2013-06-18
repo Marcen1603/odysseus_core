@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 public class SentimentDetectionAO extends UnaryLogicalOp{
 
 	private String outputtype;
+	private String classifier;
 	
 	
 	public SentimentDetectionAO(){
@@ -29,6 +30,7 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 	public SentimentDetectionAO(SentimentDetectionAO sentimentDetectionAO){
         super(sentimentDetectionAO);
         this.outputtype = sentimentDetectionAO.outputtype;
+        this.classifier = sentimentDetectionAO.classifier;
     }
 	
 
@@ -59,8 +61,18 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 		this.outputtype = outputtype;
 	}
 	
+	@Parameter(name="classifier", type=StringParameter.class)
+	public void setClassifier(String classifier){
+		this.classifier = classifier;
+	}
+	
+	
 	public String getOutputType(){
 		return outputtype;
+	}
+	
+	public String getClassifier(){
+		return classifier;
 	}
 	
 	

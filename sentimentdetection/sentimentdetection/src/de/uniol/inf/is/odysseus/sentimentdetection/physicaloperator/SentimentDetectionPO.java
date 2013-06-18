@@ -11,20 +11,22 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	private static int ctr = 0;
 	
 	private String outputtype;
+	private String classifier;
 
 	public SentimentDetectionPO() {
 		super();
 	}
 	
-	
-	public SentimentDetectionPO(String outputtype) {
+	public SentimentDetectionPO(String outputtype, String classifier) {
 		super();
 		this.outputtype = outputtype;
+		this.classifier = classifier;
 	}
 
 	public SentimentDetectionPO(SentimentDetectionPO<T> senti) {
 		super(senti);
 		this.outputtype = senti.outputtype;
+		this.classifier = senti.classifier;
 	}
 
 	@Override
@@ -36,7 +38,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	@SuppressWarnings("unchecked")
 	protected void process_next(Tuple object, int port) {
 		
-		System.out.println("Es wurde folgender OutputType gesetzt: "+outputtype);
+		System.out.println("Es wurde folgender OutputType gesetzt: "+ outputtype);
 		//get inputSize of the object	
 		int inputSize = object.size();
 		
@@ -48,6 +50,9 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	
 		//text positive or negative
 		String erg = detect(object.getAttribute(0).toString());
+	
+		//get OutputPort 
+		int outputPort = getOutPutPort(erg);
 		
 		//set the decision Attribute 
 		outputTuple.setAttribute(object.size(), erg);
@@ -61,10 +66,11 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 		ctr++;
 		//Test End
 		
-		//Transfer to the port 0
-		transfer(outputTuple,0);
+		transfer(outputTuple,outputPort);
+	
 	}
 
+	
 	@Override
 	public SentimentDetectionPO<T> clone() {
 		return new SentimentDetectionPO<T>(this);
@@ -76,17 +82,44 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	 */
 	private String detect(String inputText){
 		
-		System.out.println("Der Satz wird analysiert: " + inputText);
+    String erg = "";
+    
+		if(classifier.equals("naivebayes")){
+			
+			System.out.println("Der Satz wird analysiert: " + inputText);
+			
+			if(ctr % 2 == 0 ){
+				 erg = "positive";
+			}else{
+				 erg = "negative";
+			}
 		
-		String erg = "";
-		
-		if(ctr % 2 == 0 ){
-			 erg = "positive";
-		}else{
-			 erg = "negative";
 		}
 	
 		return erg;
+	}
+	
+	/*
+	 * Default port is 0
+	 * outputport is set to two 
+	 * transfer positive to port 0
+	 * transfer negative to port 1
+	 */
+	private int getOutPutPort(String erg){
+		
+		int outputPort = 0 ;
+		
+		if(outputtype.equals("two")){
+			if(erg.equals("positive")){
+				System.out.println("Ausgabe an Port 0:"+ outputtype);
+				outputPort = 0;
+			}else{
+				System.out.println("Ausgabe an Port 1:" + outputtype);
+				outputPort = 1;
+			}
+		}
+		
+		return outputPort;
 	}
 
 }
