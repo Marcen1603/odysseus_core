@@ -106,6 +106,8 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
             while ((line = reader.readLine()) != null) {
                 builder.append(line).append("\n");
             }
+            // remove last "\n"
+            String result = builder.subSequence(0, builder.length()-1).toString();
 
             if (debug) {
                 if (dumpEachDocument > 0) {
@@ -136,7 +138,7 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
                 }
                 documentCounter++;
             }
-            return getDataHandler().readData(builder.toString());
+            return getDataHandler().readData(result);
         } else {
             return null;
         }
