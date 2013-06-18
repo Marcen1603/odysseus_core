@@ -229,11 +229,17 @@ public class TreeListener implements ISelectionChangedListener {
 		}
 		
 		// Show the statistics for the tracemap
-		Group statisticsContainer = new Group(tracemapContainer, SWT.NONE);
+		final Group statisticsContainer = new Group(tracemapContainer, SWT.NONE);
 		statisticsContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true, 1, 1));
 		statisticsContainer.setText("Tracemap statistics");
 		statisticsContainer.setLayout(new GridLayout(1, false));
+		
+		// Update-Button (for the statistics)
+		// (has to be on top cause after click on update
+		// it will be on the top)
+		Button updateButton = new Button(statisticsContainer, SWT.PUSH);
+		updateButton.setText("Update statistics");
 		
 		// Length and speed of the traces
 		HashMap<Integer, Double> distances = tracemap.getAllLineDistances();
@@ -244,11 +250,34 @@ public class TreeListener implements ISelectionChangedListener {
 		lenTraceLabel.setText("Length of trace " + key + ": "
 				+ String.valueOf(distances.get(key)) + " km (" + speeds.get(key) + " km/h)");		
 		}
-		
-		// Speed of the trace
-//				Label speedTraceLabel = new Label(statisticsContainer, SWT.NONE);
-//				speedTraceLabel.setText("Speed of trace " + 1 + " (km/h): "
-//						+ String.valueOf(3));
+
+		updateButton.addSelectionListener(new UpdateButtonListener(tracemap) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TraceLayer tracemap = (TraceLayer) layer;
+				// Remove all statistics
+				for(Control control : statisticsContainer.getChildren()) {
+					if(!(control instanceof Button)) {
+						// But leave the updatebutton there
+						control.dispose();
+					}	
+				}
+				
+				// Add them again
+				// Length and speed of the traces
+				HashMap<Integer, Double> distances = tracemap.getAllLineDistances();
+				HashMap<Integer, Double> speeds = tracemap.getAllLineSpeeds();
+				
+				for (Integer key : distances.keySet()) {
+					Label lenTraceLabel = new Label(statisticsContainer,
+							SWT.NONE);
+					lenTraceLabel.setText("Length of trace " + key + ": "
+							+ String.valueOf(distances.get(key)) + " km ("
+							+ speeds.get(key) + " km/h)");
+					statisticsContainer.layout();
+				}
+			}
+		});
 				
 		// Redraw the container
 		container.layout();
@@ -532,43 +561,72 @@ public class TreeListener implements ISelectionChangedListener {
 		statisticsContainer.setLayout(new GridLayout(1, false));
 
 		// Maximal value
-		Label maxValueLabel = new Label(statisticsContainer, SWT.NONE);
+		final Label maxValueLabel = new Label(statisticsContainer, SWT.NONE);
 		maxValueLabel.setText("Maximal value of a tile: "
 				+ String.valueOf(heatmap.getMaxValue()));
 
 		// Minimal value
-		Label minValueLabel = new Label(statisticsContainer, SWT.NONE);
+		final Label minValueLabel = new Label(statisticsContainer, SWT.NONE);
 		minValueLabel.setText("Minimal value of a tile: "
 				+ String.valueOf(heatmap.getMinValue()));
 
 		// Sum value
-		Label sumValueLabel = new Label(statisticsContainer, SWT.NONE);
+		final Label sumValueLabel = new Label(statisticsContainer, SWT.NONE);
 		sumValueLabel.setText("Sum of all values: "
 				+ String.valueOf(heatmap.getTotalValue()));
 
 		// Number of elements
-		Label numElementsLabel = new Label(statisticsContainer, SWT.NONE);
+		final Label numElementsLabel = new Label(statisticsContainer, SWT.NONE);
 		numElementsLabel.setText("Number of elements: "
 				+ String.valueOf(heatmap.getTotalNumberOfElements()));
 
 		// Average value
-		Label avgValueLabel = new Label(statisticsContainer, SWT.NONE);
+		final Label avgValueLabel = new Label(statisticsContainer, SWT.NONE);
 		avgValueLabel.setText("Average value of an element: "
 				+ String.valueOf(heatmap.getAverageValueOfElement()));
 
 		// Number of Tiles
-		Label numTilesLabel = new Label(statisticsContainer, SWT.NONE);
+		final Label numTilesLabel = new Label(statisticsContainer, SWT.NONE);
 		numTilesLabel.setText("Number of tiles: "
 				+ String.valueOf(heatmap.getNumberOfTiles()));
 
 		// Average sum of tile
-		Label avgTileValueLabel = new Label(statisticsContainer, SWT.NONE);
+		final Label avgTileValueLabel = new Label(statisticsContainer, SWT.NONE);
 		avgTileValueLabel.setText("Average sum of a tile: "
 				+ String.valueOf(heatmap.getAverageValueOfTile()));
 		
+		// Update-Button
+		Button updateButton = new Button(statisticsContainer, SWT.PUSH);
+		updateButton.setText("Update statistics");
+
+		updateButton.addSelectionListener(new UpdateButtonListener(heatmap) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Heatmap heatmap = (Heatmap) layer;
+				maxValueLabel.setText("Maximal value of a tile: "
+				+ String.valueOf(heatmap.getMaxValue()));
+				
+				minValueLabel.setText("Minimal value of a tile: "
+						+ String.valueOf(heatmap.getMinValue()));
+				
+				sumValueLabel.setText("Sum of all values: "
+						+ String.valueOf(heatmap.getTotalValue()));
+				
+				numElementsLabel.setText("Number of elements: "
+						+ String.valueOf(heatmap.getTotalNumberOfElements()));
+				
+				avgValueLabel.setText("Average value of an element: "
+						+ String.valueOf(heatmap.getAverageValueOfElement()));
+				
+				numTilesLabel.setText("Number of tiles: "
+						+ String.valueOf(heatmap.getNumberOfTiles()));
+				
+				avgTileValueLabel.setText("Average sum of a tile: "
+						+ String.valueOf(heatmap.getAverageValueOfTile()));
+			}
+		});
+
 		
-		// Give the OK-Button the possibility to set a new config
-		parentDialog.setLayerConfiguration(newConfig);
 		// Redraw the container
 		container.layout();
 	}
