@@ -359,7 +359,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	}
 
 	@Override
-	final public void done(int port) {
+	final synchronized public void done(int port) {
 		process_done(port);
 		this.allInputsDone = true;
 		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
