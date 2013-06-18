@@ -264,7 +264,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator #setPOName (java.lang.String)
 	 */
 	@Override
-	@Parameter(name = "Name", type = StringParameter.class, optional = true)
+	@Parameter(name = "Name", type = StringParameter.class, optional = true, doc="Name of the operator (e.g. for visulization).")
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -320,7 +320,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	@Parameter(name = "Id", type = StringParameter.class, optional = true)
+	@Parameter(name = "Id", type = StringParameter.class, optional = true, doc="Systemwide unique id")
 	final public void setUniqueIdentifier(String id) {
 		this.uniqueIdentifier = id;
 	}
