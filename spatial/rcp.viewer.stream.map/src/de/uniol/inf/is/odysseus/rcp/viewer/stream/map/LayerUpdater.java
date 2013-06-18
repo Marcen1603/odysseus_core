@@ -53,6 +53,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements IStreamElementLis
 		if(!connection.isConnected()){
 			connection.connect();
 		}
+		
 	}
 
 	public IStreamConnection<Object> getConnection(){
