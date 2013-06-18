@@ -186,7 +186,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 	}
 
 	@Override
-	public void process_done(int port) {
+	public void process_done(int port) {		
 		if (isOpen()) {
 			if (out != null) {
 				LOG.debug("FileSinkPO finishing...");

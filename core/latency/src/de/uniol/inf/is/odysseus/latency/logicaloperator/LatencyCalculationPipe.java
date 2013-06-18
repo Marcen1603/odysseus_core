@@ -46,5 +46,4 @@ public class LatencyCalculationPipe<T extends IStreamObject<? extends ILatency>>
 	}
 
 
-
 }

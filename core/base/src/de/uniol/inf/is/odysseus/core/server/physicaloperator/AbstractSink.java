@@ -362,20 +362,24 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	final synchronized public void done(int port) {
 		process_done(port);
 		this.allInputsDone = true;
+		boolean doneset = false;
 		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (sub.getSinkInPort() == port) {
 				sub.setDone(true);
+				doneset = true;
 			}
 			if (!sub.isDone()) {
-				this.allInputsDone = false;
-				break;
+				this.allInputsDone = false;			
+				if(doneset){
+					break;
+				}
 			}
 		}
 		if (allInputsDone) {
 			for (IOperatorOwner owner : getOwner()) {
 				owner.done(this);
 			}
-		}
+		}	
 	}
 
 	final synchronized public boolean isDone() {
