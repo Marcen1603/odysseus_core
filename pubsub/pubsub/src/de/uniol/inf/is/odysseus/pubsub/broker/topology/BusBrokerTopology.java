@@ -51,4 +51,5 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends AbstractBroke
 		brokerBus.add(newBroker);
 		return newBroker;
 	}
+
 }

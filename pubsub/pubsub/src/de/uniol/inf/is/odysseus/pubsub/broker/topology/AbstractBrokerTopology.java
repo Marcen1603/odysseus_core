@@ -5,6 +5,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.IBroker;
+import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
@@ -26,19 +27,7 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>> impleme
 		broker.setSubscription(predicates, subscriber);	
 	}
 
-	@Override
-	public void advertise(List<IPredicate<? super T>> predicates,
-			PublishPO<T> publisher) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unadvertise(List<IPredicate<? super T>> predicates,
-			PublishPO<T> publisher) {
-		// TODO Auto-generated method stub
-		 
-	}
+	
 	
 	@Override
 	public void transfer(IStreamObject<?> object) {
@@ -47,5 +36,24 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>> impleme
 			broker.routeToSubscribers(object);			
 		}
 	}
+	
+	@Override
+	public void advertise(List<Topic> predicates,
+			PublishPO<T> publisher) {
+		List<IBroker<T>> brokers = getAdressedBrokers();
+		for (IBroker<T> broker : brokers) {
+			broker.setAdvertisement(predicates, publisher);			
+		}
+	}
+
+	@Override
+	public void unadvertise(List<Topic> predicates,
+			PublishPO<T> publisher) {
+		List<IBroker<T>> brokers = getAdressedBrokers();
+		for (IBroker<T> broker : brokers) {
+			broker.removeAdvertisement(predicates, publisher);			
+		}
+	}
+	
 
 }
