@@ -4,6 +4,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.wsenrich.exceptions.DatafieldNotFoundException;
 import de.uniol.inf.is.odysseus.wsenrich.logicaloperator.WSEnrichAO;
 
@@ -38,6 +39,13 @@ public class JsonKeyFinder implements IKeyFinder {
 	 * The value of the searched Element
 	 */
 	private Object value;
+	
+	public JsonKeyFinder() {
+		//Default-Constructor for the KeyFinderRegistry
+		this.parser = new JSONParser();
+		this.reader = new JsonContentHandler();
+	}
+	
 	
 	/**
 	 * Constructor for the JsonKeyFinder. It searched the given message
@@ -102,6 +110,16 @@ public class JsonKeyFinder implements IKeyFinder {
 			logger.error("Ecxception while parsing Json Document. Cause: {}", pe.getMessage());
 		}
 		return null;
+	}
+
+	@Override
+	public String getName() {
+		return "JSON";
+	}
+
+	@Override
+	public IKeyFinder createInstance() {
+		return new JsonKeyFinder();
 	}
 
 }

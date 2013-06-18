@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.wsenrich.util;
 
 import java.io.IOException;
+
 import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.ParseException;
 

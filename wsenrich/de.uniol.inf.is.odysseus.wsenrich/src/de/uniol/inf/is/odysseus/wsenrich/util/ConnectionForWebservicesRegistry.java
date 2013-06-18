@@ -2,8 +2,10 @@ package de.uniol.inf.is.odysseus.wsenrich.util;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableList;
 
 /* Note: Based on a copy of TransportHandlerRegistry */

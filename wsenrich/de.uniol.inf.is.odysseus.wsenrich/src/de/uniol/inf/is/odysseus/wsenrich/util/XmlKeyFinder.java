@@ -40,8 +40,12 @@ public class XmlKeyFinder implements IKeyFinder {
 	 */
 	private Object value;
 	
+	public XmlKeyFinder() {
+		//Needed for the KeyFinderRegistry
+	}
+	
 	/**
-	 * Constructor for the XmlKeyFinder. It searched the given message
+	 * Constructor for the XmlKeyFinder. It searches the given message
 	 * for the first occurence of the search and returns the value of
 	 * the element
 	 * @param message the xml message
@@ -79,7 +83,6 @@ public class XmlKeyFinder implements IKeyFinder {
 		this.message = new StringBuffer(message);
 	}
 	
-	
 	/**
 	 * Cuts the start of the message (if there´s content before data)
 	 * Example: If the message is a soap message, this method cuts all
@@ -110,6 +113,8 @@ public class XmlKeyFinder implements IKeyFinder {
 	@Override
 	public Object getValueOf(String search) throws DatafieldNotFoundException {
 		
+		cutStartofMessage();
+		cutEndofMessage();
 		if(!this.search.equals(search)) {
 			this.search = search;
 		}
@@ -126,6 +131,16 @@ public class XmlKeyFinder implements IKeyFinder {
 			
 		}
 		return value;
+	}
+
+	@Override
+	public String getName() {
+		return "XML";
+	}
+
+	@Override
+	public IKeyFinder createInstance() {
+		return new XmlKeyFinder();
 	}
 
 

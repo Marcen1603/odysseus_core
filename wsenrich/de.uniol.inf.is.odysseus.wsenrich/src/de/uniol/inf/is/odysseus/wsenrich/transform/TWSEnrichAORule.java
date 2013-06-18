@@ -10,6 +10,13 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.wsenrich.logicaloperator.WSEnrichAO;
 import de.uniol.inf.is.odysseus.wsenrich.physicaloperator.WSEnrichPO;
+import de.uniol.inf.is.odysseus.wsenrich.util.ConnectionForWebservicesRegistry;
+import de.uniol.inf.is.odysseus.wsenrich.util.HttpEntityToStringConverter;
+import de.uniol.inf.is.odysseus.wsenrich.util.IConnectionForWebservices;
+import de.uniol.inf.is.odysseus.wsenrich.util.IKeyFinder;
+import de.uniol.inf.is.odysseus.wsenrich.util.IRequestBuilder;
+import de.uniol.inf.is.odysseus.wsenrich.util.KeyFinderRegistry;
+import de.uniol.inf.is.odysseus.wsenrich.util.RequestBuilderRegistry;
 
 
 public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
@@ -25,14 +32,11 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = 
 				new RelationalMergeFunction<ITimeInterval>(logical.getOutputSchema().size());
 		
-		if(logical.getServiceMethod().equals("REST")) {
-			if(logical.getMethod().equals("GET")) {
-				//IConnectionForWebservices con = ConnectionForWebservicesRegistry.getInstance("GET");
-				//IRequestBuilder builder = RequstBuilderRegistry.getInstance("GET");
-				
-			}
+				IConnectionForWebservices connection = ConnectionForWebservicesRegistry.getInstance(logical.getMethod());
+				IRequestBuilder requestBuilder = RequestBuilderRegistry.getInstance(logical.getMethod());
+				HttpEntityToStringConverter converter = new HttpEntityToStringConverter(logical.getCharset());
+				IKeyFinder keyFinder = KeyFinderRegistry.getInstance(logical.getReturnType());
 			
-		}
 		
 		WSEnrichPO<ITimeInterval> physical = new WSEnrichPO<ITimeInterval>(
 			logical.getServiceMethod(),
@@ -44,11 +48,13 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 			logical.getReceivedData(),
 			logical.getCharset(),
 			logical.getReturnType(),
-			dataMergeFunction);
+			dataMergeFunction,
+			connection,
+			requestBuilder,
+			converter,
+			keyFinder);
 		
-		physical.setOutputSchema(logical.getOutputSchema());
-		replace(logical, physical, transformConfig);
-		retract(logical);
+		defaultExecute(logical, physical, transformConfig, true, true);
 	}
 
 	@Override

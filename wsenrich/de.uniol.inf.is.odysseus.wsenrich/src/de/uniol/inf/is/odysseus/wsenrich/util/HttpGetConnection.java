@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.wsenrich.util;
 
 import java.io.IOException;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;

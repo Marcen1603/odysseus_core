@@ -1,9 +1,12 @@
 package de.uniol.inf.is.odysseus.wsenrich.physicaloperator;
 
+import java.util.Arrays;
 import java.util.List;
 
-import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -12,6 +15,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.wsenrich.exceptions.DatafieldNotFoundException;
+import de.uniol.inf.is.odysseus.wsenrich.util.HttpEntityToStringConverter;
+import de.uniol.inf.is.odysseus.wsenrich.util.IConnectionForWebservices;
+import de.uniol.inf.is.odysseus.wsenrich.util.IKeyFinder;
+import de.uniol.inf.is.odysseus.wsenrich.util.IRequestBuilder;
 
 public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
 
@@ -27,10 +35,17 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final String returnType;
 	private final int[] parameterPositions;
 	private final IDataMergeFunction<Tuple<T>, T> dataMergeFunction;
+	private final IConnectionForWebservices connection;
+	private final IRequestBuilder requestBuilder;
+	private final HttpEntityToStringConverter converter;
+	private final IKeyFinder keyFinder;
+	static Logger logger = LoggerFactory.getLogger(WSEnrichPO.class);
 	
 	public WSEnrichPO(String serviceMethod, String method, String url, String urlsuffix,
 					List<Option> arguments, String operation, List<SDFAttribute> receivedData,
-					String charset, String returnType, IDataMergeFunction<Tuple<T>, T> dataMergeFunction) {
+					String charset, String returnType, IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
+					IConnectionForWebservices connection, IRequestBuilder requestBuilder, 
+					HttpEntityToStringConverter converter, IKeyFinder keyFinder) {
 						
 		super();
 		this.serviceMethod = serviceMethod;
@@ -44,6 +59,10 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.returnType = returnType;
 		this.parameterPositions = new int[arguments.size()];
 		this.dataMergeFunction = dataMergeFunction;
+		this.connection = connection;
+		this.requestBuilder = requestBuilder;
+		this.converter = converter;
+		this.keyFinder = keyFinder;
 						
 	}
 	
@@ -63,6 +82,10 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 				wsEnrichPO.parameterPositions,
 				wsEnrichPO.parameterPositions.length);
 		this.dataMergeFunction = wsEnrichPO.dataMergeFunction.clone();
+		this.connection = wsEnrichPO.connection;
+		this.requestBuilder = wsEnrichPO.requestBuilder;
+		this.converter = wsEnrichPO.converter;
+		this.keyFinder = wsEnrichPO.keyFinder;
 		
 	}
 	
@@ -73,10 +96,39 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@SuppressWarnings("unchecked")  //MetaData-Casts warnings
 	@Override
-	protected void process_next(Tuple<T> object, int port) {
-		// TODO Auto-generated method stub
+	protected void process_next(Tuple<T> inputTuple, int port) {
+
+	//	Object queryParameters = getQueryParameters(inputTuple);
 		
+		requestBuilder.setUrlPrefix(url);
+		requestBuilder.setUrlPrefix(urlsuffix);
+		requestBuilder.setArguments(arguments);
+		String uri = requestBuilder.getUri();
+		connection.setUri(uri);
+		//TODO: Dies muss noch überarbeitet werden!
+		connection.addHeader("Content-Type", "text/xml");
+		connection.addHeader("Content-Encoding", "UTF-8");
+		connection.connect();
+		converter.setInput(connection.retrieveBody());
+		connection.closeConnection();
+		converter.convert();
+		keyFinder.setMessage(converter.getOutput());
+		
+		for(int i = 0; i < receivedData.size(); i++) {
+			
+			keyFinder.setSearch(receivedData.get(i).getAttributeName());
+			
+			try {
+				
+				Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, (Tuple<T>) keyFinder.getValueOf(keyFinder.getSearch()), null, Order.LeftRight);
+				transfer(outputTuple);
+				
+			} catch (DatafieldNotFoundException e) {
+				logger.error(e.getMessage());	
+			}	
+		}
 	}
 	
 	@Override
@@ -139,8 +191,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		
 		return queryParameters;
 	}
-*/
-	
+
+	*/
 	/**
 	 * Compares all class attributes, that were present in the AO
 	 */

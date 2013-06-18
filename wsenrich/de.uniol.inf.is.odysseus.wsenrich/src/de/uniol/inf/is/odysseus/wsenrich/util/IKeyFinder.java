@@ -34,5 +34,15 @@ public interface IKeyFinder {
 	 * @throws DatafieldNotFoundException if the searched element ist not in the message
 	 */
 	public Object getValueOf(String search) throws DatafieldNotFoundException;
+	
+	/**
+	 * @return the name of the implementation of the IKeyFinder Interface
+	 */
+	public String getName();
+	
+	/**
+	 * Creates a instance of a class who implements this class
+	 */
+	public IKeyFinder createInstance();
 
 }

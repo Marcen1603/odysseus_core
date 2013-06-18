@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.wsenrich.logicaloperator;
 
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,10 +11,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 //TODO  libs checken!!!
@@ -137,23 +138,23 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	public boolean isValid() {
 
 		boolean valid = true;
-
-		if (!method.equals(GET_METHOD) || !method.equals(POST_METHOD)) {
+		
+		if (!method.toString().equals("GET_METHOD") || !method.toString().equals("POST_METHOD")) {
 			addError(new IllegalParameterException(
 					"Method must be \"GET\" or \"POST\""));
 			valid = false;
 		}
-		if (!serviceMethod.equals(SERVICE_METHOD_REST) || !serviceMethod.equals(SERVICE_METHOD_SOAP)) {
+		if (!serviceMethod.toString().equals("SERVICE_METHOD_REST") || !serviceMethod.toString().equals("SEVICE_METHOD_SOAP")) {
 			addError(new IllegalParameterException(
 					"The serviceMethod must be \"REST\" or \"SOAP\""));
 			valid = false;
 		}
-		if (serviceMethod.equals(SERVICE_METHOD_REST) && (!operation.equals("") || operation != null)) {
+		if ((operation != null && serviceMethod.toString().equals("SERVICE_METHOD_REST"))) {
 			addError(new IllegalParameterException(
 					"If you want to receive Data from a REST-Service you don�t have to define a operation!"));
 			valid = false;
 		}
-		if (serviceMethod.equals(SERVICE_METHOD_SOAP) && (operation.equals("") || operation == null)) {
+		if ((operation != null && serviceMethod.toString().equals("SERVICE_METHOD_SOAP"))) {
 			addError(new IllegalParameterException(
 					"If you want to receive Data from a SOAP-Servie you have to define a operation!"));
 			valid = false;
@@ -163,7 +164,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 					"You have to declare min 1 Datafield of the webservice for the Outputschema."));
 			valid = false;
 		}
-		if (!returnType.equals(RETURN_TYPE_XML) || returnType.equals(RETURN_TYPE_JSON)) {
+		if (!returnType.toString().equals("RETURN_TYPE_XML") || returnType.toString().equals("RETURN_TYPE_JSON")) {
 			addError(new IllegalParameterException(
 				"You have to declare the return type of the webservice-response. This can be JSON or XML."));
 			valid = false;
@@ -310,8 +311,8 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	public List<SDFAttribute> getReceivedData() {
 		return getOutputSchema().getAttributes();
 	}
-	
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "datafields")
+					
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "datafields", isList = true)
 	public void setReceivedData(List<SDFAttribute> receivedData) {
 		this.receivedData = receivedData;
 	}
