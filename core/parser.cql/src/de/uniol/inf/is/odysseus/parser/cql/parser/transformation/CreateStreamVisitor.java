@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryExcepti
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -151,7 +150,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			}
 		}
 
-		operator = addTimestampAO(operator);
+		// Is now done in Transformation Rule
+		//operator = addTimestampAO(operator);
 
 		try {
 			dd.setStream(name, operator, caller);
@@ -161,21 +161,21 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		return null;
 	}
 
-	private ILogicalOperator addTimestampAO(ILogicalOperator operator) {
-		TimestampAO timestampAO = new TimestampAO();
-		for (SDFAttribute attr : this.attributes) {
-			if (attr.getDatatype().equals(SDFDatatype.START_TIMESTAMP)) {
-				timestampAO.setStartTimestamp(attr);
-			}
-
-			if (attr.getDatatype().equals(SDFDatatype.END_TIMESTAMP)) {
-				timestampAO.setEndTimestamp(attr);
-			}
-		}
-
-		timestampAO.subscribeTo(operator, operator.getOutputSchema());
-		return timestampAO;
-	}
+//	private ILogicalOperator addTimestampAO(ILogicalOperator operator) {
+//		TimestampAO timestampAO = new TimestampAO();
+//		for (SDFAttribute attr : this.attributes) {
+//			if (attr.getDatatype().equals(SDFDatatype.START_TIMESTAMP)) {
+//				timestampAO.setStartTimestamp(attr);
+//			}
+//
+//			if (attr.getDatatype().equals(SDFDatatype.END_TIMESTAMP)) {
+//				timestampAO.setEndTimestamp(attr);
+//			}
+//		}
+//
+//		timestampAO.subscribeTo(operator, operator.getOutputSchema());
+//		return timestampAO;
+//	}
 
 	@Override
 	public Object visit(ASTAttributeDefinitions node, Object data) throws QueryParseException {
@@ -307,7 +307,9 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		source.setProtocolHandler("SizeByteBuffer");
 		source.setOutputSchema(new SDFSchema(name, this.attributes));
 		source.setName(name);
-		ILogicalOperator op = addTimestampAO(source);
+		// Is now done in Transformation Rule
+		//ILogicalOperator op = addTimestampAO(source);
+		ILogicalOperator op = source;
 		try {
 			dd.setStream(name, op, caller);			
 		} catch (DataDictionaryException e) {
@@ -336,7 +338,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 
 		source.setOutputSchema(new SDFSchema(name, this.attributes));
-		ILogicalOperator op = addTimestampAO(source);
+		//ILogicalOperator op = addTimestampAO(source);
+		ILogicalOperator op = source;
 		try {			
 			dd.setStream(name, op, caller);
 		} catch (DataDictionaryException e) {
@@ -387,7 +390,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
 		ILogicalOperator ao = (ILogicalOperator) invokeDatabaseVisitor(ASTCreateFromDatabase.class, node, name);
 		ao.setOutputSchema(new SDFSchema(name, attributes));
-		return addTimestampAO((ILogicalOperator) ao);
+		//return addTimestampAO((ILogicalOperator) ao);
+		return (ILogicalOperator)ao;
 	}
 
 	private Object invokeDatabaseVisitor(Class<?> nodeclass, Object node, Object data) throws QueryParseException {

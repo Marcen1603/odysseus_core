@@ -48,60 +48,89 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	private static final long serialVersionUID = 2682090172449918821L;
 
-	private final IntegerParameter port = new IntegerParameter("PORT", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
-	private final StringParameter type = new StringParameter("TYPE", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
-	private final StringParameter host = new StringParameter("HOST", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
-	private final StringParameter adapter = new StringParameter("ADAPTER", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
-	private final StringParameter input = new StringParameter("INPUT", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
-	private final StringParameter transformer = new StringParameter("transformer", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
+	private final IntegerParameter port = new IntegerParameter("PORT",
+			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
+	private final StringParameter type = new StringParameter("TYPE",
+			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
+	private final StringParameter host = new StringParameter("HOST",
+			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
+	private final StringParameter adapter = new StringParameter("ADAPTER",
+			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
+	private final StringParameter input = new StringParameter("INPUT",
+			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
+	private final StringParameter transformer = new StringParameter(
+			"transformer", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 
-	private final StringParameter inputDataHandler = new StringParameter("InputDataHandler", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
+	private final StringParameter inputDataHandler = new StringParameter(
+			"InputDataHandler", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 
-	private final StringParameter accessConnectionHandler = new StringParameter("AccessConnectionHandler", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
+	private final StringParameter accessConnectionHandler = new StringParameter(
+			"AccessConnectionHandler", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 
-	
-	private final StringParameter source = new StringParameter("source", REQUIREMENT.MANDATORY);
+	private final StringParameter source = new StringParameter("source",
+			REQUIREMENT.MANDATORY);
 	// TODO: These should be the only parameter in future
 	// Make mandatory
-	private final StringParameter wrapper = new StringParameter("WRAPPER", REQUIREMENT.OPTIONAL);
-	private final StringParameter dataHandler = new StringParameter("DATAHANDLER", REQUIREMENT.OPTIONAL);
-	private final StringParameter objectHandler = new StringParameter("OBJECTHANDLER", REQUIREMENT.OPTIONAL);
+	private final StringParameter wrapper = new StringParameter("WRAPPER",
+			REQUIREMENT.OPTIONAL);
+	private final StringParameter dataHandler = new StringParameter(
+			"DATAHANDLER", REQUIREMENT.OPTIONAL);
+	private final StringParameter objectHandler = new StringParameter(
+			"OBJECTHANDLER", REQUIREMENT.OPTIONAL);
 
-	private final StringParameter transportHandler = new StringParameter("transport", REQUIREMENT.OPTIONAL);
-	private final StringParameter protocolHandler = new StringParameter("protocol", REQUIREMENT.OPTIONAL);
-	private final ListParameter<String> options = new ListParameter<String>("OPTIONS_OLD", REQUIREMENT.OPTIONAL, new StringParameter());
-	private final ListParameter<Option> options2 = new ListParameter<Option>("OPTIONS", REQUIREMENT.OPTIONAL, new OptionParameter("OPTION", REQUIREMENT.MANDATORY));
-	private final ListParameter<String> inputSchema = new ListParameter<String>("INPUTSCHEMA", REQUIREMENT.OPTIONAL, new StringParameter());
-	private final StringParameter dateFormat = new StringParameter("dateFormat", REQUIREMENT.OPTIONAL);
-	private final ListParameter<SDFAttribute> outputschema = new ListParameter<SDFAttribute>("SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter("ATTRIBUTE", REQUIREMENT.MANDATORY));
+	private final StringParameter transportHandler = new StringParameter(
+			"transport", REQUIREMENT.OPTIONAL);
+	private final StringParameter protocolHandler = new StringParameter(
+			"protocol", REQUIREMENT.OPTIONAL);
+	private final ListParameter<String> options = new ListParameter<String>(
+			"OPTIONS_OLD", REQUIREMENT.OPTIONAL, new StringParameter());
+	private final ListParameter<Option> options2 = new ListParameter<Option>(
+			"OPTIONS", REQUIREMENT.OPTIONAL, new OptionParameter("OPTION",
+					REQUIREMENT.MANDATORY));
+	private final ListParameter<String> inputSchema = new ListParameter<String>(
+			"INPUTSCHEMA", REQUIREMENT.OPTIONAL, new StringParameter());
+	private final StringParameter dateFormat = new StringParameter(
+			"dateFormat", REQUIREMENT.OPTIONAL);
+	private final ListParameter<SDFAttribute> outputschema = new ListParameter<SDFAttribute>(
+			"SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter(
+					"ATTRIBUTE", REQUIREMENT.MANDATORY));
 
 	public AccessAOBuilder() {
 		super("ACCESS", 0, 0);
-				
-		addParameters(source, host, port, outputschema, type, options, options2, inputSchema, adapter, input, transformer, dataHandler, objectHandler, inputDataHandler, accessConnectionHandler, transportHandler, protocolHandler, wrapper, dateFormat);
-		// TODO: bind through service or why are these handlers not part of server?!
-		protocolHandler.setPossibleValues(ProtocolHandlerRegistry.getHandlerNames());
-		transportHandler.setPossibleValues(TransportHandlerRegistry.getHandlerNames());
+
+		addParameters(source, host, port, outputschema, type, options,
+				options2, inputSchema, adapter, input, transformer,
+				dataHandler, objectHandler, inputDataHandler,
+				accessConnectionHandler, transportHandler, protocolHandler,
+				wrapper, dateFormat);
+		// TODO: bind through service or why are these handlers not part of
+		// server?!
+		protocolHandler.setPossibleValues(ProtocolHandlerRegistry
+				.getHandlerNames());
+		transportHandler.setPossibleValues(TransportHandlerRegistry
+				.getHandlerNames());
 		dataHandler.setPossibleValues(DataHandlerRegistry.getHandlerNames());
 		wrapper.setPossibleValues(WrapperRegistry.getWrapperNames());
-		
+
 	}
 
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
 
-		String wrapperName = adapter.hasValue() ? adapter.getValue() : type.getValue();
+		String wrapperName = adapter.hasValue() ? adapter.getValue() : type
+				.getValue();
 		wrapperName = wrapper.hasValue() ? wrapper.getValue() : wrapperName;
 
 		HashMap<String, String> optionsMap = new HashMap<String, String>();
 
 		String sourcename = source.getValue();
-		
+
 		if (options.hasValue()) {
 			for (final String item : options.getValue()) {
 				final String[] option = item.split(":");
 				if (option.length == 2) {
-					optionsMap.put(option[0].toLowerCase(), item.substring(option[0].length() + 1));
+					optionsMap.put(option[0].toLowerCase(),
+							item.substring(option[0].length() + 1));
 				} else {
 					optionsMap.put(option[0].toLowerCase(), "");
 				}
@@ -110,12 +139,13 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		if (options2.hasValue()) {
 			for (Option option : options2.getValue()) {
-				optionsMap.put(option.getName().toLowerCase(), option.getValue());
+				optionsMap.put(option.getName().toLowerCase(),
+						option.getValue());
 			}
 		}
 
 		AccessAO ao = new AccessAO(wrapperName, optionsMap);
-		ao.setName(sourcename);		
+		ao.setName(sourcename);
 		if (outputschema.hasValue()) {
 			List<SDFAttribute> s2 = new ArrayList<>();
 			// Add source name to attributes
@@ -163,64 +193,82 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		}
 
 		String df = dateFormat.hasValue() ? dateFormat.getValue() : null;
+		ao.setDateFormat(df);
 		ILogicalOperator op = ao;
-		op = addTimestampAO(ao, df);
+		// op = addTimestampAO(ao, df);
 		return op;
 	}
 
-	private static ILogicalOperator addTimestampAO(ILogicalOperator operator, String dateFormat) {
-		TimestampAO timestampAO = new TimestampAO();
-		timestampAO.setDateFormat(dateFormat);
-		if (operator.getOutputSchema() != null) {
-
-			for (SDFAttribute attr : operator.getOutputSchema()) {
-				if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI()) || SDFDatatype.START_TIMESTAMP_STRING.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
-					timestampAO.setStartTimestamp(attr);
-				}
-
-				if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI()) || SDFDatatype.END_TIMESTAMP_STRING.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
-					timestampAO.setEndTimestamp(attr);
-				}
-
-			}
-		}
-		timestampAO.subscribeTo(operator, operator.getOutputSchema());
-		timestampAO.setName(timestampAO.getStandardName());
-		return timestampAO;
-	}
+	// Is now done in transformation rule!
+//	private static ILogicalOperator addTimestampAO(ILogicalOperator operator,
+//			String dateFormat) {
+//		TimestampAO timestampAO = new TimestampAO();
+//		timestampAO.setDateFormat(dateFormat);
+//		if (operator.getOutputSchema() != null) {
+//
+//			for (SDFAttribute attr : operator.getOutputSchema()) {
+//				if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(
+//						attr.getDatatype().getURI())
+//						|| SDFDatatype.START_TIMESTAMP_STRING.toString()
+//								.equalsIgnoreCase(attr.getDatatype().getURI())) {
+//					timestampAO.setStartTimestamp(attr);
+//				}
+//
+//				if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(
+//						attr.getDatatype().getURI())
+//						|| SDFDatatype.END_TIMESTAMP_STRING.toString()
+//								.equalsIgnoreCase(attr.getDatatype().getURI())) {
+//					timestampAO.setEndTimestamp(attr);
+//				}
+//
+//			}
+//		}
+//		timestampAO.subscribeTo(operator, operator.getOutputSchema());
+//		timestampAO.setName(timestampAO.getStandardName());
+//		return timestampAO;
+//	}
 
 	@Override
 	protected void insertParameterInfos(ILogicalOperator op) {
 		// op is timestampao here (instead of accessao)
-		super.insertParameterInfos(op.getSubscribedToSource().iterator().next().getTarget());
+		if (!op.getSubscribedToSource().isEmpty()) {
+			super.insertParameterInfos(op.getSubscribedToSource().iterator()
+					.next().getTarget());
+		}
 	}
 
 	@Override
-	protected boolean internalValidation() {		
-		
+	protected boolean internalValidation() {
+
 		if (type.hasValue() && adapter.hasValue() && wrapper.hasValue()) {
-			addError(new IllegalArgumentException("too much information for the creation of source. expecting wrapper OR type OR adapter."));
+			addError(new IllegalArgumentException(
+					"too much information for the creation of source. expecting wrapper OR type OR adapter."));
 			return false;
 		}
 		if (!type.hasValue() && !adapter.hasValue() && !wrapper.hasValue()) {
-			addError(new IllegalArgumentException("too less information for the creation of source. expecting wrapper, type or adapter."));
+			addError(new IllegalArgumentException(
+					"too less information for the creation of source. expecting wrapper, type or adapter."));
 			return false;
 		}
 		if (options.hasValue() && options2.hasValue()) {
-			addError(new IllegalArgumentException("Only one kind of options is allowed!"));
+			addError(new IllegalArgumentException(
+					"Only one kind of options is allowed!"));
 			return false;
 		}
 
 		if (this.outputschema.hasValue() && this.inputSchema.hasValue()) {
-			if (this.outputschema.getValue().size() != this.inputSchema.getValue().size()) {
-				addError(new IllegalArgumentException("For each attribute there must be at least one reader in the input schema"));
+			if (this.outputschema.getValue().size() != this.inputSchema
+					.getValue().size()) {
+				addError(new IllegalArgumentException(
+						"For each attribute there must be at least one reader in the input schema"));
 				return false;
 			}
 		}
 
 		if (this.wrapper.hasValue()) {
 			if (!WrapperRegistry.containsWrapper(this.wrapper.getValue())) {
-				addError(new IllegalParameterException("Wrapper " + this.wrapper.getValue() + " is unknown"));
+				addError(new IllegalParameterException("Wrapper "
+						+ this.wrapper.getValue() + " is unknown"));
 				return false;
 			}
 		}
@@ -234,7 +282,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	@Override
 	public void setDataDictionary(IDataDictionary dataDictionary) {
-		((CreateSDFAttributeParameter) ((outputschema).getSingleParameter())).setDataDictionary(dataDictionary);
+		((CreateSDFAttributeParameter) ((outputschema).getSingleParameter()))
+				.setDataDictionary(dataDictionary);
 		super.setDataDictionary(dataDictionary);
 	}
 

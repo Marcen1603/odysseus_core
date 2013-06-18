@@ -43,6 +43,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	
 	private String protocolHandler;
 	private String transportHandler;
+	
+	private String dateFormat;
 
 //	/**
 //	 * This variable will be used to generate an ID for every new input tuple
@@ -253,6 +255,13 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		this.transportHandler = transportHandler;
 	}
 
+	public String getDateFormat() {
+		return dateFormat;
+	}
 
+	public void setDateFormat(String dateFormat){
+		this.dateFormat = dateFormat;
+	}
+	
 }
 

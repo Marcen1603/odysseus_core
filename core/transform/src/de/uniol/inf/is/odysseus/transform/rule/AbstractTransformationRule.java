@@ -22,10 +22,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
@@ -106,5 +111,39 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 			update(o);
 		}
 	}
+	
+	protected void insertTimestampAO(ILogicalOperator operator, String dateFormat) {
+		TimestampAO timestampAO = new TimestampAO();
+		insert(timestampAO);
+		timestampAO.setDateFormat(dateFormat);
+		if (operator.getOutputSchema() != null) {
+
+			for (SDFAttribute attr : operator.getOutputSchema()) {
+				if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI()) || SDFDatatype.START_TIMESTAMP_STRING.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
+					timestampAO.setStartTimestamp(attr);
+				}
+
+				if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI()) || SDFDatatype.END_TIMESTAMP_STRING.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
+					timestampAO.setEndTimestamp(attr);
+				}
+
+			}
+		}
+		//timestampAO.subscribeTo(operator, operator.getOutputSchema());
+		timestampAO.setName(timestampAO.getStandardName());
+		RestructHelper.insertOperatorBefore(timestampAO, operator);
+	}
+	
+	protected boolean hasTimestampAOAsFather(ILogicalOperator operator) {
+		boolean hasTimestampAOAsFather = false;
+		for (LogicalSubscription sub: operator.getSubscriptions()){
+			if (sub.getTarget() instanceof TimestampAO){
+				hasTimestampAOAsFather = true;
+				break;
+			}
+		}
+		return hasTimestampAOAsFather;
+	}
+
 
 }

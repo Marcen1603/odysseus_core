@@ -1422,7 +1422,9 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 		// before adding the acces operator, add the corresponding entity
 //		dd.addEntitySchema(streamName, outputSchema, user);
 
+		// TODO: Is this really necessary?
 		TimestampAO op = addTimestampAO(accAO);
+		
 		if (isPersistent) {
 			op.setUsingNoTime(true);
 		}
