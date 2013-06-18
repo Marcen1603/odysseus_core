@@ -176,12 +176,6 @@
    <extension
          point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
       <editor
-            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList"
-            icon="icons/application-list.png"
-            id="de.uniol.inf.is.odysseus.rcp.streams.List"
-            label="List - Show all last elements">
-      </editor>
-      <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList10"
             icon="icons/application-list.png"
             id="de.uniol.inf.is.odysseus.rcp.streams.List10"
@@ -198,6 +192,12 @@
             icon="icons/application-list.png"
             id="de.uniol.inf.is.odysseus.rcp.streams.List"
             label="List - Show last 100 elements">
+      </editor>
+            <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList"
+            icon="icons/application-list.png"
+            id="de.uniol.inf.is.odysseus.rcp.streams.List"
+            label="List - Show all last elements">
       </editor>
    </extension>
 </plugin>
