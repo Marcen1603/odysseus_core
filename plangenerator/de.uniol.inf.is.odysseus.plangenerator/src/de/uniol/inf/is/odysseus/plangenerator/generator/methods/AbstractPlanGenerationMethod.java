@@ -119,7 +119,6 @@ public abstract class AbstractPlanGenerationMethod implements
 		Collection<ILogicalOperator> joinPlans = new HashSet<ILogicalOperator>();
 		// Quellen sind immernoch paarweise verbunden
 		for (ILogicalOperator joinPlan : existingJoinPlans.get(n - 1)) {
-			ILogicalOperator joinClone = joinPlan;
 
 			Set<ILogicalOperator> missing = new HashSet<ILogicalOperator>();
 			missing.addAll(this.sources);
@@ -131,6 +130,9 @@ public abstract class AbstractPlanGenerationMethod implements
 
 			// Quellenpaare durchlaufen und prüfen welche Quelle noch fehlt.
 			for (ILogicalOperator source : missing) {
+				// create new joinClone for this source
+				ILogicalOperator joinClone = PlanGeneratorHelper.copyPlan(joinPlan);
+				
 				ILogicalOperator sourceClone = source.clone();
 				PlanGeneratorHelper.setOriginalForClone(sourceClone, source);
 				// Join von joinClone mit fehlender Quelle.

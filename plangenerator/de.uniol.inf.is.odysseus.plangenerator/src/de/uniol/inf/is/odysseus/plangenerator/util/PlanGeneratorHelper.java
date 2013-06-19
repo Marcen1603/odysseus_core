@@ -242,4 +242,8 @@ public class PlanGeneratorHelper {
 		return true;
 	}
 
+	public static String getObjectName(Object obj) {
+		return obj.getClass().getSimpleName() + " (" + obj.hashCode() + ")";
+	}
+
 }

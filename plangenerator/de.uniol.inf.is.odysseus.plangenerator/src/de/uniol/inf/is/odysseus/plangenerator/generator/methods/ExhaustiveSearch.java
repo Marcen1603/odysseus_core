@@ -88,7 +88,7 @@ public class ExhaustiveSearch extends AbstractPruningPlanGenerationMethod {
 			if (PlanGeneratorHelper.hasValidWindowPositions(filledPlan)) {
 				plans.add(filledPlan);
 			} else {
-				LOG.error("Plan: " + filledPlan.getClass().getSimpleName() + " (" + filledPlan.hashCode() + ") was not valid");
+				LOG.error("Plan: {} was not valid", PlanGeneratorHelper.getObjectName(filledPlan));
 			}
 			// plans.add(joinPlan);
 		}

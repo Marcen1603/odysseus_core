@@ -3,7 +3,7 @@
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * You may obtain a joinPlan of the License at
  * 
  *   http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -41,24 +41,22 @@ public class PartialPlanInserter {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(PartialPlanInserter.class);
 
-	private ILogicalOperator joinPlan;
 	private Set<ILogicalOperator> partialPlans;
 
-	private ILogicalOperator copy;
+	private ILogicalOperator joinPlan;
 	private Set<? extends ILogicalOperator> joins;
 
 	public PartialPlanInserter(ILogicalOperator joinPlan,
 			Set<ILogicalOperator> subPlans) {
-		this.joinPlan = joinPlan;
 		this.partialPlans = subPlans;
-		this.copy = PlanGeneratorHelper.copyPlan(this.joinPlan);
-		this.joins = PlanGeneratorHelper.getJoinOperators(this.copy);
+		this.joinPlan = PlanGeneratorHelper.copyPlan(joinPlan);
+		this.joins = PlanGeneratorHelper.getJoinOperators(this.joinPlan);
 	}
 
 	/**
 	 * Fills the joinPlan with the subPlans.
 	 * 
-	 * @return a copy of the joinPlan filled with the subPlans.
+	 * @return a joinPlan of the joinPlan filled with the subPlans.
 	 */
 	public ILogicalOperator fill() {
 		for (ILogicalOperator op : this.joins) {
@@ -69,7 +67,7 @@ public class PartialPlanInserter {
 					// op is the root operator
 					if (isInsertableAsNewRoot(op, subPlan)) {
 						// set the new root as root for the plan
-						this.copy = insertPartialPlanAsNewRoot(subPlan, op, 0,
+						this.joinPlan = insertPartialPlanAsNewRoot(subPlan, op, 0,
 								0);
 						removeSubplans.add(subPlan);
 					}
@@ -101,12 +99,13 @@ public class PartialPlanInserter {
 				PlanGeneratorHelper.printErrorPlan("[UnusedPlan]", unusedPlan);
 			}
 		}
+		
 		validateWindowPositions();
 
 		PlanGeneratorHelper.printPlan("Finished Plan:",
-				this.copy);
+				this.joinPlan);
 		
-		return this.copy;
+		return this.joinPlan;
 	}
 
 	/**
@@ -155,7 +154,7 @@ public class PartialPlanInserter {
 
 	private void validateWindowPositions() {
 		Set<ILogicalOperator> sources = PlanGeneratorHelper
-				.getAccessOperators(this.copy);
+				.getAccessOperators(this.joinPlan);
 		Set<ILogicalOperator> unWindowedSources = new HashSet<ILogicalOperator>();
 		for (ILogicalOperator source : sources) {
 			if (!PlanGeneratorHelper.hasWindowBeforeJoin(source)) {
@@ -163,7 +162,7 @@ public class PartialPlanInserter {
 			}
 		}
 		Set<WindowAO> windows = PlanGeneratorHelper
-				.getWindowOperators(this.copy);
+				.getWindowOperators(this.joinPlan);
 		Set<Pair<ILogicalOperator, WindowAO>> repaired = new HashSet<Pair<ILogicalOperator, WindowAO>>();
 		// TODO: Prüfen welches Window zu welchem Access/Stream gehört
 		for (ILogicalOperator unWindowed : unWindowedSources) {
@@ -194,36 +193,6 @@ public class PartialPlanInserter {
 			RestructHelper.insertOperator(pair.getE2(), after, sinkInPort, 0, 0);
 		}
 	}
-
-	// private Set<ILogicalOperator> insertInsertablePartialPlans(
-	// ILogicalOperator op) {
-	// op.updateSchemaInfos();
-	// Set<ILogicalOperator> removeSubplans = new HashSet<ILogicalOperator>();
-	// for (ILogicalOperator subPlan : this.partialPlans) {
-	// if (op.getSubscriptions().isEmpty()) {
-	// // op is the root operator
-	// if (isInsertableAsNewRoot(op, subPlan)) {
-	// // set the new root as root for the plan
-	// this.copy = insertPartialPlanAsNewRoot(subPlan, op, 0, 0);
-	// removeSubplans.add(subPlan);
-	// }
-	// continue;
-	// }
-	// if (op.getNumberOfInputs() > 1 && isInsertable(subPlan, op, 1)
-	// && removeSubplans.contains(subPlan)) {
-	// insertPartialPlan(subPlan, op, 1, 0, 0);
-	// removeSubplans.add(subPlan);
-	// continue;
-	// }
-	// if (isInsertable(subPlan, op, 0)
-	// && !removeSubplans.contains(subPlan)) {
-	// insertPartialPlan(subPlan, op, 0, 0, 0);
-	// removeSubplans.add(subPlan);
-	// continue;
-	// }
-	// }
-	// return removeSubplans;
-	// }
 
 	private boolean isInsertable(ILogicalOperator subPlan,
 			ILogicalOperator futureFather, int fatherInPort) {
@@ -317,5 +286,4 @@ public class PartialPlanInserter {
 		}
 		return plan;
 	}
-
 }
