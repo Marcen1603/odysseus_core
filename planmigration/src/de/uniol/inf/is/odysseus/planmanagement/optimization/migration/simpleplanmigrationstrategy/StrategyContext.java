@@ -20,7 +20,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -32,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  */
 class StrategyContext {
 
-	private IOptimizer optimizer;
 	private IServerExecutor executor;
 	private IPhysicalQuery runningQuery;
 	private IPhysicalOperator newPlanRoot;
@@ -51,7 +49,6 @@ class StrategyContext {
 	public StrategyContext(IServerExecutor executor, IPhysicalQuery runningQuery,
 			IPhysicalOperator newPlanRoot) {
 		this.executor = executor;
-		this.optimizer = executor.getOptimizer();
 		this.runningQuery = runningQuery;
 		this.newPlanRoot = newPlanRoot;
 		this.buffersPOs = new ArrayList<BufferPO<?>>();
@@ -59,14 +56,6 @@ class StrategyContext {
 
 	public IServerExecutor getExecutor() {
 		return this.executor;
-	}
-	
-	public IOptimizer getOptimizer() {
-		return optimizer;
-	}
-
-	public void setOptimizer(IOptimizer optimizer) {
-		this.optimizer = optimizer;
 	}
 
 	public IPhysicalQuery getRunningQuery() {
