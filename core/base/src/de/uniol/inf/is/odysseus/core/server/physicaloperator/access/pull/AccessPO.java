@@ -184,7 +184,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	}
 
 	@Override
-	protected synchronized void process_close() {
+	protected void process_close() {
 		try {
 			if (isOpen()) {
 				if (protocolHandler != null) {
