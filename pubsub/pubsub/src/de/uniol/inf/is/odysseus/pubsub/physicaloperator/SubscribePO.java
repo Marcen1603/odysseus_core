@@ -54,7 +54,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		@SuppressWarnings("unchecked")
 		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry
 				.getTopologyByDomain(domain);
-		b.subscribe(predicates, this, brokerName);
+		b.subscribe(predicates, topics, brokerName, this);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		@SuppressWarnings("unchecked")
 		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry
 				.getTopologyByDomain(domain);
-		b.unsubscribe(predicates, this, brokerName);
+		b.unsubscribe(predicates, topics, brokerName, this);
 	}
 
 	@Override
@@ -87,5 +87,6 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	protected void process_next(T object, int port) {
 		transfer(object);
 	}
+
 
 }

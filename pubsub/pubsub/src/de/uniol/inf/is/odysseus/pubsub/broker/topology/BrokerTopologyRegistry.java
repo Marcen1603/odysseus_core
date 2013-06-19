@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 
-public class BrokerTopologyRegistry<T extends IStreamObject<?>> {
+public class BrokerTopologyRegistry {
 
 	static Logger logger = LoggerFactory.getLogger(BrokerTopologyRegistry.class);
 	
@@ -37,7 +37,7 @@ public class BrokerTopologyRegistry<T extends IStreamObject<?>> {
 	}
 	
 	// public static <T> IBrokerTopology<?> getTopologyByTypeAndDomain(String topologyType, String domain) may be better
-	public static IBrokerTopology<?> getTopologyByTypeAndDomain(String topologyType, String domain) {
+	public static <E extends IStreamObject<?>> IBrokerTopology<?> getTopologyByTypeAndDomain(String topologyType, String domain) {
 		// Check if topology Type is valid
 		if (!brokerTopologyTypes.containsKey(topologyType.toLowerCase())){
 			logger.info("Topology Type: '"+ topologyType + "' is not valid.");
@@ -57,7 +57,7 @@ public class BrokerTopologyRegistry<T extends IStreamObject<?>> {
 		} else {
 			// Broker with type and domain doesnt exists, create new Instance
 			IBrokerTopology<?> topology = brokerTopologyTypes.get(topologyType.toLowerCase());
-			IBrokerTopology<?> ret = topology.getInstance(domain);
+			IBrokerTopology<?> ret = topology.<E>getInstance(domain);
 			brokerTopologies.put(domain, ret);
 			return ret;
 		}

@@ -21,7 +21,7 @@ public interface IBroker<T extends IStreamObject<?>> {
 	 * @param predicates
 	 * @param subscriber
 	 */
-	void setSubscription(List<IPredicate<? super T>> predicates,
+	void setSubscription(List<IPredicate<? super T>> predicates, List<Topic> topics,
 			SubscribePO<T> subscriber);
 	
 	/**
@@ -29,7 +29,7 @@ public interface IBroker<T extends IStreamObject<?>> {
 	 * @param predicates
 	 * @param subscriber
 	 */
-	void removeSubscription(List<IPredicate<? super T>> predicates,
+	void removeSubscription(List<IPredicate<? super T>> predicates, List<Topic> topics,
 			SubscribePO<T> subscriber);
 	
 	
@@ -53,7 +53,7 @@ public interface IBroker<T extends IStreamObject<?>> {
 	 * 
 	 * @param object
 	 */
-	void routeToSubscribers(IStreamObject<?> object);
+	void routeToSubscribers(T object);
 	
 	/**
 	 * 

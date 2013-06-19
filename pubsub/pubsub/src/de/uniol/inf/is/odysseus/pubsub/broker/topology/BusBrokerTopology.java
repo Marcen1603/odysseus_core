@@ -60,8 +60,8 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends AbstractBroke
 	}
 
 	@Override
-	public IBrokerTopology<?> getInstance(String domain) {
-		return new BusBrokerTopology<T>(domain);
+	public <E extends IStreamObject<?>> IBrokerTopology<E> getInstance(String domain) {
+		return new BusBrokerTopology<E>(domain);
 	}
 
 }

@@ -41,8 +41,8 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends AbstractBr
 	}
 
 	@Override
-	public IBrokerTopology<?> getInstance(String domain) {
-		return new SingleBrokerTopology<T>(domain);
+	public <E extends IStreamObject<?>> IBrokerTopology<E> getInstance(String domain) {
+		return new SingleBrokerTopology<E>(domain);
 	}
 
 }

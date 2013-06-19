@@ -16,7 +16,7 @@ public interface IBrokerTopology<T extends IStreamObject<?>> {
 	 * @param name
 	 * @return
 	 */
-	IBrokerTopology<?> getInstance(String name);
+	<E extends IStreamObject<?>> IBrokerTopology<?> getInstance(String name);
 	
 	/**
 	 * 
@@ -37,7 +37,7 @@ public interface IBrokerTopology<T extends IStreamObject<?>> {
 	 * @param predicates
 	 * @param subscribePO
 	 */
-	void subscribe(List<IPredicate<? super T>> predicates, SubscribePO<T> subscribePO, String brokerName);
+	void subscribe(List<IPredicate<? super T>> predicates, List<Topic> topics , String brokerName, SubscribePO<T> subscribePO);
 
 	/**
 	 * unsubscribes a Subscriber with given Filterpredicates on a given broker
@@ -46,14 +46,14 @@ public interface IBrokerTopology<T extends IStreamObject<?>> {
 	 * @param predicates
 	 * @param subscriber
 	 */
-	void unsubscribe(List<IPredicate<? super T>> predicates, SubscribePO<T> subscriber, String brokerName);
+	void unsubscribe(List<IPredicate<? super T>> predicates, List<Topic> topics , String brokerName, SubscribePO<T> subscriber);
 	
 	
 	/**
 	 * the publisher uses the transfer method to publish the content to the brokernetwork
 	 * and to all subscribers
 	 */
-	void transfer(IStreamObject<?> object);
+	void transfer(T object);
 	
 	/**
 	 * Finds the best Broker

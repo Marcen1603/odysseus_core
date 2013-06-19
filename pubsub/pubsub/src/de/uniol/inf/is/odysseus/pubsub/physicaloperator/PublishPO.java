@@ -17,6 +17,7 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 	private String domain;
 	private List<String> topicStrings;
 	private List<Topic> topics;
+	private IBrokerTopology<T> brokerTopology;
 
 	public PublishPO(String topologyType, String domain, List<String> topics) {
 		super();
@@ -28,25 +29,20 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 
 	@Override
 	protected void process_next(T object, int port) {
-		IBrokerTopology<?> b = BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain(topologyType, domain);
-		b.transfer(object);
+		brokerTopology.transfer(object);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
-		@SuppressWarnings("unchecked")
-		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain(topologyType, domain);
-		b.advertise(topics, this);
+		brokerTopology = (IBrokerTopology<T>) BrokerTopologyRegistry
+				.<T>getTopologyByTypeAndDomain(topologyType, domain);
+		brokerTopology.advertise(topics, this);
 	}
 
 	@Override
 	protected void process_close() throws OpenFailedException {
-		@SuppressWarnings("unchecked")
-		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain(topologyType, domain);
-		b.unadvertise(topics, this);
+		brokerTopology.unadvertise(topics, this);
 	}
 
 	@Override
