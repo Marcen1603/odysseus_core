@@ -54,14 +54,7 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
  */
 public class StandardQueryOptimizer implements IQueryOptimizer {
 
-	protected static Logger _logger = null;
-
-	protected static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(StandardQueryOptimizer.class);
-		}
-		return _logger;
-	}
+	protected static final Logger LOG = LoggerFactory.getLogger(StandardQueryOptimizer.class);;	
 
 	final private Map<IPhysicalQuery, QueryBuildConfiguration> buildConfig = new HashMap<IPhysicalQuery, QueryBuildConfiguration>();
 
@@ -113,11 +106,11 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 			walker.clearVisited();
 			walker.prefixWalk(copiedPlan, joinVisitor);
 			if(joinVisitor.getResult().isEmpty()) {
-				getLogger().debug("Query can not be adapted because it does not contain any joins");
+				LOG.debug("Query can not be adapted because it does not contain any joins");
 				// query can not be adapted because there are no alternative plans
 				query.setParameter("noAdaption", true);
 			} else {
-				getLogger().debug("Creating alternative logical plans");
+				LOG.debug("Creating alternative logical plans");
 				PlanGenerationConfiguration generationConfig = parameters
 						.getPlanGenerationConfiguration();
 				List<ILogicalOperator> alternativePlans = compiler
@@ -125,11 +118,11 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 				query.setAlternativeLogicalPlans(alternativePlans);
 				// this should be the best
 				if (!alternativePlans.isEmpty()) {
-					getLogger().debug("generatePlans has returned {} plans",
+					LOG.debug("generatePlans has returned {} plans",
 							alternativePlans.size());
 					copiedPlan = alternativePlans.get(0);
 				} else {
-					getLogger().warn(
+					LOG.warn(
 							"generatePlans has returned an empty list.");
 				}
 			}
@@ -138,9 +131,11 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		boolean queryShouldBeRewritten = copiedPlan != null && restruct != null
 				&& restruct == ParameterDoRewrite.TRUE;
 		if (queryShouldBeRewritten) {
+			LOG.debug("Start rewriting of query...");
 			RewriteConfiguration rewriteConfig = parameters.getRewriteConfiguration();
 			rewriteConfig.setQueryBuildConfiguration(cb);
 			ILogicalOperator newPlan = compiler.rewritePlan(copiedPlan,rewriteConfig);
+			LOG.debug("Rewriting of query done.");
 			// set new logical plan.
 			query.setLogicalPlan(newPlan, false);
 			// do the same for all alternative plans if any
@@ -153,14 +148,17 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 					alternativePlans.set(i, compiler.rewritePlan(alternativePlan, rewriteConfig));
 				}
 			}
+		}else{
+			LOG.debug("Skip rewriting, because it is deactivated.");
 		}
 
 		try {
 			// create the physical plan
-
+			LOG.debug("Starting transformation for the logical query...");
 			physicalQuery = compiler.transform(query,
 					cb.getTransformationConfiguration(), query.getUser(), dd);
 
+			LOG.debug("Transformation into a physical query done.");
 			buildConfig.put(physicalQuery, cb);
 
 			postTransformationInit(physicalQuery);
@@ -190,7 +188,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		// add Buffer
 		if (bufferPlacementStrategy != null) {
 			try {
-				getLogger().debug(
+				LOG.debug(
 						"Adding Buffers with Strategy "
 								+ bufferPlacementStrategy.getName());
 				bufferPlacementStrategy.addBuffers(query);

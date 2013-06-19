@@ -216,11 +216,11 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	 *             Opening an sink or source failed.
 	 */
 	private List<ILogicalQuery> createQueries(String queryStr, ISession user, QueryBuildConfiguration parameters) throws NoCompilerLoadedException, QueryParseException, OpenFailedException {
-		LOG.debug("Translate Queries.");
+		LOG.debug("Translating query into logical plans");
 		// translate query and build logical plans
 		List<ILogicalQuery> queries = getCompiler().translateQuery(queryStr, parameters.getParserID(), user, getDataDictionary());
 		LOG.trace("Number of queries: " + queries.size());
-
+		LOG.debug("Translation done.");
 		annotateQueries(queries, queryStr, user, parameters);
 
 		if( parameters.get(ParameterDoDistribute.class).getValue() ) {
@@ -304,7 +304,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	 *             An exception during optimization occurred.
 	 */
 	private Collection<IPhysicalQuery> addQueries(List<ILogicalQuery> newQueries, OptimizationConfiguration conf) throws NoOptimizerLoadedException, QueryOptimizationException {
-		LOG.debug("Optimize Queries. Count:" + newQueries.size());
+		LOG.debug("Starting Optimization of logical queries...");
 		Collection<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
 		if (newQueries.isEmpty()) {
 			return optimizedQueries;
@@ -314,8 +314,12 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		this.executionPlanLock.lock();
 		try {
 			// optimize queries and set resulting execution plan
+			LOG.debug("Starting optimization and transformation for "+newQueries.size()+" logical queries...");
 			optimizedQueries = getOptimizer().optimize(this, getExecutionPlan(), newQueries, conf, getDataDictionary());
+			LOG.debug("Optimization and transformation for  "+newQueries.size()+" logical queries done.");
+			LOG.debug("Changing execution plan for optimized queries...");
 			executionPlanChanged(PlanModificationEventType.QUERY_ADDED,optimizedQueries);
+			LOG.debug("Execution plan changed.");
 
 			// store optimized queries
 
@@ -336,8 +340,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			// end synchronize of the process
 			this.executionPlanLock.unlock();
 		}
-
-		LOG.info("Queries added (Count: " + newQueries.size() + ").");
+		LOG.debug("Optimization of logical queries done");		
 		return optimizedQueries;
 	}
 
@@ -396,7 +399,8 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID, ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting) throws PlanManagementException {
-		LOG.info("Start adding Queries. " + query + " for user " + user.getUser().getName());
+		LOG.info("Adding textual query using "+parserID+" for user " + user.getUser().getName()+"...");
+		LOG.debug("Adding following query: " + query);
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
 		params.set(new ParameterParserID(parserID));
@@ -408,14 +412,16 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			List<ILogicalQuery> newQueries = createQueries(query, user, buildConfiguration);
 			if (newQueries != null && !newQueries.isEmpty()) {
 				Collection<IPhysicalQuery> addedQueries = addQueries(newQueries, new OptimizationConfiguration(buildConfiguration));
-				reloadLog.queryAdded(query, buildConfiguration.getName(), parserID, user);
-				LOG.info("Adding Queries. " + query + " for user " + user.getUser().getName() + " done.");
+				reloadLog.queryAdded(query, buildConfiguration.getName(), parserID, user);				
 				Collection<Integer> createdQueries = new ArrayList<Integer>();
 				for (IPhysicalQuery p : addedQueries) {
 					createdQueries.add(p.getID());
 				}
+				LOG.info("Adding textual query using "+parserID+" for user " + user.getUser().getName() + " done.");
+				LOG.debug("Added the following query: " + query);
 				return createdQueries;
 			}
+			LOG.info("Adding textual query using "+parserID+" for user " + user.getUser().getName() + " done.");			
 			return Lists.newArrayList();
 		} catch (QueryParseException | QueryOptimizationException | OpenFailedException e) {
 			LOG.error("Could not add query '" + query + "'", e);
@@ -434,7 +440,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 	@Override
 	public Integer addQuery(ILogicalOperator logicalPlan, ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting) throws PlanManagementException {
-		LOG.info("Start adding Queries.");
+		LOG.info("Start adding a logical query plan!");
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
 		return addQuery(logicalPlan, user, params);
@@ -478,7 +484,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 	@Override
 	public Integer addQuery(List<IPhysicalOperator> physicalPlan, ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting) throws PlanManagementException {
-		LOG.info("Start adding Queries.");
+		LOG.info("Start adding a physical query plan!");
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		try {
 			QueryBuildConfiguration queryBuildConfiguration = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
@@ -543,7 +549,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 				stopQuery(queryToRemove.getID(), caller);
 				LOG.info("Removing Query " + queryToRemove.getID());
 				this.executionPlan.removeQuery(queryToRemove.getID());
-				LOG.info("Removing Ownership " + queryToRemove.getID());
+				LOG.debug("Removing Ownership " + queryToRemove.getID());
 				queryToRemove.removeOwnerschip();
 				// A query can now be without owner, but connected to a source
 				// we need to removed all subscriptions of the physical
@@ -582,7 +588,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 				}
 				getDataDictionary().removeClosedSources();
 				getDataDictionary().removeClosedSinks();
-				LOG.debug("Query " + queryToRemove.getID() + " removed.");
+				LOG.info("Query " + queryToRemove.getID() + " removed.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REMOVE, queryToRemove));
 				if (queryToRemove.getLogicalQuery() != null) {
 					getDataDictionary().removeQuery(queryToRemove.getLogicalQuery(), caller);
@@ -633,14 +639,14 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			}
 		}
 		
-		LOG.info("Starting query (ID: " + queryID + ").");
+		LOG.info("Starting query (ID: " + queryID + ")...");
 
 		try {
 			this.executionPlanLock.lock();
 			getOptimizer().beforeQueryStart(queryToStart, this.executionPlan);
 			executionPlanChanged(PlanModificationEventType.QUERY_START, queryToStart);
 			queryToStart.open(this);
-			LOG.debug("Query " + queryID + " started.");
+			LOG.info("Query " + queryID + " started.");
 			firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_START, queryToStart));
 		} catch (Exception e) {
 			LOG.warn("Query not started. An Error during optimizing occurd (ID: " + queryID + ").", e);
@@ -702,7 +708,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	@Override
 	public void stopQuery(int queryID, ISession caller) {
 
-		LOG.info("Stopping query (ID: " + queryID + ").");
+		LOG.info("Stopping query (ID: " + queryID + ")....");
 
 		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID);
 		validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
@@ -721,7 +727,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			executionPlanChanged(PlanModificationEventType.QUERY_STOP, queryToStop);
 			if (isRunning()) {
 				queryToStop.close();
-				LOG.debug("Query " + queryToStop.getID() + " stopped.");
+				LOG.info("Query " + queryToStop.getID() + " stopped.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_STOP, queryToStop));
 			} else {
 				throw new RuntimeException("Scheduler not running. Query cannot be stopped");
@@ -750,14 +756,14 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	 */
 	@Override
 	public void reoptimize(IPhysicalQuery sender) {
-		LOG.info("Reoptimize request by query (ID: " + sender.getID() + ").");
+		LOG.info("Reoptimizing request by query (ID: " + sender.getID() + ")...");
 
 		try {
 			this.executionPlanLock.lock();
 			getOptimizer().reoptimize(sender, this.executionPlan);
 			executionPlanChanged(PlanModificationEventType.PLAN_REOPTIMIZE,(IPhysicalQuery)null);
 
-			LOG.debug("Query " + sender.getID() + " reoptimized.");
+			LOG.info("Query " + sender.getID() + " reoptimized.");
 			firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REOPTIMIZE, sender));
 		} catch (Exception e) {
 			LOG.warn("Query not reoptimized. An Error while optimizing occurd (ID: " + sender.getID() + ").");

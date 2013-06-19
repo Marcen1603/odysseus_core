@@ -57,11 +57,10 @@ public class StandardOptimizer extends AbstractOptimizer {
 	public List<IPhysicalQuery> optimize(IServerExecutor executor, IExecutionPlan currentExecPlan,  List<ILogicalQuery> queries,
 			OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException {
-		List<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
-		
+		List<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();		
 		if (!queries.isEmpty()) {
 			ParameterDoPlanAdaption adaption = parameter.getParameterDoPlanAdaption();
-			for (ILogicalQuery query : queries) {				
+			for (ILogicalQuery query : queries) {								
 				IPhysicalQuery optimized = this.queryOptimizer.optimizeQuery(executor, query, parameter, dd);		
 				doPostOptimizationActions(optimized, parameter);
 				optimizedQueries.add(optimized);
