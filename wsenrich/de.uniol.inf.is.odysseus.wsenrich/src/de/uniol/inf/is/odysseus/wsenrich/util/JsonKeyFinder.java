@@ -9,7 +9,9 @@ import de.uniol.inf.is.odysseus.wsenrich.exceptions.DatafieldNotFoundException;
 import de.uniol.inf.is.odysseus.wsenrich.logicaloperator.WSEnrichAO;
 
 public class JsonKeyFinder implements IKeyFinder {
+
 	
+	//TODO: Evtl. als StringBuffer wie XmlKeyFnder implementieren
 	/**
 	 * For Logging
 	 */
@@ -42,8 +44,7 @@ public class JsonKeyFinder implements IKeyFinder {
 	
 	public JsonKeyFinder() {
 		//Default-Constructor for the KeyFinderRegistry
-		this.parser = new JSONParser();
-		this.reader = new JsonContentHandler();
+		
 	}
 	
 	
@@ -87,6 +88,9 @@ public class JsonKeyFinder implements IKeyFinder {
 	@Override
 	public Object getValueOf(String search) throws DatafieldNotFoundException {
 		
+		this.parser = new JSONParser();
+		this.reader = new JsonContentHandler();
+		
 		if(!this.search.equals(search)) 
 			this.search = search;
 		
@@ -98,11 +102,12 @@ public class JsonKeyFinder implements IKeyFinder {
 				parser.parse(message, reader, true);
 			
 				if(reader.isFound()) {
+					reader.setFound(false);  //needed, if more then one Element are searched
 					this.value = reader.getValue();
 					return this.value;
 				}
 				
-				if(reader.isEnd()) {
+				if(reader.isEnd() && !reader.isFound()) {
 					throw new DatafieldNotFoundException();
 				}
 			}

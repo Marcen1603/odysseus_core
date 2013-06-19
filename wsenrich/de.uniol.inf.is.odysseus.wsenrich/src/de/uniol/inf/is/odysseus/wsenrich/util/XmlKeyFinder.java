@@ -42,6 +42,7 @@ public class XmlKeyFinder implements IKeyFinder {
 	
 	public XmlKeyFinder() {
 		//Needed for the KeyFinderRegistry
+		
 	}
 	
 	/**
@@ -118,17 +119,16 @@ public class XmlKeyFinder implements IKeyFinder {
 		if(!this.search.equals(search)) {
 			this.search = search;
 		}
-		int match = this.message.indexOf(STARTTAG + search);
+		
+		int match = this.message.indexOf(search);
 		
 		if(match == -1) {
 			throw new DatafieldNotFoundException();
-			
 		} else {
-			int endOfElement = this.message.indexOf(ENDTAG.toString(), match);
-			int endOfValue = this.message.indexOf(ENDTAG.toString(), endOfElement + 1);
-			String temp = this.message.substring(endOfElement + 1, endOfValue - search.length() - 2);
+			int endOfStartElement = this.message.indexOf(ENDTAG.toString(), match);
+			int startOfEndElement = this.message.indexOf(STARTTAG.toString(), endOfStartElement + 1);
+			String temp = this.message.substring(endOfStartElement + 1, startOfEndElement);
 			this.value = temp;
-			
 		}
 		return value;
 	}

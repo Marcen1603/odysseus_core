@@ -14,7 +14,7 @@ public class UriGetBuilder implements IRequestBuilder {
 	/**
 	 * Static variable for the Splitter between url and arguments is "?"
 	 */
-	private static final char URLDELMITER = '?';
+	//private static final char URLDELMITER = '?';
 	
 	/**
 	 * Static variable for the Splitting of Keys and Values is "="
@@ -61,6 +61,7 @@ public class UriGetBuilder implements IRequestBuilder {
 	 */
 	public UriGetBuilder() {
 		
+		this.url = "";
 		this.uri = new StringBuffer();
 		
 	}
@@ -70,16 +71,20 @@ public class UriGetBuilder implements IRequestBuilder {
 	 */
 	private void buildUrlBeforeArguments() {
 		
-		this.uri.delete(0, this.uri.length());
+		if(!this.uri.equals("")) {
+			this.uri.delete(0, this.uri.length());
+		}
 		
 		//Adds the URL Suffix if its not present in url
 		if(!this.url.contains(URLPREFIX)) {
 			
-			this.uri.append(URLPREFIX + this.url + URLDELMITER);
+		//	this.uri.append(URLPREFIX + this.url + URLDELMITER);
+			this.uri.append(URLPREFIX + this.url);
 			
 		} else {
 			
-			this.uri.append(this.url + URLDELMITER);
+			//this.uri.append(this.url + URLDELMITER);
+			this.uri.append(this.url);
 			
 		}
 	}
@@ -111,7 +116,7 @@ public class UriGetBuilder implements IRequestBuilder {
 	private void buildUrlAfterArguments() {
 		
 		//adds the urlsuffix if present
-		if(!this.urlsuffix.equals("") || this.urlsuffix != null  ) {
+		if(this.urlsuffix != null) {
 			
 			this.uri.append(this.urlsuffix);
 		}
@@ -130,7 +135,7 @@ public class UriGetBuilder implements IRequestBuilder {
 	
 	@Override
 	public String getName() {
-		return "GET";
+		return "get";
 	}
 	
 	@Override

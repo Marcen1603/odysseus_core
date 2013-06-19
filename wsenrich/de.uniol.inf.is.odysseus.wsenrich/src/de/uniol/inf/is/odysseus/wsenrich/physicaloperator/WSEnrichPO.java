@@ -3,10 +3,9 @@ package de.uniol.inf.is.odysseus.wsenrich.physicaloperator;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -96,24 +95,30 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@SuppressWarnings("unchecked")  //MetaData-Casts warnings
 	@Override
 	protected void process_next(Tuple<T> inputTuple, int port) {
 
 	//	Object queryParameters = getQueryParameters(inputTuple);
 		
+		List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
+		
 		requestBuilder.setUrlPrefix(url);
-		requestBuilder.setUrlPrefix(urlsuffix);
-		requestBuilder.setArguments(arguments);
+		requestBuilder.setUrlSuffix(urlsuffix);
+		requestBuilder.setArguments(queryParameters);
+		requestBuilder.buildUri();
 		String uri = requestBuilder.getUri();
+		
 		connection.setUri(uri);
 		//TODO: Dies muss noch überarbeitet werden!
-		connection.addHeader("Content-Type", "text/xml");
-		connection.addHeader("Content-Encoding", "UTF-8");
+		//connection.addHeader("Content-Type", "text/xml");
+		//connection.addHeader("Content-Encoding", "UTF-8");
+		
 		connection.connect();
-		converter.setInput(connection.retrieveBody());
-		connection.closeConnection();
+		HttpEntity entity = connection.retrieveBody();
+		converter.setInput(entity);
 		converter.convert();
+		connection.closeConnection();
+		
 		keyFinder.setMessage(converter.getOutput());
 		
 		for(int i = 0; i < receivedData.size(); i++) {
@@ -122,8 +127,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 			
 			try {
 				
-				Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, (Tuple<T>) keyFinder.getValueOf(keyFinder.getSearch()), null, Order.LeftRight);
-				transfer(outputTuple);
+				inputTuple.append(keyFinder.getValueOf(keyFinder.getSearch()), false);
+				transfer(inputTuple);
 				
 			} catch (DatafieldNotFoundException e) {
 				logger.error(e.getMessage());	
@@ -190,9 +195,24 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		}
 		
 		return queryParameters;
+	} */
+	
+	public List<Option> getQueryParameters(Tuple<T> inputTuple, List<Option> arguments) {
+		
+		List<Option> queryParameters = arguments;
+		
+		for(int i = 0; i < parameterPositions.length; i++) {
+			
+			queryParameters.set(i, new Option(queryParameters.get(i).getName(), inputTuple.getAttribute(parameterPositions[i]).toString()));
+			
+		}
+		
+		return queryParameters;	
+		
 	}
+	
 
-	*/
+	
 	/**
 	 * Compares all class attributes, that were present in the AO
 	 */

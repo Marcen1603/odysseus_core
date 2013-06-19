@@ -111,7 +111,7 @@ public class UriPostBuilder implements IRequestBuilder {
 	
 	@Override
 	public String getName() {
-		return "POST";
+		return "post";
 	}
 	
 	@Override

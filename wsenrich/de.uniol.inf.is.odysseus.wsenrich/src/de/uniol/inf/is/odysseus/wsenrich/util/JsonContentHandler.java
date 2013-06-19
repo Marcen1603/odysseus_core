@@ -76,6 +76,7 @@ public class JsonContentHandler implements ContentHandler {
 	public void endJSON() throws ParseException, IOException {
 		
 		this.end = true;
+
 		
 	}
 
@@ -97,7 +98,6 @@ public class JsonContentHandler implements ContentHandler {
 		if(key != null) {
 			if(key.equals(matchKey)) {
 			this.found = true;
-			this.end = true;
 			this.value = arg0;
 			return false;
 			}
@@ -132,6 +132,10 @@ public class JsonContentHandler implements ContentHandler {
 		this.key = arg0;
 		return true;
 
+	}
+	
+	public void setFound(boolean found) {
+		this.found = found;
 	}
 
 }

@@ -31,10 +31,7 @@ public class HttpGetConnection implements IConnectionForWebservices {
 	private HttpResponse response;
 	
 	/**
-	 * Constructor for a Http Get Request.
-	 * Constructor connects automatically to the
-	 * given Uri 
-	 * @param uri the uri for the request
+	 * Constructor for a Http Get Request. 
 	 */
 	public HttpGetConnection() {
 		//Needed for the ConnectionForWebserviceRegistery

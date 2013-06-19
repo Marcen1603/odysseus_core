@@ -139,22 +139,22 @@ public class WSEnrichAO extends UnaryLogicalOp {
 
 		boolean valid = true;
 		
-		if (!method.toString().equals("GET_METHOD") || !method.toString().equals("POST_METHOD")) {
+		if (!(method.equals(GET_METHOD) || method.equals(POST_METHOD))) {
 			addError(new IllegalParameterException(
 					"Method must be \"GET\" or \"POST\""));
 			valid = false;
 		}
-		if (!serviceMethod.toString().equals("SERVICE_METHOD_REST") || !serviceMethod.toString().equals("SEVICE_METHOD_SOAP")) {
+		if (!(serviceMethod.equals(SERVICE_METHOD_REST) || serviceMethod.equals(SERVICE_METHOD_SOAP))) {
 			addError(new IllegalParameterException(
 					"The serviceMethod must be \"REST\" or \"SOAP\""));
 			valid = false;
 		}
-		if ((operation != null && serviceMethod.toString().equals("SERVICE_METHOD_REST"))) {
+		if ((operation != null && serviceMethod.equals("SERVICE_METHOD_REST"))) {
 			addError(new IllegalParameterException(
 					"If you want to receive Data from a REST-Service you don�t have to define a operation!"));
 			valid = false;
 		}
-		if ((operation != null && serviceMethod.toString().equals("SERVICE_METHOD_SOAP"))) {
+		if ((operation != null && serviceMethod.equals("SERVICE_METHOD_SOAP"))) {
 			addError(new IllegalParameterException(
 					"If you want to receive Data from a SOAP-Servie you have to define a operation!"));
 			valid = false;
@@ -164,7 +164,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 					"You have to declare min 1 Datafield of the webservice for the Outputschema."));
 			valid = false;
 		}
-		if (!returnType.toString().equals("RETURN_TYPE_XML") || returnType.toString().equals("RETURN_TYPE_JSON")) {
+		if (!(returnType.equals(RETURN_TYPE_XML) || returnType.equals(RETURN_TYPE_JSON))) {
 			addError(new IllegalParameterException(
 				"You have to declare the return type of the webservice-response. This can be JSON or XML."));
 			valid = false;
@@ -309,7 +309,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	 * @return The Datafields received through the webservice
 	 */
 	public List<SDFAttribute> getReceivedData() {
-		return getOutputSchema().getAttributes();
+		return receivedData;
 	}
 					
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "datafields", isList = true)
