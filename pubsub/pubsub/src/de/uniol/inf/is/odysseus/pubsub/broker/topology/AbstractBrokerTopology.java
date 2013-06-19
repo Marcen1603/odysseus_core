@@ -58,6 +58,7 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>> impleme
 	}
 	
 	
+	@Override
 	public String getDomain() {
 		return domainName;
 	}
