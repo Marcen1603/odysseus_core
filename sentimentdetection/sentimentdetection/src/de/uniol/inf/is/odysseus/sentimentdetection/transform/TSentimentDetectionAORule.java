@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.sentimentdetection.physicaloperator.SentimentDet
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"rawtypes" })
 public class TSentimentDetectionAORule extends
 		AbstractTransformationRule<SentimentDetectionAO> {
 

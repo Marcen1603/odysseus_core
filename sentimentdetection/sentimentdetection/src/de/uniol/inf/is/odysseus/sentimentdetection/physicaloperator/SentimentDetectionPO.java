@@ -3,7 +3,11 @@ package de.uniol.inf.is.odysseus.sentimentdetection.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+
+import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry;
+import de.uniol.inf.is.odysseus.sentimentdetection.classifier.IClassifier;
 
 @SuppressWarnings({ "rawtypes" })
 public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe<Tuple <T>,Tuple <T>> {
@@ -12,6 +16,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	
 	private String outputtype;
 	private String classifier;
+
+	private IClassifier<T> algo;
 
 	public SentimentDetectionPO() {
 		super();
@@ -33,10 +39,24 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void process_open() throws OpenFailedException {
+		algo = (IClassifier<T>) ClassifierRegistry.getClassifierByName(classifier.toLowerCase());
+		
+	
+	}
+	
+
+	
 
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void process_next(Tuple object, int port) {
+		
+		
 		
 		System.out.println("Es wurde folgender OutputType gesetzt: "+ outputtype);
 		//get inputSize of the object	
@@ -49,7 +69,9 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 		System.arraycopy(object.getAttributes(), 0, outputTuple.getAttributes(), 0, inputSize);
 	
 		//text positive or negative
-		String erg = detect(object.getAttribute(0).toString());
+		//String erg = detect(object.getAttribute(0).toString());
+		
+		String erg = algo.startDetect(object.getAttribute(0).toString());
 	
 		//get OutputPort 
 		int outputPort = getOutPutPort(erg);
