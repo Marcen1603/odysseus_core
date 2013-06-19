@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
@@ -49,6 +50,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	private String tablename;		
 	private boolean truncate;
 	private boolean drop;
+	private long batchSize = 10;
 	
 	public DatabaseSinkAO(){
 		super();
@@ -59,6 +61,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 		this.tablename = old.tablename;		
 		this.drop = old.drop;
 		this.truncate = old.truncate;
+		this.batchSize = old.batchSize;
 	}
 
 	@Override
@@ -80,20 +83,29 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	}
 	
 
-	@Parameter(name = "TABLE", type = StringParameter.class, optional = false)
+	@Parameter(name = "TABLE", type = StringParameter.class, optional = false, doc="Name of store table")
 	public void setTablename(String tablename) {
 		this.tablename = tablename;
 	}		
 
-	@Parameter(name = "TRUNCATE", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "TRUNCATE", type = BooleanParameter.class, optional = true, doc="Empty table at start")
 	public void setTruncate(boolean truncate) {
 		this.truncate = truncate;
 	}
 
-	@Parameter(name = "DROP", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "DROP", type = BooleanParameter.class, optional = true , doc="Drop table at start")
 	public void setDrop(boolean drop) {
 		this.drop = drop;
 	}	
+	
+	@Parameter(name = "BatchSize", type = LongParameter.class, optional = true, doc="How many elements should be buffered before storing to database.")
+	public void setBatchSize(long batchSize) {
+		this.batchSize = batchSize;
+	}
+	
+	public long getBatchSize() {
+		return batchSize;
+	}
 	
 	
 

@@ -63,18 +63,19 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 
 	private int counter = 1;
 //	private long summe = 0L;
-	private IDatabaseConnection connection;
-	private String tablename;
-	private boolean truncate;
-	private boolean drop;
+	final private IDatabaseConnection connection;
+	final private String tablename;
+	final private boolean truncate;
+	final private boolean drop;
 	private volatile boolean opened = false;
+	final private long batchSize;
 
-	public DatabaseSinkPO(IDatabaseConnection connection ,String tablename, boolean drop, boolean truncate) {		
+	public DatabaseSinkPO(IDatabaseConnection connection ,String tablename, boolean drop, boolean truncate, long batchSize) {		
 		this.connection = connection;
 		this.tablename = tablename;	
 		this.truncate = truncate;
 		this.drop = drop;
-
+		this.batchSize = batchSize;
 	}
 
 	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {		
@@ -82,6 +83,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 		this.tablename = databaseSinkPO.tablename;		
 		this.drop = databaseSinkPO.drop;
 		this.truncate = databaseSinkPO.truncate;
+		this.batchSize = databaseSinkPO.batchSize;
 	}
 
 	
@@ -177,7 +179,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 			}
 			this.preparedStatement.addBatch();
 			counter++;
-			if ((counter % 10) == 0) {
+			if ((counter % batchSize) == 0) {
 				int count = this.preparedStatement.executeBatch().length;
 				this.jdbcConnection.commit();
 				logger.debug("Inserted " + count + " rows in database");
