@@ -19,4 +19,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.event,
  org.slf4j
 Service-Component: OSGI-INF/executor.xml,OSGI-INF/operatorDetailProviderRegistry.xml,OSGI-INF/generalProvider.xml,OSGI-INF/parameterInfoOperatorDetailProvider.xml,
  OSGI-INF/outputSchemaOperatorDetailProvider.xml
-Export-Package: de.uniol.inf.is.odysseus.rcp.server.views
+Export-Package: de.uniol.inf.is.odysseus.rcp.server,
+ de.uniol.inf.is.odysseus.rcp.server.views

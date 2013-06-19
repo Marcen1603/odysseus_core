@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 public interface IOperatorDetailProvider<T extends IPhysicalOperator> {
 
-	public Collection<? extends Class<T>> getOperatorTypes();
+	public Collection<Class<? extends T>> getOperatorTypes();
 	
 	public void createPartControl( Composite parent, T operator);
 	

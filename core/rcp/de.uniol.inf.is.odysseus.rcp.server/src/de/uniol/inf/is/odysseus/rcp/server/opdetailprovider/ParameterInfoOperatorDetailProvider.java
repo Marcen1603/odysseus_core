@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.rcp.server.AbstractKeyValueGeneralProvider;
 
 public class ParameterInfoOperatorDetailProvider extends AbstractKeyValueGeneralProvider {
 

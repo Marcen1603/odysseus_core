@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.rcp.server.AbstractKeyValueGeneralProvider;
 
 public class GeneralOperatorDetailProvider extends AbstractKeyValueGeneralProvider {
 

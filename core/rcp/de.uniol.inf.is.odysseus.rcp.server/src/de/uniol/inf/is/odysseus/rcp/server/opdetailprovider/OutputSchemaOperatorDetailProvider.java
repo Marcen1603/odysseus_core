@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.rcp.server.AbstractKeyValueGeneralProvider;
 
 public class OutputSchemaOperatorDetailProvider extends AbstractKeyValueGeneralProvider {
 

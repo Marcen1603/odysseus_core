@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.server.opdetailprovider;
+package de.uniol.inf.is.odysseus.rcp.server;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.rcp.server.IOperatorGeneralDetailProvider;
 
 public abstract class AbstractKeyValueGeneralProvider implements IOperatorGeneralDetailProvider {
 

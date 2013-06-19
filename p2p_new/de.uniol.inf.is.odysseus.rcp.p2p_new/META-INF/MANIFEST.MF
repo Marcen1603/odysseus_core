@@ -15,9 +15,12 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.p2p_new.dictionary,
+ de.uniol.inf.is.odysseus.p2p_new.physicaloperator,
  de.uniol.inf.is.odysseus.rcp,
+ de.uniol.inf.is.odysseus.rcp.server,
+ de.uniol.inf.is.odysseus.rcp.server.views,
  org.eclipse.ui.console,
  org.eclipse.ui.navigator.resources,
  org.slf4j
-Service-Component: OSGI-INF/p2pDictionary.xml,OSGI-INF/dataDictionaryService.xml,
- OSGI-INF/sessionManagementService.xml
+Service-Component: OSGI-INF/p2pDictionary.xml,OSGI-INF/dataDictionaryService.xml,OSGI-INF/sessionManagementService.xml,
+ OSGI-INF/jxtaReceiverOperatorDetailProvider.xml
