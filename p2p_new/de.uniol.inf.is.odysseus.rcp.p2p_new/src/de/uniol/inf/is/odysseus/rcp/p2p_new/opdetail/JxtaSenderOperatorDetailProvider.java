@@ -2,16 +2,16 @@ package de.uniol.inf.is.odysseus.rcp.p2p_new.opdetail;
 
 import org.eclipse.swt.widgets.Composite;
 
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.rcp.server.AbstractOperatorDetailProvider;
 
 @SuppressWarnings("rawtypes")
-public class JxtaReceiverOperatorDetailProvider extends AbstractOperatorDetailProvider<JxtaReceiverPO> {
+public class JxtaSenderOperatorDetailProvider extends AbstractOperatorDetailProvider<JxtaSenderPO> {
 
 	private static final String JXTA_TITLE = "JXTA";
 
 	@Override
-	public void createPartControl(Composite parent, JxtaReceiverPO operator) {
+	public void createPartControl(Composite parent, JxtaSenderPO operator) {
 
 	}
 
@@ -26,7 +26,7 @@ public class JxtaReceiverOperatorDetailProvider extends AbstractOperatorDetailPr
 	}
 
 	@Override
-	protected Class<? extends JxtaReceiverPO> getOperatorType() {
-		return JxtaReceiverPO.class;
+	protected Class<? extends JxtaSenderPO> getOperatorType() {
+		return JxtaSenderPO.class;
 	}
 }
