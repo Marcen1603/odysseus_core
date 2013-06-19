@@ -15,6 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,13 +27,14 @@ import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 
-class SingleSourceExecutor extends Thread implements IEventListener {
+class SingleSourceExecutor extends Thread implements IEventListener, ISourceExecutor {
 
 	Logger logger = LoggerFactory.getLogger(SingleSourceExecutor.class);
 
 	final private IIterableSource<?> s;
 	final private long delay;
 	final private int yieldRate;
+	final private int nanoyYieldDuration;
 	private int yieldCounter = 0;
 
 	final private SimpleThreadScheduler caller;
@@ -43,11 +48,10 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 		this.caller = singleThreadScheduler;
 		this.delay = s.getDelay();
 		this.yieldRate = s.getYieldRate();
+		this.nanoyYieldDuration = s.getYieldDurationNanos();
 	}
 
-	public IIterableSource<?> getSource() {
-		return s;
-	}
+	
 
 	@Override
 	public void run() {
@@ -90,12 +94,14 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 					if (yieldRate == yieldCounter) {
 						yieldCounter = 0;
 						try {
-							Thread.sleep(0);
+							this.setPriority(2);
+							Thread.sleep(0L, nanoyYieldDuration);
+							this.setPriority(Thread.NORM_PRIORITY);
 						} catch (InterruptedException e) {
 						}
 					}
 				}
-				Thread.yield();
+				//Thread.yield();
 			}
 		}
 
@@ -112,6 +118,18 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 	public void interrupt() {
 		super.interrupt();
 		this.interrupt = true;
+	}
+
+	@Override
+	public boolean hasSource(IIterableSource<?> other) {
+		return this.s.equals(other);
+	}
+
+	@Override
+	public Collection<IIterableSource<?>> getSources() {
+		List<IIterableSource<?>> sources = new ArrayList<IIterableSource<?>>();
+		sources.add(s);
+		return sources;		
 	}
 
 }

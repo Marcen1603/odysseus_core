@@ -29,6 +29,8 @@ public abstract class AbstractIterablePipe<R extends IStreamObject<?>, W extends
 	private ReentrantLock lock = new ReentrantLock();
 	private long delay = 0;
 	private int yieldRate = 0;
+
+	private int yieldDuration = 0;
 	
 	public AbstractIterablePipe(){}
 	
@@ -75,5 +77,15 @@ public abstract class AbstractIterablePipe<R extends IStreamObject<?>, W extends
 	@Override
 	public int getYieldRate() {
 		return yieldRate;
+	}
+	
+	@Override
+	public int getYieldDurationNanos() {	
+		return this.yieldDuration;		
+	}
+	
+	@Override
+	public void setYieldDurationNanos(int yieldDuration) {
+		this.yieldDuration = yieldDuration;
 	}
 }

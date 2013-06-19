@@ -123,7 +123,13 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 				((IIterableSource)accessPO).setYieldRate(Integer.parseInt(operator.getOptionsMap().get(
 						"scheduler.yieldrate")));
 			}
-		}		
+		}	
+		if (operator.getOptionsMap().containsKey("scheduler.yieldnanos")) {
+			if (accessPO instanceof IIterableSource) {
+				((IIterableSource)accessPO).setYieldDurationNanos(Integer.parseInt(operator.getOptionsMap().get(
+						"scheduler.yieldnanos")));
+			}
+		}
 		defaultExecute(operator, accessPO, config, true, true);
 	}
 

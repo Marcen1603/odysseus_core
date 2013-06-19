@@ -27,6 +27,7 @@ public abstract class AbstractIterableSource<T> extends AbstractSource<T>
 	private ReentrantLock lock = new ReentrantLock();
 	private long delay = 0;
 	private int yieldRate = 0;
+	private int yieldDuration;
 	
 	public AbstractIterableSource() {
 
@@ -65,4 +66,16 @@ public abstract class AbstractIterableSource<T> extends AbstractSource<T>
 	public int getYieldRate() {
 		return yieldRate;
 	}
+	
+	@Override
+	public int getYieldDurationNanos() {	
+		return this.yieldDuration;
+	}
+	
+	@Override
+	public void setYieldDurationNanos(int yieldDuration) {
+		this.yieldDuration = yieldDuration;
+	}
+	
+	
 }

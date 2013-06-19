@@ -15,7 +15,8 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.component,
  org.slf4j
-Service-Component: OSGI-INF/singlethreadscheduler_rrstrat.xml
+Service-Component: OSGI-INF/singlethreadscheduler_rrstrat.xml,
+ OSGI-INF/singlethreadscheduler_multisource_rr.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

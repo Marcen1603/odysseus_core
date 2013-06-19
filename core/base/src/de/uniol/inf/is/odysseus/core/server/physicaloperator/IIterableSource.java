@@ -98,6 +98,17 @@ public interface IIterableSource<T> extends ISource<T> {
 	 */
 	public void unlock();
 
+	/**
+	 * The number of nano seconds to sleep the thread for a yield
+	 * @return
+	 */
+	public int getYieldDurationNanos();
+
+	/**
+	 * Sets the number of nano seconds that the thread should sleep each yield
+	 * @param yieldDuration
+	 */
+	public void setYieldDurationNanos(int yieldDuration);
 	
 }
 
