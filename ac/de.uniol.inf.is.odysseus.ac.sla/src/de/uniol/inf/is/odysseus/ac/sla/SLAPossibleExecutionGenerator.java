@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPhysicalQueryScheduling;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SimpleThreadScheduler;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.AbstractSimpleThreadScheduler;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLARegistry;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLARegistryInfo;
@@ -67,8 +67,8 @@ public class SLAPossibleExecutionGenerator implements IAdmissionQuerySelector {
 		if (executor instanceof IServerExecutor) {
 			IServerExecutor serverExecutor = (IServerExecutor) executor;
 			IScheduler scheduler = serverExecutor.getSchedulerManager().getActiveScheduler();
-			if (scheduler instanceof SimpleThreadScheduler) {
-				SimpleThreadScheduler stScheduler = (SimpleThreadScheduler) scheduler;
+			if (scheduler instanceof AbstractSimpleThreadScheduler) {
+				AbstractSimpleThreadScheduler stScheduler = (AbstractSimpleThreadScheduler) scheduler;
 				IPhysicalQueryScheduling[] planScheduling = stScheduler.getPlanScheduling();
 				for (IPhysicalQueryScheduling pqs: planScheduling) {
 					if (pqs instanceof SLAPartialPlanScheduling) {

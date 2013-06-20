@@ -27,7 +27,7 @@ class SchedulingExecutor extends Thread {
 
 	final private IPhysicalQueryScheduling planScheduling;
 	private long timeSlicePerStrategy;
-	private SimpleThreadScheduler caller;
+	private AbstractSimpleThreadScheduler caller;
 	private int trainsize;
 
 	private boolean pause;
@@ -36,7 +36,7 @@ class SchedulingExecutor extends Thread {
 
 	public SchedulingExecutor(IPhysicalQueryScheduling planScheduling,
 			long timeSlicePerStrategy,
-			SimpleThreadScheduler caller, int trainsize) {
+			AbstractSimpleThreadScheduler caller, int trainsize) {
 		this.planScheduling = planScheduling;
 		if (planScheduling == null) {
 			throw new IllegalArgumentException("PlanScheduling cannot be null!");
@@ -46,7 +46,7 @@ class SchedulingExecutor extends Thread {
 		this.trainsize = trainsize;
 	}
 
-	protected SimpleThreadScheduler getCaller() {
+	protected AbstractSimpleThreadScheduler getCaller() {
 		return caller;
 	}
 

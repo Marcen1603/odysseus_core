@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPhysicalQueryScheduling;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SimpleThreadScheduler;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SimpleThreadSchedulerEachSourceThreaded;
 import de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler.prioritystrategy.SimpleDynamicPriorityPlanScheduling;
 
 public class SimpleDynamicSchedulerFactory extends AbstractSchedulerFactory {
@@ -30,7 +30,7 @@ public class SimpleDynamicSchedulerFactory extends AbstractSchedulerFactory {
 		for(int i=0;i<scheduling.length;i++){
 			scheduling[i] = new SimpleDynamicPriorityPlanScheduling(0);
 		}
-		return new SimpleThreadScheduler(schedulingFactoring, scheduling);
+		return new SimpleThreadSchedulerEachSourceThreaded(schedulingFactoring, scheduling);
 	}
 
 }

@@ -37,12 +37,12 @@ class SingleSourceExecutor extends Thread implements IEventListener, ISourceExec
 	final private int nanoyYieldDuration;
 	private int yieldCounter = 0;
 
-	final private SimpleThreadScheduler caller;
+	final private AbstractSimpleThreadScheduler caller;
 
 	private boolean interrupt;
 
 	public SingleSourceExecutor(IIterableSource<?> s,
-			SimpleThreadScheduler singleThreadScheduler) {
+			AbstractSimpleThreadScheduler singleThreadScheduler) {
 		this.setName(s.getName());
 		this.s = s;
 		this.caller = singleThreadScheduler;

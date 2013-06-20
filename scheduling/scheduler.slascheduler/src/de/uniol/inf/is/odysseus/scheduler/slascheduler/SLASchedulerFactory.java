@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPhysicalQueryScheduling;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SimpleThreadScheduler;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SimpleThreadSchedulerEachSourceThreaded;
 
 /**
  * Factory for builing SLA schedulers
@@ -98,7 +98,7 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 					costFunctionName);
 		}
 		
-		return new SimpleThreadScheduler(schedulingFactoring,scheduling);
+		return new SimpleThreadSchedulerEachSourceThreaded(schedulingFactoring,scheduling);
 	}
 
 }

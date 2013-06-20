@@ -19,9 +19,9 @@ public class MultipleSourceExecutor extends Thread implements IEventListener, IS
 
 	private boolean interrupt = false;
 	private List<IIterableSource<?>> sources = new CopyOnWriteArrayList<IIterableSource<?>>();
-	private SimpleThreadScheduler caller;	
+	private AbstractSimpleThreadScheduler caller;	
 
-	public MultipleSourceExecutor(List<IIterableSource<?>> sources, SimpleThreadScheduler singleThreadScheduler) {
+	public MultipleSourceExecutor(List<IIterableSource<?>> sources, AbstractSimpleThreadScheduler singleThreadScheduler) {
 		String name = "";
 		String sep = "";
 		for (IIterableSource<?> s : sources) {

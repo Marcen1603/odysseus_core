@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.IScheduli
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.strategy.RoundRobinPlanScheduling;
 
 /**
- * Factory for creating {@link SimpleThreadScheduler} instances.
+ * Factory for creating {@link AbstractSimpleThreadScheduler} instances.
  * 
  * @author Wolf Bauer
  * 
@@ -54,7 +54,9 @@ public class SingleThreadSchedulerFactoryWithMultiSourceRR extends AbstractSched
 		for(int i=0;i<scheduling.length;i++){
 			scheduling[i] = new RoundRobinPlanScheduling();
 		}
-		return new SimpleThreadScheduler(schedulingStrategy, scheduling, SimpleThreadScheduler.Type.MultiSourceExecutor);
+		// TODO: OdysseusConfig
+		int sourcesPerThread = -1;
+		return new SimpleThreadSchedulerMultipleSourcesThreaded(schedulingStrategy, scheduling, sourcesPerThread);
 	}
 
 }
