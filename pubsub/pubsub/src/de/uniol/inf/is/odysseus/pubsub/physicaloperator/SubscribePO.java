@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.pubsub.broker.topology.IBrokerTopology;
  * 
  * @param <T>
  */
-public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
+public class SubscribePO<T extends IStreamObject> extends AbstractPipe<T, T> {
 
 	private List<IPredicate<? super T>> predicates;
 	private SDFSchema schema;
@@ -87,6 +87,11 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	@Override
 	protected void process_next(T object, int port) {
 		transfer(object);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void receive(Object object){
+		transfer((T)object);
 	}
 
 

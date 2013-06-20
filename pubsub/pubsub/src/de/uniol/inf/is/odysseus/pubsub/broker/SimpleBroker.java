@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
-public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T>{
+public class SimpleBroker<T extends IStreamObject> extends AbstractBroker<T>{
 
 	private List<BrokerSubscription<T>> subscriptions;
 	private List<BrokerAdvertisements> advertisements;
@@ -66,7 +66,7 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T>{
 			
 			
 			// TODO Marco um Rat fragen !
-			//subscription.getSubscriber().process_next(object, 0);
+			subscription.getSubscriber().receive(object);
 		}
 	}
 
