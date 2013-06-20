@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.wsenrich.util.JsonKeyFinder;
 import de.uniol.inf.is.odysseus.wsenrich.util.KeyFinderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.RequestBuilderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.UriGetBuilder;
-import de.uniol.inf.is.odysseus.wsenrich.util.UriPostBuilder;
+import de.uniol.inf.is.odysseus.wsenrich.util.UriPostWithArgumentsBuilder;
 import de.uniol.inf.is.odysseus.wsenrich.util.XmlKeyFinder;
 
 public class Activator implements BundleActivator {
@@ -36,7 +36,7 @@ public class Activator implements BundleActivator {
 		KeyFinderRegistry.register(new JsonKeyFinder());
 		
 		RequestBuilderRegistry.register(new UriGetBuilder());
-		RequestBuilderRegistry.register(new UriPostBuilder());
+		RequestBuilderRegistry.register(new UriPostWithArgumentsBuilder());
 	
 	}
 

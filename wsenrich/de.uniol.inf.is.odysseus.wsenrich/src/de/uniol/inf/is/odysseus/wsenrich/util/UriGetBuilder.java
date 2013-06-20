@@ -130,7 +130,7 @@ public class UriGetBuilder implements IRequestBuilder {
 	
 	@Override
 	public String getPostData() {
-		return null;
+		return "";   //No Post Data in a Http Get
 	}
 	
 	@Override

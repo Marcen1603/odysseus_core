@@ -14,7 +14,7 @@ Import-Package: com.google.common.collect,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework,
  org.slf4j
-Service-Component: OSGI-INF/*, OSGI-INF/HttpPostConnectionService.xml, OSGI-INF/UriGetBuilderService.xml, OSGI-INF/UriPostBuilderService.xml, OSGI-INF/XmlKeyFinderService.xml, OSGI-INF/JsonKeyFinderService.xml
+Service-Component: OSGI-INF/*, OSGI-INF/HttpPostConnectionService.xml, OSGI-INF/UriGetBuilderService.xml, OSGI-INF/UriPostBuilderService.xml, OSGI-INF/XmlKeyFinderService.xml, OSGI-INF/JsonKeyFinderService.xml, OSGI-INF/UriPostWithArgumentsBuilder.xml, OSGI-INF/UriPostWithDocumentBuilderService.xml
 Bundle-ClassPath: lib/bcprov-jdk15on-148.jar,
  lib/commons-beanutils-1.8.3-javadoc.jar,
  lib/commons-beanutils-1.8.3-sources.jar,

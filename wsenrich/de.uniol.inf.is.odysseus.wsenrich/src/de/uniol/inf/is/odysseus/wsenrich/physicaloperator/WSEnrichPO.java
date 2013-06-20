@@ -106,14 +106,13 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		requestBuilder.setUrlSuffix(urlsuffix);
 		requestBuilder.setArguments(queryParameters);
 		requestBuilder.buildUri();
+		String postData = requestBuilder.getPostData();
 		String uri = requestBuilder.getUri();
 		
 		connection.setUri(uri);
-		//TODO: Dies muss noch überarbeitet werden!
-		//connection.addHeader("Content-Type", "text/xml");
-		//connection.addHeader("Content-Encoding", "UTF-8");
+		connection.setArgument(postData);
 		
-		connection.connect();
+		connection.connect(charset, method);
 		HttpEntity entity = connection.retrieveBody();
 		converter.setInput(entity);
 		converter.convert();
@@ -121,6 +120,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		
 		keyFinder.setMessage(converter.getOutput());
 		
+		//TODO: falsch!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (Schleife prodziert n tuple!!
 		for(int i = 0; i < receivedData.size(); i++) {
 			
 			keyFinder.setSearch(receivedData.get(i).getAttributeName());

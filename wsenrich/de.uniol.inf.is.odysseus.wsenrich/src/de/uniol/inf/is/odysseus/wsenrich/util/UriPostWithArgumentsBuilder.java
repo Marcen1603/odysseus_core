@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 
-public class UriPostBuilder implements IRequestBuilder {
+public class UriPostWithArgumentsBuilder implements IRequestBuilder {
 
 	
 	/**
@@ -52,9 +52,14 @@ public class UriPostBuilder implements IRequestBuilder {
 	 */
 	private StringBuffer uri;
 	
-	
-	public UriPostBuilder() {
-		//Needed for RequestBuilderRegistry
+	/**
+	 * Default Constructor for the UriPostBuilder
+	 */
+	public UriPostWithArgumentsBuilder() {
+		
+		this.url = "";
+		this.uri = new StringBuffer();
+		this.postData = new StringBuffer();
 	}
 	
 	/**
@@ -62,8 +67,9 @@ public class UriPostBuilder implements IRequestBuilder {
 	 */
 	private void buildUrl() {
 		
-		this.uri = new StringBuffer();
-		this.uri.delete(0, this.uri.length());
+		if(!this.uri.equals("")) {
+			this.uri.delete(0, this.uri.length());
+		}
 		
 		//Adds the URL Suffix if its not present in url
 		if(!this.url.contains(URLPREFIX)) {
@@ -81,42 +87,44 @@ public class UriPostBuilder implements IRequestBuilder {
 	 */
 	private void addParameters() {
 		
-		if(this.arguments != null) {
-			
+		if(!this.postData.equals("")) {
 			this.postData.delete(0, this.postData.length());
-			//Adds the arguments
-			for(Option argument : this.arguments) {
+		}
+		
+		//Adds the arguments
+		for(Option argument : this.arguments) {
 				
-			//replaces whitespaces if present
-			String name = argument.getName().replace(BLANK, BLANKDELMITTER);
-			String value = argument.getValue().replace(BLANK, BLANKDELMITTER);
+		//replaces whitespaces if present
+		String name = argument.getName().replace(BLANK, BLANKDELMITTER);
+		String value = argument.getValue().replace(BLANK, BLANKDELMITTER);
 				
-			this.postData.append(name + KEYVALUEDELMITER
-					+ value + ARGUMENTDELMITER);
+		this.postData.append(name + KEYVALUEDELMITER
+				+ value + ARGUMENTDELMITER);
 			
-			}
-		}	
-	}
+		}
+		this.postData.deleteCharAt(this.postData.length()-1);
+		
+	}	
 	
 	@Override
 	public String getPostData() {
 		return this.postData.toString();
 	}
 	
+	//Nothing to do
 	@Override
 	public void setPostData(String doc) {
-		this.postData = new StringBuffer(doc);
 		
 	}
 	
 	@Override
 	public String getName() {
-		return "post";
+		return "POST_ARGUMENTS";
 	}
 	
 	@Override
-	public UriPostBuilder createInstance() {
-		return new UriPostBuilder();
+	public UriPostWithArgumentsBuilder createInstance() {
+		return new UriPostWithArgumentsBuilder();
 	}
 
 	@Override

@@ -7,7 +7,7 @@ public interface IConnectionForWebservices {
 	/**
 	 * Method to connect to a HTTP Entpoint
 	 */
-	public void connect();
+	public void connect(String charset, String contentType);
 	
 	/**
 	 * Method to close the HTTP Endpoint connection
@@ -50,12 +50,12 @@ public interface IConnectionForWebservices {
 	 * Setter for the Arguments
 	 * @param value The arguments
 	 */
-	public void setArgument(Object value);
+	public void setArgument(String value);
 	
 	/**
 	 * @return The arguments of the request or the Document of a Post-Request
 	 */
-	public Object getArgument();
+	public String getArgument();
 	/**
 	 * @return The name of the Connection method
 	 */

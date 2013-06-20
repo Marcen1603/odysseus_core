@@ -1,23 +1,36 @@
 package de.uniol.inf.is.odysseus.wsenrich.util;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+import de.uniol.inf.is.odysseus.wsenrich.logicaloperator.WSEnrichAO;
 
 public class HttpPostConnection implements IConnectionForWebservices {
+	
+	/**
+	 * Static Variable for XML Content Type
+	 */
+	private static final String XML_CONTENT = "text/xml";
+
+	/**
+	 * Static Variable for Text Content Type
+	 */
+	private static final String TEXT_CONTENT = "application/x-www-form-urlencoded";
+	
+	/**
+	 * Static Variable "Content-Type"
+	 */
+	private static final String CONTENT_TYPE = "Content-Type";
+	
+	/**
+	 * Static Variable "Content-Encoding
+	 */
+	private static final String CONTENT_ENCODING = "Content-Encoding";
 	
 	/**
 	 * The Url for the Http-Request
@@ -27,7 +40,7 @@ public class HttpPostConnection implements IConnectionForWebservices {
 	/**
 	 * The Post Data
 	 */
-	private Object argument;
+	private String argument;
 	
 	/**
 	 * The client-side Http client
@@ -60,33 +73,43 @@ public class HttpPostConnection implements IConnectionForWebservices {
 	}
 	
 	@Override
-	public void setArgument(Object value) {
+	public void setArgument(String value) {
 		this.argument = value;
 	}
 	
 	@Override
-	public Object getArgument() {
+	public String getArgument() {
 		return this.argument;
 	}
 		
-		
 	@Override
-	public void connect() {
-		
-		if(this.argument instanceof List) {
+	public void connect(String charset, String contentType) {
+	
+		try {
+			this.httpClient = new DefaultHttpClient();
+			this.httpPost = new HttpPost(url);
 			
-			@SuppressWarnings("unchecked")
-			List<Option> temp = (List<Option>) argument;
-			connectWithArguments(castOptionsListToNameValuePair(temp));
-		} else if(this.argument == null) {
-			 throw new IllegalParameterException(
-					"There are no arguments or XML-Part defined. " +
-					"Set arguments or XML Dokument and try again.");
-		} else {
-			String document = (String) argument;
-			connectWithDocument(document);
-		} 
-
+			//TODO: Klären ob, bzw. wann das benötigt wird
+			this.httpPost.addHeader(CONTENT_ENCODING, charset);
+			
+			if(contentType.equals(WSEnrichAO.POST_WITH_ARGUMENTS)) {
+				this.httpPost.addHeader(CONTENT_TYPE, TEXT_CONTENT);
+			} else if (contentType.equals(WSEnrichAO.POST_WITH_DOCUMENT)) {
+				this.httpPost.addHeader(CONTENT_TYPE, XML_CONTENT);
+			}
+			
+			this.httpPost.setEntity(new StringEntity(argument));	
+			this.response = this.httpClient.execute(httpPost);
+			
+		} catch (ClientProtocolException e) {
+			
+			// TODO 
+			e.printStackTrace();
+			
+		} catch (IOException e) {
+			// TODO 
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -119,71 +142,6 @@ public class HttpPostConnection implements IConnectionForWebservices {
 		
 		this.httpPost.addHeader(argument, value);
 
-	}
-	
-	/**
-	 * Cast the List<Option> from Odysseus to List<NameValuePair>
-	 * to send it in the Http Post Body
-	 * @param arguments the arguments to cast to an NameValuePair
-	 * @return the NameValuePair List
-	 */
-	private List<NameValuePair> castOptionsListToNameValuePair(List<Option> arguments) {
-		
-		List<NameValuePair> castedList = new ArrayList<NameValuePair>();
-		
-		for(Option argument : arguments) {
-			
-			castedList.add(new BasicNameValuePair(argument.getName(), argument.getValue()));	
-		}
-		return castedList;
-	}
-	
-	/**
-	 * Opens the Http Post Connection with Arguments
-	 * Arguments will be added in the Http Body
-	 */
-	private void connectWithArguments(List<NameValuePair> arguments) {
-		
-		try {
-			this.httpClient = new DefaultHttpClient();
-			this.httpPost = new HttpPost(url);
-			this.httpPost.setEntity(new UrlEncodedFormEntity(arguments));			
-			this.response = this.httpClient.execute(httpPost);
-			
-		} catch (ClientProtocolException e) {
-			
-			// TODO 
-			e.printStackTrace();
-			
-		} catch (IOException e) {
-			// TODO 
-			e.printStackTrace();
-		}
-		
-	}
-	
-	/**
-	 * Opens the Http Post Connection with a Document, 
-	 * not Key-Value-Pairs
-	 */
-	private void connectWithDocument(String document) {
-		
-		try {
-			this.httpClient = new DefaultHttpClient();
-			this.httpPost = new HttpPost(url);
-			this.httpPost.setEntity(new StringEntity(document));
-			this.response = this.httpClient.execute(httpPost);
-			
-		} catch (ClientProtocolException e) {
-			
-			// TODO 
-			e.printStackTrace();
-			
-		} catch (IOException e) {
-			// TODO 
-			e.printStackTrace();
-		}
-		
 	}
 	
 	@Override

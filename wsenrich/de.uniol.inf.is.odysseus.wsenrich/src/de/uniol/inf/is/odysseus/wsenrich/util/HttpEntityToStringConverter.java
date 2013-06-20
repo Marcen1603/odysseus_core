@@ -6,7 +6,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 
 public class HttpEntityToStringConverter {
-	
+	private static final String LESS_THEN = "&lt;";
+	private static final String GREATER_THEN = "&gt;";
+	private static final String LESS = "<";
+	private static final String GREATER = ">";
 	private HttpEntity entity;
 	private String output;
 	private String charset;
@@ -40,7 +43,10 @@ public class HttpEntityToStringConverter {
 		if(this.charset == null || this.charset.equals("")) {
 			try {
 				
-				this.output = IOUtils.toString(entity.getContent(), "UTF-8");
+				StringBuffer temp = new StringBuffer(IOUtils.toString(entity.getContent(), "UTF-8"));
+				replaceHtmlCodecs(temp, LESS_THEN, LESS);
+				replaceHtmlCodecs(temp, GREATER_THEN, GREATER);
+				this.output = temp.toString();
 				
 			} catch (IllegalStateException e) {
 				// TODO 
@@ -55,8 +61,12 @@ public class HttpEntityToStringConverter {
 		} else {
 			try {
 				
-				this.output = IOUtils.toString(entity.getContent(), charset);
+				StringBuffer temp = new StringBuffer(IOUtils.toString(entity.getContent(), charset));
 				
+				replaceHtmlCodecs(temp, LESS_THEN, LESS);
+				replaceHtmlCodecs(temp, GREATER_THEN, GREATER);
+				this.output = temp.toString();
+	
 			} catch (IllegalStateException e) {
 				// TODO 
 				e.printStackTrace();
@@ -94,5 +104,15 @@ public class HttpEntityToStringConverter {
 		this.entity = entity;
 	}
 	
-	
+	public StringBuffer replaceHtmlCodecs(StringBuffer temp, String htmlCode, String replacement) {
+		
+		int match = temp.indexOf(htmlCode);
+		if(match > 0) {
+			temp.replace(match, match + htmlCode.length(), replacement);
+			 return replaceHtmlCodecs(temp, htmlCode, replacement);
+			
+		} else 
+			return temp;
+		
+	}
 }

@@ -35,7 +35,7 @@ public interface IRequestBuilder {
 	
 	/**
 	 * Setter for the arguments
-	 * @param value
+	 * @param arguments the list of key-value-pairs which will be written in the http-body
 	 */
 	public void setArguments(List<Option> arguments);
 	
@@ -46,7 +46,7 @@ public interface IRequestBuilder {
 	
 	/**
 	 * Setter for the Post data
-	 * @param doc the post data
+	 * @param doc the post data e.g an xml-doc which will be written in the http-body
 	 */
 	public void setPostData(String doc);
 	

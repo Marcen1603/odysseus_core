@@ -20,12 +20,22 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 //TODO  libs checken!!!
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="WSENRICH")
 public class WSEnrichAO extends UnaryLogicalOp {
-
+	
+	/**
+	 * Static Variable for the Name of the Post-Argument-Method
+	 */
+	public static final String POST_WITH_ARGUMENTS = "POST_ARGUMENTS";
+	
+	/**
+	 * Static Variable for the Name of the Post-Document-Method
+	 */
+	public static final String POST_WITH_DOCUMENT = "POST_DOCUMENT";
+	
 	/**
 	 * Static Variable for the Name of the Post-Method
 	 */
 	private static final String POST_METHOD = "POST";
-
+	
 	/**
 	 * Static Variable for the Name of the Get-Method
 	 */
@@ -102,6 +112,12 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	private String returnType;
 	
 	/**
+	 * internal variable for the final resolution, which Method to call
+	 * the webservice is used
+	 */
+	private String getOrPost;
+	
+	/**
 	 * Default-Constructor for the WSEnrichAO
 	 */
 	public WSEnrichAO() {
@@ -125,6 +141,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		this.receivedData = wsEnrichAO.receivedData;
 		this.charset = wsEnrichAO.charset;
 		this.returnType = wsEnrichAO.returnType;
+		this.getOrPost = wsEnrichAO.setGetOrPost();
 
 	}
 
@@ -139,9 +156,9 @@ public class WSEnrichAO extends UnaryLogicalOp {
 
 		boolean valid = true;
 		
-		if (!(method.equals(GET_METHOD) || method.equals(POST_METHOD))) {
+		if (!(method.equals(GET_METHOD) || method.equals(POST_WITH_ARGUMENTS) || method.equals(POST_WITH_DOCUMENT))) {
 			addError(new IllegalParameterException(
-					"Method must be \"GET\" or \"POST\""));
+					"Method must be \"GET\" or \"POST_ARGUMENTS\" or \"POST_DOCUMENT\""));
 			valid = false;
 		}
 		if (!(serviceMethod.equals(SERVICE_METHOD_REST) || serviceMethod.equals(SERVICE_METHOD_SOAP))) {
@@ -151,7 +168,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		}
 		if ((operation != null && serviceMethod.equals("SERVICE_METHOD_REST"))) {
 			addError(new IllegalParameterException(
-					"If you want to receive Data from a REST-Service you donï¿½t have to define a operation!"));
+					"If you want to receive Data from a REST-Service you don´t have to define a operation!"));
 			valid = false;
 		}
 		if ((operation != null && serviceMethod.equals("SERVICE_METHOD_SOAP"))) {
@@ -348,6 +365,24 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	public void setReturnType(String returnType) {
 		this.returnType = returnType;
 	}
+	
+	/**
+	 * Setter for the Get or Post-variable
+	 */
+	private String setGetOrPost() {
+		if(this.method.equals(POST_WITH_ARGUMENTS) || this.method.equals(POST_WITH_DOCUMENT)) {
+			return POST_METHOD;
+		} else
+			return GET_METHOD;
+	}
+	
+	/**
+	 * @return The Method for the Http Connection
+	 */
+	public String getGetOrPost() {
+		return this.getOrPost;
+	}
+	
 		
 
 }

@@ -31,8 +31,8 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = 
 				new RelationalMergeFunction<ITimeInterval>(logical.getOutputSchema().size());
-		
-				IConnectionForWebservices connection = ConnectionForWebservicesRegistry.getInstance(logical.getMethod());
+			
+				IConnectionForWebservices connection = ConnectionForWebservicesRegistry.getInstance(logical.getGetOrPost());
 				IRequestBuilder requestBuilder = RequestBuilderRegistry.getInstance(logical.getMethod());
 				HttpEntityToStringConverter converter = new HttpEntityToStringConverter(logical.getCharset());
 				IKeyFinder keyFinder = KeyFinderRegistry.getInstance(logical.getReturnType());

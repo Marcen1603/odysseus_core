@@ -13,7 +13,7 @@ public class HttpGetConnection implements IConnectionForWebservices {
 	/**
 	 * The Uri for the Http-Request
 	 */
-	private String uri;
+	private String url;
 	
 	/**
 	 * The client-side Http client
@@ -39,25 +39,26 @@ public class HttpGetConnection implements IConnectionForWebservices {
 	
 	@Override
 	public void setUri(String uri) {
-		this.uri = uri;
+		this.url = uri;
 	}
 	
 	@Override
-	public void setArgument(Object value) {
-
+	public void setArgument(String value) {
+		
 	}
 	
 	@Override
-	public Object getArgument() {
+	public String getArgument() {
 		return null;
 	}
 	
-	@Override
-	public void connect() {
+	@Override //Nothing to do with contentType ia a Http Get Connection
+	public void connect(String charset, String contentType) {
 		
 		try {
 			this.httpClient = new DefaultHttpClient();
-			this.httpGet = new HttpGet(uri);
+			this.httpGet = new HttpGet(url);
+			this.httpGet.addHeader("Content-Encoding", charset);
 			this.response = this.httpClient.execute(httpGet);
 			
 		} catch (ClientProtocolException e) {
@@ -94,7 +95,7 @@ public class HttpGetConnection implements IConnectionForWebservices {
 	@Override
 	public String getUri() {
 		
-		return this.uri;
+		return this.url;
 	}
 
 	@Override
