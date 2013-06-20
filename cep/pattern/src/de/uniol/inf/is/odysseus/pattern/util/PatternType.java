@@ -6,9 +6,8 @@ package de.uniol.inf.is.odysseus.pattern.util;
  */
 public enum PatternType {
 	ALL, ANY, ABSENCE,
-	COUNT, FUNCTOR,
+	FUNCTOR,
 	ALWAYS, SOMETIMES,
-	VALUE_MAX, VALUE_MIN,
 	RELATIVE_N_HIGHEST, RELATIVE_N_LOWEST,
 	FIRST_N, LAST_N,
 	INCREASING, DECREASING,

@@ -406,21 +406,21 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		// check pattern constraints
 		List<PatternType> patternList = Arrays.asList(RELATIVE_N_HIGHEST, RELATIVE_N_LOWEST);
 		if (patternList.contains(type)) {
-			if (attribute == null || count == null || time == null || size == null) {
+			if (attribute == null || count == null || (time == null && size == null)) {
 				help = false;
 				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
 			}
 		}
 		patternList = Arrays.asList(ALWAYS, SOMETIMES);
 		if (patternList.contains(type)) {
-			if (time == null || size == null) {
+			if (time == null && size == null) {
 				help = false;
 				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
 			}
 		}
 		patternList = Arrays.asList(FIRST_N, LAST_N);
 		if (patternList.contains(type)) {
-			if (count == null || time == null || size == null) {
+			if (count == null || (time == null && size == null)) {
 				help = false;
 				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
 			}
@@ -428,7 +428,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		patternList = Arrays.asList(INCREASING, DECREASING, STABLE,
 				NON_DECREASING, NON_INCREASING, NON_STABLE, MIXED);
 		if (patternList.contains(type)) {
-			if (attribute == null || time == null || size == null) {
+			if (attribute == null || (time == null && size == null)) {
 				help = false;
 				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
 			}

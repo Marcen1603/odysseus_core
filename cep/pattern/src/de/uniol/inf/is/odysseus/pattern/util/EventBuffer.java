@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.pattern.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
- * Speichert Events zwischen.
+ * Buffers events in a list. Gives the opportunity to sort the buffer.
  * @author Michael Falk
  *
  * @param <T>
@@ -70,10 +71,6 @@ public class EventBuffer<T extends ITimeInterval> implements Iterable<EventObjec
 		return getEventTypes().contains(eventType);
 	}
 	
-	public boolean containsAll(List<String> eventTypes) {
-		return getEventTypes().containsAll(eventTypes);
-	}
-	
 	/**
 	 * Liefert das erste EventObject mit dem entsprechenden Schema zurück.
 	 * @param schema
@@ -115,10 +112,6 @@ public class EventBuffer<T extends ITimeInterval> implements Iterable<EventObjec
 			result.add(objects.get(objects.size() - 1 - i));
 		}
 		return result;
-	}
-	
-	public EventObject<T> getLastEventObject() {
-		return objects.getLast();
 	}
 	
 	public void clear() {
@@ -164,6 +157,13 @@ public class EventBuffer<T extends ITimeInterval> implements Iterable<EventObjec
 	@Override
 	public String toString() {
 		return "EventBuffer [objects=" + objects + "]";
+	}
+	
+	/**
+	 * Sorts the event objects on the basis of their start time stamps.
+	 */
+	public void sort() {
+		Collections.sort(objects);
 	}
 	
 }

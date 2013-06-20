@@ -1,10 +1,10 @@
-1;Andi;Arbeit;20;0;0
-2;Andi;Brust;15;50;50
-3;Christiane;Krise;60;-50;-50
+1;Andi;Arbeit;20;10;10
+2;Andi;Brust;15;10;0
+3;Christiane;Krise;60;20;0
 4;Christiane;Schmidt;46;50;0
-5;Kim;Possible;30;0;50
-6;Kon;Dom;27;-50;0
-7;Knut;Schen;24;0;-50
+5;Kim;Possible;30;100;0
+6;Kon;Dom;27;50;0
+7;Knut;Schen;24;60;0
 8;Harry;Ballds;40;50;-50
 9;Niko;Tean;87;-50;50
 10;Karl;Kopf;46;19;23
