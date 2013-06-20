@@ -53,7 +53,7 @@ public interface IBrokerTopology<T extends IStreamObject<?>> {
 	 * the publisher uses the transfer method to publish the content to the brokernetwork
 	 * and to all subscribers
 	 */
-	void transfer(T object);
+	void transfer(T object, PublishPO<T> publisher);
 	
 	/**
 	 * Finds the best Broker
@@ -74,4 +74,10 @@ public interface IBrokerTopology<T extends IStreamObject<?>> {
 	 * @param publisher
 	 */
 	void unadvertise(List<Topic> topics, PublishPO<T> publisher);
+
+	void incrementNumberOfAgents();
+
+	void decrementNumberOfAgents();
+
+	boolean hasAnyAgents();
 }

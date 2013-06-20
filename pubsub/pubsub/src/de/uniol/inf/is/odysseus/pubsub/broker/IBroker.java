@@ -53,7 +53,7 @@ public interface IBroker<T extends IStreamObject<?>> {
 	 * 
 	 * @param object
 	 */
-	void routeToSubscribers(T object);
+	void routeToSubscribers(T object, PublishPO<T> publisher);
 	
 	/**
 	 * 

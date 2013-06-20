@@ -48,7 +48,7 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T>{
 	}
 
 	@Override
-	public void routeToSubscribers(T object) {
+	public void routeToSubscribers(T object, PublishPO<T> publisher) {
 		
 		for (BrokerSubscription<T> subscription : subscriptions) {
 			if (subscription.hasTopics() && doesAnyBrokerAdvertiseTopics()){

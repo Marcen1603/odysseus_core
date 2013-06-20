@@ -63,6 +63,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry
 				.getTopologyByDomain(domain);
 		b.unsubscribe(predicates, topics, brokerName, this);
+		BrokerTopologyRegistry.unregister(domain);
 	}
 
 	@Override

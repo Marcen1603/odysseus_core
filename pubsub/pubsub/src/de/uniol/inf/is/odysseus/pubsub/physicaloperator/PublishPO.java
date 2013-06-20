@@ -29,7 +29,7 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 
 	@Override
 	protected void process_next(T object, int port) {
-		brokerTopology.transfer(object);
+		brokerTopology.transfer(object, this);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -43,6 +43,7 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 	@Override
 	protected void process_close() throws OpenFailedException {
 		brokerTopology.unadvertise(topics, this);
+		BrokerTopologyRegistry.unregister(domain);
 	}
 
 	@Override

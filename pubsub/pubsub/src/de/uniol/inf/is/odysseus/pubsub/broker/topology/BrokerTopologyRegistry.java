@@ -48,6 +48,7 @@ public class BrokerTopologyRegistry {
 			IBrokerTopology<?> topology = brokerTopologies.get(domain.toLowerCase());
 			if (topology.getType().toLowerCase().equals(topologyType)){
 				// Broker with type and domain exists
+				topology.incrementNumberOfAgents();
 				return topology;				
 			} else {
 				// Broker with domain exists, but has a different type
@@ -58,10 +59,13 @@ public class BrokerTopologyRegistry {
 			// Broker with type and domain doesnt exists, create new Instance
 			IBrokerTopology<?> topology = brokerTopologyTypes.get(topologyType.toLowerCase());
 			IBrokerTopology<?> ret = topology.<E>getInstance(domain);
+			ret.incrementNumberOfAgents();
 			brokerTopologies.put(domain, ret);
 			return ret;
 		}
 	}
+	
+	
 	
 	public static IBrokerTopology<?> getTopologyByDomain(String domain) {
 		// Check if domain exists
@@ -72,6 +76,16 @@ public class BrokerTopologyRegistry {
 			return null;
 		}
 		
+	}
+
+
+	public static void unregister(String domain) {
+		IBrokerTopology<?> topology = getTopologyByDomain(domain);
+		topology.decrementNumberOfAgents();
+		if (!topology.hasAnyAgents()){
+			// Remove Topology with given name
+			brokerTopologies.remove(domain.toLowerCase());
+		}
 	}
 
 }

@@ -15,7 +15,26 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 	abstract IBroker<T> getBrokerByName(String name);
 
 	private String domainName;
+	
+	private int numberOfAgents = 0;
 
+	@Override
+	public void incrementNumberOfAgents(){
+		numberOfAgents++;
+	}
+	
+	@Override
+	public void decrementNumberOfAgents(){
+		numberOfAgents--;
+	}
+	
+	public boolean hasAnyAgents(){
+		if (numberOfAgents == 0){
+			return false;
+		}
+		return true;
+	}
+	
 	@Override
 	public void subscribe(List<IPredicate<? super T>> predicates,
 			List<Topic> topics, String brokerName, SubscribePO<T> subscriber) {
@@ -31,10 +50,10 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 	}
 
 	@Override
-	public void transfer(T object) {
+	public void transfer(T object, PublishPO<T> publisher) {
 		List<IBroker<T>> brokers = getAdressedBrokers();
 		for (IBroker<T> broker : brokers) {
-			broker.routeToSubscribers(object);
+			broker.routeToSubscribers(object, publisher);
 		}
 	}
 
