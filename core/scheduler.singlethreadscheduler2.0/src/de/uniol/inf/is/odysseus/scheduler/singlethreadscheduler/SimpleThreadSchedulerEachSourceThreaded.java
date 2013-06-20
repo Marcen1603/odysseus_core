@@ -14,6 +14,27 @@ public class SimpleThreadSchedulerEachSourceThreaded extends
 		super(schedulingStrategieFactory, planScheduling);
 		// TODO Auto-generated constructor stub
 	}
+	
+	private void removeUnscheduledSources() {
+		// 1. Remove all Sources that no longer need to be scheduled
+		// --> are no longer part of super.sources
+		// Hint: These are not the new Sources!
+		for (ISourceExecutor sourceExecutor : sourceThreads) {
+			logger.debug("Interrupting running source thread "
+					+ sourceExecutor);
+			// there should be only one running source per executor in
+			// single mode
+			for (IIterableSource<?> runningSource : sourceExecutor
+					.getSources()) {
+				if (!sources.contains(runningSource)) {
+					sourceExecutor.interrupt();
+					logger.debug("Remove source thread "
+							+ sourceExecutor);
+					sourceThreads.remove(sourceExecutor);
+				}
+			}
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -26,28 +47,8 @@ public class SimpleThreadSchedulerEachSourceThreaded extends
 	protected synchronized void process_setLeafSources(
 			List<IIterableSource<?>> newSources) {
 		synchronized (sourceThreads) {
+			removeUnscheduledSources();
 			if (newSources != null) {
-				// sourceThreads.clear();
-
-				// 1. Remove all Sources that no longer need to be scheduled
-				// --> are no longer part of super.sources
-				// Hint: These are not the new Sources!
-				for (ISourceExecutor sourceExecutor : sourceThreads) {
-					logger.debug("Interrupting running source thread "
-							+ sourceExecutor);
-					// there should be only one running source per executor in
-					// single mode
-					for (IIterableSource<?> runningSource : sourceExecutor
-							.getSources()) {
-						if (!sources.contains(runningSource)) {
-							sourceExecutor.interrupt();
-							logger.debug("Remove source thread "
-									+ sourceExecutor);
-							sourceThreads.remove(sourceExecutor);
-						}
-					}
-				}
-
 				// Add new Sources
 				for (IIterableSource<?> source : newSources) {
 					final IIterableSource<?> s = source;

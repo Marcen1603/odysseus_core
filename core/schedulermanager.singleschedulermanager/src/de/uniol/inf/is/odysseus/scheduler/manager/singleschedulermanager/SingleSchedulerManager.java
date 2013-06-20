@@ -19,7 +19,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -74,6 +77,8 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
     boolean configSchedulerDirty = false;
     boolean configSchedulingDirty = false;
     boolean activated = false;
+
+	private Map<IIterableSource<?>, Integer> sourceUsage = new HashMap<>();
 
     /**
      * OSGi-Method: Is called when this object will be activated by OSGi (after
@@ -276,11 +281,17 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
      */
     @Override
     public void refreshScheduling(IExecutionPlan execPlan) throws NoSchedulerLoadedException {
-        refreshScheduling(execPlan.getLeafSources(), execPlan.getQueries());
+        // Update Source/Query assignment
+    	sourceUsage.clear();
+    	for (IPhysicalQuery p: execPlan.getQueries()){
+    		increaseSourceUsage(p);
+    	}
+    	refreshScheduling(execPlan.getLeafSources(), execPlan.getQueries());
     }
 
-    public void refreshScheduling(List<IIterableSource<?>> leafSources, Collection<IPhysicalQuery> partialPlans) {
-        logger.debug("Refresh Scheduling. Set Sources");
+    private void refreshScheduling(List<IIterableSource<?>> leafSources, Collection<IPhysicalQuery> partialPlans) {
+        // Determine query source assignment   	
+    	logger.debug("Refresh Scheduling. Set Sources");
         this.activeScheduler.setLeafSources(leafSources);
         logger.debug("Refresh Scheduling. Set Partial Plans");
         this.activeScheduler.setPartialPlans(partialPlans);
@@ -290,15 +301,47 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
     @Override
     public void addQuery(IPhysicalQuery affectedQuery) {
     	logger.debug("AddQuery "+affectedQuery);
+    	increaseSourceUsage(affectedQuery);
     	this.activeScheduler.addLeafSources(affectedQuery.getLeafSources());
     	this.activeScheduler.addPartialPlan(affectedQuery);
-    	
     }
+
+	private void increaseSourceUsage(IPhysicalQuery affectedQuery) {
+		for (IIterableSource<?> s : affectedQuery.getLeafSources()){
+    		Integer count = sourceUsage.get(s);
+    		if (count == null){
+    			sourceUsage.put(s,1);
+    		}else{
+    			sourceUsage.put(s,count+1);
+    		}
+    	}
+	}
+	
+	private List<IIterableSource<?>> decreaseSourceUsage(IPhysicalQuery affectedQuery) {
+		List<IIterableSource<?>> ret = new LinkedList<>();
+		for (IIterableSource<?> s : affectedQuery.getLeafSources()){
+    		Integer count = sourceUsage.get(s);
+    		if (count == null){
+    			logger.error("Trying to remove not scheduled source"+s);
+    		}else{
+    			if (count > 1){
+    				sourceUsage.put(s,count-1);
+    			}else{
+    				sourceUsage.remove(s);
+    				ret.add(s);
+    			}
+    		}
+    	}
+		return ret;
+	}
+	
     
     @Override
     public void removeQuery(IPhysicalQuery affectedQuery) {
     	logger.debug("RemoveQuery "+affectedQuery);
     	this.activeScheduler.removePartialPlan(affectedQuery);
+    	List<IIterableSource<?>> toRemove = decreaseSourceUsage(affectedQuery);
+    	this.activeScheduler.removeLeafSources(toRemove);
     }
     
     @Override

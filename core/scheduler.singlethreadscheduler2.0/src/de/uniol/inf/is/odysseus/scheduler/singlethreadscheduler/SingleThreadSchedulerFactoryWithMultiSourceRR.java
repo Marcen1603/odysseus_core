@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import org.osgi.service.component.ComponentContext;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
@@ -55,7 +56,7 @@ public class SingleThreadSchedulerFactoryWithMultiSourceRR extends AbstractSched
 			scheduling[i] = new RoundRobinPlanScheduling();
 		}
 		// TODO: OdysseusConfig
-		int sourcesPerThread = -1;
+		long sourcesPerThread = OdysseusConfiguration.getLong("Scheduler.Simplethreaded.SourcesPerThread", -1);
 		return new SimpleThreadSchedulerMultipleSourcesThreaded(schedulingStrategy, scheduling, sourcesPerThread);
 	}
 

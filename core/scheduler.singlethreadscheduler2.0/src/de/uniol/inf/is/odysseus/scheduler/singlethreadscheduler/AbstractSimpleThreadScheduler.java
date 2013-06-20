@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -173,7 +172,7 @@ abstract public class AbstractSimpleThreadScheduler extends AbstractScheduler im
 
 		logger.debug("setPartialPlans done");
 	}
-
+	
 	@Override
 	public void addPartialPlan(IPhysicalQuery partialPlan) {
 		if (!partialPlans.contains(partialPlan)) {
@@ -201,7 +200,7 @@ abstract public class AbstractSimpleThreadScheduler extends AbstractScheduler im
 			}
 		}
 	}
-
+	
 	protected boolean isScheduled(IIterableSource<?> s) {
 		for (ISourceExecutor source : sourceThreads) {
 			if (source.hasSource(s)) {

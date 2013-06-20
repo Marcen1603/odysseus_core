@@ -82,6 +82,8 @@ public interface IScheduler extends IErrorEventHandler, IEventHandler {
 	public void addPartialPlan(IPhysicalQuery query);
 
 	public void removePartialPlan(IPhysicalQuery affectedQuery);
+	
+	public void removeLeafSources(List<IIterableSource<?>> sources);
 
 	
 	

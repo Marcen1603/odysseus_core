@@ -18,18 +18,11 @@ public class MultipleSourceExecutor extends Thread implements IEventListener, IS
 	Logger logger = LoggerFactory.getLogger(MultipleSourceExecutor.class);
 
 	private boolean interrupt = false;
-	private List<IIterableSource<?>> sources = new CopyOnWriteArrayList<IIterableSource<?>>();
-	private AbstractSimpleThreadScheduler caller;	
-
-	public MultipleSourceExecutor(List<IIterableSource<?>> sources, AbstractSimpleThreadScheduler singleThreadScheduler) {
-		String name = "";
-		String sep = "";
-		for (IIterableSource<?> s : sources) {
-			name = name + sep + s.getName();
-			sep = ", ";
-		}
-		this.setName(name);
-		this.sources = sources;
+	final private List<IIterableSource<?>> sources = new CopyOnWriteArrayList<IIterableSource<?>>();
+	final private AbstractSimpleThreadScheduler caller;	
+	
+	public MultipleSourceExecutor(AbstractSimpleThreadScheduler singleThreadScheduler) {
+		this.setName("MultiSourceExecutor ");
 		this.caller = singleThreadScheduler;
 
 	}
@@ -39,7 +32,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener, IS
 		logger.debug("Starting source scheduling for "+sources+" - "+this+"("+this.hashCode()+")");
 		interrupt = false;
 		for (IIterableSource<?> s : sources) {
-			logger.debug("Adding Source. " + s + ".Waiting for open ...");
+//			logger.debug("Adding Source. " + s + ".Waiting for open ...");
 			s.subscribe(this, POEventType.OpenDone);
 			synchronized (this) {
 				while (!interrupt && !s.isOpen() && !isInterrupted() && caller.isRunning()) {
@@ -82,13 +75,19 @@ public class MultipleSourceExecutor extends Thread implements IEventListener, IS
 						if(!others.isDone()){
 							alldone = false;
 						}
-					}					
+					}	
+					while (alldone){
+						try {
+							this.wait(1000);
+						} catch (InterruptedException e) {
+						}
+					}
 				}
 			}
 		}
 
-		logger.debug("Removing " + this.hashCode() + " Sources " + sources);
-		caller.removeSourceThread(this);
+		//logger.debug("Removing " + this.hashCode() + " Sources " + sources);
+		//caller.removeSourceThread(this);
 
 	}
 
@@ -113,4 +112,21 @@ public class MultipleSourceExecutor extends Thread implements IEventListener, IS
 		notifyAll();
 	}
 
+	public void removeSource(IIterableSource<?> source) {
+		sources.remove(source);
+	}
+	
+	public synchronized void addSource(IIterableSource<?> source) {
+		sources.add(source);
+		notifyAll();
+	}
+	
+	public int getRunningSources(){
+		return sources.size();
+	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName()+" "+sources;
+	}
 }

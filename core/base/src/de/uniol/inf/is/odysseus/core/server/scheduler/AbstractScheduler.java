@@ -279,6 +279,11 @@ public abstract class AbstractScheduler implements
 		process_setLeafSources(sources);
 	}
 
+	@Override
+	public void removeLeafSources(List<IIterableSource<?>> sources) {
+		this.sources.removeAll(sources);
+		process_setLeafSources(sources);
+	}
 
 	@Override
 	final public List<IIterableSource<?>> getLeafSources() {
