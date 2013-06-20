@@ -2,9 +2,14 @@ package de.uniol.inf.is.odysseus.pubsub.broker;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
+enum Filtertype{
+	content,
+	hierarchical,
+	channel
+}
+
 public abstract class AbstractBroker<T extends IStreamObject<?>> implements IBroker<T>{
 	private String name;
-	
 	
 	public AbstractBroker(String name){
 		this.name = name;
@@ -15,9 +20,6 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> implements IBro
 		return name;
 	}
 	
-	@Override
-	public boolean hasSubscriptions() {
-		return true;
-	}
+	
 	
 }

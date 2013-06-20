@@ -2,19 +2,20 @@ package de.uniol.inf.is.odysseus.pubsub.broker;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
-public class BrokerSubscription<T> {
+public class BrokerSubscription<T extends IStreamObject<?>> {
 
-	private SubscribePO<?> subscriber;
+	private SubscribePO<T> subscriber;
 
 	private List<Topic> topics;
 
 	private List<IPredicate<? super T>> predicates;
 
-	public BrokerSubscription(SubscribePO<?> subscriber, List<IPredicate<? super T>> predicates,
+	public BrokerSubscription(SubscribePO<T> subscriber, List<IPredicate<? super T>> predicates,
 			List<Topic> topics) {
 		this.setPredicates(predicates);
 		this.setTopics(topics);
@@ -36,11 +37,11 @@ public class BrokerSubscription<T> {
 	}
 	
 
-	public SubscribePO<?> getSubscriber() {
+	public SubscribePO<T> getSubscriber() {
 		return subscriber;
 	}
 
-	public void setSubscriber(SubscribePO<?> subscriber) {
+	public void setSubscriber(SubscribePO<T> subscriber) {
 		this.subscriber = subscriber;
 	}
 

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.pubsub.physicaloperator;
 
 import java.util.List;
+import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -18,6 +19,7 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 	private List<String> topicStrings;
 	private List<Topic> topics;
 	private IBrokerTopology<T> brokerTopology;
+	private String identifier;
 
 	public PublishPO(String topologyType, String domain, List<String> topics) {
 		super();
@@ -25,6 +27,7 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 		this.domain = domain;
 		this.topicStrings = topics;
 		this.topics = TopicBuilder.ConvertStringsToTopics(topics);
+		this.identifier = UUID.randomUUID().toString();
 	}
 
 	@Override
@@ -55,6 +58,10 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
+	}
+
+	public String getIdentifier() {
+		return identifier;
 	}
 
 }

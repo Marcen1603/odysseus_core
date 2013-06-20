@@ -40,7 +40,6 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends AbstractBroke
 				ret.add(broker);
 			}
 		}
-		
 		return ret;
 	}
 
