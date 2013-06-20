@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
 public class VisibilityGenerator extends StreamClientHandler {
 
 	private final static int CHANGE_MARKER = 166;
-	private final static int MAX_ELEMENTS = 1666;
+	private final static int MAX_ELEMENTS = 666;
 	private final static int SLEEP = 150;
 	private int tupleCounter = 0;
 	private boolean changed = false;

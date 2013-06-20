@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
 public class PrecipitationGenerator extends StreamClientHandler {
 
 	private final static int CHANGE_MARKER = 5;
-	private final static int MAX_ELEMENTS = 50;
+	private final static int MAX_ELEMENTS = 20;
 	private final static int SLEEP = 5000;
 	private int tupleCounter = 0;
 	private boolean changed = false;

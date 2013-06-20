@@ -36,7 +36,7 @@ public class HumidityGenerator extends StreamClientHandler {
 
 	private final static int CHANGE_MARKER = 250;
 	private final static int SLEEP = 100;
-	private final static int MAX_ELEMENTS = 2500;
+	private final static int MAX_ELEMENTS = 1000;
 	private int tupleCounter = 0;
 	private boolean changed = false;
 	

@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
 public class TemperatureGenerator extends StreamClientHandler {
 
 	private final static int CHANGE_MARKER = 500;
-	private final static int MAX_ELEMENTS = 5000;
+	private final static int MAX_ELEMENTS = 2000;
 	private final static int SLEEP = 50;
 	private int tupleCounter = 0;
 	private boolean changed = false;
