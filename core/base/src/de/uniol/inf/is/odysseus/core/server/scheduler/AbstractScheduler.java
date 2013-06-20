@@ -83,8 +83,10 @@ public abstract class AbstractScheduler implements
 	long linesWritten;
 	StringBuffer toPrint = new StringBuffer();
 
+	// This is the list of sources that shoud be scheduled
 	final protected List<IIterableSource<?>> sources = new ArrayList<>();
 
+	// This ist the list of partial plans (without sources) that should be scheduled
 	final protected Collection<IPhysicalQuery> partialPlans = new ArrayList<>();
 	
 	private final EventHandler eventHandler;
