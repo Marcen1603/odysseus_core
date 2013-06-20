@@ -59,4 +59,5 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.map,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.expression
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .,
- lib/gson-2.2.2.jar
+ lib/gson-2.2.2.jar,
+ lib/opal-0.9.5.2.jar

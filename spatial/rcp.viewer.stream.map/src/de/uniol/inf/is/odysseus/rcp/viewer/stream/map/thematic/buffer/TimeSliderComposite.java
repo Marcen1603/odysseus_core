@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Slider;
+//import org.mihalis.opal.rangeSlider.RangeSlider;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -62,6 +63,8 @@ public class TimeSliderComposite extends Composite implements
 		this.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		this.setLayout(new GridLayout(6, false));
 
+		//RangeSlider slider2 = new RangeSlider(this, SWT.HORIZONTAL);
+		
 		intervallLabel = new Label(this, SWT.NONE);
 		intervallLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER,
 				false, false, 3, 1));

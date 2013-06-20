@@ -421,7 +421,6 @@ public class MapEditorModel extends ModelObject {
 
 			LayerUpdater updater = new LayerUpdater(editor, query, connection);
 			connections.put(String.valueOf(query.hashCode()), updater);
-			// TODO: TEST!
 			screenManager.addPropertyChangeListener(updater);
 
 			LOG.debug("Bind Query: " + query.getID());
