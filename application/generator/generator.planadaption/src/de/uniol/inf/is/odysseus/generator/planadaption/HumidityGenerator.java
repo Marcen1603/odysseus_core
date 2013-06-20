@@ -49,7 +49,7 @@ public class HumidityGenerator extends StreamClientHandler {
 	 */
 	@Override
 	public void init() {
-		// CREATE STREAM humidity (timestamp LONG, humidity DOUBLE, location INTEGER) CHANNEL localhost : 57002;
+		// CREATE STREAM humidity (timestamp LONG, humidity DOUBLE, name STRING, location INTEGER) CHANNEL localhost : 57002;
 				/**
 				 * humidity ::= ACCESS({
 				 * 		source='humidity', 
@@ -65,6 +65,7 @@ public class HumidityGenerator extends StreamClientHandler {
 				 * 		schema=[
 				 * 			['timestamp', 'STARTTIMESTAMP'], 
 				 * 			['humidity', 'DOUBLE'], 
+				 * 			['name', 'STRING'],
 				 * 			['location', 'INTEGER']
 				 * 			]})
 				 **/
@@ -117,6 +118,7 @@ public class HumidityGenerator extends StreamClientHandler {
 		
 		tuple.addLong(time.nextValue());
 		tuple.addDouble(humidity.nextValue());
+		tuple.addString("humidity");
 		tuple.addInteger(location.nextValue());
 		
 		try {

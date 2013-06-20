@@ -52,7 +52,7 @@ public class PressureGenerator extends StreamClientHandler {
 	@Override
 	public void init() {
 
-		// CREATE STREAM pressure (timestamp LONG, pressure INTEGER, location INTEGER) CHANNEL localhost : 57004;
+		// CREATE STREAM pressure (timestamp LONG, pressure INTEGER, name STRING, location INTEGER) CHANNEL localhost : 57004;
 		/**
 		 * pressure ::= ACCESS({
 		 * 		source='pressure', 
@@ -68,6 +68,7 @@ public class PressureGenerator extends StreamClientHandler {
 		 * 		schema=[
 		 * 			['timestamp', 'STARTTIMESTAMP'], 
 		 * 			['pressure', 'INTEGER'], 
+		 * 			['name', 'STRING'],
 		 * 			['location', 'INTEGER']
 		 * 			]})
 		 **/
@@ -117,6 +118,7 @@ public class PressureGenerator extends StreamClientHandler {
 
 		tuple.addLong(time.nextValue());
 		tuple.addInteger(pressure.nextValue());
+		tuple.addString("pressure");
 		tuple.addInteger(location.nextValue());
 
 		try {

@@ -53,7 +53,7 @@ public class PrecipitationGenerator extends StreamClientHandler {
 	 */
 	@Override
 	public void init() {
-		// CREATE STREAM precipitation (timestamp LONG, precipitation INTEGER, location INTEGER) CHANNEL localhost : 57005;
+		// CREATE STREAM precipitation (timestamp LONG, precipitation INTEGER, name STRING, location INTEGER) CHANNEL localhost : 57005;
 				/**
 				 * precipitation ::= ACCESS({
 				 * 		source='precipitation', 
@@ -69,6 +69,7 @@ public class PrecipitationGenerator extends StreamClientHandler {
 				 * 		schema=[
 				 * 			['timestamp', 'STARTTIMESTAMP'], 
 				 * 			['precipitation', 'INTEGER'], 
+				 * 			['name', 'STRING'],
 				 * 			['location', 'INTEGER']
 				 * 			]})
 				 **/
@@ -120,6 +121,7 @@ public class PrecipitationGenerator extends StreamClientHandler {
 
 		tuple.addLong(time.nextValue());
 		tuple.addInteger(precipitation.nextValue());
+		tuple.addString("precipitation");
 		tuple.addInteger(location.nextValue());
 
 		try {

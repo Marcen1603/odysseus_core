@@ -56,7 +56,7 @@ public class TemperatureGenerator extends StreamClientHandler {
 	 */
 	@Override
 	public void init() {
-		// CREATE STREAM temperature (timestamp LONG, temperature INTEGER, location INTEGER) CHANNEL localhost : 57001;
+		// CREATE STREAM temperature (timestamp LONG, temperature INTEGER, name STRING, location INTEGER) CHANNEL localhost : 57001;
 		/**
 		 * temperature ::= ACCESS({
 		 * 		source='temperature', 
@@ -72,6 +72,7 @@ public class TemperatureGenerator extends StreamClientHandler {
 		 * 		schema=[
 		 * 			['timestamp', 'STARTTIMESTAMP'], 
 		 * 			['temperature', 'INTEGER'], 
+		 * 			['name', 'STRING'],
 		 * 			['location', 'INTEGER']
 		 * 			]})
 		 **/
@@ -127,6 +128,7 @@ public class TemperatureGenerator extends StreamClientHandler {
 
 		tuple.addLong(time.nextValue());
 		tuple.addInteger(temperature.nextValue());
+		tuple.addString("temperature");
 		tuple.addInteger(location.nextValue());
 
 		try {

@@ -52,7 +52,7 @@ public class WindGenerator extends StreamClientHandler {
 	 */
 	@Override
 	public void init() {
-		// CREATE STREAM wind (timestamp LONG, speed INTEGER, direction STRING, location INTEGER) CHANNEL localhost : 57003;
+		// CREATE STREAM wind (timestamp LONG, speed INTEGER, direction STRING, name STRING, location INTEGER) CHANNEL localhost : 57003;
 				/**
 				 * wind ::= ACCESS({
 				 * 		source='wind', 
@@ -69,6 +69,7 @@ public class WindGenerator extends StreamClientHandler {
 				 * 			['timestamp', 'STARTTIMESTAMP'], 
 				 * 			['speed', 'INTEGER'], 
 				 * 			['direction', 'STRING'],
+				 * 			['name', 'STRING'],
 				 * 			['location', 'INTEGER']
 				 * 			]})
 				 **/
@@ -121,6 +122,7 @@ public class WindGenerator extends StreamClientHandler {
 		tuple.addLong(time.nextValue());
 		tuple.addInteger(speed.nextValue());
 		tuple.addString(directions[(int) direction.nextValue()]);
+		tuple.addString("wind");
 		tuple.addInteger(location.nextValue());
 		
 		try {

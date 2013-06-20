@@ -50,7 +50,7 @@ public class VisibilityGenerator extends StreamClientHandler {
 	 */
 	@Override
 	public void init() {
-		// CREATE STREAM visibility (timestamp LONG, visibility INTEGER, location INTEGER) CHANNEL localhost : 57006;
+		// CREATE STREAM visibility (timestamp LONG, visibility INTEGER, name STRING, location INTEGER) CHANNEL localhost : 57006;
 				/**
 				 * visibility ::= ACCESS({
 				 * 		source='visibility', 
@@ -66,6 +66,7 @@ public class VisibilityGenerator extends StreamClientHandler {
 				 * 		schema=[
 				 * 			['timestamp', 'STARTTIMESTAMP'], 
 				 * 			['visibility', 'INTEGER'], 
+				 * 			['name', 'STRING'],
 				 * 			['location', 'INTEGER']
 				 * 			]})
 				 **/
@@ -117,6 +118,7 @@ public class VisibilityGenerator extends StreamClientHandler {
 
 		tuple.addLong(time.nextValue());
 		tuple.addInteger(visibility.nextValue());
+		tuple.addString("visibility");
 		tuple.addInteger(location.nextValue());
 
 		try {
