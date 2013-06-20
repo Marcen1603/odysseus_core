@@ -92,21 +92,21 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 		// Prevent an overflow in the puffer
 		if (puffer.size() > maxNumerOfElements) {
-			// TODO: Which size is ok? Config?
-
 			// Remove old element(s)
 			Iterator<Tuple<? extends ITimeInterval>> oldestElements = puffer
 					.peekElementsContaing(puffer.getMinTs(), false);
-			
+
 			PointInTime deleteTime = null;
-			if(oldestElements.hasNext()) {
-				// We need just one
+			if (oldestElements.hasNext()) {
+				// We need just one (there no while)
 				// This should be one of the last elements
-				// of more than one start with the same 
-				// oldest timestamp
+				// if more than one start with the same oldest timestamp
 				Tuple<? extends ITimeInterval> elem = oldestElements.next();
 				deleteTime = elem.getMetadata().getEnd();
 			}
+			// This deletes the oldest element. If more than one element
+			// is in this time-window, more than one element will
+			// be deleted.
 			puffer.purgeElementsBefore(deleteTime.plus(1));
 
 			// Update "current-list", timeSlider and all the other things which
