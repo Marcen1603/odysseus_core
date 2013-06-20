@@ -125,31 +125,6 @@ public class PredicateHelper {
 		LOG.debug("New predicate: {}", result);
 		return new Pair<IPredicate<?>, Set<IRelationalPredicate>>(
 				result, satisfiablePredicates);
-
-		// Set<SDFExpression> expressions = new HashSet<SDFExpression>();
-		// for (IRelationalPredicate predicate : satisfiablePredicates) {
-		// expressions.add(((RelationalPredicate) predicate).getExpression());
-		// }
-		//
-		// StringBuilder sb = new StringBuilder();
-		// for (SDFExpression expression : expressions) {
-		// sb.append(expression.getExpressionString());
-		// sb.append(" AND ");
-		// }
-		// if (sb.length() > 5) {
-		// sb.delete(sb.length() - 5, sb.length());
-		// }
-		//
-		// SDFExpression ex = new SDFExpression(null, sb.toString(),
-		// this.resolver, MEP.getInstance());
-		//
-		// RelationalPredicate predicate = new RelationalPredicate(ex);
-		//
-		// LOG.debug("[PredicateHelper] New predicate: "
-		// + ((RelationalPredicate) predicate).getExpression()
-		// .getExpressionString());
-		// return new Pair<IRelationalPredicate, Set<IRelationalPredicate>>(
-		// predicate, satisfiablePredicates);
 	}
 
 	/**
