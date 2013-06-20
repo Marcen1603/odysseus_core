@@ -16,6 +16,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	
 	private String outputtype;
 	private String classifier;
+	private String trainingset;
 
 	private IClassifier<T> algo;
 
@@ -23,16 +24,18 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 		super();
 	}
 	
-	public SentimentDetectionPO(String outputtype, String classifier) {
+	public SentimentDetectionPO(String outputtype, String classifier, String trainingset) {
 		super();
 		this.outputtype = outputtype;
 		this.classifier = classifier;
+		this.trainingset = trainingset;
 	}
 
 	public SentimentDetectionPO(SentimentDetectionPO<T> senti) {
 		super(senti);
 		this.outputtype = senti.outputtype;
 		this.classifier = senti.classifier;
+		this.trainingset = senti.trainingset;
 	}
 
 	@Override
@@ -45,7 +48,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	@Override
 	protected void process_open() throws OpenFailedException {
 		algo = (IClassifier<T>) ClassifierRegistry.getClassifierByName(classifier.toLowerCase());
-		
+		System.out.println("Classifier wird initialisiert....");
+		algo.trainClassifier(trainingset);
 	
 	}
 	
@@ -98,28 +102,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 		return new SentimentDetectionPO<T>(this);
 	}
 	
-	/*
-	 * SentimentDetection
-	 * 
-	 */
-	private String detect(String inputText){
-		
-    String erg = "";
-    
-		if(classifier.equals("naivebayes")){
-			
-			System.out.println("Der Satz wird analysiert: " + inputText);
-			
-			if(ctr % 2 == 0 ){
-				 erg = "positive";
-			}else{
-				 erg = "negative";
-			}
-		
-		}
-	
-		return erg;
-	}
+
 	
 	/*
 	 * Default port is 0

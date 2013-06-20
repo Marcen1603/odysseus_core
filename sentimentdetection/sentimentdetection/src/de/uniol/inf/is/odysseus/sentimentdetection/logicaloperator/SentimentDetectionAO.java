@@ -20,6 +20,7 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 
 	private String outputtype;
 	private String classifier;
+	private String trainingset;
 	
 	
 	public SentimentDetectionAO(){
@@ -31,6 +32,7 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
         super(sentimentDetectionAO);
         this.outputtype = sentimentDetectionAO.outputtype;
         this.classifier = sentimentDetectionAO.classifier;
+        this.trainingset = sentimentDetectionAO.trainingset;
     }
 	
 
@@ -66,6 +68,11 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 		this.classifier = classifier;
 	}
 	
+	@Parameter(name="trainingset", type=StringParameter.class)
+	public void setTrainingset(String trainingset){
+		this.trainingset = trainingset;
+	}
+	
 	
 	public String getOutputType(){
 		return outputtype;
@@ -75,6 +82,10 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 		return classifier;
 	}
 	
+	
+	public String getTrainingset(){
+		return trainingset;
+	}
 	
 
 }

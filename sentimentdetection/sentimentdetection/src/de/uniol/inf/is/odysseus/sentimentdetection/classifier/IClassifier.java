@@ -10,4 +10,6 @@ public interface IClassifier<T extends IMetaAttribute> {
 	
 	String startDetect(String text);
 	
+	void trainClassifier(String trainingsetPath);
+	
 }
