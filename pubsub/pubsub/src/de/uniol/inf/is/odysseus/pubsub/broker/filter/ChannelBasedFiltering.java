@@ -18,6 +18,7 @@ public class ChannelBasedFiltering<T extends IStreamObject<?>> extends AbstractF
 	@Override
 	public void reinitializeFilter(List<BrokerSubscription<T>> subscriptions,
 			List<BrokerAdvertisements> advertisements) {
+		matches.clear();
 		for (BrokerSubscription<T> subscription : subscriptions) {
 			for (Topic topic : subscription.getTopics()) {
 				matchPublisherAndSubscriber(advertisements, topic, subscription);
