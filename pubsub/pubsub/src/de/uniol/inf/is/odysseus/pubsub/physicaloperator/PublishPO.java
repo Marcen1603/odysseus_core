@@ -40,12 +40,16 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 	protected void process_open() throws OpenFailedException {
 		brokerTopology = (IBrokerTopology<T>) BrokerTopologyRegistry
 				.<T>getTopologyByTypeAndDomain(topologyType, domain);
-		brokerTopology.advertise(topics, this);
+		if (!topics.isEmpty()){
+			brokerTopology.advertise(topics, this);			
+		}
 	}
 
 	@Override
 	protected void process_close() throws OpenFailedException {
-		brokerTopology.unadvertise(topics, this);
+		if (!topics.isEmpty()){
+			brokerTopology.unadvertise(topics, this);			
+		}
 		BrokerTopologyRegistry.unregister(domain);
 	}
 

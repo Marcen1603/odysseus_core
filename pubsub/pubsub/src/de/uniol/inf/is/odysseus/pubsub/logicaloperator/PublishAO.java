@@ -13,7 +13,7 @@ public class PublishAO extends UnaryLogicalOp{
 	
 	private String topologyType;
 	private String domain;
-	private List<String> topics;
+	private List<String> topics = new ArrayList<>();
 	
 	public PublishAO(){
 		super();

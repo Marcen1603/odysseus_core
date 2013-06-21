@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAtt
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name="Subscribe", minInputPorts=1, maxInputPorts=1, doc="Subscribe Operator")
+@LogicalOperator(name="Subscribe", minInputPorts=0, maxInputPorts=0, doc="Subscribe Operator")
 public class SubscribeAO extends UnaryLogicalOp{
 
 	private SDFSchema schema;
@@ -58,7 +58,7 @@ public class SubscribeAO extends UnaryLogicalOp{
 	}
 	
 	@Override
-    @Parameter(name="predicates", type=PredicateParameter.class, isList=true, doc="")
+    @Parameter(name="predicates", type=PredicateParameter.class, isList=true, optional=true, doc="")
     public void setPredicates(List<IPredicate<?>> predicates) {
         super.setPredicates(predicates);
     }

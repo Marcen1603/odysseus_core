@@ -46,7 +46,7 @@ public class BrokerTopologyRegistry {
 		
 		if (brokerTopologies.containsKey(domain.toLowerCase())){
 			IBrokerTopology<?> topology = brokerTopologies.get(domain.toLowerCase());
-			if (topology.getType().toLowerCase().equals(topologyType)){
+			if (topology.getType().toLowerCase().equals(topologyType.toLowerCase())){
 				// Broker with type and domain exists
 				topology.incrementNumberOfAgents();
 				return topology;				
@@ -58,9 +58,9 @@ public class BrokerTopologyRegistry {
 		} else {
 			// Broker with type and domain doesnt exists, create new Instance
 			IBrokerTopology<?> topology = brokerTopologyTypes.get(topologyType.toLowerCase());
-			IBrokerTopology<?> ret = topology.<E>getInstance(domain);
+			IBrokerTopology<?> ret = topology.<E>getInstance(domain.toLowerCase());
 			ret.incrementNumberOfAgents();
-			brokerTopologies.put(domain, ret);
+			brokerTopologies.put(domain.toLowerCase(), ret);
 			return ret;
 		}
 	}

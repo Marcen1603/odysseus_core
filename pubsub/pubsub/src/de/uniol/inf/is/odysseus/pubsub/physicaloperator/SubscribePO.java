@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.pubsub.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -27,6 +28,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	private String domain;
 	private List<String> topicStrings;
 	private List<Topic> topics;
+	private String identifier;
 
 	public SubscribePO(List<IPredicate<? super T>> predicates,
 			String brokername, SDFSchema schema, List<String> topics,
@@ -38,6 +40,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		this.topicStrings = topics;
 		this.topics = TopicBuilder.ConvertStringsToTopics(topics);
 		initPredicates(predicates);
+		this.identifier = UUID.randomUUID().toString();
 	}
 
 	public SubscribePO(SubscribePO<T> splitPO) {
@@ -54,17 +57,23 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		@SuppressWarnings("unchecked")
 		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry
 				.getTopologyByDomain(domain);
-		b.subscribe(predicates, topics, brokerName, this);
+		if (!topics.isEmpty() || !predicates.isEmpty()){
+			b.subscribe(predicates, topics, brokerName, this);			
+		}
 	}
 
 	@Override
-	protected void process_close() throws OpenFailedException {
+	protected void process_close() {
 		@SuppressWarnings("unchecked")
 		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry
 				.getTopologyByDomain(domain);
-		b.unsubscribe(predicates, topics, brokerName, this);
-		BrokerTopologyRegistry.unregister(domain);
+		if (!topics.isEmpty() || !predicates.isEmpty()){
+			b.unsubscribe(predicates, topics, brokerName, this);
+		}
+		BrokerTopologyRegistry.unregister(domain);			
 	}
+	
+	
 
 	@Override
 	public AbstractPipe<T, T> clone() {
@@ -86,12 +95,17 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 
 	@Override
 	protected void process_next(T object, int port) {
-		transfer(object);
+		// No transfer in process_next, because broker calls receive
+		//transfer(object);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void receive(Object object){
 		transfer((T)object);
+	}
+	
+	public String getIdentifier() {
+		return identifier;
 	}
 
 

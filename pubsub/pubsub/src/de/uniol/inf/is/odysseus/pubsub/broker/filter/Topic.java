@@ -42,7 +42,7 @@ public class Topic {
 		} else {
 			return false;
 		}
-		if (this.name.toLowerCase().equals(other.name.toLowerCase()) && this.getChilds().size() == other.getChilds().size()){
+		if (this.name.toLowerCase().equals(other.name.toLowerCase())){
 			return true;
 		}
 		return false;

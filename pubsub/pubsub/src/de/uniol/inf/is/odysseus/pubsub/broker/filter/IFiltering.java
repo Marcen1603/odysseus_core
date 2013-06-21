@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.pubsub.broker.filter;
 
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -14,14 +15,14 @@ public interface IFiltering<T extends IStreamObject<?>> {
 	 * @param subscriptions
 	 * @param advertisements
 	 */
-	void reinitializeFilter(List<BrokerSubscription<T>> subscriptions, List<BrokerAdvertisements> advertisements);
+	void reinitializeFilter(Collection<BrokerSubscription<T>> subscriptions, Collection<BrokerAdvertisements> advertisements);
 	
 	/**
 	 * Send Object to subscribers
 	 * @param object
 	 * @param publisher
 	 */
-	void filter(T object, PublishPO<T> publisher);
+	List<String> filter(T object, PublishPO<T> publisher);
 
 	/**
 	 * 

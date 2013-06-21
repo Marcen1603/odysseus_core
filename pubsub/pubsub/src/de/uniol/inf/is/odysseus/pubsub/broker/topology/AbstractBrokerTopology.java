@@ -19,6 +19,15 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 	private int numberOfAgents = 0;
 
 	@Override
+	public String getDomain() {
+		return domainName;
+	}
+
+	public void setDomain(String domain) {
+		this.domainName = domain;
+	}
+	
+	@Override
 	public void incrementNumberOfAgents(){
 		numberOfAgents++;
 	}
@@ -50,21 +59,13 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 	}
 
 	@Override
-	public void transfer(T object, PublishPO<T> publisher) {
-		List<IBroker<T>> brokers = getAdressedBrokers();
-		for (IBroker<T> broker : brokers) {
-			broker.routeToSubscribers(object, publisher);
-		}
-	}
-
-	@Override
 	public void advertise(List<Topic> topics, PublishPO<T> publisher) {
 		List<IBroker<T>> brokers = getAdressedBrokers();
 		for (IBroker<T> broker : brokers) {
 			broker.setAdvertisement(topics, publisher);
 		}
 	}
-
+	
 	@Override
 	public void unadvertise(List<Topic> topics, PublishPO<T> publisher) {
 		List<IBroker<T>> brokers = getAdressedBrokers();
@@ -74,12 +75,11 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 	}
 
 	@Override
-	public String getDomain() {
-		return domainName;
-	}
-
-	public void setDomain(String domain) {
-		this.domainName = domain;
+	public void transfer(T object, PublishPO<T> publisher) {
+		List<IBroker<T>> brokers = getAdressedBrokers();
+		for (IBroker<T> broker : brokers) {
+			broker.routeToSubscribers(object, publisher);
+		}
 	}
 
 }

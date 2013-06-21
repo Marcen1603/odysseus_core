@@ -13,8 +13,8 @@ public class SimpleRoutingBroker <T extends IStreamObject<?>> extends AbstractBr
 	//private List<SimpleRoutingBroker<T>> connectedBrokers = new ArrayList<SimpleRoutingBroker<T>>();
 	
 	
-	public SimpleRoutingBroker(String name) {
-		super(name);
+	public SimpleRoutingBroker(String name, String domain) {
+		super(name, domain);
 	}
 
 	@Override

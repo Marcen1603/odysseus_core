@@ -13,11 +13,11 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends AbstractBr
 	private IBroker<T> singleBroker;
 	
 	public SingleBrokerTopology(){
-		singleBroker = new SimpleBroker<T>("Broker_0");
+		// needed for OSGi
 	}
 	
 	public SingleBrokerTopology(String domain){
-		singleBroker = new SimpleBroker<T>("Broker_0");
+		singleBroker = new SimpleBroker<T>("RootBroker", domain);
 		setDomain(domain);
 	}
 	

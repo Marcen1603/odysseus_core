@@ -15,6 +15,12 @@ public interface IBroker<T extends IStreamObject<?>> {
 	 * @return
 	 */
 	String getName();
+	
+	/**
+	 * Returns the Domain of the Topology
+	 * @return
+	 */
+	String getDomain();
 
 	/**
 	 * 
