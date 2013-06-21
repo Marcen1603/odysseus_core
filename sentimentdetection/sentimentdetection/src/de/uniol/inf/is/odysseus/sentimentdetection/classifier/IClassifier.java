@@ -8,7 +8,7 @@ public interface IClassifier<T extends IMetaAttribute> {
 	
 	String getType();
 	
-	String startDetect(String text);
+	int startDetect(String text);
 	
 	void trainClassifier(String trainingsetPath);
 	

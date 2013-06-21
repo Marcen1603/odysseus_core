@@ -14,6 +14,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	
 	private static int ctr = 0;
 	
+	private static int wrongdecision=0;
+	
 	private String outputtype;
 	private String classifier;
 	private String trainingset;
@@ -59,10 +61,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void process_next(Tuple object, int port) {
-		
-		
-		
-		System.out.println("Es wurde folgender OutputType gesetzt: "+ outputtype);
+
+		//System.out.println("Es wurde folgender OutputType gesetzt: "+ outputtype);
 		//get inputSize of the object	
 		int inputSize = object.size();
 		
@@ -75,22 +75,40 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 		//text positive or negative
 		//String erg = detect(object.getAttribute(0).toString());
 		
-		String erg = algo.startDetect(object.getAttribute(0).toString());
+		int erg = algo.startDetect(object.getAttribute(0).toString());
 	
 		//get OutputPort 
 		int outputPort = getOutPutPort(erg);
 		
 		//set the decision Attribute 
 		outputTuple.setAttribute(object.size(), erg);
+	
+		//calculate error
+		String truedecision = outputTuple.getAttribute(object.size()-1).toString();
+		int decision =   erg;
 			
 		outputTuple.setMetadata(object.getMetadata());
 		outputTuple.setRequiresDeepClone(object.requiresDeepClone());
 	
-		//Test Start
-		System.out.println("Alte Objekt ist: "+ object.toString());
-		System.out.println("Neues Objekt ist: "+ outputTuple.toString());
+		System.out.println("Satz: "+ object.getAttribute(0).toString());
+		System.out.println("true decision: "+ truedecision);
+		System.out.println("decision: "+ decision);
+		
+		
+		if(Integer.parseInt(truedecision.trim()) != erg ){
+			wrongdecision++;
+		}
+		
+		System.out.println("Error:" + 1.0 * wrongdecision / 1062 );
+		System.out.println("Wrong:" + wrongdecision );
+	
+		
+		//System.out.println("Alte Objekt ist: "+ object.toString());
+		//System.out.println("Neues Objekt ist: "+ outputTuple.toString());
 		ctr++;
 		//Test End
+		
+		
 		
 		transfer(outputTuple,outputPort);
 	
@@ -110,12 +128,12 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 	 * transfer positive to port 0
 	 * transfer negative to port 1
 	 */
-	private int getOutPutPort(String erg){
+	private int getOutPutPort(int erg){
 		
 		int outputPort = 0 ;
 		
 		if(outputtype.equals("two")){
-			if(erg.equals("positive")){
+			if(erg == 1){
 				System.out.println("Ausgabe an Port 0:"+ outputtype);
 				outputPort = 0;
 			}else{
