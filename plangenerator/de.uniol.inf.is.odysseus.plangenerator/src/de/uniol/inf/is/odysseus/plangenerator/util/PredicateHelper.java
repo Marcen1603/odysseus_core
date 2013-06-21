@@ -122,7 +122,6 @@ public class PredicateHelper {
 						.createAndPredicate(result, next);
 			}
 		}
-		LOG.debug("New predicate: {}", result);
 		return new Pair<IPredicate<?>, Set<IRelationalPredicate>>(
 				result, satisfiablePredicates);
 	}

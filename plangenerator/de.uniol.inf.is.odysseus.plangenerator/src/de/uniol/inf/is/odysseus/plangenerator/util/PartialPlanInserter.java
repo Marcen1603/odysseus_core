@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 
 /**
+ * This class provides functionality to insert the beforehand collected 
+ * partial plans into a given join plan.
  * 
  * @author Merlin Wasmann
  * 
@@ -99,12 +101,8 @@ public class PartialPlanInserter {
 				PlanGeneratorHelper.printErrorPlan("[UnusedPlan]", unusedPlan);
 			}
 		}
-		
+		// validate the correctness of the windows contained in this plan
 		validateWindowPositions();
-
-		PlanGeneratorHelper.printPlan("Finished Plan:",
-				this.joinPlan);
-		
 		return this.joinPlan;
 	}
 
@@ -152,6 +150,13 @@ public class PartialPlanInserter {
 		return candidates;
 	}
 
+	/**
+	 * Validates the correctness of the windows contained in the plan.
+	 * So that between a source and the first stateful operator (join in this case)
+	 * a window is present.
+	 * The method changes the positions of the window operators to 
+	 * change the joinPlan to a valid plan.
+	 */
 	private void validateWindowPositions() {
 		Set<ILogicalOperator> sources = PlanGeneratorHelper
 				.getAccessOperators(this.joinPlan);

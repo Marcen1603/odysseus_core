@@ -82,7 +82,6 @@ public class ExhaustiveSearch extends AbstractPruningPlanGenerationMethod {
 		Collection<ILogicalOperator> joinPlans = this.nWayJoinList
 				.get(this.nWayJoinList.size() - 1);
 
-		LOG.debug("Print resulting Join plans.");
 		for (ILogicalOperator joinPlan : joinPlans) {
 			ILogicalOperator filledPlan = fillPlanWithRemainingOperators(joinPlan);
 			if (PlanGeneratorHelper.hasValidWindowPositions(filledPlan)) {
@@ -108,7 +107,6 @@ public class ExhaustiveSearch extends AbstractPruningPlanGenerationMethod {
 			
 			costs.add(cost);
 			costMap.put(cost, p);
-			LOG.debug("Cost: {} for plan {}", cost, p);
 		}
 		
 		List<ILogicalOperator> sorted = new ArrayList<ILogicalOperator>();
@@ -126,7 +124,6 @@ public class ExhaustiveSearch extends AbstractPruningPlanGenerationMethod {
 		for (ILogicalOperator p : sorted) {
 			PlanGeneratorHelper.setNewOwnerForPlan(p, owner);
 			PlanGeneratorHelper.printPlan("With owner", p);
-			LOG.debug("Outputschema: {}", p.getOutputSchema());
 		}
 		
 		return sorted;

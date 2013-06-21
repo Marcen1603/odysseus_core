@@ -220,13 +220,6 @@ public abstract class AbstractPlanGenerationMethod implements
 			ILogicalOperator joinPlan) {
 		Set<ILogicalOperator> subPlans = this.partialPlanCollector
 				.collectPartialplans();
-		// WindowJoinPairCollector windowJoinCollector = new
-		// WindowJoinPairCollector(this.planCopy);
-		// WindowInserter windowInserter = new WindowInserter(joinPlan,
-		// windowJoinCollector.getWindowJoinPairs());
-		// windowInserter.insertWindowOperators();
-		// PartialPlanCleaner cleaner = new PartialPlanCleaner(subPlans);
-		// cleaner.removeWindowOperators();
 		PartialPlanInserter filler = new PartialPlanInserter(joinPlan, subPlans);
 		return filler.fill();
 	}
@@ -245,9 +238,5 @@ public abstract class AbstractPlanGenerationMethod implements
 		}
 		return this.sources.size();
 	}
-
-	// protected PredicateHelper getPredicateHelper() {
-	// return this.predicateHelper;
-	// }
 
 }

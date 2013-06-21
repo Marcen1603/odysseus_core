@@ -213,6 +213,13 @@ public class PlanGeneratorHelper {
 		return operatorInputSchemaMap.get(operator);
 	}
 
+	/**
+	 * Checks if there is a window operator present before the first join is
+	 * found in the plan.
+	 * 
+	 * @param source
+	 * @return
+	 */
 	public static boolean hasWindowBeforeJoin(ILogicalOperator source) {
 		ILogicalOperator next = source.getSubscriptions().iterator().next()
 				.getTarget();
@@ -232,6 +239,13 @@ public class PlanGeneratorHelper {
 		return false;
 	}
 
+	/**
+	 * Checks if between a source and the first join is a window operator
+	 * present.
+	 * 
+	 * @param plan
+	 * @return
+	 */
 	public static boolean hasValidWindowPositions(ILogicalOperator plan) {
 		Set<ILogicalOperator> sources = getAccessOperators(plan);
 		for (ILogicalOperator source : sources) {
@@ -242,6 +256,13 @@ public class PlanGeneratorHelper {
 		return true;
 	}
 
+	/**
+	 * Helper method to get the simple name of the object and its hashcode
+	 * in a readable format.
+	 * 
+	 * @param obj
+	 * @return
+	 */
 	public static String getObjectName(Object obj) {
 		return obj.getClass().getSimpleName() + " (" + obj.hashCode() + ")";
 	}
