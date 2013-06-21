@@ -453,7 +453,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					int startCount = Integer.parseInt(parts[1].trim());
 					int endCount = Integer.parseInt(parts[3].trim());
 
-					for (int counter = startCount; counter < endCount; counter++) {
+					for (int counter = startCount; counter <= endCount; counter++) {
 						for (int i = from + 1; i < to; i++) {
 							String toChange = textToParse[i];
 							// replace ${i}
