@@ -18,14 +18,21 @@ public class ClassifierRegistry <T extends Tuple<?>>{
 	
 	public static void registerClassifierAlgo(IClassifier<?> classifierAlgo){
 		
-		classifierAlgoTypes.put(classifierAlgo.getType().toLowerCase(), classifierAlgo);
+		if(!classifierAlgoTypes.containsKey(classifierAlgo.getType().toLowerCase())){
+			classifierAlgoTypes.put(classifierAlgo.getType().toLowerCase(), classifierAlgo);
+		}else{
+			logger.debug("Classifier "+ classifierAlgo.getType().toLowerCase() + " already added");
+		}
 		
 	}
 	
 	
 	public static void unregisterClassifierAlgo(IClassifier<?> classifierAlgo){
 		
-		classifierAlgoTypes.remove(classifierAlgo.getType().toLowerCase());
+		if(classifierAlgoTypes.containsKey(classifierAlgo.getType().toLowerCase())){
+			classifierAlgoTypes.remove(classifierAlgo.getType().toLowerCase());
+		}
+	
 	}
 	
 	
@@ -37,7 +44,7 @@ public class ClassifierRegistry <T extends Tuple<?>>{
 			return algo;
 			
 		}else{
-			logger.debug("The cassifier: " +name +" is not available");
+			logger.debug("The classifier: " + name +" is not available");
 			return null;
 		}
 			

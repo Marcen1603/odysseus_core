@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +27,7 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 
 			while (lineneg != null) {
 				String[] data = processCsvLine(lineneg);
-				// System.out.println("Trainingset: " + data[0] + "|" + data[1]);
+				// System.out.println("trainset: " + data[0] + "|" + data[1]);
 				trainingset.put(data[0], Integer.parseInt(data[1].trim()));
 				lineneg = readneglines.readLine();
 			}
@@ -44,32 +43,31 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 		System.out.println("Positiv/Negativ Wortliste erstellen....");
 		
 	//	for ( Map.Entry<String, Integer> e : trainingset.entrySet() )
-//			  System.out.println( e.getKey() + "    "+ e.getValue() );
+	// System.out.println( e.getKey() + "    "+ e.getValue() );
 
 		for (Map.Entry<String, Integer> e : trainingset.entrySet()) {
 
 			if (e.getValue() == 1) {
-				// positiv
+				// positive
 				for (String singleword : e.getKey().split(" ")) {
 					if (!positivewords.containsKey(singleword.toLowerCase())) {
 						  positivewords.put(singleword.toLowerCase(), 1);
 					} else {
-						// vorhanden ctr + 1
+						// exist, ctr + 1
 						int ctr = positivewords.get(singleword.toLowerCase())+1;
 						positivewords.put(singleword.toLowerCase(), ctr);
 					}
 
 				}
 			} else {
-				// negativ
+				// negative
 				for (String singleword : e.getKey().split(" ")) {
 					if (!negativewords.containsKey(singleword.toLowerCase())) {
 							negativewords.put(singleword.toLowerCase(), 1);
 					} else {
-						// vorhanden ctr + 1
+						// exist,  ctr + 1
 						int ctr = negativewords.get(singleword.toLowerCase())+1;
 						negativewords.put(singleword.toLowerCase(), ctr);
-
 					}
 
 				}
@@ -82,10 +80,6 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 		System.out.println("positivewords besteht aus: "+ positivewords.size());
 		System.out.println("negativewords besteht aus: "+ negativewords.size());
 		
-		
-
-
-
 	}
 
 	@Override
@@ -96,46 +90,46 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 	@Override
 	public int startDetect(String text) {
 
+		//result
+		int decision = 0;
+		
 		double decisionpos = 0.0;
 		double decisionneg = 0.0;
 
+		//split the record in single words
 		for (String singleword : text.split(" ")) {
 
 			double a = 1.0;
 			double b = 1.0;
 
-			// Positive value
+			// positive count
 			if (positivewords.containsKey(singleword.toLowerCase())) {
 				a = a + positivewords.get(singleword.toLowerCase());
-			
 			}
 
-			// Positive value
+			// negative count
 			if (negativewords.containsKey(singleword.toLowerCase())) {
 				b = b + negativewords.get(singleword.toLowerCase());
 			}
 
+			//positive rate
 			decisionpos += a/(a+b);
+			//negative rate
 			decisionneg += b/(a+b);
-			
-
 		}
-		System.out.println("----Auswertung----");
-		System.out.println("Satz: " + text);
-		System.out.println("Positive: " + decisionpos);
-		System.out.println("Negative: " + decisionneg);
-
-
-	
-		int erg = 0;
+		
+		System.out.println("----analysis----");
+		System.out.println("record: " + text);
+		System.out.println("positive: " + decisionpos);
+		System.out.println("negative: " + decisionneg);
 
 		if (decisionpos > decisionneg) {
-			erg = 1;
+			decision = 1;
 		} else {
-			erg = -1;
+			decision = -1;
 		}
 
-		return erg;
+		return decision;
 
 	}
 
@@ -145,6 +139,7 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 
 		final StringTokenizer st = new StringTokenizer(data, "|");
 
+		//dirty TODO....
 		while (st.hasMoreTokens()) {
 			output[0] = st.nextToken();
 			output[1] = st.nextToken();
