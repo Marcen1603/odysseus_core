@@ -1,0 +1,136 @@
+/*******************************************************************************
+ * Copyright 2013 The Odysseus Team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a joinPlan of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
+package de.uniol.inf.is.odysseus.pubsub.broker.filter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * This helper Class provides functions for work with hierarchical topic trees
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
+public class TopicHelper {
+
+	private static ArrayList<Topic> topics;
+	
+	/**
+	 * Creates a topic hierarchy on given topic strings
+	 * 
+	 * @param topicStrings for creating hierarchical structure			
+	 * @return list with created topics				
+	 */
+	public static List<Topic> convertStringsToTopics(List<String> topicStrings){
+		topics = new ArrayList<Topic>();
+		
+		// Iterate over all topic Strings
+		for (String topicString : topicStrings) {
+			String[] topicElements = topicString.split("\\.");
+			int currentElementIndex = 0;
+			
+			// If no elements exists return null
+			if (topicElements.length == 0 || topicElements[currentElementIndex].equals("*")){
+				break;
+			}
+			Topic root = getRootTopicIfExists(topicElements[currentElementIndex]);
+			
+			if (root == null){
+				// Root does not exists, create new root
+				root = new Topic(topicElements[currentElementIndex].toLowerCase());
+				topics.add(root);
+			}
+			
+			// Root is created or exists, now travers through the tree
+			createTree(topicElements, currentElementIndex, root);
+		}
+		return topics;
+	}
+	
+	private static Topic getRootTopicIfExists(String topicString){
+		for (Topic temp : topics) {
+			if (temp.getName().toLowerCase().equals(topicString.toLowerCase())){
+				return temp;
+			}
+		}
+		return null;
+	}
+	
+	private static boolean createTree(String[] topicElements, int currentElementIndex, Topic topic){
+		currentElementIndex++;
+		if (topicElements.length > currentElementIndex){
+			String currentString = topicElements[currentElementIndex];
+			
+			// if String is like *, no leaf need to be created
+			if (currentString.equals("*")){
+				return true;
+			}
+			
+			// Search for Child
+			Topic child = getChildIfExist(currentString, topic.getChilds());
+			if (child == null){
+				// Create new Child
+				child = new Topic(currentString.toLowerCase());
+				topic.getChilds().add(child);
+			}
+			return createTree(topicElements, currentElementIndex, child);
+		} else {			
+			return true;
+		}
+	}
+	
+	private static Topic getChildIfExist(String topicString, List<Topic> childs){
+		for (Topic child : childs) {
+			if (child.getName().toLowerCase().equals(topicString.toLowerCase())){
+				return child;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Compares the topic trees of an advertisement and subscription
+	 * 
+	 * @param advertisementTopic hierarchical topic of the advertisement
+	 * @param subscriptionTopic hierarchical topic of the subscription
+	 * @return if subscription topic matches advertisment topic
+	 */
+	public static boolean compareTrees(Topic advertisementTopic,
+			Topic subscriptionTopic) {
+		if (advertisementTopic.getNumberOfChilds() > 0 && advertisementTopic.getName().equals(subscriptionTopic.getName())){
+			if (advertisementTopic.getNumberOfChilds() > subscriptionTopic.getNumberOfChilds()){
+				return false;
+			} else {
+				boolean subTreeMatches = true;
+				for (Topic advChild : advertisementTopic.getChilds()) {
+					Topic subChild = subscriptionTopic.getChildWithName(advChild.getName());
+					if (subChild != null){
+						compareTrees(advChild, subChild);
+					} else {
+						return false;
+					} 
+				}
+				return subTreeMatches;
+			}
+		} else {
+			if (subscriptionTopic.getNumberOfChilds() > 0){
+				return false;
+			}
+			return true;			
+		}
+	}
+}

@@ -1,91 +1,37 @@
+/*******************************************************************************
+ * Copyright 2013 The Odysseus Team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a joinPlan of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
 package de.uniol.inf.is.odysseus.pubsub.broker.filter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.pubsub.broker.BrokerAdvertisements;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerSubscription;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 
-public class HierarchicalFiltering<T extends IStreamObject<?>> extends AbstractFiltering<T>{
+public class HierarchicalFiltering<T extends IStreamObject<?>> extends
+		AbstractTopicBasedFiltering<T> {
 
-	Map<String, List<String>> matches = new HashMap<String, List<String>>();
 
-	@Override
-	public void reinitializeFilter(
-			Collection<BrokerSubscription<T>> subscriptions,
-			Collection<BrokerAdvertisements> advertisements) {
-		matches.clear();
-		for (BrokerSubscription<T> subscription : subscriptions) {
-			for (BrokerAdvertisements advertisement : advertisements) {
-				boolean addSubscriberToPublisher = true;
-				// Wenn Advertisement mehr Topics hat, ist der Subscriber nicht
-				// interessiert
-				if (advertisement.getTopics().size() > subscription.getTopics()
-						.size() || subscription.getTopics().size() == 0) {
-					addSubscriberToPublisher = false;
-				}
-				for (Topic topic : advertisement.getTopics()) {
-					// Ist diese Topic in Advertisement nicht enthalten, dann
-					// Subscriber und Publisher nicht verbinden
-					if (!hasSubscriptionTopic(topic, subscription)) {
-						addSubscriberToPublisher = false;
-						break;
-					}
-				}
-
-				if (addSubscriberToPublisher) {
-					// Add to Routing Table
-					if (matches.containsKey(advertisement.getPublisher()
-							.getIdentifier())) {
-						// If publisher already has assigned subscribers
-						if (!matches.get(
-								advertisement.getPublisher().getIdentifier())
-								.contains(
-										subscription.getSubscriber()
-												.getIdentifier())) {
-							matches.get(
-									advertisement.getPublisher()
-											.getIdentifier()).add(
-									subscription.getSubscriber()
-											.getIdentifier());
-						}
-					} else {
-						// If publisher has no assigned subscribers
-						List<String> matchedSubscriber = new ArrayList<String>();
-						matchedSubscriber.add(subscription.getSubscriber()
-								.getIdentifier());
-						matches.put(advertisement.getPublisher()
-								.getIdentifier(), matchedSubscriber);
-					}
-				}
-			}
-		}
-		setReinitializationMode(false);
-	}
-
-	private boolean hasSubscriptionTopic(Topic topic,
+	protected boolean hasSubscriptionTopic(Topic advertisementTopic,
 			BrokerSubscription<T> subscription) {
 		for (Topic subscriptionTopic : subscription.getTopics()) {
-			if (subscriptionTopic.equals(topic)) {
-				// TODO Check complete tree
-				return true;
+			if (subscriptionTopic.equals(advertisementTopic)) {
+				return TopicHelper.compareTrees(advertisementTopic,
+						subscriptionTopic);
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public List<String> filter(T object, PublishPO<T> publisher) {
-		if (matches.containsKey(publisher.getIdentifier())) {
-			return matches.get(publisher
-					.getIdentifier());
-		}
-		return new ArrayList<String>();
 	}
 
 }

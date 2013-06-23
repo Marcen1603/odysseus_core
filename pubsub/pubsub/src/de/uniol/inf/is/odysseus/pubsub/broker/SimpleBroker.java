@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright 2013 The Odysseus Team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a joinPlan of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
 package de.uniol.inf.is.odysseus.pubsub.broker;
 
 import java.util.ArrayList;
@@ -17,6 +33,12 @@ import de.uniol.inf.is.odysseus.pubsub.broker.filter.IFiltering;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
+
+enum Filtertype{
+	content,
+	hierarchical,
+	channel
+}
 
 public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> {
 
@@ -91,16 +113,19 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 	@Override
 	public synchronized void routeToSubscribers(T object, PublishPO<T> publisher) {
 
-		ArrayList<String> matchedSubscriber = new ArrayList<String>();
+		List<String> matchedSubscriberTopics = new ArrayList<String>();
+		List<String> matchedSubscriberPredicates = new ArrayList<String>();
+		
+		
+		// Channel based filtering
 		if (hasAnySubscriptionTopics && doesAnyPublisherAdvertiseTopics()) {
 			if (!isAnyTopicHierarchical) {
-				// Channel based filtering
 				IFiltering<T> filter = filters.get(Filtertype.channel);
 				if (filter.needsReinitialization()) {
 					filter.reinitializeFilter(subscriptions.values(),
 							advertisements.values());
 				}
-				matchedSubscriber.addAll(filter.filter(object, publisher));
+				matchedSubscriberTopics.addAll(filter.filter(object, publisher));
 			} else {
 				// Hierarchical Filtering
 				IFiltering<T> filter = filters.get(Filtertype.hierarchical);
@@ -108,23 +133,43 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 					filter.reinitializeFilter(subscriptions.values(),
 							advertisements.values());
 				}
-				matchedSubscriber.addAll(filter.filter(object, publisher));
+				matchedSubscriberTopics.addAll(filter.filter(object, publisher));
+			}
+			
+			// if only topic based filter active
+			if (!hasAnySubscriptionPredicates){
+				for (String subscriberId : matchedSubscriberTopics) {
+					subscriptions.get(subscriberId).getSubscriber().receive(object);
+				}
 			}
 		}
+		// Content based filtering
 		if (hasAnySubscriptionPredicates) {
-			// Content based filtering
 			IFiltering<T> filter = filters.get(Filtertype.content);
 			if (filter.needsReinitialization()) {
 				filter.reinitializeFilter(subscriptions.values(),
 						advertisements.values());
 			}
-			matchedSubscriber.addAll(filter.filter(object, publisher));
+			matchedSubscriberPredicates.addAll(filter.filter(object, publisher));
+			
+			// if only content based filter active
+			if (!hasAnySubscriptionTopics || !doesAnyPublisherAdvertiseTopics()) {
+				for (String subscriberId : matchedSubscriberPredicates) {
+					subscriptions.get(subscriberId).getSubscriber().receive(object);
+				}
+			}
 		}
 
-		// TODO Object soll an den Subscriber nur einmal weitergeleitet werden.
-		for (String subscriberId : matchedSubscriber) {
-			subscriptions.get(subscriberId).getSubscriber().receive(object);
-		}
+		// Combine Filters with logical AND if topic and content based filters active
+		if (hasAnySubscriptionTopics && doesAnyPublisherAdvertiseTopics() && hasAnySubscriptionPredicates) {
+			for (String subscriberId : matchedSubscriberTopics) {
+				if (matchedSubscriberPredicates.contains(subscriberId)){
+					subscriptions.get(subscriberId).getSubscriber().receive(object);				
+				}
+			}			
+		} 
+		
+		
 	}
 
 	private boolean doesAnyPublisherAdvertiseTopics() {

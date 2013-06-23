@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright 2013 The Odysseus Team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a joinPlan of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
 package de.uniol.inf.is.odysseus.pubsub.broker.topology;
 
 import java.util.HashMap;
@@ -56,7 +72,7 @@ public class BrokerTopologyRegistry {
 				return null;
 			}
 		} else {
-			// Broker with type and domain doesnt exists, create new Instance
+			// Broker with type and domain does not exists, create new Instance
 			IBrokerTopology<?> topology = brokerTopologyTypes.get(topologyType.toLowerCase());
 			IBrokerTopology<?> ret = topology.<E>getInstance(domain.toLowerCase());
 			ret.incrementNumberOfAgents();
@@ -81,10 +97,12 @@ public class BrokerTopologyRegistry {
 
 	public static void unregister(String domain) {
 		IBrokerTopology<?> topology = getTopologyByDomain(domain);
-		topology.decrementNumberOfAgents();
-		if (!topology.hasAnyAgents()){
-			// Remove Topology with given name
-			brokerTopologies.remove(domain.toLowerCase());
+		if (topology != null){
+			topology.decrementNumberOfAgents();
+			if (!topology.hasAgents()){
+				// Remove Topology with given name
+				brokerTopologies.remove(domain.toLowerCase());
+			}			
 		}
 	}
 
