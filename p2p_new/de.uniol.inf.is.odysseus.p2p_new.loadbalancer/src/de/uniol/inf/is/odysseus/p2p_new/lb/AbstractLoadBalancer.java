@@ -280,11 +280,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		final Iterator<List<QueryPart>> partsIter = queryParts.iterator();
 		
 		while(partsIter.hasNext()) {
+			
+			Optional<String> peerName;
+			PeerID peerID = null;
 		
 			for(final QueryPart part : partsIter.next()) {
-			
-				PeerID peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
-				Optional<String> peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
 				
 				if(part.getDestinationName().isPresent() && part.getDestinationName().get().equals(AbstractLoadBalancer.getLocalDestinationName())) {
 					
@@ -295,6 +295,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				} else {
 					
 					// Round-Robin
+					peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
+					peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
 					distributed.put(part, peerID);
 					peerCounter = (++peerCounter) % remotePeerIDs.size();					
 					
