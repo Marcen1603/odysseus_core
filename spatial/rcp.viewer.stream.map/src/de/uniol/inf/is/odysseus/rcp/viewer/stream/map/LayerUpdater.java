@@ -82,7 +82,15 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		@SuppressWarnings("unchecked")
 		Tuple<? extends ITimeInterval> tuple = (Tuple<? extends ITimeInterval>) element;
 		PointInTime timestamp = tuple.getMetadata().getStart().clone();
-		this.streamMapEditor.getScreenManager().setMaxIntervalEnd(timestamp);
+		if (timestamp.afterOrEquals(streamMapEditor.getScreenManager()
+				.getMaxIntervalEnd())
+				|| streamMapEditor.getScreenManager().getMaxIntervalEnd()
+						.isInfinite()) {
+			// Maybe the stream elements do not come in the right order
+			this.streamMapEditor.getScreenManager()
+					.setMaxIntervalEnd(timestamp);
+		}
+
 		puffer.insert(tuple);
 		if (this.streamMapEditor.getScreenManager().getInterval().getEnd()
 				.isInfinite()) {

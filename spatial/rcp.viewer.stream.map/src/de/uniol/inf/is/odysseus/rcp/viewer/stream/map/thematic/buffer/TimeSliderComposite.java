@@ -14,8 +14,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Slider;
-//import org.mihalis.opal.rangeSlider.RangeSlider;
+import org.mihalis.opal.rangeSlider.RangeSlider;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -32,247 +31,193 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
  */
 public class TimeSliderComposite extends Composite implements
 		PropertyChangeListener {
-	// private TimeSliderControl timeSliderControl;
 
 	private ScreenManager manager;
 
-	private Label intervallLabel;
-	private Label valueLabel;
-	private Label timestampLabel;
-	private Label timeLabel;
-	private Label beginLabel;
-	private Slider beginSlider;
-	private Button equalButton;
-	private Label beginValue;
+	private Label timeRangeLabel;
 	private Label beginTimestamp;
 	private Label beginTime;
-	private Label endLabel;
-	private Slider endSlider;
-	private Label endValue;
 	private Label endTimestamp;
 	private Label endTime;
 
-	private Boolean isEqual;
 	private Boolean isActive = false;
+	private Boolean isFixedTimeRange = false;
+	private long fixedTimeRange = 0;;
 
-	private Button btnActivate;
+	private RangeSlider rangeSlider;
+	private Button activeButton;
+	private Button fixedTimeButton;
+	private Button optionsButton;
+
+	private long previousUpperValue;
 
 	public TimeSliderComposite(Composite parent, int style) {
 
 		super(parent, style);
 		this.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		this.setLayout(new GridLayout(6, false));
+		this.setLayout(new GridLayout(4, false));
 
-		//RangeSlider slider2 = new RangeSlider(this, SWT.HORIZONTAL);
-		
-		intervallLabel = new Label(this, SWT.NONE);
-		intervallLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER,
-				false, false, 3, 1));
-		intervallLabel.setText("Interval");
-
-		valueLabel = new Label(this, SWT.NONE);
-		valueLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
+		// BeginTime
+		beginTime = new Label(this, SWT.LEFT);
+		beginTime.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false, 1, 1));
-		valueLabel.setText("Value");
+		beginTime.setText("                                             ");
 
-		timestampLabel = new Label(this, SWT.NONE);
-		timestampLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER,
-				false, false, 1, 1));
-		timestampLabel.setText("Timestamp");
-
-		timeLabel = new Label(this, SWT.NONE);
-		timeLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
+		// Slider
+		rangeSlider = new RangeSlider(this, SWT.HORIZONTAL);
+		rangeSlider.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 1, 1));
-		timeLabel.setText("Time");
-
-		beginLabel = new Label(this, SWT.NONE);
-		beginLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
-		beginLabel.setText("Begin:");
-
-		beginSlider = new Slider(this, SWT.NONE);
-		beginSlider.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
-		beginSlider.setValues(0, 0, 1, 1, 1, 1);
-		beginSlider.setEnabled(isActive);
-
-		btnActivate = new Button(this, SWT.CHECK);
-		btnActivate.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
-				false, 1, 1));
-		btnActivate.setText("activate");
-		btnActivate.setSelection(false);
-		btnActivate.addSelectionListener(new SelectionAdapter() {
+		rangeSlider.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Slider " + beginSlider.getMinimum() + " "
-						+ beginSlider.getMaximum());
+				if (isActive) {
+
+					// EndSlider (right one)
+					if (rangeSlider.getSelection()[1] >= rangeSlider
+							.getMaximum() - 1) {
+						// Right slider is on the right end
+						manager.setIntervalEnd(PointInTime.getInfinityTime());
+
+					} else {
+						manager.setIntervalEnd(manager.getMaxIntervalStart().plus(
+								rangeSlider.getSelection()[1]));
+					}
+
+					// BeginSlider (left one)
+					if (!(isFixedTimeRange && rangeSlider.getSelection()[1] >= rangeSlider
+							.getMaximum() - 1)) {						
+						if (rangeSlider.getSelection()[0] == rangeSlider
+								.getMinimum()) {
+							// left slider is on the left end
+							manager.setIntervalStart(manager
+									.getMaxIntervalStart().clone());
+						} else {
+							manager.setIntervalStart(manager
+									.getMaxIntervalStart().plus(
+											rangeSlider.getSelection()[0]));
+						}
+					} else {
+						// Don't set the time, if the left slider can't move, because the right one
+						// is fixed on the right
+						rangeSlider.setLowerValue((int) (previousUpperValue - fixedTimeRange));
+					}
+
+				}
+			}
+		});
+
+		// EndTime
+		endTime = new Label(this, SWT.NONE);
+		endTime.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,
+				1, 1));
+		endTime.setText("                                             ");
+
+		// Active
+		activeButton = new Button(this, SWT.CHECK);
+		activeButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
+				false, 1, 1));
+		activeButton.setText("Active");
+		activeButton.setSelection(false);
+		activeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				ITimeInterval t = new TimeInterval(manager
 						.getMaxIntervalStart());
 				manager.setInterval(t);
-				beginSlider.setEnabled(btnActivate.getSelection());
-				endSlider.setEnabled(btnActivate.getSelection());
-				beginValue.setEnabled(btnActivate.getSelection());
-				beginTimestamp.setEnabled(btnActivate.getSelection());
-				beginTime.setEnabled(btnActivate.getSelection());
-				endValue.setEnabled(btnActivate.getSelection());
-				endTimestamp.setEnabled(btnActivate.getSelection());
-				endTime.setEnabled(btnActivate.getSelection());
-				equalButton.setEnabled(btnActivate.getSelection());
-				isActive = btnActivate.getSelection();
-			}
-		});
+				rangeSlider.setEnabled(activeButton.getSelection());
+				beginTimestamp.setEnabled(activeButton.getSelection());
+				beginTime.setEnabled(activeButton.getSelection());
+				endTimestamp.setEnabled(activeButton.getSelection());
+				endTime.setEnabled(activeButton.getSelection());
+				timeRangeLabel.setEnabled(activeButton.getSelection());
+				fixedTimeButton.setEnabled(activeButton.getSelection());
+				isActive = activeButton.getSelection();
 
-		beginValue = new Label(this, SWT.BORDER);
-		GridData gd_beginValue = new GridData(SWT.FILL, SWT.CENTER, false,
-				false, 1, 1);
-		gd_beginValue.widthHint = 100;
-		beginValue.setLayoutData(gd_beginValue);
-		beginValue.setText(Integer.toString(beginSlider.getSelection()));
-		beginValue.setEnabled(isActive);
-
-		beginTimestamp = new Label(this, SWT.BORDER);
-		GridData gd_beginTimestamp = new GridData(SWT.FILL, SWT.CENTER, false,
-				false, 1, 1);
-		gd_beginTimestamp.widthHint = 100;
-		beginTimestamp.setLayoutData(gd_beginTimestamp);
-		beginTimestamp.setText("");
-		beginTimestamp.setEnabled(isActive);
-
-		beginTime = new Label(this, SWT.BORDER);
-		GridData gd_beginTime = new GridData(SWT.FILL, SWT.CENTER, false,
-				false, 1, 1);
-		gd_beginTime.widthHint = 100;
-		beginTime.setLayoutData(gd_beginTime);
-		beginTime.setText("");
-		beginTime.setEnabled(isActive);
-
-		endLabel = new Label(this, SWT.NONE);
-		endLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
-		endLabel.setText("End:");
-
-		endSlider = new Slider(this, SWT.NONE);
-		endSlider.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
-				1, 1));
-		endSlider.setValues(0, 0, 1, 1, 1, 1);
-		endSlider.setEnabled(isActive);
-
-		equalButton = new Button(this, SWT.CHECK);
-		equalButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
-				false, 1, 1));
-		equalButton.setText("Equal");
-		equalButton.setEnabled(isActive);
-		equalButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (isActive) {
-					if (equalButton.getSelection()) {
-						endSlider.setSelection(beginSlider.getSelection());
-					}
-					isEqual = equalButton.getSelection();
-				}
-			}
-		});
-
-		endValue = new Label(this, SWT.BORDER);
-		endValue.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false,
-				1, 1));
-		endValue.setText(Integer.toString(endSlider.getSelection()));
-		endValue.setEnabled(isActive);
-
-		endTimestamp = new Label(this, SWT.BORDER);
-		endTimestamp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
-				false, 1, 1));
-		endTimestamp.setText("");
-		endTimestamp.setEnabled(isActive);
-
-		endTime = new Label(this, SWT.BORDER);
-		endTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false,
-				1, 1));
-		endTime.setText("");
-		endTime.setEnabled(isActive);
-
-		isEqual = false;
-
-		// Listener for sliders
-
-		beginSlider.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (isActive) {
-					if (isEqual) {
-						endSlider.setSelection(beginSlider.getSelection());
-						manager.setIntervalStart(manager.getMaxIntervalStart()
-								.plus(beginSlider.getSelection()));
-						manager.setIntervalEnd(manager.getMaxIntervalStart()
-								.plus(endSlider.getSelection() + 1));
-						endValue.setText(Integer.toString(
-								endSlider.getSelection()).toString());
-					} else if (beginSlider.getSelection() == beginSlider
-							.getMinimum())
-						manager.setIntervalStart(manager.getMaxIntervalStart()
-								.clone());
-					else {
-						if (beginSlider.getSelection() > endSlider
-								.getSelection())
-							beginSlider.setSelection(endSlider.getSelection());
-						manager.setIntervalStart(manager.getMaxIntervalStart()
-								.plus(beginSlider.getSelection()));
-
-					}
-				}
 				// Set the begin-labels
-				beginValue.setText(Integer.toString(beginSlider.getSelection())
-						.toString());
 				beginTimestamp.setText(Long.toString(manager.getIntervalStart()
 						.getMainPoint()));
 				beginTime.setText(new SimpleDateFormat(
-						"dd/MM/yyyy-HH:mm:ss.SSS").format(new Timestamp(manager
-						.getIntervalStart().getMainPoint())));
+						"dd/MM/yyyy - HH:mm:ss.SSS").format(new Timestamp(
+						manager.getIntervalStart().getMainPoint())));
 
-			}
-		});
+				// Start + selection -> better if end is infinity
+				endTimestamp.setText(Long.toString(manager
+						.getIntervalStart().getMainPoint()
+						+ rangeSlider.getSelection()[1]));
+				endTime.setText(new SimpleDateFormat(
+						"dd/MM/yyyy - HH:mm:ss.SSS").format(new Timestamp(
+						manager.getIntervalStart().getMainPoint()
+								+ rangeSlider.getSelection()[1])));
 
-		endSlider.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (isActive) {
-					if (isEqual) {
-						beginSlider.setSelection(endSlider.getSelection());
-					}
-
-					if (endSlider.getSelection() == endSlider.getMaximum() - 1)
-						manager.setIntervalEnd(PointInTime.getInfinityTime());
-					else {
-						if (endSlider.getSelection() <= beginSlider
-								.getSelection()) {
-							beginSlider.setSelection(endSlider.getSelection());
-							manager.setIntervalStart(manager
-									.getMaxIntervalStart().plus(
-											beginSlider.getSelection()));
-						}
-						manager.setIntervalEnd(manager.getMaxIntervalStart()
-								.plus(endSlider.getSelection() + 1));
-					}
-					
-					// Set the end-labels
-					endValue.setText(Integer.toString(endSlider.getSelection())
-							.toString());
-					if(!manager.getIntervalEnd().isInfinite()) {
-						endTimestamp.setText(Long.toString(manager.getIntervalEnd()
-							.getMainPoint()));
-					endTime.setText(new SimpleDateFormat(
-							"dd/MM/yyyy-HH:mm:ss.SSS").format(new Timestamp(manager
-							.getIntervalEnd().getMainPoint())));
-					} else {
-						endTimestamp.setText("infinity");
-						endTime.setText("infinity");
-					}
-					
+				// If it's set to inactive -> set the maximum interval
+				if(!activeButton.getSelection()) {
+					manager.setIntervalStart(PointInTime.getZeroTime());
+					manager.setIntervalEnd(PointInTime.getInfinityTime());
 					
 				}
 			}
 		});
+
+		// BeginTimeStamp
+		beginTimestamp = new Label(this, SWT.LEFT);
+		beginTimestamp.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				true, 1, 1));
+		beginTimestamp.setText("                                     ");
+
+		// -----------------------------------
+		// Box under slider
+		Composite underSlider = new Composite(this, SWT.FILL);
+		underSlider.setLayout(new GridLayout(2, false));
+		underSlider.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
+				1, 1));
+
+		// TimeRange
+		timeRangeLabel = new Label(underSlider, SWT.LEFT);
+		timeRangeLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false, 1, 1));
+		timeRangeLabel.setText("                                     ");
+
+		// Fixed time
+		fixedTimeButton = new Button(underSlider, SWT.CHECK | SWT.RIGHT);
+		fixedTimeButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER,
+				false, false, 1, 1));
+		fixedTimeButton.setText("Fixed timerange");
+		fixedTimeButton.setSelection(false);
+		fixedTimeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				isFixedTimeRange = fixedTimeButton.getSelection();
+				if (isFixedTimeRange) {
+					fixedTimeRange = rangeSlider.getUpperValue()
+							- rangeSlider.getLowerValue();
+				}
+			}
+		});
+
+		// -----------------------------------
+
+		// EndTimeStamp
+		endTimestamp = new Label(this, SWT.NONE);
+		endTimestamp.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false, 1, 1));
+		endTimestamp.setText("                                   ");
+
+		// Options
+		optionsButton = new Button(this, SWT.NONE);
+		optionsButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
+				false, 1, 1));
+		optionsButton.setText("Options ...");
+		optionsButton.setSelection(false);
+
+		// Set all the buttons active or inactive
+		// normally inactive unti the active-button is clicked
+		rangeSlider.setEnabled(activeButton.getSelection());
+		beginTimestamp.setEnabled(activeButton.getSelection());
+		beginTime.setEnabled(activeButton.getSelection());
+		endTimestamp.setEnabled(activeButton.getSelection());
+		endTime.setEnabled(activeButton.getSelection());
+		timeRangeLabel.setEnabled(activeButton.getSelection());
+		fixedTimeButton.setEnabled(activeButton.getSelection());
 
 	}
 
@@ -286,57 +231,186 @@ public class TimeSliderComposite extends Composite implements
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				if ("maxInterval".equals(evt.getPropertyName())) {
-					ITimeInterval interval = ((ITimeInterval) evt.getNewValue());
-					if (!evt.getNewValue().equals(evt.getOldValue())) {
-						int i = (int) interval.getEnd()
-								.minus(interval.getStart()).getMainPoint();
-						// beginValue.setText(interval.getStart().toString());
-						// endValue.setText(interval.getEnd().toString());
-						beginSlider.setMaximum(i);
-						endSlider.setMaximum(i);
-						if (manager.getIntervalEnd().isInfinite())
-							endSlider.setSelection(endSlider.getMaximum());
-						// beginSlider.setMinimum((int)
-						// interval.getStart().getMainPoint());
-					}
-				} else if ("interval".equals(evt.getPropertyName())) {
-					ITimeInterval interval = ((ITimeInterval) evt.getNewValue());
-					if (!evt.getNewValue().equals(evt.getOldValue())) {
-						if (interval.getEnd().isInfinite()) {
-							endSlider.setSelection(endSlider.getMaximum() - 1);
+				if (isActive) {
+					if (isFixedTimeRange) {
+
+						if ((rangeSlider.getUpperValue() >= rangeSlider
+								.getMaximum() - 1)
+								|| (rangeSlider.getUpperValue() != previousUpperValue)) {
+							// Set the left to the same distance as before
+							rangeSlider.setLowerValue((int) (rangeSlider
+									.getUpperValue() - fixedTimeRange));
+							if (rangeSlider.getUpperValue() - fixedTimeRange < rangeSlider
+									.getMinimum()) {
+								rangeSlider.setLowerValue(rangeSlider
+										.getMinimum());
+								// left slider is on the left end
+								manager.setIntervalStart(manager
+										.getMaxIntervalStart().clone());
+							}
+							// And set the value of the manager to this new value
+							manager.setIntervalStart(manager
+									.getMaxIntervalStart().plus(
+											rangeSlider.getSelection()[0]));
+						} else {
+							// the lower value was changed (left slider) -> set
+							// the right slider
+							rangeSlider.setUpperValue((int) (rangeSlider
+									.getLowerValue() + fixedTimeRange));
+							if(rangeSlider.getLowerValue() + fixedTimeRange > rangeSlider.getMaximum()) {
+								rangeSlider.setUpperValue(rangeSlider.getMaximum());
+								// Right slider is on the right end
+								manager.setIntervalEnd(PointInTime.getInfinityTime());
+							}
+							manager.setIntervalEnd(manager.getMaxIntervalStart().plus(
+									rangeSlider.getSelection()[1]));
 						}
-						{
+
+					}
+
+					if ("maxInterval".equals(evt.getPropertyName())) {
+						ITimeInterval interval = ((ITimeInterval) evt
+								.getNewValue());
+						if (!evt.getNewValue().equals(evt.getOldValue())) {
 							int i = (int) interval.getEnd()
 									.minus(interval.getStart()).getMainPoint();
-							beginSlider.setSelection(i);
-							endSlider.setSelection(i);
-						}
+							boolean setBackToEnd = (rangeSlider.getSelection()[1] >= rangeSlider
+									.getMaximum() - 1);
+							
+							rangeSlider.setMaximum(i);
 
-						beginValue.setText(Integer.toString(beginSlider
-								.getSelection()));
-						endValue.setText(Integer.toString(endSlider
-								.getSelection()));
+							if (setBackToEnd) {
+								// If the right slider is on the right side,
+								// let is stay there (except the left one was
+								// moved with fixed time range)
+								rangeSlider.setUpperValue(rangeSlider
+										.getMaximum());
+							}
 
-						beginTimestamp.setText(interval.getStart().toString());
-						endTimestamp.setText(interval.getEnd().toString());
+							// Set the begin-labels
+							beginTimestamp.setText(Long.toString(interval
+									.getStart().getMainPoint()));
+							beginTime.setText(new SimpleDateFormat(
+									"dd/MM/yyyy - HH:mm:ss.SSS")
+									.format(new Timestamp(interval.getStart()
+											.getMainPoint())));
 
-						beginTime.setText(new SimpleDateFormat(
-								"dd/MM/yyyy-HH:mm:ss.SSS")
-								.format(new Timestamp(interval.getEnd()
-										.getMainPoint())));
-						if (!interval.getEnd().isInfinite()) {
+							// Set the end-labels
+							endTimestamp.setText(Long.toString(interval
+									.getEnd().getMainPoint()));
 							endTime.setText(new SimpleDateFormat(
-									"dd/MM/yyyy-HH:mm:ss.SSS")
+									"dd/MM/yyyy - HH:mm:ss.SSS")
 									.format(new Timestamp(interval.getEnd()
 											.getMainPoint())));
-						} else {
-							endTime.setText("none");
+						}
+					} else if ("interval".equals(evt.getPropertyName())) {
+						ITimeInterval interval = ((ITimeInterval) evt
+								.getNewValue());
+						if (!evt.getNewValue().equals(evt.getOldValue())) {
+
+							int i = (int) interval.getEnd()
+									.minus(interval.getStart()).getMainPoint();
+							rangeSlider.setMaximum(i);
+
+							if (interval.getEnd().isInfinite()) {
+								rangeSlider.setUpperValue(rangeSlider
+										.getMaximum());
+
+								// Set the begin-labels
+								beginTimestamp.setText(Long.toString(interval
+										.getStart().getMainPoint()));
+								beginTime.setText(new SimpleDateFormat(
+										"dd/MM/yyyy - HH:mm:ss.SSS")
+										.format(new Timestamp(interval
+												.getStart().getMainPoint())));
+
+								// Set the end-labels
+								endTimestamp.setText(Long.toString(interval
+										.getEnd().getMainPoint()));
+								endTime.setText(new SimpleDateFormat(
+										"dd/MM/yyyy - HH:mm:ss.SSS")
+										.format(new Timestamp(interval.getEnd()
+												.getMainPoint())));
+							}
 						}
 					}
+
+					// Set the begin-labels
+					beginTimestamp.setText(Long.toString(manager
+							.getIntervalStart().getMainPoint()));
+					beginTime.setText(new SimpleDateFormat(
+							"dd/MM/yyyy - HH:mm:ss.SSS").format(new Timestamp(
+							manager.getIntervalStart().getMainPoint())));
+
+					// Set the end-labels
+					// Start + selection -> better if end is infinity
+					endTimestamp.setText(Long.toString(manager
+							.getIntervalStart().getMainPoint()
+							+ rangeSlider.getSelection()[1]));
+					endTime.setText(new SimpleDateFormat(
+							"dd/MM/yyyy - HH:mm:ss.SSS").format(new Timestamp(
+							manager.getIntervalStart().getMainPoint()
+									+ rangeSlider.getSelection()[1])));
+
+					// Set the time-range-label
+					long timeInMs = rangeSlider.getUpperValue()
+							- rangeSlider.getLowerValue();
+					timeRangeLabel.setText(msToTimeString(timeInMs));
+
+					// Save the values to compare, which one was dragged
+					previousUpperValue = rangeSlider.getUpperValue();
 				}
 			}
 		});
+	}
 
+	/**
+	 * Creates a timestring from a timeRange in MS (Form: 1day 2h 3min 4s 5ms)
+	 * 
+	 * @param timeInMs
+	 * @return
+	 */
+	public String msToTimeString(long timeInMs) {
+		long ms = 0;
+		long sec = 0;
+		long min = 0;
+		long h = 0;
+		long days = 0;
+		String timeString = "";
+
+		if (timeInMs > 999) {
+			ms = timeInMs % 1000;
+			sec = timeInMs / 1000;
+		}
+		if (sec > 59) {
+			min = sec / 60;
+			sec = sec % 60;
+		}
+		if (min > 59) {
+			h = min / 60;
+			min = min % 60;
+		}
+		if (h > 23) {
+			days = h / 24;
+			h = h % 24;
+		}
+
+		// Always a least 0ms
+		timeString = ms + "ms";
+
+		if (sec > 0) {
+			timeString = sec + "s " + timeString;
+		}
+		if (min > 0) {
+			timeString = min + "min " + timeString;
+		}
+		if (h > 0) {
+			timeString = h + "h " + timeString;
+		}
+		if (days > 0) {
+			timeString = days + "d " + timeString;
+		}
+
+		return timeString;
 	}
 }
