@@ -741,5 +741,12 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		}
 		return copy;
 	}
+	
+	@Override
+	public boolean needsLocalResources() {
+		
+		return false;
+		
+	}
 
 }

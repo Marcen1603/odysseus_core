@@ -252,4 +252,12 @@ public class SenderAO extends AbstractLogicalOperator {
     public String toString() {
         return getName() + " (" + this.wrapper + ")";
     }
+    
+    @Override
+    public boolean needsLocalResources() {
+    	
+    	return true;
+    	
+    }
+    
 }

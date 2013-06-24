@@ -126,4 +126,11 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 	public void setDataHandler(String dataHandler) {
 		this.dataHandler = dataHandler;
 	}
+	
+	@Override
+    public boolean needsLocalResources() {
+    	
+    	return true;
+    	
+    }
 }

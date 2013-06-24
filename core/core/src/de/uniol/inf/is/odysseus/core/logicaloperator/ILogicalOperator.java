@@ -302,5 +302,12 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 * @param id
 	 */
 	String getUniqueIdentifier();
+	
+	/**
+	 * A logical operator may needs local resources, so it can not be distributed.
+	 * 
+	 * @return true, if this operator needs local resources; false, if not.
+	 */
+	boolean needsLocalResources();
 
 }
