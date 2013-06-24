@@ -168,8 +168,10 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>> ex
 
 	@Override
 	public void process_close() {
-		this._buffer.clear();
-		this.realelementsize = 0;
+		synchronized (_buffer) {
+			this._buffer.clear();
+			this.realelementsize = 0;
+		}		
 	}
 
 	@Override
@@ -179,7 +181,9 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>> ex
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		this._buffer.add(punctuation);
+		synchronized (_buffer) {
+			this._buffer.add(punctuation);
+		}		
 	}
 
 }

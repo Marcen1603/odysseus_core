@@ -61,8 +61,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		super();
 	}
 
-	public LineProtocolHandler(ITransportDirection direction,
-			IAccessPattern access) {
+	public LineProtocolHandler(ITransportDirection direction, IAccessPattern access) {
 		super(direction, access);
 	}
 
@@ -108,14 +107,11 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
 		if (getDirection().equals(ITransportDirection.IN)) {
-			if ((this.getAccess().equals(IAccessPattern.PULL))
-					|| (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
-				reader = new BufferedReader(new InputStreamReader(
-						getTransportHandler().getInputStream()));
+			if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+				reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
 			}
 		} else {
-			writer = new BufferedWriter(new OutputStreamWriter(
-					getTransportHandler().getOutputStream()));
+			writer = new BufferedWriter(new OutputStreamWriter(getTransportHandler().getOutputStream()));
 		}
 		delayCounter = 0;
 		lineCounter = 0;
@@ -154,6 +150,8 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		if (hasNext()) {
 			line = reader.readLine();
 		} else {
+			long time = System.currentTimeMillis();
+			LOG.debug("Read last line. "+ lineCounter + " " + time + " " + (time - lastDumpTime) + " (" + Integer.toHexString(hashCode()) + ") line.");
 			return null;
 		}
 
@@ -161,16 +159,14 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			if (dumpEachLine > 0) {
 				if (lineCounter % dumpEachLine == 0) {
 					long time = System.currentTimeMillis();
-					LOG.debug(lineCounter + " " + time + " "
-							+ (time - lastDumpTime) + " ("+Integer.toHexString(hashCode())+") line: " + line);
+					LOG.debug(lineCounter + " " + time + " " + (time - lastDumpTime) + " (" + Integer.toHexString(hashCode()) + ") line: " + line);
 					lastDumpTime = time;
 				}
 			}
 			if (measureEachLine > 0) {
 				if (lineCounter % measureEachLine == 0) {
 					long time = System.currentTimeMillis();
-					measurements.append(lineCounter).append(";")
-							.append(time - basetime).append("\n");
+					measurements.append(lineCounter).append(";").append(time - basetime).append("\n");
 				}
 			}
 
@@ -180,8 +176,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 					basetime = time;
 				}
 				LOG.debug(lineCounter + " " + time);
-				measurements.append(lineCounter).append(";")
-						.append(time - basetime).append("\n");
+				measurements.append(lineCounter).append(";").append(time - basetime).append("\n");
 				if (lastLine == lineCounter) {
 					System.out.println(measurements);
 					isDone = true;
@@ -235,11 +230,8 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction,
-				access);
+	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction, access);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
 		instance.init(options);
