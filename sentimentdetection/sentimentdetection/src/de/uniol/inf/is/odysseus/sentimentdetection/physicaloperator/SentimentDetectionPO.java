@@ -80,6 +80,12 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			}
 		} else {
 			if (isTrained) {
+				if(buffer.size() >  0){
+					for (Tuple buffered : this.buffer) {
+						processSentimentDetection(buffered);
+					}
+					buffer.clear();
+				}
 				processSentimentDetection(object);
 			} else {
 				buffer.add(object);
