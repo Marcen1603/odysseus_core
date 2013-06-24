@@ -136,10 +136,8 @@ public class DistributionHelper {
 			
 		}
 		
-		for(ILogicalOperator operator : operatorsToRemove)
-			operators.remove(operator);
-		for(ILogicalOperator operator : operatorsToAdd)
-			operators.add(operator);
+		operators.removeAll(operatorsToRemove);
+		operators.addAll(operatorsToAdd);
 		
 		if(part.getDestinationName().isPresent())
 			return new QueryPart(operators, part.getDestinationName().get());
@@ -277,7 +275,7 @@ public class DistributionHelper {
 						DistributionHelper.determineNextQueryParts(relativeSink, queryPart, queryPartDistributionMap.keySet());
 				if(!nextOperators.isEmpty()) {
 					
-					for (final QueryPart destQueryPart : nextOperators.keySet()) {
+					for(final QueryPart destQueryPart : nextOperators.keySet()) {
 						
 						DistributionHelper.generatePeerConnection(queryPart, destQueryPart, relativeSink, nextOperators.get(destQueryPart), 
 								baseSenderName + connectionNo, baseAccessName + connectionNo);
@@ -410,6 +408,29 @@ public class DistributionHelper {
 		logicalQuery.setQueryText(PQLGeneratorService.get().generatePQLStatement(topAO));
 		
 		return logicalQuery;
+		
+	}
+	
+	/**
+	 * Searches and removes all {@link ILogicalOperator}s, which need local resources.
+	 * @see ILogicalOperator#needsLocalResources()
+	 * @param operators A collection of {@link ILogicalOperator}s.
+	 * @return A collection of all removed {@link ILogicalOperator}s. These operators need local resources.
+	 */
+	public static Collection<ILogicalOperator> filterOperatorsForLocalPart(Collection<ILogicalOperator> operators) {
+		
+		Preconditions.checkNotNull(operators, "operators must be not null!");
+		
+		List<ILogicalOperator> operatorsForLocalPart = Lists.newArrayList();
+		for(ILogicalOperator operator : operators) {
+			
+			if(operator.needsLocalResources())
+				operatorsForLocalPart.add(operator);
+			
+		}
+		
+		operators.removeAll(operatorsForLocalPart);
+		return operatorsForLocalPart;
 		
 	}
 
