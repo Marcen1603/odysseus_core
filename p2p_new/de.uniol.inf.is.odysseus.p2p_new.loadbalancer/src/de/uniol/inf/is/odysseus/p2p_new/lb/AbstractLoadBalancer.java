@@ -16,9 +16,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
@@ -82,9 +81,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 */
 	public static final int MAX_VALUE = Integer.MAX_VALUE;
 	
-	// TODO uncomment the following line to write the result into a file
-//	private int test_counter = 0;
-	
 	/**
 	 * Returns the base name for acceptor operators.
 	 */
@@ -143,13 +139,88 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
 			return queries;
 			
-		} 
-		
+		} 		
 		DistributionHelper.logPeerStatus(remotePeerIDs);
 		
-		// Read out the wanted degree of parallelism from the given distribution type parameter
-		String[] strParameters = cfg.get(ParameterDistributionType.class).getValue().split(" ");
+		// Read out the wanted degree of parallelism from the given distribution type parameter		
+		int degreeOfParallelism = this.getDegreeOfParallelismn(this.determineWantedDegreeOfParallelism(cfg), remotePeerIDs.size());
+		
+		// All queryparts over all queries
+		final Map<ILogicalQuery, List<QueryPart>> queryPartsMap = Maps.newHashMap();
+
+		for(final ILogicalQuery originQuery : queries) {
+			
+			// Make a copy of the query to avoid changes of the originQuery
+			ILogicalQuery query = DistributionHelper.copyLogicalQuery(originQuery);
+			queryPartsMap.put(originQuery, new ArrayList<QueryPart>());
+			
+			// Get all logical operators of the query and remove the TopAOs
+			List<ILogicalOperator> operators = Lists.newArrayList();
+			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
+			RestructHelper.removeTopAOs(operators);
+			
+			// Create the local part
+			QueryPart localPart = this.createLocalPart(operators, degreeOfParallelism);
+			
+			// Determine query parts
+			List<QueryPart> parts = this.determineQueryParts(operators);
+			LOG.debug("Got {} parts of logical query {}", parts.size(), originQuery);
+			queryPartsMap.get(originQuery).addAll(parts);
+			
+			// Make copies of the query
+			List<ILogicalQuery> queryCopies = Lists.newArrayList();	
+			for(int copyNo = 0; copyNo < degreeOfParallelism - 1; copyNo++)
+				queryCopies.add(DistributionHelper.copyLogicalQuery(originQuery));
+
+			for(ILogicalQuery queryCopy: queryCopies) {
+			
+				// Get all logical operators of the query and remove the TopAOs
+				operators.clear();;
+				RestructHelper.collectOperators(queryCopy.getLogicalPlan(), operators);
+				RestructHelper.removeTopAOs(operators);
+
+				// Subscribe copy to local part
+				this.subscribeCopyToLocalPart(operators, degreeOfParallelism, localPart);
+				
+				// Create the queryparts of this query
+				parts = this.determineQueryParts(operators);
+				queryPartsMap.get(originQuery).addAll(parts);
+				
+			}
+			
+			// Initialize all operators of the local part
+			this.initLocalPart(localPart);
+			queryPartsMap.get(originQuery).add(localPart);
+			
+		}
+		
+		// Assign query parts to peers
+		final Map<QueryPart, PeerID> queryPartDistributionMap = 
+				this.assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), queryPartsMap.values());
+		int connectionNo =  connectionCounter++;
+		DistributionHelper.generatePeerConnections(queryPartDistributionMap, getAccessName() + connectionNo + "_", 
+				getSenderName() + connectionNo + "_");
+		
+		// The queries to be executed locally
+		final List<ILogicalQuery> localQueries = Lists.newArrayList();
+		
+		// Publish all remote parts and get the local ones
+		for(ILogicalQuery query : queryPartsMap.keySet())
+			localQueries.add(this.shareParts(queryPartsMap.get(query), queryPartDistributionMap, cfg, query.toString()));
+		
+		return localQueries;
+		
+	}
+	
+	protected int determineWantedDegreeOfParallelism(QueryBuildConfiguration cfg) {
+		
+		// Preconditions
+		Preconditions.checkNotNull(cfg, "cfg must be not null");
+		Preconditions.checkNotNull(cfg.get(ParameterDistributionType.class).getValue(), "parameters for distributiontype must not be null");
+		
+		String[] strParameters = cfg.get(ParameterDistributionType.class).getValue().split(" ");	
 		int wantedDegreeOfParallelism = MIN_VALUE;
+		
 		if(strParameters.length > 1) {
 			
 			if(strParameters[1].toLowerCase().equals(MIN_PARAM))
@@ -175,67 +246,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 		}
 		
-		int degreeOfParallelism = this.getDegreeOfParallelismn(wantedDegreeOfParallelism, remotePeerIDs.size());
-		
-		// All queryparts over all queries
-		final Map<ILogicalQuery, List<QueryPart>> queryPartsMap = Maps.newHashMap();
-
-		for(final ILogicalQuery query : queries) {
-			
-			// All copies of the query plus the original query
-			List<ILogicalQuery> queriesToDistribute = Lists.newArrayList(query);
-			queryPartsMap.put(query, new ArrayList<QueryPart>());
-			
-			// Make copies of the query
-			for(int copyNo = 0; copyNo < degreeOfParallelism - 1; copyNo++)
-				queriesToDistribute.add(DistributionHelper.copyLogicalQuery(query));
-			
-			// The local part of this query plus all of it copies
-			QueryPart localPart = null;
-			
-			for(ILogicalQuery queryToDistribute : queriesToDistribute) {
-			
-				// Get all logical operators of the query and remove the TopAOs
-				final List<ILogicalOperator> operators = Lists.newArrayList();
-				RestructHelper.collectOperators(queryToDistribute.getLogicalPlan(), operators);
-				RestructHelper.removeTopAOs(operators);
-				
-				// Create the queryparts of this query
-				List<QueryPart> parts = this.determineQueryParts(operators);
-				LOG.debug("Got {} parts of logical query {}", parts.size(), query);
-				queryPartsMap.get(query).addAll(parts);
-				
-				// Create the local part if it hasn't been done before
-				if(localPart == null) {
-					
-					// Generate a new logical operator which marks that the query result shall return to this instance
-					localPart = this.createLocalPart(queryPartsMap.get(query), degreeOfParallelism);
-					
-				}
-				
-			}
-			
-			// Subscribe all copies plus the origin query to the local part
-			this.subscribeToLocalPart(queryPartsMap.get(query), localPart);
-			queryPartsMap.get(query).add(localPart);
-			
-		}
-		
-		// Assign query parts to peers
-		final Map<QueryPart, PeerID> queryPartDistributionMap = 
-				this.assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), queryPartsMap.values());
-		int connectionNo =  connectionCounter++;
-		DistributionHelper.generatePeerConnections(queryPartDistributionMap, getAccessName() + connectionNo + "_", 
-				getSenderName() + connectionNo + "_");
-		
-		// The queries to be executed locally
-		final List<ILogicalQuery> localQueries = Lists.newArrayList();
-		
-		// Publish all remote parts and get the local ones
-		for(ILogicalQuery query : queryPartsMap.keySet())
-			localQueries.add(this.shareParts(queryPartsMap.get(query), queryPartDistributionMap, cfg, query.toString()));
-		
-		return localQueries;
+		return wantedDegreeOfParallelism;
 		
 	}
 	
@@ -302,66 +313,134 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 	
 	/**
-	 * Creates a new {@link QueryPart} to be executed locally.
-	 * @param parts A list of semantically equal {@link QueryPart}s, 
-	 * which shall be merged by the local {@link QueryPart}. <br />
-	 * <code>parts</code> must not be null and not empty.
+	 * Creates a new {@link QueryPart} to be executed locally and makes the subscriptions for a single {@link ILogicalQuery}, 
+	 * which {@link ILogicalOperator}s are <code>operators</code>.
+	 * @param operators A collection of all {@link ILogicalOperator}s within an {@link ILogicalQuery} without any {@link TopAO}s.
 	 * @param degreeOfParallelism The degree of parallelism. <br />
 	 * <code>degreeOfParallelism</code> must greater than zero.
-	 * @return For each sink: <br />
-	 * If <code>degreeOfParallelism</code> is <code>1</code>: A {@link RenameAO} with no operation. <br />
-	 * If <code>degreeOfParallelism</code> is greater than<code>1</code>: A {@link DistributionMergeAO}.
+	 * @return The returned collection will contain for each sink: <br />
+	 * the sink, if <code>degreeOfParallelism</code> is <code>1</code> and {@link ILogicalOperator#needsLocalResources()} is true for the sink. <br />
+	 * a {@link RenameAO} with no operation subscribed to the sink, if <code>degreeOfParallelism</code> is <code>1</code> and 
+	 * {@link ILogicalOperator#needsLocalResources()} is false for the sink. <br />
+	 * a {@link DistributionMergeAO} subscribed to the sink, if <code>degreeOfParallelism</code> is greater than <code>1</code> and 
+	 * {@link ILogicalOperator#needsLocalResources()} is false for the sink. <br />
+	 * a {@link DistributionMergeAO} subscribed to all sources of the sink and subscribed as a source to the sink, 
+	 * if <code>degreeOfParallelism</code> is greater than <code>1</code> and {@link ILogicalOperator#needsLocalResources()} is true for the sink.
 	 */
-	protected QueryPart createLocalPart(List<QueryPart> parts, int degreeOfParallelism) {
+	protected QueryPart createLocalPart(Collection<ILogicalOperator> operators, int degreeOfParallelism) {
 		
-		Preconditions.checkNotNull(parts, "parts must be not null!");
-		Preconditions.checkArgument(parts.size() > 0, "parts must be not empty!");
+		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(degreeOfParallelism > 0, "degreeOfParallelism must be greater than zero!");
 		
-		final List<ILogicalOperator> operators = Lists.newArrayList();
+		final List<ILogicalOperator> localOperators = Lists.newArrayList();
 		
-		for(QueryPart part : parts) {
+		for(ILogicalOperator operator : operators) {
 			
-			for(ILogicalOperator sink : part.getRealSinks()) {
+			if(!operator.getSubscriptions().isEmpty()) {
 				
-				// Get all sources of any other query part subscribed to the sink
-				Map<QueryPart, ILogicalOperator> sourcesMap = DistributionHelper.determineNextQueryParts(
-						sink, part, Sets.newHashSet(parts));
+				// Not a sink of the query
+				continue;
 				
-				if(!sourcesMap.isEmpty()) {
+			} else if(operator.needsLocalResources() && degreeOfParallelism == 1) {	
+				
+				// Map operator to local part; neither merging nor renaming needed
+				localOperators.add(operator);
+				
+			} else if(degreeOfParallelism == 1) {
+				
+				// Don't map operator to local part; no merging needed
+				final RenameAO renameAO = new RenameAO();
+				renameAO.setNoOp(true);
+				renameAO.addParameterInfo("isNoOp", "'true'");
+				localOperators.add(renameAO);
+				renameAO.subscribeToSource(operator, 0, 0, operator.getOutputSchema());
+				LOG.debug("Subscribed {} to {}", operator, renameAO);
+				
+			} else if(!operator.needsLocalResources() && degreeOfParallelism > 1) {
+				
+				// Don't map operator to local part; merging needed before
+				final DistributionMergeAO mergeAO = new DistributionMergeAO();
+				localOperators.add(mergeAO);
+				mergeAO.subscribeToSource(operator, 0, 0, operator.getOutputSchema());
+				LOG.debug("Subscribed {} to {}", operator, mergeAO);
+				
+			} else {	// operator.needsLocalResources() && degreeOfParallelism > 1
+				
+				// Map operator to local part; Merging needed before
+				final DistributionMergeAO mergeAO = new DistributionMergeAO();
+				localOperators.add(mergeAO);
+				localOperators.add(operator);
+				
+				// Delete subscriptions from all sources of the operator towards it; subscribe them to mergeAO
+				for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
 					
-					// If there are any sources in other queryParts, there will be no local part created for 
-					// the sink
-					continue;
+					operator.unsubscribeFromSource(subToSource);
+					LOG.debug("Unsubscribed {} from {}", subToSource.getTarget(), operator);
+					mergeAO.subscribeToSource(subToSource.getTarget(), mergeAO.getNumberOfInputs(), subToSource.getSourceOutPort(), 
+							subToSource.getTarget().getOutputSchema());
+					LOG.debug("Subscribed {} to {}", subToSource.getTarget(), mergeAO);
 					
-				} else if(degreeOfParallelism == 1) {
+				}
+				
+				// Subscribe mergeAO to the operator
+				mergeAO.subscribeSink(operator, 0, 0, mergeAO.getOutputSchema());
+				LOG.debug("Subscribed {} to {}", mergeAO, operator);
+				
+			}
+			
+		}
+		
+		operators.removeAll(localOperators);
+		QueryPart localPart = new QueryPart(localOperators, AbstractLoadBalancer.getLocalDestinationName());
+		LOG.debug("Created local part {}", localPart);
+		return localPart;
+	
+	}
+	
+	/**
+	 * Makes the subscriptions for a single {@link ILogicalQuery}, which {@link ILogicalOperator}s are <code>operators</code>, to an existing local part.
+	 * @param operators A collection of all {@link ILogicalOperator}s within an {@link ILogicalQuery} without any {@link TopAO}s.
+	 * @param degreeOfParallelism The degree of parallelism. <br />
+	 * <code>degreeOfParallelism</code> must greater than zero.
+	 * @param localPart The local part to which the {@link ILogicalQuery} shall be subscribed.
+	 */
+	protected void subscribeCopyToLocalPart(Collection<ILogicalOperator> operators, int degreeOfParallelism, QueryPart localPart) {
+		
+		Preconditions.checkNotNull(operators, "operators must be not null!");
+		Preconditions.checkArgument(degreeOfParallelism > 0, "degreeOfParallelism must be greater than zero!");
+		Preconditions.checkNotNull(localPart, "localPart must be not null!");
+		
+		final List<ILogicalOperator> localOperators = Lists.newArrayList();
+		
+		// Iterator for the operators of the local Part
+		Iterator<ILogicalOperator> localIter = localPart.getOperators().iterator();
+		
+		for(ILogicalOperator operator : operators) {
+			
+			if(!operator.getSubscriptions().isEmpty()) {
+				
+				// Not a sink of the query
+				continue;
+				
+			} else if(!operator.needsLocalResources() && degreeOfParallelism > 1) {
+				
+				// Subscribe operator to existing merger
+				ILogicalOperator mergeAO = localIter.next();
+				mergeAO.subscribeToSource(operator, mergeAO.getNumberOfInputs(), 0, operator.getOutputSchema());
+				LOG.debug("Subscribed {} to {}", operator, mergeAO);
+				
+			} else {	// operator.needsLocalResources() && degreeOfParallelism > 1
+				
+				// Subscribe sources of operator to existing merger
+				localOperators.add(operator);
+				ILogicalOperator mergeAO = localIter.next();
+				for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
 					
-					// No merging needed
-					final RenameAO renameAO = new RenameAO();
-					renameAO.setNoOp(true);
-					renameAO.addParameterInfo("isNoOp", "'true'");
-					operators.add(renameAO);
-					
-					// TODO uncomment the following lines to write the result into a file
-//					final FileSinkAO fileAO = new FileSinkAO();
-//					String fileName = String.valueOf(test_counter++) + "_" + part.toString() + ".csv";
-//					fileAO.setFilename(fileName);
-//					fileAO.subscribeToSource(renameAO, 0, 0, renameAO.getOutputSchema());
-//					operators.add(fileAO);
-//					LOG.debug("FileSinkAO with the file {} added", fileName);
-					
-				} else {
-					
-					final DistributionMergeAO mergeAO = new DistributionMergeAO();
-					operators.add(mergeAO);
-					
-					// TODO uncomment the following lines to write the result into a file
-//					final FileSinkAO fileAO = new FileSinkAO();
-//					String fileName = String.valueOf(test_counter++) + "_" + part.toString() + ".csv";
-//					fileAO.setFilename(fileName);
-//					fileAO.subscribeToSource(mergeAO, 0, 0, mergeAO.getOutputSchema());
-//					operators.add(fileAO);
-//					LOG.debug("FileSinkAO with the file {} added", fileName);
+					operator.unsubscribeFromSource(subToSource);
+					LOG.debug("Unsubscribed {} from {}", subToSource.getTarget(), operator);
+					mergeAO.subscribeToSource(subToSource.getTarget(), mergeAO.getNumberOfInputs(), subToSource.getSourceOutPort(), 
+							subToSource.getTarget().getOutputSchema());
+					LOG.debug("Subscribed {} to {}", subToSource.getTarget(), mergeAO);
 					
 				}
 				
@@ -369,47 +448,18 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 		}
 		
-		return new QueryPart(operators, AbstractLoadBalancer.getLocalDestinationName());
+		operators.removeAll(localOperators);
 		
 	}
 	
 	/**
-	 * Subscribes a local {@link QueryPart} to a list of {@link QueryPart}s. <br />
-	 * Every sink of each {@link QueryPart} will be subscribed to a different Port of the source of the 
-	 * local {@link QueryPart}.
-	 * @param queryParts The list of {@link QueryPart}s. <br />
-	 * <code>queryParts</code> must not be null.
-	 * @param localPart The local {@link QueryPart} to be subscribed. <br />
-	 * <code>localPart</code> must not be null.
+	 * Calls {@link ILogicalOperator#initialize()} for all {@link ILogicalOperator}s within the local part.
+	 * @param localPart The local Part.
 	 */
-	protected void subscribeToLocalPart(List<QueryPart> queryParts, QueryPart localPart) {
+	protected void initLocalPart(QueryPart localPart) {
 		
-		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
 		Preconditions.checkNotNull(localPart, "localPart must be not null!");
 		
-		for(QueryPart part : queryParts) {
-			
-			Iterator<ILogicalOperator> localSourceIter = localPart.getRelativeSources().iterator();
-			Collection<ILogicalOperator> sinks = part.getRealSinks();
-			
-			for(ILogicalOperator sink : sinks) {
-				
-				// Get all sources of any other query part subscribed to the sink
-				Map<QueryPart, ILogicalOperator> sourcesMap = DistributionHelper.determineNextQueryParts(
-						sink, part, Sets.newHashSet(queryParts));
-				
-				if(sourcesMap.isEmpty()) {
-				
-					ILogicalOperator localSource = localSourceIter.next();
-					localSource.subscribeToSource(sink, localSource.getNumberOfInputs(), 0, sink.getOutputSchema());
-					
-				}
-				
-			}
-			
-		}
-		
-		// Initialize the operators of the local part
 		for(ILogicalOperator operator : localPart.getOperators())
 			operator.initialize();
 		

@@ -211,8 +211,13 @@ public class DistributionHelper {
 			for(final LogicalSubscription subscription : relativeSink.getSubscriptions()) {
 				
 				final ILogicalOperator target = subscription.getTarget();
-				if(!currentQueryPart.getOperators().contains(target))
-					next.put(DistributionHelper.findLogicalOperator(target, queryParts), target);
+				if(!currentQueryPart.getOperators().contains(target)) {
+					
+					QueryPart nextPart = DistributionHelper.findLogicalOperator(target, queryParts);
+					if(nextPart != null)
+						next.put(nextPart, target);
+					
+				}
 				
 			}
 			
@@ -228,8 +233,7 @@ public class DistributionHelper {
 	 * <code>target</code> must not be null.
 	 * @param parts The set of {@link QueryPart}s. <br />
 	 * <code>parts</code> must not be null.
-	 * @return The {@link QueryPart} containing <code>target</code>
-	 * @throws IllegalArgumentExcepion if <code>target</code> can not be found.
+	 * @return The {@link QueryPart} containing <code>target</code> or null, if <code>target</code> can not be found.
 	 */
 	public static QueryPart findLogicalOperator(ILogicalOperator target, Set<QueryPart> parts) throws IllegalArgumentException {
 		
@@ -243,7 +247,7 @@ public class DistributionHelper {
 			
 		}
 
-		throw new IllegalArgumentException("Could not find query part for logical operator " + target);
+		return null;
 		
 	}
 	
