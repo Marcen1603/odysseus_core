@@ -44,173 +44,193 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class NonBlockingTcpClientHandler extends AbstractTransportHandler
-		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener,
-		TCPConnectorListener {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(NonBlockingTcpClientHandler.class);
-	private SelectorThread selector;
-	private String host;
-	private int port;
-	private TCPConnector connector;
-	private NioTcpConnection connection;
-	private int readBufferSize;
-	private int writeBufferSize;
+public class NonBlockingTcpClientHandler extends AbstractTransportHandler implements IAccessConnectionListener<ByteBuffer>, IConnectionListener, TCPConnectorListener {
+    private static final Logger LOG = LoggerFactory.getLogger(NonBlockingTcpClientHandler.class);
+    private SelectorThread selector;
+    private String host;
+    private int port;
+    private TCPConnector connector;
+    private NioTcpConnection connection;
+    private int readBufferSize;
+    private int writeBufferSize;
 
-	public NonBlockingTcpClientHandler() {
-		super();
-	}
+    public NonBlockingTcpClientHandler() {
+        super();
+    }
 
-	public NonBlockingTcpClientHandler(final IProtocolHandler<?> protocolHandler) {
-		super(protocolHandler);
-	}
+    public NonBlockingTcpClientHandler(final IProtocolHandler<?> protocolHandler) {
+        super(protocolHandler);
+    }
 
-	@Override
-	public void send(final byte[] message) throws IOException {
-		if (this.connection != null) {
-			this.connection.write(message);
-		} else {
-			NonBlockingTcpClientHandler.LOG.error("Not connected");
-		}
-	}
+    @Override
+    public void send(final byte[] message) throws IOException {
+        if (this.connection != null) {
+            this.connection.write(message);
+        } else {
+            NonBlockingTcpClientHandler.LOG.error("Not connected");
+        }
+    }
 
-	@Override
-	public ITransportHandler createInstance(
-			final IProtocolHandler<?> protocolHandler,
-			final Map<String, String> options) {
-		final NonBlockingTcpClientHandler handler = new NonBlockingTcpClientHandler(
-				protocolHandler);
-		handler.readBufferSize = options.containsKey("read") ? Integer
-				.parseInt(options.get("read")) : 10240;
-		handler.writeBufferSize = options.containsKey("write") ? Integer
-				.parseInt(options.get("write")) : 10240;
-		handler.host = options.containsKey("host") ? options.get("host")
-				: "127.0.0.1";
-		handler.port = options.containsKey("port") ? Integer.parseInt(options
-				.get("port")) : 8080;
-		try {
-			handler.selector = SelectorThread.getInstance();
-			final InetSocketAddress address = new InetSocketAddress(
-					handler.host, handler.port);
-			handler.connector = new TCPConnector(handler.selector, address,
-					handler);
-		} catch (final IOException e) {
-			NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
-		}
+    @Override
+    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
+        final NonBlockingTcpClientHandler handler = new NonBlockingTcpClientHandler(protocolHandler);
+        handler.readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 10240;
+        handler.writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 10240;
+        handler.host = options.containsKey("host") ? options.get("host") : "127.0.0.1";
+        handler.port = options.containsKey("port") ? Integer.parseInt(options.get("port")) : 8080;
+        try {
+            handler.selector = SelectorThread.getInstance();
+            final InetSocketAddress address = new InetSocketAddress(handler.host, handler.port);
+            handler.connector = new TCPConnector(handler.selector, address, handler);
+        } catch (final IOException e) {
+            NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+        }
 
-		return handler;
-	}
+        return handler;
+    }
 
-	@Override
-	public InputStream getInputStream() {
-		throw new IllegalArgumentException("Currently not implemented");
-	}
+    @Override
+    public InputStream getInputStream() {
+        throw new IllegalArgumentException("Currently not implemented");
+    }
 
-	@Override
-	public String getName() {
-		return "TCPClient";
-	}
+    @Override
+    public String getName() {
+        return "TCPClient";
+    }
 
-	@Override
-	public void process(final ByteBuffer buffer) throws ClassNotFoundException {
-		super.fireProcess(buffer);
-	}
+    @Override
+    public void process(final ByteBuffer buffer) throws ClassNotFoundException {
+        super.fireProcess(buffer);
+    }
 
-	@Override
-	public void done() {
+    @Override
+    public void done() {
 
-	}
+    }
 
-	@Override
-	public OutputStream getOutputStream() {
-		throw new IllegalArgumentException("Currently not implemented");
-	}
+    @Override
+    public OutputStream getOutputStream() {
+        return new TcpOutputStream();
+    }
 
-	@Override
-	public void processInOpen() throws UnknownHostException, IOException {
-		try {
-			this.connector.connect();
-		} catch (final IOException e) {
-			NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
-			throw new OpenFailedException(e);
-		}
-	}
+    @Override
+    public void processInOpen() throws UnknownHostException, IOException {
+        try {
+            this.connector.connect();
+        } catch (final IOException e) {
+            NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+            throw new OpenFailedException(e);
+        }
+    }
 
-	@Override
-	public void processOutOpen() throws UnknownHostException, IOException {
-		try {
-			this.connector.connect();
-		} catch (final IOException e) {
-			NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
-			throw new OpenFailedException(e);
-		}
-	}
+    @Override
+    public void processOutOpen() throws UnknownHostException, IOException {
+        try {
+            this.connector.connect();
+        } catch (final IOException e) {
+            NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+            throw new OpenFailedException(e);
+        }
+    }
 
-	@Override
-	public void processInClose() throws IOException {
-		this.connector.disconnect();
-		if (this.connection != null) {
-			this.connection.close();
-		}
-	}
+    @Override
+    public void processInClose() throws IOException {
+        this.connector.disconnect();
+        if (this.connection != null) {
+            this.connection.close();
+        }
+    }
 
-	@Override
-	public void processOutClose() throws IOException {
-		this.connector.disconnect();
-		if (this.connection != null) {
-			this.connection.close();
-		}
-	}
+    @Override
+    public void processOutClose() throws IOException {
+        this.connector.disconnect();
+        if (this.connection != null) {
+            this.connection.close();
+        }
+    }
 
-	@Override
-	public void notify(final IConnection connection,
-			final ConnectionMessageReason reason) {
-		switch (reason) {
-		case ConnectionAbort:
-			super.fireOnDisconnect();
-			break;
-		case ConnectionClosed:
-			super.fireOnDisconnect();
-			break;
-		case ConnectionRefused:
-			super.fireOnDisconnect();
-			break;
-		case ConnectionOpened:
-			super.fireOnConnect();
-			break;
-		default:
-			break;
-		}
-	}
+    @Override
+    public void notify(final IConnection connection, final ConnectionMessageReason reason) {
+        switch (reason) {
+        case ConnectionAbort:
+            super.fireOnDisconnect();
+            break;
+        case ConnectionClosed:
+            super.fireOnDisconnect();
+            break;
+        case ConnectionRefused:
+            super.fireOnDisconnect();
+            break;
+        case ConnectionOpened:
+            super.fireOnConnect();
+            break;
+        default:
+            break;
+        }
+    }
 
-	@Override
-	public void connectionEstablished(final ConnectorSelectorHandler connector,
-			final SocketChannel channel) {
-		try {
-			channel.socket().setReceiveBufferSize(this.readBufferSize);
-			channel.socket().setSendBufferSize(this.writeBufferSize);
-			this.connection = new NioTcpConnection(channel, this.selector, this);
-		} catch (final IOException e) {
-			NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
-		}
-		super.fireOnConnect();
-	}
+    @Override
+    public void connectionEstablished(final ConnectorSelectorHandler connector, final SocketChannel channel) {
+        try {
+            channel.socket().setReceiveBufferSize(this.readBufferSize);
+            channel.socket().setSendBufferSize(this.writeBufferSize);
+            this.connection = new NioTcpConnection(channel, this.selector, this);
+        } catch (final IOException e) {
+            NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+        }
+        super.fireOnConnect();
+    }
 
-	@Override
-	public void connectionFailed(final ConnectorSelectorHandler connector,
-			final Exception cause) {
-		NonBlockingTcpClientHandler.LOG.error(cause.getMessage(), cause);
-	}
+    @Override
+    public void connectionFailed(final ConnectorSelectorHandler connector, final Exception cause) {
+        NonBlockingTcpClientHandler.LOG.error(cause.getMessage(), cause);
+    }
 
-	@Override
-	public void socketDisconnected() {
-		super.fireOnDisconnect();
+    @Override
+    public void socketDisconnected() {
+        super.fireOnDisconnect();
 
-	}
+    }
 
-	@Override
-	public void socketException(final Exception e) {
-		NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
-	}
+    @Override
+    public void socketException(final Exception e) {
+        NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+    }
 
+    private class TcpOutputStream extends OutputStream {
+        private ByteBuffer buffer = ByteBuffer.allocate(1024);
+
+        public TcpOutputStream() {
+
+        }
+
+        @Override
+        public void write(final int b) throws IOException {
+            if ((1 + this.buffer.position()) >= this.buffer.capacity()) {
+                final ByteBuffer newBuffer = ByteBuffer.allocate((1 + this.buffer.position()) * 2);
+                final int pos = this.buffer.position();
+                this.buffer.flip();
+                newBuffer.put(this.buffer);
+                this.buffer = newBuffer;
+                this.buffer.position(pos);
+                NonBlockingTcpClientHandler.LOG.debug("Extending buffer to " + this.buffer.capacity());
+            }
+            this.buffer.put((byte) b);
+        }
+
+        @Override
+        public void flush() throws IOException {
+            this.buffer.flip();
+            if (connection != null) {
+                connection.write(buffer);
+            }
+            this.buffer.clear();
+        }
+
+        @Override
+        public void close() throws IOException {
+            this.buffer.clear();
+        }
+    }
 }
