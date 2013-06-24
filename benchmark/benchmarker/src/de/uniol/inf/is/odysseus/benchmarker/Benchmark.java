@@ -209,7 +209,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 
 			for (ISink<?> curSink : this.sinks) {
 				try {
-					curSink.open();
+					curSink.open(null);
 				} catch (OpenFailedException e) {
 					throw new BenchmarkException(e);
 				}

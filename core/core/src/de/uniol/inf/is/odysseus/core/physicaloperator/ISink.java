@@ -60,21 +60,21 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 
 	public void processPunctuation(IPunctuation punctuation, int port);
 	
-	/**
-	 * Call open on a Sink. 	
-	 *  
-	*/
-	public void open() throws OpenFailedException;
+//	/**
+//	 * Call open on a Sink. 	
+//	 *  
+//	*/
+//	public void open() throws OpenFailedException;
 	
 	/**
 	 * Call close for a distinct owner 
 	 */
 	public void open(IOperatorOwner id);
 
-	/**
-	 * Close called on a sink has no parameter 
-	 */
-	public void close();
+//	/**
+//	 * Close called on a sink has no parameter 
+//	 */
+//	public void close();
 
 	/**
 	 * Call close for a distinct owner 

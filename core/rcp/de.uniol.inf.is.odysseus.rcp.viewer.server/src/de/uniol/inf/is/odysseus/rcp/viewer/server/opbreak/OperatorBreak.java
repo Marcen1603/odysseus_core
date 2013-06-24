@@ -64,7 +64,7 @@ public class OperatorBreak implements IBufferedPipeListener {
 			insertBuffer(operator, sourceOutPort, sink, sinkInPort, buffer);
 
 			try {
-				buffer.open();
+				buffer.open(null);
 			} catch (OpenFailedException e) {
 				// Zurückfahren
 				e.printStackTrace();

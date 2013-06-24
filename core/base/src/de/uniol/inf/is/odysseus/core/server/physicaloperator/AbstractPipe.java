@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -91,7 +90,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 				callCloseOnChildren(callPath, forOwners);
 			}
 			sinkOpen.set(false);
-
 		}
 
 		@Override
@@ -174,11 +172,11 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// OPEN
 	// ------------------------------------------------------------------------
 
-	@Override
-	final public void open() throws OpenFailedException {
-		reconnectSinks();
-		this.delegateSink.open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
-	}
+//	@Override
+//	final public void open() throws OpenFailedException {
+//		reconnectSinks();
+//		this.delegateSink.open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
+//	}
 
 	@Override
 	final public void open(IOperatorOwner owner) throws OpenFailedException {
@@ -208,13 +206,13 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		return super.isOpen() || this.delegateSink.sinkIsOpen();
 	}
 
-	// ------------------------------------------------------------------------
-	// PROCESS
-	// ------------------------------------------------------------------------
-
 	@Override
 	protected void process_open() throws OpenFailedException {
 	}
+	
+	// ------------------------------------------------------------------------
+	// PROCESS
+	// ------------------------------------------------------------------------
 
 	@Override
 	public void process(R object, int port) {
@@ -254,25 +252,20 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	}
 
 	@Override
-	final public void close() {
-		close(null);
-	}
-
-	@Override
 	final public void close(IOperatorOwner owner) {
-		// Hint: This method can be called inside a plan
-		// only if all sinksubscriptions are closed
-		// close this operator too
+		// Hint: This method can only be called 
+		// from a query
 		this.delegateSink.close(owner);
-		// if (!hasOpenSinkSubscriptions()) {
-		// // is this process_close correct?
-		// process_close();
-		// // The are cases where elements are connected that
-		// // are no roots of this query
-		// // here we need to call close by hand
-		// closeAllSinkSubscriptions();
-		// open.set(false);
-		// }
+		
+		if (!hasOpenSinkSubscriptions()) {
+			// is this process_close correct?
+			process_close();
+			// The are cases where elements are connected that
+			// are no roots of this query
+			// here we need to call close by hand
+			closeAllSinkSubscriptions();
+			open.set(false);
+		}
 	}
 
 	public void delegatedProcessClose() {

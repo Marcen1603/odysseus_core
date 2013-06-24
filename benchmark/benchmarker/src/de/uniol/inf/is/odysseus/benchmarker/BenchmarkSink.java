@@ -82,7 +82,7 @@ public class BenchmarkSink<M extends ILatency> extends
 
 	private void inputDone() {
 		if (--counter == 0) {
-			close();
+			//close();
 			result.setEndTime(System.nanoTime());
 			resultQueue.add(result);
 		}

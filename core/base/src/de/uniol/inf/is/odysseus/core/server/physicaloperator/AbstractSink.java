@@ -193,10 +193,10 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
-	@Override
-	public void open() throws OpenFailedException {
-		open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
-	}
+//	@Override
+//	public void open() throws OpenFailedException {
+//		open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
+//	}
 
 	@Override
 	public void open(IOperatorOwner owner) throws OpenFailedException {
@@ -295,10 +295,10 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// CLOSE and DONE
 	// ------------------------------------------------------------------------
 
-	@Override
-	public void close() {
-		close(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
-	}
+//	@Override
+//	public void close() {
+//		close(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
+//	}
 
 	@Override
 	public void close(IOperatorOwner id) {

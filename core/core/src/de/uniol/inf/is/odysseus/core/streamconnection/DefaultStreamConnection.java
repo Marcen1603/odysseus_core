@@ -152,7 +152,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		return isOpen;
 	}
 
-	@Override
+	//@Override
 	public void open() throws OpenFailedException {
 		LOG.debug("Opening");
 		isOpen = true;
@@ -165,7 +165,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+	//@Override
 	public void close() {
 		LOG.debug("Closing");
 		isOpen = false;

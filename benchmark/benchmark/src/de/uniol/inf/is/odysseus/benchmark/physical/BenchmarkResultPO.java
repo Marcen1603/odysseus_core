@@ -97,7 +97,7 @@ public class BenchmarkResultPO<M extends ILatency> extends
 	private void inputDone(int port) {
 		result.get(port).setEndTime(System.nanoTime());
 		transfer(result.get(port), port);
-		close();
+		//close(null);
 	}
 
 	@Override
