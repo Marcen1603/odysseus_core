@@ -168,5 +168,12 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		}
 		return outputPort;
 	}
+	
+	@Override
+	protected void process_close() {
+		super.process_close();
+		this.buffer.clear();
+		this.isTrained = false;
+	}
 
 }
