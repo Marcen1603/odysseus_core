@@ -135,7 +135,7 @@ public class UriGetBuilder implements IRequestBuilder {
 	
 	@Override
 	public String getName() {
-		return "get";
+		return "GET";
 	}
 	
 	@Override

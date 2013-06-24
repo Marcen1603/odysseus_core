@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.wsenrich.util;
 
-import de.uniol.inf.is.odysseus.wsenrich.exceptions.DatafieldNotFoundException;
-
 public interface IKeyFinder {
 	
 	/**
@@ -30,10 +28,10 @@ public interface IKeyFinder {
 	 * searches the message for the first occurence of the search and
 	 * returns the value of the element
 	 * @param search the element name to search for
+	 * @param filterNullTuples: If true, a null-response (No Data) will not be returned
 	 * @return the value of the searched element
-	 * @throws DatafieldNotFoundException if the searched element ist not in the message
 	 */
-	public Object getValueOf(String search) throws DatafieldNotFoundException;
+	public Object getValueOf(String search, boolean keyValue);
 	
 	/**
 	 * @return the name of the implementation of the IKeyFinder Interface

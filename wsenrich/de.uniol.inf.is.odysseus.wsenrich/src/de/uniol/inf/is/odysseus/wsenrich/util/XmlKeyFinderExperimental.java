@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.wsenrich.util;
 
-
-import de.uniol.inf.is.odysseus.wsenrich.exceptions.DatafieldNotFoundException;
-
-public class XmlKeyFinder implements IKeyFinder {
+public class XmlKeyFinderExperimental implements IKeyFinder {
 	
 	/**
 	 * The Start of a Element
@@ -40,7 +37,7 @@ public class XmlKeyFinder implements IKeyFinder {
 	 */
 	private Object value;
 	
-	public XmlKeyFinder() {
+	public XmlKeyFinderExperimental() {
 		//Needed for the KeyFinderRegistry
 		
 	}
@@ -52,7 +49,7 @@ public class XmlKeyFinder implements IKeyFinder {
 	 * @param message the xml message
 	 * @param search the searched element
 	 */
-	public XmlKeyFinder(String message, String search) {
+	public XmlKeyFinderExperimental(String message, String search) {
 		
 		this.message = new StringBuffer(message);
 		this.search = search;
@@ -112,7 +109,7 @@ public class XmlKeyFinder implements IKeyFinder {
 	}
 	
 	@Override
-	public Object getValueOf(String search) throws DatafieldNotFoundException {
+	public Object getValueOf(String search, boolean keyValue) {
 		
 		cutStartofMessage();
 		cutEndofMessage();
@@ -120,10 +117,11 @@ public class XmlKeyFinder implements IKeyFinder {
 			this.search = search;
 		}
 		
-		int match = this.message.indexOf(search);
+		int match = this.message.indexOf(this.search);
 		
 		if(match == -1) {
-			throw new DatafieldNotFoundException();
+			//No Data found
+			return null;
 		} else {
 			int endOfStartElement = this.message.indexOf(ENDTAG.toString(), match);
 			int startOfEndElement = this.message.indexOf(STARTTAG.toString(), endOfStartElement + 1);
@@ -135,12 +133,12 @@ public class XmlKeyFinder implements IKeyFinder {
 
 	@Override
 	public String getName() {
-		return "XML";
+		return "XMLExperimental";
 	}
 
 	@Override
 	public IKeyFinder createInstance() {
-		return new XmlKeyFinder();
+		return new XmlKeyFinderExperimental();
 	}
 
 

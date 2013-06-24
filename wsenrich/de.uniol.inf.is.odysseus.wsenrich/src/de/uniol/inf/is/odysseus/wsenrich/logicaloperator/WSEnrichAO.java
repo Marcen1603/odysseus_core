@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
@@ -52,14 +53,24 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	private static final String SERVICE_METHOD_SOAP = "SOAP";
 	
 	/**
-	 * Static Variable for the return Type of a webservice-response as XML
+	 * Static Variable for the parsing Method xml experimental
 	 */
-	private static final String RETURN_TYPE_XML = "XML";
+	private static final String PARSING_XML_EXPERIMENTAL = "XMLExperimental";
 	
 	/**
-	 * Static Variable for the return Type of a webservice-response as JSON
+	 * Static Variable for the parsing Method xpath
 	 */
-	private static final String RETURN_TYPE_JSON = "JSON";
+	private static final String PARSING_XML_XPATH = "XPath";
+	
+	/**
+	 * Static Variable for the parsing Method json experimental
+	 */
+	private static final String PARSING_JSON_EXPERIMENTAL = "JSONExperimental";
+	
+	/**
+	 * Static Variable for the parsing Method json with a Json parser
+	 */
+	private static final String PARSING_JSON_PARSER = "JSONParser";
 	
 	/**
 	 * For Logging
@@ -104,18 +115,30 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	/**
 	 * The charset that is used for the webservice conversation
 	 */
-	private String charset;
+	private String charset = "UTF-8";
 	
 	/**
 	 * The return Type of a webservice-response, can be XML or JSON
 	 */
-	private String returnType;
+	private String parsingMethod;
 	
 	/**
 	 * internal variable for the final resolution, which Method to call
 	 * the webservice is used
 	 */
 	private String getOrPost;
+	
+	/**
+	 * If true, tuples with a null-response will be filtered (they
+	 * will not appear in the output 
+	 * False, tuples with a null-response will appear in the output
+	 */
+	private boolean filterNullTuples = true;
+	
+	/**
+	 * If true, received Data from a Webservice are returned as keyValuePairs
+	 */
+	private boolean keyValueOutput = false;
 	
 	/**
 	 * Default-Constructor for the WSEnrichAO
@@ -140,8 +163,10 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		this.operation = wsEnrichAO.operation;
 		this.receivedData = wsEnrichAO.receivedData;
 		this.charset = wsEnrichAO.charset;
-		this.returnType = wsEnrichAO.returnType;
+		this.parsingMethod = wsEnrichAO.parsingMethod;
 		this.getOrPost = wsEnrichAO.setGetOrPost();
+		this.filterNullTuples = wsEnrichAO.filterNullTuples;
+		this.keyValueOutput = wsEnrichAO.keyValueOutput;
 
 	}
 
@@ -181,9 +206,10 @@ public class WSEnrichAO extends UnaryLogicalOp {
 					"You have to declare min 1 Datafield of the webservice for the Outputschema."));
 			valid = false;
 		}
-		if (!(returnType.equals(RETURN_TYPE_XML) || returnType.equals(RETURN_TYPE_JSON))) {
+		if (!(parsingMethod.equals(PARSING_XML_EXPERIMENTAL) || parsingMethod.equals(PARSING_XML_XPATH) || parsingMethod.equals(PARSING_JSON_EXPERIMENTAL) || parsingMethod.equals(PARSING_JSON_PARSER))) {
 			addError(new IllegalParameterException(
-				"You have to declare the return type of the webservice-response. This can be JSON or XML."));
+				"You have to declare the Parsing Method to parse the webservice-response. This can be XMLExperimental + " +
+				"or XPath for XML-Document or JSONExperimental or JSONParser for JSON Documents."));
 			valid = false;
 		}
 
@@ -191,7 +217,6 @@ public class WSEnrichAO extends UnaryLogicalOp {
 
 	}
 	
-	//TODO sp�ter noch �ndern, wenn XML-Verarbeitung funktioniert
 	@Override
 	public void initialize() {
 
@@ -205,24 +230,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	protected SDFSchema getOutputSchemaIntern(int port) {
 		return getOutputSchema();
 		
-	}
-	
-/*	private static String sdfSchemaToString(SDFSchema schema, String identifier) {
-		StringBuilder sb = new StringBuilder(140);
-		sb.append(identifier + ", Schema=[");
-		boolean addComma = false;
-		for (SDFAttribute attribute : schema) {
-			if(addComma) 
-				sb.append(";");
-				sb.append("['" + attribute.getURI() + "','"
-						+ attribute.getDatatype() + "']");
-				addComma = true;
-			}
-			sb.append("]");
-			return sb.toString();
-		}
-
-*/		
+	}		
 
 	/**
 	 * @return The Service-Method. REST or SOAP
@@ -353,17 +361,17 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	/**
 	 * @return The return-type of the webservice-response, can be JSON or XML
 	 */
-	public String getReturnType() {
-		return this.returnType;
+	public String getParsingMethod() {
+		return this.parsingMethod;
 	}
 	
 	/**
 	 * Setter for the return type of the webservice-response. Can be XML or JSON
-	 * @param returnType the return type 
+	 * @param parsingMethod the return type 
 	 */
-	@Parameter(type = StringParameter.class, name = "returnType")
-	public void setReturnType(String returnType) {
-		this.returnType = returnType;
+	@Parameter(type = StringParameter.class, name = "parsingMethod")
+	public void setParsingMethod(String parsingMethod) {
+		this.parsingMethod = parsingMethod;
 	}
 	
 	/**
@@ -381,6 +389,36 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	 */
 	public String getGetOrPost() {
 		return this.getOrPost;
+	}
+	
+	/**
+	 * Setter for filtering Null Tuples.
+	 * If true, Tuples with a null-response will not appear in the output stream,
+	 * If false, Tuples with a null-response will appear in the output stream with "null"
+	 * @param filterNullTuples
+	 */
+	@Parameter(type = BooleanParameter.class, optional = true, name = "filterNullTuples")
+	public void setFilterNullTuples(boolean filterNullTuples) {
+		this.filterNullTuples = filterNullTuples;
+	}
+	
+	/**
+	 * @return Null Tuples will be filtered or not
+	 */
+	public boolean getFilterNullTuples() {
+		return this.filterNullTuples;
+	}
+	
+	@Parameter(type = BooleanParameter.class, optional = true, name = "keyValueOutput")
+	public void setKeyValueOutput(boolean keyValueOutput) {
+		this.keyValueOutput = keyValueOutput;
+	}
+	
+	/**
+	 * @return KeyValueOutput is enabled or not
+	 */
+	public boolean getKeyValueOutput() {
+		return this.keyValueOutput;
 	}
 	
 		

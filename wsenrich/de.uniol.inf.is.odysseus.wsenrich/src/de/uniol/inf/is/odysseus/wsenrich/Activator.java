@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.wsenrich.util.KeyFinderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.RequestBuilderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.UriGetBuilder;
 import de.uniol.inf.is.odysseus.wsenrich.util.UriPostWithArgumentsBuilder;
-import de.uniol.inf.is.odysseus.wsenrich.util.XmlKeyFinder;
+import de.uniol.inf.is.odysseus.wsenrich.util.XmlKeyFinderExperimental;
 
 public class Activator implements BundleActivator {
 
@@ -32,7 +32,7 @@ public class Activator implements BundleActivator {
 		ConnectionForWebservicesRegistry.register(new HttpGetConnection());
 		ConnectionForWebservicesRegistry.register(new HttpPostConnection());
 		
-		KeyFinderRegistry.register(new XmlKeyFinder());
+		KeyFinderRegistry.register(new XmlKeyFinderExperimental());
 		KeyFinderRegistry.register(new JsonKeyFinder());
 		
 		RequestBuilderRegistry.register(new UriGetBuilder());

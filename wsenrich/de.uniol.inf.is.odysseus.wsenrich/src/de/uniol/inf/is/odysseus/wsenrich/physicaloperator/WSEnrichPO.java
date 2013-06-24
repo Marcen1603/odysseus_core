@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.wsenrich.exceptions.DatafieldNotFoundException;
 import de.uniol.inf.is.odysseus.wsenrich.util.HttpEntityToStringConverter;
 import de.uniol.inf.is.odysseus.wsenrich.util.IConnectionForWebservices;
 import de.uniol.inf.is.odysseus.wsenrich.util.IKeyFinder;
@@ -31,7 +30,9 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final String operation;
 	private final List<SDFAttribute> receivedData;
 	private final String charset;
-	private final String returnType;
+	private final String parsingMethod;
+	private final boolean filterNullTuples;
+	private final boolean keyValueOutput;
 	private final int[] parameterPositions;
 	private final IDataMergeFunction<Tuple<T>, T> dataMergeFunction;
 	private final IConnectionForWebservices connection;
@@ -42,7 +43,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	
 	public WSEnrichPO(String serviceMethod, String method, String url, String urlsuffix,
 					List<Option> arguments, String operation, List<SDFAttribute> receivedData,
-					String charset, String returnType, IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
+					String charset, String parsingMethod, boolean filterNullTuples, boolean keyValueOutput,
+					IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
 					IConnectionForWebservices connection, IRequestBuilder requestBuilder, 
 					HttpEntityToStringConverter converter, IKeyFinder keyFinder) {
 						
@@ -55,7 +57,9 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.operation = operation;
 		this.receivedData = receivedData;
 		this.charset = charset;
-		this.returnType = returnType;
+		this.parsingMethod = parsingMethod;
+		this.filterNullTuples = filterNullTuples;
+		this.keyValueOutput = keyValueOutput;
 		this.parameterPositions = new int[arguments.size()];
 		this.dataMergeFunction = dataMergeFunction;
 		this.connection = connection;
@@ -76,7 +80,9 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.operation = wsEnrichPO.operation;
 		this.receivedData = wsEnrichPO.receivedData;
 		this.charset = wsEnrichPO.charset;
-		this.returnType = wsEnrichPO.returnType;
+		this.parsingMethod = wsEnrichPO.parsingMethod;
+		this.filterNullTuples = wsEnrichPO.filterNullTuples;
+		this.keyValueOutput = wsEnrichPO.keyValueOutput;
 		this.parameterPositions = Arrays.copyOf(
 				wsEnrichPO.parameterPositions,
 				wsEnrichPO.parameterPositions.length);
@@ -97,11 +103,10 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 
 	@Override
 	protected void process_next(Tuple<T> inputTuple, int port) {
-
-	//	Object queryParameters = getQueryParameters(inputTuple);
 		
 		List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
 		
+		//Build the Url and arguments
 		requestBuilder.setUrlPrefix(url);
 		requestBuilder.setUrlSuffix(urlsuffix);
 		requestBuilder.setArguments(queryParameters);
@@ -109,31 +114,31 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		String postData = requestBuilder.getPostData();
 		String uri = requestBuilder.getUri();
 		
+		//Connect to the Url
 		connection.setUri(uri);
 		connection.setArgument(postData);
-		
 		connection.connect(charset, method);
 		HttpEntity entity = connection.retrieveBody();
+		
+		//Convert the Http Entity into a String, finally close the Http Connection
 		converter.setInput(entity);
 		converter.convert();
 		connection.closeConnection();
 		
+		//Set the Message for the Key (Element) Finder an find the defined Elements and paste
+		//them to the tuple
 		keyFinder.setMessage(converter.getOutput());
 		
-		//TODO: falsch!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (Schleife prodziert n tuple!!
 		for(int i = 0; i < receivedData.size(); i++) {
-			
 			keyFinder.setSearch(receivedData.get(i).getAttributeName());
-			
-			try {
-				
-				inputTuple.append(keyFinder.getValueOf(keyFinder.getSearch()), false);
-				transfer(inputTuple);
-				
-			} catch (DatafieldNotFoundException e) {
-				logger.error(e.getMessage());	
-			}	
+			Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput);
+			if(value == null && filterNullTuples) {
+				return;
+			} else if(value == null && !filterNullTuples) {
+				inputTuple.append("null", false);
+			} else inputTuple.append(value, false);
 		}
+		transfer(inputTuple);
 	}
 	
 	@Override
@@ -185,18 +190,6 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	 * @param inputTuple the current tuple from the input stream
 	 * @return the attributes for the webservicequery
 	 */
-/*	private Object[] getQueryParameters(Tuple<T> inputTuple) {
-		
-		Object[] queryParameters = new Object[parameterPositions.length];
-		
-		for(int i = 0; i < queryParameters.length; i++) {
-			
-			queryParameters[i] = inputTuple.getAttribute(parameterPositions[i]);
-		}
-		
-		return queryParameters;
-	} */
-	
 	public List<Option> getQueryParameters(Tuple<T> inputTuple, List<Option> arguments) {
 		
 		List<Option> queryParameters = arguments;
@@ -206,12 +199,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 			queryParameters.set(i, new Option(queryParameters.get(i).getName(), inputTuple.getAttribute(parameterPositions[i]).toString()));
 			
 		}
-		
 		return queryParameters;	
-		
 	}
-	
-
 	
 	/**
 	 * Compares all class attributes, that were present in the AO
@@ -265,11 +254,11 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		} else if (!charset.equals(other.charset)) {
 			return false;
 		}
-		if(returnType == null || returnType.equals("")) {
-			if(other.returnType != null || !other.returnType.equals("")) {
+		if(parsingMethod == null || parsingMethod.equals("")) {
+			if(other.parsingMethod != null || !other.parsingMethod.equals("")) {
 				return false;
 			}
-		} else if(!returnType.equals(other.returnType)) {
+		} else if(!parsingMethod.equals(other.parsingMethod)) {
 			return false;
 		}
 		return true;

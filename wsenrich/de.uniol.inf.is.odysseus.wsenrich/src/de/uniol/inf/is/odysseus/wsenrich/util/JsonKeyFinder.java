@@ -4,8 +4,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.uniol.inf.is.odysseus.wsenrich.exceptions.DatafieldNotFoundException;
 import de.uniol.inf.is.odysseus.wsenrich.logicaloperator.WSEnrichAO;
 
 public class JsonKeyFinder implements IKeyFinder {
@@ -86,7 +84,7 @@ public class JsonKeyFinder implements IKeyFinder {
 	}
 
 	@Override
-	public Object getValueOf(String search) throws DatafieldNotFoundException {
+	public Object getValueOf(String search, boolean keyValue) {
 		
 		this.parser = new JSONParser();
 		this.reader = new JsonContentHandler();
@@ -106,9 +104,8 @@ public class JsonKeyFinder implements IKeyFinder {
 					this.value = reader.getValue();
 					return this.value;
 				}
-				
 				if(reader.isEnd() && !reader.isFound()) {
-					throw new DatafieldNotFoundException();
+					return null;
 				}
 			}
 		} catch (ParseException pe) {
@@ -119,7 +116,7 @@ public class JsonKeyFinder implements IKeyFinder {
 
 	@Override
 	public String getName() {
-		return "JSON";
+		return "JSONParser";
 	}
 
 	@Override
