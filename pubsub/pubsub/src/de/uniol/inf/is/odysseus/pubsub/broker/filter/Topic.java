@@ -24,7 +24,7 @@ import java.util.List;
  * @author ChrisToenjesDeye
  *
  */
-public class Topic {
+public class Topic implements Comparable<Topic>{
 	private List<Topic> childs;
 	private String name;
 
@@ -81,6 +81,11 @@ public class Topic {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public int compareTo(Topic other) {
+		return name.compareTo(other.getName());
 	}
 
 }

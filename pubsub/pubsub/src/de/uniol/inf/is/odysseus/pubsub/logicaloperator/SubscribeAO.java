@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -53,8 +54,19 @@ public class SubscribeAO extends UnaryLogicalOp{
 		this.topics = new ArrayList<String>(subscribeAO.topics);
 	}
 	
+	@Override
+	public boolean isValid() {
+		// If predicates and topics are empty, subscription doesn't make sense
+		if (super.getPredicates().isEmpty() && topics.isEmpty()){
+			addError(new IllegalParameterException(
+					"Empty subscription not allowed. Please add Topics or Predicates or both."));
+			return false;
+		}
+		return true;
+	}
+	
 	@Parameter(name="schema", type=CreateSDFAttributeParameter.class, isList=true, doc="")
-	public void setSchema_(List<SDFAttribute> sdfAttributes){
+	public void setSchemaAttributes(List<SDFAttribute> sdfAttributes){
 		this.schema = new SDFSchema(source, sdfAttributes);
 	}
 	

@@ -45,6 +45,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	private List<String> topicStrings;
 	private List<Topic> topics;
 	private String identifier;
+	private IBrokerTopology<T> brokerTopology;
 
 	public SubscribePO(List<IPredicate<? super T>> predicates,
 			String brokername, SDFSchema schema, List<String> topics,
@@ -68,13 +69,29 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		initPredicates(splitPO.predicates);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
-		@SuppressWarnings("unchecked")
-		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry
+		brokerTopology = (IBrokerTopology<T>) BrokerTopologyRegistry
 				.getTopologyByDomain(domain);
-		if (!topics.isEmpty() || !predicates.isEmpty()){
-			b.subscribe(predicates, topics, brokerName, this);			
+		if (brokerTopology != null) {
+			BrokerTopologyRegistry.register(domain);
+			if (!topics.isEmpty() || !predicates.isEmpty()) {
+				brokerTopology.subscribe(predicates, topics, brokerName, this);
+			}
+		} else {
+			BrokerTopologyRegistry.putSubscriberIntoPendingList(domain, this);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void subscribe(IBrokerTopology<?> topology){
+		brokerTopology = (IBrokerTopology<T>) topology;
+		if (brokerTopology != null) {
+			BrokerTopologyRegistry.register(domain);
+			if (!topics.isEmpty() || !predicates.isEmpty()) {
+				brokerTopology.subscribe(predicates, topics, brokerName, this);
+			}
 		}
 	}
 
@@ -83,13 +100,13 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		@SuppressWarnings("unchecked")
 		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry
 				.getTopologyByDomain(domain);
-		if (!topics.isEmpty() || !predicates.isEmpty()){
-			b.unsubscribe(predicates, topics, brokerName, this);
+		if (b != null) {
+			if (!topics.isEmpty() || !predicates.isEmpty()) {
+				b.unsubscribe(predicates, topics, brokerName, this);
+			}
+			BrokerTopologyRegistry.unregister(domain);
 		}
-		BrokerTopologyRegistry.unregister(domain);			
 	}
-	
-	
 
 	@Override
 	public AbstractPipe<T, T> clone() {
@@ -112,14 +129,14 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	@Override
 	protected void process_next(T object, int port) {
 		// No transfer in process_next, because broker calls receive
-		//transfer(object);
+		// transfer(object);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public void receive(Object object){
-		transfer((T)object);
+	public void receive(Object object) {
+		transfer((T) object);
 	}
-	
+
 	public String getIdentifier() {
 		return identifier;
 	}
@@ -131,6 +148,5 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	public List<Topic> getTopics() {
 		return topics;
 	}
-
 
 }

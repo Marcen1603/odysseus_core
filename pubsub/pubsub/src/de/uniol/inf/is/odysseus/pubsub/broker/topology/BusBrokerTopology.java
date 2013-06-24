@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.pubsub.broker.SimpleBroker;
 
 public class BusBrokerTopology<T extends IStreamObject<?>> extends AbstractBrokerTopology<T> {
 
+	private static final String MAIN_BROKER = "MainBroker";
 	private final String TOPOLOGY_TYPE = "BusTopology";
 	private List<IBroker<T>> brokerBus = new ArrayList<IBroker<T>>();;
 	
@@ -34,6 +35,7 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends AbstractBroke
 	
 	public BusBrokerTopology(String domain){
 		setDomain(domain);
+		brokerBus.add(new SimpleBroker<T>(MAIN_BROKER, domain));
 	}
 	
 	@Override
@@ -57,8 +59,9 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends AbstractBroke
 				return broker;
 			}
 		}
-		// If Broker with given name does not exist, create new one and return it
-		IBroker<T> newBroker = new SimpleBroker<T>(name, super.getDomain());
+		// If Broker with given name does not exist, create new one (copy from existing) and return it
+		SimpleBroker<T> mainBroker = (SimpleBroker<T>) getBrokerByName(MAIN_BROKER);
+		IBroker<T> newBroker = new SimpleBroker<T>(name, mainBroker);
 		brokerBus.add(newBroker);
 		return newBroker;
 	}

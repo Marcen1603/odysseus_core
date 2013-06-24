@@ -63,6 +63,29 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 		filters.put(Filtertype.hierarchical, new HierarchicalFiltering<T>());
 		filters.put(Filtertype.content, new ContentBasedFiltering<T>());
 	}
+	
+	public SimpleBroker(String name, SimpleBroker<T> copy) {
+		// Copy data
+		super(name, copy.getDomain());
+		subscriptions = new HashMap<String, BrokerSubscription<T>>();
+		advertisements = new HashMap<String, BrokerAdvertisements>(copy.getAdvertisements());
+
+		// Create and Initialize Filters
+		filters.put(Filtertype.channel, new ChannelBasedFiltering<T>());
+		filters.put(Filtertype.hierarchical, new HierarchicalFiltering<T>());
+		filters.put(Filtertype.content, new ContentBasedFiltering<T>());
+
+		// Initialize Broker
+		refreshInternalStatus();
+	}
+	
+	public Map<String, BrokerSubscription<T>> getSubscriptions() {
+		return subscriptions;
+	}
+
+	public Map<String, BrokerAdvertisements> getAdvertisements() {
+		return advertisements;
+	}
 
 	@Override
 	public boolean hasSubscriptions() {

@@ -50,10 +50,10 @@ public interface IBrokerTopology<T extends IStreamObject<?>> {
 	 * subscribes a Subscriber with given Filterpredicates on a given broker
 	 * 
 	 * @param brokername
-	 * @param predicates
-	 * @param subscribePO
+	 * @param list
+	 * @param subscriber
 	 */
-	void subscribe(List<IPredicate<? super T>> predicates, List<Topic> topics , String brokerName, SubscribePO<T> subscribePO);
+	void subscribe(List<IPredicate<? super T>> list, List<Topic> topics , String brokerName, SubscribePO<T> subscriber);
 
 	/**
 	 * unsubscribes a Subscriber with given Filterpredicates on a given broker

@@ -22,6 +22,7 @@ import java.util.UUID;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.mep.impl.ParseException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.TopicHelper;
@@ -48,25 +49,37 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 
 	@Override
 	protected void process_next(T object, int port) {
-		brokerTopology.transfer(object, this);
+		if (brokerTopology != null){
+			brokerTopology.transfer(object, this);			
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
-		brokerTopology = (IBrokerTopology<T>) BrokerTopologyRegistry
-				.<T>getTopologyByTypeAndDomain(topologyType, domain);
-		if (!topics.isEmpty()){
-			brokerTopology.advertise(topics, this);			
+		try {
+			brokerTopology = (IBrokerTopology<T>) BrokerTopologyRegistry
+					.<T>getTopologyByTypeAndDomain(topologyType, domain);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		if (brokerTopology != null){
+			BrokerTopologyRegistry.register(domain);
+			if (!topics.isEmpty()){
+				brokerTopology.advertise(topics, this);			
+			}			
 		}
 	}
 
 	@Override
 	protected void process_close() throws OpenFailedException {
-		if (!topics.isEmpty()){
-			brokerTopology.unadvertise(topics, this);			
+		if (brokerTopology != null){
+			if (!topics.isEmpty()){
+				brokerTopology.unadvertise(topics, this);			
+			}
+			BrokerTopologyRegistry.unregister(domain);			
 		}
-		BrokerTopologyRegistry.unregister(domain);
+		super.process_close();
 	}
 
 	@Override

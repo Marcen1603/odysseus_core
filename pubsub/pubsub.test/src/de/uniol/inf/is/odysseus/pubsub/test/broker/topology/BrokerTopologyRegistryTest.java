@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.server.mep.impl.ParseException;
 import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
 import de.uniol.inf.is.odysseus.pubsub.broker.topology.BusBrokerTopology;
 import de.uniol.inf.is.odysseus.pubsub.broker.topology.IBrokerTopology;
@@ -22,7 +23,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	}
 
 	@Test
-	public void testCreateMultipleDomains() {
+	public void testCreateMultipleDomains() throws ParseException {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
@@ -33,7 +34,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	}
 
 	@Test
-	public void testCreateMultipleDomains2() {
+	public void testCreateMultipleDomains2() throws ParseException {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
@@ -43,7 +44,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	}
 	
 	@Test
-	public void testEqualDomainEqualType() {
+	public void testEqualDomainEqualType() throws ParseException {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
@@ -53,7 +54,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	}
 	
 	@Test
-	public void testCreateAndGetTopology() {
+	public void testCreateAndGetTopology() throws ParseException {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
@@ -63,7 +64,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	}
 	
 	@Test
-	public void testTopologyNotExists() {
+	public void testTopologyNotExists() throws ParseException {
 		BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
@@ -71,8 +72,8 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 		Assert.assertNull(topology1);
 	}
 	
-	@Test
-	public void testEqualDomainDifferentType() {
+	@Test(expectedExceptions = ParseException.class)
+	public void testEqualDomainDifferentType() throws ParseException {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry

@@ -17,6 +17,7 @@
 package de.uniol.inf.is.odysseus.pubsub.broker.filter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,9 +39,10 @@ public class TopicHelper {
 	public static List<Topic> convertStringsToTopics(List<String> topicStrings){
 		topics = new ArrayList<Topic>();
 		
+		Collections.sort(topicStrings);
 		// Iterate over all topic Strings
 		for (String topicString : topicStrings) {
-			String[] topicElements = topicString.split("\\.");
+			String[] topicElements = topicString.trim().split("\\.");
 			int currentElementIndex = 0;
 			
 			// If no elements exists return null
@@ -58,6 +60,7 @@ public class TopicHelper {
 			// Root is created or exists, now travers through the tree
 			createTree(topicElements, currentElementIndex, root);
 		}
+		Collections.sort(topics);
 		return topics;
 	}
 	

@@ -27,23 +27,24 @@ public class TopicHelperTest {
 		topicStrings.add("news.*");
 		topicStrings.add("News.wirtschaft");
 		topicStrings.add("boerse.ausland.*");
-		topicStrings.add("boerse.ausland.usa");
+		topicStrings.add("boerse.ausland.usa  ");
 		topicStrings.add("boerse.ausland.japan");
-		topicStrings.add("news.pOlitik.inland");
+		topicStrings.add("  news.pOlitik.inland");
 		topicStrings.add("News.politik.ausland");
 		
 		List<Topic> topics = TopicHelper.convertStringsToTopics(topicStrings);
-		Assert.assertEquals("news", topics.get(0).getName());
-		Assert.assertEquals(2, topics.get(0).getNumberOfChilds());
-		Assert.assertEquals("wirtschaft", topics.get(0).getChilds().get(0).getName());
-		Assert.assertEquals("politik", topics.get(0).getChilds().get(1).getName());
-		Assert.assertEquals(0, topics.get(0).getChilds().get(0).getNumberOfChilds());
-		Assert.assertEquals(2, topics.get(0).getChilds().get(1).getNumberOfChilds());
-		
-		Assert.assertTrue(topics.get(1).getName().equals("boerse"));
-		Assert.assertEquals(1, topics.get(1).getNumberOfChilds());
-		Assert.assertTrue(topics.get(1).getChilds().get(0).getName().equals("ausland"));
+		Assert.assertTrue(topics.get(0).getName().equals("boerse"));
+		Assert.assertEquals(1, topics.get(0).getNumberOfChilds());
+		Assert.assertTrue(topics.get(0).getChilds().get(0).getName().equals("ausland"));
+		Assert.assertEquals(2, topics.get(0).getChilds().get(0).getNumberOfChilds());
+
+		Assert.assertEquals("news", topics.get(1).getName());
+		Assert.assertEquals(2, topics.get(1).getNumberOfChilds());
+		Assert.assertEquals("politik", topics.get(1).getChilds().get(0).getName());
+		Assert.assertEquals("wirtschaft", topics.get(1).getChilds().get(1).getName());
 		Assert.assertEquals(2, topics.get(1).getChilds().get(0).getNumberOfChilds());
+		Assert.assertEquals(0, topics.get(1).getChilds().get(1).getNumberOfChilds());
+		
 	}
 	
 	/**

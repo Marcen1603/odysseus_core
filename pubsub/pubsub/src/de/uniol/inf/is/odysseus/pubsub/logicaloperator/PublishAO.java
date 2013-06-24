@@ -22,7 +22,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
 
 @LogicalOperator(name="Publish", minInputPorts=1, maxInputPorts=1, doc="Publish Operator")
 public class PublishAO extends UnaryLogicalOp{
@@ -40,6 +42,18 @@ public class PublishAO extends UnaryLogicalOp{
 		this.topologyType = publish.topologyType;
 		this.domain = publish.domain;
 		this.topics = new ArrayList<String>(publish.topics);
+	}
+	
+	@Override
+	public boolean isValid() {
+		// Check if Topology type is valid
+		List<String> validTypes = BrokerTopologyRegistry.getValidTopologyTypes();
+		if (!validTypes.contains(topologyType.toLowerCase())){
+			addError(new IllegalParameterException(
+					"Topology Type: '"+ topologyType +"' is not valid. Available Types are: "+validTypes.toString()));
+			return false;
+		}
+		return true;
 	}
 	
 	@Override
