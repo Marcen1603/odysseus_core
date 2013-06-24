@@ -1,46 +1,22 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
-
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> {
 
 	private final String algo_type = "NaiveBayes";
 
-	static Map<String, Integer> trainingset = new HashMap<String, Integer>();
-
 	static Map<String, Integer> positivewords = new HashMap<String, Integer>();
 	static Map<String, Integer> negativewords = new HashMap<String, Integer>();
 
-	public void trainClassifier(String trainingsetPath) {
+	public void trainClassifier(Map<String, Integer> trainingset) {
 
-		BufferedReader readneglines;
-		try {
-			readneglines = new BufferedReader(new FileReader(trainingsetPath));
-			String lineneg = readneglines.readLine();
-
-			while (lineneg != null) {
-				String[] data = processCsvLine(lineneg);
-				// System.out.println("trainset: " + data[0] + "|" + data[1]);
-				trainingset.put(data[0], Integer.parseInt(data[1].trim()));
-				lineneg = readneglines.readLine();
-			}
-			readneglines.close();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		System.out.println("Trainingsset besteht aus: "+ trainingset.size());
+	System.out.println("Trainingsset besteht aus: "+ trainingset.size());
 		
-		System.out.println("Positiv/Negativ Wortliste erstellen....");
+	System.out.println("Positiv/Negativ Wortliste erstellen....");
 		
 	//	for ( Map.Entry<String, Integer> e : trainingset.entrySet() )
 	// System.out.println( e.getKey() + "    "+ e.getValue() );
@@ -131,20 +107,6 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 
 		return decision;
 
-	}
-
-	public static String[] processCsvLine(final String data) {
-		// System.out.println("+++++++++++++++++++++++++++++++++++++ Neue Zeile:");
-		String[] output = new String[2];
-
-		final StringTokenizer st = new StringTokenizer(data, "|");
-
-		//dirty TODO....
-		while (st.hasMoreTokens()) {
-			output[0] = st.nextToken();
-			output[1] = st.nextToken();
-		}
-		return output;
 	}
 
 	@Override

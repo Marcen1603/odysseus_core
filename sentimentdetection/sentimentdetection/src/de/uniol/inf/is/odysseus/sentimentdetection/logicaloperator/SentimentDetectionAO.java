@@ -8,20 +8,20 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 
 
-@LogicalOperator(name="SENTIMENTDETECTION", minInputPorts=1, maxInputPorts=1)
-public class SentimentDetectionAO extends UnaryLogicalOp{
+@LogicalOperator(name="SENTIMENTDETECTION", minInputPorts=2, maxInputPorts=2)
+public class SentimentDetectionAO extends BinaryLogicalOp{
 
-	private String outputtype;
 	private String classifier;
-	private String trainingset;
-	
+	private int minimumSize = 0;
+	private int outputports = 1;
 	
 	public SentimentDetectionAO(){
 		super();
@@ -30,9 +30,9 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 	
 	public SentimentDetectionAO(SentimentDetectionAO sentimentDetectionAO){
         super(sentimentDetectionAO);
-        this.outputtype = sentimentDetectionAO.outputtype;
+        this.outputports = sentimentDetectionAO.outputports;
         this.classifier = sentimentDetectionAO.classifier;
-        this.trainingset = sentimentDetectionAO.trainingset;
+        this.minimumSize = sentimentDetectionAO.minimumSize;
     }
 	
 
@@ -48,8 +48,8 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 		
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		
-		outputAttributes.addAll(getInputSchema(0).getAttributes());
-		String name = getInputSchema(0).getURI();
+		outputAttributes.addAll(getInputSchema(1).getAttributes());
+		String name = getInputSchema(1).getURI();
 		
 		outputAttributes.add(sentDetection);
 		
@@ -58,9 +58,16 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 		return getOutputSchema();
 	}
 	
-	@Parameter(name="outputtype", type=StringParameter.class)
-	public void setOutputType(String outputtype){
-		this.outputtype = outputtype;
+	
+	@Parameter(name = "minimumSize", type=IntegerParameter.class)
+	public void setMinimumSize(int minimumSize) {
+		this.minimumSize   = minimumSize;
+	}
+
+	
+	@Parameter(name="outputports", type=IntegerParameter.class)
+	public void setOutputType(int outputports){
+		this.outputports = outputports;
 	}
 	
 	@Parameter(name="classifier", type=StringParameter.class)
@@ -68,14 +75,9 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 		this.classifier = classifier;
 	}
 	
-	@Parameter(name="trainingset", type=StringParameter.class)
-	public void setTrainingset(String trainingset){
-		this.trainingset = trainingset;
-	}
-	
-	
-	public String getOutputType(){
-		return outputtype;
+
+	public int getOutputPorts(){
+		return outputports;
 	}
 	
 	public String getClassifier(){
@@ -83,8 +85,8 @@ public class SentimentDetectionAO extends UnaryLogicalOp{
 	}
 	
 	
-	public String getTrainingset(){
-		return trainingset;
+	public int getMinimumSize(){
+		return minimumSize;
 	}
 	
 

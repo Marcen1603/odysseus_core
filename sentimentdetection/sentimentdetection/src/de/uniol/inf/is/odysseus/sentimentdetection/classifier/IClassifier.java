@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public interface IClassifier<T extends IMetaAttribute> {
@@ -10,6 +12,6 @@ public interface IClassifier<T extends IMetaAttribute> {
 	
 	int startDetect(String text);
 	
-	void trainClassifier(String trainingsetPath);
+	void trainClassifier(Map<String, Integer> trainingset);
 	
 }

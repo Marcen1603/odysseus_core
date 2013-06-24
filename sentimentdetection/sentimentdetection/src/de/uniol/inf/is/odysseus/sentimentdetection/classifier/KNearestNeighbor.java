@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class KNearestNeighbor<T extends IMetaAttribute> extends AbstractClassifier<T> {
@@ -34,8 +36,9 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends AbstractClassifi
 		return 0;
 	}
 
+
 	@Override
-	public void trainClassifier(String trainingsetPath) {
+	public void trainClassifier(Map<String, Integer> trainingset) {
 		// TODO Auto-generated method stub
 		
 	}
