@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -57,6 +58,8 @@ public class ScreenManager {
 	private ITimeInterval interval;
 	private ITimeInterval maxInterval;
 	
+	private ArrayList<LayerUpdater> connections;
+	
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private MapMouseListener mouseListener;
 
@@ -71,6 +74,7 @@ public class ScreenManager {
 		ProjCoordinate p = new ProjCoordinate(0,0);
 		if (this.crs != null) this.crs.getProjection().project(new ProjCoordinate(0, 0), p);
 		setCenterUV((int) (p.x / scale), (int) (p.y / scale));
+		connections = new ArrayList<LayerUpdater>();
 	}
 
 	private Coordinate centerEPSG = new Coordinate(0, 0);
@@ -450,6 +454,31 @@ public class ScreenManager {
 			redrawIntent = b;
 		}
 
+	}
+	
+	/**
+	 * Adds a connection (as a layerUpdater)
+	 * e.g. important for the timeslider
+	 * @param connection
+	 */
+	public void addConnection(LayerUpdater connection) {
+		connections.add(connection);
+	}
+	
+	/**
+	 * Returns a list of all connections (as layerUpdaters)
+	 * @return
+	 */
+	public ArrayList<LayerUpdater> getConnections() {
+		return connections;
+	}
+	
+	/**
+	 * Removes a connection (LayerUpdater) from the list
+	 * @param connection
+	 */
+	public void removeConnection(LayerUpdater connection) {
+		connections.remove(connection);
 	}
 
 }

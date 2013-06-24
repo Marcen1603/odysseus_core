@@ -99,6 +99,19 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		}
 
 		// Prevent an overflow in the puffer
+		checkForPufferSize();
+
+		// Should we redraw here or just if we added the tupel to the current
+		// list?
+		streamMapEditor.getScreenManager().redraw();
+
+	}
+
+	/**
+	 * Removes the oldest elements if puffer is bigger than the configured size
+	 */
+	private void checkForPufferSize() {
+		// Prevent an overflow in the puffer
 		if (puffer.size() > maxNumerOfElements) {
 			// Remove old element(s)
 			Iterator<Tuple<? extends ITimeInterval>> oldestElements = puffer
@@ -122,11 +135,6 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 			streamMapEditor.getScreenManager().setIntervalStart(
 					puffer.getMinTs());
 		}
-
-		// Should we redraw here or just if we added the tupel to the current
-		// list?
-		streamMapEditor.getScreenManager().redraw();
-
 	}
 
 	@Override
@@ -228,9 +236,46 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		return this.env.get(idx);
 	}
 
-	public int size(int idx) {
-		// TODO Auto-generated method stub
-		return this.elementList.size();
+	/**
+	 * Size of the actual list (not the whole puffer)
+	 * 
+	 * @param idx
+	 * @return
+	 */
+	public int getViewSize() {
+		if (elementList != null)
+			return this.elementList.size();
+		return 0;
+	}
+
+	/**
+	 * Size of the whole puffer (number of elements)
+	 * 
+	 * @return
+	 */
+	public int getPufferSize() {
+		return puffer.size() + 1;
+	}
+
+	/**
+	 * 
+	 * @return The maximum size of the puffer
+	 */
+	public int getMaxPufferSize() {
+		return maxNumerOfElements;
+	}
+
+	/**
+	 * 
+	 * @param size
+	 *            The size which the puffer should have max
+	 */
+	public void setMaxPufferSize(int size) {
+		if (size > 0)
+			this.maxNumerOfElements = size;
+		
+		// Prevent an overflow in the puffer
+		checkForPufferSize();
 	}
 
 	@Override
@@ -239,8 +284,6 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 			this.elementList = this.puffer
 					.queryOverlapsAsList(this.streamMapEditor
 							.getScreenManager().getInterval());
-			// System.out.println(this.puffer.getMinTs() + " " +
-			// this.puffer.getMaxTs() + " " + this.elementList.size());
 			this.index = new HashMap<Integer, Quadtree>(this.index.size());
 		}
 		if ("intervalEnd".equals(evt.getPropertyName())) {

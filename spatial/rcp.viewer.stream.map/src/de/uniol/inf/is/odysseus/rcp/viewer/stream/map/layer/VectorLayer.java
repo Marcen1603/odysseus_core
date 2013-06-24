@@ -260,7 +260,7 @@ public class VectorLayer extends AbstractLayer<VectorLayerConfiguration> {
 	@Override
 	public int getTupleCount() {
 		// TODO Auto-generated method stub
-		return this.layerUpdater.size(idx);
+		return this.layerUpdater.getViewSize();
 	}
 
 	@Override

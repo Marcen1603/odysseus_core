@@ -422,6 +422,7 @@ public class MapEditorModel extends ModelObject {
 			LayerUpdater updater = new LayerUpdater(editor, query, connection);
 			connections.put(String.valueOf(query.hashCode()), updater);
 			screenManager.addPropertyChangeListener(updater);
+			screenManager.addConnection(updater);
 
 			LOG.debug("Bind Query: " + query.getID());
 			LOG.debug("Bind Query: " + query.getLogicalQuery().getQueryText());
@@ -535,6 +536,7 @@ public class MapEditorModel extends ModelObject {
 			removeLayer(layer);
 		}
 		connections.remove(key);
+		screenManager.removeConnection(connection);
 		firePropertyChange(MAP, null, this);
 	}
 
