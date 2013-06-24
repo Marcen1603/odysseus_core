@@ -54,7 +54,7 @@ public class SubscribeAO extends UnaryLogicalOp{
 	}
 	
 	@Parameter(name="schema", type=CreateSDFAttributeParameter.class, isList=true, doc="")
-	public void setSchema(List<SDFAttribute> sdfAttributes){
+	public void setSchema_(List<SDFAttribute> sdfAttributes){
 		this.schema = new SDFSchema(source, sdfAttributes);
 	}
 	

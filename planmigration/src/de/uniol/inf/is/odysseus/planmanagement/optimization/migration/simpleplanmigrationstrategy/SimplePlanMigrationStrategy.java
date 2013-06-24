@@ -187,7 +187,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 			MigrationBuffer buffer = new MigrationBuffer();
 			try {
-				buffer.open();
+				buffer.open(null);
 			} catch (OpenFailedException e) {
 				// Buffer not connected, so no errors can occur
 				LOG.error("Failed to open Buffer", e);
@@ -261,7 +261,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// open auf dem neuen Plan aufrufen
 		LOG.debug("Calling open on new Plan ");
 		try {
-			((ISink) root).open();
+			((ISink) root).open(null);
 		} catch (OpenFailedException e1) {
 			LOG.error("Open root failed", e1);
 		}
@@ -484,7 +484,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		router.unblock();
 
 		try {
-			router.open();
+			router.open(null);
 		} catch (OpenFailedException e) {
 			LOG.error("Open failed for router", e);
 		}
@@ -675,7 +675,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			
 			LOG.debug("Calling open on all plan roots");
 			for(IPhysicalOperator root : newRoots) {
-				((ISink) root).open();
+				((ISink) root).open(null);
 			}
 
 			LOG.debug("Initialize new plan root as physical root");
@@ -753,7 +753,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				router.unsubscribeSink(sink, 0, 0, router.getOutputSchema());
 				newPlan.subscribeSink(sink, 0, 0, newPlan.getOutputSchema());
 				newRoots.add(operator);
-				sink.open();
+				sink.open(null);
 			}
 		}
 		return newRoots;

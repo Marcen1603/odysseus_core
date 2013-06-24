@@ -62,7 +62,7 @@ public class CleanOperatorsVisitor implements INodeVisitor<IPhysicalOperator, Ob
 				op.removeMonitoringData(data);
 			}
 			// TODO: Das scheint irgendwie wo anders hinzugeh�ren	
-			((ISink<?>)op).close();
+			((ISink<?>)op).close(null);
 		}
 	}
 
