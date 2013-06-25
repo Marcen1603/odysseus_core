@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -8,6 +9,10 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IntersectionAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 
@@ -24,6 +29,16 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
  * @author Michael Brand
  */
 public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
+	
+	/**
+	 * The list of all {@link ILogicalOperator} classes which are defined as "stateful" for the <code>OperatorSetCloudLoadBalancer</cloud>.
+	 */
+	@SuppressWarnings("rawtypes")
+	public static final Class[] LOGICAL_OPERATORS_DEFINED_AS_STATEFUL = {
+		
+		JoinAO.class, AggregateAO.class, UnionAO.class, IntersectionAO.class
+		
+	};
 
 	@Override
 	public String getName() {
@@ -47,7 +62,7 @@ public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
 		for(int opIndex = operators.size() - 1; opIndex >= 0; opIndex--) {
 			// list of operators starts beneath TopAOs, not with StreamAOs
 			
-			if(operators.get(opIndex) instanceof IStatefulOperator) {
+			if(Arrays.asList(LOGICAL_OPERATORS_DEFINED_AS_STATEFUL).contains(operators.get(opIndex).getClass())) {
 				
 				parts.add(DistributionHelper.replaceStreamAOs(new QueryPart(opsForCurrentPart)));
 				opsForCurrentPart.clear();
