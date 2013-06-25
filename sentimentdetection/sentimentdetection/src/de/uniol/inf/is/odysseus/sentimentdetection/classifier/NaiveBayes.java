@@ -12,6 +12,7 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 	static Map<String, Integer> positivewords = new HashMap<String, Integer>();
 	static Map<String, Integer> negativewords = new HashMap<String, Integer>();
 
+	@Override
 	public void trainClassifier(Map<String, Integer> trainingset) {
 
 	System.out.println("Trainingsset besteht aus: "+ trainingset.size());

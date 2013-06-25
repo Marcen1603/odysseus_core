@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.pubsub.broker.BrokerSubscription;
 public class ChannelBasedFiltering<T extends IStreamObject<?>> extends
 		AbstractTopicBasedFiltering<T> {
 
+	@Override
 	protected boolean hasSubscriptionTopic(Topic topic,
 			BrokerSubscription<T> subscription) {
 		for (Topic subscriptionTopic : subscription.getTopics()) {

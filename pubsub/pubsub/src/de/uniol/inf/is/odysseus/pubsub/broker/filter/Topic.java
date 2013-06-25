@@ -60,6 +60,7 @@ public class Topic implements Comparable<Topic>{
 		return childs.size();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		Topic other;
 		if (obj instanceof Topic) {

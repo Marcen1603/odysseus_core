@@ -23,6 +23,7 @@ public class HierarchicalFiltering<T extends IStreamObject<?>> extends
 		AbstractTopicBasedFiltering<T> {
 
 
+	@Override
 	protected boolean hasSubscriptionTopic(Topic advertisementTopic,
 			BrokerSubscription<T> subscription) {
 		for (Topic subscriptionTopic : subscription.getTopics()) {

@@ -53,6 +53,7 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 		numberOfAgents--;
 	}
 	
+	@Override
 	public boolean hasAgents(){
 		if (numberOfAgents > 0){
 			return true;
