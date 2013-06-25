@@ -64,16 +64,17 @@ public class SubscribeAO extends UnaryLogicalOp{
 		}
 		return true;
 	}
-	
-	@Parameter(name="schema", type=CreateSDFAttributeParameter.class, isList=true, doc="")
-	public void setSchemaAttributes(List<SDFAttribute> sdfAttributes){
-		this.schema = new SDFSchema(source, sdfAttributes);
-	}
-	
+
 	@Parameter(name="source", type=StringParameter.class)
 	public void setSource(String source){
 		this.source = source;
 	}
+	
+	@Parameter(name="schema", type=CreateSDFAttributeParameter.class, isList=true, doc="")
+	public void setSchema_(List<SDFAttribute> sdfAttributes){
+		this.schema = new SDFSchema(source, sdfAttributes);
+	}
+	
 	
 	@Parameter(name="brokername", type=StringParameter.class)
 	public void setBrokerName(String brokerName){

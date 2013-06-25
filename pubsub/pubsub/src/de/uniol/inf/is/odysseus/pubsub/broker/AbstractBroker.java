@@ -16,13 +16,16 @@
 
 package de.uniol.inf.is.odysseus.pubsub.broker;
 
+import java.util.Observable;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-public abstract class AbstractBroker<T extends IStreamObject<?>> implements IBroker<T>{
+public abstract class AbstractBroker<T extends IStreamObject<?>> extends Observable implements IBroker<T>{
 	private String name;
 	private String domain;
 	
 	public AbstractBroker(String name, String domain){
+		super();
 		this.name = name;
 		this.domain = domain;
 	}

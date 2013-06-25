@@ -17,6 +17,7 @@
 package de.uniol.inf.is.odysseus.pubsub.broker.topology;
 
 import java.util.List;
+import java.util.Observer;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
-public interface IBrokerTopology<T extends IStreamObject<?>> {
+public interface IBrokerTopology<T extends IStreamObject<?>> extends Observer{
 	
 	/**
 	 * 

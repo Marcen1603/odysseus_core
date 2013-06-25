@@ -22,12 +22,12 @@ import java.util.UUID;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.server.mep.impl.ParseException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.TopicHelper;
 import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
 import de.uniol.inf.is.odysseus.pubsub.broker.topology.IBrokerTopology;
+import de.uniol.inf.is.odysseus.pubsub.observer.PublisherObservable;
 
 public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 
@@ -37,6 +37,7 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 	private List<Topic> topics;
 	private IBrokerTopology<T> brokerTopology;
 	private String identifier;
+	private PublisherObservable<T> publisherObservable;
 
 	public PublishPO(String topologyType, String domain, List<String> topics) {
 		super();
@@ -45,39 +46,36 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 		this.topicStrings = topics;
 		this.topics = TopicHelper.convertStringsToTopics(topics);
 		this.identifier = UUID.randomUUID().toString();
+		this.publisherObservable = new PublisherObservable<T>(this);
 	}
 
 	@Override
 	protected void process_next(T object, int port) {
-		if (brokerTopology != null){
-			brokerTopology.transfer(object, this);			
-		}
+		publisherObservable.setElement(object);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
-		try {
-			brokerTopology = (IBrokerTopology<T>) BrokerTopologyRegistry
-					.<T>getTopologyByTypeAndDomain(topologyType, domain);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		if (brokerTopology != null){
+		brokerTopology = (IBrokerTopology<T>) BrokerTopologyRegistry
+				.<T> getTopologyByTypeAndDomain(topologyType, domain);
+		if (brokerTopology != null) {
 			BrokerTopologyRegistry.register(domain);
-			if (!topics.isEmpty()){
-				brokerTopology.advertise(topics, this);			
-			}			
+			if (!topics.isEmpty()) {
+				brokerTopology.advertise(topics, this);
+			}
+			publisherObservable.addObserver(brokerTopology);
 		}
 	}
 
 	@Override
 	protected void process_close() throws OpenFailedException {
-		if (brokerTopology != null){
-			if (!topics.isEmpty()){
-				brokerTopology.unadvertise(topics, this);			
+		if (brokerTopology != null) {
+			publisherObservable.deleteObserver(brokerTopology);
+			if (!topics.isEmpty()) {
+				brokerTopology.unadvertise(topics, this);
 			}
-			BrokerTopologyRegistry.unregister(domain);			
+			BrokerTopologyRegistry.unregister(domain);
 		}
 		super.process_close();
 	}
@@ -99,6 +97,10 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 
 	public List<Topic> getTopics() {
 		return topics;
+	}
+
+	public PublisherObservable<T> getPublisherObservable() {
+		return publisherObservable;
 	}
 
 }

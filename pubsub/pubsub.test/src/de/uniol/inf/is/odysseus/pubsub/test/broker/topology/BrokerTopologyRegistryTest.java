@@ -23,7 +23,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	}
 
 	@Test
-	public void testCreateMultipleDomains() throws ParseException {
+	public void testCreateMultipleDomains() {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
@@ -34,7 +34,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	}
 
 	@Test
-	public void testCreateMultipleDomains2() throws ParseException {
+	public void testCreateMultipleDomains2() {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
@@ -44,7 +44,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	}
 	
 	@Test
-	public void testEqualDomainEqualType() throws ParseException {
+	public void testEqualDomainEqualType(){
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
@@ -54,7 +54,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	}
 	
 	@Test
-	public void testCreateAndGetTopology() throws ParseException {
+	public void testCreateAndGetTopology() {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
@@ -64,7 +64,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	}
 	
 	@Test
-	public void testTopologyNotExists() throws ParseException {
+	public void testTopologyNotExists() {
 		BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
@@ -73,7 +73,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	}
 	
 	@Test(expectedExceptions = ParseException.class)
-	public void testEqualDomainDifferentType() throws ParseException {
+	public void testEqualDomainDifferentType() {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
 				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry

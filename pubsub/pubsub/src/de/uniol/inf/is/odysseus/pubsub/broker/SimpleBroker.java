@@ -138,7 +138,8 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 
 		List<String> matchedSubscriberTopics = new ArrayList<String>();
 		List<String> matchedSubscriberPredicates = new ArrayList<String>();
-		
+		// Clear Observer list
+		this.deleteObservers();
 		
 		// Channel based filtering
 		if (hasAnySubscriptionTopics && doesAnyPublisherAdvertiseTopics()) {
@@ -162,8 +163,10 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 			// if only topic based filter active
 			if (!hasAnySubscriptionPredicates){
 				for (String subscriberId : matchedSubscriberTopics) {
-					subscriptions.get(subscriberId).getSubscriber().receive(object);
+					super.addObserver(subscriptions.get(subscriberId).getSubscriber());
 				}
+				super.setChanged();
+				super.notifyObservers(object);
 			}
 		}
 		// Content based filtering
@@ -178,8 +181,10 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 			// if only content based filter active
 			if (!hasAnySubscriptionTopics || !doesAnyPublisherAdvertiseTopics()) {
 				for (String subscriberId : matchedSubscriberPredicates) {
-					subscriptions.get(subscriberId).getSubscriber().receive(object);
+					super.addObserver(subscriptions.get(subscriberId).getSubscriber());
 				}
+				super.setChanged();
+				super.notifyObservers(object);
 			}
 		}
 
@@ -187,10 +192,14 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 		if (hasAnySubscriptionTopics && doesAnyPublisherAdvertiseTopics() && hasAnySubscriptionPredicates) {
 			for (String subscriberId : matchedSubscriberTopics) {
 				if (matchedSubscriberPredicates.contains(subscriberId)){
-					subscriptions.get(subscriberId).getSubscriber().receive(object);				
+					super.addObserver(subscriptions.get(subscriberId).getSubscriber());			
 				}
+				super.setChanged();
+				super.notifyObservers(object);
 			}			
 		} 
+		
+		
 		
 		
 	}

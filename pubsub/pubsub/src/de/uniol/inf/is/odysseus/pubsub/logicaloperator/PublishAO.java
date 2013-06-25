@@ -53,6 +53,12 @@ public class PublishAO extends UnaryLogicalOp{
 					"Topology Type: '"+ topologyType +"' is not valid. Available Types are: "+validTypes.toString()));
 			return false;
 		}
+		// Check if combination of type and domain is valid
+		if (!BrokerTopologyRegistry.isDomainTypeCombinationValid(topologyType, domain)){
+			addError(new IllegalParameterException(
+					"Domain: '"+ domain +"' already exists with a different topology type. It's not possible to register a Topology with the same domain and a different topologyType."));
+			return false;
+		}
 		return true;
 	}
 	

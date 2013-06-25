@@ -17,11 +17,13 @@
 package de.uniol.inf.is.odysseus.pubsub.broker.topology;
 
 import java.util.List;
+import java.util.Observable;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.IBroker;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
+import de.uniol.inf.is.odysseus.pubsub.observer.PublisherObservable;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
@@ -97,6 +99,13 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 		for (IBroker<T> broker : brokers) {
 			broker.routeToSubscribers(object, publisher);
 		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void update(Observable observable, Object object) {
+		PublisherObservable publisherObservable = (PublisherObservable) observable;
+		transfer((T) object, publisherObservable.getPublisher());
 	}
 
 }

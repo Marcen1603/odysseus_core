@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.pubsub.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -36,7 +38,7 @@ import de.uniol.inf.is.odysseus.pubsub.broker.topology.IBrokerTopology;
  * 
  * @param <T>
  */
-public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
+public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements Observer{
 
 	private List<IPredicate<? super T>> predicates;
 	private SDFSchema schema;
@@ -133,8 +135,9 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	}
 
 	@SuppressWarnings("unchecked")
-	public void receive(Object object) {
-		transfer((T) object);
+	@Override
+	public void update(Observable observable, Object object) {
+		transfer((T) object);	
 	}
 
 	public String getIdentifier() {
@@ -148,5 +151,6 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	public List<Topic> getTopics() {
 		return topics;
 	}
+
 
 }

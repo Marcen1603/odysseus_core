@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.server.mep.impl.ParseException;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
 
@@ -53,21 +52,31 @@ public class BrokerTopologyRegistry {
 		}
 	}
 	
-	public static List<String> getValidTopologyTypes(){
-		return new ArrayList<String>(brokerTopologyTypes.keySet());
-	}
-	
-	
 	public static void unregisterBrokertopologies(IBrokerTopology<?> brokerTopology) {
 		logger.debug("Remove Broker Topology "+brokerTopology.getType());
 		brokerTopologyTypes.remove(brokerTopology.getType().toLowerCase());
 	}
 	
+	public static List<String> getValidTopologyTypes(){
+		return new ArrayList<String>(brokerTopologyTypes.keySet());
+	}
+	
+	public static boolean isDomainTypeCombinationValid(String topologyType, String domain){
+		if (brokerTopologies.containsKey(domain.toLowerCase())){
+			IBrokerTopology<?> topology = brokerTopologies.get(domain.toLowerCase());
+			if (!topology.getType().toLowerCase().equals(topologyType.toLowerCase())){
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	// public static <T> IBrokerTopology<?> getTopologyByTypeAndDomain(String topologyType, String domain) may be better
-	public static <T extends IStreamObject<?>> IBrokerTopology<?> getTopologyByTypeAndDomain(String topologyType, String domain) throws ParseException {
+	public static <T extends IStreamObject<?>> IBrokerTopology<?> getTopologyByTypeAndDomain(String topologyType, String domain){
 		// Check if topology Type is valid
 		if (!brokerTopologyTypes.containsKey(topologyType.toLowerCase())){
-			throw new ParseException("Topology Type: '"+ topologyType + "' is not valid.");
+			logger.info("Topology Type: '"+ topologyType + "' is not valid.");
+			return null;
 		}
 		
 		if (brokerTopologies.containsKey(domain.toLowerCase())){
@@ -83,7 +92,8 @@ public class BrokerTopologyRegistry {
 				return topology;				
 			} else {
 				// Broker with domain exists, but has a different type
-				throw new ParseException("Domain: '"+ domain +"' already exists. It's not possible to register a Topology with the same domain and a different topologyType.");
+				logger.info("Domain: '"+ domain +"' already exists with a different topology type. It's not possible to register a Topology with the same domain and a different topologyType.");
+				return null;
 			}
 		} else {
 			// Broker with type and domain does not exists, create new Instance

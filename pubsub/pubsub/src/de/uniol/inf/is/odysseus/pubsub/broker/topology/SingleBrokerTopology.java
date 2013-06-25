@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.pubsub.broker.topology;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.broker.IBroker;
 import de.uniol.inf.is.odysseus.pubsub.broker.SimpleBroker;
@@ -60,5 +59,4 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends AbstractBr
 	public <E extends IStreamObject<?>> IBrokerTopology<E> getInstance(String domain) {
 		return new SingleBrokerTopology<E>(domain);
 	}
-
 }
