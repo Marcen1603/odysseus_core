@@ -112,6 +112,10 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	 */
 	private void checkForPufferSize() {
 		// Prevent an overflow in the puffer
+		
+		//TODO: Do this by user setted time
+		
+		
 		if (puffer.size() > maxNumerOfElements) {
 			// Remove old element(s)
 			Iterator<Tuple<? extends ITimeInterval>> oldestElements = puffer

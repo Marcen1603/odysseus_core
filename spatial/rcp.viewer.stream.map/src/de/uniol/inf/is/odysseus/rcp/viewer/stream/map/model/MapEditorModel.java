@@ -58,7 +58,8 @@ import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
 public class MapEditorModel extends ModelObject {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MapEditorModel.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(MapEditorModel.class);
 
 	public static final String MAP = "map";
 
@@ -72,7 +73,7 @@ public class MapEditorModel extends ModelObject {
 
 	private int layercount;
 	private static IFile iFile;
-	
+
 	private int srid;
 
 	// private StreamMapEditorPart editor = null;
@@ -82,6 +83,7 @@ public class MapEditorModel extends ModelObject {
 		this.screenManager = editor.getScreenManager();
 		for (LayerUpdater layerUpdater : connections.values()) {
 			screenManager.addPropertyChangeListener(layerUpdater);
+			screenManager.addConnection(layerUpdater);	
 		}
 		for (ILayer layer : layers) {
 			if (layer != null)
@@ -93,6 +95,7 @@ public class MapEditorModel extends ModelObject {
 
 	@SuppressWarnings("unchecked")
 	public static MapEditorModel open(IFile file, StreamMapEditorPart editor) {
+		
 		iFile = file;
 		MapEditorModel newModel = new MapEditorModel();
 		String output = "";
@@ -131,69 +134,87 @@ public class MapEditorModel extends ModelObject {
 		if (output.isEmpty()) {
 			return newModel;
 		}
-		PersistentMapEditorModel persistentModel = getGson().fromJson(output, PersistentMapEditorModel.class);
-		
+		PersistentMapEditorModel persistentModel = getGson().fromJson(output,
+				PersistentMapEditorModel.class);
+
 		if (persistentModel.getSrid() != null)
 			newModel.srid = persistentModel.getSrid();
-		IServerExecutor executor = (IServerExecutor) OdysseusRCPPlugIn.getExecutor();
+		IServerExecutor executor = (IServerExecutor) OdysseusRCPPlugIn
+				.getExecutor();
 		if (persistentModel.getQueries() != null)
-			
+
 			for (PersistentQuery pquery : persistentModel.getQueries()) {
-				if (pquery instanceof QueryFile){
+				if (pquery instanceof QueryFile) {
 					QueryFile query = (QueryFile) pquery;
-					IFile nativeFile = newModel.getProject().getFile(query.filename);
+					IFile nativeFile = newModel.getProject().getFile(
+							query.filename);
 					newModel.addFile(nativeFile);
-				run(nativeFile);
-				}
-				else if (pquery instanceof QueryString){
-				
-				QueryString query = (QueryString) pquery;
-					
-				LOG.debug("Reload Query: " + query);
+					run(nativeFile);
+				} else if (pquery instanceof QueryString) {
 
-				String[] qLines = new String[3];
-				qLines[0] = "#TRANSCFG " + query.transformation;
-				qLines[1] = "#PARSER " + query.parser;
-				qLines[2] = "#QUERY " + query.text;
+					QueryString query = (QueryString) pquery;
 
-				boolean exists = false;
-				// No multiple definition of a Stream.
-				for (IPhysicalQuery phyQuery : executor.getExecutionPlan().getQueries()) {
-					if (phyQuery.getLogicalQuery().getQueryText().equals(query.text)) {
-						exists = true;
+					LOG.debug("Reload Query: " + query);
+
+					String[] qLines = new String[3];
+					qLines[0] = "#TRANSCFG " + query.transformation;
+					qLines[1] = "#PARSER " + query.parser;
+					qLines[2] = "#QUERY " + query.text;
+
+					boolean exists = false;
+					// No multiple definition of a Stream.
+					for (IPhysicalQuery phyQuery : executor.getExecutionPlan()
+							.getQueries()) {
+						if (phyQuery.getLogicalQuery().getQueryText()
+								.equals(query.text)) {
+							exists = true;
+						}
 					}
-				}
-				if (!exists) {
-					execute(qLines);
-				}
-
-				for (IPhysicalQuery phyQuery : executor.getExecutionPlan().getQueries()) {
-					if (phyQuery.getLogicalQuery().getQueryText().equals(query.text)) {
-						List<IPhysicalOperator> ops = phyQuery.getRoots();
-//						final List<ISubscription<ISource<?>>> subs = new LinkedList<ISubscription<ISource<?>>>();
-//						for (IPhysicalOperator operator : ops) {
-//
-//							if (operator instanceof ISource<?>) {
-//								subs.add(new PhysicalSubscription<ISource<?>>((ISource<?>) operator, 0, 0, operator.getOutputSchema()));
-//							} else if (operator instanceof ISink<?>) {
-//								Collection<?> list = ((ISink<?>) operator).getSubscribedToSource();
-//
-//								for (Object obj : list) {
-//									@SuppressWarnings("unchecked")
-//									PhysicalSubscription<ISource<?>> sub = (PhysicalSubscription<ISource<?>>) obj;
-//									subs.add(new PhysicalSubscription<ISource<?>>(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema()));
-//								}
-//							} else {
-//								throw new IllegalArgumentException("could not identify type of content of node " + operator);
-//							}
-//						}
-//						DefaultStreamConnection connection = new DefaultStreamConnection(subs);
-						
-						@SuppressWarnings({ "rawtypes"})
-						DefaultStreamConnection connection = new DefaultStreamConnection(ops);
-						newModel.addConnection(connection, phyQuery, editor);
+					if (!exists) {
+						execute(qLines);
 					}
-				}
+
+					for (IPhysicalQuery phyQuery : executor.getExecutionPlan()
+							.getQueries()) {
+						if (phyQuery.getLogicalQuery().getQueryText()
+								.equals(query.text)) {
+							List<IPhysicalOperator> ops = phyQuery.getRoots();
+							// final List<ISubscription<ISource<?>>> subs = new
+							// LinkedList<ISubscription<ISource<?>>>();
+							// for (IPhysicalOperator operator : ops) {
+							//
+							// if (operator instanceof ISource<?>) {
+							// subs.add(new
+							// PhysicalSubscription<ISource<?>>((ISource<?>)
+							// operator, 0, 0, operator.getOutputSchema()));
+							// } else if (operator instanceof ISink<?>) {
+							// Collection<?> list = ((ISink<?>)
+							// operator).getSubscribedToSource();
+							//
+							// for (Object obj : list) {
+							// @SuppressWarnings("unchecked")
+							// PhysicalSubscription<ISource<?>> sub =
+							// (PhysicalSubscription<ISource<?>>) obj;
+							// subs.add(new
+							// PhysicalSubscription<ISource<?>>(sub.getTarget(),
+							// sub.getSinkInPort(), sub.getSourceOutPort(),
+							// sub.getSchema()));
+							// }
+							// } else {
+							// throw new
+							// IllegalArgumentException("could not identify type of content of node "
+							// + operator);
+							// }
+							// }
+							// DefaultStreamConnection connection = new
+							// DefaultStreamConnection(subs);
+
+							@SuppressWarnings({ "rawtypes" })
+							DefaultStreamConnection connection = new DefaultStreamConnection(
+									ops);
+							newModel.addConnection(connection, phyQuery, editor);
+						}
+					}
 				}
 			}
 
@@ -207,25 +228,41 @@ public class MapEditorModel extends ModelObject {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Gson getGson(){
+	private static Gson getGson() {
+		// Layers
 		GsonBuilder gsonbuilder = new GsonBuilder().setPrettyPrinting();
-		RuntimeTypeAdapterFactory layerConfigurationFactory = RuntimeTypeAdapterFactory.of(LayerConfiguration.class);
-		layerConfigurationFactory.registerSubtype(VectorLayerConfiguration.class);
-		layerConfigurationFactory.registerSubtype(RasterLayerConfiguration.class);
-		layerConfigurationFactory.registerSubtype(GroupLayerConfiguration.class);
+		RuntimeTypeAdapterFactory layerConfigurationFactory = RuntimeTypeAdapterFactory
+				.of(LayerConfiguration.class);
+		layerConfigurationFactory
+				.registerSubtype(VectorLayerConfiguration.class);
+		layerConfigurationFactory
+				.registerSubtype(RasterLayerConfiguration.class);
+		layerConfigurationFactory
+				.registerSubtype(GroupLayerConfiguration.class);
+
+		// Thematic layers
+		layerConfigurationFactory
+				.registerSubtype(HeatmapLayerConfiguration.class);
+		layerConfigurationFactory
+				.registerSubtype(TracemapLayerConfiguration.class);
+
 		gsonbuilder.registerTypeAdapterFactory(layerConfigurationFactory);
-		RuntimeTypeAdapterFactory persistentQueryFactory = RuntimeTypeAdapterFactory.of(PersistentQuery.class);
+		
+		// Queries
+		RuntimeTypeAdapterFactory persistentQueryFactory = RuntimeTypeAdapterFactory
+				.of(PersistentQuery.class);
 		persistentQueryFactory.registerSubtype(QueryFile.class);
 		persistentQueryFactory.registerSubtype(QueryString.class);
 		gsonbuilder.registerTypeAdapterFactory(persistentQueryFactory);
 		return gsonbuilder.create();
 	}
-	
+
 	public void save(IFile file) {
 		StringBuilder configuration = new StringBuilder();
 
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(file.getLocation().toOSString()));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file
+					.getLocation().toOSString()));
 			PersistentMapEditorModel persistentModel = new PersistentMapEditorModel();
 			persistentModel.setSrid(this.srid);
 			for (IFile qryfile : qryFileList) {
@@ -235,8 +272,10 @@ public class MapEditorModel extends ModelObject {
 			}
 
 			for (LayerUpdater connection : connections.values()) {
-				String queryText = connection.getQuery().getLogicalQuery().getQueryText();
-				String queryParser = connection.getQuery().getLogicalQuery().getParserId();
+				String queryText = connection.getQuery().getLogicalQuery()
+						.getQueryText();
+				String queryParser = connection.getQuery().getLogicalQuery()
+						.getParserId();
 				QueryString pquery = new QueryString();
 
 				pquery.transformation = "Standard";
@@ -341,10 +380,12 @@ public class MapEditorModel extends ModelObject {
 		for (LayerUpdater connection : connections.values()) {
 			// LOG.debug(connection.getQuery().getLogicalQuery().getQueryText());
 			// LOG.debug(layerConfiguration.getQuery());
-			if (connection.getQuery().getLogicalQuery().getQueryText().equals(layerConfiguration.getQuery())) {
+			if (connection.getQuery().getLogicalQuery().getQueryText()
+					.equals(layerConfiguration.getQuery())) {
 
 				// Connect the Stream to the iStreamListner
-				schema = connection.getConnection().getSubscriptions().get(0).getSchema();
+				schema = connection.getConnection().getSubscriptions().get(0)
+						.getSchema();
 				// AttributeResolver resolver = new AttributeResolver();
 				// resolver.addSource(connection.getConnection().getSubscriptions().get(0).getSchema().getURI(),
 				// (ILogicalOperator)
@@ -353,11 +394,13 @@ public class MapEditorModel extends ModelObject {
 				// attribute =
 				// resolver.getAttribute(layerConfiguration.getAttribute());
 				for (SDFAttribute tmpAttribute : schema) {
-					if (tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute())) {
+					if (tmpAttribute.getAttributeName().equals(
+							layerConfiguration.getAttribute())) {
 						attribute = tmpAttribute;
 						// LOG.debug("Stream: " + schema.getURI());
 						// LOG.debug("Stream: " + attribute.toString());
-						layer = LayerTypeRegistry.getLayer(attribute.getDatatype());
+						layer = LayerTypeRegistry.getLayer(attribute
+								.getDatatype());
 						layer.setConfiguration(layerConfiguration);
 
 						// PreInit
@@ -373,56 +416,64 @@ public class MapEditorModel extends ModelObject {
 		}
 		return layer;
 	}
-	
+
 	/**
-	 * Adds an HeatmapLayer to the map 
+	 * Adds an HeatmapLayer to the map
+	 * 
 	 * @param layerConfiguration
 	 * @return The layer
 	 */
 	private ILayer addLayer(HeatmapLayerConfiguration layerConfiguration) {
 		ILayer layer = null;
 		if (screenManager != null) {
-			layer = new Heatmap(layerConfiguration, screenManager);	
-			
+			layer = new Heatmap(layerConfiguration, screenManager);
+
 			// Add to the selected connection (LayerUpdater)
 			for (LayerUpdater connection : connections.values()) {
-				if (connection.getQuery().getLogicalQuery().getQueryText().equals(layerConfiguration.getQuery())) {
+				if (connection.getQuery().getLogicalQuery().getQueryText()
+						.equals(layerConfiguration.getQuery())) {
 					connection.add(layer);
-				}				
+				}
 			}
 		}
 		return layer;
 	}
-	
+
 	/**
 	 * Adds a LinemapLayer to the map
+	 * 
 	 * @param layerConfiguration
 	 * @return The layer
 	 */
 	private ILayer addLayer(TracemapLayerConfiguration layerConfiguration) {
 		ILayer layer = null;
 		if (screenManager != null) {
-			layer = new TraceLayer(layerConfiguration, screenManager);	
-			
+			layer = new TraceLayer(layerConfiguration, screenManager);
+
 			// Add to the selected connection (LayerUpdater)
 			for (LayerUpdater connection : connections.values()) {
-				if (connection.getQuery().getLogicalQuery().getQueryText().equals(layerConfiguration.getQuery())) {
+				if (connection.getQuery().getLogicalQuery().getQueryText()
+						.equals(layerConfiguration.getQuery())) {
 					connection.add(layer);
-				}	
+				}
 			}
 		}
 		return layer;
 	}
 
-	public void addConnection(IStreamConnection<Object> connection, IPhysicalQuery query, StreamMapEditorPart editor) {
+	public void addConnection(IStreamConnection<Object> connection,
+			IPhysicalQuery query, StreamMapEditorPart editor) {
 		LOG.debug("Add Connection: " + query.getLogicalQuery().getQueryText());
 
 		if (!connections.containsKey(String.valueOf(query.hashCode()))) {
 
 			LayerUpdater updater = new LayerUpdater(editor, query, connection);
 			connections.put(String.valueOf(query.hashCode()), updater);
-			screenManager.addPropertyChangeListener(updater);
-			screenManager.addConnection(updater);
+			if(screenManager != null) {
+				// If this Model is not opened by a file
+				screenManager.addPropertyChangeListener(updater);
+				screenManager.addConnection(updater);				
+			}
 
 			LOG.debug("Bind Query: " + query.getID());
 			LOG.debug("Bind Query: " + query.getLogicalQuery().getQueryText());
@@ -446,7 +497,8 @@ public class MapEditorModel extends ModelObject {
 
 			// Datei einlesen
 			ArrayList<String> lines = new ArrayList<String>();
-			BufferedReader br = new BufferedReader(new InputStreamReader(queryFile.getContents()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					queryFile.getContents()));
 			String line = br.readLine();
 			while (line != null) {
 				lines.add(line);
@@ -474,7 +526,8 @@ public class MapEditorModel extends ModelObject {
 		try {
 			ISession user = OdysseusRCPPlugIn.getActiveSession();
 			// Befehle holen
-			final List<PreParserStatement> statements = OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user);
+			final List<PreParserStatement> statements = OdysseusRCPEditorTextPlugIn
+					.getScriptParser().parseScript(text, user);
 
 			// Erst Text testen
 			// monitor.beginTask("Executing Commands", statements.size() * 2);
@@ -497,7 +550,8 @@ public class MapEditorModel extends ModelObject {
 			for (PreParserStatement stmt : statements) {
 				// monitor.subTask("Executing (" + counter + " / " +
 				// statements.size() + ")");
-				stmt.execute(variables, user, OdysseusRCPEditorTextPlugIn.getScriptParser());
+				stmt.execute(variables, user,
+						OdysseusRCPEditorTextPlugIn.getScriptParser());
 				// monitor.worked(1);
 				counter++;
 			}
@@ -506,7 +560,9 @@ public class MapEditorModel extends ModelObject {
 			// Evil Workaround
 
 			if (!ex.getRootMessage().contains("multiple")) {
-				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), ex.getMessage(), ex.getRootMessage());
+				MessageDialog.openError(PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell(),
+						ex.getMessage(), ex.getRootMessage());
 			}
 
 			LOG.error("Exception during executing script", ex);
@@ -629,7 +685,7 @@ public class MapEditorModel extends ModelObject {
 	}
 
 	public void rename(ILayer layer, String name) {
-		if (layer instanceof GroupLayer){
+		if (layer instanceof GroupLayer) {
 			GroupLayer groupLayer = this.groups.remove(layer.getName());
 			this.groups.put(name, groupLayer);
 		}
@@ -638,7 +694,7 @@ public class MapEditorModel extends ModelObject {
 
 	public String[] getLayerNameList() {
 		ArrayList<String> names = new ArrayList<String>();
-		for(ILayer layer : layers){
+		for (ILayer layer : layers) {
 			names.add(layer.getComplexName());
 		}
 		return names.toArray(new String[names.size()]);
@@ -647,7 +703,7 @@ public class MapEditorModel extends ModelObject {
 	public Collection<GroupLayer> getGroups(ILayer element) {
 		@SuppressWarnings("unused")
 		LinkedList<GroupLayer> list = new LinkedList<GroupLayer>();
-//		for()
+		// for()
 		return this.groups.values();
 	}
 
@@ -660,7 +716,7 @@ public class MapEditorModel extends ModelObject {
 		// TODO Auto-generated method stub
 		return this.srid;
 	}
-	
+
 	public void setSrid(int srid) {
 		this.srid = srid;
 	}
@@ -672,9 +728,9 @@ public class MapEditorModel extends ModelObject {
 	public void setQryFileList(LinkedList<IFile> qryFileList) {
 		this.qryFileList = qryFileList;
 	}
-	
+
 	public IFile getFile() {
 		return iFile;
 	}
-	
+
 }
