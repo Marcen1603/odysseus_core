@@ -75,7 +75,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 			}
 		}
 		logger.debug("At least one source is open");
-		while (!interrupt && !isInterrupted()) {
+		while (!interrupt && !isInterrupted() && caller.isRunning()) {
 			synchronized (sources) { // No interruptions while one run
 				boolean waitedForFirstSource = false;
 
