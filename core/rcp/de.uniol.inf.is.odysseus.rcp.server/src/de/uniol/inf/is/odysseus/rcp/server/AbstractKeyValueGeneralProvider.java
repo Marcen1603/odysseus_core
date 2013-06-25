@@ -55,6 +55,7 @@ public abstract class AbstractKeyValueGeneralProvider implements IOperatorGenera
 		keyLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		
 		Text valueText = new Text(comp, SWT.NONE);
+		valueText.setEditable(false);
 		valueText.setText(Strings.isNullOrEmpty(value) ? "" : value);
 	}
 

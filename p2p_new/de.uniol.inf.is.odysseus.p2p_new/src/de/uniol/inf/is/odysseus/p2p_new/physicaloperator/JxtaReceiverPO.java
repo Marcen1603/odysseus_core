@@ -55,6 +55,13 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	private IJxtaConnection ctrlConnection;
 	private IJxtaConnection dataConnection;
 	
+	private long receivedBytes;
+	private double receivedBytesPerSecond;
+	private long receivedBytesPerSecondCounter;
+	private long receivedBytesPerSecondTimestamp;
+	private JxtaConnectionType connectionType = JxtaConnectionType.NONE;
+	private String connectedPeerName = "<not set>";
+	
 	public JxtaReceiverPO(JxtaReceiverAO ao) {
 		SDFSchema schema = ao.getOutputSchema().clone();
 		setOutputSchema(schema);
@@ -78,6 +85,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		this.pipeAdvertisement = po.pipeAdvertisement;
 		this.ctrlConnection = po.ctrlConnection;
 		this.dataHandler = po.dataHandler;
+		this.connectionType = po.connectionType;
 	}
 
 	@Override
@@ -123,23 +131,31 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 	@Override
 	public void onDisconnect(IJxtaConnection sender) {
-		if( sender == ctrlConnection ) {
+		if (sender == ctrlConnection) {
 			LOG.debug("{} : JxtaConnection (ctrl) is lost", getName());
 			stopDirectConnection();
-		} else if( sender == dataConnection ) {
+		} else if (sender == dataConnection) {
 			LOG.debug("{} : Direct connection (data) is lost", getName());
 			dataConnection.removeListener(this);
 			dataConnection = null;
+			connectionType = JxtaConnectionType.NONE;
+			connectedPeerName = "";
 		}
 	}
 
 	@Override
 	public void onConnect(IJxtaConnection sender) {
-		if( LOG.isDebugEnabled() ) {
-			if( sender == ctrlConnection ) {
-				LOG.debug("{} : Connectio with JxtaSender established", getName());
-			} else if( sender == dataConnection ) {
-				LOG.debug("{} : Direct connection established", getName());
+		if (sender == ctrlConnection) {
+			LOG.debug("{} : Connection with JxtaSender established", getName());
+
+		} else if (sender == dataConnection) {
+			LOG.debug("{} : Direct connection established", getName());
+			if (sender instanceof UDPConnection) {
+				connectionType = JxtaConnectionType.UDP;
+			} else if (sender instanceof SocketClientConnection) {
+				connectionType = JxtaConnectionType.TCP;
+			} else {
+				connectionType = JxtaConnectionType.JXTA;
 			}
 		}
 	}
@@ -147,9 +163,39 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	@Override
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {
 		if( isOpen() ) {
+			receivedBytes += data.length;
+			receivedBytesPerSecondCounter += data.length;
+			final long currentTime = System.currentTimeMillis();
+			final long timeDelta = currentTime - receivedBytesPerSecondTimestamp;
+			if( timeDelta > 1000 ) {
+				receivedBytesPerSecond = receivedBytesPerSecondCounter / (timeDelta / 1000.0);
+				receivedBytesPerSecondCounter = 0;
+				receivedBytesPerSecondTimestamp = currentTime;
+			}
+			
 			ByteBuffer bb = ByteBuffer.wrap(data);
 			processData(bb);
 		}
+	}
+	
+	public final long getReceivedByteCount() {
+		return receivedBytes;
+	}
+	
+	public final double getReceivedByteDataRate() {
+		return receivedBytesPerSecond;
+	}
+	
+	public final PipeAdvertisement getPipeAdvertisement() {
+		return pipeAdvertisement;
+	}
+	
+	public final JxtaConnectionType getConnectionType() {
+		return connectionType;
+	}
+	
+	public final String getConnectedPeerName() {
+		return connectedPeerName;
 	}
 
 	private void processData(ByteBuffer message) {
@@ -253,6 +299,9 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		LOG.debug("{} : Port is {}", getName(), port);
 		PeerID peerID = determinePeerID(message);
 		LOG.debug("{} : PeerID is {}", getName(), peerID.toString());
+		connectedPeerName = determinePeerName(peerID);
+		LOG.debug("{} : PeerName is {}", getName(), connectedPeerName);
+		
 		if( !JxtaServicesProvider.getInstance().getEndpointService().isReachable(peerID, false)) {
 			LOG.error("PeerID is not reachable for direct connection: {}", peerID);
 			return false;
@@ -275,6 +324,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 				dataConnection = new SocketClientConnection(realAddress, port, pipeAdvertisement);
 				LOG.debug("{} : Using TCP", getName());
 			}
+			
 			dataConnection.addListener(this);
 			dataConnection.connect();
 
@@ -285,11 +335,18 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		}
 	}
 
+	private static String determinePeerName(PeerID peerID) {
+		Optional<String> optPeerName = P2PDictionary.getInstance().getRemotePeerName(peerID);
+		return optPeerName.isPresent() ? optPeerName.get() : "<unknown>";
+	}
+
 	private void stopDirectConnection() {
 		LOG.debug("{} : Stopping direct connection", getName());
 		dataConnection.removeListener(this);
 		dataConnection.disconnect();
 		dataConnection = null;
+		
+		connectionType = JxtaConnectionType.NONE;
 	}
 
 	private void tryPropagateDone() {
