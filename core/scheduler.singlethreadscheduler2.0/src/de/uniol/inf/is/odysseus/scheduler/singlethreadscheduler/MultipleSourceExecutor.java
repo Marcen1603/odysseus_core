@@ -149,7 +149,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 	private void transfer(IIterableSource<?> s) {
 		long ct2 = System.currentTimeMillis();
-		logger.debug("Transfer for " + s + " " + ct2);
+		//logger.debug("Transfer for " + s + " " + ct2);
 		s.transferNext();
 		lastRuns.put(s, ct2);
 	}
