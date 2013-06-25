@@ -314,6 +314,10 @@ public abstract class StreamClientHandler extends Thread {
 	public void setDelay(long delay) {
 		this.delay = delay;
 	}
+	
+	public void setDelayEachTuple(boolean delayEachTuple) {
+		this.delayEachTuple = delayEachTuple;
+	}
 
 	public void remove() {
 	}
