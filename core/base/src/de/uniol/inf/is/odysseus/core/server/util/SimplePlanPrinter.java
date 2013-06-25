@@ -21,6 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 
 public class SimplePlanPrinter<T> {
 
@@ -73,6 +74,9 @@ public class SimplePlanPrinter<T> {
 		name.append(object.getClass().getSimpleName()+" ("+object.hashCode()+")");
 		if (object  instanceof IOwnedOperator){
 			name.append(" Owner: "+((IOwnedOperator)object).getOwnerIDs());
+		}
+		if (object instanceof JoinAO) {
+			name.append(" Predicate: " + ((JoinAO) object).getPredicate());
 		}
 		return name.toString();
 	}
