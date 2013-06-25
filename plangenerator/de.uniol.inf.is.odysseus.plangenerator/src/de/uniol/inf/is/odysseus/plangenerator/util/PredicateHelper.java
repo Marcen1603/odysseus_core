@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
@@ -118,9 +119,15 @@ public class PredicateHelper {
 		if (satisfiablePredicates.size() > 1) {
 			while (iterator.hasNext()) {
 				IRelationalPredicate next = iterator.next();
-				result = (IPredicate<?>) ComplexPredicateHelper
-						.createAndPredicate(result, next);
+				if (!(next instanceof TruePredicate)) {
+					result = (IPredicate<?>) ComplexPredicateHelper
+							.createAndPredicate(result, next);
+				}
 			}
+		}
+		if(this.joinToSatisfiedPredicates.containsKey(existingJoinPlan)) {
+			satisfiablePredicates.addAll(this.joinToSatisfiedPredicates.get(existingJoinPlan));
+			LOG.debug("Added existing satisfied predicates to list");
 		}
 		return new Pair<IPredicate<?>, Set<IRelationalPredicate>>(
 				result, satisfiablePredicates);
