@@ -15,7 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -29,11 +31,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
-    private String  charset;
-    private String  objectDelimiter;
+    private String charset;
+    private String objectDelimiter;
     private Scanner scanner;
     private boolean keepDelimiter;
-
+    private BufferedWriter writer;
+    
     public TextProtocolHandler() {
         super();
     }
@@ -45,14 +48,31 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
     @Override
     public void open() throws UnknownHostException, IOException {
         getTransportHandler().open();
-        this.scanner = new Scanner(getTransportHandler().getInputStream(), charset);
-        scanner.useDelimiter(objectDelimiter);
+        if (getDirection().equals(ITransportDirection.IN)) {
+            if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+                this.scanner = new Scanner(getTransportHandler().getInputStream(), charset);
+                scanner.useDelimiter(objectDelimiter);
+            }
+        } else {
+            if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+                writer = new BufferedWriter(new OutputStreamWriter(getTransportHandler().getOutputStream()));
+            }
+        }
+
     }
 
     @Override
     public void close() throws IOException {
+        if (getDirection().equals(ITransportDirection.IN)) {
+            if (scanner != null) {
+                scanner.close();
+            }
+        } else {
+            if (writer != null) {
+                writer.close();
+            }
+        }
         getTransportHandler().close();
-        scanner.close();
     }
 
     @Override
@@ -64,20 +84,19 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
     public T getNext() throws IOException {
         if (keepDelimiter) {
             return getDataHandler().readData(scanner.next() + objectDelimiter);
-        }
-        else {
+        } else {
             return getDataHandler().readData(scanner.next());
         }
     }
 
     @Override
     public void write(T object) throws IOException {
-        throw new IllegalArgumentException("Currently not implemented");
+        writer.write(object.toString());
+        writer.write(objectDelimiter);
     }
 
     @Override
-    public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
-            Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+    public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
 
         TextProtocolHandler<T> instance = new TextProtocolHandler<T>(direction, access);
         instance.setDataHandler(dataHandler);
@@ -114,8 +133,7 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
     public ITransportExchangePattern getExchangePattern() {
         if (this.getDirection().equals(ITransportDirection.IN)) {
             return ITransportExchangePattern.InOnly;
-        }
-        else {
+        } else {
             return ITransportExchangePattern.OutOnly;
         }
     }
@@ -136,8 +154,7 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
     public void process(ByteBuffer messsage) {
         if (keepDelimiter) {
             getTransfer().transfer(getDataHandler().readData(scanner.next() + objectDelimiter));
-        }
-        else {
+        } else {
             getTransfer().transfer(getDataHandler().readData(scanner.next()));
         }
     }

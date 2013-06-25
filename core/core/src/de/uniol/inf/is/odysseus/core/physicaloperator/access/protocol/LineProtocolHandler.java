@@ -110,9 +110,11 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
 				reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
 			}
-		} else {
-			writer = new BufferedWriter(new OutputStreamWriter(getTransportHandler().getOutputStream()));
-		}
+        } else {
+            if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
+                writer = new BufferedWriter(new OutputStreamWriter(getTransportHandler().getOutputStream()));
+            }
+        }
 		delayCounter = 0;
 		lineCounter = 0;
 		isDone = false;
@@ -125,9 +127,11 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			if (reader != null) {
 				reader.close();
 			}
-		} else {
-			writer.close();
-		}
+        } else {
+            if (writer != null) {
+                writer.close();
+            }
+        }
 		getTransportHandler().close();
 	}
 
