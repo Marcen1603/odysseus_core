@@ -65,7 +65,7 @@ public abstract class StreamClientHandler extends Thread {
 	 */
 	private Boolean isSA = false;
 
-	private Charset charset = Charset.forName("UTF-8");	
+	private Charset charset = Charset.forName("UTF-8");
 	private CharsetEncoder encoder = charset.newEncoder();
 
 	private boolean printthroughput = false;
@@ -75,6 +75,9 @@ public abstract class StreamClientHandler extends Thread {
 	private long startTime = 0;
 	private int lastSize = 0;
 	private int totalSize = 0;
+
+	private long delay = 0;
+	private long lastTransfer = -1;
 
 	public abstract void init();
 
@@ -116,40 +119,35 @@ public abstract class StreamClientHandler extends Thread {
 		try {
 			next = next();
 		} catch (InterruptedException ie) {
-			System.out.println("Thread interrupted. Stopping client for" + getInternalName());
+			System.out.println("Thread interrupted. Stopping client for"
+					+ getInternalName());
 			next = null;
 		}
 		while (next != null) {
 			try {
 				if (this.connection.isClosed()) {
-					System.out.println("Connection closed for " + getInternalName());
+					System.out.println("Connection closed for "
+							+ getInternalName());
 					break;
 				}
 				for (DataTuple nextTuple : next) {
+					delay();
 					transferTuple(nextTuple);
-					if (printthroughput) {
-						counter++;
-						int size = nextTuple.memSize;
-						this.totalSize += size;
-						this.lastSize += size;
-						if ((counter % throughputEach) == 0) {
-							printStats();
-							lastTime = System.currentTimeMillis();
-							lastSize = 0;
-						}
-					}
+					printThroughput(nextTuple);
 				}
 				next = next();
 
 			} catch (InterruptedException ie) {
-				System.out.println("Thread interrupted. Stopping client for " + getInternalName());
+				System.out.println("Thread interrupted. Stopping client for "
+						+ getInternalName());
 				if (printthroughput) {
 					System.out.println("Total stats:");
 					printStats();
 				}
 				next = null;
 			} catch (IOException e) {
-				System.out.println("Connection closed for " + getInternalName());
+				System.out
+						.println("Connection closed for " + getInternalName());
 				if (printthroughput) {
 					System.out.println("Total stats for :");
 					printStats();
@@ -169,6 +167,36 @@ public abstract class StreamClientHandler extends Thread {
 		close();
 	}
 
+	private void printThroughput(DataTuple nextTuple) {
+		if (printthroughput) {
+			counter++;
+			int size = nextTuple.memSize;
+			this.totalSize += size;
+			this.lastSize += size;
+			if ((counter % throughputEach) == 0) {
+				printStats();
+				lastTime = System.currentTimeMillis();
+				lastSize = 0;
+			}
+		}
+	}
+
+	private void delay() {
+		if (delay > 0) {
+			long now = System.currentTimeMillis();
+			if (lastTransfer > 0) {
+				long sleepingTime = delay-(now - lastTransfer);
+				if (sleepingTime > 0) {
+					try {
+						Thread.sleep(sleepingTime);
+					} catch (InterruptedException e) {
+					}
+				}
+			}
+			lastTransfer = now;
+		}
+	}
+
 	private String getInternalName() {
 		return this.streamName + " #" + this.instanceNumber;
 	}
@@ -180,8 +208,16 @@ public abstract class StreamClientHandler extends Thread {
 		System.out.println("--- " + getInternalName() + "---");
 		double needed = System.currentTimeMillis() - lastTime;
 		double total = System.currentTimeMillis() - startTime;
-		System.out.println("Duration for last " + nf.format(throughputEach) + " elements: \t" + nf.format(needed) + "\t ms for " + nf.format(lastSize) + "\t bytes. Throughput: \t" + Math.round((lastSize / needed) * 100.) / 100. + " bytes/ms");
-		System.out.println("Total for " + nf.format(counter) + " elements: \t\t" + nf.format(total) + "\t ms for " + nf.format(totalSize) + "\t bytes. Throughput: \t" + Math.round((totalSize / total) * 100.) / 100. + " \tbytes/ms");
+		System.out.println("Duration for last " + nf.format(throughputEach)
+				+ " elements: \t" + nf.format(needed) + "\t ms for "
+				+ nf.format(lastSize) + "\t bytes. Throughput: \t"
+				+ Math.round((lastSize / needed) * 100.) / 100. + " bytes/ms");
+		System.out
+				.println("Total for " + nf.format(counter) + " elements: \t\t"
+						+ nf.format(total) + "\t ms for "
+						+ nf.format(totalSize) + "\t bytes. Throughput: \t"
+						+ Math.round((totalSize / total) * 100.) / 100.
+						+ " \tbytes/ms");
 	}
 
 	public double getLastThroughput() {
@@ -267,6 +303,10 @@ public abstract class StreamClientHandler extends Thread {
 
 	public void setConnection(Socket connection) {
 		this.connection = connection;
+	}
+	
+	public void setDelay(long delay) {
+		this.delay = delay;
 	}
 
 	public void remove() {

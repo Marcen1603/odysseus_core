@@ -82,6 +82,8 @@ public class VisibilityGenerator extends StreamClientHandler {
 
 				location = new PredifinedValueGenerator(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 				location.init();
+				
+				setDelay(SLEEP);
 	}
 
 	/* (non-Javadoc)
@@ -121,11 +123,11 @@ public class VisibilityGenerator extends StreamClientHandler {
 		tuple.addString("visibility");
 		tuple.addInteger(location.nextValue());
 
-		try {
-			Thread.sleep(SLEEP);
-		} catch (InterruptedException ex) {
-			ex.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(SLEEP);
+//		} catch (InterruptedException ex) {
+//			ex.printStackTrace();
+//		}
 
 		List<DataTuple> list = new ArrayList<DataTuple>();
 		list.add(tuple);
