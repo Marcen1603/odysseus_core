@@ -34,45 +34,39 @@ public class EqualityCheck {
 			boolean showDetails) {
 		if (input0.containsAll(input1) && input1.containsAll(input0)) {
 			return true;
-		} else {
-			List<Tuple> missing1 = detailCheck(input0, input1);
-			if (!missing1.isEmpty()) {
-				System.err
-						.println(missing1.size()
-								+ " tuples are missing from not_optimized, but are present in optimized");
-				if (showDetails) {
-					for (Tuple missing : missing1) {
-						System.err.println(missing
-								+ " missing from not_optimized");
-
-						if (verbose) {
-							System.err.println("originating from ");
-							for (Tuple split : missing.split(new int[] { 5, 9,
-									8 }))
-								System.err.println(split);
-						}
-					}
-				}
-			}
-			List<Tuple> missing0 = detailCheck(input1, input0);
-			if (!missing0.isEmpty()) {
-				System.err
-						.println(missing0.size()
-								+ " tuples are missing from optimized, but are present in not_optimized");
-				if (showDetails) {
-					for (Tuple missing : missing0) {
-						System.err.println(missing + " missing from optimized");
-						if (verbose) {
-							System.err.println("originating from ");
-							for (Tuple split : missing.split(new int[] { 5, 9,
-									8 }))
-								System.err.println(split);
-						}
-					}
-				}
-			}
-			return false;
 		}
+		
+		List<Tuple> missing1 = detailCheck(input0, input1);
+		if (!missing1.isEmpty()) {
+			System.err.println(missing1.size() + " tuples are missing from not_optimized, but are present in optimized");
+			if (showDetails) {
+				for (Tuple missing : missing1) {
+					System.err.println(missing + " missing from not_optimized");
+
+					if (verbose) {
+						System.err.println("originating from ");
+						for (Tuple split : missing.split(new int[] { 5, 9, 8 }))
+							System.err.println(split);
+					}
+				}
+			}
+		}
+		List<Tuple> missing0 = detailCheck(input1, input0);
+		if (!missing0.isEmpty()) {
+			System.err.println(missing0.size() + " tuples are missing from optimized, but are present in not_optimized");
+			if (showDetails) {
+				for (Tuple missing : missing0) {
+					System.err.println(missing + " missing from optimized");
+					if (verbose) {
+						System.err.println("originating from ");
+						for (Tuple split : missing.split(new int[] { 5, 9, 8 }))
+							System.err.println(split);
+					}
+				}
+			}
+		}
+		return false;
+
 	}
 
 	/**

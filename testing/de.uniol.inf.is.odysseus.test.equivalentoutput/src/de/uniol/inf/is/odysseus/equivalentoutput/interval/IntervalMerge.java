@@ -78,9 +78,8 @@ public class IntervalMerge {
 		}
 		if(start < end) {
 			return new ImmutablePair<Long, Long>(start, end);
-		} else {
-			return null;
-		}
+		} 
+		return null;
 	}
 	
 	private static HashMap<Tuple, List<Pair<Long, Long>>> getIntervalMapping(List<Tuple> input) {
