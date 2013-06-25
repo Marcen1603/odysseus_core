@@ -22,6 +22,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	private String classifier;
 	private int minimumSize = 0;
 	private int outputports = 1;
+	private String domain;
 	
 	public SentimentDetectionAO(){
 		super();
@@ -33,6 +34,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         this.outputports = sentimentDetectionAO.outputports;
         this.classifier = sentimentDetectionAO.classifier;
         this.minimumSize = sentimentDetectionAO.minimumSize;
+        this.domain = sentimentDetectionAO.domain;
     }
 	
 
@@ -58,6 +60,11 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		return getOutputSchema();
 	}
 	
+	
+	@Parameter(name = "domain", type=StringParameter.class)
+	public void setDomain(String domain) {
+		this.domain   = domain;
+	}
 	
 	@Parameter(name = "minimumSize", type=IntegerParameter.class)
 	public void setMinimumSize(int minimumSize) {
@@ -87,6 +94,10 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	public int getMinimumSize(){
 		return minimumSize;
+	}
+	
+	public String getDomain(){
+		return domain;
 	}
 	
 

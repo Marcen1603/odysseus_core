@@ -6,9 +6,13 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public interface IClassifier<T extends IMetaAttribute> {
 
-	IClassifier<?> getInstance(String name);
+	IClassifier<?> getInstance(String domain);
 	
 	String getType();
+	
+	String getDomain();
+	
+	void setDomain(String domain);
 	
 	int startDetect(String text);
 	

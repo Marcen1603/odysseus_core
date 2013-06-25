@@ -24,6 +24,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private int outputports;
 	private String classifier;
 	private int minimumSize;
+	private String domain;
 	private boolean isTrained = false;
 
 	private IClassifier<T> algo;
@@ -36,11 +37,12 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	}
 
 	public SentimentDetectionPO(int outputports, String classifier,
-			int minimumSize) {
+			int minimumSize, String domain) {
 		super();
 		this.outputports = outputports;
 		this.classifier = classifier;
 		this.minimumSize = minimumSize;
+		this.domain = domain;
 	}
 
 	public SentimentDetectionPO(SentimentDetectionPO<T> senti) {
@@ -48,6 +50,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.outputports = senti.outputports;
 		this.classifier = senti.classifier;
 		this.minimumSize = senti.minimumSize;
+		this.domain = senti.domain;
 	}
 
 	@Override
@@ -58,14 +61,13 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
-		algo = (IClassifier<T>) ClassifierRegistry
-				.getClassifierByName(classifier.toLowerCase());
 		System.out.println("Classifier wird initialisiert....");
-
+		algo = (IClassifier<T>) ClassifierRegistry
+				.getClassifierByTypeAndDomain(classifier.toLowerCase(), domain);
 	}
 
 	@Override
-	protected void process_next(Tuple object, int port) {
+	protected synchronized void process_next(Tuple object, int port) {
 
 		if (port == 0) {
 			// add trainingsdata
@@ -73,22 +75,40 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 					Integer.parseInt(object.getAttribute(1).toString().trim()));
 
 			if (trainingset.size() >= minimumSize) {
-				// train classifier
-				algo.trainClassifier(trainingset);		
+				algo.trainClassifier(trainingset);
 				isTrained = true;
-				trainingset.clear();
+				// synchronized for java.util.ConcurrentModificationException problems				
+				synchronized (this.buffer) {
+					// train classifier
+					if (buffer.size() > 0) {
+						for (Tuple buffered : this.buffer) {
+							processSentimentDetection(buffered);
+						}
+
+						buffer.clear();
+					}
+					trainingset.clear();
+
+				}
+
 			}
 		} else {
 			if (isTrained) {
-				if(buffer.size() >  0){
-					for (Tuple buffered : this.buffer) {
-						processSentimentDetection(buffered);
+				// synchronized for java.util.ConcurrentModificationException problems		
+				synchronized (this.buffer) {
+					if (buffer.size() > 0) {
+						for (Tuple buffered : this.buffer) {
+							processSentimentDetection(buffered);
+						}
+						buffer.clear();
 					}
-					buffer.clear();
 				}
 				processSentimentDetection(object);
 			} else {
-				buffer.add(object);
+				// synchronized for java.util.ConcurrentModificationException problems		
+				synchronized (this.buffer) {
+					buffer.add(object);
+				}
 			}
 
 		}
@@ -168,7 +188,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		}
 		return outputPort;
 	}
-	
+
 	@Override
 	protected void process_close() {
 		super.process_close();

@@ -6,21 +6,58 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> {
-
+	
 	private final String algo_type = "NaiveBayes";
+	private String domain;
+	
+	private Map<String, Integer> positivewords = new HashMap<String, Integer>();
+	private Map<String, Integer> negativewords = new HashMap<String, Integer>();
+	
+	public NaiveBayes(){
+		
+	}
+	
+	public NaiveBayes(String name, String domain){
+		super();
+	}
+	
+	public NaiveBayes(String domain) {
+		new NaiveBayes<T>(algo_type.toLowerCase(), domain);
+		setDomain(domain);
+	}
+	
 
-	static Map<String, Integer> positivewords = new HashMap<String, Integer>();
-	static Map<String, Integer> negativewords = new HashMap<String, Integer>();
+	@Override
+	public String getType() {
+		return algo_type;
+	}
+	
+	
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+	
+	public String getDomain(){
+		return domain;
+	}
+	
 
+	@Override
+	public IClassifier<?> getInstance(String domain) {
+		return new NaiveBayes<T>(domain);
+	}
+	
+	
 	@Override
 	public void trainClassifier(Map<String, Integer> trainingset) {
 
 	System.out.println("Trainingsset besteht aus: "+ trainingset.size());
-		
+	System.out.println("Es wurde folgende Domain gesetzt: " + domain);	
 	System.out.println("Positiv/Negativ Wortliste erstellen....");
-		
-	//	for ( Map.Entry<String, Integer> e : trainingset.entrySet() )
-	// System.out.println( e.getKey() + "    "+ e.getValue() );
+	
+	//clear positivewords/negativewords
+	positivewords.clear();
+	negativewords.clear();
 
 		for (Map.Entry<String, Integer> e : trainingset.entrySet()) {
 
@@ -53,16 +90,18 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 			// System.out.println( e.getKey() + "="+ e.getValue() );
 		}
 
+		
+		//	for ( Map.Entry<String, Integer> e : positivewords.entrySet() )
+		//			System.out.println( e.getKey() + "    "+ e.getValue() );
+		
+		
 		System.out.println("Classifier erfolgreich initialisiert!");
 		System.out.println("positivewords besteht aus: "+ positivewords.size());
 		System.out.println("negativewords besteht aus: "+ negativewords.size());
 		
 	}
 
-	@Override
-	public String getType() {
-		return algo_type;
-	}
+	
 
 	@Override
 	public int startDetect(String text) {
@@ -108,12 +147,6 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 
 		return decision;
 
-	}
-
-	@Override
-	public IClassifier<?> getInstance(String name) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
