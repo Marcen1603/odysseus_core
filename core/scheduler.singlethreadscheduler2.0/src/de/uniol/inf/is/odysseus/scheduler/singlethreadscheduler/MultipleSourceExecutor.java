@@ -48,26 +48,29 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 		boolean open = false;
 		// Wait for at least one open source
 		logger.debug("Waiting for at least one open source");
-		for (IIterableSource<?> s : sources) {
-			s.subscribe(this, POEventType.OpenDone);
-		}
-		while (!open) {
-			for (IIterableSource<?> s : sources) {
-				if (!s.isOpen()) {
-					logger.debug("Opened " + this.hashCode()
-							+ "... Start Processing of Source " + s);
-					open = true;
-					continue;
-				}
-			}
+		synchronized (sources) {
 
-			synchronized (this) {
+			for (IIterableSource<?> s : sources) {
+				s.subscribe(this, POEventType.OpenDone);
+			}
+			while (!open) {
+				for (IIterableSource<?> s : sources) {
+					if (s.isOpen()) {
+						logger.debug("Opened " + this.hashCode()
+								+ "... Start Processing of Source " + s);
+						open = true;
+						break;
+					}
+				}
+
 				try {
-					this.wait(1000);
+					if (!open) {
+						sources.wait(1000);
+					}
 				} catch (InterruptedException ignored) {
 				}
-			}
 
+			}
 		}
 		logger.debug("At least one source is open");
 		boolean firstRun = false;
@@ -145,7 +148,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	}
 
 	private void transfer(IIterableSource<?> s, long ct2) {
-		logger.debug("Transfer for " + s +" "+ct2);
+		logger.debug("Transfer for " + s + " " + ct2);
 		s.transferNext();
 		lastRuns.put(s, ct2);
 	}
@@ -168,7 +171,9 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 	@Override
 	public synchronized void eventOccured(IEvent<?, ?> event, long nanoTimestamp) {
-		notifyAll();
+		synchronized (sources) {
+			notifyAll();
+		}
 	}
 
 	public void removeSource(IIterableSource<?> source) {
