@@ -1,17 +1,21 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.*;
+import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ResultEntity;
+
 
 
 public class KNearestNeighbor<T extends IMetaAttribute> extends
 		AbstractClassifier<T> {
+	
+
 
 	private final String algo_type = "KNearestNeighbor";
 
@@ -61,8 +65,10 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 		 */
 		
 		List<String> testwords = getWords(text);
-		TreeMap<Double, Integer> results = new TreeMap<Double, Integer>();
+		//TreeMap<Double, Integer> results = new TreeMap<Double, Integer>();
 		
+		
+	    List<ResultEntity> results  = new ArrayList<ResultEntity>();
 		
 		
 	
@@ -80,7 +86,9 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 				score += Math.log(ntr/freq.get(word));
 			}
 			
-			results.put(score, e.getValue());
+			
+			results.add(new ResultEntity(score,  e.getValue()));  
+			
 			
 			
 		}
@@ -91,23 +99,20 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 		int numnegones = 0;
 		
 		
-
-
-		//bad solution... fix soon...only the first 5(classifierNN) scores desc
-	    for ( Map.Entry<Double, Integer> e : results.entrySet() ) {
-	    
-	    		if(e.getValue() == 1){
-		    		numones++;
-		    	}else{
-		    		numnegones++;
-		    	}
-		    	System.out.println( e.getKey() + "= "+ e.getValue() );
-		    
-
-	    
+		Collections.sort(results ,Collections.reverseOrder());
+		
+		//only the first 5(classifierNN) scores desc
+	    for(ResultEntity entity : results.subList(0,classifierNN))
+	    {
+	    	System.out.println( entity.getScore() + "= "+ entity.getLabel() );
+	    	if(entity.getLabel() == 1){
+	    		numones++;
+	    	}else{
+	    		numnegones++;
+	    	}
+	    	
 	    }
-	   
-	 
+	    		
 	    if(numnegones>numones){
 	    	decision=-1;
 	    }else{

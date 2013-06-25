@@ -31,7 +31,6 @@ public class ClassifierRegistry<T extends Tuple<?>> {
 	}
 
 	public static void unregisterClassifierAlgo(IClassifier<?> classifierAlgo) {
-
 		if (classifierAlgoTypes.containsKey(classifierAlgo.getType()
 				.toLowerCase())) {
 			classifierAlgoTypes.remove(classifierAlgo.getType().toLowerCase());
