@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -146,57 +146,51 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		int degreeOfParallelism = this.getDegreeOfParallelismn(this.determineWantedDegreeOfParallelism(cfg), remotePeerIDs.size());
 		
 		// All queryparts over all queries
-		final Map<ILogicalQuery, List<QueryPart>> queryPartsMap = Maps.newHashMap();
+		// Outer map keys: the origin queries
+		// Inner map keys: the copies of one origin query
+		// Inner map values: a list of queryparts belonging to the copy
+		final Map<ILogicalQuery, Map<ILogicalQuery, List<QueryPart>>> queryPartsMap = Maps.newHashMap();
 
 		for(final ILogicalQuery originQuery : queries) {
 			
-			// Make a copy of the query to avoid changes of the originQuery
-			ILogicalQuery query = DistributionHelper.copyLogicalQuery(originQuery);
-			queryPartsMap.put(originQuery, new ArrayList<QueryPart>());
-			
-			// Get all logical operators of the query and remove the TopAOs
-			List<ILogicalOperator> operators = Lists.newArrayList();
-			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
-			RestructHelper.removeTopAOs(operators);
-			
-			// Create the local part
-			QueryPart localPart = this.createLocalPart(operators, degreeOfParallelism);
-			
-			// Determine query parts
-			List<QueryPart> parts = this.determineQueryParts(operators);
-			LOG.debug("Got {} parts of logical query {}", parts.size(), originQuery);
-			queryPartsMap.get(originQuery).addAll(parts);
+			queryPartsMap.put(originQuery, new HashMap<ILogicalQuery, List<QueryPart>>());
+			QueryPart localPart = null;
 			
 			// Make copies of the query
 			List<ILogicalQuery> queryCopies = Lists.newArrayList();	
-			for(int copyNo = 0; copyNo < degreeOfParallelism - 1; copyNo++)
+			for(int copyNo = 0; copyNo < degreeOfParallelism; copyNo++)
 				queryCopies.add(DistributionHelper.copyLogicalQuery(originQuery));
 
 			for(ILogicalQuery queryCopy: queryCopies) {
 			
 				// Get all logical operators of the query and remove the TopAOs
-				operators.clear();;
+				List<ILogicalOperator> operators = Lists.newArrayList();
 				RestructHelper.collectOperators(queryCopy.getLogicalPlan(), operators);
 				RestructHelper.removeTopAOs(operators);
+				
+				// Create the local part
+				if(localPart == null)
+					localPart = this.createLocalPart(operators, degreeOfParallelism);
 
 				// Subscribe copy to local part
 				this.subscribeCopyToLocalPart(operators, degreeOfParallelism, localPart);
 				
 				// Create the queryparts of this query
-				parts = this.determineQueryParts(operators);
-				queryPartsMap.get(originQuery).addAll(parts);
+				List<QueryPart> parts = this.determineQueryParts(operators);
+				LOG.debug("Got {} parts of logical query {}", parts.size(), originQuery);
+				queryPartsMap.get(originQuery).put(queryCopy, parts);
 				
 			}
 			
-			// Initialize all operators of the local part
+			// Initialize all operators of the local part and add it ONCE
 			this.initLocalPart(localPart);
-			queryPartsMap.get(originQuery).add(localPart);
+			queryPartsMap.get(originQuery).values().iterator().next().add(localPart);
 			
 		}
 		
 		// Assign query parts to peers
 		final Map<QueryPart, PeerID> queryPartDistributionMap = 
-				this.assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), queryPartsMap.values());
+				this.assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), this.arrangeQueryParts(queryPartsMap));
 		int connectionNo =  connectionCounter++;
 		DistributionHelper.generatePeerConnections(queryPartDistributionMap, getAccessName() + connectionNo + "_", 
 				getSenderName() + connectionNo + "_");
@@ -205,13 +199,24 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		final List<ILogicalQuery> localQueries = Lists.newArrayList();
 		
 		// Publish all remote parts and get the local ones
-		for(ILogicalQuery query : queryPartsMap.keySet())
-			localQueries.add(this.shareParts(queryPartsMap.get(query), queryPartDistributionMap, cfg, query.toString()));
+		for(ILogicalQuery originQuery : queryPartsMap.keySet()) {
+			
+			List<QueryPart> allQueryParts = Lists.newArrayList();
+			for(List<QueryPart> queryPartsOfCopy : queryPartsMap.get(originQuery).values())
+				allQueryParts.addAll(queryPartsOfCopy);
+			localQueries.add(this.shareParts(allQueryParts, queryPartDistributionMap, cfg, originQuery.toString()));
+			
+		}
 		
 		return localQueries;
 		
 	}
 	
+	/**
+	 * Reads out the wanted degree of parallelism from the {@link QueryBuildConfiguration}.
+	 * @param cfg The {@link QueryBuildConfiguration}.
+	 * @return The wanted degree of parallelism (> 0).
+	 */
 	protected int determineWantedDegreeOfParallelism(QueryBuildConfiguration cfg) {
 		
 		// Preconditions
@@ -259,6 +264,50 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	protected abstract List<QueryPart> determineQueryParts(List<ILogicalOperator> operators);
 	
 	/**
+	 * Arranges the {@link QueryPart}s, so that same {@link QueryPart}s of different {@link ILogicalQuery} copies are back-to-back.
+	 * @param queryPartsMap All {@link QueryPart}s over all queries. <br />
+	 * Outer map keys: the origin queries <br />
+	 * Inner map keys: the copies of one origin query <br />
+	 * Inner map values: a list of queryparts belonging to the copy
+	 * @return A collection of all {@link QueryPart}s <code>queryPartsMap</code> contains arranged as same {@link QueryPart}s of 
+	 * different {@link ILogicalQuery} copies are back-to-back.
+	 */
+	protected Collection<QueryPart> arrangeQueryParts(Map<ILogicalQuery, Map<ILogicalQuery, List<QueryPart>>> queryPartsMap) {
+		
+		Preconditions.checkNotNull(queryPartsMap, "queryPartsMap must be not null!");
+		
+		final Collection<QueryPart> arrangedParts = Lists.newArrayList();
+		final List<Iterator<QueryPart>> partsIter = Lists.newArrayList();
+		
+		for(Map<ILogicalQuery, List<QueryPart>> partialQueryPartsMap : queryPartsMap.values()) {
+			
+			for(List<QueryPart> parts : partialQueryPartsMap.values())
+				partsIter.add(parts.iterator());
+			
+		}
+		
+		boolean elementsLeft;
+		do {
+			
+			elementsLeft = false;
+			for(Iterator<QueryPart> iter : partsIter) {
+				
+				if(iter.hasNext()) {
+					
+					arrangedParts.add(iter.next());
+					elementsLeft = true;
+					
+				}
+				
+			}
+			
+		} while(elementsLeft);
+		
+		return arrangedParts;
+		
+	}
+	
+	/**
 	 * Maps each {@link QueryPart} to a peer except the local peer via round robin.
 	 * @param remotePeerIDs The collection of all peer IDs. <br />
 	 * <code>remotePeerIDs</code> must not be null and not empty.
@@ -268,8 +317,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * <code>queryParts</code> must not be null.
 	 * @return The mapping of the {@link QueryPart}s and the IDs of the the peers, where each {@link QueryPart} shall be stored.
 	 */
-	protected Map<QueryPart, PeerID> assignQueryParts(Collection<PeerID> remotePeerIDs, 
-			PeerID localPeerID, Collection<List<QueryPart>> queryParts) {
+	protected Map<QueryPart, PeerID> assignQueryParts(Collection<PeerID> remotePeerIDs, PeerID localPeerID, Collection<QueryPart> queryParts) { 
 		
 		Preconditions.checkNotNull(remotePeerIDs, "remotePeerIDs must be not null!");
 		Preconditions.checkArgument(remotePeerIDs.size() > 0, "remotePeerIDs must be not empty!");
@@ -277,36 +325,33 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
 		
 		final Map<QueryPart, PeerID> distributed = Maps.newHashMap();
-		final Iterator<List<QueryPart>> partsIter = queryParts.iterator();
+		final Iterator<QueryPart> partsIter = queryParts.iterator();
 		
 		while(partsIter.hasNext()) {
 			
+			QueryPart part = partsIter.next();
 			Optional<String> peerName;
 			PeerID peerID = null;
-		
-			for(final QueryPart part : partsIter.next()) {
 				
-				if(part.getDestinationName().isPresent() && part.getDestinationName().get().equals(AbstractLoadBalancer.getLocalDestinationName())) {
+			if(part.getDestinationName().isPresent() && part.getDestinationName().get().equals(AbstractLoadBalancer.getLocalDestinationName())) {
 					
-					// Local part
-					distributed.put(part, localPeerID);
-					peerName = P2PDictionaryService.get().getRemotePeerName(localPeerID);
-					
-				} else {
-					
-					// Round-Robin
-					peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
-					peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
-					distributed.put(part, peerID);
-					peerCounter = (++peerCounter) % remotePeerIDs.size();					
-					
-				}			
+				// Local part
+				distributed.put(part, localPeerID);
+				peerName = P2PDictionaryService.get().getRemotePeerName(localPeerID);
 				
-				if(peerName.isPresent())
-					LOG.debug("Assign query part {} to peer {}", part, peerName.get());
-				else LOG.debug("Assign query part {} to peer {}", part, peerID);
+			} else {
 				
-			}
+				// Round-Robin
+				peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
+				peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
+				distributed.put(part, peerID);
+				peerCounter = (++peerCounter) % remotePeerIDs.size();					
+				
+			}			
+				
+			if(peerName.isPresent())
+				LOG.debug("Assign query part {} to peer {}", part, peerName.get());
+			else LOG.debug("Assign query part {} to peer {}", part, peerID);
 			
 		}
 
