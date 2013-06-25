@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.PriorityQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Multiset;
+import com.google.common.collect.TreeMultiset;
 
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
@@ -22,8 +24,8 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	boolean alldone = false;
 	private boolean interrupt = false;
 	// Sort source regarding delay
-	final private PriorityQueue<IIterableSource<?>> sources = new PriorityQueue<IIterableSource<?>>(
-			11, new Comparator<IIterableSource<?>>() {
+	final private Multiset<IIterableSource<?>> sources = TreeMultiset
+			.create(new Comparator<IIterableSource<?>>() {
 				@Override
 				public int compare(IIterableSource<?> left,
 						IIterableSource<?> right) {
@@ -73,54 +75,40 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 			}
 		}
 		logger.debug("At least one source is open");
-		boolean firstRun = false;
 		while (!interrupt && !isInterrupted()) {
 			synchronized (sources) { // No interruptions while one run
 				boolean waitedForFirstSource = false;
+
 				for (IIterableSource<?> s : sources) {
 					if (s.isOpen() && !s.isDone()) {
 
 						if (s.hasNext()) {
 							Long lastRun = -1l;
-							if (s.getDelay() > 0) {
-								lastRun = lastRuns.get(s);
-								if (lastRun == null) {
-									lastRun = System.currentTimeMillis();
-									firstRun = true;
-								} else {
-									firstRun = false;
-								}
-							}
+							lastRun = lastRuns.get(s);
 							// Only delay source with shortest waiting time
 							// all other sources should be testet each time
 							// ... its some kind of busy wait ... :-/
 							if (!waitedForFirstSource) {
 								waitedForFirstSource = true;
 								long ct2 = System.currentTimeMillis();
-								transfer(s);
-								if (s.getDelay() > 0) {
-									// The first round nobody has to wait
-									if (!firstRun) {
-										long diff = ct2 - lastRun;
-										try {
-											if (s.getDelay() - diff > 0) {
-												Thread.sleep(s.getDelay()
-														- diff);
-											}
-										} catch (InterruptedException e) {
-											// Exception can be ignored
+								// The first round nobody has to wait
+								if (lastRun != null) {
+									long diff = ct2 - lastRun;
+									try {
+										logger.trace("Sleeping ..." + s);
+										if (s.getDelay() - diff > 0) {
+											Thread.sleep(s.getDelay() - diff);
 										}
+									} catch (InterruptedException e) {
+										// Exception can be ignored
 									}
 								}
-							} else { // Handle next sources
-								if (firstRun) {
+								transfer(s);
+							} else { // Handle all but the first source
+								long ct2 = System.currentTimeMillis();
+								if (lastRun == null
+										|| ct2 - lastRun >= s.getDelay()) {
 									transfer(s);
-								} else {
-									long ct2 = System.currentTimeMillis();
-									long diff = ct2 - lastRun;
-									if (diff >= s.getDelay()) {
-										transfer(s);
-									}
 								}
 							}
 						}
@@ -149,7 +137,14 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 	private void transfer(IIterableSource<?> s) {
 		long ct2 = System.currentTimeMillis();
-		//logger.debug("Transfer for " + s + " " + ct2);
+		if (logger.isTraceEnabled()) {
+			Long lastRun = lastRuns.get(s);
+			if (lastRun == null) {
+				lastRun = -1L;
+			}
+			logger.trace("Transfer for " + s + " d=" + s.getDelay() + " real="
+					+ (ct2 - lastRun) + " n=" + ct2 + " last=" + lastRun);
+		}
 		s.transferNext();
 		lastRuns.put(s, ct2);
 	}
@@ -186,8 +181,8 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 	public synchronized void addSource(IIterableSource<?> source) {
 		synchronized (sources) {
-			logger.debug("Adding Source " + source);
 			sources.add(source);
+			logger.debug("Added Source " + source + " " + sources);
 			alldone = false;
 			notifyAll();
 		}
