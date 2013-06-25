@@ -15,6 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.view.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModelChangeListener;
@@ -23,6 +26,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public class OdysseusNodeView extends DefaultNodeView<IPhysicalOperator> implements IOdysseusNodeView, INodeModelChangeListener<IPhysicalOperator> {
 
+	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeView.class);
+	
 	public OdysseusNodeView() {
 		this(null);
 	}
@@ -62,7 +67,11 @@ public class OdysseusNodeView extends DefaultNodeView<IPhysicalOperator> impleme
 		}
 
 		if (getModelNode() != null) {
-			return getModelNode().getContent().hasOwner();
+			boolean result = getModelNode().getContent().hasOwner();
+			if( !result ) {
+				LOG.error("Physical operator '{}' has no owner!", getModelNode().getContent());
+			}
+			return result;
 		}
 
 		return vis;
