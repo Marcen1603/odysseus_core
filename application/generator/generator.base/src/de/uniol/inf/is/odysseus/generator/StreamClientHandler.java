@@ -78,6 +78,7 @@ public abstract class StreamClientHandler extends Thread {
 
 	private long delay = 0;
 	private long lastTransfer = -1;
+	private boolean delayEachTuple = false;
 
 	public abstract void init();
 
@@ -131,9 +132,14 @@ public abstract class StreamClientHandler extends Thread {
 					break;
 				}
 				for (DataTuple nextTuple : next) {
-					delay();
+					if (delayEachTuple){
+						delay();
+					}
 					transferTuple(nextTuple);
 					printThroughput(nextTuple);
+				}
+				if (!delayEachTuple){
+					delay();
 				}
 				next = next();
 
