@@ -37,7 +37,7 @@ public class WindGenerator extends StreamClientHandler {
 	String[] directions = {"N", "E", "W", "S", "NE", "NW", "SE", "SW"};
 	
 	private final static int CHANGE_MARKER = 125;
-	private final static int MAX_ELEMENTS = 500;
+	private final static int MAX_ELEMENTS = 1000;
 	private final static int SLEEP = 200;
 	private int tupleCounter = 0;
 	private boolean changed = false;
@@ -100,10 +100,10 @@ public class WindGenerator extends StreamClientHandler {
 	 */
 	@Override
 	public List<DataTuple> next() throws InterruptedException {
-		if(tupleCounter >= MAX_ELEMENTS) {
-			System.out.println("MAX_ELEMENTS reached for " + this.getClass().getSimpleName() + ". Stopping Service.");
-			return null;
-		}
+//		if(tupleCounter >= MAX_ELEMENTS) {
+//			System.out.println("MAX_ELEMENTS reached for " + this.getClass().getSimpleName() + ". Stopping Service.");
+//			return null;
+//		}
 		
 		// change value range of temperature when tupleCounter hits
 		// CHANGE_MARKER

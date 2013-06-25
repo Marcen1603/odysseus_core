@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
 public class PressureGenerator extends StreamClientHandler {
 
 	private final static int CHANGE_MARKER = 25;
-	private final static int MAX_ELEMENTS = 100;
+	private final static int MAX_ELEMENTS = 200;
 	private final static int SLEEP = 1000;
 	private int tupleCounter = 0;
 	private boolean changed = false;
@@ -99,10 +99,10 @@ public class PressureGenerator extends StreamClientHandler {
 	 */
 	@Override
 	public List<DataTuple> next() throws InterruptedException {
-		if (tupleCounter >= MAX_ELEMENTS) {
-			System.out.println("MAX_ELEMENTS reached for " + this.getClass().getSimpleName() + ". Stopping Service.");
-			return null;
-		}
+//		if (tupleCounter >= MAX_ELEMENTS) {
+//			System.out.println("MAX_ELEMENTS reached for " + this.getClass().getSimpleName() + ". Stopping Service.");
+//			return null;
+//		}
 		
 		if(tupleCounter >= CHANGE_MARKER && !changed) {
 			System.out.println("CHANGE_MARKER reached for " + this.getClass().getSimpleName() + ". Changing value range.");

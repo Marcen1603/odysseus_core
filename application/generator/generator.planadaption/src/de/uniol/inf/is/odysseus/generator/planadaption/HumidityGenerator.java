@@ -36,7 +36,7 @@ public class HumidityGenerator extends StreamClientHandler {
 
 	private final static int CHANGE_MARKER = 250;
 	private final static int SLEEP = 100;
-	private final static int MAX_ELEMENTS = 1000;
+	private final static int MAX_ELEMENTS = 2000;
 	private int tupleCounter = 0;
 	private boolean changed = false;
 	
@@ -98,10 +98,10 @@ public class HumidityGenerator extends StreamClientHandler {
 	 */
 	@Override
 	public List<DataTuple> next() throws InterruptedException {
-		if(tupleCounter >= MAX_ELEMENTS) {
-			System.out.println("MAX_ELEMENTS reached for " + this.getClass().getSimpleName() + ". Stopping Service.");
-			return null;
-		}
+//		if(tupleCounter >= MAX_ELEMENTS) {
+//			System.out.println("MAX_ELEMENTS reached for " + this.getClass().getSimpleName() + ". Stopping Service.");
+//			return null;
+//		}
 		
 		// change value range of temperature when tupleCounter hits CHANGE_MARKER
 		if (tupleCounter >= CHANGE_MARKER && !changed) {

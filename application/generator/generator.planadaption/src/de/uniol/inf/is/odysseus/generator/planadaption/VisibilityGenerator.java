@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
 public class VisibilityGenerator extends StreamClientHandler {
 
 	private final static int CHANGE_MARKER = 166;
-	private final static int MAX_ELEMENTS = 666;
+	private final static int MAX_ELEMENTS = 1333;
 	private final static int SLEEP = 150;
 	private int tupleCounter = 0;
 	private boolean changed = false;
@@ -97,10 +97,10 @@ public class VisibilityGenerator extends StreamClientHandler {
 	 */
 	@Override
 	public List<DataTuple> next() throws InterruptedException {
-		if(tupleCounter >= MAX_ELEMENTS) {
-			System.out.println("MAX_ELEMENTS reached for " + this.getClass().getSimpleName() + ". Stopping Service.");
-			return null;
-		}
+//		if(tupleCounter >= MAX_ELEMENTS) {
+//			System.out.println("MAX_ELEMENTS reached for " + this.getClass().getSimpleName() + ". Stopping Service.");
+//			return null;
+//		}
 		
 		// change value range of temperature when tupleCounter hits
 		// CHANGE_MARKER
