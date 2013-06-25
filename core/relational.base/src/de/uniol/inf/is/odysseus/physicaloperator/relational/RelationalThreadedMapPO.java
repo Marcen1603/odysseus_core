@@ -37,11 +37,16 @@ public class RelationalThreadedMapPO<T extends IMetaAttribute> extends AbstractP
     final private boolean statebased;
     final private boolean allowNull;
 
-    public RelationalThreadedMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean statebased, boolean allowNullInOutput) {
+    public RelationalThreadedMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean statebased, boolean allowNullInOutput, int threads) {
         this.inputSchema = inputSchema;
         this.statebased = statebased;
         this.allowNull = allowNullInOutput;
-        this.threadPool = Executors.newFixedThreadPool(expressions.length);
+        if (threads > 0) {
+            this.threadPool = Executors.newFixedThreadPool(threads);
+        } else {
+            int availableProcessors = Runtime.getRuntime().availableProcessors();
+            this.threadPool = Executors.newFixedThreadPool(Math.min(availableProcessors, expressions.length));
+        }
         init(inputSchema, expressions);
     }
 

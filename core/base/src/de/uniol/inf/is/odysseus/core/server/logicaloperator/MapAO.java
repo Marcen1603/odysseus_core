@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
@@ -38,9 +38,9 @@ public class MapAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2120387285754464451L;
 	private List<NamedExpressionItem> namedExpressions;
-	private List<SDFExpression> expressions;
-	/** Flag indicating whether each expression should be running in an own thread */
-    private boolean threading = false;
+    private List<SDFExpression> expressions;
+    /** The number of threads used for processing the expressions. */
+    private int threads = 0;
 
 	public MapAO() {
 		super();
@@ -49,7 +49,7 @@ public class MapAO extends UnaryLogicalOp {
 	public MapAO(MapAO ao) {
 		super(ao);
 		this.setExpressions(ao.namedExpressions);
-		this.threading = ao.threading;
+		this.threads = ao.threads;
 	}
 
 	public List<SDFExpression> getExpressions() {
@@ -162,13 +162,28 @@ public class MapAO extends UnaryLogicalOp {
 		setOutputSchema(null);
 	}
 	
-    @Parameter(type = BooleanParameter.class, name = "threading", optional = true)
-    public void setThreading(boolean threading) {
-        this.threading = threading;
+    /**
+     * Sets the number of threads used for processing the expressions. A value
+     * greater than 1 indicates the number of simultaneous processing. A value
+     * equal to 1 or 0 indicates that no threads should be used. And a value
+     * lower than 0 indicates automatic threads number selection based on the
+     * number of expressions and the number of available processors.
+     * 
+     * @param threads
+     *            The number of threads
+     */
+    @Parameter(type = IntegerParameter.class, name = "threads", optional = true)
+    public void setThreads(int threads) {
+        this.threads = threads;
     }
-    
-    public boolean isThreading() {
-        return threading;
+
+    /**
+     * Gets the number of threads used for processing the expressions
+     * 
+     * @return The number of threads
+     */
+    public int getThreads() {
+        return threads;
     }
     
 	@Override
