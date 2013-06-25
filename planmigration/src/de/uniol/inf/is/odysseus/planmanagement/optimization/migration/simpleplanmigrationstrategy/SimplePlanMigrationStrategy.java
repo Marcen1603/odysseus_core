@@ -176,6 +176,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		context.setMigrationStart(migrationStart);
 		// context.setwMax(wMax);
 
+		long time = 0;
+		
 		LOG.debug("Preparing plan for parallel execution.");
 		// insert buffers before sources
 		// for (ISource<?> source : oldPlanSources) {
@@ -201,22 +203,10 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			buffer.setSource((ISource<?>) metadataUpdatePO);
 			context.addBufferPO((BufferPO<?>) buffer);
 
-//			Collection<PhysicalSubscription> afterSourceSubs = ((ISource) metadataUpdatePO)
-//					.getSubscriptions();
-//			List<ISink> sinks = new ArrayList<ISink>();
-//			List<Integer> sinkInPorts = new ArrayList<Integer>();
-//			for (PhysicalSubscription<?> sub : afterSourceSubs) {
-//				IPhysicalOperator sink = (IPhysicalOperator) sub.getTarget();
-//				// filter DataSourceObserver
-//				if (sink.isPipe()) {
-//					sinks.add((ISink) sink);
-//					sinkInPorts.add(sub.getSinkInPort());
-//				}
-//			}
-
 			insertBuffer(buffer, metadataUpdatePO, newPlanOperatorsBeforeSources, oldPlanOperatorsBeforeSources);
 
-			LOG.debug("Insert Blocking-Buffer after source ... done");
+			time = System.currentTimeMillis();
+			LOG.debug("Insert Blocking-Buffer after source ... done at {}", time);
 		}
 
 		ITimeIntervalSweepArea<? extends IStreamObject<? extends ITimeInterval>>[] areas = new DefaultTISweepArea[2];
@@ -289,6 +279,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		for(BufferPO<?> buffer : context.getBufferPOs()) {
 			buffer.unblock();
 		}
+		long diff = System.currentTimeMillis();
+		LOG.debug("Buffers unblocked at {} with duration {}", diff, diff - time);
 
 		LOG.debug("Parallel execution started.");
 		// we are waiting for the event that is fired.
@@ -630,9 +622,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				}
 
 				LOG.debug("Unblocking buffer to drain it");
+				LOG.debug("Buffer contains {} elements", buffer.size());
+				int elementCOunt = buffer.size();
 				buffer.unblock();
 				LOG.debug("Empty buffer");
 				while (buffer.hasNext()) {
+					LOG.debug("Elements to send "+(elementCOunt--));
 					buffer.transferNext();
 				}
 

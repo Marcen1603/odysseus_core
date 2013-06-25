@@ -106,6 +106,7 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 	protected void process_next(T object, int port) {
 		synchronized (buffer) {
 			this.buffer.add(object);
+			LOG.debug("{} added {}", this.source.getName(), object);
 			// if the received objects starttimestamp is after the latestEndTimestamp the MigrationMarkerPunctuation can be inserted.
 			if (!this.markerInserted && ((this.latestEndTimestamp != null && object.getMetadata()
 					.getStart().after(this.latestEndTimestamp))
