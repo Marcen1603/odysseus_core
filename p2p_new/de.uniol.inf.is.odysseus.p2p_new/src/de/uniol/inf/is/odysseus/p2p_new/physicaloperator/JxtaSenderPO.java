@@ -51,6 +51,11 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	private IJxtaServerConnection connection;
 	private NullAwareTupleDataHandler dataHandler;
+	
+	private long sentByteCount;
+	private double sentByteRate;
+	private long sentByteRateCounter;
+	private long sentByteRateTimestamp;
 
 	public JxtaSenderPO(JxtaSenderAO ao) {
 		pipeID = convertToPipeID(ao.getPipeID());
@@ -221,6 +226,26 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		}
 	}
 
+	public final PipeAdvertisement getPipeAdvertisement() {
+		return connection.getPipeAdvertisement();
+	}
+
+	public final int getConnectionCount() {
+		return connection.getConnections().size();
+	}
+
+	public final long getSentByteCount() {
+		return sentByteCount;
+	}
+
+	public final double getSentByteDataRate() {
+		return sentByteRate;
+	}	
+
+	public final JxtaConnectionType getConnectionType() {
+		return JxtaConnectionType.OTHER;
+	}
+	
 	@Override
 	protected void process_next(T object, int port) {
 		if (!dataTransmissionConnectionMap.isEmpty()) {
@@ -307,6 +332,16 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		// did not apply the "real" size of the object
 		buffer.get(rawBytes, 5, messageSizeBytes);
 
+		sentByteCount += rawBytes.length;
+		sentByteRateCounter += rawBytes.length;
+		final long now = System.currentTimeMillis();
+		final long delta = now - sentByteRateTimestamp;
+		if( delta > 1000 ) {
+			sentByteRate = sentByteRateCounter / (delta / 1000.0);
+			sentByteRateCounter = 0;
+			sentByteRateTimestamp = now;
+		}
+		
 		synchronized (dataTransmissionConnectionMap) {
 			for (IJxtaConnection conn : dataTransmissionConnectionMap.values()) {
 				try {
