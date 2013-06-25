@@ -135,7 +135,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 	}
 
 	private static List<String> readLinesFromFile(IFile queryFile) throws CoreException, IOException {
-		// Datei öffnen
+		// Datei ï¿½ffnen
 		if (!queryFile.isSynchronized(IResource.DEPTH_ZERO)) {
 			queryFile.refreshLocal(IResource.DEPTH_ZERO, null);
 		}
@@ -164,13 +164,13 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					if (ex.getCause() instanceof QueryParseException) {
 						QueryParseException qpe = (QueryParseException) ex.getCause();
 						return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parsing of Odysseus script failed in line " + qpe.getLine() + " at column " + qpe.getColumn(), qpe);
-					} else {
-						Throwable cause = ex;
-						while ((cause instanceof OdysseusScriptException || cause instanceof QueryParseException) && cause.getCause() != null) {
-							cause = cause.getCause();							
-						}
-						return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parsing of Odysseus script failed in line " + ex.getLine() + " at column " + ex.getColumn(), cause);
-					}					
+					} 
+					Throwable cause = ex;
+					while ((cause instanceof OdysseusScriptException || cause instanceof QueryParseException) && cause.getCause() != null) {
+						cause = cause.getCause();							
+					}
+					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parsing of Odysseus script failed in line " + ex.getLine() + " at column " + ex.getColumn(), cause);
+										
 				} catch (Throwable ex) {
 					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", ex);
 				}
