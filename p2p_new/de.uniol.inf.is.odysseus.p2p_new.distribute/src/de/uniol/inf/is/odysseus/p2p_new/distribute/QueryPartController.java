@@ -102,8 +102,9 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 
 		final Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, sharedQueryID);
 
-		if (sharedQueryID != null) {
+		if (!ids.isEmpty()) {
 			LOG.debug("Got message for shared query id {}", sharedQueryID);
+			LOG.debug("Local queries are {}", ids);
 
 			switch (type) {
 			case REMOVE_MSG_TYPE:
@@ -133,18 +134,18 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		try {
 			inEvent = true;
 
-			final IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
-
-			final int queryID = query.getID();
-			final ID sharedQueryID = sharedQueryIDMap.get(queryID);
-			if (sharedQueryID == null) {
-				return; // query was not shared
-			}
-
-			final Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, sharedQueryID);
-			final OutputPipe outputPipe = outputPipeMap.get(sharedQueryID);
-			if (outputPipe != null) {
-				if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
+			if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) { 
+				final IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
+	
+				final int queryID = query.getID();
+				final ID sharedQueryID = sharedQueryIDMap.get(queryID);
+				if (sharedQueryID == null) {
+					return; // query was not shared
+				}
+	
+				final Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, sharedQueryID);
+				final OutputPipe outputPipe = outputPipeMap.get(sharedQueryID);
+				if (outputPipe != null) {
 					LOG.debug("Got REMOVE-event for queryid={}", queryID);
 					LOG.debug("Shared query id is {}", sharedQueryID);
 
@@ -210,11 +211,12 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 			sharedQueryIDMap.put(id, sharedQueryID);
 		}
 
-		final PipeAdvertisement adv = createPipeAdvertisement(sharedQueryID);
 
 		try {
 			if (!inputPipeMap.containsKey(sharedQueryID)) {
+				final PipeAdvertisement adv = createPipeAdvertisement(sharedQueryID);
 				final InputPipe inputPipe = JxtaServicesProviderService.get().getPipeService().createInputPipe(adv, this);
+				
 				inputPipeMap.put(sharedQueryID, inputPipe);
 				LOG.debug("Created new input pipe for shared query id {}", sharedQueryID);
 				LOG.debug("Pipeid of Advertisementid is {}", adv.getPipeID());
