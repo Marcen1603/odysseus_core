@@ -43,8 +43,10 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 				default:
 					throw new IllegalArgumentException("There is no classifier model called " + modelSmall + "!");
 				}
-				String[] wekaoptions = weka.core.Utils.splitOptions(options.get("arguments"));
-				wekaLearner.setOptions(wekaoptions);
+				if(options.containsKey("arguments")){
+					String[] wekaoptions = weka.core.Utils.splitOptions(options.get("arguments"));
+					wekaLearner.setOptions(wekaoptions);
+				}
 			} else {
 				throw new IllegalArgumentException("Parameter \"model\" is not defined!");
 			}

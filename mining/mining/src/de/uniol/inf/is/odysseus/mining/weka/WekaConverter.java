@@ -27,7 +27,7 @@ public class WekaConverter {
 		Instance inst = new DenseInstance(war.getWekaSchema().size());		
 		for (int i = 0; i < tuple.size(); i++) {
 			Attribute a = war.getWekaSchema().get(i);
-			if (a.isNominal()) {
+			if (a.isNominal() || a.isString()) {
 				String val = tuple.getAttribute(i).toString();
 				inst.setValue(a, val);
 			} else {

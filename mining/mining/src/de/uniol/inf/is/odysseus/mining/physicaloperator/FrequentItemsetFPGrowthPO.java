@@ -32,10 +32,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.mining.frequentitem.Pattern;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Transaction;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.FList;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.FPTree;
-import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Pattern;
 
 /**
  * @author Dennis Geesen
@@ -51,8 +51,8 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	// private int maxlength = 5;
 	private int maxTransactions = 25;
 	private int counter = 0;
-	private long lastTime = 0L;
-	private long startTime = 0L;
+//	private long lastTime = 0L;
+//	private long startTime = 0L;
 	private int maxLength = 0;
 
 	private FList<M> flist = new FList<M>();
@@ -86,8 +86,8 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		this.transactions.clear();
 		this.lastCut = PointInTime.getZeroTime();
 		sweepArea.clear();
-		startTime = System.currentTimeMillis();
-		lastTime = startTime;
+//		startTime = System.currentTimeMillis();
+//		lastTime = startTime;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -95,19 +95,24 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	protected void process_next(Tuple<M> object, int port) {
 		processLock.lock();
 		lastMetadata = (M) object.getMetadata().clone();
-		if (counter % 100 == 0) {
-			long now = System.currentTimeMillis();
-			long needed = (now - lastTime);
-			long total = (now - startTime);
-
-			lastTime = now;
-			Tuple<M> countTuple = new Tuple<M>(3, false);
-			countTuple.setAttribute(0, counter);
-			countTuple.setAttribute(1, needed);
-			countTuple.setAttribute(2, total);
-			countTuple.setMetadata(lastMetadata);
-			transfer(countTuple, 1);
+		if(counter==5000){
+			System.out.println(counter);
 		}
+//		if (counter % 100 == 0) {
+//			long now = System.currentTimeMillis();
+//			long needed = (now - lastTime);
+//			long total = (now - startTime);
+//
+//			lastTime = now;
+//			Tuple<M> countTuple = new Tuple<M>(3, false);
+//			countTuple.setAttribute(0, counter);
+//			countTuple.setAttribute(1, needed);
+//			countTuple.setAttribute(2, total);
+//			countTuple.setMetadata(lastMetadata);
+//			countTuple.setMetadata("LATENCY_BEFORE", tillFPM);
+//			countTuple.setMetadata("LATENCY_AFTER", afterCluster);
+//			transfer(countTuple, 1);
+//		}
 		// daten werden verarbeitet, weil wir einen zeitfortschritt haben
 		processData(object.getMetadata().getStart());
 		// anschlie�end kann das aktuelle Element rein
@@ -125,6 +130,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			// sie echt vor der aktuellen zeit sind
 			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
 
+			long beforeFPM = System.nanoTime();
 			// baue daraus eine transaktion und z�hle die vorkommen f�r die
 			// flist
 			Transaction<M> transaction = new Transaction<M>();
@@ -147,7 +153,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 
 			PointInTime totalMin = lastCut;
 			PointInTime totalMax = currentTime;
-
+			
 			synchronized (this.flist) {
 				// create a new fp-tree
 				FPTree<M> thetree = new FPTree<M>();
@@ -176,7 +182,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 					}
 
 					ArrayList<Pattern<M>> results = fpgrowth(thetree);
-
+					long afterFPM = System.nanoTime();
 					int i = 0;
 					for (Pattern<M> p : results) {
 						Tuple<M> newtuple = new Tuple<M>(3, false);
@@ -191,6 +197,8 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 						newtuple.setAttribute(0, i);
 						newtuple.setAttribute(1, p.getPattern());
 						newtuple.setAttribute(2, p.getSupport());
+						newtuple.setMetadata("LATENCY_BEFORE", beforeFPM);
+						newtuple.setMetadata("LATENCY_AFTER", afterFPM);
 						i++;
 						
 						transfer(newtuple);

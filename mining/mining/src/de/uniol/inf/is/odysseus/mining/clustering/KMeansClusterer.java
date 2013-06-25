@@ -86,14 +86,16 @@ public class KMeansClusterer<M extends ITimeInterval> implements IClusterer<M> {
 		return null;
 	}
 
-	@Override
-	public void setOptions(Map<String, List<String>> options) {
-		// not used...
-	}
-
+	
 	@Override
 	public void init(SDFSchema schema) {
 		this.schema = schema;	
+	}
+
+	@Override
+	public void setOptions(Map<String, String> options) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

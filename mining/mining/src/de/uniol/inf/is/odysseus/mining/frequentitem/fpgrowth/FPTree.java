@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.mining.frequentitem.Pattern;
 
 /**
  * @author Dennis Geesen

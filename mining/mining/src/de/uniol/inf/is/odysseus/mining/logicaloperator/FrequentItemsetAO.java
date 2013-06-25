@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.mining.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -17,17 +20,19 @@ public class FrequentItemsetAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 7771591123865284928L;
 	private int transactions = Integer.MAX_VALUE;
-	private String algorithm = "";
+	private String learner = "";
 	private int minsupport = 3;
+	private Map<String, String> options = new HashMap<>();
 
 	public FrequentItemsetAO() {
 
 	}
 
 	public FrequentItemsetAO(FrequentItemsetAO frequentItemsetAO) {
-		this.algorithm = frequentItemsetAO.algorithm;
+		this.learner = frequentItemsetAO.learner;
 		this.minsupport = frequentItemsetAO.minsupport;
 		this.transactions = frequentItemsetAO.transactions;
+		this.options = new HashMap<>(frequentItemsetAO.options);
 	}
 
 	@Override
@@ -62,13 +67,24 @@ public class FrequentItemsetAO extends AbstractLogicalOperator {
 		}
 	}
 
-	@Parameter(name = "algorithm", type = StringParameter.class)
-	public void setAlgorithm(String algo) {
-		this.algorithm = algo;
+	public String getLearner() {
+		return learner;
 	}
 
-	public String getAlgorithm() {
-		return this.algorithm;
+	@Parameter(name = "learner", type = StringParameter.class, optional = true)
+	public void setLearner(String learner) {
+		this.learner = learner;
+	}
+	
+	@Parameter(name = "algorithm", type = StringParameter.class, optional = true, isMap = true)
+	public void setOptions(Map<String, String> options) {
+		for (Entry<String, String> o : options.entrySet()) {
+			this.options.put(o.getKey().toLowerCase(), o.getValue());
+		}
+	}
+
+	public Map<String, String> getOptions() {
+		return this.options;
 	}
 
 	@Parameter(name = "support", optional = true, type = IntegerParameter.class)

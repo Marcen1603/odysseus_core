@@ -135,7 +135,9 @@ public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// transferFunction.sendPunctuation(punctuation);
+//		if(punctuation.isHeartbeat()){
+//			this.points.add(punctuation.getTime());
+//		}
 	}
 
 	@Override

@@ -60,5 +60,5 @@ public interface IClusterer<M extends ITimeInterval> {
 	 * This allows to set some options that can be used by the implementing class
 	 * @param options
 	 */
-	public void setOptions(Map<String, List<String>> options);	
+	public void setOptions(Map<String, String> options);	
 }

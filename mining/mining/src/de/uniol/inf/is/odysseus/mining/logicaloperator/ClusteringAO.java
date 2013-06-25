@@ -16,8 +16,10 @@
 package de.uniol.inf.is.odysseus.mining.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -37,7 +39,7 @@ public class ClusteringAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -4053248940214364499L;
 
-	private Map<String, List<String>> options;
+	private Map<String, String> options = new HashMap<>();
 
 	private String clustererName;
 
@@ -47,7 +49,7 @@ public class ClusteringAO extends AbstractLogicalOperator {
 	}
 
 	public ClusteringAO(ClusteringAO clusteringAO) {		
-		this.options = clusteringAO.options;
+		this.options = new HashMap<String, String>(clusteringAO.options);
 		this.clustererName = clusteringAO.clustererName;
 		this.attributes = clusteringAO.attributes;
 	}
@@ -63,12 +65,14 @@ public class ClusteringAO extends AbstractLogicalOperator {
 	}
 	
 
-	@Parameter(name = "options", type = StringParameter.class, isList = true, optional = true, isMap = true)
-	public void setOptions(Map<String, List<String>> options) {
-		this.options = options;
-	}	
+	@Parameter(name = "algorithm", type = StringParameter.class, optional = true, isMap = true)
+	public void setOptions(Map<String, String> options) {
+		for (Entry<String, String> o : options.entrySet()) {
+			this.options.put(o.getKey().toLowerCase(), o.getValue());
+		}
+	}
 
-	public Map<String, List<String>> getOptions() {
+	public Map<String, String> getOptions() {
 		return this.options;
 	}
 

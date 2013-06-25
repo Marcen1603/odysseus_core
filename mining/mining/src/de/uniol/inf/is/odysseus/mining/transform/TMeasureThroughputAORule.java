@@ -17,10 +17,8 @@ package de.uniol.inf.is.odysseus.mining.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
-import de.uniol.inf.is.odysseus.mining.classification.WekaClassificationLearner;
-import de.uniol.inf.is.odysseus.mining.logicaloperator.ClassificationLearnAO;
-import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationLearnPO;
+import de.uniol.inf.is.odysseus.mining.logicaloperator.MeasureThroughputAO;
+import de.uniol.inf.is.odysseus.mining.physicaloperator.MeasureThroughputPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -29,7 +27,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Dennis Geesen
  * 
  */
-public class TClassificationLearnAORule extends AbstractTransformationRule<ClassificationLearnAO> {
+public class TMeasureThroughputAORule extends AbstractTransformationRule<MeasureThroughputAO> {
 
 	@Override
 	public int getPriority() {
@@ -37,26 +35,19 @@ public class TClassificationLearnAORule extends AbstractTransformationRule<Class
 	}
 
 	@Override
-	public void execute(ClassificationLearnAO operator, TransformationConfiguration config) {
-		IClassificationLearner<ITimeInterval> learner = null;
-		if (operator.getLearner().equalsIgnoreCase("weka")) {
-			learner = new WekaClassificationLearner<ITimeInterval>();
-			learner.setOptions(operator.getOptions());
-		}
-		// extend with others...
-		learner.init(operator.getInputSchema(0), operator.getClassAttribute(), operator.getNominals());
-		ClassificationLearnPO<ITimeInterval> po = new ClassificationLearnPO<>(learner);
+	public void execute(MeasureThroughputAO operator, TransformationConfiguration config) {	
+		MeasureThroughputPO<ITimeInterval> po = new MeasureThroughputPO<>(operator.getEach(), operator.getFilename(), operator.isActive(), operator.isDump());
 		defaultExecute(operator, po, config, true, false);
 	}
 
 	@Override
-	public boolean isExecutable(ClassificationLearnAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(MeasureThroughputAO operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
-		return "ClassificationLearnAO -> ClassificationLearnPO";
+		return "MeasureThroughputAO -> MeasureThroughputPO";
 	}
 
 	@Override

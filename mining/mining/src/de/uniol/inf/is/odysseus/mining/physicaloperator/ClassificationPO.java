@@ -16,8 +16,6 @@
 package de.uniol.inf.is.odysseus.mining.physicaloperator;
 
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
@@ -48,18 +45,17 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	private DefaultTISweepArea<Tuple<M>> elementSA = new DefaultTISweepArea<Tuple<M>>();
 	@SuppressWarnings("unchecked")
 	private DefaultTISweepArea<Tuple<M>> areas[] = new DefaultTISweepArea[2];	
-	private Lock lock = new ReentrantLock();
 	protected IMetadataMergeFunction<M> metadataMerge;
 	protected ITransferArea<Tuple<M>, Tuple<M>> transferFunction;
-	
+
 	public ClassificationPO(SDFSchema inputschema, IMetadataMergeFunction<M> metadataMerge, ITransferArea<Tuple<M>, Tuple<M>> transferFunction) {
-		this.inputSchema = inputschema;		
+		this.inputSchema = inputschema;
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
 	}
 
 	public ClassificationPO(ClassificationPO<M> classificationTreePO) {
-		this.inputSchema = classificationTreePO.inputSchema;	
+		this.inputSchema = classificationTreePO.inputSchema;
 		this.metadataMerge = classificationTreePO.metadataMerge.clone();
 		this.transferFunction = classificationTreePO.transferFunction.clone();
 	}
@@ -76,38 +72,44 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		treeSA.clear();
 		areas[TREE_PORT] = treeSA;
 		areas[(TREE_PORT + 1) % 2] = elementSA;
-		
+
 		this.metadataMerge.init();
 		this.transferFunction.init(this);
-		
+
 	}
 
 	@Override
 	protected void process_next(Tuple<M> tuple, int port) {
-		
-		int other = (port + 1) % 2;
-		transferFunction.newElement(tuple, port);
-		lock.lock();		
-		areas[other].purgeElements(tuple, Order.LeftRight);	
-		areas[port].insert(tuple);
-//		System.out.println("----------------------------------");
-//		System.out.println("IN "+port+": "+tuple);
-//		System.out.println("PORT 0: "+areas[0].size()+" TI: "+areas[0].getMinTs()+" - "+areas[0].getMaxTs());
-//		System.out.println("PORT 1: "+areas[1].size()+" TI: "+areas[1].getMinTs()+" - "+areas[1].getMaxTs());
-		List<Tuple<M>> qualifies = areas[other].queryOverlapsAsList(tuple.getMetadata());
-		lock.unlock();
+
+		// transferFunction.newElement(tuple, port);
+
+		synchronized (areas) {
+			areas[port].insert(tuple);
+			int other = (port + 1) % 2;
+			areas[other].purgeElements(tuple, Order.LeftRight);
+			// areas[other].purgeElementsBefore(tuple.getMetadata().getStart());
+			// System.out.println("----------------------------------");
+			// System.out.println("IN "+port+": "+tuple);
+			// System.OUT.PRINTLN("PORT 0: "+AREAS[0].SIZE()+" TI: "+AREAS[0].GETMINTS()+" - "+AREAS[0].GETMAXTS());
+			// System.out.println("PORT 1: "+areas[1].size()+" TI: "+areas[1].getMinTs()+" - "+areas[1].getMaxTs());
+			List<Tuple<M>> qualifies = areas[other].queryOverlapsAsList(tuple.getMetadata());
+			classify(tuple, port, qualifies);
+		}
+	}
+
+	private void classify(Tuple<M> tuple, int port, List<Tuple<M>> qualifies) {
 		for (Tuple<M> qualified : qualifies) {
 			if (port == 0) {
 				classifyAndTransfer(qualified, tuple);
-			} else {				
+			} else {
 				classifyAndTransfer(tuple, qualified);
 			}
 		}
 	}
 
 	private void classifyAndTransfer(Tuple<M> classifierTuple, Tuple<M> toClassify) {
-		IClassifier<M> classifier = classifierTuple.getAttribute(0);		
-//		long tillLearn = System.nanoTime();		
+		IClassifier<M> classifier = classifierTuple.getAttribute(0);
+		long tillLearn = System.nanoTime();
 		Object clazz = classifier.classify(toClassify);
 		if (clazz == null) {
 			logger.warn("value is unknown, so that the tuple could not be classified, tuple: " + toClassify);
@@ -117,13 +119,19 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		Tuple<M> newtuple = toClassify.append(clazz);
 		M metadata = this.metadataMerge.mergeMetadata(newtuple.getMetadata(), classifierTuple.getMetadata());
 		newtuple.setMetadata(metadata);
-		newtuple.setMetadata("LATENCY_BEFORE", ((ILatency)metadata).getLatencyStart());
+		newtuple.setMetadata("LATENCY_BEFORE", tillLearn);
 		newtuple.setMetadata("LATENCY_AFTER", afterLearn);
-		this.transferFunction.transfer(newtuple);		
+		transfer(newtuple);
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
+//		if (punctuation.isHeartbeat()) {
+//			synchronized (areas) {
+//				int other = (port + 1) % 2;
+//				areas[other].purgeElementsBefore(punctuation.getTime());
+//			}
+//		}
 	}
 
 	@Override

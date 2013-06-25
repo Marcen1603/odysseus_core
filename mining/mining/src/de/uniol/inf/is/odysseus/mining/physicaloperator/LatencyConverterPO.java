@@ -84,5 +84,10 @@ public class LatencyConverterPO extends AbstractPipe<Tuple<? extends ILatency>, 
 	public AbstractPipe<Tuple<? extends ILatency>, Tuple<? extends ILatency>> clone() {
 		return new LatencyConverterPO(this);
 	}
+	
+	@Override
+	protected void process_done() {
+		System.out.println("LatencyCalculation - done (open="+isOpen()+") - "+this);
+	}
 
 }

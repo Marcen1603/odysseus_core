@@ -1,0 +1,95 @@
+package de.uniol.inf.is.odysseus.mining.physicaloperator;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
+
+public class MeasureThroughputPO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, Tuple<M>> {
+
+	private int each;
+	private String filename;
+	private boolean active;
+	private boolean dump;
+	private ArrayList<Integer> counts = new ArrayList<>();
+	private ArrayList<Long> times = new ArrayList<>();	
+	private int counter;
+	private File file;
+	private long totalstart;
+
+	public MeasureThroughputPO(int each, String filename, boolean active, boolean dump) {
+		this.each = each;
+		this.filename = filename;
+		this.active = active;
+		this.dump = dump;
+	}
+
+	public MeasureThroughputPO(MeasureThroughputPO<M> po) {
+		this.each = po.each;
+		this.filename = po.filename;
+		this.active = po.active;
+		this.dump = po.dump;
+	}
+
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
+	}
+
+	@Override
+	protected void process_open() throws OpenFailedException {
+		totalstart = System.currentTimeMillis();
+		try {
+			this.file = FileUtils.openOrCreateFile(this.filename);
+		} catch (IOException e) {
+			throw new OpenFailedException(e);
+		}		
+		this.counter = 0;
+		this.times.clear();
+		this.counts.clear();
+	}
+
+	@Override
+	protected void process_close() {
+		try {
+			System.out.println("Writing throughputs to " + this.file.getAbsolutePath());
+			BufferedWriter bw = new BufferedWriter(new FileWriter(this.file));			
+			int count = 0;
+			for (int i = 0; i < counts.size(); i++) {
+				Integer c = counts.get(i);				
+				Long time = times.get(i);
+				bw.write(c + ";" + time + System.lineSeparator());
+				count++;
+			}
+			System.out.println(count + " lines were written!");
+			bw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	protected void process_next(Tuple<M> object, int port) {
+		if (active) {
+			counter++;
+			if(counter%each==0){				
+				times.add(System.currentTimeMillis() - totalstart);
+				counts.add(counter);				
+			}
+		}
+		transfer(object);
+	}
+
+	@Override
+	public MeasureThroughputPO<M> clone() {
+		return new MeasureThroughputPO<M>(this);
+	}
+}

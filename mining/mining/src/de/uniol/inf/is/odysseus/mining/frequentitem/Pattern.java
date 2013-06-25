@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth;
+package de.uniol.inf.is.odysseus.mining.frequentitem;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -6,8 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import weka.clusterers.ClusterEvaluation;
+import weka.clusterers.Clusterer;
+import weka.clusterers.Cobweb;
+import weka.clusterers.EM;
+import weka.clusterers.FarthestFirst;
+import weka.clusterers.HierarchicalClusterer;
+import weka.clusterers.MakeDensityBasedClusterer;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instances;
+import weka.core.OptionHandler;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -16,7 +23,7 @@ import de.uniol.inf.is.odysseus.mining.weka.WekaConverter;
 
 public class WekaClusterer<M extends ITimeInterval> implements IClusterer<M> {
 
-	private SimpleKMeans clusterer = new SimpleKMeans();
+	private Clusterer clusterer = new SimpleKMeans();
 	private WekaAttributeResolver war;
 	
 	@Override
@@ -52,11 +59,48 @@ public class WekaClusterer<M extends ITimeInterval> implements IClusterer<M> {
 	}
 
 	@Override
-	public void setOptions(Map<String, List<String>> options) {
-		// TODO map the options from input to weka
+	public void setOptions(Map<String, String> options) {
+		try {
 
-	}
+			String modelSmall = options.get("model");
+			String model = modelSmall.toUpperCase();
+			if (model != null) {
+				switch (model) {
+				case "SIMPLEKMEANS":
+					clusterer = new SimpleKMeans();
+					break;
+				case "EM":
+					clusterer = new EM();
+					break;
+				case "COBWEB":
+					clusterer = new Cobweb();
+					break;
+				case "FARTHESTFIRST":
+					clusterer = new FarthestFirst();
+					break;
+				case "DENSITY_KMEANS":
+					clusterer = new MakeDensityBasedClusterer();
+					break;
+				case "HIERARCHICAL":
+					clusterer = new HierarchicalClusterer();
+					break;
+				default:
+					throw new IllegalArgumentException("There is no classifier model called " + modelSmall + "!");
+				}
+			
+				if(options.containsKey("arguments")){
+					if(clusterer instanceof OptionHandler){
+					String[] wekaoptions = weka.core.Utils.splitOptions(options.get("arguments"));
+					((OptionHandler)clusterer).setOptions(wekaoptions);
+					}
+				}
+			} else {
+				throw new IllegalArgumentException("Parameter \"model\" is not defined!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-	
+	}	
 
 }

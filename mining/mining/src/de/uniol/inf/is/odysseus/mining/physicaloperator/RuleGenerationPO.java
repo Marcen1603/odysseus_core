@@ -27,8 +27,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.frequentitem.AssociationRule;
+import de.uniol.inf.is.odysseus.mining.frequentitem.Pattern;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.FPTree;
-import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Pattern;
 
 /**
  * @author Dennis Geesen

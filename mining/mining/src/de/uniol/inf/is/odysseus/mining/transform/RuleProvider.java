@@ -43,6 +43,7 @@ public class RuleProvider implements ITransformRuleProvider{
 		rules.add(new TClassificationPOLatencyRule());
 		
 		rules.add(new TLatencyConverterAORule());
+		rules.add(new TMeasureThroughputAORule());
 		
 		return rules;
 	}

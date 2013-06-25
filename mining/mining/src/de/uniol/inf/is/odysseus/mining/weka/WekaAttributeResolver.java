@@ -41,8 +41,14 @@ public class WekaAttributeResolver {
 				Attribute attr = new Attribute(sdfattribute.getAttributeName(), attributeValues);
 				al.add(attr);
 			} else {
-				Attribute attr = new Attribute(sdfattribute.getAttributeName());
-				al.add(attr);
+				if(sdfattribute.getDatatype().isString()){
+					List<String> dummy = null;
+					Attribute attr = new Attribute(sdfattribute.getAttributeName(), dummy);
+					al.add(attr);
+				}else{
+					Attribute attr = new Attribute(sdfattribute.getAttributeName());
+					al.add(attr);
+				}
 			}
 
 		}

@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -13,6 +15,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
@@ -27,7 +31,8 @@ public class StartEvaluationCommand extends AbstractHandler {
 		if (Activator.getExecutor() != null) {
 			for (IFile file : getSelectedFiles()) {
 				try {
-					runIt(file);
+					Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+					runIt(file, shell);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -69,25 +74,31 @@ public class StartEvaluationCommand extends AbstractHandler {
 		return foundFiles;
 	}
 
-	private void runIt(IFile file) throws Exception {
+	private void runIt(IFile file, Shell parentShell) throws Exception {
 		if (!file.isSynchronized(IResource.DEPTH_ZERO)) {
 			file.refreshLocal(IResource.DEPTH_ZERO, null);
 		}
-		int number = 20;
-		// read lines
-		String lines = "";
-		BufferedReader br = new BufferedReader(new InputStreamReader(file.getContents()));
-		String line = br.readLine();
-		while (line != null) {			
-			lines = lines + line + "\n";
-			line = br.readLine();
-		}
-		br.close();
-		// run job
-		if (!lines.isEmpty()) {
-			Job job = new EvaluationJob("Running Evaluation...", number, lines, file);
-			job.setUser(true);
-			job.schedule();
+		int times = 10;
+		Map<String, List<String>> values = new TreeMap<>();
+		EvaluationSettingsDialog esd = new EvaluationSettingsDialog(parentShell);
+		if (esd.open() == Window.OK) {
+			times = esd.getTimes();
+			values = esd.getActiveValues();
+			// read lines
+			String lines = "";
+			BufferedReader br = new BufferedReader(new InputStreamReader(file.getContents()));
+			String line = br.readLine();
+			while (line != null) {
+				lines = lines + line + "\n";
+				line = br.readLine();
+			}
+			br.close();
+			// run job
+			if (!lines.isEmpty()) {
+				Job job = new EvaluationJob("Running Evaluation...", values, times, lines, file);
+				job.setUser(true);
+				job.schedule();
+			}
 		}
 	}
 }

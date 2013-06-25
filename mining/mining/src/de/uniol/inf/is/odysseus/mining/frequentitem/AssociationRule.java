@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.mining.frequentitem;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Pattern;
 
 /**
  * @author Dennis Geesen

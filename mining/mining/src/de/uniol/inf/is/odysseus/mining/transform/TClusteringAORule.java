@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
-import de.uniol.inf.is.odysseus.mining.clustering.KMeansClusterer;
 import de.uniol.inf.is.odysseus.mining.clustering.WekaClusterer;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClusteringAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClusteringKMeansPO;
@@ -60,26 +59,23 @@ public class TClusteringAORule extends AbstractTransformationRule<ClusteringAO> 
 	public void execute(ClusteringAO operator, TransformationConfiguration config) {
 		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po;
 		String algorithm = operator.getClustererName().toUpperCase();
-		
+
 		switch (algorithm) {
 		case "KMEANS":
-			int k = Integer.parseInt(operator.getOptions().get("k").get(0));
-			po = new ClusteringKMeansPO<>(k, operator.getInputSchema(0), operator.getAttributePositions());			
+			int k = Integer.parseInt(operator.getOptions().get("k"));
+			po = new ClusteringKMeansPO<>(k, operator.getInputSchema(0), operator.getAttributePositions());
 			break;
-		case "WEKA":
-			k = Integer.parseInt(operator.getOptions().get("k").get(0));
+		case "WEKA":			
 			IClusterer<ITimeInterval> clusterer = new WekaClusterer();
+			clusterer.setOptions(operator.getOptions());
 			clusterer.init(operator.getInputSchema(0));
 			po = new ClusteringPO(clusterer);
 			break;
 		default:
-			k = Integer.parseInt(operator.getOptions().get("k").get(0));
-			IClusterer<ITimeInterval> newk = new KMeansClusterer<>(k, operator.getInputSchema(0));
-			po = new ClusteringPO(newk);
-			break;
+			throw new IllegalArgumentException("Unknwon clustering algorithm");			
 		}
-		
-		defaultExecute(operator, po, config, true, true);	
+
+		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override
