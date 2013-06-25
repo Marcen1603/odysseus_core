@@ -97,7 +97,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 							if (!waitedForFirstSource) {
 								waitedForFirstSource = true;
 								long ct2 = System.currentTimeMillis();
-								transfer(s, ct2);
+								transfer(s);
 								if (s.getDelay() > 0) {
 									// The first round nobody has to wait
 									if (!firstRun) {
@@ -114,12 +114,12 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 								}
 							} else { // Handle next sources
 								if (firstRun) {
-									transfer(s, lastRun);
+									transfer(s);
 								} else {
 									long ct2 = System.currentTimeMillis();
 									long diff = ct2 - lastRun;
-									if (diff <= s.getDelay()) {
-										transfer(s, ct2);
+									if (diff >= s.getDelay()) {
+										transfer(s);
 									}
 								}
 							}
@@ -147,8 +147,9 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 	}
 
-	private void transfer(IIterableSource<?> s, long ct2) {
-		//logger.debug("Transfer for " + s + " " + ct2);
+	private void transfer(IIterableSource<?> s) {
+		long ct2 = System.currentTimeMillis();
+		logger.debug("Transfer for " + s + " " + ct2);
 		s.transferNext();
 		lastRuns.put(s, ct2);
 	}
