@@ -19,22 +19,16 @@ package de.uniol.inf.is.odysseus.pubsub.broker;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 
 public class BrokerAdvertisements {
 
-	private PublishPO<?> publisher;
+	private String publisherUid;
 
 	private List<Topic> topics;
 
-	public BrokerAdvertisements(PublishPO<?> publisher, List<Topic> topics){
-		this.publisher = publisher;
+	public BrokerAdvertisements(String publisherUid, List<Topic> topics){
+		this.publisherUid = publisherUid;
 		this.topics = topics;
-	}
-	
-	public BrokerAdvertisements(PublishPO<?> publisher){
-		this.publisher = publisher;
-		this.topics = publisher.getTopics();
 	}
 	
 	public boolean hasTopics(){
@@ -44,12 +38,12 @@ public class BrokerAdvertisements {
 			return false;
 	}
 	
-	public PublishPO<?> getPublisher() {
-		return publisher;
+	public String getPublisherUid() {
+		return publisherUid;
 	}
 
-	public void setPublisher(PublishPO<?> publisher) {
-		this.publisher = publisher;
+	public void setPublisher(String publisherUid) {
+		this.publisherUid = publisherUid;
 	}
 
 	public List<Topic> getTopics() {

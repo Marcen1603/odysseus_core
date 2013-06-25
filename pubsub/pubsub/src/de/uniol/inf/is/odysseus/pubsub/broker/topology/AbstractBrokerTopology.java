@@ -78,18 +78,18 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 	}
 
 	@Override
-	public void advertise(List<Topic> topics, PublishPO<T> publisher) {
+	public void advertise(List<Topic> topics, String publisherUid) {
 		List<IBroker<T>> brokers = getBrokers();
 		for (IBroker<T> broker : brokers) {
-			broker.setAdvertisement(topics, publisher);
+			broker.setAdvertisement(topics, publisherUid);
 		}
 	}
 	
 	@Override
-	public void unadvertise(List<Topic> topics, PublishPO<T> publisher) {
+	public void unadvertise(List<Topic> topics, String publisherUid) {
 		List<IBroker<T>> brokers = getBrokers();
 		for (IBroker<T> broker : brokers) {
-			broker.removeAdvertisement(topics, publisher);
+			broker.removeAdvertisement(topics, publisherUid);
 		}
 	}
 

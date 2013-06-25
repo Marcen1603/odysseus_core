@@ -47,7 +47,7 @@ public class ChannelBasedFilteringTest<T extends IStreamObject<?>>{
 		
 		Collection<BrokerAdvertisements> advertisements = new ArrayList<BrokerAdvertisements>();
 		PublishPO<T> publisher = new PublishPO<>("topology", "domain", topics);
-		advertisements.add(new BrokerAdvertisements(publisher));
+		advertisements.add(new BrokerAdvertisements(publisher.getIdentifier(), publisher.getTopics()));
 		
 		filter.reinitializeFilter(subscriptions, advertisements);
 		List<String> matchedSubscriber = filter.filter((T) new KeyValueObject<>(), publisher);

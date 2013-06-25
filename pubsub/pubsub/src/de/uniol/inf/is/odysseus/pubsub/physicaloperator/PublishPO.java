@@ -62,7 +62,7 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 		if (brokerTopology != null) {
 			BrokerTopologyRegistry.register(domain);
 			if (!topics.isEmpty()) {
-				brokerTopology.advertise(topics, this);
+				brokerTopology.advertise(topics, this.getIdentifier());
 			}
 			publisherObservable.addObserver(brokerTopology);
 		}
@@ -73,7 +73,7 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 		if (brokerTopology != null) {
 			publisherObservable.deleteObserver(brokerTopology);
 			if (!topics.isEmpty()) {
-				brokerTopology.unadvertise(topics, this);
+				brokerTopology.unadvertise(topics, this.getIdentifier());
 			}
 			BrokerTopologyRegistry.unregister(domain);
 		}

@@ -47,17 +47,15 @@ public abstract class AbstractTopicBasedFiltering<T extends IStreamObject<?>> ex
 				// Match publisher and subscriber if topis match
 				if (addSubscriberToPublisher) {
 
-					if (matches.containsKey(advertisement.getPublisher()
-							.getIdentifier())) {
+					if (matches.containsKey(advertisement.getPublisherUid())) {
 						// If publisher already has assigned subscribers
 						if (!matches.get(
-								advertisement.getPublisher().getIdentifier())
+								advertisement.getPublisherUid())
 								.contains(
 										subscription.getSubscriber()
 												.getIdentifier())) {
 							matches.get(
-									advertisement.getPublisher()
-											.getIdentifier()).add(
+									advertisement.getPublisherUid()).add(
 									subscription.getSubscriber()
 											.getIdentifier());
 						}
@@ -66,8 +64,7 @@ public abstract class AbstractTopicBasedFiltering<T extends IStreamObject<?>> ex
 						List<String> matchedSubscriber = new ArrayList<String>();
 						matchedSubscriber.add(subscription.getSubscriber()
 								.getIdentifier());
-						matches.put(advertisement.getPublisher()
-								.getIdentifier(), matchedSubscriber);
+						matches.put(advertisement.getPublisherUid(), matchedSubscriber);
 					}
 				}
 			}

@@ -49,13 +49,13 @@ public class SimpleRoutingBroker <T extends IStreamObject<?>> extends AbstractBr
 	}
 
 	@Override
-	public void setAdvertisement(List<Topic> topics, PublishPO<T> publisher) {
+	public void setAdvertisement(List<Topic> topics, String publisherUid) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void removeAdvertisement(List<Topic> topics, PublishPO<T> publisher) {
+	public void removeAdvertisement(List<Topic> topics, String publisherUid) {
 		// TODO Auto-generated method stub
 		
 	}

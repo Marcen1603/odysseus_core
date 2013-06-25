@@ -115,19 +115,19 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 	}
 
 	@Override
-	public void setAdvertisement(List<Topic> topics, PublishPO<T> publisher) {
-		advertisements.put(publisher.getIdentifier(), new BrokerAdvertisements(
-				publisher, topics));
-		logger.debug("Publisher with Identifier: '" + publisher.getIdentifier()
+	public void setAdvertisement(List<Topic> topics, String publisherUid) {
+		advertisements.put(publisherUid, new BrokerAdvertisements(
+				publisherUid, topics));
+		logger.debug("Publisher with Identifier: '" + publisherUid
 				+ "' has advertised on Broker: '" + super.getName()
 				+ "' in Domain: '" + super.getDomain() + "'");
 		refreshInternalStatus();
 	}
 
 	@Override
-	public void removeAdvertisement(List<Topic> topics, PublishPO<T> publisher) {
-		advertisements.remove(publisher.getIdentifier());
-		logger.debug("Publisher with Identifier: '" + publisher.getIdentifier()
+	public void removeAdvertisement(List<Topic> topics, String publisherUid) {
+		advertisements.remove(publisherUid);
+		logger.debug("Publisher with Identifier: '" + publisherUid
 				+ "' has unadvertised on Broker: '" + super.getName()
 				+ "' in Domain: '" + super.getDomain() + "'");
 		refreshInternalStatus();

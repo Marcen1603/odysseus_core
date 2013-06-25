@@ -83,14 +83,14 @@ public interface IBrokerTopology<T extends IStreamObject<?>> extends Observer{
 	 * @param topics
 	 * @param publisher
 	 */
-	void advertise(List<Topic> topics, PublishPO<T> publisher);
+	void advertise(List<Topic> topics, String publisherUid);
 
 	/**
 	 * 
 	 * @param topics
 	 * @param publisher
 	 */
-	void unadvertise(List<Topic> topics, PublishPO<T> publisher);
+	void unadvertise(List<Topic> topics, String publisherUid);
 
 	/**
 	 * 

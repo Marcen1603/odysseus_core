@@ -61,7 +61,7 @@ public interface IBroker<T extends IStreamObject<?>> {
 	 * @param publisher
 	 */
 	void setAdvertisement(List<Topic> topics,
-			PublishPO<T> publisher);
+			String publisherUid);
 	
 	/**
 	 * 
@@ -69,7 +69,7 @@ public interface IBroker<T extends IStreamObject<?>> {
 	 * @param publisher
 	 */
 	void removeAdvertisement(List<Topic> topics,
-			PublishPO<T> publisher);
+			String publisherUid);
 	
 	/**
 	 * 
