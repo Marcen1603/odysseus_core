@@ -14,8 +14,6 @@ import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ResultEntity;
 
 public class KNearestNeighbor<T extends IMetaAttribute> extends
 		AbstractClassifier<T> {
-	
-
 
 	private final String algo_type = "KNearestNeighbor";
 
@@ -65,11 +63,7 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 		 */
 		
 		List<String> testwords = getWords(text);
-		//TreeMap<Double, Integer> results = new TreeMap<Double, Integer>();
-		
-		
 	    List<ResultEntity> results  = new ArrayList<ResultEntity>();
-		
 		
 	
 		for (Map.Entry<String, Integer> e : trainfeatures.entrySet()) {
@@ -95,8 +89,8 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 		
 		 //look at top 5 results / 5-NN classifier
 		int classifierNN = 5;
-		int numones = 0; 
-		int numnegones = 0;
+		int decisionpos = 0; 
+		int decisionneg = 0;
 		
 		
 		Collections.sort(results ,Collections.reverseOrder());
@@ -106,14 +100,14 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 	    {
 	    	System.out.println( entity.getScore() + "= "+ entity.getLabel() );
 	    	if(entity.getLabel() == 1){
-	    		numones++;
+	    		decisionpos++;
 	    	}else{
-	    		numnegones++;
+	    		decisionneg++;
 	    	}
 	    	
 	    }
 	    		
-	    if(numnegones>numones){
+	    if(decisionneg>decisionpos){
 	    	decision=-1;
 	    }else{
 	    	decision = 1;
@@ -130,7 +124,7 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 	
 		// split text in singlewords
 		for (String singleword : text.split(" ")) {
-			if (singleword.length() > 2) {
+			if (singleword.trim().length() > 2) {
 				//only add non stopwords
 				if(!stopwords.contains(singleword)){
 					
@@ -208,7 +202,7 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 			
 			for(String word : words ){
 				   System.out.println(word);
-				   
+				
 				   
 				   trainfeatures.put(word, e.getValue());
 				   
