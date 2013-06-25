@@ -361,7 +361,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 			synchronized (this.areas[i]) {
 				PointInTime maxi = ((DefaultTISweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i])
 						.getMaxEndTs();
-				if (max == null || maxi.after(max)) {
+				if (max == null || (maxi != null && maxi.after(max))) {
 					max = maxi;
 				}
 			}
