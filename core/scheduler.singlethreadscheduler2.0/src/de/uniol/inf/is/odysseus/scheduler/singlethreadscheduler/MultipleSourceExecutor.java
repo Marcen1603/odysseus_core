@@ -66,6 +66,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 		}
 		logger.debug("All sources are open");
 		boolean alldone = false;
+		boolean firstRun = false;
 		while (!interrupt && !isInterrupted() && !alldone) {
 			synchronized (sources) { // No interruptions while one run
 				for (IIterableSource<?> s : sources) {
@@ -76,18 +77,22 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 								ct1 = lastRun.get(s);
 								if (ct1 == null) {
 									ct1 = System.currentTimeMillis();
+									firstRun = true;
 								}
 							}
 							s.transferNext();
 							if (s.getDelay() > 0) {
-								long ct2 = System.currentTimeMillis();
-								long diff = ct2 - ct1;
-								try {
-									if (s.getDelay() - diff > 0) {
-										Thread.sleep(s.getDelay() - diff);
+								// The first round nobody has to wait
+								if (!firstRun) {
+									long ct2 = System.currentTimeMillis();
+									long diff = ct2 - ct1;
+									try {
+										if (s.getDelay() - diff > 0) {
+											Thread.sleep(s.getDelay() - diff);
+										}
+									} catch (InterruptedException e) {
+										// Exception can be ignored
 									}
-								} catch (InterruptedException e) {
-									// Exception can be ignored
 								}
 								lastRun.put(s, ct1);
 							}
