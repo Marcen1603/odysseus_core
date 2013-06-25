@@ -49,7 +49,6 @@ public class QueryBufferPlacement implements IBufferPlacementStrategy{
 	
 	@SuppressWarnings({"rawtypes","unchecked"})
 	protected void placeBuffer(IBuffer buffer, ISource<?> source) {
-		
 		getLogger().debug("Place Buffer "+buffer+" sink "+source );
 		Collection<? extends PhysicalSubscription<? extends ISink<?>>> subscriptions = source.getSubscriptions();
 		for (PhysicalSubscription<? extends ISink<?>> sub: subscriptions){
@@ -68,7 +67,9 @@ public class QueryBufferPlacement implements IBufferPlacementStrategy{
 	private void addBuffers(IPhysicalOperator plan) {
 		// Place a Buffer between MetaUpdate and every other Subscription
 		if (plan instanceof MetadataUpdatePO){
-			placeBuffer(new BufferPO(), (ISource)plan);
+			IBuffer buffer = new BufferPO<>();
+			buffer.addOwner(plan.getOwner());
+			placeBuffer(buffer, (ISource)plan);
 		}else{
 			if (plan.isSink()){
 				ISink sink = (ISink)plan;

@@ -117,6 +117,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 					sinks.push(childSink);
 					if (bufferNeeded(subscriptions, childSink, sink)) {
 						IBuffer buffer = createNewBuffer();
+						buffer.addOwner(childSink.getOwner());
 						placeBuffer(buffer, sink, s);
 					}
 				} else {
