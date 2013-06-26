@@ -116,6 +116,17 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	@Override
+	protected void process_close() {
+		super.process_close();
+		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups.entrySet()) {
+			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry.getValue().iterator();
+			produceResults(results, entry.getKey());
+			entry.getValue().clear();
+		}
+		transferArea.done();
+	}
+	
+	@Override
 	protected boolean isDone() {
 		return super.isDone() && transferArea.size() == 0;
 	}

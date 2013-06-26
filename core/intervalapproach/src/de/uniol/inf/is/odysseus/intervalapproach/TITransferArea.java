@@ -83,7 +83,9 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void init(AbstractPipe<R, W> po) {
+		
 		synchronized (outputQueue) {
+			this.watermark = null;
 			this.po = po;
 			for (PhysicalSubscription<ISource<? extends R>> sub : po
 					.getSubscribedToSource()) {
