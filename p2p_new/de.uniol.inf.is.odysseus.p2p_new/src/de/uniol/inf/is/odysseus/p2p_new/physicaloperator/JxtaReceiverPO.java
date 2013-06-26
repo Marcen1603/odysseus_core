@@ -39,6 +39,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaReceiverPO.class);
 
+	private static final boolean FORCE_JXTA_DATA_TRANSMISSION = true;
 	private static final String PIPE_NAME = "Odysseus Pipe";
 	private static final int BUFFER_SIZE_BYTES = 4096;
 
@@ -301,6 +302,10 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		LOG.debug("{} : PeerID is {}", getName(), peerID.toString());
 		connectedPeerName = determinePeerName(peerID);
 		LOG.debug("{} : PeerName is {}", getName(), connectedPeerName);
+		
+		if( FORCE_JXTA_DATA_TRANSMISSION ) {
+			return false;
+		}
 		
 		if( !JxtaServicesProvider.getInstance().getEndpointService().isReachable(peerID, false)) {
 			LOG.error("PeerID is not reachable for direct connection: {}", peerID);
