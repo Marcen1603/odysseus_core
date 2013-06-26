@@ -45,11 +45,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractLoadBalancer.class);
 	
 	/**
-	 * The {@link SimplePlanPrinter} instance for this class.
-	 */
-	protected SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
-	
-	/**
 	 * The counter for connections to other peers.
 	 */
 	private static int connectionCounter = 0;
@@ -541,7 +536,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 			} else {
 				
-				LOG.debug("Plan of the querypart to publish:\n{}", this.printer.createString(part.getLogicalPlan()));
+				SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
+				LOG.debug("Plan of the querypart to publish:\n{}", printer.createString(part.getLogicalPlan()));
 				DistributionHelper.publish(part, assignedPeerID, sharedQueryID, transCfg);
 				
 			}
