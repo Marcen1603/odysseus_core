@@ -3,8 +3,11 @@ package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.*;
@@ -18,7 +21,7 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 	private final String algo_type = "KNearestNeighbor";
 
 	private Map<String, Integer> freq = new HashMap<String, Integer>();
-	private Map<String, Integer> trainfeatures = new HashMap<String, Integer>();
+	private Map<List<String>, Integer> trainfeatures = new HashMap<List<String>, Integer>();
 	
 	private int ntr = 0;
 	private List<String> stopwords = new ArrayList<String>();
@@ -66,17 +69,28 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 	    List<ResultEntity> results  = new ArrayList<ResultEntity>();
 		
 	
-		for (Map.Entry<String, Integer> e : trainfeatures.entrySet()) {
+		for (Map.Entry<List<String>, Integer> e : trainfeatures.entrySet()) {
 			
 			List<String> commonwords = new ArrayList<String>();
 			
-			if(testwords.contains(e.getKey())){
-				commonwords.add(e.getKey());
+			System.out.println(e.getKey());
+			
+			Iterator<String> iterator = e.getKey().iterator();
+			while (iterator.hasNext()) {
+				
+				System.out.println(iterator.next());
+				
+				if(testwords.contains(iterator.next())){
+					commonwords.add(iterator.next());
+				}
 			}
 			
+			
+	
 			double score = 0.0;
 			
 			for(String word : commonwords ){
+				System.out.println("log("+ntr+"/("+ freq.get(word) +")) = " + Math.log(ntr/freq.get(word)));
 				score += Math.log(ntr/freq.get(word));
 			}
 			
@@ -140,8 +154,8 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 			}
 		}
 		
-		
-		return words;
+		//remove duplicates words
+		return removeDuplicateWithOrder(words);
 
 	}
 
@@ -202,10 +216,8 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 			
 			for(String word : words ){
 				   System.out.println(word);
-				
-				   
-				   trainfeatures.put(word, e.getValue());
-				   
+
+	
 				   if(!freq.containsKey(word)){
 					   freq.put(word, 1);
 				   }else{
@@ -215,16 +227,39 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 				   
 			}
 			
-		
-		
-		
+			   trainfeatures.put(words, e.getValue());
+			
 		}
+		
+		
+			for ( Map.Entry<String, Integer> e : freq.entrySet() )
+					System.out.println( e.getKey() + "\t\t"+ e.getValue() );
 		
 		
 	
 		
 	}
 
+	
+	
+	/** List order maintained 
+	 * @return **/
+
+	private List<String> removeDuplicateWithOrder(List<String> arlList)
+	 {
+	 Set set = new HashSet();
+	 List<String> newList = new ArrayList();
+	 for (Iterator<String> iter = arlList.iterator();    iter.hasNext(); ) {
+	 Object element = iter.next();
+	   if (set.add(element))
+		  newList.add(element.toString());
+		}
+		arlList.clear();
+		arlList.addAll(newList);
+		
+		return arlList;
+	}
+	
 	@Override
 	public String getDomain() {
 		return domain;
