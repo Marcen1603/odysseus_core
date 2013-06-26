@@ -267,11 +267,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @return A collection of all {@link QueryPart}s <code>queryPartsMap</code> contains arranged as same {@link QueryPart}s of 
 	 * different {@link ILogicalQuery} copies are back-to-back.
 	 */
-	protected Collection<QueryPart> arrangeQueryParts(Map<ILogicalQuery, Map<ILogicalQuery, List<QueryPart>>> queryPartsMap) {
+	protected List<QueryPart> arrangeQueryParts(Map<ILogicalQuery, Map<ILogicalQuery, List<QueryPart>>> queryPartsMap) {
 		
 		Preconditions.checkNotNull(queryPartsMap, "queryPartsMap must be not null!");
 		
-		final Collection<QueryPart> arrangedParts = Lists.newArrayList();
+		final List<QueryPart> arrangedParts = Lists.newArrayList();
 		final List<Iterator<QueryPart>> partsIter = Lists.newArrayList();
 		
 		for(Map<ILogicalQuery, List<QueryPart>> partialQueryPartsMap : queryPartsMap.values()) {
@@ -514,14 +514,14 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * <code>queryPartDistributionMap</code> must not be null.
 	 * @param sharedQueryID The {@link ID} for query sharing. <br />
 	 * <code>sharedQueryID</code> must not be null.
-	 * @param transCfg The name of the transport configuration. <br />
+	 * @param cfg The name of the transport configuration. <br />
 	 * <code>transCfg</code> must not be null.
 	 */
-	protected List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, QueryBuildConfiguration transCfg) {
+	protected List<QueryPart> shareParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, QueryBuildConfiguration cfg) {
 		
 		Preconditions.checkNotNull(queryPartDistributionMap, "queryPartDistributionMap must be not null!");
 		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must be not null!");
-		Preconditions.checkNotNull(transCfg, "transCfg must be not null!");
+		Preconditions.checkNotNull(cfg, "transCfg must be not null!");
 		
 		final List<QueryPart> localParts = Lists.newArrayList();
 		final PeerID ownPeerID = P2PDictionaryService.get().getLocalPeerID();
@@ -538,7 +538,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 				SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
 				LOG.debug("Plan of the querypart to publish:\n{}", printer.createString(part.getLogicalPlan()));
-				DistributionHelper.publish(part, assignedPeerID, sharedQueryID, transCfg);
+				DistributionHelper.publish(part, assignedPeerID, sharedQueryID, cfg);
 				
 			}
 
@@ -555,17 +555,17 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * <code>queryParts</code> must not be null.
 	 * @param queryPartDistributionMap The mapping of the {@link QueryPart}s and the {@link PeerID}s, where they shall be executed. <br />
 	 * <code>queryPartDistributionMap</code> must not be null.
-	 * @param transCfg The transfer configuration. <br />
+	 * @param cfg The transfer configuration. <br />
 	 * <code>transCfg</code> must not be null.
 	 * @param queryName The name of the {@link ILogicalQuery}.
 	 * @return The new {@link ILogicalQuery} created from all {@link QueryPart}s, which shall be executed locally.
 	 */
-	protected ILogicalQuery shareParts(List<QueryPart> queryParts, Map<QueryPart, PeerID> queryPartDistributionMap, QueryBuildConfiguration transCfg, 
+	protected ILogicalQuery shareParts(List<QueryPart> queryParts, Map<QueryPart, PeerID> queryPartDistributionMap, QueryBuildConfiguration cfg, 
 			String queryName) {
 		
 		Preconditions.checkNotNull(queryPartDistributionMap, "queryPartDistributionMap must be not null!");
 		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
-		Preconditions.checkNotNull(transCfg, "transCfg must be not null!");
+		Preconditions.checkNotNull(cfg, "transCfg must be not null!");
 		
 		// Generate an ID for the shared query
 		final ID sharedQueryID = DistributionHelper.generateSharedQueryID();
@@ -576,7 +576,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			queryPartPeerMap.put(part, queryPartDistributionMap.get(part));
 		
 		// publish the queryparts and transform the parts which shall be executed locally into a query
-		ILogicalQuery localQuery = DistributionHelper.transformToQuery(this.shareParts(queryPartPeerMap, sharedQueryID, transCfg), queryName);
+		ILogicalQuery localQuery = DistributionHelper.transformToQuery(this.shareParts(queryPartPeerMap, sharedQueryID, cfg), queryName);
 		
 		// Registers an sharedQueryID as a master to resolve removed query parts
 		QueryPartController.getInstance().registerAsMaster(localQuery, sharedQueryID);
