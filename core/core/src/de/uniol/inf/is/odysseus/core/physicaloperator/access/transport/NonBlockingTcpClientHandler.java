@@ -51,6 +51,9 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
     private int port;
     private TCPConnector connector;
     private NioTcpConnection connection;
+    /** In and output for data transfer */
+    private InputStream input;
+    private OutputStream output;
     private int readBufferSize;
     private int writeBufferSize;
 
@@ -111,7 +114,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
 
     @Override
     public OutputStream getOutputStream() {
-        return new TcpOutputStream();
+        return this.output;
     }
 
     @Override
@@ -132,6 +135,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
             NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
             throw new OpenFailedException(e);
         }
+        this.output = new TcpOutputStream();
     }
 
     @Override
