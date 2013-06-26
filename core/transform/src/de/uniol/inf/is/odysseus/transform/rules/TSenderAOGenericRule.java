@@ -172,7 +172,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	private IProtocolHandler<?> getProtocolHandler(SenderAO operator, IDataHandler<?> dataHandler) {
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
-			if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator.getWrapper())) {
+			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(), ITransportDirection.OUT, IAccessPattern.PULL, operator.getOptionsMap(),
 						dataHandler);
 			} else {
