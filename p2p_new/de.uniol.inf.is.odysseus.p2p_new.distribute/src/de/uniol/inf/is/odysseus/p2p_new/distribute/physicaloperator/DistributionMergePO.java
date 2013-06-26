@@ -152,6 +152,15 @@ public class DistributionMergePO<T extends IStreamObject<? extends ITimeInterval
 
 	}
 	
+	@Override
+	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
+		
+		this.purgeElements(this.getTS(punctuation, true));
+		this.mergeElement(punctuation, port);
+		this.inputQueue.add(new Pair<IStreamable, Integer>(punctuation, port));
+		
+	}
+	
 	/**
 	 * Removes all elements from the {@link inputQueue}, which have an end timestamp before or equal to <code>deadline</code>.
 	 */
@@ -179,7 +188,7 @@ public class DistributionMergePO<T extends IStreamObject<? extends ITimeInterval
 	 * @param port The port on which the object was arriving.
 	 */
 	@SuppressWarnings("unchecked")
-	private synchronized void mergeElement(T object, int port) {
+	private synchronized void mergeElement(IStreamable object, int port) {
 		
 		// The maximal count of that object over all ports and on the arriving port
 		int foundMax = 0;
@@ -204,7 +213,7 @@ public class DistributionMergePO<T extends IStreamObject<? extends ITimeInterval
 				continue;
 				
 			} else if(!elem.isPunctuation() && !object.isPunctuation() && 
-					!(((T) elem).equals(object) || !((T) elem).getMetadata().equals(object.getMetadata()))) {
+					!(((T) elem).equals((T) object) || !((T) elem).getMetadata().equals(((T) object).getMetadata()))) {
 				
 				// either the elements or the timestamps are not equal
 				continue;
@@ -235,7 +244,9 @@ public class DistributionMergePO<T extends IStreamObject<? extends ITimeInterval
 			 * First appearance of that object -> transfer
 			 * Else would mean, that the object appeared on a different port earlier -> drop
 			 */
-			this.transfer(object);
+			if(object.isPunctuation())
+				this.sendPunctuation((IPunctuation) object);
+			else this.transfer((T) object);
 			
 		}
 		
