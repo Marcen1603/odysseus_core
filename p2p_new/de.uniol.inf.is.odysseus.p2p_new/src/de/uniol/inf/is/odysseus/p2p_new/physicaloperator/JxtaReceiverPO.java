@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -24,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
@@ -39,7 +41,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaReceiverPO.class);
 
-	private static final boolean FORCE_JXTA_DATA_TRANSMISSION = true;
+	private static final boolean FORCE_JXTA_DATA_TRANSMISSION = determineForceJxtaSetting();
+	private static final String FORCE_JXTA_TRANSMISSION_SYS_PROPERTY = "peer.forcejxta";
 	private static final String PIPE_NAME = "Odysseus Pipe";
 	private static final int BUFFER_SIZE_BYTES = 4096;
 
@@ -407,4 +410,26 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		return bb.getInt();
 	}
 
+	private static boolean determineForceJxtaSetting() {
+		try {
+			return Boolean.valueOf(determineForceJxtaSettingString());
+		} catch( Throwable t ) {
+			LOG.error("Could not determine stting for forcing jxta data stream transmission connection", t);
+			return false;
+		}
+	}
+
+	private static String determineForceJxtaSettingString() {
+		String peerGroupName = System.getProperty(FORCE_JXTA_TRANSMISSION_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(peerGroupName)) {
+			return peerGroupName;
+		}
+
+		peerGroupName = OdysseusConfiguration.get(FORCE_JXTA_TRANSMISSION_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(peerGroupName)) {
+			return peerGroupName;
+		}
+
+		return "false";
+	}
 }
