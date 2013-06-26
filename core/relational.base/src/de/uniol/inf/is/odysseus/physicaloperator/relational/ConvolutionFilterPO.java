@@ -78,6 +78,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 		transferArea.init(this);
 		initWeights();
 
+		list = new HashMap<>();
 		positions = new int[attributes.size()];
 		for (int i = 0; i < attributes.size(); i++) {
 			SDFAttribute a = attributes.get(i);
@@ -120,7 +121,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 
 	@Override
 	protected synchronized void process_next(Tuple<M> o, int port) {
-		transferArea.newElement(o, port);
+		
 		Integer groupID = 0;
 		if (groupProcessor != null) {
 			groupID = groupProcessor.getGroupID(o);
@@ -128,13 +129,14 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 		if (this.list.get(groupID) == null) {
 			this.list.put(groupID, new LinkedList<Tuple<M>>());
 		}
-		this.list.get(groupID).addLast(o);
+		this.list.get(groupID).addLast(o);		
 		if (this.list.get(groupID).size() >= totalSize) {
-			Tuple<M> weightedTuple = this.list.get(groupID).get(this.size).clone();
+			Tuple<M> weightedTuple = this.list.get(groupID).get(this.size).clone();			
 			for (int pos : this.positions) {
 				weightedTuple.setAttribute(pos, getWeightedValue(pos, groupID));
-			}
-			transferArea.transfer(weightedTuple);
+			}			
+			transferArea.transfer(weightedTuple);		
+			transferArea.newElement(weightedTuple, port);
 			this.list.get(groupID).removeFirst();
 		}
 
@@ -163,6 +165,5 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 	 */
 	public void setGroupProcessor(IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor) {
 		this.groupProcessor = groupProcessor;		
-	}
-
+	}	
 }

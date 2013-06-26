@@ -125,7 +125,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void transfer(W object) {
-		synchronized (this.outputQueue) {
+		synchronized (this.outputQueue) {			
 			// watermark is needed if new sources are connected at runtime
 			// if watermark == null no object has ever been transferred --> init
 			// phase
@@ -145,8 +145,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
-		synchronized (this.outputQueue) {
-			//logger.debug("New Punctuation " + punctuation);
+		synchronized (this.outputQueue) {			
 			// watermark is needed if new sources are connected at runtime
 			// if watermark == null no object has ever been transferred --> init
 			// phase
@@ -190,7 +189,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		sendData();
 	}
 
-	private void sendData() {
+	private void sendData() {		
 		PointInTime minimum = null;
 		synchronized (minTs) {
 			minimum = getMinTs();

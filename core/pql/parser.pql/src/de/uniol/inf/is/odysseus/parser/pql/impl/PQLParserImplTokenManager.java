@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 
 /** Token Manager. */
+@SuppressWarnings("all")
 public class PQLParserImplTokenManager implements PQLParserImplConstants
 {
 
