@@ -95,6 +95,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.SMaxFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SMinFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SecondFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SinusFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.SleepFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerThanOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SqrtFunction;
@@ -264,6 +265,8 @@ public class MEP implements IExpressionParser {
         registerFunction(new EvalFunction());
         registerFunction(new SMinFunction());
         registerFunction(new SMaxFunction());
+        
+        registerFunction(new SleepFunction());
     }
 
     /**
