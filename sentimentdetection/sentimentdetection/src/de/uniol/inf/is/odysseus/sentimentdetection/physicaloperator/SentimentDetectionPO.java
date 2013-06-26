@@ -67,10 +67,10 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	}
 
 	@Override
-	protected synchronized void process_next(Tuple object, int port) {
+	protected  void process_next(Tuple object, int port) {
 
 		if (port == 0) {
-			// add trainingsdata
+			// add trainingsset
 			trainingset.put(object.getAttribute(0).toString(),
 					Integer.parseInt(object.getAttribute(1).toString().trim()));
 
