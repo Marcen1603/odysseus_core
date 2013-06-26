@@ -58,23 +58,23 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	/**
 	 * The parameter to determine that the minimum degree of parallelism should be used.
 	 */
-	public static final String MIN_PARAM = "min";
+	public static final String MIN_DEGREE_PARAM = "min";
 	
 	/**
 	 * The minimum value of parallelism.
 	 */
-	public static final int MIN_VALUE = 1;
+	public static final int MIN_DEGREE_VALUE = 1;
 	
 	/**
 	 * The parameter to determine that the maximum degree of parallelism should be used.
 	 */
-	public static final String MAX_PARAM = "max";
+	public static final String MAX_DEGREE_PARAM = "max";
 	
 	/**
 	 * The maximum value of parallelism. <br />
 	 * This leads to the usage of the number of available remote Peers as the degree of parallelism.
 	 */
-	public static final int MAX_VALUE = Integer.MAX_VALUE;
+	public static final int MAX_DEGREE_VALUE = Integer.MAX_VALUE;
 	
 	/**
 	 * Returns the base name for acceptor operators.
@@ -219,28 +219,28 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		Preconditions.checkNotNull(cfg.get(ParameterDistributionType.class).getValue(), "parameters for distributiontype must not be null");
 		
 		String[] strParameters = cfg.get(ParameterDistributionType.class).getValue().split(" ");	
-		int wantedDegreeOfParallelism = MIN_VALUE;
+		int wantedDegreeOfParallelism = MIN_DEGREE_VALUE;
 		
 		if(strParameters.length > 1) {
 			
-			if(strParameters[1].toLowerCase().equals(MIN_PARAM))
-				wantedDegreeOfParallelism = MIN_VALUE;
-			else if(strParameters[1].toLowerCase().equals(MAX_PARAM))
-				wantedDegreeOfParallelism = MAX_VALUE;
+			if(strParameters[1].toLowerCase().equals(MIN_DEGREE_PARAM))
+				wantedDegreeOfParallelism = MIN_DEGREE_VALUE;
+			else if(strParameters[1].toLowerCase().equals(MAX_DEGREE_PARAM))
+				wantedDegreeOfParallelism = MAX_DEGREE_VALUE;
 			else try {
 			
 				wantedDegreeOfParallelism = Integer.parseInt(strParameters[1]);
-				if(wantedDegreeOfParallelism < MIN_VALUE) {
+				if(wantedDegreeOfParallelism < MIN_DEGREE_VALUE) {
 					
-					LOG.error("{} is an invalid degree of parallelism. Degree settet to {}", strParameters[1], MIN_VALUE);
-					wantedDegreeOfParallelism = MIN_VALUE;
+					LOG.error("{} is an invalid degree of parallelism. Degree settet to {}", strParameters[1], MIN_DEGREE_VALUE);
+					wantedDegreeOfParallelism = MIN_DEGREE_VALUE;
 					
 				}
 				
 			} catch(NumberFormatException e) {
 				
 				e.printStackTrace();
-				LOG.error("Could not parse {} to an integer. Degree settet to {}", strParameters[1], MIN_VALUE);
+				LOG.error("Could not parse {} to an integer. Degree settet to {}", strParameters[1], MIN_DEGREE_VALUE);
 				
 			}
 			
