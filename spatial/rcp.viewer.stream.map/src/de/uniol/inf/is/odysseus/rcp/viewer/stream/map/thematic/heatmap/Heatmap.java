@@ -14,6 +14,8 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
@@ -34,12 +36,16 @@ public class Heatmap extends RasterLayer {
 	private double totalValue;
 	private LayerUpdater layerUpdater;
 	
-	public Heatmap(HeatmapLayerConfiguration configuration, ScreenManager screenManager) {
+	public Heatmap(HeatmapLayerConfiguration configuration) {
 		super(configuration);
-		this.screenManager = screenManager;
 		this.config = configuration;
 		minValue = 0;
 		maxValue = 0;
+	}
+	
+	@Override
+	public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
+		this.screenManager = screenManager;
 	}
 	
 	@Override

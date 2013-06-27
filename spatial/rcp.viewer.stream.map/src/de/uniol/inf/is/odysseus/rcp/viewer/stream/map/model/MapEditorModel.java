@@ -76,26 +76,25 @@ public class MapEditorModel extends ModelObject {
 
 	private int srid;
 
-	// private StreamMapEditorPart editor = null;
-
 	public void init(StreamMapEditorPart editor) {
-		// this.editor = editor;
 		this.screenManager = editor.getScreenManager();
 		for (LayerUpdater layerUpdater : connections.values()) {
 			screenManager.addPropertyChangeListener(layerUpdater);
-			screenManager.addConnection(layerUpdater);	
+			screenManager.addConnection(layerUpdater);
 		}
+
+		// Cause if we load it from a file, the
+		// screenManger was null
 		for (ILayer layer : layers) {
 			if (layer != null)
 				layer.init(screenManager, null, null);
 		}
-		// editor.updateViews();
 		screenManager.redraw();
 	}
 
 	@SuppressWarnings("unchecked")
 	public static MapEditorModel open(IFile file, StreamMapEditorPart editor) {
-		
+
 		iFile = file;
 		MapEditorModel newModel = new MapEditorModel();
 		String output = "";
@@ -247,7 +246,7 @@ public class MapEditorModel extends ModelObject {
 				.registerSubtype(TracemapLayerConfiguration.class);
 
 		gsonbuilder.registerTypeAdapterFactory(layerConfigurationFactory);
-		
+
 		// Queries
 		RuntimeTypeAdapterFactory persistentQueryFactory = RuntimeTypeAdapterFactory
 				.of(PersistentQuery.class);
@@ -424,18 +423,19 @@ public class MapEditorModel extends ModelObject {
 	 * @return The layer
 	 */
 	private ILayer addLayer(HeatmapLayerConfiguration layerConfiguration) {
-		ILayer layer = null;
+		ILayer layer = new Heatmap(layerConfiguration);
 		if (screenManager != null) {
-			layer = new Heatmap(layerConfiguration, screenManager);
+			layer.init(screenManager, null, null);
+		}
 
-			// Add to the selected connection (LayerUpdater)
-			for (LayerUpdater connection : connections.values()) {
-				if (connection.getQuery().getLogicalQuery().getQueryText()
-						.equals(layerConfiguration.getQuery())) {
-					connection.add(layer);
-				}
+		// Add to the selected connection (LayerUpdater)
+		for (LayerUpdater connection : connections.values()) {
+			if (connection.getQuery().getLogicalQuery().getQueryText()
+					.equals(layerConfiguration.getQuery())) {
+				connection.add(layer);
 			}
 		}
+
 		return layer;
 	}
 
@@ -446,18 +446,19 @@ public class MapEditorModel extends ModelObject {
 	 * @return The layer
 	 */
 	private ILayer addLayer(TracemapLayerConfiguration layerConfiguration) {
-		ILayer layer = null;
+		ILayer layer = new TraceLayer(layerConfiguration);
 		if (screenManager != null) {
-			layer = new TraceLayer(layerConfiguration, screenManager);
-
-			// Add to the selected connection (LayerUpdater)
-			for (LayerUpdater connection : connections.values()) {
-				if (connection.getQuery().getLogicalQuery().getQueryText()
-						.equals(layerConfiguration.getQuery())) {
-					connection.add(layer);
-				}
+			layer.init(screenManager, null, null);
+		}
+		
+		// Add to the selected connection (LayerUpdater)
+		for (LayerUpdater connection : connections.values()) {
+			if (connection.getQuery().getLogicalQuery().getQueryText()
+					.equals(layerConfiguration.getQuery())) {
+				connection.add(layer);
 			}
 		}
+
 		return layer;
 	}
 
@@ -469,10 +470,10 @@ public class MapEditorModel extends ModelObject {
 
 			LayerUpdater updater = new LayerUpdater(editor, query, connection);
 			connections.put(String.valueOf(query.hashCode()), updater);
-			if(screenManager != null) {
+			if (screenManager != null) {
 				// If this Model is not opened by a file
 				screenManager.addPropertyChangeListener(updater);
-				screenManager.addConnection(updater);				
+				screenManager.addConnection(updater);
 			}
 
 			LOG.debug("Bind Query: " + query.getID());

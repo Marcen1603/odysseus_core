@@ -20,6 +20,8 @@ import com.vividsolutions.jts.geom.Point;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
@@ -35,12 +37,15 @@ public class TraceLayer extends RasterLayer {
 	private TracemapLayerConfiguration config;
 	private HashMap<Integer, PointInTime[]> timeHashMap;
 
-	public TraceLayer(TracemapLayerConfiguration config,
-			ScreenManager screenManager) {
+	public TraceLayer(TracemapLayerConfiguration config) {
 		super(config);
-		this.screenManager = screenManager;
 		this.config = config;
 		timeHashMap = new HashMap<Integer, PointInTime[]>();
+	}
+	
+	@Override
+	public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
+		this.screenManager = screenManager;
 	}
 
 	@Override
