@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.pubsub.broker.routing.RoutingBrokerRegistry">
+   <implementation class="de.uniol.inf.is.odysseus.pubsub.broker.routing.RoutingBrokerRegistry"/>
+      <reference bind="registerRoutingBrokers" cardinality="1..n" unbind="unregisterRoutingBrokers" policy="dynamic" interface="de.uniol.inf.is.odysseus.pubsub.broker.routing.IRoutingBroker"/>
+</scr:component>

@@ -29,9 +29,16 @@ import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
 import de.uniol.inf.is.odysseus.pubsub.broker.topology.IBrokerTopology;
 import de.uniol.inf.is.odysseus.pubsub.observer.PublisherObservable;
 
+/**
+ * Physical Publish Operator. The Operator provides the publish functionality in publish/Subscribe systems.
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 
 	private String topologyType;
+	private String routing;
 	private String domain;
 	private List<String> topicStrings;
 	private List<Topic> topics;
@@ -39,9 +46,10 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 	private String identifier;
 	private PublisherObservable<T> publisherObservable;
 
-	public PublishPO(String topologyType, String domain, List<String> topics) {
+	public PublishPO(String topologyType, String domain, List<String> topics, String routing) {
 		super();
 		this.topologyType = topologyType;
+		this.routing = routing;
 		this.domain = domain;
 		this.topicStrings = topics;
 		this.topics = TopicHelper.convertStringsToTopics(topics);
@@ -58,7 +66,7 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 	@Override
 	protected void process_open() throws OpenFailedException {
 		brokerTopology = (IBrokerTopology<T>) BrokerTopologyRegistry
-				.<T> getTopologyByTypeAndDomain(topologyType, domain);
+				.<T> getTopologyByTypeAndDomain(topologyType, domain, routing);
 		if (brokerTopology != null) {
 			BrokerTopologyRegistry.register(domain);
 			if (!topics.isEmpty()) {
@@ -83,7 +91,7 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 	@Override
 	public AbstractSink<T> clone() {
 		return new PublishPO<T>(this.topologyType, this.domain,
-				this.topicStrings);
+				this.topicStrings, this.routing);
 	}
 
 	@Override

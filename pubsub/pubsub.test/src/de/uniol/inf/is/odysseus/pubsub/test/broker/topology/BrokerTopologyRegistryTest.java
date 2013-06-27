@@ -25,9 +25,9 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	@Test
 	public void testCreateMultipleDomains() {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
+				.getTopologyByTypeAndDomain("SingleBroker", "domain1", "");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain("SingleBroker", "domain2");
+				.getTopologyByTypeAndDomain("SingleBroker", "domain2", "");
 		Assert.assertEquals("domain1", topology1.getDomain());
 		Assert.assertEquals("domain2", topology2.getDomain());
 
@@ -36,9 +36,9 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	@Test
 	public void testCreateMultipleDomains2() {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
+				.getTopologyByTypeAndDomain("SingleBroker", "domain1", "");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain("BusTopology", "domain2");
+				.getTopologyByTypeAndDomain("BusTopology", "domain2", "");
 		Assert.assertEquals("domain1", topology1.getDomain());
 		Assert.assertEquals("domain2", topology2.getDomain());
 	}
@@ -46,9 +46,9 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	@Test
 	public void testEqualDomainEqualType(){
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
+				.getTopologyByTypeAndDomain("SingleBroker", "domain1", "");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
+				.getTopologyByTypeAndDomain("SingleBroker", "domain1", "");
 		Assert.assertNotNull(topology1);
 		Assert.assertNotNull(topology2);
 	}
@@ -56,7 +56,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	@Test
 	public void testCreateAndGetTopology() {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
+				.getTopologyByTypeAndDomain("SingleBroker", "domain1", "");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
 				.getTopologyByDomain("domain1");
 		Assert.assertEquals("domain1", topology1.getDomain());
@@ -66,7 +66,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	@Test
 	public void testTopologyNotExists() {
 		BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
+				.getTopologyByTypeAndDomain("SingleBroker", "domain1", "");
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
 				.getTopologyByDomain("domain2");
 		Assert.assertNull(topology1);
@@ -75,9 +75,9 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 	@Test(expectedExceptions = ParseException.class)
 	public void testEqualDomainDifferentType() {
 		IBrokerTopology<?> topology1 = BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain("SingleBroker", "domain1");
+				.getTopologyByTypeAndDomain("SingleBroker", "domain1", "");
 		IBrokerTopology<?> topology2 = BrokerTopologyRegistry
-				.getTopologyByTypeAndDomain("BusTopology", "domain1");
+				.getTopologyByTypeAndDomain("BusTopology", "domain1", "");
 		Assert.assertNotNull(topology1);
 		Assert.assertNull(topology2);
 	}

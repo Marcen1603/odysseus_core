@@ -23,6 +23,12 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * Transformation Class for Subscribe Operator
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class TSubscribeAORule extends AbstractTransformationRule<SubscribeAO> {
 
 	@Override

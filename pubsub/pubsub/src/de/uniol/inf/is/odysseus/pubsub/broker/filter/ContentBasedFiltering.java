@@ -40,18 +40,21 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends AbstractF
 
 	@Override
 	public List<String> filter(T object, PublishPO<T> publisher) {
-		// TODO naiver Ansatz
 		ArrayList<String> result = new ArrayList<String>();
 		
 		for (BrokerSubscription<T> subscription : subscriptions) {
+			boolean allpredicatesValid = true;
 			if (!subscription.hasPredicates()){
 				result.add(subscription.getSubscriber().getIdentifier());
 			} else {
 				for (IPredicate<? super T> pred : subscription.getPredicates()) {
-					if (pred.evaluate(object)){
-						result.add(subscription.getSubscriber().getIdentifier());
+					if (!pred.evaluate(object)){
+						allpredicatesValid = false;
 					}
 				}				
+				if (allpredicatesValid){
+					result.add(subscription.getSubscriber().getIdentifier());
+				}
 			}
 		}
 		return result;

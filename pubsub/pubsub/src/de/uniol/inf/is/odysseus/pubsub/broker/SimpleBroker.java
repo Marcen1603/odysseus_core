@@ -21,18 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.ChannelBasedFiltering;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.ContentBasedFiltering;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.HierarchicalFiltering;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.IFiltering;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
 enum Filtertype{
 	content,
@@ -42,10 +37,6 @@ enum Filtertype{
 
 public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> {
 
-	static Logger logger = LoggerFactory.getLogger(SimpleBroker.class);
-
-	private Map<String, BrokerSubscription<T>> subscriptions;
-	private Map<String, BrokerAdvertisements> advertisements;
 
 	private boolean isAnyTopicHierarchical = false;
 	private boolean hasAnySubscriptionTopics = false;
@@ -55,8 +46,6 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 
 	public SimpleBroker(String name, String domain) {
 		super(name, domain);
-		subscriptions = new HashMap<String, BrokerSubscription<T>>();
-		advertisements = new HashMap<String, BrokerAdvertisements>();
 
 		// Create and Initialize Filters
 		filters.put(Filtertype.channel, new ChannelBasedFiltering<T>());
@@ -67,8 +56,7 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 	public SimpleBroker(String name, SimpleBroker<T> copy) {
 		// Copy data
 		super(name, copy.getDomain());
-		subscriptions = new HashMap<String, BrokerSubscription<T>>();
-		advertisements = new HashMap<String, BrokerAdvertisements>(copy.getAdvertisements());
+		getAdvertisements().putAll(copy.getAdvertisements());
 
 		// Create and Initialize Filters
 		filters.put(Filtertype.channel, new ChannelBasedFiltering<T>());
@@ -76,60 +64,6 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 		filters.put(Filtertype.content, new ContentBasedFiltering<T>());
 
 		// Initialize Broker
-		refreshInternalStatus();
-	}
-	
-	public Map<String, BrokerSubscription<T>> getSubscriptions() {
-		return subscriptions;
-	}
-
-	public Map<String, BrokerAdvertisements> getAdvertisements() {
-		return advertisements;
-	}
-
-	@Override
-	public boolean hasSubscriptions() {
-		return true;
-	}
-
-	@Override
-	public void setSubscription(List<IPredicate<? super T>> predicates,
-			List<Topic> topics, SubscribePO<T> subscriber) {
-		subscriptions.put(subscriber.getIdentifier(),
-				new BrokerSubscription<T>(subscriber, predicates, topics));
-		logger.debug("Subscriber with Identifier: '"
-				+ subscriber.getIdentifier() + "' has subscribed on Broker: '"
-				+ super.getName() + "' in Domain: '" + super.getDomain() + "'");
-		refreshInternalStatus();
-	}
-
-	@Override
-	public void removeSubscription(List<IPredicate<? super T>> predicates,
-			List<Topic> topics, SubscribePO<T> subscriber) {
-		subscriptions.remove(subscriber.getIdentifier());
-		logger.debug("Subscriber with Identifier: '"
-				+ subscriber.getIdentifier()
-				+ "' has unsubscribed on Broker: '" + super.getName()
-				+ "' in Domain: '" + super.getDomain() + "'");
-		refreshInternalStatus();
-	}
-
-	@Override
-	public void setAdvertisement(List<Topic> topics, String publisherUid) {
-		advertisements.put(publisherUid, new BrokerAdvertisements(
-				publisherUid, topics));
-		logger.debug("Publisher with Identifier: '" + publisherUid
-				+ "' has advertised on Broker: '" + super.getName()
-				+ "' in Domain: '" + super.getDomain() + "'");
-		refreshInternalStatus();
-	}
-
-	@Override
-	public void removeAdvertisement(List<Topic> topics, String publisherUid) {
-		advertisements.remove(publisherUid);
-		logger.debug("Publisher with Identifier: '" + publisherUid
-				+ "' has unadvertised on Broker: '" + super.getName()
-				+ "' in Domain: '" + super.getDomain() + "'");
 		refreshInternalStatus();
 	}
 
@@ -146,16 +80,16 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 			if (!isAnyTopicHierarchical) {
 				IFiltering<T> filter = filters.get(Filtertype.channel);
 				if (filter.needsReinitialization()) {
-					filter.reinitializeFilter(subscriptions.values(),
-							advertisements.values());
+					filter.reinitializeFilter(getSubscriptions().values(),
+							getAdvertisements().values());
 				}
 				matchedSubscriberTopics.addAll(filter.filter(object, publisher));
 			} else {
 				// Hierarchical Filtering
 				IFiltering<T> filter = filters.get(Filtertype.hierarchical);
 				if (filter.needsReinitialization()) {
-					filter.reinitializeFilter(subscriptions.values(),
-							advertisements.values());
+					filter.reinitializeFilter(getSubscriptions().values(),
+							getAdvertisements().values());
 				}
 				matchedSubscriberTopics.addAll(filter.filter(object, publisher));
 			}
@@ -163,7 +97,7 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 			// if only topic based filter active
 			if (!hasAnySubscriptionPredicates){
 				for (String subscriberId : matchedSubscriberTopics) {
-					super.addObserver(subscriptions.get(subscriberId).getSubscriber());
+					super.addObserver(getSubscriptions().get(subscriberId).getSubscriber());
 				}
 				super.setChanged();
 				super.notifyObservers(object);
@@ -173,15 +107,15 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 		if (hasAnySubscriptionPredicates) {
 			IFiltering<T> filter = filters.get(Filtertype.content);
 			if (filter.needsReinitialization()) {
-				filter.reinitializeFilter(subscriptions.values(),
-						advertisements.values());
+				filter.reinitializeFilter(getSubscriptions().values(),
+						getAdvertisements().values());
 			}
 			matchedSubscriberPredicates.addAll(filter.filter(object, publisher));
 			
 			// if only content based filter active
 			if (!hasAnySubscriptionTopics || !doesAnyPublisherAdvertiseTopics()) {
 				for (String subscriberId : matchedSubscriberPredicates) {
-					super.addObserver(subscriptions.get(subscriberId).getSubscriber());
+					super.addObserver(getSubscriptions().get(subscriberId).getSubscriber());
 				}
 				super.setChanged();
 				super.notifyObservers(object);
@@ -192,28 +126,29 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 		if (hasAnySubscriptionTopics && doesAnyPublisherAdvertiseTopics() && hasAnySubscriptionPredicates) {
 			for (String subscriberId : matchedSubscriberTopics) {
 				if (matchedSubscriberPredicates.contains(subscriberId)){
-					super.addObserver(subscriptions.get(subscriberId).getSubscriber());			
+					super.addObserver(getSubscriptions().get(subscriberId).getSubscriber());			
 				}
 				super.setChanged();
 				super.notifyObservers(object);
 			}			
 		} 
 		
-		
+		//matchedSubscriberTopics.retainAll(matchedSubscriberPredicates);
 		
 		
 	}
 
 	private boolean doesAnyPublisherAdvertiseTopics() {
-		return !advertisements.isEmpty();
+		return !getAdvertisements().isEmpty();
 	}
-
-	private void refreshInternalStatus() {
+	
+	@Override
+	protected void refreshInternalStatus() {
 		isAnyTopicHierarchical = false;
 		hasAnySubscriptionTopics = false;
 		hasAnySubscriptionPredicates = false;
 
-		for (BrokerSubscription<T> subscription : subscriptions.values()) {
+		for (BrokerSubscription<T> subscription : getSubscriptions().values()) {
 			if (subscription.hasTopics()) {
 				hasAnySubscriptionTopics = true;
 			}
@@ -226,7 +161,7 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 				}
 			}
 		}
-		for (BrokerAdvertisements advertisement : advertisements.values()) {
+		for (BrokerAdvertisements advertisement : getAdvertisements().values()) {
 			for (Topic topic : advertisement.getTopics()) {
 				if (topic.isHierarchical()) {
 					isAnyTopicHierarchical = true;

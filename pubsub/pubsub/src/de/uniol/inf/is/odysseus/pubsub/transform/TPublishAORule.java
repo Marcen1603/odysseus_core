@@ -23,6 +23,12 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * Transformation Class for Publish Operator
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class TPublishAORule extends AbstractTransformationRule<PublishAO> {
 
 	@Override
@@ -34,7 +40,7 @@ public class TPublishAORule extends AbstractTransformationRule<PublishAO> {
 	@Override
 	public void execute(PublishAO publish, TransformationConfiguration config) {
 		defaultExecute(publish, new PublishPO(publish.getTopologyType(),
-				publish.getDomain(), publish.getTopics()), config, true, true);
+				publish.getDomain(), publish.getTopics(), publish.getRouting()), config, true, true);
 	}
 
 	@Override

@@ -21,26 +21,73 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.broker.IBroker;
 import de.uniol.inf.is.odysseus.pubsub.broker.SimpleBroker;
+import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 
-public class SingleBrokerTopology<T extends IStreamObject<?>> extends AbstractBrokerTopology<T>{
+/**
+ * This class provides the functionality of a single broker topology
+ * 
+ * @author ChrisToenjesDeye
+ * 
+ */
+public class SingleBrokerTopology<T extends IStreamObject<?>> extends
+		AbstractBrokerTopology<T> {
 
 	private final String TOPOLOGY_TYPE = "SingleBroker";
 	private IBroker<T> singleBroker;
-	
-	public SingleBrokerTopology(){
+
+	public SingleBrokerTopology() {
 		// needed for OSGi
 	}
-	
-	public SingleBrokerTopology(String domain){
+
+	public SingleBrokerTopology(String domain) {
 		singleBroker = new SimpleBroker<T>("RootBroker", domain);
 		setDomain(domain);
 	}
-	
+
+	/**
+	 * Returns the topology Type, here 'SingleBroker'
+	 * 
+	 * @return topologyType
+	 */
 	@Override
-	public String getType(){
+	public String getType() {
 		return TOPOLOGY_TYPE;
 	}
+	
+	/**
+	 * advertise on brokers
+	 * 
+	 * @param topics
+	 * @param publisher
+	 */
+	@Override
+	public void advertise(List<Topic> topics, String publisherUid) {
+		List<IBroker<T>> brokers = getBrokers();
+		for (IBroker<T> broker : brokers) {
+			broker.setAdvertisement(topics, publisherUid);
+		}
+	}
+	
+	/**
+	 * unadvertise in brokers
+	 * 
+	 * @param topics
+	 * @param publisher
+	 */
+	@Override
+	public void unadvertise(List<Topic> topics, String publisherUid) {
+		List<IBroker<T>> brokers = getBrokers();
+		for (IBroker<T> broker : brokers) {
+			broker.removeAdvertisement(topics, publisherUid);
+		}
+	}
 
+	/**
+	 * Returns a list of brokers, which should me addressed its a single broker
+	 * topology, so this method returns the only one broker
+	 * 
+	 * @return
+	 */
 	@Override
 	public List<IBroker<T>> getBrokers() {
 		// Only one Broker available
@@ -49,14 +96,24 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends AbstractBr
 		return ret;
 	}
 
+	/**
+	 * Returns a broker with a given name Only one Broker exists, so ignore name
+	 */
 	@Override
 	IBroker<T> getBrokerByName(String name) {
 		// Single Broker architecture, ignore name
 		return singleBroker;
 	}
 
+	/**
+	 * Returns a new Instance of this topology Type
+	 * 
+	 * @param name
+	 * @return
+	 */
 	@Override
-	public <E extends IStreamObject<?>> IBrokerTopology<E> getInstance(String domain) {
+	public <E extends IStreamObject<?>> IBrokerTopology<E> getInstance(
+			String domain) {
 		return new SingleBrokerTopology<E>(domain);
 	}
 }

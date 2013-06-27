@@ -21,14 +21,20 @@ import java.util.Observer;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.pubsub.broker.IBroker;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
+/**
+ * Interface for Broker Topologies
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public interface IBrokerTopology<T extends IStreamObject<?>> extends Observer{
 	
 	/**
+	 * Returns a new Instance of this topology Type
 	 * 
 	 * @param name
 	 * @return
@@ -36,19 +42,21 @@ public interface IBrokerTopology<T extends IStreamObject<?>> extends Observer{
 	<E extends IStreamObject<?>> IBrokerTopology<?> getInstance(String name);
 	
 	/**
+	 * Returns the topology Type
 	 * 
-	 * @return
+	 * @return topologyType
 	 */
 	String getType();
 	
 	/**
+	 * Returns the domain of the topolgy
 	 * 
-	 * @return
+	 * @return domain
 	 */
 	String getDomain();
 	
 	/**
-	 * subscribes a Subscriber with given Filterpredicates on a given broker
+	 * subscribes a Subscriber with given Filterpredicates on the given broker
 	 * 
 	 * @param brokername
 	 * @param list
@@ -64,21 +72,9 @@ public interface IBrokerTopology<T extends IStreamObject<?>> extends Observer{
 	 * @param subscriber
 	 */
 	void unsubscribe(List<IPredicate<? super T>> predicates, List<Topic> topics , String brokerName, SubscribePO<T> subscriber);
-	
-	
-	/**
-	 * the publisher uses the transfer method to publish the content to the brokernetwork
-	 * and to all subscribers
-	 */
-	void transfer(T object, PublishPO<T> publisher);
-	
-	/**
-	 * Finds the best Broker
-	 * @return
-	 */
-	List<IBroker<T>> getBrokers();
 
 	/**
+	 * advertise on brokers
 	 * 
 	 * @param topics
 	 * @param publisher
@@ -86,6 +82,7 @@ public interface IBrokerTopology<T extends IStreamObject<?>> extends Observer{
 	void advertise(List<Topic> topics, String publisherUid);
 
 	/**
+	 * unadvertise in brokers
 	 * 
 	 * @param topics
 	 * @param publisher
@@ -93,18 +90,28 @@ public interface IBrokerTopology<T extends IStreamObject<?>> extends Observer{
 	void unadvertise(List<Topic> topics, String publisherUid);
 
 	/**
-	 * 
+	 * increment the number of agents, which are registered on this topology
+	 * if no agent exists the topology will be deleted in BrokerTopologyRegistry
 	 */
 	void incrementNumberOfAgents();
 
 	/**
-	 * 
+	 * decrement the number of agents, which are registered on this topology
+	 * if no agent exists the topology will be deleted in BrokerTopologyRegistry
 	 */
 	void decrementNumberOfAgents();
 
 	/**
-	 * 
+	 * returns of the topology has any registered agents (publisher or subscriber)
+	 * if no agent exists the topology will be deleted in BrokerTopologyRegistry
 	 * @return
 	 */
 	boolean hasAgents();
+
+	
+	void transfer(T object, PublishPO<T> publisher);
+	
+	boolean needsRouting();
+
+	void setRoutingType(String routingType);
 }

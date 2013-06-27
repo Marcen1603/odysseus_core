@@ -32,7 +32,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name="Subscribe", minInputPorts=0, maxInputPorts=0, doc="Subscribe Operator")
+/**
+ * Logical Subscribe Operator. The Operator provides the subscribe functionality in publish/Subscribe systems.
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
+@LogicalOperator(name="Subscribe", minInputPorts=0, maxInputPorts=0, doc="This Operator provides the subscribe functionality in publish/Subscribe systems.")
 public class SubscribeAO extends UnaryLogicalOp{
 
 	private SDFSchema schema;

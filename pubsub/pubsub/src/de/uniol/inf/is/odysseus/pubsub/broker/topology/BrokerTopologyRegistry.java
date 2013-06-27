@@ -27,7 +27,12 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
-
+/**
+ * This class manages all broker topologies for publish/subscribe functionality
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class BrokerTopologyRegistry {
 
 	static Logger logger = LoggerFactory.getLogger(BrokerTopologyRegistry.class);
@@ -42,6 +47,10 @@ public class BrokerTopologyRegistry {
 	static Map<String, List<SubscribePO<?>>> pendingSubscribers = new HashMap<String, List<SubscribePO<?>>>();
 	
 	
+	/**
+	 * OSGi method - registers all topologies which implements IBrokerTopology
+	 * @param brokerTopology
+	 */
 	public static void registerBrokertopologies(IBrokerTopology<?> brokerTopology) {
 		logger.debug("Register new Broker Topology " + brokerTopology.getType());
 		if (!brokerTopologyTypes.containsKey(brokerTopology.getType().toLowerCase())) {
@@ -52,15 +61,33 @@ public class BrokerTopologyRegistry {
 		}
 	}
 	
+	/**
+	 * OSGi method - unregisters all topologies which implements IBrokerTopology
+	 * @param brokerTopology
+	 */
 	public static void unregisterBrokertopologies(IBrokerTopology<?> brokerTopology) {
 		logger.debug("Remove Broker Topology "+brokerTopology.getType());
 		brokerTopologyTypes.remove(brokerTopology.getType().toLowerCase());
 	}
 	
+	/**
+	 * Returns a list of valid topology types
+	 * @return
+	 */
 	public static List<String> getValidTopologyTypes(){
 		return new ArrayList<String>(brokerTopologyTypes.keySet());
 	}
 	
+	public static boolean needsTopologyRouting(String topologyType){
+		return brokerTopologyTypes.get(topologyType.toLowerCase()).needsRouting();
+	}
+	
+	/**
+	 * checks if a combination of domain and type is valid. needed for validation
+	 * @param topologyType
+	 * @param domain
+	 * @return is valid?
+	 */
 	public static boolean isDomainTypeCombinationValid(String topologyType, String domain){
 		if (brokerTopologies.containsKey(domain.toLowerCase())){
 			IBrokerTopology<?> topology = brokerTopologies.get(domain.toLowerCase());
@@ -71,8 +98,13 @@ public class BrokerTopologyRegistry {
 		return true;
 	}
 	
-	// public static <T> IBrokerTopology<?> getTopologyByTypeAndDomain(String topologyType, String domain) may be better
-	public static <T extends IStreamObject<?>> IBrokerTopology<?> getTopologyByTypeAndDomain(String topologyType, String domain){
+	/**
+	 * 
+	 * @param topologyType
+	 * @param domain
+	 * @return topology with given domain and type, if combination of domain and type is valid
+	 */
+	public static <T extends IStreamObject<?>> IBrokerTopology<?> getTopologyByTypeAndDomain(String topologyType, String domain, String routing){
 		// Check if topology Type is valid
 		if (!brokerTopologyTypes.containsKey(topologyType.toLowerCase())){
 			logger.info("Topology Type: '"+ topologyType + "' is not valid.");
@@ -99,6 +131,9 @@ public class BrokerTopologyRegistry {
 			// Broker with type and domain does not exists, create new Instance
 			IBrokerTopology<?> topology = brokerTopologyTypes.get(topologyType.toLowerCase());
 			IBrokerTopology<?> ret = topology.<T>getInstance(domain.toLowerCase());
+			if (ret.needsRouting()){
+				ret.setRoutingType(routing);
+			}
 			brokerTopologies.put(domain.toLowerCase(), ret);
 			
 			if (pendingSubscribers.containsKey(domain.toLowerCase())){
@@ -111,6 +146,11 @@ public class BrokerTopologyRegistry {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param domain
+	 * @return topology with a given name 
+	 */
 	public static IBrokerTopology<?> getTopologyByDomain(String domain) {
 		// Check if domain exists
 		if (brokerTopologies.containsKey(domain.toLowerCase())){
@@ -121,6 +161,11 @@ public class BrokerTopologyRegistry {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param domain
+	 * @param subscriber
+	 */
 	public static void putSubscriberIntoPendingList(String domain, SubscribePO<?> subscriber){
 		if (pendingSubscribers.containsKey(domain.toLowerCase())){
 			pendingSubscribers.get(domain.toLowerCase()).add(subscriber);			 
@@ -131,6 +176,10 @@ public class BrokerTopologyRegistry {
 		}
 	}
 
+	/**
+	 * 
+	 * @param domain
+	 */
 	public static void register(String domain) {
 		IBrokerTopology<?> topology = getTopologyByDomain(domain);
 		if (topology != null){
@@ -138,7 +187,10 @@ public class BrokerTopologyRegistry {
 		}
 	}
 
-	
+	/**
+	 * 
+	 * @param domain
+	 */
 	public static void unregister(String domain) {
 		IBrokerTopology<?> topology = getTopologyByDomain(domain);
 		if (topology != null){

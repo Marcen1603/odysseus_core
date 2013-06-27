@@ -24,14 +24,22 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.pubsub.broker.routing.RoutingBrokerRegistry;
 import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
 
-@LogicalOperator(name="Publish", minInputPorts=1, maxInputPorts=1, doc="Publish Operator")
+/**
+ * Logical Publish Operator. The Operator provides the publish functionality in publish/Subscribe systems.
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
+@LogicalOperator(name="Publish", minInputPorts=1, maxInputPorts=1, doc="This Operator provides the publish functionality in publish/Subscribe systems.")
 public class PublishAO extends UnaryLogicalOp{
 	
 	private String topologyType;
 	private String domain;
 	private List<String> topics = new ArrayList<>();
+	private String routing;
 	
 	public PublishAO(){
 		super();
@@ -41,6 +49,7 @@ public class PublishAO extends UnaryLogicalOp{
 		super(publish);
 		this.topologyType = publish.topologyType;
 		this.domain = publish.domain;
+		this.routing = publish.routing;
 		this.topics = new ArrayList<String>(publish.topics);
 	}
 	
@@ -52,6 +61,21 @@ public class PublishAO extends UnaryLogicalOp{
 			addError(new IllegalParameterException(
 					"Topology Type: '"+ topologyType +"' is not valid. Available Types are: "+validTypes.toString()));
 			return false;
+		} else {
+			// Check if topology needs routing
+			if (BrokerTopologyRegistry.needsTopologyRouting(topologyType)){
+				if (routing == null){
+					addError(new IllegalParameterException("Topology: '"+topologyType+"' needs a routing rule."));
+					return false;					
+				} else {
+					List<String> routingTypes = RoutingBrokerRegistry.getValidRoutingTypes();
+					if (!routingTypes.contains(routing)){
+						addError(new IllegalParameterException(
+								"Routing Type: '"+ routing +"' is not valid. Available Types are: "+routingTypes.toString()));
+						return false;
+					}
+				}
+			}
 		}
 		// Check if combination of type and domain is valid
 		if (!BrokerTopologyRegistry.isDomainTypeCombinationValid(topologyType, domain)){
@@ -59,6 +83,9 @@ public class PublishAO extends UnaryLogicalOp{
 					"Domain: '"+ domain +"' already exists with a different topology type. It's not possible to register a Topology with the same domain and a different topologyType."));
 			return false;
 		}
+		
+		
+		
 		return true;
 	}
 	
@@ -70,6 +97,11 @@ public class PublishAO extends UnaryLogicalOp{
 	@Parameter(name="topologyType", type=StringParameter.class, doc="")
 	public void setTopologyType(String topologyType){
 		this.topologyType = topologyType;
+	}
+	
+	@Parameter(name="routing", type=StringParameter.class, doc="", optional=true)
+	public void setRouting(String routing){
+		this.routing = routing;
 	}
 	
 	@Parameter(name="domain", type=StringParameter.class, doc="")
@@ -84,6 +116,10 @@ public class PublishAO extends UnaryLogicalOp{
 	
 	public String getTopologyType(){
 		return topologyType;
+	}
+	
+	public String getRouting(){
+		return routing;
 	}
 	
 	public String getDomain(){

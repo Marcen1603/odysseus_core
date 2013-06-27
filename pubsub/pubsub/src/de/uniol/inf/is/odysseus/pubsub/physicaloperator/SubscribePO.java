@@ -33,10 +33,10 @@ import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
 import de.uniol.inf.is.odysseus.pubsub.broker.topology.IBrokerTopology;
 
 /**
+ * Physical Subscribe Operator. The Operator provides the subscribe functionality in publish/Subscribe systems.
  * 
  * @author ChrisToenjesDeye
  * 
- * @param <T>
  */
 public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements Observer{
 

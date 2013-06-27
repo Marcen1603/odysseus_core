@@ -48,7 +48,7 @@ public class HierarchicalFilteringTest<T extends IStreamObject<?>> {
 		subscriptions.add(new BrokerSubscription<T>(subscriber));
 
 		Collection<BrokerAdvertisements> advertisements = new ArrayList<BrokerAdvertisements>();
-		PublishPO<T> publisher = new PublishPO<>("topology", "domain", topics);
+		PublishPO<T> publisher = new PublishPO<>("topology", "domain", topics, "");
 		advertisements.add(new BrokerAdvertisements(publisher.getIdentifier(), publisher.getTopics()));
 
 		filter.reinitializeFilter(subscriptions, advertisements);

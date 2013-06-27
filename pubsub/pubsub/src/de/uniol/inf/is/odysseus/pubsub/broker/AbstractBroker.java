@@ -16,18 +16,36 @@
 
 package de.uniol.inf.is.odysseus.pubsub.broker;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
+import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
 public abstract class AbstractBroker<T extends IStreamObject<?>> extends Observable implements IBroker<T>{
+	
+	protected abstract void refreshInternalStatus();
+	
+	private static Logger logger = LoggerFactory.getLogger(AbstractBroker.class);
+
 	private String name;
 	private String domain;
 	
+	private Map<String, BrokerSubscription<T>> subscriptions;
+	private Map<String, BrokerAdvertisements> advertisements;
+	
 	public AbstractBroker(String name, String domain){
-		super();
 		this.name = name;
 		this.domain = domain;
+		subscriptions = new HashMap<String, BrokerSubscription<T>>();
+		advertisements = new HashMap<String, BrokerAdvertisements>();
 	}
 	
 	@Override
@@ -38,5 +56,61 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends Observa
 	@Override
 	public String getDomain() {
 		return domain;
+	}
+	
+	public Map<String, BrokerSubscription<T>> getSubscriptions() {
+		return subscriptions;
+	}
+
+	public Map<String, BrokerAdvertisements> getAdvertisements() {
+		return advertisements;
+	}
+
+	@Override
+	public void setSubscription(List<IPredicate<? super T>> predicates,
+			List<Topic> topics, SubscribePO<T> subscriber) {
+		subscriptions.put(subscriber.getIdentifier(),
+				new BrokerSubscription<T>(subscriber, predicates, topics));
+		logger.debug("Subscriber with Identifier: '"
+				+ subscriber.getIdentifier() + "' has subscribed on Broker: '"
+				+ getName() + "' in Domain: '" + getDomain() + "'");
+		refreshInternalStatus();
+	}
+
+	@Override
+	public void removeSubscription(List<IPredicate<? super T>> predicates,
+			List<Topic> topics, SubscribePO<T> subscriber) {
+		subscriptions.remove(subscriber.getIdentifier());
+		logger.debug("Subscriber with Identifier: '"
+				+ subscriber.getIdentifier()
+				+ "' has unsubscribed on Broker: '" + getName()
+				+ "' in Domain: '" + getDomain() + "'");
+		refreshInternalStatus();
+	}
+
+	@Override
+	public void setAdvertisement(List<Topic> topics, String publisherUid) {
+		advertisements.put(publisherUid, new BrokerAdvertisements(
+				publisherUid, topics));
+		logger.debug("Publisher with Identifier: '" + publisherUid
+				+ "' has advertised on Broker: '" + getName()
+				+ "' in Domain: '" + getDomain() + "'");
+		refreshInternalStatus();
+		
+	}
+
+	@Override
+	public void removeAdvertisement(List<Topic> topics, String publisherUid) {
+		advertisements.remove(publisherUid);
+		logger.debug("Publisher with Identifier: '" + publisherUid
+				+ "' has unadvertised on Broker: '" + getName()
+				+ "' in Domain: '" + getDomain() + "'");
+		refreshInternalStatus();
+		
+	}
+
+	@Override
+	public boolean hasSubscriptions() {
+		return !subscriptions.isEmpty();
 	}
 }
