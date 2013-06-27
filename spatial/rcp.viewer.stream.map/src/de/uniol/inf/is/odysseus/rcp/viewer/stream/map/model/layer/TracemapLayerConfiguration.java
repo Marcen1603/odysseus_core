@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer;
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Configuration for the tracemap with a bit more than a rasterLayerConfiguration
@@ -17,7 +19,7 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	private static final long serialVersionUID = -7982545440178333614L;
 
 	private String query;
-	private HashMap<Integer, Color> colors;
+	private HashMap<Integer, RGB> colors; // Save RGB and not color, cause Color is not serializable
 	private int numOfLineElements;
 	private boolean autoTransparency;
 	private boolean markEndpoint;
@@ -27,7 +29,7 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	public TracemapLayerConfiguration(String name) {
 		super(name);
 		setQuery("");
-		colors = new HashMap<Integer, Color>();
+		colors = new HashMap<Integer, RGB>();
 		numOfLineElements = 10;
 		autoTransparency = true;
 		lineWidth = 3;
@@ -56,15 +58,29 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	}
 
 	public HashMap<Integer, Color> getColors() {
-		return colors;
+		// RGB to Color, cause we need Color, but Color it not serializable
+		HashMap<Integer, Color> returnColors = new HashMap<Integer, Color>();
+		for(Integer key : colors.keySet()) {
+			RGB tempRGB = colors.get(key);
+			returnColors.put(key, new Color(Display.getDefault(), tempRGB));
+		}
+		return returnColors;
 	}
 
 	/**
 	 * Set all colors for all lines
 	 * @param colors
 	 */
-	public void setColors(HashMap<Integer, Color> colors) {
-		this.colors = colors;
+	public void setColors(HashMap<Integer, Color> newColors) {
+		
+		HashMap<Integer, RGB> newColorMap = new HashMap<Integer, RGB>();
+		for(Integer key : newColors.keySet()) {
+			Color tempColor = newColors.get(key);
+			RGB tempRGB = new RGB(tempColor.getRed(), tempColor.getGreen(), tempColor.getBlue());
+			newColorMap.put(key, tempRGB);
+		}
+		
+		this.colors = newColorMap;
 	}
 	
 	/**
@@ -73,7 +89,10 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	 * @return
 	 */
 	public Color getColorForId(int id) {
-		return colors.get(id);
+		RGB tempRGB = colors.get(id);
+		if(tempRGB != null)
+			return new Color(Display.getDefault(), tempRGB);
+		return null;
 	}
 	
 	/**
@@ -82,7 +101,7 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	 * @param color
 	 */
 	public void setColorForId(int id, Color color) {
-		colors.put(new Integer(id), color);
+		colors.put(id, new RGB(color.getRed(), color.getGreen(), color.getBlue()));
 	}
 
 	public int getNumOfLineElements() {

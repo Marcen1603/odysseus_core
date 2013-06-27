@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -15,8 +16,8 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 
 	private String query;
 	private int geometricAttributePosition;
-	private Color minColor;
-	private Color maxColor;
+	private RGB minColor;	// Save RGB and not color, cause Color is not serializable
+	private RGB maxColor;
 	private int alpha;
 	private boolean interpolation;
 	private boolean autoPosition;
@@ -102,19 +103,19 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	}
 
 	public Color getMinColor() {
-		return minColor;
+		return new Color(Display.getDefault(), minColor);
 	}
 
 	public void setMinColor(Color minColor) {
-		this.minColor = minColor;
+		this.minColor = new RGB(minColor.getRed(), minColor.getGreen(), minColor.getBlue());
 	}
 
 	public Color getMaxColor() {
-		return maxColor;
+		return new Color(Display.getDefault(), maxColor);
 	}
 
 	public void setMaxColor(Color maxColor) {
-		this.maxColor = maxColor;
+		this.maxColor = new RGB(maxColor.getRed(), maxColor.getGreen(), maxColor.getBlue());
 	}
 
 	public int getAlpha() {

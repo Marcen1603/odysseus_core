@@ -287,7 +287,8 @@ public class MapEditorModel extends ModelObject {
 			persistentModel.addLayers(layers);
 
 			Gson gson = getGson();
-			configuration.append(gson.toJson(persistentModel));
+			String jsonString = gson.toJson(persistentModel);
+			configuration.append(jsonString);
 
 			LOG.debug("Save " + configuration.toString());
 			bw.write(configuration.toString());
