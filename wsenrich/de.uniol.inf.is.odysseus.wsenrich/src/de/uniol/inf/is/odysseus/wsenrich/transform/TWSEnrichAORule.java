@@ -36,7 +36,6 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 				HttpEntityToStringConverter converter = new HttpEntityToStringConverter(logical.getCharset());
 				IKeyFinder keyFinder = KeyFinderRegistry.getInstance(logical.getParsingMethod());
 			
-		
 		WSEnrichPO<ITimeInterval> physical = new WSEnrichPO<ITimeInterval>(
 			logical.getServiceMethod(),
 			logical.getMethod(),

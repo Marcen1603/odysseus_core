@@ -127,7 +127,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		
 		//Set the Message for the Key (Element) Finder an find the defined Elements and paste
 		//them to the tuple
-		keyFinder.setMessage(converter.getOutput());
+		keyFinder.setMessage(converter.getOutput(), charset);
 		
 		for(int i = 0; i < receivedData.size(); i++) {
 			keyFinder.setSearch(receivedData.get(i).getAttributeName());
@@ -152,7 +152,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	@Override
 	protected synchronized void process_close() {
 		
-		//TODO
+		//actually nothing to do
 	}
 
 	@Override

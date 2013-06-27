@@ -5,7 +5,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 
 public class UriPostWithArgumentsBuilder implements IRequestBuilder {
-
 	
 	/**
 	 * Static variable for the Url-Prefix is "http://"
@@ -56,28 +55,22 @@ public class UriPostWithArgumentsBuilder implements IRequestBuilder {
 	 * Default Constructor for the UriPostBuilder
 	 */
 	public UriPostWithArgumentsBuilder() {
-		
 		this.url = "";
 		this.uri = new StringBuffer();
 		this.postData = new StringBuffer();
 	}
 	
 	/**
-	 * Builds the static part of the uri
+	 * Builds the static part of the url
 	 */
-	private void buildUrl() {
-		
+	private void buildUrl() {	
 		if(!this.uri.equals("")) {
 			this.uri.delete(0, this.uri.length());
 		}
-		
 		//Adds the URL Suffix if its not present in url
 		if(!this.url.contains(URLPREFIX)) {
-			
-			this.uri.append(URLPREFIX + this.url);
-			
-		} else {
-			
+			this.uri.append(URLPREFIX + this.url);	
+		} else {	
 			this.uri.append(this.url);
 		}
 	}
@@ -86,24 +79,18 @@ public class UriPostWithArgumentsBuilder implements IRequestBuilder {
 	 * Adds Key Value Parameter to the Uri
 	 */
 	private void addParameters() {
-		
 		if(!this.postData.equals("")) {
 			this.postData.delete(0, this.postData.length());
 		}
-		
 		//Adds the arguments
 		for(Option argument : this.arguments) {
-				
-		//replaces whitespaces if present
+		//replace whitespaces if present
 		String name = argument.getName().replace(BLANK, BLANKDELMITTER);
-		String value = argument.getValue().replace(BLANK, BLANKDELMITTER);
-				
+		String value = argument.getValue().replace(BLANK, BLANKDELMITTER);	
 		this.postData.append(name + KEYVALUEDELMITER
 				+ value + ARGUMENTDELMITER);
-			
 		}
 		this.postData.deleteCharAt(this.postData.length()-1);
-		
 	}	
 	
 	@Override
@@ -111,10 +98,9 @@ public class UriPostWithArgumentsBuilder implements IRequestBuilder {
 		return this.postData.toString();
 	}
 	
-	//Nothing to do
 	@Override
 	public void setPostData(String doc) {
-		
+		//Nothing to do
 	}
 	
 	@Override
@@ -143,38 +129,30 @@ public class UriPostWithArgumentsBuilder implements IRequestBuilder {
 		return "";
 	}
 
-	//Nothing to do
 	@Override
 	public void setUrlSuffix(String urlSuffix) {
-
+		//Nothing to do
 	}
 
 	@Override
 	public List<Option> getArguments() {
-		
 		return this.arguments;
 	}
 		
 	@Override
 	public void setArguments(List<Option> arguments) {
-		
 		this.arguments = arguments;
-		
 	}
 
 	@Override
 	public void buildUri() {
 		this.buildUrl();
 		this.addParameters();
-		
 	}
 	
 	@Override
 	public String getUri() {
 		return this.uri.toString();
 	}
-
-	
-
 }
 

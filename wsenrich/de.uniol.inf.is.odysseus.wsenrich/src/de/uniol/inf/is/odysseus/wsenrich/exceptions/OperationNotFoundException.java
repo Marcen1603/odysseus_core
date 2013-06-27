@@ -9,7 +9,7 @@ public class OperationNotFoundException extends Exception {
 
 	public OperationNotFoundException() {
 		
-		super("The operattion you defined was not found in the Wsdl-File");
+		super("The operation you defined was not found in the Wsdl-File");
 		
 	}
 

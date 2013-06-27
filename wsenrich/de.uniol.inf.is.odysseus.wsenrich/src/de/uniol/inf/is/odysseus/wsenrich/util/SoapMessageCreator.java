@@ -20,6 +20,9 @@ import de.uniol.inf.is.odysseus.wsenrich.exceptions.OperationNotFoundException;
 
 public class SoapMessageCreator implements ISoapMessageCreator {
 	
+	/**
+	 * The instance of the SoapMessageCreator
+	 */
 	private static SoapMessageCreator instance = null;
 	
 	/**
@@ -59,13 +62,10 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 	 * @param operationName the name of the operation to call
 	 */
 	private SoapMessageCreator(String wsdlUrl, String operationName) {
-		
 		this.wsdlUrl = wsdlUrl;
 		this.operationName = operationName;
 		readWsdl();
 		this.soapMessage = SetSoapMessage(operationName);
-		
-		
 	}
 	
 	/**
@@ -84,31 +84,19 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 	 * Try to parse the wsdl-File
 	 */
 	private void readWsdl() {
-		
-		try {
-			
+		try {	
 			this.project = new WsdlProject();
 			WsdlInterface[] wsdls = WsdlImporter.importWsdl(project, wsdlUrl);
-			this.wsdl = wsdls[0];
-			
+			this.wsdl = wsdls[0];	
 		} catch (XmlException e) {
-			
 			logger.error("Exception by parsing Wsdl-File. Cause: {}", e.getMessage());
-			
-		} catch (IOException e) {
-			
+		} catch (IOException e) {	
 			logger.error("Exception by parsing Wsdl-File. Maybe you defined a wrong Url to the Wsdl-File. Cause: {}", e.getMessage());
-			
 		} catch (SoapUIException e) {
-			
 			logger.error("Internal Exception while parsing Wsdl-File. Cause: {}", e.getMessage());
-			
 		} catch (Exception e) {
-			
 			logger.error("Generally Exception while parsing Wsdl-File. Cause: {}", e.getMessage());
 		}
-		
-		
 	}
 	
 	/**
@@ -116,16 +104,11 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 	 * @param operation the name of the operation
 	 */
 	private void setOperationName(String operation) {
-		
 		this.operationName = operation;
 	}
 	
-	/**
-	 * @return the name of the operation
-	 */
 	@Override
 	public String getOperationName() {
-		
 		return this.operationName;
 	}
 	
@@ -135,23 +118,15 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 	 * has to be created
 	 */
 	private String SetSoapMessage(String operationName) {
-		
-		if(this.operationName == null || this.operationName.equals("")) {
-			
+		if(this.operationName == null || this.operationName.equals("")) {	
 			setOperationName(operationName);	
 		}
-		
-		try {
-			
-			if(this.operationExists()) {
-				
+		try {	
+			if(this.operationExists()) {	
 				return wsdl.getOperationByName(operationName).createRequest(true);	
-			}
-			
-		} catch (OperationNotFoundException e) {
-			
+			}	
+		} catch (OperationNotFoundException e) {	
 			logger.error("Exception while building the Soap-Message. Maybe you defined the wrong operation name. Cause: {}", e.getMessage());
-			
 		}
 		return "";
 	}
@@ -162,35 +137,23 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 	 * @return the required datafields of the operation
 	 */
 	public List<String> getMessageParts(String operationName)  {
-		
 		List<String> datafields = new ArrayList<String>();
-		
-		if(this.operationName == null || this.operationName.equals("")) {
-			
+		if(this.operationName == null || this.operationName.equals("")) {	
 			setOperationName(operationName);
 		}
-		
 		WsdlOperation operation = (WsdlOperation) this.wsdl.getOperationByName(this.getOperationName());
-		
-		try {
-			
-			if(this.operationExists()) {
-				
+		try {	
+			if(this.operationExists()) {	
 				MessagePart[] mp = operation.getDefaultRequestParts();
-				for(int i = 0; i < mp.length; i++) {
-					
+				for(int i = 0; i < mp.length; i++) {	
 					datafields.add(mp[i].getName());
 				}
-				
 				return datafields;
 			}
 		} catch (OperationNotFoundException e) {
-			
 			logger.error("Exception while building the Soap-Message. Maybe you defined the wrong operation name. Cause: {}", e.getMessage());
 		}
-		
-		return null;
-			
+		return null;	
 	}
 	
 	/**
@@ -199,52 +162,33 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 	 * @throws OperationNotFoundException is thrown if the operation does not exists
 	 */
 	private boolean operationExists() throws OperationNotFoundException {
-		
 		boolean found = false;
-		
 		Operation[] operations =  wsdl.getAllOperations();
-		
-		for(int i = 0; i < operations.length; i++) {
-			
+		for(int i = 0; i < operations.length; i++) {	
 			if(operations[i].getName().equals(getOperationName())) {
 				found = true;
 				break;		
 			}
 		}
-		
-		if(!found) {
-			
+		if(!found) {	
 			throw new OperationNotFoundException();
 		}
 		return found;
 	}
 	
-	/**
-	 * @return the amount of all operations found in the wsdl-file
-	 */
 	@Override
 	public Operation[] getOperationsOfWsdl() {
-		
 		return wsdl.getAllOperations();
-		
 	}
 	
-	/**
-	 * @return the amount of all messages found in the wsdl-file
-	 */
 	@Override
 	public String[] getEndpointAdress() {
-		
 		return wsdl.getEndpoints();
 	}
-	
-	/**
-	 * @return The generated Soap-Message
-	 */
+
 	@Override
 	public String getSoapMessage() {
 		return this.soapMessage;
 	}
-
 }
 

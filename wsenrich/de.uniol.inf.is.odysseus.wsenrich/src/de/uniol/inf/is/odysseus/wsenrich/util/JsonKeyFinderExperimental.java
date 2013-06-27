@@ -3,9 +3,14 @@ package de.uniol.inf.is.odysseus.wsenrich.util;
 public class JsonKeyFinderExperimental implements IKeyFinder {
 	
 	/**
-	 * Static Variable for the Definition of Keys and Values
+	 * Static Variable for the Key Value Delmiter
 	 */
-	private static final String ELEMENT_DEFINER = "\"";
+	private static final String KEY_VALUE_DELMITER = ":";
+	
+	/**
+	 * Static Variable for the end of Element Data
+	 */
+	private static final String END_OF_ELEMENT = ",";
 	
 	/**
 	 * The searched Element
@@ -42,13 +47,14 @@ public class JsonKeyFinderExperimental implements IKeyFinder {
 	}
 
 	@Override
-	public void setMessage(String Message) {
+	public void setMessage(String Message, String charset) {
 		this.message = new StringBuffer(Message);
 	}
 
 	@Override
 	public Object getValueOf(String search, boolean keyValue) {
 		
+		StringBuffer temp = new StringBuffer();
 		if(!this.search.equals(search)) {
 			this.search = search;
 		}
@@ -56,26 +62,53 @@ public class JsonKeyFinderExperimental implements IKeyFinder {
 		int match = this.message.indexOf(this.search);
 		
 		if(match == -1) {
-			//No Data found
 			return null;
-		} else {
-			int endOfElement = this.message.indexOf(ELEMENT_DEFINER.toString(), match);
-			int startOfData = this.message.indexOf(ELEMENT_DEFINER.toString(), endOfElement + 1);
-			int endOfData = this.message.indexOf(ELEMENT_DEFINER, startOfData + 1);
-			String temp = this.message.substring(startOfData + 1, endOfData);
-			this.value = temp;
 		}
+		if(keyValue) {
+			temp.append(search + " : ");
+			int endOfElement = this.message.indexOf(KEY_VALUE_DELMITER.toString(), match);
+			int endofData = this.message.indexOf(END_OF_ELEMENT, endOfElement);
+			if(endofData < 1) {  //the last Element of a Json file do not have a , as a seperator
+				endofData = this.message.indexOf("}", endOfElement);
+			}
+			temp.append(this.message.substring(endOfElement + 1, endofData));
+			replaceJsonData(temp, "\"", "");	
+		} else {
+			int endOfElement = this.message.indexOf(KEY_VALUE_DELMITER.toString(), match);
+			int endofData = this.message.indexOf(END_OF_ELEMENT, endOfElement);
+			if(endofData < 1) { //the last Element of a Json file do not have a , as a seperator
+				endofData = this.message.indexOf("}", endOfElement);
+			}
+			temp.append(this.message.substring(endOfElement + 1, endofData));
+			replaceJsonData(temp, "\"", "");
+		}
+		this.value = temp;
 		return this.value;
 	}
 
 	@Override
 	public String getName() {
-		return "JSONExperimental";
+		return "JSONEXPERIMENTAL";
 	}
 
 	@Override
 	public IKeyFinder createInstance() {
 		return new JsonKeyFinderExperimental();
 	}
-
+	
+	/**
+	 * Recursive Method to replace wrong Characters
+	 * @param temp the message
+	 * @param htmlCode the html code to be replaced
+	 * @param replacement the character which replace the htmlCode
+	 * @return
+	 */
+	private StringBuffer replaceJsonData(StringBuffer temp, String htmlCode, String replacement) {
+		int match = temp.indexOf(htmlCode);
+		if(match > -1) {
+			temp.replace(match, match + htmlCode.length(), replacement);
+			 return replaceJsonData(temp, htmlCode, replacement);	
+		} else 
+			return temp;
+	}
 }

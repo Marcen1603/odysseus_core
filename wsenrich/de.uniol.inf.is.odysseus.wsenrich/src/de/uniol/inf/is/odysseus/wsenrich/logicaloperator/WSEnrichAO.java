@@ -55,22 +55,22 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	/**
 	 * Static Variable for the parsing Method xml experimental
 	 */
-	private static final String PARSING_XML_EXPERIMENTAL = "XMLExperimental";
+	private static final String PARSING_XML_EXPERIMENTAL = "XMLEXPERIMENTAL";
 	
 	/**
 	 * Static Variable for the parsing Method xpath
 	 */
-	private static final String PARSING_XML_XPATH = "XPath";
+	private static final String PARSING_XML_XPATH = "XPATH";
 	
 	/**
 	 * Static Variable for the parsing Method json experimental
 	 */
-	private static final String PARSING_JSON_EXPERIMENTAL = "JSONExperimental";
+	private static final String PARSING_JSON_EXPERIMENTAL = "JSONEXPERIMENTAL";
 	
 	/**
 	 * Static Variable for the parsing Method json with a Json parser
 	 */
-	private static final String PARSING_JSON_PARSER = "JSONParser";
+	private static final String PARSING_JSON_PARSER = "JSONPATH";
 	
 	/**
 	 * For Logging
@@ -208,8 +208,8 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		}
 		if (!(parsingMethod.equals(PARSING_XML_EXPERIMENTAL) || parsingMethod.equals(PARSING_XML_XPATH) || parsingMethod.equals(PARSING_JSON_EXPERIMENTAL) || parsingMethod.equals(PARSING_JSON_PARSER))) {
 			addError(new IllegalParameterException(
-				"You have to declare the Parsing Method to parse the webservice-response. This can be XMLExperimental + " +
-				"or XPath for XML-Document or JSONExperimental or JSONParser for JSON Documents."));
+				"You have to declare the Parsing Method to parse the webservice-response. This can be XMLEXPERIMENTAL  " +
+				"or XPATH for XML-Documents or JSONEXPERIMENTAL or JSONPATH for JSON Documents."));
 			valid = false;
 		}
 

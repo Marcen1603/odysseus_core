@@ -13,7 +13,7 @@ public interface IRequestBuilder {
 	
 	/**
 	 * Setter for the static part of the url before arguments
-	 * @param urlPrefix
+	 * @param urlPrefix the urlprefix
 	 */
 	public void setUrlPrefix(String urlPrefix);
 	
@@ -24,7 +24,7 @@ public interface IRequestBuilder {
 	
 	/**
 	 * Setter for the static part of the url after arguments
-	 * @param urlSuffix
+	 * @param urlSuffix the urlsuffix
 	 */
 	public void setUrlSuffix(String urlSuffix);
 	
@@ -54,7 +54,6 @@ public interface IRequestBuilder {
 	 * builds the url for the given parameters
 	 */
 	public void buildUri();
-	
 	
 	/**
 	 * @return The builded Uri for the given Parameters

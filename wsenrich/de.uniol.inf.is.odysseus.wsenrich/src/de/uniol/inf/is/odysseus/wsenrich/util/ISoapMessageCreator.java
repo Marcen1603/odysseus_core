@@ -23,6 +23,4 @@ public interface ISoapMessageCreator {
 	 * @return the amount of all messages found in the wsdl-file
 	 */
 	public String[] getEndpointAdress();
-	
-
 }

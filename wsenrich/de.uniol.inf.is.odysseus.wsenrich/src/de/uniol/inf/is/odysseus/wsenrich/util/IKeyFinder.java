@@ -21,14 +21,15 @@ public interface IKeyFinder {
 	/**
 	 * Setter for the message
 	 * @param Message the message
+	 * @param charset the the charset of the message
 	 */
-	public void setMessage(String Message);
+	public void setMessage(String Message, String charset);
 	
 	/**
-	 * searches the message for the first occurence of the search and
+	 * searches the message for the first occurrence of the search and
 	 * returns the value of the element
 	 * @param search the element name to search for
-	 * @param filterNullTuples: If true, a null-response (No Data) will not be returned
+	 * @param keyValue: If true, a null-response (No Data) will not be returned
 	 * @return the value of the searched element
 	 */
 	public Object getValueOf(String search, boolean keyValue);
@@ -42,5 +43,4 @@ public interface IKeyFinder {
 	 * Creates a instance of a class who implements this class
 	 */
 	public IKeyFinder createInstance();
-
 }

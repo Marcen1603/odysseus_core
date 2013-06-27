@@ -6,6 +6,8 @@ public interface IConnectionForWebservices {
 	
 	/**
 	 * Method to connect to a HTTP Entpoint
+	 * @param the charset of the retrieved data
+	 * @param the contentType of the retrieved data, eg. XML or JSON
 	 */
 	public void connect(String charset, String contentType);
 	
@@ -34,7 +36,7 @@ public interface IConnectionForWebservices {
 	/**
 	 * Adds a Header Element for the Http Request
 	 * @param arguments The Name of the Header-Element
-	 * @param value The value of the Header-Elemente
+	 * @param value The value of the Header-Elements
 	 * Example: argument = "Content-Type"
 	 * 			value = "UTF-8"
 	 */
@@ -65,7 +67,4 @@ public interface IConnectionForWebservices {
 	 * Creates a instance of a class who implements this class
 	 */
 	public IConnectionForWebservices createInstance();
-	
-	
-
 }

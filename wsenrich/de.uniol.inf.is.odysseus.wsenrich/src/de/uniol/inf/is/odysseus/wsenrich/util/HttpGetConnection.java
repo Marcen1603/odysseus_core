@@ -1,14 +1,19 @@
 package de.uniol.inf.is.odysseus.wsenrich.util;
 
 import java.io.IOException;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpGetConnection implements IConnectionForWebservices {
+	
+	/**
+	 * For Logging
+	 */
+	static Logger logger = LoggerFactory.getLogger(HttpGetConnection.class);
 	
 	/**
 	 * The Uri for the Http-Request
@@ -44,7 +49,7 @@ public class HttpGetConnection implements IConnectionForWebservices {
 	
 	@Override
 	public void setArgument(String value) {
-		
+		//Nothing to do
 	}
 	
 	@Override
@@ -52,55 +57,42 @@ public class HttpGetConnection implements IConnectionForWebservices {
 		return null;
 	}
 	
-	@Override //Nothing to do with contentType ia a Http Get Connection
+	@Override 
 	public void connect(String charset, String contentType) {
-		
+		//Nothing to do with contentType ia a Http Get Connection
 		try {
 			this.httpClient = new DefaultHttpClient();
 			this.httpGet = new HttpGet(url);
 			this.httpGet.addHeader("Content-Encoding", charset);
-			this.response = this.httpClient.execute(httpGet);
-			
-		} catch (ClientProtocolException e) {
-			
-			// TODO 
-			e.printStackTrace();
-			
+			this.response = this.httpClient.execute(httpGet);	
 		} catch (IOException e) {
-			// TODO 
-			e.printStackTrace();
-		}
-		
+			logger.error("Error while connecting to the specified Url. Cause: {}", e.getMessage());
+		} 
 	}
 	
 	@Override
 	public void closeConnection() {
-		
 		this.httpGet.releaseConnection();
 	}
 	
 	@Override
 	public String retrieveStatusLine() {
-		
 		return this.response.getStatusLine().toString();
 	}
 
 	@Override
 	public HttpEntity retrieveBody() {
-	
 		HttpEntity entity = this.response.getEntity();
 		return entity;
 	}
 
 	@Override
 	public String getUri() {
-		
 		return this.url;
 	}
 
 	@Override
 	public void addHeader(String argument, String value) {
-		
 		this.httpGet.addHeader(argument, value);	
 	}
 	
