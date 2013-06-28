@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
@@ -89,9 +90,32 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
 
     @Override
     public void send(final byte[] message) throws IOException {
-        final HttpPost request = new HttpPost(message.toString());
-        final InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message), -1);
-        request.setEntity(postRequestEntity);
+        HttpRequestBase request = null;
+        switch (this.method) {
+        case PUT:
+            request = new HttpPut(this.uri);
+            final InputStreamEntity putRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message), -1);
+            putRequestEntity.setContentType("binary/octet-stream");
+            putRequestEntity.setChunked(true);
+            ((HttpPut) request).setEntity(putRequestEntity);
+            break;
+        case DELETE:
+            request = new HttpDelete(this.uri);
+            break;
+        case HEAD:
+            request = new HttpHead(this.uri);
+            break;
+        case GET:
+            request = new HttpGet(this.uri);
+            break;
+        case POST:
+        default:
+            request = new HttpPost(this.uri);
+            final InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message), -1);
+            postRequestEntity.setContentType("binary/octet-stream");
+            postRequestEntity.setChunked(true);
+            ((HttpPost) request).setEntity(postRequestEntity);
+        }
         this.client.execute(request);
     }
 
