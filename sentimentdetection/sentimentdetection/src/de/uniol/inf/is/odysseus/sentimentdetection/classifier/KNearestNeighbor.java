@@ -47,6 +47,18 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 	public String getType() {
 		return algo_type;
 	}
+	
+	
+	@Override
+	public String getDomain() {
+		return domain;
+	}
+
+	@Override
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+	
 
 	@Override
 	public int startDetect(String text) {
@@ -110,25 +122,7 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 		return decision;
 	}
 
-	private List<String> getWords(String text) {
-		PorterStemmer stemmer = new PorterStemmer();
 
-		List<String> words = new ArrayList<String>();
-
-		// split text in singlewords
-		for (String singleword : text.split(" ")) {
-			if (singleword.trim().length() > 2) {
-				// only add none stopwords
-				if (!stopwords.contains(singleword)) {
-					String stem = stemmer.stem(singleword);
-					words.add(stem);
-				}
-			}
-		}
-
-		// remove duplicates words
-		return removeDuplicateWithOrder(words);
-	}
 
 	private void createStopWords() {
 
@@ -206,17 +200,6 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 	}
 
 
-	@Override
-	public String getDomain() {
-		return domain;
-	}
-
-	@Override
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-	
-	
 	/*
 	 * remove duplicates with order 
 	 */
@@ -232,6 +215,27 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 		oldList.addAll(newList);
 
 		return oldList;
+	}
+	
+	
+	private List<String> getWords(String text) {
+		PorterStemmer stemmer = new PorterStemmer();
+
+		List<String> words = new ArrayList<String>();
+
+		// split text in singlewords
+		for (String singleword : text.split(" ")) {
+			//only add words length > 2
+			if (singleword.trim().length() > 2) {
+				// only add none stopwords
+				if (!stopwords.contains(singleword)) {
+					String stem = stemmer.stem(singleword);
+					words.add(stem);
+				}
+			}
+		}
+		// remove duplicates words
+		return removeDuplicateWithOrder(words);
 	}
 
 }

@@ -105,7 +105,6 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 
 	@Override
 	public int startDetect(String text) {
-
 		//result
 		int decision = 0;
 		
