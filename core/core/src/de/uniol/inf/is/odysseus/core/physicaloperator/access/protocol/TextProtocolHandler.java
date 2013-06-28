@@ -15,8 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -151,12 +154,21 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
     }
 
     @Override
-    public void process(ByteBuffer messsage) {
-        if (keepDelimiter) {
-            getTransfer().transfer(getDataHandler().readData(scanner.next() + objectDelimiter));
-        } else {
-            getTransfer().transfer(getDataHandler().readData(scanner.next()));
-        }
+    public void process(ByteBuffer message) {
+		Scanner scanner = new Scanner(
+				new ByteArrayInputStream(message.array()), charset);
+		scanner.useDelimiter(objectDelimiter);
+		while (scanner.hasNext()) {
+			if (keepDelimiter) {
+				getTransfer().transfer(
+						getDataHandler().readData(
+								scanner.next() + objectDelimiter));
+			} else {
+				getTransfer().transfer(
+						getDataHandler().readData(scanner.next()));
+			}
+		}
+		scanner.close();
     }
 
 }
