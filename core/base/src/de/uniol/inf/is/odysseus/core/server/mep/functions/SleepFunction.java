@@ -49,5 +49,10 @@ public class SleepFunction extends AbstractFunction<Double> {
     public SDFDatatype getReturnType() {
         return SDFDatatype.DOUBLE;
     }
+    
+	@Override
+	public boolean optimizeConstantParameter() {
+		return false;
+	}
 
 }
