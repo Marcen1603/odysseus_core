@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.*;
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ResultEntity;
@@ -16,6 +19,8 @@ import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ResultEntity;
 public class KNearestNeighbor<T extends IMetaAttribute> extends
 		AbstractClassifier<T> {
 
+	static Logger logger = LoggerFactory.getLogger(KNearestNeighbor.class);
+	
 	private final String algo_type = "KNearestNeighbor";
 	private String domain;
 
@@ -184,8 +189,6 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 			List<String> words = getWords(e.getKey());
 
 			for (String word : words) {
-				System.out.println(word);
-
 				if (!freq.containsKey(word)) {
 					freq.put(word, 1);
 				} else {

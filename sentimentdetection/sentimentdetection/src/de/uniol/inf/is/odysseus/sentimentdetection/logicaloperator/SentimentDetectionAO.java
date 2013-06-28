@@ -23,10 +23,10 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	private int minimumSize = 0;
 	private int outputports = 1;
 	private String domain;
+	private int evaluateClassifier = 0;
 	
 	public SentimentDetectionAO(){
 		super();
-		
 	}
 	
 	public SentimentDetectionAO(SentimentDetectionAO sentimentDetectionAO){
@@ -35,6 +35,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         this.classifier = sentimentDetectionAO.classifier;
         this.minimumSize = sentimentDetectionAO.minimumSize;
         this.domain = sentimentDetectionAO.domain;
+        this.evaluateClassifier = sentimentDetectionAO.evaluateClassifier;
     }
 	
 
@@ -61,27 +62,30 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	}
 	
 	
-	@Parameter(name = "domain", type=StringParameter.class)
+	@Parameter(name = "domain", type=StringParameter.class, doc="")
 	public void setDomain(String domain) {
 		this.domain   = domain;
 	}
 	
-	@Parameter(name = "minimumSize", type=IntegerParameter.class)
+	@Parameter(name = "minimumSize", type=IntegerParameter.class, doc="")
 	public void setMinimumSize(int minimumSize) {
 		this.minimumSize   = minimumSize;
 	}
 
-	
-	@Parameter(name="outputports", type=IntegerParameter.class)
+	@Parameter(name="outputports", type=IntegerParameter.class, optional = true, doc="")
 	public void setOutputType(int outputports){
 		this.outputports = outputports;
 	}
 	
-	@Parameter(name="classifier", type=StringParameter.class)
+	@Parameter(name="classifier", type=StringParameter.class, doc="")
 	public void setClassifier(String classifier){
 		this.classifier = classifier;
 	}
 	
+	@Parameter(name="evaluateClassifier", type=IntegerParameter.class, optional = true)
+	public void setEvaluateClassifier(int evaluateClassifier){
+		this.evaluateClassifier = evaluateClassifier;
+	}
 
 	public int getOutputPorts(){
 		return outputports;
@@ -91,13 +95,16 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		return classifier;
 	}
 	
-	
 	public int getMinimumSize(){
 		return minimumSize;
 	}
 	
 	public String getDomain(){
 		return domain;
+	}
+	
+	public int getEvaluateClassifier(){
+		return evaluateClassifier;
 	}
 	
 

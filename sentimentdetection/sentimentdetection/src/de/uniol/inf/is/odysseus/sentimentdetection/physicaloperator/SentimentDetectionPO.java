@@ -26,6 +26,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private int minimumSize;
 	private String domain;
 	private boolean isTrained = false;
+	private int evaluateClassifier = 0;
 
 	private IClassifier<T> algo;
 
@@ -37,12 +38,13 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	}
 
 	public SentimentDetectionPO(int outputports, String classifier,
-			int minimumSize, String domain) {
+			int minimumSize, String domain, int evaluateClassifier) {
 		super();
 		this.outputports = outputports;
 		this.classifier = classifier;
 		this.minimumSize = minimumSize;
 		this.domain = domain;
+		this.evaluateClassifier = evaluateClassifier;
 	}
 
 	public SentimentDetectionPO(SentimentDetectionPO<T> senti) {
@@ -51,6 +53,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.classifier = senti.classifier;
 		this.minimumSize = senti.minimumSize;
 		this.domain = senti.domain;
+		this.evaluateClassifier = senti.evaluateClassifier;
 	}
 
 	@Override
@@ -61,7 +64,6 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
-		System.out.println("Classifier wird initialisiert....");
 		algo = (IClassifier<T>) ClassifierRegistry
 				.getClassifierByTypeAndDomain(classifier.toLowerCase(), domain);
 	}
@@ -121,52 +123,50 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	@SuppressWarnings("unchecked")
 	private void processSentimentDetection(Tuple object) {
-		// System.out.println("outputType is: "+ outputtype);
-		// get inputSize of the object
-		int inputSize = object.size();
+			// get inputSize of the object
+			int inputSize = object.size();
 
-		// create new output Tuple with size + 1
-		Tuple outputTuple = new Tuple(object.size() + 1, false);
+			// create new output Tuple with size + 1
+			Tuple outputTuple = new Tuple(object.size() + 1, false);
 
-		// Copy object Attributes to the new outputTuple
-		System.arraycopy(object.getAttributes(), 0,
-				outputTuple.getAttributes(), 0, inputSize);
+			// Copy object Attributes to the new outputTuple
+			System.arraycopy(object.getAttributes(), 0,
+					outputTuple.getAttributes(), 0, inputSize);
 
-		// text positive or negative
-		// String erg = detect(object.getAttribute(0).toString());
+			// text positive or negative
+			// String erg = detect(object.getAttribute(0).toString());
 
-		int decision = algo.startDetect(object.getAttribute(0).toString());
+			int decision = algo.startDetect(object.getAttribute(0).toString());
 
-		// get OutputPort
-		int outputPort = getOutPutPort(decision);
+			// get OutputPort
+			int outputPort = getOutPutPort(decision);
 
-		// set the decision Attribute
-		outputTuple.setAttribute(object.size(), decision);
+			// set the decision Attribute
+			outputTuple.setAttribute(object.size(), decision);
+		
+			outputTuple.setMetadata(object.getMetadata());
+			outputTuple.setRequiresDeepClone(object.requiresDeepClone());
 
-		// calculate error
-		String truedecision = outputTuple.getAttribute(object.size() - 1)
-				.toString();
-
-		outputTuple.setMetadata(object.getMetadata());
-		outputTuple.setRequiresDeepClone(object.requiresDeepClone());
-
-		System.out.println("record: " + object.getAttribute(0).toString());
-		System.out.println("true decision: " + truedecision);
-		System.out.println("decision: " + decision);
-		System.out.println("wrong: " + wrongdecision);
-
-		if (Integer.parseInt(truedecision.trim()) != decision) {
-			wrongdecision++;
-		}
-
-		// System.out.println("Error:" + 1.0 * wrongdecision / 1062 );
-		// System.out.println("Alte Objekt ist: "+ object.toString());
-		// System.out.println("Neues Objekt ist: "+ outputTuple.toString());
-
-		ctr++;
-
-		transfer(outputTuple, outputPort);
-
+			
+			if(evaluateClassifier == 1){
+				// calculate error
+				String truedecision = outputTuple.getAttribute(object.size() - 1)
+						.toString();
+				
+				if (Integer.parseInt(truedecision.trim()) != decision) {
+					wrongdecision++;
+					System.out.println("ERROR:-------------------------");
+				}else{
+					System.out.println("CORRECT:-----------------------");
+				}
+				
+				System.out.println("record: " + object.getAttribute(0).toString());
+				System.out.println("true decision: " + truedecision);
+				System.out.println("decision: " + decision);
+				System.out.println("total wrong: " + wrongdecision);			
+			}
+			ctr++;
+			transfer(outputTuple, outputPort);
 	}
 
 	/*
@@ -174,15 +174,12 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	 * transfer negative to port 1
 	 */
 	private int getOutPutPort(int decision) {
-
 		int outputPort = 0;
 
 		if (outputports == 2) {
 			if (decision == 1) {
-				// System.out.println("Ausgabe an Port 0:"+ outputtype);
 				outputPort = 0;
 			} else {
-				// System.out.println("Ausgabe an Port 1:" + outputtype);
 				outputPort = 1;
 			}
 		}

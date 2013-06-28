@@ -3,6 +3,10 @@ package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> {
@@ -12,6 +16,8 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 	
 	private Map<String, Integer> positivewords = new HashMap<String, Integer>();
 	private Map<String, Integer> negativewords = new HashMap<String, Integer>();
+	
+	static Logger logger = LoggerFactory.getLogger(NaiveBayes.class);
 	
 	public NaiveBayes(){
 		
@@ -51,10 +57,10 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 	@Override
 	public void trainClassifier(Map<String, Integer> trainingset) {
 
-	System.out.println("Trainingsset besteht aus: "+ trainingset.size());
-	System.out.println("Es wurde folgende Domain gesetzt: " + domain);	
-	System.out.println("Positiv/Negativ Wortliste erstellen....");
-	
+
+	logger.debug("trainingsset size: " +  trainingset.size());
+	logger.debug("domain: " + domain);
+
 	//clear positivewords/negativewords
 	positivewords.clear();
 	negativewords.clear();
@@ -86,19 +92,11 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 
 				}
 			}
-
-			// System.out.println( e.getKey() + "="+ e.getValue() );
 		}
 
-		
-		//	for ( Map.Entry<String, Integer> e : positivewords.entrySet() )
-		//			System.out.println( e.getKey() + "    "+ e.getValue() );
-		
-		
-		System.out.println("Classifier erfolgreich initialisiert!");
-		System.out.println("positivewords besteht aus: "+ positivewords.size());
-		System.out.println("negativewords besteht aus: "+ negativewords.size());
-		
+		logger.debug("classifier successfully initialized!");
+		logger.debug("positivewords size: "+ positivewords.size());
+		logger.debug("negativewords size" + negativewords.size());
 	}
 
 	
@@ -133,10 +131,12 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 			decisionneg += b/(a+b);
 		}
 		
-		System.out.println("----analysis----");
-		System.out.println("record: " + text);
-		System.out.println("positive: " + decisionpos);
-		System.out.println("negative: " + decisionneg);
+		
+		logger.debug("----analysis----");
+		logger.debug("record: " + text);
+		logger.debug("positive: " + decisionpos);
+		logger.debug("negative: " + decisionneg);
+
 
 		if (decisionpos > decisionneg) {
 			decision = 1;
