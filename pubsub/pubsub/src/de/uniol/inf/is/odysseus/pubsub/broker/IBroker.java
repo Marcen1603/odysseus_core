@@ -17,6 +17,8 @@
 package de.uniol.inf.is.odysseus.pubsub.broker;
 
 import java.util.List;
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
@@ -64,6 +66,17 @@ public interface IBroker<T extends IStreamObject<?>>{
 	
 	/**
 	 * 
+	 * @param advertisements
+	 */
+	void setAdvertisements(Map<String, BrokerAdvertisements> advertisements);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	Map<String, BrokerAdvertisements> getAdvertisements();
+	/**
+	 * 
 	 * @param topics
 	 * @param publisher
 	 */
@@ -74,11 +87,12 @@ public interface IBroker<T extends IStreamObject<?>>{
 	 * 
 	 * @param object
 	 */
-	void routeToSubscribers(T object, PublishPO<T> publisher);
+	void sendToSubscribers(T object, PublishPO<T> publisher);
 	
 	/**
 	 * 
 	 * @return
 	 */
 	boolean hasSubscriptions();
+
 }

@@ -14,7 +14,7 @@ public abstract class AbstractRoutingTopology<T extends IStreamObject<?>>
 
 	abstract IRoutingBroker<T> getBrokerByName(String name);
 
-	abstract List<IRoutingBroker<T>> getBrokers();
+	abstract IRoutingBroker<T> getBestBroker(String publisherUid);
 	
 	private String routingType;
 
@@ -48,10 +48,7 @@ public abstract class AbstractRoutingTopology<T extends IStreamObject<?>>
 	
 	@Override
 	public void transfer(T object, PublishPO<T> publisher) {
-		List<IRoutingBroker<T>> brokers = getBrokers();
-		for (IRoutingBroker<T> broker : brokers) {
-			broker.routeToSubscribers(object, publisher);
-		}
+		getBestBroker(publisher.getIdentifier()).route(object, publisher, "");
 	}
 	
 	@Override

@@ -25,7 +25,6 @@ import java.util.UUID;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.TopicHelper;
@@ -41,7 +40,6 @@ import de.uniol.inf.is.odysseus.pubsub.broker.topology.IBrokerTopology;
 public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements Observer{
 
 	private List<IPredicate<? super T>> predicates;
-	private SDFSchema schema;
 	private String brokerName;
 	private String domain;
 	private List<String> topicStrings;
@@ -50,11 +48,10 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	private IBrokerTopology<T> brokerTopology;
 
 	public SubscribePO(List<IPredicate<? super T>> predicates,
-			String brokername, SDFSchema schema, List<String> topics,
+			String brokername, List<String> topics,
 			String domain) {
 		super();
 		this.brokerName = brokername;
-		this.schema = schema;
 		this.domain = domain;
 		this.topicStrings = topics;
 		this.topics = TopicHelper.convertStringsToTopics(topics);
@@ -65,7 +62,6 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	public SubscribePO(SubscribePO<T> splitPO) {
 		super();
 		this.brokerName = splitPO.brokerName;
-		this.schema = splitPO.schema;
 		this.topicStrings = new ArrayList<String>(topicStrings);
 		this.topics = new ArrayList<Topic>(topics);
 		initPredicates(splitPO.predicates);

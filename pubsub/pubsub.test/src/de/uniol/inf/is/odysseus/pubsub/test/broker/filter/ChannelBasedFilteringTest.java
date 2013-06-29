@@ -42,7 +42,7 @@ public class ChannelBasedFilteringTest<T extends IStreamObject<?>>{
 		List<IPredicate<? super T>> predicates = new ArrayList<IPredicate<? super T>>();
 		
 		Collection<BrokerSubscription<T>> subscriptions = new ArrayList<BrokerSubscription<T>>();
-		SubscribePO<T> subscriber = new SubscribePO<T>(predicates, "broker0815", null, topics, "default");
+		SubscribePO<T> subscriber = new SubscribePO<T>(predicates, "broker0815", topics, "default");
 		subscriptions.add(new BrokerSubscription<T>(subscriber));
 		
 		Collection<BrokerAdvertisements> advertisements = new ArrayList<BrokerAdvertisements>();

@@ -68,7 +68,7 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 	public void transfer(T object, PublishPO<T> publisher) {
 		List<IBroker<T>> brokers = getBrokers();
 		for (IBroker<T> broker : brokers) {
-			broker.routeToSubscribers(object, publisher);
+			broker.sendToSubscribers(object, publisher);
 		}
 	}
 	

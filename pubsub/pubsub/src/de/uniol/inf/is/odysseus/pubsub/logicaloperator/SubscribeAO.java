@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 @LogicalOperator(name="Subscribe", minInputPorts=0, maxInputPorts=0, doc="This Operator provides the subscribe functionality in publish/Subscribe systems.")
 public class SubscribeAO extends UnaryLogicalOp{
 
-	private SDFSchema schema;
+	private List<SDFAttribute> sdfAttributes;
 	private String source;
 	private String brokername;
 	private String domain;
@@ -53,7 +53,7 @@ public class SubscribeAO extends UnaryLogicalOp{
 	
 	public SubscribeAO(SubscribeAO subscribeAO){
 		super(subscribeAO);
-		this.schema = subscribeAO.schema;
+		this.sdfAttributes = subscribeAO.sdfAttributes;
 		this.source = subscribeAO.source;
 		this.brokername = subscribeAO.brokername;
 		this.domain = subscribeAO.domain;
@@ -78,7 +78,7 @@ public class SubscribeAO extends UnaryLogicalOp{
 	
 	@Parameter(name="schema", type=CreateSDFAttributeParameter.class, isList=true, doc="")
 	public void setSchema_(List<SDFAttribute> sdfAttributes){
-		this.schema = new SDFSchema(source, sdfAttributes);
+		this.sdfAttributes = sdfAttributes;
 	}
 	
 	
@@ -103,16 +103,23 @@ public class SubscribeAO extends UnaryLogicalOp{
 		this.topics = topics;
 	}
 	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		if (source != null){
+			return new SDFSchema(source, sdfAttributes);
+		}else if (getInputSchema() != null) {
+			return new SDFSchema(getInputSchema().getURI(), sdfAttributes);
+		} else {
+			return new SDFSchema("", sdfAttributes);
+		}
+	}
+	
 	public String getDomain(){
 		return domain;
 	}
 	
 	public List<String> getTopics(){
 		return topics;
-	}
-	
-	public SDFSchema getSchema(){
-		return schema;
 	}
 	
 	public String getBrokerName(){

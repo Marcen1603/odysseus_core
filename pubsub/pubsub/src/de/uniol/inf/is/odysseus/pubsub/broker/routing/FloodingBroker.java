@@ -20,12 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 
 public class FloodingBroker <T extends IStreamObject<?>> extends AbstractRoutingBroker<T>{
 
+	//private static Logger logger = LoggerFactory.getLogger(FloodingBroker.class);
 	private static final String ROUTING_TYPE = "Flooding";
-	private List<FloodingBroker<T>> connectedBrokers = new ArrayList<FloodingBroker<T>>();
+	private List<IRoutingBroker<T>> connectedBrokers = new ArrayList<IRoutingBroker<T>>();
+	
 	
 	public FloodingBroker() {
 		// needed for OSGi
@@ -35,8 +38,9 @@ public class FloodingBroker <T extends IStreamObject<?>> extends AbstractRouting
 	public FloodingBroker(String name, String domain) {
 		super(name, domain);
 	}
-
-	public List<FloodingBroker<T>> getConnectedBrokers() {
+	
+	@Override
+	public List<IRoutingBroker<T>> getConnectedBrokers() {
 		return connectedBrokers;
 	}
 
@@ -50,22 +54,39 @@ public class FloodingBroker <T extends IStreamObject<?>> extends AbstractRouting
 		return new FloodingBroker<T>(name, domain);
 	}
 	
+	@Override
+	public void distributeAdvertisement(List<Topic> topics,
+			String publisherUid, String sourceIdentifier) {
+		super.setAdvertisement(topics, publisherUid);
+		for (IRoutingBroker<T> conBroker : connectedBrokers) {
+			if (!conBroker.getIdentifier().equals(sourceIdentifier)){
+				conBroker.distributeAdvertisement(topics, publisherUid, this.getIdentifier());
+			}
+		}
+	}
+
+	@Override
+	public void removeDistributedAdvertisement(List<Topic> topics,
+			String publisherUid, String sourceIdentifier) {
+		super.removeAdvertisement(topics, publisherUid);
+		for (IRoutingBroker<T> conBroker : connectedBrokers) {
+			if (!conBroker.getIdentifier().equals(sourceIdentifier)){
+				conBroker.removeDistributedAdvertisement(topics, publisherUid, this.getIdentifier());
+			}
+		}
+	}
 	
 	@Override
-	public void routeToSubscribers(T object, PublishPO<T> publisher) {
-		// TODO Auto-generated method stub
-		
+	public void route(T object, PublishPO<T> publisher, String sourceIdentifier) {
+		super.sendToSubscribers(object, publisher);
+		for (IRoutingBroker<T> conBroker : connectedBrokers) {
+			if (!conBroker.getIdentifier().equals(sourceIdentifier)){
+				conBroker.route(object, publisher, this.getIdentifier());
+			}
+		}
 	}
 
-	@Override
-	public void route() {
-		// TODO Route Logic
-		
-	}
+	
 
-	@Override
-	protected void refreshInternalStatus() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 }

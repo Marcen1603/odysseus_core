@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.broker.routing.IRoutingBroker;
@@ -30,13 +29,18 @@ import de.uniol.inf.is.odysseus.pubsub.broker.routing.RoutingBrokerRegistry;
  * This class provides the functionality of a acyclic broker topology
  * 
  * @author ChrisToenjesDeye
- *
+ * 
  */
 public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 		AbstractRoutingTopology<T> {
-	
+
 	private final String TOPOLOGY_TYPE = "AcyclicTopology";
-	private Map<String, IRoutingBroker<T>> brokers = new HashMap<String, IRoutingBroker<T>>();;
+
+	// Maps Brokers and their name
+	private Map<String, IRoutingBroker<T>> brokers = new HashMap<String, IRoutingBroker<T>>();
+
+	// Maps Publisher and Brokers
+	private Map<String, IRoutingBroker<T>> publishToBroker = new HashMap<String, IRoutingBroker<T>>();
 
 	public AcyclicBrokerTopology() {
 		// needed for OSGi
@@ -45,7 +49,7 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 	public AcyclicBrokerTopology(String domain) {
 		setDomain(domain);
 	}
-	
+
 	/**
 	 * Returns a new Instance of this topology Type
 	 * 
@@ -57,7 +61,7 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 			String name) {
 		return new AcyclicBrokerTopology<E>(name);
 	}
-	
+
 	/**
 	 * Returns the topology Type, here 'AcyclicTopology'
 	 * 
@@ -67,41 +71,84 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 	public String getType() {
 		return TOPOLOGY_TYPE;
 	}
-	
+
 	@Override
 	public void advertise(List<Topic> topics, String publisherUid) {
-		// TODO Auto-generated method stub
-		
+		getBestBroker(publisherUid).distributeAdvertisement(topics,
+				publisherUid, "");
 	}
 
 	@Override
 	public void unadvertise(List<Topic> topics, String publisherUid) {
-		// TODO Auto-generated method stub
-		
+		getBestBroker(publisherUid).removeDistributedAdvertisement(topics,
+				publisherUid, "");
 	}
 
-	/**
-	 * Returns a list of brokers, which should me addressed. 
-	 * 
-	 * @return
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<IRoutingBroker<T>> getBrokers() {
-		return new ArrayList<IRoutingBroker<T>>(brokers.values());
+	public IRoutingBroker<T> getBestBroker(String publisherUid) {
+		// If no Broker exists, create initial Broker
+		if (brokers.isEmpty()) {
+			IRoutingBroker<T> newBroker = (IRoutingBroker<T>) RoutingBrokerRegistry
+					.getRoutingBrokerInstance(getRoutingType(), getDomain(),
+							"InitialBroker");
+			brokers.put(newBroker.getName(), newBroker);
+
+			// Map Publisher with Broker
+			publishToBroker.put(publisherUid, newBroker);
+			return newBroker;
+		} else {
+			if (publishToBroker.containsKey(publisherUid)) {
+				// return mapped broker
+				return publishToBroker.get(publisherUid);
+			} else {
+				// TODO If Broker Topology is distributed, don't select a random
+				// Broker, select fastest broker (ping or something else)
+				int randIndex = (int) ((brokers.keySet().size() - 1) * Math
+						.random());
+				String brokerName = new ArrayList<String>(brokers.keySet())
+						.get(randIndex);
+				IRoutingBroker<T> randBroker = brokers.get(brokerName);
+				// Map Publisher with Broker
+				publishToBroker.put(publisherUid, randBroker);
+				return randBroker;
+			}
+
+		}
 	}
 
 	/**
-	 * Returns a broker with a given name. 
+	 * Returns a broker with a given name.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	IRoutingBroker<T> getBrokerByName(String name) {
-		if (brokers.containsKey(name)){
+		if (brokers.containsKey(name)) {
 			return brokers.get(name);
 		}
-		return (IRoutingBroker<T>) RoutingBrokerRegistry.getRoutingBrokerInstance(getRoutingType(), getDomain(), name);
-	}
+		// Create new Broker
+		IRoutingBroker<T> newBroker = (IRoutingBroker<T>) RoutingBrokerRegistry
+				.getRoutingBrokerInstance(getRoutingType(), getDomain(), name);
 
-	
+		// Get All existing Advertisements from other broker if exists
+		if (!brokers.isEmpty()) {
+			// TODO If Broker Topology is distributed, don't select a random
+			// Broker, select fastest broker (ping or something else)
+			int randIndex = (int) ((brokers.keySet().size() - 1) * Math
+					.random());
+			String brokerName = new ArrayList<String>(brokers.keySet())
+					.get(randIndex);
+			IRoutingBroker<T> otherBroker = brokers.get(brokerName);
+
+			newBroker.setAdvertisements(otherBroker.getAdvertisements());
+
+			// Connect Broker bidirectional
+			otherBroker.getConnectedBrokers().add(newBroker);
+			newBroker.getConnectedBrokers().add(otherBroker);
+		}
+
+		brokers.put(newBroker.getName(), newBroker);
+		return newBroker;
+	}
 
 }

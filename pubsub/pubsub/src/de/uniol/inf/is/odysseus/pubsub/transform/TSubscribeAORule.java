@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
  * Transformation Class for Subscribe Operator
  * 
  * @author ChrisToenjesDeye
- *
+ * 
  */
 public class TSubscribeAORule extends AbstractTransformationRule<SubscribeAO> {
 
@@ -43,9 +43,8 @@ public class TSubscribeAORule extends AbstractTransformationRule<SubscribeAO> {
 		defaultExecute(
 				subscribe,
 				new SubscribePO(subscribe.getPredicates(), subscribe
-						.getBrokerName(), subscribe.getSchema(), subscribe
-						.getTopics(), subscribe.getDomain()), config, true,
-				true);
+						.getBrokerName(), subscribe.getTopics(), subscribe
+						.getDomain()), config, true, true);
 	}
 
 	@Override

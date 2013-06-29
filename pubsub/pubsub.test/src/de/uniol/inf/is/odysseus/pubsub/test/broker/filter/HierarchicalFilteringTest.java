@@ -44,7 +44,7 @@ public class HierarchicalFilteringTest<T extends IStreamObject<?>> {
 
 		Collection<BrokerSubscription<T>> subscriptions = new ArrayList<BrokerSubscription<T>>();
 		SubscribePO<T> subscriber = new SubscribePO<T>(predicates,
-				"broker0815", null, topics, "default");
+				"broker0815",  topics, "default");
 		subscriptions.add(new BrokerSubscription<T>(subscriber));
 
 		Collection<BrokerAdvertisements> advertisements = new ArrayList<BrokerAdvertisements>();
