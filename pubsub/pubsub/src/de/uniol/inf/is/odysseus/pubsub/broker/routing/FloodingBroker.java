@@ -84,9 +84,5 @@ public class FloodingBroker <T extends IStreamObject<?>> extends AbstractRouting
 				conBroker.route(object, publisher, this.getIdentifier());
 			}
 		}
-	}
-
-	
-
-	
+	}	
 }

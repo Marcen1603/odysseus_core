@@ -148,9 +148,10 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 		// Clear Observer list
 		this.deleteObservers();
 
-		// Channel based filtering
+		// Topic based filtering
 		if (hasAnySubscriptionTopics && doesAnyPublisherAdvertiseTopics()) {
 			if (!isAnyTopicHierarchical) {
+				// Channel based filtering
 				IFiltering<T> filter = filters.get(Filtertype.channel);
 				if (filter.needsReinitialization()) {
 					filter.reinitializeFilter(getSubscriptions().values(),
@@ -213,7 +214,9 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 			super.setChanged();
 			super.notifyObservers(object);
 		}
-
+		
+		// TODO Return boolean if any subscriber matrches on topics
+		// return !matchedSubscriberTopics.isEmpty();
 	}
 
 	private boolean doesAnyPublisherAdvertiseTopics() {
