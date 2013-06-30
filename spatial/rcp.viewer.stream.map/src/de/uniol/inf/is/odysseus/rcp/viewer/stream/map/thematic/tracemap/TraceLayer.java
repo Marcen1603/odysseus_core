@@ -36,11 +36,14 @@ public class TraceLayer extends RasterLayer {
 	private ScreenManager screenManager;
 	private TracemapLayerConfiguration config;
 	private HashMap<Integer, PointInTime[]> timeHashMap;
+	private Envelope searchEnv;
+	private Envelope zoomEnv;
 
 	public TraceLayer(TracemapLayerConfiguration config) {
 		super(config);
 		this.config = config;
 		timeHashMap = new HashMap<Integer, PointInTime[]>();
+		zoomEnv = new Envelope();
 	}
 	
 	@Override
@@ -63,7 +66,7 @@ public class TraceLayer extends RasterLayer {
 	}
 
 	private HashMap<Integer, LineString> getLines() {
-		Envelope searchEnv = new Envelope();
+		searchEnv = new Envelope();
 		searchEnv.init(new Coordinate(49.7, 11.7)); // Maybe somewhere in
 													// Germany
 		// Get everything
@@ -89,6 +92,11 @@ public class TraceLayer extends RasterLayer {
 			TimeInterval timeInterval = (TimeInterval) tuple.getMetadata();
 			PointInTime startTime = timeInterval.getStart();
 
+			// Build the zoomEnvironment for "zoom to layer"
+			int[] transCoordArray = screenManager.getTransformation().transformCoord(point.getCoordinate(), screenManager.getSRID());
+			Coordinate transCoord = new Coordinate(transCoordArray[0], transCoordArray[1]);
+			zoomEnv.expandToInclude(transCoord);
+			
 			// Create new LineElement
 			TraceElement lineElement = new TraceElement(point.getCoordinate(),
 					startTime);
@@ -307,6 +315,17 @@ public class TraceLayer extends RasterLayer {
 		}
 
 		return speeds;
+	}
+	
+	/**
+	 * For "zoomToLayer"
+	 */
+	@Override
+	public Envelope getEnvelope() {
+		if(zoomEnv != null) {
+			return zoomEnv;
+		}
+		return new Envelope(0, 100, 0, 100);	//TODO: Whole world.
 	}
 
 	@Override

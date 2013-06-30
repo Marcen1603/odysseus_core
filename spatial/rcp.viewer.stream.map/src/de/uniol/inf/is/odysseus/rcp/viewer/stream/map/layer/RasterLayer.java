@@ -260,6 +260,8 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 			this.maxxy = transformation.transformCoord(coord1, getTileServer().getSRID());
 			this.width = Math.max(minxy[0], maxxy[0]) - Math.min(minxy[0], maxxy[0]);
 			this.height = Math.max(minxy[1], maxxy[1]) - Math.min(minxy[1], maxxy[1]);
+			
+			// What if Coordinates can be negative? (e.g. 4326)
 		}
 		
 		@Override
@@ -288,6 +290,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 			return new Envelope(destMin.x, destMax.x, destMin.y, destMax.y);
 		}	
 		return this.tileServer.getEnvelope();
+		
 	}
 
 	@Override

@@ -66,7 +66,7 @@ public class OdysseusMapFileWizard extends Wizard implements INewWizard {
 			IPath path = page.getContainerFullPath().append(queryFileName);
 			IFile newFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 			newFile.create(getQueryTemplate(), IResource.NONE, null);
-
+			
 			// open editor
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(newFile), OdysseusMapPlugIn.ODYSSEUS_MAP_PLUGIN_ID, true);
 

@@ -154,21 +154,27 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		Label lblQueries = new Label(grpMap, SWT.NONE);
 		lblQueries.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
 				false, 2, 1));
-		lblQueries
-				.setText("Query: " + map.getQryFileList().getLast().getName());
+
 		new Label(grpMap, SWT.NONE);
 
 		txtQueriesInput = new Text(grpMap, SWT.MULTI | SWT.BORDER | SWT.WRAP
 				| SWT.V_SCROLL);
 		txtQueriesInput.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true, 1, 1));
-		try {
-			txtQueriesInput.setText(convertStreamToString(map.getQryFileList()
-					.getLast().getContents()));
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
 
+		if (!map.getQryFileList().isEmpty()) {
+			lblQueries.setText("Query: "
+					+ map.getQryFileList().getLast().getName());
+			try {
+				txtQueriesInput.setText(convertStreamToString(map
+						.getQryFileList().getLast().getContents()));
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		} else {
+			// Maybe the map has no queries
+			lblQueries.setText("There are no queries in this map.");
+		}
 		container.layout();
 	}
 
@@ -205,13 +211,15 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				if (!txtSridInput.isDisposed() && isValidInput()) {
 					// Non-thematic
 					try {
-						map.getQryFileList()
-								.getLast()
-								.setContents(
-										new ByteArrayInputStream(
-												txtQueriesInput.getText()
-														.getBytes("UTF-8")),
-										true, true, null);
+						if (!map.getQryFileList().isEmpty()) {
+							map.getQryFileList()
+									.getLast()
+									.setContents(
+											new ByteArrayInputStream(
+													txtQueriesInput.getText()
+															.getBytes("UTF-8")),
+											true, true, null);
+						}
 						map.setSrid(Integer.parseInt(txtSridInput.getText()));
 					} catch (UnsupportedEncodingException | CoreException e) {
 						LOG.debug("Changing Map Porperties failed");
@@ -279,4 +287,3 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		return new Point(748, 522);
 	}
 }
- 

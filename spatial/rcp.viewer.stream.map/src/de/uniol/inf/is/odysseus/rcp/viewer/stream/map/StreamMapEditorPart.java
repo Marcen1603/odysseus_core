@@ -72,6 +72,15 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		IFile file = in.getFile();
 		transformation = new ScreenTransformation();
 		mapModel = MapEditorModel.open(file,this);
+		
+		if(mapModel.getSRID() == 0) {
+			// If a new file was created or the map has
+			// no srid because of other reasons
+			// set a standard srid, here 3785
+			mapModel.setSrid(3857);
+			this.dirt = true;
+		}
+		
 		screenManager = new ScreenManager(transformation, this);
 //		screenManager.setSRID(mapModel.getSRID());
 		// Set this so we don't get errors
