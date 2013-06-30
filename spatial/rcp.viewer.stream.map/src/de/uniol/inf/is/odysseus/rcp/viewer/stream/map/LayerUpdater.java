@@ -39,6 +39,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	private final IStreamConnection<Object> connection;
 	private final IPhysicalQuery query;
 	private int maxNumerOfElements;
+	private int userDefinedTimeRange;
 
 	private DefaultTISweepArea<Tuple<? extends ITimeInterval>> puffer;
 	private HashMap<Integer, Quadtree> index = new HashMap<Integer, Quadtree>();
@@ -86,7 +87,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 				.getMaxIntervalEnd())
 				|| streamMapEditor.getScreenManager().getMaxIntervalEnd()
 						.isInfinite()) {
-			// Maybe the stream elements do not come in the right order
+			// Maybe the stream elements do not come in the right order (e.g. wrong csv-data)
 			this.streamMapEditor.getScreenManager()
 					.setMaxIntervalEnd(timestamp);
 		}
@@ -112,10 +113,37 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	 */
 	private void checkForPufferSize() {
 		// Prevent an overflow in the puffer
-		
-		//TODO: Do this by user setted time
-		
-		
+
+		// TODO: Do this by user-defined time
+		// Maybe the user don't want to cut the time: he defines '0' and we
+		// won't delete
+		if (userDefinedTimeRange != 0) {
+			// The newest timestamp: the time of the newest element in ms - the
+			// timerange in ms user wants to save
+			long timeRangeInMs = userDefinedTimeRange * 1000;
+			long userDefinedTimeStamp = 0;
+			if (!puffer.isEmpty()) {
+				userDefinedTimeStamp = puffer.getMaxTs().getMainPoint()
+						- timeRangeInMs;
+			}
+
+			if (userDefinedTimeStamp > 0) {
+				PointInTime userEndTS = new PointInTime(userDefinedTimeStamp);
+				puffer.purgeElementsBefore(userEndTS);
+				
+				// Update "current-list", timeSlider and all the other things which
+				// rely on the startTimeStamp
+				streamMapEditor.getScreenManager().setMaxIntervalStart(
+						puffer.getMinTs());
+				this.elementList = this.puffer
+						.queryOverlapsAsList(this.streamMapEditor
+								.getScreenManager().getInterval());
+				this.index = new HashMap<Integer, Quadtree>(this.index.size());
+			}
+		}
+
+		// Maybe in the time the user-defined were too many tuples
+		// then delete the oldest tuples, so we prevent an overflow
 		if (puffer.size() > maxNumerOfElements) {
 			// Remove old element(s)
 			Iterator<Tuple<? extends ITimeInterval>> oldestElements = puffer
@@ -136,8 +164,12 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 			// Update "current-list", timeSlider and all the other things which
 			// rely on the startTimeStamp
-			streamMapEditor.getScreenManager().setIntervalStart(
+			streamMapEditor.getScreenManager().setMaxIntervalStart(
 					puffer.getMinTs());
+			this.elementList = this.puffer
+					.queryOverlapsAsList(this.streamMapEditor
+							.getScreenManager().getInterval());
+			this.index = new HashMap<Integer, Quadtree>(this.index.size());
 		}
 	}
 
@@ -277,9 +309,35 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	public void setMaxPufferSize(int size) {
 		if (size > 0)
 			this.maxNumerOfElements = size;
-		
+
 		// Prevent an overflow in the puffer
 		checkForPufferSize();
+	}
+
+	/**
+	 * Sets the timerange the user wants to save E.g. if he wants to save 60
+	 * seconds, the puffer will save all elements with a start-timestamp between
+	 * the newest element and the newest timestamp-60 seconds
+	 * 
+	 * The max-puffer-size has a higher priority (if more elements are in the
+	 * timerange the puffer will delete the oldest)
+	 * 
+	 * Set to 0, if no time-range should be defined (just the maxPufferSize will
+	 * limit the puffer)
+	 * 
+	 * @param seconds
+	 */
+	public void setTimeRange(int seconds) {
+		userDefinedTimeRange = seconds;
+		checkForPufferSize();
+	}
+	
+	/**
+	 * 
+	 * @return Timerange in seconds
+	 */
+	public int getTimeRange() {
+		return userDefinedTimeRange;
 	}
 
 	@Override

@@ -271,6 +271,10 @@ public class ScreenManager {
 		redraw();
 	}
 	
+	/**
+	 * 
+	 * @return The selected interval
+	 */
 	public ITimeInterval getInterval() {
 		return interval;
 	}
