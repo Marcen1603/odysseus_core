@@ -38,6 +38,7 @@ public class TraceLayer extends RasterLayer {
 	private HashMap<Integer, PointInTime[]> timeHashMap;
 	private Envelope searchEnv;
 	private Envelope zoomEnv;
+	private double colorOffset;
 
 	public TraceLayer(TracemapLayerConfiguration config) {
 		super(config);
@@ -112,11 +113,7 @@ public class TraceLayer extends RasterLayer {
 			// Add a new color for this line
 			// (Random)
 			if (config.getColorForId(id) == null) {
-				int r = (int) (Math.random() * (256));
-				int g = (int) (Math.random() * (256));
-				int b = (int) (Math.random() * (256));
-				config.setColorForId(id, new Color(Display.getDefault(), r, g,
-						b));
+				config.setColorForId(id, getColorForNumber(id));
 			}
 
 			// Put the coordinate into the right ArrayList
@@ -235,7 +232,47 @@ public class TraceLayer extends RasterLayer {
 		gc.setAlpha(255);
 		gc.setLineWidth(originalLineWidth);
 	}
+	
 
+	/**
+	 * Creates a random color
+	 * @param n
+	 * @return
+	 */
+	private Color getColorForNumber(double n) {
+		if(colorOffset <= 0) {
+			colorOffset = Math.random();
+		}
+		
+		double goldenRatio = 0.618033988749895;
+		double h = (colorOffset + (goldenRatio * n)) % 1;
+		return hsvToRgb(h, 0.99, 0.95);
+	}
+	
+	
+	private Color hsvToRgb(double hue, double saturation, double value) {
+
+	    int h = (int)(hue * 6);
+	    double f = hue * 6 - h;
+	    double p = value * (1 - saturation);
+	    double q = value * (1 - f * saturation);
+	    double t = value * (1 - (1 - f) * saturation);
+
+	    switch (h) {
+	      case 0: return rgbToColor(value, t, p);
+	      case 1: return rgbToColor(q, value, p);
+	      case 2: return rgbToColor(p, value, t);
+	      case 3: return rgbToColor(p, q, value);
+	      case 4: return rgbToColor(t, p, value);
+	      case 5: return rgbToColor(value, p, q);
+	      default: throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
+	    }
+	}
+
+	private Color rgbToColor(double r, double g, double b) {
+		Color color = new Color(Display.getDefault(), (int)(r * 256), (int)(g * 256), (int)(b * 256));
+	    return color;
+	}
 	/**
 	 * 
 	 * @return length in km

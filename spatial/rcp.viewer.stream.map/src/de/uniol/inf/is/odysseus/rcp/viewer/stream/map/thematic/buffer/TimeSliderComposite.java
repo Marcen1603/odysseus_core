@@ -54,8 +54,8 @@ public class TimeSliderComposite extends Composite implements
 
 	private int savedMaxSlider; // Inaktive -> aktive (save what will be right
 								// maximum value if slider is aktive again)
-
 	private long previousUpperValue;
+	private int sliderFactor; // If timeRange is higher than max-integer
 
 	public TimeSliderComposite(Composite parent, int style) {
 
@@ -113,11 +113,13 @@ public class TimeSliderComposite extends Composite implements
 
 				// Start + selection -> better if end is infinity
 				endTimestamp.setText(Long.toString(manager.getIntervalStart()
-						.getMainPoint() + rangeSlider.getSelection()[1]));
+						.getMainPoint()
+						+ rangeSlider.getUpperValue()
+						* sliderFactor));
 				endTime.setText(new SimpleDateFormat(
 						"dd/MM/yyyy - HH:mm:ss.SSS").format(new Timestamp(
 						manager.getIntervalStart().getMainPoint()
-								+ rangeSlider.getSelection()[1])));
+								+ rangeSlider.getUpperValue() * sliderFactor)));
 
 				if (!activeButton.getSelection()) {
 					// If it's set to inactive -> set the maximum interval
@@ -126,14 +128,14 @@ public class TimeSliderComposite extends Composite implements
 					manager.setIntervalEnd(PointInTime.getInfinityTime());
 				} else {
 					// It's set to active -> set the values of the slider
-					
+
 					boolean setBackToEnd = false;
-					if(rangeSlider.getUpperValue() >= rangeSlider.getMaximum() - 1) {
+					if (rangeSlider.getUpperValue() >= rangeSlider.getMaximum() - 1) {
 						// On the right end -> "glue"
 						setBackToEnd = true;
 					}
 					rangeSlider.setMaximum(savedMaxSlider);
-					if(setBackToEnd) {
+					if (setBackToEnd) {
 						rangeSlider.setUpperValue(rangeSlider.getMaximum());
 					}
 					int tolerance = rangeSlider.getMaximum() / 20;
@@ -164,9 +166,8 @@ public class TimeSliderComposite extends Composite implements
 									+ (rangeSlider.getMaximum() / 10));
 						}
 
-						
 					}
-					
+
 					// And update the selection
 					updateInterval();
 				}
@@ -243,6 +244,20 @@ public class TimeSliderComposite extends Composite implements
 				Label timeHead = new Label(s, SWT.NONE);
 				timeHead.setText("Time to save");
 
+				// How can I add this later?
+				Button okButton = new Button(s, SWT.NONE);
+				okButton.setText("Save");
+				
+				// Add 4 empty labels, cause how to fill it either?
+				Label lab1 = new Label(s, SWT.NONE);
+				Label lab2 = new Label(s, SWT.NONE);
+				Label lab3 = new Label(s, SWT.NONE);
+				Label lab4 = new Label(s, SWT.NONE);
+				lab1.setText("");
+				lab2.setText("");
+				lab3.setText("");
+				lab4.setText("");
+				
 				ArrayList<LayerUpdater> connections = manager.getConnections();
 				if (connections != null) {
 					for (LayerUpdater conn : connections) {
@@ -287,17 +302,17 @@ public class TimeSliderComposite extends Composite implements
 						sec.setText("s");
 
 						MaxTimeListener timeListener = new MaxTimeListener(
-								conn, hours, minutes, seconds);
+								conn, hours, minutes, seconds);				
 						
-						Button okButton = new Button(s, SWT.NONE);
-						okButton.setText("Save");
 						okButton.addSelectionListener(timeListener);
-						// This would make it "live" - but the moment you tip "1 second"
+						// This would make it "live" - but the moment you tip
+						// "1 second"
 						// nearly all old data (but the one seconds) is lost :(
-//						hours.addSelectionListener(timeListener);
-//						minutes.addSelectionListener(timeListener);
-//						seconds.addSelectionListener(timeListener);
-					}
+						// hours.addSelectionListener(timeListener);
+						// minutes.addSelectionListener(timeListener);
+						// seconds.addSelectionListener(timeListener);
+					}	
+					
 				}
 
 				// Open shell
@@ -330,25 +345,28 @@ public class TimeSliderComposite extends Composite implements
 		if (isActive) {
 
 			// EndSlider (right one)
-			if (rangeSlider.getSelection()[1] >= rangeSlider.getMaximum() - 1) {
+			if (rangeSlider.getUpperValue() >= rangeSlider.getMaximum() - 1) {
 				// Right slider is on the right end
 				manager.setIntervalEnd(PointInTime.getInfinityTime());
 
 			} else {
-				manager.setIntervalEnd(manager.getMaxIntervalStart().plus(
-						rangeSlider.getSelection()[1]));
+				PointInTime newEnd = new PointInTime(
+						manager.getMaxIntervalStart().getMainPoint() + ((long) rangeSlider.getUpperValue() * sliderFactor));
+				manager.setIntervalEnd(newEnd);
 			}
 
 			// BeginSlider (left one)
-			if (!(isFixedTimeRange && rangeSlider.getSelection()[1] >= rangeSlider
+			if (!(isFixedTimeRange && rangeSlider.getUpperValue() >= rangeSlider
 					.getMaximum() - 1)) {
-				if (rangeSlider.getSelection()[0] == rangeSlider.getMinimum()) {
+				if (rangeSlider.getLowerValue() == rangeSlider.getMinimum()) {
 					// left slider is on the left end
 					manager.setIntervalStart(manager.getMaxIntervalStart()
 							.clone());
 				} else {
-					manager.setIntervalStart(manager.getMaxIntervalStart()
-							.plus(rangeSlider.getSelection()[0]));
+					PointInTime newStart = new PointInTime(
+							manager.getMaxIntervalStart().getMainPoint()
+									+ ((long) rangeSlider.getLowerValue() * sliderFactor));
+					manager.setIntervalStart(newStart);
 				}
 			} else {
 				// Don't set the time, if the left slider can't move,
@@ -385,9 +403,9 @@ public class TimeSliderComposite extends Composite implements
 							}
 							// And set the value of the manager to this new
 							// value
-							manager.setIntervalStart(manager
-									.getMaxIntervalStart().plus(
-											rangeSlider.getSelection()[0]));
+							PointInTime newStart = new PointInTime(
+									manager.getMaxIntervalStart().getMainPoint() + ((long) rangeSlider.getLowerValue() * sliderFactor));
+							manager.setIntervalStart(newStart);
 						} else {
 							// the lower value was changed (left slider) -> set
 							// the right slider
@@ -401,9 +419,9 @@ public class TimeSliderComposite extends Composite implements
 								manager.setIntervalEnd(PointInTime
 										.getInfinityTime());
 							}
-							manager.setIntervalEnd(manager
-									.getMaxIntervalStart().plus(
-											rangeSlider.getSelection()[1]));
+							PointInTime newEnd = new PointInTime(
+									manager.getMaxIntervalStart().getMainPoint() + ((long) rangeSlider.getUpperValue() * sliderFactor));
+							manager.setIntervalEnd(newEnd);
 						}
 
 					}
@@ -412,12 +430,20 @@ public class TimeSliderComposite extends Composite implements
 						ITimeInterval interval = ((ITimeInterval) evt
 								.getNewValue());
 						if (!evt.getNewValue().equals(evt.getOldValue())) {
-							int i = (int) interval.getEnd()
+							long tempMaxSlider = interval.getEnd()
 									.minus(interval.getStart()).getMainPoint();
-							boolean setBackToEnd = (rangeSlider.getSelection()[1] >= rangeSlider
+							sliderFactor = 1;
+							while (tempMaxSlider > Integer.MAX_VALUE) {
+								// Has to fit in integer, cause the rangeSlider
+								// can't have more than integer
+								tempMaxSlider /= 10;
+								sliderFactor *= 10;
+							}
+
+							boolean setBackToEnd = (rangeSlider.getUpperValue() >= rangeSlider
 									.getMaximum() - 1);
 
-							rangeSlider.setMaximum(i);
+							rangeSlider.setMaximum((int) tempMaxSlider);
 
 							if (setBackToEnd) {
 								// If the right slider is on the right side,
@@ -432,9 +458,17 @@ public class TimeSliderComposite extends Composite implements
 								.getNewValue());
 						if (!evt.getNewValue().equals(evt.getOldValue())) {
 
-							int i = (int) interval.getEnd()
+							long tempMaxSlider = interval.getEnd()
 									.minus(interval.getStart()).getMainPoint();
-							rangeSlider.setMaximum(i);
+							sliderFactor = 1;
+							while (tempMaxSlider > Integer.MAX_VALUE) {
+								// Has to fit in integer, cause the rangeSlider
+								// can't have more than integer
+								tempMaxSlider /= 10;
+								sliderFactor *= 10;
+							}
+
+							rangeSlider.setMaximum((int) tempMaxSlider);
 
 							if (interval.getEnd().isInfinite()) {
 								rangeSlider.setUpperValue(rangeSlider
@@ -454,15 +488,16 @@ public class TimeSliderComposite extends Composite implements
 					// Start + selection -> better if end is infinity
 					endTimestamp.setText(Long.toString(manager
 							.getIntervalStart().getMainPoint()
-							+ rangeSlider.getSelection()[1]));
+							+ (long) rangeSlider.getUpperValue() * sliderFactor));
 					endTime.setText(new SimpleDateFormat(
 							"dd/MM/yyyy - HH:mm:ss.SSS").format(new Timestamp(
 							manager.getIntervalStart().getMainPoint()
-									+ rangeSlider.getSelection()[1])));
+									+ (long) rangeSlider.getUpperValue()
+									* sliderFactor)));
 
 					// Set the time-range-label
-					long timeInMs = rangeSlider.getUpperValue()
-							- rangeSlider.getLowerValue();
+					long timeInMs = ((long) rangeSlider.getUpperValue() - (long) rangeSlider
+							.getLowerValue()) * (long) sliderFactor;
 					timeRangeLabel.setText(msToTimeString(timeInMs));
 
 					// Save the values to compare, which one was dragged
@@ -473,8 +508,16 @@ public class TimeSliderComposite extends Composite implements
 							|| "interval".equals(evt.getPropertyName())) {
 						ITimeInterval interval = ((ITimeInterval) evt
 								.getNewValue());
-						savedMaxSlider = (int) interval.getEnd()
+						long tempMaxSlider = interval.getEnd()
 								.minus(interval.getStart()).getMainPoint();
+						sliderFactor = 1;
+						while (tempMaxSlider > Integer.MAX_VALUE) {
+							// Has to fit in integer, cause the rangeSlider
+							// can't have more than integer
+							tempMaxSlider /= 10;
+							sliderFactor *= 10;
+						}
+						savedMaxSlider = (int) tempMaxSlider;
 					}
 				}
 			}

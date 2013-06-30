@@ -59,7 +59,7 @@ public class Heatmap extends RasterLayer {
 		Color maxColor = config.getMaxColor();
 		Image img = createImage(config.getNumTilesWidth(),
 				config.getNumTilesHeight(), minColor, maxColor);
-		drawImage(gc, img, false);
+		drawImage(gc, img, config.isInterpolation());
 	}
 
 	/**

@@ -74,7 +74,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		setGeometricAttributePosition(0); //Here should be a point
 		setMinColor(new Color(Display.getDefault(),0,255,0));
 		setMaxColor(new Color(Display.getDefault(),255,0,0));
-		setAlpha(50);
+		setAlpha(150);
 		setInterpolation(false);
 		setNumTilesHeight(10);
 		setNumTilesWidth(10);

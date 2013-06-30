@@ -426,8 +426,8 @@ public class TreeListener implements ISelectionChangedListener {
 				heatmapLayerConfig.setAlpha(spinner.getSelection());
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
-		});
-
+		});		
+		
 		// Number of tiles
 		Label numTilesWidthLabel = new Label(settingsContainer, SWT.NONE);
 		numTilesWidthLabel.setText("Number of tiles horizontal: ");
@@ -458,6 +458,24 @@ public class TreeListener implements ISelectionChangedListener {
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setNumTilesHeight(spinner.getSelection());
 				treeListener.updateParentConfig(heatmapLayerConfig);
+			}
+		});
+		
+		// Interpolation
+		Label interpolationLabel = new Label(settingsContainer, SWT.NONE);
+		interpolationLabel.setText("Interpolation: ");
+		Button interpolationButton = new Button(settingsContainer, SWT.CHECK);
+		interpolationButton.setEnabled(true);
+		interpolationButton.setSelection(newConfig.isInterpolation());
+		interpolationButton.addSelectionListener(new ButtonListener(newConfig,
+				this, interpolationButton) {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
+				heatmapLayerConfiguration.setInterpolation(correspondingButton
+						.getSelection());
+				treeListener.updateParentConfig(heatmapLayerConfiguration);
 			}
 		});
 
