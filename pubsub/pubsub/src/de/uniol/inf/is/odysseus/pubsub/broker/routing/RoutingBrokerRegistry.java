@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright 2013 The Odysseus Team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a joinPlan of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
 package de.uniol.inf.is.odysseus.pubsub.broker.routing;
 
 import java.util.ArrayList;
@@ -10,12 +26,18 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
 
+/**
+ * This class manages all routing broker types
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class RoutingBrokerRegistry {
 
-static Logger logger = LoggerFactory.getLogger(BrokerTopologyRegistry.class);
+	private static Logger logger = LoggerFactory.getLogger(BrokerTopologyRegistry.class);
 	
 	// Maps Type and the corresponding Broker
-	static Map<String, IRoutingBroker<?>> routingBrokers = new HashMap<String, IRoutingBroker<?>>();
+	private static Map<String, IRoutingBroker<?>> routingBrokers = new HashMap<String, IRoutingBroker<?>>();
 	
 	
 	/**
@@ -41,6 +63,13 @@ static Logger logger = LoggerFactory.getLogger(BrokerTopologyRegistry.class);
 		routingBrokers.remove(routingBroker.getType().toLowerCase());
 	}
 	
+	/**
+	 * Returns a new instance of a rounting broker, if type is valid.
+	 * @param type
+	 * @param domain
+	 * @param name
+	 * @return a new instance of a routing broker
+	 */
 	public static IRoutingBroker<?> getRoutingBrokerInstance(String type, String domain, String name){
 		if (routingBrokers.containsKey(type.toLowerCase())){
 			return routingBrokers.get(type.toLowerCase()).getInstance(name, domain);
@@ -48,6 +77,9 @@ static Logger logger = LoggerFactory.getLogger(BrokerTopologyRegistry.class);
 		return null;
 	}
 	
+	/**
+	 * returns valid routing types
+	 */
 	public static List<String> getValidRoutingTypes(){
 		return new ArrayList<String>(routingBrokers.keySet());
 	}

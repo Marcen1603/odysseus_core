@@ -54,30 +54,36 @@ public class PublishPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 		this.topicStrings = topics;
 		this.topics = TopicHelper.convertStringsToTopics(topics);
 		this.identifier = UUID.randomUUID().toString();
-		this.publisherObservable = new PublisherObservable<T>(this);
-	}
-
-	@Override
-	protected void process_next(T object, int port) {
-		publisherObservable.setElement(object);
+		this.publisherObservable = new PublisherObservable<T>(this.identifier);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
+		// Get topology from registry
 		brokerTopology = (IBrokerTopology<T>) BrokerTopologyRegistry
 				.<T> getTopologyByTypeAndDomain(topologyType, domain, routing);
+		// If topology was found
 		if (brokerTopology != null) {
+			// register on topology and advertise if needed
 			BrokerTopologyRegistry.register(domain);
 			if (!topics.isEmpty()) {
 				brokerTopology.advertise(topics, this.getIdentifier());
 			}
+			// Add Topology to Observers
 			publisherObservable.addObserver(brokerTopology);
 		}
+	}
+	
+	@Override
+	protected void process_next(T object, int port) {
+		// Send object to topology via Observer
+		publisherObservable.setElement(object);
 	}
 
 	@Override
 	protected void process_close() throws OpenFailedException {
+		// Remove Observer, remove advertisement and unregister
 		if (brokerTopology != null) {
 			publisherObservable.deleteObserver(brokerTopology);
 			if (!topics.isEmpty()) {

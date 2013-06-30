@@ -22,9 +22,14 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
+/**
+ * main interface for brokers
+ * 
+ * @author ChrisToenjesDeye
+ * 
+ */
 public interface IBroker<T extends IStreamObject<?>>{
 
 	/**
@@ -40,16 +45,18 @@ public interface IBroker<T extends IStreamObject<?>>{
 	String getDomain();
 
 	/**
-	 * 
+	 * sets predicates and topics for a given subscriber
 	 * @param predicates
+	 * @param topics
 	 * @param subscriber
 	 */
 	void setSubscription(List<IPredicate<? super T>> predicates, List<Topic> topics,
 			SubscribePO<T> subscriber);
 	
 	/**
-	 * 
+	 * removes predicates and topics for a given subscriber
 	 * @param predicates
+	 * @param topics
 	 * @param subscriber
 	 */
 	void removeSubscription(List<IPredicate<? super T>> predicates, List<Topic> topics,
@@ -57,7 +64,7 @@ public interface IBroker<T extends IStreamObject<?>>{
 	
 	
 	/**
-	 * 
+	 * sets topics for a given publisher
 	 * @param topics
 	 * @param publisher
 	 */
@@ -65,18 +72,7 @@ public interface IBroker<T extends IStreamObject<?>>{
 			String publisherUid);
 	
 	/**
-	 * 
-	 * @param advertisements
-	 */
-	void setAdvertisements(Map<String, BrokerAdvertisements> advertisements);
-	
-	/**
-	 * 
-	 * @return
-	 */
-	Map<String, BrokerAdvertisements> getAdvertisements();
-	/**
-	 * 
+	 * removes topics for a given publisher
 	 * @param topics
 	 * @param publisher
 	 */
@@ -84,15 +80,20 @@ public interface IBroker<T extends IStreamObject<?>>{
 			String publisherUid);
 	
 	/**
-	 * 
-	 * @param object
+	 * sets a list of advertisements mapped to a publisherUid
+	 * @param advertisements
 	 */
-	void sendToSubscribers(T object, PublishPO<T> publisher);
+	void setAdvertisements(Map<String, BrokerAdvertisements> advertisements);
 	
 	/**
-	 * 
+	 * returns a map of advertisements mapped to publisherUid
 	 * @return
 	 */
-	boolean hasSubscriptions();
-
+	Map<String, BrokerAdvertisements> getAdvertisements();
+	
+	/**
+	 * filters the object with content based filtering and topic based filtering (if subscriptions and advertisements available)
+	 * @param object
+	 */
+	void sendToSubscribers(T object, String publisherUid);
 }

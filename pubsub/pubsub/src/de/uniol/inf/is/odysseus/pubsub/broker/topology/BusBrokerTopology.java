@@ -33,7 +33,8 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends
 		AbstractBrokerTopology<T> {
 
 	private static final String MAIN_BROKER = "MainBroker";
-	private final String TOPOLOGY_TYPE = "BusTopology";
+	private static final String TOPOLOGY_TYPE = "BusTopology";
+	
 	private List<IBroker<T>> brokerBus = new ArrayList<IBroker<T>>();;
 
 	public BusBrokerTopology() {
@@ -63,7 +64,7 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends
 	 */
 	@Override
 	public void advertise(List<Topic> topics, String publisherUid) {
-		List<IBroker<T>> brokers = getBrokers();
+		List<IBroker<T>> brokers = getAllBrokers();
 		for (IBroker<T> broker : brokers) {
 			broker.setAdvertisement(topics, publisherUid);
 		}
@@ -77,7 +78,7 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends
 	 */
 	@Override
 	public void unadvertise(List<Topic> topics, String publisherUid) {
-		List<IBroker<T>> brokers = getBrokers();
+		List<IBroker<T>> brokers = getAllBrokers();
 		for (IBroker<T> broker : brokers) {
 			broker.removeAdvertisement(topics, publisherUid);
 		}
@@ -90,7 +91,7 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends
 	 * @return
 	 */
 	@Override
-	public List<IBroker<T>> getBrokers() {
+	public List<IBroker<T>> getAllBrokers() {
 		// It's a Bus, so every Broker needs to be addressed
 		return brokerBus;
 	}
@@ -100,7 +101,7 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends
 	 * and copy all advertisements from mainBroker
 	 */
 	@Override
-	IBroker<T> getBrokerByName(String name) {
+	public IBroker<T> getBrokerByName(String name) {
 		// Find Broker in existing Bus
 		for (IBroker<T> broker : brokerBus) {
 			if (broker.getName().toLowerCase().equals(name.toLowerCase())) {

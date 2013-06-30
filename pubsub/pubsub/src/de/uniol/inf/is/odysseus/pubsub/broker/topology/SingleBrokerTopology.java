@@ -32,7 +32,8 @@ import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 public class SingleBrokerTopology<T extends IStreamObject<?>> extends
 		AbstractBrokerTopology<T> {
 
-	private final String TOPOLOGY_TYPE = "SingleBroker";
+	private static final String TOPOLOGY_TYPE = "SingleBroker";
+	
 	private IBroker<T> singleBroker;
 
 	public SingleBrokerTopology() {
@@ -62,7 +63,7 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends
 	 */
 	@Override
 	public void advertise(List<Topic> topics, String publisherUid) {
-		List<IBroker<T>> brokers = getBrokers();
+		List<IBroker<T>> brokers = getAllBrokers();
 		for (IBroker<T> broker : brokers) {
 			broker.setAdvertisement(topics, publisherUid);
 		}
@@ -76,7 +77,7 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends
 	 */
 	@Override
 	public void unadvertise(List<Topic> topics, String publisherUid) {
-		List<IBroker<T>> brokers = getBrokers();
+		List<IBroker<T>> brokers = getAllBrokers();
 		for (IBroker<T> broker : brokers) {
 			broker.removeAdvertisement(topics, publisherUid);
 		}
@@ -86,10 +87,10 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends
 	 * Returns a list of brokers, which should me addressed its a single broker
 	 * topology, so this method returns the only one broker
 	 * 
-	 * @return
+	 * @return list of brokers
 	 */
 	@Override
-	public List<IBroker<T>> getBrokers() {
+	public List<IBroker<T>> getAllBrokers() {
 		// Only one Broker available
 		List<IBroker<T>> ret = new ArrayList<IBroker<T>>();
 		ret.add(singleBroker);
@@ -100,7 +101,7 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends
 	 * Returns a broker with a given name Only one Broker exists, so ignore name
 	 */
 	@Override
-	IBroker<T> getBrokerByName(String name) {
+	public IBroker<T> getBrokerByName(String name) {
 		// Single Broker architecture, ignore name
 		return singleBroker;
 	}
@@ -108,8 +109,8 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends
 	/**
 	 * Returns a new Instance of this topology Type
 	 * 
-	 * @param name
-	 * @return
+	 * @param brokername
+	 * @return new Instance of SingleBrokerTopology 
 	 */
 	@Override
 	public <E extends IStreamObject<?>> IBrokerTopology<E> getInstance(

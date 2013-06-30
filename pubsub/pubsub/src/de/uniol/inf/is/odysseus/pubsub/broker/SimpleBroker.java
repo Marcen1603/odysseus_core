@@ -18,14 +18,20 @@ package de.uniol.inf.is.odysseus.pubsub.broker;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
+/**
+ * This class provides the functionality of a simple broker with no routing
+ * needed in single broker or bus broker topology Hint: All functions are in
+ * abstract broker, because they are also needed in other brokers
+ * 
+ * @author ChrisToenjesDeye
+ * 
+ */
 public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> {
-	
-	
 
 	public SimpleBroker(String name, String domain) {
 		super(name, domain);
 	}
-	
+
 	public SimpleBroker(String name, SimpleBroker<T> copy) {
 		// Copy data
 		super(name, copy.getDomain());
@@ -35,5 +41,4 @@ public class SimpleBroker<T extends IStreamObject<?>> extends AbstractBroker<T> 
 		refreshInternalStatus();
 	}
 
-	
 }

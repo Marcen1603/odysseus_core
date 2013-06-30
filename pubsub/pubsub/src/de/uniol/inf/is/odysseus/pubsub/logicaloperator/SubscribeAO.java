@@ -87,18 +87,18 @@ public class SubscribeAO extends UnaryLogicalOp{
 		this.brokername = brokerName;
 	}
 	
-	@Parameter(name="domain", type=StringParameter.class, doc="")
+	@Parameter(name="domain", type=StringParameter.class, doc="domain, on which you want to subscribe")
 	public void setDomain(String domain){
 		this.domain = domain;
 	}
 	
 	@Override
-    @Parameter(name="predicates", type=PredicateParameter.class, isList=true, optional=true, doc="")
+    @Parameter(name="predicates", type=PredicateParameter.class, isList=true, optional=true, doc="filter incomming objects by predicates")
     public void setPredicates(List<IPredicate<?>> predicates) {
         super.setPredicates(predicates);
     }
 	
-	@Parameter(name="topics", type=StringParameter.class, isList=true, optional=true, doc="")
+	@Parameter(name="topics", type=StringParameter.class, isList=true, optional=true, doc="filter incomming objects by topics")
 	public void setTopics(List<String> topics){
 		this.topics = topics;
 	}

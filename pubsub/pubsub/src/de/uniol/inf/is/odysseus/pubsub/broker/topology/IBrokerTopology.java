@@ -22,7 +22,6 @@ import java.util.Observer;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
 /**
@@ -108,10 +107,22 @@ public interface IBrokerTopology<T extends IStreamObject<?>> extends Observer{
 	 */
 	boolean hasAgents();
 
+	/**
+	 * transfers the object to broker
+	 * @param object
+	 * @param publisher
+	 */
+	void transfer(T object, String publisherUid);
 	
-	void transfer(T object, PublishPO<T> publisher);
-	
+	/**
+	 * checks if the given topology needs a routing algorithm
+	 * @return needs routing
+	 */
 	boolean needsRouting();
 
+	/**
+	 * sets the routing type
+	 * @param routingType
+	 */
 	void setRoutingType(String routingType);
 }

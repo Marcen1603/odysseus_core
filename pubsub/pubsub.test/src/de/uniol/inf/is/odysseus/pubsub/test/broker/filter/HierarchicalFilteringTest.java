@@ -53,7 +53,7 @@ public class HierarchicalFilteringTest<T extends IStreamObject<?>> {
 
 		filter.reinitializeFilter(subscriptions, advertisements);
 		List<String> matchedSubscriber = filter.filter(
-				(T) new KeyValueObject<>(), publisher);
+				(T) new KeyValueObject<>(), publisher.getIdentifier());
 		Assert.assertTrue(matchedSubscriber.contains(subscriber.getIdentifier()));
 	}
 

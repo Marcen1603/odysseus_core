@@ -22,13 +22,12 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerAdvertisements;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerSubscription;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 
 /**
+ * Interface for filtering algorithms
  * 
  * @author ChrisToenjesDeye
  *
- * @param <T>
  */
 public interface IFiltering<T extends IStreamObject<?>> {
 
@@ -46,7 +45,7 @@ public interface IFiltering<T extends IStreamObject<?>> {
 	 * @param object
 	 * @param publisher
 	 */
-	List<String> filter(T object, PublishPO<T> publisher);
+	List<String> filter(T object, String publisherUid);
 
 	/**
 	 * Change reinitialization mode, if set to true, on next filter() 

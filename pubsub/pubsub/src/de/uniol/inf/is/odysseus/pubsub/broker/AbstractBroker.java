@@ -32,30 +32,50 @@ import de.uniol.inf.is.odysseus.pubsub.broker.filter.ContentBasedFiltering;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.HierarchicalFiltering;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.IFiltering;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
+/**
+ * enum for registered filtertypes
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 enum Filtertype {
 	content, hierarchical, channel
 }
 
+/**
+ * base abstract class, that provides base broker functionality
+ * 
+ * @author ChrisToenjesDeye
+ * 
+ */
 public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 		Observable implements IBroker<T> {
-
+	
+	// Logger
 	private static Logger logger = LoggerFactory
 			.getLogger(AbstractBroker.class);
+	
+	// name and domain of the broker
 	private String name;
 	private String domain;
 
+	// status variables for efficient filtering
 	private boolean isAnyTopicHierarchical = false;
 	private boolean hasAnySubscriptionTopics = false;
 	private boolean hasAnySubscriptionPredicates = false;
 
+	// Maps filtername and filter
 	private Map<Filtertype, IFiltering<T>> filters = new HashMap<Filtertype, IFiltering<T>>();
 
+	// Maps subscriberUid and list of subscriptions
 	protected Map<String, BrokerSubscription<T>> subscriptions;
+	
+	// Maps publisherUid and list of advertisements
 	protected Map<String, BrokerAdvertisements> advertisements;
 
+	
 	public AbstractBroker(String name, String domain) {
 		this.name = name;
 		this.domain = domain;
@@ -78,20 +98,24 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 		return domain;
 	}
 
-	public Map<String, BrokerSubscription<T>> getSubscriptions() {
-		return subscriptions;
-	}
-
 	@Override
 	public Map<String, BrokerAdvertisements> getAdvertisements() {
 		return advertisements;
 	}
-	
+
 	@Override
-	public void setAdvertisements(Map<String, BrokerAdvertisements> advertisements) {
-		this.advertisements = new HashMap<String, BrokerAdvertisements>(advertisements);
+	public void setAdvertisements(
+			Map<String, BrokerAdvertisements> advertisements) {
+		this.advertisements = new HashMap<String, BrokerAdvertisements>(
+				advertisements);
 	}
 
+	/**
+	 * sets predicates and topics for a given subscriber
+	 * @param predicates
+	 * @param topics
+	 * @param subscriber
+	 */
 	@Override
 	public void setSubscription(List<IPredicate<? super T>> predicates,
 			List<Topic> topics, SubscribePO<T> subscriber) {
@@ -103,6 +127,12 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 		refreshInternalStatus();
 	}
 
+	/**
+	 * removes predicates and topics for a given subscriber
+	 * @param predicates
+	 * @param topics
+	 * @param subscriber
+	 */
 	@Override
 	public void removeSubscription(List<IPredicate<? super T>> predicates,
 			List<Topic> topics, SubscribePO<T> subscriber) {
@@ -114,6 +144,11 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 		refreshInternalStatus();
 	}
 
+	/**
+	 * sets topics for a given publisher
+	 * @param topics
+	 * @param publisher
+	 */
 	@Override
 	public void setAdvertisement(List<Topic> topics, String publisherUid) {
 		advertisements.put(publisherUid, new BrokerAdvertisements(publisherUid,
@@ -125,6 +160,11 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 
 	}
 
+	/**
+	 * removes topics for a given publisher
+	 * @param topics
+	 * @param publisher
+	 */
 	@Override
 	public void removeAdvertisement(List<Topic> topics, String publisherUid) {
 		advertisements.remove(publisherUid);
@@ -135,45 +175,45 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 
 	}
 
+	/**
+	 * filters the object with content based filtering and topic based filtering (if subscriptions and advertisements available)
+	 * @param object
+	 */
 	@Override
-	public boolean hasSubscriptions() {
-		return !subscriptions.isEmpty();
-	}
-
-	@Override
-	public synchronized void sendToSubscribers(T object, PublishPO<T> publisher) {
-
+	public synchronized void sendToSubscribers(T object, String publisherUid) {
 		List<String> matchedSubscriberTopics = new ArrayList<String>();
 		List<String> matchedSubscriberPredicates = new ArrayList<String>();
+		
 		// Clear Observer list
 		this.deleteObservers();
 
-		// Topic based filtering
 		if (hasAnySubscriptionTopics && doesAnyPublisherAdvertiseTopics()) {
+			// Topic based filtering
 			if (!isAnyTopicHierarchical) {
 				// Channel based filtering
 				IFiltering<T> filter = filters.get(Filtertype.channel);
 				if (filter.needsReinitialization()) {
-					filter.reinitializeFilter(getSubscriptions().values(),
-							getAdvertisements().values());
+					filter.reinitializeFilter(subscriptions.values(),
+							advertisements.values());
 				}
 				matchedSubscriberTopics
-						.addAll(filter.filter(object, publisher));
+						.addAll(filter.filter(object, publisherUid));
 			} else {
 				// Hierarchical Filtering
 				IFiltering<T> filter = filters.get(Filtertype.hierarchical);
 				if (filter.needsReinitialization()) {
-					filter.reinitializeFilter(getSubscriptions().values(),
-							getAdvertisements().values());
+					filter.reinitializeFilter(subscriptions.values(),
+							advertisements.values());
 				}
 				matchedSubscriberTopics
-						.addAll(filter.filter(object, publisher));
+						.addAll(filter.filter(object, publisherUid));
 			}
 
 			// if only topic based filter active
 			if (!hasAnySubscriptionPredicates) {
+				// add observers (subscribers) and notify them
 				for (String subscriberId : matchedSubscriberTopics) {
-					super.addObserver(getSubscriptions().get(subscriberId)
+					super.addObserver(subscriptions.get(subscriberId)
 							.getSubscriber());
 				}
 				super.setChanged();
@@ -184,16 +224,17 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 		if (hasAnySubscriptionPredicates) {
 			IFiltering<T> filter = filters.get(Filtertype.content);
 			if (filter.needsReinitialization()) {
-				filter.reinitializeFilter(getSubscriptions().values(),
-						getAdvertisements().values());
+				filter.reinitializeFilter(subscriptions.values(),
+						advertisements.values());
 			}
 			matchedSubscriberPredicates
-					.addAll(filter.filter(object, publisher));
+					.addAll(filter.filter(object, publisherUid));
 
 			// if only content based filter active
 			if (!hasAnySubscriptionTopics || !doesAnyPublisherAdvertiseTopics()) {
+				// add observers (subscribers) and notify them
 				for (String subscriberId : matchedSubscriberPredicates) {
-					super.addObserver(getSubscriptions().get(subscriberId)
+					super.addObserver(subscriptions.get(subscriberId)
 							.getSubscriber());
 				}
 				super.setChanged();
@@ -207,28 +248,37 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 				&& hasAnySubscriptionPredicates) {
 			for (String subscriberId : matchedSubscriberTopics) {
 				if (matchedSubscriberPredicates.contains(subscriberId)) {
-					super.addObserver(getSubscriptions().get(subscriberId)
+					// if both filters match, add subscriber to observers
+					super.addObserver(subscriptions.get(subscriberId)
 							.getSubscriber());
 				}
 			}
+			// notify all subscribers
 			super.setChanged();
 			super.notifyObservers(object);
 		}
-		
-		// TODO Return boolean if any subscriber matrches on topics
-		// return !matchedSubscriberTopics.isEmpty();
 	}
 
+	/**
+	 * checks if any publisher has advertised
+	 * @return
+	 */
 	private boolean doesAnyPublisherAdvertiseTopics() {
-		return !getAdvertisements().isEmpty();
+		return !advertisements.isEmpty();
 	}
 
+	/**
+	 * refreshes the internal status. This should be done if
+	 * subscriptions or advertisements changed
+	 * The internal status is needed for better performance
+	 */
 	protected void refreshInternalStatus() {
 		isAnyTopicHierarchical = false;
 		hasAnySubscriptionTopics = false;
 		hasAnySubscriptionPredicates = false;
 
-		for (BrokerSubscription<T> subscription : getSubscriptions().values()) {
+		// Checks if Subscriptions has topics or predicates or both
+		for (BrokerSubscription<T> subscription : subscriptions.values()) {
 			if (subscription.hasTopics()) {
 				hasAnySubscriptionTopics = true;
 			}
@@ -241,7 +291,8 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 				}
 			}
 		}
-		for (BrokerAdvertisements advertisement : getAdvertisements().values()) {
+		// checks if any topic is hierarchical
+		for (BrokerAdvertisements advertisement : advertisements.values()) {
 			for (Topic topic : advertisement.getTopics()) {
 				if (topic.isHierarchical()) {
 					isAnyTopicHierarchical = true;

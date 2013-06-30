@@ -50,7 +50,7 @@ public class ChannelBasedFilteringTest<T extends IStreamObject<?>>{
 		advertisements.add(new BrokerAdvertisements(publisher.getIdentifier(), publisher.getTopics()));
 		
 		filter.reinitializeFilter(subscriptions, advertisements);
-		List<String> matchedSubscriber = filter.filter((T) new KeyValueObject<>(), publisher);
+		List<String> matchedSubscriber = filter.filter((T) new KeyValueObject<>(), publisher.getIdentifier());
 		Assert.assertTrue(matchedSubscriber.contains(subscriber.getIdentifier()));
 	}
 

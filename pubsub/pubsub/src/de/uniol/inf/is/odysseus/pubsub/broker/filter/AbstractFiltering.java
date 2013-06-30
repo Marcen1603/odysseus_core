@@ -18,6 +18,12 @@ package de.uniol.inf.is.odysseus.pubsub.broker.filter;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
+/**
+ * base abstract class for filtering algorithms
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public abstract class AbstractFiltering<T extends IStreamObject<?>> implements IFiltering<T>{
 
 	private boolean needsReinitialization;

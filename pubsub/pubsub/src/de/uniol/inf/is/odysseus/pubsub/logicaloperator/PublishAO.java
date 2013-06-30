@@ -68,6 +68,7 @@ public class PublishAO extends UnaryLogicalOp{
 					addError(new IllegalParameterException("Topology: '"+topologyType+"' needs a routing rule."));
 					return false;					
 				} else {
+					// Check if routing type is valid (only if needed)
 					List<String> routingTypes = RoutingBrokerRegistry.getValidRoutingTypes();
 					if (!routingTypes.contains(routing)){
 						addError(new IllegalParameterException(
@@ -94,22 +95,22 @@ public class PublishAO extends UnaryLogicalOp{
 		return new PublishAO(this);
 	}
 	
-	@Parameter(name="topologyType", type=StringParameter.class, doc="")
+	@Parameter(name="topologyType", type=StringParameter.class, doc="the used topology type")
 	public void setTopologyType(String topologyType){
 		this.topologyType = topologyType;
 	}
 	
-	@Parameter(name="routing", type=StringParameter.class, doc="", optional=true)
+	@Parameter(name="routing", type=StringParameter.class, doc="if routing topology is selected, a routing algorithm must be added", optional=true)
 	public void setRouting(String routing){
 		this.routing = routing;
 	}
 	
-	@Parameter(name="domain", type=StringParameter.class, doc="")
+	@Parameter(name="domain", type=StringParameter.class, doc="domain, where published objects will be processed")
 	public void setDomain(String domain){
 		this.domain = domain;
 	}
 	
-	@Parameter(name="topics", type=StringParameter.class, isList=true, optional=true, doc="")
+	@Parameter(name="topics", type=StringParameter.class, isList=true, optional=true, doc="advertise, which topics the processed objects match")
 	public void setTopics(List<String> topics){
 		this.topics = topics;
 	}

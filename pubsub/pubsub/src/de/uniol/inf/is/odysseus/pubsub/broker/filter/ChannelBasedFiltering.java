@@ -19,9 +19,18 @@ package de.uniol.inf.is.odysseus.pubsub.broker.filter;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerSubscription;
 
+/**
+ * provides additional functionality for channel based filtering
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class ChannelBasedFiltering<T extends IStreamObject<?>> extends
 		AbstractTopicBasedFiltering<T> {
 
+	/**
+	 * checks if a given subscription contains a given topic (not hierarchical)
+	 */
 	@Override
 	protected boolean hasSubscriptionTopic(Topic topic,
 			BrokerSubscription<T> subscription) {

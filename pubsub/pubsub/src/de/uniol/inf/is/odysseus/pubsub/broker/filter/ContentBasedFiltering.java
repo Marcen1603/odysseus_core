@@ -24,12 +24,14 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerAdvertisements;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerSubscription;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 
 public class ContentBasedFiltering<T extends IStreamObject<?>> extends AbstractFiltering<T>{
 
-	private Collection<BrokerSubscription<T>> subscriptions;
+	private Collection<BrokerSubscription<T>> subscriptions = new ArrayList<BrokerSubscription<T>>();
 	
+	/**
+	 * initialization in content based filtering not needed until now
+	 */
 	@Override
 	public void reinitializeFilter(Collection<BrokerSubscription<T>> subscriptions,
 			Collection<BrokerAdvertisements> advertisements) {
@@ -38,20 +40,27 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends AbstractF
 		setReinitializationMode(false);
 	}
 
+	/**
+	 * filters given object, if all subscriber predicates match
+	 */
 	@Override
-	public List<String> filter(T object, PublishPO<T> publisher) {
+	public List<String> filter(T object, String publisherUid) {
 		ArrayList<String> result = new ArrayList<String>();
 		
 		for (BrokerSubscription<T> subscription : subscriptions) {
+			// foreach subscription
 			boolean allpredicatesValid = true;
 			if (!subscription.hasPredicates()){
+				// add if no predicates are available (so object matches)
 				result.add(subscription.getSubscriber().getIdentifier());
 			} else {
+				// check if all predicates of this subscriber matches
 				for (IPredicate<? super T> pred : subscription.getPredicates()) {
 					if (!pred.evaluate(object)){
 						allpredicatesValid = false;
 					}
-				}				
+				}	
+				// if all predicates are match, add subscriber
 				if (allpredicatesValid){
 					result.add(subscription.getSubscriber().getIdentifier());
 				}

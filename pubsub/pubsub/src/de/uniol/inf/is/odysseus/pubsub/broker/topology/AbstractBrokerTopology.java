@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.IBroker;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
 /**
@@ -34,7 +33,8 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 		extends AbstractTopology<T> {
 	
 	abstract IBroker<T> getBrokerByName(String name);
-	abstract List<IBroker<T>> getBrokers();
+	
+	abstract List<IBroker<T>> getAllBrokers();
 
 	/**
 	 * subscribes a Subscriber with given Filterpredicates on the given broker
@@ -64,19 +64,28 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 		broker.removeSubscription(predicates, topics, subscriber);
 	}
 
+	/**
+	 * transfers object to brokers.
+	 */
 	@Override
-	public void transfer(T object, PublishPO<T> publisher) {
-		List<IBroker<T>> brokers = getBrokers();
+	public void transfer(T object, String publisherUid) {
+		List<IBroker<T>> brokers = getAllBrokers();
 		for (IBroker<T> broker : brokers) {
-			broker.sendToSubscribers(object, publisher);
+			broker.sendToSubscribers(object, publisherUid);
 		}
 	}
 	
+	/**
+	 * returns false, because it is no routing topology
+	 */
 	@Override
 	public boolean needsRouting(){
 		return false;
 	}
 	
+	/**
+	 * has no effect, because routing is not needed
+	 */
 	@Override
 	public void setRoutingType(String routingType){
 		// no routing needed

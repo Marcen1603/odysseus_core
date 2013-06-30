@@ -41,6 +41,7 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 
 	// Maps Publisher and Brokers
 	private Map<String, IRoutingBroker<T>> publishToBroker = new HashMap<String, IRoutingBroker<T>>();
+	
 
 	public AcyclicBrokerTopology() {
 		// needed for OSGi
@@ -72,23 +73,35 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 		return TOPOLOGY_TYPE;
 	}
 
+	/**
+	 * advertise from broker network. Advertisement will be set on all
+	 * brokers
+	 */
 	@Override
 	public void advertise(List<Topic> topics, String publisherUid) {
 		getBestBroker(publisherUid).distributeAdvertisement(topics,
 				publisherUid, "");
 	}
 
+	/**
+	 * unadvertise from broker network. Advertisement will be deleted on all
+	 * brokers
+	 */
 	@Override
 	public void unadvertise(List<Topic> topics, String publisherUid) {
 		getBestBroker(publisherUid).removeDistributedAdvertisement(topics,
 				publisherUid, "");
 	}
 
+	/**
+	 * returns best broker, currently its a random broker. If broker topology 
+	 * is distributed, return fastest broker (ping or something else)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public IRoutingBroker<T> getBestBroker(String publisherUid) {
-		// If no Broker exists, create initial Broker
 		if (brokers.isEmpty()) {
+			// If no Broker exists, create initial Broker
 			IRoutingBroker<T> newBroker = (IRoutingBroker<T>) RoutingBrokerRegistry
 					.getRoutingBrokerInstance(getRoutingType(), getDomain(),
 							"InitialBroker");
@@ -109,7 +122,7 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 				String brokerName = new ArrayList<String>(brokers.keySet())
 						.get(randIndex);
 				IRoutingBroker<T> randBroker = brokers.get(brokerName);
-				// Map Publisher with Broker
+				// Map Publisher with Broker, for better performance
 				publishToBroker.put(publisherUid, randBroker);
 				return randBroker;
 			}
@@ -118,11 +131,12 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 	}
 
 	/**
-	 * Returns a broker with a given name.
+	 * Returns a broker with a given name. if broker does not exist, create new
+	 * one and add it to topology
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	IRoutingBroker<T> getBrokerByName(String name) {
+	public IRoutingBroker<T> getBrokerByName(String name) {
 		if (brokers.containsKey(name)) {
 			return brokers.get(name);
 		}

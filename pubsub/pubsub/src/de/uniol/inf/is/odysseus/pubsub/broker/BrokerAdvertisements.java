@@ -20,6 +20,12 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 
+/**
+ * This class contains advertisement data. needed in brokers
+ *  
+ * @author ChrisToenjesDeye
+ *
+ */
 public class BrokerAdvertisements {
 
 	private String publisherUid;

@@ -70,20 +70,24 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
+		// Get topology from registry
 		brokerTopology = (IBrokerTopology<T>) BrokerTopologyRegistry
 				.getTopologyByDomain(domain);
+		// if topology was found, register and subscribe if predicates or topics available
 		if (brokerTopology != null) {
 			BrokerTopologyRegistry.register(domain);
 			if (!topics.isEmpty() || !predicates.isEmpty()) {
 				brokerTopology.subscribe(predicates, topics, brokerName, this);
 			}
 		} else {
+			// if topology not exists, put subscriber into pending list
 			BrokerTopologyRegistry.putSubscriberIntoPendingList(domain, this);
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void subscribe(IBrokerTopology<?> topology){
+		// needed if subscribe was before topology exists
 		brokerTopology = (IBrokerTopology<T>) topology;
 		if (brokerTopology != null) {
 			BrokerTopologyRegistry.register(domain);
@@ -95,12 +99,10 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 
 	@Override
 	protected void process_close() {
-		@SuppressWarnings("unchecked")
-		IBrokerTopology<T> b = (IBrokerTopology<T>) BrokerTopologyRegistry
-				.getTopologyByDomain(domain);
-		if (b != null) {
+		// unsubscribe and unregister from topology
+		if (brokerTopology != null) {
 			if (!topics.isEmpty() || !predicates.isEmpty()) {
-				b.unsubscribe(predicates, topics, brokerName, this);
+				brokerTopology.unsubscribe(predicates, topics, brokerName, this);
 			}
 			BrokerTopologyRegistry.unregister(domain);
 		}
@@ -126,13 +128,14 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 
 	@Override
 	protected void process_next(T object, int port) {
-		// No transfer in process_next, because broker calls receive
+		// No transfer in process_next, because broker calls update (via Observer)
 		// transfer(object);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable observable, Object object) {
+		// transfer object to next operator, object send from broker via Observer
 		transfer((T) object);	
 	}
 

@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.pubsub.observer;
 
 import java.util.Observable;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 
 /**
  * This class provides the observable functionality for the publish operator.
@@ -30,14 +29,14 @@ import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
  */
 public class PublisherObservable<T extends IStreamObject<?>> extends Observable {
 
-	private PublishPO<T> publisher;
+	private String publisherUid;
 
-	public PublisherObservable(PublishPO<T> publisher) {
-		this.publisher = publisher;
+	public PublisherObservable(String publisherUid) {
+		this.publisherUid = publisherUid;
 	}
 
-	public PublishPO<T> getPublisher() {
-		return publisher;
+	public String getPublisherUid() {
+		return publisherUid;
 	}
 
 	/**

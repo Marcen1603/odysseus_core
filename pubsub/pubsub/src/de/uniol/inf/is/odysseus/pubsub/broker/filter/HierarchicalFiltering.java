@@ -19,10 +19,18 @@ package de.uniol.inf.is.odysseus.pubsub.broker.filter;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerSubscription;
 
+/**
+ * provides additional functionality for hierarchical filtering
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class HierarchicalFiltering<T extends IStreamObject<?>> extends
 		AbstractTopicBasedFiltering<T> {
 
-
+	/**
+	 * checks if a given subscription contains a given topic tree (hierarchical)
+	 */
 	@Override
 	protected boolean hasSubscriptionTopic(Topic advertisementTopic,
 			BrokerSubscription<T> subscription) {

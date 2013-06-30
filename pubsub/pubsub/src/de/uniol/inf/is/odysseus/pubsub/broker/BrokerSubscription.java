@@ -23,43 +23,44 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
+/**
+ * This class contains subscription data. needed in brokers
+ * 
+ * @author ChrisToenjesDeye
+ * 
+ */
 public class BrokerSubscription<T extends IStreamObject<?>> {
 
 	private SubscribePO<T> subscriber;
-
 	private List<Topic> topics;
-
 	private List<IPredicate<? super T>> predicates;
 
-	public BrokerSubscription(SubscribePO<T> subscriber, List<IPredicate<? super T>> predicates,
-			List<Topic> topics) {
+	public BrokerSubscription(SubscribePO<T> subscriber,
+			List<IPredicate<? super T>> predicates, List<Topic> topics) {
 		this.setPredicates(predicates);
 		this.setTopics(topics);
 		this.setSubscriber(subscriber);
 	}
 
-	
 	public BrokerSubscription(SubscribePO<T> subscriber) {
 		this.setSubscriber(subscriber);
 		this.setPredicates(subscriber.getPredicates());
 		this.setTopics(subscriber.getTopics());
 	}
 
-
-	public boolean hasTopics(){
+	public boolean hasTopics() {
 		if (!topics.isEmpty())
 			return true;
 		else
 			return false;
 	}
-	
-	public boolean hasPredicates(){
+
+	public boolean hasPredicates() {
 		if (!predicates.isEmpty())
 			return true;
 		else
 			return false;
 	}
-	
 
 	public SubscribePO<T> getSubscriber() {
 		return subscriber;

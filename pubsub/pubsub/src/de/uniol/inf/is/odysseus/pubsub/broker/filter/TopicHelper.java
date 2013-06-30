@@ -64,6 +64,11 @@ public class TopicHelper {
 		return topics;
 	}
 	
+	/**
+	 * returns a root topic with a given name
+	 * @param topicString
+	 * @return root topic with given name, null if not exists
+	 */
 	private static Topic getRootTopicIfExists(String topicString){
 		for (Topic temp : topics) {
 			if (temp.getName().toLowerCase().equals(topicString.toLowerCase())){
@@ -73,6 +78,13 @@ public class TopicHelper {
 		return null;
 	}
 	
+	/**
+	 * creates a topic tree
+	 * @param topicElements
+	 * @param currentElementIndex
+	 * @param topic
+	 * @return
+	 */
 	private static boolean createTree(String[] topicElements, int currentElementIndex, Topic topic){
 		currentElementIndex++;
 		if (topicElements.length > currentElementIndex){
@@ -90,12 +102,19 @@ public class TopicHelper {
 				child = new Topic(currentString.toLowerCase());
 				topic.getChilds().add(child);
 			}
+			// recursive call, needed for tree structure
 			return createTree(topicElements, currentElementIndex, child);
 		} else {			
 			return true;
 		}
 	}
 	
+	/**
+	 * returns a child with given name if exists
+	 * @param topicString
+	 * @param childs
+	 * @return child with name, null if not exists
+	 */
 	private static Topic getChildIfExist(String topicString, List<Topic> childs){
 		for (Topic child : childs) {
 			if (child.getName().toLowerCase().equals(topicString.toLowerCase())){
@@ -110,18 +129,24 @@ public class TopicHelper {
 	 * 
 	 * @param advertisementTopic hierarchical topic of the advertisement
 	 * @param subscriptionTopic hierarchical topic of the subscription
-	 * @return if subscription topic matches advertisment topic
+	 * @return if subscription topic matches advertisement topic
 	 */
 	public static boolean compareTrees(Topic advertisementTopic,
 			Topic subscriptionTopic) {
 		if (advertisementTopic.getNumberOfChilds() > 0 && advertisementTopic.getName().equals(subscriptionTopic.getName())){
+			// if advertisement topic has child's and is equal with subscription topic
+			
 			if (advertisementTopic.getNumberOfChilds() > subscriptionTopic.getNumberOfChilds()){
+				// if advertisement has more child topics, subscription does not match
 				return false;
 			} else {
+				// if advertisement has less or equal number of child's than subscription, check subtree
 				boolean subTreeMatches = true;
 				for (Topic advChild : advertisementTopic.getChilds()) {
+					// for each child topic, check if name...
 					Topic subChild = subscriptionTopic.getChildWithName(advChild.getName());
 					if (subChild != null){
+						// ... and subtrees match
 						compareTrees(advChild, subChild);
 					} else {
 						return false;
@@ -131,6 +156,7 @@ public class TopicHelper {
 			}
 		} else {
 			if (subscriptionTopic.getNumberOfChilds() > 0){
+				// if advertisement topic has no child's, but subscription has filter does not match
 				return false;
 			}
 			return true;			

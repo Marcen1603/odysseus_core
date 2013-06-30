@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Topics are needed for topic based filtering in publish/Subscribe systems
  * 
  * @author ChrisToenjesDeye
  *
@@ -60,6 +61,10 @@ public class Topic implements Comparable<Topic>{
 		return childs.size();
 	}
 
+	/**
+	 * Checks if topics are equal.
+	 * Topics are equal if name is equal
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		Topic other;
@@ -75,6 +80,11 @@ public class Topic implements Comparable<Topic>{
 
 	}
 
+	/**
+	 * Returns the child with a given name
+	 * @param name
+	 * @return child with name, null if not exists
+	 */
 	public Topic getChildWithName(String name) {
 		for (Topic child : childs) {
 			if (child.getName().toLowerCase().equals(name.toLowerCase())){
@@ -84,6 +94,9 @@ public class Topic implements Comparable<Topic>{
 		return null;
 	}
 
+	/**
+	 * needed for sorting (better performance)
+	 */
 	@Override
 	public int compareTo(Topic other) {
 		return name.compareTo(other.getName());

@@ -21,8 +21,13 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
-import de.uniol.inf.is.odysseus.pubsub.physicaloperator.PublishPO;
 
+/**
+ * Class for providing flooding routing algorithm
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class FloodingBroker <T extends IStreamObject<?>> extends AbstractRoutingBroker<T>{
 
 	//private static Logger logger = LoggerFactory.getLogger(FloodingBroker.class);
@@ -39,21 +44,39 @@ public class FloodingBroker <T extends IStreamObject<?>> extends AbstractRouting
 		super(name, domain);
 	}
 	
+	/**
+	 * returns all connected brokers
+	 */
 	@Override
 	public List<IRoutingBroker<T>> getConnectedBrokers() {
 		return connectedBrokers;
 	}
 
+	/**
+	 * returns routing type 'flooding'
+	 */
 	@Override
 	public String getType() {
 		return ROUTING_TYPE;
 	}
 
+	/**
+	 * returns a new instance of a flooding broker
+	 * @param name
+	 * @param domain
+	 * @return new flooding broker instance
+	 */
 	@Override
 	public IRoutingBroker<T> getInstance(String name, String domain) {
 		return new FloodingBroker<T>(name, domain);
 	}
 	
+	/**
+	 * distribute a given advertisement to all connected brokers, except the source
+	 * @param topics
+	 * @param publisherUid
+	 * @param sourceIdentifier
+	 */
 	@Override
 	public void distributeAdvertisement(List<Topic> topics,
 			String publisherUid, String sourceIdentifier) {
@@ -65,6 +88,12 @@ public class FloodingBroker <T extends IStreamObject<?>> extends AbstractRouting
 		}
 	}
 
+	/**
+	 * remove a distributed advertisment from all connected brokers
+	 * @param topics
+	 * @param publisherUid
+	 * @param sourceIdentifier
+	 */
 	@Override
 	public void removeDistributedAdvertisement(List<Topic> topics,
 			String publisherUid, String sourceIdentifier) {
@@ -76,12 +105,18 @@ public class FloodingBroker <T extends IStreamObject<?>> extends AbstractRouting
 		}
 	}
 	
+	/**
+	 * routes an object to all other brokers, except the source
+	 * @param object
+	 * @param publisher
+	 * @param sourceIdentifier
+	 */
 	@Override
-	public void route(T object, PublishPO<T> publisher, String sourceIdentifier) {
-		super.sendToSubscribers(object, publisher);
+	public void route(T object, String publisherUid, String sourceIdentifier) {
+		super.sendToSubscribers(object, publisherUid);
 		for (IRoutingBroker<T> conBroker : connectedBrokers) {
 			if (!conBroker.getIdentifier().equals(sourceIdentifier)){
-				conBroker.route(object, publisher, this.getIdentifier());
+				conBroker.route(object, publisherUid, this.getIdentifier());
 			}
 		}
 	}	

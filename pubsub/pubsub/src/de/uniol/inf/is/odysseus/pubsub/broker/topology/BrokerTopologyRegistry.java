@@ -35,16 +35,16 @@ import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
  */
 public class BrokerTopologyRegistry {
 
-	static Logger logger = LoggerFactory.getLogger(BrokerTopologyRegistry.class);
+	private static Logger logger = LoggerFactory.getLogger(BrokerTopologyRegistry.class);
 	
 	// Maps Type and the corresponding Topology
-	static Map<String, IBrokerTopology<?>> brokerTopologyTypes = new HashMap<String, IBrokerTopology<?>>();
+	private static Map<String, IBrokerTopology<?>> brokerTopologyTypes = new HashMap<String, IBrokerTopology<?>>();
 	
 	// Maps Domainname and the corresponding Topology
-	static Map<String, IBrokerTopology<?>> brokerTopologies = new HashMap<String, IBrokerTopology<?>>();
+	private static Map<String, IBrokerTopology<?>> brokerTopologies = new HashMap<String, IBrokerTopology<?>>();
 	
 	// Pending Subscribers
-	static Map<String, List<SubscribePO<?>>> pendingSubscribers = new HashMap<String, List<SubscribePO<?>>>();
+	private static Map<String, List<SubscribePO<?>>> pendingSubscribers = new HashMap<String, List<SubscribePO<?>>>();
 	
 	
 	/**
@@ -78,6 +78,11 @@ public class BrokerTopologyRegistry {
 		return new ArrayList<String>(brokerTopologyTypes.keySet());
 	}
 	
+	/**
+	 * checks if a given topology type needs a routing algorithm
+	 * @param topologyType
+	 * @return
+	 */
 	public static boolean needsTopologyRouting(String topologyType){
 		return brokerTopologyTypes.get(topologyType.toLowerCase()).needsRouting();
 	}
@@ -99,7 +104,7 @@ public class BrokerTopologyRegistry {
 	}
 	
 	/**
-	 * 
+	 * returns a domain with given topology type, domain and routing if needed (only if values are valid)
 	 * @param topologyType
 	 * @param domain
 	 * @return topology with given domain and type, if combination of domain and type is valid
@@ -112,13 +117,16 @@ public class BrokerTopologyRegistry {
 		}
 		
 		if (brokerTopologies.containsKey(domain.toLowerCase())){
+			// If domain exists
 			IBrokerTopology<?> topology = brokerTopologies.get(domain.toLowerCase());
 			if (topology.getType().toLowerCase().equals(topologyType.toLowerCase())){
 				// Broker with type and domain exists
 				if (pendingSubscribers.containsKey(domain.toLowerCase())){
+					// if peending subscribers exists, add them to topology 
 					for (SubscribePO<?> pendingSubscriber : pendingSubscribers.get(domain.toLowerCase())) {
 						pendingSubscriber.subscribe(topology);
 					}
+					// and remove from pending list
 					pendingSubscribers.remove(domain.toLowerCase());
 				}
 				return topology;				
@@ -135,11 +143,12 @@ public class BrokerTopologyRegistry {
 				ret.setRoutingType(routing);
 			}
 			brokerTopologies.put(domain.toLowerCase(), ret);
-			
+			// if peending subscribers exists, add them to topology 
 			if (pendingSubscribers.containsKey(domain.toLowerCase())){
 				for (SubscribePO<?> pendingSubscriber : pendingSubscribers.get(domain.toLowerCase())) {
 					pendingSubscriber.subscribe(ret);
 				}
+				// and remove from pending list
 				pendingSubscribers.remove(domain.toLowerCase());
 			}		
 			return ret;
@@ -147,7 +156,7 @@ public class BrokerTopologyRegistry {
 	}
 	
 	/**
-	 * 
+	 * returns a topology with a given domain
 	 * @param domain
 	 * @return topology with a given name 
 	 */
@@ -156,13 +165,12 @@ public class BrokerTopologyRegistry {
 		if (brokerTopologies.containsKey(domain.toLowerCase())){
 			return brokerTopologies.get(domain.toLowerCase());			
 		} else {
-			logger.info("Topology with domain: '"+ domain + "' does not exists. Add to pending subscriber list.");
 			return null;
 		}
 	}
 	
 	/**
-	 * 
+	 * if topology with domain does not exists, put subscriber into pending list 
 	 * @param domain
 	 * @param subscriber
 	 */
@@ -177,7 +185,7 @@ public class BrokerTopologyRegistry {
 	}
 
 	/**
-	 * 
+	 * register on a given domain, needed for topology management
 	 * @param domain
 	 */
 	public static void register(String domain) {
@@ -188,7 +196,8 @@ public class BrokerTopologyRegistry {
 	}
 
 	/**
-	 * 
+	 * unregister on a given domain, needed for topology management
+	 * topology will be deleted if no agents are registered on this topology anymore
 	 * @param domain
 	 */
 	public static void unregister(String domain) {
