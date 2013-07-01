@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.base;
 
+import java.util.Arrays;
+
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -199,6 +201,31 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		return this.distributions;
 	}
 
+	/**
+	 * Creates a new instance from the current tuple if the createNew param is true or uses the current instance and appends the given attribute object and distribution
+	 * 
+	 * @param object
+	 *            the object to append
+	 * @param distribution
+	 *            the distribution to append
+	 * @param createNew
+	 *            indicates if create a copy
+	 * @return the extended tuple
+	 */
+	public ProbabilisticTuple<T> append(Object object, final NormalDistributionMixture distribution, boolean createNew) {
+		Object[] newAttrs = Arrays.copyOf(this.attributes, this.attributes.length + 1);
+		newAttrs[this.attributes.length] = object;
+		NormalDistributionMixture[] newDistrs = Arrays.copyOf(this.distributions, this.distributions.length + 1);
+		newDistrs[this.distributions.length] = distribution;
+		if (createNew) {
+			ProbabilisticTuple<T> newTuple = new ProbabilisticTuple<T>(this, newAttrs, newDistrs, this.requiresDeepClone());
+			return newTuple;
+		}
+		this.attributes = newAttrs;
+		this.distributions = newDistrs;
+		return this;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
