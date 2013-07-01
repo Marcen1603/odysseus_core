@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -56,7 +57,7 @@ public class TreeListener implements ISelectionChangedListener {
 			} else if (selection.getFirstElement() instanceof TraceLayer) {
 				// Show the settings for the tracemap
 				TraceLayer tracemap = (TraceLayer) selection.getFirstElement();
-				createTraceLayerpMenu(tracemap);				
+				createTraceLayerpMenu(tracemap);
 
 			} else {
 				// Show normal content - not for thematic maps
@@ -92,22 +93,29 @@ public class TreeListener implements ISelectionChangedListener {
 	void updateParentConfig(LayerConfiguration config) {
 		parentDialog.setLayerConfiguration(config);
 	}
-	
+
 	private void createTraceLayerpMenu(TraceLayer tracemap) {
 		// Remove everything except the Tree on the left
 		removeContent(container);
-		TracemapLayerConfiguration newConfig = new TracemapLayerConfiguration(tracemap.getConfig());
-		
-		// New container
-		Composite tracemapContainer = new Composite(container, SWT.NONE);
+		TracemapLayerConfiguration newConfig = new TracemapLayerConfiguration(
+				tracemap.getConfig());
+
+		// New container for scrolling
+		ScrolledComposite scrollContainer = new ScrolledComposite(container,
+				SWT.V_SCROLL | SWT.BORDER);
+		scrollContainer.setLayout(new GridLayout(1, false));
+		scrollContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true, 1, 1));
+
+		Composite tracemapContainer = new Composite(scrollContainer, SWT.NONE);
 		tracemapContainer.setLayout(new GridLayout(1, false));
-		tracemapContainer.setLayoutData(new GridData(SWT.FILL,
-				SWT.FILL, true, true, 1, 1));
-		
+		tracemapContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true, 1, 1));
+
 		// Show the settings for the tracemap
 		Group settingsContainer = new Group(tracemapContainer, SWT.NONE);
-		settingsContainer.setLayoutData(new GridData(SWT.FILL,
-				SWT.FILL, true, true, 1, 1));
+		settingsContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true, 1, 1));
 		settingsContainer.setText("Tracemap settings");
 		settingsContainer.setLayout(new GridLayout(2, false));
 
@@ -128,44 +136,42 @@ public class TreeListener implements ISelectionChangedListener {
 				treeListener.updateParentConfig(tracemapLayerConfig);
 			}
 		});
-		
+
 		// Mark end of line
 		Label markEndIfLineLabel = new Label(settingsContainer, SWT.NONE);
 		markEndIfLineLabel.setText("Mark end of line: ");
-		
+
 		Button markEndIfLineButton = new Button(settingsContainer, SWT.CHECK);
 		markEndIfLineButton.setEnabled(true);
 		markEndIfLineButton.setSelection(newConfig.isMarkEndpoint());
-		markEndIfLineButton.addSelectionListener(new ButtonListener(
-				newConfig, this, markEndIfLineButton) {
+		markEndIfLineButton.addSelectionListener(new ButtonListener(newConfig,
+				this, markEndIfLineButton) {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) layerConfiguration;
-				tracemapLayerConfiguration
-						.setMarkEndpoint((correspondingButton.getSelection()));
+				tracemapLayerConfiguration.setMarkEndpoint((correspondingButton
+						.getSelection()));
 				treeListener.updateParentConfig(tracemapLayerConfiguration);
 			}
 		});
-		
+
 		// Width of lines
 		Label lineWidthLabel = new Label(settingsContainer, SWT.NONE);
 		lineWidthLabel.setText("Width of lines: ");
 
 		Spinner lineWidthInput = new Spinner(settingsContainer, SWT.NONE);
-		lineWidthInput.setValues(newConfig.getLineWidth(), 0,
-				255, 0, 1, 1);
+		lineWidthInput.setValues(newConfig.getLineWidth(), 0, 255, 0, 1, 1);
 		lineWidthInput.addSelectionListener(new SpinnerListener(newConfig,
 				lineWidthInput, this) {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TracemapLayerConfiguration tracemapLayerConfig = (TracemapLayerConfiguration) layerConfig;
-				tracemapLayerConfig.setLineWidth((spinner
-						.getSelection()));
+				tracemapLayerConfig.setLineWidth((spinner.getSelection()));
 				treeListener.updateParentConfig(tracemapLayerConfig);
 			}
 		});
-		
+
 		// Automatic transparency
 		Label autoTransparencyLabel = new Label(settingsContainer, SWT.NONE);
 		autoTransparencyLabel.setText("Automatic transparency: ");
@@ -183,11 +189,12 @@ public class TreeListener implements ISelectionChangedListener {
 				treeListener.updateParentConfig(tracemapLayerConfiguration);
 			}
 		});
-		
+
 		// Number of elements to show
 		Label numElements = new Label(settingsContainer, SWT.NONE);
-		numElements.setText("Number of elements to show (if no auto-transparency): ");
-		
+		numElements
+				.setText("Number of elements to show (if no auto-transparency): ");
+
 		Spinner numElementsInput = new Spinner(settingsContainer, SWT.NONE);
 		numElementsInput.setValues(newConfig.getNumOfLineElements(), 1,
 				Integer.MAX_VALUE, 0, 1, 1);
@@ -200,8 +207,7 @@ public class TreeListener implements ISelectionChangedListener {
 				treeListener.updateParentConfig(tracemapLayerConfig);
 			}
 		});
-		
-		
+
 		// Color settings
 		// Show the chooser and a label with the selected color next to
 		// it
@@ -227,28 +233,29 @@ public class TreeListener implements ISelectionChangedListener {
 			colorButton.addSelectionListener(new TraceColorListener(newConfig,
 					key, this, colorView));
 		}
-		
+
 		// Show the statistics for the tracemap
 		final Group statisticsContainer = new Group(tracemapContainer, SWT.NONE);
-		statisticsContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 1, 1));
+		statisticsContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+				true, true, 1, 1));
 		statisticsContainer.setText("Tracemap statistics");
 		statisticsContainer.setLayout(new GridLayout(1, false));
-		
+
 		// Update-Button (for the statistics)
 		// (has to be on top cause after click on update
 		// it will be on the top)
 		Button updateButton = new Button(statisticsContainer, SWT.PUSH);
 		updateButton.setText("Update statistics");
-		
+
 		// Length and speed of the traces
 		HashMap<Integer, Double> distances = tracemap.getAllLineDistances();
 		HashMap<Integer, Double> speeds = tracemap.getAllLineSpeeds();
-		
-		for(Integer key : distances.keySet()) {
+
+		for (Integer key : distances.keySet()) {
 			Label lenTraceLabel = new Label(statisticsContainer, SWT.NONE);
-		lenTraceLabel.setText("Length of trace " + key + ": "
-				+ String.valueOf(distances.get(key)) + " km (" + speeds.get(key) + " km/h)");		
+			lenTraceLabel.setText("Length of trace " + key + ": "
+					+ String.valueOf(distances.get(key)) + " km ("
+					+ speeds.get(key) + " km/h)");
 		}
 
 		updateButton.addSelectionListener(new UpdateButtonListener(tracemap) {
@@ -256,18 +263,19 @@ public class TreeListener implements ISelectionChangedListener {
 			public void widgetSelected(SelectionEvent e) {
 				TraceLayer tracemap = (TraceLayer) layer;
 				// Remove all statistics
-				for(Control control : statisticsContainer.getChildren()) {
-					if(!(control instanceof Button)) {
+				for (Control control : statisticsContainer.getChildren()) {
+					if (!(control instanceof Button)) {
 						// But leave the updatebutton there
 						control.dispose();
-					}	
+					}
 				}
-				
+
 				// Add them again
 				// Length and speed of the traces
-				HashMap<Integer, Double> distances = tracemap.getAllLineDistances();
+				HashMap<Integer, Double> distances = tracemap
+						.getAllLineDistances();
 				HashMap<Integer, Double> speeds = tracemap.getAllLineSpeeds();
-				
+
 				for (Integer key : distances.keySet()) {
 					Label lenTraceLabel = new Label(statisticsContainer,
 							SWT.NONE);
@@ -278,7 +286,11 @@ public class TreeListener implements ISelectionChangedListener {
 				}
 			}
 		});
-				
+
+		scrollContainer.setContent(tracemapContainer);
+		tracemapContainer.setSize(tracemapContainer.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT));
+
 		// Redraw the container
 		container.layout();
 	}
@@ -292,8 +304,15 @@ public class TreeListener implements ISelectionChangedListener {
 		// Remove everything except the Tree on the left
 		removeContent(container);
 
+		// New container for scrolling
+		ScrolledComposite scrollContainer = new ScrolledComposite(container,
+				SWT.V_SCROLL | SWT.BORDER);
+		scrollContainer.setLayout(new GridLayout(1, false));
+		scrollContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true, 1, 1));
+		
 		// New container
-		Composite heatmapContainer = new Composite(container, SWT.NONE);
+		Composite heatmapContainer = new Composite(scrollContainer, SWT.NONE);
 		heatmapContainer.setLayout(new GridLayout(2, false));
 		heatmapContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true, 1, 1));
@@ -343,8 +362,8 @@ public class TreeListener implements ISelectionChangedListener {
 				true, 1, 1));
 		minColorView.setBackground(newConfig.getMinColor());
 
-		colorMinButton.addSelectionListener(new HeatColorListener(newConfig, this,
-				minColorView) {
+		colorMinButton.addSelectionListener(new HeatColorListener(newConfig,
+				this, minColorView) {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Shell s = new Shell(Display.getDefault());
@@ -387,8 +406,8 @@ public class TreeListener implements ISelectionChangedListener {
 				true, 1, 1));
 		maxColorView.setBackground(newConfig.getMaxColor());
 
-		colorMaxButton.addSelectionListener(new HeatColorListener(newConfig, this,
-				maxColorView) {
+		colorMaxButton.addSelectionListener(new HeatColorListener(newConfig,
+				this, maxColorView) {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Shell s = new Shell(Display.getDefault());
@@ -426,8 +445,8 @@ public class TreeListener implements ISelectionChangedListener {
 				heatmapLayerConfig.setAlpha(spinner.getSelection());
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
-		});		
-		
+		});
+
 		// Number of tiles
 		Label numTilesWidthLabel = new Label(settingsContainer, SWT.NONE);
 		numTilesWidthLabel.setText("Number of tiles horizontal: ");
@@ -460,7 +479,7 @@ public class TreeListener implements ISelectionChangedListener {
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
 		});
-		
+
 		// Interpolation
 		Label interpolationLabel = new Label(settingsContainer, SWT.NONE);
 		interpolationLabel.setText("Interpolation: ");
@@ -509,13 +528,14 @@ public class TreeListener implements ISelectionChangedListener {
 				manPosSWLatInput, this) {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				double value = spinner.getSelection()
+						/ (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLatSW(value);
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
 		});
-		
+
 		// Longitude
 		Label manPosSWLngLabel = new Label(settingsContainer, SWT.NONE);
 		manPosSWLngLabel.setText("Southwest Longitude: ");
@@ -527,13 +547,14 @@ public class TreeListener implements ISelectionChangedListener {
 				manPosSWLngInput, this) {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				double value = spinner.getSelection()
+						/ (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLngSW(value);
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
 		});
-		
+
 		// NorthEast
 		// Latitude
 		Label manPosNELatLabel = new Label(settingsContainer, SWT.NONE);
@@ -546,13 +567,14 @@ public class TreeListener implements ISelectionChangedListener {
 				manPosNELatInput, this) {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				double value = spinner.getSelection()
+						/ (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLatNE(value);
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
 		});
-		
+
 		// Longitude
 		Label manPosNELngLabel = new Label(settingsContainer, SWT.NONE);
 		manPosNELngLabel.setText("Northeast Longitude: ");
@@ -564,13 +586,14 @@ public class TreeListener implements ISelectionChangedListener {
 				manPosNELngInput, this) {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
+				double value = spinner.getSelection()
+						/ (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLngNE(value);
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
 		});
-		
+
 		// Show the statistics for this layer
 		Group statisticsContainer = new Group(heatmapContainer, SWT.NONE);
 		statisticsContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
@@ -612,7 +635,7 @@ public class TreeListener implements ISelectionChangedListener {
 		final Label avgTileValueLabel = new Label(statisticsContainer, SWT.NONE);
 		avgTileValueLabel.setText("Average sum of a tile: "
 				+ String.valueOf(heatmap.getAverageValueOfTile()));
-		
+
 		// Update-Button
 		Button updateButton = new Button(statisticsContainer, SWT.PUSH);
 		updateButton.setText("Update statistics");
@@ -622,28 +645,31 @@ public class TreeListener implements ISelectionChangedListener {
 			public void widgetSelected(SelectionEvent e) {
 				Heatmap heatmap = (Heatmap) layer;
 				maxValueLabel.setText("Maximal value of a tile: "
-				+ String.valueOf(heatmap.getMaxValue()));
-				
+						+ String.valueOf(heatmap.getMaxValue()));
+
 				minValueLabel.setText("Minimal value of a tile: "
 						+ String.valueOf(heatmap.getMinValue()));
-				
+
 				sumValueLabel.setText("Sum of all values: "
 						+ String.valueOf(heatmap.getTotalValue()));
-				
+
 				numElementsLabel.setText("Number of elements: "
 						+ String.valueOf(heatmap.getTotalNumberOfElements()));
-				
+
 				avgValueLabel.setText("Average value of an element: "
 						+ String.valueOf(heatmap.getAverageValueOfElement()));
-				
+
 				numTilesLabel.setText("Number of tiles: "
 						+ String.valueOf(heatmap.getNumberOfTiles()));
-				
+
 				avgTileValueLabel.setText("Average sum of a tile: "
 						+ String.valueOf(heatmap.getAverageValueOfTile()));
 			}
 		});
 
+		scrollContainer.setContent(heatmapContainer);
+		heatmapContainer.setSize(heatmapContainer.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT));
 		
 		// Redraw the container
 		container.layout();

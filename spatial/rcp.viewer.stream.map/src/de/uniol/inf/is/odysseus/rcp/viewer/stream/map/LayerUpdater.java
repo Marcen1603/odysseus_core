@@ -290,7 +290,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	 * @return
 	 */
 	public int getPufferSize() {
-		return puffer.size() + 1;
+		return puffer.size();
 	}
 
 	/**
