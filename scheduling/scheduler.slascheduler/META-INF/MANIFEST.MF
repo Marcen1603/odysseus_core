@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.latency,
- de.uniol.inf.is.odysseus.latency.logicaloperator,
+ de.uniol.inf.is.odysseus.latency.physicaloperator,
  de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
  org.osgi.service.component
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
