@@ -1,11 +1,21 @@
+/**
+ * Copyright 2013 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.probabilistic.test.discrete.function;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -28,50 +38,28 @@ import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerEqual
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerThanOperator;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
-@Test(singleThreaded = true)
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
+@Test
 public class TestShort {
+
 	/**
-	 * @throws Exception
+	 * Test "<"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
 	 */
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	/**
-	 * @throws Exception
-	 */
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	/**
- * 
- */
-	@BeforeTest
-	public void setUpAll() {
-
-	}
-
-	/**
- * 
- */
-	@AfterTest
-	public void tearDownAll() {
-
-	}
-
-	/**
- * 
- */
-	@AfterMethod
-	public void tearDown() {
-
-	}
-
 	@Test(dataProvider = "discreteSmallerThanShort")
-	public void testShortSmallerThan(ProbabilisticShort left,
-			ProbabilisticShort right, double result) {
-		IFunction<Double> function = new ProbabilisticSmallerThanOperator();
+	public final void testShortSmallerThan(final ProbabilisticShort left,
+			final ProbabilisticShort right, final double result) {
+		final IFunction<Double> function = new ProbabilisticSmallerThanOperator();
 		function.setArguments(new Constant<ProbabilisticShort>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_SHORT),
 				new Constant<ProbabilisticShort>(right,
@@ -79,10 +67,20 @@ public class TestShort {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "<="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteSmallerEqualsShort")
-	public void testShortSmallerEquals(ProbabilisticShort left,
-			ProbabilisticShort right, double result) {
-		IFunction<Double> function = new ProbabilisticSmallerEqualsOperator();
+	public final void testShortSmallerEquals(final ProbabilisticShort left,
+			final ProbabilisticShort right, final double result) {
+		final IFunction<Double> function = new ProbabilisticSmallerEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticShort>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_SHORT),
 				new Constant<ProbabilisticShort>(right,
@@ -90,10 +88,20 @@ public class TestShort {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "=="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteEqualsShort")
-	public void testShortEquals(ProbabilisticShort left,
-			ProbabilisticShort right, double result) {
-		IFunction<Double> function = new ProbabilisticEqualsOperator();
+	public final void testShortEquals(final ProbabilisticShort left,
+			final ProbabilisticShort right, final double result) {
+		final IFunction<Double> function = new ProbabilisticEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticShort>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_SHORT),
 				new Constant<ProbabilisticShort>(right,
@@ -101,40 +109,67 @@ public class TestShort {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "!"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteEqualsShort")
-	public void testShortNot(ProbabilisticShort left, ProbabilisticShort right,
-			double result) {
-		IFunction<Double> equalsFunction = new ProbabilisticEqualsOperator();
+	public final void testShortNot(final ProbabilisticShort left,
+			final ProbabilisticShort right, final double result) {
+		final IFunction<Double> equalsFunction = new ProbabilisticEqualsOperator();
 		equalsFunction.setArguments(new Constant<ProbabilisticShort>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_SHORT),
 				new Constant<ProbabilisticShort>(right,
 						SDFProbabilisticDatatype.PROBABILISTIC_SHORT));
-		IFunction<Double> notFunction = new ProbabilisticNotOperator();
+		final IFunction<Double> notFunction = new ProbabilisticNotOperator();
 		notFunction.setArguments(new Constant<Double>(
 				equalsFunction.getValue(), SDFDatatype.DOUBLE));
 		Assert.assertEquals(notFunction.getValue(), 1.0 - result, 10E-9);
 	}
 
+	/**
+	 * Test "&&"-operator for discrete values.
+	 */
 	@Test
-	public void testShortAnd() {
-		IFunction<Double> function = new ProbabilisticAndOperator();
+	public final void testShortAnd() {
+		final IFunction<Double> function = new ProbabilisticAndOperator();
 		function.setArguments(new Constant<Double>(0.25, SDFDatatype.DOUBLE),
 				new Constant<Double>(0.35, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), Math.min(0.25, 0.35), 10E-9);
 	}
 
+	/**
+	 * Test "||"-operator for discrete values.
+	 * 
+	 */
 	@Test
-	public void testShortOr() {
-		IFunction<Double> function = new ProbabilisticOrOperator();
+	public final void testShortOr() {
+		final IFunction<Double> function = new ProbabilisticOrOperator();
 		function.setArguments(new Constant<Double>(0.25, SDFDatatype.DOUBLE),
 				new Constant<Double>(0.35, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), Math.max(0.25, 0.35), 10E-9);
 	}
 
+	/**
+	 * Test ">="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteGreaterEqualsShort")
-	public void testShortGreaterEquals(ProbabilisticShort left,
-			ProbabilisticShort right, double result) {
-		IFunction<Double> function = new ProbabilisticGreaterEqualsOperator();
+	public final void testShortGreaterEquals(final ProbabilisticShort left,
+			final ProbabilisticShort right, final double result) {
+		final IFunction<Double> function = new ProbabilisticGreaterEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticShort>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_SHORT),
 				new Constant<ProbabilisticShort>(right,
@@ -142,10 +177,20 @@ public class TestShort {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test ">"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteGreaterThanShort")
-	public void testShortGreaterThan(ProbabilisticShort left,
-			ProbabilisticShort right, double result) {
-		IFunction<Double> function = new ProbabilisticGreaterThanOperator();
+	public final void testShortGreaterThan(final ProbabilisticShort left,
+			final ProbabilisticShort right, final double result) {
+		final IFunction<Double> function = new ProbabilisticGreaterThanOperator();
 		function.setArguments(new Constant<ProbabilisticShort>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_SHORT),
 				new Constant<ProbabilisticShort>(right,
@@ -153,10 +198,20 @@ public class TestShort {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "+"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discretePlusShort")
-	public void testShortPlus(ProbabilisticShort left,
-			ProbabilisticShort right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticPlusOperator();
+	public final void testShortPlus(final ProbabilisticShort left,
+			final ProbabilisticShort right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticPlusOperator();
 		function.setArguments(new Constant<ProbabilisticShort>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_SHORT),
 				new Constant<ProbabilisticShort>(right,
@@ -164,10 +219,20 @@ public class TestShort {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "-"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteMinusShort")
-	public void testShortMinus(ProbabilisticShort left,
-			ProbabilisticShort right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticMinusOperator();
+	public final void testShortMinus(final ProbabilisticShort left,
+			final ProbabilisticShort right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticMinusOperator();
 		function.setArguments(new Constant<ProbabilisticShort>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_SHORT),
 				new Constant<ProbabilisticShort>(right,
@@ -175,10 +240,20 @@ public class TestShort {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "*"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteMultiplicationShort")
-	public void testShortMultiplication(ProbabilisticShort left,
-			ProbabilisticShort right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticMultiplicationOperator();
+	public final void testShortMultiplication(final ProbabilisticShort left,
+			final ProbabilisticShort right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticMultiplicationOperator();
 		function.setArguments(new Constant<ProbabilisticShort>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_SHORT),
 				new Constant<ProbabilisticShort>(right,
@@ -186,10 +261,20 @@ public class TestShort {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "/"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteDivisionShort")
-	public void testShortDivision(ProbabilisticShort left,
-			ProbabilisticShort right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticDivisionOperator();
+	public final void testShortDivision(final ProbabilisticShort left,
+			final ProbabilisticShort right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticDivisionOperator();
 		function.setArguments(new Constant<ProbabilisticShort>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_SHORT),
 				new Constant<ProbabilisticShort>(right,
@@ -198,7 +283,7 @@ public class TestShort {
 	}
 
 	@DataProvider(name = "discreteSmallerThanShort")
-	public Object[][] provideDiscreteSmallerThanShortValues() {
+	public final Object[][] provideDiscreteSmallerThanShortValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticShort(new Short[] { 1, 3, 5, 7 },
@@ -224,7 +309,7 @@ public class TestShort {
 	}
 
 	@DataProvider(name = "discreteSmallerEqualsShort")
-	public Object[][] provideDiscreteSmallerEqualsShortValues() {
+	public final Object[][] provideDiscreteSmallerEqualsShortValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticShort(new Short[] { 1, 3, 5, 7 },
@@ -250,7 +335,7 @@ public class TestShort {
 	}
 
 	@DataProvider(name = "discreteEqualsShort")
-	public Object[][] provideDiscreteEqualsShortValues() {
+	public final Object[][] provideDiscreteEqualsShortValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticShort(new Short[] { 1, 3, 5, 7 },
@@ -275,7 +360,7 @@ public class TestShort {
 	}
 
 	@DataProvider(name = "discreteGreaterEqualsShort")
-	public Object[][] provideDiscreteGreaterEqualsShortValues() {
+	public final Object[][] provideDiscreteGreaterEqualsShortValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticShort(new Short[] { 1, 3, 5, 7 },
@@ -301,7 +386,7 @@ public class TestShort {
 	}
 
 	@DataProvider(name = "discreteGreaterThanShort")
-	public Object[][] provideDiscreteGreaterThanShortValues() {
+	public final Object[][] provideDiscreteGreaterThanShortValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticShort(new Short[] { 1, 3, 5, 7 },
@@ -327,7 +412,7 @@ public class TestShort {
 	}
 
 	@DataProvider(name = "discretePlusShort")
-	public Object[][] provideDiscretePlusShortValues() {
+	public final Object[][] provideDiscretePlusShortValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticShort(new Short[] { 1, 3, 5, 7 },
@@ -365,7 +450,7 @@ public class TestShort {
 	}
 
 	@DataProvider(name = "discreteMinusShort")
-	public Object[][] provideDiscreteMinusShortValues() {
+	public final Object[][] provideDiscreteMinusShortValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticShort(new Short[] { 1, 3, 5, 7 },
@@ -405,7 +490,7 @@ public class TestShort {
 	}
 
 	@DataProvider(name = "discreteMultiplicationShort")
-	public Object[][] provideDiscreteMultiplicationShortValues() {
+	public final Object[][] provideDiscreteMultiplicationShortValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticShort(new Short[] { 1, 3, 5, 7 },
@@ -449,7 +534,7 @@ public class TestShort {
 	}
 
 	@DataProvider(name = "discreteDivisionShort")
-	public Object[][] provideDiscreteDivisionShortValues() {
+	public final Object[][] provideDiscreteDivisionShortValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticShort(new Short[] { 1, 3, 5, 7 },

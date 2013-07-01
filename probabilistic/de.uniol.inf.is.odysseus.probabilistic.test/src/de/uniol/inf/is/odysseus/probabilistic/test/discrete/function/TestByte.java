@@ -1,11 +1,21 @@
+/**
+ * Copyright 2013 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.probabilistic.test.discrete.function;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -28,51 +38,25 @@ import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerEqual
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerThanOperator;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
-@Test(singleThreaded = true)
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
+@Test
 public class TestByte {
 
-	/**
-	 * @throws Exception
+/**
+	 * Test "<"-operator for discrete values.
+	 * 
+	 * @param left The left value
+	 * @param right The right value
+	 * @param result The expected result
 	 */
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	/**
-	 * @throws Exception
-	 */
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	/**
- * 
- */
-	@BeforeTest
-	public void setUpAll() {
-
-	}
-
-	/**
- * 
- */
-	@AfterTest
-	public void tearDownAll() {
-
-	}
-
-	/**
- * 
- */
-	@AfterMethod
-	public void tearDown() {
-
-	}
-
 	@Test(dataProvider = "discreteSmallerThanByte")
-	public void testByteSmallerThan(ProbabilisticByte left,
-			ProbabilisticByte right, double result) {
-		IFunction<Double> function = new ProbabilisticSmallerThanOperator();
+	public final void testByteSmallerThan(final ProbabilisticByte left,
+			final ProbabilisticByte right, final double result) {
+		final IFunction<Double> function = new ProbabilisticSmallerThanOperator();
 		function.setArguments(new Constant<ProbabilisticByte>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_BYTE),
 				new Constant<ProbabilisticByte>(right,
@@ -80,10 +64,20 @@ public class TestByte {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "<="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteSmallerEqualsByte")
-	public void testByteSmallerEquals(ProbabilisticByte left,
-			ProbabilisticByte right, double result) {
-		IFunction<Double> function = new ProbabilisticSmallerEqualsOperator();
+	public final void testByteSmallerEquals(final ProbabilisticByte left,
+			final ProbabilisticByte right, final double result) {
+		final IFunction<Double> function = new ProbabilisticSmallerEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticByte>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_BYTE),
 				new Constant<ProbabilisticByte>(right,
@@ -91,10 +85,20 @@ public class TestByte {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "=="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteEqualsByte")
-	public void testByteEquals(ProbabilisticByte left, ProbabilisticByte right,
-			double result) {
-		IFunction<Double> function = new ProbabilisticEqualsOperator();
+	public final void testByteEquals(final ProbabilisticByte left,
+			final ProbabilisticByte right, final double result) {
+		final IFunction<Double> function = new ProbabilisticEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticByte>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_BYTE),
 				new Constant<ProbabilisticByte>(right,
@@ -102,40 +106,67 @@ public class TestByte {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "!"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value used to call equals method
+	 * @param right
+	 *            The right value used to call equals method
+	 * @param result
+	 *            The expected inverse result
+	 */
 	@Test(dataProvider = "discreteEqualsByte")
-	public void testByteNot(ProbabilisticByte left, ProbabilisticByte right,
-			double result) {
-		IFunction<Double> equalsFunction = new ProbabilisticEqualsOperator();
+	public final void testByteNot(final ProbabilisticByte left,
+			final ProbabilisticByte right, final double result) {
+		final IFunction<Double> equalsFunction = new ProbabilisticEqualsOperator();
 		equalsFunction.setArguments(new Constant<ProbabilisticByte>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_BYTE),
 				new Constant<ProbabilisticByte>(right,
 						SDFProbabilisticDatatype.PROBABILISTIC_BYTE));
-		IFunction<Double> notFunction = new ProbabilisticNotOperator();
+		final IFunction<Double> notFunction = new ProbabilisticNotOperator();
 		notFunction.setArguments(new Constant<Double>(
 				equalsFunction.getValue(), SDFDatatype.DOUBLE));
 		Assert.assertEquals(notFunction.getValue(), 1.0 - result, 10E-9);
 	}
 
+	/**
+	 * Test "&&"-operator for discrete values.
+	 * 
+	 */
 	@Test
-	public void testByteAnd() {
-		IFunction<Double> function = new ProbabilisticAndOperator();
+	public final void testByteAnd() {
+		final IFunction<Double> function = new ProbabilisticAndOperator();
 		function.setArguments(new Constant<Double>(0.25, SDFDatatype.DOUBLE),
 				new Constant<Double>(0.35, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), Math.min(0.25, 0.35), 10E-9);
 	}
 
+	/**
+	 * Test "||"-operator for discrete values.
+	 */
 	@Test
-	public void testByteOr() {
-		IFunction<Double> function = new ProbabilisticOrOperator();
+	public final void testByteOr() {
+		final IFunction<Double> function = new ProbabilisticOrOperator();
 		function.setArguments(new Constant<Double>(0.25, SDFDatatype.DOUBLE),
 				new Constant<Double>(0.35, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), Math.max(0.25, 0.35), 10E-9);
 	}
 
+	/**
+	 * Test ">="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteGreaterEqualsByte")
-	public void testByteGreaterEquals(ProbabilisticByte left,
-			ProbabilisticByte right, double result) {
-		IFunction<Double> function = new ProbabilisticGreaterEqualsOperator();
+	public final void testByteGreaterEquals(final ProbabilisticByte left,
+			final ProbabilisticByte right, final double result) {
+		final IFunction<Double> function = new ProbabilisticGreaterEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticByte>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_BYTE),
 				new Constant<ProbabilisticByte>(right,
@@ -143,10 +174,20 @@ public class TestByte {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test ">"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteGreaterThanByte")
-	public void testByteGreaterThan(ProbabilisticByte left,
-			ProbabilisticByte right, double result) {
-		IFunction<Double> function = new ProbabilisticGreaterThanOperator();
+	public final void testByteGreaterThan(final ProbabilisticByte left,
+			final ProbabilisticByte right, final double result) {
+		final IFunction<Double> function = new ProbabilisticGreaterThanOperator();
 		function.setArguments(new Constant<ProbabilisticByte>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_BYTE),
 				new Constant<ProbabilisticByte>(right,
@@ -154,10 +195,20 @@ public class TestByte {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "+"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discretePlusByte")
-	public void testBytePlus(ProbabilisticByte left, ProbabilisticByte right,
-			ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticPlusOperator();
+	public final void testBytePlus(final ProbabilisticByte left,
+			final ProbabilisticByte right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticPlusOperator();
 		function.setArguments(new Constant<ProbabilisticByte>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_BYTE),
 				new Constant<ProbabilisticByte>(right,
@@ -165,10 +216,20 @@ public class TestByte {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "-"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteMinusByte")
-	public void testByteMinus(ProbabilisticByte left, ProbabilisticByte right,
-			ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticMinusOperator();
+	public final void testByteMinus(final ProbabilisticByte left,
+			final ProbabilisticByte right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticMinusOperator();
 		function.setArguments(new Constant<ProbabilisticByte>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_BYTE),
 				new Constant<ProbabilisticByte>(right,
@@ -176,10 +237,20 @@ public class TestByte {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "*"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteMultiplicationByte")
-	public void testByteMultiplication(ProbabilisticByte left,
-			ProbabilisticByte right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticMultiplicationOperator();
+	public final void testByteMultiplication(final ProbabilisticByte left,
+			final ProbabilisticByte right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticMultiplicationOperator();
 		function.setArguments(new Constant<ProbabilisticByte>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_BYTE),
 				new Constant<ProbabilisticByte>(right,
@@ -187,10 +258,20 @@ public class TestByte {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "/"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteDivisionByte")
-	public void testByteDivision(ProbabilisticByte left,
-			ProbabilisticByte right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticDivisionOperator();
+	public final void testByteDivision(final ProbabilisticByte left,
+			final ProbabilisticByte right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticDivisionOperator();
 		function.setArguments(new Constant<ProbabilisticByte>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_BYTE),
 				new Constant<ProbabilisticByte>(right,
@@ -199,7 +280,7 @@ public class TestByte {
 	}
 
 	@DataProvider(name = "discreteSmallerThanByte")
-	public Object[][] provideDiscreteSmallerThanByteValues() {
+	public final Object[][] provideDiscreteSmallerThanByteValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticByte(new Byte[] { 1, 3, 5, 7 },
@@ -225,7 +306,7 @@ public class TestByte {
 	}
 
 	@DataProvider(name = "discreteSmallerEqualsByte")
-	public Object[][] provideDiscreteSmallerEqualsByteValues() {
+	public final Object[][] provideDiscreteSmallerEqualsByteValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticByte(new Byte[] { 1, 3, 5, 7 },
@@ -251,7 +332,7 @@ public class TestByte {
 	}
 
 	@DataProvider(name = "discreteEqualsByte")
-	public Object[][] provideDiscreteEqualsByteValues() {
+	public final Object[][] provideDiscreteEqualsByteValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticByte(new Byte[] { 1, 3, 5, 7 },
@@ -276,7 +357,7 @@ public class TestByte {
 	}
 
 	@DataProvider(name = "discreteGreaterEqualsByte")
-	public Object[][] provideDiscreteGreaterEqualsByteValues() {
+	public final Object[][] provideDiscreteGreaterEqualsByteValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticByte(new Byte[] { 1, 3, 5, 7 },
@@ -302,7 +383,7 @@ public class TestByte {
 	}
 
 	@DataProvider(name = "discreteGreaterThanByte")
-	public Object[][] provideDiscreteGreaterThanByteValues() {
+	public final Object[][] provideDiscreteGreaterThanByteValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticByte(new Byte[] { 1, 3, 5, 7 },
@@ -328,7 +409,7 @@ public class TestByte {
 	}
 
 	@DataProvider(name = "discretePlusByte")
-	public Object[][] provideDiscretePlusByteValues() {
+	public final Object[][] provideDiscretePlusByteValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticByte(new Byte[] { 1, 3, 5, 7 },
@@ -366,7 +447,7 @@ public class TestByte {
 	}
 
 	@DataProvider(name = "discreteMinusByte")
-	public Object[][] provideDiscreteMinusByteValues() {
+	public final Object[][] provideDiscreteMinusByteValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticByte(new Byte[] { 1, 3, 5, 7 },
@@ -406,7 +487,7 @@ public class TestByte {
 	}
 
 	@DataProvider(name = "discreteMultiplicationByte")
-	public Object[][] provideDiscreteMultiplicationByteValues() {
+	public final Object[][] provideDiscreteMultiplicationByteValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticByte(new Byte[] { 1, 3, 5, 7 },
@@ -450,7 +531,7 @@ public class TestByte {
 	}
 
 	@DataProvider(name = "discreteDivisionByte")
-	public Object[][] provideDiscreteDivisionByteValues() {
+	public final Object[][] provideDiscreteDivisionByteValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticByte(new Byte[] { 1, 3, 5, 7 },

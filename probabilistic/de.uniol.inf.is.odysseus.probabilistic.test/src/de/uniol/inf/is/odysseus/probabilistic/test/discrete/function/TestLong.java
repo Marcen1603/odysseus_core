@@ -1,11 +1,21 @@
+/**
+ * Copyright 2013 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.probabilistic.test.discrete.function;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -28,50 +38,28 @@ import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerEqual
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerThanOperator;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
-@Test(singleThreaded = true)
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
+@Test
 public class TestLong {
+
 	/**
-	 * @throws Exception
+	 * Test "<="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
 	 */
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	/**
-	 * @throws Exception
-	 */
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	/**
- * 
- */
-	@BeforeTest
-	public void setUpAll() {
-
-	}
-
-	/**
- * 
- */
-	@AfterTest
-	public void tearDownAll() {
-
-	}
-
-	/**
- * 
- */
-	@AfterMethod
-	public void tearDown() {
-
-	}
-
 	@Test(dataProvider = "discreteSmallerThanLong")
-	public void testLongSmallerThan(ProbabilisticLong left,
-			ProbabilisticLong right, double result) {
-		IFunction<Double> function = new ProbabilisticSmallerThanOperator();
+	public final void testLongSmallerThan(final ProbabilisticLong left,
+			final ProbabilisticLong right, final double result) {
+		final IFunction<Double> function = new ProbabilisticSmallerThanOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
@@ -79,10 +67,20 @@ public class TestLong {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+/**
+	 * Test "<"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteSmallerEqualsLong")
-	public void testLongSmallerEquals(ProbabilisticLong left,
-			ProbabilisticLong right, double result) {
-		IFunction<Double> function = new ProbabilisticSmallerEqualsOperator();
+	public final void testLongSmallerEquals(final ProbabilisticLong left,
+			final ProbabilisticLong right, final double result) {
+		final IFunction<Double> function = new ProbabilisticSmallerEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
@@ -90,10 +88,20 @@ public class TestLong {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "=="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteEqualsLong")
-	public void testLongEquals(ProbabilisticLong left, ProbabilisticLong right,
-			double result) {
-		IFunction<Double> function = new ProbabilisticEqualsOperator();
+	public final void testLongEquals(final ProbabilisticLong left,
+			final ProbabilisticLong right, final double result) {
+		final IFunction<Double> function = new ProbabilisticEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
@@ -101,40 +109,67 @@ public class TestLong {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "!"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteEqualsLong")
-	public void testLongNot(ProbabilisticLong left, ProbabilisticLong right,
-			double result) {
-		IFunction<Double> equalsFunction = new ProbabilisticEqualsOperator();
+	public final void testLongNot(final ProbabilisticLong left,
+			final ProbabilisticLong right, final double result) {
+		final IFunction<Double> equalsFunction = new ProbabilisticEqualsOperator();
 		equalsFunction.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
 						SDFProbabilisticDatatype.PROBABILISTIC_LONG));
-		IFunction<Double> notFunction = new ProbabilisticNotOperator();
+		final IFunction<Double> notFunction = new ProbabilisticNotOperator();
 		notFunction.setArguments(new Constant<Double>(
 				equalsFunction.getValue(), SDFDatatype.DOUBLE));
 		Assert.assertEquals(notFunction.getValue(), 1.0 - result, 10E-9);
 	}
 
+	/**
+	 * Test "&&"-operator for discrete values.
+	 */
 	@Test
-	public void testLongAnd() {
-		IFunction<Double> function = new ProbabilisticAndOperator();
+	public final void testLongAnd() {
+		final IFunction<Double> function = new ProbabilisticAndOperator();
 		function.setArguments(new Constant<Double>(0.25, SDFDatatype.DOUBLE),
 				new Constant<Double>(0.35, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), Math.min(0.25, 0.35), 10E-9);
 	}
 
+	/**
+	 * Test "||"-operator for discrete values.
+	 * 
+	 */
 	@Test
-	public void testLongOr() {
-		IFunction<Double> function = new ProbabilisticOrOperator();
+	public final void testLongOr() {
+		final IFunction<Double> function = new ProbabilisticOrOperator();
 		function.setArguments(new Constant<Double>(0.25, SDFDatatype.DOUBLE),
 				new Constant<Double>(0.35, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), Math.max(0.25, 0.35), 10E-9);
 	}
 
+	/**
+	 * Test ">="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteGreaterEqualsLong")
-	public void testLongGreaterEquals(ProbabilisticLong left,
-			ProbabilisticLong right, double result) {
-		IFunction<Double> function = new ProbabilisticGreaterEqualsOperator();
+	public final void testLongGreaterEquals(final ProbabilisticLong left,
+			final ProbabilisticLong right, final double result) {
+		final IFunction<Double> function = new ProbabilisticGreaterEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
@@ -142,10 +177,20 @@ public class TestLong {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test ">"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteGreaterThanLong")
-	public void testLongGreaterThan(ProbabilisticLong left,
-			ProbabilisticLong right, double result) {
-		IFunction<Double> function = new ProbabilisticGreaterThanOperator();
+	public final void testLongGreaterThan(final ProbabilisticLong left,
+			final ProbabilisticLong right, final double result) {
+		final IFunction<Double> function = new ProbabilisticGreaterThanOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
@@ -153,10 +198,20 @@ public class TestLong {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "+"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discretePlusLong")
-	public void testLongPlus(ProbabilisticLong left, ProbabilisticLong right,
-			ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticPlusOperator();
+	public final void testLongPlus(final ProbabilisticLong left,
+			final ProbabilisticLong right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticPlusOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
@@ -164,10 +219,20 @@ public class TestLong {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "-"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteMinusLong")
-	public void testLongMinus(ProbabilisticLong left, ProbabilisticLong right,
-			ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticMinusOperator();
+	public final void testLongMinus(final ProbabilisticLong left,
+			final ProbabilisticLong right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticMinusOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
@@ -175,10 +240,20 @@ public class TestLong {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "*"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteMultiplicationLong")
-	public void testLongMultiplication(ProbabilisticLong left,
-			ProbabilisticLong right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticMultiplicationOperator();
+	public final void testLongMultiplication(final ProbabilisticLong left,
+			final ProbabilisticLong right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticMultiplicationOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
@@ -186,10 +261,20 @@ public class TestLong {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "/"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteDivisionLong")
-	public void testLongDivision(ProbabilisticLong left,
-			ProbabilisticLong right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticDivisionOperator();
+	public final void testLongDivision(final ProbabilisticLong left,
+			final ProbabilisticLong right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticDivisionOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
@@ -198,166 +283,166 @@ public class TestLong {
 	}
 
 	@DataProvider(name = "discreteSmallerThanLong")
-	public Object[][] provideDiscreteSmallerThanLongValues() {
+	public final Object[][] provideDiscreteSmallerThanLongValues() {
 		return new Object[][] {
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }), 0.375 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 7l, 5l, 3l, 1l },
+						new ProbabilisticLong(new Long[] { 7L, 5L, 3L, 1L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }), 0.375 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 9l, 11l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 9L, 11L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						0.5625 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l },
+						new ProbabilisticLong(new Long[] { 1L, 3L },
 								new Double[] { 0.5, 0.5 }), 0.125 } };
 	}
 
 	@DataProvider(name = "discreteSmallerEqualsLong")
-	public Object[][] provideDiscreteSmallerEqualsLongValues() {
+	public final Object[][] provideDiscreteSmallerEqualsLongValues() {
 		return new Object[][] {
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }), 0.625 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 7l, 5l, 3l, 1l },
+						new ProbabilisticLong(new Long[] { 7L, 5L, 3L, 1L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }), 0.625 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 9l, 11l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 9L, 11L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						0.6875 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l },
+						new ProbabilisticLong(new Long[] { 1L, 3L },
 								new Double[] { 0.5, 0.5 }), 0.375 } };
 	}
 
 	@DataProvider(name = "discreteEqualsLong")
-	public Object[][] provideDiscreteEqualsLongValues() {
+	public final Object[][] provideDiscreteEqualsLongValues() {
 		return new Object[][] {
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }), 0.25 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 7l, 5l, 3l, 1l },
+						new ProbabilisticLong(new Long[] { 7L, 5L, 3L, 1L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }), 0.25 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 9l, 11l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 9L, 11L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }), 0.125 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l },
+						new ProbabilisticLong(new Long[] { 1L, 3L },
 								new Double[] { 0.5, 0.5 }), 0.25 } };
 	}
 
 	@DataProvider(name = "discreteGreaterEqualsLong")
-	public Object[][] provideDiscreteGreaterEqualsLongValues() {
+	public final Object[][] provideDiscreteGreaterEqualsLongValues() {
 		return new Object[][] {
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }), 0.625 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 7l, 5l, 3l, 1l },
+						new ProbabilisticLong(new Long[] { 7L, 5L, 3L, 1L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }), 0.625 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 9l, 11l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 9L, 11L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						0.4375 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l },
+						new ProbabilisticLong(new Long[] { 1L, 3L },
 								new Double[] { 0.5, 0.5 }), 0.875 } };
 	}
 
 	@DataProvider(name = "discreteGreaterThanLong")
-	public Object[][] provideDiscreteGreaterThanLongValues() {
+	public final Object[][] provideDiscreteGreaterThanLongValues() {
 		return new Object[][] {
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }), 0.375 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 7l, 5l, 3l, 1l },
+						new ProbabilisticLong(new Long[] { 7L, 5L, 3L, 1L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }), 0.375 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 9l, 11l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 9L, 11L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						0.3125 },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l },
+						new ProbabilisticLong(new Long[] { 1L, 3L },
 								new Double[] { 0.5, 0.5 }), 0.625 } };
 	}
 
 	@DataProvider(name = "discretePlusLong")
-	public Object[][] provideDiscretePlusLongValues() {
+	public final Object[][] provideDiscretePlusLongValues() {
 		return new Object[][] {
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
-								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticDouble(new Double[] { 2.0, 4.0, 6.0,
-								8.0, 10.0, 12.0, 14.0 }, new Double[] { 0.0625,
-								0.125, 0.1875, 0.25, 0.1875, 0.125, 0.0625 }) },
-				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
-								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 7l, 5l, 3l, 1l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						new ProbabilisticDouble(new Double[] { 2.0, 4.0, 6.0,
 								8.0, 10.0, 12.0, 14.0 }, new Double[] { 0.0625,
 								0.125, 0.1875, 0.25, 0.1875, 0.125, 0.0625 }) },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 9l, 11l },
+						new ProbabilisticLong(new Long[] { 7L, 5L, 3L, 1L },
+								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
+						new ProbabilisticDouble(new Double[] { 2.0, 4.0, 6.0,
+								8.0, 10.0, 12.0, 14.0 }, new Double[] { 0.0625,
+								0.125, 0.1875, 0.25, 0.1875, 0.125, 0.0625 }) },
+				{
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
+								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
+						new ProbabilisticLong(new Long[] { 1L, 3L, 9L, 11L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						new ProbabilisticDouble(new Double[] { 2.0, 4.0, 6.0,
 								8.0, 10.0, 12.0, 14.0, 16.0, 18.0 },
 								new Double[] { 0.0625, 0.125, 0.125, 0.125,
 										0.125, 0.125, 0.125, 0.125, 0.0625 }) },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l },
+						new ProbabilisticLong(new Long[] { 1L, 3L },
 								new Double[] { 0.5, 0.5 }),
 						new ProbabilisticDouble(new Double[] { 2.0, 4.0, 6.0,
 								8.0, 10.0 }, new Double[] { 0.125, 0.25, 0.25,
@@ -365,39 +450,39 @@ public class TestLong {
 	}
 
 	@DataProvider(name = "discreteMinusLong")
-	public Object[][] provideDiscreteMinusLongValues() {
+	public final Object[][] provideDiscreteMinusLongValues() {
 		return new Object[][] {
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
-								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticDouble(new Double[] { -6.0, -4.0,
-								-2.0, 0.0, 2.0, 4.0, 6.0 }, new Double[] {
-								0.0625, 0.125, 0.1875, 0.25, 0.1875, 0.125,
-								0.0625 }) },
-				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
-								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 7l, 5l, 3l, 1l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						new ProbabilisticDouble(new Double[] { -6.0, -4.0,
 								-2.0, 0.0, 2.0, 4.0, 6.0 }, new Double[] {
 								0.0625, 0.125, 0.1875, 0.25, 0.1875, 0.125,
 								0.0625 }) },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 9l, 11l },
+						new ProbabilisticLong(new Long[] { 7L, 5L, 3L, 1L },
+								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
+						new ProbabilisticDouble(new Double[] { -6.0, -4.0,
+								-2.0, 0.0, 2.0, 4.0, 6.0 }, new Double[] {
+								0.0625, 0.125, 0.1875, 0.25, 0.1875, 0.125,
+								0.0625 }) },
+				{
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
+								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
+						new ProbabilisticLong(new Long[] { 1L, 3L, 9L, 11L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						new ProbabilisticDouble(new Double[] { -10.0, -8.0,
 								-6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, },
 								new Double[] { 0.0625, 0.125, 0.125, 0.125,
 										0.125, 0.125, 0.125, 0.125, 0.0625 }) },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l },
+						new ProbabilisticLong(new Long[] { 1L, 3L },
 								new Double[] { 0.5, 0.5 }),
 						new ProbabilisticDouble(new Double[] { -2.0, 0.0, 2.0,
 								4.0, 6.0 }, new Double[] { 0.125, 0.25, 0.25,
@@ -405,22 +490,12 @@ public class TestLong {
 	}
 
 	@DataProvider(name = "discreteMultiplicationLong")
-	public Object[][] provideDiscreteMultiplicationLongValues() {
+	public final Object[][] provideDiscreteMultiplicationLongValues() {
 		return new Object[][] {
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
-								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticDouble(new Double[] { 1.0, 3.0, 5.0,
-								7.0, 9.0, 15.0, 21.0, 25.0, 35.0, 49.0 },
-								new Double[] { 0.0625, 0.125, 0.125, 0.125,
-										0.0625, 0.125, 0.125, 0.0625, 0.125,
-										0.0625 }) },
-				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
-								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 7l, 5l, 3l, 1l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						new ProbabilisticDouble(new Double[] { 1.0, 3.0, 5.0,
 								7.0, 9.0, 15.0, 21.0, 25.0, 35.0, 49.0 },
@@ -428,9 +503,19 @@ public class TestLong {
 										0.0625, 0.125, 0.125, 0.0625, 0.125,
 										0.0625 }) },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 9l, 11l },
+						new ProbabilisticLong(new Long[] { 7L, 5L, 3L, 1L },
+								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
+						new ProbabilisticDouble(new Double[] { 1.0, 3.0, 5.0,
+								7.0, 9.0, 15.0, 21.0, 25.0, 35.0, 49.0 },
+								new Double[] { 0.0625, 0.125, 0.125, 0.125,
+										0.0625, 0.125, 0.125, 0.0625, 0.125,
+										0.0625 }) },
+				{
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
+								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
+						new ProbabilisticLong(new Long[] { 1L, 3L, 9L, 11L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						new ProbabilisticDouble(new Double[] { 1.0, 3.0, 5.0,
 								7.0, 9.0, 11.0, 15.0, 21.0, 27.0, 33.0, 45.0,
@@ -439,9 +524,9 @@ public class TestLong {
 								0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625,
 								0.0625 }) },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l },
+						new ProbabilisticLong(new Long[] { 1L, 3L },
 								new Double[] { 0.5, 0.5 }),
 						new ProbabilisticDouble(new Double[] { 1.0, 3.0, 5.0,
 								7.0, 9.0, 15.0, 21.0 }, new Double[] { 0.125,
@@ -449,25 +534,12 @@ public class TestLong {
 	}
 
 	@DataProvider(name = "discreteDivisionLong")
-	public Object[][] provideDiscreteDivisionLongValues() {
+	public final Object[][] provideDiscreteDivisionLongValues() {
 		return new Object[][] {
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
-								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticDouble(new Double[] {
-								0.14285714285714285, 0.2, 0.3333333333333333,
-								0.42857142857142855, 0.6, 0.7142857142857143,
-								1.0, 1.4, 1.6666666666666667,
-								2.3333333333333335, 3.0, 5.0, 7.0, },
-								new Double[] { 0.0625, 0.0625, 0.0625, 0.0625,
-										0.0625, 0.0625, 0.25, 0.0625, 0.0625,
-										0.0625, 0.0625, 0.0625, 0.0625 }) },
-				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
-								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 7l, 5l, 3l, 1l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						new ProbabilisticDouble(new Double[] {
 								0.14285714285714285, 0.2, 0.3333333333333333,
@@ -478,9 +550,22 @@ public class TestLong {
 										0.0625, 0.0625, 0.25, 0.0625, 0.0625,
 										0.0625, 0.0625, 0.0625, 0.0625 }) },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l, 9l, 11l },
+						new ProbabilisticLong(new Long[] { 7L, 5L, 3L, 1L },
+								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
+						new ProbabilisticDouble(new Double[] {
+								0.14285714285714285, 0.2, 0.3333333333333333,
+								0.42857142857142855, 0.6, 0.7142857142857143,
+								1.0, 1.4, 1.6666666666666667,
+								2.3333333333333335, 3.0, 5.0, 7.0, },
+								new Double[] { 0.0625, 0.0625, 0.0625, 0.0625,
+										0.0625, 0.0625, 0.25, 0.0625, 0.0625,
+										0.0625, 0.0625, 0.0625, 0.0625 }) },
+				{
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
+								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
+						new ProbabilisticLong(new Long[] { 1L, 3L, 9L, 11L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
 						new ProbabilisticDouble(new Double[] {
 								0.09090909090909091, 0.1111111111111111,
@@ -492,9 +577,9 @@ public class TestLong {
 								0.0625, 0.125, 0.0625, 0.0625, 0.0625, 0.0625,
 								0.125, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625 }) },
 				{
-						new ProbabilisticLong(new Long[] { 1l, 3l, 5l, 7l },
+						new ProbabilisticLong(new Long[] { 1L, 3L, 5L, 7L },
 								new Double[] { 0.25, 0.25, 0.25, 0.25 }),
-						new ProbabilisticLong(new Long[] { 1l, 3l },
+						new ProbabilisticLong(new Long[] { 1L, 3L },
 								new Double[] { 0.5, 0.5 }),
 						new ProbabilisticDouble(new Double[] {
 								0.3333333333333333, 1.0, 1.6666666666666667,

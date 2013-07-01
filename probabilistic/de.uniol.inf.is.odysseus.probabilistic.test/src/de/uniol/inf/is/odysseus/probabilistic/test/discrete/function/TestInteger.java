@@ -1,11 +1,21 @@
+/**
+ * Copyright 2013 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.probabilistic.test.discrete.function;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -28,50 +38,28 @@ import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerEqual
 import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerThanOperator;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
-@Test(singleThreaded = true)
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
+@Test
 public class TestInteger {
-	/**
-	 * @throws Exception
+
+/**
+	 * Test "<"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
 	 */
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	/**
-	 * @throws Exception
-	 */
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	/**
- * 
- */
-	@BeforeTest
-	public void setUpAll() {
-
-	}
-
-	/**
- * 
- */
-	@AfterTest
-	public void tearDownAll() {
-
-	}
-
-	/**
- * 
- */
-	@AfterMethod
-	public void tearDown() {
-
-	}
-
 	@Test(dataProvider = "discreteSmallerThanInteger")
-	public void testIntegerSmallerThan(ProbabilisticInteger left,
-			ProbabilisticInteger right, double result) {
-		IFunction<Double> function = new ProbabilisticSmallerThanOperator();
+	public final void testIntegerSmallerThan(final ProbabilisticInteger left,
+			final ProbabilisticInteger right, final double result) {
+		final IFunction<Double> function = new ProbabilisticSmallerThanOperator();
 		function.setArguments(new Constant<ProbabilisticInteger>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_INTEGER),
 				new Constant<ProbabilisticInteger>(right,
@@ -79,10 +67,20 @@ public class TestInteger {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "<="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteSmallerEqualsInteger")
-	public void testIntegerSmallerEquals(ProbabilisticInteger left,
-			ProbabilisticInteger right, double result) {
-		IFunction<Double> function = new ProbabilisticSmallerEqualsOperator();
+	public final void testIntegerSmallerEquals(final ProbabilisticInteger left,
+			final ProbabilisticInteger right, final double result) {
+		final IFunction<Double> function = new ProbabilisticSmallerEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticInteger>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_INTEGER),
 				new Constant<ProbabilisticInteger>(right,
@@ -90,10 +88,20 @@ public class TestInteger {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "=="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteEqualsInteger")
-	public void testIntegerEquals(ProbabilisticInteger left,
-			ProbabilisticInteger right, double result) {
-		IFunction<Double> function = new ProbabilisticEqualsOperator();
+	public final void testIntegerEquals(final ProbabilisticInteger left,
+			final ProbabilisticInteger right, final double result) {
+		final IFunction<Double> function = new ProbabilisticEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticInteger>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_INTEGER),
 				new Constant<ProbabilisticInteger>(right,
@@ -101,40 +109,66 @@ public class TestInteger {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "!"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteEqualsInteger")
-	public void testIntegerNot(ProbabilisticInteger left,
-			ProbabilisticInteger right, double result) {
-		IFunction<Double> equalsFunction = new ProbabilisticEqualsOperator();
+	public final void testIntegerNot(final ProbabilisticInteger left,
+			final ProbabilisticInteger right, final double result) {
+		final IFunction<Double> equalsFunction = new ProbabilisticEqualsOperator();
 		equalsFunction.setArguments(new Constant<ProbabilisticInteger>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_INTEGER),
 				new Constant<ProbabilisticInteger>(right,
 						SDFProbabilisticDatatype.PROBABILISTIC_INTEGER));
-		IFunction<Double> notFunction = new ProbabilisticNotOperator();
+		final IFunction<Double> notFunction = new ProbabilisticNotOperator();
 		notFunction.setArguments(new Constant<Double>(
 				equalsFunction.getValue(), SDFDatatype.DOUBLE));
 		Assert.assertEquals(notFunction.getValue(), 1.0 - result, 10E-9);
 	}
 
+	/**
+	 * Test "&&"-operator for discrete values.
+	 */
 	@Test
-	public void testIntegerAnd() {
-		IFunction<Double> function = new ProbabilisticAndOperator();
+	public final void testIntegerAnd() {
+		final IFunction<Double> function = new ProbabilisticAndOperator();
 		function.setArguments(new Constant<Double>(0.25, SDFDatatype.DOUBLE),
 				new Constant<Double>(0.35, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), Math.min(0.25, 0.35), 10E-9);
 	}
 
+	/**
+	 * Test "||"-operator for discrete values.
+	 */
 	@Test
-	public void testIntegerOr() {
-		IFunction<Double> function = new ProbabilisticOrOperator();
+	public final void testIntegerOr() {
+		final IFunction<Double> function = new ProbabilisticOrOperator();
 		function.setArguments(new Constant<Double>(0.25, SDFDatatype.DOUBLE),
 				new Constant<Double>(0.35, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), Math.max(0.25, 0.35), 10E-9);
 	}
 
+	/**
+	 * Test ">="-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteGreaterEqualsInteger")
-	public void testIntegerGreaterEquals(ProbabilisticInteger left,
-			ProbabilisticInteger right, double result) {
-		IFunction<Double> function = new ProbabilisticGreaterEqualsOperator();
+	public final void testIntegerGreaterEquals(final ProbabilisticInteger left,
+			final ProbabilisticInteger right, final double result) {
+		final IFunction<Double> function = new ProbabilisticGreaterEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticInteger>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_INTEGER),
 				new Constant<ProbabilisticInteger>(right,
@@ -142,10 +176,20 @@ public class TestInteger {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test ">"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteGreaterThanInteger")
-	public void testIntegerGreaterThan(ProbabilisticInteger left,
-			ProbabilisticInteger right, double result) {
-		IFunction<Double> function = new ProbabilisticGreaterThanOperator();
+	public final void testIntegerGreaterThan(final ProbabilisticInteger left,
+			final ProbabilisticInteger right, final double result) {
+		final IFunction<Double> function = new ProbabilisticGreaterThanOperator();
 		function.setArguments(new Constant<ProbabilisticInteger>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_INTEGER),
 				new Constant<ProbabilisticInteger>(right,
@@ -153,10 +197,20 @@ public class TestInteger {
 		Assert.assertEquals(function.getValue(), result, 10E-9);
 	}
 
+	/**
+	 * Test "+"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discretePlusInteger")
-	public void testIntegerPlus(ProbabilisticInteger left,
-			ProbabilisticInteger right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticPlusOperator();
+	public final void testIntegerPlus(final ProbabilisticInteger left,
+			final ProbabilisticInteger right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticPlusOperator();
 		function.setArguments(new Constant<ProbabilisticInteger>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_INTEGER),
 				new Constant<ProbabilisticInteger>(right,
@@ -164,10 +218,20 @@ public class TestInteger {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "-"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteMinusInteger")
-	public void testIntegerMinus(ProbabilisticInteger left,
-			ProbabilisticInteger right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticMinusOperator();
+	public final void testIntegerMinus(final ProbabilisticInteger left,
+			final ProbabilisticInteger right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticMinusOperator();
 		function.setArguments(new Constant<ProbabilisticInteger>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_INTEGER),
 				new Constant<ProbabilisticInteger>(right,
@@ -175,10 +239,21 @@ public class TestInteger {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "*"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteMultiplicationInteger")
-	public void testIntegerMultiplication(ProbabilisticInteger left,
-			ProbabilisticInteger right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticMultiplicationOperator();
+	public final void testIntegerMultiplication(
+			final ProbabilisticInteger left, final ProbabilisticInteger right,
+			final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticMultiplicationOperator();
 		function.setArguments(new Constant<ProbabilisticInteger>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_INTEGER),
 				new Constant<ProbabilisticInteger>(right,
@@ -186,10 +261,20 @@ public class TestInteger {
 		Assert.assertEquals(function.getValue(), result);
 	}
 
+	/**
+	 * Test "/"-operator for discrete values.
+	 * 
+	 * @param left
+	 *            The left value
+	 * @param right
+	 *            The right value
+	 * @param result
+	 *            The expected result
+	 */
 	@Test(dataProvider = "discreteDivisionInteger")
-	public void testIntegerDivision(ProbabilisticInteger left,
-			ProbabilisticInteger right, ProbabilisticDouble result) {
-		IFunction<ProbabilisticDouble> function = new ProbabilisticDivisionOperator();
+	public final void testIntegerDivision(final ProbabilisticInteger left,
+			final ProbabilisticInteger right, final ProbabilisticDouble result) {
+		final IFunction<ProbabilisticDouble> function = new ProbabilisticDivisionOperator();
 		function.setArguments(new Constant<ProbabilisticInteger>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_INTEGER),
 				new Constant<ProbabilisticInteger>(right,
@@ -198,7 +283,7 @@ public class TestInteger {
 	}
 
 	@DataProvider(name = "discreteSmallerThanInteger")
-	public Object[][] provideDiscreteSmallerThanIntegerValues() {
+	public final Object[][] provideDiscreteSmallerThanIntegerValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticInteger(new Integer[] { 1, 3, 5, 7 },
@@ -224,7 +309,7 @@ public class TestInteger {
 	}
 
 	@DataProvider(name = "discreteSmallerEqualsInteger")
-	public Object[][] provideDiscreteSmallerEqualsIntegerValues() {
+	public final Object[][] provideDiscreteSmallerEqualsIntegerValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticInteger(new Integer[] { 1, 3, 5, 7 },
@@ -250,7 +335,7 @@ public class TestInteger {
 	}
 
 	@DataProvider(name = "discreteEqualsInteger")
-	public Object[][] provideDiscreteEqualsIntegerValues() {
+	public final Object[][] provideDiscreteEqualsIntegerValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticInteger(new Integer[] { 1, 3, 5, 7 },
@@ -275,7 +360,7 @@ public class TestInteger {
 	}
 
 	@DataProvider(name = "discreteGreaterEqualsInteger")
-	public Object[][] provideDiscreteGreaterEqualsIntegerValues() {
+	public final Object[][] provideDiscreteGreaterEqualsIntegerValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticInteger(new Integer[] { 1, 3, 5, 7 },
@@ -301,7 +386,7 @@ public class TestInteger {
 	}
 
 	@DataProvider(name = "discreteGreaterThanInteger")
-	public Object[][] provideDiscreteGreaterThanIntegerValues() {
+	public final Object[][] provideDiscreteGreaterThanIntegerValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticInteger(new Integer[] { 1, 3, 5, 7 },
@@ -327,7 +412,7 @@ public class TestInteger {
 	}
 
 	@DataProvider(name = "discretePlusInteger")
-	public Object[][] provideDiscretePlusIntegerValues() {
+	public final Object[][] provideDiscretePlusIntegerValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticInteger(new Integer[] { 1, 3, 5, 7 },
@@ -365,7 +450,7 @@ public class TestInteger {
 	}
 
 	@DataProvider(name = "discreteMinusInteger")
-	public Object[][] provideDiscreteMinusIntegerValues() {
+	public final Object[][] provideDiscreteMinusIntegerValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticInteger(new Integer[] { 1, 3, 5, 7 },
@@ -405,7 +490,7 @@ public class TestInteger {
 	}
 
 	@DataProvider(name = "discreteMultiplicationInteger")
-	public Object[][] provideDiscreteMultiplicationIntegerValues() {
+	public final Object[][] provideDiscreteMultiplicationIntegerValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticInteger(new Integer[] { 1, 3, 5, 7 },
@@ -449,7 +534,7 @@ public class TestInteger {
 	}
 
 	@DataProvider(name = "discreteDivisionInteger")
-	public Object[][] provideDiscreteDivisionIntegerValues() {
+	public final Object[][] provideDiscreteDivisionIntegerValues() {
 		return new Object[][] {
 				{
 						new ProbabilisticInteger(new Integer[] { 1, 3, 5, 7 },
