@@ -26,8 +26,8 @@ import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.AndOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.OrOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.bool.AndOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.bool.OrOperator;
 
 /**
  * @author Jonas Jacobi
