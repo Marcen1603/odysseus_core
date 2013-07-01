@@ -15,11 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -105,9 +103,22 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
         instance.setDataHandler(dataHandler);
         instance.setTransfer(transfer);
 
-        instance.charset = options.get("charset");
-        instance.objectDelimiter = options.get("delimiter");
-        instance.keepDelimiter = Boolean.parseBoolean(options.get("keepdelimiter"));
+		if (options.containsKey("charset")) {
+			instance.charset = options.get("charset");
+		} else {
+			instance.charset = "UTF-8";
+		}
+		if (options.containsKey("delimiter")) {
+			instance.objectDelimiter = options.get("delimiter");
+		} else {
+			instance.objectDelimiter = ",";
+		}
+		if (options.containsKey("keepdelimiter")) {
+			instance.keepDelimiter = Boolean.parseBoolean(options
+					.get("keepdelimiter"));
+		} else {
+			instance.keepDelimiter = false;
+		}
         return instance;
     }
 
