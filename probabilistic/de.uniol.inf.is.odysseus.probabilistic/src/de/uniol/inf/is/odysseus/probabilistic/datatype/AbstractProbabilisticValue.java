@@ -51,8 +51,7 @@ public class AbstractProbabilisticValue<V> implements Serializable, IClone {
 		}
 	}
 
-	public AbstractProbabilisticValue(final V[] values,
-			final Double[] probabilities) {
+	public AbstractProbabilisticValue(final V[] values, final Double[] probabilities) {
 		final int length = Math.min(values.length, probabilities.length);
 		for (int i = 0; i < length; i++) {
 			this.values.put(values[i], probabilities[i]);
@@ -98,16 +97,20 @@ public class AbstractProbabilisticValue<V> implements Serializable, IClone {
 			return false;
 		if (getClass() == obj.getClass()) {
 			AbstractProbabilisticValue<?> other = (AbstractProbabilisticValue<?>) obj;
-			for (Entry<?, Double> entry : other.values.entrySet()) {
-				if ((!values.containsKey(entry.getKey()))
-						|| (values.get(entry.getKey()) != entry.getValue())) {
+
+			if (this.getValues().size() != other.getValues().size()) {
+				return false;
+			}
+			for (Entry<?, Double> thisEntry : this.getValues().entrySet()) {
+				if (!other.getValues().containsKey(thisEntry.getKey())) {
+					return false;
+				}
+
+				if (Math.abs(thisEntry.getValue() - other.getValues().get(thisEntry.getKey())) > 10E-9) {
 					return false;
 				}
 			}
-		} else {
-			if (values.containsKey(obj)) {
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}
