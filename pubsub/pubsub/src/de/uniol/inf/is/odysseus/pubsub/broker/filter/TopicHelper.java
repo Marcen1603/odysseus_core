@@ -135,6 +135,9 @@ public class TopicHelper {
 			Topic subscriptionTopic) {
 		if (advertisementTopic.getNumberOfChilds() > 0 && advertisementTopic.getName().equals(subscriptionTopic.getName())){
 			// if advertisement topic has child's and is equal with subscription topic
+			if (subscriptionTopic.getNumberOfChilds() == 0){
+				return true;
+			}
 			
 			if (advertisementTopic.getNumberOfChilds() > subscriptionTopic.getNumberOfChilds()){
 				// if advertisement has more child topics, subscription does not match

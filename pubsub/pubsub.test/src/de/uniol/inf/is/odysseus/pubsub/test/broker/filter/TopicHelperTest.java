@@ -89,6 +89,25 @@ public class TopicHelperTest {
 	}
 	
 	/**
+	 * Subscription has additional Subtree -> Filter matches
+	 * 
+	 * 		Advertisement Tree						Subscription Tree
+	 * 
+	 *  			News			  					News
+	 *  			 /\									
+	 *  			/  \								
+	 *    Wirtschaft    Politik					 
+	 */
+	@Test
+	public void compareTreesCase6Test(){
+		Topic advertisementTopic = new Topic("News");
+		advertisementTopic.getChilds().add(new Topic("Wirtschaft"));
+		advertisementTopic.getChilds().add(new Topic("Politik"));
+		Topic subscriptionTopic = new Topic("News");
+		Assert.assertTrue(TopicHelper.compareTrees(advertisementTopic, subscriptionTopic));
+	}
+	
+	/**
 	 * Advertisement has additional Subtree -> Filter matches not
 	 * 
 	 * 		Advertisement Tree						Subscription Tree

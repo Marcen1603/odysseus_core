@@ -51,7 +51,7 @@ public abstract class AbstractTopicBasedFiltering<T extends IStreamObject<?>>
 				// if advertisement is more concrete, subscriber is not
 				// interested
 				if (advertisement.getTopics().size() > subscription.getTopics()
-						.size() || subscription.getTopics().size() == 0) {
+						.size() && subscription.getTopics().size() > 0) {
 					addSubscriberToPublisher = false;
 				}
 
