@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,14 +9,11 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 
-abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded extends
-		AbstractSimpleThreadScheduler {
-	
+abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded extends AbstractSimpleThreadScheduler {
+
 	static final Logger LOG = LoggerFactory.getLogger(AbstractSimpleThreadSchedulerMultipleSourcesThreaded.class);
-		
-	public AbstractSimpleThreadSchedulerMultipleSourcesThreaded(
-			ISchedulingFactory schedulingStrategieFactory,
-			IPhysicalQueryScheduling[] planScheduling) {
+
+	public AbstractSimpleThreadSchedulerMultipleSourcesThreaded(ISchedulingFactory schedulingStrategieFactory, IPhysicalQueryScheduling[] planScheduling) {
 		super(schedulingStrategieFactory, planScheduling);
 	}
 
@@ -23,21 +21,25 @@ abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded exten
 		// 1. Remove all Sources that no longer need to be scheduled
 		// --> are no longer part of super.sources
 		// Hint: These are not the new Sources!
-		for (ISourceExecutor sourceExe : sourceThreads) {
-			MultipleSourceExecutor sourceExecutor = (MultipleSourceExecutor) sourceExe;
+		synchronized (sourceThreads) {
 
-			//logger.debug("Removing sources from thread " + sourceExecutor);
-			// there should be only one running source per executor in
-			// single mode
-			for (IIterableSource<?> runningSource : sourceExecutor.getSources()) {
-				if (!sources.contains(runningSource)) {
-					sourceExecutor.removeSource(runningSource);
-					logger.debug("Remove source " + runningSource + " from "
-							+ sourceExecutor);
-					if (sourceExecutor.getRunningSources() == 0){
-						sourceExecutor.interrupt();
-						removeSourceThread(sourceExecutor);
-						logger.debug("Remove source executor "+sourceExecutor);
+			for (ISourceExecutor sourceExe : sourceThreads) {
+				MultipleSourceExecutor sourceExecutor = (MultipleSourceExecutor) sourceExe;
+
+				// logger.debug("Removing sources from thread " + sourceExecutor);
+				// there should be only one running source per executor in
+				// single mode
+				// need a copy, since the list may change during iteration in loop, which causes concurrent modification exceptions 
+				List<IIterableSource<?>> copyList = new ArrayList<IIterableSource<?>>(sourceExecutor.getSources());
+				for (IIterableSource<?> runningSource : copyList) {
+					if (!sources.contains(runningSource)) {
+						sourceExecutor.removeSource(runningSource);
+						logger.debug("Remove source " + runningSource + " from " + sourceExecutor);
+						if (sourceExecutor.getRunningSources() == 0) {
+							sourceExecutor.interrupt();
+							removeSourceThread(sourceExecutor);
+							logger.debug("Remove source executor " + sourceExecutor);
+						}
 					}
 				}
 			}
@@ -47,13 +49,10 @@ abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded exten
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#setSources(
-	 * java.util.List)
+	 * @see de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#setSources( java.util.List)
 	 */
 	@Override
-	protected synchronized void process_setLeafSources(
-			List<IIterableSource<?>> newSources) {
+	protected synchronized void process_setLeafSources(List<IIterableSource<?>> newSources) {
 		synchronized (sourceThreads) {
 			removeUnscheduledSources();
 			if (newSources != null) {
@@ -72,7 +71,6 @@ abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded exten
 	}
 
 	abstract protected MultipleSourceExecutor getNextSourceExecutor();
-
 
 	protected MultipleSourceExecutor createNewExecutor() {
 		MultipleSourceExecutor ret;

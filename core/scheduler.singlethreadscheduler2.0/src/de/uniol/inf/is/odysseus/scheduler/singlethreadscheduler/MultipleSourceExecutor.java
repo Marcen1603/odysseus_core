@@ -2,15 +2,14 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.TreeMultiset;
 
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
@@ -24,14 +23,16 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	boolean alldone = false;
 	private boolean interrupt = false;
 	// Sort source regarding delay
-	final private Multiset<IIterableSource<?>> sources = TreeMultiset
-			.create(new Comparator<IIterableSource<?>>() {
-				@Override
-				public int compare(IIterableSource<?> left,
-						IIterableSource<?> right) {
-					return Long.compare(left.getDelay(), right.getDelay());
-				}
-			});
+	// treemultiset does not work (it assume that some accesspos are equal although they don't...)
+//	final private Multiset<IIterableSource<?>> sources = TreeMultiset
+//			.create(new Comparator<IIterableSource<?>>() {
+//				@Override
+//				public int compare(IIterableSource<?> left,
+//						IIterableSource<?> right) {
+//					return Long.compare(left.getDelay(), right.getDelay());
+//				}
+//			});
+	final private Multiset<IIterableSource<?>> sources = HashMultiset.create();
 	final private AbstractSimpleThreadScheduler caller;
 	final private Map<IIterableSource<?>, Long> lastRuns = new HashMap<>();
 
@@ -162,7 +163,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 	@Override
 	public Collection<IIterableSource<?>> getSources() {
-		return Collections.unmodifiableCollection(sources);
+		return Collections.synchronizedCollection(sources);
 	}
 
 	@Override
