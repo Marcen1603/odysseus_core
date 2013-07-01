@@ -22,8 +22,8 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.MinusOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.PlusOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.math.MinusOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.math.PlusOperator;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;

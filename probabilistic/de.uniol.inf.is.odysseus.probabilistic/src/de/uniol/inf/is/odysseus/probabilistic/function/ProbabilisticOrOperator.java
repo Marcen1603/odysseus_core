@@ -20,7 +20,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.OrOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.bool.OrOperator;
 
 /**
  * 
