@@ -37,6 +37,7 @@ public class WindGenerator extends StreamClientHandler {
 	String[] directions = {"N", "E", "W", "S", "NE", "NW", "SE", "SW"};
 	
 	private final static int CHANGE_MARKER = 125;
+	@SuppressWarnings("unused")
 	private final static int MAX_ELEMENTS = 1000;
 	private final static int SLEEP = 200;
 	private int tupleCounter = 0;

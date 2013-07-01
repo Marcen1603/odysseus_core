@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
 public class PrecipitationGenerator extends StreamClientHandler {
 
 	private final static int CHANGE_MARKER = 5;
+	@SuppressWarnings("unused")
 	private final static int MAX_ELEMENTS = 40;
 	private final static int SLEEP = 5000;
 	private int tupleCounter = 0;

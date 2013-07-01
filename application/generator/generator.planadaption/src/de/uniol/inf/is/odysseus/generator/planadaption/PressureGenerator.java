@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
 public class PressureGenerator extends StreamClientHandler {
 
 	private final static int CHANGE_MARKER = 25;
+	@SuppressWarnings("unused")
 	private final static int MAX_ELEMENTS = 200;
 	private final static int SLEEP = 1000;
 	private int tupleCounter = 0;
