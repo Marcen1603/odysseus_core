@@ -185,9 +185,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 					System.out.println(measurements);
 					isDone = true;
 				}
-			}
-			lineCounter++;
+			}		
 		}
+		lineCounter++;
 		return line;
 	}
 
