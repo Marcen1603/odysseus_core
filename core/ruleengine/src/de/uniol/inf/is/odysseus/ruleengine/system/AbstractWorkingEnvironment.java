@@ -41,7 +41,7 @@ public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironme
 		int ruleCounter = this.workingMemory.process();		
 		long diffMillis = System.currentTimeMillis() - currentmillis;
 		WorkingMemory.LOGGER.debug("Ruleengine needed " + diffMillis + " millis !");
-		WorkingMemory.LOGGER.info(ruleCounter+" rules were successfully executed!");
+		WorkingMemory.LOGGER.debug(ruleCounter+" rules were successfully executed!");
 	}
 
 	@Override
