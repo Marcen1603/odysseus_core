@@ -59,6 +59,7 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 
 	private static final Logger LOG = LoggerFactory.getLogger(SinkView.class);
 	private TreeViewer viewer;
+	volatile boolean isRefreshing = false;
 
 	@Override
 	public void dispose() {
@@ -74,6 +75,10 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 	}
 
 	public void refresh() {
+		if (isRefreshing) {
+			return;
+		}
+		isRefreshing = true;
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 			@Override
@@ -83,9 +88,11 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 				} catch (Exception e) {
 					LOG.error("Exception during setting input for treeViewer in sinkView", e);
 				}
+				isRefreshing = false;
 			}
 
 		});
+
 	}
 
 	protected void setTreeViewer(TreeViewer viewer) {

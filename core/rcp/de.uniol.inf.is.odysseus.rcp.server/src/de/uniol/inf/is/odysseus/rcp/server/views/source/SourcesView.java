@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,9 @@ import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewLabelProvider;
 public class SourcesView extends ViewPart implements IDataDictionaryListener, IUserManagementListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SourcesView.class);
-	
-	private TreeViewer viewer;
 
+	private TreeViewer viewer;
+	volatile boolean isRefreshing = false;
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
@@ -80,20 +80,25 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 	public TreeViewer getTreeViewer() {
 		return viewer;
 	}
-	
-	public final void setSorting( boolean doSorting ) {
-		if( doSorting ) {
+
+	public final void setSorting(boolean doSorting) {
+		if (doSorting) {
 			viewer.setSorter(new ViewerSorter());
 		} else {
 			viewer.setSorter(null);
 		}
 	}
-	
+
 	public final boolean isSorting() {
 		return viewer.getSorter() != null;
 	}
 
 	public void refresh() {
+
+		if (isRefreshing) {
+			return;
+		}
+		isRefreshing=true;
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 			@Override
@@ -103,6 +108,7 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 				} catch (Exception e) {
 					LOG.error("Exception during setting input for treeViewer in sourcesView", e);
 				}
+				isRefreshing=false;
 			}
 
 		});
