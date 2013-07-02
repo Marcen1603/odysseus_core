@@ -57,6 +57,9 @@ public class PlanGenerationMethodFactory {
 		case "copy":
 			return new CopyPlanGenerationMethod();
 			
+		case "swap":
+			return new SwapOperatorsPlanGenerationMethod();
+			
 		default:
 			return new ExhaustiveSearch();
 		}

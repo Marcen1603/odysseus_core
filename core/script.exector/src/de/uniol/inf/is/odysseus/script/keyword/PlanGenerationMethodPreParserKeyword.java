@@ -44,6 +44,7 @@ public class PlanGenerationMethodPreParserKeyword extends
 		add("dynamicProgramming");
 		add("iterativeDynamicProgramming");
 		add("copy");
+		add("swap");
 	}};
 	
 	/* (non-Javadoc)
