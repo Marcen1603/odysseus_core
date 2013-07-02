@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.sa;
 
 import java.util.ListIterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -10,8 +13,10 @@ import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 
 public abstract class AbstractTimeIntervalSweepArea<T extends IStreamObject<? extends ITimeInterval>> extends
 		AbstractSweepArea<T> implements ITimeIntervalSweepArea<T>{
+		
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractTimeIntervalSweepArea.class);
 	
-	protected PointInTime lastInserted = null;
+	protected T lastInserted = null;
 
 	public AbstractTimeIntervalSweepArea() {
 		super();
@@ -65,13 +70,14 @@ public abstract class AbstractTimeIntervalSweepArea<T extends IStreamObject<? ex
 	 * @param current end timestamp of the currently inserted element.
 	 */
 	protected void setLatestTimeStamp(T current) {
-		if (this.lastInserted == null || current.getMetadata().getEnd().after(this.lastInserted)) {
-			this.lastInserted = current.getMetadata().getEnd();
+		if (this.lastInserted == null || current.getMetadata().getEnd().after(this.lastInserted.getMetadata().getEnd())) {
+			this.lastInserted = current;
 		}
 	}
 	
 	@Override
 	public PointInTime getMaxEndTs() {
-		return this.lastInserted;
+		LOG.debug("Latest tuple: {}", this.lastInserted);
+		return (this.lastInserted != null ? this.lastInserted.getMetadata().getEnd() : null);
 	}
 }
