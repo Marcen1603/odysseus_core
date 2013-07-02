@@ -35,6 +35,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	final private Multiset<IIterableSource<?>> sources = HashMultiset.create();
 	final private AbstractSimpleThreadScheduler caller;
 	final private Map<IIterableSource<?>, Long> lastRuns = new HashMap<>();
+	private boolean sourcesChangeRequested = false;
 
 	private static long counter = 0;
 
@@ -77,6 +78,12 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 		}
 		logger.debug("At least one source is open");
 		while (!interrupt && !isInterrupted() && caller.isRunning()) {
+			if(this.sourcesChangeRequested){				
+				try {
+					sources.wait(1000);
+				} catch (InterruptedException e) {				
+				}
+			}
 			synchronized (sources) { // No interruptions while one run
 				boolean waitedForFirstSource = false;
 
@@ -174,18 +181,23 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	}
 
 	public void removeSource(IIterableSource<?> source) {
+		this.sourcesChangeRequested = true;
 		synchronized (sources) {
 			logger.debug("Removing Source " + source);
 			sources.remove(source);
+			this.sourcesChangeRequested = false;
+			sources.notifyAll();
 		}
 	}
 
 	public synchronized void addSource(IIterableSource<?> source) {
+		this.sourcesChangeRequested = true;
 		synchronized (sources) {
 			sources.add(source);
 			logger.debug("Added Source " + source + " " + sources);
 			alldone = false;
-			notifyAll();
+			this.sourcesChangeRequested = false;
+			sources.notifyAll();
 		}
 	}
 
