@@ -9,6 +9,8 @@ import java.util.Set;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
+import org.osgeo.proj4j.CoordinateTransform;
+import org.osgeo.proj4j.ProjCoordinate;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -50,6 +52,7 @@ public class TraceLayer extends RasterLayer {
 	@Override
 	public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
 		this.screenManager = screenManager;
+		this.srid = screenManager.getSRID();
 	}
 
 	@Override
@@ -359,10 +362,24 @@ public class TraceLayer extends RasterLayer {
 	 */
 	@Override
 	public Envelope getEnvelope() {
-		if(zoomEnv != null) {
-			return zoomEnv;
+		CoordinateTransform ct = screenManager.getTransformation().getCoordinateTransform(4326, this.srid);
+		Envelope geoEnv = config.getCoverage();
+		// Doesn't work - don't know why, I guess the transformation has a problem with 4326
+//		if (zoomArea != null) {
+//			geoEnv = zoomArea;
+//		}
+		if(geoEnv == null) {
+			geoEnv = new Envelope(180, -180, 85, -85);	// Cover whole world
 		}
-		return new Envelope(0, 100, 0, 100);	//TODO: Whole world.
+		ProjCoordinate src1 = new ProjCoordinate(geoEnv.getMaxX(), geoEnv.getMaxY());
+		ProjCoordinate src2 = new ProjCoordinate(geoEnv.getMinX(), geoEnv.getMinY());
+		ProjCoordinate dst1 = new ProjCoordinate();
+		ProjCoordinate dst2 = new ProjCoordinate();
+		ct.transform(src1, dst1);
+		ct.transform(src2, dst2);
+		Envelope coverage = new Envelope(dst1.x, dst2.x, dst1.y, dst2.y);
+		
+		return coverage;
 	}
 
 	@Override

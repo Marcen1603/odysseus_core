@@ -266,7 +266,12 @@ public class ScreenManager {
 			scale *=10;
 		}
 		scale *= Math.ceil(scaleInt);
-		setCenterUV((int) Math.floor((env.centre().x / scale)), (int) Math.floor((env.centre().y / scale)));
+		if(scale > 0) {
+			// This should always be the case, if there is an environment
+			setCenterUV((int) Math.floor((env.centre().x / scale)), (int) Math.floor((env.centre().y / scale)));
+		} else {
+			scale = 1;
+		}
 		pcs.firePropertyChange("scale", oldScale, scale);
 		redraw();
 	}

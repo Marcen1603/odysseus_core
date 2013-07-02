@@ -216,10 +216,6 @@ public class Heatmap extends RasterLayer {
 			Envelope tempEnv = new Envelope(new Coordinate(transformedPoint[0],
 					transformedPoint[1]));
 
-			// If this point is not in the heatMapArea -> expand heatMapArea
-			// (should not happen if auto-positioning is on)
-			// heatMapArea.expandToInclude(tempEnv);
-
 			if (heatMapArea.covers(tempEnv)) {
 				// Just calculate with this point if its in the area
 				// (maybe the area the user gave us does not include every point
@@ -396,22 +392,16 @@ public class Heatmap extends RasterLayer {
 	 */
 	@Override
 	public Envelope getEnvelope() {
-//		CRSFactory csFactory = new CRSFactory();
-//		CoordinateReferenceSystem crs = csFactory.createFromName("EPSG:"
-//				+ this.srid);
-		
-		// I guess, the geo-component has a problem with 4326, cause the coordinates there are "small"
 		CoordinateTransform ct = screenManager.getTransformation().getCoordinateTransform(4326, this.srid);
 		Envelope geoEnv = config.getCoverage();
-		if (zoomArea != null) {
-			geoEnv = zoomArea;
-		}
+		// Doesn't work - don't know why, I guess the transformation has a problem with 4326
+//		if (zoomArea != null) {
+//			geoEnv = zoomArea;
+//		}
 		ProjCoordinate src1 = new ProjCoordinate(geoEnv.getMaxX(), geoEnv.getMaxY());
 		ProjCoordinate src2 = new ProjCoordinate(geoEnv.getMinX(), geoEnv.getMinY());
 		ProjCoordinate dst1 = new ProjCoordinate();
 		ProjCoordinate dst2 = new ProjCoordinate();
-//		crs.getProjection().project(src1, dst1);
-//		crs.getProjection().project(src2, dst2);
 		ct.transform(src1, dst1);
 		ct.transform(src2, dst2);
 		Envelope coverage = new Envelope(dst1.x, dst2.x, dst1.y, dst2.y);
