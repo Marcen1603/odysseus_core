@@ -41,7 +41,7 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 	private static final Logger LOG = LoggerFactory.getLogger(SourcesView.class);
 
 	private TreeViewer viewer;
-	volatile boolean isRefreshing = false;
+	volatile boolean isRefreshing;
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
@@ -99,16 +99,17 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 			return;
 		}
 		isRefreshing=true;
+		
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
+					isRefreshing=false;
 					getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
 				} catch (Exception e) {
 					LOG.error("Exception during setting input for treeViewer in sourcesView", e);
 				}
-				isRefreshing=false;
 			}
 
 		});
