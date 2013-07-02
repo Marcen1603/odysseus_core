@@ -5,6 +5,13 @@ import java.util.Map;
 
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.functions.GaussianProcesses;
+import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.Logistic;
+import weka.classifiers.functions.SMO;
+import weka.classifiers.functions.SMOreg;
+import weka.classifiers.functions.SimpleLinearRegression;
+import weka.classifiers.functions.SimpleLogistic;
 import weka.classifiers.rules.DecisionTable;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
@@ -40,6 +47,30 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 				case "DECISIONTABLE":
 					wekaLearner = new DecisionTable();
 					break;
+				case "LINEAR-REGRESSION":
+					wekaLearner = new LinearRegression();
+					break;
+				case "LOGISTIC":
+					wekaLearner = new Logistic();
+					break;
+				case "GAUSSIAN-PROCESSES":
+					wekaLearner = new GaussianProcesses();
+					break;
+				case "SMO":
+					wekaLearner = new SMO();
+					break;
+				case "MULTILAYER-PERCEPTRON":
+					wekaLearner = new Logistic();
+					break;
+				case "SIMPLE-LOGISTIC":
+					wekaLearner = new SimpleLogistic();
+					break;
+				case "SIMPLE_LINEAR-REGRESSION":
+					wekaLearner = new SimpleLinearRegression();
+					break;
+				case "SMO-REGRESSION":
+					wekaLearner = new SMOreg();
+					break;
 				default:
 					throw new IllegalArgumentException("There is no classifier model called " + modelSmall + "!");
 				}
@@ -58,6 +89,9 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 	@Override
 	public IClassifier<M> createClassifier(List<Tuple<M>> tuples) {
 		try {
+			if(wekaLearner instanceof SMOreg && tuples.size()<=1){
+				return null;
+			}
 			Instances instances = WekaConverter.convertToInstances(tuples, this.war);
 			instances.setClassIndex(this.classIndex);
 			wekaLearner.buildClassifier(instances);
@@ -65,7 +99,11 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 			classifier.init(this.recognizedSchema, classAttribute);
 			return classifier;
 		} catch (Exception e) {
-			e.printStackTrace();
+			if(e.getMessage().equalsIgnoreCase("All class values are the same. At least two class values should be different")){
+				return null;
+			}else{
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}

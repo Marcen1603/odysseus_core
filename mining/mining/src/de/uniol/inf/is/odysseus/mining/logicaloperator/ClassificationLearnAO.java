@@ -44,7 +44,7 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 
 	private Map<String, String> options = new HashMap<>();
 	private String learner;
-	private Map<String, List<String>> nominals;
+	private Map<String, List<String>> nominals = new HashMap<>();
 
 	public ClassificationLearnAO() {
 

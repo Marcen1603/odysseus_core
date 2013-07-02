@@ -45,6 +45,8 @@ public class RuleProvider implements ITransformRuleProvider{
 		rules.add(new TLatencyConverterAORule());
 		rules.add(new TMeasureThroughputAORule());
 		
+		rules.add(new TTimeshiftAORule());
+		
 		return rules;
 	}
 

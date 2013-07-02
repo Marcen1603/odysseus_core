@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -38,7 +40,7 @@ import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
  */
 public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
-	private static Logger logger = LoggerFactory.getLogger(ClassificationPO.class);
+	protected static Logger logger = LoggerFactory.getLogger(ClassificationPO.class);
 	private static final int TREE_PORT = 1;
 	private SDFSchema inputSchema;
 	private DefaultTISweepArea<Tuple<M>> treeSA = new DefaultTISweepArea<>();
@@ -107,12 +109,14 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		}
 	}
 
-	private void classifyAndTransfer(Tuple<M> classifierTuple, Tuple<M> toClassify) {
+	protected void classifyAndTransfer(Tuple<M> classifierTuple, Tuple<M> toClassify) {
 		IClassifier<M> classifier = classifierTuple.getAttribute(0);
 		long tillLearn = System.nanoTime();
 		Object clazz = classifier.classify(toClassify);
 		if (clazz == null) {
 			logger.warn("value is unknown, so that the tuple could not be classified, tuple: " + toClassify);
+			PointInTime min = PointInTime.min(classifierTuple.getMetadata().getStart(), toClassify.getMetadata().getStart());
+			sendPunctuation(Heartbeat.createNewHeartbeat(min));
 			return;
 		}
 		long afterLearn = System.nanoTime();

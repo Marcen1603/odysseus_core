@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastArrayList;
@@ -53,23 +54,21 @@ public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe
 
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>(new FastLinkedList<Tuple<M>>());
 	// private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
-	private FastArrayList<PointInTime> points = new FastArrayList<PointInTime>();	
+	private FastArrayList<PointInTime> points = new FastArrayList<PointInTime>();
 	private IClassificationLearner<M> learn;
-	
 
 	public ClassificationLearnPO(IClassificationLearner<M> learn) {
-		this.learn = learn;				
+		this.learn = learn;
 	}
 
 	public ClassificationLearnPO(ClassificationLearnPO<M> clusteringPO) {
-		this.learn = clusteringPO.learn;		
+		this.learn = clusteringPO.learn;
 	}
 
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -98,22 +97,26 @@ public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe
 					List<Tuple<M>> qualifies = this.sweepArea.queryOverlapsAsList(ti);
 
 					long tillLearn = System.nanoTime();
-					
+
 					IClassifier<M> classifier = learn.createClassifier(qualifies);
-					long afterLearn = System.nanoTime();
-					
-					M metadata = (M) object.getMetadata().clone();
-					Tuple<M> newTuple = new Tuple<M>(1, false);
-					newTuple.setAttribute(0, classifier);
-					newTuple.setMetadata(metadata);
-					newTuple.getMetadata().setStartAndEnd(startP, endP);
-					// ((ILatency)newTuple.getMetadata()).setLatencyStart(start);
-					// ((ILatency)newTuple.getMetadata()).setLatencyEnd(end);
-					newTuple.setMetadata("LATENCY_BEFORE", tillLearn);
-					newTuple.setMetadata("LATENCY_AFTER", afterLearn);
-					transfer(newTuple);
+					if (classifier != null) {
+
+						long afterLearn = System.nanoTime();
+
+						M metadata = (M) object.getMetadata().clone();
+						Tuple<M> newTuple = new Tuple<M>(1, false);
+						newTuple.setAttribute(0, classifier);
+						newTuple.setMetadata(metadata);
+						newTuple.getMetadata().setStartAndEnd(startP, endP);
+						// ((ILatency)newTuple.getMetadata()).setLatencyStart(start);
+						// ((ILatency)newTuple.getMetadata()).setLatencyEnd(end);
+						newTuple.setMetadata("LATENCY_BEFORE", tillLearn);
+						newTuple.setMetadata("LATENCY_AFTER", afterLearn);
+						transfer(newTuple);
+					}
 					// System.out.println("TRANSFER: " + (System.currentTimeMillis() - time - duration));
 					removeTill = i;
+					sendPunctuation(Heartbeat.createNewHeartbeat(startP));
 				}
 			} else {
 				break;
@@ -126,8 +129,6 @@ public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe
 
 	}
 
-	
-
 	@Override
 	protected void process_close() {
 		sweepArea.clear();
@@ -135,9 +136,9 @@ public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-//		if(punctuation.isHeartbeat()){
-//			this.points.add(punctuation.getTime());
-//		}
+		// if(punctuation.isHeartbeat()){
+		// this.points.add(punctuation.getTime());
+		// }
 	}
 
 	@Override

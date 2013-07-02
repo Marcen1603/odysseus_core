@@ -41,32 +41,37 @@ public class LatencyConverterPO extends AbstractPipe<Tuple<? extends ILatency>, 
 	@Override
 	protected void process_next(Tuple<? extends ILatency> object, int port) {
 		counter++;
-		//latency till clustering
-		long tillClusteringEnd = ((Long) object.getMetadata("LATENCY_BEFORE"));
-		double timeBeforeClustering = (tillClusteringEnd - object.getMetadata().getLatencyStart())/factor;;
-		
+		// latency till clustering
+		double timeBeforeClustering = 0.0;
+		long tillClusteringEnd = 0;
+		if (object.getMetadata("LATENCY_BEFORE") != null) {
+			tillClusteringEnd = ((Long) object.getMetadata("LATENCY_BEFORE"));
+			timeBeforeClustering = (tillClusteringEnd - object.getMetadata().getLatencyStart()) / factor;			
+		}
+
 		// latency after clustering
-		long afterClusteringEnd = ((Long) object.getMetadata("LATENCY_AFTER"));
-		double timeForClustering = (afterClusteringEnd - tillClusteringEnd)/factor;;
+		long afterClusteringEnd = 0;
+		double timeForClustering = 0.0;
+		if(object.getMetadata("LATENCY_AFTER")!=null){
+			afterClusteringEnd = ((Long) object.getMetadata("LATENCY_AFTER"));
+			timeForClustering = (afterClusteringEnd - tillClusteringEnd) / factor;
+		}
 		
-		// total latency till calclatency
+
+		// total latency till calclatency		
 		long latency = object.getMetadata().getLatencyEnd();
-		double transferLatency = (latency - afterClusteringEnd)/factor;
-		
-		
-		
+		double transferLatency = (latency - afterClusteringEnd) / factor;
+
 		beforeSum = beforeSum + timeBeforeClustering;
 		afterSum = afterSum + timeForClustering;
 		transferSum = transferSum + transferLatency;
-		
-		
-	
+
 		if (counter == sample) {
 			Tuple<ILatency> t = new Tuple<>(4, false);
 			double beforeMean = beforeSum / counter;
 			double afterMean = afterSum / counter;
-			double transferMean = transferSum/counter;
-			double total = beforeMean+afterMean+transferMean;
+			double transferMean = transferSum / counter;
+			double total = beforeMean + afterMean + transferMean;
 			t.setAttribute(0, beforeMean);
 			t.setAttribute(1, afterMean);
 			t.setAttribute(2, transferMean);
@@ -84,10 +89,10 @@ public class LatencyConverterPO extends AbstractPipe<Tuple<? extends ILatency>, 
 	public AbstractPipe<Tuple<? extends ILatency>, Tuple<? extends ILatency>> clone() {
 		return new LatencyConverterPO(this);
 	}
-	
+
 	@Override
 	protected void process_done() {
-		System.out.println("LatencyCalculation - done (open="+isOpen()+") - "+this);
+		System.out.println("LatencyCalculation - done (open=" + isOpen() + ") - " + this);
 	}
 
 }

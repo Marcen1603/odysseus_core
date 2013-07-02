@@ -49,7 +49,7 @@ public class ClassificationAO extends AbstractLogicalOperator {
 			attributes.add(new SDFAttribute(null, oldAttribute.getAttributeName(), oldAttribute.getDatatype()));
 		}
 		
-		SDFAttribute attributeId = new SDFAttribute(null, "clazz", SDFDatatype.STRING);
+		SDFAttribute attributeId = new SDFAttribute(null, "clazz", SDFDatatype.DOUBLE);
 		attributes.add(attributeId);
 		
 		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
