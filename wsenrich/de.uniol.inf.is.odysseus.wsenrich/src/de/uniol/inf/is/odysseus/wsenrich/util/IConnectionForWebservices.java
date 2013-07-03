@@ -52,12 +52,12 @@ public interface IConnectionForWebservices {
 	 * Setter for the Arguments
 	 * @param value The arguments
 	 */
-	public void setArgument(String value);
+	public void setArguments(String value);
 	
 	/**
 	 * @return The arguments of the request or the Document of a Post-Request
 	 */
-	public String getArgument();
+	public String getArguments();
 	/**
 	 * @return The name of the Connection method
 	 */

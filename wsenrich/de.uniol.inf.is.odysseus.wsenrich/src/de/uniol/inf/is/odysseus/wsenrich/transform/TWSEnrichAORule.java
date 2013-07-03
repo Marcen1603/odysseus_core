@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.wsenrich.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.UseLeftInputMetadata;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
@@ -31,6 +33,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = 
 				new RelationalMergeFunction<ITimeInterval>(logical.getOutputSchema().size());
+		IMetadataMergeFunction<ITimeInterval> metaMerge = new UseLeftInputMetadata<>();
 				IConnectionForWebservices connection = ConnectionForWebservicesRegistry.getInstance(logical.getGetOrPost());
 				IRequestBuilder requestBuilder = RequestBuilderRegistry.getInstance(logical.getMethod());
 				HttpEntityToStringConverter converter = new HttpEntityToStringConverter(logical.getCharset());
@@ -49,6 +52,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 			logical.getFilterNullTuples(),
 			logical.getKeyValueOutput(),
 			dataMergeFunction,
+			metaMerge,
 			connection,
 			requestBuilder,
 			converter,

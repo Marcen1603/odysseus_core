@@ -67,7 +67,7 @@ public class JsonPathKeyFinder implements IKeyFinder {
 			replaceJsonData(temp, temp.indexOf("\""), "\"", "");
 			replaceJsonData(temp, temp.indexOf(","), ",", ", ");
 			
-			if(temp.equals("")) {
+			if(temp.equals("") || temp.length() == 0 || temp == null) {
 				return null;
 			} else {
 				this.value = temp;

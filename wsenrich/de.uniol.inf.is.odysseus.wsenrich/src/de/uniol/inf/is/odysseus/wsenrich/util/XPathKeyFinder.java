@@ -109,7 +109,7 @@ public class XPathKeyFinder implements IKeyFinder {
 						temp.append(nod.getFirstChild().getNodeValue() + ", ");	
 					}
 				}
-				if(temp.equals("")){
+				if(temp.equals("") || temp.length() == 0 || temp == null){
 					return null;
 				}
 				if(!keyValue && temp.length() > 2) {
@@ -145,7 +145,7 @@ public class XPathKeyFinder implements IKeyFinder {
 				 		temp.append(nodeList.item(i).getFirstChild().getNodeValue() + ", ");
 				 	}
 				} 
-			 if(temp.equals("")) {
+			 if(temp.equals("") || temp.length() == 0 || temp == null) {
 				 return null;
 			 }
 			 if(!keyValue && temp.length() > 2) {

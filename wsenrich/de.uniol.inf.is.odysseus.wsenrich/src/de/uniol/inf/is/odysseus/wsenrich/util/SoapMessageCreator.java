@@ -65,7 +65,7 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 		this.wsdlUrl = wsdlUrl;
 		this.operationName = operationName;
 		readWsdl();
-		this.soapMessage = SetSoapMessage(operationName);
+		this.soapMessage = buildSoapMessage(operationName);
 	}
 	
 	/**
@@ -114,10 +114,9 @@ public class SoapMessageCreator implements ISoapMessageCreator {
 	
 	/**
 	 * Builds the Soap-Message for the defined operation
-	 * @param operationName the name of the operation where the soap-message
-	 * has to be created
+	 * @param operationName the name of the operation to create the soap message
 	 */
-	private String SetSoapMessage(String operationName) {
+	private String buildSoapMessage(String operationName) {
 		if(this.operationName == null || this.operationName.equals("")) {	
 			setOperationName(operationName);	
 		}

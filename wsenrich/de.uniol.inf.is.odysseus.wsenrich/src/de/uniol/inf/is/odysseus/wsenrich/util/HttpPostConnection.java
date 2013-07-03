@@ -78,12 +78,12 @@ public class HttpPostConnection implements IConnectionForWebservices {
 	}
 	
 	@Override
-	public void setArgument(String value) {
+	public void setArguments(String value) {
 		this.argument = value;
 	}
 	
 	@Override
-	public String getArgument() {
+	public String getArguments() {
 		return this.argument;
 	}
 		

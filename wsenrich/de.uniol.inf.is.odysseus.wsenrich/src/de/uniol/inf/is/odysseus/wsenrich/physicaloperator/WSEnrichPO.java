@@ -6,8 +6,11 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -35,6 +38,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final boolean keyValueOutput;
 	private final int[] parameterPositions;
 	private final IDataMergeFunction<Tuple<T>, T> dataMergeFunction;
+	private final IMetadataMergeFunction<T> metaMergeFunction;
 	private final IConnectionForWebservices connection;
 	private final IRequestBuilder requestBuilder;
 	private final HttpEntityToStringConverter converter;
@@ -45,6 +49,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 					List<Option> arguments, String operation, List<SDFAttribute> receivedData,
 					String charset, String parsingMethod, boolean filterNullTuples, boolean keyValueOutput,
 					IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
+					IMetadataMergeFunction<T> metaMergeFunction,
 					IConnectionForWebservices connection, IRequestBuilder requestBuilder, 
 					HttpEntityToStringConverter converter, IKeyFinder keyFinder) {
 						
@@ -62,6 +67,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.keyValueOutput = keyValueOutput;
 		this.parameterPositions = new int[arguments.size()];
 		this.dataMergeFunction = dataMergeFunction;
+		this.metaMergeFunction = metaMergeFunction;
 		this.connection = connection;
 		this.requestBuilder = requestBuilder;
 		this.converter = converter;
@@ -87,6 +93,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 				wsEnrichPO.parameterPositions,
 				wsEnrichPO.parameterPositions.length);
 		this.dataMergeFunction = wsEnrichPO.dataMergeFunction.clone();
+		this.metaMergeFunction = wsEnrichPO.metaMergeFunction.clone();
 		this.connection = wsEnrichPO.connection;
 		this.requestBuilder = wsEnrichPO.requestBuilder;
 		this.converter = wsEnrichPO.converter;
@@ -116,7 +123,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		
 		//Connect to the Url
 		connection.setUri(uri);
-		connection.setArgument(postData);
+		connection.setArguments(postData);
 		connection.connect(charset, method);
 		HttpEntity entity = connection.retrieveBody();
 		
@@ -129,35 +136,37 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		//them to the tuple
 		keyFinder.setMessage(converter.getOutput(), charset);
 		
+		Tuple<T> wsTuple = new Tuple<>(receivedData.size(), false);
+		
 		for(int i = 0; i < receivedData.size(); i++) {
 			keyFinder.setSearch(receivedData.get(i).getAttributeName());
 			Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput);
-			if(value == null && filterNullTuples) {
+			if((value == null || value.equals("")) && filterNullTuples) {
 				return;
-			} else if(value == null && !filterNullTuples) {
-				inputTuple.append("null", false);
-			} else inputTuple.append(value, false);
+			} else if((value == null || value.equals("")) && !filterNullTuples) {
+				wsTuple.setAttribute(i, "null");
+			} else {
+				wsTuple.setAttribute(i, value);
+			}
 		}
-		transfer(inputTuple);
+		Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, wsTuple, metaMergeFunction, Order.LeftRight);
+	
+		transfer(outputTuple);
 	}
 	
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
-		
 		initParameterPositions();
-		dataMergeFunction.init();
-		
+//		dataMergeFunction.init();
 	}
 	
 	@Override
-	protected synchronized void process_close() {
-		
+	protected synchronized void process_close() {	
 		//actually nothing to do
 	}
 
 	@Override
 	public AbstractPipe<Tuple<T>, Tuple<T>> clone() {
-		
 		return new WSEnrichPO<T>(this);
 	}
 	
@@ -168,20 +177,15 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	 * each input tuple/ process_next-call.
 	 */
 	private void initParameterPositions() {
-		
 		for(int i = 0; i < arguments.size(); i++) {
 			String variableName = arguments.get(i).getValue();
-			
 			//Attributes of InputSchema are the Values of the KeyValueList
 			SDFAttribute attribute = getOutputSchema().findAttribute(variableName);
 			if(attribute == null) {
 				throw new RuntimeException("Could not find attribute " + variableName + " in InputTuple.");
 			}
-			
 			parameterPositions[i] = getOutputSchema().indexOf(attribute);	
-			
 		}
-		
 	}
 	
 	/**
@@ -190,14 +194,10 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	 * @param inputTuple the current tuple from the input stream
 	 * @return the attributes for the webservicequery
 	 */
-	public List<Option> getQueryParameters(Tuple<T> inputTuple, List<Option> arguments) {
-		
+	private List<Option> getQueryParameters(Tuple<T> inputTuple, List<Option> arguments) {
 		List<Option> queryParameters = arguments;
-		
 		for(int i = 0; i < parameterPositions.length; i++) {
-			
 			queryParameters.set(i, new Option(queryParameters.get(i).getName(), inputTuple.getAttribute(parameterPositions[i]).toString()));
-			
 		}
 		return queryParameters;	
 	}
@@ -207,14 +207,12 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	 */
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		
 		if(this == ipo) 
 			return true;
 		if(!super.equals(ipo))
 			return false;
 		if(getClass() != ipo.getClass())
 			return false;
-		
 		@SuppressWarnings("rawtypes")
 		WSEnrichPO other = (WSEnrichPO) ipo;
 		if(!serviceMethod.equals(other.serviceMethod))

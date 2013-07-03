@@ -48,12 +48,12 @@ public class HttpGetConnection implements IConnectionForWebservices {
 	}
 	
 	@Override
-	public void setArgument(String value) {
+	public void setArguments(String value) {
 		//Nothing to do
 	}
 	
 	@Override
-	public String getArgument() {
+	public String getArguments() {
 		return null;
 	}
 	
