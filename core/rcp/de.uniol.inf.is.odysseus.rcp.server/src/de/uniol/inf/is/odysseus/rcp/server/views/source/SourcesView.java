@@ -42,6 +42,8 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 
 	private TreeViewer viewer;
 	volatile boolean isRefreshing;
+	private boolean refreshEnabled = true;
+
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
@@ -95,24 +97,25 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 
 	public void refresh() {
 
-		if (isRefreshing) {
-			return;
-		}
-		isRefreshing=true;
-		
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					isRefreshing=false;
-					getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
-				} catch (Exception e) {
-					LOG.error("Exception during setting input for treeViewer in sourcesView", e);
-				}
+		if (refreshEnabled) {
+			if (isRefreshing) {
+				return;
 			}
+			isRefreshing = true;
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-		});
+				@Override
+				public void run() {
+					try {
+						isRefreshing = false;
+						getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
+					} catch (Exception e) {
+						LOG.error("Exception during setting input for treeViewer in sourcesView", e);
+					}
+				}
+
+			});
+		}
 	}
 
 	protected void setTreeViewer(TreeViewer viewer) {
@@ -142,6 +145,14 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 	@Override
 	public void dataDictionaryChanged(IDataDictionary sender) {
 		refresh();
+	}
+
+	public boolean isRefreshEnabled() {
+		return refreshEnabled;
+	}
+
+	public void setRefreshEnabled(boolean refreshEnabled) {
+		this.refreshEnabled = refreshEnabled;
 	}
 
 }

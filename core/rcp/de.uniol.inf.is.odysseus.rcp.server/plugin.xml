@@ -124,6 +124,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.SetSortingInSourcesViewCommand"
             name="Sort in SourcesView">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.server.commands.DisableRefreshSourcesCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.DisableRefreshSourcesViewCommand"
+            name="Disable Refreshing Sources View">
+      </command>
     </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -150,6 +155,12 @@
                name="de.uniol.inf.is.odysseus.rcp.server.separator1"
                visible="true">
          </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.DisableRefreshSourcesViewCommand"
+               icon="icons/disable-refresh.gif"
+               label="Diable Refresh"
+               style="toggle">
+         </command>
       </menuContribution>
    </extension>
 
