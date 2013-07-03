@@ -28,10 +28,10 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>
  */
-public class ProbabilisticProjectPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+public class ProbabilisticContinuousProjectPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 	/** Logger. */
 	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticProjectPO.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticContinuousProjectPO.class);
 	/** The positions of attributes to restrict on. */
 	private final int[] restrictList;
 
@@ -41,7 +41,7 @@ public class ProbabilisticProjectPO<T extends IMetaAttribute> extends AbstractPi
 	 * @param restrictList
 	 *            The positions of attributes to restrict on
 	 */
-	public ProbabilisticProjectPO(final int[] restrictList) {
+	public ProbabilisticContinuousProjectPO(final int[] restrictList) {
 		this.restrictList = restrictList;
 	}
 
@@ -51,7 +51,7 @@ public class ProbabilisticProjectPO<T extends IMetaAttribute> extends AbstractPi
 	 * @param probabilisticProjectPO
 	 *            The object
 	 */
-	public ProbabilisticProjectPO(final ProbabilisticProjectPO<T> probabilisticProjectPO) {
+	public ProbabilisticContinuousProjectPO(final ProbabilisticContinuousProjectPO<T> probabilisticProjectPO) {
 		super();
 		final int length = probabilisticProjectPO.restrictList.length;
 		this.restrictList = new int[length];
@@ -86,8 +86,8 @@ public class ProbabilisticProjectPO<T extends IMetaAttribute> extends AbstractPi
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone ()
 	 */
 	@Override
-	public final ProbabilisticProjectPO<T> clone() {
-		return new ProbabilisticProjectPO<T>(this);
+	public final ProbabilisticContinuousProjectPO<T> clone() {
+		return new ProbabilisticContinuousProjectPO<T>(this);
 	}
 
 }

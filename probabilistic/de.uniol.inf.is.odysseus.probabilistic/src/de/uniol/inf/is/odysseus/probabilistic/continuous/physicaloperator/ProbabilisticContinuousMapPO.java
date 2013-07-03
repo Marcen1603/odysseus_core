@@ -35,10 +35,10 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpress
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>
  */
-public class ProbabilisticMapPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 	/** Logger. */
 	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticMapPO.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticContinuousMapPO.class);
 	/** Attribute positions list required for variable bindings. */
 	private int[][] variables;
 	/** The expressions. */
@@ -54,7 +54,7 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends AbstractPipe<P
 	 * @param expressions
 	 *            The probabilistic expression.
 	 */
-	public ProbabilisticMapPO(final SDFSchema inputSchema, final SDFProbabilisticExpression[] expressions) {
+	public ProbabilisticContinuousMapPO(final SDFSchema inputSchema, final SDFProbabilisticExpression[] expressions) {
 		this.inputSchema = inputSchema;
 		init(inputSchema, expressions);
 	}
@@ -67,7 +67,7 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends AbstractPipe<P
 	 * @param expressions
 	 *            The expression.
 	 */
-	public ProbabilisticMapPO(final SDFSchema inputSchema, final SDFExpression[] expressions) {
+	public ProbabilisticContinuousMapPO(final SDFSchema inputSchema, final SDFExpression[] expressions) {
 		this.inputSchema = inputSchema;
 		init(inputSchema, expressions);
 	}
@@ -117,7 +117,7 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends AbstractPipe<P
 	 * @param probabilisticMapPO
 	 *            The copy
 	 */
-	public ProbabilisticMapPO(final ProbabilisticMapPO<T> probabilisticMapPO) {
+	public ProbabilisticContinuousMapPO(final ProbabilisticContinuousMapPO<T> probabilisticMapPO) {
 		this.inputSchema = probabilisticMapPO.inputSchema.clone();
 		init(probabilisticMapPO.inputSchema, probabilisticMapPO.expressions);
 	}
@@ -170,8 +170,8 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends AbstractPipe<P
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone ()
 	 */
 	@Override
-	public final ProbabilisticMapPO<T> clone() {
-		return new ProbabilisticMapPO<T>(this);
+	public final ProbabilisticContinuousMapPO<T> clone() {
+		return new ProbabilisticContinuousMapPO<T>(this);
 	}
 
 	/*
@@ -182,10 +182,10 @@ public class ProbabilisticMapPO<T extends IMetaAttribute> extends AbstractPipe<P
 	@Override
 	@SuppressWarnings({ "rawtypes" })
 	public final boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
-		if (!(ipo instanceof ProbabilisticMapPO)) {
+		if (!(ipo instanceof ProbabilisticContinuousMapPO)) {
 			return false;
 		}
-		ProbabilisticMapPO mapPo = (ProbabilisticMapPO) ipo;
+		ProbabilisticContinuousMapPO mapPo = (ProbabilisticContinuousMapPO) ipo;
 		if (this.hasSameSources(mapPo) && this.inputSchema.compareTo(mapPo.inputSchema) == 0) {
 			if (this.expressions.length == mapPo.expressions.length) {
 				for (int i = 0; i < this.expressions.length; i++) {

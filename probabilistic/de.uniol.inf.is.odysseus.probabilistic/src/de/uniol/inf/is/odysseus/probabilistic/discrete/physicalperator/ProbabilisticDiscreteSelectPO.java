@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
+package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGeneratio
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticPredicate;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticResult;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
@@ -36,10 +35,10 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
  * @author Christian Kuka <christian.kuka@offis.de>
  * @param <T>
  */
-public class ContinuousProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+public class ProbabilisticDiscreteSelectPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 	/** Logger. */
 	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(ContinuousProbabilisticSelectPO.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteSelectPO.class);
 
 	/** The predicate. */
 	private final ProbabilisticPredicate predicate;
@@ -52,7 +51,7 @@ public class ContinuousProbabilisticSelectPO<T extends IMetaAttribute> extends A
 	 * @param predicate
 	 *            The predicate
 	 */
-	public ContinuousProbabilisticSelectPO(final ProbabilisticPredicate predicate) {
+	public ProbabilisticDiscreteSelectPO(final ProbabilisticPredicate predicate) {
 		this.predicate = predicate.clone();
 	}
 
@@ -62,7 +61,7 @@ public class ContinuousProbabilisticSelectPO<T extends IMetaAttribute> extends A
 	 * @param po
 	 *            The copy
 	 */
-	public ContinuousProbabilisticSelectPO(final ContinuousProbabilisticSelectPO<T> po) {
+	public ProbabilisticDiscreteSelectPO(final ProbabilisticDiscreteSelectPO<T> po) {
 		this.predicate = po.predicate.clone();
 		this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy.clone();
 	}
@@ -91,7 +90,7 @@ public class ContinuousProbabilisticSelectPO<T extends IMetaAttribute> extends A
 		if (result.getProbability() > 0.0) {
 			int attributePosition = predicate.getAttributePositions()[0];
 			((IProbabilistic) outputVal.getMetadata()).setExistence(result.getProbability());
-			outputVal.setDistribution(attributePosition, (NormalDistributionMixture) result.getValue());
+			outputVal.setAttribute(attributePosition, result.getValue());
 			transfer(outputVal);
 		}
 	}
@@ -120,8 +119,8 @@ public class ContinuousProbabilisticSelectPO<T extends IMetaAttribute> extends A
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone ()
 	 */
 	@Override
-	public final ContinuousProbabilisticSelectPO<T> clone() {
-		return new ContinuousProbabilisticSelectPO<T>(this);
+	public final ProbabilisticDiscreteSelectPO<T> clone() {
+		return new ProbabilisticDiscreteSelectPO<T>(this);
 	}
 
 	/*
@@ -160,11 +159,11 @@ public class ContinuousProbabilisticSelectPO<T extends IMetaAttribute> extends A
 	 */
 	@Override
 	public final boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
-		if (!(ipo instanceof ContinuousProbabilisticSelectPO<?>)) {
+		if (!(ipo instanceof ProbabilisticDiscreteSelectPO<?>)) {
 			return false;
 		}
 		@SuppressWarnings("unchecked")
-		final ContinuousProbabilisticSelectPO<T> spo = (ContinuousProbabilisticSelectPO<T>) ipo;
+		final ProbabilisticDiscreteSelectPO<T> spo = (ProbabilisticDiscreteSelectPO<T>) ipo;
 		// Different sources
 		if (!this.hasSameSources(spo)) {
 			return false;

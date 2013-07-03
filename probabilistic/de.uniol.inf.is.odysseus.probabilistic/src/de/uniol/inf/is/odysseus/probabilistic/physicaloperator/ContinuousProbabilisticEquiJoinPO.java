@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.RegressionTISweepArea;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
@@ -159,7 +159,7 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 				.add(new ProbabilisticMergeFunction());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
-		RegressionTISweepArea[] areas = new RegressionTISweepArea[2];
+		LinearRegressionTISweepArea[] areas = new LinearRegressionTISweepArea[2];
 
 		for (int port = 0; port < 2; port++) {
 			int otherPort = port ^ 1;
@@ -186,7 +186,7 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 				viewAttributes.removeAll(joinAttributes);
 				int[] viewPos = SchemaUtils.getAttributePos(schema,
 						viewAttributes);
-				areas[port] = new RegressionTISweepArea(
+				areas[port] = new LinearRegressionTISweepArea(
 						joinPos, viewPos);
 				joinPO.setBetas(areas[port].getRegressionCoefficients(), port);
 			}

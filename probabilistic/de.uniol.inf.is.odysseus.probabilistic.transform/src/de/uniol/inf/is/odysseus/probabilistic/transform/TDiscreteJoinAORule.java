@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.DiscreteProbabilisticJoinPO;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.ProbabilisticDiscreteJoinPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.DefaultProbabilisticTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -58,7 +58,7 @@ public class TDiscreteJoinAORule extends AbstractTransformationRule<JoinAO> {
 
 		final IPredicate pred = operator.getPredicate();
 
-		final DiscreteProbabilisticJoinPO joinPO = new DiscreteProbabilisticJoinPO(SchemaUtils.getDiscreteProbabilisticAttributePos(operator.getInputSchema(0)), SchemaUtils.getDiscreteProbabilisticAttributePos(operator.getInputSchema(1)));
+		final ProbabilisticDiscreteJoinPO joinPO = new ProbabilisticDiscreteJoinPO(SchemaUtils.getDiscreteProbabilisticAttributePos(operator.getInputSchema(0)), SchemaUtils.getDiscreteProbabilisticAttributePos(operator.getInputSchema(1)));
 		joinPO.setJoinPredicate(pred.clone());
 
 		// if in both input paths there is no window, we

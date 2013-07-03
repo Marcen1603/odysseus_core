@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticProjectPO;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousProjectPO;
 
 @Test
 public class TestProject {
@@ -22,15 +22,15 @@ public class TestProject {
 	public final void testProject(
 			final ProbabilisticTuple<IMetaAttribute> tuple, int[] projectMatrix) {
 		try {
-			Class<ProbabilisticProjectPO> operator = ProbabilisticProjectPO.class;
+			Class<ProbabilisticContinuousProjectPO> operator = ProbabilisticContinuousProjectPO.class;
 			Class[] parameterTypes = new Class[1];
 			parameterTypes[0] = projectMatrix.getClass();
-			Constructor<ProbabilisticProjectPO> constructor = operator
+			Constructor<ProbabilisticContinuousProjectPO> constructor = operator
 					.getConstructor(parameterTypes);
 
-			ProbabilisticProjectPO obj = constructor.newInstance(projectMatrix);
+			ProbabilisticContinuousProjectPO obj = constructor.newInstance(projectMatrix);
 
-			Method processMethod = ProbabilisticProjectPO.class
+			Method processMethod = ProbabilisticContinuousProjectPO.class
 					.getDeclaredMethod("process_next", new Class[] {
 							ProbabilisticTuple.class, Integer.TYPE });
 			processMethod.setAccessible(true);

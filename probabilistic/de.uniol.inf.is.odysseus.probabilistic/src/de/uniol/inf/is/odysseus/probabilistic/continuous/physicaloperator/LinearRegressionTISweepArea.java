@@ -39,10 +39,10 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class RegressionTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> {
+public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> {
 	/** Logger. */
 	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(RegressionTISweepArea.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LinearRegressionTISweepArea.class);
 	/** The dependent attribute positions. */
 	private final int[] dependentAttributePos;
 	/** The explanatory attributes positions. */
@@ -60,7 +60,7 @@ public class RegressionTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? 
 	 * @param explanatoryAttributePos
 	 *            Positions array of the explanatory attributes
 	 */
-	public RegressionTISweepArea(final int[] dependentAttributePos, final int[] explanatoryAttributePos) {
+	public LinearRegressionTISweepArea(final int[] dependentAttributePos, final int[] explanatoryAttributePos) {
 		this.dependentAttributePos = dependentAttributePos;
 		this.explanatoryAttributePos = explanatoryAttributePos;
 	}
@@ -71,7 +71,7 @@ public class RegressionTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? 
 	 * @param regressionTISweepArea
 	 *            The sweep area
 	 */
-	public RegressionTISweepArea(final RegressionTISweepArea regressionTISweepArea) {
+	public LinearRegressionTISweepArea(final LinearRegressionTISweepArea regressionTISweepArea) {
 		this.dependentAttributePos = regressionTISweepArea.dependentAttributePos.clone();
 		this.explanatoryAttributePos = regressionTISweepArea.explanatoryAttributePos.clone();
 		this.residual = regressionTISweepArea.residual.copy();
@@ -224,7 +224,7 @@ public class RegressionTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? 
 	 * @see de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea#clone()
 	 */
 	@Override
-	public final RegressionTISweepArea clone() {
-		return new RegressionTISweepArea(this);
+	public final LinearRegressionTISweepArea clone() {
+		return new LinearRegressionTISweepArea(this);
 	}
 }

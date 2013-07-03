@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticProjectPO;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousProjectPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -49,7 +49,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	 */
 	@Override
 	public final void execute(final ProjectAO projectAO, final TransformationConfiguration transformConfig) {
-		final IPhysicalOperator projectPO = new ProbabilisticProjectPO<IMetaAttribute>(projectAO.determineRestrictList());
+		final IPhysicalOperator projectPO = new ProbabilisticContinuousProjectPO<IMetaAttribute>(projectAO.determineRestrictList());
 		this.defaultExecute(projectAO, projectPO, transformConfig, true, true);
 	}
 

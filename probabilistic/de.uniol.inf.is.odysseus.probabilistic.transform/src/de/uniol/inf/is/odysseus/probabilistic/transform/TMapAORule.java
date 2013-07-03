@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticMapPO;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -59,7 +59,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 		for (int i = 0; i < expressions.length; i++) {
 			expressions[i] = new SDFProbabilisticExpression(mapAO.getExpressions().get(i));
 		}
-		final IPhysicalOperator mapPO = new ProbabilisticMapPO<IMetaAttribute>(mapAO.getInputSchema(), expressions);
+		final IPhysicalOperator mapPO = new ProbabilisticContinuousMapPO<IMetaAttribute>(mapAO.getInputSchema(), expressions);
 
 		this.defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}

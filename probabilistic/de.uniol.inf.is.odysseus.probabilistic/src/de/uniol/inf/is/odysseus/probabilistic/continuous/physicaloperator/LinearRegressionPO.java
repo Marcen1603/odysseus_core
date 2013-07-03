@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticC
  */
 public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 	/** The sweep area. */
-	private final RegressionTISweepArea area;
+	private final LinearRegressionTISweepArea area;
 
 	/**
 	 * 
@@ -42,7 +42,7 @@ public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<Pr
 	 *            The list of explanatory attribute positions
 	 */
 	public LinearRegressionPO(final int[] dependentList, final int[] explanatoryList) {
-		area = new RegressionTISweepArea(dependentList, explanatoryList);
+		area = new LinearRegressionTISweepArea(dependentList, explanatoryList);
 	}
 
 	/**

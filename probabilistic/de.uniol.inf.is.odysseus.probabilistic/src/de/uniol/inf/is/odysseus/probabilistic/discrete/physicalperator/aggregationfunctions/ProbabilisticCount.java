@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions;
+package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,40 +27,36 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDou
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticAvg extends
+public class ProbabilisticCount extends
 		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2188835286391575126L;
-	private static Map<Integer, ProbabilisticAvg> instances = new HashMap<Integer, ProbabilisticAvg>();
-	// TODO Move to a global configuration
-	private static final double ERROR = 0.25;
-	private static final double BOUND = 0.75;
+	private static final long serialVersionUID = 8734164350164631514L;
+	private static Map<Integer, ProbabilisticCount> instances = new HashMap<Integer, ProbabilisticCount>();
 	private final int pos;
 
-	public static ProbabilisticAvg getInstance(final int pos, boolean partialAggregateInput) {
-		ProbabilisticAvg ret = ProbabilisticAvg.instances.get(pos);
+	public static ProbabilisticCount getInstance(final int pos, boolean partialAggregateInput) {
+		ProbabilisticCount ret = ProbabilisticCount.instances.get(pos);
 		if (ret == null) {
-			ret = new ProbabilisticAvg(pos, partialAggregateInput);
-			ProbabilisticAvg.instances.put(pos, ret);
+			ret = new ProbabilisticCount(pos, partialAggregateInput);
+			ProbabilisticCount.instances.put(pos, ret);
 		}
 		return ret;
 	}
 
-	protected ProbabilisticAvg(final int pos, boolean partialAggregateInput) {
-		super("AVG", partialAggregateInput);
+	protected ProbabilisticCount(final int pos, boolean partialAggregateInput) {
+		super("COUNT", partialAggregateInput);
 		this.pos = pos;
 	}
 
 	@Override
 	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-		final AvgPartialAggregate<Tuple<?>> pa = new AvgPartialAggregate<Tuple<?>>(
-				ProbabilisticAvg.ERROR, ProbabilisticAvg.BOUND);
+		final CountPartialAggregate<Tuple<?>> pa = new CountPartialAggregate<Tuple<?>>();
 		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in
 				.getAttribute(this.pos)).getValues().entrySet()) {
-			pa.update(value.getKey(), value.getValue());
+			pa.add(value.getValue());
 		}
 		return pa;
 	}
@@ -69,27 +65,28 @@ public class ProbabilisticAvg extends
 	public IPartialAggregate<Tuple<?>> merge(
 			final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
 			final boolean createNew) {
-		AvgPartialAggregate<Tuple<?>> pa = null;
+		CountPartialAggregate<Tuple<?>> pa = null;
 		if (createNew) {
-			pa = new AvgPartialAggregate<Tuple<?>>(ProbabilisticAvg.ERROR,
-					ProbabilisticAvg.BOUND);
+			pa = new CountPartialAggregate<Tuple<?>>(
+					((CountPartialAggregate<Tuple<?>>) p).getCount());
 		} else {
-			pa = (AvgPartialAggregate<Tuple<?>>) p;
+			pa = (CountPartialAggregate<Tuple<?>>) p;
 		}
 
 		for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge
 				.getAttribute(this.pos)).getValues().entrySet()) {
-			pa.update(value.getKey(), value.getValue());
+			pa.add(value.getValue());
 		}
+
 		return pa;
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
-		final AvgPartialAggregate<Tuple<?>> pa = (AvgPartialAggregate<Tuple<?>>) p;
+		final CountPartialAggregate<Tuple<?>> pa = (CountPartialAggregate<Tuple<?>>) p;
 		final Tuple<?> r = new Tuple(1, false);
-		r.setAttribute(0, new Double(pa.getAvg()));
+		r.setAttribute(0, new Double(pa.getCount()));
 		return r;
 	}
 
