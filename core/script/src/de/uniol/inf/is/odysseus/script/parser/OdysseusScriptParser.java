@@ -416,7 +416,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		return Arrays.asList(procText.split(System.lineSeparator()));
 	}
 
-	private static String[] rewriteLoop(String[] textToParse) throws OdysseusScriptException {
+	private String[] rewriteLoop(String[] textToParse) throws OdysseusScriptException {
 		List<String> text = new ArrayList<String>();
 		int from = -1;
 		int to = -1;
@@ -449,9 +449,19 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					if (parts.length != 4) {
 						throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable FROM 1 TO 10\"");
 					}
+					Map<String, String> repl = getReplacements(Arrays.copyOf(textToParse, from-1));
 					String variable = parts[0].trim();
-					int startCount = Integer.parseInt(parts[1].trim());
-					int endCount = Integer.parseInt(parts[3].trim());
+					String fromStr = parts[1].trim();
+					if(fromStr.startsWith(REPLACEMENT_START_KEY) && fromStr.endsWith(REPLACEMENT_END_KEY)){
+						fromStr = repl.get(fromStr.substring(2, fromStr.length()-1));
+					}
+					String toStr = parts[3].trim();
+					if(toStr.startsWith(REPLACEMENT_START_KEY) && toStr.endsWith(REPLACEMENT_END_KEY)){
+						toStr = repl.get(toStr.substring(2, toStr.length()-1));
+					}
+					
+					int startCount = Integer.parseInt(fromStr);
+					int endCount = Integer.parseInt(toStr);
 
 					for (int counter = startCount; counter <= endCount; counter++) {
 						for (int i = from + 1; i < to; i++) {
