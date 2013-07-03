@@ -42,10 +42,12 @@ public class TPredicateWindowTIPORule extends
 	@Override
 	public boolean isExecutable(WindowAO operator,
 			TransformationConfiguration config) {
+		if (operator.getWindowType() == WindowType.PREDICATE) {
+			if (operator.isAllPhysicalInputSet()) {
 		if (config.getMetaTypes().contains(
 				ITimeInterval.class.getCanonicalName())) {
-			if (operator.isAllPhysicalInputSet()) {
-				if (operator.getWindowType() == WindowType.PREDICATE) {
+			
+				
 					return true;
 				}
 			}

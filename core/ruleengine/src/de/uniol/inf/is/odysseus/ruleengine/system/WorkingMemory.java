@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -94,7 +95,7 @@ public class WorkingMemory {
 	private void insertIntoTree(Object o){
 		for(Class<?> sc :  getAllInterfacesAndSuperclasses(o)){
 			if(!objectMap.containsKey(sc)){
-				objectMap.put(sc, new ArrayList<>());
+				objectMap.put(sc, new LinkedList<>());
 			}
 			objectMap.get(sc).add(o);			
 		}

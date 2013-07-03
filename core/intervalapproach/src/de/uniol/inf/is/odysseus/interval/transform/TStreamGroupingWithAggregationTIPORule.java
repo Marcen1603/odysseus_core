@@ -47,8 +47,8 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 
 	@Override
 	public boolean isExecutable(AggregateAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
-			if (operator.isAllPhysicalInputSet()) {
+		if (operator.isAllPhysicalInputSet()) {
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {			
 				return true;
 			}
 		}
