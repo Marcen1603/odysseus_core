@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
@@ -46,35 +47,102 @@ public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
 		return "operatorsetcloud";
 		
 	}
-
+	
 	/**
 	 * Returns one {@link Querypart} for each {@link IStatefulOperator} within the {@link ILogicalQuery} plus one {@link QueryPart} with 
 	 * all operators before the first {@link QueryPart}.
 	 */
 	@Override
-	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators) {
+	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators, QueryPart localPart) {
 		
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(operators.size() > 0, "operators must be not empty!");
+		Preconditions.checkNotNull(localPart, "localPart must be not null!");
 		
 		List<QueryPart> parts = Lists.newArrayList();
 		List<ILogicalOperator> opsForCurrentPart = Lists.newArrayList();
-		for(int opIndex = operators.size() - 1; opIndex >= 0; opIndex--) {
-			// list of operators starts beneath TopAOs, not with StreamAOs
+		
+		for(ILogicalOperator operator : operators) {
 			
-			if(Arrays.asList(LOGICAL_OPERATORS_DEFINED_AS_STATEFUL).contains(operators.get(opIndex).getClass())) {
+			if(this.isSink(operator, localPart) || this.isSourceOfStatefulOperator(operator)) {
 				
+				// operator marks the beginning of a new querypart
+				if(!opsForCurrentPart.isEmpty()) {
+					
+					parts.add(DistributionHelper.replaceStreamAOs(new QueryPart(opsForCurrentPart)));
+					opsForCurrentPart.clear();
+					
+				}
+				
+				opsForCurrentPart.add(operator);
+				
+			} else if(Arrays.asList(OperatorSetCloudLoadBalancer.LOGICAL_OPERATORS_DEFINED_AS_STATEFUL).contains(operator.getClass())) {
+				
+				// operator marks the end of a new querypart
+				opsForCurrentPart.add(operator);
 				parts.add(DistributionHelper.replaceStreamAOs(new QueryPart(opsForCurrentPart)));
 				opsForCurrentPart.clear();
-				opsForCurrentPart.add(operators.get(opIndex));
 				
-			} else opsForCurrentPart.add(operators.get(opIndex));
+			} else opsForCurrentPart.add(operator);
 			
 		}
 		
-		parts.add(DistributionHelper.replaceStreamAOs(new QueryPart(opsForCurrentPart)));
+		// the end of the last querypart
+		if(!opsForCurrentPart.isEmpty()) {
+			
+			parts.add(DistributionHelper.replaceStreamAOs(new QueryPart(opsForCurrentPart)));
+			opsForCurrentPart.clear();
+			
+		}
 		
 		return parts;
+		
+	}
+	
+	/**
+	 * Determines if an {@link ILogicalOperator} is a sink of a distributed {@link ILogicalQuery}.
+	 * @param operator The {@link ILogicalOperator}.
+	 * @param localPart The local part of the distributed {@link ILogicalQuery}.
+	 * @return true, if <code>operator</code> has no subscriptions or if <code>operator</code> is only subscribed to <code>localPart</code>; <br />
+	 * false, else
+	 */
+	private boolean isSink(ILogicalOperator operator, QueryPart localPart) {
+		
+		Preconditions.checkNotNull(operator, "operator must be not null!");
+		Preconditions.checkNotNull(localPart, "localPart must be not null!");
+		
+		if(operator.getSubscriptions().size() == 0)
+			return true;
+		
+		for(LogicalSubscription subToSink : operator.getSubscriptions()) {
+			
+			if(!localPart.getOperators().contains(subToSink.getTarget()))
+				return false;
+			
+		}
+		
+		return true;
+		
+	}
+	
+	/**
+	 * Determines if an {@link ILogicalOperator} is a source of a stateful {@link ILogicalOperator}.
+	 * @param operator The {@link ILogicalOperator}.
+	 * @return true, if any subscription of <code>operator</code> targets an {@link ILogicalOperator} within 
+	 * {@value #LOGICAL_OPERATORS_DEFINED_AS_STATEFUL}.
+	 */
+	private boolean isSourceOfStatefulOperator(ILogicalOperator operator) {
+		
+		Preconditions.checkNotNull(operator, "operator must be not null!");
+		
+		for(LogicalSubscription subToSink : operator.getSubscriptions()) {
+			
+			if(Arrays.asList(OperatorSetCloudLoadBalancer.LOGICAL_OPERATORS_DEFINED_AS_STATEFUL).contains(subToSink.getTarget().getClass()))
+					return true;
+			
+		}
+		
+		return false;
 		
 	}
 

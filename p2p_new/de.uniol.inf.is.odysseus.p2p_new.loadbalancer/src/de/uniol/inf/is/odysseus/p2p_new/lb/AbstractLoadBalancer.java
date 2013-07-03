@@ -171,7 +171,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				this.subscribeCopyToLocalPart(operators, degreeOfParallelism, localPart);
 				
 				// Create the queryparts of this query
-				List<QueryPart> parts = this.determineQueryParts(operators);
+				List<QueryPart> parts = this.determineQueryParts(operators, localPart);
 				LOG.debug("Got {} parts of logical query {}", parts.size(), originQuery);
 				queryPartsMap.get(originQuery).put(queryCopy, parts);
 				
@@ -254,9 +254,10 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * Splits an {@link ILogicalQuery} into a list of {@link QueryPart}s.
 	 * @param operators The list of {@link ILogicalOperator}s representing the{@link ILogicalQuery}. <br />
 	 * <code>operators</code> must not be null and not empty.
+	 * @param localPart The local part of the {@link ILogicalQuery}.
 	 * @return The list of {@link QueryPart}s.
 	 */
-	protected abstract List<QueryPart> determineQueryParts(List<ILogicalOperator> operators);
+	protected abstract List<QueryPart> determineQueryParts(List<ILogicalOperator> operators, QueryPart localPart);
 	
 	/**
 	 * Arranges the {@link QueryPart}s, so that same {@link QueryPart}s of different {@link ILogicalQuery} copies are back-to-back.
