@@ -346,6 +346,11 @@ public class ScreenManager {
 		ITimeInterval oldInterval = this.maxInterval.clone();
 		if (maxIntervalEnd.before(this.maxInterval.getStart()))
 			this.setMaxIntervalStart(maxIntervalEnd);
+		if(this.interval.getStart().getMainPoint() == 0) {
+			// No time was set
+			this.interval.setStart(getMaxIntervalStart());
+			this.interval.setEnd(getMaxIntervalEnd());
+		}
 		PointInTime oldMaxIntervalEnd = this.maxInterval.getEnd();
 		this.maxInterval.setEnd(maxIntervalEnd.plus(1));
 		this.pcs.firePropertyChange("maxIntervalEnd", oldMaxIntervalEnd, this.maxInterval.getEnd());
