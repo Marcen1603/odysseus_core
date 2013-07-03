@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> {
+public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> implements Cloneable {
 	/** Logger. */
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(LinearRegressionTISweepArea.class);
