@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.test.discrete.function;
 
+import java.util.Map.Entry;
+
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -22,20 +24,21 @@ import org.testng.annotations.Test;
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticDouble;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticLong;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticAndOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticDivisionOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticGreaterEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticGreaterThanOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticMinusOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticMultiplicationOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticNotOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticOrOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticPlusOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticSmallerThanOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDouble;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticLong;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticResult;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.bool.ProbabilisticAndOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.bool.ProbabilisticNotOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.bool.ProbabilisticOrOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterThanOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticSmallerEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticSmallerThanOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticDivisionOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMultiplicationOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -59,12 +62,20 @@ public class TestLong {
 	@Test(dataProvider = "discreteSmallerThanLong")
 	public final void testLongSmallerThan(final ProbabilisticLong left,
 			final ProbabilisticLong right, final double result) {
-		final IFunction<Double> function = new ProbabilisticSmallerThanOperator();
+		final IFunction<ProbabilisticResult> function = new ProbabilisticSmallerThanOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
 						SDFProbabilisticDatatype.PROBABILISTIC_LONG));
-		Assert.assertEquals(function.getValue(), result, 10E-9);
+	
+		ProbabilisticResult value = function.getValue();
+		Assert.assertEquals(value.getProbability(), result, 10E-9);
+		double sum = 0.0;
+		for (Entry<Double, Double> entry : ((ProbabilisticDouble) value
+				.getValue()).getValues().entrySet()) {
+			sum += entry.getValue();
+		}
+		Assert.assertEquals(sum, result, 10E-9);
 	}
 
 /**
@@ -80,12 +91,20 @@ public class TestLong {
 	@Test(dataProvider = "discreteSmallerEqualsLong")
 	public final void testLongSmallerEquals(final ProbabilisticLong left,
 			final ProbabilisticLong right, final double result) {
-		final IFunction<Double> function = new ProbabilisticSmallerEqualsOperator();
+		final IFunction<ProbabilisticResult> function = new ProbabilisticSmallerEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
 						SDFProbabilisticDatatype.PROBABILISTIC_LONG));
-		Assert.assertEquals(function.getValue(), result, 10E-9);
+
+		ProbabilisticResult value = function.getValue();
+		Assert.assertEquals(value.getProbability(), result, 10E-9);
+		double sum = 0.0;
+		for (Entry<Double, Double> entry : ((ProbabilisticDouble) value
+				.getValue()).getValues().entrySet()) {
+			sum += entry.getValue();
+		}
+		Assert.assertEquals(sum, result, 10E-9);
 	}
 
 	/**
@@ -101,12 +120,20 @@ public class TestLong {
 	@Test(dataProvider = "discreteEqualsLong")
 	public final void testLongEquals(final ProbabilisticLong left,
 			final ProbabilisticLong right, final double result) {
-		final IFunction<Double> function = new ProbabilisticEqualsOperator();
+		final IFunction<ProbabilisticResult> function = new ProbabilisticEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
 						SDFProbabilisticDatatype.PROBABILISTIC_LONG));
-		Assert.assertEquals(function.getValue(), result, 10E-9);
+	
+		ProbabilisticResult value = function.getValue();
+		Assert.assertEquals(value.getProbability(), result, 10E-9);
+		double sum = 0.0;
+		for (Entry<Double, Double> entry : ((ProbabilisticDouble) value
+				.getValue()).getValues().entrySet()) {
+			sum += entry.getValue();
+		}
+		Assert.assertEquals(sum, result, 10E-9);
 	}
 
 	/**
@@ -122,15 +149,15 @@ public class TestLong {
 	@Test(dataProvider = "discreteEqualsLong")
 	public final void testLongNot(final ProbabilisticLong left,
 			final ProbabilisticLong right, final double result) {
-		final IFunction<Double> equalsFunction = new ProbabilisticEqualsOperator();
+		final IFunction<ProbabilisticResult> equalsFunction = new ProbabilisticEqualsOperator();
 		equalsFunction.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
 						SDFProbabilisticDatatype.PROBABILISTIC_LONG));
-		final IFunction<Double> notFunction = new ProbabilisticNotOperator();
+		final IFunction<ProbabilisticResult> notFunction = new ProbabilisticNotOperator();
 		notFunction.setArguments(new Constant<Double>(
-				equalsFunction.getValue(), SDFDatatype.DOUBLE));
-		Assert.assertEquals(notFunction.getValue(), 1.0 - result, 10E-9);
+				equalsFunction.getValue().getProbability(), SDFDatatype.DOUBLE));
+		Assert.assertEquals(notFunction.getValue().getProbability(), 1.0 - result, 10E-9);
 	}
 
 	/**
@@ -169,12 +196,20 @@ public class TestLong {
 	@Test(dataProvider = "discreteGreaterEqualsLong")
 	public final void testLongGreaterEquals(final ProbabilisticLong left,
 			final ProbabilisticLong right, final double result) {
-		final IFunction<Double> function = new ProbabilisticGreaterEqualsOperator();
+		final IFunction<ProbabilisticResult> function = new ProbabilisticGreaterEqualsOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
 						SDFProbabilisticDatatype.PROBABILISTIC_LONG));
-		Assert.assertEquals(function.getValue(), result, 10E-9);
+
+		ProbabilisticResult value = function.getValue();
+		Assert.assertEquals(value.getProbability(), result, 10E-9);
+		double sum = 0.0;
+		for (Entry<Double, Double> entry : ((ProbabilisticDouble) value
+				.getValue()).getValues().entrySet()) {
+			sum += entry.getValue();
+		}
+		Assert.assertEquals(sum, result, 10E-9);
 	}
 
 	/**
@@ -190,12 +225,20 @@ public class TestLong {
 	@Test(dataProvider = "discreteGreaterThanLong")
 	public final void testLongGreaterThan(final ProbabilisticLong left,
 			final ProbabilisticLong right, final double result) {
-		final IFunction<Double> function = new ProbabilisticGreaterThanOperator();
+		final IFunction<ProbabilisticResult> function = new ProbabilisticGreaterThanOperator();
 		function.setArguments(new Constant<ProbabilisticLong>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_LONG),
 				new Constant<ProbabilisticLong>(right,
 						SDFProbabilisticDatatype.PROBABILISTIC_LONG));
-		Assert.assertEquals(function.getValue(), result, 10E-9);
+
+		ProbabilisticResult value = function.getValue();
+		Assert.assertEquals(value.getProbability(), result, 10E-9);
+		double sum = 0.0;
+		for (Entry<Double, Double> entry : ((ProbabilisticDouble) value
+				.getValue()).getValues().entrySet()) {
+			sum += entry.getValue();
+		}
+		Assert.assertEquals(sum, result, 10E-9);
 	}
 
 	/**

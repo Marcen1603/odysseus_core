@@ -14,8 +14,8 @@
  */
 package de.offis.chart.charts.datatype;
 
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticDouble;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.AbstractViewableDatatype;
 

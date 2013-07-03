@@ -23,7 +23,7 @@ import org.apache.commons.math3.linear.NonSymmetricMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.util.FastMath;
 
-import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
 
 public class NormalDistributionFunctionND {
 	

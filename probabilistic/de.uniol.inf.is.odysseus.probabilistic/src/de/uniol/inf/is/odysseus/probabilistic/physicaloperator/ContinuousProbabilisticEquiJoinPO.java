@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.RegressionTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;

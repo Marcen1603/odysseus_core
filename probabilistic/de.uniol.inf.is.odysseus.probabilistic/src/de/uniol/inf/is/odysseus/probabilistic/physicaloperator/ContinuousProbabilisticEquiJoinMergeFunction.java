@@ -26,8 +26,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.AbstractRelationalMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 
 /**
  * 

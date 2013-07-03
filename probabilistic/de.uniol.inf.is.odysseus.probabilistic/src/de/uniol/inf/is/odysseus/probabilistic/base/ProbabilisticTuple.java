@@ -25,9 +25,9 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
@@ -539,4 +539,6 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		}
 		return retBuff.toString();
 	}
+	
+	
 }

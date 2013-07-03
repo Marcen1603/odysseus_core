@@ -27,16 +27,17 @@ import org.testng.annotations.Test;
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.function.AbstractProbabilisticFunction;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticAndOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousGreaterEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticContinuousSmallerEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticNotOperator;
-import de.uniol.inf.is.odysseus.probabilistic.function.ProbabilisticOrOperator;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousGreaterEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticResult;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.bool.ProbabilisticAndOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.bool.ProbabilisticNotOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.bool.ProbabilisticOrOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -115,13 +116,13 @@ public class TestDouble {
 			final ProbabilisticContinuousDouble left,
 			final NormalDistributionMixture mixtures, final Double right,
 			final double result) {
-		final IFunction<Double> function = new ProbabilisticContinuousSmallerEqualsOperator();
-		((AbstractProbabilisticFunction<Double>) function).getDistributions()
+		final IFunction<ProbabilisticResult> function = new ProbabilisticContinuousSmallerEqualsOperator();
+		((AbstractProbabilisticFunction<ProbabilisticResult>) function).getDistributions()
 				.add(mixtures);
 		function.setArguments(new Constant<ProbabilisticContinuousDouble>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE),
 				new Constant<Double>(right, SDFDatatype.DOUBLE));
-		Assert.assertEquals(function.getValue(), result, 10E-9);
+		Assert.assertEquals(function.getValue().getProbability(), result, 10E-9);
 	}
 
 	/**
@@ -141,13 +142,13 @@ public class TestDouble {
 			final ProbabilisticContinuousDouble left,
 			final NormalDistributionMixture mixtures, final Double right,
 			final double result) {
-		final IFunction<Double> function = new ProbabilisticContinuousEqualsOperator();
-		((AbstractProbabilisticFunction<Double>) function).getDistributions()
+		final IFunction<ProbabilisticResult> function = new ProbabilisticContinuousEqualsOperator();
+		((AbstractProbabilisticFunction<ProbabilisticResult>) function).getDistributions()
 				.add(mixtures);
 		function.setArguments(new Constant<ProbabilisticContinuousDouble>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE),
 				new Constant<Double>(right, SDFDatatype.DOUBLE));
-		Assert.assertEquals(function.getValue(), result, 10E-9);
+		Assert.assertEquals(function.getValue().getProbability(), result, 10E-9);
 	}
 
 	/**
@@ -166,8 +167,8 @@ public class TestDouble {
 	public final void testDoubleNot(final ProbabilisticContinuousDouble left,
 			final NormalDistributionMixture mixtures, final Double right,
 			final double result) {
-		final IFunction<Double> equalsFunction = new ProbabilisticContinuousEqualsOperator();
-		((AbstractProbabilisticFunction<Double>) equalsFunction)
+		final IFunction<ProbabilisticResult> equalsFunction = new ProbabilisticContinuousEqualsOperator();
+		((AbstractProbabilisticFunction<ProbabilisticResult>) equalsFunction)
 				.getDistributions().add(mixtures);
 		equalsFunction
 				.setArguments(
@@ -175,10 +176,10 @@ public class TestDouble {
 								left,
 								SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE),
 						new Constant<Double>(right, SDFDatatype.DOUBLE));
-		final IFunction<Double> notFunction = new ProbabilisticNotOperator();
+		final IFunction<ProbabilisticResult> notFunction = new ProbabilisticNotOperator();
 		notFunction.setArguments(new Constant<Double>(
-				equalsFunction.getValue(), SDFDatatype.DOUBLE));
-		Assert.assertEquals(notFunction.getValue(), 1.0 - result, 10E-9);
+				equalsFunction.getValue().getProbability(), SDFDatatype.DOUBLE));
+		Assert.assertEquals(notFunction.getValue().getProbability(), 1.0 - result, 10E-9);
 	}
 
 	@Test
@@ -218,13 +219,13 @@ public class TestDouble {
 			final ProbabilisticContinuousDouble left,
 			final NormalDistributionMixture mixtures, final Double right,
 			final double result) {
-		final IFunction<Double> function = new ProbabilisticContinuousGreaterEqualsOperator();
-		((AbstractProbabilisticFunction<Double>) function).getDistributions()
+		final IFunction<ProbabilisticResult> function = new ProbabilisticContinuousGreaterEqualsOperator();
+		((AbstractProbabilisticFunction<ProbabilisticResult>) function).getDistributions()
 				.add(mixtures);
 		function.setArguments(new Constant<ProbabilisticContinuousDouble>(left,
 				SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE),
 				new Constant<Double>(right, SDFDatatype.DOUBLE));
-		Assert.assertEquals(function.getValue(), result, 10E-9);
+		Assert.assertEquals(function.getValue().getProbability(), result, 10E-9);
 	}
 
 	// @Test(dataProvider = "continuousGreaterThanDouble")

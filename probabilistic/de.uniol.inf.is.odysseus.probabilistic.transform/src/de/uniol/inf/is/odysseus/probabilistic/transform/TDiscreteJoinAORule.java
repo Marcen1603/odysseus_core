@@ -27,8 +27,8 @@ import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.DiscreteProbabilisticJoinPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.DefaultProbabilisticTIDummyDataCreation;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.DiscreteProbabilisticJoinPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

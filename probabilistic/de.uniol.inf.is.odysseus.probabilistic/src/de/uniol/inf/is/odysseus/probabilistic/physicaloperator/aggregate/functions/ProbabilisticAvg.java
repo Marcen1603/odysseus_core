@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticDouble;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>

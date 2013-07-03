@@ -26,8 +26,8 @@ import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.function.AbstractProbabilisticFunction;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
 /**
  * Probabilistic expression that have acces from the payload to the multivariate distributions.

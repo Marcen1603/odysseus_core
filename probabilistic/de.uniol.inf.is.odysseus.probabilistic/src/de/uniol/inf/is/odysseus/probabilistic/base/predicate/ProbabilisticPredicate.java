@@ -29,7 +29,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticResult;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 
 /**
@@ -116,13 +117,17 @@ public class ProbabilisticPredicate extends AbstractPredicate<ProbabilisticTuple
 		return (Boolean) this.expression.getValue();
 	}
 
+	public int[] getAttributePositions() {
+		return this.attributePositions;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate #probabilisticEvaluate(de.uniol.inf.is.odysseus.probabilistic.base. ProbabilisticTuple)
 	 */
 	@Override
-	public final double probabilisticEvaluate(final ProbabilisticTuple<?> input) {
+	public final ProbabilisticResult probabilisticEvaluate(final ProbabilisticTuple<?> input) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(this.attributePositions[i]);
@@ -180,7 +185,7 @@ public class ProbabilisticPredicate extends AbstractPredicate<ProbabilisticTuple
 	 * @see de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate #probabilisticEvaluate(de.uniol.inf.is.odysseus.probabilistic.base. ProbabilisticTuple, de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple)
 	 */
 	@Override
-	public final double probabilisticEvaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
+	public final ProbabilisticResult probabilisticEvaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			Tuple<?> r;

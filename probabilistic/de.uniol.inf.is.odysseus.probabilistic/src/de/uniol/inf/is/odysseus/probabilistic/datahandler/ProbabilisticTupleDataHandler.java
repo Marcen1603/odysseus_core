@@ -32,8 +32,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datahandler.ProbabilisticContinuousDoubleHandler;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datahandler.ProbabilisticDistributionHandler;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -69,7 +71,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
         if (dataHandlers == null) {
             createDataHandler(schema);
         } else {
-            throw new RuntimeException("TupleDataHandler is immutable. Values already set");
+            throw new RuntimeException("ProbabilisticTupleDataHandler is immutable. Values already set");
         }
     }
 

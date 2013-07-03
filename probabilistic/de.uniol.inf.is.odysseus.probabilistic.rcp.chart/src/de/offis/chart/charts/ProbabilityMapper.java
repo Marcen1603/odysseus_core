@@ -18,9 +18,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 @SuppressWarnings("unused")

@@ -39,9 +39,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepAr
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**

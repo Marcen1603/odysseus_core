@@ -10,10 +10,10 @@ import org.testng.annotations.Test;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticProjectPO;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticProjectPO;
 
 @Test
 public class TestProject {
@@ -35,7 +35,7 @@ public class TestProject {
 							ProbabilisticTuple.class, Integer.TYPE });
 			processMethod.setAccessible(true);
 			processMethod.invoke(obj, new Object[] { tuple, new Integer(0) });
-			
+
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException
 				| SecurityException | InstantiationException e) {

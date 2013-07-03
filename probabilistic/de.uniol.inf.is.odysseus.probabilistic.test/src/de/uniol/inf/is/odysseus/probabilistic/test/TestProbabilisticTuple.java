@@ -1,67 +1,118 @@
 package de.uniol.inf.is.odysseus.probabilistic.test;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.testng.asserts.*;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 
-@SuppressWarnings("unused")
+@Test(singleThreaded = true)
 public class TestProbabilisticTuple {
 
+	@Test(dataProvider = "tuple")
+	public void testRestrict(final ProbabilisticTuple<IMetaAttribute> input,
+			int[] restrictMatrix,
+			final ProbabilisticTuple<IMetaAttribute> output) {
+		System.out.println("Input: " + input + " -> " + output);
+		ProbabilisticTuple<IMetaAttribute> restricted = input.restrict(
+				restrictMatrix, false);
+		System.out.println("Restricted: " + restricted + " -> " + output);
+		Assert.assertEquals(restricted, output);
+		for (int i = 0; i < restricted.getAttributes().length; i++) {
+			if (restricted.getAttribute(i) instanceof ProbabilisticContinuousDouble) {
+				int distribution = ((ProbabilisticContinuousDouble) restricted
+						.getAttribute(i)).getDistribution();
+				boolean contains = false;
+				for (int d = 0; d < restricted.getDistribution(
+						distribution).getAttributes().length; d++) {
+					if (restricted.getDistribution(distribution).getAttribute(
+							d) == i) {
+						contains = true;
+					}
+				}
 
-	@Test
-	public void testRestrict() {
-		final NormalDistributionMixture mixture1 = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new CovarianceMatrix(new double[] {
-						1.0, 0.0, 1.0 }));
-		mixture1.setAttributes(new int[] { 0, 4 });
-		final NormalDistributionMixture mixture2 = new NormalDistributionMixture(
-				new double[] { 3.0 },
-				new CovarianceMatrix(new double[] { 2.0 }));
-		mixture2.setAttributes(new int[] { 2 });
-
-		final ProbabilisticContinuousDouble probAttr11 = new ProbabilisticContinuousDouble(
-				0);
-		final ProbabilisticContinuousDouble probAttr12 = new ProbabilisticContinuousDouble(
-				0);
-		final ProbabilisticContinuousDouble probAttr21 = new ProbabilisticContinuousDouble(
-				1);
-
-		final Object[] attrs = new Object[] { probAttr21, 1.0, probAttr11,
-				"String", probAttr12 };
-
-		final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(
-				attrs, new NormalDistributionMixture[] { mixture1, mixture2 },
-				true);
-		tuple.setDistributions(new NormalDistributionMixture[] { mixture1,
-				mixture2 });
-		System.out.println(tuple);
-		for (NormalDistributionMixture dist : tuple.getDistributions()) {
-			System.out.println(dist);
+				Assert.assertTrue(contains);
+			}
 		}
-		final ProbabilisticTuple<IMetaAttribute> newTuple = tuple.restrict(
-				new int[] { 0, 1, 2 }, true);
-		System.out.println(tuple);
-		for (NormalDistributionMixture dist : tuple.getDistributions()) {
-			System.out.println(dist);
-		}
-		System.out.println(newTuple);
+	}
 
-		for (NormalDistributionMixture dist : newTuple.getDistributions()) {
-			System.out.println(dist);
+	@DataProvider(name = "tuple")
+	public final Object[][] provideTuple() {
+		return new Object[][] {
+				{ provideUnivariateTuple(new Integer[] { 0, 1 }, 2),
+						new int[] { 0 },
+						provideUnivariateTuple(new Integer[] { 0 }, 1) },
+				{ provideUnivariateTuple(new Integer[] { 0, 2 }, 3),
+						new int[] { 0, 1 },
+						provideUnivariateTuple(new Integer[] { 0 }, 2) },
+				{ provideUnivariateTuple(new Integer[] { 0, 1 }, 2),
+						new int[] { 1 },
+						provideUnivariateTuple(new Integer[] { 0 }, 1) },
+				{ provideUnivariateTuple(new Integer[] { 0, 2 }, 3),
+						new int[] { 1, 2 },
+						provideUnivariateTuple(new Integer[] { 1 }, 2) },
+				{ provideUnivariateTuple(new Integer[] { 1, 2 }, 3),
+						new int[] { 0, 1 },
+						provideUnivariateTuple(new Integer[] { 1 }, 2) },
+				{ provideUnivariateTuple(new Integer[] { 1, 2 }, 3),
+						new int[] { 0, 2 },
+						provideUnivariateTuple(new Integer[] { 1 }, 2) },
+				{ provideUnivariateTuple(new Integer[] { 1, 3 }, 4),
+						new int[] { 0, 1, 2 },
+						provideUnivariateTuple(new Integer[] { 1 }, 3) },
+				{ provideUnivariateTuple(new Integer[] { 1, 3 }, 4),
+						new int[] { 0, 2, 3 },
+						provideUnivariateTuple(new Integer[] { 2 }, 3) } };
+	}
+
+	private IStreamObject<?> provideUnivariateTuple(Integer[] pos, int length) {
+		NormalDistributionMixture[] mixtures = new NormalDistributionMixture[pos.length];
+		Object[] attrs = new Object[length];
+
+		List<Integer> positionList = Arrays.asList(pos);
+		for (Integer i = 0; i < length; i++) {
+			if (positionList.contains(i)) {
+				mixtures[positionList.indexOf(i)] = new NormalDistributionMixture(
+						new double[] { 1.5 }, new CovarianceMatrix(
+								new double[] { 2.5 }));
+				attrs[i] = new ProbabilisticContinuousDouble(
+						positionList.indexOf(i));
+				mixtures[positionList.indexOf(i)]
+						.setAttributes(new int[] { i });
+			} else {
+				attrs[i] = "StringAttribute";
+			}
 		}
 
-		// ProbabilisticTuple<IMetaAttribute> mergeTuple =
-		// (ProbabilisticTuple<IMetaAttribute>) tuple.process_merge(tuple,
-		// newTuple, Order.LeftRight);
-		//
-		// System.out.println(mergeTuple);
-		// for (NormalDistributionMixture dist : mergeTuple.getDistributions())
-		// {
-		// System.out.println(dist);
-		// }
+		return new ProbabilisticTuple<>(attrs, mixtures, true);
+	}
+
+	private IStreamObject<?> provideMultivariateTuple(Integer[] pos, int length) {
+		NormalDistributionMixture[] mixtures = new NormalDistributionMixture[pos.length];
+		Object[] attrs = new Object[length];	
+		List<Integer> positionList = Arrays.asList(pos);
+		for (Integer i = 0; i < length; i++) {
+			if (positionList.contains(i)) {
+				mixtures[positionList.indexOf(i)] = new NormalDistributionMixture(
+						new double[] { 2.0 }, new CovarianceMatrix(
+								new double[] { 1.5 }));
+				attrs[i] = new ProbabilisticContinuousDouble(
+						positionList.indexOf(i));
+				mixtures[positionList.indexOf(i)]
+						.setAttributes(new int[] { i });
+			} else {
+				attrs[i] = "StringAttribute" + i;
+			}
+		}
+
+		return new ProbabilisticTuple<>(attrs, mixtures, true);
 	}
 }

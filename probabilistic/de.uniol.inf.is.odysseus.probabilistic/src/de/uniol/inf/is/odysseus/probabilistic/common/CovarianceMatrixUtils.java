@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.common;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-import de.uniol.inf.is.odysseus.probabilistic.datatype.CovarianceMatrix;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
 
 /**
  * Utility class for covariance handling.
