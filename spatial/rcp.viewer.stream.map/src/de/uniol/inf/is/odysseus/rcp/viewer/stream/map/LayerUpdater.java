@@ -87,15 +87,20 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 				.getMaxIntervalEnd())
 				|| streamMapEditor.getScreenManager().getMaxIntervalEnd()
 						.isInfinite()) {
-			// Maybe the stream elements do not come in the right order (e.g. wrong csv-data)
+			// Maybe the stream elements do not come in the right order (e.g.
+			// wrong csv-data)
 			this.streamMapEditor.getScreenManager()
 					.setMaxIntervalEnd(timestamp);
 		}
 
 		puffer.insert(tuple);
 		if (this.streamMapEditor.getScreenManager().getInterval().getEnd()
-				.isInfinite()) {
-			// Add tuple to current list
+				.isInfinite()
+				|| (this.streamMapEditor.getScreenManager().getInterval()
+						.getStart().beforeOrEquals(timestamp) && this.streamMapEditor
+						.getScreenManager().getInterval().getEnd()
+						.afterOrEquals(timestamp))) {
+			// Add tuple to current list if the new timestamp is in the interval
 			addTuple(tuple);
 		}
 
@@ -114,7 +119,6 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	private void checkForPufferSize() {
 		// Prevent an overflow in the puffer
 
-		// TODO: Do this by user-defined time
 		// Maybe the user don't want to cut the time: he defines '0' and we
 		// won't delete
 		if (userDefinedTimeRange != 0) {
@@ -130,9 +134,9 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 			if (userDefinedTimeStamp > 0) {
 				PointInTime userEndTS = new PointInTime(userDefinedTimeStamp);
 				puffer.purgeElementsBefore(userEndTS);
-				
-				// Update "current-list", timeSlider and all the other things which
-				// rely on the startTimeStamp
+
+				// Update "current-list", timeSlider and all the other things
+				// which rely on the startTimeStamp
 				streamMapEditor.getScreenManager().setMaxIntervalStart(
 						puffer.getMinTs());
 				this.elementList = this.puffer
@@ -331,7 +335,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		userDefinedTimeRange = seconds;
 		checkForPufferSize();
 	}
-	
+
 	/**
 	 * 
 	 * @return Timerange in seconds

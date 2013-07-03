@@ -330,6 +330,10 @@ public class ScreenManager {
 		PointInTime oldMaxIntervalStart = this.maxInterval.getStart();
 		ITimeInterval oldInterval = this.maxInterval.clone();
 		this.maxInterval.setStart(maxIntervalStart);
+		if(this.interval.getStart().before(maxIntervalStart)) {
+			// If the puffer deleted something, we have to update the interval
+			this.interval.setStart(maxIntervalStart);
+		}
 		this.pcs.firePropertyChange("maxIntervalStart", oldMaxIntervalStart, this.maxInterval.getStart());
 		this.pcs.firePropertyChange("maxInterval", oldInterval, this.maxInterval);
 	}
