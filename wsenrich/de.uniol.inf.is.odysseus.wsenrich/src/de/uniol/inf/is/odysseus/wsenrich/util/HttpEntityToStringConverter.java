@@ -16,22 +16,22 @@ public class HttpEntityToStringConverter {
 	/**
 	 * Static Variable for a possibly wrong converted "<"
 	 */
-	private static final String LESS_THEN = "&lt;";
+	private static final String WRONG_LESS = "&lt;";
 	
 	/**
 	 * Static Variable for a possibly wrong converted ">"
 	 */
-	private static final String GREATER_THEN = "&gt;";
+	private static final String WRONG_GREATER = "&gt;";
 	
 	/**
 	 * Static Variable for the  String of "<"
 	 */
-	private static final String LESS = "<";
+	private static final String CORRECT_LESS = "<";
 	
 	/**
 	 * Static Variable for the String of ">"
 	 */
-	private static final String GREATER = ">";
+	private static final String CORRECT_GREATER = ">";
 	
 	/**
 	 * The HttpEntity
@@ -82,8 +82,8 @@ public class HttpEntityToStringConverter {
 		if(this.charset == null || this.charset.equals("")) {
 			try {
 				StringBuffer temp = new StringBuffer(IOUtils.toString(entity.getContent(), "UTF-8"));
-				replaceHtmlCodecs(temp, LESS_THEN, LESS);
-				replaceHtmlCodecs(temp, GREATER_THEN, GREATER);
+				replaceHtmlCodecs(temp, WRONG_LESS, CORRECT_LESS);
+				replaceHtmlCodecs(temp, WRONG_GREATER, CORRECT_GREATER);
 				this.output = temp.toString();
 			} catch (IllegalStateException | IOException e) {
 				logger.error("There was an error while converting the HttpEntity to a String. Cause {}", e.getMessage());
@@ -93,8 +93,8 @@ public class HttpEntityToStringConverter {
 			try {
 				
 				StringBuffer temp = new StringBuffer(IOUtils.toString(entity.getContent(), charset));
-				replaceHtmlCodecs(temp, LESS_THEN, LESS);
-				replaceHtmlCodecs(temp, GREATER_THEN, GREATER);
+				replaceHtmlCodecs(temp, WRONG_LESS, CORRECT_LESS);
+				replaceHtmlCodecs(temp, WRONG_GREATER, CORRECT_GREATER);
 				this.output = temp.toString();
 			} catch (IllegalStateException | IOException e) {
 				logger.error("There was an error while converting the HttpEntity to a String. Cause {}", e.getMessage());
@@ -139,4 +139,5 @@ public class HttpEntityToStringConverter {
 		} else 
 			return temp;	
 	}
+	
 }

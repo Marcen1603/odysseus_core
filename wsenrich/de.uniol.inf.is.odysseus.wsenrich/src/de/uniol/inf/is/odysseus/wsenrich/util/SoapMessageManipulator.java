@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 
-public class SoapMessageManipulator implements IXmlMessageManipulator {
+public class SoapMessageManipulator implements IMessageManipulator {
 	
 	/**
 	 * static variable for the starttag "<"
@@ -52,16 +52,10 @@ public class SoapMessageManipulator implements IXmlMessageManipulator {
 	private StringBuffer argumentsOfMesssage;
 	
 	/**
-	 * Constructor for the SoapMessagemanipulator. Arguments are automatically added
-	 * to the final message
-	 * @param message the message without arguments
-	 * @param arguments the arguments that should be added to the message
+	 * Default Conctructor
 	 */
-	public SoapMessageManipulator(String message, List<Option> arguments) {
-		this.message = new StringBuffer(message);
-		buildStartOfMessage();
-		buildArgumentsOfMessage(arguments);
-		buildEndOfMessage();
+	public SoapMessageManipulator() {
+		//Needed for the MessageManipulatorRegistry
 	}
 	
 	/**
@@ -98,8 +92,7 @@ public class SoapMessageManipulator implements IXmlMessageManipulator {
 	/**
 	 * Adds the arguments to the message
 	 */
-	private StringBuffer buildArgumentsOfMessage(List<Option> arguments) {
-		this.arguments = arguments;
+	private StringBuffer buildArgumentsOfMessage() {
 		this.argumentsOfMesssage = new StringBuffer();
 		for(Option argument : arguments) {
 			this.argumentsOfMesssage.append(STARTTAG + argument.getName() + ENDTAG);
@@ -109,41 +102,62 @@ public class SoapMessageManipulator implements IXmlMessageManipulator {
 		return this.argumentsOfMesssage;
 	}
 	
+	@Override
+	public void setMessage(String message) {
+		this.message = new StringBuffer(message);
+	}
+	
+	@Override
+	public void setArguments(List<Option> arguments) {
+		this.arguments = arguments;
+	}
+	
+	
 	/**
 	 * @return the list of arguments which should be added to the message
 	 */
-	public List<Option> getArguments() {
-		return this.arguments;
-	}
+//	public List<Option> getArguments() {
+//		return this.arguments;
+//	}
 	
 	/**
 	 * @return the argument-part of the xml document
 	 */
-	public StringBuffer getArgumentsToString() {
-		return this.argumentsOfMesssage;
-	}
+//	public StringBuffer getArgumentsToString() {
+//		return this.argumentsOfMesssage;
+//	}
 	
 	/**
 	 * @return the fixed start part (before arguments) of the message
 	 */
-	public String getStartOfMessage() {
-		return this.startOfMessage.toString();
-	}
+//	public String getStartOfMessage() {
+//		return this.startOfMessage.toString();
+//	}
 	
 	/**
 	 * @return the fixed end part (after arguments) of the message
 	 */
-	public String getEndOfMessage() {
-		return this.endOfMessage.toString();
-	}
+//	public String getEndOfMessage() {
+//		return this.endOfMessage.toString();
+//	}
 	
 	@Override
-	public String getMessage() {
+	public String buildMessage() {
 		StringBuffer output = new StringBuffer();
-		output.append(this.startOfMessage);
-		output.append(this.argumentsOfMesssage);
-		output.append(this.endOfMessage);
+		output.append(buildStartOfMessage());
+		output.append(buildArgumentsOfMessage());
+		output.append(buildEndOfMessage());
 		return output.toString();
+	}
+
+	@Override
+	public String getName() {
+		return "SOAP";
+	}
+
+	@Override
+	public IMessageManipulator createInstance() {
+		return new SoapMessageManipulator();
 	}
 }
 

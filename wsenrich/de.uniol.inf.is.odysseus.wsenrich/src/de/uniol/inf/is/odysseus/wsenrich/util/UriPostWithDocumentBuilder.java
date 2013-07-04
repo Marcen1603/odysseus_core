@@ -32,6 +32,7 @@ public class UriPostWithDocumentBuilder implements IRequestBuilder {
 	public UriPostWithDocumentBuilder() {
 		this.url = "";
 		this.uri = new StringBuffer();
+		this.postData = new StringBuffer();
 	}
 	
 	/**
@@ -68,8 +69,8 @@ public class UriPostWithDocumentBuilder implements IRequestBuilder {
 	}
 	
 	@Override
-	public UriPostWithArgumentsBuilder createInstance() {
-		return new UriPostWithArgumentsBuilder();
+	public UriPostWithDocumentBuilder createInstance() {
+		return new UriPostWithDocumentBuilder();
 	}
 
 	@Override

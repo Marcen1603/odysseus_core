@@ -20,7 +20,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.wsenrich.util.HttpEntityToStringConverter;
 import de.uniol.inf.is.odysseus.wsenrich.util.IConnectionForWebservices;
 import de.uniol.inf.is.odysseus.wsenrich.util.IKeyFinder;
+import de.uniol.inf.is.odysseus.wsenrich.util.IMessageManipulator;
 import de.uniol.inf.is.odysseus.wsenrich.util.IRequestBuilder;
+import de.uniol.inf.is.odysseus.wsenrich.util.ISoapMessageCreator;
 
 public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
 
@@ -43,6 +45,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final IRequestBuilder requestBuilder;
 	private final HttpEntityToStringConverter converter;
 	private final IKeyFinder keyFinder;
+	private final ISoapMessageCreator soapMessageCreator;
+	private final IMessageManipulator soapMessageManipulator;
 	static Logger logger = LoggerFactory.getLogger(WSEnrichPO.class);
 	
 	public WSEnrichPO(String serviceMethod, String method, String url, String urlsuffix,
@@ -51,7 +55,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 					IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
 					IMetadataMergeFunction<T> metaMergeFunction,
 					IConnectionForWebservices connection, IRequestBuilder requestBuilder, 
-					HttpEntityToStringConverter converter, IKeyFinder keyFinder) {
+					HttpEntityToStringConverter converter, IKeyFinder keyFinder, 
+					ISoapMessageCreator soapMessageCreator, IMessageManipulator soapMessageManipulator) {
 						
 		super();
 		this.serviceMethod = serviceMethod;
@@ -72,6 +77,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.requestBuilder = requestBuilder;
 		this.converter = converter;
 		this.keyFinder = keyFinder;
+		this.soapMessageCreator = soapMessageCreator;
+		this.soapMessageManipulator = soapMessageManipulator;
 						
 	}
 	
@@ -98,6 +105,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.requestBuilder = wsEnrichPO.requestBuilder;
 		this.converter = wsEnrichPO.converter;
 		this.keyFinder = wsEnrichPO.keyFinder;
+		this.soapMessageCreator = wsEnrichPO.soapMessageCreator;
+		this.soapMessageManipulator = wsEnrichPO.soapMessageManipulator;
 		
 	}
 	
@@ -113,17 +122,26 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		
 		List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
 		
+		String postData = "";
+		
+		if(soapMessageCreator != null && soapMessageManipulator != null) {
+			soapMessageManipulator.setMessage(soapMessageCreator.getSoapMessage());
+			soapMessageManipulator.setArguments(queryParameters);
+			postData = soapMessageManipulator.buildMessage();
+		}
+		
 		//Build the Url and arguments
 		requestBuilder.setUrlPrefix(url);
 		requestBuilder.setUrlSuffix(urlsuffix);
 		requestBuilder.setArguments(queryParameters);
+		requestBuilder.setPostData(postData);
 		requestBuilder.buildUri();
-		String postData = requestBuilder.getPostData();
+	//	String postData = requestBuilder.getPostData();
 		String uri = requestBuilder.getUri();
 		
 		//Connect to the Url
 		connection.setUri(uri);
-		connection.setArguments(postData);
+		connection.setArguments(requestBuilder.getPostData());
 		connection.connect(charset, method);
 		HttpEntity entity = connection.retrieveBody();
 		
@@ -156,8 +174,12 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
+		
+		if(soapMessageCreator != null) {
+			soapMessageCreator.buildSoapMessage();
+		}
 		initParameterPositions();
-//		dataMergeFunction.init();
+		dataMergeFunction.init();
 	}
 	
 	@Override

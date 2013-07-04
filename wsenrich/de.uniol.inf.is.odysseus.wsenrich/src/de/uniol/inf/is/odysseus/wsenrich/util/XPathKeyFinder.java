@@ -137,7 +137,7 @@ public class XPathKeyFinder implements IKeyFinder {
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		StringBuffer temp = new StringBuffer();
 		try {
-			 NodeList nodeList = (NodeList) xPath.compile(search).evaluate(xmlDocument, XPathConstants.NODESET);
+			 NodeList nodeList = (NodeList) xPath.compile(search).evaluate(xmlDocument, javax.xml.xpath.XPathConstants.NODESET);
 			 for(int i = 0; i < nodeList.getLength(); i++) {
 				 	if(keyValue) {
 					temp.append(nodeList.item(i).getNodeName() + " : " + nodeList.item(i).getFirstChild().getNodeValue() + " ");

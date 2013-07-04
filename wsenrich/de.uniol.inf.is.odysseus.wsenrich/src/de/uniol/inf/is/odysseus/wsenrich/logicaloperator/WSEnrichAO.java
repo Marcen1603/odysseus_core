@@ -45,12 +45,12 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	/**
 	 * Static Variable for the Service Method Rest
 	 */
-	private static final String SERVICE_METHOD_REST = "REST";
+	public static final String SERVICE_METHOD_REST = "REST";
 	
 	/**
 	 * Static Variable for the Service Method Soap
 	 */
-	private static final String SERVICE_METHOD_SOAP = "SOAP";
+	public static final String SERVICE_METHOD_SOAP = "SOAP";
 	
 	/**
 	 * Static Variable for the parsing Method xml experimental
@@ -141,6 +141,11 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	private boolean keyValueOutput = false;
 	
 	/**
+	 * the location of the wsdl-file
+	 */
+	private String wsdlLocation;
+	
+	/**
 	 * Default-Constructor for the WSEnrichAO
 	 */
 	public WSEnrichAO() {
@@ -167,6 +172,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		this.getOrPost = wsEnrichAO.setGetOrPost();
 		this.filterNullTuples = wsEnrichAO.filterNullTuples;
 		this.keyValueOutput = wsEnrichAO.keyValueOutput;
+		this.wsdlLocation = wsEnrichAO.wsdlLocation;
 
 	}
 
@@ -419,6 +425,18 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	 */
 	public boolean getKeyValueOutput() {
 		return this.keyValueOutput;
+	}
+	
+	/**
+	 * @return the path to the wsdl-file
+	 */
+	public String getWsdlLocation() {
+		return this.wsdlLocation;
+	}
+	
+	@Parameter(type = StringParameter.class, optional = true, name = "wsdlLocation")
+	public void setWsdlLocaton(String wsdlLocation) {
+		this.wsdlLocation = wsdlLocation;
 	}
 	
 		

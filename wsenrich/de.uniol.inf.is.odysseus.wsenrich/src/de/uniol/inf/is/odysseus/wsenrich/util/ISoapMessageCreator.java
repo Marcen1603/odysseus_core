@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.wsenrich.util;
 
-import com.eviware.soapui.model.iface.Operation;
-
 public interface ISoapMessageCreator {
 	
 	/**
@@ -15,12 +13,17 @@ public interface ISoapMessageCreator {
 	public String getOperationName();
 	
 	/**
-	 * @return the amount of all operations found in the wsdl-file
+	 * @return The Name of the concrete Implementation of this Interface
 	 */
-	public Operation[] getOperationsOfWsdl();
+	public String getName();
 	
 	/**
-	 * @return the amount of all messages found in the wsdl-file
+	 * Builds the SoapMessage
 	 */
-	public String[] getEndpointAdress();
+	public void buildSoapMessage();
+	
+	/**
+	 * @return a Instance of the concrete Implementation of this Interface
+	 */
+	public ISoapMessageCreator createInstance(String wsdlLocation, String operation);
 }

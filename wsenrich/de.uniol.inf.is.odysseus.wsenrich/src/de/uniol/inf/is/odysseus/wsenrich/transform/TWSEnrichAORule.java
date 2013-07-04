@@ -16,9 +16,13 @@ import de.uniol.inf.is.odysseus.wsenrich.util.ConnectionForWebservicesRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.HttpEntityToStringConverter;
 import de.uniol.inf.is.odysseus.wsenrich.util.IConnectionForWebservices;
 import de.uniol.inf.is.odysseus.wsenrich.util.IKeyFinder;
+import de.uniol.inf.is.odysseus.wsenrich.util.IMessageManipulator;
 import de.uniol.inf.is.odysseus.wsenrich.util.IRequestBuilder;
+import de.uniol.inf.is.odysseus.wsenrich.util.ISoapMessageCreator;
 import de.uniol.inf.is.odysseus.wsenrich.util.KeyFinderRegistry;
+import de.uniol.inf.is.odysseus.wsenrich.util.MessageManipulatorRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.RequestBuilderRegistry;
+import de.uniol.inf.is.odysseus.wsenrich.util.SoapMessageCreatorRegistry;
 
 
 public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
@@ -34,10 +38,22 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = 
 				new RelationalMergeFunction<ITimeInterval>(logical.getOutputSchema().size());
 		IMetadataMergeFunction<ITimeInterval> metaMerge = new UseLeftInputMetadata<>();
-				IConnectionForWebservices connection = ConnectionForWebservicesRegistry.getInstance(logical.getGetOrPost());
-				IRequestBuilder requestBuilder = RequestBuilderRegistry.getInstance(logical.getMethod());
-				HttpEntityToStringConverter converter = new HttpEntityToStringConverter(logical.getCharset());
-				IKeyFinder keyFinder = KeyFinderRegistry.getInstance(logical.getParsingMethod());
+		
+		ISoapMessageCreator soapMessageCreator;
+		IMessageManipulator soapMessageManipulator;
+		
+		if(logical.getServiceMethod().equals(WSEnrichAO.SERVICE_METHOD_SOAP)) {
+			soapMessageCreator = SoapMessageCreatorRegistry.getInstance(logical.getServiceMethod(), logical.getWsdlLocation(), logical.getOpeation());
+			soapMessageManipulator = MessageManipulatorRegistry.getInstance(logical.getServiceMethod());
+		} else {
+			soapMessageCreator = null;
+			soapMessageManipulator = null;
+		}
+		
+		IConnectionForWebservices connection = ConnectionForWebservicesRegistry.getInstance(logical.getGetOrPost());
+		IRequestBuilder requestBuilder = RequestBuilderRegistry.getInstance(logical.getMethod());
+		HttpEntityToStringConverter converter = new HttpEntityToStringConverter(logical.getCharset());
+		IKeyFinder keyFinder = KeyFinderRegistry.getInstance(logical.getParsingMethod());
 			
 		WSEnrichPO<ITimeInterval> physical = new WSEnrichPO<ITimeInterval>(
 			logical.getServiceMethod(),
@@ -56,9 +72,14 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 			connection,
 			requestBuilder,
 			converter,
-			keyFinder);
+			keyFinder,
+			soapMessageCreator,
+			soapMessageManipulator);
 		
-		defaultExecute(logical, physical, transformConfig, true, true);
+		//defaultExecute(logical, physical, transformConfig, true, true);
+		physical.setOutputSchema(logical.getOutputSchema());
+		replace(logical, physical, transformConfig);
+		retract(logical);
 	}
 
 	@Override
