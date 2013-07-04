@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,7 +44,7 @@ public class WorkingMemory {
 	private volatile boolean hasChanged = false;
 	private int executedRules = 0;
 	
-	private Map<Class<?>, List<Object>> objectMap = new HashMap<Class<?>, List<Object>>();
+	private Map<Class<?>, Collection<Object>> objectMap = new HashMap<Class<?>, Collection<Object>>();
 //	private Map<IRuleFlowGroup, Map<Class<?>, List<IRule<?, ?>>>> ruleTree = new HashMap<>();
 
 	private ISession caller;
@@ -95,7 +94,7 @@ public class WorkingMemory {
 	private void insertIntoTree(Object o){
 		for(Class<?> sc :  getAllInterfacesAndSuperclasses(o)){
 			if(!objectMap.containsKey(sc)){
-				objectMap.put(sc, new LinkedList<>());
+				objectMap.put(sc, new HashSet<>());
 			}
 			objectMap.get(sc).add(o);			
 		}
@@ -173,7 +172,7 @@ public class WorkingMemory {
 		Iterator<IRule<?, ?>> iterator = this.env.getRuleFlow().iteratorRules(group);
 		while (iterator.hasNext()) {
 			IRule rule = iterator.next();
-			List<Object> matchingObjects = objectMap.get(rule.getConditionClass());
+			Collection<Object> matchingObjects = objectMap.get(rule.getConditionClass());
 			if(matchingObjects==null){
 				// no objects for this condition clazz
 				continue;

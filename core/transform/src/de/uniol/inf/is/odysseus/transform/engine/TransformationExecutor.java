@@ -16,7 +16,8 @@
 package de.uniol.inf.is.odysseus.transform.engine;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -52,9 +53,10 @@ public class TransformationExecutor implements ITransformation {
 	@Override
 	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalOp, TransformationConfiguration config, ISession caller, IDataDictionary dd) throws TransformationException {
 		LOGGER.info("Starting transformation of " + logicalOp + "...");
-		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
-		LOGGER.debug("Before transformation: \n" + planPrinter.createString(logicalOp));
-		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
+		if (LOGGER.isDebugEnabled()) {
+			SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
+			LOGGER.debug("Before transformation: \n" + planPrinter.createString(logicalOp));
+		}
 		ArrayList<IPhysicalOperator> resultPlan = new ArrayList<IPhysicalOperator>();
 		TopAO top = null;
 		if (logicalOp instanceof TopAO) {
@@ -69,7 +71,7 @@ public class TransformationExecutor implements ITransformation {
 		TransformationInventory concreteTransformInvent = new TransformationInventory(TransformationInventory.getInstance());
 		TransformationEnvironment env = new TransformationEnvironment(config, concreteTransformInvent, caller, dd);
 
-		addLogicalOperator(top, list, env);
+		addLogicalOperator(top, new HashSet<ILogicalOperator>(), env);
 		LOGGER.trace("Processing rules...");
 		// start transformation
 		env.processEnvironment();
@@ -117,13 +119,13 @@ public class TransformationExecutor implements ITransformation {
 
 			if (logicalOp != top) {
 				logicalOp.unsubscribeSink(top, 0, 0, logicalOp.getOutputSchema());
-			}			
+			}
 		}
 		LOGGER.info("Transformation of " + logicalOp + " finished");
 		return resultPlan;
 	}
 
-	private void addLogicalOperator(ILogicalOperator op, List<ILogicalOperator> inserted, TransformationEnvironment env) {
+	private void addLogicalOperator(ILogicalOperator op, Collection<ILogicalOperator> inserted, TransformationEnvironment env) {
 		if (op == null) {
 			return;
 		}
