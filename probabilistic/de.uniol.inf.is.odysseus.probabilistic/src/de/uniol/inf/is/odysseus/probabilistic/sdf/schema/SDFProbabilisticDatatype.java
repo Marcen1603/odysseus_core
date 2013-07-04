@@ -29,7 +29,6 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
 	 */
 	private static final long serialVersionUID = 2867228296513432602L;
 
-
 	/**
 	 * Constructs a new probabilistic data type from the given URI.
 	 * 
@@ -77,8 +76,11 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
 	public SDFProbabilisticDatatype(final String name, final KindOfDatatype type, final SDFDatatype subType) {
 		super(name, type, subType, true);
 	}
-	/** Probabilistic result used in predicates. */
-	public static final SDFDatatype PROBABILISTIC_RESULT= new SDFProbabilisticDatatype("ProbabilisticResult");
+
+	/** Probabilistic result used in probabilistic discrete predicates. */
+	public static final SDFDatatype PROBABILISTIC_DISCRETE_PREDICATE_RESULT = new SDFProbabilisticDatatype("ProbabilisticDiscretePredicateResult");
+	/** Probabilistic result used in probabilistic continuous predicates. */
+	public static final SDFDatatype PROBABILISTIC_CONTINUOUS_PREDICATE_RESULT = new SDFProbabilisticDatatype("ProbabilisticContinuousPredicateResult");
 	/** Probabilistic discrete double datatype. */
 	public static final SDFDatatype PROBABILISTIC_DOUBLE = new SDFProbabilisticDatatype("ProbabilisticDouble");
 	/** Probabilistic discrete float datatype. */

@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.compare.EqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticPredicate;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.base.predicate.ProbabilisticContinuousPredicate;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
@@ -178,6 +178,23 @@ public final class SchemaUtils {
 	}
 
 	/**
+	 * Returns all attributes from the list that are continuous probabilistic attributes.
+	 * 
+	 * @param attributes
+	 *            The {@link List attributes}
+	 * @return A list of all attributes in the list that are continuous {@link SDFProbabilisticDatatype probabilistic attributes}
+	 */
+	public static List<SDFAttribute> getContinuousProbabilisticAttributes(final List<SDFAttribute> attributes) {
+		List<SDFAttribute> result = new ArrayList<SDFAttribute>();
+		for (SDFAttribute attribute : attributes) {
+			if (isContinuousProbabilisticAttribute(attribute)) {
+				result.add(attribute);
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * Returns all attributes from the schema that are discrete probabilistic attributes.
 	 * 
 	 * @param schema
@@ -193,6 +210,24 @@ public final class SchemaUtils {
 			}
 		}
 		return attributes;
+	}
+
+	/**
+	 * Returns all attributes from the list that are discrete probabilistic attributes.
+	 * 
+	 * @param attributes
+	 *            The {@link List attributes}
+	 * @return A list of all attributes in the list that are discrete {@link SDFProbabilisticDatatype probabilistic attributes}
+	 */
+
+	public static List<SDFAttribute> getDiscreteProbabilisticAttributes(final List<SDFAttribute> attributes) {
+		List<SDFAttribute> result = new ArrayList<SDFAttribute>();
+		for (SDFAttribute attribute : attributes) {
+			if (isDiscreteProbabilisticAttribute(attribute)) {
+				result.add(attribute);
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -266,7 +301,7 @@ public final class SchemaUtils {
 	 *            The relational predicate
 	 * @return <code>true</code> iff the relational predicate is of the given form
 	 */
-	public static boolean isEquiPredicate(final ProbabilisticPredicate predicate) {
+	public static boolean isEquiPredicate(final ProbabilisticContinuousPredicate predicate) {
 		IExpression<?> expression = predicate.getExpression().getMEPExpression();
 		return isEquiExpression(expression);
 	}

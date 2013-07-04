@@ -25,9 +25,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticPredicate;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.base.predicate.ProbabilisticContinuousPredicate;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.base.predicate.ProbabilisticContinuousPredicateResult;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticResult;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
@@ -42,7 +42,7 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticContinuousSelectPO.class);
 
 	/** The predicate. */
-	private final ProbabilisticPredicate predicate;
+	private final ProbabilisticContinuousPredicate predicate;
 	/** The heartbeat generation strategy. */
 	private IHeartbeatGenerationStrategy<ProbabilisticTuple<T>> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<ProbabilisticTuple<T>>();
 
@@ -52,7 +52,7 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 	 * @param predicate
 	 *            The predicate
 	 */
-	public ProbabilisticContinuousSelectPO(final ProbabilisticPredicate predicate) {
+	public ProbabilisticContinuousSelectPO(final ProbabilisticContinuousPredicate predicate) {
 		this.predicate = predicate.clone();
 	}
 
@@ -87,7 +87,7 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
 		ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(object.getAttributes(), object.requiresDeepClone());
 		outputVal.setMetadata((T) object.getMetadata().clone());
-		ProbabilisticResult result = predicate.probabilisticEvaluate(outputVal);
+		ProbabilisticContinuousPredicateResult result = predicate.probabilisticEvaluate(outputVal);
 		if (result.getProbability() > 0.0) {
 			int attributePosition = predicate.getAttributePositions()[0];
 			((IProbabilistic) outputVal.getMetadata()).setExistence(result.getProbability());

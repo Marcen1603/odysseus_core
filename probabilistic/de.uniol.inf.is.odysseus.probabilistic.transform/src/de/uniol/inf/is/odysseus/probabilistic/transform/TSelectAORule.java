@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
-import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticPredicate;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.ProbabilisticDiscreteSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
@@ -61,8 +60,9 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 		IPhysicalOperator selectPO;
 		if (this.isProbabilistic(selectAO)) {
 			final SDFProbabilisticExpression expression = new SDFProbabilisticExpression(((RelationalPredicate) selectAO.getPredicate()).getExpression());
-			final ProbabilisticPredicate predicate = new ProbabilisticPredicate(expression);
-			selectPO = new ProbabilisticDiscreteSelectPO(predicate);
+
+			int[] probabilisticAttributePos = SchemaUtils.getAttributePos(selectAO.getInputSchema(), SchemaUtils.getDiscreteProbabilisticAttributes(expression.getAllAttributes()));
+			selectPO = new ProbabilisticDiscreteSelectPO(selectAO.getPredicate(), probabilisticAttributePos);
 			if (selectAO.getHeartbeatRate() > 0) {
 				((ProbabilisticDiscreteSelectPO<?>) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));
 			}

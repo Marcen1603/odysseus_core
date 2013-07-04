@@ -166,7 +166,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 */
 	private void setDistributions(final List<NormalDistributionMixture> distributions) {
 		if (distributions == null) {
-			this.distributions = new ArrayList<NormalDistributionMixture>();
+			this.distributions.clear();
 		} else {
 			this.distributions = distributions;
 		}

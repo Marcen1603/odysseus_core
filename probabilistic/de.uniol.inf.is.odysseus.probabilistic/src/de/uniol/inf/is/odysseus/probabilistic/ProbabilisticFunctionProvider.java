@@ -34,9 +34,6 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.Proba
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsOperatorVector;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerOperatorVector;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.bool.ProbabilisticAndOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.bool.ProbabilisticNotOperator;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.bool.ProbabilisticOrOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterThanOperator;
@@ -92,9 +89,9 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
 		try {
 			/** Boolean functions for discrete probabilistic values */
-			functions.add(new ProbabilisticAndOperator());
-			functions.add(new ProbabilisticOrOperator());
-			functions.add(new ProbabilisticNotOperator());
+//			functions.add(new ProbabilisticAndOperator());
+//			functions.add(new ProbabilisticOrOperator());
+//			functions.add(new ProbabilisticNotOperator());
 
 			functions.add(new ProbabilisticEqualsOperator());
 			functions.add(new ProbabilisticSmallerEqualsOperator());

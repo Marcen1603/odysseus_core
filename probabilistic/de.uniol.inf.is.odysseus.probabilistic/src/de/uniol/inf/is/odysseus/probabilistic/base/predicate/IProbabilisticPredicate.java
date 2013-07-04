@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticResult;
 
 /**
  * Probabilistic predicate to perform evaluation of predicate boolean expressions.
@@ -27,7 +26,7 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticRes
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public interface IProbabilisticPredicate extends IPredicate<ProbabilisticTuple<?>> {
+public interface IProbabilisticPredicate<T> extends IPredicate<ProbabilisticTuple<?>> {
 	/**
 	 * Initialize the predicate with the input schemas.
 	 * 
@@ -57,7 +56,7 @@ public interface IProbabilisticPredicate extends IPredicate<ProbabilisticTuple<?
 	 *            The right input tuple
 	 * @return The probability and values that the attributes from the two input tuples holds the predicate
 	 */
-	ProbabilisticResult probabilisticEvaluate(ProbabilisticTuple<?> left, ProbabilisticTuple<?> right);
+	T probabilisticEvaluate(ProbabilisticTuple<?> left, ProbabilisticTuple<?> right);
 
 	/**
 	 * Evaluates the predicate on the attributes from the input tuple.
@@ -66,6 +65,6 @@ public interface IProbabilisticPredicate extends IPredicate<ProbabilisticTuple<?
 	 *            The input tuple
 	 * @return The probability that the attributes from the input tuple holds the predicate
 	 */
-	ProbabilisticResult probabilisticEvaluate(ProbabilisticTuple<?> input);
+	T probabilisticEvaluate(ProbabilisticTuple<?> input);
 
 }

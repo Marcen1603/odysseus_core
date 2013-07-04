@@ -15,44 +15,43 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticPredicate;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticResult;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
- * Implementation of a probabilistic Select operator.
+ * Implementation of a probabilistic Select operator for discrete probabilistic values.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * @param <T>
  */
-public class ProbabilisticDiscreteSelectPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<T> {
 	/** Logger. */
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteSelectPO.class);
 
-	/** The predicate. */
-	private final ProbabilisticPredicate predicate;
-	/** The heartbeat generation strategy. */
-	private IHeartbeatGenerationStrategy<ProbabilisticTuple<T>> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<ProbabilisticTuple<T>>();
+	private int[] probabilisticAttributePos;
 
 	/**
 	 * Default constructor.
 	 * 
 	 * @param predicate
 	 *            The predicate
+	 * @param probabilisticAttributePos
+	 *            The positions of discrete probabilistic attributes
 	 */
-	public ProbabilisticDiscreteSelectPO(final ProbabilisticPredicate predicate) {
-		this.predicate = predicate.clone();
+	public ProbabilisticDiscreteSelectPO(final IPredicate<? super T> predicate, int[] probabilisticAttributePos) {
+		super(predicate);
+		this.probabilisticAttributePos = probabilisticAttributePos;
 	}
 
 	/**
@@ -62,18 +61,8 @@ public class ProbabilisticDiscreteSelectPO<T extends IMetaAttribute> extends Abs
 	 *            The copy
 	 */
 	public ProbabilisticDiscreteSelectPO(final ProbabilisticDiscreteSelectPO<T> po) {
-		this.predicate = po.predicate.clone();
-		this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy.clone();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# getOutputMode()
-	 */
-	@Override
-	public final OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
+		super(po);
+		this.probabilisticAttributePos = po.probabilisticAttributePos.clone();
 	}
 
 	/*
@@ -83,34 +72,85 @@ public class ProbabilisticDiscreteSelectPO<T extends IMetaAttribute> extends Abs
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-		ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(object.getAttributes(), object.requiresDeepClone());
-		outputVal.setMetadata((T) object.getMetadata().clone());
-		ProbabilisticResult result = predicate.probabilisticEvaluate(outputVal);
-		if (result.getProbability() > 0.0) {
-			int attributePosition = predicate.getAttributePositions()[0];
-			((IProbabilistic) outputVal.getMetadata()).setExistence(result.getProbability());
-			outputVal.setAttribute(attributePosition, result.getValue());
-			transfer(outputVal);
+	protected final void process_next(final T object, final int port) {
+		T outputVal = (T) object.clone();
+		// Dummy tuple to hold the different worlds during evaluation
+		T selectObject = (T) object.clone();
+
+		// Input and output joint probabilities
+		double[] inSum = new double[probabilisticAttributePos.length];
+		double[] outSum = new double[probabilisticAttributePos.length];
+
+		Iterator<?>[] attributeIters = new Iterator<?>[probabilisticAttributePos.length];
+		int worldNum = 1;
+		for (int i = 0; i < probabilisticAttributePos.length; i++) {
+			((AbstractProbabilisticValue<?>) outputVal.getAttribute(probabilisticAttributePos[i])).getValues().clear();
+			AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) object.getAttribute(probabilisticAttributePos[i]);
+			worldNum *= attribute.getValues().size();
+			for (Double proberbility : attribute.getValues().values()) {
+				inSum[i] += proberbility;
+			}
+			attributeIters[i] = attribute.getValues().entrySet().iterator();
+
 		}
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# process_open()
-	 */
-	@Override
-	public final void process_open() {
-		this.predicate.init();
-	}
+		// Create all possible worlds
+		Object[][] worlds = new Object[worldNum][probabilisticAttributePos.length];
+		double instances = 0;
+		for (int i = 0; i < probabilisticAttributePos.length; i++) {
+			AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) object.getAttribute(probabilisticAttributePos[i]);
+			int world = 0;
+			if (instances == 0.0) {
+				instances = 1.0;
+			} else {
+				instances *= attribute.getValues().size();
+			}
+			int num = (int) (worlds.length / (attribute.getValues().size() * instances));
+			while (num > 0) {
+				Iterator<?> iter = attribute.getValues().entrySet().iterator();
+				while (iter.hasNext()) {
+					Entry<?, Double> entry = ((Map.Entry<?, Double>) iter.next());
+					for (int j = 0; j < instances; j++) {
+						if (world == worlds.length) {
+							LOG.error("Strange things happening in the world");
+						}
+						worlds[world][i] = entry.getKey();
+						world++;
+					}
+				}
+				num--;
+			}
+		}
 
-	/**
-	 * 
-	 * @return The predicate
-	 */
-	public final IPredicate<? super ProbabilisticTuple<T>> getPredicate() {
-		return this.predicate;
+		// Evaluate each world and store the possible ones in the output tuple
+		for (int w = 0; w < worlds.length; w++) {
+			for (int i = 0; i < probabilisticAttributePos.length; i++) {
+				selectObject.setAttribute(probabilisticAttributePos[i], worlds[w][i]);
+			}
+			boolean result = getPredicate().evaluate((T) selectObject);
+
+			if (result) {
+				for (int i = 0; i < probabilisticAttributePos.length; i++) {
+					AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) object.getAttribute(probabilisticAttributePos[i]);
+					AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(probabilisticAttributePos[i]);
+					double probability = inAttribute.getValues().get(worlds[w][i]);
+					outAttribute.getValues().put((Double) worlds[w][i], probability);
+					outSum[i] += probability;
+				}
+			}
+		}
+		// Update the joint probability
+		double jointProbability = ((IProbabilistic) outputVal.getMetadata()).getExistence();
+		for (int i = 0; i < probabilisticAttributePos.length; i++) {
+			jointProbability /= inSum[i];
+			jointProbability *= outSum[i];
+		}
+		// Transfer the tuple iff the joint probability is positive (maybe set quality filter later to reduce the number of tuples)
+		if (jointProbability > 0.0) {
+			((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
+			System.out.println("Transfer-> " + outputVal);
+			transfer((T) outputVal);
+		}
 	}
 
 	/*
@@ -121,59 +161,6 @@ public class ProbabilisticDiscreteSelectPO<T extends IMetaAttribute> extends Abs
 	@Override
 	public final ProbabilisticDiscreteSelectPO<T> clone() {
 		return new ProbabilisticDiscreteSelectPO<T>(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#toString ()
-	 */
-	@Override
-	public final String toString() {
-		return super.toString() + " predicate: " + this.getPredicate().toString();
-	}
-
-	/**
-	 * Gets the heartbeat generation strategy.
-	 * 
-	 * @return The heartbeat generation strategy
-	 */
-	public final IHeartbeatGenerationStrategy<ProbabilisticTuple<T>> getHeartbeatGenerationStrategy() {
-		return this.heartbeatGenerationStrategy;
-	}
-
-	/**
-	 * Sets the heartbeat generation strategy.
-	 * 
-	 * @param heartbeatGenerationStrategy
-	 *            The heartbeat generation strategy
-	 */
-	public final void setHeartbeatGenerationStrategy(final IHeartbeatGenerationStrategy<ProbabilisticTuple<T>> heartbeatGenerationStrategy) {
-		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource# process_isSemanticallyEqual (de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
-	 */
-	@Override
-	public final boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
-		if (!(ipo instanceof ProbabilisticDiscreteSelectPO<?>)) {
-			return false;
-		}
-		@SuppressWarnings("unchecked")
-		final ProbabilisticDiscreteSelectPO<T> spo = (ProbabilisticDiscreteSelectPO<T>) ipo;
-		// Different sources
-		if (!this.hasSameSources(spo)) {
-			return false;
-		}
-		// Predicates match
-		if (this.predicate.equals(spo.getPredicate()) || (this.predicate.isContainedIn(spo.getPredicate()) && spo.getPredicate().isContainedIn(this.predicate))) {
-			return true;
-		}
-
-		return false;
 	}
 
 }

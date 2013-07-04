@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.probabilistic.base.predicate;
+package de.uniol.inf.is.odysseus.probabilistic.continuous.base.predicate;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -29,8 +29,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticResult;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 
 /**
@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpress
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticPredicate extends AbstractPredicate<ProbabilisticTuple<?>> implements IProbabilisticPredicate {
+public class ProbabilisticContinuousPredicate extends AbstractPredicate<ProbabilisticTuple<?>> implements IProbabilisticPredicate<ProbabilisticContinuousPredicateResult> {
 
 	/**
 	 * 
@@ -59,7 +59,7 @@ public class ProbabilisticPredicate extends AbstractPredicate<ProbabilisticTuple
 	 * @param expression
 	 *            The expression
 	 */
-	public ProbabilisticPredicate(final SDFExpression expression) {
+	public ProbabilisticContinuousPredicate(final SDFExpression expression) {
 		this(new SDFProbabilisticExpression(expression));
 	}
 
@@ -69,7 +69,7 @@ public class ProbabilisticPredicate extends AbstractPredicate<ProbabilisticTuple
 	 * @param expression
 	 *            The probabilistic expression
 	 */
-	public ProbabilisticPredicate(final SDFProbabilisticExpression expression) {
+	public ProbabilisticContinuousPredicate(final SDFProbabilisticExpression expression) {
 		this.expression = expression;
 	}
 
@@ -79,7 +79,7 @@ public class ProbabilisticPredicate extends AbstractPredicate<ProbabilisticTuple
 	 * @param predicate
 	 *            The probabilistic predicate
 	 */
-	public ProbabilisticPredicate(final ProbabilisticPredicate predicate) {
+	public ProbabilisticContinuousPredicate(final ProbabilisticContinuousPredicate predicate) {
 		this.attributePositions = (int[]) predicate.attributePositions.clone();
 		this.fromRightChannel = (boolean[]) predicate.fromRightChannel.clone();
 		if (predicate.expression == null) {
@@ -120,14 +120,14 @@ public class ProbabilisticPredicate extends AbstractPredicate<ProbabilisticTuple
 	public int[] getAttributePositions() {
 		return this.attributePositions;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate #probabilisticEvaluate(de.uniol.inf.is.odysseus.probabilistic.base. ProbabilisticTuple)
 	 */
 	@Override
-	public final ProbabilisticResult probabilisticEvaluate(final ProbabilisticTuple<?> input) {
+	public final ProbabilisticContinuousPredicateResult probabilisticEvaluate(final ProbabilisticTuple<?> input) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(this.attributePositions[i]);
@@ -185,7 +185,7 @@ public class ProbabilisticPredicate extends AbstractPredicate<ProbabilisticTuple
 	 * @see de.uniol.inf.is.odysseus.probabilistic.base.predicate.IProbabilisticPredicate #probabilisticEvaluate(de.uniol.inf.is.odysseus.probabilistic.base. ProbabilisticTuple, de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple)
 	 */
 	@Override
-	public final ProbabilisticResult probabilisticEvaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
+	public final ProbabilisticContinuousPredicateResult probabilisticEvaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			Tuple<?> r;
@@ -325,8 +325,8 @@ public class ProbabilisticPredicate extends AbstractPredicate<ProbabilisticTuple
 	 * @see de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate#clone()
 	 */
 	@Override
-	public final ProbabilisticPredicate clone() {
-		return new ProbabilisticPredicate(this);
+	public final ProbabilisticContinuousPredicate clone() {
+		return new ProbabilisticContinuousPredicate(this);
 	}
 
 	/*
