@@ -67,7 +67,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	private Map<Integer, Subscription<IPhysicalOperator>> physSubscriptionTo = new HashMap<Integer, Subscription<IPhysicalOperator>>();
 	// cache access to bounded physOperators
 	private Map<Integer, IPhysicalOperator> physInputOperators = new HashMap<Integer, IPhysicalOperator>();
-	private boolean physInputOperatorsChanged = true;
+	private int subscribedInputSizeCache = 0;
 	private boolean isAllPhysicalSetCache = false;
 
 	transient private List<Exception> errors = new ArrayList<Exception>();
@@ -334,17 +334,23 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	public boolean isAllPhysicalInputSet() {
-		if (physInputOperatorsChanged) {
-			for (Integer i : this.subscribedToSource.keySet()) {
-				if (this.physInputOperators.get(i) == null) {
-					isAllPhysicalSetCache = false;
-					break;
-				}
+		for (Integer i : this.subscribedToSource.keySet()) {
+			if (this.physInputOperators.get(i) == null) {
+				return false;
 			}
-			isAllPhysicalSetCache = true;
-			physInputOperatorsChanged = false;
 		}
-		return isAllPhysicalSetCache;
+		return true;
+//		if (subscribedInputSizeCache != this.subscribedToSource.keySet().size()) {
+//			for (Integer i : this.subscribedToSource.keySet()) {
+//				if (this.physInputOperators.get(i) == null) {
+//					isAllPhysicalSetCache = false;
+//					break;
+//				}
+//			}
+//			isAllPhysicalSetCache = true;
+//			subscribedInputSizeCache = this.subscribedToSource.keySet().size();
+//		}
+//		return isAllPhysicalSetCache;
 	}
 
 	/*
@@ -355,8 +361,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	@Override
 	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator> subscription) {
 		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
-		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getTarget());
-		physInputOperatorsChanged = true;
+		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getTarget());	
 	}
 
 	@Override
